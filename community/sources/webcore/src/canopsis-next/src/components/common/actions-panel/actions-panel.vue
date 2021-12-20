@@ -21,7 +21,7 @@
     mq-layout(:mq="['m', 't', 'l']")
       v-layout
         v-menu(
-          v-if="actions.length",
+          v-if="actions.length || dropDownActions.length",
           bottom,
           left,
           @click.native.stop=""
