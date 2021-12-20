@@ -187,11 +187,9 @@ func (mr *MockPeriodicalWorkerMockRecorder) GetInterval() *gomock.Call {
 }
 
 // Work mocks base method
-func (m *MockPeriodicalWorker) Work(arg0 context.Context) error {
+func (m *MockPeriodicalWorker) Work(arg0 context.Context) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Work", arg0)
-	ret0, _ := ret[0].(error)
-	return ret0
+	m.ctrl.Call(m, "Work", arg0)
 }
 
 // Work indicates an expected call of Work

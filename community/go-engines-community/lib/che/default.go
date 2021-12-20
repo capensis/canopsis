@@ -176,32 +176,32 @@ func NewEngine(
 		},
 		logger,
 	))
-	engine.AddPeriodicalWorker(&reloadLocalCachePeriodicalWorker{
+	engine.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
 		EventFilterService: eventFilterService,
 		EnrichmentCenter:   enrichmentCenter,
 		PeriodicalInterval: options.PeriodicalWaitTime,
 		Logger:             logger,
 	})
-	engine.AddPeriodicalWorker(libengine.NewRunInfoPeriodicalWorker(
+	engine.AddPeriodicalWorker("run info", libengine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		libengine.NewRunInfoManager(runInfoRedisSession),
 		libengine.NewInstanceRunInfo(canopsis.CheEngineName, options.ConsumeFromQueue, options.PublishToQueue),
 		amqpChannel,
 		logger,
 	))
-	engine.AddPeriodicalWorker(libengine.NewLoadConfigPeriodicalWorker(
+	engine.AddPeriodicalWorker("alarm config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),
 		alarmConfigProvider,
 		logger,
 	))
-	engine.AddPeriodicalWorker(libengine.NewLoadConfigPeriodicalWorker(
+	engine.AddPeriodicalWorker("tz config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),
 		timezoneConfigProvider,
 		logger,
 	))
-	engine.AddPeriodicalWorker(libengine.NewLockedPeriodicalWorker(
+	engine.AddPeriodicalWorker("impacted services", libengine.NewLockedPeriodicalWorker(
 		periodicalLockClient,
 		redis.ChePeriodicalLockKey,
 		&impactedServicesPeriodicalWorker{
