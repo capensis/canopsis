@@ -26,7 +26,7 @@ const commands = {
     return this.customSetValue('@usernameField', username);
   },
 
-  setPassword(password) {
+  customSetPassword(password) {
     return this.customSetValue('@passwordField', password);
   },
 

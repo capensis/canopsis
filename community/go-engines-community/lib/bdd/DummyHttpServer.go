@@ -157,6 +157,22 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Method: http.MethodGet,
 			Body:   "test-job-execution-long-succeeded-output",
 		},
+		"/api/35/job/test-job-long-failed/run": {
+			Code:   http.StatusOK,
+			Method: http.MethodPost,
+			Body:   fmt.Sprintf("{\"id\":\"test-job-execution-long-failed\",\"href\":\"/api/35/execution/test-job-execution-long-failed\",\"permalink\":\"%s/rundeck/execution/show/test-job-execution-long-failed\"}", addr),
+		},
+		"/api/35/execution/test-job-execution-long-failed": {
+			Code:    http.StatusOK,
+			Method:  http.MethodGet,
+			Body:    "{\"id\":\"test-job-execution-long-failed\",\"status\":\"failed\"}",
+			Timeout: 2 * time.Second,
+		},
+		"/api/35/execution/test-job-execution-long-failed/output": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "test-job-execution-long-failed-output",
+		},
 		// AWX
 		"/api/v2/job_templates/test-job-succeeded/launch/": {
 			Code:   http.StatusOK,
@@ -217,6 +233,12 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Code:   http.StatusOK,
 			Method: http.MethodGet,
 			Body:   "test-job-execution-params-succeeded-output",
+		},
+		// Webhook
+		"/webhook/ticket": {
+			Code:   http.StatusOK,
+			Method: http.MethodPost,
+			Body:   "{\"ticket_id\":\"testticket\"}",
 		},
 	}
 }

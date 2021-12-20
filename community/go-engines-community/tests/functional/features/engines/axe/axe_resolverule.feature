@@ -7,6 +7,7 @@ Feature: resolve alarm on resolve rule
     """json
     {
       "_id": "test-resolve-rule-axe-resolverule-1",
+      "name": "test-resolve-rule-axe-resolverule-1-name",
       "description": "test-resolve-rule-axe-resolverule-1-desc",
       "entity_patterns":[
         {
@@ -14,7 +15,7 @@ Feature: resolve alarm on resolve rule
         }
       ],
       "duration": {
-        "seconds": 2,
+        "value": 2,
         "unit": "s"
       },
       "priority": 10

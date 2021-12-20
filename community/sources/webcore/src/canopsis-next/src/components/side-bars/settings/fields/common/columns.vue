@@ -1,8 +1,13 @@
 <template lang="pug">
-  v-list-group(data-test="columnNames")
-    v-list-tile(slot="activator")
-      div(:class="validationHeaderClass") {{ label }}
-    c-columns-field(v-field="columns", :with-html="withHtml", :with-color-indicator="withColorIndicator")
+  v-list-group
+    template(#activator="")
+      v-list-tile
+        div(:class="validationHeaderClass") {{ label }}
+    c-columns-field(
+      v-field="columns",
+      :with-html="withHtml",
+      :with-color-indicator="withColorIndicator"
+    )
 </template>
 
 <script>

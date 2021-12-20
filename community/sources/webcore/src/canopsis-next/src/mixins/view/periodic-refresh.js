@@ -2,8 +2,10 @@ import { get } from 'lodash';
 
 import { DATETIME_FORMATS } from '@/constants';
 
-import uid from '@/helpers/uid';
 import Observer from '@/services/observer';
+
+import uid from '@/helpers/uid';
+import { convertDurationToString, durationToSeconds } from '@/helpers/date/duration';
 
 import layoutNavigationEditingModeMixin from '../layout/navigation/editing-mode';
 
@@ -82,7 +84,7 @@ export default {
 
   computed: {
     periodicRefreshProgressFormatted() {
-      return this.$options.filters.duration(
+      return convertDurationToString(
         this.periodicRefreshProgress,
         DATETIME_FORMATS.refreshFieldFormat,
       );
@@ -96,12 +98,10 @@ export default {
       return get(this.view, 'periodic_refresh.enabled', false);
     },
 
-    periodicRefreshUnit() {
-      return get(this.view, 'periodic_refresh.unit');
-    },
-
     periodicRefreshDelay() {
-      return get(this.view, 'periodic_refresh.seconds');
+      return this.view?.periodic_refresh
+        ? durationToSeconds(this.view.periodic_refresh)
+        : 0;
     },
 
     refreshHandler() {

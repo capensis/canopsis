@@ -1,0 +1,126 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`kpi-chart-export-actions Renders \`kpi-chart-export-actions\` with custom props 1`] = `
+<div
+  class="layout justify-end"
+>
+  <button
+    class="ma-0 mr-4 v-btn v-btn--loader v-btn--small theme--light primary"
+    type="button"
+  >
+    <div
+      class="v-btn__content"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon v-icon--left material-icons theme--light"
+        style="font-size: 16px;"
+      >
+        file_download
+      </i>
+      <span>
+        common.exportAsCsv
+      </span>
+    </div>
+    <span
+      class="v-btn__loading"
+    >
+      <div
+        aria-valuemax="100"
+        aria-valuemin="0"
+        class="v-progress-circular v-progress-circular--indeterminate"
+        role="progressbar"
+        style="height: 23px; width: 23px;"
+      >
+        <svg
+          style="transform: rotate(0deg);"
+          viewBox="21.904761904761905 21.904761904761905 43.80952380952381 43.80952380952381"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            class="v-progress-circular__overlay"
+            cx="43.80952380952381"
+            cy="43.80952380952381"
+            fill="transparent"
+            r="20"
+            stroke-dasharray="125.664"
+            stroke-dashoffset="125.66370614359172px"
+            stroke-width="3.8095238095238093"
+          />
+        </svg>
+        <div
+          class="v-progress-circular__info"
+        />
+      </div>
+    </span>
+  </button>
+  <button
+    class="ma-0 v-btn v-btn--small theme--light primary"
+    type="button"
+  >
+    <div
+      class="v-btn__content"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon v-icon--left material-icons theme--light"
+        style="font-size: 16px;"
+      >
+        file_download
+      </i>
+      <span>
+        common.downloadAsPng
+      </span>
+    </div>
+  </button>
+</div>
+`;
+
+exports[`kpi-chart-export-actions Renders \`kpi-chart-export-actions\` with custom props 2`] = `undefined`;
+
+exports[`kpi-chart-export-actions Renders \`kpi-chart-export-actions\` without props 1`] = `
+<div
+  class="layout justify-end"
+>
+  <button
+    class="ma-0 mr-4 v-btn v-btn--small theme--light primary"
+    type="button"
+  >
+    <div
+      class="v-btn__content"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon v-icon--left material-icons theme--light"
+        style="font-size: 16px;"
+      >
+        file_download
+      </i>
+      <span>
+        common.exportAsCsv
+      </span>
+    </div>
+  </button>
+  <button
+    class="ma-0 v-btn v-btn--small theme--light primary"
+    type="button"
+  >
+    <div
+      class="v-btn__content"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon v-icon--left material-icons theme--light"
+        style="font-size: 16px;"
+      >
+        file_download
+      </i>
+      <span>
+        common.downloadAsPng
+      </span>
+    </div>
+  </button>
+</div>
+`;
+
+exports[`kpi-chart-export-actions Renders \`kpi-chart-export-actions\` without props 2`] = `undefined`;

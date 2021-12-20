@@ -20,10 +20,9 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { formToDataStorageSettings, dataStorageSettingsToForm } from '@/helpers/forms/data-storage';
+import { dataStorageSettingsToForm } from '@/helpers/forms/data-storage';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { validationErrorsMixin } from '@/mixins/form/validation-errors';
+import { submittableMixinCreator } from '@/mixins/submittable';
 import { entitiesDataStorageSettingsMixin } from '@/mixins/entities/data-storage';
 import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
 
@@ -35,10 +34,9 @@ export default {
   },
   components: { StorageSettingsForm },
   mixins: [
-    submittableMixin(),
-    validationErrorsMixin(),
     entitiesDataStorageSettingsMixin,
     entitiesContextEntityMixin,
+    submittableMixinCreator(),
   ],
   data() {
     return {
@@ -55,12 +53,12 @@ export default {
   methods: {
     cleanEntities() {
       this.$modals.show({
-        name: MODALS.confirmation,
+        name: MODALS.confirmationPhrase,
         config: {
-          title: this.$t('storageSetting.entity.confirmation.title'),
-          text: this.form.entity.archive
-            ? this.$t('storageSetting.entity.confirmation.archive')
-            : this.$t('storageSetting.entity.confirmation.delete'),
+          title: this.$t('modals.confirmationPhrase.cleanStorage.title'),
+          text: this.$t('modals.confirmationPhrase.cleanStorage.text'),
+          phraseText: this.$t('modals.confirmationPhrase.cleanStorage.phraseText'),
+          phrase: this.$t('modals.confirmationPhrase.cleanStorage.phrase'),
           action: async () => {
             await this.cleanEntitiesData({ data: this.form.entity });
 
@@ -78,13 +76,24 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        try {
-          await this.updateDataStorageSettings({ data: formToDataStorageSettings(this.form) });
+        this.$modals.show({
+          name: MODALS.confirmationPhrase,
+          config: {
+            title: this.$t('modals.confirmationPhrase.updateStorageSettings.title'),
+            text: this.$t('modals.confirmationPhrase.updateStorageSettings.text'),
+            phraseText: this.$t('modals.confirmationPhrase.updateStorageSettings.phraseText'),
+            phrase: this.$t('modals.confirmationPhrase.updateStorageSettings.phrase'),
+            action: async () => {
+              try {
+                await this.updateDataStorageSettings({ data: this.form });
 
-          this.$popups.success({ text: this.$t('success.default') });
-        } catch (err) {
-          this.setFormErrors(err);
-        }
+                this.$popups.success({ text: this.$t('success.default') });
+              } catch (err) {
+                this.setFormErrors(err);
+              }
+            },
+          },
+        });
       }
     },
   },
