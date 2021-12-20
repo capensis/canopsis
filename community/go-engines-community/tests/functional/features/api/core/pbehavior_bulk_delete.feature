@@ -23,6 +23,7 @@ Feature: Bulk delete pbehaviors
         "_id": "test-pbehavior-to-bulk-delete-not-found"
       },
       {},
+      [],
       {
         "_id": "test-pbehavior-to-bulk-delete-2"
       }
@@ -52,6 +53,11 @@ Feature: Bulk delete pbehaviors
         },
         "item": {},
         "status": 400
+      },
+      {
+        "status": 400,
+        "item": [],
+        "error": "value doesn't contain object; it contains array"
       },
       {
         "id": "test-pbehavior-to-bulk-delete-2",

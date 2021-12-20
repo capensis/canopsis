@@ -409,6 +409,7 @@ Feature: Bulk create scenarios
           }
         ]
       },
+      [],
       {
         "_id": "bulk-create-scenario-2",
         "name": "test-scenario-to-bulk-create-2-name",
@@ -1000,6 +1001,11 @@ Feature: Bulk create scenarios
             }
           ]
         }
+      },
+      {
+        "status": 400,
+        "item": [],
+        "error": "value doesn't contain object; it contains array"
       },
       {
         "id": "bulk-create-scenario-2",

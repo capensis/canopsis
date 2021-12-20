@@ -213,7 +213,8 @@ Feature: Bulk create eventfilters
         },
         "on_success": "pass",
         "on_failure": "pass"
-      }
+      },
+      []
     ]
     """
     Then the response code should be 207
@@ -472,6 +473,11 @@ Feature: Bulk create eventfilters
           "on_success": "pass",
           "on_failure": "pass"
         }
+      },
+      {
+        "status": 400,
+        "item": [],
+        "error": "value doesn't contain object; it contains array"
       }
     ]
     """
