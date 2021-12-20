@@ -11,3 +11,5 @@
 !tests/
 !fixtures/
 !mocks/
+!database/
+!database/postgres_migrations
