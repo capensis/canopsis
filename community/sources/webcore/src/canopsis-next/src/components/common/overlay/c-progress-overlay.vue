@@ -5,7 +5,7 @@
       :class="backgroundColor",
       :style="{ opacity }"
     )
-      v-progress-circular(indeterminate, color="primary")
+      v-progress-circular(:color="color", indeterminate)
 </template>
 
 <script>
@@ -22,6 +22,10 @@ export default {
     backgroundColor: {
       type: String,
       default: 'white',
+    },
+    color: {
+      type: String,
+      default: 'primary',
     },
   },
 };

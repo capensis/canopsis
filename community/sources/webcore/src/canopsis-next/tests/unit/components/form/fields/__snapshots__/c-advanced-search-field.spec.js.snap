@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-advanced-search-field Renders \`c-advanced-search-field\` correctly 1`] = `
+<c-search-field-stub
+  value="c-advanced-search-field"
+>
+  <span
+    class="v-tooltip v-tooltip--bottom"
+  >
+    <transition-stub
+      name="slide-y-transition"
+    />
+    <span>
+      <button
+        class="v-btn v-btn--icon theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            help_outline
+          </i>
+        </div>
+      </button>
+    </span>
+  </span>
+</c-search-field-stub>
+`;
+
+exports[`c-advanced-search-field Renders \`c-advanced-search-field\` correctly 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <div>
+    
+      
+    <span>
+      Tooltip content
+    </span>
+    
+    
+  </div>
+</div>
+`;

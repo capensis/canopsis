@@ -37,14 +37,13 @@ export default {
       try {
         commit(types.FETCH_LIST, { widgetId });
 
-        const requests = filters.map(filter =>
-          request.get(API_ROUTES.counter, {
-            params: {
-              ...params,
+        const requests = filters.map(filter => request.get(API_ROUTES.counter, {
+          params: {
+            ...params,
 
-              filter,
-            },
-          }));
+            filter,
+          },
+        }));
 
         const counters = await Promise.all(requests);
 

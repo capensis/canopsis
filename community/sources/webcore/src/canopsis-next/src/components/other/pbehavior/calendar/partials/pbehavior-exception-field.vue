@@ -36,10 +36,15 @@
 </template>
 
 <script>
-import moment from 'moment';
-
 import { DATETIME_FORMATS } from '@/constants';
-import { isEndOfDay, isStartOfDay } from '@/helpers/date/date';
+
+import {
+  convertDateToEndOfDayDateObject,
+  convertDateToStartOfDayDateObject,
+  convertDateToString,
+  isEndOfDay,
+  isStartOfDay,
+} from '@/helpers/date/date';
 
 import { formMixin } from '@/mixins/form';
 
@@ -80,7 +85,7 @@ export default {
     endRules() {
       return {
         required: true,
-        after: [moment(this.value.begin).format(DATETIME_FORMATS.dateTimePicker)],
+        after: [convertDateToString(this.value.begin, DATETIME_FORMATS.dateTimePicker)],
         date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
       };
     },
@@ -99,14 +104,11 @@ export default {
   },
   watch: {
     fullDay() {
-      const beginMoment = moment(this.value.begin).startOf('day');
-      const endMoment = moment(this.value.end).endOf('day');
-
       this.updateModel({
         ...this.value,
 
-        begin: beginMoment.toDate(),
-        end: endMoment.toDate(),
+        begin: convertDateToStartOfDayDateObject(this.value.begin),
+        end: convertDateToEndOfDayDateObject(this.value.end),
       });
     },
   },

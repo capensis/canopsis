@@ -155,8 +155,7 @@ Feature: Create a role
         "name": "Name is missing.",
         "permissions.not-exist": "Permissions.not-exist doesn't exist.",
         "permissions.test-permission-to-edit-role-1": "Permissions.test-permission-to-edit-role-1 is not empty.",
-        "permissions.test-permission-to-edit-role-2": "Permissions.test-permission-to-edit-role-2 must be one of [create read update delete].",
-        "permissions.test-permission-to-edit-role-3": "Permissions.test-permission-to-edit-role-3 must be one of [read update delete]."
+        "permissions.test-permission-to-edit-role-2": "Permissions.test-permission-to-edit-role-2 must be one of [create read update delete]."
       }
     }
     """
