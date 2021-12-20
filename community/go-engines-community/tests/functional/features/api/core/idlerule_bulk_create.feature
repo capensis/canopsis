@@ -1,17 +1,17 @@
-Feature: Create a idlerule
+Feature: Bulk create idlerules
   I need to be able to bulk create idlerules
   Only admin should be able to bulk create idlerules
 
-  Scenario: given bulk create request and no auth idlerule should not allow access
+  Scenario: given bulk create request and no auth should not allow access
     When I do POST /api/v4/bulk/idle-rules
     Then the response code should be 401
 
-  Scenario: given bulk create request and auth idlerule by api key without permissions should not allow access
+  Scenario: given bulk create request and auth by api key without permissions should not allow access
     When I am noperms
     When I do POST /api/v4/bulk/idle-rules
     Then the response code should be 403
 
-  Scenario: given create request should return ok
+  Scenario: given bulk create request should return multi status and should be handled independently
     When I am admin
     When I do POST /api/v4/bulk/idle-rules:
     """json
@@ -83,6 +83,18 @@ Feature: Create a idlerule
           }
         },
         "disable_during_periods": ["pause"]
+      },
+      {},
+      {
+        "type": "notexists"
+      },
+      {
+        "type": "alarm",
+        "alarm_patterns": [],
+        "entity_patterns": [],
+        "operation": {
+          "type": "notexists"
+        }
       },
       {
         "_id": "test-idle-rule-to-bulk-create-3",
@@ -182,6 +194,44 @@ Feature: Create a idlerule
             }
           },
           "disable_during_periods": ["pause"]
+        }
+      },
+      {
+        "status": 400,
+        "item": {},
+        "errors": {
+          "duration.value": "Value is missing.",
+          "duration.unit": "Unit is missing.",
+          "enabled": "Enabled is missing.",
+          "name": "Name is missing.",
+          "priority": "Priority is missing.",
+          "type": "Type is missing."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "type": "notexists"
+        },
+        "errors": {
+          "type": "Type must be one of [alarm entity]."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "type": "alarm",
+          "alarm_patterns": [],
+          "entity_patterns": [],
+          "operation": {
+            "type": "notexists"
+          }
+        },
+        "errors": {
+          "alarm_condition": "AlarmCondition is missing.",
+          "alarm_patterns": "AlarmPatterns or EntityPatterns is required.",
+          "entity_patterns": "EntityPatterns or AlarmPatterns is required.",
+          "operation.type": "Type must be one of [ack ackremove cancel assocticket changestate snooze pbehavior]."
         }
       },
       {
@@ -311,68 +361,4 @@ Feature: Create a idlerule
         "total_count": 3
       }
     }
-    """
-
-  Scenario: given invalid create request should return errors
-    When I am admin
-    When I do POST /api/v4/bulk/idle-rules:
-    """json
-    [
-      {},
-      {
-        "type": "notexists"
-      },
-      {
-        "type": "alarm",
-        "alarm_patterns": [],
-        "entity_patterns": [],
-        "operation": {
-          "type": "notexists"
-        }
-      }
-    ]
-    """
-    Then the response code should be 207
-    Then the response body should contain:
-    """json
-    [
-      {
-        "status": 400,
-        "item": {},
-        "errors": {
-          "duration.value": "Value is missing.",
-          "duration.unit": "Unit is missing.",
-          "enabled": "Enabled is missing.",
-          "name": "Name is missing.",
-          "priority": "Priority is missing.",
-          "type": "Type is missing."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "type": "notexists"
-        },
-        "errors": {
-          "type": "Type must be one of [alarm entity]."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "type": "alarm",
-          "alarm_patterns": [],
-          "entity_patterns": [],
-          "operation": {
-            "type": "notexists"
-          }
-        },
-        "errors": {
-          "alarm_condition": "AlarmCondition is missing.",
-          "alarm_patterns": "AlarmPatterns or EntityPatterns is required.",
-          "entity_patterns": "EntityPatterns or AlarmPatterns is required.",
-          "operation.type": "Type must be one of [ack ackremove cancel assocticket changestate snooze pbehavior]."
-        }
-      }
-    ]
     """

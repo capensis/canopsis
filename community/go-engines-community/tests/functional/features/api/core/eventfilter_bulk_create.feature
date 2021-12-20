@@ -1,17 +1,17 @@
-Feature: Create a eventfilter
+Feature: Bulk create eventfilters
   I need to be able to bulk create eventfilters
   Only admin should be able to bulk create eventfilters
 
-  Scenario: given bulk create request and no auth eventfilter should not allow access
+  Scenario: given bulk create request and no auth should not allow access
     When I do POST /api/v4/bulk/eventfilters
     Then the response code should be 401
 
-  Scenario: given bulk create request and auth eventfilter by api key without permissions should not allow access
+  Scenario: given bulk create request and auth by api key without permissions should not allow access
     When I am noperms
     When I do POST /api/v4/bulk/eventfilters
     Then the response code should be 403
 
-  Scenario: given create request should return ok
+  Scenario: given bulk create request should return multi status and should be handled independently
     When I am admin
     When I do POST /api/v4/bulk/eventfilters:
     """json
@@ -45,6 +45,72 @@ Feature: Create a eventfilter
         },
         "on_success": "pass",
         "on_failure": "pass"
+      },
+      {
+        "type": "unspecified"
+      },
+      {
+        "type": "enrichment",
+        "actions": []
+      },
+      {
+        "type": "enrichment",
+        "on_failure": "continue",
+        "on_success": "continue"
+      },
+      {
+        "_id": "test-eventfilter-check-id"
+      },
+      {
+        "type": "enrichment",
+        "description": "More entity copy",
+        "patterns": [
+          4
+        ],
+        "priority": 0,
+        "enabled": true,
+        "actions": [
+          {
+            "from": "ExternalData.entity",
+            "to": "Entity",
+            "type": "copy"
+          }
+        ],
+        "external_data": {
+          "entity": {
+            "type": "entity"
+          }
+        },
+        "on_success": "pass",
+        "on_failure": "pass",
+        "author": "root"
+      },
+      {
+        "type": "enrichment",
+        "description": "Invalid pattern with empty document",
+        "patterns": [
+          {},
+          {
+            "connector": "test-eventfilter-bulk-create-1-pattern"
+          }
+        ],
+        "priority": 0,
+        "enabled": true,
+        "actions": [
+          {
+            "from": "ExternalData.entity",
+            "to": "Entity",
+            "type": "copy"
+          }
+        ],
+        "external_data": {
+          "entity": {
+            "type": "entity"
+          }
+        },
+        "on_success": "pass",
+        "on_failure": "pass",
+        "author": "root"
       },
       {
         "_id": "test-eventfilter-bulk-create-2",
@@ -187,6 +253,107 @@ Feature: Create a eventfilter
           "on_success": "pass",
           "on_failure": "pass"
         }
+      },
+      {
+        "status": 400,
+        "item": {
+          "type": "unspecified"
+        },
+        "errors": {
+          "type": "Type must be one of [break drop enrichment]."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "type": "enrichment",
+          "actions": []
+        },
+        "errors": {
+          "actions": "Actions is missing.",
+          "on_failure": "OnFailure is required when Type enrichment is defined.",
+          "on_success": "OnSuccess is required when Type enrichment is defined."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "type": "enrichment",
+          "on_failure": "continue",
+          "on_success": "continue"
+        },
+        "errors": {
+          "on_failure": "OnFailure must be one of [pass drop break].",
+          "on_success": "OnSuccess must be one of [pass drop break]."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "_id": "test-eventfilter-check-id"
+        },
+        "errors": {
+          "_id": "ID already exists."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "type": "enrichment",
+          "description": "More entity copy",
+          "patterns": [
+            4
+          ],
+          "priority": 0,
+          "enabled": true,
+          "actions": [
+            {
+              "from": "ExternalData.entity",
+              "to": "Entity",
+              "type": "copy"
+            }
+          ],
+          "external_data": {
+            "entity": {
+              "type": "entity"
+            }
+          },
+          "on_success": "pass",
+          "on_failure": "pass",
+          "author": "root"
+        },
+        "error": "error decoding key list: unable to parse event pattern list element"
+      },
+      {
+        "status": 400,
+        "item": {
+          "type": "enrichment",
+          "description": "Invalid pattern with empty document",
+          "patterns": [
+            {},
+            {
+              "connector": "test-eventfilter-bulk-create-1-pattern"
+            }
+          ],
+          "priority": 0,
+          "enabled": true,
+          "actions": [
+            {
+              "from": "ExternalData.entity",
+              "to": "Entity",
+              "type": "copy"
+            }
+          ],
+          "external_data": {
+            "entity": {
+              "type": "entity"
+            }
+          },
+          "on_success": "pass",
+          "on_failure": "pass",
+          "author": "root"
+        },
+        "error": "error decoding key list: unable to parse event pattern list element"
       },
       {
         "id": "test-eventfilter-bulk-create-2",

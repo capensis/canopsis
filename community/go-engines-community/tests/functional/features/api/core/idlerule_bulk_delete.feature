@@ -1,37 +1,17 @@
-Feature: Delete a idlerule
-  I need to be able to bulk delete a idlerule
-  Only admin should be able to bulk delete a idlerule
+Feature: Bulk delete idlerules
+  I need to be able to bulk delete idlerules
+  Only admin should be able to bulk delete idlerules
 
-  Scenario: given delete request and no auth idlerule should not allow access
-    When I do DELETE /api/v4/bulk/idle-rules:
-    """json
-    [
-      {
-        "_id": "test-idle-rule-to-bulk-delete-1"
-      },
-      {
-        "_id": "test-idle-rule-to-bulk-delete-2"
-      }
-    ]
-    """
+  Scenario: given bulk delete request and no auth should not allow access
+    When I do DELETE /api/v4/bulk/idle-rules
     Then the response code should be 401
 
-  Scenario: given delete request and auth idlerule by api key without permissions should not allow access
+  Scenario: given bulk delete request and auth by api key without permissions should not allow access
     When I am noperms
-    When I do DELETE /api/v4/bulk/idle-rules:
-    """json
-    [
-      {
-        "_id": "test-idle-rule-to-bulk-delete-1"
-      },
-      {
-        "_id": "test-idle-rule-to-bulk-delete-2"
-      }
-    ]
-    """
+    When I do DELETE /api/v4/bulk/idle-rules
     Then the response code should be 403
 
-  Scenario: given delete request should delete idlerule
+  Scenario: given bulk delete request should return multi status and should be handled independently
     When I am admin
     When I do DELETE /api/v4/bulk/idle-rules:
     """json
@@ -39,6 +19,10 @@ Feature: Delete a idlerule
       {
         "_id": "test-idle-rule-to-bulk-delete-1"
       },
+      {
+        "_id": "test-idle-rule-to-bulk-delete-not-found"
+      },
+      {},
       {
         "_id": "test-idle-rule-to-bulk-delete-2"
       }
@@ -56,6 +40,20 @@ Feature: Delete a idlerule
         }
       },
       {
+        "error": "Not found",
+        "status": 404,
+        "item": {
+          "_id": "test-idle-rule-to-bulk-delete-not-found"
+        }
+      },
+      {
+        "errors": {
+          "_id": "ID is missing."
+        },
+        "item": {},
+        "status": 400
+      },
+      {
         "id": "test-idle-rule-to-bulk-delete-2",
         "status": 200,
         "item": {
@@ -68,56 +66,3 @@ Feature: Delete a idlerule
     Then the response code should be 404
     When I do GET /api/v4/idle-rules/test-idle-rule-to-bulk-delete-2
     Then the response code should be 404
-    When I do DELETE /api/v4/bulk/idle-rules:
-    """json
-    [
-      {
-        "_id": "test-idle-rule-to-bulk-delete-1"
-      },
-      {
-        "_id": "test-idle-rule-to-bulk-delete-2"
-      }
-    ]
-    """
-    Then the response code should be 207
-    Then the response body should contain:
-    """json
-    [
-      {
-        "error": "Not found",
-        "status": 404,
-        "item": {
-          "_id": "test-idle-rule-to-bulk-delete-1"
-        }
-      },
-      {
-        "error": "Not found",
-        "status": 404,
-        "item": {
-          "_id": "test-idle-rule-to-bulk-delete-2"
-        }
-      }
-    ]
-    """
-
-  Scenario: given delete request with empty ids should return error
-    When I am admin
-    When I do DELETE /api/v4/bulk/idle-rules:
-    """json
-    [
-      {}
-    ]
-    """
-    Then the response code should be 207
-    Then the response body should contain:
-    """json
-    [
-      {
-        "errors": {
-          "_id": "ID is missing."
-        },
-        "item": {},
-        "status": 400
-      }
-    ]
-    """

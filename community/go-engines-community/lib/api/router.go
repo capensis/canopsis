@@ -1063,16 +1063,19 @@ func RegisterRoutes(
 				userRouter.POST(
 					"",
 					middleware.Authorize(authObjView, permCreate, enforcer),
+					middleware.PreProcessBulk(conf),
 					userApi.BulkCreate,
 				)
 				userRouter.PUT(
 					"",
 					middleware.Authorize(authObjView, permUpdate, enforcer),
+					middleware.PreProcessBulk(conf),
 					userApi.BulkUpdate,
 				)
 				userRouter.DELETE(
 					"",
 					middleware.Authorize(authObjView, permDelete, enforcer),
+					middleware.PreProcessBulk(conf),
 					userApi.BulkDelete,
 				)
 			}

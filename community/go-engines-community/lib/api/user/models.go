@@ -1,7 +1,6 @@
 package user
 
 import (
-	"encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
@@ -102,18 +101,6 @@ type View struct {
 	Title string `bson:"title" json:"title"`
 }
 
-type BulkCreateRequest struct {
-	Items []Request `binding:"required,notblank,dive"`
-}
-
-func (r BulkCreateRequest) MarshalJSON() ([]byte, error) {
-	return json.Marshal(r.Items)
-}
-
-func (r *BulkCreateRequest) UnmarshalJSON(b []byte) error {
-	return json.Unmarshal(b, &r.Items)
-}
-
 type BulkUpdateRequestItem struct {
 	ID string `json:"_id" binding:"required"`
 	EditRequest
@@ -121,18 +108,6 @@ type BulkUpdateRequestItem struct {
 
 type BulkDeleteRequestItem struct {
 	ID string `json:"_id" binding:"required"`
-}
-
-type BulkUpdateRequest struct {
-	Items []BulkUpdateRequestItem `binding:"required,notblank,dive"`
-}
-
-func (r BulkUpdateRequest) MarshalJSON() ([]byte, error) {
-	return json.Marshal(r.Items)
-}
-
-func (r *BulkUpdateRequest) UnmarshalJSON(b []byte) error {
-	return json.Unmarshal(b, &r.Items)
 }
 
 type BulkDeleteRequest struct {

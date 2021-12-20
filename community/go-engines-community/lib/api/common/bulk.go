@@ -6,7 +6,6 @@ import (
 
 func GetBulkResponseItem(ar *fastjson.Arena, id string, status int, rawUser, error *fastjson.Value) *fastjson.Value {
 	item := ar.NewObject()
-
 	item.Set("status", ar.NewNumberInt(status))
 	item.Set("item", rawUser)
 

@@ -1,4 +1,4 @@
-Feature: Update a eventfilter
+Feature: Bulk update eventfilters
   I need to be able to bulk update eventfilters
   Only admin should be able to bulk update eventfilters
 
@@ -11,7 +11,7 @@ Feature: Update a eventfilter
     When I do PUT /api/v4/bulk/eventfilters
     Then the response code should be 403
 
-  Scenario: given update request should return ok
+  Scenario: given bulk update request should return multistatus and should be handled independently
     When I am admin
     When I do PUT /api/v4/bulk/eventfilters:
     """json
@@ -45,6 +45,69 @@ Feature: Update a eventfilter
         },
         "on_success": "pass",
         "on_failure": "pass"
+      },
+      {
+        "type": "unspecified"
+      },
+      {
+        "type": "enrichment",
+        "actions": []
+      },
+      {
+        "type": "enrichment",
+        "on_failure": "continue",
+        "on_success": "continue"
+      },
+      {
+        "type": "enrichment",
+        "description": "More entity copy",
+        "patterns": [
+          4
+        ],
+        "priority": 0,
+        "enabled": true,
+        "actions": [
+          {
+            "from": "ExternalData.entity",
+            "to": "Entity",
+            "type": "copy"
+          }
+        ],
+        "external_data": {
+          "entity": {
+            "type": "entity"
+          }
+        },
+        "on_success": "pass",
+        "on_failure": "pass",
+        "author": "root"
+      },
+      {
+        "type": "enrichment",
+        "description": "Invalid pattern with empty document",
+        "patterns": [
+          {},
+          {
+            "connector": "test-eventfilter-to-bulk-update-1-pattern"
+          }
+        ],
+        "priority": 0,
+        "enabled": true,
+        "actions": [
+          {
+            "from": "ExternalData.entity",
+            "to": "Entity",
+            "type": "copy"
+          }
+        ],
+        "external_data": {
+          "entity": {
+            "type": "entity"
+          }
+        },
+        "on_success": "pass",
+        "on_failure": "pass",
+        "author": "root"
       },
       {
         "_id": "test-eventfilter-to-bulk-update-2",
@@ -187,6 +250,101 @@ Feature: Update a eventfilter
           "on_success": "pass",
           "on_failure": "pass"
         }
+      },
+      {
+        "status": 400,
+        "item": {
+          "type": "unspecified"
+        },
+        "errors": {
+          "_id": "ID is missing.",
+          "type": "Type must be one of [break drop enrichment]."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "type": "enrichment",
+          "actions": []
+        },
+        "errors": {
+          "_id": "ID is missing.",
+          "actions": "Actions is missing.",
+          "on_failure": "OnFailure is required when Type enrichment is defined.",
+          "on_success": "OnSuccess is required when Type enrichment is defined."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "type": "enrichment",
+          "on_failure": "continue",
+          "on_success": "continue"
+        },
+        "errors": {
+          "_id": "ID is missing.",
+          "on_failure": "OnFailure must be one of [pass drop break].",
+          "on_success": "OnSuccess must be one of [pass drop break]."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "type": "enrichment",
+          "description": "More entity copy",
+          "patterns": [
+            4
+          ],
+          "priority": 0,
+          "enabled": true,
+          "actions": [
+            {
+              "from": "ExternalData.entity",
+              "to": "Entity",
+              "type": "copy"
+            }
+          ],
+          "external_data": {
+            "entity": {
+              "type": "entity"
+            }
+          },
+          "on_success": "pass",
+          "on_failure": "pass",
+          "author": "root"
+        },
+        "error": "error decoding key list: unable to parse event pattern list element"
+      },
+      {
+        "status": 400,
+        "item": {
+          "type": "enrichment",
+          "description": "Invalid pattern with empty document",
+          "patterns": [
+            {},
+            {
+              "connector": "test-eventfilter-to-bulk-update-1-pattern"
+            }
+          ],
+          "priority": 0,
+          "enabled": true,
+          "actions": [
+            {
+              "from": "ExternalData.entity",
+              "to": "Entity",
+              "type": "copy"
+            }
+          ],
+          "external_data": {
+            "entity": {
+              "type": "entity"
+            }
+          },
+          "on_success": "pass",
+          "on_failure": "pass",
+          "author": "root"
+        },
+        "error": "error decoding key list: unable to parse event pattern list element"
       },
       {
         "id": "test-eventfilter-to-bulk-update-2",
@@ -456,176 +614,4 @@ Feature: Update a eventfilter
         "total_count": 5
       }
     }
-    """
-
-  Scenario: given invalid update request should return errors
-    When I am admin
-    When I do PUT /api/v4/bulk/eventfilters:
-    """json
-    [
-      {
-        "type": "unspecified"
-      },
-      {
-        "type": "enrichment",
-        "actions": []
-      },
-      {
-        "type": "enrichment",
-        "on_failure": "continue",
-        "on_success": "continue"
-      },
-      {
-        "type": "enrichment",
-        "description": "More entity copy",
-        "patterns": [
-          4
-        ],
-        "priority": 0,
-        "enabled": true,
-        "actions": [
-          {
-            "from": "ExternalData.entity",
-            "to": "Entity",
-            "type": "copy"
-          }
-        ],
-        "external_data": {
-          "entity": {
-            "type": "entity"
-          }
-        },
-        "on_success": "pass",
-        "on_failure": "pass",
-        "author": "root"
-      },
-      {
-        "type": "enrichment",
-        "description": "Invalid pattern with empty document",
-        "patterns": [
-          {},
-          {
-            "connector": "test-eventfilter-to-bulk-update-1-pattern"
-          }
-        ],
-        "priority": 0,
-        "enabled": true,
-        "actions": [
-          {
-            "from": "ExternalData.entity",
-            "to": "Entity",
-            "type": "copy"
-          }
-        ],
-        "external_data": {
-          "entity": {
-            "type": "entity"
-          }
-        },
-        "on_success": "pass",
-        "on_failure": "pass",
-        "author": "root"
-      }
-    ]
-    """
-    Then the response code should be 207
-    Then the response body should contain:
-    """json
-    [
-      {
-        "status": 400,
-        "item": {
-          "type": "unspecified"
-        },
-        "errors": {
-          "_id": "ID is missing.",
-          "type": "Type must be one of [break drop enrichment]."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "type": "enrichment",
-          "actions": []
-        },
-        "errors": {
-          "_id": "ID is missing.",
-          "actions": "Actions is missing.",
-          "on_failure": "OnFailure is required when Type enrichment is defined.",
-          "on_success": "OnSuccess is required when Type enrichment is defined."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "type": "enrichment",
-          "on_failure": "continue",
-          "on_success": "continue"
-        },
-        "errors": {
-          "_id": "ID is missing.",
-          "on_failure": "OnFailure must be one of [pass drop break].",
-          "on_success": "OnSuccess must be one of [pass drop break]."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "type": "enrichment",
-          "description": "More entity copy",
-          "patterns": [
-            4
-          ],
-          "priority": 0,
-          "enabled": true,
-          "actions": [
-            {
-              "from": "ExternalData.entity",
-              "to": "Entity",
-              "type": "copy"
-            }
-          ],
-          "external_data": {
-            "entity": {
-              "type": "entity"
-            }
-          },
-          "on_success": "pass",
-          "on_failure": "pass",
-          "author": "root"
-        },
-        "error": "error decoding key list: unable to parse event pattern list element"
-      },
-      {
-        "status": 400,
-        "item": {
-          "type": "enrichment",
-          "description": "Invalid pattern with empty document",
-          "patterns": [
-            {},
-            {
-              "connector": "test-eventfilter-to-bulk-update-1-pattern"
-            }
-          ],
-          "priority": 0,
-          "enabled": true,
-          "actions": [
-            {
-              "from": "ExternalData.entity",
-              "to": "Entity",
-              "type": "copy"
-            }
-          ],
-          "external_data": {
-            "entity": {
-              "type": "entity"
-            }
-          },
-          "on_success": "pass",
-          "on_failure": "pass",
-          "author": "root"
-        },
-        "error": "error decoding key list: unable to parse event pattern list element"
-      }
-    ]
     """

@@ -11,7 +11,7 @@ Feature: Bulk create pbehaviors
     When I do POST /api/v4/bulk/pbehaviors
     Then the response code should be 403
 
-  Scenario: given bulk create request should return ok
+  Scenario: given bulk create request should return multi status and should be handled independently
     When I am admin
     When I do POST /api/v4/bulk/pbehaviors:
     """json
@@ -39,6 +39,13 @@ Feature: Bulk create pbehaviors
           }
         ],
         "exceptions": ["test-exception-to-pbh-edit"]
+      },
+      {},
+      {
+        "_id": "test-pbehavior-to-check-unique"
+      },
+      {
+        "name": "test-pbehavior-to-check-unique-name"
       },
       {
         "_id": "test-pbehavior-to-bulk-create-1-2",
@@ -96,6 +103,36 @@ Feature: Bulk create pbehaviors
             }
           ],
           "exceptions": ["test-exception-to-pbh-edit"]
+        }
+      },
+      {
+        "status": 400,
+        "item": {},
+        "errors": {
+          "enabled": "Enabled is missing.",
+          "name": "Name is missing.",
+          "filter": "Filter is missing.",
+          "tstart": "Start is missing.",
+          "reason": "Reason is missing.",
+          "type": "Type is missing."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "_id": "test-pbehavior-to-check-unique"
+        },
+        "errors": {
+          "_id": "ID already exists."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "name": "test-pbehavior-to-check-unique-name"
+        },
+        "errors": {
+          "name": "Name already exists."
         }
       },
       {
@@ -210,55 +247,4 @@ Feature: Bulk create pbehaviors
         "total_count": 2
       }
     }
-    """
-
-  Scenario: given invalid bulk create request should return errors
-    When I am admin
-    When I do POST /api/v4/bulk/pbehaviors:
-    """json
-    [
-      {},
-      {
-        "_id": "test-pbehavior-to-check-unique"
-      },
-      {
-        "name": "test-pbehavior-to-check-unique-name"
-      }
-    ]
-    """
-    Then the response code should be 207
-    Then the response body should contain:
-    """json
-    [
-      {
-        "status": 400,
-        "item": {},
-        "errors": {
-          "enabled": "Enabled is missing.",
-          "name": "Name is missing.",
-          "filter": "Filter is missing.",
-          "tstart": "Start is missing.",
-          "reason": "Reason is missing.",
-          "type": "Type is missing."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "_id": "test-pbehavior-to-check-unique"
-        },
-        "errors": {
-          "_id": "ID already exists."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "name": "test-pbehavior-to-check-unique-name"
-        },
-        "errors": {
-          "name": "Name already exists."
-        }
-      }
-    ]
     """

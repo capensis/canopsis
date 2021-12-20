@@ -1,6 +1,6 @@
 Feature: Bulk update a pbehaviors
-  I need to be able to update multiple pbehaviors
-  Only admin should be able to update multiple pbehaviors
+  I need to be able to bulk update multiple pbehaviors
+  Only admin should be able to v update multiple pbehaviors
 
   Scenario: given bulk update request and no auth user should not allow access
     When I do PUT /api/v4/bulk/pbehaviors
@@ -11,7 +11,7 @@ Feature: Bulk update a pbehaviors
     When I do PUT /api/v4/bulk/pbehaviors
     Then the response code should be 403
 
-  Scenario: given bulk update request should update pbehavior
+  Scenario: given bulk update request should return multistatus and should be handled independently
     When I am admin
     Then I do PUT /api/v4/bulk/pbehaviors:
     """json
@@ -39,6 +39,26 @@ Feature: Bulk update a pbehaviors
           }
         ],
         "exceptions": ["test-exception-to-pbh-edit"]
+      },
+      {
+        "_id": "test-pbehavior-not-found",
+        "enabled": true,
+        "name": "test-pbehavior-not-found-name",
+        "tstart": 1591172881,
+        "tstop": 1591536400,
+        "type": "test-type-to-pbh-edit-1",
+        "reason": "test-reason-1",
+        "filter":{
+          "$and":[
+            {
+              "name": "test filter"
+            }
+          ]
+        }
+      },
+      {},
+      {
+        "name": "test-pbehavior-to-check-unique-name"
       },
       {
         "_id": "test-pbehavior-to-bulk-update-2",
@@ -96,6 +116,47 @@ Feature: Bulk update a pbehaviors
             }
           ],
           "exceptions": ["test-exception-to-pbh-edit"]
+        }
+      },
+      {
+        "status": 404,
+        "item": {
+          "_id": "test-pbehavior-not-found",
+          "enabled": true,
+          "name": "test-pbehavior-not-found-name",
+          "tstart": 1591172881,
+          "tstop": 1591536400,
+          "type": "test-type-to-pbh-edit-1",
+          "reason": "test-reason-1",
+          "filter":{
+            "$and":[
+              {
+                "name": "test filter"
+              }
+            ]
+          }
+        },
+        "error": "Not found"
+      },
+      {
+        "status": 400,
+        "item": {},
+        "errors": {
+          "enabled": "Enabled is missing.",
+          "name": "Name is missing.",
+          "filter": "Filter is missing.",
+          "tstart": "Start is missing.",
+          "reason": "Reason is missing.",
+          "type": "Type is missing."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "name": "test-pbehavior-to-check-unique-name"
+        },
+        "errors": {
+          "name": "Name already exists."
         }
       },
       {
@@ -214,91 +275,4 @@ Feature: Bulk update a pbehaviors
         "total_count": 2
       }
     }
-    """
-
-  Scenario: given bulk update request with not exist ids should return not found error
-    When I am admin
-    When I do PUT /api/v4/bulk/pbehaviors:
-    """json
-    [
-      {
-        "_id": "test-pbehavior-not-found",
-        "enabled": true,
-        "name": "test-pbehavior-not-found-name",
-        "tstart": 1591172881,
-        "tstop": 1591536400,
-        "type": "test-type-to-pbh-edit-1",
-        "reason": "test-reason-1",
-        "filter":{
-          "$and":[
-            {
-              "name": "test filter"
-            }
-          ]
-        }
-      },
-      {},
-      {
-        "_id": "test-pbehavior-to-check-unique"
-      },
-      {
-        "name": "test-pbehavior-to-check-unique-name"
-      }
-    ]
-    """
-    Then the response code should be 404
-    Then the response body should be:
-    """json
-    [
-      {
-        "status": 404,
-        "item": {
-          "_id": "test-pbehavior-not-found",
-          "enabled": true,
-          "name": "test-pbehavior-not-found-name",
-          "tstart": 1591172881,
-          "tstop": 1591536400,
-          "type": "test-type-to-pbh-edit-1",
-          "reason": "test-reason-1",
-          "filter":{
-            "$and":[
-              {
-                "name": "test filter"
-              }
-            ]
-          }
-        },
-        "error": "Not found"
-      },
-      {
-        "status": 400,
-        "item": {},
-        "errors": {
-          "enabled": "Enabled is missing.",
-          "name": "Name is missing.",
-          "filter": "Filter is missing.",
-          "tstart": "Start is missing.",
-          "reason": "Reason is missing.",
-          "type": "Type is missing."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "_id": "test-pbehavior-to-check-unique"
-        },
-        "errors": {
-          "_id": "ID already exists."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "name": "test-pbehavior-to-check-unique-name"
-        },
-        "errors": {
-          "name": "Name already exists."
-        }
-      }
-    ]
     """

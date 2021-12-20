@@ -24,7 +24,7 @@ const (
 	CheEngineName                   = "engine-che"
 	CheQueueName                    = "Engine_che"
 	CheConsumerName                 = "che"
-	DefaultBulkSize                 = 2
+	DefaultBulkSize                 = 1000
 	DefaultEventAuthor              = "system"
 	DoneAutosolveDelay              = 15 * 60
 	DynamicInfosEngineName          = "engine-dynamic-infos"
