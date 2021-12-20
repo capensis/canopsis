@@ -19,9 +19,10 @@ import { MODALS } from '@/constants';
 
 import { pbehaviorToForm, formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { authMixin } from '@/mixins/auth';
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import PbehaviorForm from '@/components/other/pbehavior/calendar/partials/pbehavior-form.vue';
 
@@ -34,9 +35,10 @@ export default {
   },
   components: { PbehaviorForm, ModalWrapper },
   mixins: [
+    modalInnerMixin,
     authMixin,
-    submittableMixin(),
-    confirmableModalMixin(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     const { pbehavior, timezone } = this.modal.config;

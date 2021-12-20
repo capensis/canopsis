@@ -1,14 +1,14 @@
 <template lang="pug">
   div
     categories-list(v-if="asList", :categories="filteredCategories", :limit="limit")
-    v-menu(v-else, :disabled="isDisabled", @click.native.stop)
+    v-menu(v-else, :disabled="isDisabled", @click.native.stop="")
       v-btn(slot="activator", :disabled="isDisabled", depressed, small) {{ $t('common.links') }}
       v-list(dark, dense)
         categories-list(:categories="filteredCategories")
 </template>
 
 <script>
-import { BUSINESS_USER_PERMISSIONS_ACTIONS_MAP, WIDGETS_ACTIONS_TYPES } from '@/constants';
+import { ALARM_LIST_ACTIONS_TYPES, BUSINESS_USER_PERMISSIONS_ACTIONS_MAP } from '@/constants';
 
 import { harmonizeCategories } from '@/helpers/links';
 
@@ -49,12 +49,12 @@ export default {
      * Check if user has access to all links/categories
      */
     hasAccessToLinks() {
-      return this.checkAccess(BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.alarmsList[WIDGETS_ACTIONS_TYPES.alarmsList.links]);
+      return this.checkAccess(BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.alarmsList[ALARM_LIST_ACTIONS_TYPES.links]);
     },
   },
   methods: {
     checkAccessForSpecialCategory(category) {
-      const permissionPrefix = BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.alarmsList[WIDGETS_ACTIONS_TYPES.alarmsList.links];
+      const permissionPrefix = BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.alarmsList[ALARM_LIST_ACTIONS_TYPES.links];
       const permission = `${permissionPrefix}_${category}`;
 
       return this.hasAccessToLinks || this.checkAccess(permission);
