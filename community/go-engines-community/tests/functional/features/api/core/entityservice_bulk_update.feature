@@ -69,6 +69,7 @@ Feature: Bulk update entityservices
       {
         "name": "test-entityservice-to-check-unique-name-name"
       },
+      [],
       {
         "_id": "test-entityservice-to-bulk-update-2",
         "name": "test-entityservice-to-bulk-update-2-name",
@@ -197,6 +198,11 @@ Feature: Bulk update entityservices
         "errors": {
           "name": "Name already exists."
         }
+      },
+      {
+        "status": 400,
+        "item": [],
+        "error": "value doesn't contain object; it contains array"
       },
       {
         "id": "test-entityservice-to-bulk-update-2",

@@ -47,6 +47,7 @@ Feature: Bulk create pbehaviors
       {
         "name": "test-pbehavior-to-check-unique-name"
       },
+      [],
       {
         "_id": "test-pbehavior-to-bulk-create-1-2",
         "enabled": true,
@@ -134,6 +135,11 @@ Feature: Bulk create pbehaviors
         "errors": {
           "name": "Name already exists."
         }
+      },
+      {
+        "status": 400,
+        "item": [],
+        "error": "value doesn't contain object; it contains array"
       },
       {
         "status": 200,

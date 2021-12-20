@@ -23,6 +23,7 @@ Feature: Bulk delete scenarios
         "_id": "test-scenario-to-bulk-delete-not-found"
       },
       {},
+      [],
       {
         "_id": "test-scenario-to-bulk-delete-2"
       }
@@ -52,6 +53,11 @@ Feature: Bulk delete scenarios
         },
         "item": {},
         "status": 400
+      },
+      {
+        "status": 400,
+        "item": [],
+        "error": "value doesn't contain object; it contains array"
       },
       {
         "id": "test-scenario-to-bulk-delete-2",

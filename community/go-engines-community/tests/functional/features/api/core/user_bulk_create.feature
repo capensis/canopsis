@@ -38,6 +38,7 @@ Feature: Bulk create users
       {
         "name": "test-user-to-check-unique-name"
       },
+      [],
       {
         "name": "test-user-to-bulk-create-2-name",
         "firstname": "test-user-to-bulk-create-2-firstname",
@@ -104,6 +105,11 @@ Feature: Bulk create users
         "errors": {
           "name": "Name already exists."
         }
+      },
+      {
+        "status": 400,
+        "item": [],
+        "error": "value doesn't contain object; it contains array"
       },
       {
         "id": "test-user-to-bulk-create-2-name",

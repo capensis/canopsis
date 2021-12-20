@@ -310,6 +310,7 @@ Feature: Bulk update a scenario
           }
         ]
       },
+      [],
       {
         "_id": "test-scenario-to-bulk-update-2",
         "name": "test-scenario-to-bulk-update-2-name",
@@ -738,6 +739,11 @@ Feature: Bulk update a scenario
             }
           ]
         }
+      },
+      {
+        "status": 400,
+        "item": [],
+        "error": "value doesn't contain object; it contains array"
       },
       {
         "id": "test-scenario-to-bulk-update-2",

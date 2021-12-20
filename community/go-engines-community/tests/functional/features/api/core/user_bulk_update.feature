@@ -42,6 +42,7 @@ Feature: Bulk update users
       {
         "name": "test-user-to-check-unique-name"
       },
+      [],
       {
         "_id": "test-user-to-bulk-update-2",
         "name": "test-user-to-bulk-update-2-updated",
@@ -119,6 +120,11 @@ Feature: Bulk update users
           "_id": "ID is missing.",
           "name": "Name already exists."
         }
+      },
+      {
+        "status": 400,
+        "item": [],
+        "error": "value doesn't contain object; it contains array"
       },
       {
         "id": "test-user-to-bulk-update-2",

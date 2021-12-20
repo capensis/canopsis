@@ -96,6 +96,7 @@ Feature: Bulk create idlerules
           "type": "notexists"
         }
       },
+      [],
       {
         "_id": "test-idle-rule-to-bulk-create-3",
         "name": "test-idle-rule-to-bulk-create-3-name",
@@ -233,6 +234,11 @@ Feature: Bulk create idlerules
           "entity_patterns": "EntityPatterns or AlarmPatterns is required.",
           "operation.type": "Type must be one of [ack ackremove cancel assocticket changestate snooze pbehavior]."
         }
+      },
+      {
+        "status": 400,
+        "item": [],
+        "error": "value doesn't contain object; it contains array"
       },
       {
         "id": "test-idle-rule-to-bulk-create-3",
