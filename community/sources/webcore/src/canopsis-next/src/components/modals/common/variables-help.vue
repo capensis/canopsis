@@ -32,10 +32,13 @@
 <script>
 import { MODALS } from '@/constants';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
+
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.variablesHelp,
   components: { ModalWrapper },
+  mixins: [modalInnerMixin],
 };
 </script>

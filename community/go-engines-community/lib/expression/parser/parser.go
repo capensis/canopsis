@@ -17,6 +17,7 @@ type Parser interface {
 
 type MongoQuery interface {
 	Query() bson.M
+	GetFields() []string
 }
 
 // NewParser creates new parser.

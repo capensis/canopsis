@@ -2,7 +2,15 @@
   "env": {
     "jest": true
   },
+
+  "parserOptions": {
+    "parser": "babel-eslint",
+    "sourceType": "module"
+  },
+
   "rules": {
-    "import/no-extraneous-dependencies": "off"
+    "import/no-extraneous-dependencies": "off",
+    "import/no-unresolved": "off",
+    "import/extensions": "off"
   }
 }

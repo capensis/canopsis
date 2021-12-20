@@ -252,7 +252,6 @@ export default {
       return response.filter(file => file.error).join(' ');
     },
 
-
     /**
      * Uploader error handler
      *
@@ -294,6 +293,11 @@ export default {
       }
     },
 
+    /**
+     * File size validator
+     *
+     * @param {File} file
+     */
     uploaderFileValidator(file) {
       if (!this.maxFileSize) {
         return;

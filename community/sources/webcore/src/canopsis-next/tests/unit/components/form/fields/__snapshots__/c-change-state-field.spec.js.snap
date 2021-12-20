@@ -1,0 +1,554 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-change-state-field Renders \`c-change-state-field\` after validate correctly 1`] = `
+<div
+  class="mt-3"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="v-item-group theme--light v-btn-toggle v-btn-toggle--only-child v-btn-toggle--selected"
+      >
+        <button
+          class="v-btn v-btn--depressed theme--light"
+          data-test="stateCriticity-1"
+          style="background-color: rgb(252, 220, 0);"
+          type="button"
+          value="1"
+        >
+          <div
+            class="v-btn__content"
+          >
+            modals.createChangeStateEvent.states.minor
+          </div>
+        </button>
+        <button
+          class="v-btn v-btn--active v-btn--depressed theme--light"
+          data-test="stateCriticity-2"
+          style="background-color: rgb(255, 153, 0);"
+          type="button"
+          value="2"
+        >
+          <div
+            class="v-btn__content"
+          >
+            modals.createChangeStateEvent.states.major
+          </div>
+        </button>
+        <button
+          class="v-btn v-btn--depressed theme--light"
+          data-test="stateCriticity-3"
+          style="background-color: rgb(245, 105, 84);"
+          type="button"
+          value="3"
+        >
+          <div
+            class="v-btn__content"
+          >
+            modals.createChangeStateEvent.states.critical
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    class="layout mt-4 row"
+  >
+    <div
+      class="v-input v-textarea v-text-field v-input--has-state theme--light error--text"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-text-field__slot"
+          >
+            <label
+              aria-hidden="true"
+              class="v-label theme--light error--text"
+              style="left: 0px; position: absolute;"
+            >
+              common.output
+            </label>
+            <textarea
+              aria-label="common.output"
+              name="changeState.output"
+              rows="5"
+            />
+          </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light error--text"
+          >
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            >
+              <div
+                class="v-messages__message"
+              >
+                validation.custom.changeState.output.required:["validation.attributes.changeState.output",[],{}]
+              </div>
+            </transition-group-stub>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-change-state-field Renders \`c-change-state-field\` with allowed change severity to info correctly 1`] = `
+<div
+  class="mt-3"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="v-item-group theme--light v-btn-toggle"
+      >
+        <button
+          class="v-btn v-btn--active v-btn--depressed theme--light"
+          data-test="stateCriticity-0"
+          style="background-color: rgb(0, 166, 90);"
+          type="button"
+          value="0"
+        >
+          <div
+            class="v-btn__content"
+          >
+            modals.createChangeStateEvent.states.ok
+          </div>
+        </button>
+        <button
+          class="v-btn v-btn--depressed theme--light"
+          data-test="stateCriticity-1"
+          style="background-color: rgb(252, 220, 0);"
+          type="button"
+          value="1"
+        >
+          <div
+            class="v-btn__content"
+          >
+            modals.createChangeStateEvent.states.minor
+          </div>
+        </button>
+        <button
+          class="v-btn v-btn--depressed theme--light"
+          data-test="stateCriticity-2"
+          style="background-color: rgb(255, 153, 0);"
+          type="button"
+          value="2"
+        >
+          <div
+            class="v-btn__content"
+          >
+            modals.createChangeStateEvent.states.major
+          </div>
+        </button>
+        <button
+          class="v-btn v-btn--depressed theme--light"
+          data-test="stateCriticity-3"
+          style="background-color: rgb(245, 105, 84);"
+          type="button"
+          value="3"
+        >
+          <div
+            class="v-btn__content"
+          >
+            modals.createChangeStateEvent.states.critical
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    class="layout mt-4 row"
+  >
+    <div
+      class="v-input v-textarea v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-text-field__slot"
+          >
+            <label
+              aria-hidden="true"
+              class="v-label v-label--active theme--light"
+              style="left: 0px; position: absolute;"
+            >
+              Custom label
+            </label>
+            <textarea
+              aria-label="Custom label"
+              name="customLabelFieldName.output"
+              rows="5"
+            />
+          </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light"
+          >
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-change-state-field Renders \`c-change-state-field\` with custom label correctly 1`] = `
+<div
+  class="mt-3"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="v-item-group theme--light v-btn-toggle"
+      >
+        <button
+          class="v-btn v-btn--depressed theme--light"
+          data-test="stateCriticity-1"
+          style="background-color: rgb(252, 220, 0);"
+          type="button"
+          value="1"
+        >
+          <div
+            class="v-btn__content"
+          >
+            modals.createChangeStateEvent.states.minor
+          </div>
+        </button>
+        <button
+          class="v-btn v-btn--depressed theme--light"
+          data-test="stateCriticity-2"
+          style="background-color: rgb(255, 153, 0);"
+          type="button"
+          value="2"
+        >
+          <div
+            class="v-btn__content"
+          >
+            modals.createChangeStateEvent.states.major
+          </div>
+        </button>
+        <button
+          class="v-btn v-btn--depressed theme--light"
+          data-test="stateCriticity-3"
+          style="background-color: rgb(245, 105, 84);"
+          type="button"
+          value="3"
+        >
+          <div
+            class="v-btn__content"
+          >
+            modals.createChangeStateEvent.states.critical
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    class="layout mt-4 row"
+  >
+    <div
+      class="v-input v-textarea v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-text-field__slot"
+          >
+            <label
+              aria-hidden="true"
+              class="v-label v-label--active theme--light"
+              style="left: 0px; position: absolute;"
+            >
+              common.output
+            </label>
+            <textarea
+              aria-label="common.output"
+              name="customLabelFieldName.output"
+              rows="5"
+            />
+          </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light"
+          >
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-change-state-field Renders \`c-change-state-field\` with errors correctly 1`] = `
+<div
+  class="mt-3"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="v-item-group theme--light v-btn-toggle v-btn-toggle--only-child v-btn-toggle--selected"
+      >
+        <button
+          class="v-btn v-btn--active v-btn--depressed theme--light"
+          data-test="stateCriticity-0"
+          style="background-color: rgb(0, 166, 90);"
+          type="button"
+          value="0"
+        >
+          <div
+            class="v-btn__content"
+          >
+            modals.createChangeStateEvent.states.ok
+          </div>
+        </button>
+        <button
+          class="v-btn v-btn--depressed theme--light"
+          data-test="stateCriticity-1"
+          style="background-color: rgb(252, 220, 0);"
+          type="button"
+          value="1"
+        >
+          <div
+            class="v-btn__content"
+          >
+            modals.createChangeStateEvent.states.minor
+          </div>
+        </button>
+        <button
+          class="v-btn v-btn--depressed theme--light"
+          data-test="stateCriticity-2"
+          style="background-color: rgb(255, 153, 0);"
+          type="button"
+          value="2"
+        >
+          <div
+            class="v-btn__content"
+          >
+            modals.createChangeStateEvent.states.major
+          </div>
+        </button>
+        <button
+          class="v-btn v-btn--depressed theme--light"
+          data-test="stateCriticity-3"
+          style="background-color: rgb(245, 105, 84);"
+          type="button"
+          value="3"
+        >
+          <div
+            class="v-btn__content"
+          >
+            modals.createChangeStateEvent.states.critical
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    class="layout mt-4 row"
+  >
+    <div
+      class="v-input v-textarea v-text-field v-input--has-state v-input--is-label-active v-input--is-dirty theme--light error--text"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-text-field__slot"
+          >
+            <label
+              aria-hidden="true"
+              class="v-label v-label--active theme--light error--text"
+              style="left: 0px; position: absolute;"
+            >
+              common.output
+            </label>
+            <textarea
+              aria-label="common.output"
+              name="customName.output"
+              rows="5"
+            />
+          </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light error--text"
+          >
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            >
+              <div
+                class="v-messages__message"
+              >
+                Output error
+              </div>
+            </transition-group-stub>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-change-state-field Renders \`c-change-state-field\` without allowed change severity to info correctly 1`] = `
+<div
+  class="mt-3"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="v-item-group theme--light v-btn-toggle"
+      >
+        <button
+          class="v-btn v-btn--depressed theme--light"
+          data-test="stateCriticity-1"
+          style="background-color: rgb(252, 220, 0);"
+          type="button"
+          value="1"
+        >
+          <div
+            class="v-btn__content"
+          >
+            modals.createChangeStateEvent.states.minor
+          </div>
+        </button>
+        <button
+          class="v-btn v-btn--depressed theme--light"
+          data-test="stateCriticity-2"
+          style="background-color: rgb(255, 153, 0);"
+          type="button"
+          value="2"
+        >
+          <div
+            class="v-btn__content"
+          >
+            modals.createChangeStateEvent.states.major
+          </div>
+        </button>
+        <button
+          class="v-btn v-btn--depressed theme--light"
+          data-test="stateCriticity-3"
+          style="background-color: rgb(245, 105, 84);"
+          type="button"
+          value="3"
+        >
+          <div
+            class="v-btn__content"
+          >
+            modals.createChangeStateEvent.states.critical
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    class="layout mt-4 row"
+  >
+    <div
+      class="v-input v-textarea v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-text-field__slot"
+          >
+            <label
+              aria-hidden="true"
+              class="v-label v-label--active theme--light"
+              style="left: 0px; position: absolute;"
+            >
+              Custom label
+            </label>
+            <textarea
+              aria-label="Custom label"
+              name="changeState.output"
+              rows="5"
+            />
+          </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light"
+          >
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -10,7 +10,6 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/bsontype"
-	"time"
 )
 
 const (
@@ -101,35 +100,41 @@ func (o *Operation) UnmarshalBSONValue(_ bsontype.Type, b []byte) error {
 }
 
 // Matches returns true if alarm and entity match time condition and field patterns.
-func (r *Rule) Matches(alarm *types.Alarm, entity *types.Entity) bool {
-	return r.matchesByAlarmLastEventDate(alarm) &&
-		r.matchesByAlarmLastUpdateDate(alarm) &&
-		r.matchesByEntityLastEventDate(entity) &&
+func (r *Rule) Matches(alarm *types.Alarm, entity *types.Entity, now types.CpsTime) bool {
+	return r.matchesByAlarmLastEventDate(alarm, now) &&
+		r.matchesByAlarmLastUpdateDate(alarm, now) &&
+		r.matchesByEntityLastEventDate(entity, now) &&
 		(alarm == nil || r.AlarmPatterns.Matches(alarm)) &&
 		(entity == nil || r.EntityPatterns.Matches(entity))
 }
 
-func (r *Rule) matchesByAlarmLastEventDate(alarm *types.Alarm) bool {
+func (r *Rule) matchesByAlarmLastEventDate(alarm *types.Alarm, now types.CpsTime) bool {
+	before := r.Duration.SubFrom(now)
+
 	return r.Type != RuleTypeAlarm || r.AlarmCondition != RuleAlarmConditionLastEvent ||
-		time.Since(alarm.Value.LastEventDate.Time) >= r.Duration.Duration()
+		alarm.Value.LastEventDate.Before(before)
 }
 
-func (r *Rule) matchesByAlarmLastUpdateDate(alarm *types.Alarm) bool {
+func (r *Rule) matchesByAlarmLastUpdateDate(alarm *types.Alarm, now types.CpsTime) bool {
+	before := r.Duration.SubFrom(now)
+
 	return r.Type != RuleTypeAlarm || r.AlarmCondition != RuleAlarmConditionLastUpdate ||
-		time.Since(alarm.Value.LastUpdateDate.Time) >= r.Duration.Duration()
+		alarm.Value.LastUpdateDate.Before(before)
 }
 
-func (r *Rule) matchesByEntityLastEventDate(entity *types.Entity) bool {
+func (r *Rule) matchesByEntityLastEventDate(entity *types.Entity, now types.CpsTime) bool {
 	if r.Type != RuleTypeEntity {
 		return true
 	}
 
+	before := r.Duration.SubFrom(now)
+
 	if entity.LastEventDate != nil {
-		return time.Since(entity.LastEventDate.Time) >= r.Duration.Duration()
+		return entity.LastEventDate.Before(before)
 	}
 
 	if !entity.Created.IsZero() {
-		return time.Since(entity.Created.Time) >= r.Duration.Duration()
+		return entity.Created.Before(before)
 	}
 
 	return true

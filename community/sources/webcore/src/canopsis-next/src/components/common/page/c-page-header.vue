@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { get } from 'lodash';
+import { get, isFunction } from 'lodash';
 
 import { DOCUMENTATION_BASE_URL } from '@/config';
 import { DOCUMENTATION_LINKS } from '@/constants';
@@ -28,7 +28,11 @@ export default {
     name: {
       type: String,
       default() {
-        return get(this.$route, 'meta.requiresPermission.id');
+        const name = get(this.$route, 'meta.requiresPermission.id');
+
+        return isFunction(name)
+          ? name(this.$route)
+          : name;
       },
     },
   },
