@@ -95,7 +95,7 @@ func TestPreProcessBulk_ShouldUpdateAuthorToAllItems(t *testing.T) {
 		func(c *gin.Context) {
 			c.Set(auth.UserKey, author)
 		},
-		PreProcessBulk(config.CanopsisConf{API: config.SectionApi{BulkMaxSize: 100}}),
+		PreProcessBulk(config.CanopsisConf{API: config.SectionApi{BulkMaxSize: 100}}, true),
 		func(c *gin.Context) {
 			var body []map[string]interface{}
 
@@ -154,7 +154,7 @@ func TestPreProcessBulk_ShouldCheckBulkSize(t *testing.T) {
 		func(c *gin.Context) {
 			c.Set(auth.UserKey, "test-author")
 		},
-		PreProcessBulk(config.CanopsisConf{API: config.SectionApi{BulkMaxSize: 3}}),
+		PreProcessBulk(config.CanopsisConf{API: config.SectionApi{BulkMaxSize: 3}}, true),
 	)
 
 	w := httptest.NewRecorder()
