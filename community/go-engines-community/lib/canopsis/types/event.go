@@ -158,7 +158,7 @@ type Event struct {
 	// It also adds declare ticket to all resource alarms on ack webhook.
 	// It's still used by some old users but meta alarms must be used instead.
 	AckResources bool                   `json:"ack_resources"`
-	Duration     *CpsNumber             `json:"duration"`
+	Duration     CpsNumber              `json:"duration"`
 	Ticket       string                 `bson:"ticket" json:"ticket"`
 	StatName     string                 `bson:"stat_name" json:"stat_name"`
 	Debug        bool                   `bson:"debug" json:"debug"`

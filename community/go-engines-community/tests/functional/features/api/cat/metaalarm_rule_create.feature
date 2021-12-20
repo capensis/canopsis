@@ -11,7 +11,7 @@ Feature: Create an metaalarmrule
       "auto_resolve": true,
       "name": "complex-test-1",
       "type": "complex",
-      "output_template": "{{ .Children.Alarm.Value.State.Message }}",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {
         "time_interval": {
           "value": 1,
@@ -35,7 +35,7 @@ Feature: Create an metaalarmrule
       "name": "complex-test-1",
       "author": "root",
       "type": "complex",
-      "output_template": "{{ .Children.Alarm.Value.State.Message }}",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {
         "time_interval": {
           "value": 1,
@@ -60,7 +60,7 @@ Feature: Create an metaalarmrule
       "name": "complex-test-1",
       "author": "root",
       "type": "complex",
-      "output_template": "{{ .Children.Alarm.Value.State.Message }}",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {
         "time_interval": {
           "value": 1,
@@ -87,7 +87,7 @@ Feature: Create an metaalarmrule
       "config": {
       },
       "patterns": null,
-      "output_template": "{{ .Children.Alarm.Value.State.Message }}",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "type": "attribute_path"
     }
     """
@@ -110,7 +110,7 @@ Feature: Create an metaalarmrule
       "auto_resolve": true,
       "name": "complex-test-1",
       "type": "complex",
-      "output_template": "{{ .Children.Alarm.Value.State.Message }}",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {
         "time_interval": {
           "value": 1,
@@ -156,7 +156,7 @@ Feature: Create an metaalarmrule
       "config": {
       },
       "patterns": null,
-      "output_template": "{{ .Children.Alarm.Value.State.Message }}",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "type": "attribute"
     }
     """
@@ -186,7 +186,7 @@ Feature: Create an metaalarmrule
        ]
       },
       "patterns": null,
-      "output_template": "{{ .Children.Alarm.Value.State.Message }}",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "type": "complex"
     }
     """
@@ -208,7 +208,7 @@ Feature: Create an metaalarmrule
       "auto_resolve": true,
       "name": "complex-test-1",
       "type": "complex",
-      "output_template": "{{ .Children.Alarm.Value.State.Message }}",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "patterns": {
         "entity_patterns": [
           {
@@ -249,7 +249,7 @@ Feature: Create an metaalarmrule
       "auto_resolve": true,
       "name": "complex-test-1",
       "type": "complex",
-      "output_template": "{{ .Children.Alarm.Value.State.Message }}",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {
         "time_interval": {
           "value": 1,
@@ -284,7 +284,7 @@ Feature: Create an metaalarmrule
       "auto_resolve": true,
       "name": "complex-test-1",
       "type": "complex",
-      "output_template": "{{ .Children.Alarm.Value.State.Message }}",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {
         "n": [
           {

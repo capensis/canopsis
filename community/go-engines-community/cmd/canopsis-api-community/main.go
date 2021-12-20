@@ -68,7 +68,7 @@ func main() {
 		ctx,
 		flags,
 		enforcer,
-		nil,
+		nil, nil,
 		logger,
 		metrics.NewNullMetaUpdater(),
 		metrics.NewNullMetaUpdater(),

@@ -31,7 +31,7 @@
       v-tab(:class="{ 'error--text': errors.has('entity_patterns') }") {{ $t('common.entityPatterns') }}
       v-tab-item
         patterns-list(v-field="form.entity_patterns", v-validate="'required'", name="entity_patterns")
-      v-tab.validation-header(:disabled="advancedJsonWasChanged") {{ $t('entity.fields.manageInfos') }}
+      v-tab.validation-header(:disabled="advancedJsonWasChanged") {{ $t('entity.manageInfos') }}
       v-tab-item
         manage-infos(v-field="form.infos")
 </template>

@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-layout(row)
-      v-tabs.recurrence-rule-tabs(centered, fixed-tabs, slider-color="primary")
+      v-tabs.recurrence-rule-tabs(slider-color="primary", fixed-tabs, centered)
         v-tab {{ $t('recurrenceRule.tabs.simple') }}
         v-tab-item
           v-layout(column)

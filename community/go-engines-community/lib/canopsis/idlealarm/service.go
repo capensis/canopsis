@@ -261,8 +261,7 @@ func (s *baseService) applyAlarmRule(
 	case types.ActionTypeSnooze:
 		if params, ok := rule.Operation.Parameters.(types.OperationSnoozeParameters); ok {
 			event.EventType = types.EventTypeSnooze
-			d := types.CpsNumber(params.Duration.AddTo(now).Sub(now.Time).Seconds())
-			event.Duration = &d
+			event.Duration = types.CpsNumber(params.Duration.AddTo(now).Sub(now.Time).Seconds())
 			event.Output = params.Output
 			event.Author = params.Author
 			event.UserID = params.User

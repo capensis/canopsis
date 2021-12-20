@@ -63,7 +63,6 @@ export default {
           const { defaultview: userDefaultView } = this.currentUser;
 
           await this.login(this.form);
-          await this.fetchAppInfos();
 
           if (redirect && redirect !== ROUTES.home) {
             this.$router.push(redirect);
