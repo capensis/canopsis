@@ -34,6 +34,7 @@ import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 import ModalWrapper from '../modal-wrapper.vue';
+import { getNewWidgetGridParametersY } from '@/helpers/grid-layout';
 
 /**
  * Modal to create widget
@@ -68,20 +69,32 @@ export default {
         return rules.edition && rules.edition === this.edition;
       });
     },
+
+    tabWidgets() {
+      return this.config.tab?.widgets ?? [];
+    },
   },
   methods: {
     getIconByType(type) {
       return WIDGET_ICONS[type];
     },
 
-    selectType(type) {
+    getWidgetWithUpdatedGridParametersByType(type) {
       const widget = generateWidgetByType(type);
+      const newGridParametersY = getNewWidgetGridParametersY(this.config.tab.widgets);
 
+      widget.grid_parameters.mobile.y = newGridParametersY.mobile;
+      widget.grid_parameters.tablet.y = newGridParametersY.tablet;
+      widget.grid_parameters.desktop.y = newGridParametersY.desktop;
+
+      return widget;
+    },
+
+    selectType(type) {
       this.$sidebar.show({
         name: SIDE_BARS_BY_WIDGET_TYPES[type],
         config: {
-          widget,
-          tabId: this.config.tabId,
+          widget: this.getWidgetWithUpdatedGridParametersByType(type),
         },
       });
 

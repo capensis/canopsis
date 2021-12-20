@@ -263,7 +263,7 @@ export default {
         this.$modals.show({
           name: MODALS.createWidget,
           config: {
-            tabId: this.activeTab._id,
+            tab: this.activeTab,
           },
         });
       } else {
