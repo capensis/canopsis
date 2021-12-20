@@ -206,6 +206,29 @@
         "desc": "Healthcheck status"
     },
     {
+        "_id": "models_kpi",
+        "loader_id": "models_kpi",
+        "crecord_name": "models_kpi",
+        "crecord_type": "action",
+        "desc": "KPI"
+    },
+    {
+        "_id": "models_kpiFilters",
+        "loader_id": "models_kpiFilters",
+        "crecord_name": "models_kpiFilters",
+        "crecord_type": "action",
+        "desc": "KPI Filters",
+        "type": "CRUD"
+    },
+    {
+        "_id": "models_kpiRatingSettings",
+        "loader_id": "models_kpiRatingSettings",
+        "crecord_name": "models_kpiRatingSettings",
+        "crecord_type": "action",
+        "desc": "KPI Rating settings",
+        "type": "CRUD"
+    },
+    {
         "_id": "models_notification_instructionStats",
         "loader_id": "models_notification_instructionStats",
         "crecord_name": "models_notification_instructionStats",
@@ -973,6 +996,29 @@
         "crecord_name": "api_flapping_rule",
         "crecord_type": "action",
         "desc": "Flapping rule",
+        "type": "CRUD"
+    },
+    {
+        "_id": "api_metrics",
+        "loader_id": "api_metrics",
+        "crecord_type": "action",
+        "crecord_name": "api_metrics",
+        "desc": "Metrics api"
+    },
+    {
+        "_id": "api_rating_settings",
+        "loader_id": "api_rating_settings",
+        "crecord_type": "action",
+        "crecord_name": "api_rating_settings",
+        "desc": "Rating settings api",
+        "type": "CRUD"
+    },
+    {
+        "_id": "api_filter",
+        "loader_id": "api_filter",
+        "crecord_type": "action",
+        "crecord_name": "api_filter",
+        "desc": "Filters",
         "type": "CRUD"
     }
 ]

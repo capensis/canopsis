@@ -26,11 +26,9 @@ export default ({
   };
 
   const moduleGetters = {
-    getItemById: (state, getters, rootState, rootGetters) =>
-      id => rootGetters['entities/getItem'](entityType, id),
+    getItemById: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem'](entityType, id),
 
-    items: (state, getters, rootState, rootGetters) =>
-      rootGetters['entities/getList'](entityType, state.allIds),
+    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](entityType, state.allIds),
 
     pending: state => state.pending,
   };

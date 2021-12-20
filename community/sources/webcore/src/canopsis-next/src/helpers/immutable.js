@@ -26,8 +26,11 @@ export function setSeveralFields(obj, pathsValuesMap) {
   const clonedObject = clone(obj);
 
   Object.keys(pathsValuesMap).forEach((path) => {
-    const preparedValue = isFunction(pathsValuesMap[path]) ?
-      pathsValuesMap[path](get(obj, path)) : pathsValuesMap[path];
+    const func = pathsValuesMap[path];
+
+    const preparedValue = isFunction(func)
+      ? func(get(obj, path))
+      : func;
     let currentPath = '';
 
     setWith(clonedObject, path, preparedValue, (customizerValue, key) => {

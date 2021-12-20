@@ -31,7 +31,7 @@ func (w *deleteOutdatedRatesWorker) Work(ctx context.Context) error {
 	}
 	// Check now = schedule.
 	location := w.TimezoneConfigProvider.Get().Location
-	now := time.Now().In(location)
+	now := types.NewCpsTime().In(location)
 	if now.Weekday() != schedule.Weekday || now.Hour() != schedule.Hour {
 		return nil
 	}
@@ -42,27 +42,20 @@ func (w *deleteOutdatedRatesWorker) Work(ctx context.Context) error {
 		return nil
 	}
 	// Skip if already executed today.
-	dateFormat := "2006-01-02"
-	if conf.History.HealthCheck != nil && conf.History.HealthCheck.Time.Format(dateFormat) == now.Format(dateFormat) {
+	if conf.History.HealthCheck != nil && conf.History.HealthCheck.EqualDay(now) {
 		return nil
 	}
 
-	updated := false
-	if conf.Config.HealthCheck.DeleteAfter != nil && *conf.Config.HealthCheck.DeleteAfter.Enabled {
-		d := conf.Config.HealthCheck.DeleteAfter.Duration()
-		if d > 0 {
-			updated = true
-			deleted, err := w.RateLimitAdapter.DeleteBefore(ctx, now.Add(-d).Unix())
-			if err != nil {
-				w.Logger.Err(err).Msg("cannot delete message rates")
-			} else if deleted > 0 {
-				w.Logger.Info().Int64("count", deleted).Msg("message rates were deleted")
-			}
+	d := conf.Config.HealthCheck.DeleteAfter
+	if d != nil && *d.Enabled && d.Value > 0 {
+		deleted, err := w.RateLimitAdapter.DeleteBefore(ctx, d.SubFrom(now))
+		if err != nil {
+			w.Logger.Err(err).Msg("cannot delete message rates")
+		} else if deleted > 0 {
+			w.Logger.Info().Int64("count", deleted).Msg("message rates were deleted")
 		}
-	}
 
-	if updated {
-		err := w.LimitConfigAdapter.UpdateHistoryHealthCheck(ctx, types.CpsTime{Time: now})
+		err = w.LimitConfigAdapter.UpdateHistoryHealthCheck(ctx, now)
 		if err != nil {
 			w.Logger.Err(err).Msg("cannot update config history")
 		}

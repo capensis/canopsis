@@ -12,6 +12,5 @@ module.exports.command = function customClearRTE(selector) {
     })
     .pause(WAIT_PAUSE);
 
-
   return this;
 };

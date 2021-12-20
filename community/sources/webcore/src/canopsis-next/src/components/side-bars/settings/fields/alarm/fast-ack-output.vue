@@ -1,12 +1,12 @@
 <template lang="pug">
-  v-list-group(data-test="fastAckOutput")
-    v-list-tile(slot="activator") {{ $t('settings.fastAckOutput') }}
-      .font-italic.caption.ml-1 ({{ $t('common.optional') }})
+  v-list-group
+    template(#activator="")
+      v-list-tile {{ $t('settings.fastAckOutput') }}
+        div.font-italic.caption.ml-1 ({{ $t('common.optional') }})
     v-container
-      c-enabled-field(v-field="value.enabled", data-test="fastAckOutputSwitch")
+      c-enabled-field(v-field="value.enabled")
       v-text-field(
         v-field="value.value",
-        data-test="fastAckOutputField",
         :label="$t('tables.alarmGeneral.output')",
         :disabled="!value.enabled"
       )

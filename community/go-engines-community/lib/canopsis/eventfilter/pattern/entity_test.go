@@ -43,6 +43,7 @@ func TestEntityPatternToMongoDriverQuery(t *testing.T) {
 				},
 				"type":      bson.M{"regex_match": "abc-.*-def"},
 				"component": bson.M{"regex_match": "abc-.*-def"},
+				"category":  bson.M{"regex_match": "abc-.*-def"},
 			},
 		}
 		mongoFilter := bson.M{
@@ -77,6 +78,9 @@ func TestEntityPatternToMongoDriverQuery(t *testing.T) {
 				"$regex": "abc-.*-def",
 			},
 			"component": bson.M{
+				"$regex": "abc-.*-def",
+			},
+			"category": bson.M{
 				"$regex": "abc-.*-def",
 			},
 		}
