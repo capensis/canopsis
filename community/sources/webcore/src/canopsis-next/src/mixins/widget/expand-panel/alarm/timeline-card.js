@@ -13,7 +13,7 @@ export const widgetExpandPanelAlarmTimelineCard = {
 
       if (type.startsWith('status')) {
         return ENTITY_INFOS_TYPE.status;
-      } else if (type.startsWith('state')) {
+      } if (type.startsWith('state')) {
         return ENTITY_INFOS_TYPE.state;
       }
 

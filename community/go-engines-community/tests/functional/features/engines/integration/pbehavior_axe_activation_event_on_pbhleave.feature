@@ -22,8 +22,8 @@ Feature: send activation event on pbhleave
     {
       "enabled": true,
       "name": "test-pbehavior-axe-activation-event-1",
-      "tstart": {{ now.UTC.Unix }},
-      "tstop": {{ (now.UTC.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -36,7 +36,7 @@ Feature: send activation event on pbhleave
     }
     """
     Then the response code should be 201
-    When I wait 1s
+    When I wait the end of event processing
     When I send an event:
     """json
     {
@@ -101,8 +101,8 @@ Feature: send activation event on pbhleave
     {
       "enabled": true,
       "name": "test-pbehavior-axe-activation-event-2",
-      "tstart": {{ now.UTC.Unix }},
-      "tstop": {{ (now.UTC.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-active-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -115,7 +115,7 @@ Feature: send activation event on pbhleave
     }
     """
     Then the response code should be 201
-    When I wait 1s
+    When I wait the end of event processing
     When I send an event:
     """json
     {
@@ -180,8 +180,8 @@ Feature: send activation event on pbhleave
     {
       "enabled": true,
       "name": "test-pbehavior-axe-activation-event-3",
-      "tstart": {{ now.UTC.Unix }},
-      "tstop": {{ (now.UTC.Add (parseDuration "3s")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "3s" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -194,7 +194,7 @@ Feature: send activation event on pbhleave
     }
     """
     Then the response code should be 201
-    When I wait 1s
+    When I wait the end of event processing
     When I send an event:
     """json
     {

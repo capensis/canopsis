@@ -1,3 +1,5 @@
+import { isObject } from 'lodash';
+
 import uid from '@/helpers/uid';
 
 import { PAYLOAD_VARIABLE_REGEXP } from '@/constants';
@@ -5,13 +7,17 @@ import { PAYLOAD_VARIABLE_REGEXP } from '@/constants';
 /**
  * Convert payload string to JSON with indents
  *
- * @param {string} payload
- * @param {number} [indents]
+ * @param {string | Object} payload
+ * @param {number} [indents = 4]
  * @returns {string}
  */
-export const convertPayloadToJson = (payload, indents) => {
-  // Searching for all variables without quot in a string
-  const match = payload.matchAll(new RegExp(PAYLOAD_VARIABLE_REGEXP));
+export const convertPayloadToJson = (payload, indents = 4) => {
+  const preparedPayload = isObject(payload) ? JSON.stringify(payload) : payload;
+
+  /**
+   * Searching for all variables without quot in a string
+   */
+  const match = preparedPayload.matchAll(new RegExp(PAYLOAD_VARIABLE_REGEXP));
 
   if (match) {
     /**
@@ -28,7 +34,7 @@ export const convertPayloadToJson = (payload, indents) => {
     // Replacing all variable on temp variable for validation
     const template = jsonVariables.reduce(
       (acc, variable, index) => acc.replace(variable, jsonHoles[index]),
-      payload,
+      preparedPayload,
     );
     const normalizedJsonValue = JSON.stringify(JSON.parse(template), null, indents);
 
@@ -39,5 +45,5 @@ export const convertPayloadToJson = (payload, indents) => {
     );
   }
 
-  return JSON.stringify(JSON.parse(payload), null, indents);
+  return JSON.stringify(JSON.parse(preparedPayload), null, indents);
 };
