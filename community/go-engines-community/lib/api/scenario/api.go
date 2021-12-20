@@ -308,6 +308,19 @@ func (a *api) CheckPriority(c *gin.Context) {
 	})
 }
 
+// Bulk create scenarios
+// @Summary Bulk create scenarios
+// @Description Bulk create scenarios
+// @Tags scenarios
+// @ID scenarios-bulk-create
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []CreateRequest true "body"
+// @Success 207 {array} []BulkCreateResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/scenarios [post]
 func (a *api) BulkCreate(c *gin.Context) {
 	var ar fastjson.Arena
 
@@ -377,6 +390,19 @@ func (a *api) BulkCreate(c *gin.Context) {
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
+// Bulk update scenarios
+// @Summary Bulk update scenarios
+// @Description Bulk update scenarios
+// @Tags scenarios
+// @ID scenarios-bulk-update
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []BulkUpdateRequestItem true "body"
+// @Success 207 {array} []BulkUpdateResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/scenarios [put]
 func (a *api) BulkUpdate(c *gin.Context) {
 	var ar fastjson.Arena
 
@@ -451,6 +477,19 @@ func (a *api) BulkUpdate(c *gin.Context) {
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
+// Bulk delete scenarios
+// @Summary Bulk delete scenarios
+// @Description Bulk delete scenarios
+// @Tags scenarios
+// @ID scenarios-bulk-delete
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []BulkDeleteRequestItem true "body"
+// @Success 207 {array} []BulkDeleteResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/scenarios [delete]
 func (a *api) BulkDelete(c *gin.Context) {
 	var ar fastjson.Arena
 

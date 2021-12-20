@@ -36,18 +36,6 @@ type UpdateRequest struct {
 	ID string `json:"-"`
 }
 
-type BulkCreateRequest struct {
-	Items []CreateRequest `binding:"required,notblank,dive"`
-}
-
-func (r BulkCreateRequest) MarshalJSON() ([]byte, error) {
-	return json.Marshal(r.Items)
-}
-
-func (r *BulkCreateRequest) UnmarshalJSON(b []byte) error {
-	return json.Unmarshal(b, &r.Items)
-}
-
 type BulkUpdateRequestItem struct {
 	EditRequest
 	ID string `json:"_id" binding:"required"`
@@ -57,20 +45,31 @@ type BulkDeleteRequestItem struct {
 	ID string `json:"_id" binding:"required"`
 }
 
-type BulkUpdateRequest struct {
-	Items []BulkUpdateRequestItem `binding:"required,notblank,dive"`
+// for swagger
+type BulkCreateResponseItem struct {
+	ID     string            `json:"id,omitempty"`
+	Item   CreateRequest     `json:"item"`
+	Status int               `json:"status"`
+	Error  string            `json:"error,omitempty"`
+	Errors map[string]string `json:"errors,omitempty"`
 }
 
-func (r BulkUpdateRequest) MarshalJSON() ([]byte, error) {
-	return json.Marshal(r.Items)
+// for swagger
+type BulkUpdateResponseItem struct {
+	ID     string                `json:"id,omitempty"`
+	Item   BulkUpdateRequestItem `json:"item"`
+	Status int                   `json:"status"`
+	Error  string                `json:"error,omitempty"`
+	Errors map[string]string     `json:"errors,omitempty"`
 }
 
-func (r *BulkUpdateRequest) UnmarshalJSON(b []byte) error {
-	return json.Unmarshal(b, &r.Items)
-}
-
-type BulkDeleteRequest struct {
-	IDs []string `form:"ids[]" json:"ids" binding:"required,unique,notblank"`
+// for swagger
+type BulkDeleteResponseItem struct {
+	ID     string                `json:"id,omitempty"`
+	Item   BulkDeleteRequestItem `json:"item"`
+	Status int                   `json:"status"`
+	Error  string                `json:"error,omitempty"`
+	Errors map[string]string     `json:"errors,omitempty"`
 }
 
 type GetMinimalPriorityResponse struct {

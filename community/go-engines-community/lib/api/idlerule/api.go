@@ -230,6 +230,19 @@ func (a *api) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
+// Bulk create idlerules
+// @Summary Bulk create idlerules
+// @Description Bulk create idlerules
+// @Tags idlerules
+// @ID idlerules-bulk-create
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []CreateRequest true "body"
+// @Success 207 {array} []BulkCreateResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/idle-rules [post]
 func (a *api) BulkCreate(c *gin.Context) {
 	var ar fastjson.Arena
 
@@ -299,6 +312,19 @@ func (a *api) BulkCreate(c *gin.Context) {
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
+// Bulk update idlerules
+// @Summary Bulk update idlerules
+// @Description Bulk update idlerules
+// @Tags idlerules
+// @ID idlerules-bulk-update
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []BulkUpdateRequestItem true "body"
+// @Success 207 {array} []BulkUpdateResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/idle-rules [put]
 func (a *api) BulkUpdate(c *gin.Context) {
 	var ar fastjson.Arena
 
@@ -373,6 +399,19 @@ func (a *api) BulkUpdate(c *gin.Context) {
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
+// Bulk delete idlerules
+// @Summary Bulk delete idlerules
+// @Description Bulk delete idlerules
+// @Tags idlerules
+// @ID idlerules-bulk-delete
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []BulkDeleteRequestItem true "body"
+// @Success 207 {array} []BulkDeleteResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/idle-rules [delete]
 func (a *api) BulkDelete(c *gin.Context) {
 	var ar fastjson.Arena
 

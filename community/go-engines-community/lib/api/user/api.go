@@ -225,6 +225,19 @@ func (a *api) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
+// Bulk create users
+// @Summary Bulk create users
+// @Description Bulk create users
+// @Tags users
+// @ID users-bulk-create
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []Request true "body"
+// @Success 207 {array} []BulkCreateResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/users [post]
 func (a *api) BulkCreate(c *gin.Context) {
 	var ar fastjson.Arena
 
@@ -291,6 +304,19 @@ func (a *api) BulkCreate(c *gin.Context) {
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
+// Bulk update users
+// @Summary Bulk update users
+// @Description Bulk update users
+// @Tags users
+// @ID users-bulk-update
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []BulkUpdateRequestItem true "body"
+// @Success 207 {array} []BulkUpdateResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/users [put]
 func (a *api) BulkUpdate(c *gin.Context) {
 	var ar fastjson.Arena
 
@@ -362,6 +388,19 @@ func (a *api) BulkUpdate(c *gin.Context) {
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
+// Bulk delete users
+// @Summary Bulk delete users
+// @Description Bulk delete users
+// @Tags users
+// @ID users-bulk-delete
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []BulkDeleteRequestItem true "body"
+// @Success 207 {array} []BulkDeleteResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/users [delete]
 func (a *api) BulkDelete(c *gin.Context) {
 	var ar fastjson.Arena
 

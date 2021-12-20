@@ -310,6 +310,19 @@ func (a *api) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
+// Bulk create entityservices
+// @Summary Bulk create entityservices
+// @Description Bulk create entityservices
+// @Tags entityservices
+// @ID entityservices-bulk-create
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []CreateRequest true "body"
+// @Success 207 {array} []BulkCreateResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/entityservices [post]
 func (a *api) BulkCreate(c *gin.Context) {
 	var ar fastjson.Arena
 
@@ -386,6 +399,19 @@ func (a *api) BulkCreate(c *gin.Context) {
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
+// Bulk update entityservices
+// @Summary Bulk update entityservices
+// @Description Bulk update entityservices
+// @Tags entityservices
+// @ID entityservices-bulk-update
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []BulkUpdateRequestItem true "body"
+// @Success 207 {array} []BulkUpdateResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/entityservices [put]
 func (a *api) BulkUpdate(c *gin.Context) {
 	var ar fastjson.Arena
 
@@ -468,6 +494,19 @@ func (a *api) BulkUpdate(c *gin.Context) {
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
+// Bulk delete entityservices
+// @Summary Bulk delete entityservices
+// @Description Bulk delete entityservices
+// @Tags entityservices
+// @ID entityservices-bulk-delete
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []BulkDeleteRequestItem true "body"
+// @Success 207 {array} []BulkDeleteResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/entityservices [delete]
 func (a *api) BulkDelete(c *gin.Context) {
 	var ar fastjson.Arena
 

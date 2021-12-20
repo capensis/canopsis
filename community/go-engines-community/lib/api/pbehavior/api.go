@@ -482,7 +482,7 @@ func (a *api) Delete(c *gin.Context) {
 // @Security JWTAuth
 // @Security BasicAuth
 // @Param body body []CreateRequest true "body"
-// @Success 201 {array} Response
+// @Success 207 {array} []BulkCreateResponseItem
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /bulk/pbehaviors [post]
 func (a *api) BulkCreate(c *gin.Context) {
@@ -568,20 +568,19 @@ func (a *api) BulkCreate(c *gin.Context) {
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
-// Bulk update pbehaviors by id
-// @Summary Bulk update pbehaviors by id
-// @Description Bulk update pbehaviors by id
+// Bulk update pbehaviors
+// @Summary Bulk update pbehaviors
+// @Description Bulk update pbehaviors
 // @Tags pbehaviors
-// @ID pbehaviors-bulk-update-by-id
+// @ID pbehaviors-bulk-update
 // @Accept json
 // @Produce json
 // @Security JWTAuth
 // @Security BasicAuth
 // @Param body body []BulkUpdateRequestItem true "body"
-// @Success 200 {array} Response
+// @Success 207 {array} []BulkUpdateResponseItem
 // @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /bulk/pbehaviors/{id} [put]
+// @Router /bulk/pbehaviors [put]
 func (a *api) BulkUpdate(c *gin.Context) {
 	var ar fastjson.Arena
 
@@ -670,17 +669,19 @@ func (a *api) BulkUpdate(c *gin.Context) {
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
-// Bulk delete pbehaviors by id
-// @Summary Bulk delete pbehaviors by id
-// @Description Bulk delete pbehaviors by id
+// Bulk delete pbehaviors
+// @Summary Bulk delete pbehaviors
+// @Description Bulk delete pbehaviors
 // @Tags pbehaviors
-// @ID pbehaviors-bulk-delete-by-id
+// @ID pbehaviors-bulk-delete
+// @Accept json
+// @Produce json
 // @Security JWTAuth
 // @Security BasicAuth
-// @Param request query BulkDeleteRequest true "request"
-// @Success 204
-// @Failure 404 {object} common.ErrorResponse
-// @Router /bulk/pbehaviors/{id} [delete]
+// @Param body body []BulkDeleteRequestItem true "body"
+// @Success 207 {array} []BulkDeleteResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/pbehaviors [delete]
 func (a *api) BulkDelete(c *gin.Context) {
 	var ar fastjson.Arena
 
