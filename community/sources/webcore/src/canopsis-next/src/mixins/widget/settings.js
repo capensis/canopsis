@@ -1,8 +1,6 @@
-import { addTo, setField } from '@/helpers/immutable';
+import { setField } from '@/helpers/immutable';
 
 import { prepareQuery } from '@/helpers/query';
-import { getNewWidgetGridParametersY } from '@/helpers/grid-layout';
-import { viewToRequest } from '@/helpers/forms/view';
 
 import queryMixin from '@/mixins/query';
 import { entitiesViewMixin } from '@/mixins/entities/view';
@@ -17,15 +15,6 @@ export const widgetSettingsMixin = {
     entitiesUserPreferenceMixin,
     confirmableModalMixinCreator({ field: 'settings', closeMethod: '$sidebar.hide' }),
   ],
-  computed: {
-    activeView() {
-      return this.config.viewId ? this.getViewById(this.config.viewId) : this.view;
-    },
-
-    widget() {
-      return this.config.widget;
-    },
-  },
   methods: {
     /**
      * Validate settings form
@@ -72,40 +61,6 @@ export const widgetSettingsMixin = {
     },
 
     /**
-     * Get prepared view and widgets objects for request sending
-     *
-     * @returns {{view: Object, widget: Object}}
-     */
-    getPreparedViewAndWidget() {
-      const preparedWidget = {
-        ...this.settings.widget,
-        ...this.prepareWidgetSettings(),
-      };
-
-      const { tabs = [] } = this.activeView;
-      const tabIndex = tabs.findIndex(tab => tab._id === this.config.tabId);
-      const { widgets = [] } = tabs[tabIndex];
-      const widgetIndex = widgets.findIndex(widget => widget._id === preparedWidget._id);
-
-      if (widgetIndex === -1) {
-        const newGridParametersY = getNewWidgetGridParametersY(tabs[tabIndex].widgets);
-
-        preparedWidget.grid_parameters.mobile.y = newGridParametersY.mobile;
-        preparedWidget.grid_parameters.tablet.y = newGridParametersY.tablet;
-        preparedWidget.grid_parameters.desktop.y = newGridParametersY.desktop;
-      }
-
-      const preparedView = widgetIndex === -1
-        ? addTo(this.activeView, ['tabs', tabIndex, 'widgets'], preparedWidget)
-        : setField(this.activeView, ['tabs', tabIndex, 'widgets', widgetIndex], preparedWidget);
-
-      return {
-        view: preparedView,
-        widget: preparedWidget,
-      };
-    },
-
-    /**
      * Submit settings form
      *
      * @returns {Promise<void>}
@@ -115,11 +70,16 @@ export const widgetSettingsMixin = {
 
       if (isFormValid) {
         const userPreference = this.getPreparedUserPreference();
-        const { view, widget } = this.getPreparedViewAndWidget();
+        const widget = {
+          ...this.settings.widget,
+          ...this.prepareWidgetSettings(),
+        };
 
         await Promise.all([
           this.updateUserPreference({ data: userPreference }),
-          this.updateView({ id: this.activeView._id, data: viewToRequest(view) }),
+          /**
+           * TODO: update widget request
+           */
         ]);
 
         const oldQuery = this.getQueryById(widget._id);

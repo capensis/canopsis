@@ -59,11 +59,12 @@ export default {
   },
   computed: {
     stats() {
+      const { stat } = this.config.widget.parameters;
       const stats = {
         Accumulation: {},
       };
 
-      stats[this.widget.parameters.stat.title] = omit(this.widget.parameters.stat, ['title']);
+      stats[stat.title] = omit(stat, ['title']);
 
       return stats;
     },
