@@ -2,6 +2,7 @@ package user
 
 import (
 	"encoding/json"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -238,42 +239,43 @@ func (a *api) BulkCreate(c *gin.Context) {
 		return
 	}
 
-	rawUsers, err := jsonValue.Array()
+	rawObjects, err := jsonValue.Array()
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 		return
 	}
 
+	ctx := c.Request.Context()
 	response := ar.NewArray()
-	logEntries := make([]logger.LogEntry, 0, len(rawUsers))
+	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
 
-	for idx, rawUser := range rawUsers {
-		userObject, err := rawUser.Object()
+	for idx, rawObject := range rawObjects {
+		object, err := rawObject.Object()
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawUser, ar.NewString(err.Error())))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
 			continue
 		}
 
-		var userRequest Request
-		err = json.Unmarshal(userObject.MarshalTo(nil), &userRequest)
+		var request Request
+		err = json.Unmarshal(object.MarshalTo(nil), &request)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawUser, ar.NewString(err.Error())))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
 			continue
 		}
 
-		err = binding.Validator.ValidateStruct(userRequest)
+		err = binding.Validator.ValidateStruct(request)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawUser, common.NewValidationErrorFastJsonValue(&ar, err, userRequest)))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
 			continue
 		}
 
-		user, err := a.store.Insert(c.Request.Context(), userRequest)
+		user, err := a.store.Insert(ctx, request)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawUser, ar.NewString(err.Error())))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
 			continue
 		}
 
-		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, user.ID, http.StatusOK, rawUser, nil))
+		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, user.ID, http.StatusOK, rawObject, nil))
 		logEntries = append(logEntries, logger.LogEntry{
 			Action:    logger.ActionCreate,
 			ValueType: logger.ValueTypeUser,
@@ -281,7 +283,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 		})
 	}
 
-	err = a.actionLogger.BulkAction(c, logEntries)
+	err = a.actionLogger.BulkAction(ctx, c.MustGet(auth.UserKey).(string), logEntries)
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
@@ -303,47 +305,48 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		return
 	}
 
-	rawUsers, err := jsonValue.Array()
+	rawObjects, err := jsonValue.Array()
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 		return
 	}
 
+	ctx := c.Request.Context()
 	response := ar.NewArray()
-	logEntries := make([]logger.LogEntry, 0, len(rawUsers))
+	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
 
-	for idx, rawUser := range rawUsers {
-		userObject, err := rawUser.Object()
+	for idx, rawObject := range rawObjects {
+		object, err := rawObject.Object()
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawUser, ar.NewString(err.Error())))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
 			continue
 		}
 
-		var userRequest BulkUpdateRequestItem
-		err = json.Unmarshal(userObject.MarshalTo(nil), &userRequest)
+		var request BulkUpdateRequestItem
+		err = json.Unmarshal(object.MarshalTo(nil), &request)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawUser, ar.NewString(err.Error())))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
 			continue
 		}
 
-		err = binding.Validator.ValidateStruct(userRequest)
+		err = binding.Validator.ValidateStruct(request)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawUser, common.NewValidationErrorFastJsonValue(&ar, err, userRequest)))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
 			continue
 		}
 
-		user, err := a.store.Update(c.Request.Context(), Request(userRequest))
+		user, err := a.store.Update(ctx, Request(request))
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawUser, ar.NewString(err.Error())))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
 			continue
 		}
 
 		if user == nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawUser, ar.NewString("Not found")))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
 			continue
 		}
 
-		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, user.ID, http.StatusOK, rawUser, nil))
+		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, user.ID, http.StatusOK, rawObject, nil))
 		logEntries = append(logEntries, logger.LogEntry{
 			Action:    logger.ActionUpdate,
 			ValueType: logger.ValueTypeUser,
@@ -351,7 +354,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		})
 	}
 
-	err = a.actionLogger.BulkAction(c, logEntries)
+	err = a.actionLogger.BulkAction(ctx, c.MustGet(auth.UserKey).(string), logEntries)
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
@@ -373,55 +376,56 @@ func (a *api) BulkDelete(c *gin.Context) {
 		return
 	}
 
-	rawUsers, err := jsonValue.Array()
+	rawObjects, err := jsonValue.Array()
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 		return
 	}
 
+	ctx := c.Request.Context()
 	response := ar.NewArray()
-	logEntries := make([]logger.LogEntry, 0, len(rawUsers))
+	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
 
-	for idx, rawUser := range rawUsers {
-		userObject, err := rawUser.Object()
+	for idx, rawObject := range rawObjects {
+		object, err := rawObject.Object()
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawUser, ar.NewString(err.Error())))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
 			continue
 		}
 
-		var userRequest BulkDeleteRequestItem
-		err = json.Unmarshal(userObject.MarshalTo(nil), &userRequest)
+		var request BulkDeleteRequestItem
+		err = json.Unmarshal(object.MarshalTo(nil), &request)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawUser, ar.NewString(err.Error())))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
 			continue
 		}
 
-		err = binding.Validator.ValidateStruct(userRequest)
+		err = binding.Validator.ValidateStruct(request)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawUser, common.NewValidationErrorFastJsonValue(&ar, err, userRequest)))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
 			continue
 		}
 
-		ok, err := a.store.Delete(c.Request.Context(), userRequest.ID)
+		ok, err := a.store.Delete(ctx, request.ID)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawUser, ar.NewString(err.Error())))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
 			continue
 		}
 
 		if !ok {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawUser, ar.NewString("Not found")))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
 			continue
 		}
 
-		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, userRequest.ID, http.StatusOK, rawUser, nil))
+		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))
 		logEntries = append(logEntries, logger.LogEntry{
 			Action:    logger.ActionDelete,
 			ValueType: logger.ValueTypeUser,
-			ValueID:   userRequest.ID,
+			ValueID:   request.ID,
 		})
 	}
 
-	err = a.actionLogger.BulkAction(c, logEntries)
+	err = a.actionLogger.BulkAction(ctx, c.MustGet(auth.UserKey).(string), logEntries)
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}

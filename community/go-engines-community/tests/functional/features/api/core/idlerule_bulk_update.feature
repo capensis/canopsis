@@ -1,17 +1,17 @@
-Feature: Update a idlerule
+Feature: Bulk update idlerules
   I need to be able to bulk update idlerules
   Only admin should be able to bulk update idlerules
 
-  Scenario: given bulk update request and no auth idlerule should not allow access
+  Scenario: given bulk update request and no auth should not allow access
     When I do PUT /api/v4/bulk/idle-rules
     Then the response code should be 401
 
-  Scenario: given bulk update request and auth idlerule by api key without permissions should not allow access
+  Scenario: given bulk update request and auth by api key without permissions should not allow access
     When I am noperms
     When I do PUT /api/v4/bulk/idle-rules
     Then the response code should be 403
 
-  Scenario: given update request should return ok
+  Scenario: given update request should return multistatus and should be handled independently
     When I am admin
     When I do PUT /api/v4/bulk/idle-rules:
     """json
@@ -50,6 +50,18 @@ Feature: Update a idlerule
         },
         "disable_during_periods": ["maintenance"]
       },
+      {},
+      {
+        "type": "notexists"
+      },
+      {
+        "type": "alarm",
+        "alarm_patterns": [],
+        "entity_patterns": [],
+        "operation": {
+          "type": "notexists"
+        }
+      },
       {
         "_id": "test-idle-rule-to-bulk-update-2",
         "name": "test-idle-rule-to-bulk-update-2-name",
@@ -57,7 +69,7 @@ Feature: Update a idlerule
         "type": "alarm",
         "alarm_condition": "last_event",
         "enabled": true,
-        "priority": 30,
+        "priority": 31,
         "duration": {
           "value": 5,
           "unit": "s"
@@ -129,6 +141,47 @@ Feature: Update a idlerule
         }
       },
       {
+        "status": 400,
+        "item": {},
+        "errors": {
+          "_id": "ID is missing.",
+          "duration.value": "Value is missing.",
+          "duration.unit": "Unit is missing.",
+          "enabled": "Enabled is missing.",
+          "name": "Name is missing.",
+          "priority": "Priority is missing.",
+          "type": "Type is missing."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "type": "notexists"
+        },
+        "errors": {
+          "_id": "ID is missing.",
+          "type": "Type must be one of [alarm entity]."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "type": "alarm",
+          "alarm_patterns": [],
+          "entity_patterns": [],
+          "operation": {
+            "type": "notexists"
+          }
+        },
+        "errors": {
+          "_id": "ID is missing.",
+          "alarm_condition": "AlarmCondition is missing.",
+          "alarm_patterns": "AlarmPatterns or EntityPatterns is required.",
+          "entity_patterns": "EntityPatterns or AlarmPatterns is required.",
+          "operation.type": "Type must be one of [ack ackremove cancel assocticket changestate snooze pbehavior]."
+        }
+      },
+      {
         "id": "test-idle-rule-to-bulk-update-2",
         "status": 200,
         "item": {
@@ -138,7 +191,7 @@ Feature: Update a idlerule
           "type": "alarm",
           "alarm_condition": "last_event",
           "enabled": true,
-          "priority": 30,
+          "priority": 31,
           "duration": {
             "value": 5,
             "unit": "s"
@@ -219,7 +272,7 @@ Feature: Update a idlerule
           "type": "alarm",
           "alarm_condition": "last_event",
           "enabled": true,
-          "priority": 30,
+          "priority": 31,
           "created": 1616567033,
           "duration": {
             "value": 5,
@@ -256,71 +309,4 @@ Feature: Update a idlerule
         "total_count": 2
       }
     }
-    """
-
-  Scenario: given invalid update request should return errors
-    When I am admin
-    When I do PUT /api/v4/bulk/idle-rules:
-    """json
-    [
-      {},
-      {
-        "type": "notexists"
-      },
-      {
-        "type": "alarm",
-        "alarm_patterns": [],
-        "entity_patterns": [],
-        "operation": {
-          "type": "notexists"
-        }
-      }
-    ]
-    """
-    Then the response code should be 207
-    Then the response body should contain:
-    """json
-    [
-      {
-        "status": 400,
-        "item": {},
-        "errors": {
-          "_id": "ID is missing.",
-          "duration.value": "Value is missing.",
-          "duration.unit": "Unit is missing.",
-          "enabled": "Enabled is missing.",
-          "name": "Name is missing.",
-          "priority": "Priority is missing.",
-          "type": "Type is missing."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "type": "notexists"
-        },
-        "errors": {
-          "_id": "ID is missing.",
-          "type": "Type must be one of [alarm entity]."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "type": "alarm",
-          "alarm_patterns": [],
-          "entity_patterns": [],
-          "operation": {
-            "type": "notexists"
-          }
-        },
-        "errors": {
-          "_id": "ID is missing.",
-          "alarm_condition": "AlarmCondition is missing.",
-          "alarm_patterns": "AlarmPatterns or EntityPatterns is required.",
-          "entity_patterns": "EntityPatterns or AlarmPatterns is required.",
-          "operation.type": "Type must be one of [ack ackremove cancel assocticket changestate snooze pbehavior]."
-        }
-      }
-    ]
     """

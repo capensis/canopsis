@@ -1,17 +1,17 @@
-Feature: Create a entityservice
+Feature: Bulk create entityservices
   I need to be able to bulk create entityservices
   Only admin should be able to bulk create entityservices
 
-  Scenario: given bulk create request and no auth entityservice should not allow access
+  Scenario: given bulk create request and no auth should not allow access
     When I do POST /api/v4/bulk/entityservices
     Then the response code should be 401
 
-  Scenario: given bulk create request and auth entityservice by api key without permissions should not allow access
+  Scenario: given bulk create request and auth by api key without permissions should not allow access
     When I am noperms
     When I do POST /api/v4/bulk/entityservices
     Then the response code should be 403
 
-  Scenario: given create request should return ok
+  Scenario: given bulk create request should return multistatus and should be handled independently
     When I am admin
     When I do POST /api/v4/bulk/entityservices:
     """json
@@ -57,6 +57,17 @@ Feature: Create a entityservice
             "value": ["test-entityservice-to-bulk-create-info-6-value", false, 1022, 10.45, null]
           }
         ]
+      },
+      {},
+      {
+        "category": "test-category-not-exist",
+        "infos": [
+          {}
+        ],
+        "sli_avail_state": 4
+      },
+      {
+        "name": "test-entityservice-to-check-unique-name-name"
       },
       {
         "_id": "test-entityservice-to-bulk-create-2",
@@ -150,6 +161,41 @@ Feature: Create a entityservice
               "value": ["test-entityservice-to-bulk-create-info-6-value", false, 1022, 10.45, null]
             }
           ]
+        }
+      },
+      {
+        "status": 400,
+        "item": {},
+        "errors": {
+          "enabled": "Enabled is missing.",
+          "impact_level": "ImpactLevel is missing.",
+          "name": "Name is missing.",
+          "output_template": "OutputTemplate is missing.",
+          "sli_avail_state": "SliAvailState is missing."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "category": "test-category-not-exist",
+          "infos": [
+            {}
+          ],
+          "sli_avail_state": 4
+        },
+        "errors": {
+          "category": "Category doesn't exist.",
+          "infos.0.name": "Name is missing.",
+          "sli_avail_state": "SliAvailState should be 3 or less."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "name": "test-entityservice-to-check-unique-name-name"
+        },
+        "errors": {
+          "name": "Name already exists."
         }
       },
       {
@@ -323,64 +369,4 @@ Feature: Create a entityservice
       "sli_avail_state": 1,
       "type": "service"
     }
-    """    
-
-  Scenario: given invalid create request should return errors
-    When I am admin
-    When I do POST /api/v4/bulk/entityservices:
-    """json
-    [
-      {},
-      {
-        "category": "test-category-not-exist",
-        "infos": [
-          {}
-        ],
-        "sli_avail_state": 4
-      },
-      {
-        "name": "test-entityservice-to-check-unique-name-name"
-      }
-    ]
-    """
-    Then the response code should be 207
-    Then the response body should contain:
-    """json
-    [
-      {
-        "status": 400,
-        "item": {},
-        "errors": {
-          "enabled": "Enabled is missing.",
-          "impact_level": "ImpactLevel is missing.",
-          "name": "Name is missing.",
-          "output_template": "OutputTemplate is missing.",
-          "sli_avail_state": "SliAvailState is missing."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "category": "test-category-not-exist",
-          "infos": [
-            {}
-          ],
-          "sli_avail_state": 4
-        },
-        "errors": {
-          "category": "Category doesn't exist.",
-          "infos.0.name": "Name is missing.",
-          "sli_avail_state": "SliAvailState should be 3 or less."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "name": "test-entityservice-to-check-unique-name-name"
-        },
-        "errors": {
-          "name": "Name already exists."
-        }
-      }
-    ]
     """

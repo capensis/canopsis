@@ -1,17 +1,17 @@
-Feature: Update a user
-  I need to be able to bulk update a user
-  Only admin should be able to bulk update a user
+Feature: Bulk update users
+  I need to be able to bulk update users
+  Only admin should be able to bulk update users
 
-  Scenario: given get request and no auth user should not allow access
-    When I do PUT /api/v4/users/test-user-to-bulk-update
+  Scenario: given bulk update request and no auth user should not allow access
+    When I do PUT /api/v4/bulk/users
     Then the response code should be 401
 
-  Scenario: given get request and auth user by api key without permissions should not allow access
+  Scenario: given bulk update and auth user by api key without permissions should not allow access
     When I am noperms
-    When I do PUT /api/v4/users/test-user-to-bulk-update
+    When I do PUT /api/v4/bulk/users
     Then the response code should be 403
 
-  Scenario: given update request should update user
+  Scenario: given bulk update request should return multi status and should be handled independently
     When I am admin
     Then I do PUT /api/v4/bulk/users:
     """json
@@ -31,6 +31,16 @@ Feature: Update a user
         "ui_tours": {
           "test-tour-to-bulk-update-user-1": true
         }
+      },
+      {
+        "role": "not-exist",
+        "defaultview": "not-exist"
+      },
+      {
+        "name": "test-user-to-check-unique-name-name"
+      },
+      {
+        "name": "test-user-to-check-unique-name"
       },
       {
         "_id": "test-user-to-bulk-update-2",
@@ -72,6 +82,42 @@ Feature: Update a user
           "ui_tours": {
             "test-tour-to-bulk-update-user-1": true
           }
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "role": "not-exist",
+          "defaultview": "not-exist"
+        },
+        "errors": {
+          "_id": "ID is missing.",
+          "defaultview": "DefaultView doesn't exist.",
+          "email": "Email is missing.",
+          "enable": "IsEnabled is missing.",
+          "name": "Name is missing.",
+          "password": "Password is missing.",
+          "role": "Role doesn't exist."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "name": "test-user-to-check-unique-name-name"
+        },
+        "errors": {
+          "_id": "ID is missing.",
+          "name": "Name already exists."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "name": "test-user-to-check-unique-name"
+        },
+        "errors": {
+          "_id": "ID is missing.",
+          "name": "Name already exists."
         }
       },
       {
@@ -186,64 +232,4 @@ Feature: Update a user
       "_id": "test-user-to-bulk-update-2",
       "name": "test-user-to-bulk-update-2-updated"
     }
-    """
-
-  Scenario: given invalid update request should return errors
-    When I am admin
-    When I do PUT /api/v4/bulk/users:
-    """json
-    [
-      {
-        "role": "not-exist",
-        "defaultview": "not-exist"
-      },
-      {
-        "name": "test-user-to-check-unique-name-name"
-      },
-      {
-        "name": "test-user-to-check-unique-name"
-      }
-    ]
-    """
-    Then the response code should be 207
-    Then the response body should contain:
-    """json
-    [
-      {
-        "status": 400,
-        "item": {
-          "role": "not-exist",
-          "defaultview": "not-exist"
-        },
-        "errors": {
-          "_id": "ID is missing.",
-          "defaultview": "DefaultView doesn't exist.",
-          "email": "Email is missing.",
-          "enable": "IsEnabled is missing.",
-          "name": "Name is missing.",
-          "password": "Password is missing.",
-          "role": "Role doesn't exist."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "name": "test-user-to-check-unique-name-name"
-        },
-        "errors": {
-          "_id": "ID is missing.",
-          "name": "Name already exists."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "name": "test-user-to-check-unique-name"
-        },
-        "errors": {
-          "_id": "ID is missing.",
-          "name": "Name already exists."
-        }
-      }
-    ]
     """

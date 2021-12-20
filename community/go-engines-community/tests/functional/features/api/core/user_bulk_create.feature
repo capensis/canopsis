@@ -1,17 +1,17 @@
-Feature: Create a user
+Feature: Bulk create users
   I need to be able to bulk create users
   Only admin should be able to bulk create users
 
   Scenario: given bulk create request and no auth user should not allow access
-    When I do POST /api/v4/users
+    When I do POST /api/v4/bulk/users
     Then the response code should be 401
 
   Scenario: given bulk create request and auth user by api key without permissions should not allow access
     When I am noperms
-    When I do POST /api/v4/users
+    When I do POST /api/v4/bulk/users
     Then the response code should be 403
 
-  Scenario: given create request should return ok
+  Scenario: given bulk create request should return multi status and should be handled independently
     When I am admin
     When I do POST /api/v4/bulk/users:
     """json
@@ -27,6 +27,16 @@ Feature: Create a user
         "enable": true,
         "defaultview": "test-view-to-edit-user",
         "password": "test-password"
+      },
+      {
+        "role": "not-exist",
+        "defaultview": "not-exist"
+      },
+      {
+        "name": "test-user-to-check-unique-name-name"
+      },
+      {
+        "name": "test-user-to-check-unique-name"
       },
       {
         "name": "test-user-to-bulk-create-2-name",
@@ -60,6 +70,39 @@ Feature: Create a user
           "enable": true,
           "defaultview": "test-view-to-edit-user",
           "password": "test-password"
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "role": "not-exist",
+          "defaultview": "not-exist"
+        },
+        "errors": {
+          "defaultview": "DefaultView doesn't exist.",
+          "email": "Email is missing.",
+          "enable": "IsEnabled is missing.",
+          "name": "Name is missing.",
+          "password": "Password is missing.",
+          "role": "Role doesn't exist."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "name": "test-user-to-check-unique-name-name"
+        },
+        "errors": {
+          "name": "Name already exists."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "name": "test-user-to-check-unique-name"
+        },
+        "errors": {
+          "name": "Name already exists."
         }
       },
       {
@@ -198,61 +241,4 @@ Feature: Create a user
       "_id": "test-user-to-bulk-create-2-name",
       "name": "test-user-to-bulk-create-2-name"
     }
-    """    
-
-  Scenario: given invalid create request should return errors
-    When I am admin
-    When I do POST /api/v4/bulk/users:
-    """json
-    [
-      {
-        "role": "not-exist",
-        "defaultview": "not-exist"
-      },
-      {
-        "name": "test-user-to-check-unique-name-name"
-      },
-      {
-        "name": "test-user-to-check-unique-name"
-      }
-    ]
-    """
-    Then the response code should be 207
-    Then the response body should contain:
-    """json
-    [
-      {
-        "status": 400,
-        "item": {
-          "role": "not-exist",
-          "defaultview": "not-exist"
-        },
-        "errors": {
-          "defaultview": "DefaultView doesn't exist.",
-          "email": "Email is missing.",
-          "enable": "IsEnabled is missing.",
-          "name": "Name is missing.",
-          "password": "Password is missing.",
-          "role": "Role doesn't exist."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "name": "test-user-to-check-unique-name-name"
-        },
-        "errors": {
-          "name": "Name already exists."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "name": "test-user-to-check-unique-name"
-        },
-        "errors": {
-          "_id": "Id is missing."
-        }
-      }
-    ]
     """

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/valyala/fastjson"
 	"net/http"
@@ -504,6 +505,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 		return
 	}
 
+	ctx := c.Request.Context()
 	response := ar.NewArray()
 	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
 	ids := make([]string, 0, len(rawObjects))
@@ -528,7 +530,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
-		model, err := a.transformer.TransformCreateRequestToModel(c.Request.Context(), request)
+		model, err := a.transformer.TransformCreateRequestToModel(ctx, request)
 		if err != nil {
 			if err == ErrReasonNotExists || err == ErrExceptionNotExists || err == pbehaviorexception.ErrTypeNotExists {
 				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
@@ -539,7 +541,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
-		err = a.store.Insert(c.Request.Context(), model)
+		err = a.store.Insert(ctx, model)
 		if err != nil {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
 			continue
@@ -558,7 +560,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 		PbehaviorIds: ids,
 	})
 
-	err = a.actionLogger.BulkAction(c, logEntries)
+	err = a.actionLogger.BulkAction(ctx, c.MustGet(auth.UserKey).(string), logEntries)
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
@@ -600,6 +602,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		return
 	}
 
+	ctx := c.Request.Context()
 	response := ar.NewArray()
 	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
 	ids := make([]string, 0, len(rawObjects))
@@ -624,7 +627,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			continue
 		}
 
-		model, err := a.transformer.TransformUpdateRequestToModel(c.Request.Context(), UpdateRequest(request))
+		model, err := a.transformer.TransformUpdateRequestToModel(ctx, UpdateRequest(request))
 		if err != nil {
 			if err == ErrReasonNotExists || err == ErrExceptionNotExists || err == pbehaviorexception.ErrTypeNotExists {
 				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
@@ -635,9 +638,9 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			continue
 		}
 
-		ok, err := a.store.Update(c.Request.Context(), model)
+		ok, err := a.store.Update(ctx, model)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
 			continue
 		}
 
@@ -659,7 +662,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		PbehaviorIds: ids,
 	})
 
-	err = a.actionLogger.BulkAction(c, logEntries)
+	err = a.actionLogger.BulkAction(ctx, c.MustGet(auth.UserKey).(string), logEntries)
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
@@ -698,6 +701,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 		return
 	}
 
+	ctx := c.Request.Context()
 	response := ar.NewArray()
 	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
 	ids := make([]string, 0, len(rawObjects))
@@ -722,7 +726,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 			continue
 		}
 
-		ok, err := a.store.Delete(c.Request.Context(), request.ID)
+		ok, err := a.store.Delete(ctx, request.ID)
 		if err != nil {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
 			continue
@@ -746,7 +750,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 		PbehaviorIds: ids,
 	})
 
-	err = a.actionLogger.BulkAction(c, logEntries)
+	err = a.actionLogger.BulkAction(ctx, c.MustGet(auth.UserKey).(string), logEntries)
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}

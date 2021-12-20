@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"math"
@@ -61,7 +62,7 @@ const (
 
 type ActionLogger interface {
 	Action(c *gin.Context, logEntry LogEntry) error
-	BulkAction(c *gin.Context, logEntries []LogEntry) error
+	BulkAction(ctx context.Context, userID string, logEntries []LogEntry) error
 	Err(err error, msg string)
 }
 
@@ -111,7 +112,7 @@ func (l *logger) Action(c *gin.Context, logEntry LogEntry) error {
 	return err
 }
 
-func (l *logger) BulkAction(c *gin.Context, logEntries []LogEntry) error {
+func (l *logger) BulkAction(ctx context.Context, userID string, logEntries []LogEntry) error {
 	if len(logEntries) == 0 {
 		return nil
 	}
@@ -120,13 +121,11 @@ func (l *logger) BulkAction(c *gin.Context, logEntries []LogEntry) error {
 
 	writeModels := make([]mongodriver.WriteModel, 0, int(math.Min(float64(canopsis.DefaultBulkSize), float64(len(logEntries)))))
 	now := time.Now()
-	ctx := c.Request.Context()
 
 	for _, e := range logEntries {
 		e.Time = now
 		if e.Author == "" {
-			userID := c.MustGet(auth.UserKey)
-			e.Author = userID.(string)
+			e.Author = userID
 		}
 
 		writeModels = append(
@@ -134,7 +133,7 @@ func (l *logger) BulkAction(c *gin.Context, logEntries []LogEntry) error {
 			mongodriver.NewInsertOneModel().SetDocument(e),
 		)
 
-		if len(writeModels) == 2 {
+		if len(writeModels) == canopsis.DefaultBulkSize {
 			_, err = l.dbCollection.BulkWrite(ctx, writeModels)
 			if err != nil {
 				return err
