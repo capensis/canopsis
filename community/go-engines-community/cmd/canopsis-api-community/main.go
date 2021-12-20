@@ -64,11 +64,12 @@ func main() {
 		logger.Fatal().Err(err).Msg("cannot create security enforce")
 	}
 
+	providers := &libapi.ConfigProviders{}
 	api, err := libapi.Default(
 		ctx,
 		flags,
 		enforcer,
-		nil, nil, nil,
+		providers,
 		logger,
 		metrics.NewNullMetaUpdater(),
 		metrics.NewNullMetaUpdater(),

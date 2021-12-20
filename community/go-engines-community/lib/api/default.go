@@ -42,13 +42,17 @@ const chanBuf = 10
 const sessionStoreSessionMaxAge = 24 * time.Hour
 const sessionStoreAutoCleanInterval = 10 * time.Second
 
+type ConfigProviders struct {
+	TimezoneConfigProvider      *config.BaseTimezoneConfigProvider
+	ApiConfigProvider           *config.BaseApiConfigProvider
+	UserInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider
+}
+
 func Default(
 	ctx context.Context,
 	flags Flags,
 	enforcer libsecurity.Enforcer,
-	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
-	apiConfigProvider *config.BaseApiConfigProvider,
-	userInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider,
+	p *ConfigProviders,
 	logger zerolog.Logger,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	metricsUserMetaUpdater metrics.MetaUpdater,
@@ -67,8 +71,8 @@ func Default(
 		logger.Err(err).Msg("cannot load config")
 		return nil, err
 	}
-	if timezoneConfigProvider == nil {
-		timezoneConfigProvider = config.NewTimezoneConfigProvider(cfg, logger)
+	if p.TimezoneConfigProvider == nil {
+		p.TimezoneConfigProvider = config.NewTimezoneConfigProvider(cfg, logger)
 	}
 	// Set mongodb setting.
 	config.SetDbClientRetry(dbClient, cfg)
@@ -110,10 +114,10 @@ func Default(
 	sessionStore := mongostore.NewStore(dbClient, []byte(os.Getenv("SESSION_KEY")))
 	sessionStore.Options.MaxAge = cookieOptions.MaxAge
 	sessionStore.Options.Secure = cookieOptions.Secure
-	if apiConfigProvider == nil {
-		apiConfigProvider = config.NewApiConfigProvider(cfg, logger)
+	if p.ApiConfigProvider == nil {
+		p.ApiConfigProvider = config.NewApiConfigProvider(cfg, logger)
 	}
-	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, apiConfigProvider, cookieOptions, logger)
+	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, p.ApiConfigProvider, cookieOptions, logger)
 	// Create pbehavior computer.
 	pbhComputeChan := make(chan libpbehavior.ComputeTask, chanBuf)
 	pbhEntityMatcher := libpbehavior.NewComputedEntityMatcher(dbClient, pbhRedisSession, json.NewEncoder(), json.NewDecoder())
@@ -155,8 +159,8 @@ func Default(
 	if err != nil && err != mongodriver.ErrNoDocuments {
 		return nil, err
 	}
-	if userInterfaceConfigProvider == nil {
-		userInterfaceConfigProvider = config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
+	if p.UserInterfaceConfigProvider == nil {
+		p.UserInterfaceConfigProvider = config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
 	}
 
 	// Create and compute scenario priority intervals.
@@ -224,7 +228,7 @@ func Default(
 			security,
 			enforcer,
 			dbClient,
-			timezoneConfigProvider,
+			p.TimezoneConfigProvider,
 			pbhEntityTypeResolver,
 			pbhComputeChan,
 			entityPublChan,
@@ -234,7 +238,7 @@ func Default(
 			apilogger.NewActionLogger(dbClient, logger),
 			amqpChannel,
 			jobQueue,
-			userInterfaceConfigProvider,
+			p.UserInterfaceConfigProvider,
 			scenarioPriorityIntervals,
 			cfg.File.Upload,
 			websocketHub,
@@ -279,8 +283,8 @@ func Default(
 	api.AddWorker("import job", func(ctx context.Context) {
 		importWorker.Run(ctx)
 	})
-	api.AddWorker("config reload", updateConfig(timezoneConfigProvider, apiConfigProvider,
-		configAdapter, userInterfaceConfigProvider, userInterfaceAdapter, flags.Test, logger))
+	api.AddWorker("config reload", updateConfig(p.TimezoneConfigProvider, p.ApiConfigProvider,
+		configAdapter, p.UserInterfaceConfigProvider, userInterfaceAdapter, flags.Test, logger))
 	api.AddWorker("data export", func(ctx context.Context) {
 		exportExecutor.Execute(ctx)
 	})
