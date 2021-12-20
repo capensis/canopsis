@@ -210,7 +210,7 @@ test: $(COMMUNITY_BUILD_OUTPUT_DIR)/cmd/ready $(COMMUNITY_BUILD_OUTPUT_DIR)/cmd/
 	go test -p 1 -parallel 1 ./...
 
 .PHONY: docker-test-image
-docker-test-image: $(MONOREPO_ROOT)/.dockerignore docker-go-builder
+docker-test-image: $(MONOREPO_ROOT)/.dockerignore
 	docker build \
 		-f docker/functional-test.Dockerfile \
 		$(DOCKER_BUILD_ARGS) \
