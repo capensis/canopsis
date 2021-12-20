@@ -212,6 +212,19 @@ func (a api) Delete(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
+// Bulk create eventfilters
+// @Summary Bulk create eventfilters
+// @Description Bulk create eventfilters
+// @Tags eventfilters
+// @ID eventfilters-bulk-create
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []EventFilter true "body"
+// @Success 207 {array} []BulkCreateResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/eventfilters [post]
 func (a *api) BulkCreate(c *gin.Context) {
 	var ar fastjson.Arena
 
@@ -278,6 +291,19 @@ func (a *api) BulkCreate(c *gin.Context) {
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
+// Bulk update eventfilters
+// @Summary Bulk update eventfilters
+// @Description Bulk update eventfilters
+// @Tags eventfilters
+// @ID eventfilters-bulk-update
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []BulkUpdateRequestItem true "body"
+// @Success 207 {array} []BulkUpdateResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/eventfilters [put]
 func (a *api) BulkUpdate(c *gin.Context) {
 	var ar fastjson.Arena
 
@@ -351,6 +377,19 @@ func (a *api) BulkUpdate(c *gin.Context) {
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
+// Bulk delete eventfilters
+// @Summary Bulk delete eventfilters
+// @Description Bulk delete eventfilters
+// @Tags eventfilters
+// @ID eventfilters-bulk-delete
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []BulkDeleteRequestItem true "body"
+// @Success 207 {array} []BulkDeleteResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/eventfilters [delete]
 func (a *api) BulkDelete(c *gin.Context) {
 	var ar fastjson.Arena
 

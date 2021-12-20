@@ -110,8 +110,31 @@ type BulkDeleteRequestItem struct {
 	ID string `json:"_id" binding:"required"`
 }
 
-type BulkDeleteRequest struct {
-	IDs []string `form:"ids[]" json:"ids" binding:"required,unique,notblank"`
+// for swagger
+type BulkCreateResponseItem struct {
+	ID     string            `json:"id,omitempty"`
+	Item   Request           `json:"item"`
+	Status int               `json:"status"`
+	Error  string            `json:"error,omitempty"`
+	Errors map[string]string `json:"errors,omitempty"`
+}
+
+// for swagger
+type BulkUpdateResponseItem struct {
+	ID     string                `json:"id,omitempty"`
+	Item   BulkUpdateRequestItem `json:"item"`
+	Status int                   `json:"status"`
+	Error  string                `json:"error,omitempty"`
+	Errors map[string]string     `json:"errors,omitempty"`
+}
+
+// for swagger
+type BulkDeleteResponseItem struct {
+	ID     string                `json:"id,omitempty"`
+	Item   BulkDeleteRequestItem `json:"item"`
+	Status int                   `json:"status"`
+	Error  string                `json:"error,omitempty"`
+	Errors map[string]string     `json:"errors,omitempty"`
 }
 
 type AggregationResult struct {
