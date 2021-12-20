@@ -25,11 +25,11 @@ import { MAX_LIMIT, MODALS } from '@/constants';
 
 import { playlistToForm, formToPlaylist } from '@/helpers/forms/playlist';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 import { permissionsEntitiesPlaylistTabMixin } from '@/mixins/permissions/entities/playlist-tab';
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
-import { validationErrorsMixin } from '@/mixins/form/validation-errors';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import PlaylistForm from '@/components/other/playlists/form/playlist-form.vue';
 
@@ -44,11 +44,11 @@ export default {
   },
   components: { PlaylistForm, ModalWrapper },
   mixins: [
+    modalInnerMixin,
     entitiesViewGroupMixin,
     permissionsEntitiesPlaylistTabMixin,
-    submittableMixin(),
-    validationErrorsMixin(),
-    confirmableModalMixin(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     return {
@@ -90,15 +90,11 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        try {
-          if (this.config.action) {
-            await this.config.action(formToPlaylist(this.form));
-          }
-
-          this.$modals.hide();
-        } catch (err) {
-          this.setFormErrors(err);
+        if (this.config.action) {
+          await this.config.action(formToPlaylist(this.form));
         }
+
+        this.$modals.hide();
       }
     },
   },

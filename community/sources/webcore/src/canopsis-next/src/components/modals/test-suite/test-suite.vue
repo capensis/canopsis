@@ -4,7 +4,7 @@
       span {{ testSuite.name }}
     template(slot="text")
       v-layout(v-if="testSuiteHistoryPending", justify-center)
-        v-progress-circular(indeterminate, color="primary")
+        v-progress-circular(color="primary", indeterminate)
       test-suite-history(v-else, :test-suite-history="testSuiteHistory")
     template(slot="actions")
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
@@ -13,6 +13,7 @@
 <script>
 import { MAX_LIMIT, MODALS } from '@/constants';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesTestSuiteHistoryMixin } from '@/mixins/entities/test-suite-history';
 
 import TestSuiteHistory from '@/components/other/test-suite/test-suite-history.vue';
@@ -22,7 +23,7 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.testSuite,
   components: { ModalWrapper, TestSuiteHistory },
-  mixins: [entitiesTestSuiteHistoryMixin],
+  mixins: [modalInnerMixin, entitiesTestSuiteHistoryMixin],
   computed: {
     testSuite() {
       return this.config.testSuite;

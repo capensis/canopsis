@@ -32,7 +32,7 @@ type EventPattern struct {
 	Author        StringPattern               `bson:"author"`
 	RK            StringPattern               `bson:"routing_key"`
 	AckResources  BoolPattern                 `bson:"ack_resources"`
-	Duration      IntegerRefPattern           `bson:"duration"`
+	Duration      IntegerPattern              `bson:"duration"`
 	Ticket        StringPattern               `bson:"ticket"`
 	StatName      StringPattern               `bson:"stat_name"`
 	Debug         BoolPattern                 `bson:"debug"`

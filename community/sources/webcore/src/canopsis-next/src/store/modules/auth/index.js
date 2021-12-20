@@ -59,20 +59,24 @@ export default {
       try {
         const { access_token: accessToken } = await request.post(API_ROUTES.login, credentials);
 
-        localStorageService.set(LOCAL_STORAGE_ACCESS_TOKEN_KEY, accessToken);
-        commit(types.LOGIN_COMPLETED);
-
-        return Promise.all([
-          dispatch('viewStats/create', null, { root: true }),
-          dispatch('fetchCurrentUser'),
-          dispatch('filesAccess'),
-        ]);
+        await dispatch('applyAccessToken', accessToken);
       } catch (err) {
         console.error(err);
         commit(types.LOGOUT);
 
         throw err;
       }
+    },
+
+    applyAccessToken({ commit, dispatch }, accessToken) {
+      localStorageService.set(LOCAL_STORAGE_ACCESS_TOKEN_KEY, accessToken);
+
+      commit(types.LOGIN_COMPLETED);
+
+      return Promise.all([
+        dispatch('fetchCurrentUser'),
+        dispatch('filesAccess'),
+      ]);
     },
 
     filesAccess() {
@@ -96,12 +100,12 @@ export default {
         }
 
         return commit(types.FETCH_USER_COMPLETED, currentUser);
-      } catch (error) {
-        if (EXCLUDED_SERVER_ERROR_STATUSES.includes(error.status)) {
+      } catch (err) {
+        if (EXCLUDED_SERVER_ERROR_STATUSES.includes(err.status)) {
           dispatch('logout');
         }
 
-        throw error;
+        throw err;
       }
     },
 
