@@ -37,11 +37,11 @@ Feature: update user interface
       "check_count_request_timeout": 30,
       "popup_timeout": {
         "error": {
-          "interval": 3,
+          "value": 3,
           "unit": "s"
         },
         "info": {
-          "interval": 3,
+          "value": 3,
           "unit": "s"
         }
       }
@@ -57,7 +57,7 @@ Feature: update user interface
       "footer": "Test footer",
       "popup_timeout": {
         "error": {
-          "interval": 30,
+          "value": 30,
           "unit": "s"
         }
       }
@@ -74,11 +74,11 @@ Feature: update user interface
       "login_page_description": "Test login",
       "popup_timeout": {
         "error": {
-          "interval": 30,
+          "value": 30,
           "unit": "s"
         },
         "info": {
-          "interval": 3,
+          "value": 3,
           "unit": "s"
         }
       }
@@ -131,11 +131,11 @@ Feature: update user interface
       "check_count_request_timeout": 100,
       "popup_timeout": {
         "error": {
-          "interval": 3,
+          "value": 3,
           "unit": "s"
         },
         "info": {
-          "interval": 3,
+          "value": 3,
           "unit": "s"
         }
       }
@@ -163,11 +163,11 @@ Feature: update user interface
       "check_count_request_timeout": 30,
       "popup_timeout": {
         "error": {
-          "interval": 3,
+          "value": 3,
           "unit": "s"
         },
         "info": {
-          "interval": 3,
+          "value": 3,
           "unit": "s"
         }
       }

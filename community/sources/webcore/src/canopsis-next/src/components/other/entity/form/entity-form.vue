@@ -1,6 +1,6 @@
 <template lang="pug">
   v-tabs(slider-color="primary", centered)
-    v-tab {{ $t('entity.fields.form') }}
+    v-tab {{ $t('entity.form') }}
     v-tab-item
       v-layout.mt-3(column)
         v-layout(row)
@@ -20,31 +20,37 @@
             name="description"
           )
         v-layout(row, justify-space-between)
-          v-flex(xs4)
+          v-flex(xs3)
             c-enabled-field(v-field="form.enabled")
-          v-flex(xs8)
+          v-flex(xs9)
             v-layout(row)
-              v-flex(xs4)
-                c-impact-level-field.mr-3(v-field="form.impact_level", required)
-              v-flex(xs8)
+              v-flex.pr-3(xs3)
+                c-impact-level-field(v-field="form.impact_level", required)
+              v-flex.pr-3(xs3)
+                c-state-type-field(
+                  v-field="form.sli_avail_state",
+                  :label="$t('entity.availabilityState')",
+                  required
+                )
+              v-flex(xs6)
                 c-entity-type-field(v-field="form.type", required, disabled)
         v-layout(wrap)
           v-flex(xs12)
             entities-select(
               v-field="form.impact",
-              :label="$t('entity.fields.impact')",
+              :label="$t('entity.impact')",
               :disabled-entities-ids="form.disabled_impact",
               name="impact"
             )
           v-flex(xs12)
             entities-select(
               v-field="form.depends",
-              :label="$t('entity.fields.depends')",
+              :label="$t('entity.depends')",
               :disabled-entities-ids="form.disabled_depends",
               :existing-entities-ids="form.impact",
               name="depends"
             )
-    v-tab {{ $t('entity.fields.manageInfos') }}
+    v-tab {{ $t('entity.manageInfos') }}
     v-tab-item
       manage-infos(v-field="form.infos")
 </template>

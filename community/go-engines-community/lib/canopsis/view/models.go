@@ -3,7 +3,6 @@ package view
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"reflect"
-	"time"
 )
 
 const (
@@ -95,50 +94,6 @@ func (w Widget) GetStringsParameter(k string, defaultVal []string) []string {
 				}
 			}
 			return val
-		}
-	}
-
-	return defaultVal
-}
-
-func (w Widget) GetDurationParameter(k string, defaultVal time.Duration) time.Duration {
-	if v, ok := w.Parameters[k]; ok {
-		if d, ok := v.(types.DurationWithUnit); ok {
-			if d.Seconds > 0 {
-				return time.Duration(d.Seconds) * time.Second
-			}
-
-			return defaultVal
-		}
-
-		typeVal := reflect.ValueOf(v)
-		var seconds int64
-
-		switch typeVal.Kind() {
-		case reflect.Map:
-			for _, mk := range typeVal.MapKeys() {
-				if mk.String() == "seconds" {
-					sv := typeVal.MapIndex(mk).Interface()
-					switch value := sv.(type) {
-					case float64:
-						seconds = int64(value)
-					case float32:
-						seconds = int64(value)
-					case int64:
-						seconds = value
-					case int32:
-						seconds = int64(value)
-					case int:
-						seconds = int64(value)
-					}
-
-					break
-				}
-			}
-
-			if seconds > 0 {
-				return time.Duration(seconds) * time.Second
-			}
 		}
 	}
 

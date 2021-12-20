@@ -15,7 +15,7 @@ const unregisterGetterMethodName = uid('unregisterGetter');
  * @param {string} entityFieldName - Entity field name
  * @return {{methods: {}, beforeDestroy(): void, mounted(): void}}
  */
-export default (entitySchema, entityFieldName) => {
+export const registrableMixin = (entitySchema, entityFieldName) => {
   const dependenciesPreparer = (entities) => {
     const { entities: normalizedEntities } = normalize(entities, entitySchema);
 

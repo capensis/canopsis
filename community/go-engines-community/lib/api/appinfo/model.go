@@ -8,14 +8,9 @@ type VersionConf struct {
 	Version string `json:"version" bson:"version"`
 }
 
-type IntervalUnit struct {
-	Interval uint   `json:"interval" bson:"interval"`
-	Unit     string `json:"unit" bson:"unit" binding:"oneof=s h m"`
-}
-
 type PopupTimeout struct {
-	Info  *IntervalUnit `json:"info,omitempty" bson:"info,omitempty"`
-	Error *IntervalUnit `json:"error,omitempty" bson:"error,omitempty"`
+	Info  *types.DurationWithUnit `json:"info,omitempty" bson:"info,omitempty"`
+	Error *types.DurationWithUnit `json:"error,omitempty" bson:"error,omitempty"`
 }
 
 type UserInterfaceConf struct {
@@ -36,8 +31,7 @@ type GlobalConf struct {
 }
 
 type RemediationConf struct {
-	PauseManualInstructionInterval types.DurationWithUnit `json:"pause_manual_instruction_interval"`
-	JobConfigTypes                 []JobConfigType        `json:"job_config_types"`
+	JobConfigTypes []JobConfigType `json:"job_config_types"`
 }
 
 type JobConfigType struct {
@@ -49,10 +43,11 @@ type AppInfoResponse struct {
 	UserInterfaceConf
 	GlobalConf
 	VersionConf
-	Remediation RemediationConf `json:"remediation"`
+	Login       LoginConf        `json:"login"`
+	Remediation *RemediationConf `json:"remediation,omitempty"`
 }
 
-type LoginConfig struct {
+type LoginConf struct {
 	CasConfig  LoginConfigMethod `json:"casconfig,omitempty"`
 	LdapConfig LoginConfigMethod `json:"ldapconfig,omitempty"`
 	SamlConfig LoginConfigMethod `json:"saml2config,omitempty"`
@@ -61,10 +56,4 @@ type LoginConfig struct {
 type LoginConfigMethod struct {
 	Title  string `json:"title,omitempty"`
 	Enable bool   `json:"enable"`
-}
-
-type LoginConfigResponse struct {
-	LoginConfig       LoginConfig       `json:"login_config"`
-	UserInterfaceConf UserInterfaceConf `json:"user_interface"`
-	VersionConf
 }

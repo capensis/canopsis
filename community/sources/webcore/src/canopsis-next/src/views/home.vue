@@ -5,7 +5,7 @@
 
 <script>
 import { authMixin } from '@/mixins/auth';
-import entitiesRoleMixin from '@/mixins/entities/role';
+import { entitiesRoleMixin } from '@/mixins/entities/role';
 
 import { ROUTES_NAMES } from '@/constants';
 

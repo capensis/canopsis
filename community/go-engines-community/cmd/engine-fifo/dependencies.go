@@ -175,6 +175,12 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 		},
 		logger,
 	))
+	engine.AddPeriodicalWorker(libengine.NewLoadConfigPeriodicalWorker(
+		canopsis.PeriodicalWaitTime,
+		config.NewAdapter(mongoClient),
+		timezoneConfigProvider,
+		logger,
+	))
 
 	return engine
 }

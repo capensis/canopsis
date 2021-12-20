@@ -25,7 +25,7 @@ Feature: Get a idle rule
             "pause"
           ],
           "duration": {
-            "seconds": 3,
+            "value": 3,
             "unit": "s"
           },
           "enabled": true,
@@ -38,8 +38,9 @@ Feature: Get a idle rule
           "operation": {
             "parameters": {
               "author": "test-idle-rule-to-get-1-operation-author",
+              "user": "test-idle-rule-to-get-1-operation-user",
               "duration": {
-                "seconds": 3,
+                "value": 3,
                 "unit": "s"
               },
               "output": "test-idle-rule-to-get-1-operation-output"
@@ -58,7 +59,7 @@ Feature: Get a idle rule
           "description": "test-idle-rule-to-get-2-description",
           "disable_during_periods": null,
           "duration": {
-            "seconds": 5,
+            "value": 5,
             "unit": "s"
           },
           "enabled": true,
@@ -136,7 +137,7 @@ Feature: Get a idle rule
         "pause"
       ],
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "enabled": true,
@@ -149,8 +150,9 @@ Feature: Get a idle rule
       "operation": {
         "parameters": {
           "author": "test-idle-rule-to-get-1-operation-author",
+          "user": "test-idle-rule-to-get-1-operation-user",
           "duration": {
-            "seconds": 3,
+            "value": 3,
             "unit": "s"
           },
           "output": "test-idle-rule-to-get-1-operation-output"

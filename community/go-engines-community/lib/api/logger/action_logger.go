@@ -52,6 +52,8 @@ const (
 	ValueTypeFlappingRule = "flappingrule"
 
 	ValueTypeUserPreferences = "userpreferences"
+
+	ValueTypeFilter = "filter"
 )
 
 type ActionLogger interface {

@@ -1,0 +1,60 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`kpi-charts Renders \`kpi-charts\` with default props 1`] = `
+<div
+  class="layout pa-4 column align-center"
+>
+  <div
+    class="kpi-charts"
+  >
+    <div
+      class="layout column mb-5"
+    >
+      <div
+        class="layout row"
+      >
+        <div
+          class="subheading font-weight-bold"
+        >
+          kpi.alarmMetrics
+        </div>
+        <!---->
+      </div>
+      <!---->
+      <kpi-alarms-stub />
+    </div>
+    <div
+      class="layout column mb-5"
+    >
+      <div
+        class="layout row"
+      >
+        <div
+          class="subheading font-weight-bold"
+        >
+          common.rating:2
+        </div>
+        <!---->
+      </div>
+      <!---->
+      <kpi-rating-stub />
+    </div>
+    <div
+      class="layout column mb-5"
+    >
+      <div
+        class="layout row"
+      >
+        <div
+          class="subheading font-weight-bold"
+        >
+          kpi.sli
+        </div>
+        <!---->
+      </div>
+      <!---->
+      <kpi-sli-stub />
+    </div>
+  </div>
+</div>
+`;
