@@ -1,5 +1,6 @@
-import { shallowMount, mount, createVueInstance } from '@unit/utils/vue';
+import flushPromises from 'flush-promises';
 
+import { shallowMount, mount, createVueInstance } from '@unit/utils/vue';
 import { deleteAction, editAction, fakeAction } from '@unit/data/actions-panel';
 import { actionsPanelItem } from '@unit/stubs/actions-panel';
 import ActionsPanel from '@/components/common/actions-panel/actions-panel.vue';
@@ -27,7 +28,7 @@ const snapshotFactory = (options = {}) => mount(ActionsPanel, {
 });
 
 describe('actions-panel', () => {
-  it('Method into list called after trigger click on action item button. On the extra large size.', () => {
+  it('Method into list called after trigger click on action item button. On the extra large size.', async () => {
     const actions = [
       fakeAction(),
       fakeAction(),
@@ -41,6 +42,8 @@ describe('actions-panel', () => {
       },
     });
 
+    await flushPromises();
+
     const actionElements = wrapper.findAll('button.actions-panel-item');
 
     expect(actionElements).toHaveLength(actions.length);
@@ -53,7 +56,7 @@ describe('actions-panel', () => {
     expect(secondAction.method).toBeCalledTimes(1);
   });
 
-  it('Method into dropdown called after trigger click on action item button. On the extra large size.', () => {
+  it('Method into dropdown called after trigger click on action item button. On the extra large size.', async () => {
     const dropDownActions = [
       fakeAction(),
       fakeAction(),
@@ -67,6 +70,8 @@ describe('actions-panel', () => {
       },
     });
 
+    await flushPromises();
+
     const dropdownActionElements = wrapper.findAll('v-menu-stub button.actions-panel-item');
 
     expect(dropdownActionElements).toHaveLength(dropDownActions.length);
@@ -79,7 +84,7 @@ describe('actions-panel', () => {
     expect(secondAction.method).toBeCalledTimes(1);
   });
 
-  it('Method into list called after trigger click on action item button. On the large size.', () => {
+  it('Method into list called after trigger click on action item button. On the large size.', async () => {
     const action = fakeAction();
     const dropdownAction = fakeAction();
     const wrapper = factory({
@@ -92,6 +97,8 @@ describe('actions-panel', () => {
       },
     });
 
+    await flushPromises();
+
     const actionElements = wrapper.findAll('button.actions-panel-item');
 
     expect(actionElements).toHaveLength(2);
@@ -103,33 +110,37 @@ describe('actions-panel', () => {
     expect(dropdownAction.method).toBeCalledTimes(1);
   });
 
-  it('Renders `actions-panel` with default props correctly on the extra large size', () => {
+  it('Renders `actions-panel` with default props correctly on the extra large size', async () => {
     const wrapper = snapshotFactory({
       mocks: {
         $windowSize: 'xl',
       },
     });
 
+    await flushPromises();
+
     const dropdownContent = wrapper.find('.v-menu__content');
 
     expect(wrapper.element).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
   });
 
-  it('Renders `actions-panel` with default props correctly on the large size', () => {
+  it('Renders `actions-panel` with default props correctly on the large size', async () => {
     const wrapper = snapshotFactory({
       mocks: {
         $windowSize: 'l',
       },
     });
 
+    await flushPromises();
+
     const dropdownContent = wrapper.find('.v-menu__content');
 
     expect(wrapper.element).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
   });
 
-  it('Renders `actions-panel` with actions correctly on the extra large size', () => {
+  it('Renders `actions-panel` with actions correctly on the extra large size', async () => {
     const wrapper = snapshotFactory({
       mocks: {
         $windowSize: 'xl',
@@ -139,13 +150,15 @@ describe('actions-panel', () => {
       },
     });
 
+    await flushPromises();
+
     const dropdownContent = wrapper.find('.v-menu__content');
 
     expect(wrapper.element).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
   });
 
-  it('Renders `actions-panel` with actions correctly on the large size', () => {
+  it('Renders `actions-panel` with actions correctly on the large size', async () => {
     const wrapper = snapshotFactory({
       mocks: {
         $windowSize: 'l',
@@ -155,13 +168,15 @@ describe('actions-panel', () => {
       },
     });
 
+    await flushPromises();
+
     const dropdownContent = wrapper.find('.v-menu__content');
 
     expect(wrapper.element).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
   });
 
-  it('Renders `actions-panel` with dropdown actions correctly on the extra large size', () => {
+  it('Renders `actions-panel` with dropdown actions correctly on the extra large size', async () => {
     const wrapper = snapshotFactory({
       mocks: {
         $windowSize: 'xl',
@@ -171,13 +186,15 @@ describe('actions-panel', () => {
       },
     });
 
+    await flushPromises();
+
     const dropdownContent = wrapper.find('.v-menu__content');
 
     expect(wrapper.element).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
   });
 
-  it('Renders `actions-panel` with dropdown actions correctly on the large size', () => {
+  it('Renders `actions-panel` with dropdown actions correctly on the large size', async () => {
     const wrapper = snapshotFactory({
       mocks: {
         $windowSize: 'l',
@@ -189,11 +206,13 @@ describe('actions-panel', () => {
 
     const dropdownContent = wrapper.find('.v-menu__content');
 
+    await flushPromises();
+
     expect(wrapper.element).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
   });
 
-  it('Renders `actions-panel` with dropdown actions correctly on the tablet size', () => {
+  it('Renders `actions-panel` with dropdown actions correctly on the tablet size', async () => {
     const wrapper = snapshotFactory({
       mocks: {
         $windowSize: 't',
@@ -203,13 +222,15 @@ describe('actions-panel', () => {
       },
     });
 
+    await flushPromises();
+
     const dropdownContent = wrapper.find('.v-menu__content');
 
     expect(wrapper.element).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
   });
 
-  it('Renders `actions-panel` with dropdown actions correctly on the mobile size', () => {
+  it('Renders `actions-panel` with dropdown actions correctly on the mobile size', async () => {
     const wrapper = snapshotFactory({
       mocks: {
         $windowSize: 'm',
@@ -218,6 +239,8 @@ describe('actions-panel', () => {
         dropDownActions: [editAction, deleteAction],
       },
     });
+
+    await flushPromises();
 
     const dropdownContent = wrapper.find('.v-menu__content');
 
