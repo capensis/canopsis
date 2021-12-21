@@ -3,7 +3,6 @@ package entityservice
 import (
 	"encoding/json"
 	"errors"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -346,6 +345,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 	ctx := c.Request.Context()
 	response := ar.NewArray()
 	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
+	serviceIDs := make([]string, 0, len(rawObjects))
 
 	for idx, rawObject := range rawObjects {
 		object, err := rawObject.Object()
@@ -381,17 +381,18 @@ func (a *api) BulkCreate(c *gin.Context) {
 			})
 		}
 
-		a.metricMetaUpdater.UpdateById(ctx, service.ID)
-
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, service.ID, http.StatusOK, rawObject, nil))
 		logEntries = append(logEntries, logger.LogEntry{
 			Action:    logger.ActionCreate,
 			ValueType: logger.ValueTypeEntityService,
 			ValueID:   service.ID,
 		})
+		serviceIDs = append(serviceIDs, service.ID)
 	}
 
-	err = a.actionLogger.BulkAction(ctx, c.MustGet(auth.UserKey).(string), logEntries)
+	a.metricMetaUpdater.UpdateById(ctx, serviceIDs...)
+
+	err = a.actionLogger.BulkAction(c, logEntries)
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
@@ -435,6 +436,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 	ctx := c.Request.Context()
 	response := ar.NewArray()
 	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
+	serviceIDs := make([]string, 0, len(rawObjects))
 
 	for idx, rawObject := range rawObjects {
 		object, err := rawObject.Object()
@@ -476,17 +478,18 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			})
 		}
 
-		a.metricMetaUpdater.UpdateById(ctx, service.ID)
-
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, service.ID, http.StatusOK, rawObject, nil))
 		logEntries = append(logEntries, logger.LogEntry{
 			Action:    logger.ActionUpdate,
 			ValueType: logger.ValueTypeEntityService,
 			ValueID:   service.ID,
 		})
+		serviceIDs = append(serviceIDs, service.ID)
 	}
 
-	err = a.actionLogger.BulkAction(ctx, c.MustGet(auth.UserKey).(string), logEntries)
+	a.metricMetaUpdater.UpdateById(ctx, serviceIDs...)
+
+	err = a.actionLogger.BulkAction(c, logEntries)
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
@@ -530,6 +533,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 	ctx := c.Request.Context()
 	response := ar.NewArray()
 	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
+	serviceIDs := make([]string, 0, len(rawObjects))
 
 	for idx, rawObject := range rawObjects {
 		object, err := rawObject.Object()
@@ -569,17 +573,18 @@ func (a *api) BulkDelete(c *gin.Context) {
 			ServiceAlarm:            alarm,
 		})
 
-		a.metricMetaUpdater.DeleteById(ctx, request.ID)
-
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))
 		logEntries = append(logEntries, logger.LogEntry{
 			Action:    logger.ActionDelete,
 			ValueType: logger.ValueTypeEntityService,
 			ValueID:   request.ID,
 		})
+		serviceIDs = append(serviceIDs, request.ID)
 	}
 
-	err = a.actionLogger.BulkAction(ctx, c.MustGet(auth.UserKey).(string), logEntries)
+	a.metricMetaUpdater.DeleteById(ctx, serviceIDs...)
+
+	err = a.actionLogger.BulkAction(c, logEntries)
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}

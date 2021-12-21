@@ -43,6 +43,32 @@ Feature: Bulk update a scenario
           }
         ]
       },
+      {
+        "_id": "test-scenario-to-bulk-update-1",
+        "name": "test-scenario-to-bulk-update-1-name-twice",
+        "enabled": true,
+        "priority": 200010,
+        "triggers": ["create","pbhenter"],
+        "actions": [
+          {
+            "alarm_patterns": [
+              {
+                "_id": "test-scenario-to-bulk-update-1-alarm-updated"
+              }
+            ],
+            "type": "snooze",
+            "parameters": {
+              "output": "test snooze updated",
+              "duration": {
+                "value": 3,
+                "unit": "s"
+              }
+            },
+            "drop_scenario_if_not_matched": false,
+            "emit_trigger": false
+          }
+        ]
+      },
       {},
       {
         "name": "test-scenario-to-check-unique-name-name",
@@ -349,6 +375,36 @@ Feature: Bulk update a scenario
         "item": {
           "_id": "test-scenario-to-bulk-update-1",
           "name": "test-scenario-to-bulk-update-1-name",
+          "enabled": true,
+          "priority": 200010,
+          "triggers": ["create","pbhenter"],
+          "actions": [
+            {
+              "alarm_patterns": [
+                {
+                  "_id": "test-scenario-to-bulk-update-1-alarm-updated"
+                }
+              ],
+              "type": "snooze",
+              "parameters": {
+                "output": "test snooze updated",
+                "duration": {
+                  "value": 3,
+                  "unit": "s"
+                }
+              },
+              "drop_scenario_if_not_matched": false,
+              "emit_trigger": false
+            }
+          ]
+        }
+      },
+      {
+        "id": "test-scenario-to-bulk-update-1",
+        "status": 200,
+        "item": {
+          "_id": "test-scenario-to-bulk-update-1",
+          "name": "test-scenario-to-bulk-update-1-name-twice",
           "enabled": true,
           "priority": 200010,
           "triggers": ["create","pbhenter"],
@@ -785,7 +841,7 @@ Feature: Bulk update a scenario
       "data": [
         {
           "_id": "test-scenario-to-bulk-update-1",
-          "name": "test-scenario-to-bulk-update-1-name",
+          "name": "test-scenario-to-bulk-update-1-name-twice",
           "author": "root",
           "enabled": true,
           "priority": 200010,

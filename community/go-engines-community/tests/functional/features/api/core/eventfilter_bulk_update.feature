@@ -47,6 +47,36 @@ Feature: Bulk update eventfilters
         "on_failure": "pass"
       },
       {
+        "_id": "test-eventfilter-to-bulk-update-1",
+        "description": "test bulk update 1 twice",
+        "type": "enrichment",
+        "patterns": [
+          {
+            "connector": "test-eventfilter-to-bulk-update-1-pattern"
+          }
+        ],
+        "priority": 0,
+        "enabled": true,
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "external_data": {
+          "clear": "sky",
+          "type": "no",
+          "arr": [
+            1,
+            2,
+            3
+          ]
+        },
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      {
         "type": "unspecified"
       },
       {
@@ -224,6 +254,40 @@ Feature: Bulk update eventfilters
         "item": {
           "_id": "test-eventfilter-to-bulk-update-1",
           "description": "test bulk update 1",
+          "type": "enrichment",
+          "patterns": [
+            {
+              "connector": "test-eventfilter-to-bulk-update-1-pattern"
+            }
+          ],
+          "priority": 0,
+          "enabled": true,
+          "actions": [
+            {
+              "type": "set_field",
+              "name": "connector",
+              "value": "kafka_connector"
+            }
+          ],
+          "external_data": {
+            "clear": "sky",
+            "type": "no",
+            "arr": [
+              1,
+              2,
+              3
+            ]
+          },
+          "on_success": "pass",
+          "on_failure": "pass"
+        }
+      },
+      {
+        "id": "test-eventfilter-to-bulk-update-1",
+        "status": 200,
+        "item": {
+          "_id": "test-eventfilter-to-bulk-update-1",
+          "description": "test bulk update 1 twice",
           "type": "enrichment",
           "patterns": [
             {
@@ -481,7 +545,7 @@ Feature: Bulk update eventfilters
         {
           "_id": "test-eventfilter-to-bulk-update-1",
           "author": "root",
-          "description": "test bulk update 1",
+          "description": "test bulk update 1 twice",
           "type": "enrichment",
           "patterns": [
             {

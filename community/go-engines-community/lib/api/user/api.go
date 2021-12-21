@@ -2,7 +2,6 @@ package user
 
 import (
 	"encoding/json"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -261,6 +260,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 	ctx := c.Request.Context()
 	response := ar.NewArray()
 	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
+	userIds := make([]string, 0, len(rawObjects))
 
 	for idx, rawObject := range rawObjects {
 		object, err := rawObject.Object()
@@ -294,9 +294,12 @@ func (a *api) BulkCreate(c *gin.Context) {
 			ValueType: logger.ValueTypeUser,
 			ValueID:   user.ID,
 		})
+		userIds = append(userIds, user.ID)
 	}
 
-	err = a.actionLogger.BulkAction(ctx, c.MustGet(auth.UserKey).(string), logEntries)
+	a.metricMetaUpdater.UpdateById(c.Request.Context(), userIds...)
+
+	err = a.actionLogger.BulkAction(c, logEntries)
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
@@ -340,6 +343,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 	ctx := c.Request.Context()
 	response := ar.NewArray()
 	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
+	userIds := make([]string, 0, len(rawObjects))
 
 	for idx, rawObject := range rawObjects {
 		object, err := rawObject.Object()
@@ -378,9 +382,12 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			ValueType: logger.ValueTypeUser,
 			ValueID:   user.ID,
 		})
+		userIds = append(userIds, user.ID)
 	}
 
-	err = a.actionLogger.BulkAction(ctx, c.MustGet(auth.UserKey).(string), logEntries)
+	a.metricMetaUpdater.UpdateById(c.Request.Context(), userIds...)
+
+	err = a.actionLogger.BulkAction(c, logEntries)
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
@@ -424,6 +431,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 	ctx := c.Request.Context()
 	response := ar.NewArray()
 	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
+	userIds := make([]string, 0, len(rawObjects))
 
 	for idx, rawObject := range rawObjects {
 		object, err := rawObject.Object()
@@ -462,9 +470,12 @@ func (a *api) BulkDelete(c *gin.Context) {
 			ValueType: logger.ValueTypeUser,
 			ValueID:   request.ID,
 		})
+		userIds = append(userIds, request.ID)
 	}
 
-	err = a.actionLogger.BulkAction(ctx, c.MustGet(auth.UserKey).(string), logEntries)
+	a.metricMetaUpdater.DeleteById(c.Request.Context(), userIds...)
+
+	err = a.actionLogger.BulkAction(c, logEntries)
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}

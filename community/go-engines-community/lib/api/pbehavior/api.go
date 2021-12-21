@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/valyala/fastjson"
 	"net/http"
@@ -560,7 +559,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 		PbehaviorIds: ids,
 	})
 
-	err = a.actionLogger.BulkAction(ctx, c.MustGet(auth.UserKey).(string), logEntries)
+	err = a.actionLogger.BulkAction(c, logEntries)
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
@@ -661,7 +660,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		PbehaviorIds: ids,
 	})
 
-	err = a.actionLogger.BulkAction(ctx, c.MustGet(auth.UserKey).(string), logEntries)
+	err = a.actionLogger.BulkAction(c, logEntries)
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
@@ -751,7 +750,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 		PbehaviorIds: ids,
 	})
 
-	err = a.actionLogger.BulkAction(ctx, c.MustGet(auth.UserKey).(string), logEntries)
+	err = a.actionLogger.BulkAction(c, logEntries)
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}

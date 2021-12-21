@@ -47,6 +47,36 @@ Feature: Bulk create eventfilters
         "on_failure": "pass"
       },
       {
+        "_id": "test-eventfilter-bulk-create-1",
+        "description": "test bulk create 1",
+        "type": "enrichment",
+        "patterns": [
+          {
+            "connector": "test-eventfilter-bulk-create-1-pattern"
+          }
+        ],
+        "priority": 0,
+        "enabled": true,
+        "actions": [
+          {
+            "type": "set_field",
+            "name": "connector",
+            "value": "kafka_connector"
+          }
+        ],
+        "external_data": {
+          "clear": "sky",
+          "type": "no",
+          "arr": [
+            1,
+            2,
+            3
+          ]
+        },
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      {
         "type": "unspecified"
       },
       {
@@ -253,6 +283,42 @@ Feature: Bulk create eventfilters
           },
           "on_success": "pass",
           "on_failure": "pass"
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "_id": "test-eventfilter-bulk-create-1",
+          "description": "test bulk create 1",
+          "type": "enrichment",
+          "patterns": [
+            {
+              "connector": "test-eventfilter-bulk-create-1-pattern"
+            }
+          ],
+          "priority": 0,
+          "enabled": true,
+          "actions": [
+            {
+              "type": "set_field",
+              "name": "connector",
+              "value": "kafka_connector"
+            }
+          ],
+          "external_data": {
+            "clear": "sky",
+            "type": "no",
+            "arr": [
+              1,
+              2,
+              3
+            ]
+          },
+          "on_success": "pass",
+          "on_failure": "pass"
+        },
+        "errors": {
+          "_id": "ID already exists."
         }
       },
       {
