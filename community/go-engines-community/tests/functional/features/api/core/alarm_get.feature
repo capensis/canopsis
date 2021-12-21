@@ -48,7 +48,6 @@ Feature: Get alarms
           },
           "impact_state": 1,
           "infos": {},
-          "links": null,
           "t": 1597030222,
           "v": {
             "ack": {
@@ -145,7 +144,6 @@ Feature: Get alarms
           },
           "impact_state": 1,
           "infos": {},
-          "links": null,
           "t": 1597030220,
           "v": {
             "children": [],
@@ -225,7 +223,6 @@ Feature: Get alarms
           },
           "impact_state": 1,
           "infos": {},
-          "links": null,
           "t": 1597030219,
           "v": {
             "children": [],
@@ -348,7 +345,6 @@ Feature: Get alarms
           },
           "impact_state": 3,
           "infos": {},
-          "links": null,
           "t": 1596942720,
           "v": {
             "children": [],
