@@ -33,6 +33,22 @@ Feature: Bulk update users
         }
       },
       {
+        "_id": "test-user-to-bulk-update-1",
+        "name": "test-user-to-bulk-update-1-updated",
+        "firstname": "test-user-to-bulk-update-1-firstname-updated-twice",
+        "lastname": "test-user-to-bulk-update-1-lastname-updated",
+        "email": "test-user-to-bulk-update-1-email-updated@canopsis.net",
+        "role": "test-role-to-edit-user",
+        "ui_language": "fr",
+        "ui_groups_navigation_type": "top-bar",
+        "enable": true,
+        "password": "test-password-updated",
+        "defaultview": "test-view-to-edit-user",
+        "ui_tours": {
+          "test-tour-to-bulk-update-user-1": true
+        }
+      },
+      {
         "role": "not-exist",
         "defaultview": "not-exist"
       },
@@ -72,6 +88,26 @@ Feature: Bulk update users
           "_id": "test-user-to-bulk-update-1",
           "name": "test-user-to-bulk-update-1-updated",
           "firstname": "test-user-to-bulk-update-1-firstname-updated",
+          "lastname": "test-user-to-bulk-update-1-lastname-updated",
+          "email": "test-user-to-bulk-update-1-email-updated@canopsis.net",
+          "role": "test-role-to-edit-user",
+          "ui_language": "fr",
+          "ui_groups_navigation_type": "top-bar",
+          "enable": true,
+          "password": "test-password-updated",
+          "defaultview": "test-view-to-edit-user",
+          "ui_tours": {
+            "test-tour-to-bulk-update-user-1": true
+          }
+        }
+      },
+      {
+        "id": "test-user-to-bulk-update-1",
+        "status": 200,
+        "item": {
+          "_id": "test-user-to-bulk-update-1",
+          "name": "test-user-to-bulk-update-1-updated",
+          "firstname": "test-user-to-bulk-update-1-firstname-updated-twice",
           "lastname": "test-user-to-bulk-update-1-lastname-updated",
           "email": "test-user-to-bulk-update-1-email-updated@canopsis.net",
           "role": "test-role-to-edit-user",
@@ -164,7 +200,7 @@ Feature: Bulk update users
           "email": "test-user-to-bulk-update-1-email-updated@canopsis.net",
           "enable": true,
           "external_id": "",
-          "firstname": "test-user-to-bulk-update-1-firstname-updated",
+          "firstname": "test-user-to-bulk-update-1-firstname-updated-twice",
           "lastname": "test-user-to-bulk-update-1-lastname-updated",
           "name": "test-user-to-bulk-update-1-updated",
           "role": {

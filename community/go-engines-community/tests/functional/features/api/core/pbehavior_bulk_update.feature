@@ -41,6 +41,30 @@ Feature: Bulk update a pbehaviors
         "exceptions": ["test-exception-to-pbh-edit"]
       },
       {
+        "_id": "test-pbehavior-to-bulk-update-1",
+        "enabled": true,
+        "name": "test-pbehavior-to-bulk-update-1-name-updated-twice",
+        "tstart": 1591172881,
+        "tstop": 1591536400,
+        "type": "test-type-to-pbh-edit-1",
+        "reason": "test-reason-1",
+        "filter":{
+          "$and":[
+            {
+              "name": "test filter"
+            }
+          ]
+        },
+        "exdates": [
+          {
+            "begin": 1591164001,
+            "end": 1591167601,
+            "type": "test-type-to-pbh-edit-1"
+          }
+        ],
+        "exceptions": ["test-exception-to-pbh-edit"]
+      },
+      {
         "_id": "test-pbehavior-not-found",
         "enabled": true,
         "name": "test-pbehavior-not-found-name",
@@ -98,6 +122,34 @@ Feature: Bulk update a pbehaviors
           "_id": "test-pbehavior-to-bulk-update-1",
           "enabled": true,
           "name": "test-pbehavior-to-bulk-update-1-name-updated",
+          "tstart": 1591172881,
+          "tstop": 1591536400,
+          "type": "test-type-to-pbh-edit-1",
+          "reason": "test-reason-1",
+          "filter":{
+            "$and":[
+              {
+                "name": "test filter"
+              }
+            ]
+          },
+          "exdates": [
+            {
+              "begin": 1591164001,
+              "end": 1591167601,
+              "type": "test-type-to-pbh-edit-1"
+            }
+          ],
+          "exceptions": ["test-exception-to-pbh-edit"]
+        }
+      },
+      {
+        "status": 200,
+        "id": "test-pbehavior-to-bulk-update-1",
+        "item": {
+          "_id": "test-pbehavior-to-bulk-update-1",
+          "enabled": true,
+          "name": "test-pbehavior-to-bulk-update-1-name-updated-twice",
           "tstart": 1591172881,
           "tstop": 1591536400,
           "type": "test-type-to-pbh-edit-1",
@@ -204,7 +256,7 @@ Feature: Bulk update a pbehaviors
         {
           "_id": "test-pbehavior-to-bulk-update-1",
           "enabled": true,
-          "name": "test-pbehavior-to-bulk-update-1-name-updated",
+          "name": "test-pbehavior-to-bulk-update-1-name-updated-twice",
           "tstart": 1591172881,
           "tstop": 1591536400,
           "type": {

@@ -58,6 +58,48 @@ Feature: Bulk update entityservices
           }
         ]
       },
+      {
+        "_id": "test-entityservice-to-bulk-update-1",
+        "name": "test-entityservice-to-bulk-update-1-name-twice",
+        "output_template": "test-entityservice-to-bulk-update-1-output-updated",
+        "category": "test-category-to-entityservice-edit",
+        "impact_level": 2,
+        "enabled": true,
+        "entity_patterns": [{"name": "test-entityservice-to-bulk-update-1-pattern-updated"}],
+        "sli_avail_state": 1,
+        "infos": [
+          {
+            "description": "test-entityservice-to-bulk-update-1-info-1-description",
+            "name": "test-entityservice-to-bulk-update-1-info-1-name",
+            "value": "test-entityservice-to-bulk-update-1-info-1-value"
+          },
+          {
+            "description": "test-entityservice-to-bulk-update-1-info-2-description",
+            "name": "test-entityservice-to-bulk-update-1-info-2-name",
+            "value": false
+          },
+          {
+            "description": "test-entityservice-to-bulk-update-1-info-3-description",
+            "name": "test-entityservice-to-bulk-update-1-info-3-name",
+            "value": 1022
+          },
+          {
+            "description": "test-entityservice-to-bulk-update-1-info-4-description",
+            "name": "test-entityservice-to-bulk-update-1-info-4-name",
+            "value": 10.45
+          },
+          {
+            "description": "test-entityservice-to-bulk-update-1-info-5-description",
+            "name": "test-entityservice-to-bulk-update-1-info-5-name",
+            "value": null
+          },
+          {
+            "description": "test-entityservice-to-bulk-update-1-info-6-description",
+            "name": "test-entityservice-to-bulk-update-1-info-6-name",
+            "value": ["test-entityservice-to-bulk-update-1-info-6-value", false, 1022, 10.45, null]
+          }
+        ]
+      },
       {},
       {
         "category": "test-category-not-exist",
@@ -124,6 +166,52 @@ Feature: Bulk update entityservices
         "item": {
           "_id": "test-entityservice-to-bulk-update-1",
           "name": "test-entityservice-to-bulk-update-1-name",
+          "output_template": "test-entityservice-to-bulk-update-1-output-updated",
+          "category": "test-category-to-entityservice-edit",
+          "impact_level": 2,
+          "enabled": true,
+          "entity_patterns": [{"name": "test-entityservice-to-bulk-update-1-pattern-updated"}],
+          "sli_avail_state": 1,
+          "infos": [
+            {
+              "description": "test-entityservice-to-bulk-update-1-info-1-description",
+              "name": "test-entityservice-to-bulk-update-1-info-1-name",
+              "value": "test-entityservice-to-bulk-update-1-info-1-value"
+            },
+            {
+              "description": "test-entityservice-to-bulk-update-1-info-2-description",
+              "name": "test-entityservice-to-bulk-update-1-info-2-name",
+              "value": false
+            },
+            {
+              "description": "test-entityservice-to-bulk-update-1-info-3-description",
+              "name": "test-entityservice-to-bulk-update-1-info-3-name",
+              "value": 1022
+            },
+            {
+              "description": "test-entityservice-to-bulk-update-1-info-4-description",
+              "name": "test-entityservice-to-bulk-update-1-info-4-name",
+              "value": 10.45
+            },
+            {
+              "description": "test-entityservice-to-bulk-update-1-info-5-description",
+              "name": "test-entityservice-to-bulk-update-1-info-5-name",
+              "value": null
+            },
+            {
+              "description": "test-entityservice-to-bulk-update-1-info-6-description",
+              "name": "test-entityservice-to-bulk-update-1-info-6-name",
+              "value": ["test-entityservice-to-bulk-update-1-info-6-value", false, 1022, 10.45, null]
+            }
+          ]
+        }
+      },
+      {
+        "id": "test-entityservice-to-bulk-update-1",
+        "status": 200,
+        "item": {
+          "_id": "test-entityservice-to-bulk-update-1",
+          "name": "test-entityservice-to-bulk-update-1-name-twice",
           "output_template": "test-entityservice-to-bulk-update-1-output-updated",
           "category": "test-category-to-entityservice-edit",
           "impact_level": 2,
@@ -308,7 +396,7 @@ Feature: Bulk update entityservices
         }
       },
       "measurements": null,
-      "name": "test-entityservice-to-bulk-update-1-name",
+      "name": "test-entityservice-to-bulk-update-1-name-twice",
       "output_template": "test-entityservice-to-bulk-update-1-output-updated",
       "sli_avail_state": 1,
       "type": "service"

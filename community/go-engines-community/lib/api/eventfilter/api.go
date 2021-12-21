@@ -2,7 +2,6 @@ package eventfilter
 
 import (
 	"encoding/json"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/valyala/fastjson"
@@ -283,7 +282,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 		})
 	}
 
-	err = a.actionLogger.BulkAction(ctx, c.MustGet(auth.UserKey).(string), logEntries)
+	err = a.actionLogger.BulkAction(c, logEntries)
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
@@ -369,7 +368,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		})
 	}
 
-	err = a.actionLogger.BulkAction(ctx, c.MustGet(auth.UserKey).(string), logEntries)
+	err = a.actionLogger.BulkAction(c, logEntries)
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
@@ -453,7 +452,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 		})
 	}
 
-	err = a.actionLogger.BulkAction(ctx, c.MustGet(auth.UserKey).(string), logEntries)
+	err = a.actionLogger.BulkAction(c, logEntries)
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}

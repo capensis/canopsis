@@ -29,6 +29,18 @@ Feature: Bulk create users
         "password": "test-password"
       },
       {
+        "name": "test-user-to-bulk-create-1-name",
+        "firstname": "test-user-to-bulk-create-1-firstname",
+        "lastname": "test-user-to-bulk-create-1-lastname",
+        "email": "test-user-to-bulk-create-1-email@canopsis.net",
+        "role": "test-role-to-edit-user",
+        "ui_language": "fr",
+        "ui_groups_navigation_type": "top-bar",
+        "enable": true,
+        "defaultview": "test-view-to-edit-user",
+        "password": "test-password"
+      },
+      {
         "role": "not-exist",
         "defaultview": "not-exist"
       },
@@ -71,6 +83,24 @@ Feature: Bulk create users
           "enable": true,
           "defaultview": "test-view-to-edit-user",
           "password": "test-password"
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "name": "test-user-to-bulk-create-1-name",
+          "firstname": "test-user-to-bulk-create-1-firstname",
+          "lastname": "test-user-to-bulk-create-1-lastname",
+          "email": "test-user-to-bulk-create-1-email@canopsis.net",
+          "role": "test-role-to-edit-user",
+          "ui_language": "fr",
+          "ui_groups_navigation_type": "top-bar",
+          "enable": true,
+          "defaultview": "test-view-to-edit-user",
+          "password": "test-password"
+        },
+        "errors": {
+          "name": "Name already exists."
         }
       },
       {

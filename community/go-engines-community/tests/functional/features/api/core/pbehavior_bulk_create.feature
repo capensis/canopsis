@@ -40,6 +40,30 @@ Feature: Bulk create pbehaviors
         ],
         "exceptions": ["test-exception-to-pbh-edit"]
       },
+      {
+        "_id": "test-pbehavior-to-bulk-create-1-1",
+        "enabled": true,
+        "name": "test-pbehavior-to-bulk-create-1-1-name",
+        "tstart": 1591172881,
+        "tstop": 1591536400,
+        "type": "test-type-to-pbh-edit-1",
+        "reason": "test-reason-1",
+        "filter": {
+          "$and": [
+            {
+              "name": "test-pbehavior-to-bulk-create-1-1-filter"
+            }
+          ]
+        },
+        "exdates": [
+          {
+            "begin": 1591164001,
+            "end": 1591167601,
+            "type": "test-type-to-pbh-edit-1"
+          }
+        ],
+        "exceptions": ["test-exception-to-pbh-edit"]
+      },
       {},
       {
         "_id": "test-pbehavior-to-check-unique"
@@ -104,6 +128,36 @@ Feature: Bulk create pbehaviors
             }
           ],
           "exceptions": ["test-exception-to-pbh-edit"]
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "_id": "test-pbehavior-to-bulk-create-1-1",
+          "enabled": true,
+          "name": "test-pbehavior-to-bulk-create-1-1-name",
+          "tstart": 1591172881,
+          "tstop": 1591536400,
+          "type": "test-type-to-pbh-edit-1",
+          "reason": "test-reason-1",
+          "filter": {
+            "$and": [
+              {
+                "name": "test-pbehavior-to-bulk-create-1-1-filter"
+              }
+            ]
+          },
+          "exdates": [
+            {
+              "begin": 1591164001,
+              "end": 1591167601,
+              "type": "test-type-to-pbh-edit-1"
+            }
+          ],
+          "exceptions": ["test-exception-to-pbh-edit"]
+        },
+        "errors": {
+          "_id": "ID already exists."
         }
       },
       {

@@ -1,7 +1,6 @@
 package logger
 
 import (
-	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"math"
@@ -62,7 +61,7 @@ const (
 
 type ActionLogger interface {
 	Action(c *gin.Context, logEntry LogEntry) error
-	BulkAction(ctx context.Context, userID string, logEntries []LogEntry) error
+	BulkAction(c *gin.Context, logEntries []LogEntry) error
 	Err(err error, msg string)
 }
 
@@ -112,12 +111,14 @@ func (l *logger) Action(c *gin.Context, logEntry LogEntry) error {
 	return err
 }
 
-func (l *logger) BulkAction(ctx context.Context, userID string, logEntries []LogEntry) error {
+func (l *logger) BulkAction(c *gin.Context, logEntries []LogEntry) error {
 	if len(logEntries) == 0 {
 		return nil
 	}
 
 	var err error
+	userID := c.MustGet(auth.UserKey).(string)
+	ctx := c.Request.Context()
 
 	writeModels := make([]mongodriver.WriteModel, 0, int(math.Min(float64(canopsis.DefaultBulkSize), float64(len(logEntries)))))
 	now := time.Now()
@@ -132,6 +133,14 @@ func (l *logger) BulkAction(ctx context.Context, userID string, logEntries []Log
 			writeModels,
 			mongodriver.NewInsertOneModel().SetDocument(e),
 		)
+
+		l.zLog.Info().
+			Str("action", e.Action).
+			Str("value_type", e.ValueType).
+			Str("value_id", e.ValueID).
+			Str("author", e.Author).
+			Str("time", e.Time.String()).
+			Msg("ActionLog: ")
 
 		if len(writeModels) == canopsis.DefaultBulkSize {
 			_, err = l.dbCollection.BulkWrite(ctx, writeModels)

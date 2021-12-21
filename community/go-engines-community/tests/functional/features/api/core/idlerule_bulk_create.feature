@@ -51,6 +51,40 @@ Feature: Bulk create idlerules
         "disable_during_periods": ["pause"]
       },
       {
+        "_id": "test-idle-rule-to-bulk-create-1",
+        "name": "test-idle-rule-to-bulk-create-1-name",
+        "description": "test-idle-rule-to-bulk-create-1-description",
+        "type": "alarm",
+        "alarm_condition": "last_event",
+        "enabled": true,
+        "priority": 20,
+        "duration": {
+          "value": 3,
+          "unit": "s"
+        },
+        "alarm_patterns": [
+          {
+            "_id": "test-idle-rule-to-bulk-create-1-alarm"
+          }
+        ],
+        "entity_patterns": [
+          {
+            "name": "test-idle-rule-to-bulk-create-1-resource"
+          }
+        ],
+        "operation": {
+          "type": "snooze",
+          "parameters": {
+            "output": "test-idle-rule-to-bulk-create-1-operation-output",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          }
+        },
+        "disable_during_periods": ["pause"]
+      },
+      {
         "_id": "test-idle-rule-to-bulk-create-2",
         "name": "test-idle-rule-to-bulk-create-2-name",
         "description": "test-idle-rule-to-bulk-create-2-description",
@@ -157,6 +191,46 @@ Feature: Bulk create idlerules
             }
           },
           "disable_during_periods": ["pause"]
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "_id": "test-idle-rule-to-bulk-create-1",
+          "name": "test-idle-rule-to-bulk-create-1-name",
+          "description": "test-idle-rule-to-bulk-create-1-description",
+          "type": "alarm",
+          "alarm_condition": "last_event",
+          "enabled": true,
+          "priority": 20,
+          "duration": {
+            "value": 3,
+            "unit": "s"
+          },
+          "alarm_patterns": [
+            {
+              "_id": "test-idle-rule-to-bulk-create-1-alarm"
+            }
+          ],
+          "entity_patterns": [
+            {
+              "name": "test-idle-rule-to-bulk-create-1-resource"
+            }
+          ],
+          "operation": {
+            "type": "snooze",
+            "parameters": {
+              "output": "test-idle-rule-to-bulk-create-1-operation-output",
+              "duration": {
+                "value": 3,
+                "unit": "s"
+              }
+            }
+          },
+          "disable_during_periods": ["pause"]
+        },
+        "errors": {
+          "_id": "ID already exists."
         }
       },
       {

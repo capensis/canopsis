@@ -58,6 +58,48 @@ Feature: Bulk create entityservices
           }
         ]
       },
+      {
+        "_id": "test-entityservice-to-bulk-create-1",
+        "name": "test-entityservice-to-bulk-create-1-name",
+        "output_template": "test-entityservice-to-bulk-create-1-output",
+        "category": "test-category-to-entityservice-edit",
+        "impact_level": 1,
+        "enabled": true,
+        "entity_patterns": [{"name": "test-entityservice-to-bulk-create-1-pattern"}],
+        "sli_avail_state": 1,
+        "infos": [
+          {
+            "description": "test-entityservice-to-bulk-create-info-1-description",
+            "name": "test-entityservice-to-bulk-create-info-1-name",
+            "value": "test-entityservice-to-bulk-create-info-1-value"
+          },
+          {
+            "description": "test-entityservice-to-bulk-create-info-2-description",
+            "name": "test-entityservice-to-bulk-create-info-2-name",
+            "value": false
+          },
+          {
+            "description": "test-entityservice-to-bulk-create-info-3-description",
+            "name": "test-entityservice-to-bulk-create-info-3-name",
+            "value": 1022
+          },
+          {
+            "description": "test-entityservice-to-bulk-create-info-4-description",
+            "name": "test-entityservice-to-bulk-create-info-4-name",
+            "value": 10.45
+          },
+          {
+            "description": "test-entityservice-to-bulk-create-info-5-description",
+            "name": "test-entityservice-to-bulk-create-info-5-name",
+            "value": null
+          },
+          {
+            "description": "test-entityservice-to-bulk-create-info-6-description",
+            "name": "test-entityservice-to-bulk-create-info-6-name",
+            "value": ["test-entityservice-to-bulk-create-info-6-value", false, 1022, 10.45, null]
+          }
+        ]
+      },
       {},
       {
         "category": "test-category-not-exist",
@@ -162,6 +204,54 @@ Feature: Bulk create entityservices
               "value": ["test-entityservice-to-bulk-create-info-6-value", false, 1022, 10.45, null]
             }
           ]
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "_id": "test-entityservice-to-bulk-create-1",
+          "name": "test-entityservice-to-bulk-create-1-name",
+          "output_template": "test-entityservice-to-bulk-create-1-output",
+          "category": "test-category-to-entityservice-edit",
+          "impact_level": 1,
+          "enabled": true,
+          "entity_patterns": [{"name": "test-entityservice-to-bulk-create-1-pattern"}],
+          "sli_avail_state": 1,
+          "infos": [
+            {
+              "description": "test-entityservice-to-bulk-create-info-1-description",
+              "name": "test-entityservice-to-bulk-create-info-1-name",
+              "value": "test-entityservice-to-bulk-create-info-1-value"
+            },
+            {
+              "description": "test-entityservice-to-bulk-create-info-2-description",
+              "name": "test-entityservice-to-bulk-create-info-2-name",
+              "value": false
+            },
+            {
+              "description": "test-entityservice-to-bulk-create-info-3-description",
+              "name": "test-entityservice-to-bulk-create-info-3-name",
+              "value": 1022
+            },
+            {
+              "description": "test-entityservice-to-bulk-create-info-4-description",
+              "name": "test-entityservice-to-bulk-create-info-4-name",
+              "value": 10.45
+            },
+            {
+              "description": "test-entityservice-to-bulk-create-info-5-description",
+              "name": "test-entityservice-to-bulk-create-info-5-name",
+              "value": null
+            },
+            {
+              "description": "test-entityservice-to-bulk-create-info-6-description",
+              "name": "test-entityservice-to-bulk-create-info-6-name",
+              "value": ["test-entityservice-to-bulk-create-info-6-value", false, 1022, 10.45, null]
+            }
+          ]
+        },
+        "errors": {
+          "_id": "ID already exists."
         }
       },
       {

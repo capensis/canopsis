@@ -50,6 +50,40 @@ Feature: Bulk update idlerules
         },
         "disable_during_periods": ["maintenance"]
       },
+      {
+        "_id": "test-idle-rule-to-bulk-update-1",
+        "name": "test-idle-rule-to-bulk-update-1-name-twice",
+        "description": "test-idle-rule-to-bulk-update-1-description",
+        "type": "alarm",
+        "alarm_condition": "last_event",
+        "enabled": true,
+        "priority": 30,
+        "duration": {
+          "value": 5,
+          "unit": "s"
+        },
+        "alarm_patterns": [
+          {
+            "_id": "test-idle-rule-to-bulk-update-1-alarm-updated"
+          }
+        ],
+        "entity_patterns": [
+          {
+            "name": "test-idle-rule-to-bulk-update-1-resource-updated"
+          }
+        ],
+        "operation": {
+          "type": "snooze",
+          "parameters": {
+            "output": "test-idle-rule-to-bulk-update-1-operation-output-updated",
+            "duration": {
+              "value": 5,
+              "unit": "s"
+            }
+          }
+        },
+        "disable_during_periods": ["maintenance"]
+      },
       {},
       {
         "type": "notexists"
@@ -109,6 +143,44 @@ Feature: Bulk update idlerules
         "item": {
           "_id": "test-idle-rule-to-bulk-update-1",
           "name": "test-idle-rule-to-bulk-update-1-name",
+          "description": "test-idle-rule-to-bulk-update-1-description",
+          "type": "alarm",
+          "alarm_condition": "last_event",
+          "enabled": true,
+          "priority": 30,
+          "duration": {
+            "value": 5,
+            "unit": "s"
+          },
+          "alarm_patterns": [
+            {
+              "_id": "test-idle-rule-to-bulk-update-1-alarm-updated"
+            }
+          ],
+          "entity_patterns": [
+            {
+              "name": "test-idle-rule-to-bulk-update-1-resource-updated"
+            }
+          ],
+          "operation": {
+            "type": "snooze",
+            "parameters": {
+              "output": "test-idle-rule-to-bulk-update-1-operation-output-updated",
+              "duration": {
+                "value": 5,
+                "unit": "s"
+              }
+            }
+          },
+          "disable_during_periods": ["maintenance"]
+        }
+      },
+      {
+        "id": "test-idle-rule-to-bulk-update-1",
+        "status": 200,
+        "item": {
+          "_id": "test-idle-rule-to-bulk-update-1",
+          "name": "test-idle-rule-to-bulk-update-1-name-twice",
           "description": "test-idle-rule-to-bulk-update-1-description",
           "type": "alarm",
           "alarm_condition": "last_event",
@@ -235,7 +307,7 @@ Feature: Bulk update idlerules
       "data": [
         {
           "_id": "test-idle-rule-to-bulk-update-1",
-          "name": "test-idle-rule-to-bulk-update-1-name",
+          "name": "test-idle-rule-to-bulk-update-1-name-twice",
           "description": "test-idle-rule-to-bulk-update-1-description",
           "author": "root",
           "type": "alarm",

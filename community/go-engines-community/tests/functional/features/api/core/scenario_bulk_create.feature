@@ -111,6 +111,101 @@ Feature: Bulk create scenarios
           }
         ]
       },
+      {
+        "_id": "bulk-create-scenario-1",
+        "name": "test-scenario-to-bulk-create-1-name",
+        "enabled": true,
+        "priority": 200000,
+        "triggers": ["create"],
+        "actions": [
+          {
+            "alarm_patterns": [
+              {
+                "_id": "test-scenario-to-bulk-create-1-action-1-alarm"
+              }
+            ],
+            "entity_patterns": [
+              {
+                "name": "test-scenario-to-bulk-create-1-action-1-resource"
+              }
+            ],
+            "type": "snooze",
+            "parameters": {
+              "output": "test-scenario-to-bulk-create-1-action-1-output",
+              "duration": {
+                "value": 3,
+                "unit": "s"
+              }
+            },
+            "drop_scenario_if_not_matched": false,
+            "emit_trigger": false
+          },
+          {
+            "alarm_patterns": [
+              {
+                "_id": "test-scenario-to-bulk-create-1-action-2-alarm"
+              }
+            ],
+            "entity_patterns": [
+              {
+                "name": "test-scenario-to-bulk-create-1-action-2-resource"
+              }
+            ],
+            "type": "webhook",
+            "parameters": {
+              "request": {
+                "method": "POST",
+                "url": "http://test-scenario-to-bulk-create-1-action-2-url.com",
+                "auth": {
+                  "username": "test-scenario-to-bulk-create-1-action-2-username",
+                  "password": "test-scenario-to-bulk-create-1-action-2-password"
+                },
+                "headers": {"Content-Type": "application/json"},
+                "payload": "{\"test-scenario-to-bulk-create-1-action-2-payload\": \"test-scenario-to-bulk-create-1-action-2-paload-value\"}"
+              },
+              "declare_ticket": {
+                "empty_response": false,
+                "is_regexp": false,
+                "ticket_id": "test-scenario-to-bulk-create-1-action-2-ticket",
+                "test-scenario-to-bulk-create-1-action-2-info": "test-scenario-to-bulk-create-1-action-2-info-value"
+              },
+              "retry_count": 3,
+              "retry_delay": {
+                "value": 3,
+                "unit": "s"
+              }
+            },
+            "drop_scenario_if_not_matched": false,
+            "emit_trigger": false
+          },
+          {
+            "alarm_patterns": [
+              {
+                "_id": "test-scenario-to-bulk-create-1-action-3-alarm"
+              }
+            ],
+            "entity_patterns": [
+              {
+                "name": "test-scenario-to-bulk-create-1-action-3-resource"
+              }
+            ],
+            "type": "pbehavior",
+            "parameters": {
+              "name": "test-scenario-to-bulk-create-1-action-3-name",
+              "rrule": "FREQ=DAILY",
+              "reason": "test-reason-to-edit-scenario",
+              "type": "test-type-to-edit-scenario",
+              "start_on_trigger": true,
+              "duration": {
+                "value": 3,
+                "unit": "s"
+              }
+            },
+            "drop_scenario_if_not_matched": false,
+            "emit_trigger": false
+          }
+        ]
+      },
       {},
       {
         "name": "test-scenario-to-check-unique-name-name",
@@ -608,6 +703,107 @@ Feature: Bulk create scenarios
               "emit_trigger": false
             }
           ]
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "_id": "bulk-create-scenario-1",
+          "name": "test-scenario-to-bulk-create-1-name",
+          "enabled": true,
+          "priority": 200000,
+          "triggers": ["create"],
+          "actions": [
+            {
+              "alarm_patterns": [
+                {
+                  "_id": "test-scenario-to-bulk-create-1-action-1-alarm"
+                }
+              ],
+              "entity_patterns": [
+                {
+                  "name": "test-scenario-to-bulk-create-1-action-1-resource"
+                }
+              ],
+              "type": "snooze",
+              "parameters": {
+                "output": "test-scenario-to-bulk-create-1-action-1-output",
+                "duration": {
+                  "value": 3,
+                  "unit": "s"
+                }
+              },
+              "drop_scenario_if_not_matched": false,
+              "emit_trigger": false
+            },
+            {
+              "alarm_patterns": [
+                {
+                  "_id": "test-scenario-to-bulk-create-1-action-2-alarm"
+                }
+              ],
+              "entity_patterns": [
+                {
+                  "name": "test-scenario-to-bulk-create-1-action-2-resource"
+                }
+              ],
+              "type": "webhook",
+              "parameters": {
+                "request": {
+                  "method": "POST",
+                  "url": "http://test-scenario-to-bulk-create-1-action-2-url.com",
+                  "auth": {
+                    "username": "test-scenario-to-bulk-create-1-action-2-username",
+                    "password": "test-scenario-to-bulk-create-1-action-2-password"
+                  },
+                  "headers": {"Content-Type": "application/json"},
+                  "payload": "{\"test-scenario-to-bulk-create-1-action-2-payload\": \"test-scenario-to-bulk-create-1-action-2-paload-value\"}"
+                },
+                "declare_ticket": {
+                  "empty_response": false,
+                  "is_regexp": false,
+                  "ticket_id": "test-scenario-to-bulk-create-1-action-2-ticket",
+                  "test-scenario-to-bulk-create-1-action-2-info": "test-scenario-to-bulk-create-1-action-2-info-value"
+                },
+                "retry_count": 3,
+                "retry_delay": {
+                  "value": 3,
+                  "unit": "s"
+                }
+              },
+              "drop_scenario_if_not_matched": false,
+              "emit_trigger": false
+            },
+            {
+              "alarm_patterns": [
+                {
+                  "_id": "test-scenario-to-bulk-create-1-action-3-alarm"
+                }
+              ],
+              "entity_patterns": [
+                {
+                  "name": "test-scenario-to-bulk-create-1-action-3-resource"
+                }
+              ],
+              "type": "pbehavior",
+              "parameters": {
+                "name": "test-scenario-to-bulk-create-1-action-3-name",
+                "rrule": "FREQ=DAILY",
+                "reason": "test-reason-to-edit-scenario",
+                "type": "test-type-to-edit-scenario",
+                "start_on_trigger": true,
+                "duration": {
+                  "value": 3,
+                  "unit": "s"
+                }
+              },
+              "drop_scenario_if_not_matched": false,
+              "emit_trigger": false
+            }
+          ]
+        },
+        "errors": {
+          "_id": "ID already exists."
         }
       },
       {

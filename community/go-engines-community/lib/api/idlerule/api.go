@@ -304,7 +304,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 		})
 	}
 
-	err = a.actionLogger.BulkAction(ctx, c.MustGet(auth.UserKey).(string), logEntries)
+	err = a.actionLogger.BulkAction(c, logEntries)
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
@@ -391,7 +391,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		})
 	}
 
-	err = a.actionLogger.BulkAction(ctx, c.MustGet(auth.UserKey).(string), logEntries)
+	err = a.actionLogger.BulkAction(c, logEntries)
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
@@ -475,7 +475,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 		})
 	}
 
-	err = a.actionLogger.BulkAction(ctx, c.MustGet(auth.UserKey).(string), logEntries)
+	err = a.actionLogger.BulkAction(c, logEntries)
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}

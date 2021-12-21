@@ -974,19 +974,19 @@ func RegisterRoutes(
 			{
 				scenarioRouter.POST(
 					"",
-					middleware.Authorize(authObjView, permCreate, enforcer),
+					middleware.Authorize(authObjAction, permCreate, enforcer),
 					middleware.PreProcessBulk(conf, true),
 					scenarioAPI.BulkCreate,
 				)
 				scenarioRouter.PUT(
 					"",
-					middleware.Authorize(authObjView, permUpdate, enforcer),
+					middleware.Authorize(authObjAction, permUpdate, enforcer),
 					middleware.PreProcessBulk(conf, true),
 					scenarioAPI.BulkUpdate,
 				)
 				scenarioRouter.DELETE(
 					"",
-					middleware.Authorize(authObjView, permDelete, enforcer),
+					middleware.Authorize(authObjAction, permDelete, enforcer),
 					middleware.PreProcessBulk(conf, true),
 					scenarioAPI.BulkDelete,
 				)
@@ -996,19 +996,19 @@ func RegisterRoutes(
 			{
 				idleruleRouter.POST(
 					"",
-					middleware.Authorize(authObjView, permCreate, enforcer),
+					middleware.Authorize(authObjIdleRule, permCreate, enforcer),
 					middleware.PreProcessBulk(conf, true),
 					idleRuleAPI.BulkCreate,
 				)
 				idleruleRouter.PUT(
 					"",
-					middleware.Authorize(authObjView, permUpdate, enforcer),
+					middleware.Authorize(authObjIdleRule, permUpdate, enforcer),
 					middleware.PreProcessBulk(conf, true),
 					idleRuleAPI.BulkUpdate,
 				)
 				idleruleRouter.DELETE(
 					"",
-					middleware.Authorize(authObjView, permDelete, enforcer),
+					middleware.Authorize(authObjIdleRule, permDelete, enforcer),
 					middleware.PreProcessBulk(conf, true),
 					idleRuleAPI.BulkDelete,
 				)
@@ -1018,19 +1018,19 @@ func RegisterRoutes(
 			{
 				eventFilterRouter.POST(
 					"",
-					middleware.Authorize(authObjView, permCreate, enforcer),
+					middleware.Authorize(authEventFilter, permCreate, enforcer),
 					middleware.PreProcessBulk(conf, true),
 					eventFilterApi.BulkCreate,
 				)
 				eventFilterRouter.PUT(
 					"",
-					middleware.Authorize(authObjView, permUpdate, enforcer),
+					middleware.Authorize(authEventFilter, permUpdate, enforcer),
 					middleware.PreProcessBulk(conf, true),
 					eventFilterApi.BulkUpdate,
 				)
 				eventFilterRouter.DELETE(
 					"",
-					middleware.Authorize(authObjView, permDelete, enforcer),
+					middleware.Authorize(authEventFilter, permDelete, enforcer),
 					middleware.PreProcessBulk(conf, true),
 					eventFilterApi.BulkDelete,
 				)
@@ -1040,19 +1040,19 @@ func RegisterRoutes(
 			{
 				entityserviceRouter.POST(
 					"",
-					middleware.Authorize(authObjView, permCreate, enforcer),
+					middleware.Authorize(authObjEntityService, permCreate, enforcer),
 					middleware.PreProcessBulk(conf, false),
 					entityserviceAPI.BulkCreate,
 				)
 				entityserviceRouter.PUT(
 					"",
-					middleware.Authorize(authObjView, permUpdate, enforcer),
+					middleware.Authorize(authObjEntityService, permUpdate, enforcer),
 					middleware.PreProcessBulk(conf, false),
 					entityserviceAPI.BulkUpdate,
 				)
 				entityserviceRouter.DELETE(
 					"",
-					middleware.Authorize(authObjView, permDelete, enforcer),
+					middleware.Authorize(authObjEntityService, permDelete, enforcer),
 					middleware.PreProcessBulk(conf, false),
 					entityserviceAPI.BulkDelete,
 				)
@@ -1062,19 +1062,19 @@ func RegisterRoutes(
 			{
 				userRouter.POST(
 					"",
-					middleware.Authorize(authObjView, permCreate, enforcer),
+					middleware.Authorize(apisecurity.PermAcl, permCreate, enforcer),
 					middleware.PreProcessBulk(conf, false),
 					userApi.BulkCreate,
 				)
 				userRouter.PUT(
 					"",
-					middleware.Authorize(authObjView, permUpdate, enforcer),
+					middleware.Authorize(apisecurity.PermAcl, permUpdate, enforcer),
 					middleware.PreProcessBulk(conf, false),
 					userApi.BulkUpdate,
 				)
 				userRouter.DELETE(
 					"",
-					middleware.Authorize(authObjView, permDelete, enforcer),
+					middleware.Authorize(apisecurity.PermAcl, permDelete, enforcer),
 					middleware.PreProcessBulk(conf, false),
 					userApi.BulkDelete,
 				)
