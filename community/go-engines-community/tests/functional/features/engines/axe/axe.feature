@@ -33,7 +33,6 @@ Feature: create and update alarm by main event stream
             "_id": "test-resource-axe-1/test-component-axe-1"
           },
           "infos": {},
-          "links": null,
           "t": {{ .createTimestamp }},
           "v": {
             "children": [],
