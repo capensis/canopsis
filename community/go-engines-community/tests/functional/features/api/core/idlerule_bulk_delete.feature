@@ -20,6 +20,9 @@ Feature: Bulk delete idlerules
         "_id": "test-idle-rule-to-bulk-delete-1"
       },
       {
+        "_id": "test-idle-rule-to-bulk-delete-1"
+      },
+      {
         "_id": "test-idle-rule-to-bulk-delete-not-found"
       },
       {},
@@ -36,6 +39,13 @@ Feature: Bulk delete idlerules
       {
         "id": "test-idle-rule-to-bulk-delete-1",
         "status": 200,
+        "item": {
+          "_id": "test-idle-rule-to-bulk-delete-1"
+        }
+      },
+      {
+        "error": "Not found",
+        "status": 404,
         "item": {
           "_id": "test-idle-rule-to-bulk-delete-1"
         }

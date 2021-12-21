@@ -20,6 +20,9 @@ Feature: Bulk delete entityservices
         "_id": "test-entityservice-to-bulk-delete-1"
       },
       {
+        "_id": "test-entityservice-to-bulk-delete-1"
+      },
+      {
         "_id": "test-entityservice-to-bulk-delete-not-found"
       },
       {},
@@ -36,6 +39,13 @@ Feature: Bulk delete entityservices
       {
         "id": "test-entityservice-to-bulk-delete-1",
         "status": 200,
+        "item": {
+          "_id": "test-entityservice-to-bulk-delete-1"
+        }
+      },
+      {
+        "error": "Not found",
+        "status": 404,
         "item": {
           "_id": "test-entityservice-to-bulk-delete-1"
         }
