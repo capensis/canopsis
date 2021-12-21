@@ -43,8 +43,7 @@ Feature: Get a idle rule
                 "value": 3,
                 "unit": "s"
               },
-              "output": "test-idle-rule-to-get-1-operation-output",
-              "user": ""
+              "output": "test-idle-rule-to-get-1-operation-output"
             },
             "type": "snooze"
           },
@@ -156,8 +155,7 @@ Feature: Get a idle rule
             "value": 3,
             "unit": "s"
           },
-          "output": "test-idle-rule-to-get-1-operation-output",
-          "user": ""
+          "output": "test-idle-rule-to-get-1-operation-output"
         },
         "type": "snooze"
       },
