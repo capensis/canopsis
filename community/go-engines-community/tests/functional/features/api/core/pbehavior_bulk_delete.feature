@@ -20,6 +20,9 @@ Feature: Bulk delete pbehaviors
         "_id": "test-pbehavior-to-bulk-delete-1"
       },
       {
+        "_id": "test-pbehavior-to-bulk-delete-1"
+      },
+      {
         "_id": "test-pbehavior-to-bulk-delete-not-found"
       },
       {},
@@ -36,6 +39,13 @@ Feature: Bulk delete pbehaviors
       {
         "id": "test-pbehavior-to-bulk-delete-1",
         "status": 200,
+        "item": {
+          "_id": "test-pbehavior-to-bulk-delete-1"
+        }
+      },
+      {
+        "error": "Not found",
+        "status": 404,
         "item": {
           "_id": "test-pbehavior-to-bulk-delete-1"
         }
