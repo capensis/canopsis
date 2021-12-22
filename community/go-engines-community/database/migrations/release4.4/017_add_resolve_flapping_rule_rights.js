@@ -2,6 +2,7 @@
     db.default_rights.insertMany([
         {
             "_id": "api_resolve_rule",
+            "loader_id": "api_resolve_rule",
             "crecord_name": "api_resolve_rule",
             "crecord_type": "action",
             "desc": "Resolve rule",
@@ -9,6 +10,7 @@
         },
         {
             "_id": "api_flapping_rule",
+            "loader_id": "api_flapping_rule",
             "crecord_name": "api_flapping_rule",
             "crecord_type": "action",
             "desc": "Flapping rule",

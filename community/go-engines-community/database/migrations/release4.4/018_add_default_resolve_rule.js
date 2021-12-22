@@ -1,7 +1,8 @@
 (function () {
     var now = Math.ceil((new Date()).getTime() / 1000);
     db.resolve_rule.insertOne({
-        _id: UUID().toString().split('"')[1],
+        "_id": "default_rule",
+        "loader_id": "default_rule",
         "author": "root",
         "name": "Default rule",
         "duration": {
