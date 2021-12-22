@@ -96,7 +96,7 @@ Feature: SLI metrics should be added on alarm changes
       "enabled": true,
       "name": "test-pbehavior-metrics-pbehavior-axe-2",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "2s" }},
+      "tstop": {{ nowAdd "3s" }},
       "type": "test-pause-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -157,7 +157,7 @@ Feature: SLI metrics should be added on alarm changes
       "enabled": true,
       "name": "test-pbehavior-metrics-pbehavior-axe-3",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "2s" }},
+      "tstop": {{ nowAdd "3s" }},
       "type": "test-inactive-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
