@@ -9122,10 +9122,6 @@ var doc = `{
                 }
             }
         },
-        "bson.M": {
-            "type": "object",
-            "additionalProperties": true
-        },
         "common.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -10837,7 +10833,7 @@ var doc = `{
                 },
                 "duration": {
                     "type": "object",
-                    "$ref": "#/definitions/pattern.IntegerRefPattern"
+                    "$ref": "#/definitions/pattern.IntegerPattern"
                 },
                 "entity": {
                     "type": "object",
