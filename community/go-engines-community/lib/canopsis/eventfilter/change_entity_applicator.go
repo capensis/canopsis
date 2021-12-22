@@ -20,7 +20,7 @@ func NewChangeEntityApplicator(externalDataContainer *ExternalDataContainer) Rul
 }
 
 func (a *changeEntityApplicator) Apply(ctx context.Context, rule Rule, event types.Event, regexMatch pattern.EventRegexMatches, cfgTimezone *config.TimezoneConfig) (string, types.Event, error) {
-	externalData, err := a.getExternalData(ctx, rule, event, regexMatch)
+	externalData, err := a.getExternalData(ctx, rule, event, regexMatch, cfgTimezone)
 	if err != nil {
 		return OutcomeDrop, event, err
 	}
@@ -62,7 +62,7 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule Rule, event typ
 	return OutcomePass, event, nil
 }
 
-func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule Rule, event types.Event, regexMatch pattern.EventRegexMatches) (map[string]interface{}, error) {
+func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule Rule, event types.Event, regexMatch pattern.EventRegexMatches, cfgTimezone *config.TimezoneConfig) (map[string]interface{}, error) {
 	externalData := make(map[string]interface{})
 
 	for name, parameters := range rule.ExternalData {
@@ -74,7 +74,7 @@ func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule Rule,
 		data, err := getter.Get(ctx, parameters, TemplateParameters{
 			Event:      event,
 			RegexMatch: regexMatch,
-		})
+		}, cfgTimezone)
 		if err != nil {
 			return externalData, err
 		}

@@ -41,5 +41,5 @@ type RuleApplicatorContainer interface {
 }
 
 type ExternalDataGetter interface {
-	Get(ctx context.Context, parameters ExternalDataParameters, templateParameters TemplateParameters) (interface{}, error)
+	Get(ctx context.Context, parameters ExternalDataParameters, templateParameters TemplateParameters, cfgTimezone *config.TimezoneConfig) (interface{}, error)
 }
