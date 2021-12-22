@@ -39,21 +39,18 @@ func (f *Feeder) sendLoop(content []byte) error {
 		}
 
 		var iterable bool
-		length := 1
-		switch ref.(type) {
+		switch ref := ref.(type) {
 		case map[string]interface{}:
 			f.logger.Info().Msgf("sending one event from file %s", f.flags.File)
-			iterable = false
 
 		case []interface{}:
-			length = len(ref.([]interface{}))
+			length := len(ref)
 			f.logger.Info().Msgf("sending %d events from file %s", length, f.flags.File)
 			iterable = true
+			err = f.sendIterable(ref)
 		}
 
-		if iterable {
-			err = f.sendIterable(ref.([]interface{}))
-		} else {
+		if !iterable {
 			err = f.sendBytes(content, "#")
 		}
 	} else {

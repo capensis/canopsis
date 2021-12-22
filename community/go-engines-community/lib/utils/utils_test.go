@@ -110,7 +110,7 @@ func TestFindStringSubmatchMapWithRegexExpression(t *testing.T) {
 
 func TestFindStringSubmatchMap(t *testing.T) {
 	Convey("Given a regular expression", t, func() {
-		re, err := regexp.Compile("abc-(?P<sub1>.*)-def-(?P<sub2>\\d+)")
+		re, err := regexp.Compile(`abc-(?P<sub1>.*)-def-(?P<sub2>\d+)`)
 		So(err, ShouldBeNil)
 
 		Convey("A map containing the values of the subexpressions is returned for strings that match the regex", func() {

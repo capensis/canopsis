@@ -1,3 +1,5 @@
+//nolint
+// no lint until #4082 has not fixed
 package main
 
 import (
@@ -32,8 +34,8 @@ type Feeder struct {
 	references References
 	logger     zerolog.Logger
 
-	oldResourcesMap   map[int]int
-	newResourcesMap   map[int]int
+	oldResourcesMap map[int]int
+	newResourcesMap map[int]int
 
 	resourcesMapMutex sync.Mutex
 }
@@ -134,7 +136,7 @@ func (f *Feeder) sendMessages(eventsPerSecond float64, callback resourceData) er
 		eid := fmt.Sprintf("%d%d", componentId, resourceId)
 		state := stateMap[eid]
 
-		if (componentId * connectorId * resourceId) % changeStateEvery == 0 {
+		if (componentId*connectorId*resourceId)%changeStateEvery == 0 {
 			if state == types.AlarmStateOK {
 				state = types.AlarmStateCritical
 			} else {
@@ -151,14 +153,14 @@ func (f *Feeder) sendMessages(eventsPerSecond float64, callback resourceData) er
 
 		pubcount++
 
-		if pubcount % checkEvery == 0 {
+		if pubcount%checkEvery == 0 {
 			tsent := time.Now().UnixNano() - tstart
 			adj := f.adjust(eventsPerSecond, checkEvery, tsent)
 			nanosecSleep = time.Duration(nanosecSleep.Nanoseconds() + adj)
 			tstart = time.Now().UnixNano()
 		}
 
-		if pubcount % sleepEvery == 0 {
+		if pubcount%sleepEvery == 0 {
 			if nanosecSleep.Nanoseconds() > 0 {
 				time.Sleep(nanosecSleep)
 			}
@@ -167,7 +169,7 @@ func (f *Feeder) sendMessages(eventsPerSecond float64, callback resourceData) er
 }
 
 func (f *Feeder) feed(eventsPerSecond float64, newResourcesPerSec float64) {
-	go f.sendMessages(eventsPerSecond - newResourcesPerSec, func() (int64, int64, int64) {
+	go f.sendMessages(eventsPerSecond-newResourcesPerSec, func() (int64, int64, int64) {
 		connectorId := 1 + rand.Intn(numberOfConnectors)
 		componentId := rand.Intn(numberOfComponents)
 
@@ -176,7 +178,7 @@ func (f *Feeder) feed(eventsPerSecond float64, newResourcesPerSec float64) {
 		return int64(connectorId), int64(componentId), int64(resourceId)
 	})
 
-	ticker := time.NewTicker(time.Millisecond * time.Duration(1000 / newResourcesPerSec))
+	ticker := time.NewTicker(time.Millisecond * time.Duration(1000/newResourcesPerSec))
 	go func() {
 		for {
 			<-ticker.C
