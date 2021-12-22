@@ -136,23 +136,6 @@ L'environnement a notamment été découpé en 3 parties à lancer successiveme
 
 Il vous est donc recommandé de partir de ce nouveau référentiel, et d'y appliquer toute modification locale que vous pouviez faire jusqu'à présent. En cas de nécessité, rapprochez-vous de votre contact habituel pour un accompagnement.
 
-### Synchronisation du fichier de configuration `canopsis.toml`
-
-Vérifiez que votre fichier `canopsis.toml` soit bien à jour par rapport au fichier de référence, notamment dans le cas où vous auriez apporté des modifications locales à ce fichier :
-
-* [`canopsis.toml` pour Canopsis Community 4.4.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/4.4.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-community.toml)
-* [`canopsis.toml` pour Canopsis Pro 4.4.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/4.4.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-pro.toml)
-
-=== "Paquets CentOS 7"
-
-    Le fichier à synchroniser est `/opt/canopsis/etc/canopsis.toml`.
-
-=== "Docker Compose"
-
-    Si vous n'avez pas apporté de modification locale, ce fichier est directement intégré et mise à jour dans les conteneurs.
-
-    Si vous le surchargez à l'aide d'un volume pour y apporter des modifications, c'est ce fichier local qui doit être synchronisé.
-
 ### Migrations
 
 Sur une machine disposant d'un accès à `git.canopsis.net` ainsi que d'un client MongoDB, assurez-vous que le service MongoDB soit bien lancé et exécutez les commandes suivantes, en adaptant les identifiants MongoDB ci-dessous si nécessaire :
@@ -174,7 +157,24 @@ done
 
 ## Fin de la mise à jour
 
-Une fois ces changements apportés, suivez la [procédure standard de mise à jour de Canopsis](../../guide-administration/mise-a-jour/index.md) et redémarrez l'environnement.
+Une fois ces changements apportés, suivez la [procédure standard de mise à jour de Canopsis](../../guide-administration/mise-a-jour/index.md).
+
+### Synchronisation du fichier de configuration `canopsis.toml`
+
+Vérifiez que votre fichier `canopsis.toml` soit bien à jour par rapport au fichier de référence, notamment dans le cas où vous auriez apporté des modifications locales à ce fichier :
+
+* [`canopsis.toml` pour Canopsis Community 4.4.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/4.4.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-community.toml)
+* [`canopsis.toml` pour Canopsis Pro 4.4.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/4.4.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-pro.toml)
+
+=== "Paquets CentOS 7"
+
+    Le fichier à synchroniser est `/opt/canopsis/etc/canopsis.toml`.
+
+=== "Docker Compose"
+
+    Si vous n'avez pas apporté de modification locale, ce fichier est directement intégré et mise à jour dans les conteneurs.
+
+    Si vous le surchargez à l'aide d'un volume pour y apporter des modifications, c'est ce fichier local qui doit être synchronisé.
 
 ### Correction du binaire `canopsis-api` (paquets)
 
