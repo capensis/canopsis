@@ -21,7 +21,7 @@ func NewEnrichmentApplicator(externalDataContainer *ExternalDataContainer, proce
 }
 
 func (a *enrichmentApplicator) Apply(ctx context.Context, rule Rule, event types.Event, regexMatch pattern.EventRegexMatches, cfgTimezone *config.TimezoneConfig) (string, types.Event, error) {
-	externalData, err := a.getExternalData(ctx, rule, event, regexMatch)
+	externalData, err := a.getExternalData(ctx, rule, event, regexMatch, cfgTimezone)
 	if err != nil {
 		return rule.Config.OnFailure, event, err
 	}
@@ -36,7 +36,7 @@ func (a *enrichmentApplicator) Apply(ctx context.Context, rule Rule, event types
 	return rule.Config.OnSuccess, event, nil
 }
 
-func (a *enrichmentApplicator) getExternalData(ctx context.Context, rule Rule, event types.Event, regexMatch pattern.EventRegexMatches) (map[string]interface{}, error) {
+func (a *enrichmentApplicator) getExternalData(ctx context.Context, rule Rule, event types.Event, regexMatch pattern.EventRegexMatches, cfgTimezone *config.TimezoneConfig) (map[string]interface{}, error) {
 	externalData := make(map[string]interface{})
 
 	for name, parameters := range rule.ExternalData {
@@ -48,7 +48,7 @@ func (a *enrichmentApplicator) getExternalData(ctx context.Context, rule Rule, e
 		data, err := getter.Get(ctx, parameters, TemplateParameters{
 			Event:      event,
 			RegexMatch: regexMatch,
-		})
+		}, cfgTimezone)
 		if err != nil {
 			return externalData, err
 		}

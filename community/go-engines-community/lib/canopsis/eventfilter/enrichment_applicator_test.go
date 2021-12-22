@@ -67,7 +67,7 @@ func TestApplyWithExternalData(t *testing.T) {
 	defer ctrl.Finish()
 
 	getter := mock_eventfilter.NewMockExternalDataGetter(ctrl)
-	getter.EXPECT().Get(gomock.Any(), gomock.Any(), gomock.Any()).Return(types.Entity{ID: "test_value"}, nil)
+	getter.EXPECT().Get(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(types.Entity{ID: "test_value"}, nil)
 
 	externalDataContainer := eventfilter.NewExternalDataGetterContainer()
 	externalDataContainer.Set("test", getter)
