@@ -157,16 +157,8 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		case "ack_resources":
 			out.AckResources = bool(in.Bool())
 		case "duration":
-			if in.IsNull() {
-				in.Skip()
-				out.Duration = nil
-			} else {
-				if out.Duration == nil {
-					out.Duration = new(CpsNumber)
-				}
-				if data := in.Raw(); in.Ok() {
-					in.AddError((*out.Duration).UnmarshalJSON(data))
-				}
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.Duration).UnmarshalJSON(data))
 			}
 		case "ticket":
 			out.Ticket = string(in.String())
@@ -514,11 +506,7 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 	{
 		const prefix string = ",\"duration\":"
 		out.RawString(prefix)
-		if in.Duration == nil {
-			out.RawString("null")
-		} else {
-			out.Raw((*in.Duration).MarshalJSON())
-		}
+		out.Raw((in.Duration).MarshalJSON())
 	}
 	{
 		const prefix string = ",\"ticket\":"
