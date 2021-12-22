@@ -2,12 +2,13 @@ package pbehavior
 
 import (
 	"context"
+	"fmt"
+	"testing"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/golang/mock/gomock"
 	"go.mongodb.org/mongo-driver/bson"
-	"reflect"
-	"testing"
 )
 
 func TestEntityMatcher_MatchAll(t *testing.T) {
@@ -23,24 +24,20 @@ func TestEntityMatcher_MatchAll(t *testing.T) {
 		EXPECT().
 		Decode(gomock.Any()).
 		Do(func(val map[string][]string) {
-			val = map[string][]string{
-				"pbh1": {"1"},
-				"pbh2": {},
-				"pbh3": {},
-				"pbh4": {},
-				"pbh5": {},
-			}
+			val["pbh1"] = []string{"1"}
+			val["pbh2"] = []string{}
+			val["pbh3"] = []string{}
+			val["pbh4"] = []string{}
+			val["pbh5"] = []string{}
 		}).
 		Return(nil)
 	secondMockCursor.
 		EXPECT().
 		Decode(gomock.Any()).
 		Do(func(val map[string][]string) {
-			val = map[string][]string{
-				"pbh6": {"1"},
-				"pbh7": {},
-				"pbh8": {"1"},
-			}
+			val["pbh6"] = []string{"1"}
+			val["pbh7"] = []string{}
+			val["pbh8"] = []string{"1"}
 		}).
 		Return(nil)
 	entityID := "testid"
@@ -141,7 +138,7 @@ func TestEntityMatcher_MatchAll(t *testing.T) {
 		t.Errorf("expected not error but got %v", err)
 	}
 
-	if reflect.DeepEqual(expected, res) {
+	if fmt.Sprint(expected) != fmt.Sprint(res) {
 		t.Errorf("expected %v but got %v", expected, res)
 	}
 }
