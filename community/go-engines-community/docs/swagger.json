@@ -669,9 +669,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -931,9 +929,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -1086,9 +1082,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -1239,9 +1233,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -1392,9 +1384,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -1721,9 +1711,7 @@
                     }
                 ],
                 "responses": {
-                    "202": {
-                        "description": ""
-                    },
+                    "202": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -2045,9 +2033,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -2331,9 +2317,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -2672,9 +2656,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -2983,9 +2965,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3128,9 +3108,7 @@
                 "summary": "Get file access",
                 "operationId": "auth-get-file-access",
                 "responses": {
-                    "204": {
-                        "description": ""
-                    }
+                    "204": {}
                 }
             }
         },
@@ -3211,9 +3189,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -3479,9 +3455,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3808,9 +3782,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3884,9 +3856,7 @@
                 "summary": "delete user interface",
                 "operationId": "internal-delete-user-interface",
                 "responses": {
-                    "204": {
-                        "description": ""
-                    }
+                    "204": {}
                 }
             }
         },
@@ -3913,9 +3883,7 @@
                 "summary": "Get logged user count",
                 "operationId": "auth-logged-user-count",
                 "responses": {
-                    "204": {
-                        "description": ""
-                    }
+                    "204": {}
                 }
             }
         },
@@ -3974,9 +3942,7 @@
                 "summary": "Log out",
                 "operationId": "auth-logout",
                 "responses": {
-                    "204": {
-                        "description": ""
-                    }
+                    "204": {}
                 }
             }
         },
@@ -4236,9 +4202,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -4516,9 +4480,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -4563,9 +4525,7 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": ""
-                    },
+                    "200": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -4843,9 +4803,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -5173,9 +5131,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -5508,9 +5464,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6026,9 +5980,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6288,9 +6240,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6562,9 +6512,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6914,9 +6862,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -7418,9 +7364,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -7692,9 +7636,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -7747,9 +7689,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -8021,9 +7961,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
