@@ -145,7 +145,6 @@ Feature: create and update alarm by main event stream
             "_id": "test-resource-axe-2/test-component-axe-2"
           },
           "infos": {},
-          "links": null,
           "t": {{ .createTimestamp }},
           "v": {
             "children": [],
