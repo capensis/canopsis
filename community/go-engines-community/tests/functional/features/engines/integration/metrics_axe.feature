@@ -88,28 +88,7 @@ Feature: Metrics should be added on alarm changes
     ]
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-metrics-axe-2-1"}]}&with_steps=true until response code is 200 and body contains:
-    """json
-    {
-      "data": [
-        {
-          "v": {
-            "steps": [
-              {},
-              {},
-              {"_t": "autoinstructionstart"},
-              {"_t": "instructionjobstart"},
-              {"_t": "instructionjobcomplete"},
-              {"_t": "autoinstructioncomplete"}
-            ]
-          }
-        }
-      ]
-    }
-    """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=instruction_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=instruction_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
