@@ -2807,7 +2807,7 @@ var doc = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/eventfilter.EventFilter"
+                                                "$ref": "#/definitions/eventfilter.Rule"
                                             }
                                         }
                                     }
@@ -2851,7 +2851,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/eventfilter.EventFilter"
+                            "$ref": "#/definitions/eventfilter.Rule"
                         }
                     }
                 ],
@@ -2859,7 +2859,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/eventfilter.EventFilter"
+                            "$ref": "#/definitions/eventfilter.Rule"
                         }
                     },
                     "400": {
@@ -2903,7 +2903,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/eventfilter.EventFilter"
+                            "$ref": "#/definitions/eventfilter.Rule"
                         }
                     },
                     "404": {
@@ -2949,7 +2949,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/eventfilter.EventFilter"
+                            "$ref": "#/definitions/eventfilter.Rule"
                         }
                     }
                 ],
@@ -2957,7 +2957,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/eventfilter.EventFilter"
+                            "$ref": "#/definitions/eventfilter.Rule"
                         }
                     },
                     "400": {
@@ -9957,27 +9957,52 @@ var doc = `{
         "eventfilter.Action": {
             "type": "object",
             "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "object"
+                }
+            }
+        },
+        "eventfilter.ExternalDataParameters": {
+            "type": "object",
+            "properties": {
+                "collection": {
+                    "description": "are used in mongo external data",
+                    "type": "string"
+                },
+                "request": {
+                    "description": "are used in api external data",
+                    "type": "object",
+                    "$ref": "#/definitions/request.Parameters"
+                },
+                "select": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
                 "type": {
                     "type": "string"
                 }
             }
         },
-        "eventfilter.EventFilter": {
+        "eventfilter.Rule": {
             "type": "object",
             "required": [
                 "description",
-                "enabled",
                 "type"
             ],
             "properties": {
                 "_id": {
                     "type": "string"
-                },
-                "actions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/eventfilter.Action"
-                    }
                 },
                 "config": {
                     "type": "object",
@@ -9994,13 +10019,9 @@ var doc = `{
                 },
                 "external_data": {
                     "type": "object",
-                    "additionalProperties": true
-                },
-                "on_failure": {
-                    "type": "string"
-                },
-                "on_success": {
-                    "type": "string"
+                    "additionalProperties": {
+                        "$ref": "#/definitions/eventfilter.ExternalDataParameters"
+                    }
                 },
                 "patterns": {
                     "type": "object",
@@ -10020,6 +10041,13 @@ var doc = `{
         "eventfilter.RuleConfig": {
             "type": "object",
             "properties": {
+                "actions": {
+                    "description": "enrichment fields",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/eventfilter.Action"
+                    }
+                },
                 "component": {
                     "type": "string"
                 },
@@ -10027,6 +10055,12 @@ var doc = `{
                     "type": "string"
                 },
                 "connector_name": {
+                    "type": "string"
+                },
+                "on_failure": {
+                    "type": "string"
+                },
+                "on_success": {
                     "type": "string"
                 },
                 "resource": {
