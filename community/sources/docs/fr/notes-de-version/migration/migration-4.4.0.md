@@ -153,10 +153,6 @@ Vérifiez que votre fichier `canopsis.toml` soit bien à jour par rapport au fic
 
     Si vous le surchargez à l'aide d'un volume pour y apporter des modifications, c'est ce fichier local qui doit être synchronisé.
 
-## Fin de la mise à jour
-
-Une fois ces changements apportés, suivez la [procédure standard de mise à jour de Canopsis](../../guide-administration/mise-a-jour/index.md) et redémarrez l'environnement.
-
 ### Migrations
 
 Sur une machine disposant d'un accès à `git.canopsis.net` ainsi que d'un client MongoDB, assurez-vous que le service MongoDB soit bien lancé et exécutez les commandes suivantes, en adaptant les identifiants MongoDB ci-dessous si nécessaire :
@@ -172,7 +168,13 @@ done
 !!! attention
     Ces scripts essaient de gérer le plus de cas d'usage possible, mais la bonne exécution de ces scripts en toute condition ne peut être garantie.
 
+    Ils doivent obligatoirement être lancés *avant* le lancement des scripts de provisioning lors de l'étape suivante.
+
     N'hésitez pas à nous signaler tout problème d'exécution que vous pourriez rencontrer lors de cette étape.
+
+## Fin de la mise à jour
+
+Une fois ces changements apportés, suivez la [procédure standard de mise à jour de Canopsis](../../guide-administration/mise-a-jour/index.md) et redémarrez l'environnement.
 
 ### Correction du binaire `canopsis-api` (paquets)
 
