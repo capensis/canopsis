@@ -1068,7 +1068,7 @@ export default {
           title: 'Compteur',
         },
         [WIDGET_TYPES.testingWeather]: {
-          title: 'Scénario des tests',
+          title: 'Scénarios Junit',
         },
       },
     },
