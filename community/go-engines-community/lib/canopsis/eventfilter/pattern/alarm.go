@@ -188,16 +188,16 @@ func (p *AlarmPattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte) err
 // The zero value of an AlarmPatternList (i.e. an AlarmPatternList that has
 // not been set) is considered valid, and matches all alarms.
 type AlarmPatternList struct {
-	Patterns []AlarmPattern
+	Patterns []AlarmPattern `swaggerignore:"true"`
 
 	// isSet is a boolean indicating whether the AlarmPatternList has been set
 	// explicitly or not.
-	Set bool
+	Set bool `swaggerignore:"true"`
 
 	// isValid is a boolean indicating whether the event patterns or valid or
 	// not.
 	// isValid is also false if the AlarmPatternList has not been set.
-	Valid bool
+	Valid bool `swaggerignore:"true"`
 }
 
 func (l *AlarmPatternList) UnmarshalJSON(b []byte) error {
