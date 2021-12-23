@@ -24,9 +24,9 @@ func (e *updateStatusExecutor) Exec(
 	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
-	entity types.Entity,
+	entity *types.Entity,
 	time types.CpsTime,
-	userID, _, _ string,
+	_, _, _ string,
 ) (types.AlarmChangeType, error) {
 	var params types.OperationParameters
 	var ok bool
@@ -34,12 +34,8 @@ func (e *updateStatusExecutor) Exec(
 		return "", fmt.Errorf("invalid parameters")
 	}
 
-	if userID == "" {
-		userID = params.User
-	}
-
 	currentStatus := alarm.Value.Status.Value
-	newStatus := e.alarmStatusService.ComputeStatus(*alarm, entity)
+	newStatus := e.alarmStatusService.ComputeStatus(*alarm, *entity)
 
 	if newStatus == currentStatus {
 		return "", nil

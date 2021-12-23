@@ -107,8 +107,8 @@ export function getGroupedPermissions(permissions, views = [], playlists = []) {
     } else if (notificationTechnicalPermissionsValues.includes(permissionId)) {
       acc.technical.notification.push(permission);
     } else if (
-      allBusinessPermissionsIds.includes(permissionId) ||
-      NOT_COMPLETED_USER_PERMISSIONS.some(id => permissionId.startsWith(id))
+      allBusinessPermissionsIds.includes(permissionId)
+      || NOT_COMPLETED_USER_PERMISSIONS.some(id => permissionId.startsWith(id))
     ) {
       const [parentKey] = permission._id.split('_');
 

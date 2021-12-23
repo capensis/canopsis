@@ -6,7 +6,7 @@ Feature: Get entity basic
     When I do GET /api/v4/entitybasics?_id=test-entitybasic-to-get-resource/test-entitybasic-to-get-component
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-entitybasic-to-get-resource/test-entitybasic-to-get-component",
       "category": {
@@ -71,6 +71,7 @@ Feature: Get entity basic
       },
       "measurements": null,
       "name": "test-entitybasic-to-get-resource",
+      "sli_avail_state": 0,
       "type": "resource"
     }
     """
@@ -89,7 +90,7 @@ Feature: Get entity basic
     When I do GET /api/v4/entitybasics?_id=test-entitybasic-not-found
     Then the response code should be 404
     Then the response body should be:
-    """
+    """json
     {
       "error": "Not found"
     }

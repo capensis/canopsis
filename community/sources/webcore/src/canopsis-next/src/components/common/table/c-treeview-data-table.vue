@@ -14,7 +14,7 @@
         )
           template(slot="label", slot-scope="{ item }")
             slot(name="expand", :item="item")
-              v-avatar.white--text(color="primary", size="32") {{ item | get(`${itemChildren}.length`, null, 0) }}
+              v-avatar.white--text(color="primary", size="32") {{ item | get(`${itemChildren}.length`, 0) }}
             slot(name="expand-append", :item="item")
       v-flex
         v-data-table(
@@ -99,8 +99,11 @@ export default {
         return acc;
       }, {});
 
-      const isItemOpen = (item = {}) =>
-        !item.parentKey || (this.opened.includes(item.parentKey) && isItemOpen(itemsById[item.parentKey]));
+      const isItemOpen = item => !item.parentKey
+        || (
+          this.opened.includes(item.parentKey)
+          && isItemOpen(itemsById[item.parentKey])
+        );
 
       return arrayItems.filter(isItemOpen);
     },
