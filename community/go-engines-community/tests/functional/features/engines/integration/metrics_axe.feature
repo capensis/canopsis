@@ -718,14 +718,14 @@ Feature: Metrics should be added on alarm changes
           "title": "average_resolve",
           "data": [
             {
-              "timestamp": {{ nowDate }},
-              "value": 1
+              "timestamp": {{ nowDate }}
             }
           ]
         }
       ]
     }
     """
+    Then the response key "data.0.data.0.value" should be greater or equal than 1
 
   Scenario: given new alarm with auto instruction, meta alarm and pbehavior should add non_displayed_alarms metrics only once
     Given I am admin
