@@ -1211,7 +1211,7 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-9"
     }
     """
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=test-resource-che-event-filters-9
     Then the response code should be 200
@@ -1305,7 +1305,7 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-10"
     }
     """
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=test-resource-che-event-filters-10
     Then the response code should be 200
@@ -1413,7 +1413,7 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-11"
     }
     """
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=test-resource-che-event-filters-11
     Then the response code should be 200
@@ -1515,7 +1515,7 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-12"
     }
     """
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=test-resource-che-event-filters-12
     Then the response code should be 200
@@ -1622,7 +1622,7 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-13"
     }
     """
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=test-resource-che-event-filters-13
     Then the response code should be 200
