@@ -3,6 +3,7 @@ package common
 import (
 	"errors"
 	"math"
+	"net/http"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -83,9 +84,10 @@ func NewErrorResponse(err error) ErrorResponse {
 }
 
 var NotFoundResponse = ErrorResponse{Error: "Not found"}
-var UnauthorizedResponse = ErrorResponse{Error: "Unauthorized"}
+var MethodNotAllowedResponse = ErrorResponse{Error: http.StatusText(http.StatusMethodNotAllowed)}
+var UnauthorizedResponse = ErrorResponse{Error: http.StatusText(http.StatusUnauthorized)}
 var InternalServerErrorResponse = ErrorResponse{Error: "Internal server error"}
-var ForbiddenResponse = ErrorResponse{Error: "Forbidden"}
+var ForbiddenResponse = ErrorResponse{Error: http.StatusText(http.StatusForbidden)}
 var ErrTimeoutResponse = ErrorResponse{Error: "Request timeout reached"}
 
 // ValidationErrorResponse is response for failed validation.

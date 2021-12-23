@@ -25,7 +25,7 @@
 import { playlistSchema } from '@/store/schemas';
 
 import layoutNavigationGroupsBarPlaylistsMixin from '@/mixins/layout/navigation/groups-bar-playlists';
-import registrableMixin from '@/mixins/registrable';
+import { registrableMixin } from '@/mixins/registrable';
 
 export default {
   mixins: [

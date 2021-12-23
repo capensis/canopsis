@@ -11,8 +11,8 @@
           :entities-type="$constants.ENTITIES_TYPES.entity",
           :filters.sync="settings.widget.parameters.viewFilters",
           :condition.sync="settings.widget.parameters.mainFilterCondition",
-          :has-access-to-add-filter="hasAccessToAddFilter",
-          :has-access-to-edit-filter="hasAccessToEditFilter",
+          :addable="hasAccessToAddFilter",
+          :editable="hasAccessToEditFilter",
           @input="updateMainFilterUpdatedAt"
         )
         v-divider
@@ -181,4 +181,3 @@ export default {
   },
 };
 </script>
-
