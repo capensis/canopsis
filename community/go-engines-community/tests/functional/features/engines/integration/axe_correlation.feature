@@ -122,8 +122,6 @@ Feature: create and update meta alarm
     Then the difference between metaalarmCreationDate createTimestamp is in range -2,2
     When I do GET /api/v4/alarms?filter={"$and":[{"entity.name":"test-resource-axe-correlation-1"}]}&with_steps=true&with_consequences=true
     Then the response code should be 200
-    When I save response metaalarmattachDate={{ ( index (index .lastResponse.data 0).v.steps 2).t }}
-    Then the difference between metaalarmattachDate createTimestamp is in range -1,1
     Then the response body should contain:
     """
     {
@@ -136,7 +134,6 @@ Feature: create and update meta alarm
             "connector_name": "test-connector-name-axe-correlation-1",
             "initial_long_output": "test-long-output-axe-correlation-1",
             "initial_output": "test-output-axe-correlation-1",
-            "last_event_date": {{ .createTimestamp }},
             "last_update_date": {{ .checkEventTimestamp }},
             "parents": [
               "{{ .metalarmEntityID }}"
@@ -174,6 +171,10 @@ Feature: create and update meta alarm
       }
     }
     """
+    When I save response alarmLastEventDate={{ (index .lastResponse.data 0).v.last_event_date }}
+    When I save response metaAlarmAttachStepDate={{ ( index (index .lastResponse.data 0).v.steps 2).t }}
+    Then the difference between alarmLastEventDate createTimestamp is in range -2,2
+    Then the difference between metaAlarmAttachStepDate createTimestamp is in range -2,2
 
   Scenario: given meta alarm and ack event should ack children
     Given I am admin
