@@ -436,14 +436,14 @@ Feature: Metrics should be added on alarm changes
           "title": "average_ack",
           "data": [
             {
-              "timestamp": {{ nowDate }},
-              "value": 1
+              "timestamp": {{ nowDate }}
             }
           ]
         }
       ]
     }
     """
+    Then the response key "data.1.data.0.value" should be greater or equal than 1
 
   Scenario: given unacked alarm should add cancel_ack_alarms and ack_active_alarms metrics
     Given I am admin
