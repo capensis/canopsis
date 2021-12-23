@@ -386,14 +386,14 @@ Feature: Metrics should be added on alarm changes
           "title": "average_ack",
           "data": [
             {
-              "timestamp": {{ nowDate }},
-              "value": 1
+              "timestamp": {{ nowDate }}
             }
           ]
         }
       ]
     }
     """
+    Then the response key "data.1.data.0.value" should be greater or equal than 1
     When I send an event:
     """json
     {
