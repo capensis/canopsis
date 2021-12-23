@@ -85,50 +85,25 @@ Feature: correlation feature - valuegroup rule with threshold rate
       {
         "description" : "test-correlation-valuegroup-rate-2",
         "enabled": true,
-        "type": "enrichment",
-        "patterns": [{
-          "connector" : "test-valuegroup-rule-rate-2-connector"
-        }],
-        "external_data": {
-          "entity": {
-            "type": "entity"
-          }
-        },
-        "actions": [
-          {
-            "type": "copy",
-            "from": "ExternalData.entity",
-            "to": "Entity"
-          }
-        ],
-        "on_success": "pass",
-        "on_failure": "pass",
-        "priority": 10000
-      }
-      """
-      Then the response code should be 201
-      When I do POST /api/v4/eventfilter/rules:
-      """
-      {
-        "description" : "test-correlation-valuegroup-rate-2",
-        "enabled": true,
         "patterns" : [{
             "connector" : "test-valuegroup-rule-rate-2-connector"
         }],
         "enabled" : true,
         "external_data" : {},
-        "actions" : [
-          {
-            "type" : "set_entity_info_from_template",
-            "name" : "valuegroupRate2",
-            "value" : "{{ `{{.Event.ExtraInfos.valuegroupRate2}}` }}",
-            "description" : "valuegroupRate2"
-          }
-        ],
+        "config": {
+          "actions": [
+            {
+              "type" : "set_entity_info_from_template",
+              "name" : "valuegroupRate2",
+              "value" : "{{ `{{.Event.ExtraInfos.valuegroupRate2}}` }}",
+              "description" : "valuegroupRate2"
+            }
+          ],
+          "on_success": "pass",
+          "on_failure": "pass"
+        },
         "priority" : 10001,
-        "on_failure" : "pass",
-        "type" : "enrichment",
-        "on_success" : "pass"
+        "type" : "enrichment"
       }
       """
       Then the response code should be 201

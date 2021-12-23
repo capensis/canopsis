@@ -6,50 +6,25 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "description" : "test-correlation-valuegroup-1",
       "enabled": true,
-      "type": "enrichment",
-      "patterns": [{
-        "connector" : "test-valuegroup-1"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "priority": 10000
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "description" : "test-correlation-valuegroup-1",
-      "enabled": true,
       "patterns" : [{
           "connector" : "test-valuegroup-1"
       }],
       "enabled" : true,
       "external_data" : {},
-      "actions" : [
-        {
-          "type" : "set_entity_info_from_template",
-          "name" : "infoenrich",
-          "value" : "{{ `{{.Event.ExtraInfos.infoenrich}}` }}",
-          "description" : "infoenrich"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type" : "set_entity_info_from_template",
+            "name" : "infoenrich",
+            "value" : "{{ `{{.Event.ExtraInfos.infoenrich}}` }}",
+            "description" : "infoenrich"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "priority" : 10001,
-      "on_failure" : "pass",
-      "type" : "enrichment",
-      "on_success" : "pass"
+      "type" : "enrichment"
     }
     """
     Then the response code should be 201
@@ -214,25 +189,25 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "description" : "test-correlation-valuegroup-2",
       "enabled": true,
-      "type": "enrichment",
-      "patterns": [{
-        "connector" : "test-valuegroup-2"
+      "patterns" : [{
+          "connector" : "test-valuegroup-2"
       }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
+      "enabled" : true,
+      "external_data" : {},
+      "config": {
+        "actions": [
+          {
+            "type" : "set_entity_info_from_template",
+            "name" : "infoenrich2",
+            "value" : "{{ `{{.Event.ExtraInfos.infoenrich2}}` }}",
+            "description" : "infoenrich2"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
       },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "priority": 10000
+      "priority" : 10001,
+      "type" : "enrichment"
     }
     """
     Then the response code should be 201
@@ -246,43 +221,20 @@ Feature: correlation feature - valuegroup rule with threshold count
       }],
       "enabled" : true,
       "external_data" : {},
-      "actions" : [
-        {
-          "type" : "set_entity_info_from_template",
-          "name" : "infoenrich2",
-          "value" : "{{ `{{.Event.ExtraInfos.infoenrich2}}` }}",
-          "description" : "infoenrich2"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type" : "set_entity_info_from_template",
+            "name" : "infoenrich3",
+            "value" : "{{ `{{.Event.ExtraInfos.infoenrich3}}` }}",
+            "description" : "infoenrich3"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "priority" : 10001,
-      "on_failure" : "pass",
-      "type" : "enrichment",
-      "on_success" : "pass"
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "description" : "test-correlation-valuegroup-2",
-      "enabled": true,
-      "patterns" : [{
-          "connector" : "test-valuegroup-2"
-      }],
-      "enabled" : true,
-      "external_data" : {},
-      "actions" : [
-        {
-          "type" : "set_entity_info_from_template",
-          "name" : "infoenrich3",
-          "value" : "{{ `{{.Event.ExtraInfos.infoenrich3}}` }}",
-          "description" : "infoenrich3"
-        }
-      ],
-      "priority" : 10001,
-      "on_failure" : "pass",
-      "type" : "enrichment",
-      "on_success" : "pass"
+      "type" : "enrichment"
     }
     """
     Then the response code should be 201
@@ -645,50 +597,25 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "description" : "test-correlation-valuegroup-3",
       "enabled": true,
-      "type": "enrichment",
-      "patterns": [{
-        "connector" : "test-valuegroup-3"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "priority": 10000
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "description" : "test-correlation-valuegroup-3",
-      "enabled": true,
       "patterns" : [{
           "connector" : "test-valuegroup-3"
       }],
       "enabled" : true,
       "external_data" : {},
-      "actions" : [
-        {
-          "type" : "set_entity_info_from_template",
-          "name" : "infoenrich4",
-          "value" : "{{ `{{.Event.ExtraInfos.infoenrich4}}` }}",
-          "description" : "infoenrich4"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type" : "set_entity_info_from_template",
+            "name" : "infoenrich4",
+            "value" : "{{ `{{.Event.ExtraInfos.infoenrich4}}` }}",
+            "description" : "infoenrich4"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "priority" : 10001,
-      "on_failure" : "pass",
-      "type" : "enrichment",
-      "on_success" : "pass"
+      "type" : "enrichment"
     }
     """
     Then the response code should be 201
@@ -821,50 +748,25 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "description" : "test-correlation-valuegroup-4",
       "enabled": true,
-      "type": "enrichment",
-      "patterns": [{
-        "connector" : "test-valuegroup-4"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "priority": 10000
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "description" : "test-correlation-valuegroup-4",
-      "enabled": true,
       "patterns" : [{
           "connector" : "test-valuegroup-4"
       }],
       "enabled" : true,
       "external_data" : {},
-      "actions" : [
-        {
-          "type" : "set_entity_info_from_template",
-          "name" : "infoenrich5",
-          "value" : "{{ `{{.Event.ExtraInfos.infoenrich5}}` }}",
-          "description" : "infoenrich5"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type" : "set_entity_info_from_template",
+            "name" : "infoenrich5",
+            "value" : "{{ `{{.Event.ExtraInfos.infoenrich5}}` }}",
+            "description" : "infoenrich5"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "priority" : 10001,
-      "on_failure" : "pass",
-      "type" : "enrichment",
-      "on_success" : "pass"
+      "type" : "enrichment"
     }
     """
     Then the response code should be 201
@@ -971,50 +873,25 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "description" : "test-correlation-valuegroup-5",
       "enabled": true,
-      "type": "enrichment",
-      "patterns": [{
-        "connector" : "test-valuegroup-5"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "priority": 10000
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "description" : "test-correlation-valuegroup-5",
-      "enabled": true,
       "patterns" : [{
           "connector" : "test-valuegroup-5"
       }],
       "enabled" : true,
       "external_data" : {},
-      "actions" : [
-        {
-          "type" : "set_entity_info_from_template",
-          "name" : "infoenrich6",
-          "value" : "{{ `{{.Event.ExtraInfos.infoenrich6}}` }}",
-          "description" : "infoenrich6"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type" : "set_entity_info_from_template",
+            "name" : "infoenrich6",
+            "value" : "{{ `{{.Event.ExtraInfos.infoenrich6}}` }}",
+            "description" : "infoenrich6"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "priority" : 10001,
-      "on_failure" : "pass",
-      "type" : "enrichment",
-      "on_success" : "pass"
+      "type" : "enrichment"
     }
     """
     Then the response code should be 201
@@ -1139,50 +1016,25 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "description" : "test-correlation-valuegroup-6",
       "enabled": true,
-      "type": "enrichment",
-      "patterns": [{
-        "connector" : "test-valuegroup-6"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "priority": 10000
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "description" : "test-correlation-valuegroup-6",
-      "enabled": true,
       "patterns" : [{
           "connector" : "test-valuegroup-6"
       }],
       "enabled" : true,
       "external_data" : {},
-      "actions" : [
-        {
-          "type" : "set_entity_info_from_template",
-          "name" : "infoenrich7",
-          "value" : "{{ `{{.Event.ExtraInfos.infoenrich7}}` }}",
-          "description" : "infoenrich7"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type" : "set_entity_info_from_template",
+            "name" : "infoenrich7",
+            "value" : "{{ `{{.Event.ExtraInfos.infoenrich7}}` }}",
+            "description" : "infoenrich7"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "priority" : 10001,
-      "on_failure" : "pass",
-      "type" : "enrichment",
-      "on_success" : "pass"
+      "type" : "enrichment"
     }
     """
     Then the response code should be 201
