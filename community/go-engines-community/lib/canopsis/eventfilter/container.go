@@ -1,5 +1,7 @@
 package eventfilter
 
+import "fmt"
+
 type Container struct {
 	applicators map[string]RuleApplicator
 }
@@ -9,9 +11,11 @@ func (c *Container) Get(ruleType string) (RuleApplicator, bool) {
 }
 
 func (c *Container) Set(ruleType string, service RuleApplicator) {
-	if !c.Has(ruleType) {
-		c.applicators[ruleType] = service
+	if c.Has(ruleType) {
+		panic(fmt.Errorf("applicator %q already exists", ruleType))
 	}
+
+	c.applicators[ruleType] = service
 }
 
 func (c *Container) Has(ruleType string) bool {
@@ -35,9 +39,11 @@ func (c *ExternalDataContainer) Get(dataType string) (ExternalDataGetter, bool) 
 }
 
 func (c *ExternalDataContainer) Set(dataType string, service ExternalDataGetter) {
-	if !c.Has(dataType) {
-		c.applicators[dataType] = service
+	if c.Has(dataType) {
+		panic(fmt.Errorf("data getter %q already exists", dataType))
 	}
+
+	c.applicators[dataType] = service
 }
 
 func (c *ExternalDataContainer) Has(dataType string) bool {
