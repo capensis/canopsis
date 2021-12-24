@@ -1024,7 +1024,7 @@ Feature: get service weather
       "enabled": true,
       "name": "test-pbehavior-weather-service-16",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "1h }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
