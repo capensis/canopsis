@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/valyala/fastjson"
 	"net/http"
@@ -235,7 +236,7 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypePbehavior,
 		ValueID:   model.ID,
@@ -298,7 +299,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypePbehavior,
 		ValueID:   model.ID,
@@ -417,7 +418,7 @@ func (a *api) Patch(c *gin.Context) {
 		}
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypePbehavior,
 		ValueID:   model.ID,
@@ -456,7 +457,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionDelete,
 		ValueType: logger.ValueTypePbehavior,
 		ValueID:   id,
@@ -506,7 +507,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 
 	ctx := c.Request.Context()
 	response := ar.NewArray()
-	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
 	ids := make([]string, 0, len(rawObjects))
 
 	for idx, rawObject := range rawObjects {
@@ -547,22 +547,22 @@ func (a *api) BulkCreate(c *gin.Context) {
 		}
 
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, model.ID, http.StatusOK, rawObject, nil))
-		logEntries = append(logEntries, logger.LogEntry{
+
+		err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 			Action:    logger.ActionCreate,
 			ValueType: logger.ValueTypePbehavior,
 			ValueID:   model.ID,
 		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+
 		ids = append(ids, model.ID)
 	}
 
 	a.sendComputeTask(pbehavior.ComputeTask{
 		PbehaviorIds: ids,
 	})
-
-	err = a.actionLogger.BulkAction(c, logEntries)
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
@@ -602,7 +602,6 @@ func (a *api) BulkUpdate(c *gin.Context) {
 
 	ctx := c.Request.Context()
 	response := ar.NewArray()
-	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
 	ids := make([]string, 0, len(rawObjects))
 
 	for idx, rawObject := range rawObjects {
@@ -648,22 +647,22 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		}
 
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, model.ID, http.StatusOK, rawObject, nil))
-		logEntries = append(logEntries, logger.LogEntry{
+
+		err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 			Action:    logger.ActionUpdate,
 			ValueType: logger.ValueTypePbehavior,
 			ValueID:   model.ID,
 		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+
 		ids = append(ids, model.ID)
 	}
 
 	a.sendComputeTask(pbehavior.ComputeTask{
 		PbehaviorIds: ids,
 	})
-
-	err = a.actionLogger.BulkAction(c, logEntries)
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
@@ -703,7 +702,6 @@ func (a *api) BulkDelete(c *gin.Context) {
 
 	ctx := c.Request.Context()
 	response := ar.NewArray()
-	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
 	ids := make([]string, 0, len(rawObjects))
 
 	for idx, rawObject := range rawObjects {
@@ -738,22 +736,22 @@ func (a *api) BulkDelete(c *gin.Context) {
 		}
 
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))
-		logEntries = append(logEntries, logger.LogEntry{
+
+		err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 			Action:    logger.ActionDelete,
 			ValueType: logger.ValueTypePbehavior,
 			ValueID:   request.ID,
 		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+
 		ids = append(ids, request.ID)
 	}
 
 	a.sendComputeTask(pbehavior.ComputeTask{
 		PbehaviorIds: ids,
 	})
-
-	err = a.actionLogger.BulkAction(c, logEntries)
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
