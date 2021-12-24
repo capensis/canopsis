@@ -120,10 +120,7 @@ Feature: update an instruction statistics
     Then the response code should be 200
     When I save response execution2Time={{ .lastResponse.completed_at }}
     When I wait the end of event processing
-    When I wait 5s
-    When I do GET /api/v4/cat/instruction-stats/{{ .instructionID }}/summary
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/instruction-stats/{{ .instructionID }}/summary until response code is 200 and body contains:
     """json
     {
       "_id": "{{ .instructionID }}",
@@ -356,10 +353,7 @@ Feature: update an instruction statistics
     When I do GET /api/v4/alarms?search=test-resource-to-stats-update-2-2
     Then the response code should be 200
     When I save response alarm2ID={{ (index .lastResponse.data 0)._id }}
-    When I wait 7s
-    When I do GET /api/v4/cat/instruction-stats/{{ .instructionID }}/summary
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/instruction-stats/{{ .instructionID }}/summary until response code is 200 and body contains:
     """json
     {
       "_id": "{{ .instructionID }}",

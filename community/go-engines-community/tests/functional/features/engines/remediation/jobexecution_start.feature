@@ -111,10 +111,7 @@ Feature: run a job
     }
     """
     Then the response key "started_at" should not be "0"
-    When I wait 2s
-    When I do GET /api/v4/cat/executions/{{ .executionID }}
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 200 and body contains:
     """json
     {
       "steps": [
@@ -174,10 +171,7 @@ Feature: run a job
     }
     """
     Then the response key "started_at" should not be "0"
-    When I wait 2s
-    When I do GET /api/v4/cat/executions/{{ .executionID }}
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 200 and body contains:
     """json
     {
       "steps": [
@@ -1030,10 +1024,7 @@ Feature: run a job
     }
     """
     Then the response key "started_at" should not be "0"
-    When I wait 2s
-    When I do GET /api/v4/cat/executions/{{ .executionID }}
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 200 and body contains:
     """json
     {
       "steps": [
@@ -1164,10 +1155,7 @@ Feature: run a job
     }
     """
     Then the response key "started_at" should not be "0"
-    When I wait 2s
-    When I do GET /api/v4/cat/executions/{{ .executionID }}
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 200 and body contains:
     """json
     {
       "steps": [
@@ -1295,10 +1283,7 @@ Feature: run a job
     }
     """
     Then the response key "started_at" should not be "0"
-    When I wait 2s
-    When I do GET /api/v4/cat/executions/{{ .executionID }}
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 200 and body contains:
     """json
     {
       "steps": [

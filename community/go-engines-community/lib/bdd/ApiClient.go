@@ -37,8 +37,8 @@ const (
 	basicPrefix         = "Basic"
 	bearerPrefix        = "Bearer"
 
-	repeatRequestCount    = 10
-	repeatRequestInterval = time.Millisecond * 10
+	startRepeatRequestInterval = time.Millisecond * 10
+	totalRepeatRequestInterval = time.Second * 10
 )
 
 // ApiClient represents utility struct which implements API steps to feature context.
@@ -604,13 +604,9 @@ func (a *ApiClient) IDoRequestUntilResponseCode(method, uri string, code int) er
 		return fmt.Errorf("cannot create request: %w", err)
 	}
 
-	timeout := repeatRequestInterval
-	for i := 0; i < repeatRequestCount; i++ {
-		if i != 0 {
-			time.Sleep(timeout)
-			timeout *= 2
-		}
-
+	timeout := startRepeatRequestInterval
+	start := time.Now()
+	for {
 		err := a.doRequest(req)
 		if err != nil {
 			return err
@@ -619,6 +615,13 @@ func (a *ApiClient) IDoRequestUntilResponseCode(method, uri string, code int) er
 		if code == a.response.StatusCode {
 			return nil
 		}
+
+		if time.Since(start) > totalRepeatRequestInterval {
+			break
+		}
+
+		time.Sleep(timeout)
+		timeout *= 2
 	}
 
 	return fmt.Errorf("max retries exceeded, expected response code to be: %d, but actual is: %d\nresponse body: %v",
@@ -662,13 +665,9 @@ func (a *ApiClient) IDoRequestUntilResponse(method, uri string, code int, doc st
 	}
 
 	var resDiffErr error
-	timeout := repeatRequestInterval
-	for i := 0; i < repeatRequestCount; i++ {
-		if i != 0 {
-			time.Sleep(timeout)
-			timeout *= 2
-		}
-
+	timeout := startRepeatRequestInterval
+	start := time.Now()
+	for {
 		err := a.doRequest(req)
 		if err != nil {
 			return err
@@ -680,6 +679,13 @@ func (a *ApiClient) IDoRequestUntilResponse(method, uri string, code int, doc st
 				return nil
 			}
 		}
+
+		if time.Since(start) > totalRepeatRequestInterval {
+			break
+		}
+
+		time.Sleep(timeout)
+		timeout *= 2
 	}
 
 	if code != a.response.StatusCode {
@@ -727,13 +733,9 @@ func (a *ApiClient) IDoRequestUntilResponseContains(method, uri string, code int
 	}
 
 	var resDiffErr error
-	timeout := repeatRequestInterval
-	for i := 0; i < repeatRequestCount; i++ {
-		if i != 0 {
-			time.Sleep(timeout)
-			timeout *= 2
-		}
-
+	timeout := startRepeatRequestInterval
+	start := time.Now()
+	for {
 		err := a.doRequest(req)
 		if err != nil {
 			return err
@@ -747,6 +749,13 @@ func (a *ApiClient) IDoRequestUntilResponseContains(method, uri string, code int
 				return nil
 			}
 		}
+
+		if time.Since(start) > totalRepeatRequestInterval {
+			break
+		}
+
+		time.Sleep(timeout)
+		timeout *= 2
 	}
 
 	if code != a.response.StatusCode {
@@ -777,13 +786,9 @@ func (a *ApiClient) IDoRequestUntilResponseKeyIsGreaterOrEqualThan(method, uri s
 	}
 
 	var resDiffErr error
-	timeout := repeatRequestInterval
-	for i := 0; i < repeatRequestCount; i++ {
-		if i != 0 {
-			time.Sleep(timeout)
-			timeout *= 2
-		}
-
+	timeout := startRepeatRequestInterval
+	start := time.Now()
+	for {
 		err := a.doRequest(req)
 		if err != nil {
 			return err
@@ -796,6 +801,13 @@ func (a *ApiClient) IDoRequestUntilResponseKeyIsGreaterOrEqualThan(method, uri s
 				return nil
 			}
 		}
+
+		if time.Since(start) > totalRepeatRequestInterval {
+			break
+		}
+
+		time.Sleep(timeout)
+		timeout *= 2
 	}
 
 	if code != a.response.StatusCode {
