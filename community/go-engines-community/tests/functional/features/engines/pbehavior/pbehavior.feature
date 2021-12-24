@@ -23,7 +23,7 @@ Feature: update alarm on pbehavior
       "enabled": true,
       "name": "test-pbehavior-1",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -114,7 +114,7 @@ Feature: update alarm on pbehavior
       "enabled": true,
       "name": "test-pbehavior-2",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -191,7 +191,7 @@ Feature: update alarm on pbehavior
       "enabled": true,
       "name": "test-pbehavior-3",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -278,7 +278,7 @@ Feature: update alarm on pbehavior
       "enabled": true,
       "name": "test-pbehavior-5",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -325,7 +325,7 @@ Feature: update alarm on pbehavior
       "enabled": true,
       "name": "test-pbehavior-6",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -404,7 +404,7 @@ Feature: update alarm on pbehavior
       "enabled": true,
       "name": "test-pbehavior-7",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -500,7 +500,7 @@ Feature: update alarm on pbehavior
       "enabled": true,
       "name": "test-pbehavior-8",
       "tstart": {{ nowAdd "2s" }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
