@@ -2108,8 +2108,6 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]} until response code is 200 and body contains:
-    Then the response code should be 200
-    Then the response body should contain:
     """json
     {
       "data": [],
