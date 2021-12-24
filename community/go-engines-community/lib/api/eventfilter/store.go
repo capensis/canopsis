@@ -3,6 +3,7 @@ package eventfilter
 import (
 	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -26,7 +27,7 @@ type Store interface {
 
 type AggregationResult struct {
 	Data       []*eventfilter.Rule `bson:"data" json:"data"`
-	TotalCount int64                  `bson:"total_count" json:"total_count"`
+	TotalCount int64               `bson:"total_count" json:"total_count"`
 }
 
 type store struct {
@@ -118,6 +119,10 @@ func (s *store) Update(ctx context.Context, model *eventfilter.Rule) (bool, erro
 	).Decode(&data)
 	model.Created = data.Created
 	if err != nil {
+		if err == mongodriver.ErrNoDocuments {
+			return false, nil
+		}
+
 		return false, err
 	}
 

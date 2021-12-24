@@ -74,6 +74,13 @@ indexes:
       options:
         background: true
 
+  eventfilter:
+    priority_1:
+      keys:
+        priority: 1
+      options:
+        background: true
+
   default_pbehavior:
     eids_1:
       keys:

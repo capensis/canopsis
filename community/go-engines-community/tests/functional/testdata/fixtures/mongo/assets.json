@@ -1,12 +1,12 @@
 [
   {
-    "_id": "assets_1",
-    "component_status": "assets_status_1",
-    "component_customer": "assets_customer_1"
+    "_id": "test-eventfilters-assets-1",
+    "component_status": "test-eventfilter-assets-status-1",
+    "component_customer": "test-eventfilter-assets-customer-1"
   },
   {
-    "_id": "assets_2",
-    "component_status": "assets_status_2",
-    "component_customer": "assets_customer_2"
+    "_id": "test-eventfilters-assets-2",
+    "component_status": "test-eventfilter-assets-status-2",
+    "component_customer": "test-eventfilter-assets-customer-2"
   }
 ]
