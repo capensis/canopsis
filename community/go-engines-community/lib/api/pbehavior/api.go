@@ -486,6 +486,8 @@ func (a *api) Delete(c *gin.Context) {
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /bulk/pbehaviors [post]
 func (a *api) BulkCreate(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+
 	var ar fastjson.Arena
 
 	raw, err := c.GetRawData()
@@ -548,7 +550,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, model.ID, http.StatusOK, rawObject, nil))
 
-		err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
+		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 			Action:    logger.ActionCreate,
 			ValueType: logger.ValueTypePbehavior,
 			ValueID:   model.ID,
@@ -581,6 +583,8 @@ func (a *api) BulkCreate(c *gin.Context) {
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /bulk/pbehaviors [put]
 func (a *api) BulkUpdate(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+
 	var ar fastjson.Arena
 
 	raw, err := c.GetRawData()
@@ -648,7 +652,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, model.ID, http.StatusOK, rawObject, nil))
 
-		err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
+		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 			Action:    logger.ActionUpdate,
 			ValueType: logger.ValueTypePbehavior,
 			ValueID:   model.ID,
@@ -681,6 +685,8 @@ func (a *api) BulkUpdate(c *gin.Context) {
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /bulk/pbehaviors [delete]
 func (a *api) BulkDelete(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+
 	var ar fastjson.Arena
 
 	raw, err := c.GetRawData()
@@ -737,7 +743,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))
 
-		err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
+		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 			Action:    logger.ActionDelete,
 			ValueType: logger.ValueTypePbehavior,
 			ValueID:   request.ID,
