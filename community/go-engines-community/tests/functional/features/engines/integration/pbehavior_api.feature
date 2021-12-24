@@ -9,7 +9,7 @@ Feature: get pbehavior
       "enabled": true,
       "name": "test-pbehavior-api-1",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -92,7 +92,7 @@ Feature: get pbehavior
       "enabled": false,
       "name": "test-pbehavior-api-3",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -147,7 +147,7 @@ Feature: get pbehavior
       "enabled": true,
       "name": "test-pbehavior-api-4-1",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -167,8 +167,8 @@ Feature: get pbehavior
     {
       "enabled": true,
       "name": "test-pbehavior-api-4-2",
-      "tstart": {{ nowAdd "10m" }},
-      "tstop": {{ nowAdd "20m" }},
+      "tstart": {{ nowAdd "1h" }},
+      "tstop": {{ nowAdd "2h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{

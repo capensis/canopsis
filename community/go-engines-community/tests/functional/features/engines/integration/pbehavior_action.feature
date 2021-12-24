@@ -43,7 +43,7 @@ Feature: no execute action when entity is inactive
       "enabled": true,
       "name": "test-pbehavior-action-1",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "20m" }},
+      "tstop": {{ nowAdd "2h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{

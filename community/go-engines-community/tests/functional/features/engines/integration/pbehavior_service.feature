@@ -37,7 +37,7 @@ Feature: no update service when entity is inactive
       "enabled": true,
       "name": "test-pbehavior-service-1",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -116,7 +116,7 @@ Feature: no update service when entity is inactive
       "enabled": true,
       "name": "test-pbehavior-service-2",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -362,7 +362,7 @@ Feature: no update service when entity is inactive
       "enabled": true,
       "name": "test-pbehavior-service-4-2",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
