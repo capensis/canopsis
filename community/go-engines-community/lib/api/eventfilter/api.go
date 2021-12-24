@@ -1,7 +1,9 @@
 package eventfilter
 
 import (
+	"context"
 	"encoding/json"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/valyala/fastjson"
@@ -55,7 +57,7 @@ func (a api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeEventFilter,
 		ValueID:   request.ID,
@@ -165,7 +167,7 @@ func (a api) Update(c *gin.Context) {
 		return
 	}
 
-	err := a.actionLogger.Action(c, logger.LogEntry{
+	err := a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypeEventFilter,
 		ValueID:   data.ID,
@@ -199,7 +201,7 @@ func (a api) Delete(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionDelete,
 		ValueType: logger.ValueTypeEventFilter,
 		ValueID:   c.Param("id"),
@@ -246,7 +248,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 
 	ctx := c.Request.Context()
 	response := ar.NewArray()
-	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
 
 	for idx, rawObject := range rawObjects {
 		object, err := rawObject.Object()
@@ -275,16 +276,15 @@ func (a *api) BulkCreate(c *gin.Context) {
 		}
 
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))
-		logEntries = append(logEntries, logger.LogEntry{
+
+		err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 			Action:    logger.ActionCreate,
 			ValueType: logger.ValueTypeEventFilter,
 			ValueID:   request.ID,
 		})
-	}
-
-	err = a.actionLogger.BulkAction(c, logEntries)
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
 	}
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
@@ -325,7 +325,6 @@ func (a *api) BulkUpdate(c *gin.Context) {
 
 	ctx := c.Request.Context()
 	response := ar.NewArray()
-	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
 
 	for idx, rawObject := range rawObjects {
 		object, err := rawObject.Object()
@@ -361,16 +360,15 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		}
 
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, eventFilter.ID, http.StatusOK, rawObject, nil))
-		logEntries = append(logEntries, logger.LogEntry{
+
+		err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 			Action:    logger.ActionUpdate,
 			ValueType: logger.ValueTypeEventFilter,
 			ValueID:   eventFilter.ID,
 		})
-	}
-
-	err = a.actionLogger.BulkAction(c, logEntries)
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
 	}
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
@@ -411,7 +409,6 @@ func (a *api) BulkDelete(c *gin.Context) {
 
 	ctx := c.Request.Context()
 	response := ar.NewArray()
-	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
 
 	for idx, rawObject := range rawObjects {
 		userObject, err := rawObject.Object()
@@ -445,16 +442,15 @@ func (a *api) BulkDelete(c *gin.Context) {
 		}
 
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))
-		logEntries = append(logEntries, logger.LogEntry{
+
+		err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 			Action:    logger.ActionDelete,
 			ValueType: logger.ValueTypeEventFilter,
 			ValueID:   request.ID,
 		})
-	}
-
-	err = a.actionLogger.BulkAction(c, logEntries)
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
 	}
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))

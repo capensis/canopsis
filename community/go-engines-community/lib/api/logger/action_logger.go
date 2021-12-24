@@ -1,14 +1,10 @@
 package logger
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"math"
+	"context"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -60,8 +56,7 @@ const (
 )
 
 type ActionLogger interface {
-	Action(c *gin.Context, logEntry LogEntry) error
-	BulkAction(c *gin.Context, logEntries []LogEntry) error
+	Action(ctx context.Context, userID string, logEntry LogEntry) error
 	Err(err error, msg string)
 }
 
@@ -91,10 +86,9 @@ func NewActionLogger(dbClient mongo.DbClient, zLog zerolog.Logger) ActionLogger 
 	}
 }
 
-func (l *logger) Action(c *gin.Context, logEntry LogEntry) error {
+func (l *logger) Action(ctx context.Context, userID string, logEntry LogEntry) error {
 	if logEntry.Author == "" {
-		userID := c.MustGet(auth.UserKey)
-		logEntry.Author = userID.(string)
+		logEntry.Author = userID
 	}
 
 	logEntry.Time = time.Now()
@@ -107,55 +101,7 @@ func (l *logger) Action(c *gin.Context, logEntry LogEntry) error {
 		Str("time", logEntry.Time.String()).
 		Msg("ActionLog: ")
 
-	_, err := l.dbCollection.UpdateOne(c.Request.Context(), bson.M{"value_type": logEntry.ValueType, "value_id": logEntry.ValueID}, bson.M{"$set": logEntry}, options.Update().SetUpsert(true))
-	return err
-}
-
-func (l *logger) BulkAction(c *gin.Context, logEntries []LogEntry) error {
-	if len(logEntries) == 0 {
-		return nil
-	}
-
-	var err error
-	userID := c.MustGet(auth.UserKey).(string)
-	ctx := c.Request.Context()
-
-	writeModels := make([]mongodriver.WriteModel, 0, int(math.Min(float64(canopsis.DefaultBulkSize), float64(len(logEntries)))))
-	now := time.Now()
-
-	for _, e := range logEntries {
-		e.Time = now
-		if e.Author == "" {
-			e.Author = userID
-		}
-
-		writeModels = append(
-			writeModels,
-			mongodriver.NewInsertOneModel().SetDocument(e),
-		)
-
-		l.zLog.Info().
-			Str("action", e.Action).
-			Str("value_type", e.ValueType).
-			Str("value_id", e.ValueID).
-			Str("author", e.Author).
-			Str("time", e.Time.String()).
-			Msg("ActionLog: ")
-
-		if len(writeModels) == canopsis.DefaultBulkSize {
-			_, err = l.dbCollection.BulkWrite(ctx, writeModels)
-			if err != nil {
-				return err
-			}
-
-			writeModels = writeModels[:0]
-		}
-	}
-
-	if len(writeModels) > 0 {
-		_, err = l.dbCollection.BulkWrite(ctx, writeModels)
-	}
-
+	_, err := l.dbCollection.UpdateOne(ctx, bson.M{"value_type": logEntry.ValueType, "value_id": logEntry.ValueID}, bson.M{"$set": logEntry}, options.Update().SetUpsert(true))
 	return err
 }
 

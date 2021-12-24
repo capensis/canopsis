@@ -1,6 +1,7 @@
 package scenario
 
 import (
+	"context"
 	"encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -123,9 +124,9 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey)
-	author := c.MustGet(auth.Username)
-	setActionParameterAuthorAndUserID(&request.EditRequest, author.(string), userId.(string))
+	userId := c.MustGet(auth.UserKey).(string)
+	author := c.MustGet(auth.Username).(string)
+	setActionParameterAuthorAndUserID(&request.EditRequest, author, userId)
 
 	scenario, err := a.store.Insert(c.Request.Context(), request)
 	if err != nil {
@@ -134,7 +135,7 @@ func (a *api) Create(c *gin.Context) {
 
 	a.priorityIntervals.Take(scenario.Priority)
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeScenario,
 		ValueID:   scenario.ID,
@@ -180,9 +181,9 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey)
-	author := c.MustGet(auth.Username)
-	setActionParameterAuthorAndUserID(&request.EditRequest, author.(string), userId.(string))
+	userId := c.MustGet(auth.UserKey).(string)
+	author := c.MustGet(auth.Username).(string)
+	setActionParameterAuthorAndUserID(&request.EditRequest, author, userId)
 
 	newScenario, err := a.store.Update(c.Request.Context(), request)
 	if err != nil {
@@ -196,7 +197,7 @@ func (a *api) Update(c *gin.Context) {
 	a.priorityIntervals.Restore(oldScenario.Priority)
 	a.priorityIntervals.Take(newScenario.Priority)
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypeScenario,
 		ValueID:   c.Param("id"),
@@ -244,7 +245,7 @@ func (a *api) Delete(c *gin.Context) {
 
 	a.priorityIntervals.Restore(scenario.Priority)
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionDelete,
 		ValueType: logger.ValueTypeScenario,
 		ValueID:   c.Param("id"),
@@ -343,7 +344,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 
 	ctx := c.Request.Context()
 	response := ar.NewArray()
-	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
 	userId := c.MustGet(auth.UserKey).(string)
 
 	for idx, rawObject := range rawObjects {
@@ -375,16 +375,15 @@ func (a *api) BulkCreate(c *gin.Context) {
 		}
 
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, scenario.ID, http.StatusOK, rawObject, nil))
-		logEntries = append(logEntries, logger.LogEntry{
+
+		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 			Action:    logger.ActionCreate,
 			ValueType: logger.ValueTypeScenario,
 			ValueID:   scenario.ID,
 		})
-	}
-
-	err = a.actionLogger.BulkAction(c, logEntries)
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
 	}
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
@@ -425,7 +424,6 @@ func (a *api) BulkUpdate(c *gin.Context) {
 
 	ctx := c.Request.Context()
 	response := ar.NewArray()
-	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
 	userId := c.MustGet(auth.UserKey).(string)
 
 	for idx, rawObject := range rawObjects {
@@ -462,16 +460,15 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		}
 
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, scenario.ID, http.StatusOK, rawObject, nil))
-		logEntries = append(logEntries, logger.LogEntry{
+
+		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 			Action:    logger.ActionUpdate,
 			ValueType: logger.ValueTypeScenario,
 			ValueID:   scenario.ID,
 		})
-	}
-
-	err = a.actionLogger.BulkAction(c, logEntries)
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
 	}
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
@@ -512,7 +509,6 @@ func (a *api) BulkDelete(c *gin.Context) {
 
 	ctx := c.Request.Context()
 	response := ar.NewArray()
-	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
 
 	for idx, rawObject := range rawObjects {
 		object, err := rawObject.Object()
@@ -546,16 +542,15 @@ func (a *api) BulkDelete(c *gin.Context) {
 		}
 
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))
-		logEntries = append(logEntries, logger.LogEntry{
+
+		err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 			Action:    logger.ActionDelete,
 			ValueType: logger.ValueTypeScenario,
 			ValueID:   request.ID,
 		})
-	}
-
-	err = a.actionLogger.BulkAction(c, logEntries)
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
 	}
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))

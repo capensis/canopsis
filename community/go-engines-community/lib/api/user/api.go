@@ -1,7 +1,9 @@
 package user
 
 import (
+	"context"
 	"encoding/json"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -123,7 +125,7 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeUser,
 		ValueID:   user.ID,
@@ -172,7 +174,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypeUser,
 		ValueID:   user.ID,
@@ -210,7 +212,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionDelete,
 		ValueType: logger.ValueTypeUser,
 		ValueID:   id,
@@ -259,7 +261,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 
 	ctx := c.Request.Context()
 	response := ar.NewArray()
-	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
 	userIds := make([]string, 0, len(rawObjects))
 
 	for idx, rawObject := range rawObjects {
@@ -289,20 +290,20 @@ func (a *api) BulkCreate(c *gin.Context) {
 		}
 
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, user.ID, http.StatusOK, rawObject, nil))
-		logEntries = append(logEntries, logger.LogEntry{
+		
+		err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 			Action:    logger.ActionCreate,
 			ValueType: logger.ValueTypeUser,
 			ValueID:   user.ID,
 		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+
 		userIds = append(userIds, user.ID)
 	}
 
 	a.metricMetaUpdater.UpdateById(c.Request.Context(), userIds...)
-
-	err = a.actionLogger.BulkAction(c, logEntries)
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
@@ -342,7 +343,6 @@ func (a *api) BulkUpdate(c *gin.Context) {
 
 	ctx := c.Request.Context()
 	response := ar.NewArray()
-	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
 	userIds := make([]string, 0, len(rawObjects))
 
 	for idx, rawObject := range rawObjects {
@@ -377,20 +377,20 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		}
 
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, user.ID, http.StatusOK, rawObject, nil))
-		logEntries = append(logEntries, logger.LogEntry{
+
+		err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 			Action:    logger.ActionUpdate,
 			ValueType: logger.ValueTypeUser,
 			ValueID:   user.ID,
 		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+
 		userIds = append(userIds, user.ID)
 	}
 
 	a.metricMetaUpdater.UpdateById(c.Request.Context(), userIds...)
-
-	err = a.actionLogger.BulkAction(c, logEntries)
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
@@ -430,7 +430,6 @@ func (a *api) BulkDelete(c *gin.Context) {
 
 	ctx := c.Request.Context()
 	response := ar.NewArray()
-	logEntries := make([]logger.LogEntry, 0, len(rawObjects))
 	userIds := make([]string, 0, len(rawObjects))
 
 	for idx, rawObject := range rawObjects {
@@ -465,20 +464,20 @@ func (a *api) BulkDelete(c *gin.Context) {
 		}
 
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))
-		logEntries = append(logEntries, logger.LogEntry{
+
+		err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 			Action:    logger.ActionDelete,
 			ValueType: logger.ValueTypeUser,
 			ValueID:   request.ID,
 		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+
 		userIds = append(userIds, request.ID)
 	}
 
 	a.metricMetaUpdater.DeleteById(c.Request.Context(), userIds...)
-
-	err = a.actionLogger.BulkAction(c, logEntries)
-	if err != nil {
-		a.actionLogger.Err(err, "failed to log action")
-	}
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
