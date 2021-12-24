@@ -4,22 +4,22 @@ import (
 	"github.com/valyala/fastjson"
 )
 
-func GetBulkResponseItem(ar *fastjson.Arena, id string, status int, rawUser, error *fastjson.Value) *fastjson.Value {
+func GetBulkResponseItem(ar *fastjson.Arena, id string, status int, rawUser, err *fastjson.Value) *fastjson.Value {
 	item := ar.NewObject()
 	item.Set("status", ar.NewNumberInt(status))
 	item.Set("item", rawUser)
 
-	if error == nil {
+	if err == nil {
 		item.Set("id", ar.NewString(id))
 		return item
 	}
 
-	if error.Type() == fastjson.TypeString {
-		item.Set("error", error)
+	if err.Type() == fastjson.TypeString {
+		item.Set("error", err)
 	}
 
-	if error.Type() == fastjson.TypeObject {
-		item.Set("errors", error)
+	if err.Type() == fastjson.TypeObject {
+		item.Set("errors", err)
 	}
 
 	return item
