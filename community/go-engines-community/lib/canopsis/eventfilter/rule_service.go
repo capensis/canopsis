@@ -28,7 +28,12 @@ func (s *ruleService) LoadRules(ctx context.Context, types []string) error {
 		return err
 	}
 
-	s.logger.Info().Int("number", len(s.rules)).Msg("Successfully loaded eventfilter rules")
+	ids := make([]string, len(s.rules))
+	for i := 0; i < len(s.rules); i++ {
+		ids[i] = s.rules[i].ID
+	}
+
+	s.logger.Info().Strs("rules", ids).Msg("Loading event filter rules")
 
 	return nil
 }

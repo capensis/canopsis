@@ -192,7 +192,6 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 	engine.AddPeriodicalWorker(&periodicalWorker{
 		RuleService:        eventFilterService,
 		PeriodicalInterval: options.PeriodicalWaitTime,
-		Logger:             logger,
 	})
 	engine.AddPeriodicalWorker(libengine.NewRunInfoPeriodicalWorker(
 		canopsis.PeriodicalWaitTime,
