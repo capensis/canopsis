@@ -323,6 +323,8 @@ func (a *api) CheckPriority(c *gin.Context) {
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /bulk/scenarios [post]
 func (a *api) BulkCreate(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+
 	var ar fastjson.Arena
 
 	raw, err := c.GetRawData()
@@ -344,7 +346,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 
 	ctx := c.Request.Context()
 	response := ar.NewArray()
-	userId := c.MustGet(auth.UserKey).(string)
 
 	for idx, rawObject := range rawObjects {
 		object, err := rawObject.Object()
@@ -403,6 +404,8 @@ func (a *api) BulkCreate(c *gin.Context) {
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /bulk/scenarios [put]
 func (a *api) BulkUpdate(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+
 	var ar fastjson.Arena
 
 	raw, err := c.GetRawData()
@@ -424,7 +427,6 @@ func (a *api) BulkUpdate(c *gin.Context) {
 
 	ctx := c.Request.Context()
 	response := ar.NewArray()
-	userId := c.MustGet(auth.UserKey).(string)
 
 	for idx, rawObject := range rawObjects {
 		object, err := rawObject.Object()
@@ -488,6 +490,8 @@ func (a *api) BulkUpdate(c *gin.Context) {
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /bulk/scenarios [delete]
 func (a *api) BulkDelete(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+
 	var ar fastjson.Arena
 
 	raw, err := c.GetRawData()
@@ -543,7 +547,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))
 
-		err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
+		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 			Action:    logger.ActionDelete,
 			ValueType: logger.ValueTypeScenario,
 			ValueID:   request.ID,
