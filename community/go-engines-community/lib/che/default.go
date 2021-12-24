@@ -81,7 +81,19 @@ func NewEngine(
 
 	engine := libengine.New(
 		func(ctx context.Context) error {
-			_, err := periodicalLockClient.Obtain(ctx, redis.ChePeriodicalLockKey,
+			logger.Debug().Msg("Loading event filter rules")
+			err := eventfilterService.LoadRules(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
+			if err != nil {
+				return fmt.Errorf("unable to load rules: %v", err)
+			}
+
+			logger.Debug().Msg("Loading services")
+			err = enrichmentCenter.LoadServices(ctx)
+			if err != nil {
+				logger.Error().Err(err).Msg("unable to load services")
+			}
+
+			_, err = periodicalLockClient.Obtain(ctx, redis.ChePeriodicalLockKey,
 				options.PeriodicalWaitTime, &redislock.Options{
 					RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
 				})
@@ -103,17 +115,6 @@ func NewEngine(
 			}
 			logger.Debug().Msg("Recompute impacted services for connectors finished")
 
-			logger.Debug().Msg("Loading event filter rules")
-			err = eventfilterService.LoadRules(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
-			if err != nil {
-				return fmt.Errorf("unable to load rules: %v", err)
-			}
-
-			logger.Debug().Msg("Loading services")
-			err = enrichmentCenter.LoadServices(ctx)
-			if err != nil {
-				logger.Error().Err(err).Msg("unable to load services")
-			}
 			return nil
 		},
 		func(ctx context.Context) {

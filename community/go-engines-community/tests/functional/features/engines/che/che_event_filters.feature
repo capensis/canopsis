@@ -1177,7 +1177,7 @@ Feature: modify event on event filter
         }
       },
       "patterns": [{
-        "component": "assets_customer_1"
+        "component": "test-eventfilter-assets-customer-1"
       }],
       "description": "test-event-filter-che-event-filters-9-description",
       "priority": 1,
@@ -1205,7 +1205,7 @@ Feature: modify event on event filter
       "connector_name": "test-connector-name-che-event-filters-9",
       "source_type": "resource",
       "event_type": "check",
-      "component": "assets_customer_1",
+      "component": "test-eventfilter-assets-customer-1",
       "resource": "test-resource-che-event-filters-9",
       "state": 2,
       "output": "test-output-che-event-filters-9"
@@ -1220,15 +1220,15 @@ Feature: modify event on event filter
     {
       "data": [
         {
-          "_id": "test-resource-che-event-filters-9/assets_customer_1",
+          "_id": "test-resource-che-event-filters-9/test-eventfilter-assets-customer-1",
           "category": null,
-          "component": "assets_customer_1",
+          "component": "test-eventfilter-assets-customer-1",
           "depends": [
             "test-connector-che-event-filters-9/test-connector-name-che-event-filters-9"
           ],
           "enabled": true,
           "impact": [
-            "assets_customer_1"
+            "test-eventfilter-assets-customer-1"
           ],
           "enable_history": [
             {{ .createTimestamp }}
@@ -1238,7 +1238,7 @@ Feature: modify event on event filter
             "status": {
               "name": "status",
               "description": "status from assets",
-              "value": "assets_status_1"
+              "value": "test-eventfilter-assets-status-1"
             }
           },
           "measurements": null,
@@ -1582,7 +1582,7 @@ Feature: modify event on event filter
         }
       },
       "patterns": [{
-        "component": "assets_customer_2"
+        "component": "test-eventfilter-assets-customer-2"
       }],
       "description": "test-event-filter-che-event-filters-13-description",
       "priority": 1,
@@ -1616,7 +1616,7 @@ Feature: modify event on event filter
       "connector_name": "test-connector-name-che-event-filters-13",
       "source_type": "resource",
       "event_type": "check",
-      "component": "assets_customer_2",
+      "component": "test-eventfilter-assets-customer-2",
       "resource": "test-resource-che-event-filters-13",
       "state": 2,
       "output": "test-output-che-event-filters-13"
@@ -1631,15 +1631,15 @@ Feature: modify event on event filter
     {
       "data": [
         {
-          "_id": "test-resource-che-event-filters-13/assets_customer_2",
+          "_id": "test-resource-che-event-filters-13/test-eventfilter-assets-customer-2",
           "category": null,
-          "component": "assets_customer_2",
+          "component": "test-eventfilter-assets-customer-2",
           "depends": [
             "test-connector-che-event-filters-13/test-connector-name-che-event-filters-13"
           ],
           "enabled": true,
           "impact": [
-            "assets_customer_2"
+            "test-eventfilter-assets-customer-2"
           ],
           "enable_history": [
             {{ .createTimestamp }}
@@ -1649,7 +1649,7 @@ Feature: modify event on event filter
             "status": {
               "name": "status",
               "description": "status from assets",
-              "value": "assets_status_2"
+              "value": "test-eventfilter-assets-status-2"
             },
             "title": {
               "name": "title",

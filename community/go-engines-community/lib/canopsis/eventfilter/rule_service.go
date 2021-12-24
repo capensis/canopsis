@@ -46,21 +46,17 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 			break
 		}
 
-		if event.Debug {
-			s.logger.Info().Msgf("Event filter rule service: check rule %s", rule.ID)
-		}
-
 		regexMatches, match := rule.Patterns.GetRegexMatches(event)
 		if !match {
 			if event.Debug {
-				s.logger.Info().Str("rule_id", rule.ID).Msg("Event filter rule service: rule is not matched")
+				s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is not matched")
 			}
 
 			continue
 		}
 
 		if event.Debug {
-			s.logger.Info().Str("rule_id", rule.ID).Msg("Event filter rule service: rule is matched")
+			s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is matched")
 		}
 
 		applicator, found := s.ruleApplicatorContainer.Get(rule.Type)

@@ -144,14 +144,17 @@ func (a api) Update(c *gin.Context) {
 	}
 
 	request.ID = c.Param("id")
-	ok, _ := a.store.Update(c.Request.Context(), &request)
+	ok, err := a.store.Update(c.Request.Context(), &request)
+	if err != nil {
+		panic(err)
+	}
 
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
 
-	err := a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(c, logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypeEventFilter,
 		ValueID:   request.ID,
