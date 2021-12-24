@@ -5,7 +5,6 @@ Feature: create a PBehavior
 
   Scenario: POST a valid PBehavior but unauthorized
     When I do POST /api/v4/pbehaviors/count
-    When I wait 2s
     Then the response code should be 401
 
   Scenario: POST a valid PBehavior but without permissions
