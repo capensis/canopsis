@@ -10050,8 +10050,7 @@ var doc = `{
             }
         },
         "bson.M": {
-            "type": "object",
-            "additionalProperties": true
+            "$ref": "#/definitions/primitive.M"
         },
         "common.ErrorResponse": {
             "type": "object",
@@ -12263,7 +12262,7 @@ var doc = `{
                 },
                 "duration": {
                     "type": "object",
-                    "$ref": "#/definitions/pattern.IntegerRefPattern"
+                    "$ref": "#/definitions/pattern.IntegerPattern"
                 },
                 "entity": {
                     "type": "object",
@@ -13420,6 +13419,10 @@ var doc = `{
                     "type": "integer"
                 }
             }
+        },
+        "primitive.M": {
+            "type": "object",
+            "additionalProperties": true
         },
         "resolverule.CreateRequest": {
             "type": "object",
