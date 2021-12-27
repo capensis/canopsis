@@ -9,25 +9,20 @@ import (
 )
 
 type Store interface {
-	GetOneBy(id string) (*User, error)
+	GetOneBy(ctx context.Context, id string) (*User, error)
 }
 
 type store struct {
-	db         mongo.DbClient
 	collection mongo.DbCollection
 }
 
 func NewStore(db mongo.DbClient) Store {
 	return &store{
-		db:         db,
 		collection: db.Collection(mongo.RightsMongoCollection),
 	}
 }
 
-func (s *store) GetOneBy(id string) (*User, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 	cursor, err := s.collection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{"_id": id, "crecord_type": model.LineTypeSubject}},
 		// Find role
@@ -120,6 +115,13 @@ func (s *store) GetOneBy(id string) (*User, error) {
 			"as":           "defaultview",
 		}},
 		{"$unwind": bson.M{"path": "$defaultview", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.ViewMongoCollection,
+			"localField":   "role.defaultview",
+			"foreignField": "_id",
+			"as":           "role.defaultview",
+		}},
+		{"$unwind": bson.M{"path": "$role.defaultview", "preserveNullAndEmptyArrays": true}},
 	})
 
 	if err != nil {

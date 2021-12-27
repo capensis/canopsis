@@ -9,19 +9,17 @@ import (
 	"go.mongodb.org/mongo-driver/bson/bsontype"
 )
 
-const DefaultCategory = "default"
-
 type ListRequestWithPagination struct {
 	pagination.Query
 	ListRequest
-	WithFlags bool `form:"with_flags"`
-	NoEvents  bool `form:"no_events"`
+	WithFlags bool `form:"with_flags" json:"with_flags"`
+	NoEvents  bool `form:"no_events" json:"no_events"`
 }
 
 type ListRequest struct {
 	BaseFilterRequest
 	Sort     string   `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
-	SortBy   string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=name type category impact_level category.name idle_since"`
+	SortBy   string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=_id name type category impact_level category.name idle_since infos.*"`
 	SearchBy []string `form:"active_columns[]" json:"active_columns[]"`
 }
 
@@ -35,6 +33,17 @@ type ExportRequest struct {
 	BaseFilterRequest
 	Fields    export.Fields `json:"fields"`
 	Separator string        `json:"separator" binding:"oneoforempty=comma semicolon tab space"`
+}
+
+type CleanRequest struct {
+	Archive             *bool `json:"archive" bson:"archive" binding:"required"`
+	ArchiveDependencies bool  `json:"archive_dependencies" bson:"archive_dependencies"`
+}
+
+type CleanTask struct {
+	Archive             *bool
+	ArchiveDependencies bool
+	UserID              string
 }
 
 type ExportResponse struct {

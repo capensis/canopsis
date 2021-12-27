@@ -8,8 +8,8 @@
       field-filter-editor(
         data-test="widgetFilterEditor",
         v-model="settings.widget.parameters.mfilter",
-        :hiddenFields="['title']",
-        :entitiesType="$constants.ENTITIES_TYPES.entity"
+        :hidden-fields="['title']",
+        :entities-type="$constants.ENTITIES_TYPES.entity"
       )
       v-divider
       field-stats-selector(v-model="settings.widget.parameters.stats", required)
@@ -70,4 +70,3 @@ export default {
   },
 };
 </script>
-

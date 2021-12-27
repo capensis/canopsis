@@ -2,16 +2,17 @@ package action_test
 
 import (
 	"context"
+	"reflect"
+	"testing"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_action "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/action"
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
 	"github.com/golang/mock/gomock"
-	"github.com/influxdata/influxdb/pkg/deep"
 	"github.com/rs/zerolog"
-	"testing"
-	"time"
 )
 
 func TestDelayedScenarioManager_AddDelayedScenario_GivenNotDelayedScenario_ShouldReturnError(t *testing.T) {
@@ -50,8 +51,8 @@ func TestDelayedScenarioManager_AddDelayedScenario_GivenMatchedDelayedScenario_S
 	scenario := action.Scenario{
 		ID: "test-scenario-id",
 		Delay: &types.DurationWithUnit{
-			Seconds: 10,
-			Unit:    "s",
+			Value: 10,
+			Unit:  "s",
 		},
 		Actions: []action.Action{
 			{
@@ -250,10 +251,10 @@ func TestDelayedScenarioManager_Run_GivenExpiredScenario_ShouldReturnItByTick(t 
 		},
 	}, nil).Times(2)
 	mockStorage.EXPECT().Delete(gomock.Any(), gomock.Eq("test-delayed-id")).Return(true, nil)
-	mockActionAdapter.EXPECT().GetEnabledByIDs(gomock.Eq([]string{expectedScenario.ID})).Return([]action.Scenario{expectedScenario}, nil)
-	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByAlarmIDs(gomock.Any(), gomock.Any()).
-		Do(func(ids []string, alarms *[]types.Alarm) {
-			if !deep.Equal(ids, []string{expectedAlarm.ID}) {
+	mockActionAdapter.EXPECT().GetEnabledByIDs(gomock.Any(), gomock.Eq([]string{expectedScenario.ID})).Return([]action.Scenario{expectedScenario}, nil)
+	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByAlarmIDs(gomock.Any(), gomock.Any(), gomock.Any()).
+		Do(func(_ context.Context, ids []string, alarms *[]types.Alarm) {
+			if !reflect.DeepEqual(ids, []string{expectedAlarm.ID}) {
 				t.Errorf("expected %v but got %v", []string{expectedAlarm.ID}, ids)
 			}
 
@@ -271,10 +272,10 @@ func TestDelayedScenarioManager_Run_GivenExpiredScenario_ShouldReturnItByTick(t 
 
 	select {
 	case task := <-ch:
-		if !deep.Equal(task.Scenario, expectedScenario) {
+		if !reflect.DeepEqual(task.Scenario, expectedScenario) {
 			t.Errorf("expected scenario %v but got %v", expectedScenario, task.Scenario)
 		}
-		if !deep.Equal(task.Alarm, expectedAlarm) {
+		if !reflect.DeepEqual(task.Alarm, expectedAlarm) {
 			t.Errorf("expected alarm %v but got %v", expectedAlarm, task.Alarm)
 		}
 	default:
@@ -310,9 +311,9 @@ func TestDelayedScenarioManager_Run_GivenExpiredScenario_ShouldReturnItByWaiting
 	}, nil).Times(2)
 	mockStorage.EXPECT().Get(gomock.Any(), gomock.Eq(delayedScenario.ID)).Return(&delayedScenario, nil)
 	mockStorage.EXPECT().Delete(gomock.Any(), gomock.Eq("test-delayed-id")).Return(true, nil)
-	mockActionAdapter.EXPECT().GetEnabledByIDs(gomock.Eq([]string{expectedScenario.ID})).Return([]action.Scenario{expectedScenario}, nil)
-	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByAlarmIDs(gomock.Any(), gomock.Any()).Do(func(ids []string, alarms *[]types.Alarm) {
-		if !deep.Equal(ids, []string{expectedAlarm.ID}) {
+	mockActionAdapter.EXPECT().GetEnabledByIDs(gomock.Any(), gomock.Eq([]string{expectedScenario.ID})).Return([]action.Scenario{expectedScenario}, nil)
+	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByAlarmIDs(gomock.Any(), gomock.Any(), gomock.Any()).Do(func(_ context.Context, ids []string, alarms *[]types.Alarm) {
+		if !reflect.DeepEqual(ids, []string{expectedAlarm.ID}) {
 			t.Errorf("expected %v but got %v", []string{expectedAlarm.ID}, ids)
 		}
 
@@ -330,10 +331,10 @@ func TestDelayedScenarioManager_Run_GivenExpiredScenario_ShouldReturnItByWaiting
 
 	select {
 	case task := <-ch:
-		if !deep.Equal(task.Scenario, expectedScenario) {
+		if !reflect.DeepEqual(task.Scenario, expectedScenario) {
 			t.Errorf("expected scenario %v but got %v", expectedScenario, task.Scenario)
 		}
-		if !deep.Equal(task.Alarm, expectedAlarm) {
+		if !reflect.DeepEqual(task.Alarm, expectedAlarm) {
 			t.Errorf("expected alarm %v but got %v", expectedAlarm, task.Alarm)
 		}
 	default:

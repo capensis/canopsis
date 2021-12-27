@@ -4,9 +4,7 @@
       v-icon(color="white", small) {{ icon }}
     v-flex.pl-1.white--text.subheading(xs12)
       v-layout(align-center)
-        div.mr-1.entity-name(
-          v-resize-text="{ maxFontSize: '16px' }",
-        ) {{ { entity } | get(entityNameField, false, entityNameField) }}
+        div.mr-1.entity-name(v-resize-text="{ maxFontSize: '16px' }") {{ entityName }}
         v-btn.mx-1.white(
           v-for="icon in extraIcons",
           :key="icon.icon",
@@ -16,9 +14,12 @@
           icon
         )
           v-icon(small) {{ icon.icon }}
+        c-no-events-icon(:value="entity.idle_since", color="white", top)
 </template>
 
 <script>
+import { get } from 'lodash';
+
 import {
   ENTITIES_STATUSES,
   EVENT_ENTITY_STYLE,
@@ -46,6 +47,10 @@ export default {
     },
   },
   computed: {
+    entityName() {
+      return get({ entity: this.entity }, this.entityNameField, this.entityNameField);
+    },
+
     mainIcons() {
       const mainIcons = [];
 

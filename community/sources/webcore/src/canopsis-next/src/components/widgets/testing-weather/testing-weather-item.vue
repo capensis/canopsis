@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card.white--text.cursor-pointer.weather__item.ma-1(
+  v-card.white--text.cursor-pointer.weather-item.ma-1(
     :style="{ backgroundColor: color }",
     :class="{ 'v-card__with-see-alarms-btn': hasAlarmsListAccess }",
     tile,
@@ -13,7 +13,7 @@
           v-flex(xs6)
             v-layout.fill-height(column, justify-space-between)
               c-mini-bar-chart(:history="testSuite.mini_chart", :unit="$constants.TIME_UNITS.second")
-              span.pre-wrap {{ testSuite.timestamp | date('testSuiteFormat', true) }}
+              span.pre-wrap {{ testSuite.timestamp | date('testSuiteFormat') }}
           v-flex(xs6)
             test-suite-statistics(:test-suite="testSuite")
     v-btn.see-alarms-btn(

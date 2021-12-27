@@ -10,6 +10,7 @@ import (
 	"sync"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libcontext "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
@@ -41,14 +42,16 @@ type service struct {
 	// it's being used.
 	rulesMutex sync.RWMutex
 
-	logger zerolog.Logger
+	timezoneConfigProvider config.TimezoneConfigProvider
+	logger                 zerolog.Logger
 }
 
 // NewService creates an event filter service.
-func NewService(adapter Adapter, logger zerolog.Logger) Service {
+func NewService(adapter Adapter, timezoneConfigProvider config.TimezoneConfigProvider, logger zerolog.Logger) Service {
 	s := service{
-		adapter: adapter,
-		logger:  logger,
+		adapter:                adapter,
+		timezoneConfigProvider: timezoneConfigProvider,
+		logger:                 logger,
 	}
 	return &s
 }
@@ -119,8 +122,8 @@ func (s *service) loadRuleDataSources(rule *Rule) error {
 // LoadRules loads the event filter rules from the database, and adds them to
 // the service. Note that LoadDataSourceFactories needs to be called before
 // calling LoadRules.
-func (s *service) LoadRules() error {
-	allRules, err := s.adapter.List()
+func (s *service) LoadRules(ctx context.Context) error {
+	allRules, err := s.adapter.List(ctx)
 	if err != nil {
 		return err
 	}
@@ -154,6 +157,7 @@ func (s *service) ProcessEvent(ctx context.Context, event types.Event) (types.Ev
 
 	report := Report{}
 	outcome := UnsetOutcome
+	tz := s.timezoneConfigProvider.Get()
 	for _, rule := range s.rules {
 		if outcome != UnsetOutcome && outcome != Pass {
 			break
@@ -169,7 +173,7 @@ func (s *service) ProcessEvent(ctx context.Context, event types.Event) (types.Ev
 				s.logger.Info().Str("regex", fmt.Sprintf("%+v", regexMatches)).Msg("eventfilter | event matches, applying rule with regex matches")
 			}
 
-			event, outcome = rule.Apply(ctx, event, regexMatches, &report, s.logger)
+			event, outcome = rule.Apply(ctx, event, regexMatches, &report, &tz, s.logger)
 
 			if event.Debug {
 				s.logger.Info().Msgf("eventfilter | outcome: %s", outcome)

@@ -53,9 +53,10 @@ import { setSeveralFields } from '@/helpers/immutable';
 
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import entitiesViewMixin from '@/mixins/entities/view';
 import { authMixin } from '@/mixins/auth';
-import { submittableMixin } from '@/mixins/submittable';
+import { submittableMixinCreator } from '@/mixins/submittable';
 
 import DraggableGroupViews from '@/components/layout/navigation/partial/groups-side-bar/draggable-group-views.vue';
 import DraggableGroups from '@/components/layout/navigation/partial/groups-side-bar/draggable-groups.vue';
@@ -70,10 +71,11 @@ export default {
     ModalWrapper,
   },
   mixins: [
+    modalInnerMixin,
     authMixin,
     entitiesViewMixin,
     entitiesViewGroupMixin,
-    submittableMixin(),
+    submittableMixinCreator(),
   ],
   data() {
     return {

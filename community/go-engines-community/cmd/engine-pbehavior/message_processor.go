@@ -2,7 +2,11 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"runtime/trace"
+	"time"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -13,27 +17,30 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
-	"runtime/trace"
-	"time"
+)
+
+const (
+	resolveTimeout                     = time.Millisecond * 100
+	resolveDeadlineExceededErrInterval = time.Second * 30
 )
 
 type messageProcessor struct {
-	Store                    redis.Store
-	PbhService               libpbehavior.Service
+	PbhService               libpbehavior.EntityTypeResolver
 	TimezoneConfigProvider   config.TimezoneConfigProvider
 	FeaturePrintEventOnError bool
 	Encoder                  encoding.Encoder
 	Decoder                  encoding.Decoder
-	CreatePbehaviroProcessor createPbehaviorMessageProcessor
+	CreatePbehaviorProcessor createPbehaviorMessageProcessor
 	ChannelPub               libamqp.Channel
 	Logger                   zerolog.Logger
+	// resolveDeadlineExceededAt contains time of last logged deadline exceeded error.
+	// The error is logged only once in resolveDeadlineExceededErrInterval.
+	resolveDeadlineExceededAt time.Time
 }
 
 func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte, error) {
-	p.Logger.Debug().Msg("Process message")
-
 	msg := d.Body
-	ctx, task := trace.NewTask(context.Background(), "pbehavior.MessageProcessor")
+	ctx, task := trace.NewTask(ctx, "pbehavior.MessageProcessor")
 	defer task.End()
 	trace.Logf(ctx, "event_size", "%d", len(msg))
 	var err error
@@ -55,73 +62,104 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 	trace.Log(ctx, "event.component", event.Component)
 	trace.Log(ctx, "event.resource", event.Resource)
 
-	if event.Entity != nil && event.EventType == types.EventTypePbhCreate {
-		params := types.ActionPBehaviorParameters{}
-		err := p.Decoder.Decode([]byte(event.PbhParameters), &params)
-		if err != nil {
-			p.logError(err, "Message processor: invalid params for create pbehavior", msg)
-			return nil, nil
-		}
-
-		pbhEvent, err := p.CreatePbehaviroProcessor.Process(ctx, event.Alarm, event.Entity,
-			params, msg, "Message processor")
-		if err != nil {
-			if redis.IsConnectionError(err) {
-				return nil, err
-			}
-
-			p.logError(err, "Message processor: cannot process event", msg)
-			return nil, nil
-		}
-
-		if pbhEvent != nil {
-			err := p.publishTo(*pbhEvent, canopsis.FIFOQueueName)
+	if event.Entity != nil {
+		if event.EventType == types.EventTypePbhCreate {
+			err := p.processPbhCreateEvent(ctx, event, msg)
 			if err != nil {
-				p.logError(err, "Message processor: cannot publish pbh event", msg)
 				return nil, err
 			}
-		}
-	} else if event.Entity != nil && !event.IsPbehaviorEvent() {
-		ok, err := p.Store.Restore(ctx, p.PbhService)
-		if err != nil || !ok {
-			if err == nil {
-				err = fmt.Errorf("pbehavior intervals are not computed, cache is empty")
-			}
-			p.logError(err, "Message processor: get pbehavior's frames from redis failed! Skip periodical process", msg)
-			return nil, err
-		}
-
-		now := time.Now().In(p.TimezoneConfigProvider.Get().Location)
-		resolveResult, err := p.PbhService.Resolve(ctx, event.Entity, now)
-		if err != nil {
-			if redis.IsConnectionError(err) {
+		} else if !event.IsPbehaviorEvent() {
+			pbhInfo, err := p.processEvent(ctx, event, msg)
+			if err != nil {
 				return nil, err
 			}
 
-			p.Logger.Err(err).Str("entity_id", event.Entity.ID).Msg("Message processor: resolve an entity failed!")
-			return nil, nil
+			event.PbehaviorInfo = pbhInfo
 		}
-
-		event.PbehaviorInfo = libpbehavior.NewPBehaviorInfo(resolveResult)
 	}
 
-	// Encode and publish the event to the next engine
-	var bevent []byte
+	var body []byte
 	trace.WithRegion(ctx, "encode-event", func() {
-		bevent, err = p.Encoder.Encode(event)
+		body, err = p.Encoder.Encode(event)
 	})
 	if err != nil {
 		p.logError(err, "cannot encode event", msg)
 		return nil, nil
 	}
 
-	return bevent, nil
+	return body, nil
+}
+
+// processEvent tries to resolve pbehavior type for entity.
+// It logs error and sends event to next engine on fail and
+// pbehavior type will be resolved in periodical worker.
+func (p *messageProcessor) processEvent(ctx context.Context, event types.Event, msg []byte) (types.PbehaviorInfo, error) {
+	ctx, cancel := context.WithTimeout(ctx, resolveTimeout)
+	defer cancel()
+	now := time.Now().In(p.TimezoneConfigProvider.Get().Location)
+
+	resolveResult, err := p.PbhService.Resolve(ctx, event.Entity.ID, now)
+	if err == nil {
+		if !p.resolveDeadlineExceededAt.IsZero() {
+			p.resolveDeadlineExceededAt = time.Time{}
+			p.Logger.Info().Msg("entity resolving has been fixed")
+		}
+
+		return libpbehavior.NewPBehaviorInfo(types.CpsTime{Time: now}, resolveResult), nil
+	}
+
+	if errors.Is(err, context.DeadlineExceeded) {
+		if p.resolveDeadlineExceededAt.IsZero() || time.Since(p.resolveDeadlineExceededAt) > resolveDeadlineExceededErrInterval {
+			p.resolveDeadlineExceededAt = now
+			p.Logger.Err(err).
+				Str("entity", event.Entity.ID).
+				Msg("resolve an entity too long")
+		}
+
+		return types.PbehaviorInfo{}, nil
+	}
+
+	if redis.IsConnectionError(err) {
+		return types.PbehaviorInfo{}, err
+	}
+
+	p.logError(err, "resolve an entity failed", msg)
+	return types.PbehaviorInfo{}, nil
+}
+
+func (p *messageProcessor) processPbhCreateEvent(ctx context.Context, event types.Event, msg []byte) error {
+	params := types.ActionPBehaviorParameters{}
+	err := p.Decoder.Decode([]byte(event.PbhParameters), &params)
+	if err != nil {
+		p.logError(err, "invalid params for create pbehavior", msg)
+		return nil
+	}
+
+	pbhEvent, err := p.CreatePbehaviorProcessor.Process(ctx, event.Alarm, event.Entity,
+		params, msg)
+	if err != nil {
+		if redis.IsConnectionError(err) {
+			return err
+		}
+
+		p.logError(err, "cannot process event", msg)
+		return nil
+	}
+
+	if pbhEvent != nil {
+		err := p.publishTo(*pbhEvent, canopsis.FIFOQueueName)
+		if err != nil {
+			return fmt.Errorf("cannot publish pbh event: %w", err)
+		}
+	}
+
+	return nil
 }
 
 func (p *messageProcessor) publishTo(event types.Event, queue string) error {
-	bevent, err := p.Encoder.Encode(event)
+	body, err := p.Encoder.Encode(event)
 	if err != nil {
-		return fmt.Errorf("publishTo(): error while encoding event %+v", err)
+		return fmt.Errorf("error while encoding event: %w", err)
 	}
 
 	return errt.NewIOError(p.ChannelPub.Publish(
@@ -130,8 +168,8 @@ func (p *messageProcessor) publishTo(event types.Event, queue string) error {
 		false,
 		false,
 		amqp.Publishing{
-			ContentType:  "application/json", // this type is mandatory to avoid bad conversions into Python.
-			Body:         bevent,
+			ContentType:  canopsis.JsonContentType,
+			Body:         body,
 			DeliveryMode: amqp.Persistent,
 		},
 	))

@@ -11,7 +11,7 @@
   )
     div(slot="activator")
       v-text-field(
-        :value="value | date(format, true)",
+        :value="value | date(format)",
         :label="label",
         :error="error",
         :error-messages="errorMessages",
@@ -22,18 +22,20 @@
         :readonly="!disabled",
         @click:append="clear"
       )
+        template(slot="append")
+          slot(name="append")
     v-date-picker.date-picker(
       :value="value",
       :opened="opened",
       :color="color",
+      :allowed-dates="allowedDates",
       @input="input",
       @change="change"
     )
 </template>
 
 <script>
-
-import formBaseMixin from '@/mixins/form/base';
+import { formBaseMixin } from '@/mixins/form';
 
 /**
  * Date picker field component
@@ -56,7 +58,7 @@ export default {
       default: false,
     },
     value: {
-      type: String,
+      type: [String, Number],
       default: null,
     },
     label: {
@@ -73,7 +75,7 @@ export default {
     },
     format: {
       type: String,
-      default: 'datePicker',
+      default: 'short',
     },
     error: {
       type: Boolean,
@@ -86,6 +88,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    allowedDates: {
+      type: Function,
+      required: false,
     },
   },
   data() {

@@ -16,12 +16,14 @@
         :key="operation.key",
         :index="index",
         :operation-number="getOperationNumber(index)",
+        :disabled="disabled",
         @remove="removeOperation(index)"
       )
     v-layout(row, align-center)
       v-btn.ml-0(
-        outline,
         :color="hasOperationsErrors ? 'error' : 'primary'",
+        :disabled="disabled",
+        outline,
         @click="addOperation"
       ) {{ $t('remediationInstructions.addOperation') }}
       span.error--text(v-show="hasOperationsErrors") {{ $t('remediationInstructions.errors.operationRequired') }}
@@ -32,10 +34,10 @@ import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
-import { generateRemediationInstructionStepOperation } from '@/helpers/entities';
+import { remediationInstructionStepOperationToForm } from '@/helpers/forms/remediation-instruction';
 import { getLetterByIndex } from '@/helpers/string';
 
-import formArrayMixin from '@/mixins/form/array';
+import { formArrayMixin } from '@/mixins/form';
 
 import RemediationInstructionOperationField from './fields/remediation-instruction-operation-field.vue';
 
@@ -63,6 +65,10 @@ export default {
       type: [String, Number],
       default: '',
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -76,6 +82,7 @@ export default {
 
     draggableOptions() {
       return {
+        disabled: this.disabled,
         animation: VUETIFY_ANIMATION_DELAY,
         handle: '.operation-drag-handler',
         ghostClass: 'white',
@@ -110,7 +117,7 @@ export default {
     },
 
     addOperation() {
-      this.addItemIntoArray(generateRemediationInstructionStepOperation());
+      this.addItemIntoArray(remediationInstructionStepOperationToForm());
     },
 
     removeOperation(index) {

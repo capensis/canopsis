@@ -648,3 +648,206 @@ Feature: execute action on trigger
       }
     }
     """
+
+  Scenario: given scenarios with 2 actions and webhook should be able to use additional data in template
+    Given I am admin
+    When I do POST /api/v4/scenarios:
+    """
+    {
+      "name": "test-scenario-action-webhook-6-name",
+      "enabled": true,
+      "priority": 70,
+      "triggers": [
+        "create"
+      ],
+      "actions": [
+        {
+          "alarm_patterns": [
+            {
+              "v": {
+                "resource": "test-resource-action-webhook-6"
+              }
+            }
+          ],
+          "type": "webhook",
+          "parameters": {
+            "request": {
+              "method": "POST",
+              "url": "{{ .apiURL }}/api/v4/scenarios",
+              "auth": {
+                "username": "root",
+                "password": "test"
+              },
+              "headers": {
+                "Content-Type": "application/json"
+              },
+              "payload": "{\"name\": \"{{ `test-scenario-action-webhook-6-action-1-{{ .AdditionalData.AlarmChangeType }}-{{ .AdditionalData.Author }}-{{ .AdditionalData.Initiator }}` }}\", \"enabled\":true,\"priority\":141,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-webhook-6-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+            },
+            "declare_ticket": {
+              "empty_response": false,
+              "is_regexp": false,
+              "ticket_id": "_id",
+              "scenario_name": "name"        }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        },
+        {
+          "alarm_patterns": [
+            {
+              "v": {
+                 "resource": "test-resource-action-webhook-6"
+              }
+            }
+          ],
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "type": "webhook",
+          "parameters": {
+            "request": {
+              "method": "POST",
+              "url": "{{ .apiURL }}/api/v4/scenarios",
+              "auth": {
+                "username": "root",
+                "password": "test"
+              },
+              "headers": {
+                "Content-Type": "application/json"
+              },
+              "payload": "{\"name\": \"{{ `test-scenario-action-webhook-6-action-2-{{ .AdditionalData.AlarmChangeType }}-{{ .AdditionalData.Author }}-{{ .AdditionalData.Initiator }}` }}\", \"enabled\":true,\"priority\":114,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-webhook-6-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+            },
+            "declare_ticket": {
+              "empty_response": false,
+              "is_regexp": false,
+              "ticket_id": "_id",
+              "scenario_name_2": "name"
+            }
+          }
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """
+    {
+      "connector" : "test-connector-action-webhook-6",
+      "connector_name" : "test-connector-name-action-webhook-6",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" :  "test-component-action-webhook-6",
+      "resource" : "test-resource-action-webhook-6",
+      "state" : 2,
+      "author": "QA_canopsis",
+      "output" : "noveo alarm"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-action-webhook-6"}]}&with_steps=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "v": {
+            "ticket": {
+              "_t": "declareticket",
+              "data": {
+                "scenario_name_2": "test-scenario-action-webhook-6-action-2-declareticketwebhook-system-external"
+              }
+            },
+            "steps": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc"
+              },
+              {
+                "_t": "declareticket"
+              },
+              {
+                "_t": "declareticket"
+              }
+            ],
+            "connector": "test-connector-action-webhook-6",
+            "connector_name": "test-connector-name-action-webhook-6",
+            "component": "test-component-action-webhook-6",
+            "resource": "test-resource-action-webhook-6"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/scenarios?search=test-scenario-action-webhook-6-action-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "name": "test-scenario-action-webhook-6-action-1-create-QA_canopsis-external",
+          "enabled": true,
+          "triggers": [
+            "create"
+          ],
+          "actions": [
+            {
+              "alarm_patterns": [
+                {
+                  "_id": "test-scenario-action-webhook-6-alarm"
+                }
+              ]
+            }
+          ],
+          "priority": 141
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "per_page": 10,
+        "page_count": 1,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/scenarios?search=test-scenario-action-webhook-6-action-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "name": "test-scenario-action-webhook-6-action-2-declareticketwebhook-system-external",
+          "enabled": true,
+          "triggers": [
+            "create"
+          ],
+          "actions": [
+            {
+              "alarm_patterns": [
+                {
+                  "_id": "test-scenario-action-webhook-6-alarm"
+                }
+              ]
+            }
+          ],
+          "priority": 114
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "per_page": 10,
+        "page_count": 1,
+        "total_count": 1
+      }
+    }
+    """

@@ -3,6 +3,7 @@ package alarm
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"reflect"
 	"regexp"
@@ -13,7 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metaalarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -23,27 +24,33 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const InstructionStatusRunning = 0
-const InstructionStatusPaused = 1
-
-const InstructionsQueryAll = "all"
+const (
+	InstructionExecutionStatusRunning    = 0
+	InstructionExecutionStatusPaused     = 1
+	InstructionExecutionStatusWaitResult = 5
+	InstructionTypeManual                = 0
+	InstructionTypeAuto                  = 1
+	InstructionStatusApproved            = 0
+)
 
 const linkFetchTimeout = 30 * time.Second
 
 type Store interface {
-	Find(context.Context, string, ListRequestWithPagination) (*AggregationResult, error)
-	Count(context.Context, FilterRequest) (*Count, error)
+	Find(ctx context.Context, apiKey string, r ListRequestWithPagination) (*AggregationResult, error)
+	Count(ctx context.Context, r FilterRequest) (*Count, error)
 }
 
 type store struct {
-	dbClient              mongo.DbClient
-	dbCollection          mongo.DbCollection
-	fieldsAliases         map[string]string
-	fieldsAliasesByRegex  map[string]string
-	defaultSearchByFields []string
-	defaultSortBy         string
-	defaultSort           string
-	links                 LinksFetcher
+	mainDbCollection                 mongo.DbCollection
+	resolvedDbCollection             mongo.DbCollection
+	dbInstructionCollection          mongo.DbCollection
+	dbInstructionExecutionCollection mongo.DbCollection
+	fieldsAliases                    map[string]string
+	fieldsAliasesByRegex             map[string]string
+	defaultSearchByFields            []string
+	defaultSortBy                    string
+	defaultSort                      string
+	links                            LinksFetcher
 	// nested objects lookups depend on requested Filter:
 	// these aggregation stages inserted at beginning of pipeline when Filter has some expression
 	// or inserted at beginning of project stage otherwise
@@ -52,8 +59,10 @@ type store struct {
 
 func NewStore(dbClient mongo.DbClient, legacyURL fmt.Stringer) Store {
 	s := &store{
-		dbClient:     dbClient,
-		dbCollection: dbClient.Collection(alarm.AlarmCollectionName),
+		mainDbCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
+		resolvedDbCollection:             dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
+		dbInstructionCollection:          dbClient.Collection(mongo.InstructionMongoCollection),
+		dbInstructionExecutionCollection: dbClient.Collection(mongo.InstructionExecutionMongoCollection),
 		fieldsAliases: map[string]string{
 			"uid":            "_id",
 			"connector":      "v.connector",
@@ -70,8 +79,6 @@ func NewStore(dbClient mongo.DbClient, legacyURL fmt.Stringer) Store {
 			"output":         "v.output",
 			"opened":         "t",
 			"resolved":       "v.resolved",
-			"domain":         "v.extra.domain",
-			"perimeter":      "v.extra.perimeter",
 		},
 		fieldsAliasesByRegex: map[string]string{
 			"^infos\\.(.+)":           "entity.infos.$1",
@@ -90,17 +97,24 @@ func NewStore(dbClient mongo.DbClient, legacyURL fmt.Stringer) Store {
 	return s
 }
 
-// move $sort to the end of $project when sorting by added field v.duration
-func (s *store) adjustSort(sort bson.M, project []bson.M) []bson.M {
+func (s *store) isSortByDuration(sort bson.M) bool {
+	durationFields := []string{"v.duration", "v.active_duration"}
 	srt := sort["$sort"]
-	if sortExpr, ok := srt.(bson.D); ok && len(sortExpr) > 1 && sortExpr[0].Key == "v.duration" {
-		project = append(project, bson.M{"$sort": sortExpr})
-		delete(sort, "$sort")
-	} else if sortExpr, ok := srt.(bson.M); ok && sortExpr != nil && sortExpr["v.duration"] != nil {
-		project = append(project, bson.M{"$sort": bson.M{"v.duration": sortExpr["v.duration"]}})
-		delete(sort, "$sort")
+	if sortExpr, ok := srt.(bson.D); ok && len(sortExpr) > 1 {
+		for _, f := range durationFields {
+			if sortExpr[0].Key == f {
+				return true
+			}
+		}
+	} else if sortExpr, ok := srt.(bson.M); ok && sortExpr != nil {
+		for _, f := range durationFields {
+			if sortExpr[f] != nil {
+				return true
+			}
+		}
 	}
-	return project
+
+	return false
 }
 
 // insertDeferred iserts deferredNestedObjects at the beginning of pipeline or project stages depending on Filter
@@ -121,18 +135,32 @@ func (s *store) insertDeferred(r FilterRequest, pipeline *[]bson.M, project []bs
 }
 
 func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagination) (*AggregationResult, error) {
+	collection := s.mainDbCollection
+	if r.GetOpenedFilter() == OnlyResolved {
+		collection = s.resolvedDbCollection
+	}
+
 	pipeline := make([]bson.M, 0)
 	s.addNestedObjects(r.FilterRequest, &pipeline)
 	err := s.addFilter(ctx, r.FilterRequest, &pipeline)
 	if err != nil {
 		return nil, err
 	}
-	sort := s.getSort(r.ListRequest)
+
+	sort, err := s.getSort(r.ListRequest)
+	if err != nil {
+		return nil, err
+	}
+
 	entitiesToProject := s.resetEntities(r.ListRequest, &pipeline)
 	project := s.getProject(r.ListRequest, entitiesToProject)
 	project = s.insertDeferred(r.FilterRequest, &pipeline, project)
-	project = s.adjustSort(sort, project)
-	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
+	if s.isSortByDuration(sort) {
+		pipeline = append(pipeline, s.getDurationFields())
+	} else {
+		project = append(project, s.getDurationFields())
+	}
+	cursor, err := collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
 		sort,
@@ -158,9 +186,15 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 		return nil, err
 	}
 
-	err = s.fillAssignedInstructions(ctx, &result)
-	if err != nil {
-		return nil, err
+	if r.WithInstructions || r.GetOpenedFilter() != OnlyResolved {
+		err = s.fillAssignedInstructions(ctx, &result)
+		if err != nil {
+			return nil, err
+		}
+		err = s.fillInstructionFlags(ctx, &result)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	err = s.fillLinks(ctx, apiKey, &result)
@@ -172,6 +206,11 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 }
 
 func (s *store) Count(ctx context.Context, r FilterRequest) (*Count, error) {
+	collection := s.mainDbCollection
+	if r.GetOpenedFilter() == OnlyResolved {
+		collection = s.resolvedDbCollection
+	}
+
 	pipeline := make([]bson.M, 0)
 	s.addNestedObjects(r, &pipeline)
 	err := s.addFilter(ctx, r, &pipeline)
@@ -241,7 +280,7 @@ func (s *store) Count(ctx context.Context, r FilterRequest) (*Count, error) {
 		bson.M{"$replaceRoot": bson.M{"newRoot": "$counts"}},
 	)
 
-	cursor, err := s.dbCollection.Aggregate(ctx, aggregationPipeline)
+	cursor, err := collection.Aggregate(ctx, aggregationPipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -265,8 +304,14 @@ func (s *store) Count(ctx context.Context, r FilterRequest) (*Count, error) {
 }
 
 func (s *store) fillChildren(ctx context.Context, r ListRequest, result *AggregationResult) error {
+	collection := s.mainDbCollection
+	if r.GetOpenedFilter() == OnlyResolved {
+		collection = s.resolvedDbCollection
+	}
+
 	childrenIds := make([]string, 0)
-	for i := range result.Data {
+	parentIds := make([]string, len(result.Data))
+	for i, al := range result.Data {
 		if result.Data[i].ChildrenIDs != nil {
 			if len(result.Data[i].ChildrenIDs.Data) == 0 {
 				result.Data[i].Children = &Children{
@@ -277,6 +322,8 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 				childrenIds = append(childrenIds, result.Data[i].ChildrenIDs.Data...)
 			}
 		}
+
+		parentIds[i] = al.Entity.ID
 	}
 
 	if len(childrenIds) == 0 {
@@ -285,12 +332,21 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 
 	pipeline := make([]bson.M, 0)
 	pipeline = append(pipeline, bson.M{"$match": bson.M{"$and": []bson.M{
-		{"d": bson.M{"$in": childrenIds}},
+		{
+			"d": bson.M{"$in": childrenIds},
+			"v.parents": bson.M{"$in": parentIds},
+		},
 	}}})
 	s.addNestedObjects(r.FilterRequest, &pipeline)
-	pipeline = append(pipeline, s.getSort(r))
+
+	sortExpr, err := s.getSort(r)
+	if err != nil {
+		return err
+	}
+
+	pipeline = append(pipeline, sortExpr)
 	pipeline = append(pipeline, s.getProject(r, false)...)
-	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
+	cursor, err := collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return err
 	}
@@ -302,29 +358,53 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 		return err
 	}
 
-	childrenByEntityID := make(map[string][]Alarm)
+	childrenByParents := make(map[string][]Alarm)
 	for _, ch := range children {
-		if _, ok := childrenByEntityID[ch.Entity.ID]; !ok {
-			childrenByEntityID[ch.Entity.ID] = make([]Alarm, 0)
-		}
+		for _, parent := range ch.Value.Parents {
+			if _, ok := childrenByParents[parent]; !ok {
+				childrenByParents[parent] = make([]Alarm, 0)
+			}
 
-		childrenByEntityID[ch.Entity.ID] = append(childrenByEntityID[ch.Entity.ID], ch)
+			childrenByParents[parent] = append(childrenByParents[parent], ch)
+		}
 	}
 
-	for i := range result.Data {
-		if result.Data[i].ChildrenIDs == nil {
-			continue
+	for i, al := range result.Data {
+		if children, ok := childrenByParents[al.Entity.ID]; ok {
+			result.Data[i].Children = &Children{
+				Data:  children,
+				Total: len(children),
+			}
 		}
-		for _, chID := range result.Data[i].ChildrenIDs.Data {
-			if children, ok := childrenByEntityID[chID]; ok {
-				if result.Data[i].Children == nil {
-					result.Data[i].Children = &Children{
-						Data:  make([]Alarm, 0),
-						Total: result.Data[i].ChildrenIDs.Total,
-					}
+	}
+
+	if r.WithInstructions {
+		childrenAlarmIds := make([]string, len(children))
+		for idx, ch := range children {
+			childrenAlarmIds[idx] = ch.ID
+		}
+
+		assignedInstructionMap, err := s.getAssignedInstructionsMap(ctx, childrenAlarmIds)
+		if err != nil {
+			return err
+		}
+
+		for i := range result.Data {
+			if result.Data[i].Children == nil {
+				continue
+			}
+
+			for chIdx, ch := range result.Data[i].Children.Data {
+				sort.Slice(assignedInstructionMap[ch.ID], func(i, j int) bool {
+					return assignedInstructionMap[ch.ID][i].Name < assignedInstructionMap[ch.ID][j].Name
+				})
+
+				ch.AssignedInstructions = assignedInstructionMap[ch.ID]
+				if len(ch.AssignedInstructions) != 0 {
+					result.Data[i].ChildrenInstructions = true
 				}
 
-				result.Data[i].Children.Data = append(result.Data[i].Children.Data, children...)
+				result.Data[i].Children.Data[chIdx] = ch
 			}
 		}
 	}
@@ -333,24 +413,27 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 }
 
 func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]InstructionWithAlarms, error) {
-	instructionCursor, err := s.dbClient.Collection(mongo.InstructionMongoCollection).Aggregate(
+	instructionCursor, err := s.dbInstructionCollection.Aggregate(
 		ctx,
 		[]bson.M{
+			{"$match": bson.M{
+				"type":   InstructionTypeManual,
+				"status": bson.M{"$in": bson.A{InstructionStatusApproved, nil}},
+			}},
 			{"$lookup": bson.M{
-				"from": mongo.InstructionExecutionMongoCollection,
-				"let":  bson.M{"instruction_ids": "$_id"},
-				"pipeline": []bson.M{
-					{"$match": bson.M{
-						"$expr": bson.M{
-							"$and": []bson.M{
-								{"$eq": bson.A{"$instruction", "$$instruction_ids"}},
-								{"$in": bson.A{"$status", []int{InstructionStatusRunning, InstructionStatusPaused}}},
-								{"$in": bson.A{"$alarm", alarmIds}},
-							},
-						},
+				"from":         mongo.InstructionExecutionMongoCollection,
+				"localField":   "_id",
+				"foreignField": "instruction",
+				"as":           "instruction_executions",
+			}},
+			{"$addFields": bson.M{
+				"instruction_executions": bson.M{"$filter": bson.M{
+					"input": "$instruction_executions",
+					"cond": bson.M{"$and": []bson.M{
+						{"$in": bson.A{"$$this.status", []int{InstructionExecutionStatusRunning, InstructionExecutionStatusPaused}}},
+						{"$in": bson.A{"$$this.alarm", alarmIds}},
 					}},
-				},
-				"as": "instruction_executions",
+				}},
 			}},
 			{"$addFields": bson.M{
 				"alarms_with_executions": bson.M{
@@ -454,7 +537,7 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 		{"$replaceRoot": bson.M{"newRoot": "$ids"}},
 	}
 
-	assignedInstructionsCursor, err := s.dbClient.Collection(alarm.AlarmCollectionName).Aggregate(
+	assignedInstructionsCursor, err := s.mainDbCollection.Aggregate(
 		ctx,
 		pipeline,
 	)
@@ -510,6 +593,88 @@ func (s *store) fillAssignedInstructions(ctx context.Context, result *Aggregatio
 		})
 
 		result.Data[i].AssignedInstructions = assignedInstructionsMap[alarmDocument.ID]
+	}
+
+	return nil
+}
+
+func (s *store) fillInstructionFlags(ctx context.Context, result *AggregationResult) error {
+	alarmIDs := make([]string, len(result.Data))
+	for i, item := range result.Data {
+		alarmIDs[i] = item.ID
+	}
+
+	cursor, err := s.dbInstructionExecutionCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{
+			"alarm": bson.M{"$in": alarmIDs},
+		}},
+		{"$lookup": bson.M{
+			"from":         mongo.InstructionMongoCollection,
+			"localField":   "instruction",
+			"foreignField": "_id",
+			"as":           "instruction",
+		}},
+		{"$unwind": "$instruction"},
+		{"$group": bson.M{
+			"_id": "$alarm",
+			"auto_statuses": bson.M{"$addToSet": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$instruction.type", InstructionTypeAuto}},
+				"then": "$status",
+				"else": "$$REMOVE",
+			}}},
+			"manual_statuses": bson.M{"$addToSet": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$instruction.type", InstructionTypeManual}},
+				"then": "$status",
+				"else": "$$REMOVE",
+			}}},
+		}},
+		{"$addFields": bson.M{
+			"auto_running": bson.M{"$gt": bson.A{
+				bson.M{"$size": bson.M{"$filter": bson.M{
+					"input": "$auto_statuses",
+					"cond":  bson.M{"$in": bson.A{"$$this", []int{InstructionExecutionStatusRunning, InstructionExecutionStatusWaitResult}}},
+				}}},
+				0,
+			}},
+			"manual_running": bson.M{"$gt": bson.A{
+				bson.M{"$size": bson.M{"$filter": bson.M{
+					"input": "$manual_statuses",
+					"cond":  bson.M{"$eq": bson.A{"$$this", InstructionExecutionStatusWaitResult}},
+				}}},
+				0,
+			}},
+		}},
+		{"$addFields": bson.M{
+			"auto_all_completed": bson.M{"$and": bson.A{
+				bson.M{"$not": "$auto_running"},
+				bson.M{"$gt": bson.A{bson.M{"$size": "$auto_statuses"}, 0}},
+			}},
+		}},
+	})
+	if err != nil {
+		return err
+	}
+
+	type status struct {
+		ID               string `bson:"_id"`
+		AutoRunning      *bool  `bson:"auto_running"`
+		ManualRunning    *bool  `bson:"manual_running"`
+		AutoAllCompleted *bool  `bson:"auto_all_completed"`
+	}
+	executionStatuses := make([]status, 0)
+	err = cursor.All(ctx, &executionStatuses)
+	if err != nil {
+		return err
+	}
+	statusesByAlarm := make(map[string]status, len(executionStatuses))
+	for _, v := range executionStatuses {
+		statusesByAlarm[v.ID] = v
+	}
+
+	for i, v := range result.Data {
+		result.Data[i].IsAutoInstructionRunning = statusesByAlarm[v.ID].AutoRunning
+		result.Data[i].IsAllAutoInstructionsCompleted = statusesByAlarm[v.ID].AutoAllCompleted
+		result.Data[i].IsManualInstructionWaitingResult = statusesByAlarm[v.ID].ManualRunning
 	}
 
 	return nil
@@ -577,8 +742,8 @@ func (s *store) addFilter(ctx context.Context, r FilterRequest, pipeline *[]bson
 	match := make([]bson.M, 0)
 	s.addStartFromFilter(r, &match)
 	s.addStartToFilter(r, &match)
-	s.addOnlyOpenedFilter(r, &match)
-	s.addOnlyResolvedFilter(r, &match)
+	s.addOpenedFilter(r, &match)
+
 	replacedKeys, err := s.addQueryFilter(r, &match)
 	if err != nil {
 		return err
@@ -586,7 +751,7 @@ func (s *store) addFilter(ctx context.Context, r FilterRequest, pipeline *[]bson
 	s.addOnlyParentsFilter(r, &match)
 	s.addCategoryFilter(r, &match)
 
-	err = s.addOnlyInstructionsFilter(ctx, r, &match)
+	err = s.addInstructionsFilter(ctx, r, &match)
 	if err != nil {
 		return err
 	}
@@ -634,20 +799,12 @@ func (s *store) addStartToFilter(r FilterRequest, match *[]bson.M) {
 	*match = append(*match, bson.M{"t": bson.M{"$lte": r.StartTo}})
 }
 
-func (s *store) addOnlyOpenedFilter(r FilterRequest, match *[]bson.M) {
-	if !r.OnlyOpened || r.OnlyResolved {
+func (s *store) addOpenedFilter(r FilterRequest, match *[]bson.M) {
+	if r.GetOpenedFilter() != OnlyOpened {
 		return
 	}
 
 	*match = append(*match, bson.M{"v.resolved": bson.M{"$exists": false}})
-}
-
-func (s *store) addOnlyResolvedFilter(r FilterRequest, match *[]bson.M) {
-	if !r.OnlyResolved || r.OnlyOpened {
-		return
-	}
-
-	*match = append(*match, bson.M{"v.resolved": bson.M{"$exists": true}})
 }
 
 func (s *store) addQueryFilter(r FilterRequest, match *[]bson.M) ([]string, error) {
@@ -682,31 +839,37 @@ func (s *store) addOnlyParentsFilter(r FilterRequest, match *[]bson.M) {
 	}
 }
 
-func (s *store) addOnlyInstructionsFilter(ctx context.Context, r FilterRequest, match *[]bson.M) error {
-	var instructionFilters []bson.M
+func (s *store) addInstructionsFilter(ctx context.Context, r FilterRequest, match *[]bson.M) error {
+	var filters []bson.M
 	var err error
 
-	if r.WithoutInstructions != "" {
-		if r.WithoutInstructions == InstructionsQueryAll {
-			instructionFilters, err = s.getInstructionsFilters(ctx, bson.M{})
-		} else {
-			instructionFilters, err = s.getInstructionsFilters(ctx, bson.M{"name": bson.M{"$in": strings.Split(r.WithoutInstructions, ",")}})
-		}
-
-		if instructionFilters != nil {
-			*match = append(*match, bson.M{"$nor": instructionFilters})
+	if len(r.ExcludeInstructions) > 0 {
+		filters, err = s.getInstructionsFilters(ctx, bson.M{"_id": bson.M{"$in": r.ExcludeInstructions}})
+		if len(filters) > 0 {
+			*match = append(*match, bson.M{"$nor": filters})
 		}
 	}
 
-	if r.WithInstructions != "" {
-		if r.WithInstructions == InstructionsQueryAll {
-			instructionFilters, err = s.getInstructionsFilters(ctx, bson.M{})
-		} else {
-			instructionFilters, err = s.getInstructionsFilters(ctx, bson.M{"name": bson.M{"$in": strings.Split(r.WithInstructions, ",")}})
+	if len(r.ExcludeInstructionTypes) > 0 {
+		filters, err = s.getInstructionsFilters(ctx, bson.M{"type": bson.M{"$in": r.ExcludeInstructionTypes}})
+		if len(filters) > 0 {
+			*match = append(*match, bson.M{"$nor": filters})
 		}
+	}
 
-		if instructionFilters != nil {
-			*match = append(*match, bson.M{"$or": instructionFilters})
+	if len(r.IncludeInstructions) > 0 {
+		filters, err = s.getInstructionsFilters(ctx, bson.M{"_id": bson.M{"$in": r.IncludeInstructions}})
+		if len(filters) > 0 {
+			*match = append(*match, bson.M{"$or": filters})
+		} else {
+			*match = append(*match, bson.M{"$nor": []bson.M{{}}})
+		}
+	}
+
+	if len(r.IncludeInstructionTypes) > 0 {
+		filters, err = s.getInstructionsFilters(ctx, bson.M{"type": bson.M{"$in": r.IncludeInstructionTypes}})
+		if len(filters) > 0 {
+			*match = append(*match, bson.M{"$or": filters})
 		} else {
 			*match = append(*match, bson.M{"$nor": []bson.M{{}}})
 		}
@@ -716,7 +879,10 @@ func (s *store) addOnlyInstructionsFilter(ctx context.Context, r FilterRequest, 
 }
 
 func (s *store) getInstructionsFilters(ctx context.Context, filter bson.M) ([]bson.M, error) {
-	instructionCursor, _ := s.dbClient.Collection(mongo.InstructionMongoCollection).Find(ctx, filter)
+	//get only approved
+	filter["status"] = bson.M{"$in": bson.A{InstructionStatusApproved, nil}}
+
+	instructionCursor, _ := s.dbInstructionCollection.Find(ctx, filter)
 	defer instructionCursor.Close(ctx)
 
 	var instructionFilters []bson.M
@@ -834,7 +1000,7 @@ func (s *store) addSearchFilter(r FilterRequest, pipeline *[]bson.M,
 
 func (s *store) addOnlyManualFilter(r FilterRequest, match *[]bson.M) error {
 	if r.OnlyManual {
-		*match = append(*match, bson.M{"$expr": bson.M{"$eq": bson.A{"$meta_alarm_rule.type", metaalarm.RuleManualGroup}}})
+		*match = append(*match, bson.M{"$expr": bson.M{"$eq": bson.A{"$meta_alarm_rule.type", correlation.RuleManualGroup}}})
 	}
 
 	return nil
@@ -856,8 +1022,8 @@ func (s *store) addNestedObjects(r FilterRequest, pipeline *[]bson.M) {
 			"foreignField": "_id",
 			"as":           "entity",
 		}},
-		bson.M{"$match": bson.M{"$or": []bson.M{{"entity.enabled": true}, {"entity": bson.M{"$exists": false}}}}},
 		bson.M{"$unwind": bson.M{"path": "$entity", "preserveNullAndEmptyArrays": true}},
+		bson.M{"$match": bson.M{"$or": []bson.M{{"entity.enabled": true}, {"entity": bson.M{"$exists": false}}}}},
 		bson.M{"$addFields": bson.M{
 			"impact_state": bson.M{"$multiply": bson.A{"$v.state.val", "$entity.impact_level"}},
 		}},
@@ -888,7 +1054,7 @@ func (s *store) addNestedObjects(r FilterRequest, pipeline *[]bson.M) {
 	if r.OnlyParents {
 		*pipeline = append(*pipeline,
 			bson.M{"$lookup": bson.M{
-				"from":         metaalarm.RulesCollectionName,
+				"from":         mongo.MetaAlarmRulesMongoCollection,
 				"localField":   "v.meta",
 				"foreignField": "_id",
 				"as":           "meta_alarm_rule",
@@ -907,7 +1073,6 @@ func (s *store) resetEntities(r ListRequest, pipeline *[]bson.M) bool {
 }
 
 func (s *store) getProject(r ListRequest, entitiesToProject bool) []bson.M {
-	now := time.Now().Unix()
 	addFields := bson.M{
 		"infos": "$v.infos",
 		// outer field lastComment to make use it in $project
@@ -929,26 +1094,6 @@ func (s *store) getProject(r ListRequest, entitiesToProject bool) []bson.M {
 				"in":           bson.M{"$mergeObjects": bson.A{bson.M{}, "$$this"}},
 			},
 		},
-		"v.duration": bson.M{"$subtract": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$v.resolved",
-				"then": "$v.resolved",
-				"else": now,
-			}},
-			bson.M{"$cond": bson.M{
-				"if":   "$v.activation_date",
-				"then": "$v.activation_date",
-				"else": "$v.creation_date",
-			}},
-		}},
-		"v.current_state_duration": bson.M{"$subtract": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$v.resolved",
-				"then": "$v.resolved",
-				"else": now,
-			}},
-			"$v.state.t",
-		}},
 	}
 
 	project := bson.M{
@@ -962,7 +1107,7 @@ func (s *store) getProject(r ListRequest, entitiesToProject bool) []bson.M {
 
 	if r.OnlyParents {
 		childrenPipeline := bson.M{"total": bson.M{"$size": "$v.children"}}
-		if r.WithChildren {
+		if r.WithChildren || r.WithInstructions {
 			childrenPipeline["data"] = "$v.children"
 		}
 
@@ -1026,7 +1171,11 @@ func (s *store) getProject(r ListRequest, entitiesToProject bool) []bson.M {
 	return pipeline
 }
 
-func (s *store) getSort(r ListRequest) bson.M {
+func (s *store) getSort(r ListRequest) (bson.M, error) {
+	if len(r.MultiSort) != 0 {
+		return s.getMultiSort(r.MultiSort)
+	}
+
 	sortBy := s.resolveAlias(r.SortBy)
 	sort := r.Sort
 
@@ -1041,7 +1190,38 @@ func (s *store) getSort(r ListRequest) bson.M {
 		}
 	}
 
-	return common.GetSortQuery(sortBy, sort)
+	return common.GetSortQuery(sortBy, sort), nil
+}
+
+func (s *store) getMultiSort(multiSort []string) (bson.M, error) {
+	idExist := false
+
+	q := bson.D{}
+
+	for _, multiSortValue := range multiSort {
+		multiSortData := strings.Split(multiSortValue, ",")
+		if len(multiSortData) != 2 {
+			return nil, errors.New("length of multi_sort value should be equal 2")
+		}
+
+		sortBy := s.resolveAlias(multiSortData[0])
+		sortDir := 1
+		if multiSortData[1] == common.SortDesc {
+			sortDir = -1
+		}
+
+		if sortBy == "_id" {
+			idExist = true
+		}
+
+		q = append(q, bson.E{Key: sortBy, Value: sortDir})
+	}
+
+	if !idExist {
+		q = append(q, bson.E{Key: "_id", Value: 1})
+	}
+
+	return bson.M{"$sort": q}, nil
 }
 
 func (s *store) getCausesPipeline() []bson.M {
@@ -1054,7 +1234,7 @@ func (s *store) getCausesPipeline() []bson.M {
 			"as":               "parents",
 		}},
 		{"$lookup": bson.M{
-			"from":         metaalarm.RulesCollectionName,
+			"from":         mongo.MetaAlarmRulesMongoCollection,
 			"localField":   "parents.v.meta",
 			"foreignField": "_id",
 			"as":           "causes_rules",
@@ -1142,4 +1322,39 @@ func (s *store) resolveAlias(v string) string {
 	}
 
 	return v
+}
+
+func (s *store) getDurationFields() bson.M {
+	now := time.Now().Unix()
+
+	return bson.M{"$addFields": bson.M{
+		"v.duration": bson.M{"$subtract": bson.A{
+			bson.M{"$cond": bson.M{
+				"if":   "$v.resolved",
+				"then": "$v.resolved",
+				"else": now,
+			}},
+			"$v.creation_date",
+		}},
+		"v.current_state_duration": bson.M{"$subtract": bson.A{
+			bson.M{"$cond": bson.M{
+				"if":   "$v.resolved",
+				"then": "$v.resolved",
+				"else": now,
+			}},
+			"$v.state.t",
+		}},
+		"v.active_duration": bson.M{"$subtract": bson.A{
+			bson.M{"$cond": bson.M{
+				"if":   "$v.resolved",
+				"then": "$v.resolved",
+				"else": now,
+			}},
+			bson.M{"$sum": bson.A{
+				"$v.creation_date",
+				"$v.snooze_duration",
+				"$v.pbh_inactive_duration",
+			}},
+		}},
+	}}
 }

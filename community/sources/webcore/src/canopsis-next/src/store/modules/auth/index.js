@@ -1,15 +1,17 @@
 import { keyBy } from 'lodash';
-import Cookies from 'js-cookie';
-import qs from 'qs';
 
-import router from '@/router';
-import request from '@/services/request';
 import {
   API_ROUTES,
-  COOKIE_SESSION_KEY,
   DEFAULT_LOCALE,
   VUETIFY_ANIMATION_DELAY,
+  LOCAL_STORAGE_ACCESS_TOKEN_KEY,
 } from '@/config';
+import { EXCLUDED_SERVER_ERROR_STATUSES } from '@/constants';
+
+import router from '@/router';
+
+import request from '@/services/request';
+import localStorageService from '@/services/local-storage';
 
 const types = {
   LOGIN: 'LOGIN',
@@ -25,7 +27,7 @@ const types = {
 export default {
   namespaced: true,
   state: {
-    isLoggedIn: !!Cookies.get(COOKIE_SESSION_KEY),
+    isLoggedIn: localStorageService.has(LOCAL_STORAGE_ACCESS_TOKEN_KEY),
     currentUser: {},
     pending: true,
   },
@@ -55,20 +57,30 @@ export default {
   actions: {
     async login({ commit, dispatch }, credentials) {
       try {
-        await request.post(API_ROUTES.auth, qs.stringify({ ...credentials, json_response: true }), {
-          headers: { 'content-type': 'application/x-www-form-urlencoded' },
-        });
+        const { access_token: accessToken } = await request.post(API_ROUTES.login, credentials);
 
-        await request.get(API_ROUTES.sessionStart);
-
-        commit(types.LOGIN_COMPLETED);
-
-        return dispatch('fetchCurrentUser');
+        await dispatch('applyAccessToken', accessToken);
       } catch (err) {
+        console.error(err);
         commit(types.LOGOUT);
 
         throw err;
       }
+    },
+
+    applyAccessToken({ commit, dispatch }, accessToken) {
+      localStorageService.set(LOCAL_STORAGE_ACCESS_TOKEN_KEY, accessToken);
+
+      commit(types.LOGIN_COMPLETED);
+
+      return Promise.all([
+        dispatch('fetchCurrentUser'),
+        dispatch('filesAccess'),
+      ]);
+    },
+
+    filesAccess() {
+      return request.get(API_ROUTES.fileAccess);
     },
 
     async fetchCurrentUser({ commit, dispatch, state }) {
@@ -79,7 +91,7 @@ export default {
       try {
         commit(types.FETCH_USER);
 
-        const currentUser = await request.get(API_ROUTES.currentUser);
+        const currentUser = await request.get(API_ROUTES.currentUser, { fullResponse: true });
 
         if (currentUser.ui_language) {
           dispatch('i18n/setPersonalLocale', currentUser.ui_language, { root: true });
@@ -89,16 +101,20 @@ export default {
 
         return commit(types.FETCH_USER_COMPLETED, currentUser);
       } catch (err) {
-        dispatch('logout');
+        if (EXCLUDED_SERVER_ERROR_STATUSES.includes(err.status)) {
+          dispatch('logout');
+        }
 
         throw err;
       }
     },
+
     async logout({ commit }, { redirectTo } = {}) {
       try {
-        commit(types.LOGOUT);
+        await request.post(API_ROUTES.logout);
 
-        await request.get(API_ROUTES.logout);
+        commit(types.LOGOUT);
+        localStorageService.clear();
 
         if (redirectTo) {
           await router.replaceAsync(redirectTo);
@@ -112,6 +128,10 @@ export default {
       } catch (err) {
         console.error(err);
       }
+    },
+
+    fetchLoggedUsersCountWithoutStore() {
+      return request.get(API_ROUTES.loggedUserCount);
     },
   },
 };

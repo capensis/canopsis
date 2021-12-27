@@ -1,7 +1,7 @@
 <template lang="pug">
   modal-wrapper(data-test="confirmationModal", close)
     template(v-if="!config.hideTitle", slot="title")
-      span {{ $t('common.confirmation') }}
+      span {{ title }}
     template(v-if="config.text", slot="text")
       span.subheading {{ config.text }}
     template(slot="actions")
@@ -21,7 +21,8 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { submittableMixin } from '@/mixins/submittable';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -31,12 +32,20 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.confirmation,
   components: { ModalWrapper },
-  mixins: [submittableMixin()],
+  mixins: [
+    modalInnerMixin,
+    submittableMixinCreator(),
+  ],
   data() {
     return {
       submitted: false,
       cancelled: false,
     };
+  },
+  computed: {
+    title() {
+      return this.config.title || this.$t('common.confirmation');
+    },
   },
   beforeDestroy() {
     if (!this.submitted && this.config.cancel) {
@@ -60,4 +69,3 @@ export default {
   },
 };
 </script>
-

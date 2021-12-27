@@ -2,13 +2,13 @@ package main
 
 import (
 	"context"
-	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/ratelimit"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
+	libscheduler "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -27,57 +27,41 @@ type Options struct {
 	EventsStatsFlushInterval  time.Duration
 }
 
-type References struct {
-	Scheduler      scheduler.Scheduler
-	RunInfoManager engine.RunInfoManager
-	ChannelSub     libamqp.Channel
-	AckChanSub     libamqp.Channel
-	JSONDecoder    encoding.Decoder
-	StatsSender    ratelimit.StatsSender
-	StatsListener  statistics.StatsListener
-	StatsCh        chan statistics.Message
-	Logger         zerolog.Logger
-}
-
+// DependencyMaker can be created with DependencyMaker{}
 type DependencyMaker struct {
 	depmake.DependencyMaker
 }
 
-func (m DependencyMaker) GetDefaultReferences(ctx context.Context, options Options, logger zerolog.Logger) References {
+func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libengine.Engine {
 	defer depmake.Catch(logger)
 
-	cfg := m.DepConfig()
-
-	dbClient, err := mongo.NewClient(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
-	if err != nil {
-		logger.Fatal().Err(err).Msg("cannot connect to mongodb")
-		panic(err)
-	}
-
-	channelSub := m.DepAMQPChannelSub(m.DepAmqpConnection(logger, cfg), cfg.Global.PrefetchCount, cfg.Global.PrefetchSize)
-	ackChanSub := m.DepAMQPChannelSub(m.DepAmqpConnection(logger, cfg), cfg.Global.PrefetchCount, cfg.Global.PrefetchSize)
-	channelPub := m.DepAMQPChannelPub(m.DepAmqpConnection(logger, cfg))
-
-	redisLockStorage := m.DepRedisSession(ctx, redis.LockStorage, logger, cfg)
-	redisQueueStorage := m.DepRedisSession(ctx, redis.QueueStorage, logger, cfg)
+	m := DependencyMaker{}
+	mongoClient := m.DepMongoClient(ctx)
+	cfg := m.DepConfig(ctx, mongoClient)
+	config.SetDbClientRetry(mongoClient, cfg)
+	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
+	amqpConnection := m.DepAmqpConnection(logger, cfg)
+	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
+	lockRedisClient := m.DepRedisSession(ctx, redis.LockStorage, logger, cfg)
+	engineLockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
+	queueRedisClient := m.DepRedisSession(ctx, redis.QueueStorage, logger, cfg)
 	statsRedisClient := m.DepRedisSession(ctx, redis.FIFOMessageStatisticsStorage, logger, cfg)
-
-	eventScheduler := scheduler.NewSchedulerService(
-		redisLockStorage,
-		redisQueueStorage,
-		channelPub, options.PublishToQueue,
+	runInfoRedisClient := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
+	scheduler := libscheduler.NewSchedulerService(
+		lockRedisClient,
+		queueRedisClient,
+		m.DepAMQPChannelPub(m.DepAmqpConnection(logger, cfg)),
+		options.PublishToQueue,
 		logger,
 		options.LockTtl,
 		json.NewDecoder(),
 		json.NewEncoder(),
 		options.EnableMetaAlarmProcessing,
 	)
-
 	statsCh := make(chan statistics.Message)
 	statsSender := ratelimit.NewStatsSender(statsCh, logger)
-
 	statsListener := statistics.NewStatsListener(
-		dbClient,
+		mongoClient,
 		statsRedisClient,
 		options.EventsStatsFlushInterval,
 		map[string]int64{
@@ -87,34 +71,116 @@ func (m DependencyMaker) GetDefaultReferences(ctx context.Context, options Optio
 		logger,
 	)
 
-	return References{
-		Scheduler:      eventScheduler,
-		RunInfoManager: engine.NewRunInfoManager(m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)),
-		ChannelSub:     channelSub,
-		AckChanSub:     ackChanSub,
-		JSONDecoder:    json.NewDecoder(),
-		StatsSender:    statsSender,
-		StatsListener:  statsListener,
-		StatsCh:        statsCh,
-		Logger:         logger,
-	}
-}
+	engine := libengine.New(
+		func(ctx context.Context) error {
+			scheduler.Start(ctx)
 
-func NewEngineFIFO(options Options, references References) *EngineFIFO {
-	defaultEngine := canopsis.NewDefaultEngine(
-		canopsis.PeriodicalWaitTime,
-		true,
-		true,
-		references.ChannelSub,
-		references.Logger,
-		references.RunInfoManager,
+			go statsListener.Listen(ctx, statsCh)
+
+			return nil
+		},
+		func(ctx context.Context) {
+			close(statsCh)
+
+			scheduler.Stop(ctx)
+			err := mongoClient.Disconnect(ctx)
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close mongo connection")
+			}
+
+			err = amqpConnection.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close amqp connection")
+			}
+
+			err = lockRedisClient.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+
+			err = queueRedisClient.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+
+			err = statsRedisClient.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+
+			err = runInfoRedisClient.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+		},
+		logger,
 	)
 
-	defaultEngine.Debug = options.ModeDebug
+	engine.AddConsumer(libengine.NewDefaultConsumer(
+		canopsis.FIFOConsumerName,
+		options.ConsumeFromQueue,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
+		false,
+		"",
+		"",
+		"",
+		"",
+		amqpConnection,
+		&messageProcessor{
+			FeaturePrintEventOnError: options.PrintEventOnError,
+			Scheduler:                scheduler,
+			StatsSender:              statsSender,
+			Decoder:                  json.NewDecoder(),
+			Logger:                   logger,
+		},
+		logger,
+	))
+	engine.AddConsumer(libengine.NewDefaultConsumer(
+		canopsis.FIFOAckConsumerName,
+		canopsis.FIFOAckQueueName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
+		false,
+		"",
+		"",
+		"",
+		"",
+		amqpConnection,
+		&ackMessageProcessor{
+			FeaturePrintEventOnError: options.PrintEventOnError,
+			Scheduler:                scheduler,
+			Decoder:                  json.NewDecoder(),
+			Logger:                   logger,
+		},
+		logger,
+	))
+	engine.AddPeriodicalWorker(libengine.NewRunInfoPeriodicalWorker(
+		canopsis.PeriodicalWaitTime,
+		libengine.NewRunInfoManager(runInfoRedisClient),
+		libengine.NewInstanceRunInfo(canopsis.FIFOEngineName, options.ConsumeFromQueue, options.PublishToQueue),
+		amqpChannel,
+		logger,
+	))
+	engine.AddPeriodicalWorker(libengine.NewLockedPeriodicalWorker(
+		redis.NewLockClient(engineLockRedisClient),
+		redis.FifoDeleteOutdatedRatesLockKey,
+		&deleteOutdatedRatesWorker{
+			PeriodicalInterval:        time.Hour,
+			TimezoneConfigProvider:    timezoneConfigProvider,
+			DataStorageConfigProvider: config.NewDataStorageConfigProvider(cfg, logger),
+			LimitConfigAdapter:        datastorage.NewAdapter(mongoClient),
+			RateLimitAdapter:          ratelimit.NewAdapter(mongoClient),
+			Logger:                    logger,
+		},
+		logger,
+	))
+	engine.AddPeriodicalWorker(libengine.NewLoadConfigPeriodicalWorker(
+		canopsis.PeriodicalWaitTime,
+		config.NewAdapter(mongoClient),
+		timezoneConfigProvider,
+		logger,
+	))
 
-	return &EngineFIFO{
-		DefaultEngine: defaultEngine,
-		Options:       options,
-		References:    references,
-	}
+	return engine
 }

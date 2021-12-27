@@ -4,12 +4,14 @@
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
       field-filters(
-        :entitiesType="$constants.ENTITIES_TYPES.alarm",
+        :entities-type="$constants.ENTITIES_TYPES.alarm",
         :filters.sync="settings.widget.parameters.viewFilters",
-        hideSelect
+        hide-select,
+        addable,
+        editable
       )
       v-divider
-      field-opened-resolved-filter(v-model="settings.widget.parameters.alarmsStateFilter")
+      field-opened-resolved-filter(v-model="settings.widget.parameters.opened")
       v-divider
       alarms-list-modal-form(v-model="settings.widget.parameters.alarmsList")
       v-divider
@@ -111,4 +113,3 @@ export default {
   },
 };
 </script>
-

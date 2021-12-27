@@ -28,16 +28,17 @@
 <script>
 import { find, isString } from 'lodash';
 
-import { MODALS } from '@/constants';
+import { MODALS, ROUTES_NAMES } from '@/constants';
 
 import { generateCopyOfViewTab, getViewsWidgetsIdsMappings } from '@/helpers/entities';
-import { viewToForm, formToView, viewToRequest } from '@/helpers/forms/view';
+import { viewToForm, viewToRequest } from '@/helpers/forms/view';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import entitiesViewMixin from '@/mixins/entities/view';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
-import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
+import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
 
 import ViewForm from '@/components/other/view/view-form.vue';
@@ -54,12 +55,13 @@ export default {
   },
   components: { ViewForm, ModalWrapper },
   mixins: [
+    modalInnerMixin,
     entitiesViewMixin,
     entitiesViewGroupMixin,
     entitiesUserPreferenceMixin,
     permissionsTechnicalViewMixin,
-    submittableMixin(),
-    confirmableModalMixin(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     return {
@@ -109,8 +111,8 @@ export default {
     redirectToHomeIfCurrentRoute() {
       const { name, params = {} } = this.$route;
 
-      if (name === 'view' && params.id === this.view._id) {
-        this.$router.push({ name: 'home' });
+      if (name === ROUTES_NAMES.view && params.id === this.view._id) {
+        this.$router.push({ name: ROUTES_NAMES.home });
       }
     },
 
@@ -170,12 +172,12 @@ export default {
         ? await this.prepareGroup(this.form.group)
         : this.form.group;
 
-      const data = viewToRequest(formToView({
+      const data = viewToRequest({
         ...this.view,
         ...this.form,
 
         group,
-      }));
+      });
 
       /**
        * If we're creating a new view, or duplicating an existing one.

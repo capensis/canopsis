@@ -5,16 +5,13 @@
         .timeline-item(v-show="index === 0")
           .date {{ day }}
         .timeline-item
-          .time {{ step.t | date('time', true) }}
+          .time {{ step.t | date('time') }}
           time-line-flag.flag(:step="step")
           time-line-card(:step="step", :is-html-enabled="isHtmlEnabled")
 </template>
 
 <script>
-import moment from 'moment';
-import { groupBy } from 'lodash';
-
-import { DATETIME_FORMATS } from '@/constants';
+import { groupAlarmSteps } from '@/helpers/entities';
 
 import widgetExpandPanelAlarmTimeLine from '@/mixins/widget/expand-panel/alarm/expand-panel';
 
@@ -48,18 +45,11 @@ export default {
       immediate: true,
       handler(alarm) {
         if (alarm.v.steps) {
-          this.groupedSteps = this.groupSteps(alarm.v.steps);
+          this.groupedSteps = groupAlarmSteps(alarm.v.steps);
         } else {
           this.fetchAlarmItemWithGroupsAndSteps(alarm);
         }
       },
-    },
-  },
-  methods: {
-    groupSteps(steps) {
-      const orderedSteps = [...steps].reverse();
-
-      return groupBy(orderedSteps, step => moment.unix(step.t).format(DATETIME_FORMATS.short));
     },
   },
 };

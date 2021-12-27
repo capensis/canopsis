@@ -4,17 +4,16 @@ import (
 	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 // ModelProvider is used to implement fetching models from storage.
 type ModelProvider interface {
 	// GetTypes returns types by id.
 	GetTypes(ctx context.Context) (map[string]*Type, error)
-	// GetPbehaviors returns pbehaviors by id.
+	// GetEnabledPbehaviors returns pbehaviors.
 	GetEnabledPbehaviors(ctx context.Context) (map[string]*PBehavior, error)
-	// GetPbehavior returns pbehavior.
-	GetEnabledPbehavior(ctx context.Context, id string) (*PBehavior, error)
+	// GetEnabledPbehaviorsByIds returns pbehaviors.
+	GetEnabledPbehaviorsByIds(ctx context.Context, ids []string) (map[string]*PBehavior, error)
 	// GetExceptions returns exceptions by id.
 	GetExceptions(ctx context.Context) (map[string]*Exception, error)
 	// GetReasons returns reasons by id.
@@ -31,10 +30,7 @@ func NewModelProvider(dbClient mongo.DbClient) ModelProvider {
 	return &modelProvider{dbClient: dbClient}
 }
 
-func (p *modelProvider) GetTypes(parentCtx context.Context) (map[string]*Type, error) {
-	ctx, cancel := context.WithCancel(parentCtx)
-	defer cancel()
-
+func (p *modelProvider) GetTypes(ctx context.Context) (map[string]*Type, error) {
 	cursor, err := p.dbClient.Collection(TypeCollectionName).Find(ctx, bson.M{})
 	if err != nil {
 		return nil, err
@@ -57,10 +53,7 @@ func (p *modelProvider) GetTypes(parentCtx context.Context) (map[string]*Type, e
 	return typesByID, nil
 }
 
-func (p *modelProvider) GetEnabledPbehaviors(parentCtx context.Context) (map[string]*PBehavior, error) {
-	ctx, cancel := context.WithCancel(parentCtx)
-	defer cancel()
-
+func (p *modelProvider) GetEnabledPbehaviors(ctx context.Context) (map[string]*PBehavior, error) {
 	coll := p.dbClient.Collection(PBehaviorCollectionName)
 	cursor, err := coll.Find(ctx, bson.M{"enabled": true})
 	if err != nil {
@@ -83,32 +76,30 @@ func (p *modelProvider) GetEnabledPbehaviors(parentCtx context.Context) (map[str
 	return pbehaviorsByID, nil
 }
 
-func (p *modelProvider) GetEnabledPbehavior(parentCtx context.Context, id string) (*PBehavior, error) {
-	ctx, cancel := context.WithCancel(parentCtx)
-	defer cancel()
-
+func (p *modelProvider) GetEnabledPbehaviorsByIds(ctx context.Context, ids []string) (map[string]*PBehavior, error) {
 	coll := p.dbClient.Collection(PBehaviorCollectionName)
-	res := coll.FindOne(ctx, bson.M{"_id": id, "enabled": true})
-	if err := res.Err(); err != nil {
-		if err == mongodriver.ErrNoDocuments {
-			return nil, nil
-		}
-		return nil, err
-	}
-
-	var pbehavior PBehavior
-	err := res.Decode(&pbehavior)
+	cursor, err := coll.Find(ctx, bson.M{"_id": bson.M{"$in": ids}, "enabled": true})
 	if err != nil {
 		return nil, err
 	}
 
-	return &pbehavior, nil
+	defer cursor.Close(ctx)
+	pbehaviorsByID := make(map[string]*PBehavior)
+	for cursor.Next(ctx) {
+		var pbehavior PBehavior
+
+		err = cursor.Decode(&pbehavior)
+		if err != nil {
+			return nil, err
+		}
+
+		pbehaviorsByID[pbehavior.ID] = &pbehavior
+	}
+
+	return pbehaviorsByID, nil
 }
 
-func (p *modelProvider) GetExceptions(parentCtx context.Context) (map[string]*Exception, error) {
-	ctx, cancel := context.WithCancel(parentCtx)
-	defer cancel()
-
+func (p *modelProvider) GetExceptions(ctx context.Context) (map[string]*Exception, error) {
 	cursor, err := p.dbClient.Collection(ExceptionCollectionName).Find(ctx, bson.M{})
 	if err != nil {
 		return nil, err
@@ -130,10 +121,7 @@ func (p *modelProvider) GetExceptions(parentCtx context.Context) (map[string]*Ex
 	return exceptionsByID, nil
 }
 
-func (p *modelProvider) GetReasons(parentCtx context.Context) (map[string]*Reason, error) {
-	ctx, cancel := context.WithCancel(parentCtx)
-	defer cancel()
-
+func (p *modelProvider) GetReasons(ctx context.Context) (map[string]*Reason, error) {
 	cursor, err := p.dbClient.Collection(ReasonCollectionName).Find(ctx, bson.M{})
 	if err != nil {
 		return nil, err

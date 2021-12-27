@@ -1,5 +1,9 @@
 import { STATS_TYPES } from '@/constants';
 
+import { convertDateToString } from '@/helpers/date/date';
+import { convertNumberToRoundedPercentString } from '@/helpers/string';
+import { convertDurationToString } from '@/helpers/date/duration';
+
 import widgetStatsQueryMixin from './stats-query';
 
 export default {
@@ -28,7 +32,8 @@ export default {
          We then give it to the date filter, to display it with a date format
          */
         return this.stats[stats[0]].sum.map((value) => {
-          const start = this.$options.filters.date(value.start, 'medium', true);
+          const start = convertDateToString(value.start, 'medium');
+
           return [start];
         });
       }
@@ -43,29 +48,31 @@ export default {
     annotationLine() {
       const { annotationLine } = this.widget.parameters;
 
-      if (annotationLine && annotationLine.enabled) {
-        return {
-          annotations: [{
+      return {
+        annotations: {
+          annotationLine: {
+            drawTime: 'afterDatasetsDraw',
+            display: annotationLine && annotationLine.enabled,
             type: 'line',
             mode: 'horizontal',
-            scaleID: 'y-axis-0',
+            scaleID: 'y',
             value: annotationLine.value,
             borderColor: annotationLine.lineColor,
             borderWidth: 2,
             label: {
               enabled: true,
               position: 'left',
-              fontSize: 10,
               xPadding: 5,
               yPadding: 5,
               content: annotationLine.label,
               backgroundColor: annotationLine.labelColor,
+              font: {
+                size: 10,
+              },
             },
-          }],
-        };
-      }
-
-      return {};
+          },
+        },
+      };
     },
 
     options() {
@@ -128,11 +135,11 @@ export default {
 
     tooltipLabel(tooltipItem, data) {
       const PROPERTIES_FILTERS_MAP = {
-        [STATS_TYPES.stateRate.value]: value => this.$options.filters.percentage(value),
-        [STATS_TYPES.ackTimeSla.value]: value => this.$options.filters.percentage(value),
-        [STATS_TYPES.resolveTimeSla.value]: value => this.$options.filters.percentage(value),
-        [STATS_TYPES.timeInState.value]: value => this.$options.filters.duration(value),
-        [STATS_TYPES.mtbf.value]: value => this.$options.filters.duration(value),
+        [STATS_TYPES.stateRate.value]: convertNumberToRoundedPercentString,
+        [STATS_TYPES.ackTimeSla.value]: convertNumberToRoundedPercentString,
+        [STATS_TYPES.resolveTimeSla.value]: convertNumberToRoundedPercentString,
+        [STATS_TYPES.timeInState.value]: convertDurationToString,
+        [STATS_TYPES.mtbf.value]: convertDurationToString,
       };
 
       const { stats } = this.query;

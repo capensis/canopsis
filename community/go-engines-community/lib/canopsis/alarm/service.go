@@ -3,6 +3,8 @@ package alarm
 import (
 	"context"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resolverule"
 	"runtime/trace"
 	"time"
 
@@ -13,37 +15,75 @@ import (
 )
 
 type service struct {
-	adapter Adapter
-	logger  zerolog.Logger
+	adapter            Adapter
+	resolveRuleAdapter resolverule.Adapter
+	alarmStatusService alarmstatus.Service
+	logger             zerolog.Logger
 }
 
 // NewService gives the correct alarm adapter. Give nil to the redis
 // client and it will create a new redis.Client with the dedicated redis
 // database for alarms.
-func NewService(alarmAdapter Adapter, logger zerolog.Logger) Service {
+func NewService(
+	alarmAdapter Adapter,
+	resolveRuleAdapter resolverule.Adapter,
+	alarmStatusService alarmstatus.Service,
+	logger zerolog.Logger,
+) Service {
 	return &service{
-		adapter: alarmAdapter,
-		logger:  logger,
+		adapter:            alarmAdapter,
+		resolveRuleAdapter: resolveRuleAdapter,
+		alarmStatusService: alarmStatusService,
+		logger:             logger,
 	}
 }
 
-func (s *service) ResolveAlarms(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error) {
+func (s *service) ResolveClosed(ctx context.Context) ([]types.Alarm, error) {
 	defer trace.StartRegion(ctx, "alarm.ResolveAlarms").End()
 
-	updatedAlarms := make([]types.Alarm, 0)
+	now := types.NewCpsTime()
 
-	unresolvedAlarms, err := s.adapter.GetUnresolved()
+	rules, err := s.resolveRuleAdapter.Get(ctx)
 	if err != nil {
-		return updatedAlarms, fmt.Errorf("unresolved alarms error: %v", err)
+		return nil, fmt.Errorf("canont fetch resolve rules: %w", err)
+	}
+	if len(rules) == 0 {
+		return nil, nil
 	}
 
-	for _, alarm := range unresolvedAlarms {
-		if alarm.Closable(alarmConfig.BaggotTime) {
-			updatedAlarms = append(updatedAlarms, alarm)
+	cursor, err := s.adapter.GetOpenedAlarmsWithEntity(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("cannot fetch open alarms: %w", err)
+	}
+	defer cursor.Close(ctx)
+
+	alarmsToResolve := make([]types.Alarm, 0)
+	for cursor.Next(ctx) {
+		alarmWithEntity := types.AlarmWithEntity{}
+		if err := cursor.Decode(&alarmWithEntity); err != nil {
+			s.logger.Error().Err(err).Msg("cannot decode alarm with entity")
+			continue
+		}
+
+		for _, rule := range rules {
+			if rule.Matches(alarmWithEntity) {
+				alarmState := alarmWithEntity.Alarm.Value.State.Value
+
+				if alarmState == types.AlarmStateOK {
+					lastStep := alarmWithEntity.Alarm.Value.Steps[len(alarmWithEntity.Alarm.Value.Steps)-1]
+					before := rule.Duration.SubFrom(now)
+
+					if lastStep.Timestamp.Before(before) {
+						alarmsToResolve = append(alarmsToResolve, alarmWithEntity.Alarm)
+					}
+				}
+
+				break
+			}
 		}
 	}
 
-	return updatedAlarms, nil
+	return alarmsToResolve, nil
 }
 
 func (s *service) ResolveCancels(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error) {
@@ -51,7 +91,7 @@ func (s *service) ResolveCancels(ctx context.Context, alarmConfig config.AlarmCo
 
 	canceledAlarms := make([]types.Alarm, 0)
 
-	alarms, err := s.adapter.GetAlarmsWithCancelMark()
+	alarms, err := s.adapter.GetAlarmsWithCancelMark(ctx)
 	if err != nil {
 		return canceledAlarms, fmt.Errorf("cancel alarms error: %v", err)
 	}
@@ -70,7 +110,7 @@ func (s *service) ResolveSnoozes(ctx context.Context, alarmConfig config.AlarmCo
 
 	unsnoozedAlarms := make([]types.Alarm, 0)
 
-	alarms, err := s.adapter.GetAlarmsWithSnoozeMark()
+	alarms, err := s.adapter.GetAlarmsWithSnoozeMark(ctx)
 	if err != nil {
 		return unsnoozedAlarms, fmt.Errorf("snooze alarms error: %v", err)
 	}
@@ -84,22 +124,22 @@ func (s *service) ResolveSnoozes(ctx context.Context, alarmConfig config.AlarmCo
 	return unsnoozedAlarms, nil
 }
 
-func (s *service) UpdateFlappingAlarms(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error) {
+func (s *service) UpdateFlappingAlarms(ctx context.Context) ([]types.Alarm, error) {
 	defer trace.StartRegion(ctx, "alarm.UpdateFlappingAlarms").End()
 
 	updatedAlarms := make([]types.Alarm, 0)
 
-	flappingAlarms, err := s.adapter.GetAlarmsWithFlappingStatus()
+	flappingAlarms, err := s.adapter.GetAlarmsWithFlappingStatus(ctx)
 	if err != nil {
 		return updatedAlarms, fmt.Errorf("unable to get alarms with flapping status: %v", err)
 	}
 
 	for _, alarm := range flappingAlarms {
-		currentAlarmStatus := alarm.CurrentStatus(alarmConfig)
-		newStatus := alarm.ComputeStatus(alarmConfig)
+		currentAlarmStatus := alarm.Alarm.Value.Status.Value
+		newStatus := s.alarmStatusService.ComputeStatus(alarm.Alarm, alarm.Entity)
 
-		if newStatus != currentAlarmStatus || alarm.Value.Status == nil {
-			updatedAlarms = append(updatedAlarms, alarm)
+		if newStatus != currentAlarmStatus {
+			updatedAlarms = append(updatedAlarms, alarm.Alarm)
 		}
 	}
 
@@ -111,7 +151,7 @@ func (s *service) ResolveDone(ctx context.Context) ([]types.Alarm, error) {
 
 	doneAlarms := make([]types.Alarm, 0)
 
-	alarms, err := s.adapter.GetAlarmsWithDoneMark()
+	alarms, err := s.adapter.GetAlarmsWithDoneMark(ctx)
 	if err != nil {
 		return doneAlarms, fmt.Errorf("done alarms error: %v", err)
 	}
@@ -124,90 +164,4 @@ func (s *service) ResolveDone(ctx context.Context) ([]types.Alarm, error) {
 	}
 
 	return doneAlarms, nil
-}
-
-// UpdateToWorstState updates meta-alarm's state from its worst children, return true when meta-alarm has updated
-func UpdateToWorstState(metaAlarm *types.Alarm, updateChildren []*types.Alarm,
-	a Adapter, alarmConfig config.AlarmConfig) bool {
-	if !metaAlarm.IsMetaAlarm() {
-		return false
-	}
-
-	var (
-		alarms     []types.Alarm
-		stepTs, ts types.CpsTime
-		worstState = types.CpsNumber(types.AlarmStateOK)
-	)
-
-	if metaAlarm.Value.Children != nil && len(metaAlarm.Value.Children) > 0 {
-		if len(metaAlarm.Value.Children) == len(updateChildren) {
-			// all children to update
-			for _, child := range updateChildren {
-				childState := child.CurrentState()
-				if childState >= worstState {
-					worstState = child.Value.State.Value
-					stepTs = child.Value.LastUpdateDate
-				}
-			}
-		} else {
-			err := a.GetOpenedAlarmsByIDs(metaAlarm.Value.Children, &alarms)
-			if err != nil {
-				return false
-			}
-			for _, child := range alarms {
-				childState := child.CurrentState()
-				for _, uc := range updateChildren {
-					ts = uc.Value.LastUpdateDate
-					if uc.ID == child.ID {
-						childState = uc.CurrentState()
-						break
-					}
-				}
-				if childState > worstState {
-					worstState = childState
-					stepTs = ts
-				}
-			}
-			if stepTs.IsZero() {
-				stepTs = ts
-			}
-		}
-	}
-
-	if worstState == metaAlarm.Value.State.Value {
-		// state has not changed
-		return false
-	}
-
-	stepType := types.AlarmStepStateIncrease
-	if worstState < metaAlarm.Value.State.Value {
-		stepType = types.AlarmStepStateDecrease
-	}
-
-	metaAlarm.Value.State.Value = worstState
-
-	// Create new Step to keep track of the alarm history
-	author := metaAlarm.Value.Connector + "." + metaAlarm.Value.ConnectorName
-	newStep := types.AlarmStep{
-		Type:      stepType,
-		Timestamp: stepTs,
-		Author:    author,
-		Message:   metaAlarm.Value.Output,
-		Value:     worstState,
-	}
-
-	if err := metaAlarm.Value.Steps.Add(newStep); err != nil {
-		return false
-	}
-	metaAlarm.Value.State = &newStep
-
-	// metaAlarm with state OK to status Off
-	if metaAlarm.Value.State.Value == types.AlarmStateOK {
-		metaAlarm.UpdateStatus(stepTs, author, metaAlarm.Value.Output, alarmConfig)
-	}
-
-	metaAlarm.Value.StateChangesSinceStatusUpdate++
-	metaAlarm.Value.TotalStateChanges++
-	metaAlarm.Value.LastUpdateDate = stepTs
-	return true
 }

@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 import SnmpRuleFormField from './snmp-rule-form-field-title.vue';
 

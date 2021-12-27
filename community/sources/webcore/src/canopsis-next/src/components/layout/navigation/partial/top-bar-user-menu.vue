@@ -5,7 +5,7 @@
       v-list-tile(@click="showEditUserModal")
         v-list-tile-avatar
           v-icon(color="black") person
-        v-list-tile-title.text-uppercase.body-2 {{ $t('user.seeProfile') }}
+        v-list-tile-title.text-uppercase.body-2 {{ $t('users.seeProfile') }}
       v-list-tile.logout-btn(@click="logoutHandler")
         v-list-tile-avatar
           v-icon(color="error") exit_to_app
@@ -13,10 +13,10 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, ROUTES_NAMES } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
-import entitiesUserMixin from '@/mixins/entities/user';
+import { entitiesUserMixin } from '@/mixins/entities/user';
 
 export default {
   mixins: [authMixin, entitiesUserMixin],
@@ -43,7 +43,7 @@ export default {
     },
 
     logoutHandler() {
-      return this.logout({ redirectTo: { name: 'login' } });
+      return this.logout({ redirectTo: { name: ROUTES_NAMES.login } });
     },
 
     async updateUserWithPopup({ data, id }) {

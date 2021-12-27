@@ -4,7 +4,6 @@ import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"path/filepath"
-	"time"
 )
 
 // Config providers which auth methods must be used.
@@ -29,9 +28,6 @@ type Config struct {
 			AutoUserRegistration    bool              `yaml:"auto_user_registration"`
 		} `yaml:"saml"`
 	} `yaml:"security"`
-	Session struct {
-		StatsFrame time.Duration `yaml:"stats_frame"`
-	} `yaml:"session"`
 }
 
 const (

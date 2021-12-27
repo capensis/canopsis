@@ -14,6 +14,7 @@ type apikeyProvider struct {
 }
 
 // NewApikeyProvider creates new provider.
+// Deprecated : use JWT token instead.
 func NewApikeyProvider(p security.UserProvider) security.HttpProvider {
 	return &apikeyProvider{userProvider: p}
 }
@@ -28,7 +29,7 @@ func (p *apikeyProvider) Auth(r *http.Request) (*security.User, error, bool) {
 		return nil, nil, false
 	}
 
-	user, err := p.userProvider.FindByAuthApiKey(apiKey)
+	user, err := p.userProvider.FindByAuthApiKey(r.Context(), apiKey)
 	if err != nil {
 		return nil, fmt.Errorf("cannot find user: %v", err), true
 	}

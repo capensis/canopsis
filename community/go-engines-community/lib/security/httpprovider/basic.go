@@ -8,6 +8,7 @@ import (
 )
 
 const headerAuthorization = "Authorization"
+const basicPrefix = "Basic"
 
 // basicProvider implements a Basic HTTP Authentication provider.
 // It validates user using security provider.
@@ -22,7 +23,7 @@ func NewBasicProvider(p security.Provider) security.HttpProvider {
 
 func (p *basicProvider) Auth(r *http.Request) (*security.User, error, bool) {
 	header := r.Header.Get(headerAuthorization)
-	if header == "" {
+	if len(header) < len(basicPrefix) || !strings.EqualFold(header[:len(basicPrefix)], basicPrefix) {
 		return nil, nil, false
 	}
 
@@ -31,14 +32,14 @@ func (p *basicProvider) Auth(r *http.Request) (*security.User, error, bool) {
 		return nil, nil, true
 	}
 
-	u, err := p.provider.Auth(username, password)
+	u, err := p.provider.Auth(r.Context(), username, password)
 
 	return u, err, true
 }
 
 // decodeHeader retrieves username and password from header.
 func decodeHeader(header string) (string, string) {
-	header = strings.ReplaceAll(header, "Basic ", "")
+	header = strings.TrimSpace(header[len(basicPrefix):])
 	base, err := base64.StdEncoding.DecodeString(header)
 
 	if err != nil {

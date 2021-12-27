@@ -2,13 +2,14 @@ package role
 
 import (
 	"context"
+	"sort"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"sort"
 )
 
 type Store interface {
@@ -53,6 +54,9 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	}
 
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
+	if r.Permission != "" {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"permissions._id": r.Permission}})
+	}
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
@@ -112,13 +116,18 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Role, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r CreateRequest) (*Role, error) {
-	_, err := s.dbCollection.InsertOne(ctx, bson.M{
+	types, err := getTypes(ctx, s.dbCollection, r.Permissions)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = s.dbCollection.InsertOne(ctx, bson.M{
 		"_id":          r.Name,
 		"crecord_name": r.Name,
 		"crecord_type": securitymodel.LineTypeRole,
 		"description":  r.Description,
 		"defaultview":  r.DefaultView,
-		"rights":       transformPermissionsToDoc(r.Permissions),
+		"rights":       transformPermissionsToDoc(r.Permissions, types),
 	})
 	if err != nil {
 		return nil, err
@@ -128,12 +137,17 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Role, error) {
 }
 
 func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Role, error) {
+	types, err := getTypes(ctx, s.dbCollection, r.Permissions)
+	if err != nil {
+		return nil, err
+	}
+
 	res, err := s.dbCollection.UpdateOne(ctx,
 		bson.M{"_id": id, "crecord_type": securitymodel.LineTypeRole},
 		bson.M{"$set": bson.M{
 			"description": r.Description,
 			"defaultview": r.DefaultView,
-			"rights":      transformPermissionsToDoc(r.Permissions),
+			"rights":      transformPermissionsToDoc(r.Permissions, types),
 		}},
 	)
 	if err != nil {
@@ -279,7 +293,7 @@ func TransformBitmaskToActions(bitmask int64, roleType string) []string {
 	return actions
 }
 
-func transformPermissionsToDoc(permissions map[string][]string) map[string]interface{} {
+func transformPermissionsToDoc(permissions map[string][]string, types map[string]string) map[string]interface{} {
 	rights := make(map[string]interface{}, len(permissions))
 	actionsBitmasks := map[string]int64{
 		securitymodel.PermissionCreate: securitymodel.PermissionBitmaskCreate,
@@ -291,6 +305,14 @@ func transformPermissionsToDoc(permissions map[string][]string) map[string]inter
 	for id, actions := range permissions {
 		bitmask := int64(0)
 		if len(actions) == 0 {
+			permType, knownType := types[id]
+			if !knownType {
+				continue
+			}
+			switch permType {
+			case securitymodel.LineObjectTypeCRUD, securitymodel.LineObjectTypeRW:
+				continue
+			}
 			bitmask = 1
 		} else {
 			for _, action := range actions {
@@ -304,4 +326,47 @@ func transformPermissionsToDoc(permissions map[string][]string) map[string]inter
 	}
 
 	return rights
+}
+
+func getTypes(ctx context.Context, rightsCollection mongo.DbCollection, permissions map[string][]string) (map[string]string, error) {
+	ids := make([]string, 0)
+	for id := range permissions {
+		ids = append(ids, id)
+	}
+	cursor, err := rightsCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{
+			"_id":          bson.M{"$in": ids},
+			"crecord_type": securitymodel.LineTypeObject,
+			"type": bson.M{"$in": bson.A{
+				nil, "",
+				securitymodel.LineObjectTypeCRUD,
+				securitymodel.LineObjectTypeRW,
+			}},
+		},
+		}, {"$group": bson.M{
+			"_id": nil, "d": bson.M{"$push": bson.M{
+				"k": "$_id", "v": bson.M{"$ifNull": []string{"$type", ""}},
+			}},
+		}}, {"$project": bson.M{
+			"_id": 0, "d": bson.M{"$arrayToObject": "$d"},
+		}},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursor.Close(ctx)
+
+	var types struct {
+		Data map[string]string `bson:"d"`
+	}
+
+	if !cursor.Next(ctx) {
+		return types.Data, nil
+	}
+
+	if err := cursor.Decode(&types); err != nil {
+		return nil, err
+	}
+	return types.Data, nil
 }

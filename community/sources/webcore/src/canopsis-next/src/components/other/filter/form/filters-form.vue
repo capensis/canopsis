@@ -21,7 +21,6 @@
         @delete="showDeleteFilterModal(index)"
       )
     v-btn.ml-0(
-      data-test="addFilter",
       v-if="hasAccessToAddFilter",
       color="primary",
       outline,
@@ -32,7 +31,7 @@
 <script>
 import Draggable from 'vuedraggable';
 
-import formArrayMixin from '@/mixins/form/array';
+import { formArrayMixin } from '@/mixins/form';
 
 import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
@@ -102,7 +101,7 @@ export default {
           title: this.$t('modals.filter.edit.title'),
           entitiesType: this.entitiesType,
           existingTitles: this.existingTitles,
-          action: newFilter => this.updateItemInArray(index, newFilter),
+          action: newFilter => this.updateItemInArray(index, { ...filter, ...newFilter }),
         },
       });
     },

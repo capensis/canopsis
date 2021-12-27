@@ -24,12 +24,14 @@
 </template>
 
 <script>
-import tinycolor from 'tinycolor2';
 import { Chrome, Compact } from 'vue-color';
 
 import { MODALS } from '@/constants';
 
-import { submittableMixin } from '@/mixins/submittable';
+import { colorToHex, colorToRgb, isValidColor } from '@/helpers/color';
+
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -40,16 +42,17 @@ export default {
     Compact,
     ModalWrapper,
   },
-  mixins: [submittableMixin()],
+  mixins: [
+    modalInnerMixin,
+    submittableMixinCreator(),
+  ],
   data() {
     const { config } = this.modal;
     const color = {};
 
     if (config.color) {
-      const colorObject = tinycolor(config.color);
-
-      if (colorObject.isValid()) {
-        color.hex = colorObject.toHexString();
+      if (isValidColor(config.color)) {
+        color.hex = colorToHex(config.color);
       }
     }
 
@@ -69,8 +72,7 @@ export default {
     async submit() {
       if (this.config.action) {
         const { hex } = this.color;
-        const colorObject = tinycolor(hex);
-        const result = this.isHexType ? hex : colorObject.toRgbString();
+        const result = this.isHexType ? hex : colorToRgb(hex);
 
         await this.config.action(result);
       }

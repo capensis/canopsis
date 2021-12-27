@@ -1,12 +1,12 @@
 <template lang="pug">
   div.v-input.v-textarea.v-text-field.v-text-field--box.v-text-field--enclosed.v-input--is-label-active(
-    class="v-input--is-dirty theme--light"
+    :class="['v-input--is-dirty', 'theme--light', { 'v-input--is-disabled': disabled }]"
   )
     div.v-input__control(@click="$emit('click', $event)")
       div.v-input__slot
         div.v-text-field__slot
           label.v-label.theme--light(:class="{ 'v-label--active': value }") {{ label }}
-          div(ref="content", v-html="value")
+          div(ref="content", v-html="value", :class="{ 'v-text-field--input__disabled': disabled }")
       div.v-text-field__details(v-if="!hideDetails")
         div.v-messages.theme--light.error--text
           div.v-messages__wrapper
@@ -27,6 +27,10 @@ export default {
       default: '',
     },
     hideDetails: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },
@@ -82,13 +86,25 @@ export default {
   position: absolute;
 }
 
-.v-text-field__slot {
-  padding-top: 28px !important;
-  min-height: 150px;
-  max-width: 100%;
+.v-text-field {
+  &__slot {
+    padding-top: 28px !important;
+    min-height: 150px;
+    max-width: 100%;
 
-  & /deep/ img {
-    cursor: pointer !important;
+    & /deep/ img {
+      cursor: pointer !important;
+    }
+  }
+
+  &--input {
+    &__disabled {
+      color: rgba(0, 0, 0, 0.38);
+
+      & /deep/ img {
+        pointer-events: all !important;
+      }
+    }
   }
 }
 </style>

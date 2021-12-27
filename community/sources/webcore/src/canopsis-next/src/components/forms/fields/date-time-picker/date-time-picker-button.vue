@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import formBaseMixin from '@/mixins/form/base';
+import { formBaseMixin } from '@/mixins/form';
 
 import DateTimePicker from './date-time-picker.vue';
 

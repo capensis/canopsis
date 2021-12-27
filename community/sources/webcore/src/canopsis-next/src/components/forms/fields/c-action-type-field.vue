@@ -10,9 +10,9 @@
 </template>
 
 <script>
-import { SCENARIO_ACTION_TYPES, CAT_SCENARIO_ACTION_TYPES } from '@/constants';
+import { ACTION_TYPES, CAT_ACTION_TYPES } from '@/constants';
 
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 export default {
   inject: ['$validator'],
@@ -34,11 +34,17 @@ export default {
       type: String,
       default: 'type',
     },
+    types: {
+      type: Array,
+      required: false,
+    },
   },
   computed: {
     actionTypes() {
-      return Object.values(SCENARIO_ACTION_TYPES)
-        .filter(type => !CAT_SCENARIO_ACTION_TYPES.includes(type) || this.isCatVersion)
+      const types = this.types || Object.values(ACTION_TYPES);
+
+      return types
+        .filter(type => !CAT_ACTION_TYPES.includes(type) || this.isCatVersion)
         .map(type => ({
           value: type,
           text: this.$t(`scenario.actions.${type}`),

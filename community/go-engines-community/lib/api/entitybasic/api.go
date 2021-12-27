@@ -5,6 +5,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"net/http"
@@ -19,6 +20,7 @@ type API interface {
 type api struct {
 	store                Store
 	entityChangeListener chan<- entityservice.ChangeEntityMessage
+	metricMetaUpdater    metrics.MetaUpdater
 	actionLogger         logger.ActionLogger
 	logger               zerolog.Logger
 }
@@ -26,6 +28,7 @@ type api struct {
 func NewApi(
 	store Store,
 	entityChangeListener chan<- entityservice.ChangeEntityMessage,
+	metricMetaUpdater metrics.MetaUpdater,
 	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
 ) API {
@@ -33,6 +36,7 @@ func NewApi(
 		store:                store,
 		entityChangeListener: entityChangeListener,
 		logger:               logger,
+		metricMetaUpdater:    metricMetaUpdater,
 		actionLogger:         actionLogger,
 	}
 }
@@ -56,7 +60,7 @@ func (a *api) Get(c *gin.Context) {
 		return
 	}
 
-	entity, err := a.store.GetOneBy(request.ID)
+	entity, err := a.store.GetOneBy(c.Request.Context(), request.ID)
 	if err != nil {
 		panic(err)
 	}
@@ -98,7 +102,7 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	request.ID = idRequest.ID
-	entity, isToggled, err := a.store.Update(request)
+	entity, isToggled, err := a.store.Update(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
 	}
@@ -124,6 +128,8 @@ func (a *api) Update(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
+	a.metricMetaUpdater.UpdateById(c.Request.Context(), entity.ID)
+
 	c.JSON(http.StatusOK, entity)
 }
 
@@ -146,7 +152,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.store.Delete(request.ID)
+	ok, err := a.store.Delete(c.Request.Context(), request.ID)
 
 	if err != nil {
 		if err == ErrLinkedEntityToAlarm {
@@ -169,6 +175,8 @@ func (a *api) Delete(c *gin.Context) {
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
+
+	a.metricMetaUpdater.DeleteById(c.Request.Context(), request.ID)
 
 	c.Status(http.StatusNoContent)
 }

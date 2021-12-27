@@ -15,7 +15,7 @@
     v-btn.secondary.ml-0(@click="showManageTabsModal") {{ $t('modals.createPlaylist.manageTabs') }}
     v-layout.py-4(row)
       v-layout(v-if="tabsPending", justify-center)
-        v-progress-circular(indeterminate, color="primary")
+        v-progress-circular(color="primary", indeterminate)
       v-flex(v-else, xs12)
         v-flex.text-xs-center.mb-2 {{ $t('modals.createPlaylist.result') }}
         draggable-playlist-tabs(v-field="form.tabs_list")
@@ -31,7 +31,7 @@ import DraggablePlaylistTabs from '@/components/other/playlists/form/partials/dr
 
 import { MODALS } from '@/constants';
 
-import formMixin from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 import TabPanelContent from './partials/tab-panel-content.vue';
 

@@ -36,10 +36,22 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("required_with", fe.StructField(), fe.Param())
 		return t
 	})
+	_ = v.RegisterTranslation("required_not_both", trans, func(ut ut.Translator) error {
+		return ut.Add("required_not_both", "Can't be present both {0} and {1}.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("required_not_both", fe.StructField(), fe.Param())
+		return t
+	})
 	_ = v.RegisterTranslation("required_or", trans, func(ut ut.Translator) error {
 		return ut.Add("required_or", "{0} or {1} is required.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
 		t, _ := ut.T("required_or", fe.StructField(), fe.Param())
+		return t
+	})
+	_ = v.RegisterTranslation("required_not_both", trans, func(ut ut.Translator) error {
+		return ut.Add("required_not_both", "Can't be present both {0} and {1}.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("required_not_both", fe.StructField(), fe.Param())
 		return t
 	})
 	_ = v.RegisterTranslation("notblank", trans, func(ut ut.Translator) error {
@@ -52,6 +64,12 @@ func RegisterTranslations(v *validator.Validate) {
 		return ut.Add("gtfield", "{0} should be greater than {1}.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
 		t, _ := ut.T("gtfield", fe.StructField(), fe.Param())
+		return t
+	})
+	_ = v.RegisterTranslation("gtefield", trans, func(ut ut.Translator) error {
+		return ut.Add("gtefield", "{0} should be greater or equal than {1}.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("gtefield", fe.StructField(), fe.Param())
 		return t
 	})
 	_ = v.RegisterTranslation("gt", trans, func(ut ut.Translator) error {
@@ -94,6 +112,12 @@ func RegisterTranslations(v *validator.Validate) {
 		return ut.Add("not_exist", "{0} doesn't exist.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
 		t, _ := ut.T("not_exist", fe.StructField())
+		return t
+	})
+	_ = v.RegisterTranslation("not_approver", trans, func(ut ut.Translator) error {
+		return ut.Add("not_approver", "{0} doesn't have approve rights or doesn't exist.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("not_approver", fe.StructField())
 		return t
 	})
 	_ = v.RegisterTranslation("unique", trans, func(ut ut.Translator) error {
@@ -269,6 +293,18 @@ func RegisterTranslations(v *validator.Validate) {
 		return ut.Add("must_be_empty", "{0} is not empty.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
 		t, _ := ut.T("must_be_empty", fe.Field())
+		return t
+	})
+	_ = v.RegisterTranslation("multi_sort_invalid", trans, func(ut ut.Translator) error {
+		return ut.Add("multi_sort_invalid", "Invalid multi_sort value.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("multi_sort_invalid", fe.StructField())
+		return t
+	})
+	_ = v.RegisterTranslation("regexp", trans, func(ut ut.Translator) error {
+		return ut.Add("regexp", "Invalid regexp.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("regexp", fe.StructField())
 		return t
 	})
 }

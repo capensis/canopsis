@@ -1,6 +1,7 @@
 ---
 - name: Taking care of database migration
-  command: "{{ canopsis_home }}/bin/canopsinit --canopsis-edition {{ canopsis_edition }}"
+  # note: this legacy tool still expects cat/core values
+  command: "{{ canopsis_home }}/bin/canopsinit --canopsis-edition {{ canopsis_edition | replace('community', 'core') | replace('pro', 'cat') }}"
   register: canospinitcmd
   failed_when: canospinitcmd.rc != 0
   tags:

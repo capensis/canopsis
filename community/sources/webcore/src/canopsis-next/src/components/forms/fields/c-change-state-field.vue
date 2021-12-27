@@ -18,7 +18,7 @@
 <script>
 import { omit } from 'lodash';
 
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
 
@@ -45,7 +45,7 @@ export default {
     },
     name: {
       type: String,
-      required: 'changeState',
+      default: 'changeState',
     },
   },
   computed: {

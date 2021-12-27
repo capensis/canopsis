@@ -47,7 +47,7 @@
 <script>
 import uid from '@/helpers/uid';
 
-import formMixin from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 import PatternRuleAdvancedFieldForm from './pattern-rule-advanced-field-form.vue';
 
@@ -75,8 +75,9 @@ export default {
   },
   computed: {
     availableOperators() {
-      return this.operators.filter(operator =>
-        !this.form.advancedFields.some(({ operator: fieldOperator }) => fieldOperator === operator));
+      return this.operators.filter(
+        operator => !this.form.advancedFields.some(({ operator: fieldOperator }) => fieldOperator === operator),
+      );
     },
   },
   methods: {

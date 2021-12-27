@@ -20,13 +20,12 @@
 </template>
 
 <script>
-import moment from 'moment';
-
 import { MODALS } from '@/constants';
 
 import uid from '@/helpers/uid';
+import { convertDateToStartOfDayDateObject } from '@/helpers/date/date';
 
-import formArrayMixin from '@/mixins/form/array';
+import { formArrayMixin } from '@/mixins/form';
 
 import PbehaviorExceptionField from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-field.vue';
 import PbehaviorExceptionList from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-list.vue';
@@ -60,12 +59,10 @@ export default {
     },
 
     addException() {
-      const startOfTodayMoment = moment().startOf('day');
-
       this.addItemIntoArray({
         key: uid(),
-        begin: startOfTodayMoment.toDate(),
-        end: startOfTodayMoment.toDate(),
+        begin: convertDateToStartOfDayDateObject(),
+        end: convertDateToStartOfDayDateObject(),
         type: '',
       });
     },

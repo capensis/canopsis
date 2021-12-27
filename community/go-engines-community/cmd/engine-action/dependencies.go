@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
@@ -33,21 +34,22 @@ type DependencyMaker struct {
 func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger) engine.Engine {
 	m := DependencyMaker{}
 
-	cfg := m.DepConfig()
+	mongoClient := m.DepMongoClient(ctx)
+	cfg := m.DepConfig(ctx, mongoClient)
+	config.SetDbClientRetry(mongoClient, cfg)
+	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
-	amqpChannel, err := amqpConnection.Channel()
-	if err != nil {
-		panic(err)
-	}
-	mongoClient := m.DepMongoClient(cfg)
+	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	actionAdapter := action.NewAdapter(mongoClient)
 	alarmAdapter := alarm.NewAdapter(mongoClient)
-	redisSession := m.DepRedisSession(ctx, redis.ActionScenarioStorage, logger, cfg)
+	actionRedisClient := m.DepRedisSession(ctx, redis.ActionScenarioStorage, logger, cfg)
+	runInfoRedisClient := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
+	lockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	delayedScenarioManager := action.NewDelayedScenarioManager(actionAdapter, alarmAdapter,
-		action.NewRedisDelayedScenarioStorage(redis.DelayedScenarioKey, redisSession, json.NewEncoder(), json.NewDecoder()),
+		action.NewRedisDelayedScenarioStorage(redis.DelayedScenarioKey, actionRedisClient, json.NewEncoder(), json.NewDecoder()),
 		options.PeriodicalWaitTime, logger)
 	scenarioExecChan := make(chan action.ExecuteScenariosTask)
-	storage := action.NewRedisScenarioExecutionStorage(redis.ScenarioExecutionKey, redisSession, json.NewEncoder(), json.NewDecoder(), logger)
+	storage := action.NewRedisScenarioExecutionStorage(redis.ScenarioExecutionKey, actionRedisClient, json.NewEncoder(), json.NewDecoder(), logger)
 	actionScenarioStorage := action.NewScenarioStorage(actionAdapter, delayedScenarioManager, logger)
 	actionService := action.NewService(alarmAdapter, scenarioExecChan,
 		delayedScenarioManager, storage, json.NewEncoder(), amqpChannel,
@@ -93,7 +95,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 	engineAction := engine.New(
 		func(ctx context.Context) error {
 			manager := action.NewTaskManager(
-				action.NewWorkerPool(options.WorkerPoolSize, axeRpcClient, webhookRpcClient, alarmAdapter, json.NewEncoder(), logger),
+				action.NewWorkerPool(options.WorkerPoolSize, axeRpcClient, webhookRpcClient, alarmAdapter, json.NewEncoder(), logger, timezoneConfigProvider),
 				storage,
 				actionScenarioStorage,
 				logger,
@@ -104,7 +106,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 				return err
 			}
 
-			err = actionScenarioStorage.ReloadScenarios()
+			err = actionScenarioStorage.ReloadScenarios(ctx)
 			if err != nil {
 				logger.Error().Err(err).Msg("Initialize: failed to load actions! Engine will be stopped.")
 				return err
@@ -130,10 +132,34 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 
 			return nil
 		},
-		func() {
+		func(ctx context.Context) {
 			close(scenarioExecChan)
 			close(rpcResultChannel)
-			_ = amqpConnection.Close()
+
+			err := mongoClient.Disconnect(ctx)
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close mongo connection")
+			}
+
+			err = amqpConnection.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close amqp connection")
+			}
+
+			err = actionRedisClient.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+
+			err = lockRedisClient.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+
+			err = runInfoRedisClient.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
 		},
 		logger,
 	)
@@ -157,25 +183,39 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		logger,
 	))
 	engineAction.AddConsumer(axeRpcClient)
+	rpcPublishQueues := make([]string, 0)
 	if webhookRpcClient != nil {
 		engineAction.AddConsumer(webhookRpcClient)
+		rpcPublishQueues = append(rpcPublishQueues, canopsis.WebhookRPCQueueServerName)
 	}
 	engineAction.AddPeriodicalWorker(engine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
-		engine.NewRunInfoManager(m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)),
-		engine.RunInfo{
-			Name:         canopsis.ActionEngineName,
-			ConsumeQueue: canopsis.ActionQueueName,
-		},
+		engine.NewRunInfoManager(runInfoRedisClient),
+		engine.NewInstanceRunInfo(canopsis.ActionEngineName, canopsis.ActionQueueName, "", nil, rpcPublishQueues),
+		amqpChannel,
 		logger,
 	))
-	engineAction.AddPeriodicalWorker(&periodicalWorker{
+	engineAction.AddPeriodicalWorker(&reloadLocalCachePeriodicalWorker{
 		PeriodicalInterval:    options.PeriodicalWaitTime,
-		LockerClient:          redis.NewLockClient(redisSession),
-		ActionService:         actionService,
 		ActionScenarioStorage: actionScenarioStorage,
 		Logger:                logger,
 	})
+	engineAction.AddPeriodicalWorker(engine.NewLockedPeriodicalWorker(
+		redis.NewLockClient(lockRedisClient),
+		redis.ActionPeriodicalLockKey,
+		&scenarioPeriodicalWorker{
+			PeriodicalInterval: options.PeriodicalWaitTime,
+			ActionService:      actionService,
+			Logger:             logger,
+		},
+		logger,
+	))
+	engineAction.AddPeriodicalWorker(engine.NewLoadConfigPeriodicalWorker(
+		options.PeriodicalWaitTime,
+		config.NewAdapter(mongoClient),
+		timezoneConfigProvider,
+		logger,
+	))
 
 	return engineAction
 }

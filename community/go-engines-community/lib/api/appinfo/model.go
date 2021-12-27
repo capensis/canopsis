@@ -1,19 +1,16 @@
 package appinfo
 
+import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+
 type VersionConf struct {
 	Edition string `json:"edition" bson:"edition"`
 	Stack   string `json:"stack" bson:"stack"`
 	Version string `json:"version" bson:"version"`
 }
 
-type IntervalUnit struct {
-	Interval uint   `json:"interval" bson:"interval"`
-	Unit     string `json:"unit" bson:"unit" binding:"oneof=s h m"`
-}
-
 type PopupTimeout struct {
-	Info  *IntervalUnit `json:"info,omitempty" bson:"info,omitempty"`
-	Error *IntervalUnit `json:"error,omitempty" bson:"error,omitempty"`
+	Info  *types.DurationWithUnit `json:"info,omitempty" bson:"info,omitempty"`
+	Error *types.DurationWithUnit `json:"error,omitempty" bson:"error,omitempty"`
 }
 
 type UserInterfaceConf struct {
@@ -28,22 +25,29 @@ type UserInterfaceConf struct {
 	CheckCountRequestTimeout  int64         `json:"check_count_request_timeout" bson:"check_count_request_timeout" binding:"gt=0"`
 }
 
-type TimezoneConf struct {
-	Timezone string `json:"timezone,omitempty" bson:"timezone"`
+type GlobalConf struct {
+	Timezone          string `json:"timezone,omitempty"`
+	FileUploadMaxSize int64  `json:"file_upload_max_size"`
 }
 
 type RemediationConf struct {
-	JobExecutorFetchTimeoutSeconds int64 `json:"jobexecutorfetchtimeoutseconds,omitempty" bson:"jobexecutorfetchtimeoutseconds"`
+	JobConfigTypes []JobConfigType `json:"job_config_types"`
+}
+
+type JobConfigType struct {
+	Name     string `json:"name"`
+	AuthType string `json:"auth_type"`
 }
 
 type AppInfoResponse struct {
 	UserInterfaceConf
-	TimezoneConf
+	GlobalConf
 	VersionConf
-	RemediationConf
+	Login       LoginConf        `json:"login"`
+	Remediation *RemediationConf `json:"remediation,omitempty"`
 }
 
-type LoginConfig struct {
+type LoginConf struct {
 	CasConfig  LoginConfigMethod `json:"casconfig,omitempty"`
 	LdapConfig LoginConfigMethod `json:"ldapconfig,omitempty"`
 	SamlConfig LoginConfigMethod `json:"saml2config,omitempty"`
@@ -52,10 +56,4 @@ type LoginConfig struct {
 type LoginConfigMethod struct {
 	Title  string `json:"title,omitempty"`
 	Enable bool   `json:"enable"`
-}
-
-type LoginConfigResponse struct {
-	LoginConfig       LoginConfig       `json:"login_config"`
-	UserInterfaceConf UserInterfaceConf `json:"user_interface"`
-	VersionConf
 }

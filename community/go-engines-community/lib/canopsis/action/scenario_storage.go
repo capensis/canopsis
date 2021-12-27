@@ -28,12 +28,12 @@ func NewScenarioStorage(
 	}
 }
 
-func (s *scenarioStorage) ReloadScenarios() error {
+func (s *scenarioStorage) ReloadScenarios(ctx context.Context) error {
 	s.scenariosMx.Lock()
 	defer s.scenariosMx.Unlock()
 
 	var err error
-	scenarios, err := s.adapter.GetEnabled()
+	scenarios, err := s.adapter.GetEnabled(ctx)
 
 	if err != nil {
 		return err
@@ -90,7 +90,7 @@ func (s *scenarioStorage) GetTriggeredScenarios(
 			continue
 		}
 
-		if scenario.Delay != nil && scenario.Delay.Seconds > 0 {
+		if scenario.Delay != nil && scenario.Delay.Value > 0 {
 			continue
 		}
 
@@ -118,7 +118,7 @@ func (s *scenarioStorage) RunDelayedScenarios(
 			continue
 		}
 
-		if scenario.Delay != nil && scenario.Delay.Seconds > 0 {
+		if scenario.Delay != nil && scenario.Delay.Value > 0 {
 			// Check if at least on action matches alarm.
 			matched := false
 			for _, action := range scenario.Actions {

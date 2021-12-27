@@ -56,3 +56,20 @@ export function formatEvent(event) {
   return EVENT_ENTITY_STYLE[event];
 }
 
+/**
+ * Return object that contains the step style
+ *
+ * @param {AlarmEvent} step
+ * @returns {Object}
+ */
+export const formatStep = (step) => {
+  if (step._t.startsWith('status')) {
+    return formatStatus(step.val);
+  }
+
+  if (step._t.startsWith('state')) {
+    return formatState(step.val);
+  }
+
+  return formatEvent(step._t);
+};

@@ -1,13 +1,3 @@
-/**
- * @typedef {Object} VuexActionContext
- * @property {Object} state
- * @property {Object} rootState
- * @property {Object} getters
- * @property {Object} rootGetters
- * @property {function} commit
- * @property {function} dispatch
- */
-
 import Vue from 'vue';
 import Vuex from 'vuex';
 
@@ -21,11 +11,19 @@ import sideBarModule from './modules/side-bar';
 import navigationModule from './modules/navigation';
 import entitiesModules from './modules/entities';
 
-
 import entitiesPlugin from './plugins/entities';
 import watchOncePlugin from './plugins/watch-once';
 
 Vue.use(Vuex);
+/**
+ * @typedef {Object} VuexActionContext
+ * @property {Object} state
+ * @property {Object} rootState
+ * @property {Object} getters
+ * @property {Object} rootGetters
+ * @property {function} commit
+ * @property {function} dispatch
+ */
 
 /**
  * @typedef {Object} ActionContext

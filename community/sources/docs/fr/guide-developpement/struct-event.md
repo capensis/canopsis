@@ -1,4 +1,4 @@
-# Structure d'un évènement
+# Structure des évènements
 
 ## Focus AMQP
 

@@ -23,12 +23,13 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
-
 import { MODALS } from '@/constants';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { remediationInstructionFilterToForm } from '@/helpers/forms/remediation-instruction-filter';
+
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import RemediationInstructionsFilterForm
   from '@/components/other/remediation/instructions-filter/remediation-instructions-filter-form.vue';
@@ -42,20 +43,13 @@ export default {
   },
   components: { RemediationInstructionsFilterForm, ModalWrapper },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
+    modalInnerMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
-    const defaultForm = {
-      with: true,
-      all: false,
-      instructions: [],
-    };
-
-    const { filter } = this.modal.config;
-
     return {
-      form: filter ? cloneDeep(filter) : defaultForm,
+      form: remediationInstructionFilterToForm(this.modal.config.filter),
     };
   },
   methods: {

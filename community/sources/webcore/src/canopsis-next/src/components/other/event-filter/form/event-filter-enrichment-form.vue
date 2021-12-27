@@ -22,7 +22,7 @@
 <script>
 import { EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES, MODALS } from '@/constants';
 
-import formMixin from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 export default {
   inject: ['$validator'],
@@ -95,4 +95,3 @@ export default {
   },
 };
 </script>
-

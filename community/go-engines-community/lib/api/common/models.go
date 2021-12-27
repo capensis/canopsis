@@ -3,6 +3,7 @@ package common
 import (
 	"errors"
 	"math"
+	"net/http"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -12,6 +13,16 @@ import (
 	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
 	"github.com/go-playground/validator/v10"
 )
+
+type User struct {
+	ID   string `bson:"_id" json:"_id"`
+	Name string `bson:"crecord_name" json:"name"`
+}
+
+type Role struct {
+	ID   string `bson:"_id" json:"_id"`
+	Name string `bson:"crecord_name" json:"name"`
+}
 
 // PaginatedMeta is meta for paginated list data.
 type PaginatedMeta struct {
@@ -33,8 +44,8 @@ type PaginatedData interface {
 	GetTotal() int64
 }
 
-func NewPaginatedResponse(q pagination.Query, d PaginatedData) (interface{}, error) {
-	if q.Paginate == false {
+func NewPaginatedResponse(q pagination.Query, d PaginatedData) (PaginatedListResponse, error) {
+	if !q.Paginate {
 		q.Limit = d.GetTotal()
 	}
 
@@ -44,7 +55,7 @@ func NewPaginatedResponse(q pagination.Query, d PaginatedData) (interface{}, err
 	}
 
 	if q.Page > pageCount {
-		return nil, errors.New("page is out of range")
+		return PaginatedListResponse{}, errors.New("page is out of range")
 	}
 
 	data := d.GetData()
@@ -52,7 +63,7 @@ func NewPaginatedResponse(q pagination.Query, d PaginatedData) (interface{}, err
 		data = []interface{}{}
 	}
 
-	return &PaginatedListResponse{
+	return PaginatedListResponse{
 		Data: data,
 		Meta: PaginatedMeta{
 			Page:       q.Page,
@@ -73,9 +84,10 @@ func NewErrorResponse(err error) ErrorResponse {
 }
 
 var NotFoundResponse = ErrorResponse{Error: "Not found"}
-var UnauthorizedResponse = ErrorResponse{Error: "Unauthorized"}
+var MethodNotAllowedResponse = ErrorResponse{Error: http.StatusText(http.StatusMethodNotAllowed)}
+var UnauthorizedResponse = ErrorResponse{Error: http.StatusText(http.StatusUnauthorized)}
 var InternalServerErrorResponse = ErrorResponse{Error: "Internal server error"}
-var ForbiddenResponse = ErrorResponse{Error: "Forbidden"}
+var ForbiddenResponse = ErrorResponse{Error: http.StatusText(http.StatusForbidden)}
 var ErrTimeoutResponse = ErrorResponse{Error: "Request timeout reached"}
 
 // ValidationErrorResponse is response for failed validation.
@@ -137,16 +149,20 @@ loop:
 		switch k {
 		case reflect.Struct:
 			if f, ok := val.Type().FieldByName(path[i]); ok {
-				jsonTag := f.Tag.Get("json")
-				tags := strings.Split(jsonTag, ",")
-				if len(tags) > 1 && tags[len(tags)-1] == "omitempty" {
-					jsonTag = strings.Join(tags[:len(tags)-1], ",")
+				tag := f.Tag.Get("json")
+				if tag == "" {
+					tag = f.Tag.Get("form")
 				}
-				if jsonTag == "-" {
-					jsonTag = strings.ToLower(path[i])
+
+				tags := strings.Split(tag, ",")
+				if len(tags) > 1 && tags[len(tags)-1] == "omitempty" {
+					tag = strings.Join(tags[:len(tags)-1], ",")
+				}
+				if tag == "-" {
+					tag = strings.ToLower(path[i])
 				}
 				val = val.FieldByName(path[i])
-				path[i] = jsonTag
+				path[i] = tag
 			}
 		case reflect.Slice, reflect.Array:
 			index, err := strconv.Atoi(path[i])

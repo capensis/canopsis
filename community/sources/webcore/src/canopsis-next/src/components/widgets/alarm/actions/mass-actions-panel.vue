@@ -6,7 +6,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, EVENT_ENTITY_STYLE, WIDGETS_ACTIONS_TYPES } from '@/constants';
+import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, EVENT_ENTITY_STYLE, ALARM_LIST_ACTIONS_TYPES } from '@/constants';
 
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 
@@ -40,47 +40,45 @@ export default {
     }),
 
     actions() {
-      const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
-
       const actions = [
         {
-          type: alarmsListActionsTypes.pbehaviorAdd,
+          type: ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorAdd].icon,
           title: this.$t('alarmList.actions.titles.pbehavior'),
           method: this.showAddPbehaviorModal,
         },
         {
-          type: alarmsListActionsTypes.ack,
+          type: ALARM_LIST_ACTIONS_TYPES.ack,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
           title: this.$t('alarmList.actions.titles.ack'),
           method: this.showAckModal,
         },
         {
-          type: alarmsListActionsTypes.fastAck,
+          type: ALARM_LIST_ACTIONS_TYPES.fastAck,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.fastAck].icon,
           title: this.$t('alarmList.actions.titles.fastAck'),
           method: this.createMassFastAckEvent,
         },
         {
-          type: alarmsListActionsTypes.ackRemove,
+          type: ALARM_LIST_ACTIONS_TYPES.ackRemove,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ackRemove].icon,
           title: this.$t('alarmList.actions.titles.ackRemove'),
           method: this.showAckRemoveModal,
         },
         {
-          type: alarmsListActionsTypes.cancel,
+          type: ALARM_LIST_ACTIONS_TYPES.cancel,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
           title: this.$t('alarmList.actions.titles.cancel'),
           method: this.showCancelEventModal,
         },
         {
-          type: alarmsListActionsTypes.associateTicket,
+          type: ALARM_LIST_ACTIONS_TYPES.associateTicket,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
           title: this.$t('alarmList.actions.titles.associateTicket'),
           method: this.showCreateAssociateTicketEventModal,
         },
         {
-          type: alarmsListActionsTypes.snooze,
+          type: ALARM_LIST_ACTIONS_TYPES.snooze,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.snooze].icon,
           title: this.$t('alarmList.actions.titles.snooze'),
           method: this.showSnoozeModal,
@@ -90,13 +88,13 @@ export default {
       if (!this.hasMetaAlarm) {
         actions.push(
           {
-            type: alarmsListActionsTypes.groupRequest,
+            type: ALARM_LIST_ACTIONS_TYPES.groupRequest,
             icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.groupRequest].icon,
             title: this.$t('alarmList.actions.titles.groupRequest'),
             method: this.showCreateGroupRequestEventModal,
           },
           {
-            type: alarmsListActionsTypes.manualMetaAlarmGroup,
+            type: ALARM_LIST_ACTIONS_TYPES.manualMetaAlarmGroup,
             icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.manualMetaAlarmGroup].icon,
             title: this.$t('alarmList.actions.titles.manualMetaAlarmGroup'),
             method: this.showCreateManualMetaAlarmModal,
@@ -123,11 +121,22 @@ export default {
       return {
         itemsType: ENTITIES_TYPES.alarm,
         itemsIds: this.itemsIds,
+        afterSubmit: this.afterSubmit,
       };
     },
   },
 
   methods: {
+    clearItems() {
+      this.$emit('clear:items');
+    },
+
+    afterSubmit() {
+      this.clearItems();
+
+      return this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id });
+    },
+
     showAddPbehaviorModal() {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
@@ -135,6 +144,7 @@ export default {
           filter: {
             _id: { $in: this.items.map(item => item.entity._id) },
           },
+          afterSubmit: this.clearItems,
         },
       });
     },
@@ -171,6 +181,18 @@ export default {
           title: this.$t('modals.createManualMetaAlarm.title'),
         },
       });
+    },
+
+    async createMassFastAckEvent() {
+      let eventData = {};
+
+      if (this.widget.parameters.fastAckOutput && this.widget.parameters.fastAckOutput.enabled) {
+        eventData = { output: this.widget.parameters.fastAckOutput.value };
+      }
+
+      await this.createEvent(EVENT_ENTITY_TYPES.ack, this.items, eventData);
+
+      return this.afterSubmit();
     },
   },
 };

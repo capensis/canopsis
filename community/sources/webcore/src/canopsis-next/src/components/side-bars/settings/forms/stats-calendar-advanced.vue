@@ -5,11 +5,13 @@
     v-list.grey.lighten-4.px-2.py-0(expand)
       field-filters(
         :filters="value.filters",
-        hideSelect,
+        hide-select,
+        addable,
+        editable,
         @update:filters="updateField('filters', $event)"
       )
       v-divider
-      field-opened-resolved-filter(v-field="value.alarmsStateFilter")
+      field-opened-resolved-filter(v-field="value.opened")
       v-divider
       field-switcher(
         v-field="value.considerPbehaviors",
@@ -30,8 +32,7 @@
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
-import formValidationHeaderMixin from '@/mixins/form/validation-header';
+import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
 
 import FieldOpenedResolvedFilter from '../fields/alarm/opened-resolved-filter.vue';
 import FieldFilters from '../fields/common/filters.vue';

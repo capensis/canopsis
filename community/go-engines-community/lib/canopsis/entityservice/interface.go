@@ -12,28 +12,28 @@ import (
 // Adapter is an interface that provides methods for database queries regarding
 // services and their dependencies.
 type Adapter interface {
-	GetAll() ([]EntityService, error)
+	GetAll(ctx context.Context) ([]EntityService, error)
 
-	GetEnabled() ([]EntityService, error)
+	GetEnabled(ctx context.Context) ([]EntityService, error)
 
-	GetValid() ([]EntityService, error)
+	GetValid(ctx context.Context) ([]EntityService, error)
 
-	GetByID(id string) (*EntityService, error)
+	GetByID(ctx context.Context, id string) (*EntityService, error)
 
-	AddDepends(id string, depends []string) (bool, error)
+	AddDepends(ctx context.Context, id string, depends []string) (bool, error)
 
-	RemoveDepends(id string, depends []string) (bool, error)
+	RemoveDepends(ctx context.Context, id string, depends []string) (bool, error)
 
-	RemoveDependByQuery(query interface{}, depend string) ([]string, error)
+	RemoveDependByQuery(ctx context.Context, query interface{}, depend string) ([]string, error)
 
 	// UpdateCounters saves service counters to storage.
-	UpdateCounters(string, AlarmCounters) error
+	UpdateCounters(context.Context, string, AlarmCounters) error
 
 	// UpdateBulk bulk update
 	UpdateBulk(ctx context.Context, writeModels []mongodriver.WriteModel) error
 
-	// GetCounters calculates service counters base on dependencies alarms state.
-	GetCounters(ctx context.Context, serviceID string) (mongo.Cursor, error)
+	GetOpenAlarmsOfServiceDependencies(ctx context.Context, serviceID string) (mongo.Cursor, error)
+	GetServiceDependencies(ctx context.Context, serviceID string) (mongo.Cursor, error)
 }
 
 // Manager is used to implement context graph modifier for entity service.

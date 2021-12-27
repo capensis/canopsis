@@ -9,13 +9,12 @@ Feature: Create a idle rule
     {
       "name": "test-idle-rule-to-create-1-name",
       "description": "test-idle-rule-to-create-1-description",
-      "author": "test-idle-rule-to-create-1-author",
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
       "priority": 20,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "alarm_patterns": [
@@ -31,10 +30,9 @@ Feature: Create a idle rule
       "operation": {
         "type": "snooze",
         "parameters": {
-          "author": "test-idle-rule-to-create-1-operation-author",
           "output": "test-idle-rule-to-create-1-operation-output",
           "duration": {
-            "seconds": 3,
+            "value": 3,
             "unit": "s"
           }
         }
@@ -48,13 +46,13 @@ Feature: Create a idle rule
     {
       "name": "test-idle-rule-to-create-1-name",
       "description": "test-idle-rule-to-create-1-description",
-      "author": "test-idle-rule-to-create-1-author",
+      "author": "root",
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
       "priority": 20,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "alarm_patterns": [
@@ -70,10 +68,10 @@ Feature: Create a idle rule
       "operation": {
         "type": "snooze",
         "parameters": {
-          "author": "test-idle-rule-to-create-1-operation-author",
+          "author": "root",
           "output": "test-idle-rule-to-create-1-operation-output",
           "duration": {
-            "seconds": 3,
+            "value": 3,
             "unit": "s"
           }
         }
@@ -89,12 +87,11 @@ Feature: Create a idle rule
     {
       "name": "test-idle-rule-to-create-2-name",
       "description": "test-idle-rule-to-create-2-description",
-      "author": "test-idle-rule-to-create-2-author",
       "type": "entity",
       "enabled": true,
       "priority": 21,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -111,12 +108,12 @@ Feature: Create a idle rule
     {
       "name": "test-idle-rule-to-create-2-name",
       "description": "test-idle-rule-to-create-2-description",
-      "author": "test-idle-rule-to-create-2-author",
+      "author": "root",
       "type": "entity",
       "enabled": true,
       "priority": 21,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -135,13 +132,12 @@ Feature: Create a idle rule
     {
       "name": "test-idle-rule-to-create-3-name",
       "description": "test-idle-rule-to-create-3-description",
-      "author": "test-idle-rule-to-create-3-author",
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
       "priority": 22,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "alarm_patterns": [
@@ -158,13 +154,12 @@ Feature: Create a idle rule
         "type": "pbehavior",
         "parameters": {
           "name": "test-idle-rule-to-create-3-operation-name",
-          "author": "test-idle-rule-to-create-3-operation-author",
           "rrule": "FREQ=DAILY",
           "reason": "test-reason-to-edit-idle-rule",
           "type": "test-type-to-edit-idle-rule",
           "start_on_trigger": true,
           "duration": {
-            "seconds": 3,
+            "value": 3,
             "unit": "s"
           }
         }
@@ -180,13 +175,13 @@ Feature: Create a idle rule
     {
       "name": "test-idle-rule-to-create-3-name",
       "description": "test-idle-rule-to-create-3-description",
-      "author": "test-idle-rule-to-create-3-author",
+      "author": "root",
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
       "priority": 22,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "alarm_patterns": [
@@ -203,13 +198,13 @@ Feature: Create a idle rule
         "type": "pbehavior",
         "parameters": {
           "name": "test-idle-rule-to-create-3-operation-name",
-          "author": "test-idle-rule-to-create-3-operation-author",
+          "author": "root",
           "rrule": "FREQ=DAILY",
           "reason": "test-reason-to-edit-idle-rule",
           "type": "test-type-to-edit-idle-rule",
           "start_on_trigger": true,
           "duration": {
-            "seconds": 3,
+            "value": 3,
             "unit": "s"
           }
         }
@@ -238,8 +233,7 @@ Feature: Create a idle rule
     """
     {
       "errors": {
-        "author": "Author is missing.",
-        "duration.seconds": "Seconds is missing.",
+        "duration.value": "Value is missing.",
         "duration.unit": "Unit is missing.",
         "enabled": "Enabled is missing.",
         "name": "Name is missing.",

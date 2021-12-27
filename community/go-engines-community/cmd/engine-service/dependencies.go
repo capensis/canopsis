@@ -2,22 +2,20 @@ package main
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
-	"github.com/bsm/redislock"
 	"runtime/trace"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
 )
-
-const periodicalLock = "service-periodical-lock"
-const periodicalIdleSinceLock = "service-periodical-idle-since-lock"
 
 type Options struct {
 	FeaturePrintEventOnError bool
@@ -36,16 +34,15 @@ type DependencyMaker struct {
 // NewEngine returns the default Service engine with default connections.
 func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engine.Engine {
 	m := DependencyMaker{}
-	cfg := m.DepConfig()
+	mongoClient := m.DepMongoClient(ctx)
+	cfg := m.DepConfig(ctx, mongoClient)
+	config.SetDbClientRetry(mongoClient, cfg)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
-	amqpChannel, err := amqpConnection.Channel()
-	if err != nil {
-		panic(err)
-	}
-
-	mongoClient := m.DepMongoClient(cfg)
+	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	redisSession := m.DepRedisSession(ctx, redis.CacheService, logger, cfg)
-	periodicalLockClient := redis.NewLockClient(redisSession)
+	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
+	lockRedisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
+	periodicalLockClient := redis.NewLockClient(lockRedisSession)
 	var serviceLockClient redis.LockClient
 	if !options.AutoRecomputeAll {
 		serviceLockClient = redis.NewLockClient(redisSession)
@@ -70,7 +67,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 			defer task.End()
 
 			// Lock periodical, do not release lock to not allow another instance start periodical.
-			_, err = periodicalLockClient.Obtain(ctx, periodicalIdleSinceLock,
+			_, err := periodicalLockClient.Obtain(ctx, redis.ServiceIdleSincePeriodicalLockKey,
 				options.PeriodicalWaitTime, &redislock.Options{
 					RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
 				})
@@ -97,7 +94,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 			}
 
 			// Lock periodical, do not release lock to not allow another instance start periodical.
-			_, err := periodicalLockClient.Obtain(ctx, periodicalLock,
+			_, err = periodicalLockClient.Obtain(ctx, redis.ServicePeriodicalLockKey,
 				options.PeriodicalWaitTime, &redislock.Options{
 					RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
 				})
@@ -127,7 +124,27 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 
 			return nil
 		},
-		nil,
+		func(ctx context.Context) {
+			err := mongoClient.Disconnect(ctx)
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close mongo connection")
+			}
+
+			err = amqpConnection.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close amqp connection")
+			}
+
+			err = redisSession.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+
+			err = runInfoRedisSession.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+		},
 		logger,
 	)
 	engineService.AddConsumer(engine.NewDefaultConsumer(
@@ -167,28 +184,33 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 	))
 	engineService.AddPeriodicalWorker(engine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
-		engine.NewRunInfoManager(m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)),
-		engine.RunInfo{
-			Name:         canopsis.ServiceEngineName,
-			ConsumeQueue: canopsis.ServiceQueueName,
-			PublishQueue: options.PublishToQueue,
-		},
+		engine.NewRunInfoManager(runInfoRedisSession),
+		engine.NewInstanceRunInfo(canopsis.ServiceEngineName, canopsis.ServiceQueueName, options.PublishToQueue),
+		amqpChannel,
 		logger,
 	))
 	if options.AutoRecomputeAll {
-		engineService.AddPeriodicalWorker(&periodicalWorker{
-			LockClient:           periodicalLockClient,
+		engineService.AddPeriodicalWorker(engine.NewLockedPeriodicalWorker(
+			periodicalLockClient,
+			redis.ServicePeriodicalLockKey,
+			&recomputeAllPeriodicalWorker{
+				EntityServiceService: entityServicesService,
+				PeriodicalInterval:   options.PeriodicalWaitTime,
+				Logger:               logger,
+			},
+			logger,
+		))
+	}
+	engineService.AddPeriodicalWorker(engine.NewLockedPeriodicalWorker(
+		periodicalLockClient,
+		redis.ServiceIdleSincePeriodicalLockKey,
+		&idleSincePeriodicalWorker{
 			EntityServiceService: entityServicesService,
 			PeriodicalInterval:   options.PeriodicalWaitTime,
 			Logger:               logger,
-		})
-	}
-	engineService.AddPeriodicalWorker(&idleSincePeriodicalWorker{
-		LockClient:           periodicalLockClient,
-		EntityServiceService: entityServicesService,
-		PeriodicalInterval:   options.PeriodicalWaitTime,
-		Logger:               logger,
-	})
+		},
+		logger,
+	))
 
 	return engineService
 }

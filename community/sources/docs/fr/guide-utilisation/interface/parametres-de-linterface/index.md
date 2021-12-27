@@ -52,7 +52,7 @@ Voici un exemple de configuration (`user_interface.json`) :
 
 * Le champ `login_page_description` contient le titre et la description de l'application. Il s'agit d'une chaîne HTML.
 * Le champ `app_title` contient le titre de l'application. Il s'agit d'une chaîne de caractère simple.
-* Le champ `footer` contient le footer positionné en dessous du formulaire de connexion. Il s'agit d'une chaîne HTML.
+* Le champ `footer` contient le footer situé en dessous du formulaire de connexion. Il s'agit d'une chaîne HTML.
 * Le champ `logo` doit être une image encodée en base64.
 
 Pour soumettre cette configuration, vous pouvez utiliser `curl` comme suit :

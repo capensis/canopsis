@@ -9,8 +9,8 @@
               v-model="tstartDateString",
               v-validate="tstartRules",
               :label="$t('common.startDate')",
-              :dateObjectPreparer="startDateObjectPreparer",
-              :roundHours="roundHours",
+              :date-object-preparer="startDateObjectPreparer",
+              :round-hours="roundHours",
               name="tstart",
               @update:objectValue="$emit('update:startObjectValue', $event)"
             )
@@ -21,8 +21,8 @@
               v-model="tstopDateString",
               v-validate="tstopRules",
               :label="$t('common.endDate')",
-              :dateObjectPreparer="stopDateObjectPreparer",
-              :roundHours="roundHours",
+              :date-object-preparer="stopDateObjectPreparer",
+              :round-hours="roundHours",
               name="tstop",
               @update:objectValue="$emit('update:stopObjectValue', $event)"
             )
@@ -30,19 +30,18 @@
         v-select(
           v-model="range",
           :items="quickRanges",
-          :label="$t('settings.statsDateInterval.fields.quickRanges')",
+          :label="$t('quickRanges.title')",
           return-object
         )
 </template>
 
 <script>
-import moment from 'moment';
+import { TIME_UNITS, QUICK_RANGES, DATETIME_FORMATS } from '@/constants';
 
-import { STATS_DURATION_UNITS, STATS_QUICK_RANGES, DATETIME_FORMATS } from '@/constants';
+import { convertDateIntervalToDateObject, findQuickRangeValue } from '@/helpers/date/date-intervals';
+import { convertDateToStartOfUnitString, subtractUnitFromDate } from '@/helpers/date/date';
 
-import { prepareDateToObject, findRange } from '@/helpers/date/date-intervals';
-
-import formMixin from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 import DateTimePickerTextField from '@/components/forms/fields/date-time-picker/date-time-picker-text-field.vue';
 
@@ -84,7 +83,7 @@ export default {
     range: {
       get() {
         const { tstart, tstop } = this.value;
-        const range = findRange(tstart, tstop);
+        const range = findQuickRangeValue(tstart, tstop);
 
         return this.quickRanges.find(({ value }) => value === range.value);
       },
@@ -97,17 +96,20 @@ export default {
 
           if (!newValue.tstop || !newValue.tstart) {
             newValue = {
-              periodUnit: STATS_DURATION_UNITS.hour,
+              periodUnit: TIME_UNITS.hour,
               periodValue: 1,
 
-              tstart: moment()
-                .subtract(1, STATS_DURATION_UNITS.hour)
-                .startOf(STATS_DURATION_UNITS.hour)
-                .format(DATETIME_FORMATS.dateTimePicker),
+              tstart: convertDateToStartOfUnitString(
+                subtractUnitFromDate(Date.now(), 1, TIME_UNITS.hour),
+                TIME_UNITS.hour,
+                DATETIME_FORMATS.dateTimePicker,
+              ),
 
-              tstop: moment()
-                .startOf(STATS_DURATION_UNITS.hour)
-                .format(DATETIME_FORMATS.dateTimePicker),
+              tstop: convertDateToStartOfUnitString(
+                Date.now(),
+                TIME_UNITS.hour,
+                DATETIME_FORMATS.dateTimePicker,
+              ),
             };
           }
 
@@ -120,10 +122,10 @@ export default {
     },
 
     quickRanges() {
-      return Object.values(STATS_QUICK_RANGES).map(range => ({
+      return Object.values(QUICK_RANGES).map(range => ({
         ...range,
 
-        text: this.$t(`settings.statsDateInterval.quickRanges.${range.value}`),
+        text: this.$t(`quickRanges.types.${range.value}`),
       }));
     },
 
@@ -151,7 +153,7 @@ export default {
   },
   methods: {
     preparerDateToObjectGetter(type) {
-      return date => prepareDateToObject(date, type, this.roundHours ? 'hour' : 'minute');
+      return date => convertDateIntervalToDateObject(date, type, this.roundHours ? 'hour' : 'minute');
     },
   },
 };

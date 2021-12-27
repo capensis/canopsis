@@ -15,7 +15,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// Store is an interface for pbhavior types storage
+// Store is an interface for pbehavior types storage
 type Store interface {
 	Insert(ctx context.Context, model *Type) error
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
@@ -35,7 +35,7 @@ func NewStore(db mongo.DbClient) Store {
 	// temporarily until feat/#2344/mongo-indexes not merged
 	keys := bson.M{"priority": 1}
 	indexOptions := options.Index().SetBackground(true).SetUnique(true)
-	_, err := db.Collection(pbehavior.TypeCollectionName).Indexes().CreateOne(
+	_, err := db.Collection(mongo.PbehaviorTypeMongoCollection).Indexes().CreateOne(
 		context.Background(), mongodriver.IndexModel{
 			Keys:    &keys,
 			Options: indexOptions,
@@ -52,10 +52,10 @@ func NewStore(db mongo.DbClient) Store {
 }
 
 func (s *store) getCollection() mongo.DbCollection {
-	return s.db.Collection(pbehavior.TypeCollectionName)
+	return s.db.Collection(mongo.PbehaviorTypeMongoCollection)
 }
 
-// Find pbhavior types according to query.
+// Find pbehavior types according to query.
 func (s *store) Find(ctx context.Context, r ListRequest) (pbhResult *AggregationResult, err error) {
 	prioritiesOfDefaultTypes, err := s.getPrioritiesOfDefaultTypes(ctx)
 	if err != nil {

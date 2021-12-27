@@ -2,8 +2,10 @@ package appinfo
 
 import (
 	"context"
+	"sort"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"go.mongodb.org/mongo-driver/bson"
@@ -14,11 +16,11 @@ import (
 const defaultPopupInterval = 3 //seconds
 
 type Store interface {
-	RetrieveLoginConfig(ctx context.Context) (LoginConfig, error)
+	RetrieveLoginConfig(ctx context.Context) (LoginConf, error)
 	RetrieveUserInterfaceConfig(ctx context.Context) (UserInterfaceConf, error)
 	RetrieveVersionConfig(ctx context.Context) (VersionConf, error)
-	RetrieveTimezoneConf(ctx context.Context) (TimezoneConf, error)
-	RetrieveRemediationConf(ctx context.Context) (RemediationConf, error)
+	RetrieveGlobalConfig(ctx context.Context) (GlobalConf, error)
+	RetrieveRemediationConfig(ctx context.Context) (RemediationConf, error)
 	UpdateUserInterfaceConfig(ctx context.Context, conf *UserInterfaceConf) error
 	DeleteUserInterfaceConfig(ctx context.Context) error
 }
@@ -38,8 +40,8 @@ func NewStore(db mongo.DbClient, authProviders []string) Store {
 	}
 }
 
-func (s *store) RetrieveLoginConfig(ctx context.Context) (LoginConfig, error) {
-	var login = LoginConfig{}
+func (s *store) RetrieveLoginConfig(ctx context.Context) (LoginConf, error) {
+	var login = LoginConf{}
 	for _, p := range s.authProviders {
 		switch p {
 		case security.AuthMethodLdap:
@@ -92,42 +94,56 @@ func (s *store) RetrieveVersionConfig(ctx context.Context) (VersionConf, error) 
 	return version, err
 }
 
-func (s *store) RetrieveTimezoneConf(ctx context.Context) (TimezoneConf, error) {
-	var tz TimezoneConf
+func (s *store) RetrieveGlobalConfig(ctx context.Context) (GlobalConf, error) {
 	conf := config.CanopsisConf{}
 	err := s.configCollection.FindOne(ctx, bson.M{"_id": config.ConfigKeyName}).Decode(&conf)
 	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
-			return tz, nil
+			return GlobalConf{}, nil
 		}
 
-		return tz, err
+		return GlobalConf{}, err
 	}
 
-	tz.Timezone = conf.Timezone.Timezone
-	return tz, nil
+	return GlobalConf{
+		Timezone:          conf.Timezone.Timezone,
+		FileUploadMaxSize: conf.File.UploadMaxSize,
+	}, nil
 }
 
-func (s *store) RetrieveRemediationConf(ctx context.Context) (RemediationConf, error) {
-	var remediation RemediationConf
-	conf := config.CanopsisConf{}
-	err := s.configCollection.FindOne(ctx, bson.M{"_id": config.ConfigKeyName}).Decode(&conf)
+func (s *store) RetrieveRemediationConfig(ctx context.Context) (RemediationConf, error) {
+	conf := config.RemediationConf{}
+	result := RemediationConf{}
+	err := s.configCollection.FindOne(ctx, bson.M{"_id": config.RemediationKeyName}).Decode(&conf)
 	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
-			return remediation, nil
+			return result, nil
 		}
 
-		return remediation, err
+		return result, err
 	}
 
-	remediation.JobExecutorFetchTimeoutSeconds = conf.Remediation.JobExecutorFetchTimeoutSeconds
-	return remediation, nil
+	result.JobConfigTypes = make([]JobConfigType, len(conf.ExternalAPI))
+	i := 0
+	for name, apiConfig := range conf.ExternalAPI {
+		result.JobConfigTypes[i] = JobConfigType{
+			Name:     name,
+			AuthType: apiConfig.Auth.Type,
+		}
+		i++
+	}
+
+	sort.Slice(result.JobConfigTypes, func(i, j int) bool {
+		return result.JobConfigTypes[i].Name < result.JobConfigTypes[j].Name
+	})
+
+	return result, nil
 }
 
 func (s *store) UpdateUserInterfaceConfig(ctx context.Context, model *UserInterfaceConf) error {
-	defaultInterval := IntervalUnit{
-		Interval: defaultPopupInterval,
-		Unit:     "s",
+	defaultInterval := types.DurationWithUnit{
+		Value: defaultPopupInterval,
+		Unit:  "s",
 	}
 
 	if model.PopupTimeout == nil {

@@ -33,8 +33,10 @@ export default createEntityModule({
     widgets: {},
   },
   getters: {
-    getListByWidgetId: (state, getters, rootState, rootGetters) => widgetId =>
-      rootGetters['entities/getList'](ENTITIES_TYPES.entity, get(state.widgets[widgetId], 'allIds', [])),
+    getListByWidgetId: (state, getters, rootState, rootGetters) => widgetId => rootGetters['entities/getList'](
+      ENTITIES_TYPES.entity,
+      get(state.widgets[widgetId], 'allIds', []),
+    ),
 
     getMetaByWidgetId: state => widgetId => get(state.widgets[widgetId], 'meta', {}),
     getPendingByWidgetId: state => widgetId => get(state.widgets[widgetId], 'pending'),
@@ -133,8 +135,8 @@ export default createEntityModule({
       return exportData;
     },
 
-    fetchContextExport({ commit }, { params, widgetId, id }) {
-      const exportData = request.get(`${API_ROUTES.contextExport}/${id}`, { params });
+    async fetchContextExport({ commit }, { params, widgetId, id }) {
+      const exportData = await request.get(`${API_ROUTES.contextExport}/${id}`, { params });
 
       commit(types.EXPORT_LIST_COMPLETED, {
         widgetId,
@@ -150,6 +152,10 @@ export default createEntityModule({
       commit(types.DOWNLOAD_LIST_COMPLETED, { widgetId });
 
       return csvData;
+    },
+
+    cleanEntitiesData(context, { data }) {
+      return request.post(`${API_ROUTES.entity}/clean`, data);
     },
   },
 });

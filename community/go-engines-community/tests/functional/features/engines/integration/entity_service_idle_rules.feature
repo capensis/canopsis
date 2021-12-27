@@ -2,7 +2,7 @@ Feature: entity_service idle_rules integration
   Scenario: given service for entity should get idle_since from dependencies
     When I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "_id": "test-entityservice-idle-since-integration",
       "name": "test-entityservice-idle-since-integration",
@@ -13,22 +13,22 @@ Feature: entity_service idle_rules integration
         {
             "name": "test-idle-since-integration-resource-1"
         }
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idle-rule-es-integration-name",
       "description": "test-idle-rule-es-integration-description",
-      "author": "test-idle-rule-es-integration-author",
       "type": "entity",
       "enabled": true,
       "priority": 21,
       "duration": {
-        "seconds": 1,
+        "value": 1,
         "unit": "s"
       },
       "entity_patterns": [
@@ -47,7 +47,7 @@ Feature: entity_service idle_rules integration
     When I do GET /api/v4/weather-services?filter={"name":"test-entityservice-idle-since-integration"}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -66,7 +66,7 @@ Feature: entity_service idle_rules integration
     When I do GET /api/v4/weather-services/test-entityservice-idle-since-integration
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -85,7 +85,7 @@ Feature: entity_service idle_rules integration
     When I do GET /api/v4/entityservice-dependencies?_id=test-entityservice-idle-since-integration
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -107,7 +107,7 @@ Feature: entity_service idle_rules integration
   Scenario: given service for entity should get idle_since from depended connector
     When I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "_id": "test-entityservice-idle-since-integration-2",
       "name": "test-entityservice-idle-since-integration-2",
@@ -118,22 +118,22 @@ Feature: entity_service idle_rules integration
         {
           "name": "test-idle-since-integration-2-resource-1"
         }
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idle-rule-es-integration-2-name",
       "description": "test-idle-rule-es-integration-2-description",
-      "author": "test-idle-rule-es-integration-2-author",
       "type": "entity",
       "enabled": true,
       "priority": 21,
       "duration": {
-        "seconds": 1,
+        "value": 1,
         "unit": "s"
       },
       "entity_patterns": [
@@ -152,7 +152,7 @@ Feature: entity_service idle_rules integration
     When I do GET /api/v4/weather-services?filter={"name":"test-entityservice-idle-since-integration-2"}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -172,7 +172,7 @@ Feature: entity_service idle_rules integration
   Scenario: given entity service should get idle_since from depended service
     When I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "_id": "test-entityservice-idle-since-integration-3",
       "name": "test-entityservice-idle-since-integration-3",
@@ -183,13 +183,14 @@ Feature: entity_service idle_rules integration
         {
           "name": "test-idle-since-integration-resource-2"
         }
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "_id": "test-entityservice-idle-since-integration-4",
       "name": "test-entityservice-idle-since-integration-4",
@@ -200,22 +201,22 @@ Feature: entity_service idle_rules integration
         {
           "name": "test-entityservice-idle-since-integration-3"
         }
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idle-rule-es-integration-3-name",
       "description": "test-idle-rule-es-integration-3-description",
-      "author": "test-idle-rule-es-integration-3-author",
       "type": "entity",
       "enabled": true,
       "priority": 21,
       "duration": {
-        "seconds": 1,
+        "value": 1,
         "unit": "s"
       },
       "entity_patterns": [
@@ -225,7 +226,7 @@ Feature: entity_service idle_rules integration
       ]
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of 3 events processing
     When I do GET /api/v4/entities?search=test-idle-since-integration-resource-2
     Then the response code should be 200
     When I save response idleSince={{ (index .lastResponse.data 0).idle_since }}
@@ -234,7 +235,7 @@ Feature: entity_service idle_rules integration
     When I do GET /api/v4/weather-services?filter={"name":"test-entityservice-idle-since-integration-4"}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -253,7 +254,7 @@ Feature: entity_service idle_rules integration
     When I do GET /api/v4/entityservice-dependencies?_id=test-entityservice-idle-since-integration-4
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -275,7 +276,7 @@ Feature: entity_service idle_rules integration
   Scenario: given entity service should update its idle_since from depended resources
     When I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "_id": "test-entityservice-idle-since-integration-5",
       "name": "test-entityservice-idle-since-integration-5",
@@ -289,22 +290,22 @@ Feature: entity_service idle_rules integration
         {
           "name": "test-idle-since-integration-resource-4"
         }
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idle-rule-es-integration-4-name",
       "description": "test-idle-rule-es-integration-4-description",
-      "author": "test-idle-rule-es-integration-4-author",
       "type": "entity",
       "enabled": true,
       "priority": 21,
       "duration": {
-        "seconds": 1,
+        "value": 1,
         "unit": "s"
       },
       "entity_patterns": [
@@ -319,16 +320,15 @@ Feature: entity_service idle_rules integration
     When I do DELETE /api/v4/idle-rules/{{ .ruleID }}
     Then the response code should be 204
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idle-rule-es-integration-5-name",
       "description": "test-idle-rule-es-integration-5-description",
-      "author": "test-idle-rule-es-integration-5-author",
       "type": "entity",
       "enabled": true,
       "priority": 21,
       "duration": {
-        "seconds": 1,
+        "value": 1,
         "unit": "s"
       },
       "entity_patterns": [
@@ -350,7 +350,7 @@ Feature: entity_service idle_rules integration
     When I do GET /api/v4/weather-services?filter={"name":"test-entityservice-idle-since-integration-5"}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -367,7 +367,7 @@ Feature: entity_service idle_rules integration
     }
     """
     When I send an event:
-    """
+    """json
     {
       "connector": "test-idle-since-integration-connector",
       "connector_name": "test-idle-since-integration-connectorname",
@@ -385,7 +385,7 @@ Feature: entity_service idle_rules integration
     When I do GET /api/v4/weather-services?filter={"name":"test-entityservice-idle-since-integration-5"}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {

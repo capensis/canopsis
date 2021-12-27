@@ -10,11 +10,11 @@ Canopsis permet de journaliser certaines actions réalisées par un utilisateur 
 
 Actions  | Description  
 --|---
-`create`  | Création d'un objet (ex: Création d'un groupe de vues)
-`update`  | Mise à jour d'un objet (ex: Mise à jour d'une règle Heartbeat)
-`delete`  | Suppression d'un objet (ex: Suppression d'une règle de corrélation)
-`export`  | Export d'un objet (ex: Export d'une vue)
-`import`  | Import d'un objet (ex: Import d'une entité)
+`create`  | Création d'un objet (ex : Création d'un groupe de vues)
+`update`  | Mise à jour d'un objet (ex : Mise à jour d'une règle Heartbeat)
+`delete`  | Suppression d'un objet (ex : Suppression d'une règle de corrélation)
+`export`  | Export d'un objet (ex : Export d'une vue)
+`import`  | Import d'un objet (ex : Import d'une entité)
 
 Types  | Description  
 --|---
@@ -23,11 +23,10 @@ Types  | Description
 `eventfilter`           | [Les règles de filtrage/enrichissement](../../moteurs/moteur-che-event_filter/)
 `metaalarmrule`         | [Les règles de méta alarmes/corrélation](../../moteurs/moteur-correlation/)
 `dynamicinfo`           | [Les règles d'enrichissement d'alarmes](../../moteurs/moteur-dynamic-infos/)
-`watcher`               | [Les entités de type `watcher`](../../moteurs/moteur-watcher/)
+`service`               | [Les entités de type `service`](../../moteurs/moteur-service/)
 `pbehavior`<br/>`pbehaviortype`<br/>`pbehaviorreason`<br/>`pbehaviorexception`  | [Les comportements périodiques](../../moteurs/moteur-pbehavior/)
 `heartbeat`             | [Les règles de lignes de vie](../../moteurs/moteur-heartbeat/)
 `instruction`<br/>`jobconfig`             | [Les objets de remédiation](../../../guide-utilisation/remediation/mise-en-oeuvre/)
-
 
 
 ## Exploitation des journaux

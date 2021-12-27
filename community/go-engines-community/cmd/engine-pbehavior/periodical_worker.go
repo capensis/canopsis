@@ -3,30 +3,30 @@ package main
 import (
 	"context"
 	"fmt"
+	"time"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
-	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
-	"go.mongodb.org/mongo-driver/bson"
-	"time"
 )
 
 type periodicalWorker struct {
 	ChannelPub             libamqp.Channel
 	PeriodicalInterval     time.Duration
-	LockerClient           redis.LockClient
-	Store                  redis.Store
 	PbhService             pbehavior.Service
-	DbClient               mongo.DbClient
+	PbhEntityMatcher       pbehavior.ComputedEntityMatcher
+	AlarmAdapter           libalarm.Adapter
+	EntityAdapter          libentity.Adapter
 	EventManager           pbehavior.EventManager
 	FrameDuration          time.Duration
 	TimezoneConfigProvider config.TimezoneConfigProvider
@@ -39,127 +39,156 @@ func (w *periodicalWorker) GetInterval() time.Duration {
 }
 
 func (w *periodicalWorker) Work(ctx context.Context) error {
-	w.Logger.Debug().Msg("Periodical process")
-
-	_, err := w.LockerClient.Obtain(ctx, redis.PeriodicalLockKey, w.GetInterval(), nil)
-	if err == redislock.ErrNotObtained {
-		w.Logger.Debug().Msg("Periodical process: Could not obtain periodical lock! Skip periodical process")
-		return nil
-	} else if err != nil {
-		w.Logger.Error().Err(err).Msg("Periodical process: obtain redis lock - unexpected error! Skip periodical process")
-		return nil
-	}
-
-	backoff := time.Second
-	retries := int(w.GetInterval().Seconds() - 1)
-	computeLock, err := w.LockerClient.Obtain(ctx, redis.RecomputeLockKey, redis.RecomputeLockDuration, &redislock.Options{
-		RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(backoff), retries),
-	})
-
-	defer func() {
-		if computeLock != nil {
-			err := computeLock.Release(ctx)
-			if err != nil && err != redislock.ErrLockNotHeld {
-				w.Logger.Warn().Err(err).Msg("Periodical process: failed to manually release compute-lock, the lock will be released by ttl")
-			}
-		}
-	}()
-
-	if err != nil {
-		w.Logger.Err(err).Msg("Periodical process: obtain redlock failed! Skip periodical process")
-		return nil
-	}
-
-	ok, err := w.Store.Restore(ctx, w.PbhService)
-	if err != nil {
-		w.Logger.Err(err).Msg("Periodical process: get pbehavior's frames from redis failed! Skip periodical process")
-		return nil
-	}
-
 	now := time.Now().In(w.TimezoneConfigProvider.Get().Location)
+	w.compute(ctx, now)
 
-	span := w.PbhService.GetSpan()
-	if !ok || span.To().Before(now.Add(w.FrameDuration/2)) {
-		err = w.PbhService.Compute(ctx, timespan.New(now, now.Add(w.FrameDuration)))
-		if err != nil {
-			w.Logger.Err(err).Msg("Periodical process: compute pbehavior's frames failed! Skip periodical process")
-			return nil
-		}
-
-		err = w.Store.Save(ctx, w.PbhService)
-		if err != nil {
-			w.Logger.Err(err).Msg("Periodical process: save pbehavior's frames to redis failed! Skip periodical process")
-			return nil
-		}
+	computedEntityIDs, err := w.PbhEntityMatcher.GetComputedEntityIDs(ctx)
+	if err != nil {
+		w.Logger.Err(err).Msg("cannot get entities which have pbehavior")
+		return nil
 	}
 
-	err = computeLock.Release(ctx)
+	processedEntityIds := w.processAlarms(ctx, now, computedEntityIDs)
+	w.processEntities(ctx, now, computedEntityIDs, processedEntityIds)
+
+	return nil
+}
+
+func (w *periodicalWorker) compute(ctx context.Context, now time.Time) {
+	newSpan := timespan.New(now, now.Add(w.FrameDuration))
+	count, err := w.PbhService.Compute(ctx, newSpan)
 	if err != nil {
-		if err == redislock.ErrLockNotHeld {
-			return nil
-		} else {
-			w.Logger.Warn().Msg("Periodical process: failed to manually release compute-lock, the lock will be released by ttl")
-		}
+		w.Logger.Err(err).Msg("compute pbehavior's frames failed")
+		return
 	}
 
-	alarmCollection := w.DbClient.Collection(mongo.AlarmMongoCollection)
+	if count >= 0 {
+		w.Logger.Info().
+			Time("interval from", newSpan.From()).
+			Time("interval to", newSpan.To()).
+			Int("count", count).
+			Msg("pbehaviors are recomputed")
+	}
+}
 
-	cursor, err := alarmCollection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{
-			"v.resolved": bson.M{"$in": bson.A{false, nil}},
-			"t":          bson.M{"$lt": types.CpsTime{Time: now}},
-		}},
-		{"$project": bson.M{
-			"alarm": "$$ROOT",
-		}},
-		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
-			"localField":   "alarm.d",
-			"foreignField": "_id",
-			"as":           "entity",
-		}},
-		{"$unwind": "$entity"},
-		{"$match": bson.M{"entity.enabled": true}},
-	})
-
+func (w *periodicalWorker) processAlarms(ctx context.Context, now time.Time, computedEntityIDs []string) []string {
+	cursor, err := w.AlarmAdapter.FindToCheckPbehaviorInfo(ctx, types.CpsTime{Time: now}, computedEntityIDs)
 	if err != nil {
-		w.Logger.Err(err).Msg("Periodical process: get alarms from mongo failed! Skip periodical process")
+		w.Logger.Err(err).Msg("get alarms from mongo failed")
 		return nil
 	}
 
 	defer cursor.Close(ctx)
 
+	processedEntityIds := make([]string, 0)
 	for cursor.Next(ctx) {
 		var alarmWithEntity types.AlarmWithEntity
 
 		err = cursor.Decode(&alarmWithEntity)
 		if err != nil {
-			w.Logger.Err(err).Msg("Periodical process: decode alarm with entity failed! Skip periodical process")
-			return nil
+			w.Logger.Err(err).Msg("decode alarm with entity failed")
+			continue
 		}
 
 		alarm := alarmWithEntity.Alarm
 		entity := alarmWithEntity.Entity
 
-		resolveResult, err := w.PbhService.Resolve(ctx, &entity, now)
+		resolveResult, err := w.PbhService.Resolve(ctx, entity.ID, now)
 		if err != nil {
-			w.Logger.Err(err).Str("entity_id", entity.ID).Msg("Periodical process: resolve an entity failed! Skip periodical process")
-			return nil
+			w.Logger.Err(err).Str("entity_id", entity.ID).Msg("resolve an entity failed")
+			return processedEntityIds
 		}
 
 		event := w.EventManager.GetEvent(resolveResult, alarm, now)
 		if event.EventType != "" {
 			err := w.publishToEngineFIFO(event)
 			if err != nil {
-				w.Logger.Err(err).Str("alarm_id", alarm.ID).Msgf("failed to send %s event", event.EventType)
-				return nil
+				w.Logger.Err(err).Str("alarm", alarm.ID).Msgf("failed to send %s event", event.EventType)
+				return processedEntityIds
 			}
 
-			w.Logger.Debug().Str("resolve pbehavior", resolveResult.ResolvedPbhID).Str("resolve type", fmt.Sprintf("%+v", resolveResult.ResolvedType)).Str("alarm", alarm.ID).Msgf("Periodical process: send %s event", event.EventType)
+			processedEntityIds = append(processedEntityIds, alarm.EntityID)
+			w.Logger.Debug().
+				Str("resolve pbehavior", resolveResult.ResolvedPbhID).
+				Str("resolve type", fmt.Sprintf("%+v", resolveResult.ResolvedType)).
+				Str("alarm", alarm.ID).
+				Msgf("send %s event", event.EventType)
 		}
 	}
 
-	return nil
+	return processedEntityIds
+}
+
+func (w *periodicalWorker) processEntities(ctx context.Context, now time.Time, computedEntityIDs, processedEntityIds []string) {
+	cursor, err := w.EntityAdapter.FindToCheckPbehaviorInfo(ctx, computedEntityIDs, processedEntityIds)
+	if err != nil {
+		w.Logger.Err(err).Msg("get alarms from mongo failed")
+		return
+	}
+
+	defer cursor.Close(ctx)
+
+	eventGenerator := libevent.NewGenerator(w.EntityAdapter)
+
+	for cursor.Next(ctx) {
+		var entity types.Entity
+
+		err = cursor.Decode(&entity)
+		if err != nil {
+			w.Logger.Err(err).Msg("decode alarm with entity failed")
+			continue
+		}
+
+		resolveResult, err := w.PbhService.Resolve(ctx, entity.ID, now)
+		if err != nil {
+			w.Logger.Err(err).Str("entity_id", entity.ID).Msg("resolve an entity failed")
+			return
+		}
+
+		eventType, output := w.EventManager.GetEventType(resolveResult, entity.PbehaviorInfo)
+		if eventType == "" {
+			continue
+		}
+
+		event := types.Event{
+			Initiator: types.InitiatorSystem,
+		}
+		lastAlarm, err := w.AlarmAdapter.GetLastAlarmByEntityID(ctx, entity.ID)
+		if err != nil {
+			w.Logger.Err(err).Msg("cannot fetch last alarm")
+			return
+		}
+
+		if lastAlarm == nil {
+			event, err = eventGenerator.Generate(ctx, entity)
+			if err != nil {
+				w.Logger.Err(err).Msg("cannot generate event")
+				return
+			}
+		} else {
+			event.Connector = lastAlarm.Value.Connector
+			event.ConnectorName = lastAlarm.Value.ConnectorName
+			event.Component = lastAlarm.Value.Component
+			event.Resource = lastAlarm.Value.Resource
+			event.SourceType = event.DetectSourceType()
+		}
+
+		event.EventType = eventType
+		event.Output = output
+		event.Timestamp = types.CpsTime{Time: now}
+		event.PbehaviorInfo = pbehavior.NewPBehaviorInfo(event.Timestamp, resolveResult)
+		err = w.publishToEngineFIFO(event)
+		if err != nil {
+			w.Logger.Err(err).Str("entity", entity.ID).Msgf("failed to send %s event", eventType)
+			return
+		}
+
+		w.Logger.Debug().
+			Str("resolve pbehavior", resolveResult.ResolvedPbhID).
+			Str("resolve type", fmt.Sprintf("%+v", resolveResult.ResolvedType)).
+			Str("entity", entity.ID).
+			Msgf("send %s event", eventType)
+	}
 }
 
 func (w *periodicalWorker) publishToEngineFIFO(event types.Event) error {

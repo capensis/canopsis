@@ -8,7 +8,6 @@ import (
 	"regexp"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/heartbeat"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
@@ -31,14 +30,12 @@ const (
 
 //Event types
 const (
-	EventTypeAck           = "ack"
-	EventTypeAckremove     = "ackremove"
-	EventTypeAssocTicket   = "assocticket"
-	EventTypeCalendar      = "calendar"
-	EventTypeCancel        = "cancel"
-	EventTypeCheck         = "check"
-	EventTypeComment       = "comment"
-	EventTypeConsolidation = "consolidation"
+	EventTypeAck         = "ack"
+	EventTypeAckremove   = "ackremove"
+	EventTypeAssocTicket = "assocticket"
+	EventTypeCancel      = "cancel"
+	EventTypeCheck       = "check"
+	EventTypeComment     = "comment"
 	// EventTypeDeclareTicket is used for manual declareticket trigger which is designed
 	// to trigger webhook with declare ticket parameter.
 	EventTypeDeclareTicket = "declareticket"
@@ -46,49 +43,53 @@ const (
 	EventTypeDeclareTicketWebhook = "declareticketwebhook"
 
 	EventTypeDone              = "done"
-	EventTypeDowntime          = "downtime"
-	EventTypeEue               = "eue"
-	EventTypeLog               = "log"
 	EventTypeChangestate       = "changestate"
 	EventTypeKeepstate         = "keepstate"
 	EventTypePBehavior         = "pbehavior"
 	EventTypePerf              = "perf"
-	EventTypeSelector          = "selector"
-	EventTypeSLA               = "sla"
 	EventTypeSnooze            = "snooze"
 	EventTypeUnsnooze          = "unsnooze"
-	EventTypeTrap              = "trap"
 	EventTypeStatCounterInc    = "statcounterinc"
 	EventTypeStatDuration      = "statduration"
 	EventTypeStatStateInterval = "statstateinterval"
 	EventTypeUncancel          = "uncancel"
-	EventTypeUser              = "user"
 
-	EventTypeMetaAlarm               = "metaalarm"
-	EventTypeMetaAlarmUpdated        = "metaalarmupdated"
-	EventTypePbhEnter                = "pbhenter"
-	EventTypePbhLeaveAndEnter        = "pbhleaveandenter"
-	EventTypePbhLeave                = "pbhleave"
-	EventTypePbhCreate               = "pbhcreate"
-	EventTypeResolveDone             = "resolve_done"
-	EventTypeResolveCancel           = "resolve_cancel"
-	EventTypeResolveClose            = "resolve_close"
-	EventTypeUpdateStatus            = "updatestatus"
-	EventManualMetaAlarmGroup        = "manual_metaalarm_group"
-	EventManualMetaAlarmUngroup      = "manual_metaalarm_ungroup"
-	EventManualMetaAlarmUpdate       = "manual_metaalarm_update"
-	EventTypeActivate                = "activate"
-	EventTypeRunDelayedScenario      = "run_delayed_scenario"
-	EventTypeInstructionStarted      = "instructionstarted"
-	EventTypeInstructionPaused       = "instructionpaused"
-	EventTypeInstructionResumed      = "instructionresumed"
-	EventTypeInstructionCompleted    = "instructioncompleted"
-	EventTypeInstructionAborted      = "instructionaborted"
-	EventTypeInstructionFailed       = "instructionfailed"
+	EventTypeMetaAlarm          = "metaalarm"
+	EventTypeMetaAlarmUpdated   = "metaalarmupdated"
+	EventTypePbhEnter           = "pbhenter"
+	EventTypePbhLeaveAndEnter   = "pbhleaveandenter"
+	EventTypePbhLeave           = "pbhleave"
+	EventTypePbhCreate          = "pbhcreate"
+	EventTypeResolveDone        = "resolve_done"
+	EventTypeResolveCancel      = "resolve_cancel"
+	EventTypeResolveClose       = "resolve_close"
+	EventTypeUpdateStatus       = "updatestatus"
+	EventManualMetaAlarmGroup   = "manual_metaalarm_group"
+	EventManualMetaAlarmUngroup = "manual_metaalarm_ungroup"
+	EventManualMetaAlarmUpdate  = "manual_metaalarm_update"
+	EventTypeActivate           = "activate"
+	EventTypeRunDelayedScenario = "run_delayed_scenario"
+
+	// Following event types are used to add manual instruction execution to alarm steps.
+	EventTypeInstructionStarted   = "instructionstarted"
+	EventTypeInstructionPaused    = "instructionpaused"
+	EventTypeInstructionResumed   = "instructionresumed"
+	EventTypeInstructionCompleted = "instructioncompleted"
+	EventTypeInstructionFailed    = "instructionfailed"
+	// EventTypeInstructionAborted is the same for manual and auto instructions.
+	EventTypeInstructionAborted = "instructionaborted"
+	// Following event types are used to add auto instruction execution to alarm steps.
+	EventTypeAutoInstructionStarted        = "autoinstructionstarted"
+	EventTypeAutoInstructionCompleted      = "autoinstructioncompleted"
+	EventTypeAutoInstructionFailed         = "autoinstructionfailed"
+	EventTypeAutoInstructionAlreadyRunning = "autoinstructionalreadyrunning"
+	// Following event types are used to add job execution to alarm steps. Events are
+	// the same for manual and auto instructions.
 	EventTypeInstructionJobStarted   = "instructionjobstarted"
 	EventTypeInstructionJobCompleted = "instructionjobcompleted"
 	EventTypeInstructionJobAborted   = "instructionjobaborted"
 	EventTypeInstructionJobFailed    = "instructionjobfailed"
+
 	// EventTypeRecomputeEntityService is used to recompute service context graph and state.
 	EventTypeRecomputeEntityService = "recomputeentityservice"
 	// EventTypeUpdateEntityService is used to update service cache in engines.
@@ -120,6 +121,8 @@ const (
 	ConnectorJunit         = "junit"
 )
 
+const MaxEventTimestampVariation = 24 * time.Hour
+
 //PerfData represents a perf data array
 type PerfData struct {
 	Metric string  `bson:"metric" json:"metric"`
@@ -146,13 +149,16 @@ type Event struct {
 	Output        string     `bson:"output" json:"output"`
 	Alarm         *Alarm     `bson:"current_alarm" json:"current_alarm"`
 	Entity        *Entity    `bson:"current_entity" json:"current_entity"`
-	Author        string     `bson:"author" json:"author"`
-	RK            string     `bson:"routing_key" json:"routing_key"`
+
+	Author string `bson:"author" json:"author"`
+	UserID string `bson:"user_id" json:"user_id"`
+
+	RK string `bson:"routing_key" json:"routing_key"`
 	// AckResources is used to ack all resource alarms on ack component alarm.
 	// It also adds declare ticket to all resource alarms on ack webhook.
 	// It's still used by some old users but meta alarms must be used instead.
 	AckResources bool                   `json:"ack_resources"`
-	Duration     *CpsNumber             `json:"duration"`
+	Duration     CpsNumber              `json:"duration"`
 	Ticket       string                 `bson:"ticket" json:"ticket"`
 	StatName     string                 `bson:"stat_name" json:"stat_name"`
 	Debug        bool                   `bson:"debug" json:"debug"`
@@ -163,8 +169,9 @@ type Event struct {
 	MetaAlarmRuleID    string `bson:"metaalarm_rule_id" json:"metaalarm_rule_id"`
 	MetaAlarmValuePath string `bson:"metaalarm_value_path" json:"metaalarm_value_path"`
 
-	MetaAlarmParents  *[]string `bson:"ma_parents" json:"ma_parents"`
-	MetaAlarmChildren *[]string `bson:"ma_children" json:"ma_children"`
+	MetaAlarmRelatedParents []string  `bson:"ma_related_parents" json:"ma_related_parents"`
+	MetaAlarmParents        *[]string `bson:"ma_parents" json:"ma_parents"`
+	MetaAlarmChildren       *[]string `bson:"ma_children" json:"ma_children"`
 
 	PbehaviorInfo PbehaviorInfo `bson:"pbehavior_info" json:"pbehavior_info"`
 
@@ -188,6 +195,9 @@ type Event struct {
 
 	// IdleRuleApply is used if event is emitted by idle rule.
 	IdleRuleApply string `bson:"idle_rule_apply,omitempty" json:"idle_rule_apply,omitempty"`
+
+	// Execution is used only for instruction events: EventTypeInstructionStarted, EventTypeInstructionCompleted, etc..
+	Execution string `bson:"execution,omitempty" json:"execution,omitempty"`
 }
 
 // ContextInformation regroup context values necessary for creating a new entity
@@ -230,8 +240,10 @@ func NewEventFromAlarm(alarm Alarm) Event {
 //  "event_type" is fill with EventTypeCheck
 //  if "entity" is not null, "impacts" and "depends" are ensured to be initialized
 func (e *Event) Format() {
-	if e.Timestamp.IsZero() {
-		e.Timestamp = CpsTime{time.Now()}
+	//events can't be later or earlier than MaxEventTimestampVariation
+	now := NewCpsTime()
+	if e.Timestamp.IsZero() || e.Timestamp.Time.Before(now.Add(-MaxEventTimestampVariation)) || e.Timestamp.Time.After(now.Add(MaxEventTimestampVariation)) {
+		e.Timestamp = now
 	}
 	if e.EventType == "" {
 		e.EventType = EventTypeCheck
@@ -372,52 +384,6 @@ type GenericEvent struct {
 // json.Unmarshal(body, &event.Content)
 func (e *GenericEvent) JSONUnmarshal(body []byte) error {
 	return json.Unmarshal(body, &e.Content)
-}
-
-// PartialID builds the event ID, as a string, from the heartBeatItem configuration.
-// Given this event:
-//
-// {
-// 	"connector": "zabbix",
-// 	"connector_name": "instance1",
-// 	"component": "localhost",
-// 	...
-// }
-//
-// And the given heartBeatItem:
-//
-// li := NewHeartBeatItem(time.Minute*5)
-// li.AddMapping("connector", "zabbix")
-// li.AddMapping("connector_name", "instance1")
-//
-// PartialID will return "connector:zabbix.connector_name:instance1" as ID.
-// Keys will alphabetically sorted!
-func (e *GenericEvent) PartialID(heartBeatItem heartbeat.Item) (string, error) {
-
-	if len(heartBeatItem.Mappings) == 0 {
-		return "", errors.New("no mappings")
-	}
-
-	partial := make(map[string]string, 0)
-
-	for field := range heartBeatItem.Mappings {
-		switch event := e.Content.(type) {
-		case map[string]interface{}:
-			fieldValue, fexists := event[field]
-			if !fexists {
-				return "", fmt.Errorf("field %s does not exist", field)
-			}
-			sfieldValue, err := InterfaceToString(fieldValue)
-			if err != nil {
-				return "", fmt.Errorf("event partial id: %v", err)
-			}
-			partial[field] = sfieldValue
-		default:
-			return "", errors.New("cannot fetch data")
-		}
-	}
-
-	return heartbeat.BuildID(partial), nil
 }
 
 // GetCompatRK returns the event routing key. For compatibility only with old engines.

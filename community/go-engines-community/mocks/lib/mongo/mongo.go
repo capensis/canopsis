@@ -11,7 +11,9 @@ import (
 	bson "go.mongodb.org/mongo-driver/bson"
 	mongo0 "go.mongodb.org/mongo-driver/mongo"
 	options "go.mongodb.org/mongo-driver/mongo/options"
+	readpref "go.mongodb.org/mongo-driver/mongo/readpref"
 	reflect "reflect"
+	time "time"
 )
 
 // MockDbCollection is a mock of DbCollection interface
@@ -416,6 +418,46 @@ func (m *MockDbClient) Collection(arg0 string) mongo.DbCollection {
 func (mr *MockDbClientMockRecorder) Collection(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Collection", reflect.TypeOf((*MockDbClient)(nil).Collection), arg0)
+}
+
+// Disconnect mocks base method
+func (m *MockDbClient) Disconnect(arg0 context.Context) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Disconnect", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Disconnect indicates an expected call of Disconnect
+func (mr *MockDbClientMockRecorder) Disconnect(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Disconnect", reflect.TypeOf((*MockDbClient)(nil).Disconnect), arg0)
+}
+
+// Ping mocks base method
+func (m *MockDbClient) Ping(arg0 context.Context, arg1 *readpref.ReadPref) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Ping", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Ping indicates an expected call of Ping
+func (mr *MockDbClientMockRecorder) Ping(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Ping", reflect.TypeOf((*MockDbClient)(nil).Ping), arg0, arg1)
+}
+
+// SetRetry mocks base method
+func (m *MockDbClient) SetRetry(arg0 int, arg1 time.Duration) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SetRetry", arg0, arg1)
+}
+
+// SetRetry indicates an expected call of SetRetry
+func (mr *MockDbClientMockRecorder) SetRetry(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetRetry", reflect.TypeOf((*MockDbClient)(nil).SetRetry), arg0, arg1)
 }
 
 // MockSingleResultHelper is a mock of SingleResultHelper interface

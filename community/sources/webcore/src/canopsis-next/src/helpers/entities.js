@@ -1,14 +1,14 @@
-import { get, omit, cloneDeep, isObject } from 'lodash';
+import { get, omit, cloneDeep, isObject, groupBy } from 'lodash';
 
 import i18n from '@/i18n';
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT, COLORS } from '@/config';
 import {
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   WIDGET_TYPES,
-  STATS_CALENDAR_COLORS,
+  ALARM_STATS_CALENDAR_COLORS,
   STATS_TYPES,
-  STATS_DURATION_UNITS,
-  STATS_QUICK_RANGES,
+  TIME_UNITS,
+  QUICK_RANGES,
   STATS_DISPLAY_MODE,
   STATS_DISPLAY_MODE_PARAMETERS,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
@@ -17,9 +17,8 @@ import {
   ENTITIES_STATUSES,
   AVAILABLE_COUNTERS,
   DEFAULT_COUNTER_BLOCK_TEMPLATE,
-  TIME_UNITS,
-  WORKFLOW_TYPES,
   COLOR_INDICATOR_TYPES,
+  DATETIME_FORMATS,
   EXPORT_CSV_SEPARATORS,
   EXPORT_CSV_DATETIME_FORMATS,
   DEFAULT_ALARMS_WIDGET_COLUMNS,
@@ -27,6 +26,7 @@ import {
 
 import { widgetToForm } from '@/helpers/forms/widgets/common';
 import { alarmListWidgetDefaultParametersToForm } from '@/helpers/forms/widgets/alarm';
+import { convertDateToString } from '@/helpers/date/date';
 
 import uuid from './uuid';
 import uid from './uid';
@@ -109,7 +109,7 @@ export function generateWidgetByType(type) {
           order: SORT_ORDERS.asc,
         },
         exportCsvSeparator: EXPORT_CSV_SEPARATORS.comma,
-        exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds,
+        exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
         widgetExportColumns: defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_COLUMNS),
       };
       break;
@@ -157,9 +157,9 @@ export function generateWidgetByType(type) {
         mfilter: {},
         dateInterval: {
           periodValue: 1,
-          periodUnit: STATS_DURATION_UNITS.day,
-          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
-          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
+          periodUnit: TIME_UNITS.day,
+          tstart: QUICK_RANGES.thisMonthSoFar.start,
+          tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
         stats: {},
         statsColors: {},
@@ -171,9 +171,9 @@ export function generateWidgetByType(type) {
         mfilter: {},
         dateInterval: {
           periodValue: 1,
-          periodUnit: STATS_DURATION_UNITS.day,
-          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
-          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
+          periodUnit: TIME_UNITS.day,
+          tstart: QUICK_RANGES.thisMonthSoFar.start,
+          tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
         stats: {},
         statsColors: {},
@@ -185,9 +185,9 @@ export function generateWidgetByType(type) {
       specialParameters = {
         dateInterval: {
           periodValue: 1,
-          periodUnit: STATS_DURATION_UNITS.day,
-          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
-          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
+          periodUnit: TIME_UNITS.day,
+          tstart: QUICK_RANGES.thisMonthSoFar.start,
+          tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
         mfilter: {},
         stats: {},
@@ -197,9 +197,9 @@ export function generateWidgetByType(type) {
     case WIDGET_TYPES.statsCalendar:
       specialParameters = {
         filters: [],
-        alarmsStateFilter: {},
+        opened: false,
         considerPbehaviors: false,
-        criticityLevelsColors: { ...STATS_CALENDAR_COLORS.alarm },
+        criticityLevelsColors: { ...ALARM_STATS_CALENDAR_COLORS },
         criticityLevels: {
           minor: 20,
           major: 30,
@@ -213,9 +213,9 @@ export function generateWidgetByType(type) {
       specialParameters = {
         dateInterval: {
           periodValue: 1,
-          periodUnit: STATS_DURATION_UNITS.day,
-          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
-          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
+          periodUnit: TIME_UNITS.day,
+          tstart: QUICK_RANGES.thisMonthSoFar.start,
+          tstop: QUICK_RANGES.thisMonthSoFar.stop,
         },
         mfilter: {},
         stat: {
@@ -239,7 +239,7 @@ export function generateWidgetByType(type) {
       specialParameters = {
         dateInterval: {
           periodValue: 1,
-          periodUnit: STATS_DURATION_UNITS.day,
+          periodUnit: TIME_UNITS.day,
           tstart: 'now/d',
           tstop: 'now/d',
         },
@@ -256,25 +256,10 @@ export function generateWidgetByType(type) {
       };
       break;
 
-    case WIDGET_TYPES.text:
-      specialParameters = {
-        dateInterval: {
-          periodValue: 1,
-          periodUnit: STATS_DURATION_UNITS.day,
-          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
-          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
-        },
-        mfilter: {},
-        stats: {},
-        template: '',
-      };
-      break;
     case WIDGET_TYPES.counter:
       specialParameters = {
         viewFilters: [],
-        alarmsStateFilter: {
-          opened: true,
-        },
+        opened: true,
         blockTemplate: DEFAULT_COUNTER_BLOCK_TEMPLATE,
         columnSM: 6,
         columnMD: 4,
@@ -327,24 +312,6 @@ export function generateViewTab(title = '') {
 }
 
 /**
- * Generate user preference by widget and user objects
- *
- * @param {Object} widget
- * @param {Object} user
- * @returns {Object}
- */
-export function generateUserPreferenceByWidgetAndUser(widget, user) {
-  return {
-    _id: `${widget._id}_${user._id}`,
-    widget_preferences: {},
-    name: user._id,
-    widget_id: widget._id,
-    widgetXtype: widget.type,
-    crecord_type: 'userpreferences',
-  };
-}
-
-/**
  * Generate copy of view tab
  *
  * @param {ViewTab} tab
@@ -383,19 +350,16 @@ export function getViewsTabsWidgetsIdsMappings(oldTab, newTab) {
  * @param {View | ViewRequest} newView
  * @returns {{ oldId: string, newId: string }[]}
  */
-export function getViewsWidgetsIdsMappings(oldView, newView) {
-  return oldView.tabs.reduce((acc, tab, index) =>
-    acc.concat(getViewsTabsWidgetsIdsMappings(tab, newView.tabs[index])), []);
-}
+export const getViewsWidgetsIdsMappings = (oldView, newView) => oldView.tabs
+  .reduce((acc, tab, index) => acc.concat(getViewsTabsWidgetsIdsMappings(tab, newView.tabs[index])), []);
 
 /**
  * Checks if alarm is resolved
  * @param alarm - alarm entity
  * @returns {boolean}
  */
-export function isResolvedAlarm(alarm) {
-  return [ENTITIES_STATUSES.off, ENTITIES_STATUSES.cancelled].includes(alarm.v.status.val);
-}
+export const isResolvedAlarm = alarm => [ENTITIES_STATUSES.closed, ENTITIES_STATUSES.cancelled]
+  .includes(alarm.v.status.val);
 
 /**
  * Checks if alarm have critical state
@@ -403,9 +367,7 @@ export function isResolvedAlarm(alarm) {
  * @param alarm - alarm entity
  * @returns {boolean}
  */
-export function isWarningAlarmState(alarm) {
-  return ENTITIES_STATES.ok !== alarm.v.state.val;
-}
+export const isWarningAlarmState = alarm => ENTITIES_STATES.ok !== alarm.v.state.val;
 
 /**
  * Function return new title if title is not uniq
@@ -455,48 +417,16 @@ export const removeKeyFromEntities = (entities = []) => entities.map(entity => o
  * @param {string} idField
  * @return {string}
  */
-export const getIdFromEntity = (entity, idField = '_id') =>
-  (isObject(entity) ? entity[idField] : entity);
+export const getIdFromEntity = (entity, idField = '_id') => (isObject(entity) ? entity[idField] : entity);
 
 /**
- * Generate an remediation instruction step operation entity
+ * Get grouped steps by date
  *
- * @typedef {Object} RemediationInstructionStepOperation
- * @property {string} name
- * @property {string} description
- * @property {Array} jobs
- * @property {DurationForm} time_to_complete
- * @property {string} [key]
- * @return {RemediationInstructionStepOperation}
+ * @param {AlarmEvent[]} steps
+ * @return {Object.<string, AlarmEvent[]>}
  */
-export const generateRemediationInstructionStepOperation = () => ({
-  name: '',
-  description: '',
-  jobs: [],
-  time_to_complete: {
-    value: 0,
-    unit: TIME_UNITS.minute,
-  },
-  key: uid(),
-});
+export const groupAlarmSteps = (steps) => {
+  const orderedSteps = [...steps].reverse();
 
-/**
- * Generate an remediation instruction step entity
- *
- * @typedef {Object} RemediationInstructionStep
- * @property {string} endpoint
- * @property {string} name
- * @property {boolean} stop_on_fail
- * @property {RemediationInstructionStepOperation[]} operations
- * @property {boolean} [saved]
- * @property {string} [key]
- * @return {RemediationInstructionStep}
- */
-export const generateRemediationInstructionStep = () => ({
-  endpoint: '',
-  name: '',
-  operations: [generateRemediationInstructionStepOperation()],
-  stop_on_fail: WORKFLOW_TYPES.stop,
-  saved: false,
-  key: uid(),
-});
+  return groupBy(orderedSteps, step => convertDateToString(step.t, DATETIME_FORMATS.short));
+};

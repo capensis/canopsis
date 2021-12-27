@@ -1,17 +1,18 @@
 <template lang="pug">
   settings-button-field(
-    :isEmpty="isValueEmpty",
+    :is-empty="isValueEmpty",
     @create="showEditLiveReportingModal",
     @edit="showEditLiveReportingModal",
     @delete="removeLiveReporting"
   )
-    .subheading(slot="title", data-test="liveReporting") {{ $t('settings.liveReporting.title') }}
+    template(#title="")
+      div.subheading {{ $t('settings.liveReporting.title') }}
 </template>
 
 <script>
 import { MODALS } from '@/constants';
 
-import formBaseMixin from '@/mixins/form/base';
+import { formBaseMixin } from '@/mixins/form';
 
 import SettingsButtonField from '../partials/button-field.vue';
 

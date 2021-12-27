@@ -11,54 +11,38 @@ import (
 
 // Adapter ...
 type Adapter interface {
-	Insert(entity types.Entity) error
+	Insert(ctx context.Context, entity types.Entity) error
 
-	Update(entity types.Entity) error
+	Update(ctx context.Context, entity types.Entity) error
 
-	Remove(entity types.Entity) error
+	Get(ctx context.Context, id string) (types.Entity, bool)
 
-	BulkInsert(types.Entity) error
+	GetIDs(ctx context.Context, filter map[string]interface{}, ids *[]interface{}) error
 
-	AddToBulkUpdate(entityId string, data interface{}) error
+	GetEntityByID(ctx context.Context, id string) (types.Entity, error)
 
-	BulkUpsert(types.Entity, []string, []string) error
+	Count(ctx context.Context) (int, error)
 
-	FlushBulk() error
+	UpsertMany(ctx context.Context, entities []types.Entity) (map[string]bool, error)
 
-	FlushBulkInsert() error
+	AddImpacts(ctx context.Context, ids []string, impacts []string) error
 
-	FlushBulkUpdate() error
+	RemoveImpacts(ctx context.Context, ids []string, impacts []string) error
 
-	Get(id string) (types.Entity, bool)
+	AddImpactByQuery(ctx context.Context, query interface{}, impact string) ([]string, error)
 
-	GetIDs(filter map[string]interface{}, ids *[]interface{}) error
+	RemoveImpactByQuery(ctx context.Context, query interface{}, impact string) ([]string, error)
 
-	GetEntityByID(id string) (types.Entity, error)
+	AddInfos(ctx context.Context, id string, infos map[string]types.Info) (bool, error)
 
-	Count() (int, error)
+	UpdateComponentInfos(ctx context.Context, id, componentID string) (map[string]types.Info, error)
 
-	RemoveAll() error
+	UpdateComponentInfosByComponent(ctx context.Context, componentID string) ([]string, error)
 
-	UpsertMany([]types.Entity) (map[string]bool, error)
-
-	AddImpacts(ids []string, impacts []string) error
-
-	RemoveImpacts(ids []string, impacts []string) error
-
-	AddImpactByQuery(query interface{}, impact string) ([]string, error)
-
-	RemoveImpactByQuery(query interface{}, impact string) ([]string, error)
-
-	AddInfos(id string, infos map[string]types.Info) (bool, error)
-
-	UpdateComponentInfos(id, componentID string) (map[string]types.Info, error)
-
-	UpdateComponentInfosByComponent(componentID string) ([]string, error)
-
-	UpdateLastEventDate(ids []string, time types.CpsTime) error
+	UpdateLastEventDate(ctx context.Context, ids []string, time types.CpsTime) error
 	UpdateIdleFields(ctx context.Context, id string, idleSince *types.CpsTime, lastIdleRuleApply string) error
 
-	FindByIDs(ids []string) ([]types.Entity, error)
+	FindByIDs(ctx context.Context, ids []string) ([]types.Entity, error)
 
 	GetAllWithLastUpdateDateBefore(ctx context.Context, time types.CpsTime, exclude []string) (mongo.Cursor, error)
 	FindConnectorForComponent(ctx context.Context, id string) (*types.Entity, error)
@@ -69,8 +53,12 @@ type Adapter interface {
 	GetWithIdleSince(ctx context.Context) (mongo.Cursor, error)
 
 	GetImpactedServicesInfo(ctx context.Context) (mongo.Cursor, error)
-	
+
 	Bulk(ctx context.Context, models []mongodriver.WriteModel) error
+
+	FindToCheckPbehaviorInfo(ctx context.Context, idsWithPbehaviors []string, exceptIds []string) (mongo.Cursor, error)
+
+	UpdatePbehaviorInfo(ctx context.Context, id string, info types.PbehaviorInfo) error
 }
 
 // Service glue Adapter and Cache together

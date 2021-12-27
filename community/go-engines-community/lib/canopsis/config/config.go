@@ -9,20 +9,22 @@ const (
 	ConfigKeyName        = "global_config"
 	UserInterfaceKeyName = "user_interface"
 	VersionKeyName       = "canopsis_version"
+	RemediationKeyName   = "remediation"
+	HealthCheckName      = "health_check"
 )
 
 // SectionAlarm ...
 type SectionAlarm struct {
-	FlappingFreqLimit    int    `toml:"FlappingFreqLimit"`
-	FlappingInterval     int    `toml:"FlappingInterval"`
 	StealthyInterval     int    `toml:"StealthyInterval"`
-	BaggotTime           string `toml:"BaggotTime"`
 	EnableLastEventDate  bool   `toml:"EnableLastEventDate"`
 	CancelAutosolveDelay string `toml:"CancelAutosolveDelay"`
 	DisplayNameScheme    string `toml:"DisplayNameScheme"`
 	OutputLength         int    `toml:"OutputLength"`
+	LongOutputLength     int    `toml:"LongOutputLength"`
 	// DisableActionSnoozeDelayOnPbh ignores Pbh state to resolve snoozed with Action alarm while is True
 	DisableActionSnoozeDelayOnPbh bool `toml:"DisableActionSnoozeDelayOnPbh"`
+	// TimeToKeepResolvedAlarms defines how long resolved alarms will be kept in main alarm collection
+	TimeToKeepResolvedAlarms string `toml:"TimeToKeepResolvedAlarms"`
 }
 
 // SectionGlobal ...
@@ -41,10 +43,6 @@ type SectionTimezone struct {
 	Timezone string `toml:"Timezone"`
 }
 
-type SectionRemediation struct {
-	JobExecutorFetchTimeoutSeconds int64 `toml:"JobExecutorFetchTimeoutSeconds"`
-}
-
 type SectionImportCtx struct {
 	ThdWarnMinPerImport string `toml:"ThdWarnMinPerImport"`
 	ThdCritMinPerImport string `toml:"ThdCritMinPerImport"`
@@ -52,13 +50,23 @@ type SectionImportCtx struct {
 }
 
 type SectionFile struct {
-	Remediation string `toml:"Remediation"`
-	Junit       string `toml:"Junit"`
-	JunitApi    string `toml:"JunitApi"`
+	Upload        string `toml:"Upload"`
+	UploadMaxSize int64  `toml:"UploadMaxSize"`
+	Junit         string `toml:"Junit"`
+	JunitApi      string `toml:"JunitApi"`
 }
 
 type SectionDataStorage struct {
 	TimeToExecute string `toml:"TimeToExecute"`
+}
+
+type SectionApi struct {
+	TokenExpiration    string `toml:"TokenExpiration"`
+	TokenSigningMethod string `toml:"TokenSigningMethod"`
+}
+
+type SectionMetrics struct {
+	SliInterval string `toml:"SliInterval"`
 }
 
 // CanopsisConf represents a generic configuration object.
@@ -67,10 +75,11 @@ type CanopsisConf struct {
 	Global      SectionGlobal      `bson:"global" toml:"global"`
 	Alarm       SectionAlarm       `bson:"alarm" toml:"alarm"`
 	Timezone    SectionTimezone    `bson:"timezone" toml:"timezone"`
-	Remediation SectionRemediation `bson:"remediation" toml:"remediation"`
 	ImportCtx   SectionImportCtx   `bson:"import_ctx" toml:"import_ctx"`
 	File        SectionFile        `bson:"file" toml:"file"`
 	DataStorage SectionDataStorage `bson:"data_storage" toml:"data_storage"`
+	API         SectionApi         `bson:"api" toml:"api"`
+	Metrics     SectionMetrics     `bson:"metrics" toml:"metrics"`
 }
 
 // UserInterfaceConf represents a user interface configuration object.
