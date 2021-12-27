@@ -23,7 +23,7 @@
 
 Note: *We've added examples of `Counter` widget creation.*
 
-1. Put a new `WIDGET_TYPES` in the `src/constants.js`:
+1. Put a new `WIDGET_TYPES` in the `src/constants/widget.js`:
     ```js
     // file src/constants.js
 
@@ -34,7 +34,7 @@ Note: *We've added examples of `Counter` widget creation.*
     };
     ```
 
-2. Put a new icon for the widget type into `WIDGET_ICONS` in the `src/constants.js`:
+2. Put a new icon for the widget type into `WIDGET_ICONS` in the `src/constants/widget.js`:
     ```js
     // file src/constants.js
 
@@ -86,7 +86,7 @@ Note: *We've added examples of `Counter` widget creation.*
     };
     ```
 
-5. Put a new constant for the widget into `SIDE_BARS` in the `src/constants.js`:
+5. Put a new constant for the widget into `SIDE_BARS` in the `src/constants/widget.js`:
     ```js
     // file src/constants.js
 
@@ -97,7 +97,7 @@ Note: *We've added examples of `Counter` widget creation.*
     };
     ```
 
-6. Put a new map value into `SIDE_BARS_BY_WIDGET_TYPES` for the new `WIDGET_TYPE` and `SIDE_BARS` value in the `src/constants.js`:
+6. Put a new map value into `SIDE_BARS_BY_WIDGET_TYPES` for the new `WIDGET_TYPE` and `SIDE_BARS` value in the `src/constants/widget.js`:
     ```js
     // file src/constants.js
 
