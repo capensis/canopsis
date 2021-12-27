@@ -640,8 +640,7 @@ definitions:
     - start
     type: object
   bson.M:
-    additionalProperties: true
-    type: object
+    $ref: '#/definitions/primitive.M'
   common.ErrorResponse:
     properties:
       error:
@@ -2212,7 +2211,7 @@ definitions:
         $ref: '#/definitions/pattern.BoolPattern'
         type: object
       duration:
-        $ref: '#/definitions/pattern.IntegerRefPattern'
+        $ref: '#/definitions/pattern.IntegerPattern'
         type: object
       entity:
         $ref: '#/definitions/pattern.EntityPattern'
@@ -3116,6 +3115,9 @@ definitions:
         type: array
       updated:
         type: integer
+    type: object
+  primitive.M:
+    additionalProperties: true
     type: object
   resolverule.CreateRequest:
     properties:
@@ -5690,7 +5692,8 @@ paths:
       description: Bulk delete view groups by id
       operationId: viewgroups-bulk-delete-by-id
       parameters:
-      - in: query
+      - collectionFormat: multi
+        in: query
         items:
           type: string
         name: ids
@@ -5784,7 +5787,8 @@ paths:
       description: Bulk delete views by id
       operationId: views-bulk-delete-by-id
       parameters:
-      - in: query
+      - collectionFormat: multi
+        in: query
         items:
           type: string
         name: ids
@@ -5982,7 +5986,8 @@ paths:
       description: Get paginated list of entities
       operationId: entities-find-all
       parameters:
-      - in: query
+      - collectionFormat: multi
+        in: query
         items:
           type: string
         name: active_columns[]

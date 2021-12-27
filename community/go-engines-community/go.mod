@@ -54,7 +54,7 @@ require (
 	github.com/tidwall/pretty v1.1.0 // indirect
 	github.com/valyala/fastjson v1.6.3
 	go.mongodb.org/mongo-driver v1.7.1
-	golang.org/x/net v0.0.0-20211013171255-e13a2654a71e
+	golang.org/x/net v0.0.0-20211013171255-e13a2654a71e // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	golang.org/x/sys v0.0.0-20211013075003-97ac67df715c // indirect
 	golang.org/x/text v0.3.7
