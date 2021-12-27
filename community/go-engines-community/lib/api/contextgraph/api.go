@@ -1,6 +1,7 @@
 package contextgraph
 
 import (
+	"errors"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -18,7 +19,7 @@ type API interface {
 }
 
 type Graph struct {
-	Impact *[]string
+	Impact  *[]string
 	Depends *[]string
 }
 
@@ -54,17 +55,25 @@ func NewApi(
 // @Produce json
 // @Security ApiKeyAuth
 // @Security BasicAuth
-// @Param body body Request true "body"
+// @Param source query string true "source"
+// @Param body body ImportRequest true "body"
 // @Success 200 {object} ImportResponse
 // @Failure 400 {object} common.ErrorResponse
 // @Router /contextgraph/import [put]
 func (a *api) Import(c *gin.Context) {
-	job := ImportJob{
-		Creation: time.Now(),
-		Status: statusPending,
+	query := ImportQuery{}
+	if err := c.BindQuery(&query); err != nil {
+		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
+		return
 	}
 
-	err := a.reporter.ReportCreate(&job)
+	job := ImportJob{
+		Creation: time.Now(),
+		Status:   statusPending,
+		Source:   query.Source,
+	}
+
+	err := a.reporter.ReportCreate(c.Request.Context(), &job)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, common.NewErrorResponse(err))
 		return
@@ -100,9 +109,9 @@ func (a *api) Import(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /contextgraph/import/status/{id} [get]
 func (a *api) Status(c *gin.Context) {
-	status, err := a.reporter.GetStatus(c.Param("id"))
+	status, err := a.reporter.GetStatus(c.Request.Context(), c.Param("id"))
 	if err != nil {
-		if err == ErrNotFound {
+		if errors.Is(err, ErrNotFound) {
 			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 			return
 		}

@@ -57,10 +57,9 @@ Usage of ./external-job-executor:
 
 C'est ce composant qui est chargé de déclencher l'exécution du job auprès des
 ordonnanceurs de tâches, selon les différentes configurations définies.
-
 ## Configuration des ordonnanceurs
 
-Cette section présente la configuration à effectuer dans l'ordonnanceur et la
+Cette section présente la configuration à réaliser dans l'ordonnanceur et la
 liaison à ajouter dans Canopsis.
 
 Les opérations sont décrites séparément pour les deux ordonnanceurs supportés :
@@ -116,6 +115,31 @@ cliquez sur « + » et renseignez les différents champs.
 
 ![awx4](./img/remediation_awx4.png)
 
+### Configuration pour Jenkins
+
+#### Création d'un token d'authentification Jenkins
+
+Dans le menu « Utilisateur->Configurer » de Jenkins, vous avez accès à la création d'un token
+pour votre propre utilisateur.
+
+[![jenkins1](./img/remediation_jenkins1.png)](./img/remediation_jenkins1.png){target=_blank}
+
+[![jenkins2](./img/remediation_jenkins2.png)](./img/remediation_jenkins2.png){target=_blank}
+
+[![jenkins3](./img/remediation_jenkins3.png)](./img/remediation_jenkins3.png){target=_blank}
+
+
+Vous disposez maintenant d'un token qui va être utilisé juste après dans la
+configuration de la remédiation côté Canopsis.
+
+#### Création d'une configuration associée dans Canopsis
+
+Dans le menu d'administration de la remédiation, onglet « CONFIGURATIONS »,
+cliquez sur « + » et renseignez les différents champs.
+
+![jenkins4](./img/remediation_jenkins4.png)
+
+
 ## Configuration des jobs
 
 ### Association de job Rundeck dans Canopsis
@@ -155,6 +179,27 @@ consignes.
 Si vous devez passer des variables à votre job, la section suivante,
 [Payload](#utilisation-des-payloads) vous explique comment faire.
 
+### Association de job Jenkins dans Canopsis
+
+Coté Jenkins, dans le menu « Jobs », créez un job et récupérez son identifiant.
+
+[![jenkins5](./img/remediation_jenkins5.png)](./img/remediation_jenkins5.png){target=_blank}
+
+[![jenkins6](./img/remediation_jenkins6.png)](./img/remediation_jenkins6.png){target=_blank}
+
+Coté Canopsis, dans le menu d'administration de la remédiation, onglet
+« JOBS », cliquez sur « + » et renseignez les différents champs.
+
+![jenkins7](./img/remediation_jenkins7.png)
+
+Le job est maintenant prêt à être utilisé dans des [opérations][doc-op] de
+consignes.
+Si vous devez passer des variables à votre job, suivez la section
+[Payload](#utilisation-des-payloads) qui vous explique comment faire.
+
+[doc-op]: ../../guide-utilisation/remediation/mise-en-oeuvre/#associer-un-job-a-une-operation
+
+
 ## Utilisation des `payloads`
 
 Le module de remédiation de Canopsis permet de transmettre des variables à
@@ -165,7 +210,7 @@ l'ordonnanceur au moment de l'exécution d'un job.
 
     Les différentes valeurs sont [documentées ici](../architecture-interne/templates-golang/).
 
-Cette section décrit la manière de procéder pour Rundeck et AWX.
+Cette section décrit la manière de procéder pour Rundeck, AWX, et Jenkins.
 
 ### Rundeck
 
@@ -202,6 +247,7 @@ Voici un exemple complet de passage de variables de Canopsis vers Rundeck :
 }
 ```
 
+
 **Exploitation des variables dans un job Rundeck de type script**
 
 ```sh
@@ -214,6 +260,7 @@ echo -e "\tResource : @option.resource@"
 echo "Service à redémarrer : $RD_OPTION_SERVICE_NAME"
 echo "Terminé"
 ```
+
 
 **Exploitation des variables dans un job Rundeck de type playbook Ansible**
 
@@ -285,6 +332,41 @@ Voici un exemple complet de passage de variables de Canopsis vers AWX :
 }
 ```
 
+### Jenkins 
+
+L'ordonnanceur attend les variables pour un job directement dans l'URL (querystring).
+Pour ce faire, vous devez définir des paramètres d'URL et non un payload.
+
+[![jenkins8](./img/remediation_jenkins8.png)](./img/remediation_jenkins8.png){target=_blank}
+
+Du coté de Jenkins, vous pourrez exploiter ces variables grâce aux notations suivantes :
+
+* `${variable1}`
+
+Voici un exemple complet de passage de variables de Canopsis vers Jenkins :
+
+**Paramètres d'URL du job Canopsis**
+
+```json
+{
+  "component": "{{.Alarm.Value.Component}}",
+  "resource": "{{.Alarm.Value.Resource}}",
+  "entity_id": "{{.Entity.ID}}"
+}
+```
+**Exploitation des variables dans un job Jenkins de type script shell**
+
+```sh
+#!/bin/bash
+
+echo "Demande d'exécution de job reçue par Canopsis"
+echo "Alarme concernée :"
+echo -e "\tId de l'entité : ${entity_id}"
+echo -e "\tComposant : ${component}"
+echo -e "\tResource : ${resource}"
+echo "Terminé"
+```
+
 ## Avancé
 
 ### Message de retour d'un job Rundeck dans Canopsis
@@ -322,8 +404,8 @@ variables sont passées grâce au payload suivant :
     }
     ```
 
-L'envoi d'un commentaire dans l'alarme nécessite de fabriquer un [évènement de
-type commentaire][event-comment] avec un ensemble de champs (`component`,
+L'envoi d'un commentaire dans l'alarme nécessite de fabriquer un évènement de
+type `comment` avec un ensemble de champs (`component`,
 `resource`, `connector`, `connector_name`) qui identifie l'alarme.
 
 Dans le payload, il faut donc ajouter des options pour arriver à la structure
@@ -415,4 +497,3 @@ paramètres avancés du [widget bac à alarmes][baa].
 [remed-index]: ../../guide-utilisation/remediation/index.md
 [mise-en-oeuvre]: ../../guide-utilisation/remediation/mise-en-oeuvre.md
 [baa]: ../../guide-utilisation/interface/widgets/bac-a-alarmes/#parametres-du-widget
-[event-comment]: ../../guide-developpement/struct-event/#event-comment-structure

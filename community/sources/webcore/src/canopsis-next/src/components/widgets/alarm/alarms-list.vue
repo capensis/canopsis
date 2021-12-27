@@ -2,7 +2,7 @@
   div(data-test="tableWidget")
     v-layout.white(row, wrap, justify-space-between, align-center)
       v-flex
-        c-advanced-search(
+        c-advanced-search-field(
           :query.sync="query",
           :columns="columns",
           :tooltip="$t('search.alarmAdvancedSearch')"
@@ -46,7 +46,7 @@
           close,
           label,
           @input="removeHistoryFilter"
-        ) {{ $t(`settings.statsDateInterval.quickRanges.${activeRange.value}`) }}
+        ) {{ $t(`quickRanges.types.${activeRange.value}`) }}
         c-action-btn(
           :tooltip="$t('liveReporting.button')",
           :color="activeRange ? 'primary' : 'black'",
@@ -82,6 +82,7 @@
       :hide-groups="!query.correlation",
       :has-columns="hasColumns",
       :columns="columns",
+      :sticky-header="widget.parameters.sticky_header",
       selectable,
       expandable
     )
@@ -96,18 +97,18 @@
 </template>
 
 <script>
-import { omit, pick, isEmpty } from 'lodash';
+import { omit, pick, isEmpty, isObject } from 'lodash';
 
 import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
 
-import { findRange } from '@/helpers/date/date-intervals';
+import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
-import widgetExportMixinCreator from '@/mixins/widget/export';
+import { exportCsvMixinCreator } from '@/mixins/widget/export';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import widgetRemediationInstructionsFilterMixin from '@/mixins/widget/remediation-instructions-filter-select';
@@ -150,7 +151,7 @@ export default {
     permissionsWidgetsAlarmsListCorrelation,
     permissionsWidgetsAlarmsListFilters,
     permissionsWidgetsAlarmsListRemediationInstructionsFilters,
-    widgetExportMixinCreator({
+    exportCsvMixinCreator({
       createExport: 'createAlarmsListExport',
       fetchExport: 'fetchAlarmsListExport',
       fetchExportFile: 'fetchAlarmsListCsvFile',
@@ -187,7 +188,7 @@ export default {
       const { tstart, tstop } = this.query;
 
       if (tstart || tstop) {
-        return findRange(tstart, tstop);
+        return findQuickRangeValue(tstart, tstop);
       }
 
       return null;
@@ -204,10 +205,16 @@ export default {
     },
   },
   methods: {
-    updateCorrelation(correlation) {
-      this.updateWidgetPreferencesInUserPreference({
-        ...this.userPreference.widget_preferences,
+    refreshExpanded() {
+      Object.entries(this.$refs.alarmsTable.expanded).forEach(([id, expanded]) => {
+        if (expanded && !this.alarms.some(alarm => alarm._id === id)) {
+          this.$set(this.$refs.alarmsTable.expanded, id, false);
+        }
+      });
+    },
 
+    updateCorrelation(correlation) {
+      this.updateContentInUserPreference({
         isCorrelationEnabled: correlation,
       });
 
@@ -221,9 +228,7 @@ export default {
     updateCategory(category) {
       const categoryId = category && category._id;
 
-      this.updateWidgetPreferencesInUserPreference({
-        ...this.userPreference.widget_preferences,
-
+      this.updateContentInUserPreference({
         category: categoryId,
       });
 
@@ -235,9 +240,7 @@ export default {
     },
 
     updateRecordsPerPage(limit) {
-      this.updateWidgetPreferencesInUserPreference({
-        ...this.userPreference.widget_preferences,
-
+      this.updateContentInUserPreference({
         itemsPerPage: limit,
       });
 
@@ -282,18 +285,20 @@ export default {
       });
     },
 
-    fetchList({ isPeriodicRefresh } = {}) {
+    async fetchList({ isPeriodicRefresh, isQueryNonceUpdate } = {}) {
       if (this.hasColumns) {
         const query = this.getQuery();
 
-        if (isPeriodicRefresh && !isEmpty(this.$refs.alarmsTable.expanded)) {
+        if ((isPeriodicRefresh || isQueryNonceUpdate) && !isEmpty(this.$refs.alarmsTable.expanded)) {
           query.with_steps = true;
         }
 
-        this.fetchAlarmsList({
+        await this.fetchAlarmsList({
           widgetId: this.widget._id,
           params: query,
         });
+
+        this.refreshExpanded();
       }
     },
 
@@ -309,15 +314,19 @@ export default {
         ? widgetExportColumns
         : widgetColumns;
 
-      this.exportWidgetAsCsv({
+      this.exportAsCsv({
         name: `${this.widget._id}-${new Date().toLocaleString()}`,
+        widgetId: this.widget._id,
         data: {
-          ...pick(query, ['search', 'category', 'correlation', 'opened', 'resolved']),
+          ...pick(query, ['search', 'category', 'correlation', 'opened']),
 
           fields: columns.map(({ label, value }) => ({ label, name: value })),
           filter: JSON.stringify(query.filter),
           separator: exportCsvSeparator,
-          time_format: exportCsvDatetimeFormat,
+          /**
+           * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997
+           */
+          time_format: isObject(exportCsvDatetimeFormat) ? exportCsvDatetimeFormat.value : exportCsvDatetimeFormat,
         },
       });
     },

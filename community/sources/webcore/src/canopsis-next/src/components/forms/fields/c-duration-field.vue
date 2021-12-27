@@ -27,7 +27,7 @@
 <script>
 import { isNumber } from 'lodash';
 
-import { AVAILABLE_TIME_UNITS } from '@/constants';
+import { AVAILABLE_TIME_UNITS, SHORT_AVAILABLE_TIME_UNITS } from '@/constants';
 
 export default {
   inject: ['$validator'],
@@ -75,6 +75,10 @@ export default {
       type: Number,
       default: 1,
     },
+    long: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     valueFieldName() {
@@ -90,7 +94,11 @@ export default {
         return this.units;
       }
 
-      return Object.values(AVAILABLE_TIME_UNITS).map(({ value, text }) => ({
+      const units = this.long
+        ? AVAILABLE_TIME_UNITS
+        : SHORT_AVAILABLE_TIME_UNITS;
+
+      return Object.values(units).map(({ value, text }) => ({
         value,
         text: this.$tc(text, this.duration.value || 0),
       }));

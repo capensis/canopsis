@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.white
+  div.c-advanced-data-table.white
     v-layout(row, wrap, v-bind="toolbarProps")
       v-flex(v-if="shownSearch", xs4)
         c-search-field(
@@ -8,7 +8,7 @@
           @submit="updateSearchHandler",
           @clear="clearSearchHandler"
         )
-        c-advanced-search(
+        c-advanced-search-field(
           v-else,
           :query="pagination",
           :columns="headers",
@@ -40,13 +40,15 @@
       :expand="expand",
       :is-disabled-item="isDisabledItem",
       :hide-actions="hideActions || advancedPagination || noPagination",
+      :multi-sort="multiSort",
+      :table-class="tableClass",
       @update:pagination="updatePagination"
     )
       template(slot="items", slot-scope="props")
         slot(v-bind="getItemsProps(props)", name="items")
           tr(:key="props.item[itemKey] || props.index")
-            td(v-if="selectAll || expand", @click.stop)
-              v-layout.checkbox-wrapper(row, justify-start)
+            td(v-if="selectAll || expand", @click.stop="")
+              v-layout.c-checkbox-wrapper(row, justify-start)
                 slot(v-if="selectAll", v-bind="getItemsProps(props)", name="item-select")
                   v-checkbox-functional(
                     v-if="!isDisabledItem(props.item)",
@@ -170,6 +172,14 @@ export default {
       type: Object,
       required: false,
     },
+    multiSort: {
+      type: Boolean,
+      default: false,
+    },
+    tableClass: {
+      type: String,
+      required: false,
+    },
   },
   data() {
     return {
@@ -188,7 +198,7 @@ export default {
 
     headersWithExpand() {
       if (this.expand && !this.selectAll) {
-        return [{ sortable: false }, ...this.headers];
+        return [{ sortable: false, width: 20 }, ...this.headers];
       }
 
       return this.headers;
@@ -253,7 +263,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .checkbox-wrapper {
+.c-advanced-data-table {
+  /deep/ thead th {
+    vertical-align: middle;
+  }
+
+  & .c-checkbox-wrapper {
     display: inline-flex;
   }
+}
 </style>

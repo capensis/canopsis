@@ -1,10 +1,12 @@
-// engine contain implementation of canopsis engine.
+// Package engine contain implementation of canopsis engine.
 package engine
 
 //go:generate mockgen -destination=../../../mocks/lib/canopsis/engine/engine.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine Engine,Consumer,MessageProcessor,PeriodicalWorker,RPCClient,RPCMessageProcessor
 
 import (
 	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/streadway/amqp"
 	"time"
 )
@@ -32,11 +34,11 @@ type MessageProcessor interface {
 	Process(ctx context.Context, d amqp.Delivery) (newMessage []byte, err error)
 }
 
-// PeriodicalWork interface is used to implement engine periodical worker.
+// PeriodicalWorker interface is used to implement engine periodical worker.
 // If Work returns error engine will be stopped.
 type PeriodicalWorker interface {
 	GetInterval() time.Duration
-	Work(ctx context.Context) error
+	Work(context.Context) error
 }
 
 // RPCClient interface is used to implement AMQP RPC client.
@@ -50,7 +52,7 @@ type RPCClient interface {
 // RPCMessageProcessor interface is used to implement AMQP RPC response processor of consumer.
 // If Process returns error engine will be stopped.
 type RPCMessageProcessor interface {
-	Process(RPCMessage) error
+	Process(ctx context.Context, msg RPCMessage) error
 }
 
 // RPCMessage is AMQP RPC request or response.
@@ -61,27 +63,49 @@ type RPCMessage struct {
 
 // RunInfoManager interface is used to implement engine run info storage.
 type RunInfoManager interface {
-	Save(ctx context.Context, info RunInfo, expiration time.Duration) error
-	Get(ctx context.Context, engineName string) (*RunInfo, error)
-	GetAll(ctx context.Context) ([]RunInfo, error)
-	GetGraph(ctx context.Context) (*RunInfoGraph, error)
-	ClearAll(ctx context.Context) error
+	SaveInstance(ctx context.Context, info InstanceRunInfo, expiration time.Duration) error
+	GetEngineQueues(ctx context.Context) ([]RunInfo, error)
+	GetCacheKey(info InstanceRunInfo) string
 }
 
-// RunInfo is engine run information to detect engines order.
+// RunInfo is engine run information.
 type RunInfo struct {
-	Name            string `json:"name"`
-	ConsumeQueue    string `json:"input_queue"`
-	PublishQueue    string `json:"output_queue"`
-	PublishExchange string `json:"output_exchange,omitempty"`
+	Name         string `json:"name"`
+	ConsumeQueue string `json:"consume_queue"`
+	PublishQueue string `json:"publish_queue"`
 }
 
-type RunInfoGraph struct {
-	Nodes []RunInfo `json:"nodes"`
-	Edges []Edge    `json:"edges"`
+// InstanceRunInfo is instance of engine run information.
+type InstanceRunInfo struct {
+	ID               string        `json:"_id"`
+	Name             string        `json:"name"`
+	ConsumeQueue     string        `json:"consume_queue"`
+	PublishQueue     string        `json:"publish_queue"`
+	RpcConsumeQueues []string      `json:"rpc_consume_queues"`
+	RpcPublishQueues []string      `json:"rpc_publish_queues"`
+	QueueLength      int           `json:"queue_length"`
+	Time             types.CpsTime `json:"time"`
 }
 
-type Edge struct {
-	From string `json:"from"`
-	To   string `json:"to"`
+func NewInstanceRunInfo(name, consumeQueue, publishQueue string, rpcQueues ...[]string) InstanceRunInfo {
+	var rpcConsumeQueues, rpcPublishQueues []string
+	if len(rpcQueues) > 0 {
+		if len(rpcQueues) > 2 {
+			panic("too much arguments")
+		}
+
+		rpcConsumeQueues = rpcQueues[0]
+		if len(rpcQueues) > 1 {
+			rpcPublishQueues = rpcQueues[1]
+		}
+	}
+
+	return InstanceRunInfo{
+		ID:               utils.NewID(),
+		Name:             name,
+		ConsumeQueue:     consumeQueue,
+		PublishQueue:     publishQueue,
+		RpcConsumeQueues: rpcConsumeQueues,
+		RpcPublishQueues: rpcPublishQueues,
+	}
 }

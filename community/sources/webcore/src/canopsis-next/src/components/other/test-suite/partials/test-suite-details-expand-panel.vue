@@ -7,28 +7,28 @@
           v-card.pa-3
             v-layout(column)
               v-flex(offset-xs2)
-                test-suite-summary-row(:label="$t('common.name')", :value="testSuiteDetail.name")
-                test-suite-summary-row(
+                c-information-block-row(:label="$t('common.name')", :value="testSuiteDetail.name")
+                c-information-block-row(
                   v-if="testSuiteDetail.description",
                   :label="$t('common.description')",
                   :value="testSuiteDetail.description"
                 )
-                test-suite-summary-row(
+                c-information-block-row(
                   v-if="testSuiteDetail.classname",
                   :label="$t('testSuite.className')",
                   :value="testSuiteDetail.classname"
                 )
-                test-suite-summary-row(
+                c-information-block-row(
                   v-if="testSuiteDetail.file",
                   :label="$t('common.file')",
                   :value="testSuiteDetail.file"
                 )
-                test-suite-summary-row(
+                c-information-block-row(
                   v-if="hasLine",
                   :label="$t('testSuite.line')",
                   :value="testSuiteDetail.line"
                 )
-                test-suite-summary-row(
+                c-information-block-row(
                   :label="$t('testSuite.timeTaken')"
                 ) {{ testSuiteDetail.time | fixed }}{{ $constants.TIME_UNITS.second }}
                 system-message(
@@ -57,13 +57,11 @@
 import { isNumber } from 'lodash';
 
 import SystemMessage from './system-message.vue';
-import TestSuiteSummaryRow from './test-suite-summary-row.vue';
 import TestSuiteScreenshots from './test-suite-screenshots.vue';
 import TestSuiteVideos from './test-suite-videos.vue';
 
 export default {
   components: {
-    TestSuiteSummaryRow,
     SystemMessage,
     TestSuiteScreenshots,
     TestSuiteVideos,

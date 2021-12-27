@@ -4,7 +4,7 @@ Dans les [Webhooks](../moteurs/moteur-webhook.md), les champs `payload` et `url`
 
 Les templates des champs `payload` et `url` peuvent se décomposer en deux parties : la déclaration de variables et le corps du texte lui-même.
 
-La déclaration de variables doit être positionnée avant le corps du message. Les variables se distinguent du corps du message par le fait qu'elles sont entourées de doubles accolades.
+La déclaration de variables doit être placée avant le corps du message. Les variables se distinguent du corps du message par le fait qu'elles sont entourées de doubles accolades.
 
 Pour plus d'informations, vous pouvez consulter la [documentation officielle de Go sur les templates](https://golang.org/pkg/text/template).
 
@@ -47,11 +47,13 @@ Pour les champs de date, comme par exemple `{{ .Event.Timestamp }}`, il est poss
 !!! attention
     Les champs enrichis depuis un événement ou via l'event filter se retrouvent au niveau de l'entité et sont sensibles à la casse. Par exemple un champ enrichi intitulé `switch` dans l'entité sera traduit en `{{ .Entity.Infos.switch.Value }}`.
 
-Vous avez également la possibilité de récupérer le nom du `trigger` (AlarmChange) qui a permis de déclencher l'exécution du Webhook.
+Vous avez également la possibilité de récupérer des informations propres à l'action qui s'exécute.
 
-| Champ                             | Résultat                                                                  |
-|:--------------------------------- |:------------------------------------------------------------------------- |
-| `{{ .Event.AlarmChange.Type }}`      | Nom du trigger (sous forme de chaîne: ack, stateinc, ...)                                                |
+| Champ                                   | Résultat                                                                                                  |
+|:--------------------------------------- |:--------------------------------------------------------------------------------------------------------- |
+| `{{ .AdditionalData.AlarmChangeType }}` | Nom du trigger (sous forme de chaîne : ack, stateinc, etc.) |                                                                               |
+| `{{ .AdditionalData.Author }}`          | Auteur de l'action                                                                                                                      |
+| `{{ .AdditionalData.Initiator }}`       | Initiateur de l'action (**user** pour une action exécutée depuis l'interface graphique, **system** pour une action exécutée par un moteur)  |
 
 ## Génération de texte
 
@@ -95,7 +97,7 @@ On peut aussi enchaîner différentes fonctions à la suite si on veut transform
 
 #### Fonctionnalités spécifiques à Canopsis
 
-Certaines fonctionnalités ne sont pas présentes de base dans les templates Go. Elles ont été implémentées par l'équipe de Canopsis.
+Certaines fonctionnalités ne sont pas présentes de base dans les templates Go. Elles ont été spécifiquement ajoutées pour Canopsis.
 
 !!! note
     Les fonctions suivantes sont disponibles dans les templates des [webhooks](../moteurs/moteur-webhook.md), pas ceux de l'event-filter.
@@ -145,12 +147,25 @@ Cette fonction prend en paramètre une chaîne qui est le format attendu de la d
 | `02`                         | `%m`                                                                                      | Mois                              | 01..12              |
 | `04`                         | `%M`                                                                                      | Minute                            | 01..59              |
 | `05`                         | `%S`                                                                                      | Seconde                           | 01..61              |
-| `2006`                       | `%Y`                                                                                      | Année                             | 1970, 1984, 2019... |
-| `MST`                        | `%Z`                                                                                      | Fuseau horaire                    | CEST, EDT, JST...   |
+| `2006`                       | `%Y`                                                                                      | Année                             | 1970, 1984, 2019… |
+| `MST`                        | `%Z`                                                                                      | Fuseau horaire                    | CEST, EDT, JST…   |
 
 Ainsi, pour afficher transformer un champ en une date au format `heure:minute:seconde`, il faudra utiliser `formattedDate \"15:04:05\"` (même si le champ dans l'alarme ou l'événement ne correspondent pas à cette heure).
 
 La [documentation officielle de Go](https://golang.org/pkg/time/#pkg-constants) fournit par ailleurs les valeurs à utiliser pour des formats de dates standards. Pour obtenir une date suivant le RFC3339, il faudra utiliser `formattedDate \"2006-01-02T15:04:05Z07:00\"`. De même, `formattedDate \"02 Jan 06 15:04 MST\"` sera appelé pour générer une date au format RFC822.
+
+##### `localtime`
+
+La fonction `localtime` permet de renvoyer une date dans un autre fuseau horaire que celui paramétré par défaut sur votre instance Canopsis.
+
+Cette fonction prend en paramètre un [format de date](#formatteddate) ainsi que le nom de la timezone souhaitée.
+
+Par exemple : 
+
+* `{{ .Alarm.Value.CreationDate | localTime "2006-02-01 15:04:05" }}` va renvoyer la date dans le format indiqué et pour la timezone configurée par défaut dans Canopsis.
+* `{{ .Alarm.Value.CreationDate | localTime "2006-02-01 15:04:05" "Europe/London" }}` va renvoyer la date dans le format indiqué et pour la timezone "Europe/London".
+
+Une liste de timezones peut être trouvée sur [Wikipédia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
 ### Cas particulier des méta alarmes
 

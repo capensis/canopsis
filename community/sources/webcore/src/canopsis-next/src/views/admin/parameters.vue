@@ -16,6 +16,10 @@
               v-card-text
                 state-settings
             template(v-if="isCatVersion")
+              v-tab {{ $t('parameters.tabs.notificationsSettings') }}
+              v-tab-item(lazy)
+                v-card-text
+                  notifications-settings
               v-tab {{ $t('parameters.tabs.storageSettings') }}
               v-tab-item(lazy)
                 v-card-text
@@ -23,12 +27,13 @@
 </template>
 
 <script>
-import entitiesInfoMixin from '@/mixins/entities/info';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { permissionsTechnicalParametersMixin } from '@/mixins/permissions/technical/parameters';
 
 import UserInterface from '@/components/other/user-interface/user-interface.vue';
 import ViewsImportExport from '@/components/other/view/views-import-export.vue';
 import StateSettings from '@/components/other/state-setting/state-settings.vue';
+import NotificationsSettings from '@/components/other/notification/notifications-settings.vue';
 import StorageSettings from '@/components/other/storage-setting/storage-settings.vue';
 
 export default {
@@ -36,6 +41,7 @@ export default {
     UserInterface,
     ViewsImportExport,
     StateSettings,
+    NotificationsSettings,
     StorageSettings,
   },
   mixins: [entitiesInfoMixin, permissionsTechnicalParametersMixin],

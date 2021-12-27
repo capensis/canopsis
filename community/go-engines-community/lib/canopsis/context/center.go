@@ -5,6 +5,7 @@ import (
 	"errors"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"github.com/rs/zerolog"
@@ -19,12 +20,14 @@ func NewEnrichmentCenter(
 	adapter libentity.Adapter,
 	enableEnrich bool,
 	entityServiceManager entityservice.Manager,
+	metricMetaUpdater metrics.MetaUpdater,
 	logger zerolog.Logger,
 ) EnrichmentCenter {
 	return &center{
 		adapter:              adapter,
 		enableEnrich:         enableEnrich,
 		entityServiceManager: entityServiceManager,
+		metricMetaUpdater:    metricMetaUpdater,
 		logger:               logger,
 	}
 }
@@ -33,12 +36,13 @@ type center struct {
 	adapter              libentity.Adapter
 	enableEnrich         bool
 	entityServiceManager entityservice.Manager
+	metricMetaUpdater    metrics.MetaUpdater
 	logger               zerolog.Logger
 }
 
 func (c *center) Handle(ctx context.Context, event types.Event, fields EnrichFields) (*types.Entity, UpdatedEntityServices, error) {
 	updatedServices := UpdatedEntityServices{}
-	eventEntity, entities, err := c.createEntities(event, fields)
+	eventEntity, entities, err := c.createEntities(ctx, event, fields)
 	if err != nil {
 		return nil, updatedServices, err
 	}
@@ -47,7 +51,7 @@ func (c *center) Handle(ctx context.Context, event types.Event, fields EnrichFie
 		return nil, updatedServices, nil
 	}
 
-	resources, err := c.updateComponentInfos(event, eventEntity)
+	resources, err := c.updateComponentInfos(ctx, event, eventEntity)
 	if err != nil {
 		return nil, updatedServices, err
 	}
@@ -61,6 +65,15 @@ func (c *center) Handle(ctx context.Context, event types.Event, fields EnrichFie
 			updatedServices.UpdatedComponentInfosResources = resources
 		}
 	}
+
+	updatedEntities := []string{eventEntity.ID}
+	for _, entity := range entities {
+		if eventEntity.ID != entity.ID {
+			updatedEntities = append(updatedEntities, entity.ID)
+		}
+	}
+	updatedEntities = append(updatedEntities, resources...)
+	go c.metricMetaUpdater.UpdateById(context.Background(), updatedEntities...)
 
 	if !eventEntity.Enabled {
 		return eventEntity, updatedServices, nil
@@ -103,7 +116,7 @@ func (c *center) HandleEntityServiceUpdate(ctx context.Context, serviceID string
 		updatedServices = &UpdatedEntityServices{RemovedFrom: removed}
 	}
 
-	entity, err := c.findEntityByID(serviceID)
+	entity, err := c.findEntityByID(ctx, serviceID)
 	if err != nil {
 		return nil, err
 	}
@@ -136,8 +149,8 @@ func (c *center) HandleEntityServiceUpdate(ctx context.Context, serviceID string
 	return updatedServices, nil
 }
 
-func (c *center) Get(event types.Event) (*types.Entity, error) {
-	return c.findEntityByID(event.GetEID())
+func (c *center) Get(ctx context.Context, event types.Event) (*types.Entity, error) {
+	return c.findEntityByID(ctx, event.GetEID())
 }
 
 func (c *center) UpdateEntityInfos(ctx context.Context, entity *types.Entity) (UpdatedEntityServices, error) {
@@ -145,7 +158,7 @@ func (c *center) UpdateEntityInfos(ctx context.Context, entity *types.Entity) (U
 		return UpdatedEntityServices{}, errors.New("cannot update infos for disabled entity")
 	}
 	updatedServices := UpdatedEntityServices{}
-	ok, err := c.adapter.AddInfos(entity.ID, entity.Infos)
+	ok, err := c.adapter.AddInfos(ctx, entity.ID, entity.Infos)
 	if err != nil {
 		return updatedServices, err
 	}
@@ -163,12 +176,15 @@ func (c *center) UpdateEntityInfos(ctx context.Context, entity *types.Entity) (U
 	updatedServices.AddedTo = addedTo[entity.ID]
 	updatedServices.RemovedFrom = removedFrom[entity.ID]
 
+	updatedEntities := []string{entity.ID}
 	// Update component infos for related resource entities
 	if entity.Type == types.EntityTypeComponent {
-		resources, err := c.adapter.UpdateComponentInfosByComponent(entity.ID)
+		resources, err := c.adapter.UpdateComponentInfosByComponent(ctx, entity.ID)
 		if err != nil {
 			return updatedServices, err
 		}
+
+		updatedEntities = append(updatedEntities, resources...)
 
 		if len(resources) > 0 {
 			has, err := c.entityServiceManager.HasEntityServiceByComponentInfos(ctx)
@@ -180,6 +196,8 @@ func (c *center) UpdateEntityInfos(ctx context.Context, entity *types.Entity) (U
 			}
 		}
 	}
+
+	go c.metricMetaUpdater.UpdateById(context.Background(), updatedEntities...)
 
 	return updatedServices, nil
 }
@@ -238,8 +256,8 @@ func (c *center) LoadServices(ctx context.Context) error {
 	return c.entityServiceManager.LoadServices(ctx)
 }
 
-func (c *center) findEntityByID(id string) (*types.Entity, error) {
-	entity, err := c.adapter.GetEntityByID(id)
+func (c *center) findEntityByID(ctx context.Context, id string) (*types.Entity, error) {
+	entity, err := c.adapter.GetEntityByID(ctx, id)
 	if err != nil {
 		if _, ok := err.(errt.NotFound); ok {
 			return nil, nil
@@ -252,17 +270,17 @@ func (c *center) findEntityByID(id string) (*types.Entity, error) {
 
 // updateComponentInfos updates component infos of resource entity if it's new resource event
 // and component infos of all connected resource entities if it's component event.
-func (c *center) updateComponentInfos(event types.Event, entity *types.Entity) ([]string, error) {
+func (c *center) updateComponentInfos(ctx context.Context, event types.Event, entity *types.Entity) ([]string, error) {
 	// Update component infos for related resource entities
 	if event.SourceType == types.SourceTypeComponent {
-		resourceIDs, err := c.adapter.UpdateComponentInfosByComponent(event.Component)
+		resourceIDs, err := c.adapter.UpdateComponentInfosByComponent(ctx, event.Component)
 		if err != nil {
 			return nil, err
 		}
 
 		return resourceIDs, nil
 	} else if event.SourceType == types.SourceTypeResource && entity != nil && entity.IsNew {
-		infos, err := c.adapter.UpdateComponentInfos(entity.ID, event.Component)
+		infos, err := c.adapter.UpdateComponentInfos(ctx, entity.ID, event.Component)
 		if err != nil {
 			return nil, err
 		}
@@ -276,12 +294,12 @@ func (c *center) updateComponentInfos(event types.Event, entity *types.Entity) (
 }
 
 // createEntities creates connection, component, resource entities if they don't exist.
-func (c *center) createEntities(event types.Event, fields EnrichFields) (*types.Entity, []types.Entity, error) {
+func (c *center) createEntities(ctx context.Context, event types.Event, fields EnrichFields) (*types.Entity, []types.Entity, error) {
 	if event.SourceType != types.SourceTypeResource && event.SourceType != types.SourceTypeComponent {
 		return nil, nil, nil
 	}
 
-	entity, err := c.Get(event)
+	entity, err := c.Get(ctx, event)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -385,7 +403,7 @@ func (c *center) createEntities(event types.Event, fields EnrichFields) (*types.
 		}
 	}
 
-	insertedIDs, err := c.adapter.UpsertMany(entities)
+	insertedIDs, err := c.adapter.UpsertMany(ctx, entities)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -415,7 +433,7 @@ func (c *center) createEntities(event types.Event, fields EnrichFields) (*types.
 		updateLastEventDate = append(updateLastEventDate, connectorID)
 	}
 
-	err = c.adapter.UpdateLastEventDate(updateLastEventDate, now)
+	err = c.adapter.UpdateLastEventDate(ctx, updateLastEventDate, now)
 	if err != nil {
 		return nil, nil, err
 	}

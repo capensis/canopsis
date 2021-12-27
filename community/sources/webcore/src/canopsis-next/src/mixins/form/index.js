@@ -1,4 +1,6 @@
-export { default as array } from './array';
-export { default as object } from './object';
-
-export { default } from './object';
+export { formArrayMixin } from './array';
+export { formBaseMixin } from './base';
+export { formMixin, formMixin as default } from './object';
+export { validationChildrenMixin } from './validation-children';
+export { formValidationHeaderMixin } from './validation-header';
+export { validationErrorsMixinCreator } from './validation-errors';

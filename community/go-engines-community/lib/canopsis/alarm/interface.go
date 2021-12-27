@@ -4,6 +4,8 @@ package alarm
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -11,73 +13,66 @@ import (
 
 type Adapter interface {
 	// Insert insert an alarm
-	Insert(alarm types.Alarm) error
+	Insert(ctx context.Context, alarm types.Alarm) error
 
 	// Update update an alarm
-	Update(alarm types.Alarm) error
+	Update(ctx context.Context, alarm types.Alarm) error
 
 	PartialUpdateOpen(ctx context.Context, alarm *types.Alarm) error
 
-	// RemoveAll remove all alarms
-	RemoveAll() error
-
-	// RemoveId remove an alarm from its id
-	RemoveId(id string) error
-
-	Get(filter map[string]interface{}, alarms *[]types.Alarm) error
+	PartialMassUpdateOpen(ctx context.Context, alarms []types.Alarm) error
 
 	// GetAlarmsByID finds all alarms with an entity id.
-	GetAlarmsByID(id string) ([]types.Alarm, error)
+	GetAlarmsByID(ctx context.Context, id string) ([]types.Alarm, error)
 
 	// GetAlarmsWithCancelMark returns all alarms where v.cancel is not null
-	GetAlarmsWithCancelMark() ([]types.Alarm, error)
+	GetAlarmsWithCancelMark(ctx context.Context) ([]types.Alarm, error)
 
 	// GetAlarmsWithDoneMark returns all alarms where v.done is not null
-	GetAlarmsWithDoneMark() ([]types.Alarm, error)
+	GetAlarmsWithDoneMark(ctx context.Context) ([]types.Alarm, error)
 
 	// GetAlarmsWithSnoozeMark returns all alarms where v.snooze is not null
-	GetAlarmsWithSnoozeMark() ([]types.Alarm, error)
+	GetAlarmsWithSnoozeMark(ctx context.Context) ([]types.Alarm, error)
 
 	// GetAlarmsWithFlappingStatus returns all alarms whose status is flapping
-	GetAlarmsWithFlappingStatus() ([]types.Alarm, error)
+	GetAlarmsWithFlappingStatus(ctx context.Context) ([]types.AlarmWithEntity, error)
 
 	// GetAllOpenedResourceAlarmsByComponent returns all ongoing alarms for component
-	GetAllOpenedResourceAlarmsByComponent(component string) ([]types.AlarmWithEntity, error)
+	GetAllOpenedResourceAlarmsByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error)
 
 	// GetUnacknowledgedAlarmsByComponent returns all ongoing alarms which have
 	// not been acknowledged, given a component's name.
-	GetUnacknowledgedAlarmsByComponent(component string) ([]types.Alarm, error)
+	GetUnacknowledgedAlarmsByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error)
 
 	// GetAlarmsWithoutTicketByComponent returns all ongoing alarms which do
 	// not have a ticket, given a component's name.
-	GetAlarmsWithoutTicketByComponent(component string) ([]types.Alarm, error)
+	GetAlarmsWithoutTicketByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error)
 
-	GetOpenedAlarmByAlarmId(id string) (types.Alarm, error)
+	GetOpenedAlarmByAlarmId(ctx context.Context, id string) (types.Alarm, error)
+	GetAlarmByAlarmId(ctx context.Context, id string) (types.Alarm, error)
 
 	// GetOpenedAlarm find one opened alarm with his entity id.
 	// Note : a control is added to prevent fetching future alarms.
-	GetOpenedAlarm(connector, connectorName, id string) (types.Alarm, error)
+	GetOpenedAlarm(ctx context.Context, connector, connectorName, id string) (types.Alarm, error)
 
-	GetOpenedMetaAlarm(ruleId string, valuePath string) (types.Alarm, error)
+	GetOpenedMetaAlarm(ctx context.Context, ruleId string, valuePath string) (types.Alarm, error)
+	GetOpenedMetaAlarmWithEntity(ctx context.Context, ruleId string, valuePath string) (types.AlarmWithEntity, error)
 
 	// GetLastAlarm find the last alarm with an id
-	GetLastAlarm(connector, connectorName, id string) (types.Alarm, error)
-
-	// GetUnresolved returns all alarms that have v.resolved to null or absent field.
-	GetUnresolved() ([]types.Alarm, error)
+	GetLastAlarm(ctx context.Context, connector, connectorName, id string) (types.Alarm, error)
+	GetLastAlarmWithEntity(ctx context.Context, connector, connectorName, id string) (types.AlarmWithEntity, error)
 
 	// GetOpenedAlarmsByIDs gets ongoing alarms related the provided entity ids
-	GetOpenedAlarmsByIDs(ids []string, alarms *[]types.Alarm) error
-	GetOpenedAlarmsWithEntityByIDs(ids []string, alarms *[]types.AlarmWithEntity) error
-	GetCountOpenedAlarmsByIDs(ids []string) (int64, error)
+	GetOpenedAlarmsByIDs(ctx context.Context, ids []string, alarms *[]types.Alarm) error
+	GetOpenedAlarmsWithEntityByIDs(ctx context.Context, ids []string, alarms *[]types.AlarmWithEntity) error
+	GetCountOpenedAlarmsByIDs(ctx context.Context, ids []string) (int64, error)
+	GetOpenedAlarmsWithEntity(ctx context.Context) (mongo.Cursor, error)
 
 	// GetOpenedAlarmsByAlarmIDs gets ongoing alarms related the provided alarm ids
-	GetOpenedAlarmsByAlarmIDs(ids []string, alarms *[]types.Alarm) error
-	GetOpenedAlarmsWithEntityByAlarmIDs(ids []string, alarms *[]types.AlarmWithEntity) error
+	GetOpenedAlarmsByAlarmIDs(ctx context.Context, ids []string, alarms *[]types.Alarm) error
+	GetOpenedAlarmsWithEntityByAlarmIDs(ctx context.Context, ids []string, alarms *[]types.AlarmWithEntity) error
 
-	MassUpdate(alarms []types.Alarm, notUpdateResolved bool) error
-
-	MassUpdateWithEntity(alarms []types.AlarmWithEntity) error
+	MassUpdate(ctx context.Context, alarms []types.Alarm, notUpdateResolved bool) error
 
 	// MassPartialUpdateOpen updates opened alarms matching by list of IDs, applying partial update from alarm
 	MassPartialUpdateOpen(context.Context, *types.Alarm, []string) error
@@ -86,9 +81,25 @@ type Adapter interface {
 
 	GetOpenedAlarmsByConnectorIdleRules(ctx context.Context) ([]types.Alarm, error)
 
-	CountResolvedAlarm(alarmList []string) (int, error)
+	GetOpenedAlarmsWithEntityAfter(ctx context.Context, createdAfter types.CpsTime) (mongo.Cursor, error)
+
+	CountResolvedAlarm(ctx context.Context, alarmList []string) (int, error)
 
 	GetLastAlarmByEntityID(ctx context.Context, entityID string) (*types.Alarm, error)
+
+	// DeleteResolvedAlarms deletes resolved alarms from resolved collection after some duration
+	DeleteResolvedAlarms(ctx context.Context, duration time.Duration) error
+
+	// DeleteArchivedResolvedAlarms deletes resolved alarms from archived collection after some time.
+	DeleteArchivedResolvedAlarms(ctx context.Context, before types.CpsTime) (int64, error)
+
+	// CopyAlarmToResolvedCollection copies alarm to resolved alarm collection
+	CopyAlarmToResolvedCollection(ctx context.Context, alarm types.Alarm) error
+
+	// ArchiveResolvedAlarms archives alarm to archived alarm collection.
+	ArchiveResolvedAlarms(ctx context.Context, before types.CpsTime) (int64, error)
+
+	FindToCheckPbehaviorInfo(ctx context.Context, createdAfter types.CpsTime, idsWithPbehaviors []string) (mongo.Cursor, error)
 }
 
 type EventProcessor interface {
@@ -100,8 +111,8 @@ type EventProcessor interface {
 }
 
 type Service interface {
-	// ResolveAlarms that have v.resolved to null
-	ResolveAlarms(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error)
+	// ResolveClosed close ok alarms.
+	ResolveClosed(ctx context.Context) ([]types.Alarm, error)
 
 	// ResolveCancels close canceled alarms when time has expired
 	ResolveCancels(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error)
@@ -114,5 +125,5 @@ type Service interface {
 
 	// UpdateFlappingAlarms updates the status of the flapping alarms, removing
 	// the flapping status if needed.
-	UpdateFlappingAlarms(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error)
+	UpdateFlappingAlarms(ctx context.Context) ([]types.Alarm, error)
 }

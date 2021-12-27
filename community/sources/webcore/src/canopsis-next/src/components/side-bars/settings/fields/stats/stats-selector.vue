@@ -45,7 +45,7 @@
             v-list-tile
               v-list-tile-title {{ $t('common.trend') }}: {{ stat.trend }}
             v-list-tile
-              v-list-tile-title {{ $t('common.parameters') }}: {{ stat.parameters }}
+              v-list-tile-title {{ $tc('common.parameter', 2) }}: {{ stat.parameters }}
 </template>
 
 <script>
@@ -57,8 +57,7 @@ import { MODALS } from '@/constants';
 
 import { setSeveralFields } from '@/helpers/immutable';
 
-import formMixin from '@/mixins/form';
-import formValidationHeaderMixin from '@/mixins/form/validation-header';
+import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
 
 export default {
   inject: ['$validator'],

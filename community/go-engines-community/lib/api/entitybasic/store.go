@@ -10,29 +10,26 @@ import (
 )
 
 type Store interface {
-	GetOneBy(id string) (*Entity, error)
-	Update(EditRequest) (*Entity, bool, error)
-	Delete(id string) (bool, error)
+	GetOneBy(ctx context.Context, id string) (*Entity, error)
+	Update(ctx context.Context, r EditRequest) (*Entity, bool, error)
+	Delete(ctx context.Context, id string) (bool, error)
 }
 
 type store struct {
-	db           mongo.DbClient
-	dbCollection mongo.DbCollection
-	basicTypes   []string
+	dbCollection      mongo.DbCollection
+	alarmDbCollection mongo.DbCollection
+	basicTypes        []string
 }
 
 func NewStore(db mongo.DbClient) Store {
 	return &store{
-		db:           db,
-		dbCollection: db.Collection(mongo.EntityMongoCollection),
-		basicTypes:   []string{types.EntityTypeResource, types.EntityTypeComponent, types.EntityTypeConnector},
+		dbCollection:      db.Collection(mongo.EntityMongoCollection),
+		alarmDbCollection: db.Collection(mongo.AlarmMongoCollection),
+		basicTypes:        []string{types.EntityTypeResource, types.EntityTypeComponent, types.EntityTypeConnector},
 	}
 }
 
-func (s *store) GetOneBy(id string) (*Entity, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) GetOneBy(ctx context.Context, id string) (*Entity, error) {
 	pipeline := []bson.M{
 		{"$match": bson.M{
 			"_id":  id,
@@ -117,38 +114,36 @@ func (s *store) GetOneBy(id string) (*Entity, error) {
 	return nil, nil
 }
 
-func (s *store) Update(r EditRequest) (*Entity, bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	entity, err := s.GetOneBy(r.ID)
+func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error) {
+	entity, err := s.GetOneBy(ctx, r.ID)
 	if err != nil || entity == nil {
 		return nil, false, err
 	}
 
 	res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID},
 		bson.M{"$set": bson.M{
-			"description":  r.Description,
-			"enabled":      *r.Enabled,
-			"category":     r.Category,
-			"impact_level": r.ImpactLevel,
-			"infos":        transformInfos(r),
+			"description":     r.Description,
+			"enabled":         *r.Enabled,
+			"category":        r.Category,
+			"impact_level":    r.ImpactLevel,
+			"infos":           transformInfos(r),
+			"sli_avail_state": r.SliAvailState,
 		}},
 	)
 	if err != nil || res.MatchedCount == 0 {
 		return nil, false, err
 	}
 
-	err = s.removeEntityLinks(*entity, r)
+	err = s.removeEntityLinks(ctx, *entity, r)
 	if err != nil {
 		return nil, false, err
 	}
-	err = s.addEntityLinks(*entity, r)
+	err = s.addEntityLinks(ctx, *entity, r)
 	if err != nil {
 		return nil, false, err
 	}
 
-	updatedEntity, err := s.GetOneBy(r.ID)
+	updatedEntity, err := s.GetOneBy(ctx, r.ID)
 	if err != nil {
 		return nil, false, err
 	}
@@ -158,10 +153,7 @@ func (s *store) Update(r EditRequest) (*Entity, bool, error) {
 	return updatedEntity, isToggled, nil
 }
 
-func (s *store) Delete(id string) (bool, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	res := s.dbCollection.FindOne(ctx, bson.M{
 		"_id":  id,
 		"type": bson.M{"$in": s.basicTypes},
@@ -179,7 +171,7 @@ func (s *store) Delete(id string) (bool, error) {
 		return false, err
 	}
 
-	alarmRes := s.db.Collection(mongo.AlarmMongoCollection).FindOne(ctx, bson.M{"d": entity.ID})
+	alarmRes := s.alarmDbCollection.FindOne(ctx, bson.M{"d": entity.ID})
 	if err := alarmRes.Err(); err == nil {
 		return false, ErrLinkedEntityToAlarm
 	} else if err != mongodriver.ErrNoDocuments {
@@ -212,10 +204,7 @@ func (s *store) Delete(id string) (bool, error) {
 	return true, nil
 }
 
-func (s *store) removeEntityLinks(entity Entity, r EditRequest) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) removeEntityLinks(ctx context.Context, entity Entity, r EditRequest) error {
 	impacts := diffSlices(entity.ChangeableImpacts, r.Impacts)
 	depends := diffSlices(entity.ChangeableDepends, r.Depends)
 	models := make([]mongodriver.WriteModel, 0)
@@ -251,10 +240,7 @@ func (s *store) removeEntityLinks(entity Entity, r EditRequest) error {
 	return nil
 }
 
-func (s *store) addEntityLinks(entity Entity, r EditRequest) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (s *store) addEntityLinks(ctx context.Context, entity Entity, r EditRequest) error {
 	impacts := diffSlices(r.Impacts, entity.ChangeableImpacts)
 	depends := diffSlices(r.Depends, entity.ChangeableDepends)
 	models := make([]mongodriver.WriteModel, 0)

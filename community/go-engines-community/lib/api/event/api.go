@@ -2,7 +2,6 @@ package event
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -32,7 +31,7 @@ type API interface {
 
 type api struct {
 	publisher                   amqp.Publisher
-	dbClient                    mongo.DbClient
+	alarmCollection             mongo.DbCollection
 	isAllowChangeSeverityToInfo bool
 	logger                      zerolog.Logger
 }
@@ -46,7 +45,7 @@ func NewApi(
 	return &api{
 		publisher:                   publisher,
 		isAllowChangeSeverityToInfo: isAllowChangeSeverityToInfo,
-		dbClient:                    client,
+		alarmCollection:             client.Collection(mongo.AlarmMongoCollection),
 		logger:                      logger,
 	}
 }
@@ -228,6 +227,9 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 		api.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msgf("Long output field is not a string : %s. Replacing it by \"\"", longOutputValue.Type())
 	}
 
+	contextAuthor := c.MustGet(auth.Username).(string)
+	contextUser := c.MustGet(auth.UserKey).(string)
+
 	author, err := getStringField(value, "author")
 	if err != nil && !errors.Is(err, ErrFieldNotExists) {
 		api.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msg(err.Error())
@@ -235,8 +237,17 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 	}
 
 	if author == "" {
-		userID := c.MustGet(auth.UserKey).(string)
-		value.Set("author", fastjson.MustParse(fmt.Sprintf("%q", userID)))
+		value.Set("author", fastjson.MustParse(fmt.Sprintf("%q", contextAuthor)))
+	}
+
+	user, err := getStringField(value, "user_id")
+	if err != nil && !errors.Is(err, ErrFieldNotExists) {
+		api.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msg(err.Error())
+		return false
+	}
+
+	if user == "" {
+		value.Set("user_id", fastjson.MustParse(fmt.Sprintf("%q", contextUser)))
 	}
 
 	var eid string
@@ -307,19 +318,68 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 		}
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
 	var alarm types.Alarm
-	err = api.dbClient.Collection(mongo.AlarmMongoCollection).FindOne(ctx, bson.M{"d": eid}).Decode(&alarm)
+	err = api.alarmCollection.FindOne(c.Request.Context(), bson.M{"d": eid}).Decode(&alarm)
 	if err != nil && err != mongodriver.ErrNoDocuments {
 		api.logger.Err(err).Str("event", string(value.MarshalTo(nil))).Msg("Failed to get alarm from mongo")
 		return false
 	}
 
+	ctx := c.Request.Context()
 	if err != mongodriver.ErrNoDocuments {
 		processArray(value, "ma_parents", alarm.Value.Parents)
 		processArray(value, "ma_children", alarm.Value.Children)
+
+		if alarm.IsMetaAlarm() && len(alarm.Value.Children) > 0 {
+			cursor, err := api.alarmCollection.Aggregate(
+				ctx,
+				[]bson.M{
+					{
+						"$match": bson.M{
+							"d": bson.M{
+								"$in": alarm.Value.Children,
+							},
+						},
+					},
+					{
+						"$unwind": "$v.parents",
+					},
+					{
+						"$group": bson.M{
+							"_id": 1,
+							"related_parents": bson.M{
+								"$addToSet": bson.M{
+									"$cond": bson.M{
+										"if": bson.M{"$ne": bson.A{"$v.parents", alarm.EntityID}},
+										"then": "$v.parents",
+										"else": "$$REMOVE",
+									},
+								},
+							},
+						},
+					},
+				},
+			)
+			if err != nil {
+				api.logger.Err(err).Str("event", string(value.MarshalTo(nil))).Msg("Failed to get related parents info from mongo")
+				return false
+			}
+			defer cursor.Close(ctx)
+
+			var relatedParentsInfo struct{
+				RelatedParents []string `bson:"related_parents"`
+			}
+
+			if cursor.Next(ctx) {
+				err = cursor.Decode(&relatedParentsInfo)
+				if err != nil {
+					api.logger.Err(err).Str("event", string(value.MarshalTo(nil))).Msg("Failed to get related parents info from mongo")
+					return false
+				}
+
+				processArray(value, "ma_related_parents", relatedParentsInfo.RelatedParents)
+			}
+		}
 	}
 
 	err = api.publisher.Publish(

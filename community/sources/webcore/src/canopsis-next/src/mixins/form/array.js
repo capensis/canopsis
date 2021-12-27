@@ -1,20 +1,21 @@
 import { setField } from '@/helpers/immutable';
 
-import baseFormMixin, { modelPropKeyComputed } from './base';
+import { formBaseMixin, modelPropKeyComputed } from './base';
 
 /**
  * @mixin Form mixin
  */
-export default {
-  mixins: [baseFormMixin],
+export const formArrayMixin = {
+  mixins: [formBaseMixin],
   methods: {
     /**
      * Emit event to parent with new array with new item
      *
      * @param {*} value
+     * @return {Array}
      */
     addItemIntoArray(value) {
-      this.updateModel([...this[this[modelPropKeyComputed]], value]);
+      return this.updateModel([...this[this[modelPropKeyComputed]], value]);
     },
 
     /**
@@ -22,13 +23,14 @@ export default {
      *
      * @param {number} index
      * @param {*} value
+     * @return {Array}
      */
     updateItemInArray(index, value) {
       const items = [...this[this[modelPropKeyComputed]]];
 
       items[index] = value;
 
-      this.updateModel(items);
+      return this.updateModel(items);
     },
 
     /**
@@ -37,18 +39,22 @@ export default {
      * @param {number} index
      * @param {string} fieldName
      * @param {*} value
+     * @return {Array}
      */
     updateFieldInArrayItem(index, fieldName, value) {
-      this.updateItemInArray(index, setField(this[this[modelPropKeyComputed]][index], fieldName, value));
+      return this.updateItemInArray(index, setField(this[this[modelPropKeyComputed]][index], fieldName, value));
     },
 
     /**
      * Emit event to parent with new array without array item
      *
      * @param {number} index
+     * @return {Array}
      */
     removeItemFromArray(index) {
-      this.updateModel(this[this[modelPropKeyComputed]].filter((v, i) => i !== index));
+      return this.updateModel(this[this[modelPropKeyComputed]].filter((v, i) => i !== index));
     },
   },
 };
+
+export default formArrayMixin;

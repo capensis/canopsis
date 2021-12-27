@@ -1,11 +1,12 @@
 import { get, isString } from 'lodash';
 
-import { DATETIME_FORMATS, STATS_DURATION_UNITS } from '@/constants';
+import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
 
 import {
-  dateParse,
   prepareStatsStopForMonthPeriod,
   prepareStatsStartForMonthPeriod,
+  convertStartDateIntervalToMoment,
+  convertStopDateIntervalToMoment,
 } from '@/helpers/date/date-intervals';
 
 export default {
@@ -26,10 +27,10 @@ export default {
         }
       }
 
-      tstart = dateParse(tstart, 'start', DATETIME_FORMATS.dateTimePicker);
-      tstop = dateParse(tstop, 'stop', DATETIME_FORMATS.dateTimePicker);
+      tstart = convertStartDateIntervalToMoment(tstart, DATETIME_FORMATS.dateTimePicker);
+      tstop = convertStopDateIntervalToMoment(tstop, DATETIME_FORMATS.dateTimePicker);
 
-      if (periodUnit === STATS_DURATION_UNITS.month) {
+      if (periodUnit === TIME_UNITS.month) {
         periodUnit = periodUnit.toUpperCase();
 
         /**

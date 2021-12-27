@@ -13,65 +13,27 @@
         template(slot="items", slot-scope="props")
           remediation-instruction-assigned-job(
             :job="props.item",
-            :key="`job_${props.item.job_id}`",
-            @execute-job="executeJob"
-          )
-          remediation-instruction-assigned-job-alert-row(
-            :job="props.item",
-            :key="`key_${props.item.job_id}`",
-            @skip="cancelExecuteJob"
+            :key="props.item.job_id",
+            @execute-job="$listeners['execute-job']"
           )
 </template>
 
 <script>
-import entitiesRemediationJobsExecutionsMixin from '@/mixins/entities/remediation/jobs-executions';
-import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
-
 import RemediationInstructionAssignedJob from './partials/remediation-instruction-assigned-job.vue';
-import RemediationInstructionAssignedJobAlertRow from './partials/remediation-instruction-assigned-job-alert-row.vue';
 
 export default {
   components: {
-    RemediationInstructionAssignedJobAlertRow,
     RemediationInstructionAssignedJob,
   },
-  mixins: [
-    entitiesRemediationJobsExecutionsMixin,
-    entitiesRemediationInstructionExecutionMixin,
-  ],
   props: {
     jobs: {
       type: Array,
       default: () => [],
     },
-    executionId: {
-      type: String,
-      required: true,
-    },
-    operationId: {
-      type: [Number, String],
-      required: true,
-    },
   },
   methods: {
     async executeJob(job) {
-      try {
-        await this.createRemediationJobExecution({
-          data: {
-            execution: this.executionId,
-            job: job.job_id,
-            operation: this.operationId,
-          },
-        });
-        await this.pingRemediationInstructionExecution({ id: this.executionId });
-      } catch (err) {
-        this.$popups.error({ text: err.error || this.$t('errors.default') });
-      }
-    },
-
-    async cancelExecuteJob(job) {
-      await this.cancelRemediationJobExecution({ id: job._id });
-      await this.pingRemediationInstructionExecution({ id: this.executionId });
+      this.$emit('execute-job', { job });
     },
   },
 };

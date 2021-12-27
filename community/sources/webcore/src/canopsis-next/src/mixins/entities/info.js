@@ -6,17 +6,16 @@ import { CANOPSIS_EDITION, USER_PERMISSIONS_TO_PAGES_RULES } from '@/constants';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('info');
 
-/**
- * @mixin
- */
-export default {
+export const entitiesInfoMixin = {
   computed: {
     ...mapGetters({
+      appInfo: 'appInfo',
       version: 'version',
       logo: 'logo',
       appTitle: 'appTitle',
       popupTimeout: 'popupTimeout',
       maxMatchedItems: 'maxMatchedItems',
+      checkCountRequestTimeout: 'checkCountRequestTimeout',
       footer: 'footer',
       edition: 'edition',
       stack: 'stack',
@@ -29,7 +28,8 @@ export default {
       casConfig: 'casConfig',
       samlConfig: 'samlConfig',
       timezone: 'timezone',
-      jobExecutorFetchTimeoutSeconds: 'jobExecutorFetchTimeoutSeconds',
+      fileUploadMaxSize: 'fileUploadMaxSize',
+      remediationJobConfigTypes: 'remediationJobConfigTypes',
     }),
 
     isCatVersion() {
@@ -37,12 +37,12 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['fetchLoginInfos', 'fetchAppInfos', 'updateUserInterface']),
+    ...mapActions(['fetchAppInfo', 'updateUserInterface']),
 
-    checkAppInfoAccessByRight(right) {
-      const rightAppInfoRules = USER_PERMISSIONS_TO_PAGES_RULES[right];
+    checkAppInfoAccessByPermission(permission) {
+      const permissionAppInfoRules = USER_PERMISSIONS_TO_PAGES_RULES[permission];
 
-      if (!rightAppInfoRules) {
+      if (!permissionAppInfoRules) {
         return true;
       }
 
@@ -51,7 +51,7 @@ export default {
         stack: this.stack,
       };
 
-      return isMatch(appInfo, USER_PERMISSIONS_TO_PAGES_RULES[right]);
+      return isMatch(appInfo, USER_PERMISSIONS_TO_PAGES_RULES[permission]);
     },
 
     setTitle() {

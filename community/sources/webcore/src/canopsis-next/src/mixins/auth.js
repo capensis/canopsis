@@ -40,30 +40,36 @@ export const authMixin = {
     },
   },
   methods: {
-    ...mapActions(['login', 'logout', 'fetchCurrentUser']),
+    ...mapActions([
+      'login',
+      'applyAccessToken',
+      'logout',
+      'fetchCurrentUser',
+      'filesAccess',
+    ]),
 
     checkIsTourEnabled(tour) {
       return !get(this.currentUser, ['ui_tours', tour]);
     },
 
-    checkAccess(rightId, action = CRUD_ACTIONS.can) {
-      return checkUserAccess(this.currentUserPermissionsById, rightId, action);
+    checkAccess(permissionId, action = CRUD_ACTIONS.can) {
+      return checkUserAccess(this.currentUserPermissionsById, permissionId, action);
     },
 
-    checkCreateAccess(rightId) {
-      return this.checkAccess(rightId, CRUD_ACTIONS.create);
+    checkCreateAccess(permissionId) {
+      return this.checkAccess(permissionId, CRUD_ACTIONS.create);
     },
 
-    checkReadAccess(rightId) {
-      return this.checkAccess(rightId, CRUD_ACTIONS.read);
+    checkReadAccess(permissionId) {
+      return this.checkAccess(permissionId, CRUD_ACTIONS.read);
     },
 
-    checkUpdateAccess(rightId) {
-      return this.checkAccess(rightId, CRUD_ACTIONS.update);
+    checkUpdateAccess(permissionId) {
+      return this.checkAccess(permissionId, CRUD_ACTIONS.update);
     },
 
-    checkDeleteAccess(rightId) {
-      return this.checkAccess(rightId, CRUD_ACTIONS.delete);
+    checkDeleteAccess(permissionId) {
+      return this.checkAccess(permissionId, CRUD_ACTIONS.delete);
     },
   },
 };

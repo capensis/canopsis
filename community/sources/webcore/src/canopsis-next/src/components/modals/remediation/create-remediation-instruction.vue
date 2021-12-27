@@ -4,7 +4,7 @@
       template(slot="title")
         span {{ title }}
       template(slot="text")
-        remediation-instruction-form(v-model="form")
+        remediation-instruction-form(v-model="form", :disabled="disabled")
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
@@ -17,11 +17,16 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { formToRemediationInstruction, remediationInstructionToForm } from '@/helpers/forms/remediation-instruction';
+import {
+  formToRemediationInstruction,
+  remediationInstructionErrorsToForm,
+  remediationInstructionToForm,
+} from '@/helpers/forms/remediation-instruction';
 
-import { validationErrorsMixin } from '@/mixins/form/validation-errors';
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import RemediationInstructionForm from '@/components/other/remediation/instructions/form/remediation-instruction-form.vue';
 
@@ -37,9 +42,10 @@ export default {
     RemediationInstructionForm,
   },
   mixins: [
-    validationErrorsMixin(),
-    submittableMixin(),
-    confirmableModalMixin(),
+    modalInnerMixin,
+    validationErrorsMixinCreator(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     return {
@@ -49,6 +55,10 @@ export default {
   computed: {
     title() {
       return this.config.title || this.$t('modals.createRemediationInstruction.create.title');
+    },
+
+    disabled() {
+      return this.config.disabled;
     },
   },
   methods: {
@@ -63,7 +73,7 @@ export default {
 
           this.$modals.hide();
         } catch (err) {
-          this.setFormErrors(err);
+          this.setFormErrors(remediationInstructionErrorsToForm(err));
         }
       }
     },

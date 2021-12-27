@@ -12,21 +12,21 @@
       v-flex(v-if="!noFilter", xs12)
         pbehavior-filter-field(v-field="form")
       v-flex(xs12)
-        pbehavior-rrule-field(v-field="form")
+        pbehavior-recurrence-rule-field(v-field="form")
 </template>
 
 <script>
-import formMixin from '@/mixins/form/object';
+import { formMixin } from '@/mixins/form';
 
 import PbehaviorGeneralForm from './pbehavior-general-form.vue';
 import PbehaviorCommentsForm from './pbehavior-comments-form.vue';
 import PbehaviorFilterField from './pbehavior-filter-field.vue';
-import PbehaviorRruleField from './pbehavior-rrule-field.vue';
+import PbehaviorRecurrenceRuleField from './pbehavior-recurrence-rule-field.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    PbehaviorRruleField,
+    PbehaviorRecurrenceRuleField,
     PbehaviorFilterField,
     PbehaviorGeneralForm,
     PbehaviorCommentsForm,

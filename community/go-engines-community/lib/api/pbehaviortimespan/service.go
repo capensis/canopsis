@@ -16,24 +16,26 @@ import (
 )
 
 type Service interface {
-	GetTimespans(request TimespansRequest) ([]timespansItemResponse, error)
+	GetTimespans(ctx context.Context, request TimespansRequest) ([]timespansItemResponse, error)
 }
 
 func NewService(dbClient mongo.DbClient, timezoneConfigProvider config.TimezoneConfigProvider) Service {
 	return &service{
-		dbClient:               dbClient,
+		exceptionCollection:    dbClient.Collection(mongo.PbehaviorExceptionMongoCollection),
+		typeCollection:         dbClient.Collection(mongo.PbehaviorTypeMongoCollection),
 		timezoneConfigProvider: timezoneConfigProvider,
 	}
 }
 
 type service struct {
-	dbClient               mongo.DbClient
+	exceptionCollection    mongo.DbCollection
+	typeCollection         mongo.DbCollection
 	timezoneConfigProvider config.TimezoneConfigProvider
 }
 
-func (s *service) GetTimespans(r TimespansRequest) ([]timespansItemResponse, error) {
+func (s *service) GetTimespans(ctx context.Context, r TimespansRequest) ([]timespansItemResponse, error) {
 	location := s.timezoneConfigProvider.Get().Location
-	startAt := r.StartAt.In(location)
+	startAt := r.StartAt.Time.In(location)
 	var endAt time.Time
 	if r.EndAt == nil {
 		endAt = r.ViewTo.Time
@@ -56,11 +58,11 @@ func (s *service) GetTimespans(r TimespansRequest) ([]timespansItemResponse, err
 
 	var spans []timespan.Span
 	viewSpan := timespan.New(
-		r.ViewFrom.In(location),
-		r.ViewTo.In(location),
+		r.ViewFrom.Time.In(location),
+		r.ViewTo.Time.In(location),
 	)
 
-	exdates, err := s.getExdates(r)
+	exdates, err := s.getExdates(ctx, r)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +87,7 @@ func (s *service) GetTimespans(r TimespansRequest) ([]timespansItemResponse, err
 				pbhTypeIDs = append(pbhTypeIDs, exspan.Type())
 			}
 		}
-		pbhTypes, err = s.findPbhTypes(pbhTypeIDs)
+		pbhTypes, err = s.findPbhTypes(ctx, pbhTypeIDs)
 		if err != nil {
 			return nil, err
 		}
@@ -110,7 +112,7 @@ func (s *service) GetTimespans(r TimespansRequest) ([]timespansItemResponse, err
 	return res, nil
 }
 
-func (s *service) getExdates(r TimespansRequest) ([]timespan.Span, error) {
+func (s *service) getExdates(ctx context.Context, r TimespansRequest) ([]timespan.Span, error) {
 	res := make([]timespan.Span, 0, len(r.Exdates))
 	location := s.timezoneConfigProvider.Get().Location
 
@@ -122,7 +124,7 @@ func (s *service) getExdates(r TimespansRequest) ([]timespan.Span, error) {
 		))
 	}
 
-	exceptions, err := s.findExceptions(r.Exceptions)
+	exceptions, err := s.findExceptions(ctx, r.Exceptions)
 	if err != nil {
 		return nil, err
 	}
@@ -140,15 +142,12 @@ func (s *service) getExdates(r TimespansRequest) ([]timespan.Span, error) {
 	return res, nil
 }
 
-func (s *service) findExceptions(ids []string) ([]pbehavior.Exception, error) {
+func (s *service) findExceptions(ctx context.Context, ids []string) ([]pbehavior.Exception, error) {
 	if len(ids) == 0 {
 		return nil, nil
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	coll := s.dbClient.Collection(pbehavior.ExceptionCollectionName)
-	cursor, err := coll.Find(ctx, bson.M{"_id": bson.M{"$in": ids}})
+	cursor, err := s.exceptionCollection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}})
 	if err != nil {
 		return nil, err
 	}
@@ -167,15 +166,12 @@ func (s *service) findExceptions(ids []string) ([]pbehavior.Exception, error) {
 	return exceptions, nil
 }
 
-func (s *service) findPbhTypes(ids []string) (map[string]pbehavior.Type, error) {
+func (s *service) findPbhTypes(ctx context.Context, ids []string) (map[string]pbehavior.Type, error) {
 	if len(ids) == 0 {
 		return nil, nil
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	coll := s.dbClient.Collection(pbehavior.TypeCollectionName)
-	cursor, err := coll.Find(ctx, bson.M{"_id": bson.M{"$in": ids}})
+	cursor, err := s.typeCollection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}})
 	if err != nil {
 		return nil, err
 	}

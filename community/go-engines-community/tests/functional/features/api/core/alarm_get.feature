@@ -54,7 +54,6 @@ Feature: Get alarms
             "connector_name": "test-alarm-get-connectorname",
             "creation_date": 1597030222,
             "display_name": "PK-SL-XK",
-            "extra": {},
             "infos": {},
             "infos_rule_version": {},
             "initial_long_output": "",
@@ -121,7 +120,6 @@ Feature: Get alarms
             "connector_name": "test-alarm-get-connectorname",
             "creation_date": 1597030220,
             "display_name": "ZD-SY-RM",
-            "extra": {},
             "infos": {},
             "infos_rule_version": {},
             "initial_long_output": "",
@@ -185,7 +183,6 @@ Feature: Get alarms
             "connector_name": "test-alarm-get-connectorname",
             "creation_date": 1597030219,
             "display_name": "PU-YA-QB",
-            "extra": {},
             "infos": {},
             "infos_rule_version": {},
             "initial_long_output": "",
@@ -292,7 +289,6 @@ Feature: Get alarms
             "connector_name": "test-alarm-get-connectorname",
             "creation_date": 1596942720,
             "display_name": "RC-KC_tW",
-            "extra": {},
             "infos": {},
             "infos_rule_version": {},
             "initial_long_output": "",
@@ -431,6 +427,141 @@ Feature: Get alarms
     }
     """
 
+  Scenario: given get multi sort request should return sorted alarms by t and last_event_date
+    When I am admin
+    When I do GET /api/v4/alarms?search=test-alarm-multi-sort-get&multi_sort[]=t,asc&multi_sort[]=v.last_event_date,desc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-multi-sort-get-1",
+          "t": 1000000000,
+          "v": {
+            "last_event_date": 1000000000
+          }
+        },
+        {
+          "_id": "test-alarm-multi-sort-get-2",
+          "t": 1000000001,
+          "v": {
+            "last_event_date": 1000000003
+          }
+        },
+        {
+          "_id": "test-alarm-multi-sort-get-3",
+          "t": 1000000001,
+          "v": {
+            "last_event_date": 1000000002
+          }
+        },
+        {
+          "_id": "test-alarm-multi-sort-get-4",
+          "t": 1000000002,
+          "v": {
+            "last_event_date": 1000000004
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 4
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-multi-sort-get&multi_sort[]=t,asc&multi_sort[]=v.last_event_date,asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-multi-sort-get-1",
+          "t": 1000000000,
+          "v": {
+            "last_event_date": 1000000000
+          }
+        },
+        {
+          "_id": "test-alarm-multi-sort-get-3",
+          "t": 1000000001,
+          "v": {
+            "last_event_date": 1000000002
+          }
+        },
+        {
+          "_id": "test-alarm-multi-sort-get-2",
+          "t": 1000000001,
+          "v": {
+            "last_event_date": 1000000003
+          }
+        },
+        {
+          "_id": "test-alarm-multi-sort-get-4",
+          "t": 1000000002,
+          "v": {
+            "last_event_date": 1000000004
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 4
+      }
+    }
+    """
+
+  Scenario: given get multi sort with simple sort is not allowed
+    When I am admin
+    When I do GET /api/v4/alarms?search=test-alarm-multi-sort-get&multi_sort[]=t,asc&multi_sort[]=v.last_event_date,desc&sort_key=v.duration&sort_dir=desc
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "sort_key": "Can't be present both SortBy and MultiSort."
+      }
+    }
+    """
+
+  Scenario: given get with invalid multi sort
+    When I am admin
+    When I do GET /api/v4/alarms?search=test-alarm-multi-sort-get&multi_sort[]=t,asc&multi_sort[]=v.last_event_date
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "multi_sort[]": "Invalid multi_sort value."
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-multi-sort-get&multi_sort[]=t,asc&multi_sort[]=v.last_event_date,bad
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "multi_sort[]": "Invalid multi_sort value."
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-multi-sort-get&multi_sort[]=t,asc&multi_sort[]=v.last_event_date,desc,extra
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "multi_sort[]": "Invalid multi_sort value."
+      }
+    }
+    """
+
   Scenario: given get time inverval request should return alarms which were created
   in this time interval.
     When I am admin
@@ -480,9 +611,9 @@ Feature: Get alarms
     }
     """
 
-  Scenario: given get resolved request should return only resolved alarms
+  Scenario: given get recent resolved request should return only recent resolved alarms and opened
     When I am admin
-    When I do GET /api/v4/alarms?search=test-alarm-get&resolved=true
+    When I do GET /api/v4/alarms?search=test-alarm-get
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -490,6 +621,36 @@ Feature: Get alarms
       "data": [
         {
           "_id": "test-alarm-get-4"
+        },
+        {
+          "_id": "test-alarm-get-3"
+        },
+        {
+          "_id": "test-alarm-get-2"
+        },
+        {
+          "_id": "test-alarm-get-1"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 4
+      }
+    }
+    """
+
+  Scenario: given get resolved request should return only resolved alarms
+    When I am admin
+    When I do GET /api/v4/alarms?search=test-alarm-get&opened=false
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-get-resolved-collection"
         }
       ],
       "meta": {
@@ -798,13 +959,13 @@ Feature: Get alarms
           "consequences": {
               "data": [
                 {
-                  "_id": "test-alarm-get-2"
+                  "_id": "test-alarm-get-4"
                 },
                 {
                   "_id": "test-alarm-get-3"
                 },
                 {
-                  "_id": "test-alarm-get-4"
+                  "_id": "test-alarm-get-2"
                 }
               ],
               "total": 3
@@ -1073,7 +1234,7 @@ Feature: Get alarms
 
   Scenario: given get search request should return assigned instruction for the alarm
     When I am admin
-    When I do GET /api/v4/alarms?search=test-alarm-with-instruction-resource-1
+    When I do GET /api/v4/alarms?search=test-alarm-with-instruction-resource-1&with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -1101,7 +1262,7 @@ Feature: Get alarms
 
   Scenario: given get search request should return assigned instruction, which have an execution for the alarm
     When I am admin
-    When I do GET /api/v4/alarms?search=test-alarm-with-instruction-resource-2
+    When I do GET /api/v4/alarms?search=test-alarm-with-instruction-resource-2&with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -1133,7 +1294,7 @@ Feature: Get alarms
   Scenario: given get search request should return assigned instruction, which have several executions for the alarm
   where some of them is not executed
     When I am admin
-    When I do GET /api/v4/alarms?search=test-alarm-with-instruction-resource-3
+    When I do GET /api/v4/alarms?search=test-alarm-with-instruction-resource-3&with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -1167,9 +1328,36 @@ Feature: Get alarms
     }
     """
 
-  Scenario: given get search request should return alarms with assigned instructions depending from with_instructions or without_instructions fields
+  Scenario: given get search request should return alarms with assigned instructions depending from exclude or include instructions fields
     When I am admin
-    When I do GET /api/v4/alarms?with_instructions=all&search=test-alarm-with-instruction
+    When I do GET /api/v4/alarms?include_instruction_types[]=0&include_instruction_types[]=1&search=test-alarm-with-instruction
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-with-instruction-1"
+        },
+        {
+          "_id": "test-alarm-with-instruction-2"
+        },
+        {
+          "_id": "test-alarm-with-instruction-3"
+        },
+        {
+          "_id": "test-alarm-with-instruction-4"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 4
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?include_instruction_types[]=0&&search=test-alarm-with-instruction
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -1193,7 +1381,25 @@ Feature: Get alarms
       }
     }
     """
-    When I do GET /api/v4/alarms?without_instructions=all&search=test-alarm-with-instruction
+    When I do GET /api/v4/alarms?include_instruction_types[]=1&search=test-alarm-with-instruction
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-with-instruction-4"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?exclude_instruction_types[]=0&exclude_instruction_types[]=1&search=test-alarm-with-instruction
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -1207,7 +1413,49 @@ Feature: Get alarms
       }
     }
     """
-    When I do GET /api/v4/alarms?without_instructions=all&search=instruction-not-exists
+    When I do GET /api/v4/alarms?exclude_instruction_types[]=0&search=test-alarm-with-instruction
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-with-instruction-4"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?exclude_instruction_types[]=1&search=test-alarm-with-instruction
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-with-instruction-1"
+        },
+        {
+          "_id": "test-alarm-with-instruction-2"
+        },
+        {
+          "_id": "test-alarm-with-instruction-3"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 3
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?exclude_instruction_types[]=0&exclude_instruction_types[]=1&search=instruction-not-exists
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -1221,7 +1469,7 @@ Feature: Get alarms
       }
     }
     """
-    When I do GET /api/v4/alarms?with_instructions=test-instruction-to-assign-name&search=test-alarm-with-instruction
+    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-to-assign&search=test-alarm-with-instruction
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -1239,7 +1487,7 @@ Feature: Get alarms
       }
     }
     """
-    When I do GET /api/v4/alarms?with_instructions=test-instruction-to-assign-name,test-instruction-to-assign-with-execution-name&search=test-alarm-with-instruction
+    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-to-assign&include_instructions[]=test-instruction-to-assign-with-execution&search=test-alarm-with-instruction
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -1260,7 +1508,7 @@ Feature: Get alarms
       }
     }
     """
-    When I do GET /api/v4/alarms?with_instructions=all&without_instructions=test-instruction-to-assign-name&search=test-alarm-with-instruction
+    When I do GET /api/v4/alarms?include_instruction_types[]=0&include_instruction_types[]=1&exclude_instructions[]=test-instruction-to-assign&search=test-alarm-with-instruction
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -1271,17 +1519,20 @@ Feature: Get alarms
         },
         {
           "_id": "test-alarm-with-instruction-3"
+        },
+        {
+          "_id": "test-alarm-with-instruction-4"
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 3
       }
     }
     """
-    When I do GET /api/v4/alarms?with_instructions=all&without_instructions=test-instruction-to-assign-name,test-instruction-to-assign-with-execution-name&search=test-alarm-with-instruction
+    When I do GET /api/v4/alarms?include_instruction_types[]=0&include_instruction_types[]=1&exclude_instructions[]=test-instruction-to-assign&exclude_instructions[]=test-instruction-to-assign-with-execution&exclude_instructions[]=test-instruction-to-auto-instruction-filter&search=test-alarm-with-instruction
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -1299,7 +1550,7 @@ Feature: Get alarms
       }
     }
     """
-    When I do GET /api/v4/alarms?with_instructions=test-instruction-with-entity-pattern-1-name
+    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-with-entity-pattern-1
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -1326,7 +1577,7 @@ Feature: Get alarms
       }
     }
     """
-    When I do GET /api/v4/alarms?with_instructions=test-instruction-with-entity-pattern-2-name
+    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-with-entity-pattern-2
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -1353,7 +1604,7 @@ Feature: Get alarms
       }
     }
     """
-    When I do GET /api/v4/alarms?with_instructions=test-instruction-with-patterns-combined-name
+    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-with-patterns-combined
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -1381,7 +1632,7 @@ Feature: Get alarms
     }
     """
 
-    When I do GET /api/v4/alarms?with_instructions=test-alarm-with-pbh-with-some-active-name
+    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-with-pbh-with-some-active&with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -1435,7 +1686,7 @@ Feature: Get alarms
     }
     """
 
-    When I do GET /api/v4/alarms?with_instructions=test-alarm-with-pbh-all-active-name
+    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-with-pbh-all-active&with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -1508,7 +1759,7 @@ Feature: Get alarms
     }
     """
 
-    When I do GET /api/v4/alarms?with_instructions=test-alarm-with-pbh-with-some-disabled-name
+    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-with-pbh-with-some-disabled&with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -1591,6 +1842,147 @@ Feature: Get alarms
         "page_count": 1,
         "per_page": 10,
         "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given get correlation with_instructions request should return
+  meta alarms with children, children should have assigned instruction if they have it, the corresponding
+  metaalarm should have a mark about it.
+    When I am admin
+    When I do GET /api/v4/alarms?search=test-alarm-meta-children-with-instructions&correlation=true&with_instructions=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-meta-children-with-instructions-1",
+          "metaalarm": true,
+          "children_instructions": true,
+          "consequences": {
+            "data": [
+              {
+                "_id": "test-alarm-meta-children-with-instructions-alarm-1-1",
+                "assigned_instructions": [
+                  {
+                    "_id": "test-alarm-meta-children-with-instructions"
+                  }
+                ]
+              }
+            ],
+            "total": 1
+          }
+        },
+        {
+          "_id": "test-alarm-meta-children-with-instructions-2",
+          "metaalarm": true,
+          "children_instructions": false,
+          "consequences": {
+            "data": [
+              {
+                "_id": "test-alarm-meta-children-with-instructions-alarm-2-1"
+              }
+            ],
+            "total": 1
+          }
+        },
+        {
+          "_id": "test-alarm-meta-children-with-instructions-3",
+          "metaalarm": true,
+          "children_instructions": true,
+          "consequences": {
+            "total": 2
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 3
+      }
+    }
+    """
+
+  Scenario: given get correlation without with_instructions request should return
+  meta alarms without mark that children has assigned instructions even if they have it.
+    When I am admin
+    When I do GET /api/v4/alarms?search=test-alarm-meta-children-with-instructions&correlation=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-meta-children-with-instructions-1",
+          "metaalarm": true,
+          "children_instructions": false
+        },
+        {
+          "_id": "test-alarm-meta-children-with-instructions-2",
+          "metaalarm": true,
+          "children_instructions": false
+        },
+        {
+          "_id": "test-alarm-meta-children-with-instructions-3",
+          "metaalarm": true,
+          "children_instructions": false
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 3
+      }
+    }
+    """
+
+  Scenario: given get correlation alarms with the same children, but different alarms shouldn't have alarms of each other
+    When I am admin
+    When I do GET /api/v4/alarms?sort_key=t&sort_dir=desc&correlation=true&with_steps=true&with_consequences=true&search=test-api-correlation
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-api-correlation-metaalarm-1",
+          "metaalarm": true,
+          "consequences": {
+            "data": [
+              {
+                "_id": "test-api-correlation-get-1"
+              },
+              {
+                "_id": "test-api-correlation-get-2"
+              }
+            ],
+            "total": 2
+          }
+        },
+        {
+          "_id": "test-alarm-api-correlation-metaalarm-2",
+          "metaalarm": true,
+          "consequences": {
+            "data": [
+              {
+                "_id": "test-api-correlation-get-3"
+              },
+              {
+                "_id": "test-api-correlation-get-4"
+              }
+            ],
+            "total": 2
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
       }
     }
     """

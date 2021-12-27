@@ -11,8 +11,8 @@
           :entities-type="$constants.ENTITIES_TYPES.entity",
           :filters.sync="settings.widget.parameters.viewFilters",
           :condition.sync="settings.widget.parameters.mainFilterCondition",
-          :has-access-to-add-filter="hasAccessToAddFilter",
-          :has-access-to-edit-filter="hasAccessToEditFilter",
+          :addable="hasAccessToAddFilter",
+          :editable="hasAccessToEditFilter",
           @input="updateMainFilterUpdatedAt"
         )
         v-divider
@@ -37,7 +37,7 @@
           field-sort-column(
             v-model="settings.widget.parameters.sort",
             :columns="sortColumns",
-            :columnsLabel="$t('settings.orderBy')"
+            :columns-label="$t('settings.orderBy')"
           )
           v-divider
           field-default-elements-per-page(v-model="settings.widget.parameters.modalItemsPerPage")
@@ -181,4 +181,3 @@ export default {
   },
 };
 </script>
-

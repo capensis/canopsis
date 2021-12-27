@@ -15,7 +15,7 @@
     )
       template(slot="toolbar", slot-scope="props")
         v-flex
-          c-advanced-search(
+          c-advanced-search-field(
             :query.sync="query",
             :columns="columns",
             :tooltip="$t('search.contextAdvancedSearch')"
@@ -32,10 +32,17 @@
             :has-access-to-edit-filter="hasAccessToEditFilter",
             :has-access-to-user-filter="hasAccessToUserFilter",
             :has-access-to-list-filters="hasAccessToListFilters",
-            :entitiesType="$constants.ENTITIES_TYPES.entity",
+            :entities-type="$constants.ENTITIES_TYPES.entity",
             @input="updateSelectedFilter",
             @update:condition="updateSelectedCondition",
             @update:filters="updateFilters"
+          )
+        v-flex
+          v-checkbox(
+            :input-value="query.no_events",
+            :label="$t('context.noEventsFilter')",
+            color="primary",
+            @change="updateNoEvents"
           )
         v-flex(v-if="hasAccessToCreateEntity")
           context-fab
@@ -56,7 +63,6 @@
               type="top",
               @input="updateQueryPage"
             )
-
       template(v-for="column in columns", :slot="column.value", slot-scope="props")
         entity-column-cell(
           :entity="props.item",
@@ -65,7 +71,6 @@
         )
       template(slot="actions", slot-scope="props")
         actions-panel(:item="props.item", :is-editing-mode="isEditingMode")
-
       template(slot="expand", slot-scope="props")
         entities-list-expand-panel(
           :item="props.item",
@@ -73,9 +78,9 @@
           :tab-id="tabId",
           :columns-filters="columnsFilters"
         )
-
       template(slot="mass-actions", slot-scope="props")
         mass-actions-panel.ml-3(:items="props.selected")
+
     c-table-pagination(
       :total-items="contextEntitiesMeta.total_count",
       :rows-per-page="query.limit",
@@ -86,7 +91,7 @@
 </template>
 
 <script>
-import { omit, isString } from 'lodash';
+import { omit, isString, isObject } from 'lodash';
 
 import { USERS_PERMISSIONS } from '@/constants';
 
@@ -97,9 +102,9 @@ import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
-import widgetExportMixinCreator from '@/mixins/widget/export';
+import { exportCsvMixinCreator } from '@/mixins/widget/export';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
-import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
+import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
 import { permissionsWidgetsContextEntityFilters } from '@/mixins/permissions/widgets/context-entity/filters';
 import { permissionsWidgetsContextEntityCategory } from '@/mixins/permissions/widgets/context-entity/category';
@@ -128,7 +133,7 @@ export default {
     entitiesAlarmColumnsFiltersMixin,
     permissionsWidgetsContextEntityFilters,
     permissionsWidgetsContextEntityCategory,
-    widgetExportMixinCreator({
+    exportCsvMixinCreator({
       createExport: 'createContextExport',
       fetchExport: 'fetchContextExport',
       fetchExportFile: 'fetchContextCsvFile',
@@ -183,12 +188,22 @@ export default {
     this.columnsFiltersPending = false;
   },
   methods: {
+    updateNoEvents(noEvents) {
+      this.updateContentInUserPreference({
+        noEvents,
+      });
+
+      this.query = {
+        ...this.query,
+
+        no_events: noEvents,
+      };
+    },
+
     updateCategory(category) {
       const categoryId = category && category._id;
 
-      this.updateWidgetPreferencesInUserPreference({
-        ...this.userPreference.widget_preferences,
-
+      this.updateContentInUserPreference({
         category: categoryId,
       });
 
@@ -241,7 +256,6 @@ export default {
       return query;
     },
 
-
     fetchList() {
       if (this.hasColumns) {
         const params = this.getQuery();
@@ -266,15 +280,19 @@ export default {
         ? widgetExportColumns
         : widgetColumns;
 
-      this.exportWidgetAsCsv({
+      this.exportAsCsv({
         name: `${this.widget._id}-${new Date().toLocaleString()}`,
+        widgetId: this.widget._id,
         data: {
           fields: columns.map(({ label, value }) => ({ label, name: value })),
           search: query.search,
           category: query.category,
           filter: JSON.stringify(query.filter),
           separator: exportCsvSeparator,
-          time_format: exportCsvDatetimeFormat,
+          /**
+           * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997
+           */
+          time_format: isObject(exportCsvDatetimeFormat) ? exportCsvDatetimeFormat.value : exportCsvDatetimeFormat,
         },
       });
     },

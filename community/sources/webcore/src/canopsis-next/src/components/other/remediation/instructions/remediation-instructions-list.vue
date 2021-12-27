@@ -8,7 +8,6 @@
       :pagination="pagination",
       :is-disabled-item="isDisabledInstruction",
       select-all,
-      expand,
       search,
       advanced-pagination,
       @update:pagination="$emit('update:pagination', $event)"
@@ -18,19 +17,29 @@
           v-btn(@click="$emit('remove-selected', props.selected)", icon)
             v-icon delete
       template(slot="headerCell", slot-scope="props")
-        span.pre-line.header-text {{ props.header.text }}
+        span.c-table-header__text--multiline {{ props.header.text }}
+      template(slot="author", slot-scope="props")
+        span {{ props.item.author.name }}
       template(slot="enabled", slot-scope="props")
         c-enabled(:value="props.item.enabled")
-      template(slot="rating", slot-scope="props")
-        rating-field(:value="props.item.rating", readonly)
-      template(slot="last_modified", slot-scope="props")
-        | {{ props.item.last_modified | date('long', true, null) }}
-      template(slot="avg_complete_time", slot-scope="props")
-        span(v-if="props.item.avg_complete_time") {{ props.item.avg_complete_time | duration }}
-      template(slot="last_executed_on", slot-scope="props")
-        | {{ props.item.last_executed_on | date('long', true, null) }}
+      template(slot="status", slot-scope="props")
+        v-tooltip(v-if="props.item.approval", bottom)
+          slot(slot="activator")
+            v-icon(color="black") query_builder
+          span {{ $t('remediationInstructions.approvalPending') }}
+        v-icon(v-else, color="primary") check_circle
+      template(slot="type", slot-scope="props") {{ $t(`remediationInstructions.types.${props.item.type}`) }}
+      template(slot="last_modified", slot-scope="props") {{ props.item.last_modified | date }}
+      template(slot="last_executed_on", slot-scope="props") {{ props.item.last_executed_on | date }}
       template(slot="actions", slot-scope="props")
-        v-layout(row)
+        v-layout(row, justify-end)
+          c-action-btn(
+            v-if="props.item.approval && isApprovalForCurrentUser(props.item.approval)",
+            :tooltip="$t('remediationInstructions.needApprove')",
+            icon="notification_important",
+            color="error",
+            @click="$emit('approve', props.item)"
+          )
           c-action-btn(
             v-if="hasUpdateAnyRemediationInstructionAccess",
             type="edit",
@@ -49,22 +58,16 @@
             type="delete",
             @click="$emit('remove', props.item)"
           )
-      template(slot="expand", slot-scope="props")
-        remediation-instructions-list-expand-panel(:remediationInstruction="props.item")
 </template>
 
 <script>
-import { permissionsTechnicalRemediationInstructionMixin } from '@/mixins/permissions/technical/remediation-instruction';
+import { get } from 'lodash';
 
-import RatingField from '@/components/forms/fields/rating-field.vue';
-
-import RemediationInstructionsListExpandPanel from './partials/remediation-instructions-list-expand-panel.vue';
+import {
+  permissionsTechnicalRemediationInstructionMixin,
+} from '@/mixins/permissions/technical/remediation-instruction';
 
 export default {
-  components: {
-    RatingField,
-    RemediationInstructionsListExpandPanel,
-  },
   mixins: [permissionsTechnicalRemediationInstructionMixin],
   props: {
     remediationInstructions: {
@@ -100,24 +103,21 @@ export default {
           value: 'enabled',
         },
         {
-          text: this.$t('remediationInstructions.table.rating'),
-          value: 'rating',
+          text: this.$t('common.type'),
+          value: 'type',
         },
         {
-          text: this.$t('remediationInstructions.table.lastModifiedOn'),
+          text: this.$t('common.lastModifiedOn'),
           value: 'last_modified',
         },
         {
-          text: this.$t('remediationInstructions.table.averageTimeCompletion'),
-          value: 'avg_complete_time',
+          text: this.$t('common.status'),
+          value: 'status',
         },
         {
           text: this.$t('remediationInstructions.table.monthExecutions'),
           value: 'month_executions',
-        },
-        {
-          text: this.$t('remediationInstructions.table.lastExecutedBy'),
-          value: 'last_executed_by.username',
+          sortable: false,
         },
         {
           text: this.$t('remediationInstructions.table.lastExecutedOn'),
@@ -132,23 +132,14 @@ export default {
     },
   },
   methods: {
+    isApprovalForCurrentUser(remediationInstruction) {
+      return get(remediationInstruction, 'user._id') === this.currentUser._id
+        || get(remediationInstruction, 'role._id') === this.currentUser.role._id;
+    },
+
     isDisabledInstruction({ deletable }) {
       return !deletable;
     },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.header-text {
-  display: inline-block;
-  height: 100%;
-  vertical-align: middle;
-}
-
-.instruction-list {
-  /deep/ thead th {
-    vertical-align: middle;
-  }
-}
-</style>

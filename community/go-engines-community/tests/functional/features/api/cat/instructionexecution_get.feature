@@ -7,6 +7,7 @@ Feature: get running instruction
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-execution-get-1-name",
       "alarm_patterns": [
         {
@@ -15,18 +16,22 @@ Feature: get running instruction
       ],
       "description": "test-instruction-execution-get-1-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-execution-get-1-step-1",
           "operations": [
             {
               "name": "test-instruction-execution-get-1-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-get-1-step-1-operation-1-description"
             },
             {
               "name": "test-instruction-execution-get-1-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"m"},
               "description": "test-instruction-execution-get-1-step-1-operation-2-description"
             }
           ],
@@ -38,7 +43,7 @@ Feature: get running instruction
           "operations": [
             {
               "name": "test-instruction-execution-get-1-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 2, "unit":"h"},
               "description": "test-instruction-execution-get-1-step-2-operation-1-description"
             }
           ],
@@ -68,21 +73,21 @@ Feature: get running instruction
       "steps": [
         {
           "name": "test-instruction-execution-get-1-step-1",
-          "time_to_complete": {"seconds": 4, "unit":"s"},
+          "time_to_complete": {"value": 181, "unit":"s"},
           "completed_at": 0,
           "failed_at": 0,
           "operations": [
             {
               "completed_at": 0,
               "name": "test-instruction-execution-get-1-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-get-1-step-1-operation-1-description"
             },
             {
               "started_at": 0,
               "completed_at": 0,
               "name": "test-instruction-execution-get-1-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"m"},
               "description": "",
               "jobs": []
             }
@@ -91,7 +96,7 @@ Feature: get running instruction
         },
         {
           "name": "test-instruction-execution-get-1-step-2",
-          "time_to_complete": {"seconds": 6, "unit":"s"},
+          "time_to_complete": {"value": 2, "unit":"h"},
           "completed_at": 0,
           "failed_at": 0,
           "operations": [
@@ -99,7 +104,7 @@ Feature: get running instruction
               "started_at": 0,
               "completed_at": 0,
               "name": "test-instruction-execution-get-1-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 2, "unit":"h"},
               "description": "",
               "jobs": []
             }
@@ -116,6 +121,7 @@ Feature: get running instruction
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-execution-get-2-name",
       "alarm_patterns": [
         {
@@ -124,18 +130,22 @@ Feature: get running instruction
       ],
       "description": "test-instruction-execution-get-2-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-execution-get-2-step-1",
           "operations": [
             {
               "name": "test-instruction-execution-get-2-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-get-2-step-1-operation-1-description"
             },
             {
               "name": "test-instruction-execution-get-2-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-execution-get-2-step-1-operation-2-description"
             }
           ],
@@ -147,7 +157,7 @@ Feature: get running instruction
           "operations": [
             {
               "name": "test-instruction-execution-get-2-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 6, "unit":"s"},
               "description": "test-instruction-execution-get-2-step-2-operation-1-description"
             }
           ],
@@ -181,18 +191,18 @@ Feature: get running instruction
       "steps": [
         {
           "name": "test-instruction-execution-get-2-step-1",
-          "time_to_complete": {"seconds": 4, "unit":"s"},
+          "time_to_complete": {"value": 4, "unit":"s"},
           "failed_at": 0,
           "operations": [
             {
               "name": "test-instruction-execution-get-2-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-get-2-step-1-operation-1-description",
               "jobs": []
             },
             {
               "name": "test-instruction-execution-get-2-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-execution-get-2-step-1-operation-2-description",
               "jobs": []
             }
@@ -201,14 +211,14 @@ Feature: get running instruction
         },
         {
           "name": "test-instruction-execution-get-2-step-2",
-          "time_to_complete": {"seconds": 6, "unit":"s"},
+          "time_to_complete": {"value": 6, "unit":"s"},
           "completed_at": 0,
           "failed_at": 0,
           "operations": [
             {
               "completed_at": 0,
               "name": "test-instruction-execution-get-2-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 6, "unit":"s"},
               "description": "test-instruction-execution-get-2-step-2-operation-1-description",
               "jobs": []
             }
@@ -230,6 +240,7 @@ Feature: get running instruction
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-execution-get-3-name",
       "alarm_patterns": [
         {
@@ -238,18 +249,22 @@ Feature: get running instruction
       ],
       "description": "test-instruction-execution-get-3-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-execution-get-3-step-1",
           "operations": [
             {
               "name": "test-instruction-execution-get-3-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-get-3-step-1-operation-1-description"
             },
             {
               "name": "test-instruction-execution-get-3-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-execution-get-3-step-1-operation-2-description"
             }
           ],
@@ -261,7 +276,7 @@ Feature: get running instruction
           "operations": [
             {
               "name": "test-instruction-execution-get-3-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 6, "unit":"s"},
               "description": "test-instruction-execution-get-3-step-2-operation-1-description"
             }
           ],
@@ -297,19 +312,19 @@ Feature: get running instruction
       "steps": [
         {
           "name": "test-instruction-execution-get-3-step-1",
-          "time_to_complete": {"seconds": 4, "unit":"s"},
+          "time_to_complete": {"value": 4, "unit":"s"},
           "completed_at": 0,
           "failed_at": 0,
           "operations": [
             {
               "name": "test-instruction-execution-get-3-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-get-3-step-1-operation-1-description"
             },
             {
               "completed_at": 0,
               "name": "test-instruction-execution-get-3-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-execution-get-3-step-1-operation-2-description",
               "jobs": []
             }
@@ -318,7 +333,7 @@ Feature: get running instruction
         },
         {
           "name": "test-instruction-execution-get-3-step-2",
-          "time_to_complete": {"seconds": 6, "unit":"s"},
+          "time_to_complete": {"value": 6, "unit":"s"},
           "completed_at": 0,
           "failed_at": 0,
           "operations": [
@@ -326,7 +341,7 @@ Feature: get running instruction
               "started_at": 0,
               "completed_at": 0,
               "name": "test-instruction-execution-get-3-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 6, "unit":"s"},
               "description": "",
               "jobs": []
             }
@@ -345,6 +360,7 @@ Feature: get running instruction
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-execution-get-4-name",
       "alarm_patterns": [
         {
@@ -353,13 +369,17 @@ Feature: get running instruction
       ],
       "description": "test-instruction-execution-get-4-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-execution-get-4-step-1",
           "operations": [
             {
               "name": "test-instruction-execution-get-4-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-get-4-step-1-operation-1-description"
             }
           ],
@@ -384,10 +404,10 @@ Feature: get running instruction
     Then the response code should be 404
 
   Scenario: given unauth request should not allow access
-    When I do GET /api/v4/cat/executions/test-instruction-execution-running
+    When I do GET /api/v4/cat/executions/notexist
     Then the response code should be 401
 
   Scenario: given get request and auth user without permissions should not allow access
     When I am noperms
-    When I do GET /api/v4/cat/executions/test-instruction-execution-running
+    When I do GET /api/v4/cat/executions/notexist
     Then the response code should be 403

@@ -12,13 +12,13 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS } from '@/constants';
+import { MODALS, ROUTES_NAMES } from '@/constants';
 
 import { generateCopyOfViewTab, getViewsTabsWidgetsIdsMappings } from '@/helpers/entities';
 import { viewToRequest } from '@/helpers/forms/view';
 
 import { authMixin } from '@/mixins/auth';
-import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
+import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 
 const { mapGetters: viewMapGetters, mapActions: viewMapActions } = createNamespacedHelpers('view');
 
@@ -84,7 +84,7 @@ export default {
       await this.addTabIntoViewById(newTab, viewId);
 
       this.$router.push({
-        name: 'view',
+        name: ROUTES_NAMES.view,
         params: {
           id: viewId,
         },

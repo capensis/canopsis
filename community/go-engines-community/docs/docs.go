@@ -124,8 +124,44 @@ var doc = `{
                         "in": "query"
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "exclude_instruction_types",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "exclude_instructions",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "include_instruction_types",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "include_instructions",
                         "in": "query"
                     },
                     {
@@ -136,11 +172,6 @@ var doc = `{
                     {
                         "type": "boolean",
                         "name": "opened",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "resolved",
                         "in": "query"
                     },
                     {
@@ -156,16 +187,6 @@ var doc = `{
                     {
                         "type": "integer",
                         "name": "tstop",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "with_instructions",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "without_instructions",
                         "in": "query"
                     }
                 ],
@@ -341,7 +362,7 @@ var doc = `{
                         "BasicAuth": []
                     }
                 ],
-                "description": "Get paginated list of alarms",
+                "description": "Get paginated list of alarms. Use parameters \"multi_sort[]=field_1,asc\u0026multi_sort[]=field_2,desc\u0026multi_sort[]=field_3,asc\" to sort list by multiple fields. \"sort_key\", \"sort_dir\" are left for compatibility with older ways of sorting",
                 "consumes": [
                     "application/json"
                 ],
@@ -374,8 +395,44 @@ var doc = `{
                         "in": "query"
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "exclude_instruction_types",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "exclude_instructions",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "include_instruction_types",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "include_instructions",
                         "in": "query"
                     },
                     {
@@ -386,6 +443,15 @@ var doc = `{
                     {
                         "type": "boolean",
                         "name": "manual",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "name": "multi_sort[]",
                         "in": "query"
                     },
                     {
@@ -401,11 +467,6 @@ var doc = `{
                     {
                         "type": "boolean",
                         "name": "paginate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "resolved",
                         "in": "query"
                     },
                     {
@@ -439,18 +500,13 @@ var doc = `{
                         "in": "query"
                     },
                     {
-                        "type": "string",
+                        "type": "boolean",
                         "name": "with_instructions",
                         "in": "query"
                     },
                     {
                         "type": "boolean",
                         "name": "with_steps",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "without_instructions",
                         "in": "query"
                     }
                 ],
@@ -480,6 +536,35 @@ var doc = `{
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/app-info": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get application information",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "internal"
+                ],
+                "summary": "Get application information",
+                "operationId": "internal-get-app-info",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/appinfo.AppInfoResponse"
                         }
                     }
                 }
@@ -874,17 +959,17 @@ var doc = `{
                 }
             }
         },
-        "/bulk/heartbeats": {
-            "put": {
+        "/bulk/pbehaviors": {
+            "post": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
                     }
                 ],
-                "description": "Bulk update heartbeats by id",
+                "description": "Bulk create pbehaviors",
                 "consumes": [
                     "application/json"
                 ],
@@ -892,10 +977,10 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "heartbeats"
+                    "pbehaviors"
                 ],
-                "summary": "Bulk update heartbeats by id",
-                "operationId": "heartbeats-bulk-update-by-id",
+                "summary": "Bulk create pbehaviors",
+                "operationId": "pbehaviors-bulk-create",
                 "parameters": [
                     {
                         "description": "body",
@@ -905,7 +990,62 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/heartbeat.BulkUpdateRequestItem"
+                                "$ref": "#/definitions/pbehavior.CreateRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/pbehavior.Response"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/bulk/pbehaviors/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk update pbehaviors by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehaviors"
+                ],
+                "summary": "Bulk update pbehaviors by id",
+                "operationId": "pbehaviors-bulk-update-by-id",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/pbehavior.BulkUpdateRequestItem"
                             }
                         }
                     }
@@ -916,10 +1056,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/definitions/heartbeat.Response"
-                                }
+                                "$ref": "#/definitions/pbehavior.Response"
                             }
                         }
                     },
@@ -937,77 +1074,21 @@ var doc = `{
                     }
                 }
             },
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Bulk create heartbeats",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "heartbeats"
-                ],
-                "summary": "Bulk create heartbeats",
-                "operationId": "heartbeats-bulk-create",
-                "parameters": [
-                    {
-                        "description": "body",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/heartbeat.CreateRequest"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/definitions/heartbeat.Response"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.ValidationErrorResponse"
-                        }
-                    }
-                }
-            },
             "delete": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
                     }
                 ],
-                "description": "Bulk delete heartbeats by id",
+                "description": "Bulk delete pbehaviors by id",
                 "tags": [
-                    "heartbeats"
+                    "pbehaviors"
                 ],
-                "summary": "Bulk delete heartbeats by id",
-                "operationId": "heartbeats-bulk-delete-by-id",
+                "summary": "Bulk delete pbehaviors by id",
+                "operationId": "pbehaviors-bulk-delete-by-id",
                 "parameters": [
                     {
                         "type": "array",
@@ -1363,12 +1444,19 @@ var doc = `{
                 "operationId": "contextgraph-import-create-import",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "source",
+                        "name": "source",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
                         "description": "body",
                         "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/contextgraph.Request"
+                            "$ref": "#/definitions/contextgraph.ImportRequest"
                         }
                     }
                 ],
@@ -1542,6 +1630,26 @@ var doc = `{
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "no_events",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "paginate",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "search",
                         "in": "query"
@@ -1554,6 +1662,11 @@ var doc = `{
                     {
                         "type": "string",
                         "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "with_flags",
                         "in": "query"
                     }
                 ],
@@ -1588,11 +1701,59 @@ var doc = `{
                 }
             }
         },
+        "/entities/clean": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Clean disabled entities",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "entities"
+                ],
+                "summary": "Clean disabled entities",
+                "operationId": "entities-clean",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "name": "archive",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "archive_dependencies",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/entities/pbehaviors": {
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -2850,17 +3011,17 @@ var doc = `{
                 }
             }
         },
-        "/heartbeats": {
+        "/file": {
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
                     }
                 ],
-                "description": "Get paginated list of heartbeats",
+                "description": "Get list of file objects by ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -2868,10 +3029,244 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "heartbeats"
+                    "files"
                 ],
-                "summary": "Find heartbeats",
-                "operationId": "heartbeats-find-all",
+                "summary": "List files by ID",
+                "operationId": "files-list",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/file.File"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Upload files",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "Upload files",
+                "operationId": "file-upload",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "request",
+                        "name": "files",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "file visibility",
+                        "name": "public",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/file.File"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/file-access": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "description": "Get file access",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get file access",
+                "operationId": "auth-get-file-access",
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/file/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get file content by ID or download with file name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "Get file by ID",
+                "operationId": "files-get",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "file id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Delete file by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "Delete file",
+                "operationId": "files-delete",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "file id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/flapping-rules": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get paginated list of flapping rule",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flappingrules"
+                ],
+                "summary": "Find all flapping rule",
+                "operationId": "flappingrules-find-all",
                 "parameters": [
                     {
                         "type": "integer",
@@ -2892,18 +3287,6 @@ var doc = `{
                         "description": "search query",
                         "name": "search",
                         "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "sort query",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "sort query",
-                        "name": "sort_by",
-                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -2920,7 +3303,7 @@ var doc = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/heartbeat.Response"
+                                                "$ref": "#/definitions/flappingrule.Response"
                                             }
                                         }
                                     }
@@ -2931,7 +3314,7 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                            "$ref": "#/definitions/common.ErrorResponse"
                         }
                     }
                 }
@@ -2939,13 +3322,13 @@ var doc = `{
             "post": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
                     }
                 ],
-                "description": "Create heartbeat",
+                "description": "Create flapping rule",
                 "consumes": [
                     "application/json"
                 ],
@@ -2953,10 +3336,10 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "heartbeats"
+                    "flappingrules"
                 ],
-                "summary": "Create heartbeat",
-                "operationId": "heartbeats-create",
+                "summary": "Create flapping rule",
+                "operationId": "flappingrules-create",
                 "parameters": [
                     {
                         "description": "body",
@@ -2964,7 +3347,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/heartbeat.CreateRequest"
+                            "$ref": "#/definitions/flappingrule.CreateRequest"
                         }
                     }
                 ],
@@ -2972,41 +3355,41 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/heartbeat.Response"
+                            "$ref": "#/definitions/flappingrule.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                            "$ref": "#/definitions/common.ErrorResponse"
                         }
                     }
                 }
             }
         },
-        "/heartbeats/{id}": {
+        "/flapping-rules/{id}": {
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
                     }
                 ],
-                "description": "Get heartbeat by id",
+                "description": "Get flapping rule by id",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "heartbeats"
+                    "flappingrules"
                 ],
-                "summary": "Get heartbeat by id",
-                "operationId": "heartbeats-get-by-id",
+                "summary": "Get flapping rule by id",
+                "operationId": "flappingrules-get-by-id",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "heartbeat id",
+                        "description": "flapping rule id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -3016,7 +3399,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/heartbeat.Response"
+                            "$ref": "#/definitions/flappingrule.Response"
                         }
                     },
                     "404": {
@@ -3030,13 +3413,13 @@ var doc = `{
             "put": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
                     }
                 ],
-                "description": "Update heartbeat by id",
+                "description": "Update flapping rule by id",
                 "consumes": [
                     "application/json"
                 ],
@@ -3044,14 +3427,14 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "heartbeats"
+                    "flappingrules"
                 ],
-                "summary": "Update heartbeat by id",
-                "operationId": "heartbeats-update-by-id",
+                "summary": "Update flapping rule by id",
+                "operationId": "flappingrules-update-by-id",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "heartbeat id",
+                        "description": "flapping rule id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -3062,7 +3445,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/heartbeat.UpdateRequest"
+                            "$ref": "#/definitions/flappingrule.UpdateRequest"
                         }
                     }
                 ],
@@ -3070,7 +3453,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/heartbeat.Response"
+                            "$ref": "#/definitions/flappingrule.Response"
                         }
                     },
                     "400": {
@@ -3090,22 +3473,22 @@ var doc = `{
             "delete": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
-                        "BasicAuth": []
+                        "BasicAuth` + "`" + `": []
                     }
                 ],
-                "description": "Delete heartbeat by id",
+                "description": "Delete flapping rule by id",
                 "tags": [
-                    "heartbeats"
+                    "flappingrules"
                 ],
-                "summary": "Delete heartbeat by id",
-                "operationId": "heartbeats-delete-by-id",
+                "summary": "Delete flapping rule by id",
+                "operationId": "flappingrules-delete-by-id",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "heartbeat id",
+                        "description": "flapping rule id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -3453,56 +3836,6 @@ var doc = `{
                 }
             }
         },
-        "/internal/app_info": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Get application information",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "internal"
-                ],
-                "summary": "Get application information",
-                "operationId": "internal-get-app-info",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/appinfo.AppInfoResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/internal/login_info": {
-            "get": {
-                "description": "Get login information",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "internal"
-                ],
-                "summary": "Get login information",
-                "operationId": "internal-get-login-info",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/appinfo.LoginConfigResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/internal/user_interface": {
             "put": {
                 "security": [
@@ -3573,6 +3906,96 @@ var doc = `{
                 }
             }
         },
+        "/logged-user-count": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get logged user count",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get logged user count",
+                "operationId": "auth-logged-user-count",
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "Log in",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Log in",
+                "operationId": "auth-login",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.loginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/auth.loginResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "description": "Log out",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Log out",
+                "operationId": "auth-logout",
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/message-rate-stats": {
             "get": {
                 "security": [
@@ -3610,32 +4033,61 @@ var doc = `{
                     },
                     {
                         "type": "integer",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "paginate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "sort_by",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "name": "to",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/messageratestats.StatsListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/notification": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get notification settings",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Get notification settings",
+                "operationId": "notification-get",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "current page",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "items per page",
+                        "name": "limit",
                         "in": "query",
                         "required": true
                     }
@@ -3654,18 +4106,72 @@ var doc = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/messageratestats.StatsResponse"
+                                                "$ref": "#/definitions/notification.Notification"
                                             }
                                         }
                                     }
                                 }
                             ]
                         }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update notification settings",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Update notification settings",
+                "operationId": "notification-update",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "type id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/notification.Notification"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/notification.Notification"
+                        }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
                         }
                     }
                 }
@@ -4705,7 +5211,7 @@ var doc = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -4790,7 +5296,7 @@ var doc = `{
             "post": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -4815,7 +5321,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pbehavior.EditRequest"
+                            "$ref": "#/definitions/pbehavior.CreateRequest"
                         }
                     }
                 ],
@@ -4839,7 +5345,7 @@ var doc = `{
             "post": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -4856,7 +5362,7 @@ var doc = `{
                     "pbehaviors"
                 ],
                 "summary": "Count entities matching filter",
-                "operationId": "pbehavior-countfilter",
+                "operationId": "pbehaviors-countfilter",
                 "parameters": [
                     {
                         "description": "body",
@@ -4894,7 +5400,7 @@ var doc = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -4936,7 +5442,7 @@ var doc = `{
             "put": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -4968,7 +5474,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pbehavior.EditRequest"
+                            "$ref": "#/definitions/pbehavior.UpdateRequest"
                         }
                     }
                 ],
@@ -4996,7 +5502,7 @@ var doc = `{
             "delete": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -5007,7 +5513,7 @@ var doc = `{
                     "pbehaviors"
                 ],
                 "summary": "Delete pbehavior by id",
-                "operationId": "pbehavior-delete-by-id",
+                "operationId": "pbehaviors-delete-by-id",
                 "parameters": [
                     {
                         "type": "string",
@@ -5028,13 +5534,73 @@ var doc = `{
                         }
                     }
                 }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Patch partial set of behavior attributes by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehaviors"
+                ],
+                "summary": "Patch partial set of behavior attributes by id",
+                "operationId": "pbehaviors-patch-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "pbehavior id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pbehavior.PatchRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pbehavior.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
             }
         },
         "/pbehaviors/{id}/entities": {
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "JWTAuth": []
                     },
                     {
                         "BasicAuth": []
@@ -5488,6 +6054,268 @@ var doc = `{
                 }
             }
         },
+        "/resolve-rules": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get paginated list of resolve rule",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "resolverules"
+                ],
+                "summary": "Find all resolve rule",
+                "operationId": "resolverules-find-all",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "current page",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "items per page",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "search query",
+                        "name": "search",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.PaginatedListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/resolverule.Response"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Create resolve rule",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "resolverules"
+                ],
+                "summary": "Create resolve rule",
+                "operationId": "resolverules-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/resolverule.CreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/resolverule.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/resolve-rules/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get resolve rule by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "resolverules"
+                ],
+                "summary": "Get resolve rule by id",
+                "operationId": "resolverules-get-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "resolve rule id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/resolverule.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update resolve rule by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "resolverules"
+                ],
+                "summary": "Update resolve rule by id",
+                "operationId": "resolverules-update-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "resolve rule id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/resolverule.UpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/resolverule.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth` + "`" + `": []
+                    }
+                ],
+                "description": "Delete resolve rule by id",
+                "tags": [
+                    "resolverules"
+                ],
+                "summary": "Delete resolve rule by id",
+                "operationId": "resolverules-delete-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "resolve rule id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/roles": {
             "get": {
                 "security": [
@@ -5896,6 +6724,84 @@ var doc = `{
                 }
             }
         },
+        "/scenarios/check-priority": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Check priority",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "scenarios"
+                ],
+                "summary": "Check priority",
+                "operationId": "scenarios-check-priority",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/scenario.CheckPriorityRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/scenario.CheckPriorityResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/scenarios/minimal-priority": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get minimal priority",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "scenarios"
+                ],
+                "summary": "Get minimal priority",
+                "operationId": "scenarios-get-minimal-priority",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/scenario.GetMinimalPriorityResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/scenarios/{id}": {
             "get": {
                 "security": [
@@ -6036,44 +6942,6 @@ var doc = `{
                 }
             }
         },
-        "/sessions-count": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Get counts of active sessions",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "Get counts of active sessions",
-                "operationId": "auth-get-session-counts",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/auth.sessionsCountResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.ValidationErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/state-settings": {
             "get": {
                 "security": [
@@ -6199,6 +7067,105 @@ var doc = `{
                 }
             }
         },
+        "/user-preferences": {
+            "put": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update user preferences by widget id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "userpreference"
+                ],
+                "summary": "Update user preferences by widget id",
+                "operationId": "userpreference-update-by-widget-id",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userpreferences.EditRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/userpreferences.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user-preferences/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get user preferences by widget id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "userpreference"
+                ],
+                "summary": "Get user preferences by widget id",
+                "operationId": "userpreference-get-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "widget id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/userpreferences.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "get": {
                 "security": [
@@ -6246,6 +7213,12 @@ var doc = `{
                         "type": "string",
                         "description": "sort query",
                         "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "role permission",
+                        "name": "permission",
                         "in": "query"
                     },
                     {
@@ -7333,6 +8306,9 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/alarm.Causes"
                 },
+                "children_instructions": {
+                    "type": "boolean"
+                },
                 "consequences": {
                     "type": "object",
                     "$ref": "#/definitions/alarm.Children"
@@ -7356,6 +8332,15 @@ var doc = `{
                         "type": "object",
                         "additionalProperties": true
                     }
+                },
+                "is_all_auto_instructions_completed": {
+                    "type": "boolean"
+                },
+                "is_auto_instruction_running": {
+                    "type": "boolean"
+                },
+                "is_manual_instruction_waiting_result": {
+                    "type": "boolean"
                 },
                 "links": {
                     "type": "object",
@@ -7399,6 +8384,9 @@ var doc = `{
                 "t": {
                     "type": "integer"
                 },
+                "user_id": {
+                    "type": "string"
+                },
                 "val": {
                     "type": "integer"
                 }
@@ -7425,6 +8413,9 @@ var doc = `{
                 "t": {
                     "type": "integer"
                 },
+                "user_id": {
+                    "type": "string"
+                },
                 "val": {
                     "type": "string"
                 }
@@ -7438,6 +8429,9 @@ var doc = `{
                     "$ref": "#/definitions/alarm.AlarmStep"
                 },
                 "activation_date": {
+                    "type": "integer"
+                },
+                "active_duration": {
                     "type": "integer"
                 },
                 "canceled": {
@@ -7477,10 +8471,6 @@ var doc = `{
                 },
                 "events_count": {
                     "type": "integer"
-                },
-                "extra": {
-                    "type": "object",
-                    "additionalProperties": true
                 },
                 "infos": {
                     "type": "object",
@@ -7536,6 +8526,9 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/types.PbehaviorInfo"
                 },
+                "pbh_inactive_duration": {
+                    "type": "integer"
+                },
                 "resolved": {
                     "type": "integer"
                 },
@@ -7545,6 +8538,9 @@ var doc = `{
                 "snooze": {
                     "type": "object",
                     "$ref": "#/definitions/alarm.AlarmStep"
+                },
+                "snooze_duration": {
+                    "type": "integer"
                 },
                 "state": {
                     "type": "object",
@@ -7649,6 +8645,18 @@ var doc = `{
                 "correlation": {
                     "type": "boolean"
                 },
+                "exclude_instruction_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "exclude_instructions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "fields": {
                     "type": "object",
                     "$ref": "#/definitions/export.Fields"
@@ -7656,13 +8664,22 @@ var doc = `{
                 "filter": {
                     "type": "string"
                 },
+                "include_instruction_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "include_instructions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "manual": {
                     "type": "boolean"
                 },
                 "opened": {
-                    "type": "boolean"
-                },
-                "resolved": {
                     "type": "boolean"
                 },
                 "search": {
@@ -7683,14 +8700,8 @@ var doc = `{
                 "with_consequences": {
                     "type": "boolean"
                 },
-                "with_instructions": {
-                    "type": "string"
-                },
                 "with_steps": {
                     "type": "boolean"
-                },
-                "without_instructions": {
-                    "type": "string"
                 }
             }
         },
@@ -7720,16 +8731,37 @@ var doc = `{
                 "correlation": {
                     "type": "boolean"
                 },
+                "exclude_instruction_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "exclude_instructions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "filter": {
                     "type": "string"
+                },
+                "include_instruction_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "include_instructions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "manual": {
                     "type": "boolean"
                 },
                 "opened": {
-                    "type": "boolean"
-                },
-                "resolved": {
                     "type": "boolean"
                 },
                 "search": {
@@ -7740,12 +8772,6 @@ var doc = `{
                 },
                 "tstop": {
                     "type": "integer"
-                },
-                "with_instructions": {
-                    "type": "string"
-                },
-                "without_instructions": {
-                    "type": "string"
                 }
             }
         },
@@ -7791,14 +8817,44 @@ var doc = `{
                 "correlation": {
                     "type": "boolean"
                 },
+                "exclude_instruction_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "exclude_instructions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "filter": {
                     "type": "string"
+                },
+                "include_instruction_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "include_instructions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "limit": {
                     "type": "integer"
                 },
                 "manual": {
                     "type": "boolean"
+                },
+                "multi_sort[]": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "opened": {
                     "type": "boolean"
@@ -7807,9 +8863,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "paginate": {
-                    "type": "boolean"
-                },
-                "resolved": {
                     "type": "boolean"
                 },
                 "search": {
@@ -7831,13 +8884,10 @@ var doc = `{
                     "type": "boolean"
                 },
                 "with_instructions": {
-                    "type": "string"
+                    "type": "boolean"
                 },
                 "with_steps": {
                     "type": "boolean"
-                },
-                "without_instructions": {
-                    "type": "string"
                 }
             }
         },
@@ -7894,14 +8944,18 @@ var doc = `{
                 "edition": {
                     "type": "string"
                 },
+                "file_upload_max_size": {
+                    "type": "integer"
+                },
                 "footer": {
                     "type": "string"
                 },
-                "jobexecutorfetchtimeoutseconds": {
-                    "type": "integer"
-                },
                 "language": {
                     "type": "string"
+                },
+                "login": {
+                    "type": "object",
+                    "$ref": "#/definitions/appinfo.LoginConf"
                 },
                 "login_page_description": {
                     "type": "string"
@@ -7916,6 +8970,10 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/appinfo.PopupTimeout"
                 },
+                "remediation": {
+                    "type": "object",
+                    "$ref": "#/definitions/appinfo.RemediationConf"
+                },
                 "stack": {
                     "type": "string"
                 },
@@ -7927,18 +8985,18 @@ var doc = `{
                 }
             }
         },
-        "appinfo.IntervalUnit": {
+        "appinfo.JobConfigType": {
             "type": "object",
             "properties": {
-                "interval": {
-                    "type": "integer"
+                "auth_type": {
+                    "type": "string"
                 },
-                "unit": {
+                "name": {
                     "type": "string"
                 }
             }
         },
-        "appinfo.LoginConfig": {
+        "appinfo.LoginConf": {
             "type": "object",
             "properties": {
                 "casconfig": {
@@ -7966,38 +9024,27 @@ var doc = `{
                 }
             }
         },
-        "appinfo.LoginConfigResponse": {
-            "type": "object",
-            "properties": {
-                "edition": {
-                    "type": "string"
-                },
-                "login_config": {
-                    "type": "object",
-                    "$ref": "#/definitions/appinfo.LoginConfig"
-                },
-                "stack": {
-                    "type": "string"
-                },
-                "user_interface": {
-                    "type": "object",
-                    "$ref": "#/definitions/appinfo.UserInterfaceConf"
-                },
-                "version": {
-                    "type": "string"
-                }
-            }
-        },
         "appinfo.PopupTimeout": {
             "type": "object",
             "properties": {
                 "error": {
                     "type": "object",
-                    "$ref": "#/definitions/appinfo.IntervalUnit"
+                    "$ref": "#/definitions/types.DurationWithUnit"
                 },
                 "info": {
                     "type": "object",
-                    "$ref": "#/definitions/appinfo.IntervalUnit"
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                }
+            }
+        },
+        "appinfo.RemediationConf": {
+            "type": "object",
+            "properties": {
+                "job_config_types": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/appinfo.JobConfigType"
+                    }
                 }
             }
         },
@@ -8053,11 +9100,26 @@ var doc = `{
         "associativetable.Content": {
             "type": "object"
         },
-        "auth.sessionsCountResponse": {
+        "auth.loginRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.loginResponse": {
             "type": "object",
             "properties": {
-                "count": {
-                    "type": "integer"
+                "access_token": {
+                    "type": "string"
                 }
             }
         },
@@ -8122,6 +9184,10 @@ var doc = `{
                 }
             }
         },
+        "bson.M": {
+            "type": "object",
+            "additionalProperties": true
+        },
         "common.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -8159,6 +9225,17 @@ var doc = `{
                 }
             }
         },
+        "common.User": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "common.ValidationErrorResponse": {
             "type": "object",
             "properties": {
@@ -8170,48 +9247,10 @@ var doc = `{
                 }
             }
         },
-        "contextgraph.ConfigurationItem": {
+        "config.TimezoneConfig": {
             "type": "object",
             "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "action": {
-                    "type": "string"
-                },
-                "action_properties": {
-                    "type": "object"
-                },
-                "category": {
-                    "type": "string"
-                },
-                "enabled": {
-                    "type": "boolean"
-                },
-                "entity_patterns": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.EntityPatternList"
-                },
-                "impact_level": {
-                    "type": "integer"
-                },
-                "infos": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "measurements": {
-                    "type": "array",
-                    "items": {
-                        "type": "object"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "output_template": {
-                    "type": "string"
-                },
-                "type": {
+                "location": {
                     "type": "string"
                 }
             }
@@ -8219,24 +9258,49 @@ var doc = `{
         "contextgraph.ImportJob": {
             "type": "object",
             "properties": {
+                "_id": {
+                    "type": "string"
+                },
                 "creation": {
                     "type": "string"
                 },
-                "execTime": {
-                    "type": "string"
-                },
-                "id": {
+                "exec_time": {
                     "type": "string"
                 },
                 "info": {
                     "type": "string"
                 },
+                "source": {
+                    "type": "string"
+                },
                 "stats": {
                     "type": "object",
-                    "$ref": "#/definitions/contextgraph.JobStats"
+                    "$ref": "#/definitions/importcontextgraph.Stats"
                 },
                 "status": {
                     "type": "string"
+                }
+            }
+        },
+        "contextgraph.ImportRequest": {
+            "type": "object",
+            "properties": {
+                "json": {
+                    "type": "object",
+                    "properties": {
+                        "cis": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/importcontextgraph.ConfigurationItem"
+                            }
+                        },
+                        "links": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/importcontextgraph.Link"
+                            }
+                        }
+                    }
                 }
             }
         },
@@ -8248,72 +9312,56 @@ var doc = `{
                 }
             }
         },
-        "contextgraph.JobStats": {
-            "type": "object",
-            "properties": {
-                "deleted": {
-                    "type": "integer"
-                },
-                "updated": {
-                    "type": "integer"
-                }
-            }
-        },
-        "contextgraph.Link": {
-            "type": "object",
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "action": {
-                    "type": "string"
-                },
-                "action_properties": {
-                    "type": "object"
-                },
-                "from": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "infos": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "to": {
-                    "type": "string"
-                }
-            }
-        },
-        "contextgraph.Request": {
-            "type": "object",
-            "properties": {
-                "json": {
-                    "type": "object",
-                    "properties": {
-                        "cis": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/contextgraph.ConfigurationItem"
-                            }
-                        },
-                        "links": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/contextgraph.Link"
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "datastorage.Config": {
             "type": "object",
             "properties": {
+                "alarm": {
+                    "type": "object",
+                    "properties": {
+                        "archive_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        },
+                        "delete_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        }
+                    }
+                },
+                "health_check": {
+                    "type": "object",
+                    "properties": {
+                        "delete_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        }
+                    }
+                },
                 "junit": {
                     "type": "object",
                     "properties": {
+                        "delete_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        }
+                    }
+                },
+                "pbehavior": {
+                    "type": "object",
+                    "properties": {
+                        "delete_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        }
+                    }
+                },
+                "remediation": {
+                    "type": "object",
+                    "properties": {
+                        "accumulate_after": {
+                            "type": "object",
+                            "$ref": "#/definitions/types.DurationWithEnabled"
+                        },
                         "delete_after": {
                             "type": "object",
                             "$ref": "#/definitions/types.DurationWithEnabled"
@@ -8338,8 +9386,53 @@ var doc = `{
         "datastorage.History": {
             "type": "object",
             "properties": {
+                "alarm": {
+                    "type": "object",
+                    "$ref": "#/definitions/datastorage.HistoryWithCount"
+                },
+                "entity": {
+                    "type": "object",
+                    "$ref": "#/definitions/datastorage.HistoryWithCount"
+                },
+                "health_check": {
+                    "type": "integer"
+                },
                 "junit": {
                     "type": "integer"
+                },
+                "pbehavior": {
+                    "type": "integer"
+                },
+                "remediation": {
+                    "type": "integer"
+                }
+            }
+        },
+        "datastorage.HistoryWithCount": {
+            "type": "object",
+            "properties": {
+                "archived": {
+                    "type": "integer"
+                },
+                "deleted": {
+                    "type": "integer"
+                },
+                "time": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.CleanRequest": {
+            "type": "object",
+            "required": [
+                "archive"
+            ],
+            "properties": {
+                "archive": {
+                    "type": "boolean"
+                },
+                "archive_dependencies": {
+                    "type": "boolean"
                 }
             }
         },
@@ -8457,7 +9550,7 @@ var doc = `{
                 "$ref": "#/definitions/entity.Info"
             }
         },
-        "entity.ListRequest": {
+        "entity.ListRequestWithPagination": {
             "type": "object",
             "properties": {
                 "active_columns[]": {
@@ -8472,6 +9565,18 @@ var doc = `{
                 "filter": {
                     "type": "string"
                 },
+                "limit": {
+                    "type": "integer"
+                },
+                "no_events": {
+                    "type": "boolean"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "paginate": {
+                    "type": "boolean"
+                },
                 "search": {
                     "type": "string"
                 },
@@ -8480,6 +9585,9 @@ var doc = `{
                 },
                 "sort_by": {
                     "type": "string"
+                },
+                "with_flags": {
+                    "type": "boolean"
                 }
             }
         },
@@ -8487,7 +9595,8 @@ var doc = `{
             "type": "object",
             "required": [
                 "enabled",
-                "impact_level"
+                "impact_level",
+                "sli_avail_state"
             ],
             "properties": {
                 "category": {
@@ -8519,6 +9628,9 @@ var doc = `{
                     "items": {
                         "$ref": "#/definitions/entitybasic.InfoRequest"
                     }
+                },
+                "sli_avail_state": {
+                    "type": "integer"
                 }
             }
         },
@@ -8593,6 +9705,9 @@ var doc = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "sli_avail_state": {
+                    "type": "integer"
                 },
                 "type": {
                     "type": "string"
@@ -8675,7 +9790,8 @@ var doc = `{
                 "enabled",
                 "impact_level",
                 "name",
-                "output_template"
+                "output_template",
+                "sli_avail_state"
             ],
             "properties": {
                 "category": {
@@ -8702,6 +9818,9 @@ var doc = `{
                 },
                 "output_template": {
                     "type": "string"
+                },
+                "sli_avail_state": {
+                    "type": "integer"
                 }
             }
         },
@@ -8768,6 +9887,9 @@ var doc = `{
                 },
                 "output_template": {
                     "type": "string"
+                },
+                "sli_avail_state": {
+                    "type": "integer"
                 },
                 "type": {
                     "type": "string"
@@ -8908,93 +10030,74 @@ var doc = `{
                 "$ref": "#/definitions/export.Field"
             }
         },
-        "heartbeat.BulkDeleteRequest": {
+        "file.File": {
             "type": "object",
-            "required": [
-                "ids"
-            ],
             "properties": {
-                "ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                "_id": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "filename": {
+                    "type": "string"
+                },
+                "mediatype": {
+                    "type": "string"
                 }
             }
         },
-        "heartbeat.BulkUpdateRequestItem": {
+        "flappingrule.CreateRequest": {
             "type": "object",
             "required": [
-                "_id",
-                "description",
-                "expected_interval",
+                "duration",
+                "freq_limit",
                 "name",
-                "pattern"
+                "priority"
             ],
             "properties": {
                 "_id": {
                     "type": "string"
                 },
+                "alarm_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmPatternList"
+                },
                 "description": {
                     "type": "string"
                 },
-                "expected_interval": {
+                "duration": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "freq_limit": {
                     "type": "integer"
                 },
                 "name": {
                     "type": "string"
                 },
-                "output": {
-                    "type": "string"
-                },
-                "pattern": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "heartbeat.CreateRequest": {
-            "type": "object",
-            "required": [
-                "description",
-                "expected_interval",
-                "name",
-                "pattern"
-            ],
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "expected_interval": {
+                "priority": {
                     "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "output": {
-                    "type": "string"
-                },
-                "pattern": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
                 }
             }
         },
-        "heartbeat.Response": {
+        "flappingrule.Response": {
             "type": "object",
             "properties": {
                 "_id": {
                     "type": "string"
+                },
+                "alarm_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmPatternList"
                 },
                 "author": {
-                    "type": "string"
+                    "type": "object",
+                    "$ref": "#/definitions/common.User"
                 },
                 "created": {
                     "type": "integer"
@@ -9002,52 +10105,60 @@ var doc = `{
                 "description": {
                     "type": "string"
                 },
-                "expected_interval": {
+                "duration": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "freq_limit": {
                     "type": "integer"
                 },
                 "name": {
                     "type": "string"
                 },
-                "output": {
-                    "type": "string"
-                },
-                "pattern": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
+                "priority": {
+                    "type": "integer"
                 },
                 "updated": {
                     "type": "integer"
                 }
             }
         },
-        "heartbeat.UpdateRequest": {
+        "flappingrule.UpdateRequest": {
             "type": "object",
             "required": [
-                "description",
-                "expected_interval",
+                "duration",
+                "freq_limit",
                 "name",
-                "pattern"
+                "priority"
             ],
             "properties": {
+                "alarm_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmPatternList"
+                },
                 "description": {
                     "type": "string"
                 },
-                "expected_interval": {
+                "duration": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "freq_limit": {
                     "type": "integer"
                 },
                 "name": {
                     "type": "string"
                 },
-                "output": {
-                    "type": "string"
-                },
-                "pattern": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
+                "priority": {
+                    "type": "integer"
                 }
             }
         },
@@ -9131,7 +10242,6 @@ var doc = `{
         "idlerule.EditRequest": {
             "type": "object",
             "required": [
-                "author",
                 "duration",
                 "enabled",
                 "name",
@@ -9145,9 +10255,6 @@ var doc = `{
                 "alarm_patterns": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.AlarmPatternList"
-                },
-                "author": {
-                    "type": "string"
                 },
                 "description": {
                     "type": "string"
@@ -9270,6 +10377,90 @@ var doc = `{
                 }
             }
         },
+        "importcontextgraph.ConfigurationItem": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "action": {
+                    "type": "string"
+                },
+                "action_properties": {
+                    "type": "object"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "impact_level": {
+                    "type": "integer"
+                },
+                "infos": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "measurements": {
+                    "type": "array",
+                    "items": {
+                        "type": "object"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "output_template": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "importcontextgraph.Link": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "action": {
+                    "type": "string"
+                },
+                "action_properties": {
+                    "type": "object"
+                },
+                "from": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "infos": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "to": {
+                    "type": "string"
+                }
+            }
+        },
+        "importcontextgraph.Stats": {
+            "type": "object",
+            "properties": {
+                "deleted": {
+                    "type": "integer"
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
         "messageratestats.ListRequest": {
             "type": "object",
             "required": [
@@ -9284,34 +10475,63 @@ var doc = `{
                 "interval": {
                     "type": "string"
                 },
-                "limit": {
-                    "type": "integer"
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "paginate": {
-                    "type": "boolean"
-                },
-                "sort": {
-                    "type": "string"
-                },
-                "sort_by": {
-                    "type": "string"
-                },
                 "to": {
                     "type": "integer"
+                }
+            }
+        },
+        "messageratestats.StatsListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/messageratestats.StatsResponse"
+                    }
+                },
+                "meta": {
+                    "type": "object",
+                    "properties": {
+                        "deleted_before": {
+                            "type": "integer"
+                        }
+                    }
                 }
             }
         },
         "messageratestats.StatsResponse": {
             "type": "object",
             "properties": {
-                "_id": {
+                "rate": {
                     "type": "integer"
                 },
-                "received": {
+                "time": {
                     "type": "integer"
+                }
+            }
+        },
+        "notification.InstructionNotification": {
+            "type": "object",
+            "required": [
+                "rate",
+                "rate_frequency"
+            ],
+            "properties": {
+                "rate": {
+                    "type": "boolean"
+                },
+                "rate_frequency": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                }
+            }
+        },
+        "notification.Notification": {
+            "type": "object",
+            "properties": {
+                "instruction": {
+                    "type": "object",
+                    "$ref": "#/definitions/notification.InstructionNotification"
                 }
             }
         },
@@ -9466,6 +10686,10 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/pattern.AlarmStepRefPattern"
                 },
+                "children": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringArrayPattern"
+                },
                 "component": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.StringPattern"
@@ -9489,12 +10713,6 @@ var doc = `{
                 "done": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.AlarmStepRefPattern"
-                },
-                "extra": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/pattern.InterfacePattern"
-                    }
                 },
                 "hardLimit": {
                     "type": "object",
@@ -9523,6 +10741,10 @@ var doc = `{
                 "output": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.StringPattern"
+                },
+                "parents": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringArrayPattern"
                 },
                 "resolved": {
                     "type": "object",
@@ -9579,6 +10801,10 @@ var doc = `{
         "pattern.EntityPattern": {
             "type": "object",
             "properties": {
+                "category": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.StringPattern"
+                },
                 "component": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.StringPattern"
@@ -9895,6 +11121,10 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/types.OptionalStringArray"
                 },
+                "isEmpty": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalBool"
+                },
                 "lt": {
                     "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
                     "type": "object",
@@ -9909,6 +11139,31 @@ var doc = `{
                     "description": "If RegexMatch is set, the value of a field has to be matched by this\nregular expression to be matched by the pattern.",
                     "type": "object",
                     "$ref": "#/definitions/types.OptionalRegexp"
+                },
+                "unexpectedFields": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "pattern.StringArrayPattern": {
+            "type": "object",
+            "properties": {
+                "hasEvery": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalStringArray"
+                },
+                "hasNot": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalStringArray"
+                },
+                "hasOneOf": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalStringArray"
+                },
+                "isEmpty": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.OptionalBool"
                 },
                 "unexpectedFields": {
                     "type": "object",
@@ -10034,6 +11289,73 @@ var doc = `{
                 }
             }
         },
+        "pbehavior.BulkDeleteRequest": {
+            "type": "object",
+            "required": [
+                "ids"
+            ],
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pbehavior.BulkUpdateRequestItem": {
+            "type": "object",
+            "required": [
+                "_id",
+                "enabled",
+                "filter",
+                "name",
+                "reason",
+                "tstart",
+                "type"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "exceptions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "exdates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pbehaviorexception.ExdateRequest"
+                    }
+                },
+                "filter": {
+                    "type": "object"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "rrule": {
+                    "type": "string"
+                },
+                "tstart": {
+                    "type": "integer"
+                },
+                "tstop": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "pbehavior.Comment": {
             "type": "object",
             "properties": {
@@ -10069,7 +11391,7 @@ var doc = `{
                 }
             }
         },
-        "pbehavior.EditRequest": {
+        "pbehavior.CreateRequest": {
             "type": "object",
             "required": [
                 "enabled",
@@ -10080,6 +11402,9 @@ var doc = `{
                 "type"
             ],
             "properties": {
+                "_id": {
+                    "type": "string"
+                },
                 "enabled": {
                     "type": "boolean"
                 },
@@ -10132,6 +11457,47 @@ var doc = `{
                 }
             }
         },
+        "pbehavior.PatchRequest": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "exceptions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "exdates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pbehaviorexception.ExdateRequest"
+                    }
+                },
+                "filter": {
+                    "type": "object"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "rrule": {
+                    "type": "string"
+                },
+                "tstart": {
+                    "type": "integer"
+                },
+                "tstop": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "pbehavior.Response": {
             "type": "object",
             "properties": {
@@ -10170,6 +11536,9 @@ var doc = `{
                 "is_active_status": {
                     "description": "IsActiveStatus represents if pbehavior is in action for current time.",
                     "type": "boolean"
+                },
+                "last_alarm_date": {
+                    "type": "integer"
                 },
                 "name": {
                     "type": "string"
@@ -10215,6 +11584,55 @@ var doc = `{
                     "type": "string"
                 },
                 "priority": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "pbehavior.UpdateRequest": {
+            "type": "object",
+            "required": [
+                "enabled",
+                "filter",
+                "name",
+                "reason",
+                "tstart",
+                "type"
+            ],
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "exceptions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "exdates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pbehaviorexception.ExdateRequest"
+                    }
+                },
+                "filter": {
+                    "type": "object"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "rrule": {
+                    "type": "string"
+                },
+                "tstart": {
+                    "type": "integer"
+                },
+                "tstop": {
                     "type": "integer"
                 },
                 "type": {
@@ -10570,6 +11988,110 @@ var doc = `{
                 }
             }
         },
+        "resolverule.CreateRequest": {
+            "type": "object",
+            "required": [
+                "duration",
+                "name",
+                "priority"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "alarm_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmPatternList"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                }
+            }
+        },
+        "resolverule.Response": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "alarm_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmPatternList"
+                },
+                "author": {
+                    "type": "object",
+                    "$ref": "#/definitions/common.User"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
+        "resolverule.UpdateRequest": {
+            "type": "object",
+            "required": [
+                "duration",
+                "name",
+                "priority"
+            ],
+            "properties": {
+                "alarm_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmPatternList"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                }
+            }
+        },
         "role.CreateRequest": {
             "type": "object",
             "required": [
@@ -10726,6 +12248,28 @@ var doc = `{
                 }
             }
         },
+        "scenario.CheckPriorityRequest": {
+            "type": "object",
+            "required": [
+                "priority"
+            ],
+            "properties": {
+                "priority": {
+                    "type": "integer"
+                }
+            }
+        },
+        "scenario.CheckPriorityResponse": {
+            "type": "object",
+            "properties": {
+                "recommended_priority": {
+                    "type": "integer"
+                },
+                "valid": {
+                    "type": "boolean"
+                }
+            }
+        },
         "scenario.EditRequest": {
             "type": "object",
             "required": [
@@ -10770,6 +12314,14 @@ var doc = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "scenario.GetMinimalPriorityResponse": {
+            "type": "object",
+            "properties": {
+                "priority": {
+                    "type": "integer"
                 }
             }
         },
@@ -11180,13 +12732,17 @@ var doc = `{
                 "a": {
                     "type": "string"
                 },
+                "exec": {
+                    "description": "Execution contains id if instruction execution for instruction steps only.",
+                    "type": "string"
+                },
                 "initiator": {
                     "type": "string"
                 },
                 "m": {
                     "type": "string"
                 },
-                "pbehaviorCanonicalType": {
+                "pbehavior_canonical_type": {
                     "type": "string"
                 },
                 "role": {
@@ -11199,6 +12755,9 @@ var doc = `{
                 "t": {
                     "type": "object",
                     "$ref": "#/definitions/types.CpsTime"
+                },
+                "user_id": {
+                    "type": "string"
                 },
                 "val": {
                     "type": "integer"
@@ -11235,6 +12794,9 @@ var doc = `{
                 "t": {
                     "type": "object",
                     "$ref": "#/definitions/types.CpsTime"
+                },
+                "user_id": {
+                    "type": "string"
                 },
                 "val": {
                     "type": "string"
@@ -11285,10 +12847,6 @@ var doc = `{
                 "events_count": {
                     "description": "EventsCount accumulates count of check events.",
                     "type": "integer"
-                },
-                "extra": {
-                    "type": "object",
-                    "additionalProperties": true
                 },
                 "hard_limit": {
                     "type": "integer"
@@ -11342,6 +12900,15 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/types.PbehaviorInfo"
                 },
+                "pbh_inactive_duration": {
+                    "type": "integer"
+                },
+                "related_parents": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "resolved": {
                     "type": "object",
                     "$ref": "#/definitions/types.CpsTime"
@@ -11359,6 +12926,9 @@ var doc = `{
                 "snooze": {
                     "type": "object",
                     "$ref": "#/definitions/types.AlarmStep"
+                },
+                "snooze_duration": {
+                    "type": "integer"
                 },
                 "state": {
                     "type": "object",
@@ -11423,33 +12993,46 @@ var doc = `{
             "type": "object",
             "required": [
                 "enabled",
-                "seconds",
-                "unit"
+                "unit",
+                "value"
             ],
             "properties": {
                 "enabled": {
                     "type": "boolean"
                 },
-                "seconds": {
-                    "type": "integer"
-                },
                 "unit": {
                     "type": "string"
+                },
+                "value": {
+                    "type": "integer"
                 }
             }
         },
         "types.DurationWithUnit": {
             "type": "object",
             "required": [
-                "seconds",
-                "unit"
+                "unit",
+                "value"
             ],
             "properties": {
-                "seconds": {
-                    "type": "integer"
-                },
                 "unit": {
                     "type": "string"
+                },
+                "value": {
+                    "type": "integer"
+                }
+            }
+        },
+        "types.OptionalBool": {
+            "type": "object",
+            "properties": {
+                "set": {
+                    "description": "Set is a boolean indicating whether the value was set or not.",
+                    "type": "boolean"
+                },
+                "value": {
+                    "description": "Value contains the value of the bool. It should only be taken into\naccount if Set is true.",
+                    "type": "boolean"
                 }
             }
         },
@@ -11526,6 +13109,11 @@ var doc = `{
                     "description": "Reason is Name of pbehavior.Reason.",
                     "type": "string"
                 },
+                "timestamp": {
+                    "description": "Timestamp is time when entity enters pbehavior.\nUse pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.",
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
                 "type": {
                     "description": "TypeID is ID of pbehavior.Type.",
                     "type": "string"
@@ -11588,6 +13176,10 @@ var doc = `{
             "properties": {
                 "_id": {
                     "type": "string"
+                },
+                "defaultview": {
+                    "type": "object",
+                    "$ref": "#/definitions/user.View"
                 },
                 "name": {
                     "type": "string"
@@ -11653,6 +13245,34 @@ var doc = `{
                     "type": "string"
                 },
                 "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "userpreferences.EditRequest": {
+            "type": "object",
+            "required": [
+                "content",
+                "widget"
+            ],
+            "properties": {
+                "content": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "widget": {
+                    "type": "string"
+                }
+            }
+        },
+        "userpreferences.Response": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "widget": {
                     "type": "string"
                 }
             }
@@ -11981,6 +13601,11 @@ var doc = `{
         },
         "BasicAuth": {
             "type": "basic"
+        },
+        "JWTAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

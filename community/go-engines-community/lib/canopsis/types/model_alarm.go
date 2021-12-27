@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -50,37 +49,47 @@ const (
 
 //Alarm steps
 const (
-	AlarmStepStateIncrease          = "stateinc"
-	AlarmStepStateDecrease          = "statedec"
-	AlarmStepStatusIncrease         = "statusinc"
-	AlarmStepStatusDecrease         = "statusdec"
-	AlarmStepAck                    = "ack"
-	AlarmStepAckRemove              = "ackremove"
-	AlarmStepCancel                 = "cancel"
-	AlarmStepUncancel               = "uncancel"
-	AlarmStepComment                = "comment"
-	AlarmStepDone                   = "done"
-	AlarmStepDeclareTicket          = "declareticket"
-	AlarmStepAssocTicket            = "assocticket"
-	AlarmStepSnooze                 = "snooze"
-	AlarmStepPbehavior              = "pbehavior"
-	AlarmStepStateCounter           = "statecounter"
-	AlarmStepChangeState            = "changestate"
-	AlarmStepPbhEnter               = "pbhenter"
-	AlarmStepPbhLeave               = "pbhleave"
-	AlarmStepMetaAlarmAttach        = "metaalarmattach"
-	AlarmStepInstructionStart       = "instructionstart"
-	AlarmStepInstructionPause       = "instructionpause"
-	AlarmStepInstructionResume      = "instructionresume"
-	AlarmStepInstructionComplete    = "instructioncomplete"
-	AlarmStepInstructionAbort       = "instructionabort"
-	AlarmStepInstructionFail        = "instructionfail"
+	AlarmStepStateIncrease   = "stateinc"
+	AlarmStepStateDecrease   = "statedec"
+	AlarmStepStatusIncrease  = "statusinc"
+	AlarmStepStatusDecrease  = "statusdec"
+	AlarmStepAck             = "ack"
+	AlarmStepAckRemove       = "ackremove"
+	AlarmStepCancel          = "cancel"
+	AlarmStepUncancel        = "uncancel"
+	AlarmStepComment         = "comment"
+	AlarmStepDone            = "done"
+	AlarmStepDeclareTicket   = "declareticket"
+	AlarmStepAssocTicket     = "assocticket"
+	AlarmStepSnooze          = "snooze"
+	AlarmStepStateCounter    = "statecounter"
+	AlarmStepChangeState     = "changestate"
+	AlarmStepPbhEnter        = "pbhenter"
+	AlarmStepPbhLeave        = "pbhleave"
+	AlarmStepMetaAlarmAttach = "metaalarmattach"
+
+	// Following alarm steps are used for manual instruction execution.
+	AlarmStepInstructionStart    = "instructionstart"
+	AlarmStepInstructionPause    = "instructionpause"
+	AlarmStepInstructionResume   = "instructionresume"
+	AlarmStepInstructionComplete = "instructioncomplete"
+	AlarmStepInstructionFail     = "instructionfail"
+	// AlarmStepInstructionAbort are used for manual and auto instruction execution.
+	AlarmStepInstructionAbort = "instructionabort"
+	// Following alarm steps are used for manual instruction execution.
+	AlarmStepAutoInstructionStart          = "autoinstructionstart"
+	AlarmStepAutoInstructionComplete       = "autoinstructioncomplete"
+	AlarmStepAutoInstructionFail           = "autoinstructionfail"
+	AlarmStepAutoInstructionAlreadyRunning = "autoinstructionalreadyrunning"
+	// Following alarm steps are used for job execution.
 	AlarmStepInstructionJobStart    = "instructionjobstart"
 	AlarmStepInstructionJobComplete = "instructionjobcomplete"
 	AlarmStepInstructionJobAbort    = "instructionjobabort"
 	AlarmStepInstructionJobFail     = "instructionjobfail"
-	AlarmStepJunitTestSuiteUpdate   = "junittestsuiteupdate"
-	AlarmStepJunitTestCaseUpdate    = "junittestcaseupdate"
+
+	// Following alarm steps are used for junit.
+	AlarmStepJunitTestSuiteUpdate = "junittestsuiteupdate"
+	AlarmStepJunitTestCaseUpdate  = "junittestcaseupdate"
 )
 
 const (
@@ -95,7 +104,11 @@ type Alarm struct {
 	Value    AlarmValue `bson:"v" json:"v"`
 	// update contains alarm changes after last mongo update. Use functions Update* to
 	// fill it.
-	update bson.M
+	update         bson.M
+	childrenUpdate []string
+	childrenRemove []string
+	parentsUpdate  []string
+	parentsRemove  []string
 }
 
 // AlarmWithEntity is an encapsulated type, mostly to facilitate the alarm manipulation for the post-processors
@@ -106,11 +119,6 @@ type AlarmWithEntity struct {
 
 // NewAlarm creates en new Alarm from an Event
 func NewAlarm(event Event, alarmConfig config.AlarmConfig) (Alarm, error) {
-	// When the alarms are written to the database, the dates are converted to
-	// timestamps, in seconds.
-	// The dates used internally should be the same as the ones stored in the
-	// database, so that the engines do not work on different versions of the
-	// same alarm.
 	now := CpsTime{time.Now().Truncate(time.Second)}
 
 	if event.Timestamp.IsZero() {
@@ -131,15 +139,30 @@ func NewAlarm(event Event, alarmConfig config.AlarmConfig) (Alarm, error) {
 			InitialLongOutput: event.LongOutput,
 			LongOutput:        event.LongOutput,
 			CreationDate:      now,
-			LastUpdateDate:    now,
+			LastUpdateDate:    event.Timestamp,
 			LastEventDate:     now,
 			DisplayName:       GenDisplayName(alarmConfig.DisplayNameScheme),
 			Infos:             make(map[string]map[string]interface{}),
 			RuleVersion:       make(map[string]string),
+			State: &AlarmStep{
+				Type:      AlarmStepStateIncrease,
+				Timestamp: event.Timestamp,
+				Author:    event.Connector + "." + event.ConnectorName,
+				Message:   event.Output,
+				Value:     event.State,
+			},
+			Status: &AlarmStep{
+				Type:      AlarmStepStatusIncrease,
+				Timestamp: event.Timestamp,
+				Author:    event.Connector + "." + event.ConnectorName,
+				Message:   event.Output,
+				Value:     AlarmStatusOngoing,
+			},
+			TotalStateChanges: 1,
 		},
 	}
 	alarm.Value.LongOutputHistory = append(alarm.Value.LongOutputHistory, event.LongOutput)
-	alarm.Update(event, alarmConfig)
+	alarm.Value.Steps = AlarmSteps{*alarm.Value.State, *alarm.Value.Status}
 
 	return alarm, nil
 }
@@ -204,7 +227,7 @@ func (a *Alarm) GetAppliedActions() (steps AlarmSteps, ticket *AlarmTicket) {
 		steps = append(steps, *a.Value.ACK)
 	}
 	if ticket = a.Value.Ticket; ticket != nil {
-		steps = append(steps, NewAlarmStep(ticket.Type, ticket.Timestamp, ticket.Author, ticket.Message, ticket.Role, ""))
+		steps = append(steps, NewAlarmStep(ticket.Type, ticket.Timestamp, ticket.Author, ticket.Message, ticket.UserID, ticket.Role, ""))
 	}
 	if a.IsSnoozed() {
 		steps = append(steps, *a.Value.Snooze)
@@ -214,27 +237,29 @@ func (a *Alarm) GetAppliedActions() (steps AlarmSteps, ticket *AlarmTicket) {
 }
 
 // Apply actions (ACK, Snooze, AssocTicket, DeclareTicket) from steps to alarm
-func (a *Alarm) ApplyActions(steps AlarmSteps, ticket *AlarmTicket) (done bool, err error) {
+func (a *Alarm) ApplyActions(steps AlarmSteps, ticket *AlarmTicket) error {
 	ts := NewCpsTime(time.Now().Unix())
+
 	for j := 0; j < len(steps); j++ {
-		done = true
 		step := steps[j]
 		step.Author = "correlation"
 		step.Timestamp = ts
-		switch steps[j].Type {
+		switch step.Type {
 		case AlarmStepAck:
-			if a.Value.ACK != nil {
-				continue
+			err := a.PartialUpdateAck(ts, step.Author, step.Message, step.UserID, step.Role, step.Initiator)
+			if err != nil {
+				return err
 			}
-
-			a.Value.ACK = &step
 		case AlarmStepSnooze:
-			if a.Value.Snooze != nil {
-				continue
+			d := DurationWithUnit{
+				Value: int64(step.Value) - step.Timestamp.Unix(),
+				Unit:  "s",
 			}
-
-			a.Value.Snooze = &step
-		case AlarmStepAssocTicket, AlarmStepDeclareTicket:
+			err := a.PartialUpdateSnooze(ts, d, step.Author, step.Message, step.UserID, step.Role, step.Initiator)
+			if err != nil {
+				return err
+			}
+		case AlarmStepAssocTicket:
 			if a.Value.Ticket != nil {
 				continue
 			}
@@ -242,16 +267,30 @@ func (a *Alarm) ApplyActions(steps AlarmSteps, ticket *AlarmTicket) (done bool, 
 			if ticket == nil {
 				continue
 			}
-			ticket := step.NewTicket(ticket.Value, ticket.Data)
-			a.Value.Ticket = &ticket
+
+			err := a.PartialUpdateAssocTicket(ts, ticket.Data, step.Author, ticket.Value, step.UserID, step.Role, step.Initiator)
+			if err != nil {
+				return err
+			}
+		case AlarmStepDeclareTicket:
+			if a.Value.Ticket != nil {
+				continue
+			}
+
+			if ticket == nil {
+				continue
+			}
+
+			err := a.PartialUpdateDeclareTicket(ts, step.Author, step.Message, ticket.Value, ticket.Data, step.UserID, step.Role, step.Initiator)
+			if err != nil {
+				return err
+			}
 		default:
-			return false, fmt.Errorf("unsupported action type: %s", step.Type)
-		}
-		if err = a.Value.Steps.Add(step); err != nil {
-			return false, err
+			return fmt.Errorf("unsupported action type: %s", step.Type)
 		}
 	}
-	return done, nil
+
+	return nil
 }
 
 // CurrentState returns the Current State of the Alarm
@@ -269,36 +308,11 @@ func (a *Alarm) CurrentState() CpsNumber {
 	return alarmState
 }
 
-// CurrentStatus returns the Current status of the alarm
-func (a *Alarm) CurrentStatus(alarmConfig config.AlarmConfig) CpsNumber {
-	if a.Value.Status == nil {
-		return a.ComputeStatus(alarmConfig)
-	}
-
-	currentAlarmStatus := a.Value.Status.Value
-	if currentAlarmStatus < AlarmStatusOff {
-		return AlarmStatusOff
-	}
-
-	return currentAlarmStatus
-}
-
-// Update an alarm from an Event
-func (a *Alarm) Update(e Event, alarmConfig config.AlarmConfig) bool {
-	timestamp := e.Timestamp
-	author := e.Connector + "." + e.ConnectorName
-	message := e.Output
-
-	updatedState := a.updateState(e)
-	updatedStatus := a.UpdateStatus(timestamp, author, message, alarmConfig)
-	return updatedState || updatedStatus
-}
-
 // UpdateOutput updates an alarm output field
 func (a *Alarm) UpdateOutput(newOutput string) {
 	a.Value.Output = newOutput
 
-	a.addUpdate("$set", bson.M{
+	a.AddUpdate("$set", bson.M{
 		"v.output": a.Value.Output,
 	})
 }
@@ -313,213 +327,11 @@ func (a *Alarm) UpdateLongOutput(newOutput string) {
 		}
 		a.Value.LongOutputHistory = history
 
-		a.addUpdate("$set", bson.M{
+		a.AddUpdate("$set", bson.M{
 			"v.long_output":         a.Value.LongOutput,
 			"v.long_output_history": a.Value.LongOutputHistory,
 		})
 	}
-}
-
-// updateState If Event is a check event and if the associated alarm is not
-// locked, increases or decreases the State of the alarm.
-func (a *Alarm) updateState(e Event) bool {
-	if e.EventType != EventTypeCheck && e.EventType != EventTypeMetaAlarm {
-		return false
-	}
-
-	currentAlarmState := a.CurrentState()
-	if e.State == currentAlarmState {
-		// State hasn't changed. Stop here
-		return false
-	}
-	if a.IsStateLocked() {
-		// Event is an OK, so the alarm should be resolved anyway
-		if e.State == AlarmStateOK {
-			a.Value.State.Type = ""
-		} else {
-			// Stop here: state should be preserved.
-			return false
-		}
-	}
-
-	// Create new Step to keep track of the alarm history
-	newStep := AlarmStep{
-		Type:      AlarmStepStateIncrease,
-		Timestamp: e.Timestamp,
-		Author:    e.Connector + "." + e.ConnectorName,
-		Message:   e.Output,
-		Value:     e.State,
-	}
-	if e.State < currentAlarmState {
-		newStep.Type = AlarmStepStateDecrease
-	}
-
-	a.Value.State = &newStep
-	a.Value.Steps.Add(newStep)
-
-	a.Value.StateChangesSinceStatusUpdate++
-	a.Value.TotalStateChanges++
-	a.Value.LastUpdateDate = e.Timestamp
-
-	return true
-}
-
-// UpdateStatus recomputes the status of the alarm. If the status changes, a
-// new step is added to the alarm, with the timestamp, author and message given
-// in parameters.
-func (a *Alarm) UpdateStatus(timestamp CpsTime, author, message string, alarmConfig config.AlarmConfig) bool {
-	currentAlarmStatus := a.CurrentStatus(alarmConfig)
-	newStatus := a.ComputeStatus(alarmConfig)
-
-	if newStatus == currentAlarmStatus && a.Value.Status != nil {
-		return false
-	}
-
-	// Create new Step to keep track of the alarm history.
-	newStep := AlarmStep{
-		Type:      AlarmStepStatusIncrease,
-		Timestamp: timestamp,
-		Author:    author,
-		Message:   message,
-		Value:     newStatus,
-	}
-
-	// If the status is Decreasing
-	if newStatus < currentAlarmStatus {
-		newStep.Type = AlarmStepStatusDecrease
-	}
-	a.Value.Status = &newStep
-	a.Value.Steps.Add(newStep)
-
-	a.Value.StateChangesSinceStatusUpdate = CpsNumber(0)
-	a.Value.LastUpdateDate = timestamp
-
-	return true
-}
-
-// ComputeStatus of an Alarm from an Event
-func (a *Alarm) ComputeStatus(alarmConfig config.AlarmConfig) CpsNumber {
-	if a.IsCanceled() {
-		return AlarmStatusCancelled
-	}
-
-	if a.IsFlapping(alarmConfig) {
-		return AlarmStatusFlapping
-	}
-
-	if a.IsStealthy(alarmConfig) {
-		return AlarmStatusStealthy
-	}
-
-	if a.Value.State == nil {
-		return AlarmStatusOff
-	}
-
-	if a.Value.State.Value != AlarmStateOK {
-		return AlarmStatusOngoing
-	}
-
-	return AlarmStatusOff
-}
-
-// Ack an alarm
-func (a *Alarm) Ack(event Event) AlarmStep {
-	newStep := NewAlarmStepFromEvent(AlarmStepAck, event)
-	a.Value.ACK = &newStep
-
-	return newStep
-}
-
-// Unack removes an ack on an alarm
-func (a *Alarm) Unack(event Event) AlarmStep {
-	newStep := NewAlarmStepFromEvent(AlarmStepAckRemove, event)
-	a.Value.ACK = nil
-
-	return newStep
-}
-
-func (a *Alarm) PbhEnter(event Event) AlarmStep {
-	newStep := NewAlarmStepFromEvent(AlarmStepPbhEnter, event)
-	newStep.PbehaviorCanonicalType = event.PbehaviorInfo.CanonicalType
-
-	a.Value.PbehaviorInfo = event.PbehaviorInfo
-
-	return newStep
-}
-
-func (a *Alarm) PbhLeave(event Event) AlarmStep {
-	newStep := NewAlarmStepFromEvent(AlarmStepPbhLeave, event)
-	newStep.PbehaviorCanonicalType = a.Value.PbehaviorInfo.CanonicalType
-
-	a.Value.PbehaviorInfo = PbehaviorInfo{}
-
-	return newStep
-}
-
-// Cancel cancel an alarm
-func (a *Alarm) Cancel(event Event) AlarmStep {
-	newStep := NewAlarmStepFromEvent(AlarmStepCancel, event)
-	a.Value.Canceled = &newStep
-
-	return newStep
-}
-
-// Uncancel uncancel an alarm
-func (a *Alarm) Uncancel(event Event) AlarmStep {
-	newStep := NewAlarmStepFromEvent(AlarmStepUncancel, event)
-	a.Value.Canceled = nil
-
-	return newStep
-}
-
-// ChangeState force the state of an alarm
-func (a *Alarm) ChangeState(event Event) AlarmStep {
-	newStep := NewAlarmStepFromEvent(AlarmStepChangeState, event)
-	newStep.Value = event.State
-	a.Value.State = &newStep
-
-	return newStep
-}
-
-// Comment comment an alarm
-func (a *Alarm) Comment(event Event) AlarmStep {
-	newStep := NewAlarmStepFromEvent(AlarmStepComment, event)
-	// It just add a step with a comment
-
-	return newStep
-}
-
-// Done mark an alarm as done
-func (a *Alarm) Done(event Event) AlarmStep {
-	newStep := NewAlarmStepFromEvent(AlarmStepDone, event)
-	a.Value.Done = &newStep
-
-	return newStep
-}
-
-// Ticket add a ticket on an alarm
-func (a *Alarm) Ticket(stepType string, timestamp CpsTime, author string, ticketNumber string, role string, data map[string]string, initiator string) AlarmStep {
-	newStep := NewAlarmStep(stepType, timestamp, author, ticketNumber, role, initiator)
-	ticketStep := newStep.NewTicket(ticketNumber, data)
-	a.Value.Ticket = &ticketStep
-
-	return newStep
-}
-
-// AssocTicket associate a ticket number to an alarm
-func (a *Alarm) AssocTicket(event Event) AlarmStep {
-	data := make(map[string]string)
-	return a.Ticket(AlarmStepAssocTicket, event.Timestamp, event.Author, event.Ticket, event.Role, data, event.Initiator)
-}
-
-// DeclareTicket ask for a creation
-func (a *Alarm) DeclareTicket(event Event) AlarmStep {
-	//TODO: declare should  not read ticket parameter, but schedule a ticket
-	// creation and get back a ticket number.
-	// ! BUT ! On "ack and report" action from frontend, it send a declareticket
-	// event with the corresponding ticket number...
-	data := make(map[string]string)
-	return a.Ticket(AlarmStepDeclareTicket, event.Timestamp, event.Author, event.Ticket, event.Role, data, event.Initiator)
 }
 
 // Resolve mark as resolved an Alarm with a timestamp [sic]
@@ -527,54 +339,21 @@ func (a *Alarm) Resolve(timestamp *CpsTime) {
 	a.Value.Resolved = timestamp
 }
 
-// ResolveCancel forces alarm resolution on cancel
-func (a *Alarm) ResolveCancel(timestamp *CpsTime) {
-	a.Resolve(timestamp)
-	a.Value.Status = a.Value.Canceled
-	a.Value.Status.Value = AlarmStatusCancelled
-}
-
-// Snooze apply a snooze step to an Alarm
-func (a *Alarm) Snooze(timestamp CpsTime, duration CpsNumber, author, output, role, initiator string) (AlarmStep, error) {
-	newStep := NewAlarmStep(AlarmStepSnooze, timestamp, author, output, role, initiator)
-	if duration == 0 {
-		return newStep, errt.NewUnknownError(errors.New("no duration for snoozing"))
-	}
-	newStep.Value = CpsNumber(timestamp.Time.Unix()) + duration
-	a.Value.Snooze = &newStep
-
-	return newStep, nil
-}
-
-// SnoozeFromEvent apply a snooze step to an Alarm
-func (a *Alarm) SnoozeFromEvent(event Event) (AlarmStep, error) {
-	duration := CpsNumber(0)
-	if event.Duration != nil {
-		duration = *event.Duration
-	}
-	return a.Snooze(event.Timestamp, duration, event.Author, event.Output, event.Role, event.Initiator)
-}
-
-// UnSnooze cancel a snooze
-func (a *Alarm) UnSnooze() {
-	a.Value.LastUpdateDate = CpsTime{time.Now()}
-	a.Value.Snooze = nil
-}
-
-// Closable checks the last step for it's state to be OK for at least
-// baggotTime. Reference time is time.Now() when this function is called.
-func (a Alarm) Closable(baggotTime time.Duration) bool {
+// Closable checks the last step for it's state to be OK for at least d interval.
+// Reference time is time.Now() when this function is called.
+func (a Alarm) Closable(d time.Duration) bool {
 	// prevent some silly crash
 	if a.Value.State == nil {
 		return false
 	}
 
+	alarmState := a.Value.State.Value
 	ls, err := a.Value.Steps.Last()
-	if err == nil && a.Value.State.Value == AlarmStateOK && ls.Timestamp.Time.Before(time.Now().Add(-baggotTime)) {
+	if err == nil && alarmState == AlarmStateOK && ls.Timestamp.Time.Before(time.Now().Add(-d)) {
 		return true
 	}
 
-	if err != nil && a.Value.State.Value != AlarmStateOK {
+	if err != nil && alarmState != AlarmStateOK {
 		log.Printf("warning: alarm %s has empty steps but is not OK", a.ID)
 	}
 
@@ -589,36 +368,6 @@ func (a Alarm) IsAck() bool {
 // IsCanceled check if an Alarm is canceled
 func (a Alarm) IsCanceled() bool {
 	return a.Value.Canceled != nil && !a.IsResolved()
-}
-
-// IsFlapping check if an Alarm is currently flapping
-func (a Alarm) IsFlapping(alarmConfig config.AlarmConfig) bool {
-	lastStepType := ""
-	freq := 0
-
-	for i := len(a.Value.Steps) - 1; i >= 0; i-- {
-		s := a.Value.Steps[i]
-		duration := time.Since(s.Timestamp.Time)
-		if duration >= alarmConfig.FlappingInterval {
-			break
-		}
-
-		if s.Type != lastStepType {
-			switch s.Type {
-			case AlarmStepStateIncrease:
-				fallthrough
-			case AlarmStepStateDecrease:
-				lastStepType = s.Type
-				freq++
-			}
-		}
-
-		if freq > alarmConfig.FlappingFreqLimit {
-			return true
-		}
-	}
-
-	return false
 }
 
 // IsMatched tell if an alarm is catched by a regex
@@ -645,41 +394,12 @@ func (a Alarm) IsSnoozed() bool {
 	}
 
 	snoozeEnd := a.Value.Snooze.Value.CpsTimestamp()
-	return snoozeEnd.After(time.Now())
+	return snoozeEnd.After(NewCpsTime())
 }
 
 // IsStateLocked checks that the Alarm is not Locked (by manual intervention for example)
 func (a *Alarm) IsStateLocked() bool {
 	return a.Value.State != nil && a.Value.State.Type == AlarmStepChangeState
-}
-
-// IsStealthy checks if an Alarm is currently stealthy
-func (a Alarm) IsStealthy(alarmConfig config.AlarmConfig) bool {
-	// FIXME: crash on watch event creating a new alarm, cause State is not initialized
-	if a.Value.State.Value != AlarmStateOK {
-		return false
-	}
-
-	for i := len(a.Value.Steps) - 1; i >= 0; i-- {
-		s := a.Value.Steps[i]
-		timeSinceThisStep := time.Since(s.Timestamp.Time)
-		if timeSinceThisStep >= alarmConfig.StealthyInterval {
-			break
-		}
-
-		if s.Value != AlarmStateOK {
-			switch s.Type {
-			case AlarmStepStatusIncrease:
-				fallthrough
-			case AlarmStepStateDecrease:
-				return true
-			default:
-				break
-			}
-		}
-	}
-
-	return false
 }
 
 // IsMalfunctioning...
@@ -723,47 +443,79 @@ func (a Alarm) HasChildByEID(childEID string) bool {
 	return false
 }
 
-// UpdateState updates alarm's state to stateValue if it worst
-func (a *Alarm) UpdateState(stateValue CpsNumber, ts CpsTime) {
-	if stateValue == AlarmStateUnknown || stateValue < AlarmStateMinor {
-		return
-	}
-	if a.IsStateLocked() {
-		if stateValue != AlarmStateOK {
-			// Stop here: state should be preserved.
-			return
+func (a Alarm) HasParentByEID(parentEID string) bool {
+	for _, parent := range a.Value.Parents {
+		if parent == parentEID {
+			return true
 		}
-		// Event is an OK, so the alarm should be resolved anyway
-		a.Value.State.Type = ""
 	}
-	if a.CurrentState() == stateValue {
+
+	return false
+}
+
+func (a *Alarm) AddChild(childEID string) {
+	if a.HasChildByEID(childEID) {
 		return
 	}
 
-	stepType := AlarmStepStateIncrease
-	if stateValue < a.Value.State.Value {
-		stepType = AlarmStepStateDecrease
+	a.Value.Children = append(a.Value.Children, childEID)
+	a.childrenUpdate = append(a.childrenUpdate, childEID)
+
+	a.AddUpdate("$addToSet", bson.M{"v.children": bson.M{"$each": a.childrenUpdate}})
+}
+
+func (a *Alarm) RemoveChild(childEID string) {
+	removed := false
+	for idx, child := range a.Value.Children {
+		if child == childEID {
+			a.Value.Children = append(a.Value.Children[:idx], a.Value.Children[idx+1:]...)
+			removed = true
+
+			break
+		}
 	}
 
-	a.Value.State.Value = stateValue
-
-	// Create new Step to keep track of the alarm history
-	newStep := AlarmStep{
-		Type:      stepType,
-		Timestamp: ts,
-		Author:    a.Value.Connector + "." + a.Value.ConnectorName,
-		Message:   a.Value.Output,
-		Value:     stateValue,
+	if removed {
+		a.childrenRemove = append(a.childrenRemove, childEID)
+		a.AddUpdate("$pull", bson.M{"v.children": bson.M{"$in": a.childrenRemove}})
 	}
+}
 
-	if err := a.Value.Steps.Add(newStep); err != nil {
+func (a *Alarm) AddParent(parentEID string) {
+	if a.HasParentByEID(parentEID) {
 		return
 	}
-	a.Value.State = &newStep
 
-	a.Value.StateChangesSinceStatusUpdate++
-	a.Value.TotalStateChanges++
-	a.Value.LastUpdateDate = ts
+	a.Value.Parents = append(a.Value.Parents, parentEID)
+	a.parentsUpdate = append(a.parentsUpdate, parentEID)
+	a.AddUpdate("$addToSet", bson.M{"v.parents": bson.M{"$each": a.parentsUpdate}})
+}
+
+func (a *Alarm) RemoveParent(parentEID string) {
+	removed := false
+	for idx, parent := range a.Value.Parents {
+		if parent == parentEID {
+			a.Value.Parents = append(a.Value.Parents[:idx], a.Value.Parents[idx+1:]...)
+			removed = true
+
+			break
+		}
+	}
+
+	if removed {
+		a.parentsRemove = append(a.parentsRemove, parentEID)
+		a.AddUpdate("$pull", bson.M{"v.parents": bson.M{"$in": a.parentsRemove}})
+	}
+}
+
+func (a *Alarm) SetMeta(meta string) {
+	a.Value.Meta = meta
+	a.AddUpdate("$set", bson.M{"v.meta": meta})
+}
+
+func (a *Alarm) SetMetaValuePath(path string) {
+	a.Value.MetaValuePath = path
+	a.AddUpdate("$set", bson.M{"v.meta_value_path": path})
 }
 
 func (a *Alarm) Activate() {

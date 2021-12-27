@@ -6,6 +6,9 @@ import (
 	"testing"
 	"time"
 
+	mock_alarmstatus "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarmstatus"
+	mock_resolverule "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/resolverule"
+
 	cps "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -100,14 +103,18 @@ func TestService_ResolveDone(t *testing.T) {
 
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			alarmAdapterMock := mock_alarm.NewMockAdapter(ctrl)
-			alarmAdapterMock.
+			mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
+			mockResolveRuleAdapter := mock_resolverule.NewMockAdapter(ctrl)
+			mockAlarmStatusService := mock_alarmstatus.NewMockService(ctrl)
+			mockAlarmAdapter.
 				EXPECT().
-				GetAlarmsWithDoneMark().
+				GetAlarmsWithDoneMark(gomock.Any()).
 				Return(dataset.findAlarms, dataset.findError)
 
 			service := alarm.NewService(
-				alarmAdapterMock,
+				mockAlarmAdapter,
+				mockResolveRuleAdapter,
+				mockAlarmStatusService,
 				log.NewLogger(true),
 			)
 
@@ -210,14 +217,18 @@ func TestService_ResolveCancels(t *testing.T) {
 
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			alarmAdapterMock := mock_alarm.NewMockAdapter(ctrl)
-			alarmAdapterMock.
+			mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
+			mockResolveRuleAdapter := mock_resolverule.NewMockAdapter(ctrl)
+			mockAlarmStatusService := mock_alarmstatus.NewMockService(ctrl)
+			mockAlarmAdapter.
 				EXPECT().
-				GetAlarmsWithCancelMark().
+				GetAlarmsWithCancelMark(gomock.Any()).
 				Return(dataset.findAlarms, dataset.findError)
 
 			service := alarm.NewService(
-				alarmAdapterMock,
+				mockAlarmAdapter,
+				mockResolveRuleAdapter,
+				mockAlarmStatusService,
 				log.NewLogger(true),
 			)
 
@@ -233,121 +244,6 @@ func TestService_ResolveCancels(t *testing.T) {
 
 			if len(cancelAlarms) != dataset.expectedCancel {
 				t.Errorf("expected %d done alarms but got %d", dataset.expectedCancel, len(cancelAlarms))
-			}
-		})
-	}
-}
-
-func TestService_ResolveAlarms(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	baggotTime := 60 * time.Second
-	lastStepTime := 61 * time.Second
-
-	var dataSets = []struct {
-		testName       string
-		findAlarms     []types.Alarm
-		findError      error
-		expectedClosed int
-	}{
-		{
-			"given no alarms should return empty result",
-			[]types.Alarm{},
-			nil,
-			0,
-		},
-		{
-			"given done alarms with last step time < baggotTime should return empty result",
-			[]types.Alarm{
-				newClosedAlarm(types.CpsTime{
-					Time: time.Now(),
-				}),
-				newClosedAlarm(types.CpsTime{
-					Time: time.Now(),
-				}),
-				newClosedAlarm(types.CpsTime{
-					Time: time.Now(),
-				}),
-			},
-			nil,
-			0,
-		},
-		{
-			"given done alarms and done alarms with last steps time > baggotTime should return count of alarms with time > baggotTime",
-			[]types.Alarm{
-				newClosedAlarm(types.CpsTime{
-					Time: time.Now(),
-				}),
-				newClosedAlarm(types.CpsTime{
-					Time: time.Now().Add(-lastStepTime),
-				}),
-				newClosedAlarm(types.CpsTime{
-					Time: time.Now().Add(-lastStepTime),
-				}),
-			},
-			nil,
-			2,
-		},
-		{
-			"given done alarms with valid time should return count of alarms",
-			[]types.Alarm{
-				newClosedAlarm(types.CpsTime{
-					Time: time.Now().Add(-lastStepTime),
-				}),
-				newClosedAlarm(types.CpsTime{
-					Time: time.Now().Add(-lastStepTime),
-				}),
-				newClosedAlarm(types.CpsTime{
-					Time: time.Now().Add(-lastStepTime),
-				}),
-			},
-			nil,
-			3,
-		},
-		{
-			"given find error should return error",
-			[]types.Alarm{
-				newClosedAlarm(types.CpsTime{
-					Time: time.Now().Add(-lastStepTime),
-				}),
-				newClosedAlarm(types.CpsTime{
-					Time: time.Now().Add(-lastStepTime),
-				}),
-				newClosedAlarm(types.CpsTime{
-					Time: time.Now().Add(-lastStepTime),
-				}),
-			},
-			fmt.Errorf("not found"),
-			0,
-		},
-	}
-
-	for _, dataset := range dataSets {
-		t.Run(dataset.testName, func(t *testing.T) {
-			alarmAdapterMock := mock_alarm.NewMockAdapter(ctrl)
-			alarmAdapterMock.
-				EXPECT().
-				GetUnresolved().
-				Return(dataset.findAlarms, dataset.findError)
-
-			service := alarm.NewService(
-				alarmAdapterMock,
-				log.NewLogger(true),
-			)
-
-			closedAlarms, err := service.ResolveAlarms(context.Background(), config.AlarmConfig{
-				BaggotTime: baggotTime,
-			})
-			if err != nil {
-				expectedErr := fmt.Sprintf("unresolved alarms error: %v", dataset.findError.Error())
-				if err.Error() != expectedErr {
-					t.Errorf("expected err %v but got %v", expectedErr, err)
-				}
-			}
-
-			if len(closedAlarms) != dataset.expectedClosed {
-				t.Errorf("expected %d done alarms but got %d", dataset.expectedClosed, len(closedAlarms))
 			}
 		})
 	}
@@ -435,14 +331,18 @@ func TestService_ResolveSnoozes(t *testing.T) {
 
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			alarmAdapterMock := mock_alarm.NewMockAdapter(ctrl)
-			alarmAdapterMock.
+			mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
+			mockResolveRuleAdapter := mock_resolverule.NewMockAdapter(ctrl)
+			mockAlarmStatusService := mock_alarmstatus.NewMockService(ctrl)
+			mockAlarmAdapter.
 				EXPECT().
-				GetAlarmsWithSnoozeMark().
+				GetAlarmsWithSnoozeMark(gomock.Any()).
 				Return(dataset.findAlarms, dataset.findError)
 
 			service := alarm.NewService(
-				alarmAdapterMock,
+				mockAlarmAdapter,
+				mockResolveRuleAdapter,
+				mockAlarmStatusService,
 				log.NewLogger(true),
 			)
 
@@ -478,21 +378,6 @@ func newCancelAlarm(time types.CpsTime) types.Alarm {
 			Canceled: &types.AlarmStep{
 				Type:      types.AlarmStepCancel,
 				Timestamp: time,
-			},
-		},
-	}
-}
-
-func newClosedAlarm(time types.CpsTime) types.Alarm {
-	return types.Alarm{
-		Value: types.AlarmValue{
-			State: &types.AlarmStep{
-				Value: types.AlarmStateOK,
-			},
-			Steps: []types.AlarmStep{
-				{
-					Timestamp: time,
-				},
 			},
 		},
 	}

@@ -1,6 +1,7 @@
 package executor
 
 import (
+	"context"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"time"
@@ -14,10 +15,12 @@ type resolveDisabledExecutor struct {
 }
 
 func (e *resolveDisabledExecutor) Exec(
+	_ context.Context,
 	_ types.Operation,
 	alarm *types.Alarm,
+	_ *types.Entity,
 	_ types.CpsTime,
-	_, _ string,
+	_, _, _ string,
 ) (types.AlarmChangeType, error) {
 	err := alarm.PartialUpdateResolve(types.CpsTime{Time: time.Now()})
 	if err != nil {

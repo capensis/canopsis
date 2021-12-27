@@ -42,7 +42,7 @@ export const serviceSchema = new schema.Entity(ENTITIES_TYPES.service, {}, { idA
 export const weatherServiceSchema = new schema.Entity(ENTITIES_TYPES.weatherService, {}, { idAttribute: '_id' });
 
 export const userPreferenceSchema = new schema.Entity(ENTITIES_TYPES.userPreference, {}, {
-  idAttribute: '_id',
+  idAttribute: 'widget',
 });
 
 export const widgetSchema = new schema.Entity(ENTITIES_TYPES.widget, {}, {
@@ -53,7 +53,15 @@ export const viewTabSchema = new schema.Entity(ENTITIES_TYPES.viewTab, {
   widgets: [widgetSchema],
 }, {
   idAttribute: '_id',
-  processStrategy: childProcessStrategy,
+  processStrategy(entity, parent, key) {
+    const result = childProcessStrategy.call(this, entity, parent, key);
+
+    if (!result.widgets) {
+      result.widgets = [];
+    }
+
+    return result;
+  },
   mergeStrategy: childMergeStrategy,
 });
 
@@ -84,8 +92,6 @@ export const metaAlarmRuleSchema = new schema.Entity(ENTITIES_TYPES.metaAlarmRul
 
 export const snmpRuleSchema = new schema.Entity(ENTITIES_TYPES.snmpRule, {}, { idAttribute: '_id' });
 
-export const heartbeatSchema = new schema.Entity(ENTITIES_TYPES.heartbeat, {}, { idAttribute: '_id' });
-
 export const dynamicInfoSchema = new schema.Entity(ENTITIES_TYPES.dynamicInfo, {}, { idAttribute: '_id' });
 
 export const broadcastMessageSchema = new schema.Entity(ENTITIES_TYPES.broadcastMessage, {}, { idAttribute: '_id' });
@@ -98,13 +104,35 @@ export const pbehaviorTypesSchema = new schema.Entity(ENTITIES_TYPES.pbehaviorTy
 
 export const pbehaviorReasonsSchema = new schema.Entity(ENTITIES_TYPES.pbehaviorReasons, {}, { idAttribute: '_id' });
 
-export const pbehaviorExceptionsSchema = new schema.Entity(ENTITIES_TYPES.pbehaviorExceptions, {}, { idAttribute: '_id' });
+export const pbehaviorExceptionsSchema = new schema.Entity(
+  ENTITIES_TYPES.pbehaviorExceptions,
+  {},
+  { idAttribute: '_id' },
+);
 
-export const remediationInstructionSchema = new schema.Entity(ENTITIES_TYPES.remediationInstruction, {}, { idAttribute: '_id' });
+export const remediationInstructionSchema = new schema.Entity(
+  ENTITIES_TYPES.remediationInstruction,
+  {},
+  { idAttribute: '_id' },
+);
 
-export const remediationJobSchema = new schema.Entity(ENTITIES_TYPES.remediationJob, {}, { idAttribute: '_id' });
+export const remediationJobSchema = new schema.Entity(
+  ENTITIES_TYPES.remediationJob,
+  {},
+  { idAttribute: '_id' },
+);
 
-export const remediationConfigurationSchema = new schema.Entity(ENTITIES_TYPES.remediationConfiguration, {}, { idAttribute: '_id' });
+export const remediationConfigurationSchema = new schema.Entity(
+  ENTITIES_TYPES.remediationConfiguration,
+  {},
+  { idAttribute: '_id' },
+);
+
+export const remediationInstructionStatsSchema = new schema.Entity(
+  ENTITIES_TYPES.remediationInstructionStats,
+  {},
+  { idAttribute: '_id' },
+);
 
 export const scenarioSchema = new schema.Entity(ENTITIES_TYPES.scenario, {}, { idAttribute: '_id' });
 
@@ -115,6 +143,16 @@ export const testSuiteSchema = new schema.Entity(ENTITIES_TYPES.testSuite, {}, {
 export const testSuiteHistorySchema = new schema.Entity(ENTITIES_TYPES.testSuiteHistory, {}, { idAttribute: '_id' });
 
 export const stateSettingSchema = new schema.Entity(ENTITIES_TYPES.stateSetting, {}, { idAttribute: '_id' });
+
+export const idleRulesSchema = new schema.Entity(ENTITIES_TYPES.idleRules, {}, { idAttribute: '_id' });
+
+export const flappingRulesSchema = new schema.Entity(ENTITIES_TYPES.flappingRules, {}, { idAttribute: '_id' });
+
+export const resolveRulesSchema = new schema.Entity(ENTITIES_TYPES.resolveRules, {}, { idAttribute: '_id' });
+
+export const filterSchema = new schema.Entity(ENTITIES_TYPES.filter, {}, { idAttribute: '_id' });
+
+export const ratingSettingsSchema = new schema.Entity(ENTITIES_TYPES.ratingSettings, {}, { idAttribute: 'id' });
 
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
@@ -131,7 +169,6 @@ export default {
   [ENTITIES_TYPES.role]: roleSchema,
   [ENTITIES_TYPES.eventFilterRule]: eventFilterRuleSchema,
   [ENTITIES_TYPES.snmpRule]: snmpRuleSchema,
-  [ENTITIES_TYPES.heartbeat]: heartbeatSchema,
   [ENTITIES_TYPES.dynamicInfo]: dynamicInfoSchema,
   [ENTITIES_TYPES.broadcastMessage]: broadcastMessageSchema,
   [ENTITIES_TYPES.playlist]: playlistSchema,
@@ -147,4 +184,10 @@ export default {
   [ENTITIES_TYPES.testSuite]: testSuiteSchema,
   [ENTITIES_TYPES.testSuiteHistory]: testSuiteHistorySchema,
   [ENTITIES_TYPES.stateSetting]: stateSettingSchema,
+  [ENTITIES_TYPES.remediationInstructionStats]: remediationInstructionStatsSchema,
+  [ENTITIES_TYPES.idleRules]: idleRulesSchema,
+  [ENTITIES_TYPES.flappingRules]: flappingRulesSchema,
+  [ENTITIES_TYPES.resolveRules]: resolveRulesSchema,
+  [ENTITIES_TYPES.filter]: filterSchema,
+  [ENTITIES_TYPES.ratingSettings]: ratingSettingsSchema,
 };

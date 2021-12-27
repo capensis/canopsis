@@ -1,7 +1,13 @@
 import { omit, isUndefined, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
-import { WIDGET_TYPES, STATS_QUICK_RANGES, ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP } from '@/constants';
+import {
+  WIDGET_TYPES,
+  QUICK_RANGES,
+  ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP,
+  SORT_ORDERS,
+  ALARMS_OPENED_VALUES,
+} from '@/constants';
 
 import { prepareMainFilterToQueryFilter, getMainFilterAndCondition } from './filter';
 import {
@@ -30,23 +36,17 @@ export function convertSortToQuery({ parameters }) {
 }
 
 /**
- *  This function converts widget.parameters.alarmsStateFilter to query Object
+ *  This function converts widget.parameters.opened to query Object
  *
  * @param {Object} parameters
- * @returns {{}}
+ * @returns {{ opened: boolean }}
  */
 export function convertAlarmStateFilterToQuery({ parameters }) {
-  const { alarmsStateFilter } = parameters;
+  const { opened = ALARMS_OPENED_VALUES.opened } = parameters;
   const query = {};
 
-  if (alarmsStateFilter) {
-    if (!isUndefined(alarmsStateFilter.opened)) {
-      query.opened = alarmsStateFilter.opened;
-    }
-
-    if (!isUndefined(alarmsStateFilter.resolved)) {
-      query.resolved = alarmsStateFilter.resolved;
-    }
+  if (!isUndefined(opened)) {
+    query.opened = opened;
   }
 
   return query;
@@ -60,32 +60,38 @@ export function convertAlarmStateFilterToQuery({ parameters }) {
  */
 export function convertAlarmWidgetToQuery(widget) {
   const {
-    alarmsStateFilter = {},
     liveReporting = {},
     widgetColumns,
     itemsPerPage,
+    sort,
+    opened = ALARMS_OPENED_VALUES.opened,
   } = widget.parameters;
 
   const query = {
+    opened,
     page: 1,
-    opened: alarmsStateFilter.opened || false,
-    resolved: alarmsStateFilter.resolved || false,
     limit: itemsPerPage || PAGINATION_LIMIT,
+    with_instructions: true,
+    multiSortBy: [],
   };
 
   if (!isEmpty(liveReporting)) {
     query.tstart = liveReporting.tstart;
     query.tstop = liveReporting.tstop;
-  } else if (query.resolved) {
-    query.tstart = STATS_QUICK_RANGES.last30Days.start;
-    query.tstop = STATS_QUICK_RANGES.last30Days.stop;
+  } else if (query.opened === ALARMS_OPENED_VALUES.resolved) {
+    query.tstart = QUICK_RANGES.last30Days.start;
+    query.tstop = QUICK_RANGES.last30Days.stop;
   }
 
   if (widgetColumns) {
     query.active_columns = widgetColumns.map(v => (ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP[v.value] || v.value));
   }
 
-  return { ...query, ...convertSortToQuery(widget) };
+  if (sort && sort.column && sort.order) {
+    query.multiSortBy.push({ sortBy: sort.column, descending: sort.order === SORT_ORDERS.desc });
+  }
+
+  return query;
 }
 
 /**
@@ -140,21 +146,19 @@ export function convertWeatherWidgetToQuery(widget) {
  * @param {Object} widget
  * @returns {{}}
  */
-export function convertWidgetStatsParameterToQuery(widget) {
-  const statsList = Object.keys(widget.parameters.stats).reduce((acc, stat) => {
-    acc[stat] = {
-      ...omit(widget.parameters.stats[stat], ['position']),
-      stat: widget.parameters.stats[stat].stat.value,
-    };
-    return acc;
-  }, {});
+export const convertWidgetStatsParameterToQuery = widget => ({
+  ...widget.parameters,
 
-  return {
-    ...widget.parameters,
+  stats: Object.entries(widget.parameters.stats)
+    .reduce((acc, [statsKey, stats]) => {
+      acc[statsKey] = {
+        ...omit(stats, ['position']),
+        stat: stats.stat.value,
+      };
 
-    stats: statsList,
-  };
-}
+      return acc;
+    }, {}),
+});
 
 /**
  * This function converts widget with type 'StatsCalendar' to query Object
@@ -259,12 +263,12 @@ export function convertCounterWidgetToQuery(widget) {
  * @param {Object} userPreference
  * @returns {{}}
  */
-export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
+export function convertAlarmUserPreferenceToQuery({ content }) {
   const {
     itemsPerPage,
     category,
     isCorrelationEnabled = false,
-  } = widgetPreferences;
+  } = content;
 
   const query = {
     correlation: isCorrelationEnabled,
@@ -284,8 +288,8 @@ export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPr
  * @param {Object} userPreference
  * @returns {{ category: string }}
  */
-export function convertWeatherUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
-  const { category } = widgetPreferences;
+export function convertWeatherUserPreferenceToQuery({ content }) {
+  const { category } = content;
 
   return { category };
 }
@@ -296,11 +300,12 @@ export function convertWeatherUserPreferenceToQuery({ widget_preferences: widget
  * @param {Object} userPreference
  * @returns {{ category: string }}
  */
-export function convertContextUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
-  const { category } = widgetPreferences;
+export function convertContextUserPreferenceToQuery({ content }) {
+  const { category, noEvents } = content;
 
   return {
     category,
+    no_events: noEvents,
   };
 }
 
@@ -312,10 +317,11 @@ export function convertContextUserPreferenceToQuery({ widget_preferences: widget
  * This function converts userPreference to query Object
  *
  * @param {Object} userPreference
- * @returns {{}}
+ * @param {WidgetType} widgetType
+ * @returns {Object}
  */
-export function convertUserPreferenceToQuery(userPreference) {
-  switch (userPreference.widgetXtype) {
+export function convertUserPreferenceToQuery(userPreference, widgetType) {
+  switch (widgetType) {
     case WIDGET_TYPES.alarmList:
       return convertAlarmUserPreferenceToQuery(userPreference);
     case WIDGET_TYPES.context:
@@ -368,7 +374,7 @@ export function convertWidgetToQuery(widget) {
  */
 export function prepareQuery(widget, userPreference) {
   const widgetQuery = convertWidgetToQuery(widget);
-  const userPreferenceQuery = convertUserPreferenceToQuery(userPreference);
+  const userPreferenceQuery = convertUserPreferenceToQuery(userPreference, widget.type);
   let query = {
     ...widgetQuery,
     ...userPreferenceQuery,

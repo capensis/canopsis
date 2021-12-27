@@ -2,12 +2,12 @@
   v-expansion-panel.sidebar-playlists(v-if="availablePlaylists.length", expand, focusable, dark)
     v-expansion-panel-content.secondary.lighten-1.white--text
       div.panel-header(slot="header")
-        span {{ $t('common.playlists') }}
+        span {{ $t(`pageHeaders.${$constants.USERS_PERMISSIONS.technical.playlist}.title`) }}
       router-link(
         v-for="playlist in availablePlaylists",
         :key="playlist._id",
         :title="playlist.name",
-        :to="{ name: 'playlist', params: { id: playlist._id } }"
+        :to="{ name: $constants.ROUTES_NAMES.playlist, params: { id: playlist._id } }"
       )
         v-card.secondary.lighten-2
           v-card-text
@@ -21,7 +21,7 @@
 import { playlistSchema } from '@/store/schemas';
 
 import layoutNavigationGroupsBarPlaylistsMixin from '@/mixins/layout/navigation/groups-bar-playlists';
-import registrableMixin from '@/mixins/registrable';
+import { registrableMixin } from '@/mixins/registrable';
 
 export default {
   mixins: [

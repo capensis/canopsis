@@ -64,7 +64,7 @@ import { FILTER_DEFAULT_VALUES, FILTER_MONGO_OPERATORS } from '@/constants';
 
 import uid from '@/helpers/uid';
 
-import formMixin from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 import OperatorField from '@/components/forms/fields/operator-field.vue';
 import PatternInformation from '@/components/other/pattern/pattern-information.vue';
@@ -75,7 +75,7 @@ import FilterRule from './filter-rule.vue';
  * Component representing a group in MongoDB filter
  */
 export default {
-  name: 'filter-group', // We need it for recursive
+  name: 'FilterGroup', // We need it for recursive
   components: {
     PatternInformation,
     OperatorField,

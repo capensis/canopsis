@@ -4,25 +4,16 @@
       v-show="!isEditingMode",
       :tab="tab"
     )
-      widget-wrapper(
-        slot-scope="props",
-        :widget="props.widget",
-        :tab="tab",
-        :updateTabMethod="updateTabMethod"
-      )
+      template(#default="{ widget }")
+        widget-wrapper(:widget="widget", :tab="tab")
     grid-edit-widgets(
       v-if="isEditingMode",
       :tab="tab",
-      :updateTabMethod="updateTabMethod",
-      @update:widgetsFields="$emit('update:widgetsFields', $event)"
+      :update-tab-method="updateTabMethod",
+      @update:widgets-fields="$emit('update:widgets-fields', $event)"
     )
-      widget-wrapper(
-        slot-scope="props",
-        :widget="props.widget",
-        :tab="tab",
-        :isEditingMode="isEditingMode",
-        :updateTabMethod="updateTabMethod"
-      )
+      template(#default="{ widget }")
+        widget-wrapper(:widget="widget", :tab="tab", is-editing-mode)
 </template>
 
 <script>

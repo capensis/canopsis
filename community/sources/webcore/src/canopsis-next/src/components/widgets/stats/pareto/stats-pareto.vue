@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import { colorToRgba } from '@/helpers/color';
+
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
@@ -16,7 +18,7 @@ import widgetStatsChartWrapperMixin from '@/mixins/widget/stats/stats-chart-wrap
 
 import { SORT_ORDERS } from '@/constants';
 
-import StatsParetoChart from './stats-pareto-chart.vue';
+const StatsParetoChart = () => import(/* webpackChunkName: "Charts" */ './stats-pareto-chart.vue');
 
 export default {
   components: {
@@ -73,16 +75,16 @@ export default {
             label: 'curve',
             type: 'line',
             data: curveData,
-            yAxisID: 'y-axis-2',
+            yAxisID: 'y2',
             backgroundColor: 'transparent',
-            borderColor: this.widget.parameters.statsColors.Accumulation || 'rgba(0, 0, 0, 0.1)',
+            borderColor: this.widget.parameters.statsColors.Accumulation || colorToRgba('#000', 0.1),
             cubicInterpolationMode: 'monotone',
           },
           {
             label: this.statTitle,
             data: barsData,
-            yAxisID: 'y-axis-1',
-            backgroundColor: this.widget.parameters.statsColors[this.statTitle] || 'rgba(0, 0, 0, 0.1)',
+            yAxisID: 'y',
+            backgroundColor: this.widget.parameters.statsColors[this.statTitle] || colorToRgba('#000', 0.1),
           },
         ];
       }
@@ -93,39 +95,37 @@ export default {
     options() {
       return {
         scales: {
-          xAxes: [{
+          x: {
             ticks: {
               fontSize: 11,
             },
-          }],
-          yAxes: [
-            {
-              type: 'linear',
-              position: 'left',
-              id: 'y-axis-1',
-              ticks: {
-                suggestedMin: 0,
-                fontSize: 11,
-              },
-              scaleLabel: {
-                display: true,
-                labelString: this.statTitle,
-              },
+          },
+          y: {
+            type: 'linear',
+            position: 'left',
+            id: 'y',
+            ticks: {
+              suggestedMin: 0,
+              fontSize: 11,
             },
-            {
-              type: 'linear',
-              position: 'right',
-              id: 'y-axis-2',
-              ticks: {
-                suggestedMin: 0,
-                fontSize: 11,
-              },
-              scaleLabel: {
-                display: true,
-                labelString: '%',
-              },
+            scaleLabel: {
+              display: true,
+              labelString: this.statTitle,
             },
-          ],
+          },
+          y2: {
+            type: 'linear',
+            position: 'right',
+            id: 'y2',
+            ticks: {
+              suggestedMin: 0,
+              fontSize: 11,
+            },
+            scaleLabel: {
+              display: true,
+              labelString: '%',
+            },
+          },
         },
       };
     },

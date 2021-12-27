@@ -8,8 +8,8 @@
       field-filter-editor(
         data-test="widgetFilterEditor",
         v-model="settings.widget.parameters.mfilter",
-        :hiddenFields="['title']",
-        :entitiesType="$constants.ENTITIES_TYPES.entity"
+        :hidden-fields="['title']",
+        :entities-type="$constants.ENTITIES_TYPES.entity"
       )
       v-divider
       field-stats-selector(v-model="settings.widget.parameters.stats", required)
@@ -27,8 +27,9 @@
 <script>
 import { cloneDeep } from 'lodash';
 
-import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { SIDE_BARS } from '@/constants';
+
+import { widgetSettingsMixin } from '@/mixins/widget/settings';
 
 import FieldTitle from './fields/common/title.vue';
 import FieldFilterEditor from './fields/common/filter-editor.vue';
@@ -62,4 +63,3 @@ export default {
   },
 };
 </script>
-

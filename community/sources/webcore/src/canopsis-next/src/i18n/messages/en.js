@@ -4,20 +4,28 @@ import {
   EVENT_ENTITY_TYPES,
   STATS_TYPES,
   STATS_CRITICITY,
-  STATS_QUICK_RANGES,
+  QUICK_RANGES,
   TOURS,
   BROADCAST_MESSAGES_STATUSES,
   USER_PERMISSIONS_PREFIXES,
-  REMEDIATION_CONFIGURATION_TYPES,
   PBEHAVIOR_RRULE_PERIODS_RANGES,
-  ENGINES_NAMES,
   WIDGET_TYPES,
-  SCENARIO_ACTION_TYPES,
+  ACTION_TYPES,
   ENTITY_TYPES,
   TEST_SUITE_STATUSES,
   SIDE_BARS,
   STATE_SETTING_METHODS,
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
+  REMEDIATION_INSTRUCTION_TYPES,
+  IDLE_RULE_TYPES,
+  IDLE_RULE_ALARM_CONDITIONS,
+  USERS_PERMISSIONS,
+  ALARMS_OPENED_VALUES,
+  HEALTHCHECK_SERVICES_NAMES,
+  HEALTHCHECK_ENGINES_NAMES,
+  GROUPS_NAVIGATION_TYPES,
+  ALARM_METRIC_PARAMETERS,
+  USER_METRIC_PARAMETERS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -28,7 +36,6 @@ export default {
     undefined: 'Not defined',
     entity: 'Entity',
     service: 'Service',
-    pbehaviors: 'PBehaviors',
     widget: 'Widget',
     addWidget: 'Add widget',
     addTab: 'Add tab',
@@ -53,7 +60,7 @@ export default {
     no: 'No',
     default: 'Default',
     confirmation: 'Are you sure?',
-    parameters: 'Parameters',
+    parameter: 'Parameter | Parameters',
     by: 'By',
     date: 'Date',
     comment: 'Comment | Comments',
@@ -69,11 +76,10 @@ export default {
     authors: 'Authors',
     stat: 'Stat',
     trend: 'Trend',
-    users: 'Users',
-    roles: 'Roles',
+    user: 'User | Users',
+    role: 'Role | Roles',
     import: 'Import',
     export: 'Export',
-    rights: 'Rights',
     profile: 'Profile',
     username: 'Username',
     password: 'Password',
@@ -119,13 +125,6 @@ export default {
     links: 'Links',
     stack: 'Stack',
     edition: 'Edition',
-    broadcastMessages: 'Broadcast messages',
-    playlists: 'Playlists',
-    planning: 'Planning',
-    remediation: 'Remediation',
-    instructions: 'Instructions',
-    metaAlarmRule: 'Meta alarm rule',
-    dynamicInfo: 'Dynamic informations',
     icon: 'Icon',
     fullscreen: 'Fullscreen',
     interval: 'Interval',
@@ -149,7 +148,6 @@ export default {
     periods: 'Periods',
     range: 'Range',
     duration: 'Duration',
-    engines: 'Engines',
     previous: 'Previous',
     next: 'Next',
     eventPatterns: 'Event patterns',
@@ -177,7 +175,7 @@ export default {
     percent: 'Percent | Percents',
     tests: 'Tests',
     total: 'Total',
-    errors: 'Errors',
+    error: 'Error | Errors',
     failures: 'Failures',
     skipped: 'Skipped',
     current: 'Current',
@@ -190,6 +188,30 @@ export default {
     access: 'Access',
     communication: 'Communication | Communications',
     general: 'General',
+    notification: 'Notification | Notifications',
+    dismiss: 'Dismiss',
+    approve: 'Approve',
+    summary: 'Summary',
+    recurrence: 'Recurrence',
+    statistics: 'Statistics',
+    action: 'Action',
+    minimal: 'Minimal',
+    optimal: 'Optimal',
+    graph: 'Graph | Graphs',
+    systemStatus: 'System status',
+    downloadAsPng: 'Download as PNG',
+    rating: 'Rating | Ratings',
+    sampling: 'Sampling',
+    parametersToDisplay: '{count} parameters to display',
+    uptime: 'Uptime',
+    maintenance: 'Maintenance',
+    downtime: 'Downtime',
+    toTheTop: 'To the top',
+    time: 'Time',
+    lastModifiedOn: 'Last modified on',
+    exportAsCsv: 'Export as csv',
+    criteria: 'Criteria',
+    ratingSettings: 'Rating settings',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -215,6 +237,44 @@ export default {
       month: 'month | months',
       year: 'year | years',
     },
+    timeFrequencies: {
+      secondly: 'Secondly',
+      minutely: 'Minutely',
+      hourly: 'Hourly',
+      daily: 'Daily',
+      weekly: 'Weekly',
+      monthly: 'Monthly',
+      yearly: 'Yearly',
+    },
+    weekDays: {
+      monday: 'Monday',
+      tuesday: 'Tuesday',
+      wednesday: 'Wednesday',
+      thursday: 'Thursday',
+      friday: 'Friday',
+      saturday: 'Saturday',
+      sunday: 'Sunday',
+    },
+    months: {
+      january: 'January',
+      february: 'February',
+      march: 'March',
+      april: 'April',
+      may: 'May',
+      june: 'June',
+      july: 'July',
+      august: 'August',
+      september: 'September',
+      october: 'October',
+      november: 'November',
+      december: 'December',
+    },
+    stateTypes: {
+      [ENTITIES_STATES.ok]: 'Ok',
+      [ENTITIES_STATES.minor]: 'Minor',
+      [ENTITIES_STATES.major]: 'Major',
+      [ENTITIES_STATES.critical]: 'Critical',
+    },
   },
   variableTypes: {
     string: 'String',
@@ -223,15 +283,10 @@ export default {
     null: 'Null',
     array: 'Array',
   },
-  user: {
-    role: 'Role',
-    defaultView: 'Default view',
-    seeProfile: 'See profile',
-    selectDefaultView: 'Select default view',
-  },
   context: {
     impacts: 'Impacts',
     dependencies: 'Dependencies',
+    noEventsFilter: 'No events filter',
     expandPanel: {
       infos: 'Informations',
       type: 'Type',
@@ -263,46 +318,49 @@ export default {
       common: 'Add a new entity',
       addService: 'Add a new service entity',
     },
+    popups: {
+      massDeleteWarning: 'The mass deletion cannot be applied for some of selected elements, so they won\'t be deleted.',
+    },
   },
   search: {
-    alarmAdvancedSearch: '<span>Help on the advanced research :</span>\n' +
-      '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n' +
-      '<p>The "-" before the research is required</p>\n' +
-      '<p>Operators :\n' +
-      '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n' +
-      '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
-      '<dl><dt>Examples :</dt><dt>- Connector = "connector_1"</dt>\n' +
-      '    <dd>Alarms whose connectors are "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n' +
-      '    <dd>Alarms whose connectors is "connector_1" and the resources is "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n' +
-      '    <dd>Alarms whose connectors is "connector_1" or the resources is "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n' +
-      '    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = "connector_1"</dt>\n' +
-      '    <dd>Alarms whose connectors isn\'t "connector_1"</dd>\n' +
-      '</dl>',
-    contextAdvancedSearch: '<span>Help on the advanced research :</span>\n' +
-      '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n' +
-      '<p>The "-" before the research is required</p>\n' +
-      '<p>Operators :\n' +
-      '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n' +
-      '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
-      '<dl><dt>Examples :</dt><dt>- Name = "name_1"</dt>\n' +
-      '    <dd>Entities whose names are "name_1"</dd><dt>- Name="name_1" AND Type="service"</dt>\n' +
-      '    <dd>Entities whose names is "name_1" and the types is "service"</dd><dt>- infos.custom.value="Custom value" OR Type="resource"</dt>\n' +
-      '    <dd>Entities whose infos.custom.value is "Custom value" or the type is "resource"</dd><dt>- infos.custom.value LIKE 1 OR infos.custom.value LIKE 2</dt>\n' +
-      '    <dd>Entities whose infos.custom.value contains 1 or 2</dd><dt>- NOT Name = "name_1"</dt>\n' +
-      '    <dd>Entities whose name isn\'t "name_1"</dd>\n' +
-      '</dl>',
-    dynamicInfoAdvancedSearch: '<span>Help on the advanced research :</span>\n' +
-      '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n' +
-      '<p>The "-" before the research is required</p>\n' +
-      '<p>Operators :\n' +
-      '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n' +
-      '<p>For querying patterns, use "pattern" keyword as the &lt;ColumnName&gt; alias</p>\n' +
-      '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
-      '<dl><dt>Examples :</dt><dt>- description = "testdyninfo"</dt>\n' +
-      '    <dd>Dynamic info rules descriptions are "testdyninfo"</dd><dt>- pattern = "SEARCHPATTERN1"</dt>\n' +
-      '    <dd>Dynamic info rules whose one of its patterns is equal "SEARCHPATTERN1"</dd><dt>- pattern LIKE "SEARCHPATTERN2"</dt>\n' +
-      '    <dd>Dynamic info rules whose one of its patterns contains "SEARCHPATTERN2"</dd>' +
-      '</dl>',
+    alarmAdvancedSearch: '<span>Help on the advanced research :</span>\n'
+      + '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n'
+      + '<p>The "-" before the research is required</p>\n'
+      + '<p>Operators :\n'
+      + '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n'
+      + '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n'
+      + '<dl><dt>Examples :</dt><dt>- Connector = "connector_1"</dt>\n'
+      + '    <dd>Alarms whose connectors are "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n'
+      + '    <dd>Alarms whose connectors is "connector_1" and the resources is "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n'
+      + '    <dd>Alarms whose connectors is "connector_1" or the resources is "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n'
+      + '    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = "connector_1"</dt>\n'
+      + '    <dd>Alarms whose connectors isn\'t "connector_1"</dd>\n'
+      + '</dl>',
+    contextAdvancedSearch: '<span>Help on the advanced research :</span>\n'
+      + '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n'
+      + '<p>The "-" before the research is required</p>\n'
+      + '<p>Operators :\n'
+      + '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n'
+      + '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n'
+      + '<dl><dt>Examples :</dt><dt>- Name = "name_1"</dt>\n'
+      + '    <dd>Entities whose names are "name_1"</dd><dt>- Name="name_1" AND Type="service"</dt>\n'
+      + '    <dd>Entities whose names is "name_1" and the types is "service"</dd><dt>- infos.custom.value="Custom value" OR Type="resource"</dt>\n'
+      + '    <dd>Entities whose infos.custom.value is "Custom value" or the type is "resource"</dd><dt>- infos.custom.value LIKE 1 OR infos.custom.value LIKE 2</dt>\n'
+      + '    <dd>Entities whose infos.custom.value contains 1 or 2</dd><dt>- NOT Name = "name_1"</dt>\n'
+      + '    <dd>Entities whose name isn\'t "name_1"</dd>\n'
+      + '</dl>',
+    dynamicInfoAdvancedSearch: '<span>Help on the advanced research :</span>\n'
+      + '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n'
+      + '<p>The "-" before the research is required</p>\n'
+      + '<p>Operators :\n'
+      + '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n'
+      + '<p>For querying patterns, use "pattern" keyword as the &lt;ColumnName&gt; alias</p>\n'
+      + '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n'
+      + '<dl><dt>Examples :</dt><dt>- description = "testdyninfo"</dt>\n'
+      + '    <dd>Dynamic info rules descriptions are "testdyninfo"</dd><dt>- pattern = "SEARCHPATTERN1"</dt>\n'
+      + '    <dd>Dynamic info rules whose one of its patterns is equal "SEARCHPATTERN1"</dd><dt>- pattern LIKE "SEARCHPATTERN2"</dt>\n'
+      + '    <dd>Dynamic info rules whose one of its patterns contains "SEARCHPATTERN2"</dd>'
+      + '</dl>',
     submit: 'Search',
     clear: 'Clear search input',
   },
@@ -393,6 +451,10 @@ export default {
         [EVENT_ENTITY_TYPES.instructionJobComplete]: 'Instruction job has been completed',
         [EVENT_ENTITY_TYPES.instructionJobAbort]: 'Instruction job has been aborted',
         [EVENT_ENTITY_TYPES.instructionJobFail]: 'Instruction job has been failed',
+        [EVENT_ENTITY_TYPES.autoInstructionStart]: 'Instruction has been started automatically',
+        [EVENT_ENTITY_TYPES.autoInstructionComplete]: 'Instruction has been completed automatically',
+        [EVENT_ENTITY_TYPES.autoInstructionFail]: 'Instruction has been failed automatically',
+        [EVENT_ENTITY_TYPES.autoInstructionAlreadyRunning]: 'Instruction has been started automatically for another alarm',
         [EVENT_ENTITY_TYPES.junitTestSuiteUpdate]: 'Test suite has been updated',
         [EVENT_ENTITY_TYPES.junitTestCaseUpdate]: 'Test case has been updated',
       },
@@ -410,8 +472,32 @@ export default {
       defineATemplate: 'To define a template for this window, go to the alarms list settings',
     },
     infoPopup: 'Info popup',
-    instructionInfoPopup: 'There is an instruction for this type of incidents',
-    priorityPopup: 'The priority parameter is derived from the alarm severity multiplied by impact level of the entity on which the alarm is raised',
+    tooltips: {
+      priority: 'The priority parameter is derived from the alarm severity multiplied by impact level of the entity on which the alarm is raised',
+      hasInstruction: 'There is an instruction for this type of incidents',
+      hasAutoInstructionInRunning: 'Automatic instruction in progress',
+      allAutoInstructionExecuted: 'All automatic instructions has been executed',
+      awaitingInstructionComplete: 'Awaiting for the instruction to complete',
+    },
+    metrics: {
+      [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Number of created alarms',
+      [ALARM_METRIC_PARAMETERS.activeAlarms]: 'Number of active alarms',
+      [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: 'Number of non-displayed alarms',
+      [ALARM_METRIC_PARAMETERS.instructionAlarms]: 'Number of alarms under automatic remediation',
+      [ALARM_METRIC_PARAMETERS.pbehaviorAlarms]: 'Number of alarms with PBehavior',
+      [ALARM_METRIC_PARAMETERS.correlationAlarms]: 'Number of alarms with correlation',
+      [ALARM_METRIC_PARAMETERS.ackAlarms]: 'Total number of acks',
+      [ALARM_METRIC_PARAMETERS.ackActiveAlarms]: 'Number of active alarms with acks',
+      [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: 'Number of canceled acks',
+      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: 'Number of active alarms with acks',
+      [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: 'Number of active alarms without tickets',
+      [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '% of correlated alarms',
+      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% of alarms with auto remediation',
+      [ALARM_METRIC_PARAMETERS.ratioTickets]: '% of alarms with tickets created',
+      [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '% of non-displayed alarms',
+      [ALARM_METRIC_PARAMETERS.averageAck]: 'Average time to ack alarms',
+      [ALARM_METRIC_PARAMETERS.averageResolve]: 'Average time to resolve alarms',
+    },
   },
   weather: {
     moreInfos: 'More info',
@@ -428,6 +514,26 @@ export default {
     status: 'Status',
     created: 'Creation date',
     updated: 'Last update date',
+    lastAlarmDate: 'Last alarm date',
+    searchHelp: '<span>Help on the advanced research :</span>\n'
+      + '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n'
+      + '<p>The "-" before the research is required</p>\n'
+      + '<p>Operators : <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n'
+      + '<p>For querying patterns, use "pattern" keyword as the &lt;ColumnName&gt; alias</p>\n'
+      + '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n'
+      + '<dl>'
+      + '  <dt>Examples :</dt>'
+      + '  <dt>- name = "name_1"</dt>\n'
+      + '  <dd>Pbehavior name are "name_1"</dd>\n'
+      + '  <dt>- rrule = "rrule_1"</dt>\n'
+      + '  <dd>Pbehavior rrule are "rrule_1"</dd>\n'
+      + '  <dt>- filter = "filter_1"</dt>\n'
+      + '  <dd>Pbehavior filter are "filter_1"</dd>\n'
+      + '  <dt>- type.name = "type_name_1"</dt>\n'
+      + '  <dd>Pbehavior type name are "type_name_1"</dd>\n'
+      + '  <dt>- reason.name = "reason_name_1"</dt>\n'
+      + '  <dd>Pbehavior reason name are "reason_name_1"</dd>'
+      + '</dl>',
     tabs: {
       filter: 'Filter',
       comments: 'Comments',
@@ -448,6 +554,11 @@ export default {
       [SIDE_BARS.textSettings]: 'Text settings',
       [SIDE_BARS.counterSettings]: 'Counter settings',
       [SIDE_BARS.testingWeatherSettings]: 'Testing weather',
+    },
+    openedTypes: {
+      [ALARMS_OPENED_VALUES.opened]: 'Opened alarms',
+      [ALARMS_OPENED_VALUES.resolved]: 'All resolved alarms',
+      [ALARMS_OPENED_VALUES.all]: 'Opened and recent resolved alarms',
     },
     advancedSettings: 'Advanced settings',
     widgetTitle: 'Widget title',
@@ -508,30 +619,6 @@ export default {
     },
     statsDateInterval: {
       monthPeriodInfo: "If you select a 'monthly' period, start and end date will be rounded to the first day of the month, at 00:00 UTC",
-      fields: {
-        quickRanges: 'Quick ranges',
-      },
-      quickRanges: {
-        [STATS_QUICK_RANGES.custom.value]: 'Custom',
-        [STATS_QUICK_RANGES.last2Days.value]: 'Last 2 days',
-        [STATS_QUICK_RANGES.last7Days.value]: 'Last 7 days',
-        [STATS_QUICK_RANGES.last30Days.value]: 'Last 30 days',
-        [STATS_QUICK_RANGES.last1Year.value]: 'Last 1 year',
-        [STATS_QUICK_RANGES.yesterday.value]: 'Yesterday',
-        [STATS_QUICK_RANGES.previousWeek.value]: 'Previous week',
-        [STATS_QUICK_RANGES.previousMonth.value]: 'Previous month',
-        [STATS_QUICK_RANGES.today.value]: 'Today',
-        [STATS_QUICK_RANGES.todaySoFar.value]: 'Today so far',
-        [STATS_QUICK_RANGES.thisWeek.value]: 'This week',
-        [STATS_QUICK_RANGES.thisWeekSoFar.value]: 'This week so far',
-        [STATS_QUICK_RANGES.thisMonth.value]: 'This month',
-        [STATS_QUICK_RANGES.thisMonthSoFar.value]: 'This month so far',
-        [STATS_QUICK_RANGES.last1Hour.value]: 'Last 1 hour',
-        [STATS_QUICK_RANGES.last3Hour.value]: 'Last 3 hour',
-        [STATS_QUICK_RANGES.last6Hour.value]: 'Last 6 hour',
-        [STATS_QUICK_RANGES.last12Hour.value]: 'Last 12 hour',
-        [STATS_QUICK_RANGES.last24Hour.value]: 'Last 24 hour',
-      },
     },
     statsNumbers: {
       title: 'Stats numbers',
@@ -651,12 +738,12 @@ export default {
     },
     screenshotMask: {
       title: 'Screenshots filename mask',
-      helpText: '<dl>' +
-        '<dt>Define the filename mask of which screenshots are created using the following variables:<dt>\n' +
-        '<dd>- test case name %test_case%</dd>\n' +
-        '<dd>- date (YYYY, MM, DD)</dd>\n' +
-        '<dd>- time of execution (hh, mm, ss)</dd>' +
-        '</dl>',
+      helpText: '<dl>'
+        + '<dt>Define the filename mask of which screenshots are created using the following variables:<dt>\n'
+        + '<dd>- test case name %test_case%</dd>\n'
+        + '<dd>- date (YYYY, MM, DD)</dd>\n'
+        + '<dd>- time of execution (hh, mm, ss)</dd>'
+        + '</dl>',
     },
     videoDirectories: {
       title: 'Video storage settings',
@@ -664,12 +751,21 @@ export default {
     },
     videoMask: {
       title: 'Videos filename mask',
-      helpText: '<dl>' +
-        '<dt>Define the filename mask of which videos are created using the following variables:<dt>\n' +
-        '<dd>- test case name %test_case%</dd>\n' +
-        '<dd>- date (YYYY, MM, DD)</dd>\n' +
-        '<dd>- time of execution (hh, mm, ss)</dd>' +
-        '</dl>',
+      helpText: '<dl>'
+        + '<dt>Define the filename mask of which videos are created using the following variables:<dt>\n'
+        + '<dd>- test case name %test_case%</dd>\n'
+        + '<dd>- date (YYYY, MM, DD)</dd>\n'
+        + '<dd>- time of execution (hh, mm, ss)</dd>'
+        + '</dl>',
+    },
+    stickyHeader: 'Sticky header',
+    reportFileRegexp: {
+      title: 'Report file mask',
+      helpText: '<dl>'
+        + '<dt>Define the filename regexp of which report:<dt>\n'
+        + '<dd>For example:</dd>\n'
+        + '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n'
+        + '</dl>',
     },
   },
   modals: {
@@ -838,9 +934,6 @@ export default {
           buttons: {
             addExdate: 'Add an exclusion date',
           },
-          fields: {
-            rRuleQuestion: 'Add a recurrence rule to the pbehavior?',
-          },
         },
         comments: {
           title: 'Comments',
@@ -924,6 +1017,9 @@ export default {
       edit: {
         title: 'Edit filter',
       },
+      duplicate: {
+        title: 'Duplicate filter',
+      },
       fields: {
         title: 'Title',
       },
@@ -972,7 +1068,7 @@ export default {
           title: 'Counter',
         },
         [WIDGET_TYPES.testingWeather]: {
-          title: 'Testing weather',
+          title: 'Junit scenarios',
         },
       },
     },
@@ -1061,8 +1157,8 @@ export default {
         addObjectRuleField: 'Add object rule field',
         editObjectRuleField: 'Edit object rule field',
         removeRuleField: 'Remove rule field',
-        copyFromHelp: '<p>The accessible variables are: <strong>Event</strong></p>' +
-          '<i>For example:</i> <span>"Event.ExtraInfos.datecustom"</span>',
+        copyFromHelp: '<p>The accessible variables are: <strong>Event</strong></p>'
+          + '<i>For example:</i> <span>"Event.ExtraInfos.datecustom"</span>',
       },
       actionsTypes: {
         [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
@@ -1187,27 +1283,8 @@ export default {
     selectViewTab: {
       title: 'Select tab',
     },
-    createHeartbeat: {
-      create: {
-        title: 'Create heartbeat',
-        success: 'Heartbeat successfully created!',
-      },
-      edit: {
-        title: 'Modify heartbeat',
-        success: 'Heartbeat successfully modified!',
-      },
-      duplicate: {
-        title: 'Duplicate heartbeat',
-      },
-      remove: {
-        success: 'Heartbeat successfully removed!',
-      },
-      massRemove: {
-        success: 'Heartbeats successfully removed!',
-      },
-      patternRequired: 'Pattern is required',
-    },
     createDynamicInfo: {
+      alarmUpdate: 'The rule will update existing alarms!',
       create: {
         title: 'Create dynamic information',
         success: 'Dynamic information successfully created!',
@@ -1399,10 +1476,6 @@ export default {
           success: '{configurationName} has been successfully modified',
         },
       },
-      types: {
-        [REMEDIATION_CONFIGURATION_TYPES.rundeck]: 'Rundeck',
-        [REMEDIATION_CONFIGURATION_TYPES.awx]: 'Awx',
-      },
       fields: {
         host: 'Host',
         token: 'Authorization token',
@@ -1424,13 +1497,16 @@ export default {
       fields: {
         configuration: 'Configuration',
         jobId: 'Job ID',
+        query: 'Query',
       },
       errors: {
         invalidJSON: 'Invalid JSON',
       },
-      payloadHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>' +
-        '<i>For example:</i>' +
-        '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
+      addPayload: 'Add payload',
+      deletePayload: 'Delete payload',
+      payloadHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'
+        + '<i>For example:</i>'
+        + '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
     },
     clickOutsideConfirmation: {
       title: 'Are you sure?',
@@ -1445,7 +1521,7 @@ export default {
       title: 'Assign patterns',
     },
     rateInstruction: {
-      title: 'Rate this instruction',
+      title: 'Rate this instruction "{name}"',
       text: 'How useful was this instruction?',
     },
     createScenario: {
@@ -1500,6 +1576,91 @@ export default {
         placeholder: 'Input the path to the video folder',
       },
     },
+    remediationInstructionApproval: {
+      title: 'Instruction approval',
+      requested: 'requested for approval',
+      tabs: {
+        updated: 'Updated',
+        original: 'Original',
+      },
+    },
+    createAlarmIdleRule: {
+      create: {
+        title: 'Create alarm rule',
+      },
+      edit: {
+        title: 'Edit alarm rule',
+      },
+      duplicate: {
+        title: 'Duplicate alarm rule',
+      },
+    },
+    createEntityIdleRule: {
+      create: {
+        title: 'Create entity rule',
+      },
+      edit: {
+        title: 'Edit entity rule',
+      },
+      duplicate: {
+        title: 'Duplicate entity rule',
+      },
+    },
+    createAlarmStatusRule: {
+      flapping: {
+        create: {
+          title: 'Create flapping rule',
+        },
+        edit: {
+          title: 'Edit flapping rule',
+        },
+        duplicate: {
+          title: 'Duplicate flapping rule',
+        },
+      },
+      resolve: {
+        create: {
+          title: 'Create resolve rule',
+        },
+        edit: {
+          title: 'Edit resolve rule',
+        },
+        duplicate: {
+          title: 'Duplicate resolve rule',
+        },
+      },
+    },
+    webSocketError: {
+      title: 'WebSocket connection error',
+      text: '<p>Websockets are unavailable, so the following functionalities are restricted:</p>'
+        + '<p>'
+        + '<ul>'
+        + '<li>Healthcheck header</li>'
+        + '<li>Healthcheck network graph</li>'
+        + '<li>Active broadcast messages</li>'
+        + '<li>Active users sessions</li>'
+        + '<li>Remediation execution</li>'
+        + '</ul>'
+        + '</p>'
+        + '<p>Please check your server configuration.</p>',
+    },
+    confirmationPhrase: {
+      phrase: 'Phrase',
+      updateStorageSettings: {
+        title: 'Updating storage policy. Are you sure ?',
+        text: 'You are about to change the storage policy.\n'
+          + '<strong>Associated operations, deleting data, won\'t be cancellable.</strong>',
+        phraseText: 'Please, type the following to confirm:',
+        phrase: 'update the storage policy',
+      },
+      cleanStorage: {
+        title: 'Archive/delete disabled entities. Are you sure ?',
+        text: 'You are about to archive and/or delete data.\n'
+          + '<strong>Deletion operation won\'t be cancellable.</strong>',
+        phraseText: 'Please, type the following to confirm:',
+        phrase: 'archive or delete',
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -1516,13 +1677,6 @@ export default {
       state: 'Severity',
       status: 'Status',
       extraDetails: 'Extra details',
-    },
-    alarmStatus: {
-      [ENTITIES_STATUSES.off]: 'Off',
-      [ENTITIES_STATUSES.ongoing]: 'Ongoing',
-      [ENTITIES_STATUSES.flapping]: 'Flapping',
-      [ENTITIES_STATUSES.stealthy]: 'Stealth',
-      [ENTITIES_STATUSES.cancelled]: 'Canceled',
     },
     alarmStates: {
       [ENTITIES_STATES.ok]: 'Info',
@@ -1548,10 +1702,22 @@ export default {
       },
     },
   },
-  rRule: {
+  recurrenceRule: {
     advancedHint: 'Separate numbers with a comma',
-    textLabel: 'Summary',
-    stringLabel: 'Recurrence',
+    freq: 'Frequency',
+    until: 'Until',
+    byweekday: 'By week day',
+    count: 'Repeat',
+    interval: 'Interval',
+    wkst: 'Week start',
+    bymonth: 'By month',
+    bysetpos: 'By set position',
+    bymonthday: 'By month day',
+    byyearday: 'By year day',
+    byweekno: 'By week n°',
+    byhour: 'By hour',
+    byminute: 'By minute',
+    bysecond: 'By second',
     tabs: {
       simple: 'Simple',
       advanced: 'Advanced',
@@ -1566,42 +1732,14 @@ export default {
       [PBEHAVIOR_RRULE_PERIODS_RANGES.thisMonth]: 'This month',
       [PBEHAVIOR_RRULE_PERIODS_RANGES.nextMonth]: 'Next month',
     },
-    fields: {
-      freq: 'Frequency',
-      until: 'Until',
-      byweekday: 'By week day',
-      count: 'Repeat',
-      interval: 'Interval',
-      wkst: 'Week start',
-      bymonth: 'By month',
-      bysetpos: {
-        label: 'By set position',
-        tooltip: 'If given, it must be one or many integers, positive or negative. Each given integer will specify an occurrence number, corresponding to the nth occurrence of the rule inside the frequency period. For example, a \'bysetpos\' of -1 if combined with a monthly frequency, and a \'byweekday\' of (Monday, Tuesday, Wednesday, Thursday, Friday), will result in the last work day of every month.',
-      },
-      bymonthday: {
-        label: 'By month day',
-        tooltip: 'If given, it must be one or many integers, meaning the month days to apply the recurrence to.',
-      },
-      byyearday: {
-        label: 'By year day',
-        tooltip: 'If given, it must be one or many integers, meaning the year days to apply the recurrence to.',
-      },
-      byweekno: {
-        label: 'By week n°',
-        tooltip: 'If given, it must be on or many integers, meaning the week numbers to apply the recurrence to. Week numbers have the meaning described in ISO8601, that is, the first week of the year is that containing at least four days of the new year.',
-      },
-      byhour: {
-        label: 'By hour',
-        tooltip: 'If given, it must be one or many integers, meaning the hours to apply the recurrence to.',
-      },
-      byminute: {
-        label: 'By minute',
-        tooltip: 'If given, it must be one or many integers, meaning the minutes to apply the recurrence to.',
-      },
-      bysecond: {
-        label: 'By second',
-        tooltip: 'If given, it must be one or many integers, meaning the seconds to apply the recurrence to.',
-      },
+    tooltips: {
+      bysetpos: 'If given, it must be one or many integers, positive or negative. Each given integer will specify an occurrence number, corresponding to the nth occurrence of the rule inside the frequency period. For example, a \'bysetpos\' of -1 if combined with a monthly frequency, and a \'byweekday\' of (Monday, Tuesday, Wednesday, Thursday, Friday), will result in the last work day of every month.',
+      bymonthday: 'If given, it must be one or many integers, meaning the month days to apply the recurrence to.',
+      byyearday: 'If given, it must be one or many integers, meaning the year days to apply the recurrence to.',
+      byweekno: 'If given, it must be on or many integers, meaning the week numbers to apply the recurrence to. Week numbers have the meaning described in ISO8601, that is, the first week of the year is that containing at least four days of the new year.',
+      byhour: 'If given, it must be one or many integers, meaning the hours to apply the recurrence to.',
+      byminute: 'If given, it must be one or many integers, meaning the minutes to apply the recurrence to.',
+      bysecond: 'If given, it must be one or many integers, meaning the seconds to apply the recurrence to.',
     },
   },
   errors: {
@@ -1611,6 +1749,7 @@ export default {
     versionNotFound: 'Unable to get application version',
     statsRequestProblem: 'An error occurred while retrieving stats data',
     statsWrongEditionError: "Stats widgets are not available with 'core' edition",
+    socketConnectionProblem: 'Problem with connection to socket server',
   },
   calendar: {
     today: 'Today',
@@ -1689,7 +1828,6 @@ export default {
     },
   },
   eventFilter: {
-    title: 'Event filter',
     externalDatas: 'External data',
     actionsRequired: 'Please add at least one action',
     idHelp: 'If no id is specified, a unique id will be generated automatically on rule creation',
@@ -1704,27 +1842,26 @@ export default {
     autoResolve: 'Auto resolve',
     idHelp: 'If no id is specified, a unique id will be generated automatically on rule creation',
     corelId: 'Corel ID',
-    corelIdHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>' +
-      '<i>For example:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
+    corelIdHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'
+      + '<i>For example:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
     corelStatus: 'Corel status',
-    corelStatusHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>' +
-      '<i>For example:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
+    corelStatusHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'
+      + '<i>For example:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
     corelParent: 'Corel parent',
     corelChild: 'Corel child',
-    outputTemplateHelp: '<p>The accessible variables are:</p>' +
-      '<p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p>' +
-      '<p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p>' +
-      '<p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p>' +
-      '<p>For example:</p>' +
-      '<p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p>' +
-      '<p>A static informative message</p>' +
-      '<p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>',
+    outputTemplateHelp: '<p>The accessible variables are:</p>'
+      + '<p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p>'
+      + '<p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p>'
+      + '<p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p>'
+      + '<p>For example:</p>'
+      + '<p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p>'
+      + '<p>A static informative message</p>'
+      + '<p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>',
     errors: {
       noValuePaths: 'You have to add at least 1 value path',
     },
   },
   snmpRules: {
-    title: 'SNMP rules',
     uploadMib: 'Upload MIB',
     addSnmpRule: 'Add SNMP rule',
   },
@@ -1735,7 +1872,7 @@ export default {
         create: 'Create view',
         settings: 'Settings',
       },
-      activeSessions: 'Active sessions',
+      loggedUsersCount: 'Active sessions',
       ordering: {
         popups: {
           success: 'The groups was reordered',
@@ -1752,32 +1889,7 @@ export default {
       importExportViews: 'Import/Export',
       stateSettings: 'State settings',
       storageSettings: 'Storage settings',
-    },
-    interfaceLanguage: 'Interface language',
-    groupsNavigationType: {
-      title: 'Groups navigation type',
-      items: {
-        sideBar: 'Side bar',
-        topBar: 'Top bar',
-      },
-    },
-    userInterfaceForm: {
-      title: 'User interface',
-      fields: {
-        appTitle: 'App title',
-        language: 'Default user interface language',
-        footer: 'Login footer',
-        description: 'Login page description',
-        logo: 'Logo',
-        infoPopupTimeout: 'Info popup timeout',
-        errorPopupTimeout: 'Error popup timeout',
-        popupTimeoutUnit: 'Unit',
-        allowChangeSeverityToInfo: 'Allow change severity to info',
-        maxMatchedItems: 'Max matched items',
-      },
-      tooltips: {
-        maxMatchedItems: 'it need to warn user when number of items that match patterns is above this value',
-      },
+      notificationsSettings: 'Notifications settings',
     },
   },
   view: {
@@ -1856,15 +1968,6 @@ export default {
   serviceWeather: {
     seeAlarms: 'See alarms',
   },
-  heartbeat: {
-    title: 'Heartbeats',
-    table: {
-      fields: {
-        id: 'ID',
-        expectedInterval: 'Expected interval',
-      },
-    },
-  },
   contextGeneralTable: {
     addSelection: 'Add selection',
   },
@@ -1897,10 +2000,12 @@ export default {
       },
     },
   },
+
   permissions: {
     technical: {
       admin: 'Admin rights',
       exploitation: 'Exploitation rights',
+      notification: 'Notification rights',
     },
     business: {
       [USER_PERMISSIONS_PREFIXES.business.common]: 'Rights for common',
@@ -1910,6 +2015,12 @@ export default {
       [USER_PERMISSIONS_PREFIXES.business.counter]: 'Rights for Counter',
       [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Rights for Testing Weather',
     },
+    api: {
+      general: 'General',
+      rules: 'Rules',
+      remediation: 'Remediation',
+      pbehavior: 'PBehavior',
+    },
   },
 
   pbehavior: {
@@ -1918,10 +2029,6 @@ export default {
       editFilter: 'Edit filter',
       addRRule: 'Add recurrence rule',
       editRrule: 'Edit recurrence rule',
-    },
-    alerts: {
-      countOverLimit: 'The filter you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
-      countRequestError: 'The request to entities count by the filter was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
     },
   },
 
@@ -1950,51 +2057,108 @@ export default {
     },
   },
 
-  engines: {
-    [ENGINES_NAMES.event]: {
-      title: 'Event',
-      description: 'Comes from resource',
+  healthcheck: {
+    notRunning: '{name} is unavailable',
+    queueOverflow: 'Queue overflow',
+    lackOfInstances: 'Lack of instances',
+    diffInstancesConfig: 'Invalid instances configuration',
+    queueLength: 'Queue length {queueLength}/{maxQueueLength}',
+    instancesCount: 'Instances {instances}/{minInstances}',
+    activeInstances: 'Only {instances} is active out of {minInstances}. The optimal number of instances is {optimalInstances}.',
+    queueOverflowed: 'Queue is overflowed: {queueLength} messages out of {maxQueueLength}.\nPlease check the instances.',
+    engineDown: '{name} is down, the system is not operational.\nPlease check the log or restart the service.',
+    engineDownOrSlow: '{name} is down or responds too slow, the system is not operational.\nPlease check the log or restart the instance.',
+    invalidEnginesOrder: 'Invalid engines configuration',
+    invalidInstancesConfiguration: 'Invalid instances configuration: engine instances read or write to different queues.\nPlease check the instances.',
+    chainConfigurationInvalid: 'Engines chain configuration is invalid.\nRefer below for the correct sequence of engines:',
+    queueLimit: 'Queue length limit',
+    defineQueueLimit: 'Define the engines queue length limit',
+    notifyUsersQueueLimit: 'Users can be notified when the queue length limit is exceeded',
+    numberOfInstances: 'Number of instances',
+    notifyUsersNumberOfInstances: 'Users can be notified when the number of active instances is less than the minimal value. The optimal number of instances is shown when the engine state is unavailable.',
+    messagesHistory: 'FIFO messages processing history',
+    messagesLastHour: 'FIFO messages processing for the last hour',
+    messagesPerHour: 'messages/hour',
+    unknown: 'This system state is unavailable',
+    systemStatusChipError: 'The system is not operational',
+    systemStatusServerError: 'System configuration is invalid, please contact the administrator',
+    systemsOperational: 'All systems are operational',
+    validation: {
+      max_value: 'The field must be equal or less than the optimal instance count',
+      min_value: 'The field must be equal or more than the minimal instance count',
     },
+    nodes: {
+      [HEALTHCHECK_SERVICES_NAMES.mongo]: {
+        name: 'MongoDB',
+        edgeLabel: 'Status check',
+      },
 
-    [ENGINES_NAMES.webhook]: {
-      title: 'Webhook',
-      description: 'Triggers the webhooks launch',
-    },
-    [ENGINES_NAMES.fifo]: {
-      title: 'FIFO',
-      description: 'Manages the queue of events and alarms',
-    },
-    [ENGINES_NAMES.axe]: {
-      title: 'AXE',
-      description: 'Creates alarms and performs actions with them',
-    },
-    [ENGINES_NAMES.che]: {
-      title: 'CHE',
-      description: 'Applies eventfilters and created entities',
-    },
-    [ENGINES_NAMES.pbehavior]: {
-      title: 'Pbehavior',
-      description: 'Checks if the alarm is under PBehvaior',
-    },
-    [ENGINES_NAMES.action]: {
-      title: 'Action',
-      description: 'Triggers the actions launch',
-    },
-    [ENGINES_NAMES.service]: {
-      title: 'Service',
-      description: 'Updates counters and generates service-events',
-    },
-    [ENGINES_NAMES.dynamicInfo]: {
-      title: 'Dynamic infos',
-      description: 'Adds dynamic infos to alarm',
-    },
-    [ENGINES_NAMES.correlation]: {
-      title: 'Correlation',
-      description: 'Adds dynamic infos to alarm',
-    },
-    [ENGINES_NAMES.heartbeat]: {
-      title: 'Heartbeat',
-      description: 'Adds dynamic infos to alarm',
+      [HEALTHCHECK_SERVICES_NAMES.rabbit]: {
+        name: 'RabbitMQ',
+        edgeLabel: 'Status check',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.redis]: {
+        name: 'Redis',
+        edgeLabel: 'FIFO data\nRedis check',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.events]: {
+        name: 'Events',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.api]: {
+        name: 'Canopsis API',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.enginesChain]: {
+        name: 'Engines chain',
+      },
+
+      [HEALTHCHECK_SERVICES_NAMES.healthcheck]: {
+        name: 'Healthcheck',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.webhook]: {
+        name: 'Webhook',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.fifo]: {
+        name: 'FIFO',
+        edgeLabel: 'RabbitMQ status\nIncomming flow KPIs',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.axe]: {
+        name: 'AXE',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.che]: {
+        name: 'CHE',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.pbehavior]: {
+        name: 'Pbehavior',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.action]: {
+        name: 'Action',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.service]: {
+        name: 'Service',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.dynamicInfos]: {
+        name: 'Dynamic infos',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.correlation]: {
+        name: 'Correlation',
+      },
+
+      [HEALTHCHECK_ENGINES_NAMES.remediation]: {
+        name: 'Remediation',
+      },
     },
   },
 
@@ -2010,29 +2174,41 @@ export default {
     usingInstruction: 'Cannot be deleted since it is in use',
     addStep: 'Add step',
     addOperation: 'Add operation',
-    addEndpoint: 'Add endpoint',
+    addJob: 'Add job',
     endpoint: 'Endpoint',
+    job: 'Job | Jobs',
+    listJobs: 'List of jobs',
     endpointAvatar: 'EP',
     workflow: 'Workflow if this step fails:',
+    jobWorkflow: 'Workflow if this job fails:',
     remainingStep: 'Continue with remaining steps',
+    remainingJob: 'Continue with remaining job',
     timeToComplete: 'Time to complete',
     emptySteps: 'No steps added yet',
     emptyOperations: 'No operations added yet',
+    emptyJobs: 'No jobs added yet',
+    timeoutAfterExecution: 'Timeout after instruction execution',
+    requestApproval: 'Request for approval',
+    type: 'Instruction type',
+    approvalPending: 'Approval pending',
+    needApprove: 'Approval is needed',
+    types: {
+      [REMEDIATION_INSTRUCTION_TYPES.manual]: 'Manual',
+      [REMEDIATION_INSTRUCTION_TYPES.auto]: 'Automatic',
+    },
     tooltips: {
       endpoint: 'Endpoint should be in question in Yes/No format',
     },
     table: {
       rating: 'Rating',
-      lastModifiedOn: 'Last modified on',
-      averageTimeCompletion: 'Average time\nof completion',
       monthExecutions: '№ of executions\nthis month',
-      lastExecutedBy: 'Last executed by',
       lastExecutedOn: 'Last executed on',
     },
     errors: {
       runningInstruction: 'New changes cannot be applied to the instruction in progress. Would you like to cancel started instruction and apply new changes?',
       operationRequired: 'Please add at least one operation',
       stepRequired: 'Please add at least one step',
+      jobRequired: 'Please add at least one job',
     },
   },
 
@@ -2062,6 +2238,7 @@ export default {
       success: '{instructionName} has been successfully completed',
       failed: '{instructionName} has been failed. Please escalate this problem further',
       connectionError: 'There is a problem with connection. Please click on refresh button or reload the page.',
+      wasAborted: '{instructionName} has been aborted',
       wasPaused: 'The {instructionName} instruction on {alarmName} alarm was paused at {date}. You can resume it manually.',
     },
     jobs: {
@@ -2084,11 +2261,30 @@ export default {
       without: 'Without selected instructions',
       selectAll: 'Select all',
       selectedInstructions: 'Selected instructions',
+      selectedInstructionsHelp: 'Instructions of selected type are excluded from the list',
     },
     chip: {
       with: 'WITH',
       without: 'WITHOUT',
       all: 'ALL',
+    },
+  },
+
+  remediationInstructionStats: {
+    alarmsTimeline: 'Alarms timeline',
+    alarmId: 'Alarm ID',
+    executedOn: 'Executed on',
+    lastExecutedOn: 'Last executed on',
+    modifiedOn: 'Modified on',
+    averageCompletionTime: 'Average time\nof completion',
+    executionCount: 'Number of\nexecutions',
+    alarmStates: 'Alarms affected by state',
+    okAlarmStates: 'Number of resulting\nOK states',
+    notAvailable: 'N/a',
+    instructionChanged: 'The instruction has been changed',
+    actions: {
+      needRate: 'Rate it!',
+      rate: 'Rate',
     },
   },
 
@@ -2105,56 +2301,54 @@ export default {
   },
 
   scenario: {
-    title: 'Scenarios',
+    triggers: 'Triggers',
+    emitTrigger: 'Emit trigger',
+    withAuth: 'Do you need auth fields?',
+    emptyResponse: 'Empty response',
+    isRegexp: 'The value can be a RegExp',
+    headerKey: 'Header key',
+    headerValue: 'Header value',
+    key: 'Key',
+    skipVerify: 'Ignore HTTPS certificate verification',
     headers: 'Headers',
     declareTicket: 'Declare ticket',
     workflow: 'Workflow if this action didn’t match:',
     remainingAction: 'Continue with remaining actions',
     addAction: 'Add action',
     emptyActions: 'No actions added yet',
-    urlHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>' +
-      '<i>For example:</i>' +
-      '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>' +
-      '<pre>"https://exampleurl.com?entity_id={{ .Entity.ID }}"</pre>' +
-      '<pre>"https://exampleurl.com?children_count={{ len .Children }}"</pre>' +
-      '<pre>"https://exampleurl.com?children={{ range .Children }}{{ .ID }}{{ end }}"</pre>',
-    outputHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>' +
-      '<i>For example:</i>' +
-      '<pre>Resource - {{ .Alarm.Value.Resource }}. Entity - {{ .Entity.ID }}.</pre>',
-    payloadHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>' +
-      '<i>For example:</i>' +
-      '<pre>{\n' +
-      '  resource: "{{ .Alarm.Value.Resource }}",\n' +
-      '  entity: "{{ .Entity.ID }}",\n' +
-      '  children_count: "{{ len .Children }}",\n' +
-      '  children: {{ range .Children }}{{ .ID }}{{ end }}\n' +
-      '}</pre>',
+    urlHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>'
+      + '<i>For example:</i>'
+      + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'
+      + '<pre>"https://exampleurl.com?entity_id={{ .Entity.ID }}"</pre>'
+      + '<pre>"https://exampleurl.com?children_count={{ len .Children }}"</pre>'
+      + '<pre>"https://exampleurl.com?children={{ range .Children }}{{ .ID }}{{ end }}"</pre>',
+    outputHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'
+      + '<i>For example:</i>'
+      + '<pre>Resource - {{ .Alarm.Value.Resource }}. Entity - {{ .Entity.ID }}.</pre>',
+    payloadHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>'
+      + '<i>For example:</i>'
+      + '<pre>{\n'
+      + '  resource: "{{ .Alarm.Value.Resource }}",\n'
+      + '  entity: "{{ .Entity.ID }}",\n'
+      + '  children_count: "{{ len .Children }}",\n'
+      + '  children: {{ range .Children }}{{ .ID }}{{ end }}\n'
+      + '}</pre>',
     actions: {
-      [SCENARIO_ACTION_TYPES.snooze]: 'Snooze',
-      [SCENARIO_ACTION_TYPES.pbehavior]: 'Pbehavior',
-      [SCENARIO_ACTION_TYPES.changeState]: 'Change state (Change and lock severity)',
-      [SCENARIO_ACTION_TYPES.ack]: 'Acknowledge',
-      [SCENARIO_ACTION_TYPES.ackremove]: 'Acknowledge remove',
-      [SCENARIO_ACTION_TYPES.assocticket]: 'Associate ticket',
-      [SCENARIO_ACTION_TYPES.cancel]: 'Cancel',
-      [SCENARIO_ACTION_TYPES.webhook]: 'Webhook',
-    },
-    fields: {
-      triggers: 'Triggers',
-      emitTrigger: 'Emit trigger',
-      withAuth: 'Do you need auth fields?',
-      emptyResponse: 'Empty response',
-      isRegexp: 'The value can be a RegExp',
-      headerKey: 'Header key',
-      headerValue: 'Header value',
-      key: 'Key',
-      skipVerify: 'Ignore HTTPS certificate verification',
+      [ACTION_TYPES.snooze]: 'Snooze',
+      [ACTION_TYPES.pbehavior]: 'Pbehavior',
+      [ACTION_TYPES.changeState]: 'Change state (Change and lock severity)',
+      [ACTION_TYPES.ack]: 'Acknowledge',
+      [ACTION_TYPES.ackremove]: 'Acknowledge remove',
+      [ACTION_TYPES.assocticket]: 'Associate ticket',
+      [ACTION_TYPES.cancel]: 'Cancel',
+      [ACTION_TYPES.webhook]: 'Webhook',
     },
     tabs: {
       pattern: 'Pattern',
     },
     errors: {
       actionRequired: 'Please add at least one action',
+      priorityExist: 'The priority of current scenario is already in use. Do you want to change the current scenario priority to {priority}?',
     },
   },
 
@@ -2169,22 +2363,17 @@ export default {
   },
 
   entity: {
+    manageInfos: 'Manage Infos',
+    form: 'Form',
+    impact: 'Impact',
+    depends: 'Depends',
+    addInformation: 'Add Information',
+    emptyInfos: 'No information',
+    availabilityState: 'Hi availability state',
     types: {
       connector: 'connector type',
       component: 'component',
       resource: 'resource',
-    },
-    fields: {
-      type: 'Type',
-      manageInfos: 'Manage Infos',
-      form: 'Form',
-      impact: 'Impact',
-      depends: 'Depends',
-    },
-    manageInfos: {
-      title: 'Informations',
-      createTitle: 'Add Information',
-      emptyInfos: 'No information',
     },
   },
 
@@ -2199,22 +2388,24 @@ export default {
   },
 
   users: {
-    table: {
-      username: 'Username',
-      firstName: 'First name',
-      lastName: 'Last name',
-      role: 'Role',
-      enabled: 'Enabled',
-      auth: 'Auth',
+    seeProfile: 'See profile',
+    selectDefaultView: 'Select default view',
+    username: 'Username',
+    firstName: 'First name',
+    lastName: 'Last name',
+    email: 'Email',
+    role: 'Role',
+    enabled: 'Enabled',
+    password: 'Password',
+    language: 'User interface language',
+    auth: 'Auth',
+    navigationType: 'Groups navigation type',
+    navigationTypes: {
+      [GROUPS_NAVIGATION_TYPES.sideBar]: 'Side bar',
+      [GROUPS_NAVIGATION_TYPES.topBar]: 'Top bar',
     },
-    fields: {
-      username: 'Username',
-      firstName: 'First name',
-      lastName: 'Last name',
-      email: 'Email',
-      password: 'Password',
-      language: 'User interface language',
-      role: 'Role',
+    metrics: {
+      [USER_METRIC_PARAMETERS.totalUserActivity]: 'Total activity time',
     },
   },
 
@@ -2236,7 +2427,6 @@ export default {
     failureMessage: 'Failure message',
     noData: 'No system messages found in XML',
     tabs: {
-      summary: 'Summary',
       globalMessages: 'Global messages',
       gantt: 'Gantt',
       details: 'Details',
@@ -2270,15 +2460,293 @@ export default {
     },
   },
 
-  storageSetting: {
+  storageSettings: {
+    alarm: {
+      title: 'Alarm data storage',
+      titleHelp: 'When switched on, the resolved alarms data will be archived and/or deleted after the defined time period.',
+      archiveAfter: 'Archive resolved alarms data after',
+      deleteAfter: 'Delete resolved alarms data after',
+    },
     junit: {
       title: 'JUnit data storage',
       deleteAfter: 'Delete test suites data after',
       deleteAfterHelpText: 'When switched on, the JUnit test suites data (XMLs, screenshots and videos) will be deleted after the defined time period.',
     },
-    history: {
-      junit: 'Script launched at {launchedAt}',
+    remediation: {
+      title: 'Instructions data storage',
+      accumulateAfter: 'Accumulate instructions statistics after',
+      deleteAfter: 'Delete instructions data after',
+      deleteAfterHelpText: 'When switched on, the instructions statistical data will be deleted after the defined time period.',
     },
+    entity: {
+      title: 'Entities data storage',
+      titleHelp: 'All disabled entities with associated alarms can be archived (moved to the separate collection) and/or deleted forever.',
+      archiveEntity: 'Archive disabled entities',
+      deleteEntity: 'Delete disabled entities forever from archive',
+      archiveDependencies: 'Remove the impacting and dependent entities as well',
+      archiveDependenciesHelp: 'For connectors, all impacting and dependent components and resources will be archived or deleted forever. For components, all dependent resources will be archived or deleted forever as well.',
+      cleanStorage: 'Clean storage',
+    },
+    pbehavior: {
+      title: 'PBehavior data storage',
+      deleteAfter: 'Delete PBehavior data after',
+      deleteAfterHelpText: 'When switched on, inactive PBehaviors will be deleted after the defined time period from the last event.',
+    },
+    healthCheck: {
+      title: 'Healthcheck data storage',
+      deleteAfter: 'Delete FIFO incoming flow data after',
+    },
+    history: {
+      scriptLaunched: 'Script launched at {launchedAt}.',
+      alarm: {
+        deletedCount: 'Alarms deleted: {count}.',
+        archivedCount: 'Alarms archived: {count}.',
+      },
+      entity: {
+        deletedCount: 'Entities deleted: {count}.',
+        archivedCount: 'Entities archived: {count}.',
+      },
+    },
+  },
+
+  notificationSettings: {
+    instruction: {
+      header: 'Instructions',
+      rate: '”Rate the instruction” notifications',
+      rateFrequency: 'Frequency',
+      duration: 'Time range',
+    },
+  },
+
+  quickRanges: {
+    title: 'Quick ranges',
+    types: {
+      [QUICK_RANGES.custom.value]: 'Custom',
+      [QUICK_RANGES.last2Days.value]: 'Last 2 days',
+      [QUICK_RANGES.last7Days.value]: 'Last 7 days',
+      [QUICK_RANGES.last30Days.value]: 'Last 30 days',
+      [QUICK_RANGES.last1Year.value]: 'Last 1 year',
+      [QUICK_RANGES.yesterday.value]: 'Yesterday',
+      [QUICK_RANGES.previousWeek.value]: 'Previous week',
+      [QUICK_RANGES.previousMonth.value]: 'Previous month',
+      [QUICK_RANGES.today.value]: 'Today',
+      [QUICK_RANGES.todaySoFar.value]: 'Today so far',
+      [QUICK_RANGES.thisWeek.value]: 'This week',
+      [QUICK_RANGES.thisWeekSoFar.value]: 'This week so far',
+      [QUICK_RANGES.thisMonth.value]: 'This month',
+      [QUICK_RANGES.thisMonthSoFar.value]: 'This month so far',
+      [QUICK_RANGES.last1Hour.value]: 'Last 1 hour',
+      [QUICK_RANGES.last3Hour.value]: 'Last 3 hour',
+      [QUICK_RANGES.last6Hour.value]: 'Last 6 hour',
+      [QUICK_RANGES.last12Hour.value]: 'Last 12 hour',
+      [QUICK_RANGES.last24Hour.value]: 'Last 24 hour',
+    },
+  },
+
+  idleRules: {
+    timeAwaiting: 'Time awaiting',
+    timeRangeAwaiting: 'Time range awaiting',
+    types: {
+      [IDLE_RULE_TYPES.alarm]: 'Alarm rule',
+      [IDLE_RULE_TYPES.entity]: 'Entity rule',
+    },
+    alarmConditions: {
+      [IDLE_RULE_ALARM_CONDITIONS.lastEvent]: 'No events received',
+      [IDLE_RULE_ALARM_CONDITIONS.lastUpdate]: 'No state changes',
+    },
+  },
+
+  alarmStatusRules: {
+    frequencyLimit: 'Frequency limit',
+  },
+
+  icons: {
+    noEvents: 'No events received for {duration} by some of dependencies',
+  },
+
+  pageHeaders: {
+    hideMessage: 'Got it! Hide',
+    learnMore: 'Learn more on {link}',
+
+    /**
+     * Exploitation
+     */
+    [USERS_PERMISSIONS.technical.exploitation.eventFilter]: {
+      title: 'Event filter',
+      message: 'The event-filter is a feature of the engine engine-cheallowing to define rules handling events.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: {
+      title: 'Dynamic informations',
+      message: 'The Canopsis Dynamic infos are used to add information to the alarms. This information is defined with rules indicating under which conditions information must be presented on an alarm.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: {
+      title: 'Meta alarm rule',
+      message: 'Meta alarm rules can be used for grouping alarms by types and criteria (parent-child relationship, time interval, etc).',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.idleRules]: {
+      title: 'Idle rules',
+      message: 'Idle rules for entities and alarms can be used in order to monitor events and alarm states in order to be aware when events are not receiving or alarm state is not changed for a long time because of errors or invalid configuration.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.flappingRules]: {
+      title: 'Flapping rules',
+      // message: '', // TODO: need to put description
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.resolveRules]: {
+      title: 'Resolve rules',
+      // message: '', // TODO: need to put description
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.pbehavior]: {
+      title: 'PBehaviors',
+      message: 'Canopsis periodical behaviors can be used in order to define a periods when the behavior has to be changed, e.g. for  maintenance or service range.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.scenario]: {
+      title: 'Scenarios',
+      message: 'The Canopsis scenarios can be used to conditionally trigger various types of actions on alarms.',
+    },
+
+    [USERS_PERMISSIONS.technical.exploitation.snmpRule]: {
+      title: 'SNMP rules',
+      message: 'The SNMP engine allows the processing of SNMP traps retrieved by the connector snmp2canopsis.',
+    },
+
+    /**
+     * Admin access
+     */
+    [USERS_PERMISSIONS.technical.action]: {
+      title: 'Rights',
+    },
+    [USERS_PERMISSIONS.technical.role]: {
+      title: 'Roles',
+    },
+    [USERS_PERMISSIONS.technical.user]: {
+      title: 'Users',
+    },
+
+    /**
+     * Admin communications
+     */
+    [USERS_PERMISSIONS.technical.broadcastMessage]: {
+      title: 'Broadcast messages',
+      message: 'The Canopsis broadcasting messages can be used for displaying banners and information messages that will appear in the Canopsis interface.',
+    },
+    [USERS_PERMISSIONS.technical.playlist]: {
+      title: 'Playlists',
+      message: 'Playlists can be used for the views customization which can be displayed one after another with an associated delay.',
+    },
+    [USERS_PERMISSIONS.technical.healthcheck]: {
+      title: 'Healthcheck',
+      message: 'The Healthcheck feature is the dashboard with states and errors indications of all systems included to the Canopsis.',
+    },
+    [USERS_PERMISSIONS.technical.kpi]: {
+      title: 'KPI',
+      message: '', // TODO: add correct message
+    },
+
+    /**
+     * Admin general
+     */
+    [USERS_PERMISSIONS.technical.parameters]: {
+      title: 'Parameters',
+    },
+    [USERS_PERMISSIONS.technical.planning]: {
+      title: 'Planning',
+      message: 'The Canopsis Planning Administration functionality can be used for the periodic behavior types customization.',
+    },
+    [USERS_PERMISSIONS.technical.remediation]: {
+      title: 'Instructions',
+      message: 'The Canopsis Remediation feature is used for creation plans or instructions to correct situations.',
+    },
+
+    /**
+     * Notifications
+     */
+    [USERS_PERMISSIONS.technical.notification.instructionStats]: {
+      title: 'Instruction rating',
+      message: 'This page contains the statistics on the instructions execution. Users can rate instructions based on their performance.',
+    },
+  },
+
+  alarmStatuses: {
+    [ENTITIES_STATUSES.closed]: 'Closed',
+    [ENTITIES_STATUSES.ongoing]: 'Ongoing',
+    [ENTITIES_STATUSES.flapping]: 'Flapping',
+    [ENTITIES_STATUSES.stealthy]: 'Stealth',
+    [ENTITIES_STATUSES.cancelled]: 'Canceled',
+    [ENTITIES_STATUSES.noEvents]: 'No events',
+  },
+
+  entitiesCountAlerts: {
+    filter: {
+      countOverLimit: 'The filter you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
+      countRequestError: 'The request to entities count by the filter was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
+    },
+    patterns: {
+      countOverLimit: 'The patterns you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
+      countRequestError: 'The request to entities count by the patterns was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
+    },
+  },
+
+  userInterface: {
+    title: 'User interface',
+    appTitle: 'App title',
+    language: 'Default user interface language',
+    footer: 'Login footer',
+    description: 'Login page description',
+    logo: 'Logo',
+    infoPopupTimeout: 'Info popup timeout',
+    errorPopupTimeout: 'Error popup timeout',
+    allowChangeSeverityToInfo: 'Allow change severity to info',
+    maxMatchedItems: 'Max matched items',
+    checkCountRequestTimeout: 'Check max matched items request timeout (seconds)',
+    tooltips: {
+      maxMatchedItems: 'it need to warn user when number of items that match patterns is above this value',
+      checkCountRequestTimeout: 'it need to define request timeout value for max matched items checking',
+    },
+  },
+
+  kpi: {
+    alarmMetrics: 'Alarm metrics',
+    sli: 'SLI',
+  },
+
+  kpiMetrics: {
+    parameter: 'Parameter to compare',
+    tooltip: {
+      [USER_METRIC_PARAMETERS.totalUserActivity]: '{value} total activity time',
+
+      [ALARM_METRIC_PARAMETERS.createdAlarms]: '{value} created alarms',
+      [ALARM_METRIC_PARAMETERS.activeAlarms]: '{value} active alarms',
+      [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: '{value} non-displayed alarms',
+      [ALARM_METRIC_PARAMETERS.instructionAlarms]: '{value} alarms under auto remediation',
+      [ALARM_METRIC_PARAMETERS.pbehaviorAlarms]: '{value} alarms under PBehavior',
+      [ALARM_METRIC_PARAMETERS.correlationAlarms]: '{value} alarms with correlation',
+      [ALARM_METRIC_PARAMETERS.ackAlarms]: '{value} alarms with acks',
+      [ALARM_METRIC_PARAMETERS.ackActiveAlarms]: '{value} active alarms with acks',
+      [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: '{value} alarms with cancelled acks',
+      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: '{value} active alarms with acks',
+      [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: '{value} active alarms without tickets',
+      [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '{value}% of alarms with auto remediation',
+      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '{value}% alarms with instructions',
+      [ALARM_METRIC_PARAMETERS.ratioTickets]: '{value}% of alarms with tickets created',
+      [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '{value}% of non-displayed alarms',
+      [ALARM_METRIC_PARAMETERS.averageAck]: '{value} to ack alarms',
+      [ALARM_METRIC_PARAMETERS.averageResolve]: '{value} to resolve alarms',
+    },
+  },
+
+  kpiFilters: {
+    helpInformation: 'Here the filter patterns for additional slices of data for counters and ratings can be added.',
+  },
+
+  kpiRatingSettings: {
+    helpInformation: 'The list of parameters to use for rating.',
   },
 
   ...featureService.get('i18n.en'),

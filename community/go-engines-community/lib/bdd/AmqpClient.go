@@ -7,16 +7,13 @@ import (
 	"fmt"
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	liblog "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"github.com/cucumber/messages-go/v10"
+	"github.com/cucumber/godog"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
 	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"math/rand"
 	"net/url"
 	"text/template"
@@ -39,21 +36,13 @@ type AmqpClient struct {
 
 // NewAmqpClient creates new AMQP client.
 func NewAmqpClient(
+	dbClient mongo.DbClient,
+	amqpConnection libamqp.Connection,
 	exchange, key string,
 	encoder encoding.Encoder,
 	decoder encoding.Decoder,
 	eventLogger zerolog.Logger,
 ) (*AmqpClient, error) {
-	mongoClient, err := mongo.NewClient(0, 0)
-	if err != nil {
-		return nil, err
-	}
-
-	amqpConnection, err := libamqp.NewConnection(liblog.NewLogger(false), 0, 0)
-	if err != nil {
-		return nil, err
-	}
-
 	ch, err := amqpConnection.Channel()
 	if err != nil {
 		return nil, err
@@ -103,7 +92,7 @@ func NewAmqpClient(
 
 	return &AmqpClient{
 		amqpConnection:    amqpConnection,
-		mongoClient:       mongoClient,
+		mongoClient:       dbClient,
 		mainStreamAckMsgs: msgs,
 		encoder:           encoder,
 		decoder:           decoder,
@@ -112,13 +101,13 @@ func NewAmqpClient(
 	}, nil
 }
 
-func (c *AmqpClient) Reset(_ *messages.Pickle) {
+func (c *AmqpClient) Reset(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 	// Clear channel.
 	for {
 		select {
 		case <-c.mainStreamAckMsgs:
 		default:
-			return
+			return ctx, nil
 		}
 	}
 }
@@ -173,19 +162,20 @@ Step example:
 	}
 	"""
 */
-func (c *AmqpClient) ICallRPCAxeRequest(eid string, doc *messages.PickleStepArgument_PickleDocString) error {
-	alarm, err := c.findAlarm(eid)
+func (c *AmqpClient) ICallRPCAxeRequest(ctx context.Context, eid string, doc string) error {
+	alarm, err := c.findAlarm(ctx, eid)
 	if err != nil {
 		return err
 	}
 
 	var event types.RPCAxeEvent
-	err = c.decoder.Decode([]byte(doc.Content), &event)
+	err = c.decoder.Decode([]byte(doc), &event)
 	if err != nil {
 		return err
 	}
 
-	event.Alarm = alarm
+	event.Alarm = &alarm.Alarm
+	event.Entity = &alarm.Entity
 	body, err := c.encoder.Encode(event)
 	if err != nil {
 		return err
@@ -221,13 +211,13 @@ Step example:
 	}
 	"""
 */
-func (c *AmqpClient) ICallRPCWebhookRequest(eid string, doc *messages.PickleStepArgument_PickleDocString) error {
-	alarm, err := c.findAlarm(eid)
+func (c *AmqpClient) ICallRPCWebhookRequest(ctx context.Context, eid string, doc string) error {
+	alarm, err := c.findAlarm(ctx, eid)
 	if err != nil {
 		return err
 	}
 
-	content, err := c.executeTemplate(doc.Content)
+	content, err := c.executeTemplate(doc)
 	if err != nil {
 		return err
 	}
@@ -238,7 +228,8 @@ func (c *AmqpClient) ICallRPCWebhookRequest(eid string, doc *messages.PickleStep
 		return err
 	}
 
-	event.Alarm = alarm
+	event.Alarm = &alarm.Alarm
+	event.Entity = &alarm.Entity
 	body, err := c.encoder.Encode(event)
 	if err != nil {
 		return err
@@ -262,25 +253,39 @@ func (c *AmqpClient) ICallRPCWebhookRequest(eid string, doc *messages.PickleStep
 	return nil
 }
 
-func (c *AmqpClient) findAlarm(eid string) (*types.Alarm, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	res := c.mongoClient.Collection(libalarm.AlarmCollectionName).FindOne(ctx, bson.M{"d": eid})
-	if err := res.Err(); err != nil {
-		if err == mongodriver.ErrNoDocuments {
-			return nil, fmt.Errorf("couldn't find an alarm for eid = %s", eid)
-		}
-
-		return nil, err
-	}
-
-	var alarm types.Alarm
-	err := res.Decode(&alarm)
+func (c *AmqpClient) findAlarm(ctx context.Context, eid string) (*types.AlarmWithEntity, error) {
+	cursor, err := c.mongoClient.Collection(mongo.AlarmMongoCollection).Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"d": eid}},
+		{"$sort": bson.M{"v.creation_date": -1}},
+		{"$limit": 1},
+		{"$project": bson.M{
+			"alarm": "$$ROOT",
+			"_id":   0,
+		}},
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "alarm.d",
+			"foreignField": "_id",
+			"as":           "entity",
+		}},
+		{"$unwind": "$entity"},
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	return &alarm, nil
+	defer cursor.Close(ctx)
+	if cursor.Next(ctx) {
+		var alarm types.AlarmWithEntity
+		err := cursor.Decode(&alarm)
+		if err != nil {
+			return nil, err
+		}
+
+		return &alarm, nil
+	}
+
+	return nil, fmt.Errorf("couldn't find an alarm for eid = %s", eid)
 }
 
 func (c *AmqpClient) executeRPC(queue string, body []byte) ([]byte, error) {

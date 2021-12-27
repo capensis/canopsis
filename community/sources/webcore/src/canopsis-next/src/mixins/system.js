@@ -1,9 +1,8 @@
 import Vue from 'vue';
 
 import { DEFAULT_TIMEZONE } from '@/constants';
-import { DEFAULT_JOB_EXECUTOR_FETCH_TIMEOUT_SECONDS } from '@/config';
 
-export default {
+export const systemMixin = {
   provide() {
     return {
       $system: this.system,
@@ -13,8 +12,6 @@ export default {
     return {
       system: {
         timezone: this.timezone || DEFAULT_TIMEZONE,
-        jobExecutorFetchTimeoutSeconds: this.jobExecutorFetchTimeoutSeconds
-          || DEFAULT_JOB_EXECUTOR_FETCH_TIMEOUT_SECONDS,
       },
     };
   },
@@ -22,7 +19,6 @@ export default {
     /**
      * @param {Object} options
      * @param {string} [options.timezone]
-     * @param {number} [options.jobExecutorFetchTimeoutSeconds]
      */
     setSystemData(options) {
       Object.entries(options).forEach(([key, value]) => {

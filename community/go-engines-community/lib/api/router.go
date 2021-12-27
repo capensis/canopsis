@@ -20,11 +20,13 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/heartbeat"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/file"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/notification"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorcomment"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorexception"
@@ -34,24 +36,28 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviortype"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/permission"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/playlist"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/resolverule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/role"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/scenario"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/serviceweather"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/sessionstats"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/sessionauth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/userpreferences"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libentityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	libfile "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session/stats"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -59,35 +65,45 @@ import (
 const baseUrl = "/api/v4"
 
 const (
-	authObjPbh              = "api_pbehavior"
-	authObjPbhType          = "api_pbehaviortype"
-	authObjPbhReason        = "api_pbehaviorreason"
-	authObjPbhException     = "api_pbehaviorexception"
-	authObjHeartbeat        = "api_heartbeat"
-	authObjAction           = "api_action"
-	authObjEntity           = "api_entity"
-	authObjEntityService    = "api_entityservice"
-	authObjEntityCategory   = "api_entitycategory"
-	authObjView             = "api_view"
-	authObjViewGroup        = "api_viewgroup"
-	authObjPlaylist         = "api_playlist"
-	authPermAlarmRead       = "api_alarm_read"
-	authEngine              = "api_engine"
-	authObjContextGraph     = "api_contextgraph"
-	authAcl                 = "api_acl"
-	authObjStateSettings    = "api_state_settings"
-	authDataStorageRead     = "api_datastorage_read"
-	authDataStorageUpdate   = "api_datastorage_update"
-	authEventFilter         = "api_eventfilter"
-	authBroadcastMessage    = "api_broadcast_message"
-	authAssociativeTable    = "api_associative_table"
-	authAppInfoRead         = "api_app_info_read"
-	authUserInterfaceUpdate = "api_user_interface_update"
-	authUserInterfaceDelete = "api_user_interface_delete"
-	authEvent               = "api_event"
-	authObjIdleRule         = "api_idlerule"
+	authObjPbh          = apisecurity.ObjPbehavior
+	authObjPbhType      = apisecurity.ObjPbehaviorType
+	authObjPbhReason    = apisecurity.ObjPbehaviorReason
+	authObjPbhException = apisecurity.ObjPbehaviorException
 
-	authMessageRateStatsRead = "api_message_rate_stats_read"
+	authObjAction = apisecurity.ObjAction
+
+	authObjEntity         = apisecurity.ObjEntity
+	authObjEntityService  = apisecurity.ObjEntityService
+	authObjEntityCategory = apisecurity.ObjEntityCategory
+	authObjContextGraph   = apisecurity.ObjContextGraph
+
+	authObjView      = apisecurity.ObjView
+	authObjViewGroup = apisecurity.ObjViewGroup
+	authObjPlaylist  = apisecurity.ObjPlaylist
+
+	authPermAlarmRead = apisecurity.PermAlarmRead
+
+	authObjStateSettings = apisecurity.PermStateSettings
+
+	authDataStorageRead   = apisecurity.PermDataStorageRead
+	authDataStorageUpdate = apisecurity.PermDataStorageUpdate
+
+	authEventFilter = apisecurity.ObjEventFilter
+
+	authBroadcastMessage = apisecurity.ObjBroadcastMessage
+
+	authAssociativeTable = apisecurity.ObjAssociativeTable
+
+	authUserInterfaceUpdate = apisecurity.PermUserInterfaceUpdate
+	authUserInterfaceDelete = apisecurity.PermUserInterfaceDelete
+
+	authEvent = apisecurity.PermEvent
+
+	authObjIdleRule = apisecurity.ObjIdleRule
+
+	authObjNotification = apisecurity.PermNotification
+
+	authMessageRateStatsRead = apisecurity.PermMessageRateStatsRead
 
 	permRead   = model.PermissionRead
 	permCreate = model.PermissionCreate
@@ -104,88 +120,135 @@ func RegisterRoutes(
 	enforcer libsecurity.Enforcer,
 	dbClient mongo.DbClient,
 	timezoneConfigProvider config.TimezoneConfigProvider,
-	pbhStore redis.Store,
-	pbhService libpbehavior.Service,
+	pbhEntityTypeResolver libpbehavior.EntityTypeResolver,
 	pbhComputeChan chan<- libpbehavior.ComputeTask,
 	entityPublChan chan<- libentityservice.ChangeEntityMessage,
+	entityCleanerTaskChan chan<- entity.CleanTask,
 	runInfoManager engine.RunInfoManager,
 	exportExecutor export.TaskExecutor,
 	actionLogger logger.ActionLogger,
 	publisher amqp.Publisher,
 	jobQueue contextgraph.JobQueue,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
+	scenarioPriorityIntervals action.PriorityIntervals,
+	filesRoot string,
+	websocketHub websocket.Hub,
+	broadcastMessageChan chan<- bool,
+	metricsEntityMetaUpdater metrics.MetaUpdater,
+	metricsUserMetaUpdater metrics.MetaUpdater,
 	logger zerolog.Logger,
 ) {
 	sessionStore := security.GetSessionStore()
 	authMiddleware := security.GetAuthMiddleware()
 	security.RegisterCallbackRoutes(router)
 	authApi := auth.NewApi(
+		security.GetTokenService(),
+		security.GetTokenStore(),
+		security.GetAuthProviders(),
+		security.GetSessionStore(),
+		websocketHub,
+		security.GetCookieOptions().FileAccessName,
+		security.GetCookieOptions().MaxAge,
+		security.GetCookieOptions().Secure,
+		logger,
+	)
+	sessionauthApi := sessionauth.NewApi(
 		sessionStore,
 		security.GetAuthProviders(),
+		websocketHub,
+		security.GetTokenStore(),
+		logger,
 	)
-	router.POST("/auth", authApi.LoginHandler())
-	sessionStatsApi := sessionstats.NewApi(sessionStore, stats.NewManager(dbClient, security.GetConfig().Session.StatsFrame))
+	router.POST("/auth", sessionauthApi.LoginHandler())
+
 	sessionProtected := router.Group("")
 	{
 		sessionProtected.Use(middleware.SessionAuth(dbClient, sessionStore), middleware.OnlyAuth())
-		sessionProtected.GET("/logout", authApi.LogoutHandler())
-
-		{
-			sessionProtected.GET("/api/v2/sessionstart", sessionStatsApi.StartHandler())
-			sessionProtected.POST("/api/v2/keepalive", sessionStatsApi.PingHandler())
-			sessionProtected.POST("/api/v2/session_tracepath", sessionStatsApi.ChangePathHandler())
-		}
+		sessionProtected.GET("/logout", sessionauthApi.LogoutHandler())
 	}
 
-	getStatsHandlers := append(
-		authMiddleware,
-		middleware.SessionAuth(dbClient, sessionStore),
-		middleware.OnlyAuth(),
-		sessionStatsApi.ListHandler(),
-	)
-	router.GET("/api/v2/sessions", getStatsHandlers...)
+	unprotected := router.Group(baseUrl)
+	{
+		unprotected.POST("/login", authApi.Login)
+		unprotected.POST("/logout", authApi.Logout)
+	}
 
 	protected := router.Group(baseUrl)
 	{
 		protected.Use(authMiddleware...)
 
+		protected.Group("/ws").GET("", websocket.NewApi(websocketHub).Handler)
+
 		protected.GET("/account/me", account.NewApi(account.NewStore(dbClient)).Me)
-		protected.GET("/sessions-count", authApi.GetSessionsCount())
+		protected.GET("/logged-user-count", authApi.GetLoggedUserCount)
+		protected.GET("/file-access", authApi.GetFileAccess)
+
+		userPreferencesRouter := protected.Group("/user-preferences")
+		{
+			userPreferencesRouter.Use(middleware.OnlyAuth())
+			userPreferencesApi := userpreferences.NewApi(userpreferences.NewStore(dbClient), actionLogger)
+			userPreferencesRouter.GET("/:id", userPreferencesApi.Get)
+			userPreferencesRouter.PUT("", userPreferencesApi.Update)
+		}
 
 		userRouter := protected.Group("/users")
 		{
-			userRouter.Use(middleware.Authorize(authAcl, permCan, enforcer))
-			userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder()), actionLogger)
+			userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder()), actionLogger, metricsUserMetaUpdater)
 			userRouter.POST("",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionCreate, enforcer),
 				userApi.Create,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer),
 			)
-			userRouter.GET("", userApi.List)
-			userRouter.GET("/:id", userApi.Get)
+			userRouter.GET("",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer),
+				userApi.List,
+			)
+			userRouter.GET("/:id",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer),
+				userApi.Get,
+			)
 			userRouter.PUT("/:id",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer),
 				userApi.Update,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer),
 			)
-			userRouter.DELETE("/:id", userApi.Delete)
+			userRouter.DELETE("/:id",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionDelete, enforcer),
+				userApi.Delete,
+			)
 		}
 		roleRouter := protected.Group("/roles")
 		{
-			roleRouter.Use(middleware.Authorize(authAcl, permCan, enforcer))
 			roleApi := role.NewApi(role.NewStore(dbClient), actionLogger)
-			roleRouter.POST("", roleApi.Create)
-			roleRouter.GET("", roleApi.List)
-			roleRouter.GET("/:id", roleApi.Get)
+			roleRouter.POST("",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionCreate, enforcer),
+				roleApi.Create,
+			)
+			roleRouter.GET("",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer),
+				roleApi.List,
+			)
+			roleRouter.GET("/:id",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer),
+				roleApi.Get,
+			)
 			roleRouter.PUT("/:id",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer),
 				roleApi.Update,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer),
 			)
-			roleRouter.DELETE("/:id", roleApi.Delete)
+			roleRouter.DELETE("/:id",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionDelete, enforcer),
+				roleApi.Delete,
+			)
 		}
 		permissionRouter := protected.Group("/permissions")
 		{
-			permissionRouter.Use(middleware.Authorize(authAcl, permCan, enforcer))
 			permissionApi := permission.NewApi(permission.NewStore(dbClient))
-			permissionRouter.GET("", permissionApi.List)
+			permissionRouter.GET("",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer),
+				permissionApi.List,
+			)
 		}
 
 		alarmAPI := alarm.NewApi(alarm.NewStore(dbClient, GetLegacyURL()), exportExecutor, timezoneConfigProvider)
@@ -224,7 +287,7 @@ func RegisterRoutes(
 			)
 		}
 
-		entityAPI := entity.NewApi(entity.NewStore(dbClient), exportExecutor)
+		entityAPI := entity.NewApi(entity.NewStore(dbClient), exportExecutor, entityCleanerTaskChan, logger)
 		entityExportRouter := protected.Group("/entity-export")
 		{
 			entityExportRouter.POST(
@@ -295,8 +358,7 @@ func RegisterRoutes(
 			pbehavior.NewStore(
 				dbClient,
 				libpbehavior.NewEntityMatcher(dbClient),
-				pbhStore,
-				pbhService,
+				pbhEntityTypeResolver,
 				timezoneConfigProvider,
 			),
 			pbhComputeChan,
@@ -328,6 +390,11 @@ func RegisterRoutes(
 				middleware.Authorize(authObjPbh, permUpdate, enforcer),
 				middleware.SetAuthor(),
 				pbehaviorApi.Update)
+			pbehaviorRouter.PATCH(
+				"/:id",
+				middleware.Authorize(authObjPbh, permUpdate, enforcer),
+				middleware.SetAuthor(),
+				pbehaviorApi.Patch)
 			pbehaviorRouter.DELETE(
 				"/:id",
 				middleware.Authorize(authObjPbh, permDelete, enforcer),
@@ -354,11 +421,17 @@ func RegisterRoutes(
 		}
 		entityRouter := protected.Group("/entities")
 		{
-			entityAPI := entity.NewApi(entity.NewStore(dbClient), exportExecutor)
+			entityAPI := entity.NewApi(entity.NewStore(dbClient), exportExecutor, entityCleanerTaskChan, logger)
 			entityRouter.GET(
 				"",
 				middleware.Authorize(authObjEntity, permRead, enforcer),
 				entityAPI.List,
+			)
+
+			entityRouter.POST(
+				"/clean",
+				middleware.Authorize(authObjEntity, permDelete, enforcer),
+				entityAPI.Clean,
 			)
 
 			entityRouter.GET(
@@ -370,7 +443,8 @@ func RegisterRoutes(
 		}
 		entitybasicsRouter := protected.Group("/entitybasics")
 		{
-			entitybasicsAPI := entitybasic.NewApi(entitybasic.NewStore(dbClient), entityPublChan, actionLogger, logger)
+			entitybasicsAPI := entitybasic.NewApi(entitybasic.NewStore(dbClient), entityPublChan, metricsEntityMetaUpdater,
+				actionLogger, logger)
 			entitybasicsRouter.GET(
 				"",
 				middleware.Authorize(authObjEntity, permRead, enforcer),
@@ -389,7 +463,8 @@ func RegisterRoutes(
 		}
 		entityserviceRouter := protected.Group("/entityservices")
 		{
-			entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient), entityPublChan, actionLogger, logger)
+			entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient), entityPublChan, metricsEntityMetaUpdater,
+				actionLogger, logger)
 			entityserviceRouter.POST(
 				"",
 				middleware.Authorize(authObjEntityService, permCreate, enforcer),
@@ -516,8 +591,6 @@ func RegisterRoutes(
 				GetLegacyURL(),
 				statsStore,
 				timezoneConfigProvider,
-				pbhStore,
-				pbhService,
 			))
 			weatherRouter.GET(
 				"",
@@ -528,42 +601,6 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(authObjEntityService, permRead, enforcer),
 				weatherAPI.EntityList,
-			)
-		}
-
-		heartbeatAPI := heartbeat.NewApi(
-			heartbeat.NewStore(dbClient),
-			heartbeat.NewModelTransformer(),
-			actionLogger,
-		)
-		heartbeatRouter := protected.Group("/heartbeats")
-		{
-			heartbeatRouter.POST(
-				"",
-				middleware.Authorize(authObjHeartbeat, permCreate, enforcer),
-				middleware.SetAuthor(),
-				heartbeatAPI.Create,
-			)
-			heartbeatRouter.GET(
-				"",
-				middleware.Authorize(authObjHeartbeat, permRead, enforcer),
-				heartbeatAPI.List,
-			)
-			heartbeatRouter.GET(
-				"/:id",
-				middleware.Authorize(authObjHeartbeat, permRead, enforcer),
-				heartbeatAPI.Get,
-			)
-			heartbeatRouter.PUT(
-				"/:id",
-				middleware.Authorize(authObjHeartbeat, permUpdate, enforcer),
-				middleware.SetAuthor(),
-				heartbeatAPI.Update,
-			)
-			heartbeatRouter.DELETE(
-				"/:id",
-				middleware.Authorize(authObjHeartbeat, permDelete, enforcer),
-				heartbeatAPI.Delete,
 			)
 		}
 
@@ -608,16 +645,10 @@ func RegisterRoutes(
 				eventApi.Send)
 		}
 
-		appInfoApi := appinfo.NewApi(appinfo.NewStore(dbClient, security.GetConfig().Security.AuthProviders))
+		appInfoApi := appinfo.NewApi(enforcer, appinfo.NewStore(dbClient, security.GetConfig().Security.AuthProviders))
+		protected.GET("app-info", appInfoApi.GetAppInfo)
 		appInfoRouter := protected.Group("/internal")
 		{
-			appInfoRouter.GET("login_info", appInfoApi.LoginInfo)
-			appInfoRouter.GET(
-				"app_info",
-				middleware.Authorize(authAppInfoRead, permCan, enforcer),
-				appInfoApi.GetAppInfo,
-			)
-
 			appInfoRouter.PUT(
 				"user_interface",
 				middleware.Authorize(authUserInterfaceUpdate, permCan, enforcer),
@@ -636,7 +667,7 @@ func RegisterRoutes(
 		}
 		protected.GET(
 			"/engine-runinfo",
-			middleware.Authorize(authEngine, permCan, enforcer),
+			middleware.Authorize(apisecurity.PermHealthcheck, permCan, enforcer),
 			engineinfo.GetRunInfo(ctx, runInfoManager),
 		)
 
@@ -722,6 +753,7 @@ func RegisterRoutes(
 		// broadcast message API
 		broadcastMessageApi := broadcastmessage.NewApi(
 			broadcastmessage.NewStore(dbClient),
+			broadcastMessageChan,
 			actionLogger,
 		)
 		broadcastMessageRouter := protected.Group("/broadcast-message")
@@ -777,7 +809,7 @@ func RegisterRoutes(
 
 		scenarioRouter := protected.Group("/scenarios")
 		{
-			scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient), actionLogger)
+			scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient), actionLogger, scenarioPriorityIntervals)
 			scenarioRouter.POST(
 				"",
 				middleware.Authorize(authObjAction, permCreate, enforcer),
@@ -805,6 +837,16 @@ func RegisterRoutes(
 				middleware.Authorize(authObjAction, permDelete, enforcer),
 				scenarioAPI.Delete,
 			)
+			scenarioRouter.GET(
+				"/minimal-priority",
+				middleware.Authorize(authObjAction, permRead, enforcer),
+				scenarioAPI.GetMinimalPriority,
+			)
+			scenarioRouter.POST(
+				"/check-priority",
+				middleware.Authorize(authObjAction, permRead, enforcer),
+				scenarioAPI.CheckPriority,
+			)
 		}
 
 		contextGraphRouter := protected.Group("/contextgraph")
@@ -831,9 +873,24 @@ func RegisterRoutes(
 				stateSettingsApi.Update,
 			)
 			stateSettingsRouter.GET(
-				"/",
+				"",
 				middleware.Authorize(authObjStateSettings, permCan, enforcer),
 				stateSettingsApi.List,
+			)
+		}
+
+		notificationRouter := protected.Group("/notification")
+		{
+			notificationApi := notification.NewApi(notification.NewStore(dbClient), actionLogger)
+			notificationRouter.PUT(
+				"",
+				middleware.Authorize(authObjNotification, permCan, enforcer),
+				notificationApi.Update,
+			)
+			notificationRouter.GET(
+				"",
+				middleware.Authorize(authObjNotification, permCan, enforcer),
+				notificationApi.Get,
 			)
 		}
 
@@ -877,27 +934,6 @@ func RegisterRoutes(
 
 		bulkRouter := protected.Group("/bulk")
 		{
-			heartbeatRouter := bulkRouter.Group("/heartbeats")
-			{
-				heartbeatRouter.POST(
-					"",
-					middleware.Authorize(authObjHeartbeat, permCreate, enforcer),
-					middleware.SetAuthorToBulk(),
-					heartbeatAPI.BulkCreate,
-				)
-				heartbeatRouter.PUT(
-					"",
-					middleware.Authorize(authObjHeartbeat, permUpdate, enforcer),
-					middleware.SetAuthorToBulk(),
-					heartbeatAPI.BulkUpdate,
-				)
-				heartbeatRouter.DELETE(
-					"",
-					middleware.Authorize(authObjHeartbeat, permDelete, enforcer),
-					heartbeatAPI.BulkDelete,
-				)
-			}
-
 			viewRouter := bulkRouter.Group("/views")
 			{
 				viewRouter.POST(
@@ -943,6 +979,27 @@ func RegisterRoutes(
 					viewGroupAPI.BulkDelete,
 				)
 			}
+
+			pbehaviorRouter := bulkRouter.Group("/pbehaviors")
+			{
+				pbehaviorRouter.POST(
+					"",
+					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionCreate, enforcer),
+					middleware.SetAuthorToBulk(),
+					pbehaviorApi.BulkCreate,
+				)
+				pbehaviorRouter.PUT(
+					"",
+					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionUpdate, enforcer),
+					middleware.SetAuthorToBulk(),
+					pbehaviorApi.BulkUpdate,
+				)
+				pbehaviorRouter.DELETE(
+					"",
+					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionDelete, enforcer),
+					pbehaviorApi.BulkDelete,
+				)
+			}
 		}
 
 		dateStorageRouter := protected.Group("data-storage")
@@ -976,6 +1033,7 @@ func RegisterRoutes(
 			idleRuleRouter.POST(
 				"",
 				middleware.Authorize(authObjIdleRule, permCreate, enforcer),
+				middleware.SetAuthor(),
 				idleRuleAPI.Create,
 			)
 			idleRuleRouter.GET(
@@ -991,6 +1049,7 @@ func RegisterRoutes(
 			idleRuleRouter.PUT(
 				"/:id",
 				middleware.Authorize(authObjIdleRule, permUpdate, enforcer),
+				middleware.SetAuthor(),
 				idleRuleAPI.Update,
 			)
 			idleRuleRouter.DELETE(
@@ -1003,19 +1062,96 @@ func RegisterRoutes(
 				middleware.Authorize(authObjPbh, permCreate, enforcer),
 				idleRuleAPI.CountPatterns)
 		}
+
+		fileRouter := protected.Group("/file")
+		{
+			fileAPI := file.NewApi(enforcer, file.NewStore(dbClient, libfile.NewStorage(
+				filesRoot,
+				libfile.NewEtagEncoder(),
+			), conf.File.UploadMaxSize))
+			fileRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjFile, permCreate, enforcer),
+				fileAPI.Create,
+			)
+			getFileRouter := fileRouter.Group("", security.GetFileAuthMiddleware()...)
+			getFileRouter.GET(
+				"",
+				fileAPI.List,
+			)
+			getFileRouter.GET(
+				"/:id",
+				fileAPI.Get,
+			)
+			fileRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjFile, permDelete, enforcer),
+				fileAPI.Delete,
+			)
+		}
+
+		resolveRuleRouter := protected.Group("/resolve-rules")
+		{
+			resolveRuleAPI := resolverule.NewApi(resolverule.NewStore(dbClient), actionLogger)
+			resolveRuleRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjResolveRule, model.PermissionCreate, enforcer),
+				middleware.SetAuthor(),
+				resolveRuleAPI.Create,
+			)
+			resolveRuleRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjResolveRule, model.PermissionRead, enforcer),
+				resolveRuleAPI.List,
+			)
+			resolveRuleRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjResolveRule, model.PermissionRead, enforcer),
+				resolveRuleAPI.Get,
+			)
+			resolveRuleRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjResolveRule, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				resolveRuleAPI.Update,
+			)
+			resolveRuleRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjResolveRule, model.PermissionDelete, enforcer),
+				resolveRuleAPI.Delete,
+			)
+		}
+
+		flappingRuleRouter := protected.Group("/flapping-rules")
+		{
+			flappingRuleAPI := flappingrule.NewApi(flappingrule.NewStore(dbClient), actionLogger)
+			flappingRuleRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionCreate, enforcer),
+				middleware.SetAuthor(),
+				flappingRuleAPI.Create,
+			)
+			flappingRuleRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionRead, enforcer),
+				flappingRuleAPI.List,
+			)
+			flappingRuleRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionRead, enforcer),
+				flappingRuleAPI.Get,
+			)
+			flappingRuleRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				flappingRuleAPI.Update,
+			)
+			flappingRuleRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionDelete, enforcer),
+				flappingRuleAPI.Delete,
+			)
+		}
 	}
-}
-
-func GetProxy(
-	security Security,
-	enforcer libsecurity.Enforcer,
-	accessConfig proxy.AccessConfig,
-) []gin.HandlerFunc {
-	authMiddleware := security.GetAuthMiddleware()
-
-	return append(
-		authMiddleware,
-		middleware.ProxyAuthorize(enforcer, accessConfig),
-		ReverseProxyHandler(),
-	)
 }

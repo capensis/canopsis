@@ -1,7 +1,7 @@
 <template lang="pug">
   v-app#app
     v-layout(v-if="!pending")
-      the-navigation#main-navigation(v-if="$route.name !== 'login'")
+      the-navigation#main-navigation(v-if="shownNavigation")
       v-content#main-content
         active-broadcast-message
         router-view(:key="routeViewKey")
@@ -11,21 +11,27 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 import { isEmpty } from 'lodash';
+import { createNamespacedHelpers } from 'vuex';
+
+import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
+import { EXCLUDED_SERVER_ERROR_STATUSES, MAX_LIMIT, ROUTES_NAMES } from '@/constants';
+
+import { reloadPageWithTrailingSlashes } from '@/helpers/url';
+import { convertDateToString } from '@/helpers/date/date';
+
+import localStorageService from '@/services/local-storage';
+
+import { authMixin } from '@/mixins/auth';
+import { systemMixin } from '@/mixins/system';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { entitiesUserMixin } from '@/mixins/entities/user';
 
 import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
 import TheSideBars from '@/components/side-bars/the-sidebars.vue';
 import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active-broadcast-message.vue';
 
-import { authMixin } from '@/mixins/auth';
-import systemMixin from '@/mixins/system';
-import entitiesInfoMixin from '@/mixins/entities/info';
-import entitiesUserMixin from '@/mixins/entities/user';
-import keepaliveMixin from '@/mixins/entities/keepalive';
-
 import '@/assets/styles/main.scss';
-import { MAX_LIMIT } from '@/constants';
 
 const { mapActions } = createNamespacedHelpers('remediationInstructionExecution');
 
@@ -40,7 +46,6 @@ export default {
     systemMixin,
     entitiesInfoMixin,
     entitiesUserMixin,
-    keepaliveMixin,
   ],
   data() {
     return {
@@ -49,42 +54,47 @@ export default {
   },
   computed: {
     routeViewKey() {
-      if (this.$route.name === 'view') {
+      if (this.$route.name === ROUTES_NAMES.view) {
         return this.$route.path;
       }
 
       return this.$route.fullPath;
     },
+
+    shownNavigation() {
+      return ![ROUTES_NAMES.login, ROUTES_NAMES.error].includes(this.$route.name);
+    },
+  },
+  beforeCreate() {
+    reloadPageWithTrailingSlashes();
   },
   created() {
     this.registerCurrentUserOnceWatcher();
   },
-  async mounted() {
-    await this.fetchCurrentUser();
-
-    this.pending = false;
-  },
-  beforeDestroy() {
-    this.stopKeepalive();
+  mounted() {
+    this.socketConnectWithErrorHandling();
+    this.fetchCurrentUserWithErrorHandling();
   },
   methods: {
     ...mapActions({
-      fetchPausedExecutionsWithoutStore: 'fetchPausedExecutionsWithoutStore',
+      fetchPausedExecutionsWithoutStore: 'fetchPausedListWithoutStore',
     }),
 
     registerCurrentUserOnceWatcher() {
       const unwatch = this.$watch('currentUser', async (currentUser) => {
         if (!isEmpty(currentUser)) {
-          await this.fetchAppInfos();
+          this.$socket.authenticate(localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY));
+
+          await Promise.all([
+            this.fetchAppInfo(),
+            this.filesAccess(),
+          ]);
 
           this.setSystemData({
             timezone: this.timezone,
-            jobExecutorFetchTimeoutSeconds: this.jobExecutorFetchTimeoutSeconds,
           });
 
           this.setTitle();
-
-          this.startKeepalive();
           this.showPausedExecutionsPopup();
 
           unwatch();
@@ -105,9 +115,46 @@ export default {
         text: this.$t('remediationInstructionExecute.popups.wasPaused', {
           instructionName: execution.instruction_name,
           alarmName: execution.alarm_name,
-          date: this.$options.filters.date(execution.paused, 'long', true),
+          date: convertDateToString(execution.paused),
         }),
       }));
+    },
+
+    socketConnectWithErrorHandling() {
+      try {
+        this.$socket
+          .connect(SOCKET_URL)
+          .on('error', this.socketErrorHandler);
+      } catch (err) {
+        this.$popups.error({
+          text: this.$t('errors.socketConnectionProblem'),
+          autoClose: false,
+        });
+
+        console.error(err);
+      }
+    },
+
+    socketErrorHandler({ message } = {}) {
+      if (message) {
+        this.$popups.error({ text: message });
+      }
+    },
+
+    async fetchCurrentUserWithErrorHandling() {
+      try {
+        this.pending = true;
+
+        await this.fetchCurrentUser();
+      } catch (err) {
+        if (!EXCLUDED_SERVER_ERROR_STATUSES.includes(err.status)) {
+          this.$router.push({ name: ROUTES_NAMES.error });
+        }
+
+        console.error(err);
+      } finally {
+        this.pending = false;
+      }
     },
   },
 };

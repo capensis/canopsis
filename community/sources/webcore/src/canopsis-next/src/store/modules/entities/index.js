@@ -11,6 +11,7 @@ import remediationInstructionExecutionModule from './remediation-instruction-exe
 import remediationConfigurationModule from './remediation-configuration';
 import remediationJobModule from './remediation-job';
 import remediationJobExecutionModule from './remediation-job-execution';
+import remediationInstructionStatsModule from './remediation-instruction-stats';
 import userPreferenceModule from './user-preference';
 import viewModule from './view';
 import statsModule from './stats';
@@ -21,10 +22,7 @@ import eventFilterRuleModule from './event-filter-rule';
 import infoModule from './info';
 import snmpRuleModule from './snmp/rule';
 import snmpMibModule from './snmp/mib';
-import heartbeatModule from './heartbeat';
-import keepaliveModule from './keepalive';
 import dynamicInfoModule from './dynamic-info';
-import sessionsCountModule from './sessions-count';
 import broadcastMessageModule from './broadcast-message';
 import counterModule from './counter';
 import playlistModule from './playlist';
@@ -36,6 +34,16 @@ import testSuiteModule from './test-suite';
 import stateSettingModule from './state-setting';
 import associativeTableModule from './associative-table';
 import dataStorageModule from './data-storage';
+import notificationSettingsModule from './notification-settings';
+import idleRulesModule from './idle-rules';
+import flappingRulesModule from './flapping-rules';
+import resolveRulesModule from './resolve-rules';
+import healthcheckModule from './healthcheck';
+import healthcheckParametersModule from './healthcheck-parameters';
+import messageRateStatsModule from './message-rate-stats';
+import metricsModule from './metrics';
+import filterModule from './filter';
+import ratingSettingsModule from './rating-settings';
 
 export default {
   alarm: alarmModule,
@@ -56,10 +64,7 @@ export default {
   info: infoModule,
   snmpRule: snmpRuleModule,
   snmpMib: snmpMibModule,
-  heartbeat: heartbeatModule,
-  keepalive: keepaliveModule,
   dynamicInfo: dynamicInfoModule,
-  sessionsCount: sessionsCountModule,
   broadcastMessage: broadcastMessageModule,
   counter: counterModule,
   playlist: playlistModule,
@@ -70,10 +75,21 @@ export default {
   remediationConfiguration: remediationConfigurationModule,
   remediationInstructionExecution: remediationInstructionExecutionModule,
   remediationJobExecution: remediationJobExecutionModule,
+  remediationInstructionStats: remediationInstructionStatsModule,
   scenario: scenarioModule,
   entityCategory: entityCategoryModule,
   testSuite: testSuiteModule,
   stateSetting: stateSettingModule,
   associativeTable: associativeTableModule,
   dataStorage: dataStorageModule,
+  notificationSettings: notificationSettingsModule,
+  idleRules: idleRulesModule,
+  flappingRules: flappingRulesModule,
+  resolveRules: resolveRulesModule,
+  healthcheck: healthcheckModule,
+  healthcheckParameters: healthcheckParametersModule,
+  messageRateStats: messageRateStatsModule,
+  metrics: metricsModule,
+  filter: filterModule,
+  ratingSettings: ratingSettingsModule,
 };

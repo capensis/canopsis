@@ -29,12 +29,16 @@ import sanitizeHTML from 'sanitize-html';
 
 import { ALARM_ENTITY_FIELDS, COLOR_INDICATOR_TYPES } from '@/constants';
 
+import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
+import { convertDurationToString } from '@/helpers/date/duration';
+
 import { widgetColumnsFiltersMixin } from '@/mixins/widget/columns-filters';
 
 import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
 
 import AlarmColumnCellPopupBody from './alarm-column-cell-popup-body.vue';
 import AlarmColumnValueState from './alarm-column-value-state.vue';
+import AlarmColumnValueStatus from './alarm-column-value-status.vue';
 import AlarmColumnValueCategories from './alarm-column-value-categories.vue';
 import AlarmColumnValueExtraDetails from './alarm-column-value-extra-details.vue';
 import AlarmColumnValueLinks from './alarm-column-value-links.vue';
@@ -52,6 +56,7 @@ export default {
   components: {
     AlarmColumnCellPopupBody,
     AlarmColumnValueState,
+    AlarmColumnValueStatus,
     AlarmColumnValueCategories,
     AlarmColumnValueExtraDetails,
     AlarmColumnValueLinks,
@@ -83,7 +88,9 @@ export default {
   },
   computed: {
     value() {
-      return this.$options.filters.get(this.alarm, this.column.value, this.columnFilter, '');
+      const value = get(this.alarm, this.column.value, '');
+
+      return this.columnFilter ? this.columnFilter(value) : value;
     },
 
     sanitizedValue() {
@@ -114,17 +121,19 @@ export default {
 
     columnFilter() {
       const PROPERTIES_FILTERS_MAP = {
-        'v.status.val': value => this.$t(`tables.alarmStatus.${value}`),
-        'v.last_update_date': value => this.$options.filters.date(value, 'long'),
-        'v.creation_date': value => this.$options.filters.date(value, 'long'),
-        'v.last_event_date': value => this.$options.filters.date(value, 'long'),
-        'v.activation_date': value => this.$options.filters.date(value, 'long'),
-        'v.state.t': value => this.$options.filters.date(value, 'long'),
-        'v.status.t': value => this.$options.filters.date(value, 'long'),
-        'v.resolved': value => this.$options.filters.date(value, 'long'),
-        'v.duration': value => this.$options.filters.duration(value),
-        'v.current_state_duration': value => this.$options.filters.duration(value),
-        t: value => this.$options.filters.date(value, 'long'),
+        'v.last_update_date': convertDateToStringWithFormatForToday,
+        'v.creation_date': convertDateToStringWithFormatForToday,
+        'v.last_event_date': convertDateToStringWithFormatForToday,
+        'v.activation_date': convertDateToStringWithFormatForToday,
+        'v.state.t': convertDateToStringWithFormatForToday,
+        'v.status.t': convertDateToStringWithFormatForToday,
+        'v.resolved': convertDateToStringWithFormatForToday,
+        'v.duration': convertDurationToString,
+        'v.current_state_duration': convertDurationToString,
+        t: convertDateToStringWithFormatForToday,
+        'v.active_duration': convertDateToStringWithFormatForToday,
+        'v.snooze_duration': convertDateToStringWithFormatForToday,
+        'v.pbh_inactive_duration': convertDateToStringWithFormatForToday,
 
         ...this.columnsFiltersMap,
       };
@@ -137,6 +146,12 @@ export default {
         [ALARM_ENTITY_FIELDS.state]: {
           bind: {
             is: 'alarm-column-value-state',
+            alarm: this.alarm,
+          },
+        },
+        [ALARM_ENTITY_FIELDS.status]: {
+          bind: {
+            is: 'alarm-column-value-status',
             alarm: this.alarm,
           },
         },
@@ -164,7 +179,7 @@ export default {
             links: this.alarm.links,
           },
         },
-        extra_details: {
+        [ALARM_ENTITY_FIELDS.extraDetails]: {
           bind: {
             is: 'alarm-column-value-extra-details',
             alarm: this.alarm,
@@ -190,10 +205,12 @@ export default {
         };
       }
 
+      const prepareFunc = this.columnFilter ?? String;
+
       return {
         bind: {
           is: 'c-ellipsis',
-          text: String(this.$options.filters.get(this.alarm, this.column.value, this.columnFilter, '')),
+          text: prepareFunc(get(this.alarm, this.column.value, '')),
         },
       };
     },

@@ -7,6 +7,7 @@ Feature: move a instruction execution to next operation
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-execution-next-1-name",
       "alarm_patterns": [
         {
@@ -15,18 +16,22 @@ Feature: move a instruction execution to next operation
       ],
       "description": "test-instruction-execution-next-1-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-execution-next-1-step-1",
           "operations": [
             {
               "name": "test-instruction-execution-next-1-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-next-1-step-1-operation-1-description connector {{ `{{ .Alarm.Value.Connector }}` }} entity {{ `{{ .Entity.ID }}` }}"
             },
             {
               "name": "test-instruction-execution-next-1-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-execution-next-1-step-1-operation-2-description connector {{ `{{ .Alarm.Value.Connector }}` }} entity {{ `{{ .Entity.ID }}` }}"
             }
           ],
@@ -38,7 +43,7 @@ Feature: move a instruction execution to next operation
           "operations": [
             {
               "name": "test-instruction-execution-next-1-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 6, "unit":"s"},
               "description": "test-instruction-execution-next-1-step-2-operation-1-description connector {{ `{{ .Alarm.Value.Connector }}` }} entity {{ `{{ .Entity.ID }}` }}"
             }
           ],
@@ -68,19 +73,19 @@ Feature: move a instruction execution to next operation
       "steps": [
         {
           "name": "test-instruction-execution-next-1-step-1",
-          "time_to_complete": {"seconds": 4, "unit":"s"},
+          "time_to_complete": {"value": 4, "unit":"s"},
           "completed_at": 0,
           "failed_at": 0,
           "operations": [
             {
               "name": "test-instruction-execution-next-1-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-next-1-step-1-operation-1-description connector test-instruction-execution-next-connector entity test-instruction-execution-next-resource-1/test-instruction-execution-next-component"
             },
             {
               "completed_at": 0,
               "name": "test-instruction-execution-next-1-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-execution-next-1-step-1-operation-2-description connector test-instruction-execution-next-connector entity test-instruction-execution-next-resource-1/test-instruction-execution-next-component",
               "jobs": []
             }
@@ -89,7 +94,7 @@ Feature: move a instruction execution to next operation
         },
         {
           "name": "test-instruction-execution-next-1-step-2",
-          "time_to_complete": {"seconds": 6, "unit":"s"},
+          "time_to_complete": {"value": 6, "unit":"s"},
           "completed_at": 0,
           "failed_at": 0,
           "operations": [
@@ -97,7 +102,7 @@ Feature: move a instruction execution to next operation
               "started_at": 0,
               "completed_at": 0,
               "name": "test-instruction-execution-next-1-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 6, "unit":"s"},
               "description": "",
               "jobs": []
             }
@@ -116,6 +121,7 @@ Feature: move a instruction execution to next operation
     When I do POST /api/v4/cat/instructions:
     """
     {
+      "type": 0,
       "name": "test-instruction-execution-next-2-name",
       "alarm_patterns": [
         {
@@ -124,18 +130,22 @@ Feature: move a instruction execution to next operation
       ],
       "description": "test-instruction-execution-next-2-description",
       "enabled": true,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "s"
+      },
       "steps": [
         {
           "name": "test-instruction-execution-next-2-step-1",
           "operations": [
             {
               "name": "test-instruction-execution-next-2-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-next-2-step-1-operation-1-description"
             },
             {
               "name": "test-instruction-execution-next-2-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-execution-next-2-step-1-operation-2-description"
             }
           ],
@@ -147,7 +157,7 @@ Feature: move a instruction execution to next operation
           "operations": [
             {
               "name": "test-instruction-execution-next-2-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 6, "unit":"s"},
               "description": "test-instruction-execution-next-2-step-2-operation-1-description"
             }
           ],
@@ -178,10 +188,10 @@ Feature: move a instruction execution to next operation
     """
 
   Scenario: given unauth request should not allow access
-    When I do PUT /api/v4/cat/executions/test-instruction-execution-running/next
+    When I do PUT /api/v4/cat/executions/notexist/next
     Then the response code should be 401
 
   Scenario: given get request and auth user without permissions should not allow access
     When I am noperms
-    When I do PUT /api/v4/cat/executions/test-instruction-execution-running/next
+    When I do PUT /api/v4/cat/executions/notexist/next
     Then the response code should be 403

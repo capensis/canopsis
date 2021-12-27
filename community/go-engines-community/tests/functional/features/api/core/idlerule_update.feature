@@ -9,13 +9,12 @@ Feature: Update a idle rule
     {
       "name": "test-idle-rule-to-update-name",
       "description": "test-idle-rule-to-update-description",
-      "author": "test-idle-rule-to-update-author",
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
       "priority": 30,
       "duration": {
-        "seconds": 5,
+        "value": 5,
         "unit": "s"
       },
       "alarm_patterns": [
@@ -31,10 +30,9 @@ Feature: Update a idle rule
       "operation": {
         "type": "snooze",
         "parameters": {
-          "author": "test-idle-rule-to-update-operation-author-updated",
           "output": "test-idle-rule-to-update-operation-output-updated",
           "duration": {
-            "seconds": 5,
+            "value": 5,
             "unit": "s"
           }
         }
@@ -49,14 +47,14 @@ Feature: Update a idle rule
       "_id": "test-idle-rule-to-update",
       "name": "test-idle-rule-to-update-name",
       "description": "test-idle-rule-to-update-description",
-      "author": "test-idle-rule-to-update-author",
+      "author": "root",
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
       "priority": 30,
       "created": 1616567033,
       "duration": {
-        "seconds": 5,
+        "value": 5,
         "unit": "s"
       },
       "alarm_patterns": [
@@ -72,10 +70,10 @@ Feature: Update a idle rule
       "operation": {
         "type": "snooze",
         "parameters": {
-          "author": "test-idle-rule-to-update-operation-author-updated",
+          "author": "root",
           "output": "test-idle-rule-to-update-operation-output-updated",
           "duration": {
-            "seconds": 5,
+            "value": 5,
             "unit": "s"
           }
         }
@@ -118,13 +116,12 @@ Feature: Update a idle rule
     {
       "name": "test-idle-rule-notexists-name",
       "description": "test-idle-rule-notexists-description",
-      "author": "test-idle-rule-notexists-author",
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
       "priority": 31,
       "duration": {
-        "seconds": 5,
+        "value": 5,
         "unit": "s"
       },
       "alarm_patterns": [
@@ -140,10 +137,9 @@ Feature: Update a idle rule
       "operation": {
         "type": "snooze",
         "parameters": {
-          "author": "test-idle-rule-notexists-operation-author-updated",
           "output": "test-idle-rule-notexists-operation-output-updated",
           "duration": {
-            "seconds": 5,
+            "value": 5,
             "unit": "s"
           }
         }

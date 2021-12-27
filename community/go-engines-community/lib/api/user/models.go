@@ -6,7 +6,8 @@ import (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy string `form:"sort_by" binding:"oneoforempty=_id name role enable"`
+	SortBy     string `form:"sort_by" binding:"oneoforempty=_id name role enable"`
+	Permission string `form:"permission"`
 }
 
 type EditRequest struct {
@@ -42,8 +43,9 @@ type User struct {
 }
 
 type Role struct {
-	ID   string `bson:"_id" json:"_id"`
-	Name string `bson:"name" json:"name"`
+	ID          string `bson:"_id" json:"_id"`
+	Name        string `bson:"name" json:"name"`
+	DefaultView *View  `bson:"defaultview" json:"defaultview"`
 }
 
 type View struct {

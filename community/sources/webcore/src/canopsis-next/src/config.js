@@ -1,28 +1,41 @@
 import { removeTrailingSlashes } from '@/helpers/url';
 
-export const { BASE_URL, VUE_APP_COOKIE_SESSION_KEY } = process.env;
-
-export const API_BASE_URL = '/backend';
+export const {
+  BASE_URL,
+  VUE_APP_API_HOST,
+  VUE_APP_LOCAL_STORAGE_ACCESS_TOKEN_KEY,
+  VUE_APP_PAGINATION_LIMIT,
+} = process.env;
 
 export const APP_HOST = removeTrailingSlashes(`${window.location.origin}${BASE_URL}`);
 
-export const API_HOST = removeTrailingSlashes(`${APP_HOST}${API_BASE_URL}`);
+export const API_HOST = VUE_APP_API_HOST || window.location.origin;
+
+export const SOCKET_HOST = API_HOST.replace(/^http(s?)/, 'wss');
+
+export const SOCKET_ROUTE = '/api/v4/ws';
+
+export const SOCKET_URL = removeTrailingSlashes(`${SOCKET_HOST}${SOCKET_ROUTE}`);
 
 export const ROUTER_MODE = 'history';
 
-export const COOKIE_SESSION_KEY = VUE_APP_COOKIE_SESSION_KEY;
+export const ROUTER_ACCESS_TOKEN_KEY = 'access_token';
 
-export const PAGINATION_LIMIT = parseInt(process.env.VUE_APP_PAGINATION_LIMIT, 10);
+export const LOCAL_STORAGE_ACCESS_TOKEN_KEY = VUE_APP_LOCAL_STORAGE_ACCESS_TOKEN_KEY || 'accessToken';
+
+export const PAGINATION_LIMIT = parseInt(VUE_APP_PAGINATION_LIMIT, 10);
 
 export const PAGINATION_PER_PAGE_VALUES = [5, 10, 20, 50, 100];
 
 export const PAGINATION_TOTAL_VISIBLE = 7;
 
+export const DEFAULT_MAX_MULTI_SORT_COLUMNS_COUNT = 3;
+
 export const DEFAULT_WEATHER_LIMIT = 120;
 
 export const DEFAULT_LOCALE = 'en';
 
-export const DEFAULT_KEEP_ALIVE_INTERVAL = 120000;
+export const DEFAULT_VIEW_STATS_INTERVAL = 120000;
 
 export const LOCALE_PRIORITIES = {
   default: 1,
@@ -32,15 +45,13 @@ export const LOCALE_PRIORITIES = {
 
 export const POPUP_AUTO_CLOSE_DELAY = 3000;
 
-export const ACTIVE_SESSIONS_COUNT_FETCHING_INTERVAL = 60000;
-
-export const ACTIVE_BROADCAST_MESSAGE_FETCHING_INTERVAL = 60000;
-
 export const VUETIFY_ANIMATION_DELAY = 300;
 
 export const POPUP_TICK_DELAY = 100;
 
 export const SIDE_BAR_WIDTH = 250;
+
+export const TOP_BAR_HEIGHT = 48;
 
 export const EXPAND_DEFAULT_MAX_LETTERS = 50;
 
@@ -57,10 +68,21 @@ export const MAX_LOGO_SIZE_IN_KB = 16384;
 
 export const DEFAULT_APP_TITLE = 'Canopsis';
 
-export const EXPORT_VIEWS_AND_GROUPS_PREFIX = 'canopsis_groups_views-';
+export const EXPORT_VIEWS_AND_GROUPS_FILENAME_PREFIX = 'canopsis_groups_views-';
+
+export const SOCKET_ROOMS = {
+  healthcheck: 'healthcheck',
+  healthcheckStatus: 'healthcheck-status',
+  messageRates: 'message-rates',
+  loggedUserCount: 'logged-user-count',
+  broadcastMessages: 'broadcast-messages',
+  execution: 'execution',
+};
 
 export const API_ROUTES = {
-  auth: '/auth',
+  login: '/api/v4/login',
+  logout: '/api/v4/logout',
+  loggedUserCount: '/api/v4/logged-user-count',
   currentUser: '/api/v4/account/me',
   alarmList: '/api/v4/alarms',
   entity: '/api/v4/entities',
@@ -73,7 +95,7 @@ export const API_ROUTES = {
   contextExport: '/api/v4/entity-export',
   actions: '/api/v2/actions',
   event: '/api/v4/event',
-  userPreferences: '/rest/userpreferences/userpreferences',
+  userPreferences: '/api/v4/user-preferences',
   view: '/api/v4/views',
   bulkView: '/api/v4/bulk/views',
   viewPosition: '/api/v4/view-positions',
@@ -84,25 +106,23 @@ export const API_ROUTES = {
   users: '/api/v4/users',
   roles: '/api/v4/roles',
   eventFilterRules: '/api/v4/eventfilter/rules',
+  file: '/api/v4/file',
+  fileAccess: '/api/v4/file-access',
   snmpRule: {
-    list: '/snmprule',
-    create: '/snmprule/put',
+    list: '/api/snmprule',
+    create: '/api/snmprule/put',
   },
   snmpMib: {
-    list: '/snmpmib',
-    distinct: '/snmpmibdistinct',
-    upload: '/uploadmib',
+    list: '/api/snmpmib',
+    distinct: '/api/snmpmibdistinct',
+    upload: '/api/uploadmib',
   },
   infos: {
-    login: '/api/v4/internal/login_info',
-    app: '/api/v4/internal/app_info',
+    app: '/api/v4/app-info',
     userInterface: '/api/v4/internal/user_interface',
   },
-  heartbeat: '/api/v4/heartbeats',
   associativeTable: '/api/v4/associativetable',
-  sessionStart: '/api/v2/sessionstart',
   sessionTracePath: '/api/v2/session_tracepath',
-  keepalive: '/api/v2/keepalive',
   sessionsCount: '/api/v4/sessions-count',
   broadcastMessage: {
     list: '/api/v4/broadcast-message',
@@ -122,14 +142,44 @@ export const API_ROUTES = {
   },
   engineRunInfo: '/api/v4/engine-runinfo',
   cas: {
-    login: '/cas/login',
-    loggedin: '/cas/loggedin',
+    login: '/api/v4/cas/login',
+    loggedin: '/api/v4/cas/loggedin',
   },
   saml: {
-    auth: '/saml/auth',
+    auth: '/api/v4/saml/auth',
   },
-  scenarios: '/api/v4/scenarios',
+  scenario: {
+    scenarios: '/api/v4/scenarios',
+    checkPriority: '/api/v4/scenarios/check-priority',
+  },
   entityCategories: '/api/v4/entity-categories',
+  stateSetting: '/api/v4/state-settings',
+  dataStorage: '/api/v4/data-storage',
+  notification: '/api/v4/notification',
+  idleRules: '/api/v4/idle-rules',
+  idleRulesCount: '/api/v4/idle-rules/count',
+  flappingRules: '/api/v4/flapping-rules',
+  resolveRules: '/api/v4/resolve-rules',
+  messageRateStats: '/api/v4/message-rate-stats',
+
+  /**
+   * Cat routes
+   */
+  filters: '/api/v4/cat/filters',
+  ratingSettings: '/api/v4/cat/rating-settings',
+  bulkRatingSettings: '/api/v4/cat/rating-settings/bulk',
+  dynamicInfo: '/api/v4/cat/dynamic-infos',
+  metaAlarmRule: '/api/v4/cat/metaalarmrules',
+  remediation: {
+    instructions: '/api/v4/cat/instructions',
+    instructionStats: '/api/v4/cat/instruction-stats',
+    jobs: '/api/v4/cat/jobs',
+    configurations: '/api/v4/cat/job-configs',
+    executions: '/api/v4/cat/executions',
+    jobExecutions: '/api/v4/cat/job-executions',
+    pausedExecutions: '/api/v4/cat/account/paused-executions',
+    instructionComments: '/api/v4/cat/instruction-comments',
+  },
   junit: {
     directory: '/api/v4/cat/junit/directory',
     testSuites: '/api/v4/cat/junit/test-suites',
@@ -138,23 +188,19 @@ export const API_ROUTES = {
     widget: '/api/v4/cat/junit/test-suites-widget',
     file: '/api/v4/cat/junit/test-cases-file',
   },
-  stateSetting: '/api/v4/state-settings/',
-  dataStorage: '/api/v4/data-storage',
-  logout: '/logout',
-
-  /**
-   * Cat routes
-   */
-  file: '/api/v4/cat/file',
-  dynamicInfo: '/api/v4/cat/dynamic-infos',
-  metaAlarmRule: '/api/v4/cat/metaalarmrules',
-  remediation: {
-    instructions: '/api/v4/cat/instructions',
-    jobs: '/api/v4/cat/jobs',
-    configurations: '/api/v4/cat/job-configs',
-    executions: '/api/v4/cat/executions',
-    jobExecutions: '/api/v4/cat/job-executions',
-    pausedExecutions: '/api/v4/cat/account/paused-executions',
+  healthcheck: {
+    engines: '/api/v4/cat/healthcheck',
+    status: '/api/v4/cat/healthcheck/status',
+    parameters: '/api/v4/cat/healthcheck/parameters',
+  },
+  metrics: {
+    alarm: '/api/v4/cat/metrics/alarm',
+    exportAlarm: '/api/v4/cat/metrics-export/alarm',
+    exportRating: '/api/v4/cat/metrics-export/rating',
+    exportSli: '/api/v4/cat/metrics-export/sli',
+    exportMetric: '/api/v4/cat/metrics-export',
+    sli: '/api/v4/cat/metrics/sli',
+    rating: '/api/v4/cat/metrics/rating',
   },
 };
 
@@ -169,11 +215,12 @@ export const COLORS = {
     pause: '#808080',
   },
   status: {
-    off: 'black',
-    ongoing: 'grey',
-    stealthy: 'gold',
-    flapping: 'orange',
-    cancelled: 'red',
+    closed: '#2fab63',
+    stealthy: '#757575',
+    flapping: '#2b3E4F',
+    ongoing: '#f9A825',
+    cancelled: '#757575',
+    noEvents: '#ff5252',
     unknown: 'black',
   },
   entitiesEvents: {
@@ -192,6 +239,13 @@ export const COLORS = {
     error: '#ffa800',
     failed: '#ff5252',
     skipped: '#5a6D80',
+  },
+  healthcheck: {
+    error: '#FF5252',
+    warning: '#FFA800',
+    unknown: '#C4C4C4',
+    edgeGray: '#979797',
+    edgeBlack: '#000000',
   },
   statsDefault: '#dddddd',
   impactState: [
@@ -227,14 +281,51 @@ export const COLORS = {
     '#AD1457',
     '#880E4F',
   ],
+  kpi: {
+    downtime: '#c4c4c4',
+    maintenance: '#ffa800',
+    uptime: '#5b6E7f',
+  },
+  metrics: {
+    activeAlarms: '#5a6d7e',
+    createdAlarms: '#fda701',
+    nonDisplayedAlarms: '#fd693b',
+    instructionAlarms: '#7bb242',
+    pbehaviorAlarms: '#d64315',
+    correlationAlarms: '#fdef75',
+    ackAlarms: '#fd5252',
+    cancelAckAlarms: '#9b27af',
+    ackActiveAlarms: '#81b0fd',
+    ticketActiveAlarms: '#2faa63',
+    withoutTicketActiveAlarms: '#747474',
+    ratioCorrelation: '#c31162',
+    ratioInstructions: '#cbda39',
+    ratioTickets: '#2195f1',
+    ratioNonDisplayed: '#f9bf2d',
+    averageAck: '#f5c6ab',
+    averageResolve: '#1afd01',
+    totalUserActivity: '#1fbbd1',
+  },
 };
 
-export const FILE_BASE_URL = `${API_BASE_URL}${API_ROUTES.file}`;
+export const FILE_BASE_URL = `${API_HOST}${API_ROUTES.file}`;
 
-export const INSTRUCTION_EXECUTE_FETCHING_INTERVAL = 10000;
+export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';
 
 export const EXPORT_FETCHING_INTERVAL = 2000;
 
-export const DEFAULT_JOB_EXECUTOR_FETCH_TIMEOUT_SECONDS = 30;
-
 export const DEFAULT_CATEGORIES_LIMIT = 3;
+
+export const HEALTHCHECK_HISTORY_FILENAME_PREFIX = 'healthcheck_history-';
+
+export const HEALTHCHECK_LAST_HOUR_FILENAME_PREFIX = 'healthcheck_last_hour-';
+
+export const KPI_ALARM_METRICS_FILENAME_PREFIX = 'kpi_alarm_metrics';
+
+export const KPI_RATING_METRICS_FILENAME_PREFIX = 'kpi_rating_metrics';
+
+export const KPI_SLI_METRICS_FILENAME_PREFIX = 'kpi_sli_metrics';
+
+export const APP_INFO_FETCHING_INTERVAL = 10000;
+
+export const MIN_CLICK_OUTSIDE_DELAY_AFTER_REGISTERED = 100;

@@ -10,24 +10,24 @@
       state-setting-threshold-field.pl-4.pt-2(
         v-field="form.junit_thresholds.skipped",
         :label="$t('common.skipped')",
-        name="skipped"
+        name="junit_thresholds.skipped"
       )
       state-setting-threshold-field.pl-4.pt-2(
         v-field="form.junit_thresholds.errors",
-        :label="$t('common.errors')",
-        name="errors"
+        :label="$tc('common.error', 2)",
+        name="junit_thresholds.errors"
       )
       state-setting-threshold-field.pl-4.pt-2(
         v-field="form.junit_thresholds.failures",
         :label="$t('common.failures')",
-        name="failures"
+        name="junit_thresholds.failures"
       )
 </template>
 
 <script>
 import { STATE_SETTING_METHODS } from '@/constants';
 
-import formMixin from '@/mixins/form/object';
+import { formMixin } from '@/mixins/form';
 
 import StateSettingMethodField from './fields/state-setting-method-field.vue';
 import StateSettingThresholdField from './fields/state-setting-thresholds-field.vue';

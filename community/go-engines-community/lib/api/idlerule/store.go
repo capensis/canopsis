@@ -210,7 +210,7 @@ func (s store) count(ctx context.Context, request CountByPatternRequest, overLim
 		go func(cancel context.CancelFunc) {
 			defer wg.Done()
 
-			if !request.EntityPatterns.IsSet() || !request.EntityPatterns.IsValid() {
+			if !request.EntityPatterns.IsSet() || !request.EntityPatterns.IsValid() || len(request.EntityPatterns.Patterns) == 0 {
 				return
 			}
 
@@ -223,7 +223,7 @@ func (s store) count(ctx context.Context, request CountByPatternRequest, overLim
 		go func(cancel context.CancelFunc) {
 			defer wg.Done()
 
-			if !request.AlarmPatterns.IsSet() || !request.AlarmPatterns.IsValid() {
+			if !request.AlarmPatterns.IsSet() || !request.AlarmPatterns.IsValid() || len(request.AlarmPatterns.Patterns) == 0 {
 				return
 			}
 
@@ -303,7 +303,7 @@ func (s *store) getSort(r FilteredQuery) bson.M {
 	}
 
 	if sortBy == "duration" {
-		sortBy = "duration.seconds"
+		sortBy = "duration.value"
 	}
 
 	return common.GetSortQuery(sortBy, r.Sort)

@@ -17,7 +17,8 @@ import (
 )
 
 type API interface {
-	common.CrudAPI
+	common.BulkCrudAPI
+	Patch(c *gin.Context)
 	ListByEntityID(c *gin.Context)
 	ListEntities(c *gin.Context)
 	CountFilter(c *gin.Context)
@@ -57,7 +58,7 @@ func NewApi(
 // @ID pbehaviors-find-all
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security JWTAuth
 // @Security BasicAuth
 // @Param page query integer true "current page"
 // @Param limit query integer true "items per page"
@@ -98,7 +99,7 @@ func (a *api) List(c *gin.Context) {
 // @ID pbehaviors-find-by-entity-id
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security JWTAuth
 // @Security BasicAuth
 // @Param id query string true "Entity id"
 // @Success 200 {array} Response
@@ -126,7 +127,7 @@ func (a *api) ListByEntityID(c *gin.Context) {
 // @Tags pbehaviors
 // @ID pbehaviors-get-by-id
 // @Produce json
-// @Security ApiKeyAuth
+// @Security JWTAuth
 // @Security BasicAuth
 // @Param id path string true "pbehavior id"
 // @Success 200 {object} Response
@@ -152,7 +153,7 @@ func (a *api) Get(c *gin.Context) {
 // @Tags pbehaviors
 // @ID pbehaviors-find-entities
 // @Produce json
-// @Security ApiKeyAuth
+// @Security JWTAuth
 // @Security BasicAuth
 // @Param id path string true "pbehavior id"
 // @Param page query integer true "current page"
@@ -200,9 +201,9 @@ func (a *api) ListEntities(c *gin.Context) {
 // @ID pbehaviors-create
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security JWTAuth
 // @Security BasicAuth
-// @Param body body EditRequest true "body"
+// @Param body body CreateRequest true "body"
 // @Success 201 {object} Response
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /pbehaviors [post]
@@ -226,7 +227,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	err = a.store.Insert(c.Request.Context(), model)
+	err = a.store.Insert(c.Request.Context(), []*Response{model})
 	if err != nil {
 		panic(err)
 	}
@@ -241,9 +242,9 @@ func (a *api) Create(c *gin.Context) {
 	}
 
 	a.sendComputeTask(pbehavior.ComputeTask{
-		PbehaviorID:   model.ID,
-		OperationType: pbehavior.OperationCreate,
+		PbehaviorIds: []string{model.ID},
 	})
+
 	c.JSON(http.StatusCreated, model)
 }
 
@@ -254,10 +255,10 @@ func (a *api) Create(c *gin.Context) {
 // @ID pbehaviors-update-by-id
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security JWTAuth
 // @Security BasicAuth
 // @Param id path string true "pbehavior id"
-// @Param body body EditRequest true "body"
+// @Param body body UpdateRequest true "body"
 // @Success 200 {object} Response
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
@@ -284,7 +285,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.store.Update(c.Request.Context(), model)
+	ok, err := a.store.Update(c.Request.Context(), []*Response{model})
 	if err != nil {
 		panic(err)
 	}
@@ -304,8 +305,126 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	a.sendComputeTask(pbehavior.ComputeTask{
-		PbehaviorID:   model.ID,
-		OperationType: pbehavior.OperationUpdate,
+		PbehaviorIds: []string{model.ID},
+	})
+
+	c.JSON(http.StatusOK, model)
+}
+
+// Patch partial set of behavior's attributes by id
+// @Summary Patch partial set of behavior attributes by id
+// @Description Patch partial set of behavior attributes by id
+// @Tags pbehaviors
+// @ID pbehaviors-patch-by-id
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param id path string true "pbehavior id"
+// @Param body body PatchRequest true "body"
+// @Success 200 {object} Response
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Failure 404 {object} common.ErrorResponse
+// @Router /pbehaviors/{id} [patch]
+func (a *api) Patch(c *gin.Context) {
+	req := PatchRequest{}
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, req))
+		return
+	}
+	ctx := c.Request.Context()
+
+	var model *Response
+	if req.Start != nil || req.Stop.isSet || req.Type != nil {
+		// Patching fields having constraint validation will retry
+		// until snapshot is matching or retry count reached
+		updated := false
+		retried := 0
+		for !updated && retried < 5 {
+			model, err = a.store.GetOneBy(ctx, bson.M{"_id": c.Param("id")})
+			if err != nil || model == nil {
+				c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+				return
+			}
+			if model.Stop != nil && model.Stop.IsZero() {
+				model.Stop = nil
+			}
+			snapshot := bson.M{
+				"_id":    model.ID,
+				"tstart": model.Start,
+				"tstop":  model.Stop,
+				"type_":  model.Type.ID,
+			}
+
+			// Clear tstop field when tstop is defined as null in request body
+			if req.Stop.isSet && req.Stop.CpsTime == nil {
+				model.Stop = nil
+			}
+
+			err = a.transformer.Patch(ctx, req, model)
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+				return
+			}
+
+			// Validation
+			if model.Type.Type != pbehavior.TypePause && model.Stop == nil ||
+				(model.Stop != nil && model.Stop.Before(*model.Start)) {
+				c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(errors.New("invalid fields start, stop, type")))
+				return
+			}
+			updated, err = a.store.UpdateByFilter(ctx, model, snapshot)
+			if err != nil {
+				panic(err)
+			}
+			if updated {
+				break
+			}
+			retried++
+		}
+
+		if !updated {
+			c.AbortWithStatusJSON(http.StatusNotFound, common.NewErrorResponse(errors.New("max update retry reached")))
+			return
+		}
+	} else {
+		// Patching fields that doesn't need to be validated will be executed once
+		var ok bool
+		model, err = a.store.GetOneBy(c.Request.Context(), bson.M{"_id": c.Param("id")})
+		if err != nil || model == nil {
+			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+			return
+		}
+
+		err = a.transformer.Patch(c.Request.Context(), req, model)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			return
+		}
+
+		ok, err = a.store.Update(c.Request.Context(), []*Response{model})
+		if err != nil {
+			panic(err)
+		}
+
+		if !ok {
+			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+			return
+		}
+	}
+
+	err = a.actionLogger.Action(c, logger.LogEntry{
+		Action:    logger.ActionUpdate,
+		ValueType: logger.ValueTypePbehavior,
+		ValueID:   model.ID,
+	})
+	if err != nil {
+		a.actionLogger.Err(err, "failed to log action")
+	}
+
+	a.sendComputeTask(pbehavior.ComputeTask{
+		PbehaviorIds: []string{model.ID},
 	})
 
 	c.JSON(http.StatusOK, model)
@@ -315,8 +434,8 @@ func (a *api) Update(c *gin.Context) {
 // @Summary Delete pbehavior by id
 // @Description Delete pbehavior by id
 // @Tags pbehaviors
-// @ID pbehavior-delete-by-id
-// @Security ApiKeyAuth
+// @ID pbehaviors-delete-by-id
+// @Security JWTAuth
 // @Security BasicAuth
 // @Param id path string true "pbehavior id"
 // @Success 204
@@ -324,7 +443,7 @@ func (a *api) Update(c *gin.Context) {
 // @Router /pbehaviors/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(c.Request.Context(), id)
+	ok, err := a.store.Delete(c.Request.Context(), []string{id})
 	if err != nil {
 		panic(err)
 	}
@@ -337,27 +456,190 @@ func (a *api) Delete(c *gin.Context) {
 	err = a.actionLogger.Action(c, logger.LogEntry{
 		Action:    logger.ActionDelete,
 		ValueType: logger.ValueTypePbehavior,
-		ValueID:   c.Param("id"),
+		ValueID:   id,
 	})
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
 	a.sendComputeTask(pbehavior.ComputeTask{
-		PbehaviorID:   id,
-		OperationType: pbehavior.OperationDelete,
+		PbehaviorIds: []string{id},
 	})
 	c.JSON(http.StatusNoContent, nil)
+}
+
+// Bulk create pbehaviors
+// @Summary Bulk create pbehaviors
+// @Description Bulk create pbehaviors
+// @Tags pbehaviors
+// @ID pbehaviors-bulk-create
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []CreateRequest true "body"
+// @Success 201 {array} Response
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/pbehaviors [post]
+func (a *api) BulkCreate(c *gin.Context) {
+	var request BulkCreateRequest
+	if err := c.ShouldBind(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	models, err := a.transformer.TransformBulkCreateRequestToModels(c.Request.Context(), request.Items)
+	if err != nil {
+		if err == ErrReasonNotExists || err == ErrExceptionNotExists || err == pbehaviorexception.ErrTypeNotExists {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		} else {
+			panic(err)
+		}
+
+		return
+	}
+
+	err = a.store.Insert(c.Request.Context(), models)
+	if err != nil {
+		panic(err)
+	}
+
+	ids := make([]string, len(models))
+	for i, model := range models {
+		ids[i] = model.ID
+		err = a.actionLogger.Action(c, logger.LogEntry{
+			Action:    logger.ActionCreate,
+			ValueType: logger.ValueTypePbehavior,
+			ValueID:   model.ID,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+	}
+
+	a.sendComputeTask(pbehavior.ComputeTask{
+		PbehaviorIds: ids,
+	})
+
+	c.JSON(http.StatusCreated, models)
+}
+
+// Bulk update pbehaviors by id
+// @Summary Bulk update pbehaviors by id
+// @Description Bulk update pbehaviors by id
+// @Tags pbehaviors
+// @ID pbehaviors-bulk-update-by-id
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []BulkUpdateRequestItem true "body"
+// @Success 200 {array} Response
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Failure 404 {object} common.ErrorResponse
+// @Router /bulk/pbehaviors/{id} [put]
+func (a *api) BulkUpdate(c *gin.Context) {
+	request := BulkUpdateRequest{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	models, err := a.transformer.TransformBulkUpdateRequestToModels(c.Request.Context(), request.Items)
+	if err != nil {
+		if err == ErrReasonNotExists || err == ErrExceptionNotExists || err == pbehaviorexception.ErrTypeNotExists {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		} else {
+			panic(err)
+		}
+
+		return
+	}
+
+	ok, err := a.store.Update(c.Request.Context(), models)
+	if err != nil {
+		panic(err)
+	}
+
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	ids := make([]string, len(models))
+	for i, model := range models {
+		ids[i] = model.ID
+		err = a.actionLogger.Action(c, logger.LogEntry{
+			Action:    logger.ActionUpdate,
+			ValueType: logger.ValueTypePbehavior,
+			ValueID:   model.ID,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+	}
+
+	a.sendComputeTask(pbehavior.ComputeTask{
+		PbehaviorIds: ids,
+	})
+
+	c.JSON(http.StatusOK, models)
+}
+
+// Bulk delete pbehaviors by id
+// @Summary Bulk delete pbehaviors by id
+// @Description Bulk delete pbehaviors by id
+// @Tags pbehaviors
+// @ID pbehaviors-bulk-delete-by-id
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param request query BulkDeleteRequest true "request"
+// @Success 204
+// @Failure 404 {object} common.ErrorResponse
+// @Router /bulk/pbehaviors/{id} [delete]
+func (a *api) BulkDelete(c *gin.Context) {
+	request := BulkDeleteRequest{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	ok, err := a.store.Delete(c.Request.Context(), request.IDs)
+	if err != nil {
+		panic(err)
+	}
+
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	for _, id := range request.IDs {
+		err = a.actionLogger.Action(c, logger.LogEntry{
+			Action:    logger.ActionDelete,
+			ValueType: logger.ValueTypePbehavior,
+			ValueID:   id,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+	}
+
+	a.sendComputeTask(pbehavior.ComputeTask{
+		PbehaviorIds: request.IDs,
+	})
+
+	c.Status(http.StatusNoContent)
 }
 
 // Count entities matching filter
 // @Summary Count entities matching filter
 // @Description Count entities matching filter
 // @Tags pbehaviors
-// @ID pbehavior-countfilter
+// @ID pbehaviors-countfilter
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security JWTAuth
 // @Security BasicAuth
 // @Param body body FilterRequest true "body"
 // @Success 200 {object} CountFilterResult
@@ -389,7 +671,7 @@ func (a *api) sendComputeTask(task pbehavior.ComputeTask) {
 	case a.computeChan <- task:
 	default:
 		a.logger.Err(errors.New("channel is full")).
-			Str("pbehavior", task.PbehaviorID).
+			Strs("pbehavior", task.PbehaviorIds).
 			Msg("fail to start pbehavior recompute")
 	}
 }

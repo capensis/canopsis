@@ -7,13 +7,12 @@ Feature: update alarm on idle rule
     """
     {
       "name": "test-idlerule-axe-idlerule-1-name",
-      "author": "test-idlerule-axe-idlerule-1-author",
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
       "priority": 40,
       "duration": {
-        "seconds": 5,
+        "value": 5,
         "unit": "s"
       },
       "entity_patterns": [
@@ -25,8 +24,7 @@ Feature: update alarm on idle rule
         "type": "assocticket",
         "parameters": {
           "ticket": "test-idlerule-axe-idlerule-1-ticket",
-          "output": "test-idlerule-axe-idlerule-1-output",
-          "author": "test-idlerule-axe-idlerule-1-author"
+          "output": "test-idlerule-axe-idlerule-1-output"
         }
       }
     }
@@ -43,9 +41,7 @@ Feature: update alarm on idle rule
       "component":  "test-component-axe-idlerule-1",
       "resource": "test-resource-axe-idlerule-1",
       "state": 2,
-      "output": "test-output-axe-idlerule-1",
-      "long_output": "test-long-output-axe-idlerule-1",
-      "author": "test-author-axe-idlerule-1"
+      "output": "test-output-axe-idlerule-1"
     }
     """
     When I wait the end of event processing
@@ -60,9 +56,7 @@ Feature: update alarm on idle rule
       "component":  "test-component-axe-idlerule-1",
       "resource": "test-resource-axe-idlerule-1",
       "state": 2,
-      "output": "test-output-axe-idlerule-1",
-      "long_output": "test-long-output-axe-idlerule-1",
-      "author": "test-author-axe-idlerule-1"
+      "output": "test-output-axe-idlerule-1"
     }
     """
     When I wait the end of event processing
@@ -127,7 +121,7 @@ Feature: update alarm on idle rule
             },
             "ticket": {
               "_t": "assocticket",
-              "a": "test-idlerule-axe-idlerule-1-author",
+              "a": "root",
               "m": "test-idlerule-axe-idlerule-1-ticket"
             },
             "steps": [
@@ -141,7 +135,8 @@ Feature: update alarm on idle rule
               },
               {
                 "_t": "assocticket",
-                "a": "test-idlerule-axe-idlerule-1-author",
+                "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-1-ticket"
               }
             ]
@@ -166,9 +161,7 @@ Feature: update alarm on idle rule
       "component":  "test-component-axe-idlerule-1",
       "resource": "test-resource-axe-idlerule-1",
       "state": 2,
-      "output": "test-output-axe-idlerule-1",
-      "long_output": "test-long-output-axe-idlerule-1",
-      "author": "test-author-axe-idlerule-1"
+      "output": "test-output-axe-idlerule-1"
     }
     """
     When I wait the end of 2 events processing
@@ -192,7 +185,8 @@ Feature: update alarm on idle rule
             },
             "ticket": {
               "_t": "assocticket",
-              "a": "test-idlerule-axe-idlerule-1-author",
+              "a": "root",
+              "user_id": "root",
               "m": "test-idlerule-axe-idlerule-1-ticket"
             },
             "steps": [
@@ -206,12 +200,14 @@ Feature: update alarm on idle rule
               },
               {
                 "_t": "assocticket",
-                "a": "test-idlerule-axe-idlerule-1-author",
+                "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-1-ticket"
               },
               {
                 "_t": "assocticket",
-                "a": "test-idlerule-axe-idlerule-1-author",
+                "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-1-ticket"
               }
             ]
@@ -233,13 +229,12 @@ Feature: update alarm on idle rule
     """
     {
       "name": "test-idlerule-axe-idlerule-2-name",
-      "author": "test-idlerule-axe-idlerule-2-author",
       "type": "alarm",
       "alarm_condition": "last_update",
       "enabled": true,
       "priority": 41,
       "duration": {
-        "seconds": 5,
+        "value": 5,
         "unit": "s"
       },
       "entity_patterns": [
@@ -251,8 +246,7 @@ Feature: update alarm on idle rule
         "type": "assocticket",
         "parameters": {
           "ticket": "test-idlerule-axe-idlerule-2-ticket",
-          "output": "test-idlerule-axe-idlerule-2-output",
-          "author": "test-idlerule-axe-idlerule-2-author"
+          "output": "test-idlerule-axe-idlerule-2-output"
         }
       }
     }
@@ -269,9 +263,7 @@ Feature: update alarm on idle rule
       "component":  "test-component-axe-idlerule-2",
       "resource": "test-resource-axe-idlerule-2",
       "state": 1,
-      "output": "test-output-axe-idlerule-2",
-      "long_output": "test-long-output-axe-idlerule-2",
-      "author": "test-author-axe-idlerule-2"
+      "output": "test-output-axe-idlerule-2"
     }
     """
     When I wait the end of event processing
@@ -286,9 +278,7 @@ Feature: update alarm on idle rule
       "component":  "test-component-axe-idlerule-2",
       "resource": "test-resource-axe-idlerule-2",
       "state": 2,
-      "output": "test-output-axe-idlerule-2",
-      "long_output": "test-long-output-axe-idlerule-2",
-      "author": "test-author-axe-idlerule-2"
+      "output": "test-output-axe-idlerule-2"
     }
     """
     When I wait the end of event processing
@@ -357,7 +347,8 @@ Feature: update alarm on idle rule
             },
             "ticket": {
               "_t": "assocticket",
-              "a": "test-idlerule-axe-idlerule-2-author",
+              "a": "root",
+              "user_id": "root",
               "m": "test-idlerule-axe-idlerule-2-ticket"
             },
             "steps": [
@@ -375,7 +366,8 @@ Feature: update alarm on idle rule
               },
               {
                 "_t": "assocticket",
-                "a": "test-idlerule-axe-idlerule-2-author",
+                "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-2-ticket"
               }
             ]
@@ -400,9 +392,7 @@ Feature: update alarm on idle rule
       "component":  "test-component-axe-idlerule-2",
       "resource": "test-resource-axe-idlerule-2",
       "state": 2,
-      "output": "test-output-axe-idlerule-2",
-      "long_output": "test-long-output-axe-idlerule-2",
-      "author": "test-author-axe-idlerule-2"
+      "output": "test-output-axe-idlerule-2"
     }
     """
     When I wait the end of event processing
@@ -427,7 +417,8 @@ Feature: update alarm on idle rule
             },
             "ticket": {
               "_t": "assocticket",
-              "a": "test-idlerule-axe-idlerule-2-author",
+              "a": "root",
+              "user_id": "root",
               "m": "test-idlerule-axe-idlerule-2-ticket"
             },
             "steps": [
@@ -445,7 +436,8 @@ Feature: update alarm on idle rule
               },
               {
                 "_t": "assocticket",
-                "a": "test-idlerule-axe-idlerule-2-author",
+                "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-2-ticket"
               }
             ]
@@ -470,9 +462,7 @@ Feature: update alarm on idle rule
       "component":  "test-component-axe-idlerule-2",
       "resource": "test-resource-axe-idlerule-2",
       "state": 3,
-      "output": "test-output-axe-idlerule-2",
-      "long_output": "test-long-output-axe-idlerule-2",
-      "author": "test-author-axe-idlerule-2"
+      "output": "test-output-axe-idlerule-2"
     }
     """
     When I wait the end of 2 events processing
@@ -496,7 +486,8 @@ Feature: update alarm on idle rule
             },
             "ticket": {
               "_t": "assocticket",
-              "a": "test-idlerule-axe-idlerule-2-author",
+              "a": "root",
+              "user_id": "root",
               "m": "test-idlerule-axe-idlerule-2-ticket"
             },
             "steps": [
@@ -514,7 +505,8 @@ Feature: update alarm on idle rule
               },
               {
                 "_t": "assocticket",
-                "a": "test-idlerule-axe-idlerule-2-author",
+                "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-2-ticket"
               },
               {
@@ -523,7 +515,8 @@ Feature: update alarm on idle rule
               },
               {
                 "_t": "assocticket",
-                "a": "test-idlerule-axe-idlerule-2-author",
+                "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-2-ticket"
               }
             ]
@@ -545,12 +538,11 @@ Feature: update alarm on idle rule
     """
     {
       "name": "test-idlerule-axe-idlerule-3-name",
-      "author": "test-idlerule-axe-idlerule-3-author",
       "type": "entity",
       "enabled": true,
       "priority": 42,
       "duration": {
-        "seconds": 5,
+        "value": 5,
         "unit": "s"
       },
       "entity_patterns": [
@@ -573,9 +565,7 @@ Feature: update alarm on idle rule
       "component":  "test-component-axe-idlerule-3",
       "resource": "test-resource-axe-idlerule-3",
       "state": 0,
-      "output": "test-output-axe-idlerule-3",
-      "long_output": "test-long-output-axe-idlerule-3",
-      "author": "test-author-axe-idlerule-3"
+      "output": "test-output-axe-idlerule-3"
     }
     """
     When I wait the end of event processing
@@ -590,9 +580,7 @@ Feature: update alarm on idle rule
       "component":  "test-component-axe-idlerule-3",
       "resource": "test-resource-axe-idlerule-3",
       "state": 0,
-      "output": "test-output-axe-idlerule-3",
-      "long_output": "test-long-output-axe-idlerule-3",
-      "author": "test-author-axe-idlerule-3"
+      "output": "test-output-axe-idlerule-3"
     }
     """
     When I wait the end of event processing
@@ -626,25 +614,25 @@ Feature: update alarm on idle rule
             "resource": "test-resource-axe-idlerule-3",
             "state": {
               "val": 3,
-              "a": "test-idlerule-axe-idlerule-3-author",
+              "a": "root",
               "m": "Idle rule test-idlerule-axe-idlerule-3-name"
             },
             "status": {
               "val": 5,
-              "a": "test-idlerule-axe-idlerule-3-author",
+              "a": "root",
               "m": "Idle rule test-idlerule-axe-idlerule-3-name"
             },
             "steps": [
               {
                 "_t": "stateinc",
                 "val": 3,
-                "a": "test-idlerule-axe-idlerule-3-author",
+                "a": "root",
                 "m": "Idle rule test-idlerule-axe-idlerule-3-name"
               },
               {
                 "_t": "statusinc",
                 "val": 5,
-                "a": "test-idlerule-axe-idlerule-3-author",
+                "a": "root",
                 "m": "Idle rule test-idlerule-axe-idlerule-3-name"
               }
             ]
@@ -669,9 +657,7 @@ Feature: update alarm on idle rule
       "component":  "test-component-axe-idlerule-3",
       "resource": "test-resource-axe-idlerule-3",
       "state": 3,
-      "output": "test-output-axe-idlerule-3",
-      "long_output": "test-long-output-axe-idlerule-3",
-      "author": "test-author-axe-idlerule-3"
+      "output": "test-output-axe-idlerule-3"
     }
     """
     When I wait the end of event processing
@@ -729,12 +715,11 @@ Feature: update alarm on idle rule
     """
     {
       "name": "test-idlerule-axe-idlerule-4-name",
-      "author": "test-idlerule-axe-idlerule-4-author",
       "type": "entity",
       "enabled": true,
       "priority": 43,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -756,9 +741,7 @@ Feature: update alarm on idle rule
       "source_type": "component",
       "component":  "test-component-axe-idlerule-4",
       "state": 0,
-      "output": "test-output-axe-idlerule-4",
-      "long_output": "test-long-output-axe-idlerule-4",
-      "author": "test-author-axe-idlerule-4"
+      "output": "test-output-axe-idlerule-4"
     }
     """
     When I wait the end of 2 events processing
@@ -775,25 +758,25 @@ Feature: update alarm on idle rule
             "connector_name": "test-connector-name-axe-idlerule-4",
             "state": {
               "val": 3,
-              "a": "test-idlerule-axe-idlerule-4-author",
+              "a": "root",
               "m": "Idle rule test-idlerule-axe-idlerule-4-name"
             },
             "status": {
               "val": 5,
-              "a": "test-idlerule-axe-idlerule-4-author",
+              "a": "root",
               "m": "Idle rule test-idlerule-axe-idlerule-4-name"
             },
             "steps": [
               {
                 "_t": "stateinc",
                 "val": 3,
-                "a": "test-idlerule-axe-idlerule-4-author",
+                "a": "root",
                 "m": "Idle rule test-idlerule-axe-idlerule-4-name"
               },
               {
                 "_t": "statusinc",
                 "val": 5,
-                "a": "test-idlerule-axe-idlerule-4-author",
+                "a": "root",
                 "m": "Idle rule test-idlerule-axe-idlerule-4-name"
               }
             ]
@@ -817,9 +800,7 @@ Feature: update alarm on idle rule
       "source_type": "component",
       "component":  "test-component-axe-idlerule-4",
       "state": 0,
-      "output": "test-output-axe-idlerule-4",
-      "long_output": "test-long-output-axe-idlerule-4",
-      "author": "test-author-axe-idlerule-4"
+      "output": "test-output-axe-idlerule-4"
     }
     """
     When I wait the end of event processing
@@ -878,12 +859,11 @@ Feature: update alarm on idle rule
     """
     {
       "name": "test-idlerule-axe-idlerule-5-name",
-      "author": "test-idlerule-axe-idlerule-5-author",
       "type": "entity",
       "enabled": true,
       "priority": 44,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -905,9 +885,7 @@ Feature: update alarm on idle rule
       "source_type": "component",
       "component":  "test-component-axe-idlerule-5",
       "state": 0,
-      "output": "test-output-axe-idlerule-5",
-      "long_output": "test-long-output-axe-idlerule-5",
-      "author": "test-author-axe-idlerule-5"
+      "output": "test-output-axe-idlerule-5"
     }
     """
     When I wait the end of 2 events processing
@@ -923,25 +901,25 @@ Feature: update alarm on idle rule
             "connector_name": "test-connector-name-axe-idlerule-5",
             "state": {
               "val": 3,
-              "a": "test-idlerule-axe-idlerule-5-author",
+              "a": "root",
               "m": "Idle rule test-idlerule-axe-idlerule-5-name"
             },
             "status": {
               "val": 5,
-              "a": "test-idlerule-axe-idlerule-5-author",
+              "a": "root",
               "m": "Idle rule test-idlerule-axe-idlerule-5-name"
             },
             "steps": [
               {
                 "_t": "stateinc",
                 "val": 3,
-                "a": "test-idlerule-axe-idlerule-5-author",
+                "a": "root",
                 "m": "Idle rule test-idlerule-axe-idlerule-5-name"
               },
               {
                 "_t": "statusinc",
                 "val": 5,
-                "a": "test-idlerule-axe-idlerule-5-author",
+                "a": "root",
                 "m": "Idle rule test-idlerule-axe-idlerule-5-name"
               }
             ]
@@ -966,9 +944,7 @@ Feature: update alarm on idle rule
       "source_type": "component",
       "component":  "test-component-axe-idlerule-5",
       "state": 0,
-      "output": "test-output-axe-idlerule-5",
-      "long_output": "test-long-output-axe-idlerule-5",
-      "author": "test-author-axe-idlerule-5"
+      "output": "test-output-axe-idlerule-5"
     }
     """
     When I wait the end of 2 events processing
@@ -1026,13 +1002,12 @@ Feature: update alarm on idle rule
     """
     {
       "name": "test-idlerule-axe-idlerule-6-1-name",
-      "author": "test-idlerule-axe-idlerule-6-author",
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
       "priority": 46,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1043,8 +1018,7 @@ Feature: update alarm on idle rule
       "operation": {
         "type": "ack",
         "parameters": {
-          "output": "test-idlerule-axe-idlerule-6-1-output",
-          "author": "test-idlerule-axe-idlerule-6-1-author"
+          "output": "test-idlerule-axe-idlerule-6-1-output"
         }
       }
     }
@@ -1054,13 +1028,12 @@ Feature: update alarm on idle rule
     """
     {
       "name": "test-idlerule-axe-idlerule-6-2-name",
-      "author": "test-idlerule-axe-idlerule-6-author",
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
       "priority": 45,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1072,8 +1045,7 @@ Feature: update alarm on idle rule
         "type": "assocticket",
         "parameters": {
           "ticket": "test-idlerule-axe-idlerule-6-2-ticket",
-          "output": "test-idlerule-axe-idlerule-6-2-output",
-          "author": "test-idlerule-axe-idlerule-6-2-author"
+          "output": "test-idlerule-axe-idlerule-6-2-output"
         }
       }
     }
@@ -1090,9 +1062,7 @@ Feature: update alarm on idle rule
       "component":  "test-component-axe-idlerule-6",
       "resource": "test-resource-axe-idlerule-6",
       "state": 2,
-      "output": "test-output-axe-idlerule-6",
-      "long_output": "test-long-output-axe-idlerule-6",
-      "author": "test-author-axe-idlerule-6"
+      "output": "test-output-axe-idlerule-6"
     }
     """
     When I wait the end of 2 events processing
@@ -1116,7 +1086,8 @@ Feature: update alarm on idle rule
             },
             "ticket": {
               "_t": "assocticket",
-              "a": "test-idlerule-axe-idlerule-6-2-author",
+              "a": "root",
+              "user_id": "root",
               "m": "test-idlerule-axe-idlerule-6-2-ticket"
             },
             "steps": [
@@ -1130,7 +1101,8 @@ Feature: update alarm on idle rule
               },
               {
                 "_t": "assocticket",
-                "a": "test-idlerule-axe-idlerule-6-2-author",
+                "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-6-2-ticket"
               }
             ]
@@ -1190,9 +1162,7 @@ Feature: update alarm on idle rule
       "component":  "test-component-axe-idlerule-6",
       "resource": "test-resource-axe-idlerule-6",
       "state": 2,
-      "output": "test-output-axe-idlerule-6",
-      "long_output": "test-long-output-axe-idlerule-6",
-      "author": "test-author-axe-idlerule-6"
+      "output": "test-output-axe-idlerule-6"
     }
     """
     When I wait the end of 2 events processing
@@ -1240,12 +1210,11 @@ Feature: update alarm on idle rule
     """
     {
       "name": "test-idlerule-axe-idlerule-7-1-name",
-      "author": "test-idlerule-axe-idlerule-7-1-author",
       "type": "entity",
       "enabled": true,
       "priority": 48,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1261,12 +1230,11 @@ Feature: update alarm on idle rule
     """
     {
       "name": "test-idlerule-axe-idlerule-7-2-name",
-      "author": "test-idlerule-axe-idlerule-7-2-author",
       "type": "entity",
       "enabled": true,
       "priority": 47,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1289,9 +1257,7 @@ Feature: update alarm on idle rule
       "component":  "test-component-axe-idlerule-7",
       "resource": "test-resource-axe-idlerule-7",
       "state": 0,
-      "output": "test-output-axe-idlerule-7",
-      "long_output": "test-long-output-axe-idlerule-7",
-      "author": "test-author-axe-idlerule-7"
+      "output": "test-output-axe-idlerule-7"
     }
     """
     When I wait the end of 2 events processing
@@ -1321,7 +1287,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "statusinc",
                 "val": 5,
-                "a": "test-idlerule-axe-idlerule-7-2-author"
+                "a": "root"
               }
             ]
           }
@@ -1379,9 +1345,7 @@ Feature: update alarm on idle rule
       "component":  "test-component-axe-idlerule-7",
       "resource": "test-resource-axe-idlerule-7",
       "state": 0,
-      "output": "test-output-axe-idlerule-7",
-      "long_output": "test-long-output-axe-idlerule-7",
-      "author": "test-author-axe-idlerule-7"
+      "output": "test-output-axe-idlerule-7"
     }
     """
     When I wait the end of 2 events processing
@@ -1405,7 +1369,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "statusinc",
                 "val": 5,
-                "a": "test-idlerule-axe-idlerule-7-2-author"
+                "a": "root"
               },
               {
                 "_t": "statedec",
@@ -1422,7 +1386,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "statusinc",
                 "val": 5,
-                "a": "test-idlerule-axe-idlerule-7-2-author"
+                "a": "root"
               }
             ]
           }
@@ -1447,12 +1411,11 @@ Feature: update alarm on idle rule
     """
     {
       "name": "test-idlerule-axe-idlerule-8-name",
-      "author": "test-idlerule-axe-idlerule-8-author",
       "type": "entity",
       "enabled": true,
       "priority": 49,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1475,9 +1438,7 @@ Feature: update alarm on idle rule
       "component":  "test-component-axe-idlerule-8",
       "resource": "test-resource-axe-idlerule-8",
       "state": 1,
-      "output": "test-output-axe-idlerule-8",
-      "long_output": "test-long-output-axe-idlerule-8",
-      "author": "test-author-axe-idlerule-8"
+      "output": "test-output-axe-idlerule-8"
     }
     """
     When I wait the end of 2 events processing
@@ -1513,12 +1474,12 @@ Feature: update alarm on idle rule
               {
                 "_t": "stateinc",
                 "val": 3,
-                "a": "test-idlerule-axe-idlerule-8-author"
+                "a": "root"
               },
               {
                 "_t": "statusinc",
                 "val": 5,
-                "a": "test-idlerule-axe-idlerule-8-author"
+                "a": "root"
               }
             ]
           }
@@ -1542,9 +1503,7 @@ Feature: update alarm on idle rule
       "component":  "test-component-axe-idlerule-8",
       "resource": "test-resource-axe-idlerule-8",
       "state": 1,
-      "output": "test-output-axe-idlerule-8",
-      "long_output": "test-long-output-axe-idlerule-8",
-      "author": "test-author-axe-idlerule-8"
+      "output": "test-output-axe-idlerule-8"
     }
     """
     When I wait the end of event processing
@@ -1612,13 +1571,12 @@ Feature: update alarm on idle rule
     """
     {
       "name": "test-idlerule-axe-idlerule-9-1-name",
-      "author": "test-idlerule-axe-idlerule-9-author",
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
       "priority": 50,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1630,8 +1588,7 @@ Feature: update alarm on idle rule
         "type": "assocticket",
         "parameters": {
           "ticket": "test-idlerule-axe-idlerule-9-1-ticket",
-          "output": "test-idlerule-axe-idlerule-9-1-output",
-          "author": "test-idlerule-axe-idlerule-9-1-author"
+          "output": "test-idlerule-axe-idlerule-9-1-output"
         }
       }
     }
@@ -1642,12 +1599,11 @@ Feature: update alarm on idle rule
     """
     {
       "name": "test-idlerule-axe-idlerule-9-2-name",
-      "author": "test-idlerule-axe-idlerule-9-author",
       "type": "entity",
       "enabled": true,
       "priority": 51,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1670,9 +1626,7 @@ Feature: update alarm on idle rule
       "component":  "test-component-axe-idlerule-9",
       "resource": "test-resource-axe-idlerule-9",
       "state": 2,
-      "output": "test-output-axe-idlerule-9",
-      "long_output": "test-long-output-axe-idlerule-9",
-      "author": "test-author-axe-idlerule-9"
+      "output": "test-output-axe-idlerule-9"
     }
     """
     When I wait the end of 2 events processing
@@ -1696,7 +1650,8 @@ Feature: update alarm on idle rule
             },
             "ticket": {
               "_t": "assocticket",
-              "a": "test-idlerule-axe-idlerule-9-1-author",
+              "a": "root",
+              "user_id": "root",
               "m": "test-idlerule-axe-idlerule-9-1-ticket"
             },
             "steps": [
@@ -1710,7 +1665,8 @@ Feature: update alarm on idle rule
               },
               {
                 "_t": "assocticket",
-                "a": "test-idlerule-axe-idlerule-9-1-author",
+                "a": "root",
+                "user_id": "root",
                 "m": "test-idlerule-axe-idlerule-9-1-ticket"
               }
             ]
@@ -1770,9 +1726,7 @@ Feature: update alarm on idle rule
       "component":  "test-component-axe-idlerule-9",
       "resource": "test-resource-axe-idlerule-9",
       "state": 2,
-      "output": "test-output-axe-idlerule-9",
-      "long_output": "test-long-output-axe-idlerule-9",
-      "author": "test-author-axe-idlerule-9"
+      "output": "test-output-axe-idlerule-9"
     }
     """
     When I wait the end of 2 events processing
@@ -1824,13 +1778,12 @@ Feature: update alarm on idle rule
     """
     {
       "name": "test-idlerule-axe-idlerule-10-1-name",
-      "author": "test-idlerule-axe-idlerule-10-author",
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
       "priority": 53,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1841,8 +1794,7 @@ Feature: update alarm on idle rule
       "operation": {
         "type": "ack",
         "parameters": {
-          "output": "test-idlerule-axe-idlerule-10-1-output",
-          "author": "test-idlerule-axe-idlerule-10-1-author"
+          "output": "test-idlerule-axe-idlerule-10-1-output"
         }
       }
     }
@@ -1853,12 +1805,11 @@ Feature: update alarm on idle rule
     """
     {
       "name": "test-idlerule-axe-idlerule-10-2-name",
-      "author": "test-idlerule-axe-idlerule-10-author",
       "type": "entity",
       "enabled": true,
       "priority": 52,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -1881,9 +1832,7 @@ Feature: update alarm on idle rule
       "component":  "test-component-axe-idlerule-10",
       "resource": "test-resource-axe-idlerule-10",
       "state": 2,
-      "output": "test-output-axe-idlerule-10",
-      "long_output": "test-long-output-axe-idlerule-10",
-      "author": "test-author-axe-idlerule-10"
+      "output": "test-output-axe-idlerule-10"
     }
     """
     When I wait the end of 2 events processing
@@ -1986,9 +1935,7 @@ Feature: update alarm on idle rule
       "component":  "test-component-axe-idlerule-10",
       "resource": "test-resource-axe-idlerule-10",
       "state": 2,
-      "output": "test-output-axe-idlerule-10",
-      "long_output": "test-long-output-axe-idlerule-10",
-      "author": "test-author-axe-idlerule-10"
+      "output": "test-output-axe-idlerule-10"
     }
     """
     When I wait the end of 2 events processing
@@ -2060,12 +2007,11 @@ Feature: update alarm on idle rule
     """
     {
       "name": "test-idlerule-axe-idlerule-11-name",
-      "author": "test-idlerule-axe-idlerule-11-author",
       "type": "entity",
       "enabled": true,
       "priority": 54,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -2088,9 +2034,7 @@ Feature: update alarm on idle rule
       "component":  "test-component-axe-idlerule-11",
       "resource":  "test-resource-axe-idlerule-11",
       "state": 0,
-      "output": "test-output-axe-idlerule-11",
-      "long_output": "test-long-output-axe-idlerule-11",
-      "author": "test-author-axe-idlerule-11"
+      "output": "test-output-axe-idlerule-11"
     }
     """
     When I wait the end of 2 events processing

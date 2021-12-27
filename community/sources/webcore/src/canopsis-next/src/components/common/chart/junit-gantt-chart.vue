@@ -25,7 +25,9 @@ import { get } from 'lodash';
 
 import { TEST_SUITE_COLORS, TEST_SUITE_STATUSES } from '@/constants';
 
-import HorizontalBar from './horizontal-bar.vue';
+import { colorToRgba } from '@/helpers/color';
+
+const HorizontalBar = () => import(/* webpackChunkName: "Charts" */ './horizontal-bar.vue');
 
 /**
  * Local constants
@@ -43,12 +45,6 @@ const ICONS_COLORS = {
   [ICON_NAMES.arrowUpward]: 'primary',
   [ICON_NAMES.arrowDownward]: 'error',
 };
-
-const FAILED_STATUSES = [
-  TEST_SUITE_STATUSES.error,
-  TEST_SUITE_STATUSES.skipped,
-  TEST_SUITE_STATUSES.failed,
-];
 
 const MIN_SKIPPED_TO_SECTIONS_COUNT = 40;
 
@@ -127,7 +123,7 @@ export default {
         datasets.unshift({
           ...defaultDatasetParameters,
 
-          backgroundColor: 'rgba(0, 0, 0, .2)',
+          backgroundColor: colorToRgba('#000', 0.2),
           data: items.map(({ from, avg_to: avgTo }) => [from, avgTo]),
         });
       }
@@ -140,22 +136,26 @@ export default {
         animation: false,
         responsive: false,
         maintainAspectRatio: false,
-        legend: { display: false },
         scales: {
-          yAxes: [{
+          y: {
             stacked: true,
-          }],
-          xAxes: [{
+          },
+          x: {
             position: 'top',
             ticks: {
               callback: value => `${value}s`,
             },
             suggestedMin: 0,
-          }],
+          },
         },
-        tooltips: {
-          enabled: false,
-          custom: this.getTooltip,
+        plugins: {
+          legend: {
+            display: false,
+          },
+          tooltip: {
+            enabled: false,
+            external: this.getTooltip,
+          },
         },
       };
     },
@@ -164,7 +164,7 @@ export default {
     getTooltipContent(tooltipModel) {
       const { dataPoints: [dataPoint] } = tooltipModel;
 
-      const { time = 0, status, message } = this.items[dataPoint.index];
+      const { time = 0, status, message } = this.items[dataPoint.dataIndex];
 
       const timeDiv = `<div>${time.toFixed(3)}s</div>`;
       const statusDiv = `<div>${this.$t(`testSuite.statuses.${status}`)}${message ? `: ${message}` : ''}</div>`;
@@ -189,10 +189,10 @@ export default {
           } else if (time > avgTime) {
             icon = ICON_NAMES.arrowDownward;
           }
-        } else if (FAILED_STATUSES.includes(avgStatus)) {
+        } else {
           icon = ICON_NAMES.done;
         }
-      } else if (avgStatus === TEST_SUITE_STATUSES.passed && FAILED_STATUSES.includes(status)) {
+      } else if (avgStatus === TEST_SUITE_STATUSES.passed) {
         icon = ICON_NAMES.close;
       }
 
@@ -207,7 +207,7 @@ export default {
 
     getHistoricalTooltipContent(tooltipModel) {
       const { dataPoints: [dataPoint] } = tooltipModel;
-      const item = this.items[dataPoint.index] || {};
+      const item = this.items[dataPoint.dataIndex];
       const {
         time = 0,
         status,
@@ -219,15 +219,13 @@ export default {
       const fixedAvgTime = avgTime.toFixed(3);
 
       const icon = `&nbsp;${this.getHistoricalTooltipIcon(item)}`;
-      const currentDiv =
-        `<div>${this.$t('common.current')}: ${this.$t(`testSuite.statuses.${status}`)} ${fixedTime}s${icon}</div>`;
-      const averageDiv =
-        `<div>${this.$t('common.average')}: ${this.$t(`testSuite.statuses.${avgStatus}`)} ${fixedAvgTime}s</div>`;
+      const currentDiv = `<div>${this.$t('common.current')}: ${this.$t(`testSuite.statuses.${status}`)} ${fixedTime}s${icon}</div>`;
+      const averageDiv = `<div>${this.$t('common.average')}: ${this.$t(`testSuite.statuses.${avgStatus}`)} ${fixedAvgTime}s</div>`;
 
       return `<div>${currentDiv}${averageDiv}</div>`;
     },
 
-    getTooltip(tooltipModel) {
+    getTooltip({ tooltip: tooltipModel }) {
       const { tooltip: tooltipEl, horizontalBar: horizontalBarEl } = this.$refs;
 
       if (tooltipModel.opacity === 0) {

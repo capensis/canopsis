@@ -18,17 +18,20 @@ type AlarmStep struct {
 	Type                   string      `bson:"_t" json:"_t"`
 	Timestamp              CpsTime     `bson:"t" json:"t"`
 	Author                 string      `bson:"a" json:"a"`
+	UserID                 string      `bson:"user_id,omitempty" json:"user_id,omitempty"`
 	Message                string      `bson:"m" json:"m"`
 	Role                   string      `bson:"role,omitempty" json:"role,omitempty"`
 	Value                  CpsNumber   `bson:"val" json:"val"`
 	StateCounter           CropCounter `bson:"statecounter,omitempty" json:"statecounter,omitempty"`
-	PbehaviorCanonicalType string      `bson:"pbehavior_canonical_type,omitempty"`
-	Initiator              string      `bson:"initiator,omitempty"`
+	PbehaviorCanonicalType string      `bson:"pbehavior_canonical_type,omitempty" json:"pbehavior_canonical_type,omitempty"`
+	Initiator              string      `bson:"initiator,omitempty" json:"initiator,omitempty"`
+	// Execution contains id if instruction execution for instruction steps only.
+	Execution string `bson:"exec,omitempty" json:"exec,omitempty"`
 }
 
 // NewAlarmStep returns an AlarmStep.
 // If the timestamp or author are empty, default values will be used to create an AlarmStep.
-func NewAlarmStep(stepType string, timestamp CpsTime, author string, msg string, role string, initiator string) AlarmStep {
+func NewAlarmStep(stepType string, timestamp CpsTime, author, msg, userID, role, initiator string) AlarmStep {
 	authorAlarmStep := author
 	if authorAlarmStep == "" {
 		authorAlarmStep = cps.DefaultEventAuthor
@@ -41,6 +44,7 @@ func NewAlarmStep(stepType string, timestamp CpsTime, author string, msg string,
 
 	return AlarmStep{
 		Author:    authorAlarmStep,
+		UserID:    userID,
 		Message:   msg,
 		Timestamp: timestampAlarmStep,
 		Type:      stepType,
@@ -57,18 +61,9 @@ func NewMetaAlarmAttachStep(metaAlarm Alarm, ruleName string) AlarmStep {
 			ruleName,
 			metaAlarm.Value.DisplayName,
 			metaAlarm.EntityID),
-		"", "",
+		"", "", "",
 	)
 	return newStep
-}
-
-// NewAlarmStepFromEvent returns an AlarmStep.
-func NewAlarmStepFromEvent(stepType string, event Event) AlarmStep {
-	return NewAlarmStep(stepType, event.Timestamp, event.Author, event.Output, event.Role, event.Initiator)
-}
-
-func NewAlarmStepFromAction(stepType string, event Event) AlarmStep {
-	return NewAlarmStep(stepType, event.Timestamp, event.Author, event.Output, event.Role, event.Initiator)
 }
 
 // CropCounter provides an explicit way of counting the steps that were cropped.
@@ -251,11 +246,14 @@ type ByTimestamp struct {
 }
 
 func (s ByTimestamp) Less(i, j int) bool {
-	return s.AlarmSteps[i].Timestamp.Before(s.AlarmSteps[j].Timestamp.Time)
+	return s.AlarmSteps[i].Timestamp.Before(s.AlarmSteps[j].Timestamp)
 }
 
 // PbehaviorInfo represents current state of entity.
 type PbehaviorInfo struct {
+	// Timestamp is time when entity enters pbehavior.
+	// Use pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.
+	Timestamp *CpsTime `bson:"timestamp" json:"timestamp"`
 	// ID is ID of pbehavior.PBehavior.
 	ID string `bson:"id" json:"id"`
 	// Name is Name of pbehavior.PBehavior.
@@ -335,19 +333,22 @@ type AlarmValue struct {
 	Meta              string        `bson:"meta,omitempty" json:"meta,omitempty"`
 	MetaValuePath     string        `bson:"meta_value_path,omitempty" json:"meta_value_path,omitempty"`
 
-	Parents  []string `bson:"parents" json:"parents"`
-	Children []string `bson:"children" json:"children"`
+	RelatedParents []string `bson:"-" json:"related_parents"`
+	Parents        []string `bson:"parents" json:"parents"`
+	Children       []string `bson:"children" json:"children"`
 
 	StateChangesSinceStatusUpdate CpsNumber `bson:"state_changes_since_status_update,omitempty" json:"state_changes_since_status_update,omitempty"`
 	TotalStateChanges             CpsNumber `bson:"total_state_changes,omitempty" json:"total_state_changes,omitempty"`
 	// EventsCount accumulates count of check events.
 	EventsCount CpsNumber `bson:"events_count,omitempty" json:"events_count,omitempty"`
 
-	Extra map[string]interface{}            `bson:"extra" json:"extra"`
 	Infos map[string]map[string]interface{} `bson:"infos" json:"infos"`
 
 	// store version of dynamic-infos rule
 	RuleVersion map[string]string `bson:"infos_rule_version"`
+
+	SnoozeDuration            int64 `bson:"snooze_duration" json:"snooze_duration"`
+	PbehaviorInactiveDuration int64 `bson:"pbh_inactive_duration" json:"pbh_inactive_duration"`
 }
 
 func (v *AlarmValue) Transform() {
@@ -362,6 +363,7 @@ type AlarmTicket struct {
 	Type      string  `bson:"_t" json:"_t"`
 	Timestamp CpsTime `bson:"t" json:"t"`
 	Author    string  `bson:"a" json:"a"`
+	UserID    string  `bson:"user_id" json:"user_id"`
 	Message   string  `bson:"m" json:"m"`
 	Role      string  `bson:"role,omitempty" json:"role,omitempty"`
 	Value     string  `bson:"val" json:"val"`
@@ -376,6 +378,7 @@ func (s AlarmStep) NewTicket(value string, data map[string]string) AlarmTicket {
 		Message:   value,
 		Timestamp: s.Timestamp,
 		Type:      s.Type,
+		UserID:    s.UserID,
 		Value:     value,
 		Data:      data,
 		Role:      s.Role,

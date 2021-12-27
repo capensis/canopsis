@@ -1,13 +1,13 @@
 <template lang="pug">
   div
     v-fade-transition(mode="out-in")
-      c-progress-overlay(v-if="pending", :pending="true")
-      div(v-else-if="playlist")
-        c-the-page-header {{ playlist.name }}
+      c-progress-overlay(v-if="pending", pending)
+      div.playlist(v-else-if="playlist")
+        c-page-header {{ playlist.name }}
         portal(:to="$constants.PORTALS_NAMES.additionalTopBarItems")
           v-fade-transition
-            v-toolbar-items.mr-2(v-if="!pending")
-              span.playlist-timer.white--text.mr-2 {{ time | duration }}
+            v-toolbar-items.playlist__actions.mr-2(v-if="!pending")
+              span.playlist__timer.white--text.mr-2 {{ time | duration }}
               v-btn(:disabled="!activeTab", dark, icon, @click="prevTab")
                 v-icon skip_previous
               v-btn(v-if="pausing || !played", :disabled="!activeTab", dark, icon, @click="play")
@@ -20,9 +20,9 @@
                 v-btn(slot="activator", :disabled="!activeTab", dark, icon, @click="toggleFullScreenMode")
                   v-icon fullscreen
                 span {{ $t('playlist.player.tooltips.fullscreen') }}
-        div.position-relative.playlist-tabs-wrapper(ref="playlistTabsWrapper", v-if="activeTab")
-          div.play-button-wrapper(v-if="!played")
-            v-btn.play-button(color="primary", large, @click="play")
+        div.position-relative.playlist__tabs-wrapper(ref="playlistTabsWrapper", v-if="activeTab")
+          div.playlist__play-button-wrapper(v-if="!played")
+            v-btn(color="primary", large, @click="play")
               v-icon(large) play_arrow
           v-fade-transition(mode="out-in")
             view-tab-widgets(:tab="activeTab", :key="activeTab._id")
@@ -30,6 +30,8 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+
+import { toSeconds } from '@/helpers/date/duration';
 
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 import { permissionsEntitiesPlaylistTabMixin } from '@/mixins/permissions/entities/playlist-tab';
@@ -98,9 +100,9 @@ export default {
     }),
 
     initTime() {
-      const { seconds } = this.playlist.interval;
+      const { value, unit } = this.playlist.interval;
 
-      this.time = seconds;
+      this.time = toSeconds(value, unit);
     },
 
     play() {
@@ -124,8 +126,8 @@ export default {
         const lastIndex = this.availableTabs.length - 1;
 
         this.activeTabIndex = this.activeTabIndex <= 0 ? lastIndex : this.activeTabIndex - 1;
-        this.time = this.playlist.interval.seconds;
 
+        this.initTime();
         this.restartTimer();
       }
     },
@@ -141,7 +143,6 @@ export default {
 
     timerTick() {
       this.time -= 1;
-
 
       if (this.time <= 0) {
         return this.nextTab();
@@ -179,11 +180,12 @@ export default {
 </script>
 
 <style lang="scss">
-  .playlist-tabs-wrapper {
+.playlist {
+  &__tabs-wrapper {
     min-height: 60px;
   }
 
-  .play-button-wrapper {
+  &__play-button-wrapper {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -196,7 +198,12 @@ export default {
     justify-content: center;
   }
 
-  .playlist-timer {
+  &__actions {
+    width: 310px;
+  }
+
+  &__timer {
     line-height: 48px;
   }
+}
 </style>

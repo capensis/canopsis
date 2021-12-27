@@ -76,7 +76,7 @@ export default {
     },
 
     removeLocked({ commit }, { id }) {
-      commit(types.UPDATE_LOCKED, { id });
+      commit(types.REMOVE_LOCKED, { id });
     },
   },
 };

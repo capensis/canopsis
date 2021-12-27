@@ -216,7 +216,7 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 
 			for _, v := range dataset.scenarioInfos {
 				info := v
-				get := alarmAdapter.EXPECT().GetOpenedAlarmByAlarmId(gomock.Eq(info.Alarm.ID)).
+				get := alarmAdapter.EXPECT().GetAlarmByAlarmId(gomock.Any(), gomock.Eq(info.Alarm.ID)).
 					Return(info.Alarm, nil)
 				getInOrder = append(getInOrder, get)
 
@@ -302,9 +302,9 @@ func TestService_ProcessAbandonedExecutions(t *testing.T) {
 	alarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	alarmAdapter.
 		EXPECT().
-		GetOpenedAlarmByAlarmId(gomock.Any()).
+		GetOpenedAlarmByAlarmId(gomock.Any(), gomock.Any()).
 		AnyTimes().
-		DoAndReturn(func(id string) (types.Alarm, error) {
+		DoAndReturn(func(_ context.Context, id string) (types.Alarm, error) {
 			var err error
 			if id != "test-alarm" {
 				err = mongo.ErrNoDocuments

@@ -50,6 +50,8 @@ definitions:
       causes:
         $ref: '#/definitions/alarm.Causes'
         type: object
+      children_instructions:
+        type: boolean
       consequences:
         $ref: '#/definitions/alarm.Children'
         type: object
@@ -67,6 +69,12 @@ definitions:
           additionalProperties: true
           type: object
         type: object
+      is_all_auto_instructions_completed:
+        type: boolean
+      is_auto_instruction_running:
+        type: boolean
+      is_manual_instruction_waiting_result:
+        type: boolean
       links:
         additionalProperties: true
         type: object
@@ -96,6 +104,8 @@ definitions:
         type: string
       t:
         type: integer
+      user_id:
+        type: string
       val:
         type: integer
     type: object
@@ -113,6 +123,8 @@ definitions:
         type: string
       t:
         type: integer
+      user_id:
+        type: string
       val:
         type: string
     type: object
@@ -122,6 +134,8 @@ definitions:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
       activation_date:
+        type: integer
+      active_duration:
         type: integer
       canceled:
         $ref: '#/definitions/alarm.AlarmStep'
@@ -149,9 +163,6 @@ definitions:
         type: integer
       events_count:
         type: integer
-      extra:
-        additionalProperties: true
-        type: object
       infos:
         additionalProperties:
           additionalProperties: true
@@ -189,6 +200,8 @@ definitions:
       pbehavior_info:
         $ref: '#/definitions/types.PbehaviorInfo'
         type: object
+      pbh_inactive_duration:
+        type: integer
       resolved:
         type: integer
       resource:
@@ -196,6 +209,8 @@ definitions:
       snooze:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
+      snooze_duration:
+        type: integer
       state:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
@@ -264,16 +279,30 @@ definitions:
         type: string
       correlation:
         type: boolean
+      exclude_instruction_types:
+        items:
+          type: integer
+        type: array
+      exclude_instructions:
+        items:
+          type: string
+        type: array
       fields:
         $ref: '#/definitions/export.Fields'
         type: object
       filter:
         type: string
+      include_instruction_types:
+        items:
+          type: integer
+        type: array
+      include_instructions:
+        items:
+          type: string
+        type: array
       manual:
         type: boolean
       opened:
-        type: boolean
-      resolved:
         type: boolean
       search:
         type: string
@@ -287,12 +316,8 @@ definitions:
         type: integer
       with_consequences:
         type: boolean
-      with_instructions:
-        type: string
       with_steps:
         type: boolean
-      without_instructions:
-        type: string
     type: object
   alarm.ExportResponse:
     properties:
@@ -311,13 +336,27 @@ definitions:
         type: string
       correlation:
         type: boolean
+      exclude_instruction_types:
+        items:
+          type: integer
+        type: array
+      exclude_instructions:
+        items:
+          type: string
+        type: array
       filter:
         type: string
+      include_instruction_types:
+        items:
+          type: integer
+        type: array
+      include_instructions:
+        items:
+          type: string
+        type: array
       manual:
         type: boolean
       opened:
-        type: boolean
-      resolved:
         type: boolean
       search:
         type: string
@@ -325,10 +364,6 @@ definitions:
         type: integer
       tstop:
         type: integer
-      with_instructions:
-        type: string
-      without_instructions:
-        type: string
     type: object
   alarm.InstructionWithAlarms:
     properties:
@@ -358,19 +393,37 @@ definitions:
         type: string
       correlation:
         type: boolean
+      exclude_instruction_types:
+        items:
+          type: integer
+        type: array
+      exclude_instructions:
+        items:
+          type: string
+        type: array
       filter:
         type: string
+      include_instruction_types:
+        items:
+          type: integer
+        type: array
+      include_instructions:
+        items:
+          type: string
+        type: array
       limit:
         type: integer
       manual:
         type: boolean
+      multi_sort[]:
+        items:
+          type: string
+        type: array
       opened:
         type: boolean
       page:
         type: integer
       paginate:
-        type: boolean
-      resolved:
         type: boolean
       search:
         type: string
@@ -385,11 +438,9 @@ definitions:
       with_consequences:
         type: boolean
       with_instructions:
-        type: string
+        type: boolean
       with_steps:
         type: boolean
-      without_instructions:
-        type: string
     type: object
   alarm.MetaAlarmRule:
     properties:
@@ -426,12 +477,15 @@ definitions:
         type: integer
       edition:
         type: string
+      file_upload_max_size:
+        type: integer
       footer:
         type: string
-      jobexecutorfetchtimeoutseconds:
-        type: integer
       language:
         type: string
+      login:
+        $ref: '#/definitions/appinfo.LoginConf'
+        type: object
       login_page_description:
         type: string
       logo:
@@ -441,6 +495,9 @@ definitions:
       popup_timeout:
         $ref: '#/definitions/appinfo.PopupTimeout'
         type: object
+      remediation:
+        $ref: '#/definitions/appinfo.RemediationConf'
+        type: object
       stack:
         type: string
       timezone:
@@ -448,14 +505,14 @@ definitions:
       version:
         type: string
     type: object
-  appinfo.IntervalUnit:
+  appinfo.JobConfigType:
     properties:
-      interval:
-        type: integer
-      unit:
+      auth_type:
+        type: string
+      name:
         type: string
     type: object
-  appinfo.LoginConfig:
+  appinfo.LoginConf:
     properties:
       casconfig:
         $ref: '#/definitions/appinfo.LoginConfigMethod'
@@ -474,29 +531,21 @@ definitions:
       title:
         type: string
     type: object
-  appinfo.LoginConfigResponse:
-    properties:
-      edition:
-        type: string
-      login_config:
-        $ref: '#/definitions/appinfo.LoginConfig'
-        type: object
-      stack:
-        type: string
-      user_interface:
-        $ref: '#/definitions/appinfo.UserInterfaceConf'
-        type: object
-      version:
-        type: string
-    type: object
   appinfo.PopupTimeout:
     properties:
       error:
-        $ref: '#/definitions/appinfo.IntervalUnit'
+        $ref: '#/definitions/types.DurationWithUnit'
         type: object
       info:
-        $ref: '#/definitions/appinfo.IntervalUnit'
+        $ref: '#/definitions/types.DurationWithUnit'
         type: object
+    type: object
+  appinfo.RemediationConf:
+    properties:
+      job_config_types:
+        items:
+          $ref: '#/definitions/appinfo.JobConfigType'
+        type: array
     type: object
   appinfo.UserInterfaceConf:
     properties:
@@ -533,10 +582,20 @@ definitions:
     type: object
   associativetable.Content:
     type: object
-  auth.sessionsCountResponse:
+  auth.loginRequest:
     properties:
-      count:
-        type: integer
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  auth.loginResponse:
+    properties:
+      access_token:
+        type: string
     type: object
   broadcastmessage.BroadcastMessage:
     properties:
@@ -580,6 +639,9 @@ definitions:
     - message
     - start
     type: object
+  bson.M:
+    additionalProperties: true
+    type: object
   common.ErrorResponse:
     properties:
       error:
@@ -604,6 +666,13 @@ definitions:
       total_count:
         type: integer
     type: object
+  common.User:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+    type: object
   common.ValidationErrorResponse:
     properties:
       errors:
@@ -611,101 +680,82 @@ definitions:
           type: string
         type: object
     type: object
-  contextgraph.ConfigurationItem:
+  config.TimezoneConfig:
     properties:
-      _id:
-        type: string
-      action:
-        type: string
-      action_properties:
-        type: object
-      category:
-        type: string
-      enabled:
-        type: boolean
-      entity_patterns:
-        $ref: '#/definitions/pattern.EntityPatternList'
-        type: object
-      impact_level:
-        type: integer
-      infos:
-        additionalProperties: true
-        type: object
-      measurements:
-        items:
-          type: object
-        type: array
-      name:
-        type: string
-      output_template:
-        type: string
-      type:
+      location:
         type: string
     type: object
   contextgraph.ImportJob:
     properties:
+      _id:
+        type: string
       creation:
         type: string
-      execTime:
-        type: string
-      id:
+      exec_time:
         type: string
       info:
         type: string
+      source:
+        type: string
       stats:
-        $ref: '#/definitions/contextgraph.JobStats'
+        $ref: '#/definitions/importcontextgraph.Stats'
         type: object
       status:
         type: string
+    type: object
+  contextgraph.ImportRequest:
+    properties:
+      json:
+        properties:
+          cis:
+            items:
+              $ref: '#/definitions/importcontextgraph.ConfigurationItem'
+            type: array
+          links:
+            items:
+              $ref: '#/definitions/importcontextgraph.Link'
+            type: array
+        type: object
     type: object
   contextgraph.ImportResponse:
     properties:
       _id:
         type: string
     type: object
-  contextgraph.JobStats:
-    properties:
-      deleted:
-        type: integer
-      updated:
-        type: integer
-    type: object
-  contextgraph.Link:
-    properties:
-      _id:
-        type: string
-      action:
-        type: string
-      action_properties:
-        type: object
-      from:
-        items:
-          type: string
-        type: array
-      infos:
-        additionalProperties: true
-        type: object
-      to:
-        type: string
-    type: object
-  contextgraph.Request:
-    properties:
-      json:
-        properties:
-          cis:
-            items:
-              $ref: '#/definitions/contextgraph.ConfigurationItem'
-            type: array
-          links:
-            items:
-              $ref: '#/definitions/contextgraph.Link'
-            type: array
-        type: object
-    type: object
   datastorage.Config:
     properties:
+      alarm:
+        properties:
+          archive_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+            type: object
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+            type: object
+        type: object
+      health_check:
+        properties:
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+            type: object
+        type: object
       junit:
         properties:
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+            type: object
+        type: object
+      pbehavior:
+        properties:
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+            type: object
+        type: object
+      remediation:
+        properties:
+          accumulate_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+            type: object
           delete_after:
             $ref: '#/definitions/types.DurationWithEnabled'
             type: object
@@ -722,8 +772,38 @@ definitions:
     type: object
   datastorage.History:
     properties:
+      alarm:
+        $ref: '#/definitions/datastorage.HistoryWithCount'
+        type: object
+      entity:
+        $ref: '#/definitions/datastorage.HistoryWithCount'
+        type: object
+      health_check:
+        type: integer
       junit:
         type: integer
+      pbehavior:
+        type: integer
+      remediation:
+        type: integer
+    type: object
+  datastorage.HistoryWithCount:
+    properties:
+      archived:
+        type: integer
+      deleted:
+        type: integer
+      time:
+        type: integer
+    type: object
+  entity.CleanRequest:
+    properties:
+      archive:
+        type: boolean
+      archive_dependencies:
+        type: boolean
+    required:
+    - archive
     type: object
   entity.Entity:
     properties:
@@ -801,7 +881,7 @@ definitions:
     additionalProperties:
       $ref: '#/definitions/entity.Info'
     type: object
-  entity.ListRequest:
+  entity.ListRequestWithPagination:
     properties:
       active_columns[]:
         items:
@@ -811,12 +891,22 @@ definitions:
         type: string
       filter:
         type: string
+      limit:
+        type: integer
+      no_events:
+        type: boolean
+      page:
+        type: integer
+      paginate:
+        type: boolean
       search:
         type: string
       sort:
         type: string
       sort_by:
         type: string
+      with_flags:
+        type: boolean
     type: object
   entitybasic.EditRequest:
     properties:
@@ -840,9 +930,12 @@ definitions:
         items:
           $ref: '#/definitions/entitybasic.InfoRequest'
         type: array
+      sli_avail_state:
+        type: integer
     required:
     - enabled
     - impact_level
+    - sli_avail_state
     type: object
   entitybasic.Entity:
     properties:
@@ -893,6 +986,8 @@ definitions:
         type: object
       name:
         type: string
+      sli_avail_state:
+        type: integer
       type:
         type: string
     type: object
@@ -961,11 +1056,14 @@ definitions:
         type: string
       output_template:
         type: string
+      sli_avail_state:
+        type: integer
     required:
     - enabled
     - impact_level
     - name
     - output_template
+    - sli_avail_state
     type: object
   entityservice.Response:
     properties:
@@ -1011,6 +1109,8 @@ definitions:
         type: string
       output_template:
         type: string
+      sli_avail_state:
+        type: integer
       type:
         type: string
     type: object
@@ -1108,102 +1208,97 @@ definitions:
     items:
       $ref: '#/definitions/export.Field'
     type: array
-  heartbeat.BulkDeleteRequest:
-    properties:
-      ids:
-        items:
-          type: string
-        type: array
-    required:
-    - ids
-    type: object
-  heartbeat.BulkUpdateRequestItem:
+  file.File:
     properties:
       _id:
         type: string
+      created:
+        type: integer
+      filename:
+        type: string
+      mediatype:
+        type: string
+    type: object
+  flappingrule.CreateRequest:
+    properties:
+      _id:
+        type: string
+      alarm_patterns:
+        $ref: '#/definitions/pattern.AlarmPatternList'
+        type: object
       description:
         type: string
-      expected_interval:
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+      entity_patterns:
+        $ref: '#/definitions/pattern.EntityPatternList'
+        type: object
+      freq_limit:
         type: integer
       name:
         type: string
-      output:
-        type: string
-      pattern:
-        additionalProperties:
-          type: string
-        type: object
-    required:
-    - _id
-    - description
-    - expected_interval
-    - name
-    - pattern
-    type: object
-  heartbeat.CreateRequest:
-    properties:
-      _id:
-        type: string
-      description:
-        type: string
-      expected_interval:
+      priority:
         type: integer
-      name:
-        type: string
-      output:
-        type: string
-      pattern:
-        additionalProperties:
-          type: string
-        type: object
     required:
-    - description
-    - expected_interval
+    - duration
+    - freq_limit
     - name
-    - pattern
+    - priority
     type: object
-  heartbeat.Response:
+  flappingrule.Response:
     properties:
       _id:
         type: string
+      alarm_patterns:
+        $ref: '#/definitions/pattern.AlarmPatternList'
+        type: object
       author:
-        type: string
+        $ref: '#/definitions/common.User'
+        type: object
       created:
         type: integer
       description:
         type: string
-      expected_interval:
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+      entity_patterns:
+        $ref: '#/definitions/pattern.EntityPatternList'
+        type: object
+      freq_limit:
         type: integer
       name:
         type: string
-      output:
-        type: string
-      pattern:
-        additionalProperties:
-          type: string
-        type: object
+      priority:
+        type: integer
       updated:
         type: integer
     type: object
-  heartbeat.UpdateRequest:
+  flappingrule.UpdateRequest:
     properties:
+      alarm_patterns:
+        $ref: '#/definitions/pattern.AlarmPatternList'
+        type: object
       description:
         type: string
-      expected_interval:
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+      entity_patterns:
+        $ref: '#/definitions/pattern.EntityPatternList'
+        type: object
+      freq_limit:
         type: integer
       name:
         type: string
-      output:
-        type: string
-      pattern:
-        additionalProperties:
-          type: string
-        type: object
+      priority:
+        type: integer
     required:
-    - description
-    - expected_interval
+    - duration
+    - freq_limit
     - name
-    - pattern
+    - priority
     type: object
   http.Response:
     properties:
@@ -1263,8 +1358,6 @@ definitions:
       alarm_patterns:
         $ref: '#/definitions/pattern.AlarmPatternList'
         type: object
-      author:
-        type: string
       description:
         type: string
       disable_during_periods:
@@ -1289,7 +1382,6 @@ definitions:
       type:
         type: string
     required:
-    - author
     - duration
     - enabled
     - name
@@ -1357,21 +1449,67 @@ definitions:
         $ref: '#/definitions/types.CpsTime'
         type: object
     type: object
+  importcontextgraph.ConfigurationItem:
+    properties:
+      _id:
+        type: string
+      action:
+        type: string
+      action_properties:
+        type: object
+      category:
+        type: string
+      enabled:
+        type: boolean
+      entity_patterns:
+        $ref: '#/definitions/pattern.EntityPatternList'
+        type: object
+      impact_level:
+        type: integer
+      infos:
+        additionalProperties: true
+        type: object
+      measurements:
+        items:
+          type: object
+        type: array
+      name:
+        type: string
+      output_template:
+        type: string
+      type:
+        type: string
+    type: object
+  importcontextgraph.Link:
+    properties:
+      _id:
+        type: string
+      action:
+        type: string
+      action_properties:
+        type: object
+      from:
+        items:
+          type: string
+        type: array
+      infos:
+        additionalProperties: true
+        type: object
+      to:
+        type: string
+    type: object
+  importcontextgraph.Stats:
+    properties:
+      deleted:
+        type: integer
+      updated:
+        type: integer
+    type: object
   messageratestats.ListRequest:
     properties:
       from:
         type: integer
       interval:
-        type: string
-      limit:
-        type: integer
-      page:
-        type: integer
-      paginate:
-        type: boolean
-      sort:
-        type: string
-      sort_by:
         type: string
       to:
         type: integer
@@ -1380,12 +1518,41 @@ definitions:
     - interval
     - to
     type: object
+  messageratestats.StatsListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/messageratestats.StatsResponse'
+        type: array
+      meta:
+        properties:
+          deleted_before:
+            type: integer
+        type: object
+    type: object
   messageratestats.StatsResponse:
     properties:
-      _id:
+      rate:
         type: integer
-      received:
+      time:
         type: integer
+    type: object
+  notification.InstructionNotification:
+    properties:
+      rate:
+        type: boolean
+      rate_frequency:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+    required:
+    - rate
+    - rate_frequency
+    type: object
+  notification.Notification:
+    properties:
+      instruction:
+        $ref: '#/definitions/notification.InstructionNotification'
+        type: object
     type: object
   pattern.AlarmPattern:
     properties:
@@ -1530,6 +1697,9 @@ definitions:
       canceled:
         $ref: '#/definitions/pattern.AlarmStepRefPattern'
         type: object
+      children:
+        $ref: '#/definitions/pattern.StringArrayPattern'
+        type: object
       component:
         $ref: '#/definitions/pattern.StringPattern'
         type: object
@@ -1547,10 +1717,6 @@ definitions:
         type: object
       done:
         $ref: '#/definitions/pattern.AlarmStepRefPattern'
-        type: object
-      extra:
-        additionalProperties:
-          $ref: '#/definitions/pattern.InterfacePattern'
         type: object
       hardLimit:
         $ref: '#/definitions/pattern.IntegerRefPattern'
@@ -1572,6 +1738,9 @@ definitions:
         type: object
       output:
         $ref: '#/definitions/pattern.StringPattern'
+        type: object
+      parents:
+        $ref: '#/definitions/pattern.StringArrayPattern'
         type: object
       resolved:
         $ref: '#/definitions/pattern.TimeRefPattern'
@@ -1617,6 +1786,9 @@ definitions:
     type: object
   pattern.EntityPattern:
     properties:
+      category:
+        $ref: '#/definitions/pattern.StringPattern'
+        type: object
       component:
         $ref: '#/definitions/pattern.StringPattern'
         type: object
@@ -1908,6 +2080,9 @@ definitions:
       hasOneOf:
         $ref: '#/definitions/types.OptionalStringArray'
         type: object
+      isEmpty:
+        $ref: '#/definitions/types.OptionalBool'
+        type: object
       lt:
         $ref: '#/definitions/types.OptionalInt64'
         description: |-
@@ -1925,6 +2100,24 @@ definitions:
         description: |-
           If RegexMatch is set, the value of a field has to be matched by this
           regular expression to be matched by the pattern.
+        type: object
+      unexpectedFields:
+        additionalProperties: true
+        type: object
+    type: object
+  pattern.StringArrayPattern:
+    properties:
+      hasEvery:
+        $ref: '#/definitions/types.OptionalStringArray'
+        type: object
+      hasNot:
+        $ref: '#/definitions/types.OptionalStringArray'
+        type: object
+      hasOneOf:
+        $ref: '#/definitions/types.OptionalStringArray'
+        type: object
+      isEmpty:
+        $ref: '#/definitions/types.OptionalBool'
         type: object
       unexpectedFields:
         additionalProperties: true
@@ -2064,6 +2257,52 @@ definitions:
           UnexpectedFields should always be empty.
         type: object
     type: object
+  pbehavior.BulkDeleteRequest:
+    properties:
+      ids:
+        items:
+          type: string
+        type: array
+    required:
+    - ids
+    type: object
+  pbehavior.BulkUpdateRequestItem:
+    properties:
+      _id:
+        type: string
+      enabled:
+        type: boolean
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.ExdateRequest'
+        type: array
+      filter:
+        type: object
+      name:
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    required:
+    - _id
+    - enabled
+    - filter
+    - name
+    - reason
+    - tstart
+    - type
+    type: object
   pbehavior.Comment:
     properties:
       _id:
@@ -2087,8 +2326,10 @@ definitions:
       total_count:
         type: integer
     type: object
-  pbehavior.EditRequest:
+  pbehavior.CreateRequest:
     properties:
+      _id:
+        type: string
       enabled:
         type: boolean
       exceptions:
@@ -2130,6 +2371,33 @@ definitions:
     required:
     - filter
     type: object
+  pbehavior.PatchRequest:
+    properties:
+      enabled:
+        type: boolean
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.ExdateRequest'
+        type: array
+      filter:
+        type: object
+      name:
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    type: object
   pbehavior.Response:
     properties:
       _id:
@@ -2158,6 +2426,8 @@ definitions:
         description: IsActiveStatus represents if pbehavior is in action for current
           time.
         type: boolean
+      last_alarm_date:
+        type: integer
       name:
         type: string
       reason:
@@ -2191,6 +2461,40 @@ definitions:
         type: integer
       type:
         type: string
+    type: object
+  pbehavior.UpdateRequest:
+    properties:
+      enabled:
+        type: boolean
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.ExdateRequest'
+        type: array
+      filter:
+        type: object
+      name:
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    required:
+    - enabled
+    - filter
+    - name
+    - reason
+    - tstart
+    - type
     type: object
   pbehaviorcomment.Request:
     properties:
@@ -2426,6 +2730,79 @@ definitions:
       updated:
         type: integer
     type: object
+  resolverule.CreateRequest:
+    properties:
+      _id:
+        type: string
+      alarm_patterns:
+        $ref: '#/definitions/pattern.AlarmPatternList'
+        type: object
+      description:
+        type: string
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+      entity_patterns:
+        $ref: '#/definitions/pattern.EntityPatternList'
+        type: object
+      name:
+        type: string
+      priority:
+        type: integer
+    required:
+    - duration
+    - name
+    - priority
+    type: object
+  resolverule.Response:
+    properties:
+      _id:
+        type: string
+      alarm_patterns:
+        $ref: '#/definitions/pattern.AlarmPatternList'
+        type: object
+      author:
+        $ref: '#/definitions/common.User'
+        type: object
+      created:
+        type: integer
+      description:
+        type: string
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+      entity_patterns:
+        $ref: '#/definitions/pattern.EntityPatternList'
+        type: object
+      name:
+        type: string
+      priority:
+        type: integer
+      updated:
+        type: integer
+    type: object
+  resolverule.UpdateRequest:
+    properties:
+      alarm_patterns:
+        $ref: '#/definitions/pattern.AlarmPatternList'
+        type: object
+      description:
+        type: string
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+      entity_patterns:
+        $ref: '#/definitions/pattern.EntityPatternList'
+        type: object
+      name:
+        type: string
+      priority:
+        type: integer
+    required:
+    - duration
+    - name
+    - priority
+    type: object
   role.CreateRequest:
     properties:
       defaultview:
@@ -2530,6 +2907,20 @@ definitions:
     - emit_trigger
     - type
     type: object
+  scenario.CheckPriorityRequest:
+    properties:
+      priority:
+        type: integer
+    required:
+    - priority
+    type: object
+  scenario.CheckPriorityResponse:
+    properties:
+      recommended_priority:
+        type: integer
+      valid:
+        type: boolean
+    type: object
   scenario.EditRequest:
     properties:
       actions:
@@ -2562,6 +2953,11 @@ definitions:
     - name
     - priority
     - triggers
+    type: object
+  scenario.GetMinimalPriorityResponse:
+    properties:
+      priority:
+        type: integer
     type: object
   scenario.Scenario:
     properties:
@@ -2839,11 +3235,15 @@ definitions:
         type: string
       a:
         type: string
+      exec:
+        description: Execution contains id if instruction execution for instruction
+          steps only.
+        type: string
       initiator:
         type: string
       m:
         type: string
-      pbehaviorCanonicalType:
+      pbehavior_canonical_type:
         type: string
       role:
         type: string
@@ -2853,6 +3253,8 @@ definitions:
       t:
         $ref: '#/definitions/types.CpsTime'
         type: object
+      user_id:
+        type: string
       val:
         type: integer
     type: object
@@ -2877,6 +3279,8 @@ definitions:
       t:
         $ref: '#/definitions/types.CpsTime'
         type: object
+      user_id:
+        type: string
       val:
         type: string
     type: object
@@ -2912,9 +3316,6 @@ definitions:
       events_count:
         description: EventsCount accumulates count of check events.
         type: integer
-      extra:
-        additionalProperties: true
-        type: object
       hard_limit:
         type: integer
       infos:
@@ -2951,6 +3352,12 @@ definitions:
       pbehavior_info:
         $ref: '#/definitions/types.PbehaviorInfo'
         type: object
+      pbh_inactive_duration:
+        type: integer
+      related_parents:
+        items:
+          type: string
+        type: array
       resolved:
         $ref: '#/definitions/types.CpsTime'
         type: object
@@ -2964,6 +3371,8 @@ definitions:
       snooze:
         $ref: '#/definitions/types.AlarmStep'
         type: object
+      snooze_duration:
+        type: integer
       state:
         $ref: '#/definitions/types.AlarmStep'
         type: object
@@ -3008,24 +3417,35 @@ definitions:
     properties:
       enabled:
         type: boolean
-      seconds:
-        type: integer
       unit:
         type: string
+      value:
+        type: integer
     required:
     - enabled
-    - seconds
     - unit
+    - value
     type: object
   types.DurationWithUnit:
     properties:
-      seconds:
-        type: integer
       unit:
         type: string
+      value:
+        type: integer
     required:
-    - seconds
     - unit
+    - value
+    type: object
+  types.OptionalBool:
+    properties:
+      set:
+        description: Set is a boolean indicating whether the value was set or not.
+        type: boolean
+      value:
+        description: |-
+          Value contains the value of the bool. It should only be taken into
+          account if Set is true.
+        type: boolean
     type: object
   types.OptionalInt64:
     properties:
@@ -3084,6 +3504,12 @@ definitions:
       reason:
         description: Reason is Name of pbehavior.Reason.
         type: string
+      timestamp:
+        $ref: '#/definitions/types.CpsTime'
+        description: |-
+          Timestamp is time when entity enters pbehavior.
+          Use pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.
+        type: object
       type:
         description: TypeID is ID of pbehavior.Type.
         type: string
@@ -3127,6 +3553,9 @@ definitions:
     properties:
       _id:
         type: string
+      defaultview:
+        $ref: '#/definitions/user.View'
+        type: object
       name:
         type: string
     type: object
@@ -3170,6 +3599,25 @@ definitions:
       _id:
         type: string
       title:
+        type: string
+    type: object
+  userpreferences.EditRequest:
+    properties:
+      content:
+        additionalProperties: true
+        type: object
+      widget:
+        type: string
+    required:
+    - content
+    - widget
+    type: object
+  userpreferences.Response:
+    properties:
+      content:
+        additionalProperties: true
+        type: object
+      widget:
         type: string
     type: object
   utils.RegexExpression:
@@ -3444,17 +3892,38 @@ paths:
       - in: query
         name: correlation
         type: boolean
+      - collectionFormat: multi
+        in: query
+        items:
+          type: integer
+        name: exclude_instruction_types
+        type: array
+      - collectionFormat: multi
+        in: query
+        items:
+          type: string
+        name: exclude_instructions
+        type: array
       - in: query
         name: filter
         type: string
+      - collectionFormat: multi
+        in: query
+        items:
+          type: integer
+        name: include_instruction_types
+        type: array
+      - collectionFormat: multi
+        in: query
+        items:
+          type: string
+        name: include_instructions
+        type: array
       - in: query
         name: manual
         type: boolean
       - in: query
         name: opened
-        type: boolean
-      - in: query
-        name: resolved
         type: boolean
       - in: query
         name: search
@@ -3465,12 +3934,6 @@ paths:
       - in: query
         name: tstop
         type: integer
-      - in: query
-        name: with_instructions
-        type: string
-      - in: query
-        name: without_instructions
-        type: string
       produces:
       - application/json
       responses:
@@ -3582,7 +4045,9 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get paginated list of alarms
+      description: Get paginated list of alarms. Use parameters "multi_sort[]=field_1,asc&multi_sort[]=field_2,desc&multi_sort[]=field_3,asc"
+        to sort list by multiple fields. "sort_key", "sort_dir" are left for compatibility
+        with older ways of sorting
       operationId: alarms-find-all
       parameters:
       - collectionFormat: multi
@@ -3597,15 +4062,45 @@ paths:
       - in: query
         name: correlation
         type: boolean
+      - collectionFormat: multi
+        in: query
+        items:
+          type: integer
+        name: exclude_instruction_types
+        type: array
+      - collectionFormat: multi
+        in: query
+        items:
+          type: string
+        name: exclude_instructions
+        type: array
       - in: query
         name: filter
         type: string
+      - collectionFormat: multi
+        in: query
+        items:
+          type: integer
+        name: include_instruction_types
+        type: array
+      - collectionFormat: multi
+        in: query
+        items:
+          type: string
+        name: include_instructions
+        type: array
       - in: query
         name: limit
         type: integer
       - in: query
         name: manual
         type: boolean
+      - collectionFormat: multi
+        in: query
+        items:
+          type: string
+        name: multi_sort[]
+        type: array
       - in: query
         name: opened
         type: boolean
@@ -3614,9 +4109,6 @@ paths:
         type: integer
       - in: query
         name: paginate
-        type: boolean
-      - in: query
-        name: resolved
         type: boolean
       - in: query
         name: search
@@ -3638,13 +4130,10 @@ paths:
         type: boolean
       - in: query
         name: with_instructions
-        type: string
+        type: boolean
       - in: query
         name: with_steps
         type: boolean
-      - in: query
-        name: without_instructions
-        type: string
       produces:
       - application/json
       responses:
@@ -3669,6 +4158,23 @@ paths:
       summary: Find all alarms
       tags:
       - alarms
+  /app-info:
+    get:
+      description: Get application information
+      operationId: internal-get-app-info
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/appinfo.AppInfoResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get application information
+      tags:
+      - internal
   /associativetable:
     delete:
       description: Delete associativetable by name
@@ -3908,10 +4414,44 @@ paths:
       summary: Update broadcast-message by id
       tags:
       - broadcast-messages
-  /bulk/heartbeats:
+  /bulk/pbehaviors:
+    post:
+      consumes:
+      - application/json
+      description: Bulk create pbehaviors
+      operationId: pbehaviors-bulk-create
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/pbehavior.CreateRequest'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            items:
+              $ref: '#/definitions/pbehavior.Response'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Bulk create pbehaviors
+      tags:
+      - pbehaviors
+  /bulk/pbehaviors/{id}:
     delete:
-      description: Bulk delete heartbeats by id
-      operationId: heartbeats-bulk-delete-by-id
+      description: Bulk delete pbehaviors by id
+      operationId: pbehaviors-bulk-delete-by-id
       parameters:
       - collectionFormat: multi
         in: query
@@ -3928,51 +4468,16 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
-      summary: Bulk delete heartbeats by id
+      summary: Bulk delete pbehaviors by id
       tags:
-      - heartbeats
-    post:
-      consumes:
-      - application/json
-      description: Bulk create heartbeats
-      operationId: heartbeats-bulk-create
-      parameters:
-      - description: body
-        in: body
-        name: body
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/heartbeat.CreateRequest'
-          type: array
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            items:
-              items:
-                $ref: '#/definitions/heartbeat.Response'
-              type: array
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/common.ValidationErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Bulk create heartbeats
-      tags:
-      - heartbeats
+      - pbehaviors
     put:
       consumes:
       - application/json
-      description: Bulk update heartbeats by id
-      operationId: heartbeats-bulk-update-by-id
+      description: Bulk update pbehaviors by id
+      operationId: pbehaviors-bulk-update-by-id
       parameters:
       - description: body
         in: body
@@ -3980,7 +4485,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/heartbeat.BulkUpdateRequestItem'
+            $ref: '#/definitions/pbehavior.BulkUpdateRequestItem'
           type: array
       produces:
       - application/json
@@ -3989,9 +4494,7 @@ paths:
           description: OK
           schema:
             items:
-              items:
-                $ref: '#/definitions/heartbeat.Response'
-              type: array
+              $ref: '#/definitions/pbehavior.Response'
             type: array
         "400":
           description: Bad Request
@@ -4002,11 +4505,11 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
-      summary: Bulk update heartbeats by id
+      summary: Bulk update pbehaviors by id
       tags:
-      - heartbeats
+      - pbehaviors
   /bulk/view-groups:
     delete:
       description: Bulk delete view groups by id
@@ -4204,12 +4707,17 @@ paths:
       description: Create import task
       operationId: contextgraph-import-create-import
       parameters:
+      - description: source
+        in: query
+        name: source
+        required: true
+        type: string
       - description: body
         in: body
         name: body
         required: true
         schema:
-          $ref: '#/definitions/contextgraph.Request'
+          $ref: '#/definitions/contextgraph.ImportRequest'
       produces:
       - application/json
       responses:
@@ -4314,6 +4822,18 @@ paths:
         name: filter
         type: string
       - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: no_events
+        type: boolean
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: paginate
+        type: boolean
+      - in: query
         name: search
         type: string
       - in: query
@@ -4322,6 +4842,9 @@ paths:
       - in: query
         name: sort_by
         type: string
+      - in: query
+        name: with_flags
+        type: boolean
       produces:
       - application/json
       responses:
@@ -4344,6 +4867,35 @@ paths:
       - ApiKeyAuth: []
       - BasicAuth: []
       summary: Find entities
+      tags:
+      - entities
+  /entities/clean:
+    post:
+      consumes:
+      - application/json
+      description: Clean disabled entities
+      operationId: entities-clean
+      parameters:
+      - in: query
+        name: archive
+        required: true
+        type: boolean
+      - in: query
+        name: archive_dependencies
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Clean disabled entities
       tags:
       - entities
   /entities/pbehaviors:
@@ -4372,7 +4924,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ValidationErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Find pbehaviors by entity id
       tags:
@@ -5123,12 +5675,155 @@ paths:
       summary: Update eventfilter by id
       tags:
       - eventfilters
-  /heartbeats:
+  /file:
     get:
       consumes:
       - application/json
-      description: Get paginated list of heartbeats
-      operationId: heartbeats-find-all
+      description: Get list of file objects by ID
+      operationId: files-list
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/file.File'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: List files by ID
+      tags:
+      - files
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload files
+      operationId: file-upload
+      parameters:
+      - description: request
+        in: formData
+        name: files
+        required: true
+        type: string
+      - description: file visibility
+        in: query
+        name: public
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/file.File'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Upload files
+      tags:
+      - files
+  /file-access:
+    get:
+      consumes:
+      - application/json
+      description: Get file access
+      operationId: auth-get-file-access
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+      security:
+      - JWTAuth: []
+      summary: Get file access
+      tags:
+      - auth
+  /file/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete file by ID
+      operationId: files-delete
+      parameters:
+      - description: file id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Delete file
+      tags:
+      - files
+    get:
+      consumes:
+      - application/json
+      description: Get file content by ID or download with file name
+      operationId: files-get
+      parameters:
+      - description: file id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Get file by ID
+      tags:
+      - files
+  /flapping-rules:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of flapping rule
+      operationId: flappingrules-find-all
       parameters:
       - description: current page
         in: query
@@ -5144,14 +5839,6 @@ paths:
         in: query
         name: search
         type: string
-      - description: sort query
-        in: query
-        name: sort
-        type: string
-      - description: sort query
-        in: query
-        name: sort_by
-        type: string
       produces:
       - application/json
       responses:
@@ -5163,54 +5850,54 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/heartbeat.Response'
+                    $ref: '#/definitions/flappingrule.Response'
                   type: array
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/common.ValidationErrorResponse'
+            $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
-      summary: Find heartbeats
+      summary: Find all flapping rule
       tags:
-      - heartbeats
+      - flappingrules
     post:
       consumes:
       - application/json
-      description: Create heartbeat
-      operationId: heartbeats-create
+      description: Create flapping rule
+      operationId: flappingrules-create
       parameters:
       - description: body
         in: body
         name: body
         required: true
         schema:
-          $ref: '#/definitions/heartbeat.CreateRequest'
+          $ref: '#/definitions/flappingrule.CreateRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/heartbeat.Response'
+            $ref: '#/definitions/flappingrule.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/common.ValidationErrorResponse'
+            $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
-      summary: Create heartbeat
+      summary: Create flapping rule
       tags:
-      - heartbeats
-  /heartbeats/{id}:
+      - flappingrules
+  /flapping-rules/{id}:
     delete:
-      description: Delete heartbeat by id
-      operationId: heartbeats-delete-by-id
+      description: Delete flapping rule by id
+      operationId: flappingrules-delete-by-id
       parameters:
-      - description: heartbeat id
+      - description: flapping rule id
         in: path
         name: id
         required: true
@@ -5223,16 +5910,16 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Delete heartbeat by id
+      - JWTAuth: []
+      - BasicAuth`: []
+      summary: Delete flapping rule by id
       tags:
-      - heartbeats
+      - flappingrules
     get:
-      description: Get heartbeat by id
-      operationId: heartbeats-get-by-id
+      description: Get flapping rule by id
+      operationId: flappingrules-get-by-id
       parameters:
-      - description: heartbeat id
+      - description: flapping rule id
         in: path
         name: id
         required: true
@@ -5243,24 +5930,24 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/heartbeat.Response'
+            $ref: '#/definitions/flappingrule.Response'
         "404":
           description: Not Found
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
-      summary: Get heartbeat by id
+      summary: Get flapping rule by id
       tags:
-      - heartbeats
+      - flappingrules
     put:
       consumes:
       - application/json
-      description: Update heartbeat by id
-      operationId: heartbeats-update-by-id
+      description: Update flapping rule by id
+      operationId: flappingrules-update-by-id
       parameters:
-      - description: heartbeat id
+      - description: flapping rule id
         in: path
         name: id
         required: true
@@ -5270,14 +5957,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/heartbeat.UpdateRequest'
+          $ref: '#/definitions/flappingrule.UpdateRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/heartbeat.Response'
+            $ref: '#/definitions/flappingrule.Response'
         "400":
           description: Bad Request
           schema:
@@ -5287,11 +5974,11 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
-      summary: Update heartbeat by id
+      summary: Update flapping rule by id
       tags:
-      - heartbeats
+      - flappingrules
   /idle-rules:
     get:
       consumes:
@@ -5495,37 +6182,6 @@ paths:
       summary: Count entities and alarm matching patterns
       tags:
       - idlerules
-  /internal/app_info:
-    get:
-      description: Get application information
-      operationId: internal-get-app-info
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/appinfo.AppInfoResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Get application information
-      tags:
-      - internal
-  /internal/login_info:
-    get:
-      description: Get login information
-      operationId: internal-get-login-info
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/appinfo.LoginConfigResponse'
-      summary: Get login information
-      tags:
-      - internal
   /internal/user_interface:
     delete:
       description: delete user interface
@@ -5568,6 +6224,62 @@ paths:
       summary: update user interface
       tags:
       - internal
+  /logged-user-count:
+    get:
+      consumes:
+      - application/json
+      description: Get logged user count
+      operationId: auth-logged-user-count
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get logged user count
+      tags:
+      - auth
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Log in
+      operationId: auth-login
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/auth.loginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.loginResponse'
+      summary: Log in
+      tags:
+      - auth
+  /logout:
+    post:
+      consumes:
+      - application/json
+      description: Log out
+      operationId: auth-logout
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+      security:
+      - JWTAuth: []
+      summary: Log out
+      tags:
+      - auth
   /message-rate-stats:
     get:
       consumes:
@@ -5584,22 +6296,41 @@ paths:
         required: true
         type: string
       - in: query
-        name: limit
-        type: integer
-      - in: query
-        name: page
-        type: integer
-      - in: query
-        name: paginate
-        type: boolean
-      - in: query
-        name: sort
-        type: string
-      - in: query
-        name: sort_by
-        type: string
-      - in: query
         name: to
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/messageratestats.StatsListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Find message rate stats
+      tags:
+      - message-rate-stats
+  /notification:
+    get:
+      consumes:
+      - application/json
+      description: Get notification settings
+      operationId: notification-get
+      parameters:
+      - description: current page
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: items per page
+        in: query
+        name: limit
         required: true
         type: integer
       produces:
@@ -5613,19 +6344,53 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/messageratestats.StatsResponse'
+                    $ref: '#/definitions/notification.Notification'
                   type: array
               type: object
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get notification settings
+      tags:
+      - notification
+    put:
+      consumes:
+      - application/json
+      description: Update notification settings
+      operationId: notification-update
+      parameters:
+      - description: type id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/notification.Notification'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/notification.Notification'
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
       security:
       - ApiKeyAuth: []
       - BasicAuth: []
-      summary: Find message rate stats
+      summary: Update notification settings
       tags:
-      - message-rate-stats
+      - notification
   /pbehavior-comments:
     post:
       consumes:
@@ -6314,7 +7079,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ValidationErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Find all pbehaviors
       tags:
@@ -6330,7 +7095,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/pbehavior.EditRequest'
+          $ref: '#/definitions/pbehavior.CreateRequest'
       produces:
       - application/json
       responses:
@@ -6343,7 +7108,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ValidationErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Create pbehavior
       tags:
@@ -6351,7 +7116,7 @@ paths:
   /pbehaviors/{id}:
     delete:
       description: Delete pbehavior by id
-      operationId: pbehavior-delete-by-id
+      operationId: pbehaviors-delete-by-id
       parameters:
       - description: pbehavior id
         in: path
@@ -6366,7 +7131,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Delete pbehavior by id
       tags:
@@ -6392,9 +7157,47 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Get pbehavior by id
+      tags:
+      - pbehaviors
+    patch:
+      consumes:
+      - application/json
+      description: Patch partial set of behavior attributes by id
+      operationId: pbehaviors-patch-by-id
+      parameters:
+      - description: pbehavior id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/pbehavior.PatchRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pbehavior.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Patch partial set of behavior attributes by id
       tags:
       - pbehaviors
     put:
@@ -6413,7 +7216,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/pbehavior.EditRequest'
+          $ref: '#/definitions/pbehavior.UpdateRequest'
       produces:
       - application/json
       responses:
@@ -6430,7 +7233,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Update behavior by id
       tags:
@@ -6490,7 +7293,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Find entities by pbehavior id
       tags:
@@ -6500,7 +7303,7 @@ paths:
       consumes:
       - application/json
       description: Count entities matching filter
-      operationId: pbehavior-countfilter
+      operationId: pbehaviors-countfilter
       parameters:
       - description: body
         in: body
@@ -6524,7 +7327,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Count entities matching filter
       tags:
@@ -6751,6 +7554,167 @@ paths:
       summary: Update playlist by id
       tags:
       - playlists
+  /resolve-rules:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of resolve rule
+      operationId: resolverules-find-all
+      parameters:
+      - description: current page
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: items per page
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: search query
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PaginatedListResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/resolverule.Response'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Find all resolve rule
+      tags:
+      - resolverules
+    post:
+      consumes:
+      - application/json
+      description: Create resolve rule
+      operationId: resolverules-create
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/resolverule.CreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/resolverule.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Create resolve rule
+      tags:
+      - resolverules
+  /resolve-rules/{id}:
+    delete:
+      description: Delete resolve rule by id
+      operationId: resolverules-delete-by-id
+      parameters:
+      - description: resolve rule id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: ""
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth`: []
+      summary: Delete resolve rule by id
+      tags:
+      - resolverules
+    get:
+      description: Get resolve rule by id
+      operationId: resolverules-get-by-id
+      parameters:
+      - description: resolve rule id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resolverule.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Get resolve rule by id
+      tags:
+      - resolverules
+    put:
+      consumes:
+      - application/json
+      description: Update resolve rule by id
+      operationId: resolverules-update-by-id
+      parameters:
+      - description: resolve rule id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/resolverule.UpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resolverule.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Update resolve rule by id
+      tags:
+      - resolverules
   /roles:
     get:
       consumes:
@@ -7089,19 +8053,26 @@ paths:
       summary: Update scenario by id
       tags:
       - scenarios
-  /sessions-count:
-    get:
+  /scenarios/check-priority:
+    post:
       consumes:
       - application/json
-      description: Get counts of active sessions
-      operationId: auth-get-session-counts
+      description: Check priority
+      operationId: scenarios-check-priority
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/scenario.CheckPriorityRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/auth.sessionsCountResponse'
+            $ref: '#/definitions/scenario.CheckPriorityResponse'
         "400":
           description: Bad Request
           schema:
@@ -7109,9 +8080,26 @@ paths:
       security:
       - ApiKeyAuth: []
       - BasicAuth: []
-      summary: Get counts of active sessions
+      summary: Check priority
       tags:
-      - auth
+      - scenarios
+  /scenarios/minimal-priority:
+    get:
+      description: Get minimal priority
+      operationId: scenarios-get-minimal-priority
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/scenario.GetMinimalPriorityResponse'
+      security:
+      - ApiKeyAuth: []
+      - BasicAuth: []
+      summary: Get minimal priority
+      tags:
+      - scenarios
   /state-settings:
     get:
       consumes:
@@ -7188,6 +8176,67 @@ paths:
       summary: Update state setting type by id
       tags:
       - state-settings
+  /user-preferences:
+    put:
+      consumes:
+      - application/json
+      description: Update user preferences by widget id
+      operationId: userpreference-update-by-widget-id
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/userpreferences.EditRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userpreferences.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Update user preferences by widget id
+      tags:
+      - userpreference
+  /user-preferences/{id}:
+    get:
+      description: Get user preferences by widget id
+      operationId: userpreference-get-by-id
+      parameters:
+      - description: widget id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userpreferences.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Get user preferences by widget id
+      tags:
+      - userpreference
   /users:
     get:
       consumes:
@@ -7212,6 +8261,10 @@ paths:
       - description: sort query
         in: query
         name: sort
+        type: string
+      - description: role permission
+        in: query
+        name: permission
         type: string
       - description: sort query
         in: query
@@ -7847,4 +8900,8 @@ securityDefinitions:
     type: apiKey
   BasicAuth:
     type: basic
+  JWTAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

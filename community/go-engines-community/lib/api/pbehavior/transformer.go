@@ -13,7 +13,10 @@ import (
 
 type ModelTransformer interface {
 	TransformCreateRequestToModel(ctx context.Context, request CreateRequest) (*Response, error)
+	TransformBulkCreateRequestToModels(ctx context.Context, requests []CreateRequest) ([]*Response, error)
 	TransformUpdateRequestToModel(ctx context.Context, request UpdateRequest) (*Response, error)
+	TransformBulkUpdateRequestToModels(ctx context.Context, requests []BulkUpdateRequestItem) ([]*Response, error)
+	Patch(ctx context.Context, req PatchRequest, model *Response) error
 }
 
 type modelTransformer struct {
@@ -81,6 +84,32 @@ func (t *modelTransformer) TransformUpdateRequestToModel(ctx context.Context, re
 	return t.TransformCreateRequestToModel(ctx, CreateRequest(request))
 }
 
+func (t *modelTransformer) TransformBulkCreateRequestToModels(ctx context.Context, requests []CreateRequest) ([]*Response, error) {
+	models := make([]*Response, len(requests))
+	var err error
+	for i, request := range requests {
+		models[i], err = t.TransformCreateRequestToModel(ctx, request)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return models, nil
+}
+
+func (t *modelTransformer) TransformBulkUpdateRequestToModels(ctx context.Context, requests []BulkUpdateRequestItem) ([]*Response, error) {
+	models := make([]*Response, len(requests))
+	var err error
+	for i, request := range requests {
+		models[i], err = t.TransformCreateRequestToModel(ctx, CreateRequest(request))
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return models, nil
+}
+
 func (t *modelTransformer) transformReasonToModel(ctx context.Context, id string) (*apireason.Reason, error) {
 	var reason apireason.Reason
 
@@ -138,7 +167,7 @@ func (t *modelTransformer) transformExceptionsToModel(ctx context.Context, ids [
 		{"$replaceRoot": bson.M{
 			"newRoot": bson.M{"$mergeObjects": bson.A{
 				"$data",
-				bson.D{{"exdates", "$exdates"}}}},
+				bson.D{{Key: "exdates", Value: "$exdates"}}}},
 		}},
 	})
 	if err != nil {
@@ -160,4 +189,56 @@ func (t *modelTransformer) transformExceptionsToModel(ctx context.Context, ids [
 	}
 
 	return exceptions, nil
+}
+
+func (t *modelTransformer) Patch(ctx context.Context, req PatchRequest, model *Response) error {
+	var err error
+	model.Author = req.Author
+	if req.Enabled != nil {
+		model.Enabled = *req.Enabled
+	}
+	if req.Filter != nil {
+		model.Filter = NewFilter(req.Filter)
+	}
+	if req.Name != nil {
+		model.Name = *req.Name
+	}
+	if req.RRule != nil {
+		model.RRule = *req.RRule
+	}
+	if req.Start != nil {
+		model.Start = req.Start
+	}
+	if req.Stop.isSet {
+		model.Stop = req.Stop.CpsTime
+	}
+	if req.Type != nil {
+		var pbhType *pbehavior.Type
+		if pbhType, err = t.transformTypeToModel(ctx, *req.Type); err != nil {
+			return err
+		}
+		model.Type = pbhType
+	}
+	if req.Reason != nil {
+		var reason *apireason.Reason
+		if reason, err = t.transformReasonToModel(ctx, *req.Reason); err != nil {
+			return err
+		}
+		model.Reason = reason
+	}
+	if len(req.Exdates) > 0 {
+		var exdates []pbehaviorexception.Exdate
+		if exdates, err = t.exceptionTransformer.TransformExdatesRequestToModel(ctx, req.Exdates); err != nil {
+			return err
+		}
+		model.Exdates = exdates
+	}
+	if len(req.Exceptions) > 0 {
+		var exceptions []pbehaviorexception.Exception
+		if exceptions, err = t.transformExceptionsToModel(ctx, req.Exceptions); err != nil {
+			return err
+		}
+		model.Exceptions = exceptions
+	}
+	return err
 }

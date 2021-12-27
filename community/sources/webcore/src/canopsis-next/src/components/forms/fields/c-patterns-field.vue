@@ -15,6 +15,7 @@
               v-validate="rules",
               :disabled="disabled",
               :name="alarmPatternsFieldName",
+              :type="$constants.PATTERNS_TYPES.alarm",
               @input="errors.remove(alarmPatternsFieldName)"
             )
         template(v-if="event")
@@ -25,6 +26,7 @@
               v-validate="rules",
               :disabled="disabled",
               :name="eventPatternsFieldName",
+              :type="$constants.PATTERNS_TYPES.event",
               @input="errors.remove(eventPatternsFieldName)"
             )
         template(v-if="entity")
@@ -35,6 +37,7 @@
               v-validate="rules",
               :disabled="disabled",
               :name="entityPatternsFieldName",
+              :type="$constants.PATTERNS_TYPES.entity",
               @input="errors.remove(entityPatternsFieldName)"
             )
         template(v-if="totalEntity")
@@ -47,13 +50,14 @@
               v-validate="rules",
               :disabled="disabled",
               :name="totalEntityPatternsFieldName",
+              :type="$constants.PATTERNS_TYPES.totalEntity",
               @input="errors.remove(totalEntityPatternsFieldName)"
             )
         slot(name="additionalTabs")
 </template>
 
 <script>
-import formValidationHeaderMixin from '@/mixins/form/validation-header';
+import { formValidationHeaderMixin } from '@/mixins/form';
 
 import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
 
@@ -142,4 +146,3 @@ export default {
   },
 };
 </script>
-

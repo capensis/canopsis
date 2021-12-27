@@ -6,7 +6,8 @@
         v-validate="'required|min_value:1'",
         :label="$t('remediationInstructions.timeToComplete')",
         :error-messages="errors.collect(durationFieldName)",
-        :min="0",
+        :disabled="disabled",
+        :min="min",
         :name="durationFieldName",
         type="number",
         box
@@ -17,14 +18,13 @@
         v-validate="'required'",
         :items="availableUnits",
         :name="unitFieldName",
+        :disabled="disabled",
         hide-details
       )
 </template>
 
 <script>
-import { omit } from 'lodash';
-
-import { AVAILABLE_TIME_UNITS } from '@/constants';
+import { SHORT_AVAILABLE_TIME_UNITS } from '@/constants';
 
 export default {
   inject: ['$validator'],
@@ -41,6 +41,14 @@ export default {
       type: String,
       default: '',
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    min: {
+      type: Number,
+      default: 0,
+    },
   },
   computed: {
     durationFieldName() {
@@ -52,7 +60,7 @@ export default {
     },
 
     availableUnits() {
-      return Object.values(omit(AVAILABLE_TIME_UNITS, ['year'])).map(({ value, text }) => ({
+      return Object.values(SHORT_AVAILABLE_TIME_UNITS).map(({ value, text }) => ({
         value,
         text: this.$tc(text, this.duration.value),
       }));

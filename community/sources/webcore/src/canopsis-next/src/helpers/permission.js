@@ -74,12 +74,20 @@ export const getCheckboxValue = (
  * @returns {*}
  */
 export function getGroupedPermissions(permissions, views = [], playlists = []) {
-  const allBusinessPermissionsIds = flatten(USERS_PERMISSIONS.business);
+  const allBusinessPermissionsIds = Object.values(flatten(USERS_PERMISSIONS.business));
+  const generalApiPermissions = Object.values(USERS_PERMISSIONS.api.general);
+  const rulesApiPermissions = Object.values(USERS_PERMISSIONS.api.rules);
+  const remediationApiPermissions = Object.values(USERS_PERMISSIONS.api.remediation);
+  const pbehaviorApiPermissions = Object.values(USERS_PERMISSIONS.api.pbehavior);
 
-  const { exploitation: exploitationTechnicalPermissions, ...adminTechnicalPermissions } = USERS_PERMISSIONS.technical;
+  const {
+    exploitation: exploitationTechnicalPermissions,
+    notification: notificationTechnicalPermissions,
+    ...adminTechnicalPermissions
+  } = USERS_PERMISSIONS.technical;
   const adminTechnicalPermissionsValues = Object.values(adminTechnicalPermissions);
   const exploitationTechnicalPermissionsValues = Object.values(exploitationTechnicalPermissions);
-  const apiPermissionsValues = Object.values(USERS_PERMISSIONS.api);
+  const notificationTechnicalPermissionsValues = Object.values(notificationTechnicalPermissions);
   const viewsById = keyBy(views, '_id');
   const playlistsById = keyBy(playlists, '_id');
 
@@ -96,17 +104,25 @@ export function getGroupedPermissions(permissions, views = [], playlists = []) {
       acc.technical.admin.push(permission);
     } else if (exploitationTechnicalPermissionsValues.includes(permissionId)) {
       acc.technical.exploitation.push(permission);
+    } else if (notificationTechnicalPermissionsValues.includes(permissionId)) {
+      acc.technical.notification.push(permission);
     } else if (
-      Object.values(allBusinessPermissionsIds).includes(permissionId) ||
-      NOT_COMPLETED_USER_PERMISSIONS.some(id => permissionId.startsWith(id))
+      allBusinessPermissionsIds.includes(permissionId)
+      || NOT_COMPLETED_USER_PERMISSIONS.some(id => permissionId.startsWith(id))
     ) {
       const [parentKey] = permission._id.split('_');
 
       if (acc.business[parentKey]) {
         acc.business[parentKey].push(permission);
       }
-    } else if (apiPermissionsValues.includes(permissionId)) {
-      acc.api.push(permission);
+    } else if (generalApiPermissions.includes(permissionId)) {
+      acc.api.general.push(permission);
+    } else if (rulesApiPermissions.includes(permissionId)) {
+      acc.api.rules.push(permission);
+    } else if (remediationApiPermissions.includes(permissionId)) {
+      acc.api.remediation.push(permission);
+    } else if (pbehaviorApiPermissions.includes(permissionId)) {
+      acc.api.pbehavior.push(permission);
     }
 
     return acc;
@@ -124,8 +140,14 @@ export function getGroupedPermissions(permissions, views = [], playlists = []) {
     technical: {
       admin: [],
       exploitation: [],
+      notification: [],
     },
-    api: [],
+    api: {
+      general: [],
+      rules: [],
+      remediation: [],
+      pbehavior: [],
+    },
   });
 
   /**
@@ -144,6 +166,15 @@ export function getGroupedPermissions(permissions, views = [], playlists = []) {
   groupedPermissions.technical = Object.entries(groupedPermissions.technical)
     .map(([key, groupPermissions]) => ({
       key: `permissions.technical.${key}`,
+      permissions: sortBy(groupPermissions, ['description']),
+    }));
+
+  /**
+   * Ordering behavior have the same behavior as for `api`
+   */
+  groupedPermissions.api = Object.entries(groupedPermissions.api)
+    .map(([key, groupPermissions]) => ({
+      key: `permissions.api.${key}`,
       permissions: sortBy(groupPermissions, ['description']),
     }));
 

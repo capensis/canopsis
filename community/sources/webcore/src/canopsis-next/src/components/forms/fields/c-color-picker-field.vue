@@ -22,7 +22,7 @@ import { MODALS } from '@/constants';
 
 import { getMostReadableTextColor } from '@/helpers/color';
 
-import formBaseMixin from '@/mixins/form/base';
+import { formBaseMixin } from '@/mixins/form';
 
 export default {
   mixins: [formBaseMixin],

@@ -1,17 +1,17 @@
 <template lang="pug">
   v-list-group
-    v-list-tile(slot="activator")
-      div(:class="validationHeaderClass") {{ title }}
-        span.font-italic.caption.ml-1(v-if="optional") ({{ $t('common.optional') }})
+    template(#activator="")
+      v-list-tile
+        div(:class="validationHeaderClass") {{ title }}
+          span.font-italic.caption.ml-1(v-if="optional") ({{ $t('common.optional') }})
     v-container
       enabled-limit-field(v-field="value", :label="label")
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
-import formValidationHeaderMixin from '@/mixins/form/validation-header';
+import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
 
-import EnabledLimitField from '@/components/forms/fields/enabled-limit.vue';
+import EnabledLimitField from '@/components/forms/fields/enabled-limit-field.vue';
 
 export default {
   inject: ['$validator'],

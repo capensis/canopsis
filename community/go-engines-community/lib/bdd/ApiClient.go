@@ -1,11 +1,13 @@
-// bdd contains feature context utils.
+// Package bdd contains feature context utils.
 package bdd
 
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"go/types"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -17,17 +19,27 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/gin-gonic/gin/binding"
-
+	libtypes "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
-	"github.com/cucumber/messages-go/v10"
+	"github.com/cucumber/godog"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/kylelemons/godebug/pretty"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-const authHeader = "x-canopsis-authkey"
-const ApiEnvURL = "API_URL"
-const requestTimeout = 10 * time.Second
+const (
+	ApiEnvURL           = "API_URL"
+	requestTimeout      = 10 * time.Second
+	userPass            = "test"
+	headerAuthorization = "Authorization"
+	headerContentType   = "Content-Type"
+	basicPrefix         = "Basic"
+	bearerPrefix        = "Bearer"
+
+	repeatRequestCount    = 10
+	repeatRequestInterval = time.Millisecond * 10
+)
 
 // ApiClient represents utility struct which implements API steps to feature context.
 type ApiClient struct {
@@ -37,35 +49,22 @@ type ApiClient struct {
 	client *http.Client
 	// db is db client.
 	db mongo.DbClient
-	// authApiKey is api key which can be set using corresponding step.
-	authApiKey string
-	// basicAuth is username and password which can be set using corresponding step.
-	basicAuth *basicAuth
 	// response is http response of made API request.
 	response           *http.Response
 	responseBody       interface{}
 	responseBodyOutput string
 	// cookies is http cookies which are retrieved from API response and used in following steps.
+	// todo remove after session remove
 	cookies []*http.Cookie
 	// vars is used to save data between steps.
 	vars map[string]string
 	// request header
-	contentType string
-}
-
-// basicAuth represents Basic Auth credentials.
-type basicAuth struct {
-	username, password string
+	headers map[string]string
 }
 
 // NewApiClient creates new API client.
-func NewApiClient() (*ApiClient, error) {
+func NewApiClient(db mongo.DbClient) (*ApiClient, error) {
 	apiUrl, err := GetApiURL()
-	if err != nil {
-		return nil, err
-	}
-
-	db, err := mongo.NewClient(0, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +75,7 @@ func NewApiClient() (*ApiClient, error) {
 	}
 	apiClient.url = apiUrl
 	apiClient.db = db
-	apiClient.contentType = binding.MIMEJSON
+	apiClient.headers = make(map[string]string)
 
 	return &apiClient, nil
 }
@@ -90,22 +89,22 @@ func GetApiURL() (*url.URL, error) {
 
 	parsed, err := url.Parse(legacy)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot parse api url: %w", err)
 	}
 
 	return parsed, nil
 }
 
 // ResetResponse clears all saved response data.
-func (a *ApiClient) ResetResponse(_ *messages.Pickle) {
+func (a *ApiClient) ResetResponse(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 	a.response = nil
 	a.responseBody = nil
 	a.responseBodyOutput = ""
-	a.authApiKey = ""
-	a.basicAuth = nil
 	a.cookies = nil
 	a.vars = nil
-	a.contentType = binding.MIMEJSON
+	a.headers = make(map[string]string)
+
+	return ctx, nil
 }
 
 /**
@@ -139,29 +138,26 @@ Step example:
 	}
 	"""
 */
-func (a *ApiClient) TheResponseBodyShouldBe(doc *messages.PickleStepArgument_PickleDocString) error {
+func (a *ApiClient) TheResponseBodyShouldBe(doc string) error {
 	if a.responseBody == nil {
 		return fmt.Errorf("response is nil")
 	}
 
-	// Try execute template on expected body
-	b, err := a.executeTemplate(doc.Content)
+	// Try to execute template on expected body
+	b, err := a.executeTemplate(doc)
 	if err != nil {
 		return err
 	}
 
 	content := b.Bytes()
-	// Try to umarshal expected body as json
-	var expectedBody interface{}
-	err = json.Unmarshal(content, &expectedBody)
+	// Try to unmarshal expected body as json
+	expectedBody, err := unmarshalJson(content)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot decode expected response body: %w", err)
 	}
 
-	if !reflect.DeepEqual(a.responseBody, expectedBody) {
-		expectedBodyOutput, _ := json.MarshalIndent(expectedBody, "", "  ")
-		return fmt.Errorf("expected response body to be:\n%v\n, but actual is:\n%v",
-			string(expectedBodyOutput), a.responseBodyOutput)
+	if err := checkResponse(a.responseBody, expectedBody); err != nil {
+		return err
 	}
 
 	return nil
@@ -174,16 +170,16 @@ Step example:
 	Test
 	"""
 */
-func (a *ApiClient) TheResponseRawBodyShouldBe(doc *messages.PickleStepArgument_PickleDocString) error {
+func (a *ApiClient) TheResponseRawBodyShouldBe(doc string) error {
 	// Try execute template on expected body
-	b, err := a.executeTemplate(doc.Content)
+	b, err := a.executeTemplate(doc)
 	if err != nil {
 		return err
 	}
 
 	expectedBody := b.String()
 	if a.responseBodyOutput != expectedBody {
-		return fmt.Errorf("expected response body to be:\n%v\n, but actual is:\n%v",
+		return fmt.Errorf("expected response body to be:\n%v\n but actual is:\n%v",
 			expectedBody, a.responseBodyOutput)
 	}
 
@@ -201,29 +197,28 @@ Step example:
 	}
 	"""
 */
-func (a *ApiClient) TheResponseBodyShouldContain(doc *messages.PickleStepArgument_PickleDocString) error {
+func (a *ApiClient) TheResponseBodyShouldContain(doc string) error {
 	if a.responseBody == nil {
 		return fmt.Errorf("response is nil")
 	}
 
 	// Try execute template on expected body
-	b, err := a.executeTemplate(doc.Content)
+	b, err := a.executeTemplate(doc)
 	if err != nil {
 		return err
 	}
 
 	content := b.Bytes()
 	// Try to umarshal expected body as json
-	var expectedBody interface{}
-	err = json.Unmarshal(content, &expectedBody)
+	expectedBody, err := unmarshalJson(content)
 	if err != nil {
 		return fmt.Errorf("cannot unmarshal json %v: %s", err, content)
 	}
 
-	if !partialEqual(expectedBody, a.responseBody) {
-		expectedBodyOutput, _ := json.MarshalIndent(expectedBody, "", "  ")
-		return fmt.Errorf("expected response body to be:\n%v\n, but actual is:\n%v",
-			string(expectedBodyOutput), a.responseBodyOutput)
+	partialBody := getPartialResponse(a.responseBody, expectedBody)
+
+	if err := checkResponse(partialBody, expectedBody); err != nil {
+		return err
 	}
 
 	return nil
@@ -234,12 +229,43 @@ Step example:
 	Then the response key "data.0.created_at" should not be "0"
 */
 func (a *ApiClient) TheResponseKeyShouldNotBe(path, value string) error {
-	if v, ok := getNestedJsonVal(a.responseBody, strings.Split(path, ".")); ok {
-		if fmt.Sprintf("%v", v) == value {
-			return fmt.Errorf("%v is equal to %v", value, v)
-		} else {
-			return nil
+	if nestedVal, ok := getNestedJsonVal(a.responseBody, strings.Split(path, ".")); ok {
+		switch v := nestedVal.(type) {
+		case types.Nil:
+			if value != "null" {
+				return nil
+			}
+		case string:
+			if v != value {
+				return nil
+			}
+		case int:
+			if i, err := strconv.ParseInt(value, 10, 0); err != nil || v != int(i) {
+				return nil
+			}
+		case int32:
+			if i, err := strconv.ParseInt(value, 10, 0); err != nil || v != int32(i) {
+				return nil
+			}
+		case int64:
+			if i, err := strconv.ParseInt(value, 10, 0); err != nil || v != i {
+				return nil
+			}
+		case float32:
+			if f, err := strconv.ParseFloat(value, 0); err != nil || v != float32(f) {
+				return nil
+			}
+		case float64:
+			if f, err := strconv.ParseFloat(value, 0); err != nil || v != f {
+				return nil
+			}
+		case bool:
+			if b, err := strconv.ParseBool(value); err != nil || v != b {
+				return nil
+			}
 		}
+
+		return fmt.Errorf("%v is equal to %v", value, nestedVal)
 	}
 
 	return fmt.Errorf("%s not exists in response:\n%v", path, a.responseBodyOutput)
@@ -255,6 +281,38 @@ func (a *ApiClient) TheResponseKeyShouldNotExist(path string) error {
 	}
 
 	return nil
+}
+
+/**
+Step example:
+	Then the response key "data.0.duration" should be greater or equal than 3
+*/
+func (a *ApiClient) TheResponseKeyShouldBeGreaterOrEqualThan(path string, value float64) error {
+	if nestedVal, ok := getNestedJsonVal(a.responseBody, strings.Split(path, ".")); ok {
+		var fieldVal float64
+		switch v := nestedVal.(type) {
+		case int:
+			fieldVal = float64(v)
+		case int32:
+			fieldVal = float64(v)
+		case int64:
+			fieldVal = float64(v)
+		case float32:
+			fieldVal = float64(v)
+		case float64:
+			fieldVal = v
+		default:
+			return fmt.Errorf("%v is not number", nestedVal)
+		}
+
+		if fieldVal >= value {
+			return nil
+		}
+
+		return fmt.Errorf("%v is lesser then %v", fieldVal, value)
+	}
+
+	return fmt.Errorf("%s not exists in response:\n%v", path, a.responseBodyOutput)
 }
 
 // getNestedJsonVal returns val by path.
@@ -293,21 +351,19 @@ func getNestedJsonVal(v interface{}, path []string) (interface{}, bool) {
 Step example:
 	Given I am admin
 */
-func (a *ApiClient) IAm(role string) error {
+func (a *ApiClient) IAm(ctx context.Context, role string) error {
 	var line model.Rbac
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	res := a.db.Collection(mongo.RightsMongoCollection).FindOne(ctx, bson.M{
 		"crecord_type": model.LineTypeRole,
 		"crecord_name": role,
 	})
 	if err := res.Err(); err != nil {
-		return err
+		return fmt.Errorf("cannot fetch role: %w", err)
 	}
 
 	err := res.Decode(&line)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot decode role: %w", err)
 	}
 
 	res = a.db.Collection(mongo.RightsMongoCollection).FindOne(ctx, bson.M{
@@ -315,15 +371,56 @@ func (a *ApiClient) IAm(role string) error {
 		"role":         line.ID,
 	})
 	if err := res.Err(); err != nil {
-		return err
+		return fmt.Errorf("cannot fetch user: %w", err)
 	}
 
 	err = res.Decode(&line)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot decode user: %w", err)
 	}
 
-	a.authApiKey = line.AuthApiKey
+	uri := fmt.Sprintf("%s/api/v4/login", a.url)
+	body, err := json.Marshal(map[string]string{
+		"username": line.Name,
+		"password": userPass,
+	})
+	if err != nil {
+		return err
+	}
+	request, err := http.NewRequest(http.MethodPost, uri, bytes.NewReader(body))
+	if err != nil {
+		return fmt.Errorf("cannot create login request: %w", err)
+	}
+
+	request.Header.Set(headerContentType, binding.MIMEJSON)
+
+	response, err := a.client.Do(request)
+	if err != nil {
+		return fmt.Errorf("cannot do login request: %w", err)
+	}
+
+	buf, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return fmt.Errorf("cannot fetch login response: %w", err)
+	}
+
+	if response.StatusCode != http.StatusOK {
+		return fmt.Errorf("unexpected response status %v %s", response.StatusCode, buf)
+	}
+
+	responseBody := make(map[string]string)
+	err = json.Unmarshal(buf, &responseBody)
+	if err != nil {
+		return fmt.Errorf("cannot decode login response: %w", err)
+	}
+
+	token := responseBody["access_token"]
+	if token == "" {
+		return fmt.Errorf("unexpected login response %v", buf)
+	}
+
+	a.headers[headerAuthorization] = bearerPrefix + " " + token
+
 	return nil
 }
 
@@ -332,25 +429,7 @@ Step example:
 	When I am authenticated with username "user" password "pass"
 */
 func (a *ApiClient) IAmAuthenticatedByBasicAuth(username, password string) error {
-	a.basicAuth = &basicAuth{
-		username: username,
-		password: password,
-	}
-
-	return nil
-}
-
-/**
-Step example:
-	When I am authenticated with api key "key"
-*/
-func (a *ApiClient) IAmAuthenticatedByApiKey(apiKey string) error {
-	b, err := a.executeTemplate(apiKey)
-	if err != nil {
-		return err
-	}
-
-	a.authApiKey = b.String()
+	a.headers[headerAuthorization] = basicPrefix + " " + base64.StdEncoding.EncodeToString([]byte(username+":"+password))
 
 	return nil
 }
@@ -371,9 +450,9 @@ Step example:
 	  }
 	"""
 */
-func (a *ApiClient) ISendAnEvent(doc *messages.PickleStepArgument_PickleDocString) (err error) {
+func (a *ApiClient) ISendAnEvent(doc string) (err error) {
 	uri := fmt.Sprintf("%s/api/v4/event", a.url)
-	body, err := a.executeTemplate(doc.Content)
+	body, err := a.executeTemplate(doc)
 	if err != nil {
 		return err
 	}
@@ -385,10 +464,10 @@ func (a *ApiClient) ISendAnEvent(doc *messages.PickleStepArgument_PickleDocStrin
 
 	req, err := http.NewRequest(http.MethodPost, uri, body)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot create event request: %w", err)
 	}
 
-	req.Header.Set("Content-Type", a.contentType)
+	req.Header.Set(headerContentType, binding.MIMEJSON)
 	err = a.doRequest(req)
 	if err != nil {
 		return err
@@ -399,9 +478,7 @@ func (a *ApiClient) ISendAnEvent(doc *messages.PickleStepArgument_PickleDocStrin
 		return err
 	}
 
-	return a.TheResponseBodyShouldContain(&messages.PickleStepArgument_PickleDocString{
-		Content: fmt.Sprintf("{\"sent_events\":%s}", responseStr),
-	})
+	return a.TheResponseBodyShouldContain(fmt.Sprintf("{\"sent_events\":%s}", responseStr))
 }
 
 /**
@@ -410,6 +487,10 @@ Step example:
 	When I do GET /api/v4/entitybasic/{{ .lastResponse._id}}
 */
 func (a *ApiClient) IDoRequest(method, uri string) error {
+	if strings.Contains(uri, "until response") {
+		return fmt.Errorf("step is wrongly matched to IDoRequest")
+	}
+
 	uri, err := a.getRequestURL(uri)
 	if err != nil {
 		return err
@@ -417,7 +498,7 @@ func (a *ApiClient) IDoRequest(method, uri string) error {
 
 	req, err := http.NewRequest(method, uri, nil)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot create request: %w", err)
 	}
 
 	return a.doRequest(req)
@@ -445,13 +526,20 @@ Step example:
 	  }
 	"""
 */
-func (a *ApiClient) IDoRequestWithBody(method, uri string, doc *messages.PickleStepArgument_PickleDocString) error {
+func (a *ApiClient) IDoRequestWithBody(method, uri string, doc string) error {
+	if doc == "" {
+		return fmt.Errorf("body is empty")
+	}
+	if strings.Contains(uri, "until response") {
+		return fmt.Errorf("step is wrongly matched to IDoRequestWithBody")
+	}
+
 	uri, err := a.getRequestURL(uri)
 	if err != nil {
 		return err
 	}
 
-	body, err := a.getRequestBody(doc.Content)
+	body, err := a.getRequestBody(doc)
 	if err != nil {
 		return err
 	}
@@ -462,18 +550,248 @@ func (a *ApiClient) IDoRequestWithBody(method, uri string, doc *messages.PickleS
 		body,
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot create request: %w", err)
 	}
 
-	req.Header.Set("Content-Type", a.contentType)
+	if _, ok := a.headers[headerContentType]; !ok {
+		req.Header.Set(headerContentType, binding.MIMEJSON)
+	}
+
 	return a.doRequest(req)
 }
 
 /**
 Step example:
+	When I do GET /api/v4/entitybasic/{{ .lastResponse._id}} until response code is 200
 */
-func (a *ApiClient) SetRequestContentType(contentType string) error {
-	a.contentType = contentType
+func (a *ApiClient) IDoRequestUntilResponseCode(method, uri string, code int) error {
+	uri, err := a.getRequestURL(uri)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(method, uri, nil)
+	if err != nil {
+		return fmt.Errorf("cannot create request: %w", err)
+	}
+
+	timeout := repeatRequestInterval
+	for i := 0; i < repeatRequestCount; i++ {
+		if i != 0 {
+			time.Sleep(timeout)
+			timeout *= 2
+		}
+
+		err := a.doRequest(req)
+		if err != nil {
+			return err
+		}
+
+		if code == a.response.StatusCode {
+			return nil
+		}
+	}
+
+	return fmt.Errorf("max retries exceeded, expected response code to be: %d, but actual is: %d\nresponse body: %v",
+		code,
+		a.response.StatusCode,
+		a.responseBodyOutput,
+	)
+}
+
+/**
+Step example:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body is:
+    """
+    {
+      "status": "done"
+    }
+    """
+*/
+func (a *ApiClient) IDoRequestUntilResponse(method, uri string, code int, doc string) error {
+	if doc == "" {
+		return fmt.Errorf("body is empty")
+	}
+	uri, err := a.getRequestURL(uri)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(method, uri, nil)
+	if err != nil {
+		return fmt.Errorf("cannot create request: %w", err)
+	}
+
+	b, err := a.executeTemplate(doc)
+	if err != nil {
+		return err
+	}
+	content := b.Bytes()
+	expectedBody, err := unmarshalJson(content)
+	if err != nil {
+		return fmt.Errorf("cannot decode expected response body: %w", err)
+	}
+
+	var resDiffErr error
+	timeout := repeatRequestInterval
+	for i := 0; i < repeatRequestCount; i++ {
+		if i != 0 {
+			time.Sleep(timeout)
+			timeout *= 2
+		}
+
+		err := a.doRequest(req)
+		if err != nil {
+			return err
+		}
+
+		if code == a.response.StatusCode {
+			resDiffErr = checkResponse(a.responseBody, expectedBody)
+			if resDiffErr == nil {
+				return nil
+			}
+		}
+	}
+
+	if code != a.response.StatusCode {
+		return fmt.Errorf("max retries exceeded: expected response code to be: %d, but actual is: %d\nresponse body: %v",
+			code,
+			a.response.StatusCode,
+			a.responseBodyOutput,
+		)
+	}
+
+	return fmt.Errorf("max retries exceeded: %w", resDiffErr)
+}
+
+/**
+Step example:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """
+    {
+      "status": "done"
+    }
+    """
+*/
+func (a *ApiClient) IDoRequestUntilResponseContains(method, uri string, code int, doc string) error {
+	if doc == "" {
+		return fmt.Errorf("body is empty")
+	}
+	uri, err := a.getRequestURL(uri)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(method, uri, nil)
+	if err != nil {
+		return fmt.Errorf("cannot create request: %w", err)
+	}
+
+	b, err := a.executeTemplate(doc)
+	if err != nil {
+		return err
+	}
+	content := b.Bytes()
+	expectedBody, err := unmarshalJson(content)
+	if err != nil {
+		return fmt.Errorf("cannot decode expected response body: %w", err)
+	}
+
+	var resDiffErr error
+	timeout := repeatRequestInterval
+	for i := 0; i < repeatRequestCount; i++ {
+		if i != 0 {
+			time.Sleep(timeout)
+			timeout *= 2
+		}
+
+		err := a.doRequest(req)
+		if err != nil {
+			return err
+		}
+
+		if code == a.response.StatusCode {
+			partialBody := getPartialResponse(a.responseBody, expectedBody)
+			resDiffErr = checkResponse(partialBody, expectedBody)
+
+			if resDiffErr == nil {
+				return nil
+			}
+		}
+	}
+
+	if code != a.response.StatusCode {
+		return fmt.Errorf("max retries exceeded: expected response code to be: %d, but actual is: %d\nresponse body: %v",
+			code,
+			a.response.StatusCode,
+			a.responseBodyOutput,
+		)
+	}
+
+	return fmt.Errorf("max retries exceeded: %w", resDiffErr)
+}
+
+/**
+Step example:
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and response key "data.0.duration" is greater or equal than 3
+    """
+*/
+func (a *ApiClient) IDoRequestUntilResponseKeyIsGreaterOrEqualThan(method, uri string, code int, path string, value float64) error {
+	uri, err := a.getRequestURL(uri)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(method, uri, nil)
+	if err != nil {
+		return fmt.Errorf("cannot create request: %w", err)
+	}
+
+	var resDiffErr error
+	timeout := repeatRequestInterval
+	for i := 0; i < repeatRequestCount; i++ {
+		if i != 0 {
+			time.Sleep(timeout)
+			timeout *= 2
+		}
+
+		err := a.doRequest(req)
+		if err != nil {
+			return err
+		}
+
+		if code == a.response.StatusCode {
+			resDiffErr = a.TheResponseKeyShouldBeGreaterOrEqualThan(path, value)
+
+			if resDiffErr == nil {
+				return nil
+			}
+		}
+	}
+
+	if code != a.response.StatusCode {
+		return fmt.Errorf("max retries exceeded: expected response code to be: %d, but actual is: %d\nresponse body: %v",
+			code,
+			a.response.StatusCode,
+			a.responseBodyOutput,
+		)
+	}
+
+	return fmt.Errorf("max retries exceeded: %w", resDiffErr)
+}
+
+/**
+Step example:
+    When I set header Content-Type=application/json
+*/
+func (a *ApiClient) ISetRequestHeader(key, value string) error {
+	b, err := a.executeTemplate(value)
+	if err != nil {
+		return err
+	}
+
+	a.headers[key] = b.String()
+
 	return nil
 }
 
@@ -498,12 +816,8 @@ func (a *ApiClient) ISaveResponse(key, value string) error {
 
 // doRequest adds auth credentials and makes request.
 func (a *ApiClient) doRequest(req *http.Request) error {
-	// Add auth credentials
-	if a.authApiKey != "" {
-		req.Header.Add(authHeader, a.authApiKey)
-	}
-	if a.basicAuth != nil {
-		req.SetBasicAuth(a.basicAuth.username, a.basicAuth.password)
+	for k, v := range a.headers {
+		req.Header.Set(k, v)
 	}
 
 	// Add session's cookies
@@ -519,16 +833,16 @@ func (a *ApiClient) doRequest(req *http.Request) error {
 	a.response, err = a.client.Do(req)
 	// Read response
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot do request: %w", err)
 	}
 	buf, err := ioutil.ReadAll(a.response.Body)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot fetch response: %w", err)
 	}
 
 	// Parse response
 	if len(buf) > 0 {
-		err = json.Unmarshal(buf, &a.responseBody)
+		a.responseBody, err = unmarshalJson(buf)
 		if err == nil {
 			ibuf, _ := json.MarshalIndent(a.responseBody, "", "  ")
 			a.responseBodyOutput = string(ibuf)
@@ -570,59 +884,58 @@ func (a *ApiClient) getRequestBody(body string) (io.Reader, error) {
 func (a *ApiClient) executeTemplate(tpl string) (*bytes.Buffer, error) {
 	t, err := template.New("tpl").
 		Funcs(template.FuncMap{
-			"now": time.Now,
-			"parseTime": func(s string) (time.Time, error) {
-				v, err := time.Parse("02-01-2006 15:04", s)
-				if err != nil {
-					return time.Time{}, err
-				}
-
-				return v, nil
+			"now": func() int64 {
+				return time.Now().Unix()
 			},
-			"parseDuration": func(s string) (time.Duration, error) {
-				v, err := time.ParseDuration(s)
+			"nowAdd": func(s string) (int64, error) {
+				d, err := libtypes.ParseDurationWithUnit(s)
 				if err != nil {
 					return 0, err
 				}
 
-				return v, nil
+				return d.AddTo(libtypes.NewCpsTime()).Unix(), nil
 			},
-			"json": func(v interface{}) (string, error) {
-				b, err := json.Marshal(v)
+			"nowDate": func() int64 {
+				y, m, d := time.Now().UTC().Date()
+
+				return time.Date(y, m, d, 0, 0, 0, 0, time.UTC).Unix()
+			},
+			"nowDateAdd": func(s string) (int64, error) {
+				d, err := libtypes.ParseDurationWithUnit(s)
 				if err != nil {
-					return "", err
+					return 0, err
 				}
 
-				return string(b), nil
+				year, month, day := time.Now().UTC().Date()
+				now := libtypes.CpsTime{Time: time.Date(year, month, day, 0, 0, 0, 0, time.UTC)}
+
+				return d.AddTo(now).Unix(), nil
 			},
-			"sum": func(args ...interface{}) (float64, error) {
-				sum := float64(0)
+			"parseTime": func(s string) (int64, error) {
+				t, err := time.ParseInLocation("02-01-2006 15:04", s, time.UTC)
+				if err != nil {
+					return 0, err
+				}
+
+				return t.Unix(), nil
+			},
+			"sumTime": func(args ...interface{}) (int64, error) {
+				var sum int64
 				for _, arg := range args {
 					switch v := arg.(type) {
-					case int:
-						sum += float64(v)
-					case int32:
-						sum += float64(v)
-					case int64:
-						sum += float64(v)
-					case float32:
-						sum += float64(v)
-					case float64:
-						sum += v
 					case string:
 						i, err := strconv.Atoi(v)
 						if err != nil {
-							f, err := strconv.ParseFloat(v, 64)
-							if err != nil {
-								return 0, err
-							}
-
-							sum += f
+							return 0, err
 						}
 
-						sum += float64(i)
+						sum += int64(i)
+					case int:
+						sum += int64(v)
+					case int64:
+						sum += v
 					default:
-						return 0, fmt.Errorf("cannot process %v", arg)
+						return 0, fmt.Errorf("unexpected type %T of argument %v", arg, arg)
 					}
 				}
 
@@ -631,7 +944,7 @@ func (a *ApiClient) executeTemplate(tpl string) (*bytes.Buffer, error) {
 		}).
 		Parse(tpl)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot parse template: %w", err)
 	}
 
 	data := map[string]interface{}{
@@ -646,75 +959,159 @@ func (a *ApiClient) executeTemplate(tpl string) (*bytes.Buffer, error) {
 	buf := new(bytes.Buffer)
 	err = t.Execute(buf, data)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot execute template: %w", err)
 	}
 
 	return buf, nil
 }
 
-// partialEqual compares two JSON unmarshal to interface{} results.
-// If there is map in their structure only values by left map keys are compared.
-// Extra keys from right map are ignored.
-func partialEqual(left, right interface{}) bool {
-	lval := reflect.ValueOf(left)
-	rval := reflect.ValueOf(right)
+// getPartialResponse removes fields from received which are not presented in expected.
+func getPartialResponse(received, expected interface{}) interface{} {
+	receviedRef := reflect.ValueOf(received)
+	expectedRef := reflect.ValueOf(expected)
 
-	if !lval.IsValid() || !rval.IsValid() {
-		return lval.IsValid() == rval.IsValid()
-	}
-	if lval.Type() != rval.Type() {
-		return false
+	if !receviedRef.IsValid() || !expectedRef.IsValid() || receviedRef.Type() != expectedRef.Type() {
+		return received
 	}
 
-	switch lval.Kind() {
+	switch receviedRef.Kind() {
 	case reflect.Array:
-		if lval.Len() != rval.Len() {
-			return false
+		receivedLen := receviedRef.Len()
+		expectedLen := expectedRef.Len()
+		minLen := receivedLen
+		if minLen > expectedLen {
+			minLen = expectedLen
 		}
 
-		for i := 0; i < lval.Len(); i++ {
-			if !partialEqual(lval.Index(i).Interface(), rval.Index(i).Interface()) {
-				return false
-			}
+		res := make([]interface{}, receivedLen)
+		for i := 0; i < minLen; i++ {
+			res[i] = getPartialResponse(receviedRef.Index(i).Interface(), expectedRef.Index(i).Interface())
+		}
+		for i := minLen; i < receivedLen; i++ {
+			res[i] = receviedRef.Index(i).Interface()
 		}
 
-		return true
+		return res
 	case reflect.Slice:
-		if lval.IsNil() != rval.IsNil() {
-			return false
+		if receviedRef.IsNil() || expectedRef.IsNil() {
+			return received
 		}
-		if lval.Len() != rval.Len() {
-			return false
-		}
-		if lval.Pointer() == rval.Pointer() {
-			return true
-		}
-
-		for i := 0; i < lval.Len(); i++ {
-			if !partialEqual(lval.Index(i).Interface(), rval.Index(i).Interface()) {
-				return false
-			}
+		receivedLen := receviedRef.Len()
+		expectedLen := expectedRef.Len()
+		minLen := receivedLen
+		if minLen > expectedLen {
+			minLen = expectedLen
 		}
 
-		return true
+		res := make([]interface{}, receivedLen)
+		for i := 0; i < minLen; i++ {
+			res[i] = getPartialResponse(receviedRef.Index(i).Interface(), expectedRef.Index(i).Interface())
+		}
+		for i := minLen; i < receivedLen; i++ {
+			res[i] = receviedRef.Index(i).Interface()
+		}
+
+		return res
 	case reflect.Map:
-		if lval.IsNil() != rval.IsNil() {
-			return false
+		if receviedRef.IsNil() || expectedRef.IsNil() {
+			return received
 		}
-		if lval.Pointer() == rval.Pointer() {
-			return true
-		}
-		// Compare only values by left map keys.
-		for _, k := range lval.MapKeys() {
-			l := lval.MapIndex(k)
-			r := rval.MapIndex(k)
+		res := make(map[string]interface{})
+		for _, k := range expectedRef.MapKeys() {
+			receivedVal := receviedRef.MapIndex(k)
+			expectedVal := expectedRef.MapIndex(k)
 
-			if !r.IsValid() || !partialEqual(l.Interface(), r.Interface()) {
-				return false
+			if receivedVal.IsValid() {
+				res[k.String()] = getPartialResponse(receivedVal.Interface(), expectedVal.Interface())
 			}
 		}
-		return true
+
+		return res
 	default:
-		return reflect.DeepEqual(left, right)
+		return received
+	}
+}
+
+// checkResponse returns error which contains differences between received and expected.
+func checkResponse(received, expected interface{}) error {
+	if diff := pretty.Compare(received, expected); diff != "" {
+		return fmt.Errorf("response doesn't match expected response body:\n%s\n", diff)
+	}
+
+	return nil
+}
+
+// unmarshalJson decodes JSON to structure where all numbers are decoded to int64 or float64.
+func unmarshalJson(data []byte) (interface{}, error) {
+	d := json.NewDecoder(bytes.NewReader(data))
+	d.UseNumber()
+	var v interface{}
+	err := d.Decode(&v)
+	if err != nil {
+		return nil, err
+	}
+
+	v = convertJsonNumber(v)
+
+	return v, nil
+}
+
+// convertJsonNumber transforms json.Number in all nested fields to int64 or float64 which value is fit.
+func convertJsonNumber(v interface{}) interface{} {
+	if n, ok := v.(json.Number); ok {
+		i, err := n.Int64()
+		if err == nil {
+			return i
+		}
+
+		f, err := n.Float64()
+		if err == nil {
+			return f
+		}
+
+		return n.String()
+	}
+
+	refVal := reflect.ValueOf(v)
+	if !refVal.IsValid() {
+		return v
+	}
+
+	switch refVal.Kind() {
+	case reflect.Array:
+		l := refVal.Len()
+		converted := make([]interface{}, l)
+		for i := 0; i < l; i++ {
+			converted[i] = convertJsonNumber(refVal.Index(i).Interface())
+		}
+
+		return converted
+	case reflect.Slice:
+		if refVal.IsNil() {
+			return v
+		}
+		l := refVal.Len()
+		converted := make([]interface{}, l)
+		for i := 0; i < l; i++ {
+			converted[i] = convertJsonNumber(refVal.Index(i).Interface())
+		}
+
+		return converted
+	case reflect.Map:
+		if refVal.IsNil() {
+			return v
+		}
+		converted := make(map[string]interface{})
+		for _, k := range refVal.MapKeys() {
+			item := refVal.MapIndex(k)
+
+			if item.IsValid() {
+				converted[k.String()] = convertJsonNumber(item.Interface())
+			}
+		}
+
+		return converted
+	default:
+		return v
 	}
 }

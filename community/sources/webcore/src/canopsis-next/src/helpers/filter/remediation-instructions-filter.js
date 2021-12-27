@@ -1,35 +1,75 @@
 import { uniq } from 'lodash';
 
-import { REMEDIATION_INSTRUCTION_FILTER_ALL } from '@/constants';
+import { REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
+
+/**
+ * @typedef {Object} RemediationInstructionFilterQueryParameters
+ * @property {boolean} [with_instructions]
+ * @property {string[]} [include_instructions]
+ * @property {string[]} [exclude_instructions]
+ * @property {string[]} [include_instructions_types]
+ * @property {string[]} [exclude_instructions_types]
+ */
+
+const PARAMETERS_FILTERS_TYPES = {
+  include: 'include',
+  exclude: 'exclude',
+};
 
 /**
  * Prepare remediation instructions filters to query
  *
- * @param {Object|Array} [filters = []]
- * @returns {Object}
+ * @param {RemediationInstructionFilter[]} [filters = []]
+ * @returns {RemediationInstructionFilterQueryParameters}
  */
 export function prepareRemediationInstructionsFiltersToQuery(filters = []) {
   const query = {};
 
-  const result = filters.reduce((acc, filter) => {
-    const key = filter.with ? 'with' : 'without';
+  if (!filters.length) {
+    return query;
+  }
 
-    if (filter.all) {
-      acc[key] = [REMEDIATION_INSTRUCTION_FILTER_ALL];
-    } else if (!acc[key].includes(REMEDIATION_INSTRUCTION_FILTER_ALL)) {
-      acc[key].push(...filter.instructions);
+  const result = filters.reduce((acc, filter) => {
+    const key = filter.with ? PARAMETERS_FILTERS_TYPES.include : PARAMETERS_FILTERS_TYPES.exclude;
+
+    if (
+      acc[key].types.includes(REMEDIATION_INSTRUCTION_TYPES.auto)
+      && acc[key].types.includes(REMEDIATION_INSTRUCTION_TYPES.manual)
+    ) {
+      return acc;
     }
 
+    if (filter.all) {
+      acc[key].types = [REMEDIATION_INSTRUCTION_TYPES.auto, REMEDIATION_INSTRUCTION_TYPES.manual];
+    }
+
+    if (filter.auto) {
+      acc[key].types.push(REMEDIATION_INSTRUCTION_TYPES.auto);
+    }
+
+    if (filter.manual) {
+      acc[key].types.push(REMEDIATION_INSTRUCTION_TYPES.manual);
+    }
+
+    const instructionsIds = filter.instructions
+      ? filter.instructions.map(({ _id }) => _id)
+      : [];
+
+    acc[key].instructions.push(...instructionsIds);
+
     return acc;
-  }, { with: [], without: [] });
+  }, {
+    [PARAMETERS_FILTERS_TYPES.include]: { types: [], instructions: [] },
+    [PARAMETERS_FILTERS_TYPES.exclude]: { types: [], instructions: [] },
+  });
 
-  if (result.with.length) {
-    query.with_instructions = uniq(result.with).sort().join(',');
-  }
-
-  if (result.without.length) {
-    query.without_instructions = uniq(result.without).sort().join(',');
-  }
+  Object.entries(result).forEach(([filterTypeKey, filterTypeRules = {}]) => {
+    Object.entries(filterTypeRules).forEach(([filterTypeRuleKey, filterTypeRule = []]) => {
+      if (filterTypeRule.length) {
+        query[`${filterTypeKey}_${filterTypeRuleKey}`] = uniq(filterTypeRule).sort();
+      }
+    });
+  });
 
   return query;
 }
@@ -37,7 +77,7 @@ export function prepareRemediationInstructionsFiltersToQuery(filters = []) {
 /**
  * Get all enabled remediation instructions filters for user on widget
  *
- * @param {Object} widget
+ * @param {Widget} widget
  * @param {Object} userPreference
  * @returns {Array}
  */
@@ -46,7 +86,7 @@ export function getRemediationInstructionsFilters(widget, userPreference) {
   const {
     disabledWidgetRemediationInstructionsFilters: disabledWidgetFilters = [],
     remediationInstructionsFilters: filters = [],
-  } = userPreference.widget_preferences;
+  } = userPreference.content;
 
   const preparedWidgetFilters = widgetFilters
     .filter(filter => !disabledWidgetFilters.includes(filter._id));

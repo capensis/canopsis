@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    c-the-page-header {{ $t('common.instructions') }}
+    c-page-header
     v-layout(row, wrap)
       v-flex(xs12)
         v-card.ma-2
@@ -33,11 +33,15 @@ import RemediationInstructions from '@/components/other/remediation/instructions
 import RemediationJobs from '@/components/other/remediation/jobs/remediation-jobs.vue';
 import RemediationConfigurations from '@/components/other/remediation/configurations/remediation-configurations.vue';
 
-import entitiesRemediationInstructionsMixin from '@/mixins/entities/remediation/instructions';
-import entitiesRemediationConfigurationsMixin from '@/mixins/entities/remediation/configurations';
-import entitiesRemediationJobsMixin from '@/mixins/entities/remediation/jobs';
-import { permissionsTechnicalRemediationInstructionMixin } from '@/mixins/permissions/technical/remediation-instruction';
-import { permissionsTechnicalRemediationConfigurationMixin } from '@/mixins/permissions/technical/remediation-configuration';
+import { entitiesRemediationInstructionMixin } from '@/mixins/entities/remediation/instruction';
+import { entitiesRemediationConfigurationMixin } from '@/mixins/entities/remediation/configuration';
+import { entitiesRemediationJobMixin } from '@/mixins/entities/remediation/job';
+import {
+  permissionsTechnicalRemediationInstructionMixin,
+} from '@/mixins/permissions/technical/remediation-instruction';
+import {
+  permissionsTechnicalRemediationConfigurationMixin,
+} from '@/mixins/permissions/technical/remediation-configuration';
 import { permissionsTechnicalRemediationJobMixin } from '@/mixins/permissions/technical/remediation-job';
 
 export default {
@@ -47,9 +51,9 @@ export default {
     RemediationJobs,
   },
   mixins: [
-    entitiesRemediationInstructionsMixin,
-    entitiesRemediationConfigurationsMixin,
-    entitiesRemediationJobsMixin,
+    entitiesRemediationInstructionMixin,
+    entitiesRemediationConfigurationMixin,
+    entitiesRemediationJobMixin,
     permissionsTechnicalRemediationInstructionMixin,
     permissionsTechnicalRemediationConfigurationMixin,
     permissionsTechnicalRemediationJobMixin,

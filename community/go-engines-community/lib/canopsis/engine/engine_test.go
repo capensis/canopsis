@@ -14,6 +14,7 @@ import (
 
 const waitTimeout = time.Second
 const interval = time.Millisecond * 100
+const inaccuracy = interval / 100
 
 func TestEngine_Run_GivenPeriodicalProcess_ShouldRunIt(t *testing.T) {
 	const timesToRun = 2
@@ -25,7 +26,7 @@ func TestEngine_Run_GivenPeriodicalProcess_ShouldRunIt(t *testing.T) {
 	defer close(done)
 
 	mockPeriodicalWorker := mock_engine.NewMockPeriodicalWorker(ctrl)
-	mockPeriodicalWorker.EXPECT().GetInterval().Return(interval)
+	mockPeriodicalWorker.EXPECT().GetInterval().Return(interval).AnyTimes()
 	workTimes := make([]time.Time, 0)
 	mockPeriodicalWorker.EXPECT().Work(gomock.Any()).
 		Do(func(_ context.Context) {
@@ -62,7 +63,7 @@ func TestEngine_Run_GivenPeriodicalProcess_ShouldRunIt(t *testing.T) {
 
 	for _, date := range workTimes {
 		sub := date.Sub(start)
-		if sub < interval || sub >= 2*interval {
+		if sub < interval-inaccuracy || sub >= 2*(interval-inaccuracy) {
 			t.Errorf("expected %v between periodical executions but got %v", interval, sub)
 			return
 		}
@@ -109,7 +110,7 @@ func TestEngine_Run_GivenErrorOnPeriodicalProcess_ShouldStopEngine(t *testing.T)
 	defer close(done)
 
 	mockPeriodicalWorker := mock_engine.NewMockPeriodicalWorker(ctrl)
-	expectedErr := errors.New("test err")
+	expectedErr := &testErr{msg: "test error"}
 	mockPeriodicalWorker.EXPECT().GetInterval().Return(interval)
 	mockPeriodicalWorker.EXPECT().Work(gomock.Any()).Return(expectedErr)
 
@@ -124,7 +125,8 @@ func TestEngine_Run_GivenErrorOnPeriodicalProcess_ShouldStopEngine(t *testing.T)
 
 	waitDone(t, done)
 
-	if err != expectedErr {
+	testErr := &testErr{}
+	if !errors.As(err, &testErr) || testErr.Error() != expectedErr.Error() {
 		t.Errorf("expected error %v but got %v", expectedErr, err)
 	}
 }
@@ -138,7 +140,7 @@ func TestEngine_Run_GivenErrorOnConsumer_ShouldStopEngine(t *testing.T) {
 	defer close(done)
 
 	mockConsumer := mock_engine.NewMockConsumer(ctrl)
-	expectedErr := errors.New("test err")
+	expectedErr := &testErr{msg: "test error"}
 	mockConsumer.EXPECT().Consume(gomock.Any()).Return(expectedErr)
 
 	engine := libengine.New(nil, nil, zerolog.Logger{})
@@ -152,7 +154,8 @@ func TestEngine_Run_GivenErrorOnConsumer_ShouldStopEngine(t *testing.T) {
 
 	waitDone(t, done)
 
-	if err != expectedErr {
+	testErr := &testErr{}
+	if !errors.As(err, &testErr) || testErr.Error() != expectedErr.Error() {
 		t.Errorf("expected error %v but got %v", expectedErr, err)
 	}
 }
