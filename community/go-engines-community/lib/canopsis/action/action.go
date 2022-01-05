@@ -42,6 +42,7 @@ func (s Scenario) IsTriggered(triggers []string) bool {
 // Action represents a canopsis Action on alarms.
 type Action struct {
 	Type                     string                    `bson:"type" json:"type"`
+	Comment                  string                    `bson:"comment" json:"comment"`
 	Parameters               map[string]interface{}    `bson:"parameters,omitempty" json:"parameters,omitempty"` // parameters for the action
 	AlarmPatterns            pattern.AlarmPatternList  `bson:"alarm_patterns" json:"alarm_patterns"`
 	EntityPatterns           pattern.EntityPatternList `bson:"entity_patterns" json:"entity_patterns"`
