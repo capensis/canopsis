@@ -126,17 +126,40 @@ Le moteur `engine-axe` doit aussi être lancé avec l'option `-withRemediation=t
       command: /engine-axe -publishQueue Engine_correlation -withRemediation=true
     ```
 
-### Docker Compose : réorganisation des environnements de référence
+### Mise à jour de Canopsis
 
-Les fichiers de référence Docker Compose ont été complétement revus dans cette version :
+=== "Paquets CentOS 7"
 
-<https://git.canopsis.net/canopsis/canopsis-pro/-/tree/release-4.4/pro/deployment/canopsis/docker>
+    Appliquez la mise à jour des paquets Canopsis :
 
-L'environnement a notamment été découpé en 3 parties à lancer successivement (`00-data` pour les données persistantes et briques externes ; `01-prov` pour le provisioning ; `02-app` pour l'application Canopsis en elle-même). De nouvelles variables, telles que `DOCKER_REPOSITORY`, ou `CPS_SERVER_NAME` ont aussi été introduites. Certains conteneurs ont aussi été renommés ou déplacés entre Community et Pro.
+    ```sh
+    yum --disablerepo="*" --enablerepo="canopsis*" update
+    ```
 
-Il vous est donc recommandé de partir de ce nouveau référentiel, et d'y appliquer toute modification locale que vous pouviez faire jusqu'à présent. En cas de nécessité, rapprochez-vous de votre contact habituel pour un accompagnement.
+=== "Docker Compose"
 
-### Migrations
+    Les fichiers de référence Docker Compose ont été complétement revus dans cette version.
+
+    L'environnement Docker Compose a notamment été découpé en 3 parties successives :
+
+    1. `00-data` pour les données persistantes et les briques externes ;
+    2. `01-prov` pour le provisioning ;
+    3. `02-app` pour l'application Canopsis en elle-même.
+
+    De nouvelles variables, telles que `DOCKER_REPOSITORY` ou `CPS_SERVER_NAME` ont été introduites. Certains conteneurs ont aussi été renommés, ou déplacés entre Community et Pro.
+
+    Les changements étant nombreux, il vous est recommandé d'utiliser directement le nouveau référentiel :  
+    <https://git.canopsis.net/canopsis/canopsis-pro/-/tree/release-4.4/pro/deployment/canopsis/docker>
+
+    et d'y appliquer, au besoin, toute modification locale que vous faisiez jusqu'à présent. En cas de nécessité, rapprochez-vous de votre contact habituel pour un accompagnement.
+
+    Une fois ces changements effectués, lancez seulement la partie `00-data` pour le moment :
+
+    ```sh
+    docker-compose -f 00-data.docker-compose.yml up -d
+    ```
+
+### Lancement des scripts de migration
 
 Sur une machine disposant d'un accès à `git.canopsis.net` ainsi que d'un client MongoDB, assurez-vous que le service MongoDB soit bien lancé et exécutez les commandes suivantes, en adaptant les identifiants MongoDB ci-dessous si nécessaire :
 
@@ -151,13 +174,9 @@ done
 !!! attention
     Ces scripts essaient de gérer le plus de cas d'usage possible, mais la bonne exécution de ces scripts en toute condition ne peut être garantie.
 
-    Ils doivent obligatoirement être lancés *avant* le lancement des scripts de provisioning lors de l'étape suivante.
+    Ils doivent obligatoirement être lancés **avant** le lancement des scripts de provisioning lors de l'étape suivante.
 
     N'hésitez pas à nous signaler tout problème d'exécution que vous pourriez rencontrer lors de cette étape.
-
-## Fin de la mise à jour
-
-Une fois ces changements apportés, suivez la [procédure standard de mise à jour de Canopsis](../../guide-administration/mise-a-jour/index.md).
 
 ### Synchronisation du fichier de configuration `canopsis.toml`
 
@@ -172,26 +191,30 @@ Vérifiez que votre fichier `canopsis.toml` soit bien à jour par rapport au fic
 
 === "Docker Compose"
 
-    Si vous n'avez pas apporté de modification locale, ce fichier est directement intégré et mise à jour dans les conteneurs.
+    Si vous n'avez pas apporté de modification locale, ce fichier est directement intégré et mise à jour dans les conteneurs, et vous n'avez donc pas de modification à apporter.
 
-    Si vous le surchargez à l'aide d'un volume pour y apporter des modifications, c'est ce fichier local qui doit être synchronisé.
+    Si vous modifiez ce fichier à l'aide d'un volume surchargeant `canopsis.toml`, c'est ce fichier local qui doit être synchronisé.
 
-### Correction du binaire `canopsis-api` (paquets)
+### Ajustement du binaire `canopsis-api` (paquets)
 
-Cette partie s'applique seulement aux installations de paquets RPM.
+=== "Paquets CentOS 7"
 
-Après mise à jour, le lien symbolique `/opt/canopsis/bin/canopsis-api` doit être corrigé pour pointer vers une version Community ou Pro, en fonction de votre type d'installation :
+    Cette partie s'applique seulement aux installations de paquets RPM.
 
-```sh
-rm -f /opt/canopsis/bin/canopsis-api
+    Après mise à jour, le lien symbolique `/opt/canopsis/bin/canopsis-api` doit pointer vers une version Community ou Pro, en fonction de votre type d'installation :
 
-# Si Canopsis Community :
-ln -sf /opt/canopsis/bin/canopsis-api-community /opt/canopsis/bin/canopsis-api
-# Si Canopsis Pro :
-ln -sf /opt/canopsis/bin/canopsis-api-pro /opt/canopsis/bin/canopsis-api
+    ```sh
+    rm -f /opt/canopsis/bin/canopsis-api
 
-canoctl restart
-```
+    # si Canopsis Community :
+    ln -sf /opt/canopsis/bin/canopsis-api-community /opt/canopsis/bin/canopsis-api
+    # OU si Canopsis Pro :
+    ln -sf /opt/canopsis/bin/canopsis-api-pro /opt/canopsis/bin/canopsis-api
+    ```
+
+=== "Docker Compose"
+
+    Aucune manipulation n'est nécessaire ici.
 
 ### Mise à jour de la configuration de Nginx
 
@@ -202,6 +225,8 @@ Plusieurs changements ont été apportés à la configuration de Nginx.
 
 === "Paquets CentOS 7"
 
+    Exécutez les commandes suivantes afin de prendre en compte ces changements :
+
     ```sh
     cp -f /opt/canopsis/deploy-ansible/playbook/roles/canopsis/templates/nginx/cors.j2 /etc/nginx/cors.inc
     cp -f /opt/canopsis/deploy-ansible/playbook/roles/canopsis/templates/nginx/https.j2 /etc/nginx/https.inc
@@ -211,7 +236,7 @@ Plusieurs changements ont été apportés à la configuration de Nginx.
     ```
 
     !!! attention
-        Si vous accédez à l'interface web de Canopsis au travers d'un nom de domaine (par exemple `canopsis.mon-si.fr`), vous devrez **obligatoirement** configurer la ligne `set $canopsis_server_name` du fichier `/etc/nginx/conf.d/default.conf` avec cette valeur.
+        Si vous accédez à l'interface web de Canopsis au travers d'un nom de domaine (par exemple `canopsis.mon-si.fr`), vous devrez **obligatoirement** configurer la ligne `set $canopsis_server_name` du fichier `/etc/nginx/conf.d/default.conf` avec le nom de domaine concerné.
 
 === "Docker Compose"
 
@@ -220,8 +245,73 @@ Plusieurs changements ont été apportés à la configuration de Nginx.
     En revanche, si vous mainteniez vos propres versions modifiées de ces fichiers de configuration, vous devez manuellement vous synchroniser avec la totalité des modifications ayant été apportées dans `/etc/nginx/`.
 
     !!! attention
-        Si vous accédez à l'interface web de Canopsis au travers d'un nom de domaine (par exemple `canopsis.mon-si.fr`), vous devrez **obligatoirement** configurer la ligne `CPS_SERVER_NAME` du fichier `compose.env` associé à votre Docker Compose avec cette valeur :
+        Si vous accédez à l'interface web de Canopsis au travers d'un nom de domaine (par exemple `canopsis.mon-si.fr`), vous devrez **obligatoirement** configurer la ligne `CPS_SERVER_NAME` du fichier `compose.env` associé à votre Docker Compose avec le nom de domaine concerné :
 
         ```ini
         CPS_SERVER_NAME=canopsis.mon-si.fr
         ```
+
+### Lancement du provisioning et de `canopsis-reconfigure`
+
+Le *provisioning* doit être lancé afin de mettre à jour certaines données en base, tandis que `canopsis-reconfigure` prend en compte les changements apportés au fichier `canopsis.toml`.
+
+=== "Paquets CentOS 7"
+
+    Lancez les scripts de provisioning :
+
+    ```sh
+    # si vous utilisez Canopsis Community
+    su - canopsis -c "canopsinit --canopsis-edition core"
+    # OU si vous utilisez Canopsis Pro
+    su - canopsis -c "canopsinit --canopsis-edition cat"
+    ```
+
+    Puis, lancez `canopsis-reconfigure` :
+
+    ```bash
+    set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
+    /opt/canopsis/bin/canopsis-reconfigure
+    ```
+
+=== "Docker Compose"
+
+    Exécutez la commande suivante :
+
+    ```sh
+    docker-compose -f 01-prov.docker-compose.yml up -d
+    ```
+
+### Remise en route des moteurs et des services de Canopsis
+
+Si et seulement si les commandes précédentes n'ont pas renvoyé d'erreur, vous pouvez relancer l'intégralité des services.
+
+=== "Paquets CentOS 7"
+
+    Relancez la totalité de l'environnement :
+
+    ```sh
+    systemctl daemon-reload
+    canoctl restart
+    ```
+
+=== "Docker Compose"
+
+    Lancez maintenant la partie `02-app`, afin de bénéficier de l'application Canopsis en elle-même :
+
+    ```sh
+    docker-compose -f 02-app.docker-compose.yml up -d
+    ```
+
+### Fin de la mise à jour
+
+Après quelques minutes, le service devrait être à nouveau accessible sur son interface web habituelle. En cas de problème, consultez l'ensemble des logs.
+
+Suivez la [section « Après la mise à jour »](../../guide-administration/mise-a-jour/index.md#apres-la-mise-a-jour) du Guide d'administration afin d'en savoir plus.
+
+## Recommandation : mise en place d'une limite de file d'attente
+
+Si vous utilisez la nouvelle fonctionnalité de Healthcheck, il vous est suggéré de vous rendre dans ses paramètres afin de mettre en place une limite de longueur de file d'attente :
+
+![Mise en place d'une limite de longueur de file d'attente](img/limite-file-attente.png)
+
+La limite à mettre en place doit être adaptée au flux d'évènements habituel de votre plateforme, si vous en avez connaissance.
