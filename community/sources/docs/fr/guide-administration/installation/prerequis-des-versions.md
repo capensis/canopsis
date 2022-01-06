@@ -8,7 +8,7 @@ Solution       | Versions   |
 ---------------|------------|
 Ansible        | = 2.8.7    |
 Architecture   | x86-64     |
-Docker CE      | ≥ 19.03.5  |
+Docker CE      | ≥ 20.10    |
 Docker-compose | ≥ 1.24     |
 Kernel         | ≥ 4.4 (Docker uniquement) |
 OS CentOS      | = 7        |
