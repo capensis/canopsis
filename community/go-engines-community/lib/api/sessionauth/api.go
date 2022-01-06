@@ -3,9 +3,13 @@
 package sessionauth
 
 import (
+	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
 	"github.com/rs/zerolog"
@@ -15,17 +19,20 @@ import (
 type API interface {
 	LogoutHandler() gin.HandlerFunc
 	LoginHandler() gin.HandlerFunc
-	GetSessionsCount() gin.HandlerFunc
 }
 
 func NewApi(
 	sessionStore libsession.Store,
 	providers []security.Provider,
+	websocketHub websocket.Hub,
+	tokenStore token.Store,
 	logger zerolog.Logger,
 ) API {
 	return &api{
 		sessionStore: sessionStore,
 		providers:    providers,
+		websocketHub: websocketHub,
+		tokenStore:   tokenStore,
 		logger:       logger,
 	}
 }
@@ -33,6 +40,8 @@ func NewApi(
 type api struct {
 	sessionStore libsession.Store
 	providers    []security.Provider
+	websocketHub websocket.Hub
+	tokenStore   token.Store
 	logger       zerolog.Logger
 }
 
@@ -80,6 +89,8 @@ func (a *api) LoginHandler() gin.HandlerFunc {
 			panic(err)
 		}
 
+		a.sendWebsocketMessage(c)
+
 		c.JSON(http.StatusOK, response)
 	}
 }
@@ -95,30 +106,8 @@ func (a *api) LogoutHandler() gin.HandlerFunc {
 			panic(err)
 		}
 
+		a.sendWebsocketMessage(c)
 		c.Next()
-	}
-}
-
-// GetSessionsCount gets counts of active sessions.
-// @Summary Get counts of active sessions
-// @Description Get counts of active sessions
-// @Tags auth
-// @ID auth-get-session-counts
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Success 200 {object} sessionsCountResponse
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /sessions-count [get]
-func (a *api) GetSessionsCount() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		count, err := a.sessionStore.GetActiveSessionsCount(c.Request.Context())
-		if err != nil {
-			panic(err)
-		}
-
-		c.JSON(http.StatusOK, sessionsCountResponse{Count: count})
 	}
 }
 
@@ -130,4 +119,26 @@ func (a *api) getSession(c *gin.Context) *sessions.Session {
 	}
 
 	return session
+}
+
+func (a *api) sendWebsocketMessage(ctx context.Context) {
+	count, err := a.fetchLoggedUserCount(ctx)
+	if err != nil {
+		panic(err)
+	}
+	a.websocketHub.Send(websocket.RoomLoggedUserCount, count)
+}
+
+func (a *api) fetchLoggedUserCount(ctx context.Context) (int64, error) {
+	count, err := a.tokenStore.Count(ctx)
+	if err != nil {
+		return 0, err
+	}
+
+	sessionCount, err := a.sessionStore.GetActiveSessionsCount(ctx)
+	if err != nil {
+		return 0, err
+	}
+
+	return count + sessionCount, nil
 }

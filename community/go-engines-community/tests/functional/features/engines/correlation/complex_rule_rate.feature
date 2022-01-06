@@ -15,7 +15,10 @@ Feature: correlation feature - complex rule with threshold rate
             }
           }
         ],
-        "time_interval": 10,
+        "time_interval": {
+          "value": 10,
+          "unit": "s"
+        },
         "threshold_rate": 0.6
       }
     }
@@ -143,7 +146,10 @@ Feature: correlation feature - complex rule with threshold rate
             }
           }
         ],
-        "time_interval": 10,
+        "time_interval": {
+          "value": 10,
+          "unit": "s"
+        },
         "threshold_rate": 0.6
       }
     }
@@ -311,7 +317,10 @@ Feature: correlation feature - complex rule with threshold rate
             }
           }
         ],
-        "time_interval": 3,
+        "time_interval": {
+          "value": 3,
+          "unit": "s"
+        },
         "threshold_rate": 0.6
       }
     }
@@ -472,7 +481,10 @@ Feature: correlation feature - complex rule with threshold rate
             }
           }
         ],
-        "time_interval": 3,
+        "time_interval": {
+          "value": 3,
+          "unit": "s"
+        },
         "threshold_rate": 0.4
       }
     }
@@ -654,7 +666,10 @@ Feature: correlation feature - complex rule with threshold rate
             }
           }
         ],
-        "time_interval": 5,
+        "time_interval": {
+          "value": 5,
+          "unit": "s"
+        },
         "threshold_rate": 0.6
       }
     }
@@ -812,7 +827,10 @@ Feature: correlation feature - complex rule with threshold rate
             }
           }
         ],
-        "time_interval": 10,
+        "time_interval": {
+          "value": 10,
+          "unit": "s"
+        },
         "threshold_rate": 0.4
       }
     }

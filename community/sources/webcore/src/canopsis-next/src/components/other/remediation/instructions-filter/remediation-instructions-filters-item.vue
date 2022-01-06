@@ -75,7 +75,7 @@ export default {
     },
 
     instructionsNames() {
-      return this.filter.instructions.map(({ name }) => name);
+      return this.filter.instructions?.map(({ name }) => name) ?? [];
     },
 
     conditionTypeMessage() {
@@ -105,7 +105,7 @@ export default {
         return this.updateField('disabled', !this.filter.disabled);
       }
 
-      return this.$emit('remove', this.filter);
+      return this.$emit('remove');
     },
 
     showEditFilterModal() {

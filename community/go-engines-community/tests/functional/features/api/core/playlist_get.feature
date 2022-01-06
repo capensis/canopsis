@@ -17,7 +17,7 @@ Feature: Get a playlist
           "enabled": true,
           "fullscreen": true,
           "interval": {
-            "seconds": 10,
+            "value": 10,
             "unit": "s"
           },
           "name": "test-playlist-to-get-1-name",
@@ -33,7 +33,7 @@ Feature: Get a playlist
           "enabled": true,
           "fullscreen": true,
           "interval": {
-            "seconds": 20,
+            "value": 20,
             "unit": "s"
           },
           "name": "test-playlist-to-get-2-name",
@@ -65,7 +65,7 @@ Feature: Get a playlist
       "enabled": true,
       "fullscreen": true,
       "interval": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "name": "test-playlist-to-get-1-name",

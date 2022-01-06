@@ -2,7 +2,7 @@
   div(data-test="tableWidget")
     v-layout.white(row, wrap, justify-space-between, align-center)
       v-flex
-        c-advanced-search(
+        c-advanced-search-field(
           :query.sync="query",
           :columns="columns",
           :tooltip="$t('search.alarmAdvancedSearch')"
@@ -82,6 +82,7 @@
       :hide-groups="!query.correlation",
       :has-columns="hasColumns",
       :columns="columns",
+      :sticky-header="widget.parameters.sticky_header",
       selectable,
       expandable
     )
@@ -100,14 +101,14 @@ import { omit, pick, isEmpty, isObject } from 'lodash';
 
 import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
 
-import { findRange } from '@/helpers/date/date-intervals';
+import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
-import widgetExportMixinCreator from '@/mixins/widget/export';
+import { exportCsvMixinCreator } from '@/mixins/widget/export';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import widgetRemediationInstructionsFilterMixin from '@/mixins/widget/remediation-instructions-filter-select';
@@ -150,7 +151,7 @@ export default {
     permissionsWidgetsAlarmsListCorrelation,
     permissionsWidgetsAlarmsListFilters,
     permissionsWidgetsAlarmsListRemediationInstructionsFilters,
-    widgetExportMixinCreator({
+    exportCsvMixinCreator({
       createExport: 'createAlarmsListExport',
       fetchExport: 'fetchAlarmsListExport',
       fetchExportFile: 'fetchAlarmsListCsvFile',
@@ -187,7 +188,7 @@ export default {
       const { tstart, tstop } = this.query;
 
       if (tstart || tstop) {
-        return findRange(tstart, tstop);
+        return findQuickRangeValue(tstart, tstop);
       }
 
       return null;
@@ -313,8 +314,9 @@ export default {
         ? widgetExportColumns
         : widgetColumns;
 
-      this.exportWidgetAsCsv({
+      this.exportAsCsv({
         name: `${this.widget._id}-${new Date().toLocaleString()}`,
+        widgetId: this.widget._id,
         data: {
           ...pick(query, ['search', 'category', 'correlation', 'opened']),
 

@@ -5,7 +5,7 @@
         .timeline-item(v-show="index === 0")
           .date {{ day }}
         .timeline-item
-          .time {{ step.t | date('time', true) }}
+          .time {{ step.t | date('time') }}
           time-line-flag.flag(:step="step")
           time-line-card(:step="step", :is-html-enabled="isHtmlEnabled")
 </template>
