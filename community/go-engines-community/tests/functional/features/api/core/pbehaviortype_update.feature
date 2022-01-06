@@ -1,125 +1,108 @@
-Feature: PBehavior Type update
+Feature: Update a pbehavior type
+  I need to be able to update a pbehavior type
+  Only admin should be able to update a pbehavior type
 
-  Scenario: PUT as unauthorized
-    When I do PUT /api/v4/pbehavior-types/test-to-update:
-            """
-            {
-            Name: "Maintenance State",
-            Description: "Maintenance state type",
-            Type: "maintenance",
-            Priority: 11,
-            icon_name: "exclamation-mark.png"
-            }
-            """
+  Scenario: given update request and no auth user should not allow access
+    When I do PUT /api/v4/pbehavior-types/test-to-update
     Then the response code should be 401
 
-  Scenario: PUT without permissions
+  Scenario: given update request and auth user without permissions should not allow access
     When I am noperms
-    When I do PUT /api/v4/pbehavior-types/test-to-update:
-            """
-            {
-            Name: "Maintenance State",
-            Description: "Maintenance state type",
-            Type: "maintenance",
-            Priority: 11,
-            icon_name: "exclamation-mark.png"
-            }
-            """
+    When I do PUT /api/v4/pbehavior-types/test-to-update
     Then the response code should be 403
 
-  Scenario: PUT a valid PBehavior type that doesn't exist
+  Scenario: given update request with not exist id should return not found error
     When I am admin
     When I do PUT /api/v4/pbehavior-types/test-to-update-unavailable:
-            """
-            {
-                "Name": "Maintenance State",
-                "Description": "Maintenance state type",
-                "Type": "maintenance",
-                "Priority": 399,
-                "icon_name": "exclamation-mark.png"
-            }
-            """
+    """json
+    {
+      "name": "Maintenance State",
+      "description": "Maintenance state type",
+      "type": "maintenance",
+      "priority": 399,
+      "icon_name": "exclamation-mark.png"
+    }
+    """
     Then the response code should be 404
+    Then the response body should be:
+    """json
+    {
+      "error": "Not found"
+    }
+    """
 
-  Scenario: PUT a valid PBehavior Type with invalid priority
+  Scenario: given invalid update request should return errors
     When I am admin
     When I do PUT /api/v4/pbehavior-types/test-to-update:
-            """
-            {
-                "name": "Active State",
-                "description": "Active state type",
-                "type": "active",
-                "priority": "invalid",
-                "icon_name": "exclamation-mark.png"
-            }
-            """
+    """json
+    {}
+    """
     Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "description": "Description is missing.",
+        "icon_name": "IconName is missing.",
+        "name": "Name is missing.",
+        "priority": "Priority is missing.",
+        "type": "Type is missing."
+      }
+    }
+    """
+    When I do PUT /api/v4/pbehavior-types/test-to-update:
+    """json
+    {
+      "type": "notexist"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "type": "type must be one of [active inactive maintenance pause]."
+      }
+    }
+    """
 
-  Scenario: PUT a valid PBehavior Type
+  Scenario: given update request should update type
     When I am admin
     When I do PUT /api/v4/pbehavior-types/test-type-to-update:
-    """
+    """json
     {
-        "name": "Maintenance State",
-        "description": "Maintenance state type",
-        "type": "maintenance",
-        "priority": 399,
-        "icon_name": "exclamation-mark.png"
+      "name": "Maintenance State",
+      "description": "Maintenance state type",
+      "type": "maintenance",
+      "priority": 399,
+      "icon_name": "exclamation-mark.png"
     }
     """
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
-        "_id": "test-type-to-update",
-        "name": "Maintenance State",
-        "description": "Maintenance state type",
-        "type": "maintenance",
-        "priority": 399,
-        "icon_name": "exclamation-mark.png"
+      "_id": "test-type-to-update",
+      "name": "Maintenance State",
+      "description": "Maintenance state type",
+      "type": "maintenance",
+      "priority": 399,
+      "icon_name": "exclamation-mark.png"
     }
     """
 
-  Scenario: PUT a valid PBehavior Type without any changes
+  Scenario: given update request with already exists priority and name should return error
     When I am admin
     When I do PUT /api/v4/pbehavior-types/test-type-to-update:
-    """
+    """json
     {
-        "name": "Maintenance State",
-        "description": "Maintenance state type",
-        "type": "maintenance",
-        "priority": 399,
-        "icon_name": "exclamation-mark.png"
-    }
-    """
-    Then the response code should be 200
-    Then the response body should be:
-    """
-    {
-        "_id": "test-type-to-update",
-        "name": "Maintenance State",
-        "description": "Maintenance state type",
-        "type": "maintenance",
-        "priority": 399,
-        "icon_name": "exclamation-mark.png"
-    }
-    """
-
-  Scenario: PUT a valid PBehavior Type with already existed priority and name
-    When I am admin
-    When I do PUT /api/v4/pbehavior-types/test-type-to-update:
-    """
-    {
-        "name": "Some State",
-        "description": "Maintenance state type",
-        "type": "maintenance",
-        "priority": 4,
-        "icon_name": "exclamation-mark.png"
+      "name": "Some State",
+      "priority": 4
     }
     """
     Then the response code should be 400
-    Then the response body should be:
-    """
+    Then the response body should contain:
+    """json
     {
       "errors": {
         "name": "Name already exists.",
@@ -128,16 +111,22 @@ Feature: PBehavior Type update
     }
     """
 
-  Scenario: Given default type Should return error
+  Scenario: given update request for default type should return error
     When I am admin
-    When I do PUT /api/v4/pbehavior-types/test-default-pause-type
-    """
+    When I do PUT /api/v4/pbehavior-types/test-default-pause-type:
+    """json
     {
-        "name": "Some State",
-        "description": "Maintenance state type",
-        "type": "maintenance",
-        "priority": 4,
-        "icon_name": "exclamation-mark.png"
+      "name": "Default Type Pause",
+      "description": "Maintenance state type",
+      "type": "maintenance",
+      "priority": 3,
+      "icon_name": "exclamation-mark.png"
     }
     """
     Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "error": "type is default"
+    }
+    """

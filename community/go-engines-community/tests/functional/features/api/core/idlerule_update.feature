@@ -14,7 +14,7 @@ Feature: Update a idle rule
       "enabled": true,
       "priority": 30,
       "duration": {
-        "seconds": 5,
+        "value": 5,
         "unit": "s"
       },
       "alarm_patterns": [
@@ -32,7 +32,7 @@ Feature: Update a idle rule
         "parameters": {
           "output": "test-idle-rule-to-update-operation-output-updated",
           "duration": {
-            "seconds": 5,
+            "value": 5,
             "unit": "s"
           }
         }
@@ -54,7 +54,7 @@ Feature: Update a idle rule
       "priority": 30,
       "created": 1616567033,
       "duration": {
-        "seconds": 5,
+        "value": 5,
         "unit": "s"
       },
       "alarm_patterns": [
@@ -73,7 +73,7 @@ Feature: Update a idle rule
           "author": "root",
           "output": "test-idle-rule-to-update-operation-output-updated",
           "duration": {
-            "seconds": 5,
+            "value": 5,
             "unit": "s"
           }
         }
@@ -121,7 +121,7 @@ Feature: Update a idle rule
       "enabled": true,
       "priority": 31,
       "duration": {
-        "seconds": 5,
+        "value": 5,
         "unit": "s"
       },
       "alarm_patterns": [
@@ -139,7 +139,7 @@ Feature: Update a idle rule
         "parameters": {
           "output": "test-idle-rule-notexists-operation-output-updated",
           "duration": {
-            "seconds": 5,
+            "value": 5,
             "unit": "s"
           }
         }

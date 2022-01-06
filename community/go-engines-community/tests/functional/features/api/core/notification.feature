@@ -28,7 +28,7 @@ Feature: update notifications
       "instruction": {
         "rate": false,
         "rate_frequency": {
-          "seconds": 1,
+          "value": 1,
           "unit": "s"
         }
       }
@@ -41,7 +41,7 @@ Feature: update notifications
       "instruction": {
         "rate": false,
         "rate_frequency": {
-          "seconds": 1,
+          "value": 1,
           "unit": "s"
         }
       }
@@ -55,7 +55,7 @@ Feature: update notifications
       "instruction": {
         "rate": false,
         "rate_frequency": {
-          "seconds": 1,
+          "value": 1,
           "unit": "s"
         }
       }

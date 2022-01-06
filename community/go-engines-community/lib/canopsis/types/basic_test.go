@@ -209,43 +209,6 @@ func TestCpsTime(t *testing.T) {
 	})
 }
 
-func TestCpsDuration(t *testing.T) {
-	Convey("Given a type struct with CpsDuration", t, func() {
-		type MyTime struct {
-			TheDuration types.CpsDuration `json:"theduration" bson:"theduration"`
-		}
-		duration := time.Second*10 + time.Hour*2 + time.Minute*10
-		mt := MyTime{
-			TheDuration: types.CpsDuration(duration),
-		}
-
-		Convey("I can marshal to JSON", func() {
-			bjdoc, err := json.Marshal(mt)
-			So(err, ShouldBeNil)
-			So(string(bjdoc), ShouldEqual, `{"theduration":"`+duration.String()+`"}`)
-
-			Convey("And get my struct back from Marshal-ed JSON", func() {
-				var mtb MyTime
-				err = json.Unmarshal(bjdoc, &mtb)
-				So(err, ShouldBeNil)
-				So(mtb.TheDuration.Duration(), ShouldEqual, duration)
-			})
-		})
-
-		Convey("I can marshal to BSON", func() {
-			bsdoc, err := bson.Marshal(mt)
-			So(err, ShouldBeNil)
-
-			Convey("And get my struct back from Marshal-ed BSON", func() {
-				var mtb MyTime
-				err := bson.Unmarshal(bsdoc, &mtb)
-				So(err, ShouldBeNil)
-				So(mtb.TheDuration.Duration(), ShouldEqual, duration)
-			})
-		})
-	})
-}
-
 func TestCpsNumber(t *testing.T) {
 	Convey("Setup", t, func() {
 

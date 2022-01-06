@@ -26,8 +26,8 @@ type FilteredQuery struct {
 }
 
 type AggregationResult struct {
-	Data       []*BroadcastMessage `bson:"data" json:"data"`
-	TotalCount int64               `bson:"total_count" json:"total_count"`
+	Data       []BroadcastMessage `bson:"data" json:"data"`
+	TotalCount int64              `bson:"total_count" json:"total_count"`
 }
 
 func (r *AggregationResult) GetData() interface{} {

@@ -20,7 +20,7 @@ export const generateChart = (chartId, chartType) => ({
         },
         ref: 'canvas',
       })]),
-      this.$scopedSlots.actions && this.$scopedSlots.actions({ chart: this.chart }),
+      this.chartRendered && this.$scopedSlots.actions?.({ chart: this.chart }),
     ]);
   },
 
@@ -53,6 +53,7 @@ export const generateChart = (chartId, chartType) => ({
   data() {
     return {
       chartPlugins: this.plugins,
+      chartRendered: false,
     };
   },
 
@@ -88,6 +89,8 @@ export const generateChart = (chartId, chartType) => ({
         options,
         plugins: this.chartPlugins,
       });
+
+      this.chartRendered = true;
     },
 
     updateChart(data, options) {
