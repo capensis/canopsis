@@ -40,15 +40,12 @@ Une fois Docker installé, vous devez ensuite [installer Docker Compose](https:/
 
 ## Lancement de Canopsis avec Docker Compose
 
-Les images Docker officielles de Canopsis sont hébergées sur Docker Hub : <https://hub.docker.com/u/canopsis/> et seront prochainement migrées vers notre propre registre Docker.
+Les images Docker officielles de Canopsis sont hébergées sur notre propre registre Docker, `docker.canopsis.net`.
 
 Le [dépôt Git de Canopsis](https://git.canopsis.net/canopsis/canopsis-community/-/tree/develop) contient des fichiers Docker Compose d'exemple :
 ```sh
 git clone -b develop https://git.canopsis.net/canopsis/canopsis-community.git && cd canopsis-community/community/docker-compose
 ```
-
-!!! attention
-    La variable `CANOPSIS_IMAGE_TAG` du fichier `.env` a pour valeur par défaut `nightly`, ce qui correspond à la version la plus récente des images disponibles sur Docker Hub. Notez que cela englobe également les versions intermédiaires destinées **au développement et aux tests**. Aussi, le tag `nightly` ne doit **pas** être utilisé pour un environnement de production.
 
 Récupérez les dernières images disponibles :
 ```sh
