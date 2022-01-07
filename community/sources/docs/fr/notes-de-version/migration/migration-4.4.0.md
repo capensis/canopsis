@@ -142,7 +142,7 @@ Le moteur `engine-axe` doit aussi être lancé avec l'option `-withRemediation=t
 
     L'environnement Docker Compose a notamment été découpé en 3 parties successives :
 
-    1. `00-data` pour les données persistantes et les briques externes ;
+    1. `00-data` pour les données persistantes et les briques externes (MongoDB, RabbitMQ, Redis…) ;
     2. `01-prov` pour le provisioning ;
     3. `02-app` pour l'application Canopsis en elle-même.
 
@@ -158,6 +158,8 @@ Le moteur `engine-axe` doit aussi être lancé avec l'option `-withRemediation=t
     ```sh
     docker-compose -f 00-data.docker-compose.yml up -d
     ```
+
+    Ou bien, relancez seulement les conteneurs `mongo`, `rabbitmq`, `redis` et `influxdb`.
 
 ### Lancement des scripts de migration
 
@@ -281,6 +283,12 @@ Le *provisioning* doit être lancé afin de mettre à jour certaines données en
     docker-compose -f 01-prov.docker-compose.yml up -d
     ```
 
+    Ou bien, si vous utilisez encore l'ancien procédé :
+
+    ```sh
+    docker-compose up -d provisioning reconfigure
+    ```
+
 ### Remise en route des moteurs et des services de Canopsis
 
 Si et seulement si les commandes précédentes n'ont pas renvoyé d'erreur, vous pouvez relancer l'intégralité des services.
@@ -300,6 +308,12 @@ Si et seulement si les commandes précédentes n'ont pas renvoyé d'erreur, vous
 
     ```sh
     docker-compose -f 02-app.docker-compose.yml up -d
+    ```
+
+    Ou bien, si vous utilisez encore l'ancien procédé :
+
+    ```sh
+    docker-compose up -d
     ```
 
 ### Fin de la mise à jour
