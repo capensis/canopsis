@@ -715,6 +715,10 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 }
 
 func (s *store) createPermissions(ctx context.Context, userID string, views map[string]string) error {
+	if len(views) == 0 {
+		return nil
+	}
+
 	newPermissions := make([]interface{}, 0, len(views))
 	setRole := bson.M{}
 	for viewId, viewTitle := range views {
