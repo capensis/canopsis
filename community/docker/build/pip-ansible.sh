@@ -11,13 +11,11 @@ source ${CPS_HOME}/venv-ansible/bin/activate
 pip install -U setuptools "pip==20.1.1"
 pip --no-color install -U wheel
 
-# jmespath is required by ansible role repository adder maat
 # pymongo 3.5.0 is required by ansible 2.4.x module mongodb
 # pyopenssl is required to fix compatibility between systems
 # crytography 2.9.2 to avoid Python 2 warning, for now
 # NEVER, NEVER, NEVER ⚠️⚠️⚠️ UPGRADE ANSIBLE, OR BE PREPARED FOR PAIN.
 cat > tmprequirements.txt << EOF
-jmespath==0.10.0
 pymongo==3.5.0
 pyOpenSSL==19.1.0
 cryptography==2.9.2
