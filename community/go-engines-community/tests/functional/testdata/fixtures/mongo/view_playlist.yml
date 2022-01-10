@@ -6,8 +6,8 @@ view_playlist:
     enabled: true
     fullscreen: true
     interval:
-      seconds: 10
       unit: s
+      value: 10
     name: test-playlist-to-check-unique-name-name
     tabs_list:
     - test-view-to-edit-playlist-tab-1
@@ -19,8 +19,8 @@ view_playlist:
     enabled: true
     fullscreen: true
     interval:
-      seconds: 10
       unit: s
+      value: 10
     name: test-playlist-to-check-access-name
     tabs_list:
     - test-view-to-edit-playlist-tab-1
@@ -32,8 +32,8 @@ view_playlist:
     enabled: true
     fullscreen: true
     interval:
-      seconds: 10
       unit: s
+      value: 10
     name: test-playlist-to-get-1-name
     tabs_list:
     - test-view-to-edit-playlist-tab-1
@@ -45,8 +45,8 @@ view_playlist:
     enabled: true
     fullscreen: true
     interval:
-      seconds: 20
       unit: s
+      value: 20
     name: test-playlist-to-get-2-name
     tabs_list:
     - test-view-to-edit-playlist-tab-2
@@ -58,8 +58,8 @@ view_playlist:
     enabled: true
     fullscreen: true
     interval:
-      seconds: 10
       unit: s
+      value: 10
     name: test-playlist-to-update-name
     tabs_list:
     - test-view-to-edit-playlist-tab-1
@@ -71,8 +71,8 @@ view_playlist:
     enabled: true
     fullscreen: true
     interval:
-      seconds: 10
       unit: s
+      value: 10
     name: test-playlist-to-delete-name
     tabs_list:
     - test-view-to-edit-playlist-tab-1

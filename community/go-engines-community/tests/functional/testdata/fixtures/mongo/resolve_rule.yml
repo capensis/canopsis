@@ -8,8 +8,8 @@ resolve_rule:
     created: 1619083733
     description: test-resolve-rule-to-get-1-description
     duration:
-      seconds: 10
       unit: s
+      value: 10
     entity_patterns:
     - name: test-resolve-rule-to-get-1-resource
     name: test-resolve-rule-to-get-1-name
@@ -24,8 +24,8 @@ resolve_rule:
     created: 1619083733
     description: test-resolve-rule-to-get-2-description
     duration:
-      seconds: 10
       unit: s
+      value: 10
     entity_patterns:
     - name: test-resolve-rule-to-get-2-resource
     name: test-resolve-rule-to-get-2-name
@@ -40,8 +40,8 @@ resolve_rule:
     created: 1619083733
     description: test-resolve-rule-to-delete-description
     duration:
-      seconds: 10
       unit: s
+      value: 10
     entity_patterns:
     - name: test-resolve-rule-to-delete-resource
     name: test-resolve-rule-to-delete-name
@@ -56,8 +56,8 @@ resolve_rule:
     created: 1619083733
     description: test-resolve-rule-to-update-1-description
     duration:
-      seconds: 10
       unit: s
+      value: 10
     entity_patterns:
     - name: test-resolve-rule-to-update-1-resource
     name: test-resolve-rule-to-update-1-name
@@ -72,8 +72,8 @@ resolve_rule:
     created: 1619083733
     description: test-resolve-rule-to-check-unique-description
     duration:
-      seconds: 10
       unit: s
+      value: 10
     entity_patterns:
     - name: test-resolve-rule-to-check-unique-resource
     name: test-resolve-rule-to-check-unique-name

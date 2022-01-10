@@ -10,7 +10,6 @@ periodical_alarm:
       connector_name: test-alarm-get-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -66,7 +65,6 @@ periodical_alarm:
       connector_name: test-alarm-get-connectorname
       creation_date: 1597030219
       display_name: PU-YA-QB
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -120,7 +118,6 @@ periodical_alarm:
       connector_name: correlation
       creation_date: 1597030219
       display_name: IK-JK-QB
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -171,7 +168,6 @@ periodical_alarm:
       connector_name: correlation
       creation_date: 1597030219
       display_name: IK-JK-QB
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -221,7 +217,6 @@ periodical_alarm:
       connector_name: correlation
       creation_date: 1597030219
       display_name: IK-JK-QB
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -271,7 +266,6 @@ periodical_alarm:
       connector_name: correlation
       creation_date: 1597030219
       display_name: IK-JK-QB
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -321,7 +315,6 @@ periodical_alarm:
       connector_name: test-alarm-get-connectorname
       creation_date: 1597030220
       display_name: ZD-SY-RM
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -387,7 +380,6 @@ periodical_alarm:
       connector_name: test-alarm-get-connectorname
       creation_date: 1597030222
       display_name: PK-SL-XK
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -475,7 +467,6 @@ periodical_alarm:
       connector_name: test-alarm-pbehavior-get-connectorname
       creation_date: 1597030118
       display_name: PK-SL-XK
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -548,7 +539,6 @@ periodical_alarm:
       connector_name: test-alarmcounter-get-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -604,7 +594,6 @@ periodical_alarm:
       connector_name: test-alarmcounter-get-connectorname
       creation_date: 1597030219
       display_name: PU-YA-QB
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -662,7 +651,6 @@ periodical_alarm:
       connector_name: correlation
       creation_date: 1597030219
       display_name: IK-JK-QB
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -712,7 +700,6 @@ periodical_alarm:
       connector_name: test-alarmcounter-get-connectorname
       creation_date: 1597030220
       display_name: ZD-SY-RM
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -778,7 +765,6 @@ periodical_alarm:
       connector_name: test-alarmcounter-get-connectorname
       creation_date: 1597030118
       display_name: PK-SL-XK
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -849,7 +835,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-start-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -905,7 +890,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-start-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -961,7 +945,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-next-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -1017,7 +1000,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-next-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -1073,7 +1055,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-next-step-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -1129,7 +1110,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-next-step-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -1185,7 +1165,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-next-step-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -1241,7 +1220,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-next-step-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -1297,7 +1275,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-next-step-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -1353,7 +1330,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-next-step-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -1409,7 +1385,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-previous-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -1465,7 +1440,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-previous-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -1521,7 +1495,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-previous-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -1577,7 +1550,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-previous-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -1633,7 +1605,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-cancel-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -1689,7 +1660,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-cancel-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -1745,7 +1715,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-pause-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -1794,7 +1763,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-pause-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -1843,7 +1811,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-pause-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -1892,7 +1859,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-pause-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -1941,7 +1907,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-resume-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -1990,7 +1955,6 @@ periodical_alarm:
       connector_name: test-alarm-with-instruction-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -2046,7 +2010,6 @@ periodical_alarm:
       connector_name: test-alarm-with-instruction-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -2102,7 +2065,6 @@ periodical_alarm:
       connector_name: test-alarm-with-instruction-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -2158,7 +2120,6 @@ periodical_alarm:
       connector_name: test-alarm-with-instruction-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -2214,7 +2175,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-get-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -2270,7 +2230,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-get-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -2326,7 +2285,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-get-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -2382,7 +2340,6 @@ periodical_alarm:
       connector_name: test-instruction-execution-get-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -2440,7 +2397,6 @@ periodical_alarm:
       connector_name: correlation
       creation_date: 1597030219
       display_name: IK-JK-QB
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -2492,7 +2448,6 @@ periodical_alarm:
       connector_name: test-alarm-instruction-with-pbehavior-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -2520,7 +2475,6 @@ periodical_alarm:
       connector_name: test-alarm-instruction-with-pbehavior-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -2548,7 +2502,6 @@ periodical_alarm:
       connector_name: test-alarm-instruction-with-pbehavior-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -2576,7 +2529,6 @@ periodical_alarm:
       connector_name: test-entity-to-check-deletable-connector-name
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -2603,7 +2555,6 @@ periodical_alarm:
       connector_name: test-entitybasic-to-delete-linked-to-alarm-connector-name
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -2630,7 +2581,6 @@ periodical_alarm:
       connector_name: test-idle-since-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -2680,7 +2630,6 @@ periodical_alarm:
       creation_date: 1596942720
       display_name: RC-KC_tW
       events_count: 5
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -2737,7 +2686,6 @@ periodical_alarm:
       connector_name: test-alarm-to-export-connector-name
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -2793,7 +2741,6 @@ periodical_alarm:
       connector_name: test-alarm-to-export-connector-name
       creation_date: 1597030219
       display_name: PU-YA-QB
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -2842,7 +2789,6 @@ periodical_alarm:
       connector_name: test-idle-rule-count-patterns-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -2869,7 +2815,6 @@ periodical_alarm:
       connector_name: test-idle-rule-count-patterns-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -2896,7 +2841,6 @@ periodical_alarm:
       connector_name: test-idle-rule-count-patterns-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -2923,7 +2867,6 @@ periodical_alarm:
       connector_name: test-idle-rule-count-patterns-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -2950,7 +2893,6 @@ periodical_alarm:
       connector_name: test-idle-rule-count-patterns-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -2977,7 +2919,6 @@ periodical_alarm:
       connector_name: test-connector-name-to-not-run-auto-instruction-manually
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -3002,7 +2943,17 @@ periodical_alarm:
         m: ""
         t: 1596942720
         val: 1
-      steps: []
+      steps:
+      - _t: stateinc
+        a: ""
+        m: ""
+        t: 1596942720
+        val: 3
+      - _t: statusinc
+        a: ""
+        m: ""
+        t: 1596942720
+        val: 1
       tags: []
       total_state_changes: 1
   periodical_alarm_60:
@@ -3016,7 +2967,6 @@ periodical_alarm:
       connector_name: test-connector-name-to-stats-executions-get-1
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -3510,7 +3460,6 @@ periodical_alarm:
       connector_name: correlation
       creation_date: 1597030219
       display_name: IK-JK-QB
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -3561,7 +3510,6 @@ periodical_alarm:
       connector_name: correlation
       creation_date: 1597030219
       display_name: IK-JK-QB
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -3613,7 +3561,6 @@ periodical_alarm:
       connector_name: correlation
       creation_date: 1597030219
       display_name: IK-JK-QB
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -3663,7 +3610,6 @@ periodical_alarm:
       connector_name: test-alarm-meta-children-with-instructions-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -3675,7 +3621,7 @@ periodical_alarm:
       - ""
       output: test-alarm-meta-children-with-instructions-output
       parents:
-      - test-alarm-meta-children-with-instructions-1
+      - test-alarm-meta-children-with-instructions-1/metaalarm
       pbehavior_info: null
       resource: test-alarm-meta-children-with-instructions-resource-1
       tags: []
@@ -3691,7 +3637,6 @@ periodical_alarm:
       connector_name: test-alarm-meta-children-with-instructions-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -3703,7 +3648,7 @@ periodical_alarm:
       - ""
       output: test-alarm-meta-children-with-instructions-output
       parents:
-      - test-alarm-meta-children-with-instructions-2
+      - test-alarm-meta-children-with-instructions-2/metaalarm
       pbehavior_info: null
       resource: test-alarm-meta-children-with-instructions-resource-1
       tags: []
@@ -3719,7 +3664,6 @@ periodical_alarm:
       connector_name: test-alarm-meta-children-with-instructions-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -3731,7 +3675,7 @@ periodical_alarm:
       - ""
       output: test-alarm-meta-children-with-instructions-output
       parents:
-      - test-alarm-meta-children-with-instructions-3
+      - test-alarm-meta-children-with-instructions-3/metaalarm
       pbehavior_info: null
       resource: test-alarm-meta-children-with-instructions-resource-2
       tags: []
@@ -3747,7 +3691,6 @@ periodical_alarm:
       connector_name: test-alarm-meta-children-with-instructions-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -3759,7 +3702,7 @@ periodical_alarm:
       - ""
       output: test-alarm-meta-children-with-instructions-output
       parents:
-      - test-alarm-meta-children-with-instructions-3
+      - test-alarm-meta-children-with-instructions-3/metaalarm
       pbehavior_info: null
       resource: test-alarm-meta-children-with-instructions-resource-2
       tags: []
@@ -3775,7 +3718,6 @@ periodical_alarm:
       connector_name: test-connector-name-to-stats-executions-get-with-resolved-alarms-1
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -3834,7 +3776,6 @@ periodical_alarm:
       connector_name: test-alarm-multi-sort-get-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -3890,7 +3831,6 @@ periodical_alarm:
       connector_name: test-alarm-multi-sort-get-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -3946,7 +3886,6 @@ periodical_alarm:
       connector_name: test-alarm-multi-sort-get-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -4002,7 +3941,6 @@ periodical_alarm:
       connector_name: test-alarm-multi-sort-get-connectorname
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -4045,5 +3983,354 @@ periodical_alarm:
         role: admin
         t: 1597033041
         val: 0
+      tags: []
+      total_state_changes: 1
+  periodical_alarm_79:
+    _id: test-alarm-api-correlation-metaalarm-1
+    d: test-api-correlation-1/metaalarm
+    t: 1597030219
+    v:
+      children:
+      - test-api-correlation-resource-1/test-api-correlation-component
+      - test-api-correlation-resource-2/test-api-correlation-component
+      component: metaalarm
+      connector: engine
+      connector_name: correlation
+      creation_date: 1597030219
+      display_name: IK-JK-QB
+      infos: {}
+      infos_rule_version: {}
+      initial_long_output: ""
+      initial_output: test-alarm-get alarm
+      last_event_date: 1597030219
+      last_update_date: 1597030219
+      long_output: ""
+      long_output_history:
+      - ""
+      meta: test-api-correlation-metaalarm-rule-1
+      output: test-alarm-get alarm
+      parents: []
+      resolved: 1597034023
+      resource: test-api-correlation-1
+      state:
+        _t: stateinc
+        a: engine.correlation
+        m: test-alarm-get alarm
+        t: 1597030219
+        val: 1
+      status:
+        _t: statusinc
+        a: engine.correlation
+        m: test-alarm-get alarm
+        t: 1597030219
+        val: 1
+      steps:
+      - _t: stateinc
+        a: engine.correlation
+        m: test-alarm-get alarm
+        t: 1597030219
+        val: 1
+      - _t: statusinc
+        a: engine.correlation
+        m: test-alarm-get alarm
+        t: 1597030219
+        val: 1
+      tags: []
+      total_state_changes: 1
+  periodical_alarm_80:
+    _id: test-alarm-api-correlation-metaalarm-2
+    d: test-api-correlation-2/metaalarm
+    t: 1597030219
+    v:
+      children:
+      - test-api-correlation-resource-1/test-api-correlation-component
+      - test-api-correlation-resource-2/test-api-correlation-component
+      component: metaalarm
+      connector: engine
+      connector_name: correlation
+      creation_date: 1597030219
+      display_name: IK-JK-QB
+      infos: {}
+      infos_rule_version: {}
+      initial_long_output: ""
+      initial_output: test-alarm-get alarm
+      last_event_date: 1597030219
+      last_update_date: 1597030219
+      long_output: ""
+      long_output_history:
+      - ""
+      meta: test-api-correlation-metaalarm-rule-1
+      output: test-alarm-get alarm
+      parents: []
+      resource: test-api-correlation-2
+      state:
+        _t: stateinc
+        a: engine.correlation
+        m: test-alarm-get alarm
+        t: 1597030219
+        val: 1
+      status:
+        _t: statusinc
+        a: engine.correlation
+        m: test-alarm-get alarm
+        t: 1597030219
+        val: 1
+      steps:
+      - _t: stateinc
+        a: engine.correlation
+        m: test-alarm-get alarm
+        t: 1597030219
+        val: 1
+      - _t: statusinc
+        a: engine.correlation
+        m: test-alarm-get alarm
+        t: 1597030219
+        val: 1
+      tags: []
+      total_state_changes: 1
+  periodical_alarm_81:
+    _id: test-api-correlation-get-1
+    d: test-api-correlation-resource-1/test-api-correlation-component
+    t: 1000000002
+    v:
+      children: []
+      component: test-api-correlation-get-component
+      connector: test-api-correlation-get-connector
+      connector_name: test-api-correlation-get-connectorname
+      creation_date: 1596942720
+      display_name: RC-KC_tW
+      infos: {}
+      infos_rule_version: {}
+      initial_long_output: ""
+      initial_output: test-api-correlation-resource-1
+      last_event_date: 1000000004
+      last_update_date: 1596942720
+      long_output: test-api-correlation-resource-1
+      long_output_history:
+      - ""
+      output: test-api-correlation-resource-1
+      parents:
+      - test-api-correlation-1/metaalarm
+      resolved: 1597034023
+      resource: test-api-correlation-resource-1
+      state:
+        _t: stateinc
+        a: test-api-correlation-get-connector.test-api-correlation-get-connectorname
+        m: test-api-correlation-get alarm
+        t: 1596942720
+        val: 3
+      status:
+        _t: statusinc
+        a: test-api-correlation-get-connector.test-api-correlation-get-connectorname
+        m: test-api-correlation-get alarm
+        t: 1596942720
+        val: 1
+      steps:
+      - _t: stateinc
+        a: test-api-correlation-get-connector.test-api-correlation-get-connectorname
+        m: test-api-correlation-get alarm
+        t: 1596942720
+        val: 3
+      - _t: statusinc
+        a: test-api-correlation-get-connector.test-api-correlation-get-connectorname
+        m: test-api-correlation-get alarm
+        t: 1596942720
+        val: 1
+      tags: []
+      total_state_changes: 1
+  periodical_alarm_82:
+    _id: test-api-correlation-get-2
+    d: test-api-correlation-resource-2/test-api-correlation-component
+    t: 1000000002
+    v:
+      children: []
+      component: test-api-correlation-get-component
+      connector: test-api-correlation-get-connector
+      connector_name: test-api-correlation-get-connectorname
+      creation_date: 1596942720
+      display_name: RC-KC_tW
+      infos: {}
+      infos_rule_version: {}
+      initial_long_output: ""
+      initial_output: test-api-correlation-resource-2
+      last_event_date: 1000000004
+      last_update_date: 1596942720
+      long_output: test-api-correlation-resource-2
+      long_output_history:
+      - ""
+      output: test-api-correlation-resource-2
+      parents:
+      - test-api-correlation-1/metaalarm
+      resolved: 1597034023
+      resource: test-api-correlation-resource-2
+      state:
+        _t: stateinc
+        a: test-api-correlation-get-connector.test-api-correlation-get-connectorname
+        m: test-api-correlation-get alarm
+        t: 1596942720
+        val: 3
+      status:
+        _t: statusinc
+        a: test-api-correlation-get-connector.test-api-correlation-get-connectorname
+        m: test-api-correlation-get alarm
+        t: 1596942720
+        val: 1
+      steps:
+      - _t: stateinc
+        a: test-api-correlation-get-connector.test-api-correlation-get-connectorname
+        m: test-api-correlation-get alarm
+        t: 1596942720
+        val: 3
+      - _t: statusinc
+        a: test-api-correlation-get-connector.test-api-correlation-get-connectorname
+        m: test-api-correlation-get alarm
+        t: 1596942720
+        val: 1
+      tags: []
+      total_state_changes: 1
+  periodical_alarm_83:
+    _id: test-api-correlation-get-3
+    d: test-api-correlation-resource-1/test-api-correlation-component
+    t: 1000000002
+    v:
+      children: []
+      component: test-api-correlation-get-component
+      connector: test-api-correlation-get-connector
+      connector_name: test-api-correlation-get-connectorname
+      creation_date: 1596942720
+      display_name: RC-KC_tW
+      infos: {}
+      infos_rule_version: {}
+      initial_long_output: ""
+      initial_output: test-api-correlation-resource-1
+      last_event_date: 1000000004
+      last_update_date: 1596942720
+      long_output: test-api-correlation-resource-1
+      long_output_history:
+      - ""
+      output: test-api-correlation-resource-1
+      parents:
+      - test-api-correlation-2/metaalarm
+      resource: test-api-correlation-resource-1
+      state:
+        _t: stateinc
+        a: test-api-correlation-get-connector.test-api-correlation-get-connectorname
+        m: test-api-correlation-get alarm
+        t: 1596942720
+        val: 3
+      status:
+        _t: statusinc
+        a: test-api-correlation-get-connector.test-api-correlation-get-connectorname
+        m: test-api-correlation-get alarm
+        t: 1596942720
+        val: 1
+      steps:
+      - _t: stateinc
+        a: test-api-correlation-get-connector.test-api-correlation-get-connectorname
+        m: test-api-correlation-get alarm
+        t: 1596942720
+        val: 3
+      - _t: statusinc
+        a: test-api-correlation-get-connector.test-api-correlation-get-connectorname
+        m: test-api-correlation-get alarm
+        t: 1596942720
+        val: 1
+      tags: []
+      total_state_changes: 1
+  periodical_alarm_84:
+    _id: test-api-correlation-get-4
+    d: test-api-correlation-resource-2/test-api-correlation-component
+    t: 1000000002
+    v:
+      children: []
+      component: test-api-correlation-get-component
+      connector: test-api-correlation-get-connector
+      connector_name: test-api-correlation-get-connectorname
+      creation_date: 1596942720
+      display_name: RC-KC_tW
+      infos: {}
+      infos_rule_version: {}
+      initial_long_output: ""
+      initial_output: test-api-correlation-resource-2
+      last_event_date: 1000000004
+      last_update_date: 1596942720
+      long_output: test-api-correlation-resource-2
+      long_output_history:
+      - ""
+      output: test-api-correlation-resource-2
+      parents:
+      - test-api-correlation-2/metaalarm
+      resource: test-api-correlation-resource-2
+      state:
+        _t: stateinc
+        a: test-api-correlation-get-connector.test-api-correlation-get-connectorname
+        m: test-api-correlation-get alarm
+        t: 1596942720
+        val: 3
+      status:
+        _t: statusinc
+        a: test-api-correlation-get-connector.test-api-correlation-get-connectorname
+        m: test-api-correlation-get alarm
+        t: 1596942720
+        val: 1
+      steps:
+      - _t: stateinc
+        a: test-api-correlation-get-connector.test-api-correlation-get-connectorname
+        m: test-api-correlation-get alarm
+        t: 1596942720
+        val: 3
+      - _t: statusinc
+        a: test-api-correlation-get-connector.test-api-correlation-get-connectorname
+        m: test-api-correlation-get alarm
+        t: 1596942720
+        val: 1
+      tags: []
+      total_state_changes: 1
+  periodical_alarm_85:
+    _id: dynamic-info-update-1
+    d: dynamic-info-update-resource-1/dynamic-info-update-component
+    t: 1000000002
+    v:
+      children: []
+      component: dynamic-info-update-component
+      connector: dynamic-info-update-connector
+      connector_name: dynamic-info-update-connectorname
+      creation_date: 1596942720
+      display_name: 7DT-0TC
+      infos: {}
+      infos_rule_version: {}
+      initial_long_output: dynamic-info-update alarm
+      initial_output: dynamic-info-update alarm
+      last_event_date: 1000000004
+      last_update_date: 1596942720
+      long_output: dynamic-info-update alarm
+      long_output_history:
+      - ""
+      output: dynamic-info-update alarm
+      parents: []
+      resource: dynamic-info-update-resource-1
+      state:
+        _t: stateinc
+        a: dynamic-info-update-connector.dynamic-info-update-connectorname
+        m: dynamic-info-update alarm
+        t: 1596942720
+        val: 3
+      status:
+        _t: statusinc
+        a: dynamic-info-update-connector.dynamic-info-update-connectorname
+        m: dynamic-info-update alarm
+        t: 1596942720
+        val: 1
+      steps:
+      - _t: stateinc
+        a: test-api-correlation-get-connector.test-api-correlation-get-connectorname
+        m: dynamic-info-update alarm
+        t: 1596942720
+        val: 3
+      - _t: statusinc
+        a: test-api-correlation-get-connector.test-api-correlation-get-connectorname
+        m: dynamic-info-update alarm
+        t: 1596942720
+        val: 1
       tags: []
       total_state_changes: 1

@@ -38,158 +38,169 @@ default_rights:
     crecord_type: action
     type: CRUD
   default_rights_9:
-    _id: api_webhook
-    crecord_name: api_webhook
-    crecord_type: action
-    type: CRUD
-  default_rights_10:
     _id: api_entityservice
     crecord_name: api_entityservice
     crecord_type: action
     type: CRUD
-  default_rights_11:
+  default_rights_10:
     _id: api_eventfilter
     crecord_name: api_eventfilter
     crecord_type: action
     type: CRUD
-  default_rights_12:
+  default_rights_11:
     _id: api_pbehavior
     crecord_name: api_pbehavior
     crecord_type: action
     type: CRUD
-  default_rights_13:
+  default_rights_12:
     _id: api_pbehaviorreason
     crecord_name: api_pbehaviorreason
     crecord_type: action
     type: CRUD
-  default_rights_14:
+  default_rights_13:
     _id: api_pbehaviorexception
     crecord_name: api_pbehaviorexception
     crecord_type: action
     type: CRUD
-  default_rights_15:
+  default_rights_14:
     _id: api_pbehaviortype
     crecord_name: api_pbehaviortype
     crecord_type: action
     type: CRUD
-  default_rights_16:
+  default_rights_15:
     _id: api_job_config
     crecord_name: api_job_config
     crecord_type: action
     type: CRUD
-  default_rights_17:
+  default_rights_16:
     _id: api_job
     crecord_name: api_job
     crecord_type: action
     type: CRUD
-  default_rights_18:
+  default_rights_17:
     _id: api_instruction
     crecord_name: api_instruction
     crecord_type: action
     type: CRUD
-  default_rights_19:
+  default_rights_18:
     _id: api_execution
     crecord_name: api_execution
     crecord_type: action
-  default_rights_20:
+  default_rights_19:
     _id: api_dynamicinfos
     crecord_name: api_dynamicinfos
     crecord_type: action
     type: CRUD
-  default_rights_21:
+  default_rights_20:
     _id: api_contextgraph
     crecord_name: api_contextgraph
     crecord_type: action
     type: CRUD
-  default_rights_22:
+  default_rights_21:
     _id: api_view
     crecord_name: api_view
     crecord_type: action
     type: CRUD
-  default_rights_23:
+  default_rights_22:
     _id: api_viewgroup
     crecord_name: api_viewgroup
     crecord_type: action
     type: CRUD
-  default_rights_24:
+  default_rights_23:
     _id: api_playlist
     crecord_name: api_playlist
     crecord_type: action
     desc: api_playlist
     type: CRUD
-  default_rights_25:
+  default_rights_24:
     _id: api_junit
     crecord_name: api_junit
     crecord_type: action
     type: CRUD
-  default_rights_26:
+  default_rights_25:
     _id: api_state_settings
     crecord_name: api_state_settings
     crecord_type: action
-  default_rights_27:
+  default_rights_26:
     _id: api_datastorage_read
     crecord_name: api_datastorage_read
     crecord_type: action
-  default_rights_28:
+  default_rights_27:
     _id: api_datastorage_update
     crecord_name: api_datastorage_update
     crecord_type: action
-  default_rights_29:
+  default_rights_28:
     _id: api_app_info_read
     crecord_name: api_app_info_read
     crecord_type: action
     desc: read app info
-  default_rights_30:
+  default_rights_29:
     _id: api_user_interface_update
     crecord_name: api_user_interface_update
     crecord_type: action
     desc: update user interface
-  default_rights_31:
+  default_rights_30:
     _id: api_user_interface_delete
     crecord_name: api_user_interface_delete
     crecord_type: action
     desc: delete user interface
-  default_rights_32:
+  default_rights_31:
     _id: api_broadcast_message
     crecord_name: api_broadcast_message
     crecord_type: action
     desc: Broadcast Message
     type: CRUD
-  default_rights_33:
+  default_rights_32:
     _id: api_associative_table
     crecord_name: api_associative_table
     crecord_type: action
     desc: Associative table
     type: CRUD
-  default_rights_34:
+  default_rights_33:
     _id: api_message_rate_stats_read
     crecord_name: api_message_rate_stats_read
     crecord_type: action
-  default_rights_35:
+  default_rights_34:
     _id: api_resolve_rule
     crecord_name: api_resolve_rule
     crecord_type: action
     desc: Resolve rule
     type: CRUD
-  default_rights_36:
+  default_rights_35:
     _id: api_flapping_rule
     crecord_name: api_flapping_rule
     crecord_type: action
     desc: Flapping rule
     type: CRUD
-  default_rights_37:
+  default_rights_36:
     _id: api_notification
     crecord_name: api_notification
     crecord_type: action
-  default_rights_38:
+  default_rights_37:
     _id: api_instruction_approve
     crecord_name: api_instruction_approve
     crecord_type: action
-  default_rights_39:
+  default_rights_38:
     _id: api_healthcheck
     crecord_name: api_healthcheck
     crecord_type: action
+  default_rights_39:
+    _id: api_filter
+    crecord_name: api_filter
+    crecord_type: action
+    type: CRUD
   default_rights_40:
+    _id: api_metrics
+    crecord_name: api_metrics
+    crecord_type: action
+    desc: Metrics api
+  default_rights_41:
+    _id: api_rating_settings
+    crecord_name: api_rating_settings
+    crecord_type: action
+    desc: Rating settings api
+    type: CRUD
+  default_rights_42:
     _id: admin
     crecord_name: admin
     crecord_type: role
@@ -242,6 +253,9 @@ default_rights:
       api_execution:
         checksum: 1
         crecord_type: right
+      api_filter:
+        checksum: 15
+        crecord_type: right
       api_flapping_rule:
         checksum: 15
         crecord_type: right
@@ -272,6 +286,9 @@ default_rights:
       api_metaalarmrule:
         checksum: 15
         crecord_type: right
+      api_metrics:
+        checksum: 1
+        crecord_type: right
       api_notification:
         checksum: 1
         crecord_type: right
@@ -290,6 +307,9 @@ default_rights:
       api_playlist:
         checksum: 15
         crecord_type: right
+      api_rating_settings:
+        checksum: 15
+        crecord_type: right
       api_resolve_rule:
         checksum: 15
         crecord_type: right
@@ -306,9 +326,6 @@ default_rights:
         checksum: 15
         crecord_type: right
       api_viewgroup:
-        checksum: 15
-        crecord_type: right
-      api_webhook:
         checksum: 15
         crecord_type: right
       test-playlist-to-delete:
@@ -362,12 +379,12 @@ default_rights:
       test-view-to-viewgroup-get-3:
         checksum: 0
         crecord_type: right
-  default_rights_41:
+  default_rights_43:
     _id: noperms
     crecord_name: noperms
     crecord_type: role
     rights: {}
-  default_rights_42:
+  default_rights_44:
     _id: approver
     crecord_name: approver
     crecord_type: role
@@ -381,7 +398,7 @@ default_rights:
       api_instruction_approve:
         checksum: 1
         crecord_type: right
-  default_rights_43:
+  default_rights_45:
     _id: approver2
     crecord_name: approver2
     crecord_type: role
@@ -392,7 +409,7 @@ default_rights:
       api_instruction_approve:
         checksum: 1
         crecord_type: right
-  default_rights_44:
+  default_rights_46:
     _id: manager
     crecord_name: manager
     crecord_type: role
@@ -451,10 +468,7 @@ default_rights:
       api_viewgroup:
         checksum: 4
         crecord_type: right
-      api_webhook:
-        checksum: 15
-        crecord_type: right
-  default_rights_45:
+  default_rights_47:
     _id: root
     authkey: 2be1d0ee-5e9e-4b1f-9d80-e857e50f4191
     contact:
@@ -466,7 +480,7 @@ default_rights:
     mail: admin@canopsis.net
     role: admin
     shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_46:
+  default_rights_48:
     _id: manageruser
     authkey: 2be1d0ee-5e9e-4b1f-9d80-e857e50f4191
     contact:
@@ -478,7 +492,7 @@ default_rights:
     mail: manager@canopsis.net
     role: manager
     shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_47:
+  default_rights_49:
     _id: nopermsuser
     authkey: b31c48c7-3ccc-4ad3-bc1e-0e12bdd64caa
     crecord_name: nopermsuser
@@ -486,7 +500,7 @@ default_rights:
     enable: true
     role: noperms
     shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_48:
+  default_rights_50:
     _id: approveruser
     authkey: b31c48c7-3ccc-4ad3-bc1e-0e12bdd64caa
     crecord_name: approveruser
@@ -494,7 +508,7 @@ default_rights:
     enable: true
     role: approver
     shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_49:
+  default_rights_51:
     _id: approveruser2
     authkey: b31c48c7-3ccc-4ad3-bc1e-0e12bdd64caa
     crecord_name: approveruser2
@@ -502,7 +516,7 @@ default_rights:
     enable: true
     role: approver2
     shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_50:
+  default_rights_52:
     _id: test-user-to-test-paused-executions
     authkey: b1f67e3e-f631-4140-a801-9a05cb683e2c
     crecord_name: test-user-to-test-paused-executions
@@ -510,57 +524,57 @@ default_rights:
     enable: true
     role: manager
     shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_51:
+  default_rights_53:
     _id: test-permission-to-get-1
     crecord_name: test-permission-to-get-1
     crecord_type: action
     desc: test-permission-to-get-1-description
-  default_rights_52:
+  default_rights_54:
     _id: test-permission-to-get-2
     crecord_name: test-permission-to-get-2
     crecord_type: action
     desc: test-permission-to-get-2-description
-  default_rights_53:
+  default_rights_55:
     _id: test-permission-to-edit-role-1
     crecord_name: test-permission-to-edit-role-1
     crecord_type: action
     desc: test-permission-to-edit-role-1-description
-  default_rights_54:
+  default_rights_56:
     _id: test-permission-to-edit-role-2
     crecord_name: test-permission-to-edit-role-2
     crecord_type: action
     desc: test-permission-to-edit-role-2-description
     type: CRUD
-  default_rights_55:
+  default_rights_57:
     _id: test-permission-to-edit-role-3
     crecord_name: test-permission-to-edit-role-3
     crecord_type: action
     desc: test-permission-to-edit-role-3-description
     type: RW
-  default_rights_56:
+  default_rights_58:
     _id: test-role-to-check-unique-name
     crecord_name: test-role-to-check-unique-name
     crecord_type: role
     description: test-role-to-check-unique-name-description
     rights: {}
-  default_rights_57:
+  default_rights_59:
     _id: test-role-to-delete
     crecord_name: test-role-to-delete
     crecord_type: role
     description: test-role-to-delete-description
     rights: {}
-  default_rights_58:
+  default_rights_60:
     _id: test-role-to-delete-linked-to-user
     crecord_name: test-role-to-delete-linked-to-user
     crecord_type: role
     description: test-role-to-delete-linked-to-user-description
     rights: {}
-  default_rights_59:
+  default_rights_61:
     _id: test-user-to-delete-role-linked-to-user
     crecord_name: test-user-to-delete-role-linked-to-user
     crecord_type: user
     role: test-role-to-delete-linked-to-user
-  default_rights_60:
+  default_rights_62:
     _id: test-role-to-get-1
     crecord_name: test-role-to-get-1
     crecord_type: role
@@ -572,7 +586,7 @@ default_rights:
         checksum: 15
       test-permission-to-edit-role-3:
         checksum: 7
-  default_rights_61:
+  default_rights_63:
     _id: test-role-to-get-2
     crecord_name: test-role-to-get-2
     crecord_type: role
@@ -583,7 +597,7 @@ default_rights:
         checksum: 7
       test-permission-to-edit-role-3:
         checksum: 3
-  default_rights_62:
+  default_rights_64:
     _id: test-role-to-update
     crecord_name: test-role-to-update
     crecord_type: role
@@ -595,24 +609,24 @@ default_rights:
         checksum: 15
       test-permission-to-edit-role-3:
         checksum: 7
-  default_rights_63:
+  default_rights_65:
     _id: test-permission-to-edit-user-1
     crecord_name: test-permission-to-edit-user-1
     crecord_type: action
     desc: test-permission-to-edit-user-1-description
-  default_rights_64:
+  default_rights_66:
     _id: test-permission-to-edit-user-2
     crecord_name: test-permission-to-edit-user-2
     crecord_type: action
     desc: test-permission-to-edit-user-2-description
     type: CRUD
-  default_rights_65:
+  default_rights_67:
     _id: test-permission-to-edit-user-3
     crecord_name: test-permission-to-edit-user-3
     crecord_type: action
     desc: test-permission-to-edit-user-3-description
     type: RW
-  default_rights_66:
+  default_rights_68:
     _id: test-role-to-edit-user
     crecord_name: test-role-to-edit-user
     crecord_type: role
@@ -625,7 +639,7 @@ default_rights:
         checksum: 15
       test-permission-to-edit-user-3:
         checksum: 7
-  default_rights_67:
+  default_rights_69:
     _id: test-user-to-get-1
     authkey: 3ct2e1ff-5e9e-4b1f-9d80-d968d61g5202
     crecord_name: test-user-to-get-1
@@ -641,7 +655,7 @@ default_rights:
     tours:
       test-tour-to-get-user-1: true
     ui_language: en
-  default_rights_68:
+  default_rights_70:
     _id: test-user-to-get-2
     authkey: 4du3d2gg-6d0d-5c2g-0e91-e079f72o6313
     crecord_name: test-user-to-get-2
@@ -655,7 +669,7 @@ default_rights:
     role: test-role-to-edit-user
     shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
     ui_language: en
-  default_rights_69:
+  default_rights_71:
     _id: test-user-to-check-unique-name
     crecord_name: test-user-to-check-unique-name-name
     crecord_type: user
@@ -663,7 +677,7 @@ default_rights:
     mail: test-user-to-check-unique-name-email@canopsis.net
     role: test-role-to-edit-user
     shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_70:
+  default_rights_72:
     _id: test-user-to-delete
     crecord_name: test-user-to-delete
     crecord_type: user
@@ -671,7 +685,7 @@ default_rights:
     mail: test-user-to-delete-email@canopsis.net
     role: test-role-to-edit-user
     shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_71:
+  default_rights_73:
     _id: test-user-to-update-1
     authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
     crecord_name: test-user-to-update-1
@@ -680,7 +694,7 @@ default_rights:
     mail: test-user-to-update-1-email@canopsis.net
     role: test-role-to-edit-user
     shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_72:
+  default_rights_74:
     _id: test-user-to-update-2
     crecord_name: test-user-to-update-2
     crecord_type: user
@@ -688,121 +702,121 @@ default_rights:
     mail: test-user-to-update-2-email@canopsis.net
     role: test-role-to-edit-user
     shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_73:
+  default_rights_75:
     _id: test-view-to-get-1
     crecord_name: test-view-to-get-1
     crecord_type: action
     desc: view test-view-to-get-1
     type: RW
-  default_rights_74:
+  default_rights_76:
     _id: test-view-to-get-2
     crecord_name: test-view-to-get-2
     crecord_type: action
     desc: view test-view-to-get-2
     type: RW
-  default_rights_75:
+  default_rights_77:
     _id: test-view-to-delete
     crecord_name: test-view-to-delete
     crecord_type: action
     desc: view test-view-to-delete
     type: RW
-  default_rights_76:
+  default_rights_78:
     _id: test-view-to-update
     crecord_name: test-view-to-update
     crecord_type: action
     desc: view test-view-to-update
     type: RW
-  default_rights_77:
+  default_rights_79:
     _id: test-view-to-check-access
     crecord_name: test-view-to-check-access
     crecord_type: action
     desc: view test-view-to-check-access
     type: RW
-  default_rights_78:
+  default_rights_80:
     _id: test-view-to-edit-junit-dir-param
     crecord_name: test-view-to-edit-junit-dir-param
     crecord_type: action
     desc: test-view-to-edit-junit-dir-param-name
     type: RW
-  default_rights_79:
+  default_rights_81:
     _id: test-view-to-viewgroup-get-1
     crecord_name: test-view-to-viewgroup-get-1
     crecord_type: action
     desc: test-view-to-viewgroup-get-1-name
     type: RW
-  default_rights_80:
+  default_rights_82:
     _id: test-view-to-viewgroup-get-2
     crecord_name: test-view-to-viewgroup-get-2
     crecord_type: action
     desc: test-view-to-viewgroup-get-2-name
     type: RW
-  default_rights_81:
+  default_rights_83:
     _id: test-view-to-viewgroup-get-3
     crecord_name: test-view-to-viewgroup-get-3
     crecord_type: action
     desc: test-view-to-viewgroup-get-3-name
     type: RW
-  default_rights_82:
+  default_rights_84:
     _id: test-view-to-bulk-delete-1
     crecord_name: test-view-to-bulk-delete-1
     crecord_type: action
     desc: view test-view-to-bulk-delete-1
     type: RW
-  default_rights_83:
+  default_rights_85:
     _id: test-view-to-bulk-delete-2
     crecord_name: test-view-to-bulk-delete-2
     crecord_type: action
     desc: view test-view-to-bulk-delete-2
     type: RW
-  default_rights_84:
+  default_rights_86:
     _id: test-view-to-bulk-delete-3
     crecord_name: test-view-to-bulk-delete-3
     crecord_type: action
     desc: view test-view-to-bulk-delete-3
     type: RW
-  default_rights_85:
+  default_rights_87:
     _id: test-view-to-bulk-update-1
     crecord_name: test-view-to-bulk-update-1
     crecord_type: action
     desc: view test-view-to-bulk-update-1
     type: RW
-  default_rights_86:
+  default_rights_88:
     _id: test-view-to-bulk-update-2
     crecord_name: test-view-to-bulk-update-2
     crecord_type: action
     desc: view test-view-to-bulk-update-2
     type: RW
-  default_rights_87:
+  default_rights_89:
     _id: test-playlist-to-check-access
     crecord_name: test-playlist-to-check-access
     crecord_type: action
     desc: playlist test-playlist-to-check-access
     type: RW
-  default_rights_88:
+  default_rights_90:
     _id: test-playlist-to-get-1
     crecord_name: test-playlist-to-get-1
     crecord_type: action
     desc: playlist test-playlist-to-get-1
     type: RW
-  default_rights_89:
+  default_rights_91:
     _id: test-playlist-to-get-2
     crecord_name: test-playlist-to-get-2
     crecord_type: action
     desc: playlist test-playlist-to-get-2
     type: RW
-  default_rights_90:
+  default_rights_92:
     _id: test-playlist-to-update
     crecord_name: test-playlist-to-update
     crecord_type: action
     desc: playlist test-playlist-to-update
     type: RW
-  default_rights_91:
+  default_rights_93:
     _id: test-playlist-to-delete
     crecord_name: test-playlist-to-delete
     crecord_type: action
     desc: playlist test-playlist-to-delete
     type: RW
-  default_rights_92:
+  default_rights_94:
     _id: test-role-to-update-view-position
     crecord_name: test-role-to-update-view-position
     crecord_type: role
@@ -814,7 +828,7 @@ default_rights:
       api_viewgroup:
         checksum: 15
         crecord_type: right
-  default_rights_93:
+  default_rights_95:
     _id: test-user-to-update-view-position
     authkey: b1f67e3e-wwww-4140-a801-9a05cb683e2c
     crecord_name: test-user-to-update-view-position
@@ -822,7 +836,7 @@ default_rights:
     enable: true
     role: test-role-to-update-view-position
     shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_94:
+  default_rights_96:
     _id: test-user-author-1-id
     authkey: b31c48c7-3ccc-4ad3-bc1e-0e12bdd64caa
     crecord_name: test-user-author-1-username
@@ -830,7 +844,7 @@ default_rights:
     enable: true
     role: noperms
     shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_95:
+  default_rights_97:
     _id: test-user-alternate-author-1-id
     authkey: b31c48c7-3ccc-4ad3-bc1e-0e12bdd64caa
     crecord_name: test-user-alternate-author-1-username
@@ -838,7 +852,7 @@ default_rights:
     enable: true
     role: noperms
     shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_96:
+  default_rights_98:
     _id: test-role-to-rate-instruction
     crecord_name: test-role-to-rate-instruction
     crecord_type: role
@@ -852,7 +866,7 @@ default_rights:
       api_notification:
         checksum: 1
         crecord_type: right
-  default_rights_97:
+  default_rights_99:
     _id: test-user-to-rate-instruction
     authkey: 2be1d0ee-5e9e-8mdn-9d80-e857e50f4191
     crecord_name: test-user-to-rate-instruction
@@ -861,7 +875,7 @@ default_rights:
     mail: test-user-to-rate-instruction@canopsis.net
     role: test-role-to-rate-instruction
     shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_98:
+  default_rights_100:
     _id: test-role-to-stats-instruction-get
     crecord_name: test-role-to-stats-instruction-get
     crecord_type: role
@@ -875,7 +889,7 @@ default_rights:
       api_notification:
         checksum: 1
         crecord_type: right
-  default_rights_99:
+  default_rights_101:
     _id: test-user-to-stats-instruction-get
     authkey: 2be1d0ee-7fs6-8mdn-9d80-e857e50f4191
     crecord_name: test-user-to-stats-instruction-get
@@ -883,4 +897,52 @@ default_rights:
     enable: true
     mail: test-user-to-stats-instruction-get@canopsis.net
     role: test-role-to-stats-instruction-get
+    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
+  default_rights_102:
+    _id: test-role-to-user-preferences-update
+    crecord_name: test-role-to-user-preferences-update
+    crecord_type: role
+    rights: {}
+  default_rights_103:
+    _id: test-user-to-user-preferences-update
+    authkey: 2be1d0ee-7fs6-8mdn-9d80-e857e50f5202
+    crecord_name: test-user-to-user-preferences-update
+    crecord_type: user
+    enable: true
+    mail: test-user-to-user-preferences-update@canopsis.net
+    role: test-role-to-user-preferences-update
+    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
+  default_rights_104:
+    _id: test-role-to-user-preferences-delete-1
+    crecord_name: test-role-to-user-preferences-delete-1
+    crecord_type: role
+    rights:
+      api_view:
+        checksum: 15
+        crecord_type: right
+  default_rights_105:
+    _id: test-user-to-user-preferences-delete-1
+    authkey: 2be1d0ee-7fs6-8mdn-9d80-e857e50f5203
+    crecord_name: test-user-to-user-preferences-delete-1
+    crecord_type: user
+    enable: true
+    mail: test-user-to-user-preferences-delete-1@canopsis.net
+    role: test-role-to-user-preferences-delete-1
+    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
+  default_rights_106:
+    _id: test-role-to-user-preferences-delete-2
+    crecord_name: test-role-to-user-preferences-delete-2
+    crecord_type: role
+    rights:
+      api_view:
+        checksum: 15
+        crecord_type: right
+  default_rights_107:
+    _id: test-user-to-user-preferences-delete-2
+    authkey: 2be1d0ee-7fs6-8mdn-9d80-e857e50f5204
+    crecord_name: test-user-to-user-preferences-delete-2
+    crecord_type: user
+    enable: true
+    mail: test-user-to-user-preferences-delete-2@canopsis.net
+    role: test-role-to-user-preferences-delete-2
     shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3

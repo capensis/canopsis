@@ -87,3 +87,11 @@ job_config:
     host: http://localhost:3000
     name: test-job-config-to-run-manual-job-awx-name
     type: awx
+  job_config_12:
+    _id: test-job-config-metrics-axe
+    auth_token: test-job-config-metrics-axe-token
+    author: test-author-metrics-axe
+    created: 1596550518
+    host: http://localhost:3000
+    name: test-job-config-metrics-axe-name
+    type: rundeck

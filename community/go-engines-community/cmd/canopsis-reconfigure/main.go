@@ -3,12 +3,7 @@ package main
 import (
 	"context"
 	"errors"
-	"flag"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
-	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/pgx"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"io/ioutil"
 	"os"
 
@@ -18,20 +13,25 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/migration/cli"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/pgx"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/pelletier/go-toml"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 const (
+	ErrGeneral    = 1
 	ErrRabbitInit = 2
 
 	DefaultCfgFile = "/opt/canopsis/etc/canopsis.toml"
 	FlagUsageConf  = "The configuration file used to initialize Canopsis."
 
 	DefaultMigrationsPath = "/opt/canopsis/share/database/migrations"
-	DefaultFixturesPath   = "/opt/canopsis/share/database/fixtures/prod"
+	DefaultFixturesPath   = "/opt/canopsis/share/database/fixtures"
 )
 
 type Conf struct {
@@ -45,23 +45,8 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	var confFile string
-	var mongoConfPath string
-	var migrationDirectory string
-	var modeDebug bool
-	var mongoContainer string
-	var mongoURL string
-	var modeMigrateOnly bool
-	var modeMigrate bool
-
-	flag.StringVar(&confFile, "conf", DefaultCfgFile, FlagUsageConf)
-	flag.StringVar(&mongoConfPath, "mongoConf", DefaultMongoConfPath, "The configuration file path is used to create mongo indexes.")
-	flag.BoolVar(&modeDebug, "d", false, "debug mode")
-	flag.BoolVar(&modeMigrate, "migrate", false, "If true, it will execute migration scripts")
-	flag.BoolVar(&modeMigrateOnly, "migrate-only", false, "If true, it will only execute migration scripts")
-	flag.StringVar(&migrationDirectory, "migration-directory", "", "The directory with migration scripts")
-	flag.StringVar(&mongoContainer, "mongo-container", "", "Should contain docker container_id. If set, it will execute migration scripts inside the container")
-	flag.StringVar(&mongoURL, "mongo-url", "", "mongo url")
+	f := flags{}
+	f.Parse()
 
 	logger := log.NewLogger(f.modeDebug)
 	data, err := ioutil.ReadFile(f.confFile)
@@ -79,24 +64,20 @@ func main() {
 	err = GracefullStart(ctx, logger)
 	utils.FailOnError(err, "Failed to open one of required sessions")
 
-	if modeMigratePostgres {
-		if postgresMigrationDirectory == "" {
+	if f.modeMigratePostgres {
+		if f.postgresMigrationDirectory == "" {
 			logger.Error().Msg("-postgres-migration-directory is not set")
 			os.Exit(ErrGeneral)
 		}
 
 		logger.Info().Msg("Start postgres migrations")
 
-		err = runPostgresMigrations(postgresMigrationDirectory, postgresMigrationMode, postgresMigrationSteps)
+		err = runPostgresMigrations(f.postgresMigrationDirectory, f.postgresMigrationMode, f.postgresMigrationSteps)
 		if err != nil {
 			utils.FailOnError(err, "Failed to migrate")
 		}
 
 		logger.Info().Msg("Finish postgres migrations")
-	}
-
-	if modeMigrateOnly {
-		return
 	}
 
 	amqpConn, err := amqp.NewConnection(logger, 0, 0)
@@ -178,7 +159,7 @@ func main() {
 	utils.FailOnError(err, "Failed to apply fixtures")
 	if len(collections) == 0 {
 		logger.Info().Msg("Start fixtures")
-		loader := fixtures.NewLoader(client, []string{f.fixtureDirectory}, true,
+		loader := fixtures.NewLoader(client, []string{f.mongoFixtureDirectory}, true,
 			fixtures.NewParser(password.NewSha1Encoder()), logger)
 		err = loader.Load(ctx)
 		utils.FailOnError(err, "Failed to apply fixtures")
@@ -193,7 +174,7 @@ func main() {
 	utils.FailOnError(err, "Failed to save config into mongo")
 
 	logger.Info().Msg("Start migrations")
-	cmd := cli.NewUpCmd(f.migrationDirectory, "", client, mongo.NewScriptExecutor(), logger)
+	cmd := cli.NewUpCmd(f.mongoMigrationDirectory, "", client, mongo.NewScriptExecutor(), logger)
 	err = cmd.Exec(ctx)
 	utils.FailOnError(err, "Failed to migrate")
 	logger.Info().Msg("Finish migrations")

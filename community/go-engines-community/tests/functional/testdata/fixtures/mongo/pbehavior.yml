@@ -464,7 +464,7 @@ pbehavior:
     reason: test-reason-1
     rrule: ""
     tstart: 1591172881
-    tstop: 2591536400
+    tstop: 1591172981
     type_: test-type-to-pbh-edit-1
     updated: 1592215337
   pbehavior_22:
@@ -500,4 +500,64 @@ pbehavior:
     tstart: 1592215337
     tstop: null
     type_: test-default-pause-type
+    updated: 1592215337
+  pbehavior_24:
+    _id: test-pbehavior-to-bulk-delete-1
+    author: root
+    created: 1592215337
+    enabled: true
+    filter: '{"$and":[{"name":"test filter"}]}'
+    name: test-pbehavior-to-bulk-delete-1-name
+    reason: test-reason-1
+    tstart: 1591172881
+    tstop: 1591536400
+    type_: test-type-to-pbh-edit-1
+    updated: 1592215337
+  pbehavior_25:
+    _id: test-pbehavior-to-bulk-delete-2
+    author: root
+    created: 1592215337
+    enabled: true
+    filter: '{"$and":[{"name":"test filter"}]}'
+    name: test-pbehavior-to-bulk-delete-2-name
+    reason: test-reason-1
+    tstart: 1591172881
+    tstop: 1591536400
+    type_: test-type-to-pbh-edit-1
+    updated: 1592215337
+  pbehavior_26:
+    _id: test-pbehavior-to-bulk-update-1
+    author: root
+    created: 1592215337
+    enabled: true
+    filter: '{"$and":[{"name":"test filter"}]}'
+    name: test-pbehavior-to-bulk-update-1-name
+    reason: test-reason-1
+    tstart: 1591172881
+    tstop: 1591536400
+    type_: test-type-to-pbh-edit-1
+    updated: 1592215337
+  pbehavior_27:
+    _id: test-pbehavior-to-bulk-update-2
+    author: root
+    created: 1592215337
+    enabled: true
+    filter: '{"$and":[{"name":"test filter"}]}'
+    name: test-pbehavior-to-bulk-update-2-name
+    reason: test-reason-1
+    tstart: 1591172881
+    tstop: 1591536400
+    type_: test-type-to-pbh-edit-1
+    updated: 1592215337
+  pbehavior_28:
+    _id: test-pbehavior-to-check-unique
+    author: root
+    created: 1592215337
+    enabled: true
+    filter: '{"$and":[{"name":"test filter"}]}'
+    name: test-pbehavior-to-check-unique-name
+    reason: test-reason-1
+    tstart: 1591172881
+    tstop: 1591536400
+    type_: test-type-to-pbh-edit-1
     updated: 1592215337
