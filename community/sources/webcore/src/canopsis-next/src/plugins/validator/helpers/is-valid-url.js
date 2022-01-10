@@ -9,7 +9,7 @@ export const isValidUrl = (string) => {
     const url = new URL(string.replace(/{{(.+)}}/g, ''));
 
     return /^(https?:\/\/)/.test(url.href);
-  } catch (error) {
+  } catch (err) {
     return false;
   }
 };

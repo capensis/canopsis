@@ -23,9 +23,10 @@ import {
   remediationInstructionToForm,
 } from '@/helpers/forms/remediation-instruction';
 
-import { validationErrorsMixin } from '@/mixins/form/validation-errors';
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import RemediationInstructionForm from '@/components/other/remediation/instructions/form/remediation-instruction-form.vue';
 
@@ -41,9 +42,10 @@ export default {
     RemediationInstructionForm,
   },
   mixins: [
-    validationErrorsMixin(),
-    submittableMixin(),
-    confirmableModalMixin(),
+    modalInnerMixin,
+    validationErrorsMixinCreator(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     return {

@@ -74,7 +74,6 @@ export default {
       commit(types.LOGIN_COMPLETED);
 
       return Promise.all([
-        dispatch('viewStats/create', null, { root: true }),
         dispatch('fetchCurrentUser'),
         dispatch('filesAccess'),
       ]);
@@ -101,12 +100,12 @@ export default {
         }
 
         return commit(types.FETCH_USER_COMPLETED, currentUser);
-      } catch (error) {
-        if (EXCLUDED_SERVER_ERROR_STATUSES.includes(error.status)) {
+      } catch (err) {
+        if (EXCLUDED_SERVER_ERROR_STATUSES.includes(err.status)) {
           dispatch('logout');
         }
 
-        throw error;
+        throw err;
       }
     },
 

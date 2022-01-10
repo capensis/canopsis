@@ -22,7 +22,7 @@ Feature: Create an resolve rule
         }
       ],
       "duration": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "priority": 5
@@ -51,7 +51,7 @@ Feature: Create an resolve rule
         }
       ],
       "duration": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "priority": 5
@@ -81,7 +81,7 @@ Feature: Create an resolve rule
         }
       ],
       "duration": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "priority": 5
@@ -108,7 +108,7 @@ Feature: Create an resolve rule
         }
       ],
       "duration": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "priority": 5
@@ -133,7 +133,7 @@ Feature: Create an resolve rule
         }
       ],
       "duration": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "priority": 5
@@ -169,7 +169,7 @@ Feature: Create an resolve rule
     {
       "errors": {
         "name": "Name is missing.",
-        "duration.seconds": "Seconds is missing.",
+        "duration.value": "Value is missing.",
         "duration.unit": "Unit is missing.",
         "priority": "Priority is missing."
       }
