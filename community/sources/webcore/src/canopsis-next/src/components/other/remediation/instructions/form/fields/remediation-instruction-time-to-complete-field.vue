@@ -24,9 +24,7 @@
 </template>
 
 <script>
-import { omit } from 'lodash';
-
-import { AVAILABLE_TIME_UNITS } from '@/constants';
+import { SHORT_AVAILABLE_TIME_UNITS } from '@/constants';
 
 export default {
   inject: ['$validator'],
@@ -62,7 +60,7 @@ export default {
     },
 
     availableUnits() {
-      return Object.values(omit(AVAILABLE_TIME_UNITS, ['year'])).map(({ value, text }) => ({
+      return Object.values(SHORT_AVAILABLE_TIME_UNITS).map(({ value, text }) => ({
         value,
         text: this.$tc(text, this.duration.value),
       }));

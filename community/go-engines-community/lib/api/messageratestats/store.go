@@ -8,6 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -77,6 +78,9 @@ func (s *store) GetDeletedBeforeForHours(ctx context.Context) (*types.CpsTime, e
 	}{}
 
 	err := s.db.Collection(mongo.MessageRateStatsHourCollectionName).FindOne(ctx, bson.M{}, options.FindOne().SetSort(bson.M{"_id": 1})).Decode(&res)
+	if err == mongodriver.ErrNoDocuments {
+		return nil, nil
+	}
 
 	return &res.Time, err
 }

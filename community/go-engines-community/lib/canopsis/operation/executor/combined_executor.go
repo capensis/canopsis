@@ -20,14 +20,14 @@ func (e *combinedExecutor) Exec(
 	ctx context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
-	entity types.Entity,
+	entity *types.Entity,
 	time types.CpsTime,
-	role, initiator string,
+	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
 	executor, ok := e.container.Get(operation.Type)
 	if !ok {
 		return "", nil
 	}
 
-	return executor.Exec(ctx, operation, alarm, entity, time, role, initiator)
+	return executor.Exec(ctx, operation, alarm, entity, time, userID, role, initiator)
 }

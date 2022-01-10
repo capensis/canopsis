@@ -13,8 +13,8 @@
 import { isEqual, sortBy } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
-import { COLORS } from '@/config';
-import { HEALTHCHECK_SERVICES_NAMES, SOCKET_ROOMS, USERS_PERMISSIONS } from '@/constants';
+import { COLORS, SOCKET_ROOMS } from '@/config';
+import { HEALTHCHECK_SERVICES_NAMES, ROUTES_NAMES, USERS_PERMISSIONS } from '@/constants';
 
 import { getHealthcheckNodeColor } from '@/helpers/color';
 
@@ -69,6 +69,7 @@ export default {
 
       return sortBy(wrongNodes, ['name']).map(engine => ({
         ...engine,
+
         color: getHealthcheckNodeColor(engine),
         tooltip: this.getTooltipText(engine),
         label: this.getNodeName(engine.name),
@@ -78,16 +79,14 @@ export default {
   mounted() {
     this.fetchList();
 
-    this.$socket.join(SOCKET_ROOMS.healthcheckStatus);
     this.$socket
-      .getRoom(SOCKET_ROOMS.healthcheckStatus)
+      .join(SOCKET_ROOMS.healthcheckStatus)
       .addListener(this.setHealthcheckStatus);
   },
   beforeDestroy() {
     this.$socket
-      .getRoom(SOCKET_ROOMS.healthcheckStatus)
+      .leave(SOCKET_ROOMS.healthcheckStatus)
       .removeListener(this.setHealthcheckStatus);
-    this.$socket.leave(SOCKET_ROOMS.healthcheckStatus);
   },
   methods: {
     ...mapActions({
@@ -96,7 +95,7 @@ export default {
 
     redirectToHealthcheck() {
       this.$router.push({
-        name: 'admin-healthcheck',
+        name: ROUTES_NAMES.adminHealthcheck,
       });
     },
 

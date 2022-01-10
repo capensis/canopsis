@@ -89,7 +89,7 @@ func (m *runInfoManager) GetEngineQueues(ctx context.Context) ([]RunInfo, error)
 						return nil, fmt.Errorf("cannot unmarshal info key=%q: %w", unprocessedKeys[i], err)
 					}
 
-					if recentInfo, ok := recentInfos[info.Name]; !ok || recentInfo.Time.Before(info.Time.Time) {
+					if recentInfo, ok := recentInfos[info.Name]; !ok || recentInfo.Time.Before(info.Time) {
 						recentInfos[info.Name] = info
 					}
 				} else {

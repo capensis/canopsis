@@ -40,21 +40,14 @@ import { dataTableCustomSortWithNullIgnoring } from '@/helpers/sort';
 
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
-import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 import widgetStatsTableWrapperMixin from '@/mixins/widget/stats/stats-table-wrapper';
 
 export default {
-  filters: {
-    statValue(name) {
-      return `${name}.value`;
-    },
-  },
   mixins: [
     entitiesStatsMixin,
     widgetFetchQueryMixin,
-    entitiesUserPreferenceMixin,
     widgetStatsQueryMixin,
     widgetStatsWrapperMixin,
     widgetStatsTableWrapperMixin,
@@ -90,7 +83,7 @@ export default {
         .sort((a, b) => widgetStats[a].position - widgetStats[b].position)
         .map(item => ({
           text: item,
-          value: this.$options.filters.statValue(item),
+          value: this.getStatValueFieldName(item),
         }));
 
       return [
@@ -105,6 +98,10 @@ export default {
     },
   },
   methods: {
+    getStatValueFieldName(name) {
+      return `${name}.value`;
+    },
+
     customSort: dataTableCustomSortWithNullIgnoring,
 
     getQuery() {
@@ -141,7 +138,7 @@ export default {
 
         this.pagination = {
           page: 1,
-          sortBy: sort.column ? this.$options.filters.statValue(sort.column) : null,
+          sortBy: sort.column ? this.getStatValueFieldName(sort.column) : null,
           totalItems: values.length,
           rowsPerPage: PAGINATION_LIMIT,
           descending: sort.order === SORT_ORDERS.desc,

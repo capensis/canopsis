@@ -1,7 +1,8 @@
 <template lang="pug">
   v-list-group
-    v-list-tile(slot="activator")
-      div {{ title }}
+    template(#activator="")
+      v-list-tile
+        div {{ title }}
     v-container
       v-range-slider(
         v-field="value",

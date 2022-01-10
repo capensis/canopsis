@@ -142,9 +142,7 @@ func (a *api) Create(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.computeChan <- pbehavior.ComputeTask{
-		PbehaviorID: "",
-	}
+	a.computeChan <- pbehavior.ComputeTask{}
 	c.JSON(http.StatusCreated, pt)
 }
 
@@ -245,9 +243,7 @@ func (a *api) Delete(c *gin.Context) {
 }
 
 func (a *api) sendComputeTask(typeID string) {
-	task := pbehavior.ComputeTask{
-		PbehaviorID: "",
-	}
+	task := pbehavior.ComputeTask{}
 
 	select {
 	case a.computeChan <- task:

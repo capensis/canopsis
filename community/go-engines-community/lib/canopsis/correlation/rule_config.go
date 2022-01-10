@@ -1,9 +1,12 @@
 package correlation
 
-import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+)
 
 type RuleConfig struct {
-	TimeInterval int `bson:"time_interval,omitempty" json:"time_interval,omitempty"`
+	TimeInterval *types.DurationWithUnit `bson:"time_interval,omitempty" json:"time_interval,omitempty"`
 	// AlarmPatterns represents Alarm's attribute pattern list
 	AlarmPatterns pattern.AlarmPatternList `bson:"alarm_patterns,omitempty" json:"alarm_patterns,omitempty"`
 	// EntityPatterns represents Entity's attribute pattern list

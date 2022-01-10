@@ -8,7 +8,6 @@
 </template>
 
 <script>
-
 /**
  * Wrapper for all modal windows
  */

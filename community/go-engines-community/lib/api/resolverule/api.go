@@ -21,7 +21,7 @@ type api struct {
 // @ID resolverules-create
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security JWTAuth
 // @Security BasicAuth
 // @Param body body CreateRequest true "body"
 // @Success 201 {object} Response
@@ -42,7 +42,7 @@ func (a api) Create(c *gin.Context) {
 	err = a.actionLogger.Action(c, logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeResolveRule,
-		ValueID:   request.ID,
+		ValueID:   rule.ID,
 	})
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
@@ -58,7 +58,7 @@ func (a api) Create(c *gin.Context) {
 // @ID resolverules-find-all
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security JWTAuth
 // @Security BasicAuth
 // @Param page query integer true "current page"
 // @Param limit query integer true "items per page"
@@ -95,7 +95,7 @@ func (a api) List(c *gin.Context) {
 // @Tags resolverules
 // @ID resolverules-get-by-id
 // @Produce json
-// @Security ApiKeyAuth
+// @Security JWTAuth
 // @Security BasicAuth
 // @Param id path string true "resolve rule id"
 // @Success 200 {object} Response
@@ -122,7 +122,7 @@ func (a api) Get(c *gin.Context) {
 // @ID resolverules-update-by-id
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security JWTAuth
 // @Security BasicAuth
 // @Param id path string true "resolve rule id"
 // @Param body body UpdateRequest true "body"
@@ -166,7 +166,7 @@ func (a api) Update(c *gin.Context) {
 // @Description Delete resolve rule by id
 // @Tags resolverules
 // @ID resolverules-delete-by-id
-// @Security ApiKeyAuth
+// @Security JWTAuth
 // @Security BasicAuth`
 // @Param id path string true "resolve rule id"
 // @Success 204

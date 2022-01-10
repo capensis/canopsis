@@ -1,20 +1,14 @@
-import { omit } from 'lodash';
+import { get, omit } from 'lodash';
 import { prepareRemediationInstructionsFiltersToQuery } from '@/helpers/filter/remediation-instructions-filter';
 
 export default {
   computed: {
-    enabledWidgetRemediationInstructionsFilters() {
-      return this.widgetRemediationInstructionsFilters.filter(filter => !filter.disabled);
-    },
-
     remediationInstructionsFilters: {
       get() {
-        return this.userPreference.widget_preferences.remediationInstructionsFilters || [];
+        return this.userPreference.content.remediationInstructionsFilters || [];
       },
       set(filters) {
-        this.updateWidgetPreferencesInUserPreference({
-          ...this.userPreference.widget_preferences,
-
+        this.updateContentInUserPreference({
           remediationInstructionsFilters: filters,
         });
 
@@ -30,7 +24,7 @@ export default {
     widgetRemediationInstructionsFilters: {
       get() {
         const { remediationInstructionsFilters = [] } = this.widget.parameters;
-        const { disabledWidgetRemediationInstructionsFilters = [] } = this.userPreference.widget_preferences;
+        const { disabledWidgetRemediationInstructionsFilters = [] } = this.userPreference.content;
 
         return remediationInstructionsFilters.map(filter => ({
           ...filter,
@@ -39,15 +33,13 @@ export default {
         }));
       },
       set(filters) {
-        this.updateWidgetPreferencesInUserPreference({
-          ...this.userPreference.widget_preferences,
-
+        this.updateContentInUserPreference({
           disabledWidgetRemediationInstructionsFilters: filters.filter(filter => filter.disabled)
             .map(filter => filter._id),
         });
 
         const newRemediationInstructionsFilters = [
-          ...this.userPreference.widget_preferences.remediationInstructionsFilters,
+          ...get(this.userPreference, 'content.remediationInstructionsFilters', []),
           ...filters.filter(filter => !filter.disabled),
         ];
 
@@ -61,8 +53,8 @@ export default {
         'with_instructions',
         'include_instructions',
         'exclude_instructions',
-        'include_instructions_types',
-        'exclude_instructions_types',
+        'include_types',
+        'exclude_types',
       ]);
 
       this.query = {

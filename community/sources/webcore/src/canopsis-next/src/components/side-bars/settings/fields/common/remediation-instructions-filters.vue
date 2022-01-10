@@ -1,14 +1,15 @@
 <template lang="pug">
-  v-list-group(data-test="filterOnOpenResolved")
-    v-list-tile(slot="activator") {{ $t('settings.remediationInstructionsFilters') }}
+  v-list-group
+    template(#activator="")
+      v-list-tile {{ $t('settings.remediationInstructionsFilters') }}
     v-container
       v-layout(row, wrap)
         remediation-instructions-filters-list(
           v-field="filters",
-          :editable="hasAccessToEditFilter",
-          :closable="hasAccessToEditFilter"
+          :editable="editable",
+          :closable="editable"
         )
-      v-layout(v-if="hasAccessToAddFilter", row, wrap)
+      v-layout(v-if="addable", row, wrap)
         v-btn.ml-1(
           color="primary",
           @click="showCreateInstructionsFilterModal"
@@ -37,13 +38,13 @@ export default {
       type: Array,
       default: () => [],
     },
-    hasAccessToAddFilter: {
+    addable: {
       type: Boolean,
-      default: true,
+      default: false,
     },
-    hasAccessToEditFilter: {
+    editable: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
   methods: {
