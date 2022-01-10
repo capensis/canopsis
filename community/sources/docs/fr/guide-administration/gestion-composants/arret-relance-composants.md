@@ -34,22 +34,6 @@ L'agent de messages RabbitMQ peut être redémarré avec la commande suivante :
 systemctl restart rabbitmq-server.service
 ```
 
-### InfluxDB
-
-La base de métriques InfluxDB peut être redémarrée avec la commande suivante :
-
-```sh
-systemctl restart influxdb.service
-```
-
-### Nginx
-
-La serveur HTTP Nginx peut être redémarré avec la commande suivante :
-
-```sh
-systemctl restart nginx.service
-```
-
 ### Redis
 
 Le serveur de cache Redis peut être redémarré avec la commande suivante :

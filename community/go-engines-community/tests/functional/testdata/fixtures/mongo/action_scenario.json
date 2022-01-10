@@ -158,7 +158,8 @@
           }
         ],
         "drop_scenario_if_not_matched": false,
-        "emit_trigger": false
+        "emit_trigger": false,
+        "comment": "should be updated"
       }
     ],
     "triggers": ["create"],

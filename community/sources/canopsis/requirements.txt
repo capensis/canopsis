@@ -30,7 +30,6 @@ gunicorn==19.7.1
 #gunicorn==19.10.0
 icalendar==4.0.7
 ijson==2.3
-influxdb==5.1.0
 jsonschema==2.6.0
 kombu==4.1.0
 lxml==4.2.6
