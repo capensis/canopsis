@@ -12672,6 +12672,9 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/pattern.AlarmPatternList"
                 },
+                "comment": {
+                    "type": "string"
+                },
                 "drop_scenario_if_not_matched": {
                     "type": "boolean"
                 },

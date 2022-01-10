@@ -14,8 +14,3 @@
 
 - src: https://gitlab.capensis.fr/projet-maat/ansible-role-repository-adder-maat
   scm: git
-
-# broken
-#- src: https://gitlab.capensis.fr/projet-maat/ansible-role-influxdb-maat
-#  version: debian_compat
-#  scm: git

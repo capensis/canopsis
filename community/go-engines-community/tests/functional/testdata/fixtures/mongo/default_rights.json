@@ -46,12 +46,6 @@
     "type": "CRUD"
   },
   {
-    "_id": "api_webhook",
-    "crecord_type": "action",
-    "crecord_name": "api_webhook",
-    "type": "CRUD"
-  },
-  {
     "_id": "api_entityservice",
     "crecord_type": "action",
     "crecord_name": "api_entityservice",
@@ -301,10 +295,6 @@
         "crecord_type": "right"
       },
       "api_idlerule": {
-        "checksum": 15,
-        "crecord_type": "right"
-      },
-      "api_webhook": {
         "checksum": 15,
         "crecord_type": "right"
       },
@@ -572,10 +562,6 @@
         "crecord_type": "right"
       },
       "api_action": {
-        "checksum": 15,
-        "crecord_type": "right"
-      },
-      "api_webhook": {
         "checksum": 15,
         "crecord_type": "right"
       },
