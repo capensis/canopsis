@@ -88,6 +88,7 @@ type CheckPriorityResponse struct {
 type ActionRequest struct {
 	Type                     string                    `json:"type" binding:"required"`
 	Parameters               interface{}               `json:"parameters,omitempty"`
+	Comment                  string                    `json:"comment"`
 	AlarmPatterns            pattern.AlarmPatternList  `json:"alarm_patterns"`
 	EntityPatterns           pattern.EntityPatternList `json:"entity_patterns"`
 	DropScenarioIfNotMatched *bool                     `json:"drop_scenario_if_not_matched" binding:"required"`
@@ -249,6 +250,7 @@ type Scenario struct {
 
 type Action struct {
 	Type                     string                    `bson:"type" json:"type"`
+	Comment                  string                    `bson:"comment" json:"comment"`
 	Parameters               map[string]interface{}    `bson:"parameters,omitempty" json:"parameters,omitempty"`
 	AlarmPatterns            pattern.AlarmPatternList  `bson:"alarm_patterns" json:"alarm_patterns"`
 	EntityPatterns           pattern.EntityPatternList `bson:"entity_patterns" json:"entity_patterns"`
