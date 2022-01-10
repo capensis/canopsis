@@ -30,8 +30,9 @@ const (
 	DefaultCfgFile = "/opt/canopsis/etc/canopsis.toml"
 	FlagUsageConf  = "The configuration file used to initialize Canopsis."
 
-	DefaultMigrationsPath = "/opt/canopsis/share/database/migrations"
-	DefaultFixturesPath   = "/opt/canopsis/share/database/fixtures"
+	DefaultMongoMigrationsPath    = "/opt/canopsis/share/database/migrations"
+	DefaultMongoFixturesPath      = "/opt/canopsis/share/database/fixtures"
+	DefaultPostgresMigrationsPath = "/opt/canopsis/share/database/postgres_migrations"
 )
 
 type Conf struct {
@@ -173,11 +174,18 @@ func main() {
 	err = config.NewHealthCheckAdapter(client).UpsertConfig(ctx, conf.HealthCheck)
 	utils.FailOnError(err, "Failed to save config into mongo")
 
-	logger.Info().Msg("Start migrations")
-	cmd := cli.NewUpCmd(f.mongoMigrationDirectory, "", client, mongo.NewScriptExecutor(), logger)
-	err = cmd.Exec(ctx)
-	utils.FailOnError(err, "Failed to migrate")
-	logger.Info().Msg("Finish migrations")
+	if f.modeMigrateMongo {
+		if f.mongoMigrationDirectory == "" {
+			logger.Error().Msg("-mongo-migration-directory is not set")
+			os.Exit(ErrGeneral)
+		}
+
+		logger.Info().Msg("Start migrations")
+		cmd := cli.NewUpCmd(f.mongoMigrationDirectory, "", client, mongo.NewScriptExecutor(), logger)
+		err = cmd.Exec(ctx)
+		utils.FailOnError(err, "Failed to migrate")
+		logger.Info().Msg("Finish migrations")
+	}
 }
 
 func runPostgresMigrations(migrationDirectory, mode string, steps int) error {
