@@ -24,13 +24,13 @@
 </template>
 
 <script>
-import { entitiesRemediationJobsMixin } from '@/mixins/entities/remediation/jobs';
 import { localQueryMixin } from '@/mixins/query-local/query';
+import { entitiesRemediationJobMixin } from '@/mixins/entities/remediation/job';
 
 export default {
   mixins: [
-    entitiesRemediationJobsMixin,
     localQueryMixin,
+    entitiesRemediationJobMixin,
   ],
   props: {
     jobs: {

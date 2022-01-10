@@ -35,10 +35,11 @@
 <script>
 import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
-import modalInnerItemsMixin from '@/mixins/modal/inner-items';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import { prepareEventsByAlarms } from '@/helpers/forms/event';
 
@@ -57,11 +58,12 @@ export default {
   },
   components: { AlarmGeneralTable, AckEventForm, ModalWrapper },
   mixins: [
+    modalInnerMixin,
     modalInnerItemsMixin,
     eventActionsAlarmMixin,
-    submittableMixin(),
-    confirmableModalMixin(),
-    submittableMixin({
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
+    submittableMixinCreator({
       method: 'submitWithTicket',
       property: 'submittingWithTicket',
       computedProperty: 'isDisabledWithTicket',
@@ -82,7 +84,9 @@ export default {
     },
 
     submitWithTicketBtnLabel() {
-      return this.form.ticket ? this.$t('common.actions.acknowledgeAndAssociateTicket') : this.$t('common.actions.acknowledgeAndDeclareTicket');
+      return this.form.ticket
+        ? this.$t('common.actions.acknowledgeAndAssociateTicket')
+        : this.$t('common.actions.acknowledgeAndDeclareTicket');
     },
   },
   methods: {
@@ -156,4 +160,3 @@ export default {
   },
 };
 </script>
-

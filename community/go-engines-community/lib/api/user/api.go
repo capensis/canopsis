@@ -4,6 +4,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -11,15 +12,20 @@ import (
 type api struct {
 	store        Store
 	actionLogger logger.ActionLogger
+
+	metricMetaUpdater metrics.MetaUpdater
 }
 
 func NewApi(
 	store Store,
 	actionLogger logger.ActionLogger,
+	metricMetaUpdater metrics.MetaUpdater,
 ) common.CrudAPI {
 	return &api{
 		store:        store,
 		actionLogger: actionLogger,
+
+		metricMetaUpdater: metricMetaUpdater,
 	}
 }
 
@@ -123,6 +129,8 @@ func (a *api) Create(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
+	a.metricMetaUpdater.UpdateById(c.Request.Context(), user.ID)
+
 	c.JSON(http.StatusCreated, user)
 }
 
@@ -170,6 +178,8 @@ func (a *api) Update(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
+	a.metricMetaUpdater.UpdateById(c.Request.Context(), user.ID)
+
 	c.JSON(http.StatusOK, user)
 }
 
@@ -205,6 +215,8 @@ func (a *api) Delete(c *gin.Context) {
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
+
+	a.metricMetaUpdater.DeleteById(c.Request.Context(), id)
 
 	c.Status(http.StatusNoContent)
 }

@@ -11,10 +11,10 @@ Feature: get time intervals for periodical behavior
     """
     {
       "rrule": "FREQ=DAILY;BYDAY=WE,TH,FR",
-      "start_at": {{ (parseTime "01-10-2020 10:00").Unix }},
-      "end_at": {{ (parseTime "01-10-2020 12:00").Unix }},
-      "view_from": {{ (parseTime "30-09-2020 22:00").Unix }},
-      "view_to": {{ (parseTime "31-10-2020 23:00").Unix }},
+      "start_at": {{ parseTime "01-10-2020 10:00" }},
+      "end_at": {{ parseTime "01-10-2020 12:00" }},
+      "view_from": {{ parseTime "30-09-2020 22:00" }},
+      "view_to": {{ parseTime "31-10-2020 23:00" }},
       "by_date": true
     }
     """
@@ -23,24 +23,24 @@ Feature: get time intervals for periodical behavior
     """
     [
       {
-        "from": {{ (parseTime "30-09-2020 22:00").Unix }},
-        "to": {{ (parseTime "01-10-2020 22:00").Unix }}
+        "from": {{ parseTime "30-09-2020 22:00" }},
+        "to": {{ parseTime "01-10-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "06-10-2020 22:00").Unix }},
-        "to": {{ (parseTime "08-10-2020 22:00").Unix }}
+        "from": {{ parseTime "06-10-2020 22:00" }},
+        "to": {{ parseTime "08-10-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "13-10-2020 22:00").Unix }},
-        "to": {{ (parseTime "15-10-2020 22:00").Unix }}
+        "from": {{ parseTime "13-10-2020 22:00" }},
+        "to": {{ parseTime "15-10-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "20-10-2020 22:00").Unix }},
-        "to": {{ (parseTime "22-10-2020 22:00").Unix }}
+        "from": {{ parseTime "20-10-2020 22:00" }},
+        "to": {{ parseTime "22-10-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "27-10-2020 23:00").Unix }},
-        "to": {{ (parseTime "29-10-2020 23:00").Unix }}
+        "from": {{ parseTime "27-10-2020 23:00" }},
+        "to": {{ parseTime "29-10-2020 23:00" }}
       }
     ]
 	"""
@@ -52,10 +52,10 @@ Feature: get time intervals for periodical behavior
     """
     {
       "rrule": "FREQ=DAILY;BYDAY=WE,TH,FR",
-      "start_at": {{ (parseTime "01-10-2020 10:00").Unix }},
-      "end_at": {{ (parseTime "01-10-2020 12:00").Unix }},
-      "view_from": {{ (parseTime "04-10-2020 22:00").Unix }},
-      "view_to": {{ (parseTime "10-10-2020 22:00").Unix }}
+      "start_at": {{ parseTime "01-10-2020 10:00" }},
+      "end_at": {{ parseTime "01-10-2020 12:00" }},
+      "view_from": {{ parseTime "04-10-2020 22:00" }},
+      "view_to": {{ parseTime "10-10-2020 22:00" }}
     }
     """
     Then the response code should be 200
@@ -63,16 +63,16 @@ Feature: get time intervals for periodical behavior
     """
     [
       {
-        "from": {{ (parseTime "07-10-2020 10:00").Unix }},
-        "to": {{ (parseTime "07-10-2020 12:00").Unix }}
+        "from": {{ parseTime "07-10-2020 10:00" }},
+        "to": {{ parseTime "07-10-2020 12:00" }}
       },
       {
-        "from": {{ (parseTime "08-10-2020 10:00").Unix }},
-        "to": {{ (parseTime "08-10-2020 12:00").Unix }}
+        "from": {{ parseTime "08-10-2020 10:00" }},
+        "to": {{ parseTime "08-10-2020 12:00" }}
       },
       {
-        "from": {{ (parseTime "09-10-2020 10:00").Unix }},
-        "to": {{ (parseTime "09-10-2020 12:00").Unix }}
+        "from": {{ parseTime "09-10-2020 10:00" }},
+        "to": {{ parseTime "09-10-2020 12:00" }}
       }
     ]
 	"""
@@ -84,10 +84,10 @@ Feature: get time intervals for periodical behavior
     """
     {
       "rrule": "FREQ=DAILY;BYDAY=WE,TH,FR",
-      "start_at": {{ (parseTime "01-10-2020 10:00").Unix }},
-      "end_at": {{ (parseTime "01-10-2020 12:00").Unix }},
-      "view_from": {{ (parseTime "06-10-2020 22:00").Unix }},
-      "view_to": {{ (parseTime "07-10-2020 22:00").Unix }}
+      "start_at": {{ parseTime "01-10-2020 10:00" }},
+      "end_at": {{ parseTime "01-10-2020 12:00" }},
+      "view_from": {{ parseTime "06-10-2020 22:00" }},
+      "view_to": {{ parseTime "07-10-2020 22:00" }}
     }
     """
     Then the response code should be 200
@@ -95,8 +95,8 @@ Feature: get time intervals for periodical behavior
     """
     [
       {
-        "from": {{ (parseTime "07-10-2020 10:00").Unix }},
-        "to": {{ (parseTime "07-10-2020 12:00").Unix }}
+        "from": {{ parseTime "07-10-2020 10:00" }},
+        "to": {{ parseTime "07-10-2020 12:00" }}
       }
     ]
 	"""
@@ -108,10 +108,10 @@ Feature: get time intervals for periodical behavior
     """
     {
       "rrule": "FREQ=DAILY;BYDAY=WE,TH,FR",
-      "start_at": {{ (parseTime "01-10-2020 10:00").Unix }},
-      "end_at": {{ (parseTime "01-10-2020 12:00").Unix }},
-      "view_from": {{ (parseTime "02-10-2020 22:00").Unix }},
-      "view_to": {{ (parseTime "03-10-2020 22:00").Unix }}
+      "start_at": {{ parseTime "01-10-2020 10:00" }},
+      "end_at": {{ parseTime "01-10-2020 12:00" }},
+      "view_from": {{ parseTime "02-10-2020 22:00" }},
+      "view_to": {{ parseTime "03-10-2020 22:00" }}
     }
     """
     Then the response code should be 200
@@ -126,10 +126,10 @@ Feature: get time intervals for periodical behavior
     """
     {
       "rrule": "FREQ=WEEKLY",
-      "start_at": {{ (parseTime "03-08-2020 22:00").Unix }},
-      "end_at": {{ (parseTime "05-08-2020 22:00").Unix }},
-      "view_from": {{ (parseTime "31-07-2020 22:00").Unix }},
-      "view_to": {{ (parseTime "31-08-2020 22:00").Unix }},
+      "start_at": {{ parseTime "03-08-2020 22:00" }},
+      "end_at": {{ parseTime "05-08-2020 22:00" }},
+      "view_from": {{ parseTime "31-07-2020 22:00" }},
+      "view_to": {{ parseTime "31-08-2020 22:00" }},
       "by_date": true
     }
     """
@@ -138,24 +138,24 @@ Feature: get time intervals for periodical behavior
     """
     [
       {
-        "from": {{ (parseTime "03-08-2020 22:00").Unix }},
-        "to": {{ (parseTime "05-08-2020 22:00").Unix }}
+        "from": {{ parseTime "03-08-2020 22:00" }},
+        "to": {{ parseTime "05-08-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "10-08-2020 22:00").Unix }},
-        "to": {{ (parseTime "12-08-2020 22:00").Unix }}
+        "from": {{ parseTime "10-08-2020 22:00" }},
+        "to": {{ parseTime "12-08-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "17-08-2020 22:00").Unix }},
-        "to": {{ (parseTime "19-08-2020 22:00").Unix }}
+        "from": {{ parseTime "17-08-2020 22:00" }},
+        "to": {{ parseTime "19-08-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "24-08-2020 22:00").Unix }},
-        "to": {{ (parseTime "26-08-2020 22:00").Unix }}
+        "from": {{ parseTime "24-08-2020 22:00" }},
+        "to": {{ parseTime "26-08-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "31-08-2020 22:00").Unix }},
-        "to": {{ (parseTime "31-08-2020 22:00").Unix }}
+        "from": {{ parseTime "31-08-2020 22:00" }},
+        "to": {{ parseTime "31-08-2020 22:00" }}
       }
     ]
 	"""
@@ -166,10 +166,10 @@ Feature: get time intervals for periodical behavior
     """
     {
       "rrule": "FREQ=MONTHLY",
-      "start_at": {{ (parseTime "02-01-2020 23:00").Unix }},
-      "end_at": {{ (parseTime "08-01-2020 23:00").Unix }},
-      "view_from": {{ (parseTime "31-12-2019 23:00").Unix }},
-      "view_to": {{ (parseTime "31-12-2020 23:00").Unix }},
+      "start_at": {{ parseTime "02-01-2020 23:00" }},
+      "end_at": {{ parseTime "08-01-2020 23:00" }},
+      "view_from": {{ parseTime "31-12-2019 23:00" }},
+      "view_to": {{ parseTime "31-12-2020 23:00" }},
       "by_date": true
     }
     """
@@ -178,52 +178,52 @@ Feature: get time intervals for periodical behavior
     """
     [
       {
-        "from": {{ (parseTime "02-01-2020 23:00").Unix }},
-        "to": {{ (parseTime "08-01-2020 23:00").Unix }}
+        "from": {{ parseTime "02-01-2020 23:00" }},
+        "to": {{ parseTime "08-01-2020 23:00" }}
       },
       {
-        "from": {{ (parseTime "02-02-2020 23:00").Unix }},
-        "to": {{ (parseTime "08-02-2020 23:00").Unix }}
+        "from": {{ parseTime "02-02-2020 23:00" }},
+        "to": {{ parseTime "08-02-2020 23:00" }}
       },
       {
-        "from": {{ (parseTime "02-03-2020 23:00").Unix }},
-        "to": {{ (parseTime "08-03-2020 23:00").Unix }}
+        "from": {{ parseTime "02-03-2020 23:00" }},
+        "to": {{ parseTime "08-03-2020 23:00" }}
       },
       {
-        "from": {{ (parseTime "02-04-2020 22:00").Unix }},
-        "to": {{ (parseTime "08-04-2020 22:00").Unix }}
+        "from": {{ parseTime "02-04-2020 22:00" }},
+        "to": {{ parseTime "08-04-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "02-05-2020 22:00").Unix }},
-        "to": {{ (parseTime "08-05-2020 22:00").Unix }}
+        "from": {{ parseTime "02-05-2020 22:00" }},
+        "to": {{ parseTime "08-05-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "02-06-2020 22:00").Unix }},
-        "to": {{ (parseTime "08-06-2020 22:00").Unix }}
+        "from": {{ parseTime "02-06-2020 22:00" }},
+        "to": {{ parseTime "08-06-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "02-07-2020 22:00").Unix }},
-        "to": {{ (parseTime "08-07-2020 22:00").Unix }}
+        "from": {{ parseTime "02-07-2020 22:00" }},
+        "to": {{ parseTime "08-07-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "02-08-2020 22:00").Unix }},
-        "to": {{ (parseTime "08-08-2020 22:00").Unix }}
+        "from": {{ parseTime "02-08-2020 22:00" }},
+        "to": {{ parseTime "08-08-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "02-09-2020 22:00").Unix }},
-        "to": {{ (parseTime "08-09-2020 22:00").Unix }}
+        "from": {{ parseTime "02-09-2020 22:00" }},
+        "to": {{ parseTime "08-09-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "02-10-2020 22:00").Unix }},
-        "to": {{ (parseTime "08-10-2020 22:00").Unix }}
+        "from": {{ parseTime "02-10-2020 22:00" }},
+        "to": {{ parseTime "08-10-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "02-11-2020 23:00").Unix }},
-        "to": {{ (parseTime "08-11-2020 23:00").Unix }}
+        "from": {{ parseTime "02-11-2020 23:00" }},
+        "to": {{ parseTime "08-11-2020 23:00" }}
       },
       {
-        "from": {{ (parseTime "02-12-2020 23:00").Unix }},
-        "to": {{ (parseTime "08-12-2020 23:00").Unix }}
+        "from": {{ parseTime "02-12-2020 23:00" }},
+        "to": {{ parseTime "08-12-2020 23:00" }}
       }
     ]
 	"""
@@ -234,10 +234,10 @@ Feature: get time intervals for periodical behavior
     """
     {
       "rrule": "FREQ=WEEKLY",
-      "start_at": {{ (parseTime "27-07-2020 22:00").Unix }},
-      "end_at": {{ (parseTime "29-07-2020 21:59").Unix }},
-      "view_from": {{ (parseTime "11-08-2020 22:00").Unix }},
-      "view_to": {{ (parseTime "12-08-2020 21:59").Unix }}
+      "start_at": {{ parseTime "27-07-2020 22:00" }},
+      "end_at": {{ parseTime "29-07-2020 21:59" }},
+      "view_from": {{ parseTime "11-08-2020 22:00" }},
+      "view_to": {{ parseTime "12-08-2020 21:59" }}
     }
     """
     Then the response code should be 200
@@ -245,8 +245,8 @@ Feature: get time intervals for periodical behavior
     """
     [
       {
-        "from": {{ (parseTime "11-08-2020 22:00").Unix }},
-        "to": {{ (parseTime "12-08-2020 21:59").Unix }}
+        "from": {{ parseTime "11-08-2020 22:00" }},
+        "to": {{ parseTime "12-08-2020 21:59" }}
       }
     ]
 	"""
@@ -257,10 +257,10 @@ Feature: get time intervals for periodical behavior
     """
     {
       "rrule": "FREQ=MONTHLY",
-      "start_at": {{ (parseTime "02-08-2020 22:00").Unix }},
-      "end_at": {{ (parseTime "09-08-2020 21:59").Unix }},
-      "view_from": {{ (parseTime "04-09-2020 22:00").Unix }},
-      "view_to": {{ (parseTime "05-09-2020 21:59").Unix }}
+      "start_at": {{ parseTime "02-08-2020 22:00" }},
+      "end_at": {{ parseTime "09-08-2020 21:59" }},
+      "view_from": {{ parseTime "04-09-2020 22:00" }},
+      "view_to": {{ parseTime "05-09-2020 21:59" }}
     }
     """
     Then the response code should be 200
@@ -268,8 +268,8 @@ Feature: get time intervals for periodical behavior
     """
     [
       {
-        "from": {{ (parseTime "04-09-2020 22:00").Unix }},
-        "to": {{ (parseTime "05-09-2020 21:59").Unix }}
+        "from": {{ parseTime "04-09-2020 22:00" }},
+        "to": {{ parseTime "05-09-2020 21:59" }}
       }
     ]
 	"""
@@ -281,10 +281,10 @@ Feature: get time intervals for periodical behavior
     """
     {
       "rrule": "FREQ=DAILY;BYDAY=WE,TH,FR",
-      "start_at": {{ (parseTime "01-10-2020 10:00").Unix }},
-      "end_at": {{ (parseTime "01-10-2020 12:00").Unix }},
-      "view_from": {{ (parseTime "27-10-2020 23:00").Unix }},
-      "view_to": {{ (parseTime "28-10-2020 23:00").Unix }}
+      "start_at": {{ parseTime "01-10-2020 10:00" }},
+      "end_at": {{ parseTime "01-10-2020 12:00" }},
+      "view_from": {{ parseTime "27-10-2020 23:00" }},
+      "view_to": {{ parseTime "28-10-2020 23:00" }}
     }
     """
     Then the response code should be 200
@@ -292,8 +292,8 @@ Feature: get time intervals for periodical behavior
     """
     [
       {
-        "from": {{ (parseTime "28-10-2020 11:00").Unix }},
-        "to": {{ (parseTime "28-10-2020 13:00").Unix }}
+        "from": {{ parseTime "28-10-2020 11:00" }},
+        "to": {{ parseTime "28-10-2020 13:00" }}
       }
     ]
 	"""
@@ -306,42 +306,42 @@ Feature: get time intervals for periodical behavior
     """
     {
       "rrule": "FREQ=DAILY;BYDAY=WE,TH,FR",
-      "start_at": {{ (parseTime "01-10-2020 10:00").Unix }},
-      "end_at": {{ (parseTime "01-10-2020 12:00").Unix }},
-      "view_from": {{ (parseTime "30-09-2020 22:00").Unix }},
-      "view_to": {{ (parseTime "31-10-2020 23:00").Unix }},
+      "start_at": {{ parseTime "01-10-2020 10:00" }},
+      "end_at": {{ parseTime "01-10-2020 12:00" }},
+      "view_from": {{ parseTime "30-09-2020 22:00" }},
+      "view_to": {{ parseTime "31-10-2020 23:00" }},
       "exdates": [
         {
-          "begin": {{ (parseTime "07-10-2020 22:00").Unix }},
-          "end": {{ (parseTime "08-10-2020 22:00").Unix }}
+          "begin": {{ parseTime "07-10-2020 22:00" }},
+          "end": {{ parseTime "08-10-2020 22:00" }}
         },
         {
-          "begin": {{ (parseTime "14-10-2020 22:00").Unix }},
-          "end": {{ (parseTime "15-10-2020 11:00").Unix }}
+          "begin": {{ parseTime "14-10-2020 22:00" }},
+          "end": {{ parseTime "15-10-2020 11:00" }}
         },
         {
-          "begin": {{ (parseTime "22-10-2020 11:00").Unix }},
-          "end": {{ (parseTime "22-10-2020 22:00").Unix }}
+          "begin": {{ parseTime "22-10-2020 11:00" }},
+          "end": {{ parseTime "22-10-2020 22:00" }}
         },
         {
-          "begin": {{ (parseTime "29-10-2020 11:00").Unix }},
-          "end": {{ (parseTime "29-10-2020 11:30").Unix }}
+          "begin": {{ parseTime "29-10-2020 11:00" }},
+          "end": {{ parseTime "29-10-2020 11:30" }}
         },
         {
-          "begin": {{ (parseTime "08-10-2020 22:00").Unix }},
-          "end": {{ (parseTime "09-10-2020 09:00").Unix }}
+          "begin": {{ parseTime "08-10-2020 22:00" }},
+          "end": {{ parseTime "09-10-2020 09:00" }}
         },
         {
-          "begin": {{ (parseTime "16-10-2020 13:00").Unix }},
-          "end": {{ (parseTime "16-10-2020 22:00").Unix }}
+          "begin": {{ parseTime "16-10-2020 13:00" }},
+          "end": {{ parseTime "16-10-2020 22:00" }}
         },
         {
-          "begin": {{ (parseTime "21-10-2020 09:00").Unix }},
-          "end": {{ (parseTime "21-10-2020 10:30").Unix }}
+          "begin": {{ parseTime "21-10-2020 09:00" }},
+          "end": {{ parseTime "21-10-2020 10:30" }}
         },
         {
-          "begin": {{ (parseTime "21-10-2020 10:00").Unix }},
-          "end": {{ (parseTime "21-10-2020 18:30").Unix }}
+          "begin": {{ parseTime "21-10-2020 10:00" }},
+          "end": {{ parseTime "21-10-2020 18:30" }}
         }
       ],
       "by_date": true
@@ -352,28 +352,28 @@ Feature: get time intervals for periodical behavior
     """
     [
       {
-        "from": {{ (parseTime "30-09-2020 22:00").Unix }},
-        "to": {{ (parseTime "01-10-2020 22:00").Unix }}
+        "from": {{ parseTime "30-09-2020 22:00" }},
+        "to": {{ parseTime "01-10-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "06-10-2020 22:00").Unix }},
-        "to": {{ (parseTime "06-10-2020 22:00").Unix }}
+        "from": {{ parseTime "06-10-2020 22:00" }},
+        "to": {{ parseTime "06-10-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "08-10-2020 22:00").Unix }},
-        "to": {{ (parseTime "08-10-2020 22:00").Unix }}
+        "from": {{ parseTime "08-10-2020 22:00" }},
+        "to": {{ parseTime "08-10-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "13-10-2020 22:00").Unix }},
-        "to": {{ (parseTime "15-10-2020 22:00").Unix }}
+        "from": {{ parseTime "13-10-2020 22:00" }},
+        "to": {{ parseTime "15-10-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "21-10-2020 22:00").Unix }},
-        "to": {{ (parseTime "22-10-2020 22:00").Unix }}
+        "from": {{ parseTime "21-10-2020 22:00" }},
+        "to": {{ parseTime "22-10-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "27-10-2020 23:00").Unix }},
-        "to": {{ (parseTime "29-10-2020 23:00").Unix }}
+        "from": {{ parseTime "27-10-2020 23:00" }},
+        "to": {{ parseTime "29-10-2020 23:00" }}
       }
     ]
 	"""
@@ -385,42 +385,42 @@ Feature: get time intervals for periodical behavior
     """
     {
       "rrule": "FREQ=DAILY",
-      "start_at": {{ (parseTime "01-10-2020 10:00").Unix }},
-      "end_at": {{ (parseTime "01-10-2020 12:00").Unix }},
-      "view_from": {{ (parseTime "04-10-2020 22:00").Unix }},
-      "view_to": {{ (parseTime "11-10-2020 22:00").Unix }},
+      "start_at": {{ parseTime "01-10-2020 10:00" }},
+      "end_at": {{ parseTime "01-10-2020 12:00" }},
+      "view_from": {{ parseTime "04-10-2020 22:00" }},
+      "view_to": {{ parseTime "11-10-2020 22:00" }},
       "exdates": [
         {
-          "begin": {{ (parseTime "04-10-2020 22:00").Unix }},
-          "end": {{ (parseTime "05-10-2020 22:00").Unix }}
+          "begin": {{ parseTime "04-10-2020 22:00" }},
+          "end": {{ parseTime "05-10-2020 22:00" }}
         },
         {
-          "begin": {{ (parseTime "05-10-2020 22:00").Unix }},
-          "end": {{ (parseTime "06-10-2020 11:00").Unix }}
+          "begin": {{ parseTime "05-10-2020 22:00" }},
+          "end": {{ parseTime "06-10-2020 11:00" }}
         },
         {
-          "begin": {{ (parseTime "07-10-2020 11:00").Unix }},
-          "end": {{ (parseTime "07-10-2020 22:00").Unix }}
+          "begin": {{ parseTime "07-10-2020 11:00" }},
+          "end": {{ parseTime "07-10-2020 22:00" }}
         },
         {
-          "begin": {{ (parseTime "08-10-2020 11:00").Unix }},
-          "end": {{ (parseTime "08-10-2020 11:30").Unix }}
+          "begin": {{ parseTime "08-10-2020 11:00" }},
+          "end": {{ parseTime "08-10-2020 11:30" }}
         },
         {
-          "begin": {{ (parseTime "08-10-2020 22:00").Unix }},
-          "end": {{ (parseTime "09-10-2020 09:00").Unix }}
+          "begin": {{ parseTime "08-10-2020 22:00" }},
+          "end": {{ parseTime "09-10-2020 09:00" }}
         },
         {
-          "begin": {{ (parseTime "09-10-2020 13:00").Unix }},
-          "end": {{ (parseTime "09-10-2020 22:00").Unix }}
+          "begin": {{ parseTime "09-10-2020 13:00" }},
+          "end": {{ parseTime "09-10-2020 22:00" }}
         },
         {
-          "begin": {{ (parseTime "10-10-2020 09:00").Unix }},
-          "end": {{ (parseTime "10-10-2020 10:30").Unix }}
+          "begin": {{ parseTime "10-10-2020 09:00" }},
+          "end": {{ parseTime "10-10-2020 10:30" }}
         },
         {
-          "begin": {{ (parseTime "10-10-2020 10:00").Unix }},
-          "end": {{ (parseTime "10-10-2020 18:30").Unix }}
+          "begin": {{ parseTime "10-10-2020 10:00" }},
+          "end": {{ parseTime "10-10-2020 18:30" }}
         }
       ]
     }
@@ -430,28 +430,28 @@ Feature: get time intervals for periodical behavior
     """
     [
       {
-        "from": {{ (parseTime "06-10-2020 11:00").Unix }},
-        "to": {{ (parseTime "06-10-2020 12:00").Unix }}
+        "from": {{ parseTime "06-10-2020 11:00" }},
+        "to": {{ parseTime "06-10-2020 12:00" }}
       },
       {
-        "from": {{ (parseTime "07-10-2020 10:00").Unix }},
-        "to": {{ (parseTime "07-10-2020 11:00").Unix }}
+        "from": {{ parseTime "07-10-2020 10:00" }},
+        "to": {{ parseTime "07-10-2020 11:00" }}
       },
       {
-        "from": {{ (parseTime "08-10-2020 10:00").Unix }},
-        "to": {{ (parseTime "08-10-2020 11:00").Unix }}
+        "from": {{ parseTime "08-10-2020 10:00" }},
+        "to": {{ parseTime "08-10-2020 11:00" }}
       },
       {
-        "from": {{ (parseTime "08-10-2020 11:30").Unix }},
-        "to": {{ (parseTime "08-10-2020 12:00").Unix }}
+        "from": {{ parseTime "08-10-2020 11:30" }},
+        "to": {{ parseTime "08-10-2020 12:00" }}
       },
       {
-        "from": {{ (parseTime "09-10-2020 10:00").Unix }},
-        "to": {{ (parseTime "09-10-2020 12:00").Unix }}
+        "from": {{ parseTime "09-10-2020 10:00" }},
+        "to": {{ parseTime "09-10-2020 12:00" }}
       },
       {
-        "from": {{ (parseTime "11-10-2020 10:00").Unix }},
-        "to": {{ (parseTime "11-10-2020 12:00").Unix }}
+        "from": {{ parseTime "11-10-2020 10:00" }},
+        "to": {{ parseTime "11-10-2020 12:00" }}
       }
     ]
 	"""
@@ -467,43 +467,43 @@ Feature: get time intervals for periodical behavior
       "description": "Test timespans with exceptions on month view",
       "exdates": [
         {
-          "begin": {{ (parseTime "07-10-2020 22:00").Unix }},
-          "end": {{ (parseTime "08-10-2020 22:00").Unix }},
+          "begin": {{ parseTime "07-10-2020 22:00" }},
+          "end": {{ parseTime "08-10-2020 22:00" }},
           "type": "test-type-to-pbh-edit-1"
         },
         {
-          "begin": {{ (parseTime "14-10-2020 22:00").Unix }},
-          "end": {{ (parseTime "15-10-2020 11:00").Unix }},
+          "begin": {{ parseTime "14-10-2020 22:00" }},
+          "end": {{ parseTime "15-10-2020 11:00" }},
           "type": "test-type-to-pbh-edit-1"
         },
         {
-          "begin": {{ (parseTime "22-10-2020 11:00").Unix }},
-          "end": {{ (parseTime "22-10-2020 22:00").Unix }},
+          "begin": {{ parseTime "22-10-2020 11:00" }},
+          "end": {{ parseTime "22-10-2020 22:00" }},
           "type": "test-type-to-pbh-edit-1"
         },
         {
-          "begin": {{ (parseTime "29-10-2020 11:00").Unix }},
-          "end": {{ (parseTime "29-10-2020 11:30").Unix }},
+          "begin": {{ parseTime "29-10-2020 11:00" }},
+          "end": {{ parseTime "29-10-2020 11:30" }},
           "type": "test-type-to-pbh-edit-1"
         },
         {
-          "begin": {{ (parseTime "08-10-2020 22:00").Unix }},
-          "end": {{ (parseTime "09-10-2020 09:00").Unix }},
+          "begin": {{ parseTime "08-10-2020 22:00" }},
+          "end": {{ parseTime "09-10-2020 09:00" }},
           "type": "test-type-to-pbh-edit-1"
         },
         {
-          "begin": {{ (parseTime "16-10-2020 13:00").Unix }},
-          "end": {{ (parseTime "16-10-2020 22:00").Unix }},
+          "begin": {{ parseTime "16-10-2020 13:00" }},
+          "end": {{ parseTime "16-10-2020 22:00" }},
           "type": "test-type-to-pbh-edit-1"
         },
         {
-          "begin": {{ (parseTime "21-10-2020 09:00").Unix }},
-          "end": {{ (parseTime "21-10-2020 10:30").Unix }},
+          "begin": {{ parseTime "21-10-2020 09:00" }},
+          "end": {{ parseTime "21-10-2020 10:30" }},
           "type": "test-type-to-pbh-edit-1"
         },
         {
-          "begin": {{ (parseTime "21-10-2020 10:00").Unix }},
-          "end": {{ (parseTime "21-10-2020 18:30").Unix }},
+          "begin": {{ parseTime "21-10-2020 10:00" }},
+          "end": {{ parseTime "21-10-2020 18:30" }},
           "type": "test-type-to-pbh-edit-1"
         }
       ]
@@ -513,10 +513,10 @@ Feature: get time intervals for periodical behavior
     """
     {
       "rrule": "FREQ=DAILY;BYDAY=WE,TH,FR",
-      "start_at": {{ (parseTime "01-10-2020 10:00").Unix }},
-      "end_at": {{ (parseTime "01-10-2020 12:00").Unix }},
-      "view_from": {{ (parseTime "30-09-2020 22:00").Unix }},
-      "view_to": {{ (parseTime "31-10-2020 23:00").Unix }},
+      "start_at": {{ parseTime "01-10-2020 10:00" }},
+      "end_at": {{ parseTime "01-10-2020 12:00" }},
+      "view_from": {{ parseTime "30-09-2020 22:00" }},
+      "view_to": {{ parseTime "31-10-2020 23:00" }},
       "exceptions": ["{{ .lastResponse._id }}"],
       "by_date": true
     }
@@ -526,28 +526,28 @@ Feature: get time intervals for periodical behavior
     """
     [
       {
-        "from": {{ (parseTime "30-09-2020 22:00").Unix }},
-        "to": {{ (parseTime "01-10-2020 22:00").Unix }}
+        "from": {{ parseTime "30-09-2020 22:00" }},
+        "to": {{ parseTime "01-10-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "06-10-2020 22:00").Unix }},
-        "to": {{ (parseTime "06-10-2020 22:00").Unix }}
+        "from": {{ parseTime "06-10-2020 22:00" }},
+        "to": {{ parseTime "06-10-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "08-10-2020 22:00").Unix }},
-        "to": {{ (parseTime "08-10-2020 22:00").Unix }}
+        "from": {{ parseTime "08-10-2020 22:00" }},
+        "to": {{ parseTime "08-10-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "13-10-2020 22:00").Unix }},
-        "to": {{ (parseTime "15-10-2020 22:00").Unix }}
+        "from": {{ parseTime "13-10-2020 22:00" }},
+        "to": {{ parseTime "15-10-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "21-10-2020 22:00").Unix }},
-        "to": {{ (parseTime "22-10-2020 22:00").Unix }}
+        "from": {{ parseTime "21-10-2020 22:00" }},
+        "to": {{ parseTime "22-10-2020 22:00" }}
       },
       {
-        "from": {{ (parseTime "27-10-2020 23:00").Unix }},
-        "to": {{ (parseTime "29-10-2020 23:00").Unix }}
+        "from": {{ parseTime "27-10-2020 23:00" }},
+        "to": {{ parseTime "29-10-2020 23:00" }}
       }
     ]
 	"""
@@ -563,43 +563,43 @@ Feature: get time intervals for periodical behavior
 #      "description": "Test timespans with exceptions on week view",
 #      "exdates": [
 #        {
-#          "begin": {{ (parseTime "04-10-2020 22:00").Unix }},
-#          "end": {{ (parseTime "05-10-2020 22:00").Unix }},
+#          "begin": {{ parseTime "04-10-2020 22:00" }},
+#          "end": {{ parseTime "05-10-2020 22:00" }},
 #          "type": "test-type-to-pbh-edit-1"
 #        },
 #        {
-#          "begin": {{ (parseTime "05-10-2020 22:00").Unix }},
-#          "end": {{ (parseTime "06-10-2020 11:00").Unix }},
+#          "begin": {{ parseTime "05-10-2020 22:00" }},
+#          "end": {{ parseTime "06-10-2020 11:00" }},
 #          "type": "test-type-to-pbh-edit-1"
 #        },
 #        {
-#          "begin": {{ (parseTime "07-10-2020 11:00").Unix }},
-#          "end": {{ (parseTime "07-10-2020 22:00").Unix }},
+#          "begin": {{ parseTime "07-10-2020 11:00" }},
+#          "end": {{ parseTime "07-10-2020 22:00" }},
 #          "type": "test-type-to-pbh-edit-1"
 #        },
 #        {
-#          "begin": {{ (parseTime "08-10-2020 11:00").Unix }},
-#          "end": {{ (parseTime "08-10-2020 11:30").Unix }},
+#          "begin": {{ parseTime "08-10-2020 11:00" }},
+#          "end": {{ parseTime "08-10-2020 11:30" }},
 #          "type": "test-type-to-pbh-edit-1"
 #        },
 #        {
-#          "begin": {{ (parseTime "08-10-2020 22:00").Unix }},
-#          "end": {{ (parseTime "09-10-2020 09:00").Unix }},
+#          "begin": {{ parseTime "08-10-2020 22:00" }},
+#          "end": {{ parseTime "09-10-2020 09:00" }},
 #          "type": "test-type-to-pbh-edit-1"
 #        },
 #        {
-#          "begin": {{ (parseTime "09-10-2020 13:00").Unix }},
-#          "end": {{ (parseTime "09-10-2020 22:00").Unix }},
+#          "begin": {{ parseTime "09-10-2020 13:00" }},
+#          "end": {{ parseTime "09-10-2020 22:00" }},
 #          "type": "test-type-to-pbh-edit-1"
 #        },
 #        {
-#          "begin": {{ (parseTime "10-10-2020 09:00").Unix }},
-#          "end": {{ (parseTime "10-10-2020 10:30").Unix }},
+#          "begin": {{ parseTime "10-10-2020 09:00" }},
+#          "end": {{ parseTime "10-10-2020 10:30" }},
 #          "type": "test-type-to-pbh-edit-1"
 #        },
 #        {
-#          "begin": {{ (parseTime "10-10-2020 10:00").Unix }},
-#          "end": {{ (parseTime "10-10-2020 18:30").Unix }},
+#          "begin": {{ parseTime "10-10-2020 10:00" }},
+#          "end": {{ parseTime "10-10-2020 18:30" }},
 #          "type": "test-type-to-pbh-edit-1"
 #        }
 #      ]
@@ -609,10 +609,10 @@ Feature: get time intervals for periodical behavior
 #    """
 #    {
 #      "rrule": "FREQ=DAILY",
-#      "start_at": {{ (parseTime "01-10-2020 10:00").Unix }},
-#      "end_at": {{ (parseTime "01-10-2020 12:00").Unix }},
-#      "view_from": {{ (parseTime "04-10-2020 22:00").Unix }},
-#      "view_to": {{ (parseTime "11-10-2020 22:00").Unix }},
+#      "start_at": {{ parseTime "01-10-2020 10:00" }},
+#      "end_at": {{ parseTime "01-10-2020 12:00" }},
+#      "view_from": {{ parseTime "04-10-2020 22:00" }},
+#      "view_to": {{ parseTime "11-10-2020 22:00" }},
 #      "exceptions": ["{{ .lastResponse._id }}"]
 #    }
 #    """
@@ -621,32 +621,32 @@ Feature: get time intervals for periodical behavior
 #    """
 #    [
 #      {
-#        "from": {{ (parseTime "06-10-2020 11:00").Unix }},
-#        "to": {{ (parseTime "06-10-2020 12:00").Unix }}
+#        "from": {{ parseTime "06-10-2020 11:00" }},
+#        "to": {{ parseTime "06-10-2020 12:00" }}
 #      },
 #      {
-#        "from": {{ (parseTime "07-10-2020 10:00").Unix }},
-#        "to": {{ (parseTime "07-10-2020 11:00").Unix }}
+#        "from": {{ parseTime "07-10-2020 10:00" }},
+#        "to": {{ parseTime "07-10-2020 11:00" }}
 #      },
 #      {
-#        "from": {{ (parseTime "08-10-2020 10:00").Unix }},
-#        "to": {{ (parseTime "08-10-2020 11:00").Unix }}
+#        "from": {{ parseTime "08-10-2020 10:00" }},
+#        "to": {{ parseTime "08-10-2020 11:00" }}
 #      },
 #      {
-#        "from": {{ (parseTime "08-10-2020 11:30").Unix }},
-#        "to": {{ (parseTime "08-10-2020 12:00").Unix }}
+#        "from": {{ parseTime "08-10-2020 11:30" }},
+#        "to": {{ parseTime "08-10-2020 12:00" }}
 #      },
 #      {
-#        "from": {{ (parseTime "09-10-2020 10:00").Unix }},
-#        "to": {{ (parseTime "09-10-2020 12:00").Unix }}
+#        "from": {{ parseTime "09-10-2020 10:00" }},
+#        "to": {{ parseTime "09-10-2020 12:00" }}
 #      },
 #      {
-#        "from": {{ (parseTime "11-10-2020 10:00").Unix }},
-#        "to": {{ (parseTime "11-10-2020 12:00").Unix }}
+#        "from": {{ parseTime "11-10-2020 10:00" }},
+#        "to": {{ parseTime "11-10-2020 12:00" }}
 #      },
 #      {
-#        "from": {{ (parseTime "04-10-2020 22:00").Unix }},
-#        "to": {{ (parseTime "05-10-2020 22:00").Unix }},
+#        "from": {{ parseTime "04-10-2020 22:00" }},
+#        "to": {{ parseTime "05-10-2020 22:00" }},
 #        "type": {
 #          "_id": "test-type-to-pbh-edit-1",
 #          "description": "Pbh edit 1 State type",
@@ -657,8 +657,8 @@ Feature: get time intervals for periodical behavior
 #        }
 #      },
 #      {
-#        "from": {{ (parseTime "05-10-2020 22:00").Unix }},
-#        "to": {{ (parseTime "06-10-2020 11:00").Unix }},
+#        "from": {{ parseTime "05-10-2020 22:00" }},
+#        "to": {{ parseTime "06-10-2020 11:00" }},
 #        "type": {
 #          "_id": "test-type-to-pbh-edit-1",
 #          "description": "Pbh edit 1 State type",
@@ -669,8 +669,8 @@ Feature: get time intervals for periodical behavior
 #        }
 #      },
 #      {
-#        "from": {{ (parseTime "07-10-2020 11:00").Unix }},
-#        "to": {{ (parseTime "07-10-2020 22:00").Unix }},
+#        "from": {{ parseTime "07-10-2020 11:00" }},
+#        "to": {{ parseTime "07-10-2020 22:00" }},
 #        "type": {
 #          "_id": "test-type-to-pbh-edit-1",
 #          "description": "Pbh edit 1 State type",
@@ -681,8 +681,8 @@ Feature: get time intervals for periodical behavior
 #        }
 #      },
 #      {
-#        "from": {{ (parseTime "08-10-2020 11:00").Unix }},
-#        "to": {{ (parseTime "08-10-2020 11:30").Unix }},
+#        "from": {{ parseTime "08-10-2020 11:00" }},
+#        "to": {{ parseTime "08-10-2020 11:30" }},
 #        "type": {
 #          "_id": "test-type-to-pbh-edit-1",
 #          "description": "Pbh edit 1 State type",
@@ -693,8 +693,8 @@ Feature: get time intervals for periodical behavior
 #        }
 #      },
 #      {
-#        "from": {{ (parseTime "08-10-2020 22:00").Unix }},
-#        "to": {{ (parseTime "09-10-2020 09:00").Unix }},
+#        "from": {{ parseTime "08-10-2020 22:00" }},
+#        "to": {{ parseTime "09-10-2020 09:00" }},
 #        "type": {
 #          "_id": "test-type-to-pbh-edit-1",
 #          "description": "Pbh edit 1 State type",
@@ -705,8 +705,8 @@ Feature: get time intervals for periodical behavior
 #        }
 #      },
 #      {
-#        "from": {{ (parseTime "09-10-2020 13:00").Unix }},
-#        "to": {{ (parseTime "09-10-2020 22:00").Unix }},
+#        "from": {{ parseTime "09-10-2020 13:00" }},
+#        "to": {{ parseTime "09-10-2020 22:00" }},
 #        "type": {
 #          "_id": "test-type-to-pbh-edit-1",
 #          "description": "Pbh edit 1 State type",
@@ -717,8 +717,8 @@ Feature: get time intervals for periodical behavior
 #        }
 #      },
 #      {
-#        "from": {{ (parseTime "10-10-2020 09:00").Unix }},
-#        "to": {{ (parseTime "10-10-2020 10:30").Unix }},
+#        "from": {{ parseTime "10-10-2020 09:00" }},
+#        "to": {{ parseTime "10-10-2020 10:30" }},
 #        "type": {
 #          "_id": "test-type-to-pbh-edit-1",
 #          "description": "Pbh edit 1 State type",
@@ -729,8 +729,8 @@ Feature: get time intervals for periodical behavior
 #        }
 #      },
 #      {
-#        "from": {{ (parseTime "10-10-2020 10:00").Unix }},
-#        "to": {{ (parseTime "10-10-2020 18:30").Unix }},
+#        "from": {{ parseTime "10-10-2020 10:00" }},
+#        "to": {{ parseTime "10-10-2020 18:30" }},
 #        "type": {
 #          "_id": "test-type-to-pbh-edit-1",
 #          "description": "Pbh edit 1 State type",
@@ -750,9 +750,9 @@ Feature: get time intervals for periodical behavior
     """
     {
       "rrule": "FREQ=DAILY;BYDAY=WE,TH,FR",
-      "start_at": {{ (parseTime "01-10-2020 10:00").Unix }},
-      "view_from": {{ (parseTime "30-09-2020 22:00").Unix }},
-      "view_to": {{ (parseTime "31-10-2020 23:00").Unix }},
+      "start_at": {{ parseTime "01-10-2020 10:00" }},
+      "view_from": {{ parseTime "30-09-2020 22:00" }},
+      "view_to": {{ parseTime "31-10-2020 23:00" }},
       "by_date": true
     }
     """
@@ -761,8 +761,8 @@ Feature: get time intervals for periodical behavior
     """
     [
       {
-        "from": {{ (parseTime "30-09-2020 22:00").Unix }},
-        "to": {{ (parseTime "31-10-2020 23:00").Unix }}
+        "from": {{ parseTime "30-09-2020 22:00" }},
+        "to": {{ parseTime "31-10-2020 23:00" }}
       }
     ]
 	"""
@@ -774,9 +774,9 @@ Feature: get time intervals for periodical behavior
     """
     {
       "rrule": "FREQ=DAILY;BYDAY=WE,TH,FR",
-      "start_at": {{ (parseTime "09-10-2020 10:00").Unix }},
-      "view_from": {{ (parseTime "04-10-2020 22:00").Unix }},
-      "view_to": {{ (parseTime "10-10-2020 22:00").Unix }}
+      "start_at": {{ parseTime "09-10-2020 10:00" }},
+      "view_from": {{ parseTime "04-10-2020 22:00" }},
+      "view_to": {{ parseTime "10-10-2020 22:00" }}
     }
     """
     Then the response code should be 200
@@ -784,8 +784,8 @@ Feature: get time intervals for periodical behavior
     """
     [
       {
-        "from": {{ (parseTime "09-10-2020 10:00").Unix }},
-        "to": {{ (parseTime "10-10-2020 22:00").Unix }}
+        "from": {{ parseTime "09-10-2020 10:00" }},
+        "to": {{ parseTime "10-10-2020 22:00" }}
       }
     ]
 	"""
@@ -797,9 +797,9 @@ Feature: get time intervals for periodical behavior
     """
     {
       "rrule": "FREQ=DAILY;BYDAY=WE,TH,FR",
-      "start_at": {{ (parseTime "07-10-2020 10:00").Unix }},
-      "view_from": {{ (parseTime "06-10-2020 22:00").Unix }},
-      "view_to": {{ (parseTime "07-10-2020 22:00").Unix }}
+      "start_at": {{ parseTime "07-10-2020 10:00" }},
+      "view_from": {{ parseTime "06-10-2020 22:00" }},
+      "view_to": {{ parseTime "07-10-2020 22:00" }}
     }
     """
     Then the response code should be 200
@@ -807,8 +807,8 @@ Feature: get time intervals for periodical behavior
     """
     [
       {
-        "from": {{ (parseTime "07-10-2020 10:00").Unix }},
-        "to": {{ (parseTime "07-10-2020 22:00").Unix }}
+        "from": {{ parseTime "07-10-2020 10:00" }},
+        "to": {{ parseTime "07-10-2020 22:00" }}
       }
     ]
 	"""
@@ -834,10 +834,10 @@ Feature: get time intervals for periodical behavior
     """
     {
       "rrule": "FREQ=DAILY;BYDAY=MO,TU,WE",
-      "start_at": {{ (parseTime "01-10-2020 10:00").Unix }},
-      "end_at": {{ (parseTime "01-10-2020 12:00").Unix }},
-      "view_from": {{ (parseTime "30-09-2020 22:00").Unix }},
-      "view_to": {{ (parseTime "31-10-2020 23:00").Unix }}
+      "start_at": {{ parseTime "01-10-2020 10:00" }},
+      "end_at": {{ parseTime "01-10-2020 12:00" }},
+      "view_from": {{ parseTime "30-09-2020 22:00" }},
+      "view_to": {{ parseTime "31-10-2020 23:00" }}
       "by_date": true
     }
     """

@@ -4,7 +4,7 @@
       v-tab {{ $t('common.summary') }}
       v-tab {{ $t('common.statistics') }}
       v-tab(v-if="remediationInstruction.execution_count") {{ $t('remediationInstructionStats.alarmsTimeline') }}
-      v-tab {{ $t('remediationInstructionStats.rating') }}
+      v-tab {{ $tc('common.rating') }}
     v-layout.pa-3.secondary.lighten-2
       v-flex(xs12)
         v-card.pa-3

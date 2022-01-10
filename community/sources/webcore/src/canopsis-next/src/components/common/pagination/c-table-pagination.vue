@@ -9,21 +9,20 @@
       )
     v-spacer
     v-flex(xs2)
-      c-records-per-page(
+      c-records-per-page-field.pa-0(
         :value="rowsPerPage",
         :items="rowsPerPageItems",
+        hide-details,
         @input="$emit('update:rows-per-page', $event)"
       )
 </template>
 
 <script>
 import CPagination from './c-pagination.vue';
-import CRecordsPerPage from './c-records-per-page.vue';
 
 export default {
   components: {
     CPagination,
-    CRecordsPerPage,
   },
   props: {
     rowsPerPageItems: {

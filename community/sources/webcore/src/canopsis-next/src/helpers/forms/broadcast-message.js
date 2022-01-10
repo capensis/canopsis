@@ -1,8 +1,6 @@
-import moment from 'moment';
-
 import { DEFAULT_BROADCAST_MESSAGE_COLOR } from '@/constants';
 
-import { convertTimestampToMoment } from '@/helpers/date/date';
+import { convertDateToDateObject, convertDateToTimestamp } from '@/helpers/date/date';
 
 /**
  * @typedef {Object} Broadcast
@@ -27,12 +25,8 @@ import { convertTimestampToMoment } from '@/helpers/date/date';
 export const messageToForm = (broadcastMessage = {}) => ({
   message: broadcastMessage.message || '',
   color: broadcastMessage.color || DEFAULT_BROADCAST_MESSAGE_COLOR,
-  start: broadcastMessage.start
-    ? convertTimestampToMoment(broadcastMessage.start).toDate()
-    : new Date(),
-  end: broadcastMessage.end
-    ? convertTimestampToMoment(broadcastMessage.end).toDate()
-    : new Date(),
+  start: convertDateToDateObject(broadcastMessage.start),
+  end: convertDateToDateObject(broadcastMessage.end),
 });
 
 /**
@@ -43,6 +37,6 @@ export const messageToForm = (broadcastMessage = {}) => ({
  */
 export const formToMessage = (form = {}) => ({
   ...form,
-  start: moment(form.start).unix(),
-  end: moment(form.end).unix(),
+  start: convertDateToTimestamp(form.start),
+  end: convertDateToTimestamp(form.end),
 });

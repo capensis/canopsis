@@ -1,8 +1,9 @@
 <template lang="pug">
   v-list-group
-    v-list-tile(slot="activator")
-      div(:class="validationHeaderClass") {{ $t('settings.periodicRefresh') }}
-        span.font-italic.caption.ml-1 ({{ $t('common.optional') }})
+    template(#activator="")
+      v-list-tile
+        div(:class="validationHeaderClass") {{ $t('settings.periodicRefresh') }}
+          span.font-italic.caption.ml-1 ({{ $t('common.optional') }})
     v-container
       periodic-refresh-field(v-field="value", :name="name")
 </template>
@@ -33,7 +34,7 @@ export default {
     },
   },
   created() {
-    if (this.value && !this.value.unit) {
+    if (!this.value?.unit) {
       this.updateField('unit', TIME_UNITS.second);
     }
   },

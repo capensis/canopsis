@@ -303,7 +303,7 @@ func (s *store) getSort(r FilteredQuery) bson.M {
 	}
 
 	if sortBy == "duration" {
-		sortBy = "duration.seconds"
+		sortBy = "duration.value"
 	}
 
 	return common.GetSortQuery(sortBy, r.Sort)
