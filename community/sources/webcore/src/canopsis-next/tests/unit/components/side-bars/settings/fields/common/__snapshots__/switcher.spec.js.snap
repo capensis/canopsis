@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`switcher Renders \`switcher\` with custom props 1`] = `
+<div
+  class="container pa-3 fluid"
+>
+  <div
+    class="layout align-center justify-space-between"
+  >
+    <div
+      class="flex xs11"
+    >
+      <div
+        class="subheading"
+      >
+        Custom title
+      </div>
+    </div>
+    <div
+      class="layout"
+    >
+      <input
+        class="v-switch ma-0 pa-0"
+        color="primary"
+        hide-details="hide-details"
+        type="checkbox"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`switcher Renders \`switcher\` with default and required props 1`] = `
+<div
+  class="container pa-3 fluid"
+>
+  <div
+    class="layout align-center justify-space-between"
+  >
+    <div
+      class="flex xs11"
+    >
+      <div
+        class="subheading"
+      >
+        
+      </div>
+    </div>
+    <div
+      class="layout"
+    >
+      <input
+        class="v-switch ma-0 pa-0"
+        color="primary"
+        hide-details="hide-details"
+        type="checkbox"
+      />
+    </div>
+  </div>
+</div>
+`;

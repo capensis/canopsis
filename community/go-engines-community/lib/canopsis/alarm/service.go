@@ -41,6 +41,8 @@ func NewService(
 func (s *service) ResolveClosed(ctx context.Context) ([]types.Alarm, error) {
 	defer trace.StartRegion(ctx, "alarm.ResolveAlarms").End()
 
+	now := types.NewCpsTime()
+
 	rules, err := s.resolveRuleAdapter.Get(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("canont fetch resolve rules: %w", err)
@@ -65,8 +67,15 @@ func (s *service) ResolveClosed(ctx context.Context) ([]types.Alarm, error) {
 
 		for _, rule := range rules {
 			if rule.Matches(alarmWithEntity) {
-				if alarmWithEntity.Alarm.Closable(rule.Duration.Duration()) {
-					alarmsToResolve = append(alarmsToResolve, alarmWithEntity.Alarm)
+				alarmState := alarmWithEntity.Alarm.Value.State.Value
+
+				if alarmState == types.AlarmStateOK {
+					lastStep := alarmWithEntity.Alarm.Value.Steps[len(alarmWithEntity.Alarm.Value.Steps)-1]
+					before := rule.Duration.SubFrom(now)
+
+					if lastStep.Timestamp.Before(before) {
+						alarmsToResolve = append(alarmsToResolve, alarmWithEntity.Alarm)
+					}
 				}
 
 				break

@@ -2,32 +2,38 @@ package api
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
+	"fmt"
+	"net/http"
 	"os"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	apilogger "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	devmiddleware "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware/dev"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session/mongostore"
 	"github.com/gin-gonic/gin"
+	gorillawebsocket "github.com/gorilla/websocket"
 	"github.com/rs/zerolog"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
@@ -38,13 +44,14 @@ const sessionStoreAutoCleanInterval = 10 * time.Second
 
 func Default(
 	ctx context.Context,
-	addr string,
-	configDir string,
-	secureSession bool,
-	test bool,
+	flags Flags,
 	enforcer libsecurity.Enforcer,
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
+	apiConfigProvider *config.BaseApiConfigProvider,
 	logger zerolog.Logger,
+	metricsEntityMetaUpdater metrics.MetaUpdater,
+	metricsUserMetaUpdater metrics.MetaUpdater,
+	exportExecutor export.TaskExecutor,
 	deferFunc DeferFunc,
 ) (API, error) {
 	// Retrieve config.
@@ -88,7 +95,7 @@ func Default(
 		logger.Err(err).Msg("cannot connect to redis")
 		return nil, err
 	}
-	securityConfig, err := libsecurity.LoadConfig(configDir)
+	securityConfig, err := libsecurity.LoadConfig(flags.ConfigDir)
 	if err != nil {
 		logger.Err(err).Msg("cannot load security config")
 		return nil, err
@@ -97,19 +104,15 @@ func Default(
 	cookieOptions := CookieOptions{
 		FileAccessName: "token",
 		MaxAge:         int(sessionStoreSessionMaxAge.Seconds()),
-		Secure:         secureSession,
+		Secure:         flags.SecureSession,
 	}
 	sessionStore := mongostore.NewStore(dbClient, []byte(os.Getenv("SESSION_KEY")))
 	sessionStore.Options.MaxAge = cookieOptions.MaxAge
 	sessionStore.Options.Secure = cookieOptions.Secure
-	apiConfigProvider := config.NewApiConfigProvider(cfg, logger)
-	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, apiConfigProvider, cookieOptions, logger)
-
-	proxyAccessConfig, err := proxy.LoadAccessConfig(configDir)
-	if err != nil {
-		logger.Err(err).Msg("cannot load access config")
-		return nil, err
+	if apiConfigProvider == nil {
+		apiConfigProvider = config.NewApiConfigProvider(cfg, logger)
 	}
+	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, apiConfigProvider, cookieOptions, logger)
 	// Create pbehavior computer.
 	pbhComputeChan := make(chan libpbehavior.ComputeTask, chanBuf)
 	pbhEntityMatcher := libpbehavior.NewComputedEntityMatcher(dbClient, pbhRedisSession, json.NewEncoder(), json.NewDecoder())
@@ -130,7 +133,11 @@ func Default(
 		contextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
 		contextgraph.NewMongoStatusReporter(dbClient),
 		jobQueue,
-		importcontextgraph.NewWorker(dbClient, importcontextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel)),
+		importcontextgraph.NewWorker(
+			dbClient,
+			importcontextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
+			metricsEntityMetaUpdater,
+		),
 		logger,
 	)
 
@@ -138,6 +145,7 @@ func Default(
 	disabledEntityCleaner := entity.NewDisabledCleaner(
 		entity.NewStore(dbClient),
 		datastorage.NewAdapter(dbClient),
+		metricsEntityMetaUpdater,
 		logger,
 	)
 
@@ -156,15 +164,22 @@ func Default(
 	}
 
 	// Create csv exporter.
-	exportExecutor := export.NewTaskExecutor(dbClient, logger)
+	if exportExecutor == nil {
+		exportExecutor = export.NewTaskExecutor(dbClient, logger)
+	}
+
+	websocketHub := newWebsocketHub(enforcer, security.GetTokenProvider(), logger)
+
+	broadcastMessageChan := make(chan bool)
 
 	// Create api.
 	api := New(
-		addr,
+		fmt.Sprintf(":%d", flags.Port),
 		func(ctx context.Context) {
 			close(pbhComputeChan)
 			close(entityPublChan)
 			close(entityCleanerTaskChan)
+			close(broadcastMessageChan)
 
 			err := dbClient.Disconnect(ctx)
 			if err != nil {
@@ -194,7 +209,7 @@ func Default(
 	api.AddRouter(func(router gin.IRouter) {
 		router.Use(middleware.Cache())
 
-		if test {
+		if flags.Test {
 			router.Use(devmiddleware.ReloadEnforcerPolicy(enforcer))
 		}
 
@@ -219,10 +234,20 @@ func Default(
 			userInterfaceConfigProvider,
 			scenarioPriorityIntervals,
 			cfg.File.Upload,
+			websocketHub,
+			broadcastMessageChan,
+			metricsEntityMetaUpdater,
+			metricsUserMetaUpdater,
 			logger,
 		)
 	})
-	api.AddNoRoute(GetProxy(security, enforcer, proxyAccessConfig))
+	api.AddNoRoute(func(c *gin.Context) {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+	})
+	api.AddNoMethod(func(c *gin.Context) {
+		c.AbortWithStatusJSON(http.StatusMethodNotAllowed, common.MethodNotAllowedResponse)
+	})
+	api.SetWebsocketHub(websocketHub)
 
 	api.AddWorker("session clean", func(ctx context.Context) {
 		security.GetSessionStore().StartAutoClean(ctx, sessionStoreAutoCleanInterval)
@@ -252,15 +277,38 @@ func Default(
 		importWorker.Run(ctx)
 	})
 	api.AddWorker("config reload", updateConfig(timezoneConfigProvider, apiConfigProvider,
-		configAdapter, userInterfaceConfigProvider, userInterfaceAdapter, test, logger))
+		configAdapter, userInterfaceConfigProvider, userInterfaceAdapter, flags.Test, logger))
 	api.AddWorker("data export", func(ctx context.Context) {
 		exportExecutor.Execute(ctx)
 	})
 	api.AddWorker("auth token", func(ctx context.Context) {
 		security.GetTokenStore().DeleteExpired(ctx, canopsis.PeriodicalWaitTime)
 	})
+	api.AddWorker("websocket", func(ctx context.Context) {
+		websocketHub.Start(ctx)
+	})
+	broadcastMessageService := broadcastmessage.NewService(broadcastmessage.NewStore(dbClient), websocketHub, canopsis.PeriodicalWaitTime, logger)
+	api.AddWorker("broadcast message", func(ctx context.Context) {
+		broadcastMessageService.Start(ctx, broadcastMessageChan)
+	})
 
 	return api, nil
+}
+
+func newWebsocketHub(enforcer libsecurity.Enforcer, tokenProvider libsecurity.TokenProvider, logger zerolog.Logger, roomPerms ...map[string][]string) websocket.Hub {
+	websocketUpgrader := websocket.NewUpgrader(gorillawebsocket.Upgrader{
+		ReadBufferSize:  1024,
+		WriteBufferSize: 2048,
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
+	})
+	websocketAuthorizer := websocket.NewAuthorizer(enforcer, tokenProvider)
+	websocketHub := websocket.NewHub(websocketUpgrader, websocketAuthorizer,
+		canopsis.PeriodicalWaitTime, logger)
+	websocketHub.RegisterRoom(websocket.RoomBroadcastMessages)
+	websocketHub.RegisterRoom(websocket.RoomLoggedUserCount)
+	return websocketHub
 }
 
 func updateConfig(

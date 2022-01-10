@@ -42,7 +42,7 @@ export const serviceSchema = new schema.Entity(ENTITIES_TYPES.service, {}, { idA
 export const weatherServiceSchema = new schema.Entity(ENTITIES_TYPES.weatherService, {}, { idAttribute: '_id' });
 
 export const userPreferenceSchema = new schema.Entity(ENTITIES_TYPES.userPreference, {}, {
-  idAttribute: '_id',
+  idAttribute: 'widget',
 });
 
 export const widgetSchema = new schema.Entity(ENTITIES_TYPES.widget, {}, {
@@ -104,15 +104,35 @@ export const pbehaviorTypesSchema = new schema.Entity(ENTITIES_TYPES.pbehaviorTy
 
 export const pbehaviorReasonsSchema = new schema.Entity(ENTITIES_TYPES.pbehaviorReasons, {}, { idAttribute: '_id' });
 
-export const pbehaviorExceptionsSchema = new schema.Entity(ENTITIES_TYPES.pbehaviorExceptions, {}, { idAttribute: '_id' });
+export const pbehaviorExceptionsSchema = new schema.Entity(
+  ENTITIES_TYPES.pbehaviorExceptions,
+  {},
+  { idAttribute: '_id' },
+);
 
-export const remediationInstructionSchema = new schema.Entity(ENTITIES_TYPES.remediationInstruction, {}, { idAttribute: '_id' });
+export const remediationInstructionSchema = new schema.Entity(
+  ENTITIES_TYPES.remediationInstruction,
+  {},
+  { idAttribute: '_id' },
+);
 
-export const remediationJobSchema = new schema.Entity(ENTITIES_TYPES.remediationJob, {}, { idAttribute: '_id' });
+export const remediationJobSchema = new schema.Entity(
+  ENTITIES_TYPES.remediationJob,
+  {},
+  { idAttribute: '_id' },
+);
 
-export const remediationConfigurationSchema = new schema.Entity(ENTITIES_TYPES.remediationConfiguration, {}, { idAttribute: '_id' });
+export const remediationConfigurationSchema = new schema.Entity(
+  ENTITIES_TYPES.remediationConfiguration,
+  {},
+  { idAttribute: '_id' },
+);
 
-export const remediationInstructionStatsSchema = new schema.Entity(ENTITIES_TYPES.remediationInstructionStats, {}, { idAttribute: '_id' });
+export const remediationInstructionStatsSchema = new schema.Entity(
+  ENTITIES_TYPES.remediationInstructionStats,
+  {},
+  { idAttribute: '_id' },
+);
 
 export const scenarioSchema = new schema.Entity(ENTITIES_TYPES.scenario, {}, { idAttribute: '_id' });
 
@@ -129,6 +149,10 @@ export const idleRulesSchema = new schema.Entity(ENTITIES_TYPES.idleRules, {}, {
 export const flappingRulesSchema = new schema.Entity(ENTITIES_TYPES.flappingRules, {}, { idAttribute: '_id' });
 
 export const resolveRulesSchema = new schema.Entity(ENTITIES_TYPES.resolveRules, {}, { idAttribute: '_id' });
+
+export const filterSchema = new schema.Entity(ENTITIES_TYPES.filter, {}, { idAttribute: '_id' });
+
+export const ratingSettingsSchema = new schema.Entity(ENTITIES_TYPES.ratingSettings, {}, { idAttribute: 'id' });
 
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
@@ -164,4 +188,6 @@ export default {
   [ENTITIES_TYPES.idleRules]: idleRulesSchema,
   [ENTITIES_TYPES.flappingRules]: flappingRulesSchema,
   [ENTITIES_TYPES.resolveRules]: resolveRulesSchema,
+  [ENTITIES_TYPES.filter]: filterSchema,
+  [ENTITIES_TYPES.ratingSettings]: ratingSettingsSchema,
 };

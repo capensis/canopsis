@@ -4,7 +4,7 @@ Feature: create service entity
   Scenario: given resource entity and new service entity should add resource to service on service creation
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-1",
       "connector_name": "test-connector-name-che-service-1",
@@ -18,13 +18,14 @@ Feature: create service entity
     """
     When I wait the end of event processing
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-che-service-1-name",
       "output_template": "test-entityservice-che-service-1-output",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-che-service-1"}]
+      "entity_patterns": [{"name": "test-resource-che-service-1"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
@@ -33,7 +34,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-1&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -115,20 +116,21 @@ Feature: create service entity
   Scenario: given service entity and new resource entity should add resource to service on resource creation
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-che-service-2-name",
       "output_template": "test-entityservice-che-service-2-output",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-che-service-2"}]
+      "entity_patterns": [{"name": "test-resource-che-service-2"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-2",
       "connector_name": "test-connector-name-che-service-2",
@@ -144,7 +146,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-2&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -226,7 +228,7 @@ Feature: create service entity
   Scenario: given service entity with updated pattern should remove now unmatched and add now matched entities on service update
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-3",
       "connector_name": "test-connector-name-che-service-3",
@@ -240,7 +242,7 @@ Feature: create service entity
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-3",
       "connector_name": "test-connector-name-che-service-3",
@@ -254,13 +256,14 @@ Feature: create service entity
     """
     When I wait the end of event processing
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-che-service-3-name",
       "output_template": "test-entityservice-che-service-3-output",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-che-service-3-1"}]
+      "entity_patterns": [{"name": "test-resource-che-service-3-1"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
@@ -269,7 +272,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-3&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -333,14 +336,15 @@ Feature: create service entity
     }
     """
     When I do PUT /api/v4/entityservices/{{ .serviceID }}:
-    """
+    """json
     {
       "name": "test-entityservice-che-service-3-name",
       "output_template": "test-entityservice-che-service-3-output",
       "category": null,
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-che-service-3-2"}]
+      "entity_patterns": [{"name": "test-resource-che-service-3-2"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 200
@@ -348,7 +352,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-3&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -415,7 +419,7 @@ Feature: create service entity
   Scenario: given service entity and resource entity with extra infos should remove resource from service on infos update
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-4",
       "connector_name": "test-connector-name-che-service-4",
@@ -430,7 +434,7 @@ Feature: create service entity
     """
     When I wait the end of event processing
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-che-service-4-name",
       "output_template": "test-entityservice-che-service-4-output",
@@ -438,7 +442,8 @@ Feature: create service entity
       "enabled": true,
       "entity_patterns": [{"infos": {
         "client": {"value": "test-client-che-service-4"}
-      }}]
+      }}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
@@ -447,7 +452,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-4&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -499,7 +504,7 @@ Feature: create service entity
     }
     """
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-4",
       "connector_name": "test-connector-name-che-service-4",
@@ -516,7 +521,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-4&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -568,7 +573,7 @@ Feature: create service entity
   Scenario: given service entity and updated resource entity with extra infos should add resource to service on infos update
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-che-service-5-name",
       "output_template": "test-entityservice-che-service-5-output",
@@ -577,14 +582,15 @@ Feature: create service entity
       "entity_patterns": [{"infos": {
         "client": {"value": "test-client-che-service-5"},
         "company": {"value": "test-company-che-service-5"}
-      }}]
+      }}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-5",
       "connector_name": "test-connector-name-che-service-5",
@@ -599,7 +605,7 @@ Feature: create service entity
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-5",
       "connector_name": "test-connector-name-che-service-5",
@@ -616,7 +622,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-5&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -671,7 +677,7 @@ Feature: create service entity
   Scenario: given service entity and resource entity and enrichment event filter should add resource to service on infos update
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-che-service-6-name",
       "output_template": "test-entityservice-che-service-6-output",
@@ -679,14 +685,15 @@ Feature: create service entity
       "enabled": true,
       "entity_patterns": [{"infos": {
         "manager": {"value": "test-manager-che-service-6"}
-      }}]
+      }}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -714,7 +721,7 @@ Feature: create service entity
     """
     Then the response code should be 201
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -744,7 +751,7 @@ Feature: create service entity
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-6",
       "connector_name": "test-connector-name-che-service-6",
@@ -760,7 +767,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-6&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -815,7 +822,7 @@ Feature: create service entity
   Scenario: given service entity and resource entity and updated enrichment event filter should remove resource from service on infos update
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-che-service-7-name",
       "output_template": "test-entityservice-che-service-7-output",
@@ -823,14 +830,15 @@ Feature: create service entity
       "enabled": true,
       "entity_patterns": [{"infos": {
         "manager": {"value": "test-manager-che-service-7"}
-      }}]
+      }}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -858,7 +866,7 @@ Feature: create service entity
     """
     Then the response code should be 201
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -889,7 +897,7 @@ Feature: create service entity
     When I save response ruleID={{ .lastResponse._id }}
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-7",
       "connector_name": "test-connector-name-che-service-7",
@@ -905,7 +913,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-7&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -957,7 +965,7 @@ Feature: create service entity
     }
     """
     When I do PUT /api/v4/eventfilter/rules/{{ .ruleID }}:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -982,7 +990,7 @@ Feature: create service entity
     Then the response code should be 200
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-7",
       "connector_name": "test-connector-name-che-service-7",
@@ -998,7 +1006,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-7&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1050,20 +1058,21 @@ Feature: create service entity
   Scenario: given service entity and new component entity on resource event should add component to service
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-che-service-8-name",
       "output_template": "test-entityservice-che-service-8-output",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-component-che-service-8"}]
+      "entity_patterns": [{"name": "test-component-che-service-8"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-8",
       "connector_name": "test-connector-name-che-service-8",
@@ -1079,7 +1088,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-8&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1134,20 +1143,21 @@ Feature: create service entity
   Scenario: given service entity and new connector entity on resource event should add connector to service
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-che-service-9-name",
       "output_template": "test-entityservice-che-service-9-output",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-connector-name-che-service-9"}]
+      "entity_patterns": [{"name": "test-connector-name-che-service-9"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-9",
       "connector_name": "test-connector-name-che-service-9",
@@ -1163,7 +1173,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-9&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1218,20 +1228,21 @@ Feature: create service entity
   Scenario: given service entity and enrichment event filter and new component entity on resource event should add component to service
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-che-service-10-name",
       "output_template": "test-entityservice-che-service-10-output",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-component-che-service-10"}]
+      "entity_patterns": [{"name": "test-component-che-service-10"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -1259,7 +1270,7 @@ Feature: create service entity
     """
     Then the response code should be 201
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -1289,7 +1300,7 @@ Feature: create service entity
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-10",
       "connector_name": "test-connector-name-che-service-10",
@@ -1305,7 +1316,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-10&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1367,7 +1378,7 @@ Feature: create service entity
   Scenario: given service entity and resource entity with component infos by extra infos should add resource to service on component event
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-che-service-11-name",
       "impact_level": 1,
@@ -1375,14 +1386,15 @@ Feature: create service entity
       "enabled": true,
       "entity_patterns": [{"component_infos": {
         "client": {"value": "test-client-che-service-11"}
-      }}]
+      }}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-11",
       "connector_name": "test-connector-name-che-service-11",
@@ -1396,7 +1408,7 @@ Feature: create service entity
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-11",
       "connector_name": "test-connector-name-che-service-11",
@@ -1412,7 +1424,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-11&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1479,7 +1491,7 @@ Feature: create service entity
   Scenario: given service entity and resource entity with component infos by extra infos should add resource to service on resource event
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-che-service-12-name",
       "impact_level": 1,
@@ -1487,14 +1499,15 @@ Feature: create service entity
       "enabled": true,
       "entity_patterns": [{"component_infos": {
         "client": {"value": "test-client-che-service-12"}
-      }}]
+      }}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-12",
       "connector_name": "test-connector-name-che-service-12",
@@ -1508,7 +1521,7 @@ Feature: create service entity
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-12",
       "connector_name": "test-connector-name-che-service-12",
@@ -1524,7 +1537,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-12&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1591,7 +1604,7 @@ Feature: create service entity
   Scenario: given service entity and resource entity with component infos by event filter should add resource to service on component event
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-che-service-13-name",
       "impact_level": 1,
@@ -1599,14 +1612,15 @@ Feature: create service entity
       "enabled": true,
       "entity_patterns": [{"component_infos": {
         "manager": {"value": "test-manager-che-service-13"}
-      }}]
+      }}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -1634,7 +1648,7 @@ Feature: create service entity
     """
     Then the response code should be 201
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -1665,7 +1679,7 @@ Feature: create service entity
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-13",
       "connector_name": "test-connector-name-che-service-13",
@@ -1679,7 +1693,7 @@ Feature: create service entity
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-13",
       "connector_name": "test-connector-name-che-service-13",
@@ -1694,7 +1708,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-13&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1761,7 +1775,7 @@ Feature: create service entity
   Scenario: given service entity and resource entity with component infos by event filter should add resource to service on resource event
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-che-service-14-name",
       "impact_level": 1,
@@ -1769,14 +1783,15 @@ Feature: create service entity
       "enabled": true,
       "entity_patterns": [{"component_infos": {
         "manager": {"value": "test-manager-che-service-14"}
-      }}]
+      }}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -1804,7 +1819,7 @@ Feature: create service entity
     """
     Then the response code should be 201
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -1835,7 +1850,7 @@ Feature: create service entity
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-14",
       "connector_name": "test-connector-name-che-service-14",
@@ -1848,7 +1863,7 @@ Feature: create service entity
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-14",
       "connector_name": "test-connector-name-che-service-14",
@@ -1864,7 +1879,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-14&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1931,7 +1946,7 @@ Feature: create service entity
   Scenario: given service entity and resource entity with component infos by extra infos should remove resource from service on component event
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-che-service-15-name",
       "impact_level": 1,
@@ -1939,14 +1954,15 @@ Feature: create service entity
       "enabled": true,
       "entity_patterns": [{"component_infos": {
         "client": {"value": "test-client-che-service-15"}
-      }}]
+      }}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-15",
       "connector_name": "test-connector-name-che-service-15",
@@ -1960,7 +1976,7 @@ Feature: create service entity
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-15",
       "connector_name": "test-connector-name-che-service-15",
@@ -1976,7 +1992,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-15&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -2040,7 +2056,7 @@ Feature: create service entity
     }
     """
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-15",
       "connector_name": "test-connector-name-che-service-15",
@@ -2056,7 +2072,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-15&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -2120,20 +2136,21 @@ Feature: create service entity
   Scenario: given service entity and updated resource entity by api should add resource to service on infos update
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-che-service-16-name",
       "output_template": "test-entityservice-che-service-16-output",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"infos": {"manager": {"value": "test-manager-che-service-16"}}}]
+      "entity_patterns": [{"infos": {"manager": {"value": "test-manager-che-service-16"}}}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-16",
       "connector_name": "test-connector-name-che-service-16",
@@ -2147,7 +2164,7 @@ Feature: create service entity
     """
     When I wait the end of event processing
     When I do PUT /api/v4/entitybasics?_id=test-resource-che-service-16/test-component-che-service-16:
-    """
+    """json
     {
       "enabled": true,
       "impact_level": 1,
@@ -2163,7 +2180,8 @@ Feature: create service entity
       ],
       "depends": [
         "test-connector-che-service-16/test-connector-name-che-service-16"
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 200
@@ -2171,7 +2189,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-16&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -2226,33 +2244,35 @@ Feature: create service entity
   Scenario: given deleted service entity should remove service from all links
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-che-service-17-name-1",
       "impact_level": 1,
       "output_template": "test-entityservice-che-service-17-output-1",
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-che-service-17"}]
+      "entity_patterns": [{"name": "test-resource-che-service-17"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-che-service-17-name-2",
       "impact_level": 1,
       "output_template": "test-entityservice-che-service-17-output-2",
       "enabled": true,
-      "entity_patterns": [{"name": "test-entityservice-che-service-17-name-1"}]
+      "entity_patterns": [{"name": "test-entityservice-che-service-17-name-1"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response impactServiceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-17",
       "connector_name": "test-connector-name-che-service-17",
@@ -2268,7 +2288,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-17&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -2321,7 +2341,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-17&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -2359,7 +2379,7 @@ Feature: create service entity
   Scenario: given disabled service entity should not update service context graph
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-che-service-18-name",
       "impact_level": 1,
@@ -2368,14 +2388,15 @@ Feature: create service entity
       "entity_patterns": [
         {"name": "test-resource-che-service-18-1"},
         {"name": "test-resource-che-service-18-2"}
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-18",
       "connector_name": "test-connector-name-che-service-18",
@@ -2391,7 +2412,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-18&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -2429,19 +2450,20 @@ Feature: create service entity
     }
     """
     When I do PUT /api/v4/entityservices/{{ .serviceID }}:
-    """
+    """json
     {
       "name": "test-entityservice-che-service-18-name",
       "impact_level": 1,
       "output_template": "test-entityservice-che-service-18-output",
       "enabled": false,
-      "entity_patterns": [{"name": "test-resource-che-service-18"}]
+      "entity_patterns": [{"name": "test-resource-che-service-18"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 200
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-service-18",
       "connector_name": "test-connector-name-che-service-18",
@@ -2457,7 +2479,7 @@ Feature: create service entity
     When I do GET /api/v4/entities?search=che-service-18&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
