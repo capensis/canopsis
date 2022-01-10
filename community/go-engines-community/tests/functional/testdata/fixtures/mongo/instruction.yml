@@ -22,16 +22,16 @@ instruction:
         - test-job-to-instruction-edit-2
         name: test-instruction-to-get-1-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       - _id: test-instruction-to-get-1-step-1-operation-2
         description: test-instruction-to-get-1-step-1-operation-2-description
         jobs:
         - test-job-to-instruction-edit-2
         name: test-instruction-to-get-1-step-1-operation-2-name
         time_to_complete:
-          seconds: 3
           unit: s
+          value: 3
       stop_on_fail: true
     - _id: test-instruction-to-get-1-step-2
       endpoint: test-instruction-to-get-1-step-2-endpoint
@@ -44,12 +44,12 @@ instruction:
         - test-job-to-instruction-edit-1
         name: test-instruction-to-get-1-step-2-operation-1-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_2:
     _id: test-instruction-to-get-2
@@ -68,8 +68,8 @@ instruction:
     name: test-instruction-to-get-2-name
     priority: 0
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 1
   instruction_3:
     _id: test-instruction-to-delete
@@ -92,12 +92,12 @@ instruction:
         jobs: []
         name: test-instruction-to-delete-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_4:
     _id: test-instruction-to-update
@@ -120,12 +120,12 @@ instruction:
         jobs: []
         name: test-instruction-to-update-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 10
       unit: m
+      value: 10
     type: 0
   instruction_5:
     _id: test-instruction-to-update-with-approval
@@ -150,8 +150,8 @@ instruction:
         jobs: []
         name: test-instruction-to-update-with-approval-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     type: 0
   instruction_6:
@@ -177,8 +177,8 @@ instruction:
         jobs: []
         name: test-instruction-to-update-with-approval-2-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     type: 0
   instruction_7:
@@ -204,8 +204,8 @@ instruction:
         jobs: []
         name: test-instruction-to-update-with-approval-3-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     type: 0
   instruction_8:
@@ -231,8 +231,8 @@ instruction:
         jobs: []
         name: test-instruction-to-update-with-approval-4-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     type: 0
   instruction_9:
@@ -258,8 +258,8 @@ instruction:
         jobs: []
         name: test-instruction-to-update-with-approval-5-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     type: 0
   instruction_10:
@@ -285,8 +285,8 @@ instruction:
         jobs: []
         name: test-instruction-to-update-with-approval-6-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     type: 0
   instruction_11:
@@ -312,8 +312,8 @@ instruction:
         jobs: []
         name: test-instruction-to-update-with-approval-7-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     type: 0
   instruction_12:
@@ -339,8 +339,8 @@ instruction:
         jobs: []
         name: test-instruction-to-update-with-approval-8-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     type: 0
   instruction_13:
@@ -366,8 +366,8 @@ instruction:
         jobs: []
         name: test-instruction-to-update-with-approval-9-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     type: 0
   instruction_14:
@@ -393,8 +393,8 @@ instruction:
         jobs: []
         name: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     type: 0
   instruction_15:
@@ -426,8 +426,8 @@ instruction:
         jobs: []
         name: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     type: 0
   instruction_16:
@@ -451,12 +451,12 @@ instruction:
         jobs: []
         name: test-instruction-to-check-unique-id-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_17:
     _id: test-instruction-to-check-unique-name
@@ -479,12 +479,12 @@ instruction:
         jobs: []
         name: test-instruction-to-check-unique-name-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_18:
     _id: test-instruction-to-job-check-linked-1
@@ -508,12 +508,12 @@ instruction:
         - test-job-to-check-linked-to-manual-instruction
         name: test-instruction-to-job-check-linked-1-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_19:
     _id: test-instruction-to-job-check-linked-2
@@ -530,8 +530,8 @@ instruction:
     name: test-instruction-to-job-check-linked-2-name
     priority: 1
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 1
   instruction_20:
     _id: test-instruction-execution-to-start-multiple-times
@@ -554,15 +554,15 @@ instruction:
         jobs: []
         name: test-instruction-execution-to-start-multiple-times-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       - _id: test-instruction-execution-to-start-multiple-times-step-1-operation-2
         description: test-instruction-execution-to-start-multiple-times-step-1-operation-2-description
         jobs: []
         name: test-instruction-execution-to-start-multiple-times-step-1-operation-2-name
         time_to_complete:
-          seconds: 3
           unit: s
+          value: 3
       stop_on_fail: true
     - _id: test-instruction-execution-to-start-multiple-times-step-2
       endpoint: test-instruction-execution-to-start-multiple-times-step-2-endpoint
@@ -573,12 +573,12 @@ instruction:
         jobs: []
         name: test-instruction-execution-to-start-multiple-times-step-2-operation-1-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_21:
     _id: test-instruction-execution-running
@@ -602,15 +602,15 @@ instruction:
         - test-job-execution-to-get
         name: test-instruction-execution-running-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       - _id: test-instruction-execution-running-step-1-operation-2
         description: test-instruction-execution-running-step-1-operation-2-description
         jobs: []
         name: test-instruction-execution-running-step-1-operation-2-name
         time_to_complete:
-          seconds: 3
           unit: s
+          value: 3
       stop_on_fail: true
     - _id: test-instruction-execution-running-step-2
       endpoint: test-instruction-execution-running-step-2-endpoint
@@ -621,12 +621,12 @@ instruction:
         jobs: []
         name: test-instruction-execution-running-step-2-operation-1-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_22:
     _id: test-instruction-cancel-execution-running-1
@@ -649,15 +649,15 @@ instruction:
         jobs: []
         name: test-instruction-cancel-execution-running-1-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       - _id: test-instruction-cancel-execution-running-1-step-1-operation-2
         description: test-instruction-cancel-execution-running-1-step-1-operation-2-description
         jobs: []
         name: test-instruction-cancel-execution-running-1-step-1-operation-2-name
         time_to_complete:
-          seconds: 3
           unit: s
+          value: 3
       stop_on_fail: true
     - _id: test-instruction-cancel-execution-running-1-step-2
       endpoint: test-instruction-cancel-execution-running-1-step-2-endpoint
@@ -668,12 +668,12 @@ instruction:
         jobs: []
         name: test-instruction-cancel-execution-running-1-step-2-operation-1-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_23:
     _id: test-instruction-delete-execution-running
@@ -696,15 +696,15 @@ instruction:
         jobs: []
         name: test-instruction-delete-execution-running-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       - _id: test-instruction-delete-execution-running-step-1-operation-2
         description: test-instruction-delete-execution-running-step-1-operation-2-description
         jobs: []
         name: test-instruction-delete-execution-running-step-1-operation-2-name
         time_to_complete:
-          seconds: 3
           unit: s
+          value: 3
       stop_on_fail: true
     - _id: test-instruction-delete-execution-running-step-2
       endpoint: test-instruction-delete-execution-running-step-2-endpoint
@@ -715,12 +715,12 @@ instruction:
         jobs: []
         name: test-instruction-delete-execution-running-step-2-operation-1-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_24:
     _id: test-instruction-execution-resume-1
@@ -743,15 +743,15 @@ instruction:
         jobs: []
         name: test-instruction-execution-resume-1-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       - _id: test-instruction-execution-resume-1-step-1-operation-2
         description: test-instruction-execution-resume-1-step-1-operation-2-description
         jobs: []
         name: test-instruction-execution-resume-1-step-1-operation-2-name
         time_to_complete:
-          seconds: 3
           unit: s
+          value: 3
       stop_on_fail: true
     - _id: test-instruction-execution-resume-1-step-2
       endpoint: test-instruction-execution-resume-1-step-2-endpoint
@@ -762,12 +762,12 @@ instruction:
         jobs: []
         name: test-instruction-execution-resume-1-step-2-operation-1-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_25:
     _id: test-instruction-to-assign
@@ -790,12 +790,12 @@ instruction:
         jobs: []
         name: test-instruction-to-assign-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_26:
     _id: test-instruction-should-not-be-assigned
@@ -822,8 +822,8 @@ instruction:
         jobs: []
         name: test-instruction-to-assign-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     type: 0
   instruction_27:
@@ -847,12 +847,12 @@ instruction:
         jobs: []
         name: test-instruction-to-assign-with-execution-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_28:
     _id: test-instruction-to-assign-with-execution-2
@@ -875,12 +875,12 @@ instruction:
         jobs: []
         name: test-instruction-to-assign-with-execution-2-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_29:
     _id: test-instruction-to-assign-without-execution
@@ -903,12 +903,12 @@ instruction:
         jobs: []
         name: test-instruction-to-assign-without-execution-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_30:
     _id: test-instruction-to-auto-instruction-filter
@@ -924,8 +924,8 @@ instruction:
     last_modified: 1596712203
     name: test-instruction-to-auto-instruction-filter-name
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 1
   instruction_31:
     _id: test-instruction-to-rate-1
@@ -948,12 +948,12 @@ instruction:
         jobs: []
         name: test-instruction-to-rate-1-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_32:
     _id: test-instruction-to-rate-2
@@ -976,12 +976,12 @@ instruction:
         jobs: []
         name: test-instruction-to-rate-2-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
     users:
     - test-user-to-rate-instruction
@@ -1006,12 +1006,12 @@ instruction:
         jobs: []
         name: test-instruction-to-rate-3-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
     users:
     - test-user-to-rate-instruction
@@ -1035,12 +1035,12 @@ instruction:
         jobs: []
         name: test-instruction-to-rate-4-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_35:
     _id: test-instruction-to-rate-5
@@ -1063,12 +1063,12 @@ instruction:
         jobs: []
         name: test-instruction-to-rate-5-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_36:
     _id: test-instruction-to-check-rate-notify
@@ -1092,12 +1092,12 @@ instruction:
         jobs: []
         name: test-instruction-to-check-rate-notify-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_37:
     _id: test-instruction-with-entity-pattern-1
@@ -1121,12 +1121,12 @@ instruction:
         jobs: []
         name: test-instruction-with-entity-pattern-1-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_38:
     _id: test-instruction-with-entity-pattern-2
@@ -1150,12 +1150,12 @@ instruction:
         jobs: []
         name: test-instruction-with-entity-pattern-2-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_39:
     _id: test-instruction-with-patterns-combined
@@ -1182,12 +1182,12 @@ instruction:
         jobs: []
         name: test-instruction-with-patterns-combined-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_40:
     _id: test-instruction-with-pbh-with-some-active
@@ -1205,8 +1205,8 @@ instruction:
     name: test-alarm-with-pbh-with-some-active-name
     steps: []
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_41:
     _id: test-instruction-with-pbh-all-active
@@ -1221,8 +1221,8 @@ instruction:
     name: test-alarm-with-pbh-all-active-name
     steps: []
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_42:
     _id: test-instruction-with-pbh-with-some-disabled
@@ -1240,8 +1240,8 @@ instruction:
     name: test-alarm-with-pbh-with-some-disabled-name
     steps: []
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_43:
     _id: test-instruction-with-pbh-to-edit
@@ -1259,8 +1259,8 @@ instruction:
     name: test-instruction-with-pbh-to-edit-name
     steps: []
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
   instruction_44:
     _id: test-instruction-to-run-auto-instruction-1-1
@@ -1279,8 +1279,8 @@ instruction:
     name: test-instruction-to-run-auto-instruction-1-1-name
     priority: 2
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 1
   instruction_45:
     _id: test-instruction-to-run-auto-instruction-1-2
@@ -1297,8 +1297,8 @@ instruction:
     name: test-instruction-to-run-auto-instruction-1-2-name
     priority: 3
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 1
   instruction_46:
     _id: test-instruction-to-run-auto-instruction-2-1
@@ -1315,8 +1315,8 @@ instruction:
     name: test-instruction-to-run-auto-instruction-2-1-name
     priority: 4
     timeout_after_execution:
-      seconds: 3
       unit: s
+      value: 3
     type: 1
   instruction_47:
     _id: test-instruction-to-run-auto-instruction-2-2
@@ -1333,8 +1333,8 @@ instruction:
     name: test-instruction-to-run-auto-instruction-2-2-name
     priority: 5
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 1
   instruction_48:
     _id: test-instruction-to-run-auto-instruction-3-1
@@ -1351,8 +1351,8 @@ instruction:
     name: test-instruction-to-run-auto-instruction-3-1-name
     priority: 6
     timeout_after_execution:
-      seconds: 10
       unit: s
+      value: 10
     type: 1
   instruction_49:
     _id: test-instruction-to-run-auto-instruction-3-2
@@ -1369,8 +1369,8 @@ instruction:
     name: test-instruction-to-run-auto-instruction-3-2-name
     priority: 7
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 1
   instruction_50:
     _id: test-instruction-to-run-auto-instruction-4-1
@@ -1388,8 +1388,8 @@ instruction:
     name: test-instruction-to-run-auto-instruction-4-1-name
     priority: 8
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 1
   instruction_51:
     _id: test-instruction-to-run-auto-instruction-4-2
@@ -1406,8 +1406,8 @@ instruction:
     name: test-instruction-to-run-auto-instruction-4-2-name
     priority: 9
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 1
   instruction_52:
     _id: test-instruction-to-run-auto-instruction-4-3
@@ -1424,8 +1424,8 @@ instruction:
     name: test-instruction-to-run-auto-instruction-4-3-name
     priority: 10
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 1
   instruction_53:
     _id: test-instruction-to-run-auto-instruction-5
@@ -1442,10 +1442,65 @@ instruction:
     name: test-instruction-to-run-auto-instruction-5-name
     priority: 11
     timeout_after_execution:
+      unit: s
+      value: 2
+    type: 1
+  instruction_54:
+    _id: test-instruction-to-run-auto-instruction-6-1
+    author: test-user-author-1-id
+    created: 1596712203
+    description: test-instruction-to-run-auto-instruction-6-1-description
+    enabled: true
+    entity_patterns:
+    - name: test-resource-to-run-auto-instruction-6-1
+    - name: test-resource-to-run-auto-instruction-6-2
+    jobs:
+    - job: test-job-to-run-auto-instruction-6
+      stop_on_fail: false
+    last_modified: 1596712203
+    name: test-instruction-to-run-auto-instruction-6-1-name
+    priority: 8
+    timeout_after_execution:
       seconds: 2
       unit: s
     type: 1
-  instruction_54:
+  instruction_55:
+    _id: test-instruction-to-run-auto-instruction-6-2
+    author: test-user-author-1-id
+    created: 1596712203
+    description: test-instruction-to-run-auto-instruction-6-2-description
+    enabled: true
+    entity_patterns:
+    - name: test-resource-to-run-auto-instruction-6-1
+    jobs:
+    - job: test-job-to-run-auto-instruction-2
+      stop_on_fail: false
+    last_modified: 1596712203
+    name: test-instruction-to-run-auto-instruction-6-2-name
+    priority: 9
+    timeout_after_execution:
+      seconds: 2
+      unit: s
+    type: 1
+  instruction_56:
+    _id: test-instruction-to-run-auto-instruction-6-3
+    author: test-user-author-1-id
+    created: 1596712203
+    description: test-instruction-to-run-auto-instruction-6-3-description
+    enabled: true
+    entity_patterns:
+    - name: test-resource-to-run-auto-instruction-6-2
+    jobs:
+    - job: test-job-to-run-auto-instruction-2
+      stop_on_fail: false
+    last_modified: 1596712203
+    name: test-instruction-to-run-auto-instruction-6-3-name
+    priority: 10
+    timeout_after_execution:
+      seconds: 2
+      unit: s
+    type: 1
+  instruction_57:
     _id: test-instruction-to-run-auto-instruction-to-approve-update
     author: test-user-author-1-id
     created: 1596712203
@@ -1458,12 +1513,12 @@ instruction:
       stop_on_fail: false
     last_modified: 1596712203
     name: est-instruction-to-run-auto-instruction-to-approve-update-name
-    priority: 1000
+    priority: 12
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 1
-  instruction_55:
+  instruction_58:
     _id: test-instruction-to-stats-get-1
     author: test-user-author-1-id
     avg_complete_time: 316
@@ -1486,15 +1541,15 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-get-1-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       - _id: test-instruction-to-stats-get-1-step-1-operation-2
         description: test-instruction-to-stats-get-1-step-1-operation-2-description
         jobs: []
         name: test-instruction-to-stats-get-1-step-1-operation-2-name
         time_to_complete:
-          seconds: 3
           unit: s
+          value: 3
       stop_on_fail: true
     - _id: test-instruction-to-stats-get-1-step-2
       endpoint: test-instruction-to-stats-get-1-step-2-endpoint
@@ -1505,23 +1560,23 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-get-1-step-2-operation-1-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       - _id: test-instruction-to-stats-get-1-step-2-operation-2
         description: test-instruction-to-stats-get-1-step-2-operation-2-description
         jobs: []
         name: test-instruction-to-stats-get-1-step-2-operation-2-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
     users:
     - test-user-to-stats-instruction-get
-  instruction_56:
+  instruction_59:
     _id: test-instruction-to-stats-get-2
     author: test-user-author-1-id
     avg_complete_time: 316
@@ -1537,12 +1592,12 @@ instruction:
     last_executed_on: 1618394399
     last_modified: 1617555600
     name: test-instruction-to-stats-get-2-name
-    priority: 12
+    priority: 13
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 1
-  instruction_57:
+  instruction_60:
     _id: test-instruction-to-stats-get-3
     author: test-user-author-1-id
     created: 1617555600
@@ -1556,12 +1611,12 @@ instruction:
     - job: test-job-to-instruction-edit-2
     last_modified: 1617555600
     name: test-instruction-to-stats-get-3-name
-    priority: 12
+    priority: 14
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 1
-  instruction_58:
+  instruction_61:
     _id: test-instruction-to-stats-summary-get-1
     author: test-user-author-1-id
     avg_complete_time: 316
@@ -1583,15 +1638,15 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-summary-get-1-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       - _id: test-instruction-to-stats-summary-get-1-step-1-operation-2
         description: test-instruction-to-stats-summary-get-1-step-1-operation-2-description
         jobs: []
         name: test-instruction-to-stats-summary-get-1-step-1-operation-2-name
         time_to_complete:
-          seconds: 3
           unit: s
+          value: 3
       stop_on_fail: true
     - _id: test-instruction-to-stats-summary-get-1-step-2
       endpoint: test-instruction-to-stats-summary-get-1-step-2-endpoint
@@ -1602,23 +1657,23 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-summary-get-1-step-2-operation-1-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       - _id: test-instruction-to-stats-summary-get-1-step-2-operation-2
         description: test-instruction-to-stats-summary-get-1-step-2-operation-2-description
         jobs: []
         name: test-instruction-to-stats-summary-get-1-step-2-operation-2-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
     users:
     - test-user-to-stats-instruction-get
-  instruction_59:
+  instruction_62:
     _id: test-instruction-to-stats-summary-get-2
     author: test-user-author-1-id
     avg_complete_time: 316
@@ -1634,12 +1689,12 @@ instruction:
     last_executed_on: 1618280210
     last_modified: 1596712303
     name: test-instruction-to-stats-summary-get-2-name
-    priority: 12
+    priority: 15
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 1
-  instruction_60:
+  instruction_63:
     _id: test-instruction-to-stats-summary-get-3
     author: test-user-author-1-id
     created: 1596712203
@@ -1653,12 +1708,12 @@ instruction:
     - job: test-job-to-instruction-edit-2
     last_modified: 1596712203
     name: test-instruction-to-stats-summary-get-3-name
-    priority: 13
+    priority: 16
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 1
-  instruction_61:
+  instruction_64:
     _id: test-instruction-to-stats-changes-get-1
     author: test-user-author-1-id
     created: 1596712203
@@ -1679,15 +1734,15 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-changes-get-1-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       - _id: test-instruction-to-stats-changes-get-1-step-1-operation-2
         description: test-instruction-to-stats-changes-get-1-step-1-operation-2-description
         jobs: []
         name: test-instruction-to-stats-changes-get-1-step-1-operation-2-name
         time_to_complete:
-          seconds: 3
           unit: s
+          value: 3
       stop_on_fail: true
     - _id: test-instruction-to-stats-changes-get-1-step-2
       endpoint: test-instruction-to-stats-changes-get-1-step-2-endpoint
@@ -1698,23 +1753,23 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-changes-get-1-step-2-operation-1-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       - _id: test-instruction-to-stats-changes-get-1-step-2-operation-2
         description: test-instruction-to-stats-changes-get-1-step-2-operation-2-description
         jobs: []
         name: test-instruction-to-stats-changes-get-1-step-2-operation-2-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
     users:
     - test-user-to-stats-instruction-get
-  instruction_62:
+  instruction_65:
     _id: test-instruction-to-stats-changes-get-2
     author: test-user-author-1-id
     created: 1596712203
@@ -1729,12 +1784,12 @@ instruction:
     last_executed_on: 1618280210
     last_modified: 1596712203
     name: test-instruction-to-stats-changes-get-2-name
-    priority: 12
+    priority: 17
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 1
-  instruction_63:
+  instruction_66:
     _id: test-instruction-to-stats-changes-get-3
     author: test-user-author-1-id
     created: 1596712203
@@ -1748,12 +1803,12 @@ instruction:
     - job: test-job-to-instruction-edit-2
     last_modified: 1596712203
     name: test-instruction-to-stats-changes-get-3-name
-    priority: 13
+    priority: 18
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 1
-  instruction_64:
+  instruction_67:
     _id: test-instruction-to-comments-get-1
     author: test-user-author-1-id
     created: 1596712203
@@ -1774,15 +1829,15 @@ instruction:
         jobs: []
         name: test-instruction-to-comments-get-1-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       - _id: test-instruction-to-comments-get-1-step-1-operation-2
         description: test-instruction-to-comments-get-1-step-1-operation-2-description
         jobs: []
         name: test-instruction-to-comments-get-1-step-1-operation-2-name
         time_to_complete:
-          seconds: 3
           unit: s
+          value: 3
       stop_on_fail: true
     - _id: test-instruction-to-comments-get-1-step-2
       endpoint: test-instruction-to-comments-get-1-step-2-endpoint
@@ -1793,21 +1848,21 @@ instruction:
         jobs: []
         name: test-instruction-to-comments-get-1-step-2-operation-1-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       - _id: test-instruction-to-comments-get-1-step-2-operation-2
         description: test-instruction-to-comments-get-1-step-2-operation-2-description
         jobs: []
         name: test-instruction-to-comments-get-1-step-2-operation-2-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
-  instruction_65:
+  instruction_68:
     _id: test-instruction-to-comments-get-2
     author: test-user-author-1-id
     created: 1596712203
@@ -1827,15 +1882,15 @@ instruction:
         jobs: []
         name: test-instruction-to-comments-get-2-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       - _id: test-instruction-to-comments-get-2-step-1-operation-2
         description: test-instruction-to-comments-get-2-step-1-operation-2-description
         jobs: []
         name: test-instruction-to-comments-get-2-step-1-operation-2-name
         time_to_complete:
-          seconds: 3
           unit: s
+          value: 3
       stop_on_fail: true
     - _id: test-instruction-to-comments-get-2-step-2
       endpoint: test-instruction-to-comments-get-2-step-2-endpoint
@@ -1846,21 +1901,21 @@ instruction:
         jobs: []
         name: test-instruction-to-comments-get-2-step-2-operation-1-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       - _id: test-instruction-to-comments-get-2-step-2-operation-2
         description: test-instruction-to-comments-get-2-step-2-operation-2-description
         jobs: []
         name: test-instruction-to-comments-get-2-step-2-operation-2-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
-  instruction_66:
+  instruction_69:
     _id: test-instruction-to-not-run-auto-instruction-manually
     alarm_patterns:
     - _id: test-alarm-to-not-run-auto-instruction-manually
@@ -1875,12 +1930,12 @@ instruction:
       stop_on_fail: false
     last_modified: 1596712203
     name: test-instruction-to-not-run-auto-instruction-manually-name
-    priority: 2
+    priority: 19
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 1
-  instruction_67:
+  instruction_70:
     _id: test-instruction-to-stats-executions-get-1
     author: test-user-author-1-id
     created: 1596712203
@@ -1901,15 +1956,15 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-executions-get-1-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       - _id: test-instruction-to-stats-executions-get-1-step-1-operation-2
         description: test-instruction-to-stats-executions-get-1-step-1-operation-2-description
         jobs: []
         name: test-instruction-to-stats-executions-get-1-step-1-operation-2-name
         time_to_complete:
-          seconds: 3
           unit: s
+          value: 3
       stop_on_fail: true
     - _id: test-instruction-to-stats-executions-get-1-step-2
       endpoint: test-instruction-to-stats-executions-get-1-step-2-endpoint
@@ -1920,23 +1975,23 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-executions-get-1-step-2-operation-1-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       - _id: test-instruction-to-stats-executions-get-1-step-2-operation-2
         description: test-instruction-to-stats-executions-get-1-step-2-operation-2-description
         jobs: []
         name: test-instruction-to-stats-executions-get-1-step-2-operation-2-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
     users:
     - test-user-to-stats-instruction-get
-  instruction_68:
+  instruction_71:
     _id: test-instruction-to-stats-executions-get-2
     author: test-user-author-1-id
     created: 1596712203
@@ -1957,15 +2012,15 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-executions-get-2-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       - _id: test-instruction-to-stats-executions-get-2-step-1-operation-2
         description: test-instruction-to-stats-executions-get-2-step-1-operation-2-description
         jobs: []
         name: test-instruction-to-stats-executions-get-2-step-1-operation-2-name
         time_to_complete:
-          seconds: 3
           unit: s
+          value: 3
       stop_on_fail: true
     - _id: test-instruction-to-stats-executions-get-2-step-2
       endpoint: test-instruction-to-stats-executions-get-2-step-2-endpoint
@@ -1976,21 +2031,21 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-executions-get-2-step-2-operation-1-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       - _id: test-instruction-to-stats-executions-get-2-step-2-operation-2
         description: test-instruction-to-stats-executions-get-2-step-2-operation-2-description
         jobs: []
         name: test-instruction-to-stats-executions-get-2-step-2-operation-2-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
-  instruction_69:
+  instruction_72:
     _id: test-instruction-to-stats-executions-get-3
     author: test-user-author-1-id
     created: 1596712203
@@ -2011,15 +2066,15 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-executions-get-3-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       - _id: test-instruction-to-stats-executions-get-3-step-1-operation-2
         description: test-instruction-to-stats-executions-get-3-step-1-operation-2-description
         jobs: []
         name: test-instruction-to-stats-executions-get-3-step-1-operation-2-name
         time_to_complete:
-          seconds: 3
           unit: s
+          value: 3
       stop_on_fail: true
     - _id: test-instruction-to-stats-executions-get-3-step-2
       endpoint: test-instruction-to-stats-executions-get-3-step-2-endpoint
@@ -2030,21 +2085,21 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-executions-get-3-step-2-operation-1-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       - _id: test-instruction-to-stats-executions-get-3-step-2-operation-2
         description: test-instruction-to-stats-executions-get-3-step-2-operation-2-description
         jobs: []
         name: test-instruction-to-stats-executions-get-3-step-2-operation-2-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
-  instruction_70:
+  instruction_73:
     _id: test-instruction-to-stats-executions-get-4
     author: test-user-author-1-id
     created: 1596712203
@@ -2065,15 +2120,15 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-executions-get-4-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       - _id: test-instruction-to-stats-executions-get-4-step-1-operation-2
         description: test-instruction-to-stats-executions-get-4-step-1-operation-2-description
         jobs: []
         name: test-instruction-to-stats-executions-get-4-step-1-operation-2-name
         time_to_complete:
-          seconds: 3
           unit: s
+          value: 3
       stop_on_fail: true
     - _id: test-instruction-to-stats-executions-get-4-step-2
       endpoint: test-instruction-to-stats-executions-get-4-step-2-endpoint
@@ -2084,21 +2139,21 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-executions-get-4-step-2-operation-1-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       - _id: test-instruction-to-stats-executions-get-4-step-2-operation-2
         description: test-instruction-to-stats-executions-get-4-step-2-operation-2-description
         jobs: []
         name: test-instruction-to-stats-executions-get-4-step-2-operation-2-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
-  instruction_71:
+  instruction_74:
     _id: test-instruction-to-stats-executions-get-5
     author: test-user-author-1-id
     created: 1596712203
@@ -2119,15 +2174,15 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-executions-get-5-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       - _id: test-instruction-to-stats-executions-get-5-step-1-operation-2
         description: test-instruction-to-stats-executions-get-5-step-1-operation-2-description
         jobs: []
         name: test-instruction-to-stats-executions-get-5-step-1-operation-2-name
         time_to_complete:
-          seconds: 3
           unit: s
+          value: 3
       stop_on_fail: true
     - _id: test-instruction-to-stats-executions-get-5-step-2
       endpoint: test-instruction-to-stats-executions-get-5-step-2-endpoint
@@ -2138,21 +2193,21 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-executions-get-5-step-2-operation-1-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       - _id: test-instruction-to-stats-executions-get-5-step-2-operation-2
         description: test-instruction-to-stats-executions-get-5-step-2-operation-2-description
         jobs: []
         name: test-instruction-to-stats-executions-get-5-step-2-operation-2-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
-  instruction_72:
+  instruction_75:
     _id: test-instruction-to-stats-executions-get-6
     author: test-user-author-1-id
     created: 1596712203
@@ -2173,15 +2228,15 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-executions-get-6-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       - _id: test-instruction-to-stats-executions-get-6-step-1-operation-2
         description: test-instruction-to-stats-executions-get-6-step-1-operation-2-description
         jobs: []
         name: test-instruction-to-stats-executions-get-6-step-1-operation-2-name
         time_to_complete:
-          seconds: 3
           unit: s
+          value: 3
       stop_on_fail: true
     - _id: test-instruction-to-stats-executions-get-6-step-2
       endpoint: test-instruction-to-stats-executions-get-6-step-2-endpoint
@@ -2192,21 +2247,21 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-executions-get-6-step-2-operation-1-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       - _id: test-instruction-to-stats-executions-get-6-step-2-operation-2
         description: test-instruction-to-stats-executions-get-6-step-2-operation-2-description
         jobs: []
         name: test-instruction-to-stats-executions-get-6-step-2-operation-2-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
-  instruction_73:
+  instruction_76:
     _id: test-instruction-to-stats-executions-get-7
     author: test-user-author-1-id
     created: 1596712203
@@ -2227,15 +2282,15 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-executions-get-7-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       - _id: test-instruction-to-stats-executions-get-7-step-1-operation-2
         description: test-instruction-to-stats-executions-get-7-step-1-operation-2-description
         jobs: []
         name: test-instruction-to-stats-executions-get-7-step-1-operation-2-name
         time_to_complete:
-          seconds: 3
           unit: s
+          value: 3
       stop_on_fail: true
     - _id: test-instruction-to-stats-executions-get-7-step-2
       endpoint: test-instruction-to-stats-executions-get-7-step-2-endpoint
@@ -2246,21 +2301,21 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-executions-get-7-step-2-operation-1-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       - _id: test-instruction-to-stats-executions-get-7-step-2-operation-2
         description: test-instruction-to-stats-executions-get-7-step-2-operation-2-description
         jobs: []
         name: test-instruction-to-stats-executions-get-7-step-2-operation-2-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
-  instruction_74:
+  instruction_77:
     _id: test-instruction-to-stats-executions-get-8
     author: test-user-author-1-id
     created: 1596712203
@@ -2281,15 +2336,15 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-executions-get-8-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       - _id: test-instruction-to-stats-executions-get-8-step-1-operation-2
         description: test-instruction-to-stats-executions-get-8-step-1-operation-2-description
         jobs: []
         name: test-instruction-to-stats-executions-get-8-step-1-operation-2-name
         time_to_complete:
-          seconds: 3
           unit: s
+          value: 3
       stop_on_fail: true
     - _id: test-instruction-to-stats-executions-get-8-step-2
       endpoint: test-instruction-to-stats-executions-get-8-step-2-endpoint
@@ -2300,21 +2355,21 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-executions-get-8-step-2-operation-1-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       - _id: test-instruction-to-stats-executions-get-8-step-2-operation-2
         description: test-instruction-to-stats-executions-get-8-step-2-operation-2-description
         jobs: []
         name: test-instruction-to-stats-executions-get-8-step-2-operation-2-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
-  instruction_75:
+  instruction_78:
     _id: test-instruction-to-stats-executions-get-9
     author: test-user-author-1-id
     created: 1596712203
@@ -2335,15 +2390,15 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-executions-get-9-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       - _id: test-instruction-to-stats-executions-get-9-step-1-operation-2
         description: test-instruction-to-stats-executions-get-9-step-1-operation-2-description
         jobs: []
         name: test-instruction-to-stats-executions-get-9-step-1-operation-2-name
         time_to_complete:
-          seconds: 3
           unit: s
+          value: 3
       stop_on_fail: true
     - _id: test-instruction-to-stats-executions-get-9-step-2
       endpoint: test-instruction-to-stats-executions-get-9-step-2-endpoint
@@ -2354,21 +2409,21 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-executions-get-9-step-2-operation-1-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       - _id: test-instruction-to-stats-executions-get-9-step-2-operation-2
         description: test-instruction-to-stats-executions-get-9-step-2-operation-2-description
         jobs: []
         name: test-instruction-to-stats-executions-get-9-step-2-operation-2-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
-  instruction_76:
+  instruction_79:
     _id: test-instruction-to-stats-executions-get-10
     author: test-user-author-1-id
     created: 1596712203
@@ -2389,15 +2444,15 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-executions-get-10-step-1-operation-1-name
         time_to_complete:
-          seconds: 1
           unit: s
+          value: 1
       - _id: test-instruction-to-stats-executions-get-10-step-1-operation-2
         description: test-instruction-to-stats-executions-get-10-step-1-operation-2-description
         jobs: []
         name: test-instruction-to-stats-executions-get-10-step-1-operation-2-name
         time_to_complete:
-          seconds: 3
           unit: s
+          value: 3
       stop_on_fail: true
     - _id: test-instruction-to-stats-executions-get-10-step-2
       endpoint: test-instruction-to-stats-executions-get-10-step-2-endpoint
@@ -2408,21 +2463,21 @@ instruction:
         jobs: []
         name: test-instruction-to-stats-executions-get-10-step-2-operation-1-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       - _id: test-instruction-to-stats-executions-get-10-step-2-operation-2
         description: test-instruction-to-stats-executions-get-10-step-2-operation-2-description
         jobs: []
         name: test-instruction-to-stats-executions-get-10-step-2-operation-2-name
         time_to_complete:
-          seconds: 6
           unit: s
+          value: 6
       stop_on_fail: true
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
-  instruction_77:
+  instruction_80:
     _id: test-alarm-meta-children-with-instructions
     alarm_patterns:
     - v:
@@ -2433,7 +2488,7 @@ instruction:
     name: test-alarm-meta-children-with-instructions-name
     steps: []
     type: 0
-  instruction_78:
+  instruction_81:
     _id: test-instruction-to-stats-executions-get-with-resolved-alarms-1
     author: test-user-author-1-id
     created: 1596712203
@@ -2446,8 +2501,86 @@ instruction:
     name: test-instruction-to-stats-executions-get-with-resolved-alarms-1-name
     steps: []
     timeout_after_execution:
-      seconds: 2
       unit: s
+      value: 2
     type: 0
     users:
     - test-user-to-stats-instruction-get
+  instruction_82:
+    _id: test-instruction-metrics-axe-2-1
+    author: test-author-metrics-axe-2
+    created: 1637904803
+    description: test-instruction-metrics-axe-2-1-description
+    enabled: true
+    entity_patterns:
+    - name: test-resource-metrics-axe-2-1
+    - name: test-resource-metrics-axe-2-2
+    jobs:
+    - job: test-job-metrics-axe
+      stop_on_fail: false
+    last_modified: 1637904803
+    name: test-instruction-metrics-axe-2-1-name
+    priority: 20
+    status: 0
+    timeout_after_execution:
+      unit: s
+      value: 1
+    type: 1
+  instruction_83:
+    _id: test-instruction-metrics-axe-2-2
+    author: test-author-metrics-axe-2
+    created: 1637904803
+    description: test-instruction-metrics-axe-2-2-description
+    enabled: true
+    entity_patterns:
+    - name: test-resource-metrics-axe-2-1
+    - name: test-resource-metrics-axe-2-2
+    jobs:
+    - job: test-job-metrics-axe
+      stop_on_fail: false
+    last_modified: 1637904803
+    name: test-instruction-metrics-axe-2-2-name
+    priority: 21
+    status: 0
+    timeout_after_execution:
+      unit: s
+      value: 1
+    type: 1
+  instruction_84:
+    _id: test-instruction-metrics-axe-10
+    author: test-author-metrics-axe-10
+    created: 1637904803
+    description: test-instruction-metrics-axe-10-description
+    enabled: true
+    entity_patterns:
+    - name: test-resource-metrics-axe-10
+    jobs:
+    - job: test-job-metrics-axe
+      stop_on_fail: false
+    last_modified: 1637904803
+    name: test-instruction-metrics-axe-10-name
+    priority: 22
+    status: 0
+    timeout_after_execution:
+      unit: s
+      value: 1
+    type: 1
+  instruction_85:
+    _id: test-instruction-metrics-axe-11
+    author: test-author-metrics-axe-11
+    created: 1637904803
+    description: test-instruction-metrics-axe-11-description
+    enabled: true
+    entity_patterns:
+    - name: test-resource-metrics-axe-11-1
+    jobs:
+    - job: test-job-metrics-axe
+      stop_on_fail: false
+    last_modified: 1637904803
+    name: test-instruction-metrics-axe-11-name
+    priority: 23
+    status: 0
+    timeout_after_execution:
+      unit: s
+      value: 1
+    type: 1

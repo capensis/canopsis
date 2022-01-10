@@ -79,6 +79,8 @@ func TestMain(m *testing.M) {
 	}
 	defer redisClient.Close()
 
+	loader := fixtures.NewLoader(dbClient, flags.mongoFixtures, true,
+		fixtures.NewParser(password.NewSha1Encoder()), logger)
 	opts := godog.Options{
 		StopOnFailure:  true,
 		Format:         "pretty",
@@ -108,14 +110,14 @@ func TestMain(m *testing.M) {
 func InitializeTestSuite(ctx context.Context, flags Flags, loader fixtures.Loader, redisClient redismod.Cmdable) func(*godog.TestSuiteContext) {
 	return func(godogCtx *godog.TestSuiteContext) {
 		godogCtx.BeforeSuite(func() {
-			err := clearStores(ctx, loader, redisClient)
+			err := clearStores(ctx, flags, loader, redisClient)
 			if err != nil {
 				panic(err)
 			}
 			time.Sleep(flags.periodicalWaitTime)
 		})
 		godogCtx.AfterSuite(func() {
-			err := clearStores(ctx, loader, redisClient)
+			err := clearStores(ctx, flags, loader, redisClient)
 			if err != nil {
 				panic(err)
 			}
@@ -202,8 +204,8 @@ func InitializeScenario(flags Flags, dbClient mongo.DbClient, amqpConnection amq
 	}, nil
 }
 
-func clearStores(ctx context.Context, flags Flags, dbClient mongo.DbClient, redisClient redismod.Cmdable) error {
-	err := loader.Load(ctx, dbClient, flags.mongoFixtures)
+func clearStores(ctx context.Context, flags Flags, loader fixtures.Loader, redisClient redismod.Cmdable) error {
+	err := loader.Load(ctx)
 	if err != nil {
 		return fmt.Errorf("cannot load mongo fixtures: %w", err)
 	}

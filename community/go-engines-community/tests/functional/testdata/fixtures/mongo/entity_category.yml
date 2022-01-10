@@ -101,9 +101,3 @@ entity_category:
     created: 1592215337
     name: test-category-to-entitybasic-edit-name
     updated: 1592215337
-  entity_category_18:
-    _id: test-category-pbehavior-weather-service-is-grey
-    author: test-category-pbehavior-weather-service-is-grey-author
-    created: 1592215337
-    name: test-category-pbehavior-weather-service-is-grey-name
-    updated: 1592215337

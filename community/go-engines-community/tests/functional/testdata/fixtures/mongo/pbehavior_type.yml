@@ -202,3 +202,10 @@ pbehavior_type:
     name: test-pause-type-to-patch-pbehavior-name
     priority: 29
     type: pause
+  pbehavior_type_30:
+    _id: test-pause-type-to-engine
+    description: Engine pause
+    icon_name: test-pause-to-engine-icon
+    name: Engine pause
+    priority: 30
+    type: pause

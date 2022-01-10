@@ -1,0 +1,113 @@
+dynamic_infos:
+  dynamic_infos_1:
+    _id: test-dynamic-infos-to-get-1
+    alarm_patterns:
+    - v:
+        connector: test-dynamic-infos-to-get-1-alarm-pattern
+    author: root
+    creation_date: 1581423405
+    description: test-dynamic-infos-to-get-1-description
+    enabled: true
+    entity_patterns:
+    - _id: test-dynamic-infos-to-get-1-entity-pattern
+    infos:
+    - name: test-dynamic-infos-to-get-1-info-1-name
+      value: test-dynamic-infos-to-get-1-info-1-value
+    - name: test-dynamic-infos-to-get-1-info-2-name
+      value: test-dynamic-infos-to-get-1-info-2-value
+    last_modified_date: 1593679995
+    name: test-dynamic-infos-to-get-1-name
+    pattern:
+    - test-dynamic-infos-to-get-1-entity-pattern
+    - test-dynamic-infos-to-get-1-alarm-pattern
+  dynamic_infos_2:
+    _id: test-dynamic-infos-to-get-2
+    alarm_patterns:
+    - v:
+        connector: test-dynamic-infos-to-get-2-alarm-pattern
+    author: root
+    creation_date: 1581423405
+    description: test-dynamic-infos-to-get-2-description
+    enabled: true
+    entity_patterns:
+    - _id: test-dynamic-infos-to-get-2-entity-pattern
+    infos:
+    - name: test-dynamic-infos-to-get-2-info-1-name
+      value: test-dynamic-infos-to-get-2-info-1-value
+    - name: test-dynamic-infos-to-get-2-info-2-name
+      value: test-dynamic-infos-to-get-2-info-2-value
+    last_modified_date: 1593679995
+    name: test-dynamic-infos-to-get-2-name
+    pattern:
+    - test-dynamic-infos-to-get-2-entity-pattern
+    - test-dynamic-infos-to-get-2-alarm-pattern
+  dynamic_infos_3:
+    _id: test-dynamic-infos-to-delete
+    alarm_patterns:
+    - v:
+        connector: test-dynamic-infos-to-delete-pattern
+    author: root
+    creation_date: 1581423405
+    description: test-dynamic-infos-to-delete-description
+    enabled: true
+    infos:
+    - name: test-dynamic-infos-to-delete-info-name
+      value: test-dynamic-infos-to-delete-info-value
+    last_modified_date: 1593679995
+    name: test-dynamic-infos-to-delete-name
+    pattern:
+    - test-dynamic-infos-to-delete-pattern
+  dynamic_infos_4:
+    _id: test-dynamic-infos-to-update-1
+    alarm_patterns:
+    - v:
+        connector: test-dynamic-infos-to-update-1-pattern
+    author: root
+    creation_date: 1581423405
+    description: test-dynamic-infos-to-update-1-description
+    enabled: true
+    infos:
+    - name: test-dynamic-infos-to-update-1-info-1-name
+      value: test-dynamic-infos-to-update-1-info-1-value
+    - name: test-dynamic-infos-to-update-1-info-2-name
+      value: test-dynamic-infos-to-update-1-info-2-value
+    last_modified_date: 1593679995
+    name: test-dynamic-infos-to-update-1-name
+    pattern:
+    - test-dynamic-infos-to-update-1-pattern
+  dynamic_infos_5:
+    _id: test-dynamic-infos-to-update-2
+    alarm_patterns:
+    - v:
+        connector: test-dynamic-infos-to-update-2-pattern
+    author: root
+    creation_date: 1581423405
+    description: test-dynamic-infos-to-update-2-description
+    enabled: true
+    infos:
+    - name: test-dynamic-infos-to-update-2-info-1-name
+      value: test-dynamic-infos-to-update-2-info-1-value
+    - name: test-dynamic-infos-to-update-2-info-2-name
+      value: test-dynamic-infos-to-update-2-info-2-value
+    last_modified_date: 1593679995
+    name: test-dynamic-infos-to-update-2-name
+    pattern:
+    - test-dynamic-infos-to-update-2-pattern
+  dynamic_infos_6:
+    _id: test-dynamic-infos-to-check-unique
+    alarm_patterns:
+    - v:
+        connector: test-dynamic-infos-to-check-unique-pattern
+    author: root
+    creation_date: 1581423405
+    description: test-dynamic-infos-to-check-unique-description
+    enabled: true
+    infos:
+    - name: test-dynamic-infos-to-check-unique-info-1-name
+      value: test-dynamic-infos-to-check-unique-info-1-value
+    - name: test-dynamic-infos-to-check-unique-info-2-name
+      value: test-dynamic-infos-to-check-unique-info-2-value
+    last_modified_date: 1593679995
+    name: test-dynamic-infos-to-check-unique-name
+    pattern:
+    - test-dynamic-infos-to-check-unique-pattern

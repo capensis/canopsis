@@ -28,8 +28,8 @@ views:
     group_id: test-viewgroup-to-view-edit
     periodic_refresh:
       enabled: true
-      seconds: 1
       unit: s
+      value: 1
     position: 2
     tabs:
     - _id: test-view-to-get-1-tab-1
@@ -58,8 +58,8 @@ views:
     group_id: test-viewgroup-to-view-edit
     periodic_refresh:
       enabled: true
-      seconds: 1
       unit: s
+      value: 1
     position: 3
     tabs:
     - _id: test-view-to-get-2-tab-1
@@ -85,8 +85,8 @@ views:
     group_id: test-viewgroup-to-view-edit
     periodic_refresh:
       enabled: true
-      seconds: 1
       unit: s
+      value: 1
     position: 4
     tabs:
     - _id: test-view-to-update-tab-1
@@ -136,8 +136,8 @@ views:
     group_id: test-viewgroup-to-view-edit
     periodic_refresh:
       enabled: true
-      seconds: 1
       unit: s
+      value: 1
     position: 8
     tabs:
     - _id: test-view-with-test-suites-widget-tab-1
@@ -209,8 +209,8 @@ views:
     group_id: test-viewgroup-to-get-1
     periodic_refresh:
       enabled: true
-      seconds: 1
       unit: s
+      value: 1
     position: 12
     tabs:
     - _id: test-view-to-viewgroup-get-1-tab-1
@@ -239,8 +239,8 @@ views:
     group_id: test-viewgroup-to-get-1
     periodic_refresh:
       enabled: true
-      seconds: 1
       unit: s
+      value: 1
     position: 11
     tabs:
     - _id: test-view-to-viewgroup-get-2-tab-1
@@ -266,8 +266,8 @@ views:
     group_id: test-viewgroup-to-get-1
     periodic_refresh:
       enabled: true
-      seconds: 1
       unit: s
+      value: 1
     position: 13
     tabs: []
     tags:
@@ -323,8 +323,8 @@ views:
     group_id: test-viewgroup-to-view-edit
     periodic_refresh:
       enabled: true
-      seconds: 1
       unit: s
+      value: 1
     position: 18
     tabs:
     - _id: test-view-to-bulk-update-1-tab-1
@@ -350,8 +350,8 @@ views:
     group_id: test-viewgroup-to-view-edit
     periodic_refresh:
       enabled: true
-      seconds: 1
       unit: s
+      value: 1
     position: 19
     tabs:
     - _id: test-view-to-bulk-update-2-tab-1
@@ -367,4 +367,20 @@ views:
     tags:
     - test-view-to-bulk-update-2-tag
     title: test-view-to-bulk-update-2-title
+    updated: 1611229670
+  views_20:
+    _id: test-view-to-update-user-preferences
+    author: test-view-to-update-user-preferences-author
+    created: 1611229670
+    description: test-view-to-update-user-preferences-description
+    enabled: true
+    position: 20
+    tabs:
+    - _id: test-view-to-update-user-preferences-tab-1
+      title: test-view-to-update-user-preferences-tab-1-title
+      widgets:
+      - _id: test-view-to-update-user-preferences-tab-1-widget-1
+        title: test-view-to-update-user-preferences-tab-1-widget-1-title
+        type: test-view-to-update-user-preferences-tab-1-widget-1-type
+    title: test-view-to-update-user-preferences-title
     updated: 1611229670

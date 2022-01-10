@@ -8,8 +8,8 @@ idle_rule:
     created: 1616567033
     description: test-idle-rule-to-check-unique-name-description
     duration:
-      seconds: 3
       unit: s
+      value: 3
     enabled: true
     entity_patterns:
     - name: test-idle-rule-to-check-unique-name-resource
@@ -18,8 +18,8 @@ idle_rule:
       parameters:
         author: test-idle-rule-to-check-unique-name-operation-author
         duration:
-          seconds: 3
           unit: s
+          value: 3
         output: test-idle-rule-to-check-unique-name-operation-output
       type: snooze
     priority: 0
@@ -36,8 +36,8 @@ idle_rule:
     disable_during_periods:
     - pause
     duration:
-      seconds: 3
       unit: s
+      value: 3
     enabled: true
     entity_patterns:
     - name: test-idle-rule-to-get-1-resource
@@ -46,9 +46,10 @@ idle_rule:
       parameters:
         author: test-idle-rule-to-get-1-operation-author
         duration:
-          seconds: 3
           unit: s
+          value: 3
         output: test-idle-rule-to-get-1-operation-output
+        user: test-idle-rule-to-get-1-operation-user
       type: snooze
     priority: 1
     type: alarm
@@ -59,8 +60,8 @@ idle_rule:
     created: 1616567033
     description: test-idle-rule-to-get-2-description
     duration:
-      seconds: 5
       unit: s
+      value: 5
     enabled: true
     entity_patterns:
     - name: test-idle-rule-to-get-2-resource
@@ -76,8 +77,8 @@ idle_rule:
     author: test-idle-rule-to-delete-author
     created: 1616567033
     duration:
-      seconds: 3
       unit: s
+      value: 3
     enabled: true
     entity_patterns:
     - name: test-idle-rule-to-delete-resource
@@ -86,8 +87,8 @@ idle_rule:
       parameters:
         author: test-idle-rule-to-delete-operation-author
         duration:
-          seconds: 3
           unit: s
+          value: 3
         output: test-idle-rule-to-delete-operation-output
       type: snooze
     priority: 3
@@ -104,8 +105,8 @@ idle_rule:
     disable_during_periods:
     - pause
     duration:
-      seconds: 3
       unit: s
+      value: 3
     enabled: true
     entity_patterns:
     - name: test-idle-rule-to-update-resource
@@ -114,10 +115,36 @@ idle_rule:
       parameters:
         author: test-idle-rule-to-update-operation-author
         duration:
-          seconds: 3
           unit: s
+          value: 3
         output: test-idle-rule-to-update-operation-output
       type: snooze
     priority: 4
     type: alarm
     updated: 1616567033
+  idle_rule_6:
+    _id: test-idle-rule-axe-12
+    alarm_condition: last_event
+    alarm_patterns:
+    - v:
+        ticket: null
+    author: test-author-metrics-axe-12
+    created: 1638346696
+    description: test-idle-rule-axe-12-description
+    duration:
+      unit: s
+      value: 1
+    enabled: true
+    entity_patterns:
+    - name: test-resource-metrics-axe-12-4
+    name: test-idle-rule-axe-12-name
+    operation:
+      parameters:
+        author: test-author-metrics-axe-12
+        output: test-scenario-metrics-axe-12-output
+        ticket: test-scenario-metrics-axe-12-ticket
+        user: test-user-metrics-axe-12
+      type: assocticket
+    priority: 5
+    type: alarm
+    updated: 1638346696

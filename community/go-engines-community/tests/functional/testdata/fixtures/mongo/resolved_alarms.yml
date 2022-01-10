@@ -26,7 +26,6 @@ resolved_alarms:
       connector_name: test-alarm-get-resolved-collection-connectorname
       creation_date: 1597030222
       display_name: PK-SL-XK
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -113,7 +112,6 @@ resolved_alarms:
       connector_name: test-alarmcounter-get-resolved-connectorname
       creation_date: 1597030118
       display_name: PK-SL-XK
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""
@@ -184,7 +182,6 @@ resolved_alarms:
       connector_name: test-connector-name-to-stats-executions-get-with-resolved-alarms-2
       creation_date: 1596942720
       display_name: RC-KC_tW
-      extra: {}
       infos: {}
       infos_rule_version: {}
       initial_long_output: ""

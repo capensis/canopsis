@@ -83,3 +83,10 @@ viewgroups:
     position: 11
     title: test-viewgroup-to-bulk-update-title-2
     updated: 1611229670
+  viewgroups_13:
+    _id: test-viewgroup-to-user-preferences-delete
+    author: test-viewgroup-to-user-preferences-delete
+    created: 1611229670
+    position: 12
+    title: test-viewgroup-to-user-preferences-delete
+    updated: 1611229670

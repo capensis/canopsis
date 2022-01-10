@@ -4,5 +4,5 @@ notification:
     instruction:
       rate: true
       rate_frequency:
-        seconds: 604800
         unit: s
+        value: 604800

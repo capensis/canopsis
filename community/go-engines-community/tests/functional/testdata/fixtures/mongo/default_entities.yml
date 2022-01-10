@@ -4430,3 +4430,136 @@ default_entities:
     measurements: null
     name: test-alarm-multi-sort-get-resource-4
     type: resource
+  default_entities_269:
+    _id: test-api-correlation-connector/test-api-correlation-connectorname
+    depends:
+    - test-api-correlation-component
+    enable_history:
+    - 1597030096
+    enabled: true
+    impact:
+    - test-api-correlation-resource-1/test-api-correlation-component
+    - test-api-correlation-resource-2/test-api-correlation-component
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-api-correlation-connectorname
+    type: connector
+  default_entities_270:
+    _id: test-api-correlation-component
+    component: test-api-correlation-component
+    depends:
+    - test-api-correlation-resource-1/test-api-correlation-component
+    - test-api-correlation-resource-2/test-api-correlation-component
+    enable_history:
+    - 1597030096
+    enabled: true
+    impact:
+    - test-api-correlation-connector/test-api-correlation-connectorname
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-api-correlation-component
+    type: component
+  default_entities_271:
+    _id: test-api-correlation-resource-1/test-api-correlation-component
+    category: test-category-to-alarm-test-api-correlation-1
+    component: test-api-correlation-component
+    depends:
+    - test-api-correlation-connector/test-api-correlation-connectorname
+    enable_history:
+    - 1597030096
+    enabled: true
+    impact:
+    - test-api-correlation-component
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-api-correlation-resource-1
+    type: resource
+  default_entities_272:
+    _id: test-api-correlation-resource-2/test-api-correlation-component
+    category: test-category-to-alarm-test-api-correlation-2
+    component: test-api-correlation-component
+    depends:
+    - test-api-correlation-connector/test-api-correlation-connectorname
+    enable_history:
+    - 1597030096
+    enabled: true
+    impact:
+    - test-api-correlation-component
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-api-correlation-resource-2
+    type: resource
+  default_entities_273:
+    _id: test-api-correlation-1/metaalarm
+    component: metaalarm
+    depends: []
+    enable_history:
+    - 1597030219
+    enabled: true
+    impact: []
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-api-correlation-1
+    type: metaalarm
+  default_entities_274:
+    _id: test-api-correlation-2/metaalarm
+    component: metaalarm
+    depends: []
+    enable_history:
+    - 1597030219
+    enabled: true
+    impact: []
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-api-correlation-2
+    type: metaalarm
+  default_entities_275:
+    _id: dynamic-info-update-connector/dynamic-info-update-connectorname
+    depends:
+    - dynamic-info-update-component
+    enable_history:
+    - 1597030096
+    enabled: true
+    impact:
+    - dynamic-info-update-resource-1/dynamic-info-update-component
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: dynamic-info-update-connectorname
+    type: connector
+  default_entities_276:
+    _id: dynamic-info-update-component
+    component: dynamic-info-update-component
+    depends:
+    - dynamic-info-update-resource-1/dynamic-info-update-component
+    enable_history:
+    - 1597030096
+    enabled: true
+    impact:
+    - dynamic-info-update-connector/dynamic-info-update-connectorname
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: dynamic-info-update-component
+    type: component
+  default_entities_277:
+    _id: dynamic-info-update-resource-1/dynamic-info-update-component
+    component: dynamic-info-update-component
+    depends:
+    - dynamic-info-update-connector/dynamic-info-update-connectorname
+    enable_history:
+    - 1597030219
+    enabled: true
+    impact:
+    - dynamic-info-update-component
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: dynamic-info-update-resource-1
+    type: resource
