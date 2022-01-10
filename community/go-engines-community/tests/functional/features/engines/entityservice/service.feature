@@ -2327,7 +2327,6 @@ Feature: update service on event
             "component": "{{ .serviceID }}",
             "connector": "service",
             "connector_name": "service",
-            "resolved": {{ .disableTimestamp }},
             "state": {
               "val": 3
             },
@@ -2359,6 +2358,8 @@ Feature: update service on event
       }
     }
     """
+    When I save response alarmResolve={{ (index .lastResponse.data 1).v.resolved }}
+    Then the difference between alarmResolve disableTimestamp is in range -2,2
 
   Scenario: given deleted entity service should update impact service alarm
     Given I am admin
