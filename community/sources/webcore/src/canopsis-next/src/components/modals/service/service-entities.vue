@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { pick } from 'lodash';
+import { pick, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 
@@ -152,6 +152,20 @@ export default {
       }, []);
     },
 
+    async createPbehaviorsWithPopups(pbehaviors) {
+      try {
+        await this.bulkCreatePbehaviors({ data: pbehaviors });
+      } catch (err) {
+        if (err?.length) {
+          err.forEach(({ errors }) => {
+            if (!isEmpty(errors)) {
+              this.$popups.error({ text: Object.values(errors).join('\n') });
+            }
+          });
+        }
+      }
+    },
+
     async submit() {
       const { eventsActions, createdPbehaviors, removedPbehaviors } = this.actions.queue.reduce((acc, action) => {
         if (action.actionType === WEATHER_ACTIONS_TYPES.entityPause) {
@@ -174,7 +188,7 @@ export default {
       });
 
       await Promise.all([
-        createdPbehaviors.length && this.bulkCreatePbehaviors({ data: createdPbehaviors }),
+        createdPbehaviors.length && this.createPbehaviorsWithPopups({ data: createdPbehaviors }),
         removedPbehaviors.length && this.bulkRemovePbehaviors({ params: { ids: mapIds(removedPbehaviors) } }),
         this.createEventAction({ data: convertActionsToEvents(eventsActions) }),
       ]);
