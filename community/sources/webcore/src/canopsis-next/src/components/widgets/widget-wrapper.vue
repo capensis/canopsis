@@ -1,6 +1,6 @@
 <template lang="pug">
   div(:style="widgetWrapperStyles")
-    template(v-if="widget.title || isEditingMode")
+    template(v-if="widget.title || editing")
       v-card-title.widget-title.white.pa-2
         v-layout(justify-space-between, align-center)
           v-flex
@@ -12,7 +12,7 @@
         v-bind="getWidgetPropsByType(widget.type)",
         :widget="widget",
         :tab-id="tab._id",
-        :is-editing-mode="isEditingMode"
+        :editing="editing"
       )
 </template>
 
@@ -60,7 +60,7 @@ export default {
       type: Object,
       required: true,
     },
-    isEditingMode: {
+    editing: {
       type: Boolean,
       default: false,
     },

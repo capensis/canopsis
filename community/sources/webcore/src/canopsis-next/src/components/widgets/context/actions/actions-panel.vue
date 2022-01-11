@@ -19,7 +19,7 @@ import SharedActionsPanel from '@/components/common/actions-panel/actions-panel.
  * @module context
  *
  * @prop {Object} item - Item of context entities lists
- * @prop {boolean} [isEditingMode=false] - Is editing mode enable on a view
+ * @prop {boolean} [editing=false] - Is editing mode enable on a view
  */
 export default {
   components: { SharedActionsPanel },
@@ -31,7 +31,7 @@ export default {
       type: Object,
       required: true,
     },
-    isEditingMode: {
+    editing: {
       type: Boolean,
       default: false,
     },
@@ -96,7 +96,7 @@ export default {
 
       actions.push(filteredActionsMap.pbehavior);
 
-      if (this.isEditingMode) {
+      if (this.editing) {
         actions.push(filteredActionsMap.variablesHelp);
       }
 

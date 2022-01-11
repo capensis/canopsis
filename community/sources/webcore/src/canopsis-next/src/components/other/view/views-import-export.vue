@@ -110,17 +110,15 @@ export default {
       this.$refs.fileSelector.clear();
     },
 
-    exportViews() {
+    async exportViews() {
       const data = exportedGroupsAndViewsToRequest({
         groups: this.selected.groups.map(this.getGroupById),
         views: this.selected.views.map(this.getViewById),
       });
 
-      /**
-       * TODO: put request
-       */
+      const result = await this.exportViewsWithoutStore({ data });
 
-      saveJsonFile(data, `${EXPORT_VIEWS_AND_GROUPS_FILENAME_PREFIX}${new Date().toLocaleString()}`);
+      saveJsonFile(result, `${EXPORT_VIEWS_AND_GROUPS_FILENAME_PREFIX}${new Date().toLocaleString()}`);
 
       this.resetSelected();
     },

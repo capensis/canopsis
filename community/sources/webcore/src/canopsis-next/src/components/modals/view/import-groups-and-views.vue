@@ -42,6 +42,7 @@ import {
   prepareImportedViews,
   prepareImportedGroups,
   prepareCurrentGroupsForImporting,
+  prepareViewGroupsForImportRequest,
 } from '@/helpers/forms/view';
 
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
@@ -104,10 +105,9 @@ export default {
 
     async submit() {
       try {
-
-        /**
-         * TODO: send request
-         */
+        await this.importViewsWithoutStore({
+          data: prepareViewGroupsForImportRequest(this.currentGroups),
+        });
       } catch (err) {
         this.$popups.error({ text: err.description || this.$t('errors.default') });
       } finally {

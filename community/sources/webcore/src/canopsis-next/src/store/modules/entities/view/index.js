@@ -7,6 +7,8 @@ import { viewSchema } from '@/store/schemas';
 import { types as entitiesTypes } from '@/store/plugins/entities';
 
 import groupModule from './group';
+import tabModule from './tab';
+import widgetModule from './widget';
 
 export const types = {
   FETCH_ITEM: 'FETCH_ITEM',
@@ -18,10 +20,13 @@ export default {
   namespaced: true,
   modules: {
     group: groupModule,
+    tab: tabModule,
+    widget: widgetModule,
   },
   state: {
     activeViewId: null,
     pending: true,
+    editing: false,
   },
   getters: {
     itemId: state => state.activeViewId,
@@ -97,6 +102,14 @@ export default {
 
     bulkCreateWithoutStore(context, { data }) {
       return request.post(API_ROUTES.bulkView, data);
+    },
+
+    exportWithoutStore(context, { data }) {
+      return request.post(API_ROUTES.viewExport, data);
+    },
+
+    importWithoutStore(context, { data }) {
+      return request.post(API_ROUTES.viewImport, data);
     },
   },
 };

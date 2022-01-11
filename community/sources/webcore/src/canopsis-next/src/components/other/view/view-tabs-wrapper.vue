@@ -5,25 +5,19 @@
       :view="view",
       :tabs.sync="tabs",
       :isTabsChanged="isTabsChanged",
-      :isEditingMode="isEditingMode",
-      :hasUpdateAccess="hasUpdateAccess"
+      :editing="editing",
+      :updatable="updatable"
     )
     v-fade-transition
-      div
-        .v-overlay.v-overlay--active(v-show="view && isTabsChanged")
-          v-btn(
-            data-test="submitMoveTab",
-            color="primary",
-            @click="submit"
-          ) {{ $t('common.submit') }}
-          v-btn(@click="cancel") {{ $t('common.cancel') }}
+      div.v-overlay.v-overlay--active(v-show="view && isTabsChanged")
+        v-btn(color="primary", @click="submit") {{ $t('common.submit') }}
+        v-btn(@click="cancel") {{ $t('common.cancel') }}
     view-tabs(
       :view="view",
       :tabs.sync="tabs",
       :isTabsChanged="isTabsChanged",
-      :isEditingMode="isEditingMode",
-      :hasUpdateAccess="hasUpdateAccess",
-      :updateViewMethod="updateViewMethod"
+      :editing="editing",
+      :updatable="updatable"
     )
       view-tab-widgets(
         slot-scope="props",
@@ -35,6 +29,8 @@
 <script>
 import { isEqual } from 'lodash';
 
+import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
+
 import ViewTabs from './view-tabs.vue';
 import ViewTabWidgets from './view-tab-widgets.vue';
 
@@ -43,22 +39,19 @@ export default {
     ViewTabs,
     ViewTabWidgets,
   },
+  mixins: [entitiesViewTabMixin],
   props: {
     view: {
       type: Object,
       required: true,
     },
-    hasUpdateAccess: {
+    editing: {
       type: Boolean,
       default: false,
     },
-    isEditingMode: {
+    updatable: {
       type: Boolean,
       default: false,
-    },
-    updateViewMethod: {
-      type: Function,
-      required: true,
     },
   },
   data() {
@@ -90,11 +83,7 @@ export default {
     },
 
     async submit() {
-      this.updateViewMethod({
-        ...this.view,
-
-        tabs: this.tabs,
-      });
+      this.updateViewTabPositions({});
     },
   },
 };

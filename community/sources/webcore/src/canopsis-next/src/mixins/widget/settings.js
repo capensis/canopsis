@@ -1,6 +1,7 @@
 import { setField } from '@/helpers/immutable';
 
 import { prepareQuery } from '@/helpers/query';
+import { formToWidget } from '@/helpers/forms/widgets/common';
 
 import queryMixin from '@/mixins/query';
 import { entitiesViewMixin } from '@/mixins/entities/view';
@@ -69,26 +70,25 @@ export const widgetSettingsMixin = {
       const isFormValid = await this.isFormValid();
 
       if (isFormValid) {
-        const userPreference = this.getPreparedUserPreference();
-        const widget = {
-          ...this.settings.widget,
-          ...this.prepareWidgetSettings(),
-        };
+        const data = formToWidget(this.settings.widget);
 
-        await Promise.all([
-          this.updateUserPreference({ data: userPreference }),
-          /**
-           * TODO: update widget request
-           */
-        ]);
+        /**
+         * TODO: update widget request
+         */
 
-        const oldQuery = this.getQueryById(widget._id);
-        const newQuery = prepareQuery(widget, userPreference);
+        if (data._id) {
+          const userPreference = this.getPreparedUserPreference();
 
-        this.updateQuery({
-          id: widget._id,
-          query: this.prepareWidgetQuery(newQuery, oldQuery),
-        });
+          await this.updateUserPreference({ data: userPreference });
+
+          const oldQuery = this.getQueryById(data._id);
+          const newQuery = prepareQuery(data, userPreference);
+
+          this.updateQuery({
+            id: data._id,
+            query: this.prepareWidgetQuery(newQuery, oldQuery),
+          });
+        }
 
         this.$sidebar.hide();
       }

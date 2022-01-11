@@ -70,7 +70,7 @@
           :columns-filters="columnsFilters"
         )
       template(slot="actions", slot-scope="props")
-        actions-panel(:item="props.item", :is-editing-mode="isEditingMode")
+        actions-panel(:item="props.item", :editing="editing")
       template(slot="expand", slot-scope="props")
         entities-list-expand-panel(
           :item="props.item",
@@ -144,7 +144,7 @@ export default {
       type: Object,
       required: true,
     },
-    isEditingMode: {
+    editing: {
       type: Boolean,
       required: true,
     },

@@ -4,9 +4,8 @@
       view-tabs-wrapper(
         v-if="isViewTabsReady",
         :view="view",
-        :isEditingMode="isEditingMode",
-        :hasUpdateAccess="hasUpdateAccess",
-        :updateViewMethod="updateViewMethod",
+        :editing="editing",
+        :updatable="hasUpdateAccess",
         @update:widgets-fields="updateWidgetsFieldsForUpdateById"
       )
     div.fab
@@ -56,7 +55,7 @@
           v-tooltip(left)
             v-btn(
               slot="activator",
-              v-model="isFullScreenMode",
+              v-model="fullscreen",
               fab,
               dark,
               small,
@@ -68,7 +67,7 @@
           v-tooltip(v-if="hasUpdateAccess", left)
             v-btn(
               slot="activator",
-              :input-value="isEditingMode",
+              :input-value="editing",
               data-test="editViewButton",
               fab,
               dark,
@@ -109,7 +108,7 @@
         v-tooltip(v-else, top)
           v-btn(
             slot="activator",
-            v-model="isFullScreenMode",
+            v-model="fullscreen",
             fab,
             dark,
             @click="toggleFullScreenMode"
@@ -155,8 +154,8 @@ export default {
   },
   data() {
     return {
-      isEditingMode: false,
-      isFullScreenMode: false,
+      editing: false,
+      fullscreen: false,
       isVSpeedDialOpen: false,
       widgetsFieldsForUpdateById: {},
     };
@@ -250,7 +249,7 @@ export default {
           this.$fullscreen.toggle(element, {
             fullscreenClass: 'full-screen',
             background: 'white',
-            callback: value => this.isFullScreenMode = value,
+            callback: value => this.fullscreen = value,
           });
         }
       } else {
@@ -325,11 +324,11 @@ export default {
     },
 
     async toggleViewEditingMode() {
-      if (this.isEditingMode && !isEmpty(this.widgetsFieldsForUpdateById)) {
+      if (this.editing && !isEmpty(this.widgetsFieldsForUpdateById)) {
         await this.updateTabs();
       }
 
-      this.isEditingMode = !this.isEditingMode;
+      this.editing = !this.editing;
     },
   },
 };

@@ -23,6 +23,8 @@ export const entitiesViewMixin = {
       updateViewWithoutStore: 'updateWithoutStore',
       removeView: 'remove',
       bulkCreateViewsWithoutStore: 'bulkCreateWithoutStore',
+      exportViewsWithoutStore: 'exportWithoutStore',
+      importViewsWithoutStore: 'importWithoutStore',
     }),
 
     async createViewWithPopup({ data }) {
