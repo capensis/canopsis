@@ -91,7 +91,6 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-2"
     }
     """
-    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-event-filters-2
     Then the response code should be 200
@@ -105,9 +104,6 @@ Feature: modify event on event filter
           "component": "test-component-che-event-filters-2",
           "depends": [
             "test-resource-che-event-filters-2/test-component-che-event-filters-2"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
           ],
           "enabled": true,
           "impact": [
@@ -125,9 +121,6 @@ Feature: modify event on event filter
           "depends": [
             "test-component-che-event-filters-2"
           ],
-          "enable_history": [
-            {{ .createTimestamp }}
-          ],
           "enabled": true,
           "impact": [
             "test-resource-che-event-filters-2/test-component-che-event-filters-2"
@@ -144,9 +137,6 @@ Feature: modify event on event filter
           "component": "test-component-che-event-filters-2",
           "depends": [
             "test-connector-che-event-filters-2/test-connector-name-che-event-filters-2"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
           ],
           "enabled": true,
           "impact": [
@@ -301,7 +291,6 @@ Feature: modify event on event filter
       "manager": "test-manager-che-event-filters-3"
     }
     """
-    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-event-filters-3
     Then the response code should be 200
@@ -315,9 +304,6 @@ Feature: modify event on event filter
           "component": "test-component-che-event-filters-3",
           "depends": [
             "test-resource-che-event-filters-3/test-component-che-event-filters-3"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
           ],
           "enabled": true,
           "impact": [
@@ -335,9 +321,6 @@ Feature: modify event on event filter
           "depends": [
             "test-component-che-event-filters-3"
           ],
-          "enable_history": [
-            {{ .createTimestamp }}
-          ],
           "enabled": true,
           "impact": [
             "test-resource-che-event-filters-3/test-component-che-event-filters-3"
@@ -354,9 +337,6 @@ Feature: modify event on event filter
           "component": "test-component-che-event-filters-3",
           "depends": [
             "test-connector-che-event-filters-3/test-connector-name-che-event-filters-3"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
           ],
           "enabled": true,
           "impact": [
@@ -644,7 +624,6 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-5"
     }
     """
-    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I send an event:
     """
@@ -672,9 +651,6 @@ Feature: modify event on event filter
           "depends": [
             "test-resource-che-event-filters-5/test-component-che-event-filters-5"
           ],
-          "enable_history": [
-            {{ .createTimestamp }}
-          ],
           "enabled": true,
           "impact": [
             "test-connector-che-event-filters-5/test-connector-name-che-event-filters-5"
@@ -696,9 +672,6 @@ Feature: modify event on event filter
           "category": null,
           "depends": [
             "test-component-che-event-filters-5"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
           ],
           "enabled": true,
           "impact": [
@@ -723,9 +696,6 @@ Feature: modify event on event filter
           },
           "depends": [
             "test-connector-che-event-filters-5/test-connector-name-che-event-filters-5"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
           ],
           "enabled": true,
           "impact": [
@@ -762,7 +732,6 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-6"
     }
     """
-    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do PUT /api/v4/entitybasics?_id=test-resource-che-event-filters-6/test-component-che-event-filters-6:
     """
@@ -866,9 +835,6 @@ Feature: modify event on event filter
           "depends": [
             "test-resource-che-event-filters-6/test-component-che-event-filters-6"
           ],
-          "enable_history": [
-            {{ .createTimestamp }}
-          ],
           "enabled": true,
           "impact": [
             "test-connector-che-event-filters-6/test-connector-name-che-event-filters-6"
@@ -884,9 +850,6 @@ Feature: modify event on event filter
           "category": null,
           "depends": [
             "test-component-che-event-filters-6"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
           ],
           "enabled": true,
           "impact": [
@@ -904,9 +867,6 @@ Feature: modify event on event filter
           "component": "test-component-che-event-filters-6",
           "depends": [
             "test-connector-che-event-filters-6/test-connector-name-che-event-filters-6"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
           ],
           "enabled": false,
           "impact": [
@@ -1002,7 +962,6 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-7"
     }
     """
-    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-event-filters-7
     Then the response code should be 200
@@ -1016,9 +975,6 @@ Feature: modify event on event filter
           "component": "test-component-che-event-filters-7",
           "depends": [
             "test-resource-che-event-filters-7/test-component-che-event-filters-7"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
           ],
           "enabled": true,
           "impact": [
@@ -1036,9 +992,6 @@ Feature: modify event on event filter
           "depends": [
             "test-component-che-event-filters-7"
           ],
-          "enable_history": [
-            {{ .createTimestamp }}
-          ],
           "enabled": true,
           "impact": [
             "test-resource-che-event-filters-7/test-component-che-event-filters-7"
@@ -1055,9 +1008,6 @@ Feature: modify event on event filter
           "component": "test-component-che-event-filters-7",
           "depends": [
             "test-connector-che-event-filters-7/test-connector-name-che-event-filters-7"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
           ],
           "enabled": true,
           "impact": [
@@ -1218,7 +1168,6 @@ Feature: modify event on event filter
       "testdate": 1592215337
     }
     """
-    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-event-filters-8
     Then the response code should be 200
@@ -1232,9 +1181,6 @@ Feature: modify event on event filter
           "component": "test-component-che-event-filters-8",
           "depends": [
             "test-resource-che-event-filters-8/test-component-che-event-filters-8"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
           ],
           "enabled": true,
           "impact": [
@@ -1252,9 +1198,6 @@ Feature: modify event on event filter
           "depends": [
             "test-component-che-event-filters-8"
           ],
-          "enable_history": [
-            {{ .createTimestamp }}
-          ],
           "enabled": true,
           "impact": [
             "test-resource-che-event-filters-8/test-component-che-event-filters-8"
@@ -1271,9 +1214,6 @@ Feature: modify event on event filter
           "component": "test-component-che-event-filters-8",
           "depends": [
             "test-connector-che-event-filters-8/test-connector-name-che-event-filters-8"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
           ],
           "enabled": true,
           "impact": [

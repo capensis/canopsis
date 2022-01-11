@@ -242,7 +242,7 @@ Feature: no execute action when entity is inactive
           "parameters": {
             "name": "pbehavior-action-3",
             "tstart": {{ now }},
-            "tstop": {{ nowAdd "10m" }},
+            "tstop": {{ nowAdd "1h" }},
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"
           },
@@ -395,7 +395,7 @@ Feature: no execute action when entity is inactive
           "parameters": {
             "name": "pbehavior-action-5",
             "tstart": {{ now }},
-            "tstop": {{ nowAdd "10m" }},
+            "tstop": {{ nowAdd "1h" }},
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"
           },
@@ -486,7 +486,7 @@ Feature: no execute action when entity is inactive
           "parameters": {
             "name": "pbehavior-action-6",
             "tstart": {{ now }},
-            "tstop": {{ nowAdd "10m" }},
+            "tstop": {{ nowAdd "1h" }},
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"
           },
