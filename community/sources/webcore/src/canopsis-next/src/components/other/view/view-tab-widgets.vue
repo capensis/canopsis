@@ -1,19 +1,19 @@
 <template lang="pug">
   div.view(:id="`view-tab-${tab._id}`")
     grid-overview-widget(
-      v-show="!isEditingMode",
+      v-show="!editing",
       :tab="tab"
     )
       template(#default="{ widget }")
         widget-wrapper(:widget="widget", :tab="tab")
     grid-edit-widgets(
-      v-if="isEditingMode",
+      v-if="editing",
       :tab="tab",
       :update-tab-method="updateTabMethod",
       @update:widgets-fields="$emit('update:widgets-fields', $event)"
     )
       template(#default="{ widget }")
-        widget-wrapper(:widget="widget", :tab="tab", is-editing-mode)
+        widget-wrapper(:widget="widget", :tab="tab", editing)
 </template>
 
 <script>
@@ -37,7 +37,7 @@ export default {
       type: Object,
       required: true,
     },
-    isEditingMode: {
+    editing: {
       type: Boolean,
       default: false,
     },

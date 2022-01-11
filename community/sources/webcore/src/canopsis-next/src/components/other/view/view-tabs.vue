@@ -3,14 +3,13 @@
     ref="tabs",
     :key="vTabsKey",
     :value="$route.fullPath",
-    :class="{ hidden: this.tabs.length < 2 && !isEditingMode, 'tabs-editing': isEditingMode }",
+    :class="{ hidden: this.tabs.length < 2 && !editing, 'tabs-editing': editing }",
     :hide-slider="isTabsChanged",
     color="secondary lighten-2",
     slider-color="primary",
     dark
   )
     draggable.d-flex(
-      data-test="draggable-wrap",
       v-if="tabs.length",
       :value="tabs",
       :options="draggableOptions",
@@ -18,7 +17,6 @@
       @input="$emit('update:tabs', $event)"
     )
       v-tab.draggable-item(
-        :data-test="`tab-${tab._id}`",
         v-for="tab in tabs",
         :key="tab._id",
         :disabled="isTabsChanged",
@@ -28,16 +26,16 @@
       )
         span {{ tab.title }}
         update-tab-btn(
-          v-show="hasUpdateAccess && isEditingMode",
+          v-show="updatable && editing",
           :tab="tab",
           :updateTabMethod="updateTab"
         )
         clone-tab-btn(
-          v-show="hasUpdateAccess && isEditingMode",
+          v-show="updatable && editing",
           :tab="tab"
         )
         delete-tab-btn(
-          v-show="hasUpdateAccess && isEditingMode",
+          v-show="updatable && editing",
           :tab="tab",
           :view="view",
           :updateViewMethod="updateViewMethod"
@@ -52,7 +50,7 @@
         )
           slot(
             :tab="tab",
-            :isEditingMode="isEditingMode",
+            :editing="editing",
             :updateTabMethod="updateTab"
           )
 </template>
@@ -87,7 +85,7 @@ export default {
       type: Array,
       required: true,
     },
-    hasUpdateAccess: {
+    updatable: {
       type: Boolean,
       default: false,
     },
@@ -95,7 +93,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    isEditingMode: {
+    editing: {
       type: Boolean,
       default: false,
     },
@@ -111,7 +109,7 @@ export default {
     draggableOptions() {
       return {
         animation: VUETIFY_ANIMATION_DELAY,
-        disabled: !this.isEditingMode,
+        disabled: !this.editing,
       };
     },
     getTabHrefById() {
@@ -123,7 +121,7 @@ export default {
     },
   },
   watch: {
-    isEditingMode() {
+    editing() {
       this.$nextTick(this.callTabsOnResizeMethod);
     },
     tabs: {

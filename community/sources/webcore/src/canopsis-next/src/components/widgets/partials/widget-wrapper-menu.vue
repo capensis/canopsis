@@ -19,12 +19,15 @@
 </template>
 
 <script>
+import { omit } from 'lodash';
+
 import { MODALS, ROUTES_NAMES, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 
-import { generateWidgetId } from '@/helpers/entities';
-import { removeFrom } from '@/helpers/immutable';
+import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
+import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
 
 export default {
+  mixins: [entitiesWidgetMixin, entitiesViewTabMixin],
   props: {
     widget: {
       type: Object,
@@ -34,37 +37,22 @@ export default {
       type: Object,
       required: true,
     },
-    updateTabMethod: {
-      type: Function,
-      required: true,
-    },
   },
   methods: {
     /**
-     * Delete widget from tab
-     *
-     * @param {string} widgetId
-     */
-    deleteWidgetFromTab(widgetId) {
-      const widgetIndex = this.tab.widgets.findIndex(widget => widget._id === widgetId);
-
-      return removeFrom(this.tab, 'widgets', widgetIndex);
-    },
-
-    /**
      * Redirect to selected view and tab, if it's different then the view/tab we're actually on
      */
-    async redirectToSelectedViewAndTab({ tabId, viewId }) {
-      await new Promise((resolve, reject) => {
+    redirectToSelectedViewAndTab({ tabId, viewId }) {
+      return new Promise((resolve, reject) => {
         if (this.tab._id === tabId) {
-          resolve();
-        } else {
-          this.$router.push({
-            name: ROUTES_NAMES.view,
-            params: { id: viewId },
-            query: { tabId },
-          }, resolve, reject);
+          return resolve();
         }
+
+        return this.$router.push({
+          name: ROUTES_NAMES.view,
+          params: { id: viewId },
+          query: { tabId },
+        }, resolve, reject);
       });
     },
 
@@ -72,31 +60,15 @@ export default {
      * Copy a widget's parameters, and open corresponding settings panel
      */
     cloneWidget({ viewId, tabId }) {
-      const newWidget = { ...this.widget, _id: generateWidgetId(this.widget.type) };
+      const newWidget = omit(this.widget, ['_id']);
 
       this.redirectToSelectedViewAndTab({ tabId, viewId });
 
-      this.showSettings({ viewId, tabId, widget: newWidget });
-    },
-
-    /**
-     * Show widget settings side bar
-     *
-     * @param {string} [viewId]
-     * @param {string} tabId
-     * @param {Object} widget
-     */
-    showSettings({
-      viewId,
-      tabId,
-      widget,
-    }) {
       this.$sidebar.show({
-        name: SIDE_BARS_BY_WIDGET_TYPES[widget.type],
+        name: SIDE_BARS_BY_WIDGET_TYPES[newWidget.type],
         config: {
-          viewId,
           tabId,
-          widget,
+          widget: newWidget,
         },
       });
     },
@@ -120,10 +92,10 @@ export default {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () => {
-            const updatedTab = this.deleteWidgetFromTab(this.widget._id);
+          action: async () => {
+            await this.removeWidget({ id: this.widget._id });
 
-            return this.updateTabMethod(updatedTab);
+            return this.fetchViewTab({ id: this.tab._id });
           },
         },
       });

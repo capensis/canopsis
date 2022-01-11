@@ -1,12 +1,14 @@
 import { cloneDeep } from 'lodash';
 
 import {
-  DEFAULT_WIDGET_GRID_PARAMETERS,
-  WIDGET_GRID_SIZES_KEYS,
   WIDGET_TYPES,
+  WIDGET_GRID_SIZES_KEYS,
+  DEFAULT_WIDGET_GRID_PARAMETERS,
 } from '@/constants';
 
 import { generateWidgetId } from '@/helpers/entities';
+
+import { formToAlarmListWidget } from './alarm';
 
 /**
  * @typedef { 'AlarmsList' | 'Context' | 'ServiceWeather' | 'StatsCalendar' | 'Text' | 'Counter' | 'Junit' } WidgetType
@@ -71,3 +73,17 @@ export const widgetToForm = (widget = { type: WIDGET_TYPES.alarmList }) => ({
     return acc;
   }, {}),
 });
+
+/**
+ * Convert form object to widget
+ *
+ * @param {WidgetForm} form
+ * @returns {Widget}
+ */
+export const formToWidget = (form) => {
+  const method = {
+    [WIDGET_TYPES.alarmList]: formToAlarmListWidget,
+  }[form.type];
+
+  return method ? method(form) : form;
+};
