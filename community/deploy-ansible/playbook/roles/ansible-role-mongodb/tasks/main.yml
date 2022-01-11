@@ -48,8 +48,3 @@
   when: mongodb_security_authorization == 'enabled'
   no_log: true
   tags: [mongodb]
-
-- name: Include MMS Agent configuration
-  include: mms-agent.yml
-  when: mongodb_mms_api_key | length > 0
-  tags: [mongodb]

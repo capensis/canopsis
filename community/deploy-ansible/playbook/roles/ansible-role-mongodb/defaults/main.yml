@@ -58,12 +58,6 @@ mongodb_systemlog_logappend: true                                        # Appen
 mongodb_systemlog_logrotate: "rename"                                    # Logrotation behavior
 mongodb_systemlog_path: /var/log/mongodb/{{ mongodb_daemon_name }}.log   # Log file to send write to instead of stdout
 
-# MMS Agent
-mongodb_mms_agent_pkg: https://mms.mongodb.com/download/agent/automation/mongodb-mms-automation-agent-manager_1.4.2.783-1_amd64.deb
-mongodb_mms_group_id: ""
-mongodb_mms_api_key: ""
-mongodb_mms_base_url: https://mms.mongodb.com
-
 # password for inter-process authentication
 # please regenerate this file on production environment with command 'openssl rand -base64 741'
 mongodb_keyfile_content: |
