@@ -10,7 +10,7 @@ mongodb_apt_key_id:
   "4.4": "20691eec35216c63caf66ce1656408e390cfb1f5"
 # XXX: Capensis note: no 5.0 support from UnderGreen/ansible-role-mongodb upstream as of 2022-01-11
 
-mongodb_pymongo_from_pip: true                   # Install latest PyMongo via PIP or package manager
+mongodb_pymongo_from_pip: false                   # Install latest PyMongo via PIP or package manager
 mongodb_pymongo_pip_version: 3.11.3
 
 mongodb_user_update_password: "on_create"        # MongoDB user password update default policy
@@ -35,11 +35,11 @@ mongodb_processmanagement_fork: "{{ 'RedHat' == ansible_os_family }}"
 
 ## security Options
 # Disable or enable security. Possible values: 'disabled', 'enabled'
-mongodb_security_authorization: "disabled"
+mongodb_security_authorization: "enabled"
 mongodb_security_keyfile: /etc/mongodb-keyfile   # Specify path to keyfile with password for inter-process authentication
 
 ## storage Options
-mongodb_storage_dbpath: /data/db                 # Directory for datafiles
+mongodb_storage_dbpath: /var/lib/mongodb         # Directory for datafiles
 # The storage engine for the mongod database. Available values:
 # 'mmapv1', 'wiredTiger'
 mongodb_storage_engine: "wiredTiger"
@@ -80,11 +80,11 @@ mongodb_keyfile_content: |
   wR700U0LDaGGQpslGtiE56SemgoP
 
 # names and passwords for administrative users
-mongodb_user_admin_name: siteUserAdmin
-mongodb_user_admin_password: passw0rd
+mongodb_user_admin_name: admin
+mongodb_user_admin_password: admin
 
-mongodb_root_admin_name: siteRootAdmin
-mongodb_root_admin_password: passw0rd
+mongodb_root_admin_name: root
+mongodb_root_admin_password: root
 
 mongodb_root_backup_name: backupuser
 mongodb_root_backup_password: passw0rd
