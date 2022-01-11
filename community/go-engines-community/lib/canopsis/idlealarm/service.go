@@ -49,16 +49,17 @@ type baseService struct {
 }
 
 func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr error) {
-	defer func() {
-		s.logger.Debug().Msg("process idle alarms")
-	}()
-
 	now := types.NewCpsTime()
 	eventGenerator := libevent.NewGenerator(s.entityAdapter)
 	rules, err := s.ruleAdapter.GetEnabled(ctx)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot fetch idle rules: %w", err)
 	}
+	ids := make([]string, len(rules))
+	for i, rule := range rules {
+		ids[i] = rule.ID
+	}
+	s.logger.Debug().Strs("rules", ids).Msg("load idle rules")
 
 	var allMinDuration, entityMinDuration types.DurationWithUnit
 	for _, rule := range rules {
@@ -74,7 +75,7 @@ func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr er
 				entityMinDuration = rule.Duration
 			}
 		default:
-			return nil, fmt.Errorf("unknown type of idle rule: %v for id=%s", rule.Type, rule.ID)
+			return nil, fmt.Errorf("unknown type of idle rule: %q for id=%s", rule.Type, rule.ID)
 		}
 	}
 
@@ -85,7 +86,7 @@ func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr er
 		before := allMinDuration.SubFrom(now)
 		cursor, err := s.alarmAdapter.GetOpenedAlarmsWithLastDatesBefore(ctx, before)
 		if err != nil {
-			return events, err
+			return events, fmt.Errorf("cannot fetch alarms: %w", err)
 		}
 
 		defer cursor.Close(ctx)
@@ -94,7 +95,7 @@ func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr er
 			alarm := types.AlarmWithEntity{}
 			err := cursor.Decode(&alarm)
 			if err != nil {
-				return events, err
+				return events, fmt.Errorf("cannot decode alarm %w", err)
 			}
 
 			event, err := s.applyRules(ctx, rules, alarm.Entity, &alarm.Alarm, eventGenerator, now)
@@ -114,7 +115,7 @@ func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr er
 		before := entityMinDuration.SubFrom(now)
 		cursor, err := s.entityAdapter.GetAllWithLastUpdateDateBefore(ctx, before, checkedEntities)
 		if err != nil {
-			return events, err
+			return events, fmt.Errorf("cannot fetch entities: %w", err)
 		}
 
 		defer cursor.Close(ctx)
@@ -123,7 +124,7 @@ func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr er
 			entity := types.Entity{}
 			err := cursor.Decode(&entity)
 			if err != nil {
-				return events, err
+				return events, fmt.Errorf("cannot decode entity : %w", err)
 			}
 
 			event, err := s.applyRules(ctx, rules, entity, nil, eventGenerator, now)
@@ -175,7 +176,7 @@ func (s *baseService) applyRules(
 				var err error
 				lastAlarm, err = s.alarmAdapter.GetLastAlarmByEntityID(ctx, entity.ID)
 				if err != nil {
-					return nil, err
+					return nil, fmt.Errorf("cannot fetch alarm: %w", err)
 				}
 
 				// If some rule has already been applied on entity.
@@ -266,11 +267,11 @@ func (s *baseService) applyAlarmRule(
 			event.UserID = params.User
 		}
 	default:
-		return nil, fmt.Errorf("unknown idle rule operation %v", rule.Operation)
+		return nil, fmt.Errorf("unknown idle rule id=%q operation type=%q", rule.ID, rule.Operation.Type)
 	}
 
 	if event.EventType == "" {
-		return nil, fmt.Errorf("invalid idle rule operation %v", rule.Operation)
+		return nil, fmt.Errorf("invalid idle rule id=%q operation params %v", rule.ID, rule.Operation.Parameters)
 	}
 
 	return &event, nil
@@ -315,7 +316,7 @@ func (s *baseService) applyEntityRule(
 func (s *baseService) closeConnectorAlarms(ctx context.Context) ([]types.Event, error) {
 	alarms, err := s.alarmAdapter.GetOpenedAlarmsByConnectorIdleRules(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("failed to fetch opened alarms: %w", err)
+		return nil, fmt.Errorf("cannot fetch opened alarms: %w", err)
 	}
 
 	events := make([]types.Event, len(alarms))
