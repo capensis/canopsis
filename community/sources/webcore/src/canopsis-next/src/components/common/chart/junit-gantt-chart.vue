@@ -27,7 +27,7 @@ import { TEST_SUITE_COLORS, TEST_SUITE_STATUSES } from '@/constants';
 
 import { colorToRgba } from '@/helpers/color';
 
-import HorizontalBar from './horizontal-bar.vue';
+const HorizontalBar = () => import(/* webpackChunkName: "Charts" */ './horizontal-bar.vue');
 
 /**
  * Local constants
@@ -45,12 +45,6 @@ const ICONS_COLORS = {
   [ICON_NAMES.arrowUpward]: 'primary',
   [ICON_NAMES.arrowDownward]: 'error',
 };
-
-const FAILED_STATUSES = [
-  TEST_SUITE_STATUSES.error,
-  TEST_SUITE_STATUSES.skipped,
-  TEST_SUITE_STATUSES.failed,
-];
 
 const MIN_SKIPPED_TO_SECTIONS_COUNT = 40;
 
@@ -195,10 +189,10 @@ export default {
           } else if (time > avgTime) {
             icon = ICON_NAMES.arrowDownward;
           }
-        } else if (FAILED_STATUSES.includes(avgStatus)) {
+        } else {
           icon = ICON_NAMES.done;
         }
-      } else if (avgStatus === TEST_SUITE_STATUSES.passed && FAILED_STATUSES.includes(status)) {
+      } else if (avgStatus === TEST_SUITE_STATUSES.passed) {
         icon = ICON_NAMES.close;
       }
 
@@ -213,7 +207,7 @@ export default {
 
     getHistoricalTooltipContent(tooltipModel) {
       const { dataPoints: [dataPoint] } = tooltipModel;
-      const item = this.items[dataPoint.dataIndex] || {};
+      const item = this.items[dataPoint.dataIndex];
       const {
         time = 0,
         status,
@@ -225,10 +219,8 @@ export default {
       const fixedAvgTime = avgTime.toFixed(3);
 
       const icon = `&nbsp;${this.getHistoricalTooltipIcon(item)}`;
-      const currentDiv =
-        `<div>${this.$t('common.current')}: ${this.$t(`testSuite.statuses.${status}`)} ${fixedTime}s${icon}</div>`;
-      const averageDiv =
-        `<div>${this.$t('common.average')}: ${this.$t(`testSuite.statuses.${avgStatus}`)} ${fixedAvgTime}s</div>`;
+      const currentDiv = `<div>${this.$t('common.current')}: ${this.$t(`testSuite.statuses.${status}`)} ${fixedTime}s${icon}</div>`;
+      const averageDiv = `<div>${this.$t('common.average')}: ${this.$t(`testSuite.statuses.${avgStatus}`)} ${fixedAvgTime}s</div>`;
 
       return `<div>${currentDiv}${averageDiv}</div>`;
     },

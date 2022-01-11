@@ -7,8 +7,9 @@ import { viewToRequest } from '@/helpers/forms/view';
 import queryMixin from '@/mixins/query';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 import entitiesViewMixin from '@/mixins/entities/view';
+
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
 
 export const widgetSettingsMixin = {
   props: {
@@ -22,7 +23,7 @@ export const widgetSettingsMixin = {
     sideBarMixin,
     entitiesViewMixin,
     entitiesUserPreferenceMixin,
-    confirmableModalMixin({ field: 'settings', closeMethod: 'hideSideBar' }),
+    confirmableModalMixinCreator({ field: 'settings', closeMethod: 'hideSideBar' }),
   ],
   computed: {
     activeView() {

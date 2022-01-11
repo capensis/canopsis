@@ -14,16 +14,16 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { entitiesRemediationJobsMixin } from '@/mixins/entities/remediation/jobs';
 import { localQueryMixin } from '@/mixins/query-local/query';
+import { entitiesRemediationJobMixin } from '@/mixins/entities/remediation/job';
 
 import RemediationJobsList from './remediation-jobs-list.vue';
 
 export default {
   components: { RemediationJobsList },
   mixins: [
-    entitiesRemediationJobsMixin,
     localQueryMixin,
+    entitiesRemediationJobMixin,
   ],
   mounted() {
     this.fetchList();

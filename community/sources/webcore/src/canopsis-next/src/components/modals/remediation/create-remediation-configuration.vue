@@ -17,13 +17,17 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { formToRemediationConfiguration, remediationConfigurationToForm } from '@/helpers/forms/remediation-configuration';
+import {
+  formToRemediationConfiguration,
+  remediationConfigurationToForm,
+} from '@/helpers/forms/remediation-configuration';
 
-import { validationErrorsMixin } from '@/mixins/form/validation-errors';
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import RemediationConfigurationForm from '@/components/other/remediation/configurations/form/remediation-configuration-form.vue';
+import RemediationConfigurationForm
+  from '@/components/other/remediation/configurations/form/remediation-configuration-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -37,9 +41,9 @@ export default {
     ModalWrapper,
   },
   mixins: [
-    validationErrorsMixin(),
-    submittableMixin(),
-    confirmableModalMixin(),
+    modalInnerMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     return {
@@ -56,15 +60,11 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        try {
-          if (this.config.action) {
-            await this.config.action(formToRemediationConfiguration(this.form));
-          }
-
-          this.$modals.hide();
-        } catch (err) {
-          this.setFormErrors(err);
+        if (this.config.action) {
+          await this.config.action(formToRemediationConfiguration(this.form));
         }
+
+        this.$modals.hide();
       }
     },
   },

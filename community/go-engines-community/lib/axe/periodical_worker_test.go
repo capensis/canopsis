@@ -52,5 +52,5 @@ func TestPeriodicalWorker_Work(t *testing.T) {
 	mockIdleAlarmService.EXPECT().Process(gomock.Any())
 	mockAlarmStatusService.EXPECT().Load(gomock.Any())
 
-	_ = worker.Work(ctx)
+	worker.Work(ctx)
 }

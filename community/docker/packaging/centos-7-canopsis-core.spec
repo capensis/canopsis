@@ -38,7 +38,6 @@ rm -rf %{buildroot}/opt/canopsis/.erlang.cookie
 rm -rf %{buildroot}/opt/canopsis/.config
 rm -rf %{buildroot}/opt/canopsis/.cache
 rm -rf %{buildroot}/opt/canopsis/.bash_history
-rm -rf %{buildroot}/opt/canopsis/bin/influx*
 rm -rf %{buildroot}/opt/canopsis/bin/rabbit*
 rm -rf %{buildroot}/opt/canopsis/Linux*
 
