@@ -11,12 +11,12 @@ source ${CPS_HOME}/venv-ansible/bin/activate
 pip install -U setuptools "pip==20.1.1"
 pip --no-color install -U wheel
 
-# pymongo 3.5.0 is required by ansible 2.4.x module mongodb
+# pymongo is required by the Ansible mongodb role
 # pyopenssl is required to fix compatibility between systems
 # crytography 2.9.2 to avoid Python 2 warning, for now
 # NEVER, NEVER, NEVER ⚠️⚠️⚠️ UPGRADE ANSIBLE, OR BE PREPARED FOR PAIN.
 cat > tmprequirements.txt << EOF
-pymongo==3.5.0
+pymongo==3.11.3
 pyOpenSSL==19.1.0
 cryptography==2.9.2
 ansible==2.8.7
