@@ -226,3 +226,4 @@ Feature: update user interface
     }
     """
     Then the response code should be 200
+    When I wait 2s
