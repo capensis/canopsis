@@ -95,7 +95,7 @@ func (w *periodicalWorker) processAlarms(ctx context.Context, computedAt types.C
 
 		if len(alarm.Value.Steps) > 0 {
 			lastStep := alarm.Value.Steps[len(alarm.Value.Steps)-1]
-			if lastStep.Timestamp.After(computedAt) {
+			if !lastStep.Timestamp.Before(computedAt) {
 				continue
 			}
 		}
