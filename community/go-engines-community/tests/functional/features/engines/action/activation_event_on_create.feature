@@ -196,7 +196,7 @@ Feature: send activation event on create
           "parameters":{
             "name": "pbehavior-action-activation-event-4",
             "tstart": {{ now }},
-            "tstop": {{ nowAdd "10m" }},
+            "tstop": {{ nowAdd "1h" }},
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"
           },
@@ -340,8 +340,8 @@ Feature: send activation event on create
           "type":"pbehavior",
           "parameters":{
             "name": "pbehavior-action-activation-event-6",
-            "tstart": {{ nowAdd "10m" }},
-            "tstop": {{ nowAdd "20m" }},
+            "tstart": {{ nowAdd "1h" }},
+            "tstop": {{ nowAdd "2h" }},
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"
           },
