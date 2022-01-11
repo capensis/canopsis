@@ -810,7 +810,7 @@ export const USERS_PERMISSIONS = {
   technical: {
     view: `${USER_PERMISSIONS_PREFIXES.technical.admin}_userview`,
     role: `${USER_PERMISSIONS_PREFIXES.technical.admin}_role`,
-    action: `${USER_PERMISSIONS_PREFIXES.technical.admin}_action`,
+    permission: `${USER_PERMISSIONS_PREFIXES.technical.admin}_permission`,
     user: `${USER_PERMISSIONS_PREFIXES.technical.admin}_user`,
     parameters: `${USER_PERMISSIONS_PREFIXES.technical.admin}_parameters`,
     broadcastMessage: `${USER_PERMISSIONS_PREFIXES.technical.admin}_broadcastMessage`,

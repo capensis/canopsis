@@ -1,6 +1,6 @@
 <template lang="pug">
   c-fab-expand-btn(
-    v-if="hasCreateAnyUserAccess || hasCreateAnyRoleAccess || hasCreateAnyActionAccess",
+    v-if="hasCreateAnyUserAccess || hasCreateAnyRoleAccess || hasCreateAnyPermissionAccess",
     @refresh="refresh"
   )
     v-tooltip(v-if="hasCreateAnyUserAccess", top)
@@ -20,7 +20,7 @@ import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesUserMixin from '@/mixins/entities/user';
 import { permissionsTechnicalUserMixin } from '@/mixins/permissions/technical/user';
 import { permissionsTechnicalRoleMixin } from '@/mixins/permissions/technical/role';
-import { permissionsTechnicalActionMixin } from '@/mixins/permissions/technical/action';
+import { permissionsTechnicalPermissionMixin } from '@/mixins/permissions/technical/permission';
 
 export default {
   mixins: [
@@ -28,7 +28,7 @@ export default {
     entitiesUserMixin,
     permissionsTechnicalUserMixin,
     permissionsTechnicalRoleMixin,
-    permissionsTechnicalActionMixin,
+    permissionsTechnicalPermissionMixin,
   ],
   methods: {
     showCreateUserModal() {
