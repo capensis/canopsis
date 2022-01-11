@@ -47,6 +47,7 @@ func Default(
 	flags Flags,
 	enforcer libsecurity.Enforcer,
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
+	apiConfigProvider *config.BaseApiConfigProvider,
 	logger zerolog.Logger,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	metricsUserMetaUpdater metrics.MetaUpdater,
@@ -108,7 +109,9 @@ func Default(
 	sessionStore := mongostore.NewStore(dbClient, []byte(os.Getenv("SESSION_KEY")))
 	sessionStore.Options.MaxAge = cookieOptions.MaxAge
 	sessionStore.Options.Secure = cookieOptions.Secure
-	apiConfigProvider := config.NewApiConfigProvider(cfg, logger)
+	if apiConfigProvider == nil {
+		apiConfigProvider = config.NewApiConfigProvider(cfg, logger)
+	}
 	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, apiConfigProvider, cookieOptions, logger)
 	// Create pbehavior computer.
 	pbhComputeChan := make(chan libpbehavior.ComputeTask, chanBuf)
@@ -335,28 +338,15 @@ func updateConfig(
 					continue
 				}
 
-				err = timezoneConfigProvider.Update(cfg)
-				if err != nil {
-					logger.Err(err).Msg("fail to update tz config")
-					continue
-				}
-
-				err = apiConfigProvider.Update(cfg)
-				if err != nil {
-					logger.Err(err).Msg("fail to update api config")
-					continue
-				}
+				timezoneConfigProvider.Update(cfg)
+				apiConfigProvider.Update(cfg)
 
 				userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
 				if err != nil {
 					logger.Err(err).Msg("fail to load user interface config")
 					continue
 				}
-				err = userInterfaceConfigProvider.Update(userInterfaceConfig)
-				if err != nil {
-					logger.Err(err).Msg("fail to update user interface config")
-					continue
-				}
+				userInterfaceConfigProvider.Update(userInterfaceConfig)
 			case <-ctx.Done():
 				return
 			}

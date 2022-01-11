@@ -8,7 +8,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
-	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"time"
@@ -21,14 +20,12 @@ func NewEnrichmentCenter(
 	enableEnrich bool,
 	entityServiceManager entityservice.Manager,
 	metricMetaUpdater metrics.MetaUpdater,
-	logger zerolog.Logger,
 ) EnrichmentCenter {
 	return &center{
 		adapter:              adapter,
 		enableEnrich:         enableEnrich,
 		entityServiceManager: entityServiceManager,
 		metricMetaUpdater:    metricMetaUpdater,
-		logger:               logger,
 	}
 }
 
@@ -37,7 +34,6 @@ type center struct {
 	enableEnrich         bool
 	entityServiceManager entityservice.Manager
 	metricMetaUpdater    metrics.MetaUpdater
-	logger               zerolog.Logger
 }
 
 func (c *center) Handle(ctx context.Context, event types.Event, fields EnrichFields) (*types.Entity, UpdatedEntityServices, error) {
@@ -66,14 +62,24 @@ func (c *center) Handle(ctx context.Context, event types.Event, fields EnrichFie
 		}
 	}
 
-	updatedEntities := []string{eventEntity.ID}
+	updatedEntities := make([]string, 0)
+	metaUpdated := false
 	for _, entity := range entities {
-		if eventEntity.ID != entity.ID {
+		if eventEntity.ID == entity.ID {
+			// Update new event entity synchronously to update metrics in following engines.
+			c.metricMetaUpdater.UpdateById(context.Background(), eventEntity.ID)
+			metaUpdated = true
+		} else {
 			updatedEntities = append(updatedEntities, entity.ID)
 		}
 	}
+	if !metaUpdated {
+		updatedEntities = append(updatedEntities, eventEntity.ID)
+	}
 	updatedEntities = append(updatedEntities, resources...)
-	go c.metricMetaUpdater.UpdateById(context.Background(), updatedEntities...)
+	if len(updatedEntities) > 0 {
+		go c.metricMetaUpdater.UpdateById(context.Background(), updatedEntities...)
+	}
 
 	if !eventEntity.Enabled {
 		return eventEntity, updatedServices, nil
