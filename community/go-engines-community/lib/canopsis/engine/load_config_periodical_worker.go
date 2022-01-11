@@ -32,12 +32,12 @@ func (w *loadConfigPeriodicalWorker) GetInterval() time.Duration {
 	return w.periodicalInterval
 }
 
-func (w *loadConfigPeriodicalWorker) Work(ctx context.Context) error {
+func (w *loadConfigPeriodicalWorker) Work(ctx context.Context) {
 	cfg, err := w.adapter.GetConfig(ctx)
 	if err != nil {
 		w.logger.Err(err).Msgf("cannot load config")
-		return nil
+		return
 	}
 
-	return w.updater.Update(cfg)
+	w.updater.Update(cfg)
 }

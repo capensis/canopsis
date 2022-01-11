@@ -38,20 +38,18 @@ func (w *periodicalWorker) GetInterval() time.Duration {
 	return w.PeriodicalInterval
 }
 
-func (w *periodicalWorker) Work(ctx context.Context) error {
+func (w *periodicalWorker) Work(ctx context.Context) {
 	now := time.Now().In(w.TimezoneConfigProvider.Get().Location)
 	w.compute(ctx, now)
 
 	computedEntityIDs, err := w.PbhEntityMatcher.GetComputedEntityIDs(ctx)
 	if err != nil {
 		w.Logger.Err(err).Msg("cannot get entities which have pbehavior")
-		return nil
+		return
 	}
 
 	processedEntityIds := w.processAlarms(ctx, types.CpsTime{Time: now}, computedEntityIDs)
 	w.processEntities(ctx, computedEntityIDs, processedEntityIds)
-
-	return nil
 }
 
 func (w *periodicalWorker) compute(ctx context.Context, now time.Time) {
