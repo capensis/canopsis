@@ -17,11 +17,9 @@ func (w *reloadLocalCachePeriodicalWorker) GetInterval() time.Duration {
 	return w.PeriodicalInterval
 }
 
-func (w *reloadLocalCachePeriodicalWorker) Work(ctx context.Context) error {
+func (w *reloadLocalCachePeriodicalWorker) Work(ctx context.Context) {
 	err := w.ActionScenarioStorage.ReloadScenarios(ctx)
 	if err != nil {
-		w.Logger.Error().Err(err).Msg("Periodical process: failed to reload actions")
+		w.Logger.Error().Err(err).Msg("failed to reload action scenarios")
 	}
-
-	return nil
 }

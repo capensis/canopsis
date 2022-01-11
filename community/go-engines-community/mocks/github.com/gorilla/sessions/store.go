@@ -2,39 +2,40 @@
 // Source: github.com/gorilla/sessions (interfaces: Store)
 
 // Package mock_sessions is a generated GoMock package.
-package sessions
+package mock_sessions
 
 import (
-	gomock "github.com/golang/mock/gomock"
-	sessions "github.com/gorilla/sessions"
 	http "net/http"
 	reflect "reflect"
+
+	gomock "github.com/golang/mock/gomock"
+	sessions "github.com/gorilla/sessions"
 )
 
-// MockStore is a mock of Store interface
+// MockStore is a mock of Store interface.
 type MockStore struct {
 	ctrl     *gomock.Controller
 	recorder *MockStoreMockRecorder
 }
 
-// MockStoreMockRecorder is the mock recorder for MockStore
+// MockStoreMockRecorder is the mock recorder for MockStore.
 type MockStoreMockRecorder struct {
 	mock *MockStore
 }
 
-// NewMockStore creates a new mock instance
+// NewMockStore creates a new mock instance.
 func NewMockStore(ctrl *gomock.Controller) *MockStore {
 	mock := &MockStore{ctrl: ctrl}
 	mock.recorder = &MockStoreMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockStore) EXPECT() *MockStoreMockRecorder {
 	return m.recorder
 }
 
-// Get mocks base method
+// Get mocks base method.
 func (m *MockStore) Get(arg0 *http.Request, arg1 string) (*sessions.Session, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", arg0, arg1)
@@ -43,13 +44,13 @@ func (m *MockStore) Get(arg0 *http.Request, arg1 string) (*sessions.Session, err
 	return ret0, ret1
 }
 
-// Get indicates an expected call of Get
+// Get indicates an expected call of Get.
 func (mr *MockStoreMockRecorder) Get(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockStore)(nil).Get), arg0, arg1)
 }
 
-// New mocks base method
+// New mocks base method.
 func (m *MockStore) New(arg0 *http.Request, arg1 string) (*sessions.Session, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "New", arg0, arg1)
@@ -58,13 +59,13 @@ func (m *MockStore) New(arg0 *http.Request, arg1 string) (*sessions.Session, err
 	return ret0, ret1
 }
 
-// New indicates an expected call of New
+// New indicates an expected call of New.
 func (mr *MockStoreMockRecorder) New(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "New", reflect.TypeOf((*MockStore)(nil).New), arg0, arg1)
 }
 
-// Save mocks base method
+// Save mocks base method.
 func (m *MockStore) Save(arg0 *http.Request, arg1 http.ResponseWriter, arg2 *sessions.Session) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Save", arg0, arg1, arg2)
@@ -72,7 +73,7 @@ func (m *MockStore) Save(arg0 *http.Request, arg1 http.ResponseWriter, arg2 *ses
 	return ret0
 }
 
-// Save indicates an expected call of Save
+// Save indicates an expected call of Save.
 func (mr *MockStoreMockRecorder) Save(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockStore)(nil).Save), arg0, arg1, arg2)

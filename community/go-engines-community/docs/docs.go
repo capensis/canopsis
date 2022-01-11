@@ -685,9 +685,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -947,9 +945,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -2120,9 +2116,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -2273,9 +2267,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -2602,9 +2594,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "202": {
-                        "description": ""
-                    },
+                    "202": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -2926,9 +2916,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3212,9 +3200,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -3553,9 +3539,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3864,9 +3848,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -4009,9 +3991,7 @@ var doc = `{
                 "summary": "Get file access",
                 "operationId": "auth-get-file-access",
                 "responses": {
-                    "204": {
-                        "description": ""
-                    }
+                    "204": {}
                 }
             }
         },
@@ -4092,9 +4072,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -4360,9 +4338,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -4689,9 +4665,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -4765,9 +4739,7 @@ var doc = `{
                 "summary": "delete user interface",
                 "operationId": "internal-delete-user-interface",
                 "responses": {
-                    "204": {
-                        "description": ""
-                    }
+                    "204": {}
                 }
             }
         },
@@ -4794,9 +4766,7 @@ var doc = `{
                 "summary": "Get logged user count",
                 "operationId": "auth-logged-user-count",
                 "responses": {
-                    "204": {
-                        "description": ""
-                    }
+                    "204": {}
                 }
             }
         },
@@ -4855,9 +4825,7 @@ var doc = `{
                 "summary": "Log out",
                 "operationId": "auth-logout",
                 "responses": {
-                    "204": {
-                        "description": ""
-                    }
+                    "204": {}
                 }
             }
         },
@@ -5117,9 +5085,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -5397,9 +5363,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -5444,9 +5408,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": ""
-                    },
+                    "200": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -5724,9 +5686,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -6054,9 +6014,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -6389,9 +6347,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6907,9 +6863,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -7169,9 +7123,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -7443,9 +7395,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -7795,9 +7745,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -8299,9 +8247,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -8573,9 +8519,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -8628,9 +8572,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -8902,9 +8844,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -10048,9 +9988,6 @@ var doc = `{
                     "type": "integer"
                 }
             }
-        },
-        "bson.M": {
-            "$ref": "#/definitions/primitive.M"
         },
         "common.ErrorResponse": {
             "type": "object",
@@ -11898,759 +11835,14 @@ var doc = `{
                 }
             }
         },
-        "pattern.AlarmPattern": {
-            "type": "object",
-            "properties": {
-                "entityID": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "id": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "shouldBeNil": {
-                    "type": "boolean"
-                },
-                "shouldNotBeNil": {
-                    "description": "ShouldNotBeNil is a boolean indicating that the alarm should not be nil,\nand ShouldBeNil is a boolean indicating that the alarm should be nil.\nThe two booleans are needed to be able to make the difference between\nthe case where no alarm pattern was defined (in which case the alarm can\nbe nil or not), the case where a nil alarm pattern was defined (in which\ncase the alarm should be nil), and the case where a non-nil alarm\npattern was defined (in which case the alarm should not be nil).",
-                    "type": "boolean"
-                },
-                "time": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.TimePattern"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.",
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "value": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.AlarmValuePattern"
-                }
-            }
-        },
         "pattern.AlarmPatternList": {
-            "type": "object",
-            "properties": {
-                "patterns": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/pattern.AlarmPattern"
-                    }
-                },
-                "set": {
-                    "description": "isSet is a boolean indicating whether the AlarmPatternList has been set\nexplicitly or not.",
-                    "type": "boolean"
-                },
-                "valid": {
-                    "description": "isValid is a boolean indicating whether the event patterns or valid or\nnot.\nisValid is also false if the AlarmPatternList has not been set.",
-                    "type": "boolean"
-                }
-            }
-        },
-        "pattern.AlarmStepRefPattern": {
-            "type": "object",
-            "properties": {
-                "author": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "initiator": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "message": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "shouldBeNil": {
-                    "type": "boolean"
-                },
-                "shouldNotBeNil": {
-                    "description": "ShouldNotBeNil is a boolean indicating that the alarm step should not be\nnil, and ShouldBeNil is a boolean indicating that the alarm step should\nbe nil.\nThe two booleans are needed to be able to make the difference between\nthe case where no pattern was defined (in which case the alarm step can\nbe nil or not), the case where a nil pattern was defined (in which case\nthe alarm step should be nil), and the case where a non-nil pattern was\ndefined (in which case the alarm step should not be nil).",
-                    "type": "boolean"
-                },
-                "timestamp": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.TimePattern"
-                },
-                "type": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.",
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "value": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.IntegerPattern"
-                }
-            }
-        },
-        "pattern.AlarmTicketRefPattern": {
-            "type": "object",
-            "properties": {
-                "author": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "data": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/pattern.StringPattern"
-                    }
-                },
-                "message": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "shouldBeNil": {
-                    "type": "boolean"
-                },
-                "shouldNotBeNil": {
-                    "description": "ShouldNotBeNil is a boolean indicating that the alarm step should not be\nnil, and ShouldBeNil is a boolean indicating that the alarm step should\nbe nil.\nThe two booleans are needed to be able to make the difference between\nthe case where no pattern was defined (in which case the alarm step can\nbe nil or not), the case where a nil pattern was defined (in which case\nthe alarm step should be nil), and the case where a non-nil pattern was\ndefined (in which case the alarm step should not be nil).",
-                    "type": "boolean"
-                },
-                "timestamp": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.TimePattern"
-                },
-                "type": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.",
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "value": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                }
-            }
-        },
-        "pattern.AlarmValuePattern": {
-            "type": "object",
-            "properties": {
-                "ack": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.AlarmStepRefPattern"
-                },
-                "activationDate": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.TimeRefPattern"
-                },
-                "canceled": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.AlarmStepRefPattern"
-                },
-                "children": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringArrayPattern"
-                },
-                "component": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "connector": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "connectorName": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "creationDate": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.TimePattern"
-                },
-                "displayName": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "done": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.AlarmStepRefPattern"
-                },
-                "hardLimit": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.IntegerRefPattern"
-                },
-                "initialLongOutput": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "initialOutput": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "lastEventDate": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.TimePattern"
-                },
-                "lastUpdateDate": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.TimePattern"
-                },
-                "longOutput": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "output": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "parents": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringArrayPattern"
-                },
-                "resolved": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.TimeRefPattern"
-                },
-                "resource": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "snooze": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.AlarmStepRefPattern"
-                },
-                "state": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.AlarmStepRefPattern"
-                },
-                "stateChangesSinceStatusUpdate": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.IntegerPattern"
-                },
-                "status": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.AlarmStepRefPattern"
-                },
-                "ticket": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.AlarmTicketRefPattern"
-                },
-                "totalStateChanges": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.IntegerPattern"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.",
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
-        },
-        "pattern.BoolPattern": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "description": "Set is a boolean indicating whether the value was set or not.",
-                    "type": "boolean"
-                },
-                "value": {
-                    "description": "Value contains the value of the bool. It should only be taken into\naccount if Set is true.",
-                    "type": "boolean"
-                }
-            }
-        },
-        "pattern.EntityPattern": {
-            "type": "object",
-            "properties": {
-                "category": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "component": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "componentInfos": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/pattern.InfoPattern"
-                    }
-                },
-                "enabled": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.BoolPattern"
-                },
-                "id": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "infos": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/pattern.InfoPattern"
-                    }
-                },
-                "name": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "shouldBeNil": {
-                    "type": "boolean"
-                },
-                "shouldNotBeNil": {
-                    "description": "ShouldNotBeNil is a boolean indicating that the entity should not be\nnil, and ShouldBeNil is a boolean indicating that the entity should be\nnil.\nThe two booleans are needed to be able to make the difference between\nthe case where no entity pattern was defined (in which case the entity\ncan be nil or not), the case where a nil entity pattern was defined (in\nwhich case the entity should be nil), and the case where a non-nil\nentity pattern was defined (in which case the entity should not be nil).",
-                    "type": "boolean"
-                },
-                "type": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.",
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
+            "type": "object"
         },
         "pattern.EntityPatternList": {
-            "type": "object",
-            "properties": {
-                "patterns": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/pattern.EntityPattern"
-                    }
-                },
-                "set": {
-                    "description": "Set is a boolean indicating whether the EntityPatternList has been set\nexplicitly or not.",
-                    "type": "boolean"
-                },
-                "valid": {
-                    "description": "Valid is a boolean indicating whether the event patterns or valid or\nnot.\nValid is also false if the EntityPatternList has not been set.",
-                    "type": "boolean"
-                }
-            }
-        },
-        "pattern.EventPattern": {
-            "type": "object",
-            "properties": {
-                "ackResources": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.BoolPattern"
-                },
-                "author": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "component": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "connector": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "connectorName": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "debug": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.BoolPattern"
-                },
-                "duration": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.IntegerPattern"
-                },
-                "entity": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.EntityPattern"
-                },
-                "eventType": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "extraInfos": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/pattern.InterfacePattern"
-                    }
-                },
-                "id": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringRefPattern"
-                },
-                "longOutput": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "output": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "perfData": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringRefPattern"
-                },
-                "resource": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "rk": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "sourceType": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "statName": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "state": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.IntegerPattern"
-                },
-                "stateType": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.IntegerRefPattern"
-                },
-                "status": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.IntegerRefPattern"
-                },
-                "ticket": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "timestamp": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.TimePattern"
-                }
-            }
+            "type": "object"
         },
         "pattern.EventPatternList": {
-            "type": "object",
-            "properties": {
-                "patterns": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/pattern.EventPattern"
-                    }
-                },
-                "set": {
-                    "description": "Set is a boolean indicating whether the EventPatternList has been set\nexplicitly or not.",
-                    "type": "boolean"
-                },
-                "valid": {
-                    "description": "Valid is a boolean indicating whether the event patterns or valid or\nnot.\nValid is also false if the EventPatternList has not been set.",
-                    "type": "boolean"
-                }
-            }
-        },
-        "pattern.InfoPattern": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "name": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "shouldNotBeSet": {
-                    "type": "boolean"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.",
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "value": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                }
-            }
-        },
-        "pattern.IntegerPattern": {
-            "type": "object",
-            "properties": {
-                "equal": {
-                    "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "gt": {
-                    "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "gte": {
-                    "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "lt": {
-                    "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "lte": {
-                    "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
-        },
-        "pattern.IntegerRefPattern": {
-            "type": "object",
-            "properties": {
-                "equal": {
-                    "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "equalNil": {
-                    "description": "If EqualNil is true, the field should be nil or not be set to be matched\nby the pattern.",
-                    "type": "boolean"
-                },
-                "gt": {
-                    "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "gte": {
-                    "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "lt": {
-                    "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "lte": {
-                    "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
-        },
-        "pattern.InterfacePattern": {
-            "type": "object",
-            "properties": {
-                "equal": {
-                    "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalString"
-                },
-                "equalNil": {
-                    "description": "If EqualNil is true, the field should be nil or not be set to be matched\nby the pattern.",
-                    "type": "boolean"
-                },
-                "gt": {
-                    "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "gte": {
-                    "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "hasEvery": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalStringArray"
-                },
-                "hasNot": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalStringArray"
-                },
-                "hasOneOf": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalStringArray"
-                },
-                "isEmpty": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalBool"
-                },
-                "lt": {
-                    "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "lte": {
-                    "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "regexMatch": {
-                    "description": "If RegexMatch is set, the value of a field has to be matched by this\nregular expression to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalRegexp"
-                },
-                "unexpectedFields": {
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
-        },
-        "pattern.StringArrayPattern": {
-            "type": "object",
-            "properties": {
-                "hasEvery": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalStringArray"
-                },
-                "hasNot": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalStringArray"
-                },
-                "hasOneOf": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalStringArray"
-                },
-                "isEmpty": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalBool"
-                },
-                "unexpectedFields": {
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
-        },
-        "pattern.StringPattern": {
-            "type": "object",
-            "properties": {
-                "equal": {
-                    "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalString"
-                },
-                "regexMatch": {
-                    "description": "If RegexMatch is set, the value of a field has to be matched by this\nregular expression to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalRegexp"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
-        },
-        "pattern.StringRefPattern": {
-            "type": "object",
-            "properties": {
-                "equal": {
-                    "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalString"
-                },
-                "equalNil": {
-                    "description": "If EqualNil is true, the field should be nil or not be set to be matched\nby the pattern.",
-                    "type": "boolean"
-                },
-                "regexMatch": {
-                    "description": "If RegexMatch is set, the value of a field has to be matched by this\nregular expression to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalRegexp"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
-        },
-        "pattern.TimePattern": {
-            "type": "object",
-            "properties": {
-                "equal": {
-                    "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "gt": {
-                    "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "gte": {
-                    "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "lt": {
-                    "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "lte": {
-                    "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
-        },
-        "pattern.TimeRefPattern": {
-            "type": "object",
-            "properties": {
-                "equal": {
-                    "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "equalNil": {
-                    "description": "If EqualNil is true, the field should be nil or not be set to be matched\nby the pattern.",
-                    "type": "boolean"
-                },
-                "gt": {
-                    "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "gte": {
-                    "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "lt": {
-                    "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "lte": {
-                    "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
+            "type": "object"
         },
         "pbehavior.BulkCreateResponseItem": {
             "type": "object",
@@ -14646,73 +13838,6 @@ var doc = `{
                 }
             }
         },
-        "types.OptionalBool": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "description": "Set is a boolean indicating whether the value was set or not.",
-                    "type": "boolean"
-                },
-                "value": {
-                    "description": "Value contains the value of the bool. It should only be taken into\naccount if Set is true.",
-                    "type": "boolean"
-                }
-            }
-        },
-        "types.OptionalInt64": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "description": "Set is a boolean indicating whether the value was set or not.",
-                    "type": "boolean"
-                },
-                "value": {
-                    "description": "Value contains the value of the int64. It should only be taken into\naccount if Set is true.",
-                    "type": "integer"
-                }
-            }
-        },
-        "types.OptionalRegexp": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "description": "Set is a boolean indicating whether the value was set or not.",
-                    "type": "boolean"
-                },
-                "value": {
-                    "description": "Value contains the value of the regular expression. It should only be\ntaken into account if Set is true.",
-                    "type": "object",
-                    "$ref": "#/definitions/utils.RegexExpression"
-                }
-            }
-        },
-        "types.OptionalString": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "description": "Set is a boolean indicating whether the value was set or not.",
-                    "type": "boolean"
-                },
-                "value": {
-                    "description": "Value contains the value of the string. It should only be taken into\naccount if Set is true.",
-                    "type": "string"
-                }
-            }
-        },
-        "types.OptionalStringArray": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "type": "boolean"
-                },
-                "value": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
         "types.PbehaviorInfo": {
             "type": "object",
             "properties": {
@@ -15080,9 +14205,6 @@ var doc = `{
                     "type": "string"
                 }
             }
-        },
-        "utils.RegexExpression": {
-            "type": "object"
         },
         "view.BulkDeleteRequest": {
             "type": "object",
