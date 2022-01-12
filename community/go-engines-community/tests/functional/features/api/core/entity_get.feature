@@ -33,7 +33,10 @@ Feature: Get entities
           "infos": {},
           "measurements": null,
           "name": "test-entity-to-get-component",
-          "type": "component"
+          "type": "component",
+          "ok_events": 0,
+          "ko_events": 0,
+          "state": 0
         },
         {
           "_id": "test-entity-to-get-connector/test-entity-to-get-connector-name",
@@ -58,7 +61,10 @@ Feature: Get entities
           "infos": {},
           "measurements": null,
           "name": "test-entity-to-get-connector-name",
-          "type": "connector"
+          "type": "connector",
+          "ok_events": 0,
+          "ko_events": 0,
+          "state": 0
         },
         {
           "_id": "test-entity-to-get-resource/test-entity-to-get-component",
@@ -119,7 +125,10 @@ Feature: Get entities
           },
           "measurements": null,
           "name": "test-entity-to-get-resource",
-          "type": "resource"
+          "type": "resource",
+          "ok_events": 0,
+          "ko_events": 0,
+          "state": 0
         }
       ],
       "meta": {

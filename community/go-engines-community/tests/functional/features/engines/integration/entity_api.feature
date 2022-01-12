@@ -10,7 +10,7 @@ Feature: test dynamic entity api fields
       "event_type": "check",
       "component":  "test-component-entity-api-1",
       "resource": "test-resource-entity-api-1",
-      "state": 0,
+      "state": 1,
       "output": "test-output-entity-api-1"
     }
     """
@@ -92,7 +92,7 @@ Feature: test dynamic entity api fields
         "total_count": 1
       }
     }
-    """    
+    """
 
   Scenario: should cound ko and ok events
     When I am admin
@@ -545,6 +545,99 @@ Feature: test dynamic entity api fields
       "data": [
         {
           "state": 0
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "per_page": 10,
+        "page_count": 1,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: old statistics shouldn't be returned
+    When I am admin
+    When I do GET /api/v4/entities?search=test-resource-entity-api-8
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "ok_events": 0,
+          "ko_events": 0
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "per_page": 10,
+        "page_count": 1,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: next day statistic should remove old one
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-entity-api-9",
+      "connector_name": "test-connector-name-entity-api-9",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-component-entity-api-9",
+      "resource": "test-resource-entity-api-9",
+      "state": 2,
+      "output": "test-output-entity-api-9",
+      "timestamp": {{ nowAdd "-10s" }}
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/entities?search=test-resource-entity-api-9
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "ok_events": 0,
+          "ko_events": 1
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "per_page": 10,
+        "page_count": 1,
+        "total_count": 1
+      }
+    }
+    """
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-entity-api-9",
+      "connector_name": "test-connector-name-entity-api-9",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-component-entity-api-9",
+      "resource": "test-resource-entity-api-9",
+      "state": 0,
+      "output": "test-output-entity-api-9",
+      "timestamp": {{ nowAdd "86391s" }}
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/entities?search=test-resource-entity-api-9
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "ok_events": 1,
+          "ko_events": 0
         }
       ],
       "meta": {
