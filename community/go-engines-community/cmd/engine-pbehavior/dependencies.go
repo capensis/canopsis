@@ -157,14 +157,14 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		},
 		logger,
 	))
-	enginePbehavior.AddPeriodicalWorker(engine.NewRunInfoPeriodicalWorker(
+	enginePbehavior.AddPeriodicalWorker("run info", engine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		engine.NewRunInfoManager(runInfoRedisSession),
 		engine.NewInstanceRunInfo(canopsis.PBehaviorEngineName, canopsis.PBehaviorQueueName, options.PublishToQueue),
 		amqpChannel,
 		logger,
 	))
-	enginePbehavior.AddPeriodicalWorker(engine.NewLockedPeriodicalWorker(
+	enginePbehavior.AddPeriodicalWorker("alarms", engine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisSession),
 		redis.PbehaviorPeriodicalLockKey,
 		&periodicalWorker{
@@ -182,7 +182,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		},
 		logger,
 	))
-	enginePbehavior.AddPeriodicalWorker(engine.NewLockedPeriodicalWorker(
+	enginePbehavior.AddPeriodicalWorker("cleaner", engine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisSession),
 		redis.PbehaviorCleanPeriodicalLockKey,
 		&cleanPeriodicalWorker{
@@ -195,13 +195,13 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		},
 		logger,
 	))
-	enginePbehavior.AddPeriodicalWorker(engine.NewLoadConfigPeriodicalWorker(
+	enginePbehavior.AddPeriodicalWorker("tz config", engine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(dbClient),
 		timezoneConfigProvider,
 		logger,
 	))
-	enginePbehavior.AddPeriodicalWorker(engine.NewLoadConfigPeriodicalWorker(
+	enginePbehavior.AddPeriodicalWorker("data storage config", engine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(dbClient),
 		dataStorageConfigProvider,

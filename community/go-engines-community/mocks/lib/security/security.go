@@ -6,36 +6,37 @@ package mock_security
 
 import (
 	context "context"
-	security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
-	gomock "github.com/golang/mock/gomock"
 	http "net/http"
 	reflect "reflect"
+
+	security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	gomock "github.com/golang/mock/gomock"
 )
 
-// MockEnforcer is a mock of Enforcer interface
+// MockEnforcer is a mock of Enforcer interface.
 type MockEnforcer struct {
 	ctrl     *gomock.Controller
 	recorder *MockEnforcerMockRecorder
 }
 
-// MockEnforcerMockRecorder is the mock recorder for MockEnforcer
+// MockEnforcerMockRecorder is the mock recorder for MockEnforcer.
 type MockEnforcerMockRecorder struct {
 	mock *MockEnforcer
 }
 
-// NewMockEnforcer creates a new mock instance
+// NewMockEnforcer creates a new mock instance.
 func NewMockEnforcer(ctrl *gomock.Controller) *MockEnforcer {
 	mock := &MockEnforcer{ctrl: ctrl}
 	mock.recorder = &MockEnforcerMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockEnforcer) EXPECT() *MockEnforcerMockRecorder {
 	return m.recorder
 }
 
-// Enforce mocks base method
+// Enforce mocks base method.
 func (m *MockEnforcer) Enforce(arg0 ...interface{}) (bool, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{}
@@ -48,13 +49,13 @@ func (m *MockEnforcer) Enforce(arg0 ...interface{}) (bool, error) {
 	return ret0, ret1
 }
 
-// Enforce indicates an expected call of Enforce
+// Enforce indicates an expected call of Enforce.
 func (mr *MockEnforcerMockRecorder) Enforce(arg0 ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Enforce", reflect.TypeOf((*MockEnforcer)(nil).Enforce), arg0...)
 }
 
-// GetPermissionsForUser mocks base method
+// GetPermissionsForUser mocks base method.
 func (m *MockEnforcer) GetPermissionsForUser(arg0 string, arg1 ...string) [][]string {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0}
@@ -66,14 +67,14 @@ func (m *MockEnforcer) GetPermissionsForUser(arg0 string, arg1 ...string) [][]st
 	return ret0
 }
 
-// GetPermissionsForUser indicates an expected call of GetPermissionsForUser
+// GetPermissionsForUser indicates an expected call of GetPermissionsForUser.
 func (mr *MockEnforcerMockRecorder) GetPermissionsForUser(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0}, arg1...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPermissionsForUser", reflect.TypeOf((*MockEnforcer)(nil).GetPermissionsForUser), varargs...)
 }
 
-// GetRolesForUser mocks base method
+// GetRolesForUser mocks base method.
 func (m *MockEnforcer) GetRolesForUser(arg0 string, arg1 ...string) ([]string, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0}
@@ -86,14 +87,14 @@ func (m *MockEnforcer) GetRolesForUser(arg0 string, arg1 ...string) ([]string, e
 	return ret0, ret1
 }
 
-// GetRolesForUser indicates an expected call of GetRolesForUser
+// GetRolesForUser indicates an expected call of GetRolesForUser.
 func (mr *MockEnforcerMockRecorder) GetRolesForUser(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0}, arg1...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRolesForUser", reflect.TypeOf((*MockEnforcer)(nil).GetRolesForUser), varargs...)
 }
 
-// HasPermissionForUser mocks base method
+// HasPermissionForUser mocks base method.
 func (m *MockEnforcer) HasPermissionForUser(arg0 string, arg1 ...string) bool {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0}
@@ -105,14 +106,14 @@ func (m *MockEnforcer) HasPermissionForUser(arg0 string, arg1 ...string) bool {
 	return ret0
 }
 
-// HasPermissionForUser indicates an expected call of HasPermissionForUser
+// HasPermissionForUser indicates an expected call of HasPermissionForUser.
 func (mr *MockEnforcerMockRecorder) HasPermissionForUser(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0}, arg1...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasPermissionForUser", reflect.TypeOf((*MockEnforcer)(nil).HasPermissionForUser), varargs...)
 }
 
-// LoadPolicy mocks base method
+// LoadPolicy mocks base method.
 func (m *MockEnforcer) LoadPolicy() error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "LoadPolicy")
@@ -120,48 +121,48 @@ func (m *MockEnforcer) LoadPolicy() error {
 	return ret0
 }
 
-// LoadPolicy indicates an expected call of LoadPolicy
+// LoadPolicy indicates an expected call of LoadPolicy.
 func (mr *MockEnforcerMockRecorder) LoadPolicy() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoadPolicy", reflect.TypeOf((*MockEnforcer)(nil).LoadPolicy))
 }
 
-// StartAutoLoadPolicy mocks base method
+// StartAutoLoadPolicy mocks base method.
 func (m *MockEnforcer) StartAutoLoadPolicy(arg0 context.Context) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "StartAutoLoadPolicy", arg0)
 }
 
-// StartAutoLoadPolicy indicates an expected call of StartAutoLoadPolicy
+// StartAutoLoadPolicy indicates an expected call of StartAutoLoadPolicy.
 func (mr *MockEnforcerMockRecorder) StartAutoLoadPolicy(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StartAutoLoadPolicy", reflect.TypeOf((*MockEnforcer)(nil).StartAutoLoadPolicy), arg0)
 }
 
-// MockProvider is a mock of Provider interface
+// MockProvider is a mock of Provider interface.
 type MockProvider struct {
 	ctrl     *gomock.Controller
 	recorder *MockProviderMockRecorder
 }
 
-// MockProviderMockRecorder is the mock recorder for MockProvider
+// MockProviderMockRecorder is the mock recorder for MockProvider.
 type MockProviderMockRecorder struct {
 	mock *MockProvider
 }
 
-// NewMockProvider creates a new mock instance
+// NewMockProvider creates a new mock instance.
 func NewMockProvider(ctrl *gomock.Controller) *MockProvider {
 	mock := &MockProvider{ctrl: ctrl}
 	mock.recorder = &MockProviderMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockProvider) EXPECT() *MockProviderMockRecorder {
 	return m.recorder
 }
 
-// Auth mocks base method
+// Auth mocks base method.
 func (m *MockProvider) Auth(arg0 context.Context, arg1, arg2 string) (*security.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Auth", arg0, arg1, arg2)
@@ -170,13 +171,13 @@ func (m *MockProvider) Auth(arg0 context.Context, arg1, arg2 string) (*security.
 	return ret0, ret1
 }
 
-// Auth indicates an expected call of Auth
+// Auth indicates an expected call of Auth.
 func (mr *MockProviderMockRecorder) Auth(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Auth", reflect.TypeOf((*MockProvider)(nil).Auth), arg0, arg1, arg2)
 }
 
-// GetName mocks base method
+// GetName mocks base method.
 func (m *MockProvider) GetName() string {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetName")
@@ -184,36 +185,36 @@ func (m *MockProvider) GetName() string {
 	return ret0
 }
 
-// GetName indicates an expected call of GetName
+// GetName indicates an expected call of GetName.
 func (mr *MockProviderMockRecorder) GetName() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetName", reflect.TypeOf((*MockProvider)(nil).GetName))
 }
 
-// MockHttpProvider is a mock of HttpProvider interface
+// MockHttpProvider is a mock of HttpProvider interface.
 type MockHttpProvider struct {
 	ctrl     *gomock.Controller
 	recorder *MockHttpProviderMockRecorder
 }
 
-// MockHttpProviderMockRecorder is the mock recorder for MockHttpProvider
+// MockHttpProviderMockRecorder is the mock recorder for MockHttpProvider.
 type MockHttpProviderMockRecorder struct {
 	mock *MockHttpProvider
 }
 
-// NewMockHttpProvider creates a new mock instance
+// NewMockHttpProvider creates a new mock instance.
 func NewMockHttpProvider(ctrl *gomock.Controller) *MockHttpProvider {
 	mock := &MockHttpProvider{ctrl: ctrl}
 	mock.recorder = &MockHttpProviderMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockHttpProvider) EXPECT() *MockHttpProviderMockRecorder {
 	return m.recorder
 }
 
-// Auth mocks base method
+// Auth mocks base method.
 func (m *MockHttpProvider) Auth(arg0 *http.Request) (*security.User, error, bool) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Auth", arg0)
@@ -223,36 +224,36 @@ func (m *MockHttpProvider) Auth(arg0 *http.Request) (*security.User, error, bool
 	return ret0, ret1, ret2
 }
 
-// Auth indicates an expected call of Auth
+// Auth indicates an expected call of Auth.
 func (mr *MockHttpProviderMockRecorder) Auth(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Auth", reflect.TypeOf((*MockHttpProvider)(nil).Auth), arg0)
 }
 
-// MockUserProvider is a mock of UserProvider interface
+// MockUserProvider is a mock of UserProvider interface.
 type MockUserProvider struct {
 	ctrl     *gomock.Controller
 	recorder *MockUserProviderMockRecorder
 }
 
-// MockUserProviderMockRecorder is the mock recorder for MockUserProvider
+// MockUserProviderMockRecorder is the mock recorder for MockUserProvider.
 type MockUserProviderMockRecorder struct {
 	mock *MockUserProvider
 }
 
-// NewMockUserProvider creates a new mock instance
+// NewMockUserProvider creates a new mock instance.
 func NewMockUserProvider(ctrl *gomock.Controller) *MockUserProvider {
 	mock := &MockUserProvider{ctrl: ctrl}
 	mock.recorder = &MockUserProviderMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockUserProvider) EXPECT() *MockUserProviderMockRecorder {
 	return m.recorder
 }
 
-// FindByAuthApiKey mocks base method
+// FindByAuthApiKey mocks base method.
 func (m *MockUserProvider) FindByAuthApiKey(arg0 context.Context, arg1 string) (*security.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindByAuthApiKey", arg0, arg1)
@@ -261,13 +262,13 @@ func (m *MockUserProvider) FindByAuthApiKey(arg0 context.Context, arg1 string) (
 	return ret0, ret1
 }
 
-// FindByAuthApiKey indicates an expected call of FindByAuthApiKey
+// FindByAuthApiKey indicates an expected call of FindByAuthApiKey.
 func (mr *MockUserProviderMockRecorder) FindByAuthApiKey(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByAuthApiKey", reflect.TypeOf((*MockUserProvider)(nil).FindByAuthApiKey), arg0, arg1)
 }
 
-// FindByExternalSource mocks base method
+// FindByExternalSource mocks base method.
 func (m *MockUserProvider) FindByExternalSource(arg0 context.Context, arg1 string, arg2 security.Source) (*security.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindByExternalSource", arg0, arg1, arg2)
@@ -276,13 +277,13 @@ func (m *MockUserProvider) FindByExternalSource(arg0 context.Context, arg1 strin
 	return ret0, ret1
 }
 
-// FindByExternalSource indicates an expected call of FindByExternalSource
+// FindByExternalSource indicates an expected call of FindByExternalSource.
 func (mr *MockUserProviderMockRecorder) FindByExternalSource(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByExternalSource", reflect.TypeOf((*MockUserProvider)(nil).FindByExternalSource), arg0, arg1, arg2)
 }
 
-// FindByID mocks base method
+// FindByID mocks base method.
 func (m *MockUserProvider) FindByID(arg0 context.Context, arg1 string) (*security.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindByID", arg0, arg1)
@@ -291,13 +292,13 @@ func (m *MockUserProvider) FindByID(arg0 context.Context, arg1 string) (*securit
 	return ret0, ret1
 }
 
-// FindByID indicates an expected call of FindByID
+// FindByID indicates an expected call of FindByID.
 func (mr *MockUserProviderMockRecorder) FindByID(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByID", reflect.TypeOf((*MockUserProvider)(nil).FindByID), arg0, arg1)
 }
 
-// FindByUsername mocks base method
+// FindByUsername mocks base method.
 func (m *MockUserProvider) FindByUsername(arg0 context.Context, arg1 string) (*security.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindByUsername", arg0, arg1)
@@ -306,13 +307,13 @@ func (m *MockUserProvider) FindByUsername(arg0 context.Context, arg1 string) (*s
 	return ret0, ret1
 }
 
-// FindByUsername indicates an expected call of FindByUsername
+// FindByUsername indicates an expected call of FindByUsername.
 func (mr *MockUserProviderMockRecorder) FindByUsername(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByUsername", reflect.TypeOf((*MockUserProvider)(nil).FindByUsername), arg0, arg1)
 }
 
-// Save mocks base method
+// Save mocks base method.
 func (m *MockUserProvider) Save(arg0 context.Context, arg1 *security.User) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Save", arg0, arg1)
@@ -320,36 +321,36 @@ func (m *MockUserProvider) Save(arg0 context.Context, arg1 *security.User) error
 	return ret0
 }
 
-// Save indicates an expected call of Save
+// Save indicates an expected call of Save.
 func (mr *MockUserProviderMockRecorder) Save(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockUserProvider)(nil).Save), arg0, arg1)
 }
 
-// MockConfigProvider is a mock of ConfigProvider interface
+// MockConfigProvider is a mock of ConfigProvider interface.
 type MockConfigProvider struct {
 	ctrl     *gomock.Controller
 	recorder *MockConfigProviderMockRecorder
 }
 
-// MockConfigProviderMockRecorder is the mock recorder for MockConfigProvider
+// MockConfigProviderMockRecorder is the mock recorder for MockConfigProvider.
 type MockConfigProviderMockRecorder struct {
 	mock *MockConfigProvider
 }
 
-// NewMockConfigProvider creates a new mock instance
+// NewMockConfigProvider creates a new mock instance.
 func NewMockConfigProvider(ctrl *gomock.Controller) *MockConfigProvider {
 	mock := &MockConfigProvider{ctrl: ctrl}
 	mock.recorder = &MockConfigProviderMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockConfigProvider) EXPECT() *MockConfigProviderMockRecorder {
 	return m.recorder
 }
 
-// LoadCasConfig mocks base method
+// LoadCasConfig mocks base method.
 func (m *MockConfigProvider) LoadCasConfig(arg0 context.Context) (*security.CasConfig, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "LoadCasConfig", arg0)
@@ -358,13 +359,13 @@ func (m *MockConfigProvider) LoadCasConfig(arg0 context.Context) (*security.CasC
 	return ret0, ret1
 }
 
-// LoadCasConfig indicates an expected call of LoadCasConfig
+// LoadCasConfig indicates an expected call of LoadCasConfig.
 func (mr *MockConfigProviderMockRecorder) LoadCasConfig(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoadCasConfig", reflect.TypeOf((*MockConfigProvider)(nil).LoadCasConfig), arg0)
 }
 
-// LoadLdapConfig mocks base method
+// LoadLdapConfig mocks base method.
 func (m *MockConfigProvider) LoadLdapConfig(arg0 context.Context) (*security.LdapConfig, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "LoadLdapConfig", arg0)
@@ -373,7 +374,7 @@ func (m *MockConfigProvider) LoadLdapConfig(arg0 context.Context) (*security.Lda
 	return ret0, ret1
 }
 
-// LoadLdapConfig indicates an expected call of LoadLdapConfig
+// LoadLdapConfig indicates an expected call of LoadLdapConfig.
 func (mr *MockConfigProviderMockRecorder) LoadLdapConfig(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoadLdapConfig", reflect.TypeOf((*MockConfigProvider)(nil).LoadLdapConfig), arg0)
