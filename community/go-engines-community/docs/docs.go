@@ -7438,14 +7438,15 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/view.ImportRequest"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/viewgroup.ViewGroup"
+                            }
                         }
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    }
+                    "204": {}
                 }
             }
         },
@@ -7533,9 +7534,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -7722,9 +7721,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -8364,9 +8361,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -8413,9 +8408,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -8602,9 +8595,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -11834,6 +11825,9 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/pattern.AlarmPatternList"
                 },
+                "comment": {
+                    "type": "string"
+                },
                 "drop_scenario_if_not_matched": {
                     "type": "boolean"
                 },
@@ -12972,20 +12966,6 @@ var doc = `{
                 },
                 "updated": {
                     "type": "integer"
-                }
-            }
-        },
-        "view.ImportRequest": {
-            "type": "object",
-            "required": [
-                "items"
-            ],
-            "properties": {
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/viewgroup.ViewGroup"
-                    }
                 }
             }
         },

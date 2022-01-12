@@ -2173,6 +2173,8 @@ definitions:
       alarm_patterns:
         $ref: '#/definitions/pattern.AlarmPatternList'
         type: object
+      comment:
+        type: string
       drop_scenario_if_not_matched:
         type: boolean
       emit_trigger:
@@ -2951,15 +2953,6 @@ definitions:
         type: string
       updated:
         type: integer
-    type: object
-  view.ImportRequest:
-    properties:
-      items:
-        items:
-          $ref: '#/definitions/viewgroup.ViewGroup'
-        type: array
-    required:
-    - items
     type: object
   view.Parameters:
     properties:
@@ -7748,12 +7741,13 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/view.ImportRequest'
+          items:
+            $ref: '#/definitions/viewgroup.ViewGroup'
+          type: array
       produces:
       - application/json
       responses:
-        "204":
-          description: ""
+        "204": {}
       security:
       - JWTAuth: []
       - BasicAuth: []
@@ -7807,8 +7801,7 @@ paths:
       produces:
       - application/json
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -7860,8 +7853,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -8256,8 +8248,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -8350,8 +8341,7 @@ paths:
       produces:
       - application/json
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -8403,8 +8393,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
