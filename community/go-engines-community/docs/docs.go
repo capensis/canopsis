@@ -9421,11 +9421,28 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/entity.Infos"
                 },
+                "ko_events": {
+                    "type": "integer"
+                },
+                "last_event_date": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
                 "measurements": {
                     "type": "object"
                 },
                 "name": {
                     "type": "string"
+                },
+                "ok_events": {
+                    "type": "integer"
+                },
+                "pbehavior_info": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.PbehaviorInfo"
+                },
+                "state": {
+                    "type": "integer"
                 },
                 "type": {
                     "type": "string"
@@ -9634,13 +9651,30 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/entity.Infos"
                 },
+                "ko_events": {
+                    "type": "integer"
+                },
+                "last_event_date": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
                 "measurements": {
                     "type": "object"
                 },
                 "name": {
                     "type": "string"
                 },
+                "ok_events": {
+                    "type": "integer"
+                },
+                "pbehavior_info": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.PbehaviorInfo"
+                },
                 "sli_avail_state": {
+                    "type": "integer"
+                },
+                "state": {
                     "type": "integer"
                 },
                 "type": {
@@ -9813,16 +9847,33 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/entity.Infos"
                 },
+                "ko_events": {
+                    "type": "integer"
+                },
+                "last_event_date": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
                 "measurements": {
                     "type": "object"
                 },
                 "name": {
                     "type": "string"
                 },
+                "ok_events": {
+                    "type": "integer"
+                },
                 "output_template": {
                     "type": "string"
                 },
+                "pbehavior_info": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.PbehaviorInfo"
+                },
                 "sli_avail_state": {
+                    "type": "integer"
+                },
+                "state": {
                     "type": "integer"
                 },
                 "type": {
@@ -11659,10 +11710,6 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/alarm.AlarmStep"
                 },
-                "stats": {
-                    "type": "object",
-                    "$ref": "#/definitions/serviceweather.Stats"
-                },
                 "status": {
                     "type": "object",
                     "$ref": "#/definitions/alarm.AlarmStep"
@@ -11783,23 +11830,6 @@ var doc = `{
                 "status": {
                     "type": "object",
                     "$ref": "#/definitions/alarm.AlarmStep"
-                }
-            }
-        },
-        "serviceweather.Stats": {
-            "type": "object",
-            "properties": {
-                "ko": {
-                    "type": "integer"
-                },
-                "last_event": {
-                    "type": "integer"
-                },
-                "last_ko": {
-                    "type": "integer"
-                },
-                "ok": {
-                    "type": "integer"
                 }
             }
         },
