@@ -302,6 +302,12 @@ func (i PbehaviorInfo) IsZero() bool {
 	return i == PbehaviorInfo{}
 }
 
+func (i PbehaviorInfo) Same(v PbehaviorInfo) bool {
+	v.Timestamp = i.Timestamp
+
+	return i == v
+}
+
 // AlarmValue represents a full description of an alarm.
 type AlarmValue struct {
 	ACK               *AlarmStep    `bson:"ack,omitempty" json:"ack,omitempty"`
