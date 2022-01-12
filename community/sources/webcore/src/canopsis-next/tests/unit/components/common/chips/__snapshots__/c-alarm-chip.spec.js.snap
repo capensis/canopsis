@@ -1,0 +1,1652 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with custom props 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: rgb(117, 117, 117);"
+    >
+      stealthy
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          3
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with default props 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: rgb(0, 166, 90);"
+    >
+      ok
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+        style="display: none;"
+      >
+        <span
+          class="caption"
+        >
+          0
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: ack 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          ack20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: ackRemove 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          ackremove20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: assocTicket 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          assocticket20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: autoInstructionAlreadyRunning 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          autoinstructionalreadyrunning20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: autoInstructionComplete 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          autoinstructioncomplete20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: autoInstructionFail 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          autoinstructionfail20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: autoInstructionStart 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          autoinstructionstart20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: cancel 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          cancel20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: changeState 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          changestate20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: comment 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          comment20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: declareTicket 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          declareticket20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: delete 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          delete20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: done 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          done20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: executeInstruction 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          executeInstruction20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: fastAck 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          fastAck20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: group 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          group20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: groupRequest 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          groupRequest20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionAbort 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          instructionabort20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionComplete 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          instructioncomplete20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionFail 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          instructionfail20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionJobAbort 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          instructionjobabort20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionJobComplete 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          instructionjobcomplete20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionJobFail 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          instructionjobfail20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionJobStart 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          instructionjobstart20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionPause 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          instructionpause20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionResume 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          instructionresume20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionStart 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          instructionstart20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: invalidate 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          invalidate20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: junitTestCaseUpdate 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          junittestcaseupdate20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: junitTestSuiteUpdate 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          junittestsuiteupdate20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: manualMetaAlarmGroup 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          manual_metaalarm_group20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: manualMetaAlarmUngroup 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          manual_metaalarm_ungroup20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: manualMetaAlarmUpdate 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          manual_metaalarm_update20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: metaalarmattach 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          metaalarmattach20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pause 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          pause20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pbehaviorAdd 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          pbehaviorAdd20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pbehaviorList 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          pbehaviorList20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pbhenter 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          pbhenter20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pbhleave 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          pbhleave20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: play 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          play20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: snooze 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          snooze20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: statedec 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          statedec20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: stateinc 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          stateinc20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: statusdec 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          statusdec20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: statusinc 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          statusinc20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: unsooze 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          unsooze20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: validate 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          validate20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: cancelled 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: rgb(117, 117, 117);"
+    >
+      cancelled
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          14
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: closed 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: rgb(47, 171, 99);"
+    >
+      closed
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          10
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: flapping 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: rgb(43, 62, 79);"
+    >
+      flapping
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          13
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: noEvents 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: rgb(255, 82, 82);"
+    >
+      no events
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          15
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: ongoing 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: rgb(249, 168, 37);"
+    >
+      ongoing
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          11
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: stealthy 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: rgb(117, 117, 117);"
+    >
+      stealthy
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="caption"
+        >
+          12
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
