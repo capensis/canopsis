@@ -133,8 +133,6 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		rpcPublishQueues = append(rpcPublishQueues, canopsis.RemediationRPCQueueServerName)
 	}
 
-	statisticsSender := statistics.NewEventStatisticsSender(dbClient, logger, timezoneConfigProvider)
-
 	engineAxe := libengine.New(
 		nil,
 		func(ctx context.Context) {
@@ -197,7 +195,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 				alarmStatusService,
 				redis.NewLockClient(corrRedisClient),
 				metricsSender,
-				statisticsSender,
+				statistics.NewEventStatisticsSender(dbClient, logger, timezoneConfigProvider),
 				logger,
 			),
 			RemediationRpcClient:   remediationRpcClient,
