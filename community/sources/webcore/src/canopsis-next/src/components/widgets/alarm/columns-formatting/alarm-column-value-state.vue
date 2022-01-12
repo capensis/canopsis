@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(align-center)
-    c-alarm-chip(:value="stateId", :badge-value="alarm | get('v.events_count')")
+    c-alarm-chip(:value="stateId", :badge-value="badgeValue")
     v-icon(v-if="showIcon", color="purple") account_circle
 </template>
 
@@ -25,6 +25,10 @@ export default {
     },
   },
   computed: {
+    badgeValue() {
+      return get(this.alarm, 'v.events_count');
+    },
+
     stateId() {
       return get(this.alarm, this.propertyKey);
     },
