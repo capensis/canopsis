@@ -55,6 +55,31 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*Aggrega
 			"as":           "category",
 		}},
 		{"$unwind": bson.M{"path": "$category", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.EventStatistics,
+			"localField":   "_id",
+			"foreignField": "_id",
+			"as":           "eventStatistics",
+		}},
+		{"$unwind": bson.M{"path": "$eventStatistics", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"ok_events": "$eventStatistics.ok",
+			"ko_events": "$eventStatistics.ko",
+		}},
+		{"$lookup": bson.M{
+			"from": mongo.AlarmMongoCollection,
+			"let":  bson.M{"id": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$and": []bson.M{
+					{"$expr": bson.M{"$eq": bson.A{"$d", "$$id"}}},
+					{"v.resolved": bson.M{"$in": bson.A{"", nil}}},
+				}}},
+				{"$limit": 1},
+			},
+			"as": "alarm",
+		}},
+		{"$unwind": bson.M{"path": "$alarm", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{"state": "$alarm.v.state.val"}},
 	}
 	if r.NoEvents {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{"idle_since": bson.M{"$gt": 0}}})

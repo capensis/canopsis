@@ -20,6 +20,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation/executor"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resolverule"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -132,6 +133,8 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		rpcPublishQueues = append(rpcPublishQueues, canopsis.RemediationRPCQueueServerName)
 	}
 
+	statisticsSender := statistics.NewEventStatisticsSender(dbClient, logger, timezoneConfigProvider)
+
 	engineAxe := libengine.New(
 		nil,
 		func(ctx context.Context) {
@@ -194,6 +197,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 				alarmStatusService,
 				redis.NewLockClient(corrRedisClient),
 				metricsSender,
+				statisticsSender,
 				logger,
 			),
 			RemediationRpcClient:   remediationRpcClient,
