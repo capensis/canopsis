@@ -5,11 +5,13 @@ import (
 	"encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"time"
 )
 
 const bulkMaxSize = 10000
@@ -21,18 +23,20 @@ type Store interface {
 }
 
 type store struct {
-	db                    mongo.DbClient
-	mainCollection        mongo.DbCollection
-	archivedCollection    mongo.DbCollection
-	defaultSearchByFields []string
-	defaultSortBy         string
+	db                     mongo.DbClient
+	mainCollection         mongo.DbCollection
+	archivedCollection     mongo.DbCollection
+	timezoneConfigProvider config.TimezoneConfigProvider
+	defaultSearchByFields  []string
+	defaultSortBy          string
 }
 
-func NewStore(db mongo.DbClient) Store {
+func NewStore(db mongo.DbClient, timezoneConfigProvider config.TimezoneConfigProvider) Store {
 	return &store{
-		db:                 db,
-		mainCollection:     db.Collection(mongo.EntityMongoCollection),
-		archivedCollection: db.Collection(mongo.ArchivedEntitiesMongoCollection),
+		db:                     db,
+		mainCollection:         db.Collection(mongo.EntityMongoCollection),
+		archivedCollection:     db.Collection(mongo.ArchivedEntitiesMongoCollection),
+		timezoneConfigProvider: timezoneConfigProvider,
 		defaultSearchByFields: []string{
 			"_id", "name", "type",
 		},
@@ -47,6 +51,11 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*Aggrega
 		return nil, err
 	}
 
+	location := s.timezoneConfigProvider.Get().Location
+
+	year, month, day := time.Now().In(location).Date()
+	truncatedInLocation := time.Date(year, month, day, 0, 0, 0, 0, location)
+
 	project := []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.EntityCategoryMongoCollection,
@@ -56,10 +65,15 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*Aggrega
 		}},
 		{"$unwind": bson.M{"path": "$category", "preserveNullAndEmptyArrays": true}},
 		{"$lookup": bson.M{
-			"from":         mongo.EventStatistics,
-			"localField":   "_id",
-			"foreignField": "_id",
-			"as":           "eventStatistics",
+			"from": mongo.EventStatistics,
+			"let":  bson.M{"id": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$and": []bson.M{
+					{"$expr": bson.M{"$eq": bson.A{"$_id", "$$id"}}},
+					{"timestamp": bson.M{"$gt": truncatedInLocation.Unix()}},
+				}}},
+			},
+			"as": "eventStatistics",
 		}},
 		{"$unwind": bson.M{"path": "$eventStatistics", "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{
@@ -72,7 +86,7 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*Aggrega
 			"pipeline": []bson.M{
 				{"$match": bson.M{"$and": []bson.M{
 					{"$expr": bson.M{"$eq": bson.A{"$d", "$$id"}}},
-					{"v.resolved": bson.M{"$in": bson.A{"", nil}}},
+					{"v.resolved": nil},
 				}}},
 				{"$limit": 1},
 			},
