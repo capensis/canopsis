@@ -585,11 +585,9 @@ func RegisterRoutes(
 
 		weatherRouter := protected.Group("/weather-services")
 		{
-			statsStore := serviceweather.NewStatsStore(dbClient)
 			weatherAPI := serviceweather.NewApi(serviceweather.NewStore(
 				dbClient,
 				GetLegacyURL(),
-				statsStore,
 				timezoneConfigProvider,
 			))
 			weatherRouter.GET(
