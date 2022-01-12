@@ -30,13 +30,11 @@ type Store interface {
 func NewStore(
 	dbClient mongo.DbClient,
 	legacyURL fmt.Stringer,
-	statsStore StatsStore,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 ) Store {
 	return &store{
 		dbCollection:           dbClient.Collection(mongo.EntityMongoCollection),
 		pbehaviorCollection:    dbClient.Collection(mongo.PbehaviorMongoCollection),
-		statsStore:             statsStore,
 		defaultSortBy:          "name",
 		links:                  alarmapi.NewLinksFetcher(legacyURL, linkFetchTimeout),
 		timezoneConfigProvider: timezoneConfigProvider,
@@ -47,7 +45,6 @@ type store struct {
 	dbCollection           mongo.DbCollection
 	pbehaviorCollection    mongo.DbCollection
 	links                  alarmapi.LinksFetcher
-	statsStore             StatsStore
 	defaultSortBy          string
 	timezoneConfigProvider config.TimezoneConfigProvider
 }
@@ -173,13 +170,6 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 			res.Data[i].Pbehaviors = []pbehavior.Response{v}
 		} else {
 			res.Data[i].Pbehaviors = []pbehavior.Response{}
-		}
-
-		if s.statsStore != nil {
-			res.Data[i].Stats, err = s.statsStore.GetStats(ctx, res.Data[i].ID, s.timezoneConfigProvider.Get().Location)
-			if err != nil {
-				return nil, err
-			}
 		}
 	}
 
