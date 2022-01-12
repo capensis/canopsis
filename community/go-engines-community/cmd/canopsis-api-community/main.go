@@ -1,5 +1,7 @@
 package main
 
+//go:generate swag init  -d ../../lib -g ../cmd/canopsis-api-community/main.go -o ../../docs
+
 import (
 	"context"
 	"os"

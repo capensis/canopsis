@@ -8,7 +8,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
-	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"time"
@@ -21,14 +20,12 @@ func NewEnrichmentCenter(
 	enableEnrich bool,
 	entityServiceManager entityservice.Manager,
 	metricMetaUpdater metrics.MetaUpdater,
-	logger zerolog.Logger,
 ) EnrichmentCenter {
 	return &center{
 		adapter:              adapter,
 		enableEnrich:         enableEnrich,
 		entityServiceManager: entityServiceManager,
 		metricMetaUpdater:    metricMetaUpdater,
-		logger:               logger,
 	}
 }
 
@@ -37,7 +34,6 @@ type center struct {
 	enableEnrich         bool
 	entityServiceManager entityservice.Manager
 	metricMetaUpdater    metrics.MetaUpdater
-	logger               zerolog.Logger
 }
 
 func (c *center) Handle(ctx context.Context, event types.Event, fields EnrichFields) (*types.Entity, UpdatedEntityServices, error) {
