@@ -147,10 +147,7 @@ durable = true
 autoDelete = false
 exclusive = false
 noWait = false
-  [RabbitMQ.queues.bind]
-  key = "FIFO_ack"
-  exchange = "amq.direct"
-  noWait = false
+# args =
 
 [[RabbitMQ.queues]]
 name = "Engine_service"
