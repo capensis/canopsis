@@ -42,13 +42,17 @@ func (m *manager) LoadServices(ctx context.Context) error {
 		return err
 	}
 
+	ids := make([]string, len(services))
 	data := make([]ServiceData, len(services))
-	for i := range data {
+	for i := range services {
+		ids[i] = services[i].ID
 		data[i] = ServiceData{
 			ID:             services[i].ID,
 			EntityPatterns: services[i].EntityPatterns,
 		}
 	}
+
+	m.logger.Debug().Strs("services", ids).Msg("load services")
 
 	return m.storage.SaveAll(ctx, data)
 }

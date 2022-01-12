@@ -141,7 +141,7 @@ func RegisterRoutes(
 ) {
 	sessionStore := security.GetSessionStore()
 	authMiddleware := security.GetAuthMiddleware()
-	security.RegisterCallbackRoutes(router)
+	security.RegisterCallbackRoutes(router, dbClient)
 	authApi := auth.NewApi(
 		security.GetTokenService(),
 		security.GetTokenStore(),
