@@ -18,7 +18,7 @@ func (w *recomputeAllPeriodicalWorker) GetInterval() time.Duration {
 	return w.PeriodicalInterval
 }
 
-func (w *recomputeAllPeriodicalWorker) Work(parentCtx context.Context) error {
+func (w *recomputeAllPeriodicalWorker) Work(parentCtx context.Context) {
 	ctx, task := trace.NewTask(parentCtx, "service.PeriodicalWorker")
 	defer task.End()
 
@@ -27,6 +27,4 @@ func (w *recomputeAllPeriodicalWorker) Work(parentCtx context.Context) error {
 	if err != nil {
 		w.Logger.Warn().Err(err).Msg("error while recomputing all entity services")
 	}
-
-	return nil
 }

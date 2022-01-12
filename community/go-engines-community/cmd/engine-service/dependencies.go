@@ -55,7 +55,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		entityservice.NewAdapter(mongoClient),
 		entity.NewAdapter(mongoClient),
 		entityservice.NewCountersCache(redisSession, logger),
-		entityservice.NewStorage(redisSession, json.NewEncoder(), json.NewDecoder(), logger),
+		entityservice.NewStorage(redisSession, json.NewEncoder(), json.NewDecoder()),
 		serviceLockClient,
 		redisSession,
 		logger,
@@ -182,7 +182,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		},
 		logger,
 	))
-	engineService.AddPeriodicalWorker(engine.NewRunInfoPeriodicalWorker(
+	engineService.AddPeriodicalWorker("run info", engine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		engine.NewRunInfoManager(runInfoRedisSession),
 		engine.NewInstanceRunInfo(canopsis.ServiceEngineName, canopsis.ServiceQueueName, options.PublishToQueue),
@@ -190,7 +190,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		logger,
 	))
 	if options.AutoRecomputeAll {
-		engineService.AddPeriodicalWorker(engine.NewLockedPeriodicalWorker(
+		engineService.AddPeriodicalWorker("recompute all", engine.NewLockedPeriodicalWorker(
 			periodicalLockClient,
 			redis.ServicePeriodicalLockKey,
 			&recomputeAllPeriodicalWorker{
@@ -201,7 +201,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 			logger,
 		))
 	}
-	engineService.AddPeriodicalWorker(engine.NewLockedPeriodicalWorker(
+	engineService.AddPeriodicalWorker("idle since", engine.NewLockedPeriodicalWorker(
 		periodicalLockClient,
 		redis.ServiceIdleSincePeriodicalLockKey,
 		&idleSincePeriodicalWorker{
