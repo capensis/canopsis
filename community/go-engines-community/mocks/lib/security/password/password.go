@@ -5,34 +5,35 @@
 package mock_password
 
 import (
-	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
+
+	gomock "github.com/golang/mock/gomock"
 )
 
-// MockEncoder is a mock of Encoder interface
+// MockEncoder is a mock of Encoder interface.
 type MockEncoder struct {
 	ctrl     *gomock.Controller
 	recorder *MockEncoderMockRecorder
 }
 
-// MockEncoderMockRecorder is the mock recorder for MockEncoder
+// MockEncoderMockRecorder is the mock recorder for MockEncoder.
 type MockEncoderMockRecorder struct {
 	mock *MockEncoder
 }
 
-// NewMockEncoder creates a new mock instance
+// NewMockEncoder creates a new mock instance.
 func NewMockEncoder(ctrl *gomock.Controller) *MockEncoder {
 	mock := &MockEncoder{ctrl: ctrl}
 	mock.recorder = &MockEncoderMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockEncoder) EXPECT() *MockEncoderMockRecorder {
 	return m.recorder
 }
 
-// EncodePassword mocks base method
+// EncodePassword mocks base method.
 func (m *MockEncoder) EncodePassword(arg0 []byte) []byte {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "EncodePassword", arg0)
@@ -40,13 +41,13 @@ func (m *MockEncoder) EncodePassword(arg0 []byte) []byte {
 	return ret0
 }
 
-// EncodePassword indicates an expected call of EncodePassword
+// EncodePassword indicates an expected call of EncodePassword.
 func (mr *MockEncoderMockRecorder) EncodePassword(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EncodePassword", reflect.TypeOf((*MockEncoder)(nil).EncodePassword), arg0)
 }
 
-// IsValidPassword mocks base method
+// IsValidPassword mocks base method.
 func (m *MockEncoder) IsValidPassword(arg0, arg1 []byte) bool {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsValidPassword", arg0, arg1)
@@ -54,7 +55,7 @@ func (m *MockEncoder) IsValidPassword(arg0, arg1 []byte) bool {
 	return ret0
 }
 
-// IsValidPassword indicates an expected call of IsValidPassword
+// IsValidPassword indicates an expected call of IsValidPassword.
 func (mr *MockEncoderMockRecorder) IsValidPassword(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsValidPassword", reflect.TypeOf((*MockEncoder)(nil).IsValidPassword), arg0, arg1)
