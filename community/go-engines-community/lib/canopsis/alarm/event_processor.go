@@ -104,7 +104,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	case types.EventTypeCheck:
 		changeType, err := s.storeAlarm(ctx, event)
 		if err == nil {
-			s.sendEventStatistics(ctx, *event)
+			go s.sendEventStatistics(ctx, *event)
 		}
 
 		if changeType == types.AlarmChangeTypeStateIncrease || changeType == types.AlarmChangeTypeStateDecrease {
@@ -1001,7 +1001,7 @@ func (s *eventProcessor) sendEventStatistics(ctx context.Context, event types.Ev
 		return
 	}
 
-	if event.PbehaviorInfo.Is(pbehavior.TypeInactive) {
+	if event.Entity.PbehaviorInfo.Is(pbehavior.TypeInactive) {
 		return
 	}
 
