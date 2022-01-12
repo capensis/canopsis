@@ -101,7 +101,6 @@ type Entity struct {
 	Pbehaviors                       []pbehavior.Response             `json:"pbehaviors" bson:"-"`
 	PbehaviorInfo                    types.PbehaviorInfo              `json:"-" bson:"pbehavior_info"`
 	Links                            []WeatherLink                    `json:"linklist" bson:"-"`
-	Stats                            Stats                            `json:"stats" bson:"-"`
 	IsGrey                           bool                             `json:"is_grey"`
 	ImpactLevel                      int                              `json:"impact_level" bson:"impact_level"`
 	ImpactState                      int                              `json:"impact_state" bson:"impact_state"`
@@ -111,13 +110,6 @@ type Entity struct {
 type WeatherLink struct {
 	Category string      `json:"cat_name"`
 	Links    interface{} `json:"links"`
-}
-
-type Stats struct {
-	FailEventsCount int            `json:"ko" bson:"ko"`
-	OKEventsCount   int            `json:"ok" bson:"ok"`
-	LastFailEvent   *types.CpsTime `json:"last_ko" bson:"last_ko" swaggertype:"integer"`
-	LastEvent       *types.CpsTime `json:"last_event" bson:"last_event" swaggertype:"integer"`
 }
 
 type EntityAggregationResult struct {
