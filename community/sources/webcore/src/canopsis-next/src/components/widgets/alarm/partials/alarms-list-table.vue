@@ -153,7 +153,9 @@ export default {
     },
   },
   data() {
-    const data = {};
+    const data = featuresService.has('components.alarmListTable.data')
+      ? featuresService.call('components.alarmListTable.data', this, {})
+      : {};
 
     return {
       selected: [],
