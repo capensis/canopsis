@@ -39,7 +39,8 @@
     },
     "api": {
       "tokenexpiration": "24h",
-      "tokensigningmethod": "HS256"
+      "tokensigningmethod": "HS256",
+      "bulkmaxsize": 10000
     }
   },
   {
