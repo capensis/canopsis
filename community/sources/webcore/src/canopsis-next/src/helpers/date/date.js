@@ -247,7 +247,7 @@ export const convertDateToString = (date, format = DATETIME_FORMATS.long, defaul
  */
 export const convertDateToStringWithFormatForToday = (date, format, defaultValue) => {
   const dateObject = convertDateToMoment(date);
-  const resultFormat = dateObject.isSame(new Date(), 'day') ? DATETIME_FORMATS.time : format;
+  const resultFormat = dateObject.isSame(Date.now(), 'day') ? DATETIME_FORMATS.time : format;
 
   return convertDateToString(date, resultFormat, defaultValue);
 };

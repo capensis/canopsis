@@ -1,0 +1,138 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`extra-details-canceled Renders \`extra-details-canceled\` with date in previous month 1`] = `
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <span>
+      <i
+        aria-hidden="true"
+        class="v-icon c-extra-details__badge blue-grey white--text material-icons theme--light"
+        style="font-size: 16px;"
+      >
+        delete
+      </i>
+    </span>
+  </span>
+</div>
+`;
+
+exports[`extra-details-canceled Renders \`extra-details-canceled\` with date in previous month 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <div
+    class="text-md-center"
+  >
+    <strong>
+      alarmList.actions.iconsTitles.canceled
+    </strong>
+    <div>
+      common.by : cancelled-author
+    </div>
+    <div>
+      common.date : 08/08/2013 0:00:00
+    </div>
+    <div
+      class="c-extra-details__message"
+    >
+      common.comment:undefined : cancelled-message
+    </div>
+  </div>
+</div>
+`;
+
+exports[`extra-details-canceled Renders \`extra-details-canceled\` with full canceled 1`] = `
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <span>
+      <i
+        aria-hidden="true"
+        class="v-icon c-extra-details__badge blue-grey white--text material-icons theme--light"
+        style="font-size: 16px;"
+      >
+        delete
+      </i>
+    </span>
+  </span>
+</div>
+`;
+
+exports[`extra-details-canceled Renders \`extra-details-canceled\` with full canceled 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <div
+    class="text-md-center"
+  >
+    <strong>
+      alarmList.actions.iconsTitles.canceled
+    </strong>
+    <div>
+      common.by : cancelled-author
+    </div>
+    <div>
+      common.date : 12:00:00
+    </div>
+    <div
+      class="c-extra-details__message"
+    >
+      common.comment:undefined : cancelled-message
+    </div>
+  </div>
+</div>
+`;
+
+exports[`extra-details-canceled Renders \`extra-details-canceled\` without message 1`] = `
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <span>
+      <i
+        aria-hidden="true"
+        class="v-icon c-extra-details__badge blue-grey white--text material-icons theme--light"
+        style="font-size: 16px;"
+      >
+        delete
+      </i>
+    </span>
+  </span>
+</div>
+`;
+
+exports[`extra-details-canceled Renders \`extra-details-canceled\` without message 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <div
+    class="text-md-center"
+  >
+    <strong>
+      alarmList.actions.iconsTitles.canceled
+    </strong>
+    <div>
+      common.by : cancelled-author
+    </div>
+    <div>
+      common.date : 12:00:00
+    </div>
+    <!---->
+  </div>
+</div>
+`;
