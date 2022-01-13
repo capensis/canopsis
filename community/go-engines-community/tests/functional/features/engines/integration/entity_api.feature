@@ -275,7 +275,7 @@ Feature: test dynamic entity api fields
       "enabled": true,
       "name": "test-pbehavior-entity-api-4",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "5m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-default-inactive-type",
       "reason": "test-reason-1",
       "filter":{
@@ -349,7 +349,7 @@ Feature: test dynamic entity api fields
     }
     """
 
-  Scenario: shouldn count statistic if entity in not inactive pbh state
+  Scenario: should count statistic if entity in not inactive pbh state
     When I am admin
     When I send an event:
     """json
