@@ -1,62 +1,4 @@
 Feature: test dynamic entity api fields
-  Scenario: should return entity pbh
-    When I am admin
-    When I send an event:
-    """json
-    {
-      "connector": "test-connector-entity-api-1",
-      "connector_name": "test-connector-name-entity-api-1",
-      "source_type": "resource",
-      "event_type": "check",
-      "component":  "test-component-entity-api-1",
-      "resource": "test-resource-entity-api-1",
-      "state": 1,
-      "output": "test-output-entity-api-1"
-    }
-    """
-    When I wait the end of event processing
-    When I do POST /api/v4/pbehaviors:
-    """json
-    {
-      "enabled": true,
-      "name": "test-pbehavior-entity-api-1",
-      "tstart": {{ now }},
-      "tstop": {{ nowAdd "5m" }},
-      "type": "test-default-maintenance-type",
-      "reason": "test-reason-1",
-      "filter":{
-        "$and":[
-          {
-            "name": "test-resource-entity-api-1"
-          }
-        ]
-      }
-    }
-    """
-    When I wait the end of event processing
-    When I do GET /api/v4/entities?search=test-resource-entity-api-1
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "pbehavior_info": {
-            "name": "test-pbehavior-entity-api-1",
-            "reason": "test-reason-1-name",
-            "type": "test-default-maintenance-type"
-          }
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "per_page": 10,
-        "page_count": 1,
-        "total_count": 1
-      }
-    }
-    """
-
   Scenario: shouldn return entity last event date
     When I am admin
     When I send an event:
@@ -545,28 +487,6 @@ Feature: test dynamic entity api fields
       "data": [
         {
           "state": 0
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "per_page": 10,
-        "page_count": 1,
-        "total_count": 1
-      }
-    }
-    """
-
-  Scenario: old statistics shouldn't be returned
-    When I am admin
-    When I do GET /api/v4/entities?search=test-resource-entity-api-8
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "ok_events": 0,
-          "ko_events": 0
         }
       ],
       "meta": {
