@@ -20,6 +20,8 @@ const snapshotFactory = (options = {}) => mount(AlarmColumnValueCategories, {
   ...options,
 });
 
+const selectMenuContent = wrapper => wrapper.find('.v-menu__content');
+
 describe('alarm-column-value-categories', () => {
   const links = {
     Category: [
@@ -57,6 +59,9 @@ describe('alarm-column-value-categories', () => {
   it('Renders `alarm-column-value-categories` with default props', () => {
     const wrapper = snapshotFactory();
 
+    const menuContent = selectMenuContent(wrapper);
+
+    expect(menuContent.element).toMatchSnapshot();
     expect(wrapper.element).toMatchSnapshot();
   });
 
@@ -81,11 +86,13 @@ describe('alarm-column-value-categories', () => {
       }]),
       propsData: {
         links,
-        asList: true,
         limit: 2,
       },
     });
 
+    const menuContent = selectMenuContent(wrapper);
+
+    expect(menuContent.element).toMatchSnapshot();
     expect(wrapper.element).toMatchSnapshot();
   });
 });
