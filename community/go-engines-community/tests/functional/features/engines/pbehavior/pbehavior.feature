@@ -91,6 +91,28 @@ Feature: update alarm on pbehavior
       }
     }
     """
+    When I do GET /api/v4/entities?search=test-resource-pbehavior-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "pbehavior_info": {
+            "name": "test-pbehavior-1",
+            "reason": "Test Engine",
+            "type": "test-maintenance-type-to-engine"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "per_page": 10,
+        "page_count": 1,
+        "total_count": 1
+      }
+    }
+    """
 
   Scenario: given pbehavior and alarm should update alarm pbehavior info
     Given I am admin

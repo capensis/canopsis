@@ -415,6 +415,28 @@ Feature: Get entities
     }
     """
 
+  Scenario: old event statistics shouldn't be returned
+    When I am admin
+    When I do GET /api/v4/entities?search=test-resource-entity-api-8
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "ok_events": 0,
+          "ko_events": 0
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "per_page": 10,
+        "page_count": 1,
+        "total_count": 1
+      }
+    }
+    """
+
   Scenario: given get unauth request should not allow access
     When I do GET /api/v4/entities
     Then the response code should be 401
