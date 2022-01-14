@@ -9,6 +9,7 @@ import eventModule from './modules/event';
 import queryModule from './modules/query';
 import navigationModule from './modules/navigation';
 import entitiesModules from './modules/entities';
+import activeViewModule from './modules/active-view';
 
 import entitiesPlugin from './plugins/entities';
 import watchOncePlugin from './plugins/watch-once';
@@ -41,6 +42,7 @@ export default new Vuex.Store({
     event: eventModule,
     query: queryModule,
     navigation: navigationModule,
+    activeView: activeViewModule,
 
     ...entitiesModules,
     ...featuresService.get('store.modules'),

@@ -9,19 +9,20 @@
     grid-edit-widgets(
       v-if="editing",
       :tab="tab",
-      :update-tab-method="updateTabMethod",
-      @update:widgets-fields="$emit('update:widgets-fields', $event)"
+      @update:widgets-fields="updateWidgetsFieldsForUpdateById"
     )
       template(#default="{ widget }")
         widget-wrapper(:widget="widget", :tab="tab", editing)
 </template>
 
 <script>
+import { queryMixin } from '@/mixins/query';
+import { activeViewMixin } from '@/mixins/active-view';
+import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
+
 import GridOverviewWidget from '@/components/widgets/grid-overview-widget.vue';
 import GridEditWidgets from '@/components/widgets/grid-edit-widgets.vue';
 import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
-
-import queryMixin from '@/mixins/query';
 
 export default {
   components: {
@@ -31,32 +32,44 @@ export default {
   },
   mixins: [
     queryMixin,
+    activeViewMixin,
+    entitiesWidgetMixin,
   ],
   props: {
     tab: {
       type: Object,
       required: true,
     },
-    editing: {
-      type: Boolean,
-      default: false,
-    },
-    updateTabMethod: {
-      type: Function,
-      default: () => () => {},
-    },
   },
-  destroyed() {
+  data() {
+    return {
+      widgetsFieldsForUpdateById: {},
+    };
+  },
+  created() {
+    this.registerEditingOffHandler(this.updatePositions);
+  },
+  beforeDestroy() {
     this.removeWidgetsQueries();
+    this.unregisterEditingOffHandler(this.updatePositions);
   },
   methods: {
+    updateWidgetsFieldsForUpdateById(widgetsFieldsForUpdateById) {
+      this.widgetsFieldsForUpdateById = {
+        ...this.widgetsFieldsForUpdateById,
+        ...widgetsFieldsForUpdateById,
+      };
+    },
+
+    updatePositions() {
+      return new Promise(resolve => setTimeout(resolve, 5000));
+    },
+
     /**
      * Remove queries which was created for all widgets
      */
     removeWidgetsQueries() {
-      this.tab.widgets.forEach(({ _id: id }) => this.removeQuery({
-        id,
-      }));
+      this.tab.widgets.forEach(({ _id: id }) => this.removeQuery({ id }));
     },
   },
 };

@@ -14,5 +14,11 @@ export const entitiesViewTabMixin = {
       updateViewTabPositions: 'updatePositions',
       removeViewTab: 'remove',
     }),
+
+    async updateViewTabAndFetch({ id, data }) {
+      await this.updateViewTab({ id, data });
+
+      return this.fetchViewTab({ id });
+    },
   },
 };

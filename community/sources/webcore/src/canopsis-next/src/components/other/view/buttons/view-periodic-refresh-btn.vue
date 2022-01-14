@@ -1,32 +1,81 @@
-import { get } from 'lodash';
+<template lang="pug">
+  v-tooltip(top)
+    template(#activator="{ on }")
+      v-btn(
+        v-on="on",
+        :input-value="isPeriodicRefreshEnabled",
+        color="secondary",
+        fab,
+        dark,
+        @click.stop="refreshHandler"
+      )
+        v-icon(v-if="!isPeriodicRefreshEnabled") refresh
+        v-progress-circular.periodic-refresh-progress(
+          v-else,
+          :rotate="270",
+          :size="30",
+          :width="2",
+          :value="periodicRefreshProgressValue",
+          color="white",
+          button
+        )
+          span.refresh-btn {{ periodicRefreshProgress | maxDurationByUnit }}
+    span {{ tooltipContent }}
+</template>
 
+<script>
 import { DATETIME_FORMATS } from '@/constants';
-
-import Observer from '@/services/observer';
 
 import uid from '@/helpers/uid';
 import { convertDurationToString, durationToSeconds } from '@/helpers/date/duration';
 
-import layoutNavigationEditingModeMixin from '../layout/navigation/editing-mode';
+import { activeViewMixin } from '@/mixins/active-view';
+import layoutNavigationEditingModeMixin from '@/mixins/layout/navigation/editing-mode';
 
 export default {
-  mixins: [layoutNavigationEditingModeMixin],
-  provide() {
-    return {
-      $periodicRefresh: this.$periodicRefresh,
-    };
-  },
+  inject: ['$periodicRefresh'],
+  mixins: [
+    activeViewMixin,
+    layoutNavigationEditingModeMixin,
+  ],
   data() {
     return {
       periodicRefreshInterval: null,
       periodicRefreshProgress: undefined,
     };
   },
+  computed: {
+    tooltipContent() {
+      return this.isPeriodicRefreshEnabled ? this.periodicRefreshProgressFormatted : this.$t('common.refresh');
+    },
 
-  beforeCreate() {
-    this.$periodicRefresh = new Observer();
+    periodicRefreshProgressFormatted() {
+      return convertDurationToString(
+        this.periodicRefreshProgress,
+        DATETIME_FORMATS.refreshFieldFormat,
+      );
+    },
+
+    periodicRefreshProgressValue() {
+      return this.periodicRefreshProgress / (this.periodicRefreshDelay / 100);
+    },
+
+    isPeriodicRefreshEnabled() {
+      return this.view?.periodic_refresh?.enabled ?? false;
+    },
+
+    periodicRefreshDelay() {
+      return this.view?.periodic_refresh
+        ? durationToSeconds(this.view.periodic_refresh)
+        : 0;
+    },
+
+    refreshHandler() {
+      return this.isPeriodicRefreshEnabled && !this.isNavigationEditingMode
+        ? this.callSubscribers
+        : this.refresh;
+    },
   },
-
   watch: {
     isPeriodicRefreshEnabled(value, oldValue) {
       if (value && (!oldValue || !this.periodicRefreshInterval) && !this.isNavigationEditingMode) {
@@ -82,34 +131,6 @@ export default {
     this.stopPeriodicRefreshInterval();
   },
 
-  computed: {
-    periodicRefreshProgressFormatted() {
-      return convertDurationToString(
-        this.periodicRefreshProgress,
-        DATETIME_FORMATS.refreshFieldFormat,
-      );
-    },
-
-    periodicRefreshProgressValue() {
-      return this.periodicRefreshProgress / (this.periodicRefreshDelay / 100);
-    },
-
-    isPeriodicRefreshEnabled() {
-      return get(this.view, 'periodic_refresh.enabled', false);
-    },
-
-    periodicRefreshDelay() {
-      return this.view?.periodic_refresh
-        ? durationToSeconds(this.view.periodic_refresh)
-        : 0;
-    },
-
-    refreshHandler() {
-      return this.isPeriodicRefreshEnabled && !this.isNavigationEditingMode
-        ? this.callSubscribers
-        : this.refresh;
-    },
-  },
   methods: {
     refresh() {
       return this.$periodicRefresh.notify();
@@ -155,3 +176,4 @@ export default {
     },
   },
 };
+</script>

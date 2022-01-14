@@ -24,7 +24,7 @@ import { createNamespacedHelpers } from 'vuex';
 import { MODALS, USERS_PERMISSIONS } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
-import queryMixin from '@/mixins/query';
+import { queryMixin } from '@/mixins/query';
 
 const { mapActions } = createNamespacedHelpers('pbehavior');
 

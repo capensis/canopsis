@@ -1,150 +1,38 @@
 <template lang="pug">
-  div.view-wrapper(:data-test="`view-page-${id}`")
+  div.view-wrapper
     v-fade-transition
       view-tabs-wrapper(
         v-if="isViewTabsReady",
-        :view="view",
         :editing="editing",
-        :updatable="hasUpdateAccess",
-        @update:widgets-fields="updateWidgetsFieldsForUpdateById"
+        :updatable="hasUpdateAccess"
       )
-    div.fab
-      v-layout(data-test="controlViewLayout", row)
-        v-fade-transition
-          v-tooltip(v-if="pageScrolled", top)
-            v-btn(slot="activator", color="secondary lighten-2", fab, dark, @click="scrollToTop")
-              v-icon arrow_upward
-            span {{ $t('common.toTheTop') }}
-        v-tooltip(top)
-          v-btn(
-            slot="activator",
-            :input-value="isPeriodicRefreshEnabled",
-            color="secondary",
-            fab,
-            dark,
-            @click.stop="refreshHandler"
-          )
-            v-icon(v-if="!isPeriodicRefreshEnabled") refresh
-            v-progress-circular.periodic-refresh-progress(
-              v-else,
-              :rotate="270",
-              :size="30",
-              :width="2",
-              :value="periodicRefreshProgressValue",
-              color="white",
-              button
-            )
-              span.refresh-btn {{ periodicRefreshProgress | maxDurationByUnit }}
-          span {{ tooltipContent }}
-        v-speed-dial(
-          v-if="hasUpdateAccess",
-          v-model="isVSpeedDialOpen",
-          direction="top",
-          transition="slide-y-reverse-transition"
-        )
-          v-btn(
-            slot="activator",
-            :input-value="isVSpeedDialOpen",
-            data-test="menuViewButton",
-            color="primary",
-            dark,
-            fab
-          )
-            v-icon menu
-            v-icon close
-          v-tooltip(left)
-            v-btn(
-              slot="activator",
-              v-model="fullscreen",
-              fab,
-              dark,
-              small,
-              @click="toggleFullScreenMode"
-            )
-              v-icon fullscreen
-              v-icon fullscreen_exit
-            span alt + enter / command + enter
-          v-tooltip(v-if="hasUpdateAccess", left)
-            v-btn(
-              slot="activator",
-              :input-value="editing",
-              data-test="editViewButton",
-              fab,
-              dark,
-              small,
-              @click.stop="toggleViewEditingMode"
-            )
-              v-icon edit
-              v-icon done
-            div
-              div {{ $t('common.toggleEditView') }}  (ctrl + e / command + e)
-              div.font-italic {{ $t('common.toggleEditViewSubtitle') }}
-          v-tooltip(left)
-            v-btn(
-              slot="activator",
-              v-if="hasUpdateAccess",
-              data-test="addWidgetButton",
-              fab,
-              dark,
-              small,
-              color="indigo",
-              @click.stop="showCreateWidgetModal"
-            )
-              v-icon add
-            span {{ $t('common.addWidget') }}
-          v-tooltip(left)
-            v-btn(
-              slot="activator",
-              v-if="hasUpdateAccess",
-              data-test="addTabButton",
-              fab,
-              dark,
-              small,
-              color="green",
-              @click.stop="showCreateTabModal"
-            )
-              v-icon add
-            span {{ $t('common.addTab') }}
-        v-tooltip(v-else, top)
-          v-btn(
-            slot="activator",
-            v-model="fullscreen",
-            fab,
-            dark,
-            @click="toggleFullScreenMode"
-          )
-            v-icon fullscreen
-            v-icon fullscreen_exit
-          div {{ $t('view.fullScreen') }}
-            .font-italic.caption.ml-1 ({{ $t('view.fullScreenShortcut') }})
+    view-fab-btns(:active-tab="activeTab", :updatable="hasUpdateAccess")
 </template>
 
 <script>
-import { isEmpty } from 'lodash';
-
-import { MODALS } from '@/constants';
-import { generateViewTab } from '@/helpers/entities';
-import { setSeveralFields } from '@/helpers/immutable';
-import { viewToRequest } from '@/helpers/forms/view';
+import Observer from '@/services/observer';
 
 import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
+import ViewFabBtns from '@/components/other/view/buttons/view-fab-btns.vue';
 
 import { authMixin } from '@/mixins/auth';
-import queryMixin from '@/mixins/query';
-import { entitiesViewMixin } from '@/mixins/entities/view';
-import periodicRefreshMixin from '@/mixins/view/periodic-refresh';
-import { scrollToTopMixin } from '@/mixins/scroll-to-top';
+import { queryMixin } from '@/mixins/query';
+import { activeViewMixin } from '@/mixins/active-view';
 
 export default {
+  provide() {
+    return {
+      $periodicRefresh: this.$periodicRefresh,
+    };
+  },
   components: {
     ViewTabsWrapper,
+    ViewFabBtns,
   },
   mixins: [
     authMixin,
     queryMixin,
-    entitiesViewMixin,
-    periodicRefreshMixin,
-    scrollToTopMixin,
+    activeViewMixin,
   ],
   props: {
     id: {
@@ -152,19 +40,7 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      editing: false,
-      fullscreen: false,
-      isVSpeedDialOpen: false,
-      widgetsFieldsForUpdateById: {},
-    };
-  },
   computed: {
-    tooltipContent() {
-      return this.isPeriodicRefreshEnabled ? this.periodicRefreshProgressFormatted : this.$t('common.refresh');
-    },
-
     hasUpdateAccess() {
       return this.checkUpdateAccess(this.id);
     },
@@ -172,45 +48,43 @@ export default {
     activeTab() {
       const { tabId } = this.$route.query;
 
-      if (this.view.tabs && this.view.tabs.length) {
+      if (this.view?.tabs?.length) {
         if (!tabId) {
           return this.view.tabs[0];
         }
 
-        return this.view.tabs.find(tab => tab._id === tabId) || null;
+        return this.view.tabs.find(tab => tab._id === tabId) ?? null;
       }
 
       return null;
     },
 
     isViewTabsReady() {
-      return this.view && this.$route.query.tabId;
+      return this.view?.tabs && this.$route.query.tabId;
     },
   },
 
+  beforeCreate() {
+    this.$periodicRefresh = new Observer();
+  },
+
   created() {
-    document.addEventListener('keydown', this.keyDownListener);
     this.registerViewOnceWatcher();
     this.$periodicRefresh.register(this.refreshView);
   },
 
   mounted() {
-    this.fetchView({ id: this.id });
+    this.fetchActiveView({ id: this.id });
   },
 
   beforeDestroy() {
-    this.$fullscreen.exit();
-    document.removeEventListener('keydown', this.keyDownListener);
     this.$periodicRefresh.unregister(this.refreshView);
+    this.clearActiveView();
   },
 
   methods: {
-    updateViewMethod(view) {
-      return this.updateView({ id: this.id, data: viewToRequest(view) });
-    },
-
     async refreshView() {
-      await this.fetchView({ id: this.id });
+      await this.fetchActiveView({ id: this.id });
 
       if (this.activeTab) {
         this.forceUpdateQuery({ id: this.activeTab._id });
@@ -229,106 +103,6 @@ export default {
           unwatch();
         }
       });
-    },
-
-    keyDownListener(event) {
-      if (event.key === 'Enter' && event.altKey) {
-        this.toggleFullScreenMode();
-        event.preventDefault();
-      } else if (event.key === 'e' && event.ctrlKey && this.hasUpdateAccess) {
-        this.toggleViewEditingMode();
-        event.preventDefault();
-      }
-    },
-
-    toggleFullScreenMode() {
-      if (this.activeTab) {
-        const element = document.getElementById(`view-tab-${this.activeTab._id}`);
-
-        if (element) {
-          this.$fullscreen.toggle(element, {
-            fullscreenClass: 'full-screen',
-            background: 'white',
-            callback: value => this.fullscreen = value,
-          });
-        }
-      } else {
-        this.$popups.warning({ text: this.$t('view.errors.emptyTabs') });
-      }
-    },
-
-    showCreateWidgetModal() {
-      if (this.activeTab) {
-        this.$modals.show({
-          name: MODALS.createWidget,
-          config: {
-            tab: this.activeTab,
-          },
-        });
-      } else {
-        this.$popups.warning({ text: this.$t('view.errors.emptyTabs') });
-      }
-    },
-
-    showCreateTabModal() {
-      this.$modals.show({
-        name: MODALS.textFieldEditor,
-        config: {
-          title: this.$t('modals.viewTab.create.title'),
-          field: {
-            name: 'text',
-            label: this.$t('modals.viewTab.fields.title'),
-            validationRules: 'required',
-          },
-          action: (title) => {
-            const oldTabs = this.view.tabs || [];
-            const newTab = { ...generateViewTab(), title };
-            const view = {
-              ...this.view,
-              tabs: [...oldTabs, newTab],
-            };
-
-            return this.updateView({ id: this.id, data: viewToRequest(view) });
-          },
-        },
-      });
-    },
-
-    updateWidgetsFieldsForUpdateById(widgetsFieldsForUpdateById) {
-      this.widgetsFieldsForUpdateById = {
-        ...this.widgetsFieldsForUpdateById,
-        ...widgetsFieldsForUpdateById,
-      };
-    },
-
-    updateTabs() {
-      const view = {
-        ...this.view,
-
-        tabs: this.view.tabs.map(tab => ({
-          ...tab,
-
-          widgets: tab.widgets.map((widget) => {
-            const fields = this.widgetsFieldsForUpdateById[widget._id];
-
-            if (fields) {
-              return setSeveralFields(widget, fields);
-            }
-
-            return widget;
-          }),
-        })),
-      };
-
-      return this.updateView({ id: this.id, data: viewToRequest(view) });
-    },
-
-    async toggleViewEditingMode() {
-      if (this.editing && !isEmpty(this.widgetsFieldsForUpdateById)) {
-        await this.updateTabs();
-      }
-
-      this.editing = !this.editing;
     },
   },
 };

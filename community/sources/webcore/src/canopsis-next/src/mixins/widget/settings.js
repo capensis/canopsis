@@ -3,8 +3,7 @@ import { setField } from '@/helpers/immutable';
 import { prepareQuery } from '@/helpers/query';
 import { formToWidget } from '@/helpers/forms/widgets/common';
 
-import queryMixin from '@/mixins/query';
-import { entitiesViewMixin } from '@/mixins/entities/view';
+import { queryMixin } from '@/mixins/query';
 
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
@@ -12,7 +11,6 @@ import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 export const widgetSettingsMixin = {
   mixins: [
     queryMixin,
-    entitiesViewMixin,
     entitiesUserPreferenceMixin,
     confirmableModalMixinCreator({ field: 'settings', closeMethod: '$sidebar.hide' }),
   ],
