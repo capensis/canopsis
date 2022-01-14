@@ -14,7 +14,7 @@ import uid from '@/helpers/uid';
  * @param {Function} [comparator = isEqual]
  * @returns {{created(): void, methods: {}, beforeDestroy(): void, inject: [string]}|*}
  */
-export const confirmableModalMixin = ({
+export const confirmableModalMixinCreator = ({
   field = 'form',
   method = 'submit',
   closeMethod = '$modals.hide',

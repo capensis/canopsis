@@ -31,9 +31,9 @@
 </template>
 
 <script>
-import moment from 'moment';
-
 import { DATETIME_FORMATS } from '@/constants';
+
+import { convertDateToString } from '@/helpers/date/date';
 
 import { formMixin } from '@/mixins/form';
 
@@ -64,7 +64,7 @@ export default {
     endRules() {
       return {
         required: true,
-        after: [moment(this.form.start).format(DATETIME_FORMATS.dateTimePicker)],
+        after: [convertDateToString(this.form.start, DATETIME_FORMATS.dateTimePicker)],
         date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
       };
     },

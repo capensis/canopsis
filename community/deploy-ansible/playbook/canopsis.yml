@@ -9,8 +9,6 @@
     -
       role: "ansible-role-rabbitmq"
     -
-      role: "ansible-role-influxdb-maat"
-    -
       role: "ansible-role-redis"
     -
       role: "canopsis"

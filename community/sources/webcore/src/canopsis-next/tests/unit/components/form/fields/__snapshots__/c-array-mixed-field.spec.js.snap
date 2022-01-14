@@ -1,0 +1,139 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-array-mixed-field Renders \`c-array-mixed-field\` with all field types correctly 1`] = `
+<div>
+  <div
+    class="layout"
+  >
+    <div
+      class="flex"
+    >
+      <c-mixed-field-stub
+        value="string"
+      />
+    </div>
+    <c-action-btn-stub
+      type="delete"
+    />
+  </div>
+  <div
+    class="layout"
+  >
+    <div
+      class="flex"
+    >
+      <c-mixed-field-stub
+        value="123"
+      />
+    </div>
+    <c-action-btn-stub
+      type="delete"
+    />
+  </div>
+  <div
+    class="layout"
+  >
+    <div
+      class="flex"
+    >
+      <c-mixed-field-stub />
+    </div>
+    <c-action-btn-stub
+      type="delete"
+    />
+  </div>
+  <div
+    class="layout"
+  >
+    <div
+      class="flex"
+    >
+      <c-mixed-field-stub />
+    </div>
+    <c-action-btn-stub
+      type="delete"
+    />
+  </div>
+  <div
+    class="layout"
+  >
+    <div
+      class="flex"
+    >
+      <c-mixed-field-stub
+        value=",string,123"
+      />
+    </div>
+    <c-action-btn-stub
+      type="delete"
+    />
+  </div>
+  <button
+    class="mx-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
+    type="button"
+  >
+    <div
+      class="v-btn__content"
+    >
+      common.add
+    </div>
+  </button>
+</div>
+`;
+
+exports[`c-array-mixed-field Renders \`c-array-mixed-field\` with default props correctly 1`] = `
+<div>
+  <button
+    class="mx-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
+    type="button"
+  >
+    <div
+      class="v-btn__content"
+    >
+      common.add
+    </div>
+  </button>
+</div>
+`;
+
+exports[`c-array-mixed-field Renders disabled \`c-array-mixed-field\` correctly 1`] = `
+<div>
+  <div
+    class="layout"
+  >
+    <div
+      class="flex"
+    >
+      <c-mixed-field-stub
+        disabled="true"
+        value="string"
+      />
+    </div>
+    <!---->
+  </div>
+  <div
+    class="layout"
+  >
+    <div
+      class="flex"
+    >
+      <c-mixed-field-stub
+        disabled="true"
+        value="123"
+      />
+    </div>
+    <!---->
+  </div>
+  <button
+    class="mx-0 v-btn v-btn--disabled v-btn--outline v-btn--depressed theme--light primary--text"
+    disabled="disabled"
+    type="button"
+  >
+    <div
+      class="v-btn__content"
+    >
+      common.add
+    </div>
+  </button>
+</div>
+`;

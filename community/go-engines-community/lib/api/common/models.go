@@ -2,6 +2,7 @@ package common
 
 import (
 	"errors"
+	"github.com/valyala/fastjson"
 	"math"
 	"net/http"
 	"reflect"
@@ -110,6 +111,21 @@ func NewValidationErrorResponse(err error, request interface{}) interface{} {
 	}
 
 	return ErrorResponse{Error: "request has invalid structure"}
+}
+
+func NewValidationErrorFastJsonValue(ar *fastjson.Arena, err error, request interface{}) *fastjson.Value {
+	var errs validator.ValidationErrors
+	if errors.As(err, &errs) {
+		value := ar.NewObject()
+		for _, fe := range errs {
+			field := transformNamespace(fe.Namespace(), request)
+			value.Set(field, ar.NewString(libvalidator.TranslateError(fe)))
+		}
+
+		return value
+	}
+
+	return ar.NewString("request has invalid structure")
 }
 
 // transformNamespace prepares field namespace for response.
