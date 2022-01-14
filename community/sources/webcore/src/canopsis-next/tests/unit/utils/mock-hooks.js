@@ -64,3 +64,18 @@ export const mockModals = () => {
 
   return modals;
 };
+
+/**
+ * Mock for the popups. Clear yourself after all tests.
+ */
+export const mockPopups = () => {
+  const popups = {
+    error: jest.fn(),
+  };
+
+  afterEach(() => {
+    popups.error.mockReset();
+  });
+
+  return popups;
+};
