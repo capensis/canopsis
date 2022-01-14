@@ -17,13 +17,9 @@ func (w *impactedServicesPeriodicalWorker) GetInterval() time.Duration {
 	return w.PeriodicalInterval
 }
 
-func (w *impactedServicesPeriodicalWorker) Work(ctx context.Context) error {
-	w.Logger.Debug().Msg("Recompute impacted services for connectors")
+func (w *impactedServicesPeriodicalWorker) Work(ctx context.Context) {
 	err := w.EnrichmentCenter.UpdateImpactedServices(ctx)
 	if err != nil {
 		w.Logger.Warn().Err(err).Msg("error while recomputing impacted services for connectors")
 	}
-	w.Logger.Debug().Msg("Recompute impacted services for connectors finished")
-
-	return nil
 }

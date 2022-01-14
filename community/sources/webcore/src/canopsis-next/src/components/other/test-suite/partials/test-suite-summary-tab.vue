@@ -5,12 +5,11 @@
     c-information-block-row(:label="$t('testSuite.hostname')", :value="testSuite.hostname")
     c-information-block-row(
       :label="$t('testSuite.lastUpdate')"
-    ) {{ testSuite.last_update | date('testSuiteFormat', true) }}
+    ) {{ testSuite.last_update | date('testSuiteFormat') }}
     c-information-block-row(
       :label="$t('testSuite.timeTaken')"
     )
       span(v-if="testSuite.time") {{ testSuite.time | fixed }}{{ $constants.TIME_UNITS.second }}
-
     v-layout.mt-4(row)
       v-layout(column)
         c-information-block-row(:label="$t('testSuite.totalTests')", :value="testSuite.total")
@@ -40,7 +39,8 @@
 
 <script>
 import TestSuiteSummaryStatusRow from './test-suite-summary-status-row.vue';
-import TestSuiteStatusPieChart from './test-suite-status-pie-chart.vue';
+
+const TestSuiteStatusPieChart = () => import(/* webpackChunkName: "Charts" */ './test-suite-status-pie-chart.vue');
 
 export default {
   components: {
