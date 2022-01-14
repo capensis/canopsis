@@ -8319,6 +8319,10 @@ var doc = `{
                 "m": {
                     "type": "string"
                 },
+                "statecounter": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CropCounter"
+                },
                 "t": {
                     "type": "integer"
                 },
@@ -11387,6 +11391,9 @@ var doc = `{
                 "alarm_patterns": {
                     "type": "object",
                     "$ref": "#/definitions/pattern.AlarmPatternList"
+                },
+                "comment": {
+                    "type": "string"
                 },
                 "drop_scenario_if_not_matched": {
                     "type": "boolean"
