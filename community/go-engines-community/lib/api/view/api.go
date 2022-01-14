@@ -1,6 +1,7 @@
 package view
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
@@ -142,7 +143,7 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), userID, logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeView,
 		ValueID:   view.ID,
@@ -189,7 +190,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypeView,
 		ValueID:   view.ID,
@@ -225,7 +226,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionDelete,
 		ValueType: logger.ValueTypeView,
 		ValueID:   id,
