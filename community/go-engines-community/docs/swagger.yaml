@@ -102,6 +102,9 @@ definitions:
         type: string
       m:
         type: string
+      statecounter:
+        $ref: '#/definitions/types.CropCounter'
+        type: object
       t:
         type: integer
       user_id:
@@ -2563,6 +2566,8 @@ definitions:
       alarm_patterns:
         $ref: '#/definitions/pattern.AlarmPatternList'
         type: object
+      comment:
+        type: string
       drop_scenario_if_not_matched:
         type: boolean
       emit_trigger:
