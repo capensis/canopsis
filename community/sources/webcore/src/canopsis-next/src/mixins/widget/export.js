@@ -21,7 +21,7 @@ import { saveCsvFile } from '@/helpers/file/files';
  */
 export const exportCsvMixinCreator = ({ createExport, fetchExport, fetchExportFile }) => ({
   methods: {
-    async generateFile({ data, ...params } = {}) {
+    async generateFile({ data, ...params }) {
       const { _id: id } = await this[createExport]({ data, ...params });
 
       await this.waitGeneratingCsvFile({ id, ...params });
@@ -29,13 +29,13 @@ export const exportCsvMixinCreator = ({ createExport, fetchExport, fetchExportFi
       return this[fetchExportFile]({ id, ...params });
     },
 
-    async exportAsCsv({ data, name, ...params } = {}) {
+    async exportAsCsv({ data, name, ...params }) {
       try {
         const file = await this.generateFile({ data, ...params });
 
         saveCsvFile(file, name);
       } catch (err) {
-        this.$popups.error({ text: err.error || this.$t('errors.default') });
+        this.$popups.error({ text: err?.error ?? this.$t('errors.default') });
       }
     },
 
