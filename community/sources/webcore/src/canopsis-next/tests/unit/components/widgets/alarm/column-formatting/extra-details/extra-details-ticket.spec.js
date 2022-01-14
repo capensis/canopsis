@@ -33,7 +33,7 @@ describe('extra-details-ticket', () => {
       },
     });
 
-    const tooltipContent = wrapper.findTooltipContent();
+    const tooltipContent = wrapper.findTooltip();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(tooltipContent.element).toMatchSnapshot();
@@ -46,7 +46,7 @@ describe('extra-details-ticket', () => {
       },
     });
 
-    const tooltipContent = wrapper.findTooltipContent();
+    const tooltipContent = wrapper.findTooltip();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(tooltipContent.element).toMatchSnapshot();
@@ -62,7 +62,7 @@ describe('extra-details-ticket', () => {
       },
     });
 
-    const tooltipContent = wrapper.findTooltipContent();
+    const tooltipContent = wrapper.findTooltip();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(tooltipContent.element).toMatchSnapshot();

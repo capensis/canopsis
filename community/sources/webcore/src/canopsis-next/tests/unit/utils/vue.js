@@ -17,8 +17,8 @@ import SetSeveralPlugin from '@/plugins/set-several';
 /**
  * @typedef {Wrapper<Vue>} CustomWrapper
  * @property {Function} getValidator
- * @property {Function} findAllTooltipContents
- * @property {Function} findTooltipContent
+ * @property {Function} findAllTooltips
+ * @property {Function} findTooltip
  */
 
 document.body.setAttribute('data-app', true);
@@ -77,8 +77,8 @@ export const createVueInstance = () => createLocalVue();
  */
 const enhanceWrapper = (wrapper) => {
   wrapper.getValidator = () => wrapper.vm.$validator;
-  wrapper.findAllTooltipContents = () => wrapper.findAll('.v-tooltip__content');
-  wrapper.findTooltipContent = () => wrapper.find('.v-tooltip__content');
+  wrapper.findAllTooltips = () => wrapper.findAll('.v-tooltip__content');
+  wrapper.findTooltip = () => wrapper.find('.v-tooltip__content');
 };
 
 /**
