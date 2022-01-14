@@ -43,8 +43,7 @@
                   ) lock
               widget-wrapper-menu(
                 :widget="layoutItem.widget",
-                :tab="tab",
-                :update-tab-method="updateTabMethod"
+                :tab="tab"
               )
           slot(:widget="layoutItem.widget")
 </template>
@@ -71,10 +70,6 @@ export default {
   props: {
     tab: {
       type: Object,
-      required: true,
-    },
-    updateTabMethod: {
-      type: Function,
       required: true,
     },
   },

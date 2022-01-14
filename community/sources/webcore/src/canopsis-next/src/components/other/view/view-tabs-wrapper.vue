@@ -2,10 +2,8 @@
   div
     view-tabs.tabs-absolute(
       v-if="view && isTabsChanged",
-      :view="view",
       :tabs.sync="tabs",
-      :isTabsChanged="isTabsChanged",
-      :editing="editing",
+      :changed="isTabsChanged",
       :updatable="updatable"
     )
     v-fade-transition
@@ -15,20 +13,22 @@
     view-tabs(
       :view="view",
       :tabs.sync="tabs",
-      :isTabsChanged="isTabsChanged",
+      :changed="isTabsChanged",
       :editing="editing",
       :updatable="updatable"
     )
       view-tab-widgets(
         slot-scope="props",
-        v-bind="props",
-        @update:widgets-fields="$emit('update:widgets-fields', $event)"
+        v-bind="props"
       )
 </template>
 
 <script>
 import { isEqual } from 'lodash';
 
+import { getIdFromEntity } from '@/helpers/entities';
+
+import { activeViewMixin } from '@/mixins/active-view';
 import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
 
 import ViewTabs from './view-tabs.vue';
@@ -39,16 +39,11 @@ export default {
     ViewTabs,
     ViewTabWidgets,
   },
-  mixins: [entitiesViewTabMixin],
+  mixins: [
+    activeViewMixin,
+    entitiesViewTabMixin,
+  ],
   props: {
-    view: {
-      type: Object,
-      required: true,
-    },
-    editing: {
-      type: Boolean,
-      default: false,
-    },
     updatable: {
       type: Boolean,
       default: false,
@@ -56,7 +51,7 @@ export default {
   },
   data() {
     return {
-      tabs: [...this.view.tabs],
+      tabs: [],
     };
   },
   computed: {
@@ -70,6 +65,7 @@ export default {
   },
   watch: {
     'view.tabs': {
+      immediate: true,
       handler(tabs, prevTabs) {
         if (!isEqual(tabs, prevTabs)) {
           this.tabs = [...tabs];
@@ -83,7 +79,11 @@ export default {
     },
 
     async submit() {
-      this.updateViewTabPositions({});
+      await this.updateViewTabPositions({
+        data: this.tabs.map(tab => getIdFromEntity(tab)),
+      });
+
+      return this.fetchActiveView();
     },
   },
 };

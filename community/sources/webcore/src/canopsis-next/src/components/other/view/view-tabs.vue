@@ -4,7 +4,7 @@
     :key="vTabsKey",
     :value="$route.fullPath",
     :class="{ hidden: this.tabs.length < 2 && !editing, 'tabs-editing': editing }",
-    :hide-slider="isTabsChanged",
+    :hide-slider="changed",
     color="secondary lighten-2",
     slider-color="primary",
     dark
@@ -19,27 +19,18 @@
       v-tab.draggable-item(
         v-for="tab in tabs",
         :key="tab._id",
-        :disabled="isTabsChanged",
+        :disabled="changed",
         :to="getTabHrefById(tab._id)",
         exact,
         ripple
       )
         span {{ tab.title }}
-        update-tab-btn(
-          v-show="updatable && editing",
-          :tab="tab",
-          :updateTabMethod="updateTab"
-        )
-        clone-tab-btn(
-          v-show="updatable && editing",
-          :tab="tab"
-        )
-        delete-tab-btn(
-          v-show="updatable && editing",
-          :tab="tab",
-          :view="view",
-          :updateViewMethod="updateViewMethod"
-        )
+        template(v-if="updatable && editing")
+          v-btn(small, flat, icon, @click.prevent="showUpdateTabModal(tab)")
+            v-icon(small) edit
+          clone-tab-btn(:tab="tab")
+          v-btn(small, flat, icon, @click.prevent="showDeleteTabModal(tab)")
+            v-icon(small) delete
     template(v-if="$scopedSlots.default")
       v-tabs-items(touchless)
         v-tab-item(
@@ -48,39 +39,37 @@
           :value="getTabHrefById(tab._id)",
           lazy
         )
-          slot(
-            :tab="tab",
-            :editing="editing",
-            :updateTabMethod="updateTab"
-          )
+          slot(:tab="tab")
 </template>
 
 <script>
 import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
+import { MODALS } from '@/constants';
 
-import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
+import { activeViewMixin } from '@/mixins/active-view';
+import { vuetifyTabsMixin } from '@/mixins/vuetify/tabs';
+import { entitiesViewMixin } from '@/mixins/entities/view';
+import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
 
-import UpdateTabBtn from './buttons/update-tab-btn.vue';
 import CloneTabBtn from './buttons/clone-tab-btn.vue';
-import DeleteTabBtn from './buttons/delete-tab-btn.vue';
 
+/**
+ * TODO: move clone tab
+ */
 export default {
   components: {
     Draggable,
-    UpdateTabBtn,
     CloneTabBtn,
-    DeleteTabBtn,
   },
   mixins: [
+    activeViewMixin,
     vuetifyTabsMixin,
+    entitiesViewMixin,
+    entitiesViewTabMixin,
   ],
   props: {
-    view: {
-      type: Object,
-      required: true,
-    },
     tabs: {
       type: Array,
       required: true,
@@ -89,29 +78,23 @@ export default {
       type: Boolean,
       default: false,
     },
-    isTabsChanged: {
+    changed: {
       type: Boolean,
       default: false,
-    },
-    editing: {
-      type: Boolean,
-      default: false,
-    },
-    updateViewMethod: {
-      type: Function,
-      default: () => {},
     },
   },
   computed: {
     vTabsKey() {
       return this.view.tabs.map(tab => tab._id).join('-');
     },
+
     draggableOptions() {
       return {
         animation: VUETIFY_ANIMATION_DELAY,
         disabled: !this.editing,
       };
     },
+
     getTabHrefById() {
       return (id) => {
         const { href } = this.$router.resolve({ query: { tabId: id } }, this.$route);
@@ -124,6 +107,7 @@ export default {
     editing() {
       this.$nextTick(this.callTabsOnResizeMethod);
     },
+
     tabs: {
       immediate: true,
       handler() {
@@ -132,19 +116,33 @@ export default {
     },
   },
   methods: {
-    updateTab(tab) {
-      const view = {
-        ...this.view,
-        tabs: this.view.tabs.map((viewTab) => {
-          if (viewTab._id === tab._id) {
-            return tab;
-          }
+    showUpdateTabModal(tab) {
+      this.$modals.show({
+        name: MODALS.textFieldEditor,
+        config: {
+          title: this.$t('modals.viewTab.edit.title'),
+          field: {
+            name: 'text',
+            label: this.$t('modals.viewTab.fields.title'),
+            value: tab.title,
+            validationRules: 'required',
+          },
+          action: title => this.updateViewTabAndFetch({ id: tab._id, data: { ...tab, title } }),
+        },
+      });
+    },
 
-          return viewTab;
-        }),
-      };
+    showDeleteTabModal(tab) {
+      this.$modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await this.removeViewTab({ id: tab._id });
 
-      return this.updateViewMethod(view);
+            return this.fetchActiveView();
+          },
+        },
+      });
     },
 
     onUpdateTabs() {

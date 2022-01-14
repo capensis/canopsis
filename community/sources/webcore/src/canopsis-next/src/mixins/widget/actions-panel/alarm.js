@@ -13,7 +13,7 @@ import { convertObjectToTreeview } from '@/helpers/treeview';
 import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
 
 import { authMixin } from '@/mixins/auth';
-import queryMixin from '@/mixins/query';
+import { queryMixin } from '@/mixins/query';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 

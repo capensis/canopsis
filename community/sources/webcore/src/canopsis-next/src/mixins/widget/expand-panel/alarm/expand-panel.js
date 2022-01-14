@@ -2,7 +2,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { SORT_ORDERS } from '@/constants';
 
-import queryMixin from '@/mixins/query';
+import { queryMixin } from '@/mixins/query';
 
 const { mapActions } = createNamespacedHelpers('alarm');
 
