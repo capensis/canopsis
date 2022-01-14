@@ -201,7 +201,7 @@ func (s *store) BulkInsert(ctx context.Context, requests []Request) error {
 		)
 
 		if len(writeModels) == canopsis.DefaultBulkSize {
-			_, err = s.dbCollection.BulkWrite(ctx, writeModels)
+			_, err = s.collection.BulkWrite(ctx, writeModels)
 			if err != nil {
 				return err
 			}
@@ -211,7 +211,7 @@ func (s *store) BulkInsert(ctx context.Context, requests []Request) error {
 	}
 
 	if len(writeModels) > 0 {
-		_, err = s.dbCollection.BulkWrite(ctx, writeModels)
+		_, err = s.collection.BulkWrite(ctx, writeModels)
 	}
 
 	return err
@@ -231,7 +231,7 @@ func (s *store) BulkUpdate(ctx context.Context, requests []BulkUpdateRequestItem
 		)
 
 		if len(writeModels) == canopsis.DefaultBulkSize {
-			_, err = s.dbCollection.BulkWrite(ctx, writeModels)
+			_, err = s.collection.BulkWrite(ctx, writeModels)
 			if err != nil {
 				return err
 			}
@@ -241,14 +241,14 @@ func (s *store) BulkUpdate(ctx context.Context, requests []BulkUpdateRequestItem
 	}
 
 	if len(writeModels) > 0 {
-		_, err = s.dbCollection.BulkWrite(ctx, writeModels)
+		_, err = s.collection.BulkWrite(ctx, writeModels)
 	}
 
 	return err
 }
 
 func (s *store) BulkDelete(ctx context.Context, ids []string) error {
-	_, err := s.dbCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
+	_, err := s.collection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
 
 	return err
 }

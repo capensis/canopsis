@@ -140,7 +140,7 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(context.Background(), userID, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypePlayList,
 		ValueID:   playlist.ID,
