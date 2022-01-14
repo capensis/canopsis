@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -64,7 +65,7 @@ func TestSetAuthor_ShouldUpdateAuthor(t *testing.T) {
 	}
 }
 
-func TestSetAuthorToBulk_ShouldUpdateAuthorToAllItems(t *testing.T) {
+func TestPreProcessBulk_ShouldUpdateAuthorToAllItems(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -94,7 +95,7 @@ func TestSetAuthorToBulk_ShouldUpdateAuthorToAllItems(t *testing.T) {
 		func(c *gin.Context) {
 			c.Set(auth.UserKey, author)
 		},
-		SetAuthorToBulk(),
+		PreProcessBulk(config.CanopsisConf{API: config.SectionApi{BulkMaxSize: 100}}, true),
 		func(c *gin.Context) {
 			var body []map[string]interface{}
 
@@ -124,5 +125,66 @@ func TestSetAuthorToBulk_ShouldUpdateAuthorToAllItems(t *testing.T) {
 
 	if w.Body.String() != expectedResponse {
 		t.Errorf("expected response: \"%v\" but got \"%v\"", expectedResponse, w.Body.String())
+	}
+}
+
+func TestPreProcessBulk_ShouldCheckBulkSize(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	valid := []map[string]interface{}{
+		{
+			"test_key-1": "test_value-1",
+		},
+		{
+			"test_key-2": "test_value-2",
+		},
+		{
+			"test_key-3": "test_value-3",
+		},
+	}
+
+	body, _ := json.Marshal(valid)
+	req := httptest.NewRequest("POST", okURL, ioutil.NopCloser(bytes.NewBuffer(body)))
+
+	router := gin.New()
+	router.POST(
+		okURL,
+		// Mock UserKey in Context
+		func(c *gin.Context) {
+			c.Set(auth.UserKey, "test-author")
+		},
+		PreProcessBulk(config.CanopsisConf{API: config.SectionApi{BulkMaxSize: 3}}, true),
+	)
+
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Errorf("expected code: %v but got %v", http.StatusOK, w.Code)
+	}
+
+	invalid := []map[string]interface{}{
+		{
+			"test_key-1": "test_value-1",
+		},
+		{
+			"test_key-2": "test_value-2",
+		},
+		{
+			"test_key-3": "test_value-3",
+		},
+		{
+			"test_key-4": "test_value-4",
+		},
+	}
+
+	body, _ = json.Marshal(invalid)
+	req = httptest.NewRequest("POST", okURL, ioutil.NopCloser(bytes.NewBuffer(body)))
+
+	w = httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+	if w.Code != http.StatusBadRequest {
+		t.Errorf("expected code: %v but got %v", http.StatusBadRequest, w.Code)
 	}
 }

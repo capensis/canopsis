@@ -123,7 +123,7 @@ func (a api) Update(c *gin.Context) {
 		action = logger.ActionCreate
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 		Action:    action,
 		ValueType: logger.ValueTypeUserPreferences,
 		ValueID:   response.Widget,

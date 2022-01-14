@@ -165,6 +165,13 @@ func (e *engine) runPeriodicalWorker(
 				start = time.Now()
 				go func() {
 					worker.Work(ctx)
+
+					select {
+					case <-ctx.Done():
+						return
+					default:
+					}
+
 					done <- time.Since(start)
 				}()
 			}
