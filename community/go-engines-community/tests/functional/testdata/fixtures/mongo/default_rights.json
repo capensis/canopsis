@@ -880,6 +880,46 @@
     "enable": true
   },
   {
+    "_id": "test-user-to-bulk-update-1",
+    "crecord_type": "user",
+    "crecord_name": "test-user-to-bulk-update-1",
+    "mail": "test-user-to-bulk-update-1-email@canopsis.net",
+    "role": "test-role-to-edit-user",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "enable": true,
+    "authkey": "5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424"
+  },
+  {
+    "_id": "test-user-to-bulk-update-2",
+    "crecord_type": "user",
+    "crecord_name": "test-user-to-bulk-update-2",
+    "mail": "test-user-to-bulk-update-2-email@canopsis.net",
+    "role": "test-role-to-edit-user",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "enable": true,
+    "authkey": "5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424"
+  },
+  {
+    "_id": "test-user-to-bulk-delete-1",
+    "crecord_type": "user",
+    "crecord_name": "test-user-to-bulk-delete-1",
+    "mail": "test-user-to-bulk-delete-1-email@canopsis.net",
+    "role": "test-role-to-edit-user",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "enable": true,
+    "authkey": "5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424"
+  },
+  {
+    "_id": "test-user-to-bulk-delete-2",
+    "crecord_type": "user",
+    "crecord_name": "test-user-to-bulk-delete-2",
+    "mail": "test-user-to-bulk-delete-2-email@canopsis.net",
+    "role": "test-role-to-edit-user",
+    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "enable": true,
+    "authkey": "5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424"
+  },
+  {
     "_id": "test-view-to-get-1",
     "crecord_type": "action",
     "crecord_name": "test-view-to-get-1",
