@@ -21,7 +21,6 @@ stage_test:
   tags: ["canopsis"]
   script:
     - set
-    #- ./CI/ci-gitlab.sh
     - ./build-docker.sh
 
 
