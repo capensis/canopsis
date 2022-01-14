@@ -109,7 +109,7 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(c, userId, logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeViewTab,
 		ValueID:   tab.ID,
@@ -187,7 +187,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(c, userId, logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypeViewTab,
 		ValueID:   newTab.ID,
@@ -249,7 +249,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(c, userId, logger.LogEntry{
 		Action:    logger.ActionDelete,
 		ValueType: logger.ValueTypeViewTab,
 		ValueID:   id,
