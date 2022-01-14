@@ -132,6 +132,78 @@
     "updated": 1616567033
   },
   {
+    "_id": "test-idle-rule-to-bulk-delete-1",
+    "alarm_patterns": [
+      {
+        "_id": "test-idle-rule-to-bulk-delete-1-alarm"
+      }
+    ],
+    "author": "test-idle-rule-to-bulk-delete-1-author",
+    "created": 1616567033,
+    "duration": {
+      "value": 3,
+      "unit": "s"
+    },
+    "enabled": true,
+    "entity_patterns": [
+      {
+        "name": "test-idle-rule-to-bulk-delete-1-resource"
+      }
+    ],
+    "name": "test-idle-rule-to-bulk-delete-1-name",
+    "operation": {
+      "type": "snooze",
+      "parameters": {
+        "duration": {
+          "value": 3,
+          "unit": "s"
+        },
+        "output": "test-idle-rule-to-bulk-delete-1-operation-output",
+        "author": "test-idle-rule-to-bulk-delete-1-operation-author"
+      }
+    },
+    "priority": 3,
+    "type": "alarm",
+    "alarm_condition": "last_event",
+    "updated": 1616567033
+  },
+  {
+    "_id": "test-idle-rule-to-bulk-delete-2",
+    "alarm_patterns": [
+      {
+        "_id": "test-idle-rule-to-bulk-delete-2-alarm"
+      }
+    ],
+    "author": "test-idle-rule-to-bulk-delete-2-author",
+    "created": 1616567033,
+    "duration": {
+      "value": 3,
+      "unit": "s"
+    },
+    "enabled": true,
+    "entity_patterns": [
+      {
+        "name": "test-idle-rule-to-bulk-delete-2-resource"
+      }
+    ],
+    "name": "test-idle-rule-to-bulk-delete-2-name",
+    "operation": {
+      "type": "snooze",
+      "parameters": {
+        "duration": {
+          "value": 3,
+          "unit": "s"
+        },
+        "output": "test-idle-rule-to-bulk-delete-2-operation-output",
+        "author": "test-idle-rule-to-bulk-delete-2-operation-author"
+      }
+    },
+    "priority": 3,
+    "type": "alarm",
+    "alarm_condition": "last_event",
+    "updated": 1616567033
+  },
+  {
     "_id": "test-idle-rule-to-update",
     "alarm_patterns": [
       {
@@ -162,6 +234,82 @@
         },
         "output": "test-idle-rule-to-update-operation-output",
         "author": "test-idle-rule-to-update-operation-author"
+      }
+    },
+    "priority": 4,
+    "type": "alarm",
+    "alarm_condition": "last_event",
+    "updated": 1616567033
+  },
+  {
+    "_id": "test-idle-rule-to-bulk-update-1",
+    "alarm_patterns": [
+      {
+        "_id": "test-idle-rule-to-bulk-update-1-alarm"
+      }
+    ],
+    "author": "test-idle-rule-to-bulk-update-1-author",
+    "created": 1616567033,
+    "description": "test-idle-rule-to-bulk-update-1-description",
+    "disable_during_periods": ["pause"],
+    "duration": {
+      "value": 3,
+      "unit": "s"
+    },
+    "enabled": true,
+    "entity_patterns": [
+      {
+        "name": "test-idle-rule-to-bulk-update-1-resource"
+      }
+    ],
+    "name": "test-idle-rule-to-bulk-update-1-name",
+    "operation": {
+      "type": "snooze",
+      "parameters": {
+        "duration": {
+          "value": 3,
+          "unit": "s"
+        },
+        "output": "test-idle-rule-to-bulk-update-1-operation-output",
+        "author": "test-idle-rule-to-bulk-update-1-operation-author"
+      }
+    },
+    "priority": 4,
+    "type": "alarm",
+    "alarm_condition": "last_event",
+    "updated": 1616567033
+  },
+  {
+    "_id": "test-idle-rule-to-bulk-update-2",
+    "alarm_patterns": [
+      {
+        "_id": "test-idle-rule-to-bulk-update-2-alarm"
+      }
+    ],
+    "author": "test-idle-rule-to-bulk-update-2-author",
+    "created": 1616567033,
+    "description": "test-idle-rule-to-bulk-update-2-description",
+    "disable_during_periods": ["pause"],
+    "duration": {
+      "value": 3,
+      "unit": "s"
+    },
+    "enabled": true,
+    "entity_patterns": [
+      {
+        "name": "test-idle-rule-to-bulk-update-2-resource"
+      }
+    ],
+    "name": "test-idle-rule-to-bulk-update-2-name",
+    "operation": {
+      "type": "snooze",
+      "parameters": {
+        "duration": {
+          "value": 3,
+          "unit": "s"
+        },
+        "output": "test-idle-rule-to-bulk-update-2-operation-output",
+        "author": "test-idle-rule-to-bulk-update-2-operation-author"
       }
     },
     "priority": 4,
