@@ -953,6 +953,86 @@
     "type": "service"
   },
   {
+    "_id": "test-entityservice-to-bulk-update-1",
+    "depends": [],
+    "enable_history": [],
+    "enabled": true,
+    "impact": [],
+    "impact_level": 3,
+    "infos": {
+      "test-entityservice-to-bulk-update-1-customer-name": {
+        "description": "test-entityservice-to-bulk-update-1-customer-description",
+        "name": "test-entityservice-to-bulk-update-1-customer-name",
+        "value": "test-entityservice-to-bulk-update-1-customer-value"
+      }
+    },
+    "measurements": null,
+    "entity_patterns": [{"name": "test-entityservice-to-bulk-update-1-pattern"}],
+    "name": "test-entityservice-to-bulk-update-1-name",
+    "output_template": "test-entityservice-to-bulk-update-1-output",
+    "type": "service"
+  },
+  {
+    "_id": "test-entityservice-to-bulk-update-2",
+    "depends": [],
+    "enable_history": [],
+    "enabled": true,
+    "impact": [],
+    "impact_level": 3,
+    "infos": {
+      "test-entityservice-to-bulk-update-2-customer-name": {
+        "description": "test-entityservice-to-bulk-update-2-customer-description",
+        "name": "test-entityservice-to-bulk-update-2-customer-name",
+        "value": "test-entityservice-to-bulk-update-2-customer-value"
+      }
+    },
+    "measurements": null,
+    "entity_patterns": [{"name": "test-entityservice-to-bulk-update-2-pattern"}],
+    "name": "test-entityservice-to-bulk-update-2-name",
+    "output_template": "test-entityservice-to-bulk-update-2-output",
+    "type": "service"
+  },
+  {
+    "_id": "test-entityservice-to-bulk-delete-1",
+    "depends": [],
+    "enable_history": [],
+    "enabled": true,
+    "impact": [],
+    "impact_level": 3,
+    "infos": {
+      "test-entityservice-to-bulk-delete-1-customer-name": {
+        "description": "test-entityservice-to-bulk-delete-1-customer-description",
+        "name": "test-entityservice-to-bulk-delete-1-customer-name",
+        "value": "test-entityservice-to-bulk-delete-1-customer-value"
+      }
+    },
+    "measurements": null,
+    "entity_patterns": [{"name": "test-entityservice-to-bulk-delete-1-pattern"}],
+    "name": "test-entityservice-to-bulk-delete-1-name",
+    "output_template": "test-entityservice-to-bulk-delete-1-output",
+    "type": "service"
+  },
+  {
+    "_id": "test-entityservice-to-bulk-delete-2",
+    "depends": [],
+    "enable_history": [],
+    "enabled": true,
+    "impact": [],
+    "impact_level": 3,
+    "infos": {
+      "test-entityservice-to-bulk-delete-2-customer-name": {
+        "description": "test-entityservice-to-bulk-delete-2-customer-description",
+        "name": "test-entityservice-to-bulk-delete-2-customer-name",
+        "value": "test-entityservice-to-bulk-delete-2-customer-value"
+      }
+    },
+    "measurements": null,
+    "entity_patterns": [{"name": "test-entityservice-to-bulk-delete-2-pattern"}],
+    "name": "test-entityservice-to-bulk-delete-2-name",
+    "output_template": "test-entityservice-to-bulk-delete-2-output",
+    "type": "service"
+  },  
+  {
     "_id": "test-entityservice-to-delete",
     "depends": [],
     "enable_history": [],

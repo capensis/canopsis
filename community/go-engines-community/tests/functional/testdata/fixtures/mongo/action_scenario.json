@@ -158,6 +158,29 @@
           }
         ],
         "drop_scenario_if_not_matched": false,
+        "emit_trigger": false,
+        "comment": "should be updated"
+      }
+    ],
+    "triggers": ["create"],
+    "enabled": true,
+    "priority": 6,
+    "created": 1605263992,
+    "updated": 1605263992
+  },
+  {
+    "_id": "test-scenario-to-bulk-update-1",
+    "name": "test-scenario-to-bulk-update-1-name",
+    "author": "test-scenario-to-bulk-update-1-author",
+    "actions": [
+      {
+        "type": "ack",
+        "alarm_patterns": [
+          {
+            "_id": "test-scenario-to-bulk-update-1-alarm"
+          }
+        ],
+        "drop_scenario_if_not_matched": false,
         "emit_trigger": false
       }
     ],
@@ -166,6 +189,72 @@
     "priority": 6,
     "created": 1605263992,
     "updated": 1605263992
+  },
+  {
+    "_id": "test-scenario-to-bulk-update-2",
+    "name": "test-scenario-to-bulk-update-2-name",
+    "author": "test-scenario-to-bulk-update-2-author",
+    "actions": [
+      {
+        "type": "ack",
+        "alarm_patterns": [
+          {
+            "_id": "test-scenario-to-bulk-update-2-alarm"
+          }
+        ],
+        "drop_scenario_if_not_matched": false,
+        "emit_trigger": false
+      }
+    ],
+    "triggers": ["create"],
+    "enabled": true,
+    "priority": 6,
+    "created": 1605263992,
+    "updated": 1605263992
+  },
+  {
+    "_id": "test-scenario-to-bulk-delete-1",
+    "name": "test-scenario-to-bulk-delete-1-name",
+    "author": "test-scenario-to-bulk-delete-1-author",
+    "actions": [
+      {
+        "type": "ack",
+        "alarm_patterns": [
+          {
+            "_id": "test-scenario-to-bulk-delete-1-alarm"
+          }
+        ],
+        "drop_scenario_if_not_matched": false,
+        "emit_trigger": false
+      }
+    ],
+    "triggers": ["create"],
+    "enabled": true,
+    "priority": 6,
+    "created": 1605263992,
+    "deleted": 1605263992
+  },
+  {
+    "_id": "test-scenario-to-bulk-delete-2",
+    "name": "test-scenario-to-bulk-delete-2-name",
+    "author": "test-scenario-to-bulk-delete-2-author",
+    "actions": [
+      {
+        "type": "ack",
+        "alarm_patterns": [
+          {
+            "_id": "test-scenario-to-bulk-delete-2-alarm"
+          }
+        ],
+        "drop_scenario_if_not_matched": false,
+        "emit_trigger": false
+      }
+    ],
+    "triggers": ["create"],
+    "enabled": true,
+    "priority": 6,
+    "created": 1605263992,
+    "deleted": 1605263992
   },
   {
     "_id": "test-scenario-to-delete-reason",

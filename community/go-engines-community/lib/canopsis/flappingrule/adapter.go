@@ -1,7 +1,5 @@
 package flappingrule
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/flappingrule/rule.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule Adapter
-
 import (
 	"context"
 

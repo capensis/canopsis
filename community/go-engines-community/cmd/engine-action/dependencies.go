@@ -34,7 +34,7 @@ type DependencyMaker struct {
 func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger) engine.Engine {
 	m := DependencyMaker{}
 
-	mongoClient := m.DepMongoClient(ctx)
+	mongoClient := m.DepMongoClient(ctx, logger)
 	cfg := m.DepConfig(ctx, mongoClient)
 	config.SetDbClientRetry(mongoClient, cfg)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
@@ -188,19 +188,19 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		engineAction.AddConsumer(webhookRpcClient)
 		rpcPublishQueues = append(rpcPublishQueues, canopsis.WebhookRPCQueueServerName)
 	}
-	engineAction.AddPeriodicalWorker(engine.NewRunInfoPeriodicalWorker(
+	engineAction.AddPeriodicalWorker("run info", engine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		engine.NewRunInfoManager(runInfoRedisClient),
 		engine.NewInstanceRunInfo(canopsis.ActionEngineName, canopsis.ActionQueueName, "", nil, rpcPublishQueues),
 		amqpChannel,
 		logger,
 	))
-	engineAction.AddPeriodicalWorker(&reloadLocalCachePeriodicalWorker{
+	engineAction.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
 		PeriodicalInterval:    options.PeriodicalWaitTime,
 		ActionScenarioStorage: actionScenarioStorage,
 		Logger:                logger,
 	})
-	engineAction.AddPeriodicalWorker(engine.NewLockedPeriodicalWorker(
+	engineAction.AddPeriodicalWorker("abandon executions", engine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),
 		redis.ActionPeriodicalLockKey,
 		&scenarioPeriodicalWorker{
@@ -210,7 +210,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		},
 		logger,
 	))
-	engineAction.AddPeriodicalWorker(engine.NewLoadConfigPeriodicalWorker(
+	engineAction.AddPeriodicalWorker("config", engine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),
 		timezoneConfigProvider,
