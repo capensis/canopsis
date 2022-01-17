@@ -18,10 +18,10 @@ import (
 )
 
 type Store interface {
-	Insert(ctx context.Context, model *eventfilter.Rule) error
-	GetById(ctx context.Context, id string) (*eventfilter.Rule, error)
+	Insert(ctx context.Context, model *EventFilter) error
+	GetById(ctx context.Context, id string) (*EventFilter, error)
 	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
-	Update(ctx context.Context, model *eventfilter.Rule) (bool, error)
+	Update(ctx context.Context, model *EventFilter) (bool, error)
 	Delete(ctx context.Context, id string) (bool, error)
 }
 
@@ -46,7 +46,7 @@ func NewStore(
 	}
 }
 
-func (s *store) Insert(ctx context.Context, model *eventfilter.Rule) error {
+func (s *store) Insert(ctx context.Context, model *EventFilter) error {
 	if model.ID == "" {
 		model.ID = utils.NewID()
 	}
@@ -62,8 +62,8 @@ func (s *store) Insert(ctx context.Context, model *eventfilter.Rule) error {
 	return err
 }
 
-func (s *store) GetById(ctx context.Context, id string) (*eventfilter.Rule, error) {
-	ef := &eventfilter.Rule{}
+func (s *store) GetById(ctx context.Context, id string) (*EventFilter, error) {
+	ef := &EventFilter{}
 	d := s.dbCollection.FindOne(ctx, bson.M{"_id": id})
 	if d.Err() != nil {
 		return nil, d.Err()
@@ -107,7 +107,7 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 	return &result, nil
 }
 
-func (s *store) Update(ctx context.Context, model *eventfilter.Rule) (bool, error) {
+func (s *store) Update(ctx context.Context, model *EventFilter) (bool, error) {
 	var data eventfilter.Rule
 	updated := types.NewCpsTime(time.Now().Unix())
 	model.Created = nil

@@ -14,5 +14,5 @@ func NewEngine(ctx context.Context, options fifo.Options, logger zerolog.Logger)
 
 	var m depmake.DependencyMaker
 
-	return fifo.Default(ctx, options, m.DepMongoClient(ctx), eventfilter.NewExternalDataGetterContainer(), logger)
+	return fifo.Default(ctx, options, m.DepMongoClient(ctx, logger), eventfilter.NewExternalDataGetterContainer(), logger)
 }

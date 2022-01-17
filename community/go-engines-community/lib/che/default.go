@@ -61,11 +61,10 @@ func NewEngine(
 		entityservice.NewManager(
 			entityServiceAdapter,
 			entityAdapter,
-			entityservice.NewStorage(serviceRedisSession, json.NewEncoder(), json.NewDecoder(), logger),
+			entityservice.NewStorage(serviceRedisSession, json.NewEncoder(), json.NewDecoder()),
 			logger,
 		),
 		metricsEntityMetaUpdater,
-		logger,
 	)
 	enrichFields := libcontext.NewEnrichFields(options.EnrichInclude, options.EnrichExclude)
 
@@ -84,13 +83,12 @@ func NewEngine(
 			logger.Debug().Msg("Loading event filter rules")
 			err := eventfilterService.LoadRules(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
 			if err != nil {
-				return fmt.Errorf("unable to load rules: %v", err)
+				return fmt.Errorf("unable to load rules: %w", err)
 			}
 
-			logger.Debug().Msg("Loading services")
 			err = enrichmentCenter.LoadServices(ctx)
 			if err != nil {
-				logger.Error().Err(err).Msg("unable to load services")
+				return fmt.Errorf("unable to load services: %w", err)
 			}
 
 			_, err = periodicalLockClient.Obtain(ctx, redis.ChePeriodicalLockKey,
@@ -103,17 +101,14 @@ func NewEngine(
 					return nil
 				}
 
-				logger.Error().Err(err).Msg("cannot obtain lock")
-				return err
+				return fmt.Errorf("cannot obtain lock: %w", err)
 			}
-			// Below are actions locked with ChePeriodicalLockKey for multi-instance configuration
 
-			logger.Debug().Msg("Recompute impacted services for connectors")
+			// Below are actions locked with ChePeriodicalLockKey for multi-instance configuration
 			err = enrichmentCenter.UpdateImpactedServices(ctx)
 			if err != nil {
 				logger.Warn().Err(err).Msg("error while recomputing impacted services for connectors")
 			}
-			logger.Debug().Msg("Recompute impacted services for connectors finished")
 
 			return nil
 		},
@@ -176,32 +171,32 @@ func NewEngine(
 		},
 		logger,
 	))
-	engine.AddPeriodicalWorker(&reloadLocalCachePeriodicalWorker{
+	engine.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
 		EventFilterService: eventfilterService,
 		EnrichmentCenter:   enrichmentCenter,
 		PeriodicalInterval: options.PeriodicalWaitTime,
 		Logger:             logger,
 	})
-	engine.AddPeriodicalWorker(libengine.NewRunInfoPeriodicalWorker(
+	engine.AddPeriodicalWorker("run info", libengine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		libengine.NewRunInfoManager(runInfoRedisSession),
 		libengine.NewInstanceRunInfo(canopsis.CheEngineName, options.ConsumeFromQueue, options.PublishToQueue),
 		amqpChannel,
 		logger,
 	))
-	engine.AddPeriodicalWorker(libengine.NewLoadConfigPeriodicalWorker(
+	engine.AddPeriodicalWorker("alarm config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),
 		alarmConfigProvider,
 		logger,
 	))
-	engine.AddPeriodicalWorker(libengine.NewLoadConfigPeriodicalWorker(
+	engine.AddPeriodicalWorker("tz config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),
 		timezoneConfigProvider,
 		logger,
 	))
-	engine.AddPeriodicalWorker(libengine.NewLockedPeriodicalWorker(
+	engine.AddPeriodicalWorker("impacted services", libengine.NewLockedPeriodicalWorker(
 		periodicalLockClient,
 		redis.ChePeriodicalLockKey,
 		&impactedServicesPeriodicalWorker{
