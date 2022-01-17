@@ -132,6 +132,10 @@ export default {
       }, { root: true });
     },
 
+    bulkUpdate(context, { data }) {
+      return request.put(API_ROUTES.pbehavior.bulkPbehaviors, data);
+    },
+
     async remove({ dispatch }, { id }) {
       try {
         await request.delete(`${API_ROUTES.pbehavior.pbehaviors}/${id}`);
@@ -144,8 +148,8 @@ export default {
       }
     },
 
-    bulkRemove(context, { params }) {
-      return request.delete(API_ROUTES.pbehavior.bulkPbehaviors, { params });
+    bulkRemove(context, { data }) {
+      return request.delete(API_ROUTES.pbehavior.bulkPbehaviors, { data });
     },
 
     fetchEntitiesCountWithoutStore(context, { data }) {

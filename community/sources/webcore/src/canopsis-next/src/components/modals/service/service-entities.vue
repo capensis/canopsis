@@ -46,9 +46,9 @@ import { PAGINATION_LIMIT } from '@/config';
 
 import { MODALS, SORT_ORDERS, WEATHER_ACTIONS_TYPES } from '@/constants';
 
-import { addKeyInEntities, mapIds } from '@/helpers/entities';
+import { addKeyInEntities } from '@/helpers/entities';
 import { createDowntimePbehavior, isPausedPbehavior } from '@/helpers/entities/pbehavior';
-import { convertActionsToEvents } from '@/helpers/entities/context';
+import { convertActionsToEvents } from '@/helpers/entities/entity';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -153,16 +153,24 @@ export default {
     },
 
     async createPbehaviorsWithPopups(pbehaviors) {
-      try {
-        await this.bulkCreatePbehaviors({ data: pbehaviors });
-      } catch (err) {
-        if (err?.length) {
-          err.forEach(({ errors }) => {
-            if (!isEmpty(errors)) {
-              this.$popups.error({ text: Object.values(errors).join('\n') });
-            }
-          });
-        }
+      const response = await this.createPbehaviors(pbehaviors);
+
+      this.showPbehaviorResponseErrorPopups(response);
+    },
+
+    async removePbehaviorsWithPopups(pbehaviors) {
+      const response = await this.removePbehaviors(pbehaviors);
+
+      this.showPbehaviorResponseErrorPopups(response);
+    },
+
+    showPbehaviorResponseErrorPopups(response) {
+      if (response?.length) {
+        response.forEach(({ error, errors }) => {
+          if (error || !isEmpty(errors)) {
+            this.$popups.error({ text: error || Object.values(errors).join('\n') });
+          }
+        });
       }
     },
 
@@ -187,10 +195,12 @@ export default {
         eventsActions: [],
       });
 
+      const events = convertActionsToEvents(eventsActions);
+
       await Promise.all([
-        createdPbehaviors.length && this.createPbehaviorsWithPopups({ data: createdPbehaviors }),
-        removedPbehaviors.length && this.bulkRemovePbehaviors({ params: { ids: mapIds(removedPbehaviors) } }),
-        this.createEventAction({ data: convertActionsToEvents(eventsActions) }),
+        createdPbehaviors.length && this.createPbehaviorsWithPopups(createdPbehaviors),
+        removedPbehaviors.length && this.removePbehaviorsWithPopups(removedPbehaviors),
+        events.length && this.createEventAction({ data: events }),
       ]);
 
       this.$modals.hide();

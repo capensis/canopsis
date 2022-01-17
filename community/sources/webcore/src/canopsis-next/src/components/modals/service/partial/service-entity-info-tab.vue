@@ -21,7 +21,7 @@ import {
 } from '@/constants';
 
 import { isPausedPbehavior } from '@/helpers/entities/pbehavior';
-import { getAvailableActionsByEntity } from '@/helpers/entities/context';
+import { getAvailableActionsByEntity } from '@/helpers/entities/entity';
 import { mapIds } from '@/helpers/entities';
 
 import { authMixin } from '@/mixins/auth';

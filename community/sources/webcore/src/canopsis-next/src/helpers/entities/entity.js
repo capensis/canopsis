@@ -19,6 +19,7 @@ import {
   createInvalidateEventByEntity,
   createValidateEventByEntity,
 } from '@/helpers/forms/event';
+
 /**
  * @typedef {Object} EntityAction
  * @property {string} actionType

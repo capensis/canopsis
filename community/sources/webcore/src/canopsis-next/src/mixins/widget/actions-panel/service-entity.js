@@ -1,13 +1,16 @@
 import {
   MODALS,
   WEATHER_ACK_EVENT_OUTPUT,
-  BUSINESS_USER_PERMISSIONS_ACTIONS_MAP, WEATHER_ACTIONS_TYPES, PBEHAVIOR_TYPE_TYPES,
+  BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
+  WEATHER_ACTIONS_TYPES,
+  PBEHAVIOR_TYPE_TYPES,
 } from '@/constants';
+
+import { isActionTypeAvailableForEntity } from '@/helpers/entities/entity';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 import { entitiesPbehaviorTypesMixin } from '@/mixins/entities/pbehavior/types';
-import { isActionTypeAvailableForEntity } from '@/helpers/entities/context';
 
 export const widgetActionPanelServiceEntityMixin = {
   mixins: [
