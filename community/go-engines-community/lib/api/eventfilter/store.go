@@ -18,10 +18,10 @@ import (
 )
 
 type Store interface {
-	Insert(ctx context.Context, model *EventFilter) error
-	GetById(ctx context.Context, id string) (*EventFilter, error)
+	Insert(ctx context.Context, model CreateRequest) (*eventfilter.Rule, error)
+	GetById(ctx context.Context, id string) (*eventfilter.Rule, error)
 	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
-	Update(ctx context.Context, model *EventFilter) (bool, error)
+	Update(ctx context.Context, model UpdateRequest) (*eventfilter.Rule, error)
 	Delete(ctx context.Context, id string) (bool, error)
 }
 
@@ -46,7 +46,7 @@ func NewStore(
 	}
 }
 
-func (s *store) Insert(ctx context.Context, model *EventFilter) error {
+func (s *store) Insert(ctx context.Context, model CreateRequest) (*eventfilter.Rule, error) {
 	if model.ID == "" {
 		model.ID = utils.NewID()
 	}
@@ -56,22 +56,28 @@ func (s *store) Insert(ctx context.Context, model *EventFilter) error {
 
 	_, err := s.dbCollection.InsertOne(ctx, model)
 	if err != nil {
-		return err
-	}
-
-	return err
-}
-
-func (s *store) GetById(ctx context.Context, id string) (*EventFilter, error) {
-	ef := &EventFilter{}
-	d := s.dbCollection.FindOne(ctx, bson.M{"_id": id})
-	if d.Err() != nil {
-		return nil, d.Err()
-	}
-	if err := d.Decode(&ef); err != nil {
 		return nil, err
 	}
-	return ef, nil
+
+	return s.GetById(ctx, model.ID)
+}
+
+func (s *store) GetById(ctx context.Context, id string) (*eventfilter.Rule, error) {
+	res := s.dbCollection.FindOne(ctx, bson.M{"_id": id})
+	if err := res.Err(); err != nil {
+		if err == mongodriver.ErrNoDocuments {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	rule := &eventfilter.Rule{}
+	err := res.Decode(rule)
+	if err != nil {
+		return nil, err
+	}
+
+	return rule, nil
 }
 
 func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error) {
@@ -107,7 +113,7 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 	return &result, nil
 }
 
-func (s *store) Update(ctx context.Context, model *EventFilter) (bool, error) {
+func (s *store) Update(ctx context.Context, model UpdateRequest) (*eventfilter.Rule, error) {
 	var data eventfilter.Rule
 	updated := types.NewCpsTime(time.Now().Unix())
 	model.Created = nil
@@ -120,13 +126,13 @@ func (s *store) Update(ctx context.Context, model *EventFilter) (bool, error) {
 	model.Created = data.Created
 	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
-			return false, nil
+			return nil, nil
 		}
 
-		return false, err
+		return nil, err
 	}
 
-	return true, nil
+	return s.GetById(ctx, model.ID)
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {

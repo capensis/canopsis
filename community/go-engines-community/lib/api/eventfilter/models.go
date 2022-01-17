@@ -7,7 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
-type EventFilterPayload struct {
+type EditRequest struct {
 	Author       string                                        `bson:"author" json:"author" swaggerignore:"true"`
 	Description  string                                        `bson:"description" json:"description" binding:"required,max=255"`
 	Type         string                                        `bson:"type" json:"type" binding:"required,oneof=break drop enrichment change_entity"`
@@ -20,24 +20,29 @@ type EventFilterPayload struct {
 	Updated      *types.CpsTime                                `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 }
 
-type EventFilter struct {
-	ID                 string `bson:"_id" json:"_id" binding:"id"`
-	EventFilterPayload `bson:",inline"`
+type CreateRequest struct {
+	EditRequest `bson:",inline"`
+	ID          string `bson:"_id" json:"_id" binding:"id"`
+}
+
+type UpdateRequest struct {
+	EditRequest `bson:",inline"`
+	ID          string `bson:"-" json:"-"`
 }
 
 type BulkUpdateRequestItem struct {
-	ID string `json:"_id" binding:"required"`
-	EventFilterPayload
+	EditRequest `bson:",inline"`
+	ID          string `bson:"_id" json:"_id" binding:"required"`
 }
 
 type BulkDeleteRequestItem struct {
-	ID string `json:"_id" binding:"required"`
+	ID string `bson:"_id" json:"_id" binding:"required"`
 }
 
 // for swagger
 type BulkCreateResponseItem struct {
 	ID     string            `json:"id,omitempty"`
-	Item   EventFilter       `json:"item"`
+	Item   CreateRequest     `json:"item"`
 	Status int               `json:"status"`
 	Error  string            `json:"error,omitempty"`
 	Errors map[string]string `json:"errors,omitempty"`

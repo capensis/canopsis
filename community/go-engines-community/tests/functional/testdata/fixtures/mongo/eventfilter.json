@@ -76,13 +76,13 @@
     "updated": 1608635535
   },
   {
-    "_id": "test-eventfilter-to-bulk-update-1",
+    "_id": "test-eventfilter-bulk-update-1",
     "author": "root",
     "description": "break filter",
     "type": "break",
     "patterns": [
       {
-        "resource": "test-eventfilter-to-bulk-update-1-pattern"
+        "resource": "test-eventfilter-bulk-update-1-pattern"
       }
     ],
     "priority": 3,
@@ -91,13 +91,13 @@
     "updated": 1608635535
   },
   {
-    "_id": "test-eventfilter-to-bulk-update-2",
+    "_id": "test-eventfilter-bulk-update-2",
     "author": "root",
     "description": "break filter",
     "type": "break",
     "patterns": [
       {
-        "resource": "test-eventfilter-to-bulk-update-2-pattern"
+        "resource": "test-eventfilter-bulk-update-2-pattern"
       }
     ],
     "priority": 3,
@@ -106,13 +106,13 @@
     "updated": 1608635535
   },
   {
-    "_id": "test-eventfilter-to-bulk-update-3",
+    "_id": "test-eventfilter-bulk-update-3",
     "author": "root",
     "description": "break filter",
     "type": "break",
     "patterns": [
       {
-        "resource": "test-eventfilter-to-bulk-update-3-pattern"
+        "resource": "test-eventfilter-bulk-update-3-pattern"
       }
     ],
     "priority": 3,
@@ -121,13 +121,13 @@
     "updated": 1608635535
   },
   {
-    "_id": "test-eventfilter-to-bulk-update-4",
+    "_id": "test-eventfilter-bulk-update-4",
     "author": "root",
     "description": "break filter",
     "type": "break",
     "patterns": [
       {
-        "resource": "test-eventfilter-to-bulk-update-4-pattern"
+        "resource": "test-eventfilter-bulk-update-4-pattern"
       }
     ],
     "priority": 3,
@@ -136,13 +136,13 @@
     "updated": 1608635535
   },
   {
-    "_id": "test-eventfilter-to-bulk-update-5",
+    "_id": "test-eventfilter-bulk-update-5",
     "author": "root",
     "description": "break filter",
     "type": "break",
     "patterns": [
       {
-        "resource": "test-eventfilter-to-bulk-update-5-pattern"
+        "resource": "test-eventfilter-bulk-update-5-pattern"
       }
     ],
     "priority": 3,
