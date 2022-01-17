@@ -9,7 +9,7 @@
 <script>
 import { isEmpty } from 'lodash';
 
-import { LOGIN_INFOS_FETCHING_INTERVAL } from '@/config';
+import { APP_INFO_FETCHING_INTERVAL } from '@/config';
 
 import { ROUTES_NAMES } from '@/constants';
 
@@ -22,9 +22,8 @@ export default {
     authMixin,
     entitiesInfoMixin,
     pollingMixinCreator({
-      method: 'fetchInfos',
-      delay: LOGIN_INFOS_FETCHING_INTERVAL,
-      startOnMount: true,
+      method: 'fetchInfo',
+      delayField: 'pollingDelay',
     }),
   ],
   props: {
@@ -37,13 +36,18 @@ export default {
       default: '',
     },
   },
+  computed: {
+    pollingDelay() {
+      return APP_INFO_FETCHING_INTERVAL;
+    },
+  },
   mounted() {
-    this.fetchInfos();
+    this.fetchInfo();
   },
   methods: {
-    async fetchInfos() {
+    async fetchInfo() {
       try {
-        await this.fetchLoginInfos();
+        await this.fetchAppInfo();
 
         if (!isEmpty(this.currentUser)) {
           this.$router.replace({

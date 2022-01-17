@@ -16,11 +16,11 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-1",
       "long_output" : "test-long-output-axe-1",
       "author" : "test-author-axe-1",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I save response eventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-1"}]}&with_steps=true
     Then the response code should be 200
@@ -41,7 +41,6 @@ Feature: create and update alarm by main event stream
             "connector": "test-connector-axe-1",
             "connector_name": "test-connector-name-axe-1",
             "creation_date": {{ .createTimestamp }},
-            "extra": {},
             "infos": {},
             "infos_rule_version": {},
             "initial_long_output": "test-long-output-axe-1",
@@ -112,11 +111,11 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-2",
       "long_output" : "test-long-output-axe-2-1",
       "author" : "test-author-axe-2",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I save response firstEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I send an event:
     """json
@@ -131,7 +130,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-2",
       "long_output" : "test-long-output-axe-2-2",
       "author" : "test-author-axe-2",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I save response secondEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -155,7 +154,6 @@ Feature: create and update alarm by main event stream
             "connector": "test-connector-axe-2",
             "connector_name": "test-connector-name-axe-2",
             "creation_date": {{ .createTimestamp }},
-            "extra": {},
             "infos": {},
             "infos_rule_version": {},
             "initial_long_output": "test-long-output-axe-2-1",
@@ -233,7 +231,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-3",
       "long_output" : "test-long-output-axe-3",
       "author" : "test-author-axe-3",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -250,7 +248,8 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-3",
       "long_output" : "test-long-output-axe-3",
       "author" : "test-author-axe-3",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "user_id": "test-author-id-3",
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I save response ackEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -267,6 +266,7 @@ Feature: create and update alarm by main event stream
               "_t": "ack",
               "a": "test-author-axe-3",
               "m": "test-output-axe-3",
+              "user_id": "test-author-id-3",
               "t": {{ .ackEventTimestamp }},
               "val": 0
             },
@@ -325,7 +325,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-4",
       "long_output" : "test-long-output-axe-4",
       "author" : "test-author-axe-4",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -339,10 +339,11 @@ Feature: create and update alarm by main event stream
       "source_type" : "resource",
       "component" :  "test-component-axe-4",
       "resource" : "test-resource-axe-4",
+      "user_id": "test-author-id-4",
       "output" : "test-output-axe-4",
       "long_output" : "test-long-output-axe-4",
       "author" : "test-author-axe-4",
-      "timestamp": {{ (now.Add (parseDuration "-7s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-7s" }}
     }
     """
     When I save response ackEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -356,10 +357,11 @@ Feature: create and update alarm by main event stream
       "source_type" : "resource",
       "component" :  "test-component-axe-4",
       "resource" : "test-resource-axe-4",
+      "user_id": "test-author-id-4",
       "output" : "test-output-axe-4",
       "long_output" : "test-long-output-axe-4",
       "author" : "test-author-axe-4",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I save response ackRemoveEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -395,6 +397,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "ack",
                 "a": "test-author-axe-4",
+                "user_id": "test-author-id-4",
                 "m": "test-output-axe-4",
                 "t": {{ .ackEventTimestamp }},
                 "val": 0
@@ -402,6 +405,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "ackremove",
                 "a": "test-author-axe-4",
+                "user_id": "test-author-id-4",
                 "m": "test-output-axe-4",
                 "t": {{ .ackRemoveEventTimestamp }},
                 "val": 0
@@ -435,7 +439,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-5",
       "long_output" : "test-long-output-axe-5",
       "author" : "test-author-axe-5",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I wait the end of event processing
@@ -451,7 +455,8 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-5",
       "long_output" : "test-long-output-axe-5",
       "author" : "test-author-axe-5",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "user_id": "test-author-id-5",
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I save response cancelEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -467,6 +472,7 @@ Feature: create and update alarm by main event stream
             "canceled": {
               "_t": "cancel",
               "a": "test-author-axe-5",
+              "user_id": "test-author-id-5",
               "m": "test-output-axe-5",
               "t": {{ .cancelEventTimestamp }},
               "val": 0
@@ -537,7 +543,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-6",
       "long_output" : "test-long-output-axe-6",
       "author" : "test-author-axe-6",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I wait the end of event processing
@@ -553,7 +559,8 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-6",
       "long_output" : "test-long-output-axe-6",
       "author" : "test-author-axe-6",
-      "timestamp": {{ (now.Add (parseDuration "-7s")).UTC.Unix }}
+      "user_id": "test-author-id-6",
+      "timestamp": {{ nowAdd "-7s" }}
     }
     """
     When I save response cancelEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -570,7 +577,8 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-6",
       "long_output" : "test-long-output-axe-6",
       "author" : "test-author-axe-6",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "user_id": "test-author-id-6",
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I save response uncancelEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -610,6 +618,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "cancel",
                 "a": "test-author-axe-6",
+                "user_id": "test-author-id-6",
                 "m": "test-output-axe-6",
                 "t": {{ .cancelEventTimestamp }},
                 "val": 0
@@ -624,6 +633,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "uncancel",
                 "a": "test-author-axe-6",
+                "user_id": "test-author-id-6",
                 "m": "test-output-axe-6",
                 "t": {{ .uncancelEventTimestamp }},
                 "val": 0
@@ -664,7 +674,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-7",
       "long_output" : "test-long-output-axe-7",
       "author" : "test-author-axe-7",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -681,7 +691,8 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-7",
       "long_output" : "test-long-output-axe-7",
       "author" : "test-author-axe-7",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "user_id": "test-author-id-7",
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I save response commentEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -701,6 +712,7 @@ Feature: create and update alarm by main event stream
             "lastComment": {
               "_t": "comment",
               "a": "test-author-axe-7",
+              "user_id": "test-author-id-7",
               "m": "test-output-axe-7",
               "t": {{ .commentEventTimestamp }},
               "val": 0
@@ -756,7 +768,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-8",
       "long_output" : "test-long-output-axe-8",
       "author" : "test-author-axe-8",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -773,7 +785,8 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-8",
       "long_output" : "test-long-output-axe-8",
       "author" : "test-author-axe-8",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "user_id": "test-author-id-8",
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I save response doneEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -789,6 +802,7 @@ Feature: create and update alarm by main event stream
             "done": {
               "_t": "done",
               "a": "test-author-axe-8",
+              "user_id": "test-author-id-8",
               "m": "test-output-axe-8",
               "t": {{ .doneEventTimestamp }},
               "val": 0
@@ -816,6 +830,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "done",
                 "a": "test-author-axe-8",
+                "user_id": "test-author-id-8",
                 "m": "test-output-axe-8",
                 "t": {{ .doneEventTimestamp }},
                 "val": 0
@@ -848,7 +863,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-9",
       "long_output" : "test-long-output-axe-9",
       "author" : "test-author-axe-9",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -866,7 +881,8 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-9",
       "long_output" : "test-long-output-axe-9",
       "author" : "test-author-axe-9",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "user_id": "test-author-id-9",
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I save response ticketEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -909,6 +925,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "assocticket",
                 "a": "test-author-axe-9",
+                "user_id": "test-author-id-9",
                 "m": "testticket",
                 "t": {{ .ticketEventTimestamp }},
                 "val": 0
@@ -941,7 +958,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-10",
       "long_output" : "test-long-output-axe-10",
       "author" : "test-author-axe-10",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -959,7 +976,8 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-10",
       "long_output" : "test-long-output-axe-10",
       "author" : "test-author-axe-10",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "user_id": "test-author-id-10",
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I save response changeStateEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -980,6 +998,7 @@ Feature: create and update alarm by main event stream
             "state": {
               "_t": "changestate",
               "a": "test-author-axe-10",
+              "user_id": "test-author-id-10",
               "m": "test-output-axe-10",
               "t": {{ .changeStateEventTimestamp }},
               "val": 3
@@ -999,6 +1018,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "changestate",
                 "a": "test-author-axe-10",
+                "user_id": "test-author-id-10",
                 "m": "test-output-axe-10",
                 "t": {{ .changeStateEventTimestamp }},
                 "val": 3
@@ -1031,7 +1051,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-11",
       "long_output" : "test-long-output-axe-11",
       "author" : "test-author-axe-11",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -1049,7 +1069,8 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-11",
       "long_output" : "test-long-output-axe-11",
       "author" : "test-author-axe-11",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "user_id": "test-author-id-11",
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I save response snoozeEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -1065,9 +1086,10 @@ Feature: create and update alarm by main event stream
             "snooze": {
               "_t": "snooze",
               "a": "test-author-axe-11",
+              "user_id": "test-author-id-11",
               "m": "test-output-axe-11",
               "t": {{ .snoozeEventTimestamp }},
-              "val": {{ .snoozeEventTimestamp | sum 600 }}
+              "val": {{ .snoozeEventTimestamp | sumTime 600 }}
             },
             "component": "test-component-axe-11",
             "connector": "test-connector-axe-11",
@@ -1092,9 +1114,10 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "snooze",
                 "a": "test-author-axe-11",
+                "user_id": "test-author-id-11",
                 "m": "test-output-axe-11",
                 "t": {{ .snoozeEventTimestamp }},
-                "val": {{ .snoozeEventTimestamp | sum 600 }}
+                "val": {{ .snoozeEventTimestamp | sumTime 600 }}
               }
             ]
           }
@@ -1124,7 +1147,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-12",
       "long_output" : "test-long-output-axe-12",
       "author" : "test-author-axe-12",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -1142,7 +1165,8 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-12",
       "long_output" : "test-long-output-axe-12",
       "author" : "test-author-axe-12",
-      "timestamp": {{ (now.Add (parseDuration "-7s")).UTC.Unix }}
+      "user_id": "test-author-id-12",
+      "timestamp": {{ nowAdd "-7s" }}
     }
     """
     When I save response snoozeEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -1159,7 +1183,8 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-12",
       "long_output" : "test-long-output-axe-12",
       "author" : "test-author-axe-12",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "user_id": "test-author-id-12",
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I wait the end of event processing
@@ -1194,9 +1219,10 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "snooze",
                 "a": "test-author-axe-12",
+                "user_id": "test-author-id-12",
                 "m": "test-output-axe-12",
                 "t": {{ .snoozeEventTimestamp }},
-                "val": {{ .snoozeEventTimestamp | sum 600 }}
+                "val": {{ .snoozeEventTimestamp | sumTime 600 }}
               }
             ]
           }
@@ -1227,7 +1253,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-13",
       "long_output" : "test-long-output-axe-13",
       "author" : "test-author-axe-13",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -1244,7 +1270,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-13",
       "long_output" : "test-long-output-axe-13",
       "author" : "test-author-axe-13",
-      "timestamp": {{ (now.Add (parseDuration "-7s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-7s" }}
     }
     """
     When I save response doneEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -1261,10 +1287,10 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-13",
       "long_output" : "test-long-output-axe-13",
       "author" : "test-author-axe-13",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
-    When I save response resolveTimestamp={{ now.UTC.Unix }}
+    When I save response resolveTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-13"}]}&with_steps=true
     Then the response code should be 200
@@ -1330,7 +1356,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-14",
       "long_output" : "test-long-output-axe-14",
       "author" : "test-author-axe-14",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I wait the end of event processing
@@ -1346,7 +1372,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-14",
       "long_output" : "test-long-output-axe-14",
       "author" : "test-author-axe-14",
-      "timestamp": {{ (now.Add (parseDuration "-7s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-7s" }}
     }
     """
     When I save response cancelEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -1363,10 +1389,10 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-14",
       "long_output" : "test-long-output-axe-14",
       "author" : "test-author-axe-14",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
-    When I save response resolveTimestamp={{ now.UTC.Unix }}
+    When I save response resolveTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-14"}]}&with_steps=true
     Then the response code should be 200
@@ -1439,7 +1465,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-15",
       "long_output" : "test-long-output-axe-15",
       "author" : "test-author-axe-15",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -1457,7 +1483,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-15",
       "long_output" : "test-long-output-axe-15",
       "author" : "test-author-axe-15",
-      "timestamp": {{ (now.Add (parseDuration "-7s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-7s" }}
     }
     """
     When I save response closeEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -1474,10 +1500,10 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-15",
       "long_output" : "test-long-output-axe-15",
       "author" : "test-author-axe-15",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
-    When I save response resolveTimestamp={{ now.UTC.Unix }}
+    When I save response resolveTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-15"}]}&with_steps=true
     Then the response code should be 200
@@ -1550,7 +1576,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-16",
       "long_output" : "test-long-output-axe-16",
       "author" : "test-author-axe-16",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -1567,7 +1593,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-16",
       "long_output" : "test-long-output-axe-16",
       "author" : "test-author-axe-16",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I wait the end of event processing
@@ -1627,7 +1653,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-17",
       "long_output" : "test-long-output-axe-17",
       "author" : "test-author-axe-17",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -1644,7 +1670,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-17",
       "long_output" : "test-long-output-axe-17",
       "author" : "test-author-axe-17",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I wait the end of event processing
@@ -1660,7 +1686,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-17",
       "long_output" : "test-long-output-axe-17",
       "author" : "test-author-axe-17",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I save response ackEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -1735,7 +1761,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-18",
       "long_output" : "test-long-output-axe-18",
       "author" : "test-author-axe-18",
-      "timestamp": {{ (now.Add (parseDuration "-19s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-19s" }}
     }
     """
     When I wait the end of event processing
@@ -1752,7 +1778,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-18",
       "long_output" : "test-long-output-axe-18",
       "author" : "test-author-axe-18",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I wait the end of event processing
@@ -1836,7 +1862,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-19",
       "long_output" : "test-long-output-axe-19",
       "author" : "test-author-axe-19",
-      "timestamp": {{ (now.Add (parseDuration "-19s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-19s" }}
     }
     """
     When I wait the end of event processing
@@ -1853,7 +1879,7 @@ Feature: create and update alarm by main event stream
       "output" : "test-output-axe-19",
       "long_output" : "test-long-output-axe-19",
       "author" : "test-author-axe-19",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I wait the end of event processing

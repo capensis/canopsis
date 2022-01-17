@@ -14,7 +14,7 @@
 - import_tasks: config-additional-cat-engines.yml
   tags:
     - cps_config
-  when: canopsis_edition == "cat"
+  when: canopsis_edition == "pro"
 
 - import_tasks: init-db.yml
   become: true

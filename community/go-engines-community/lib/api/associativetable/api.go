@@ -1,6 +1,8 @@
 package associativetable
 
 import (
+	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -64,7 +66,7 @@ func (a api) Update(c *gin.Context) {
 		action = logger.ActionCreate
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    action,
 		ValueType: logger.ValueAssociativeTable,
 		ValueID:   request.Name,
@@ -131,7 +133,7 @@ func (a api) Delete(c *gin.Context) {
 	}
 
 	if ok {
-		err = a.actionLogger.Action(c, logger.LogEntry{
+		err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 			Action:    logger.ActionDelete,
 			ValueType: logger.ValueAssociativeTable,
 			ValueID:   request.Name,

@@ -17,8 +17,10 @@ export default {
     testSuites: {},
   },
   getters: {
-    getListByTestSuiteId: (state, getters, rootState, rootGetters) => testSuiteId =>
-      rootGetters['entities/getList'](ENTITIES_TYPES.testSuiteHistory, get(state.testSuites[testSuiteId], 'allIds', [])),
+    getListByTestSuiteId: (state, getters, rootState, rootGetters) => testSuiteId => rootGetters['entities/getList'](
+      ENTITIES_TYPES.testSuiteHistory,
+      get(state.testSuites[testSuiteId], 'allIds', []),
+    ),
     getPendingByTestSuiteId: state => testSuiteId => get(state.testSuites[testSuiteId], 'pending'),
     getMetaByTestSuiteId: state => testSuiteId => get(state.testSuites[testSuiteId], 'meta', {}),
   },

@@ -24,7 +24,7 @@ func init() {
 }
 
 type Updater interface {
-	Update(CanopsisConf) error
+	Update(CanopsisConf)
 }
 
 type AlarmConfigProvider interface {
@@ -52,10 +52,7 @@ type UserInterfaceConfigProvider interface {
 }
 
 type AlarmConfig struct {
-	FlappingFreqLimit     int
-	FlappingInterval      time.Duration
 	StealthyInterval      time.Duration
-	BaggotTime            time.Duration
 	EnableLastEventDate   bool
 	CancelAutosolveDelay  time.Duration
 	DisplayNameScheme     *template.Template
@@ -74,6 +71,7 @@ type TimezoneConfig struct {
 type ApiConfig struct {
 	TokenExpiration    time.Duration
 	TokenSigningMethod jwt.SigningMethod
+	BulkMaxSize        int
 }
 
 type RemediationConfig struct {
@@ -102,10 +100,7 @@ func (t ScheduledTime) String() string {
 func NewAlarmConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseAlarmConfigProvider {
 	sectionName := "alarm"
 	conf := AlarmConfig{
-		FlappingFreqLimit:             parseInt(cfg.Alarm.FlappingFreqLimit, 0, "FlappingFreqLimit", sectionName, logger),
-		FlappingInterval:              parseTimeDurationBySeconds(cfg.Alarm.FlappingInterval, 0, "FlappingInterval", sectionName, logger),
 		StealthyInterval:              parseTimeDurationBySeconds(cfg.Alarm.StealthyInterval, 0, "StealthyInterval", sectionName, logger),
-		BaggotTime:                    parseTimeDurationByStr(cfg.Alarm.BaggotTime, AlarmBaggotTime, "BaggotTime", sectionName, logger),
 		EnableLastEventDate:           parseBool(cfg.Alarm.EnableLastEventDate, "EnableLastEventDate", sectionName, logger),
 		CancelAutosolveDelay:          parseTimeDurationByStr(cfg.Alarm.CancelAutosolveDelay, AlarmCancelAutosolveDelay, "CancelAutosolveDelay", sectionName, logger),
 		DisableActionSnoozeDelayOnPbh: parseBool(cfg.Alarm.DisableActionSnoozeDelayOnPbh, "DisableActionSnoozeDelayOnPbh", sectionName, logger),
@@ -143,17 +138,12 @@ type BaseAlarmConfigProvider struct {
 	logger zerolog.Logger
 }
 
-func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) error {
+func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) {
 	p.mx.Lock()
 	defer p.mx.Unlock()
 
 	sectionName := "alarm"
-	d, ok := parseUpdatedTimeDurationByStr(cfg.Alarm.BaggotTime, p.conf.BaggotTime, "BaggotTime", sectionName, p.logger)
-	if ok {
-		p.conf.BaggotTime = d
-	}
-
-	d, ok = parseUpdatedTimeDurationByStr(cfg.Alarm.CancelAutosolveDelay, p.conf.CancelAutosolveDelay, "CancelAutosolveDelay", sectionName, p.logger)
+	d, ok := parseUpdatedTimeDurationByStr(cfg.Alarm.CancelAutosolveDelay, p.conf.CancelAutosolveDelay, "CancelAutosolveDelay", sectionName, p.logger)
 	if ok {
 		p.conf.CancelAutosolveDelay = d
 	}
@@ -180,16 +170,6 @@ func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) error {
 		}
 	}
 
-	i, ok := parseUpdatedInt(cfg.Alarm.FlappingFreqLimit, p.conf.FlappingFreqLimit, "FlappingFreqLimit", sectionName, p.logger)
-	if ok {
-		p.conf.FlappingFreqLimit = i
-	}
-
-	d, ok = parseUpdatedTimeDurationBySeconds(cfg.Alarm.FlappingInterval, p.conf.FlappingInterval, "FlappingInterval", sectionName, p.logger)
-	if ok {
-		p.conf.FlappingInterval = d
-	}
-
 	d, ok = parseUpdatedTimeDurationBySeconds(cfg.Alarm.StealthyInterval, p.conf.StealthyInterval, "StealthyInterval", sectionName, p.logger)
 	if ok {
 		p.conf.StealthyInterval = d
@@ -211,8 +191,6 @@ func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) error {
 	if ok {
 		p.conf.DisableActionSnoozeDelayOnPbh = b
 	}
-
-	return nil
 }
 
 func (p *BaseAlarmConfigProvider) Get() AlarmConfig {
@@ -237,7 +215,7 @@ type BaseTimezoneConfigProvider struct {
 	logger zerolog.Logger
 }
 
-func (p *BaseTimezoneConfigProvider) Update(cfg CanopsisConf) error {
+func (p *BaseTimezoneConfigProvider) Update(cfg CanopsisConf) {
 	p.mx.Lock()
 	defer p.mx.Unlock()
 
@@ -245,8 +223,6 @@ func (p *BaseTimezoneConfigProvider) Update(cfg CanopsisConf) error {
 	if ok {
 		p.conf.Location = l
 	}
-
-	return nil
 }
 
 func (p *BaseTimezoneConfigProvider) Get() TimezoneConfig {
@@ -261,6 +237,7 @@ func NewApiConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseApiConfi
 	conf := ApiConfig{
 		TokenExpiration:    parseTimeDurationByStr(cfg.API.TokenExpiration, ApiTokenExpiration, "TokenExpiration", sectionName, logger),
 		TokenSigningMethod: parseJwtSigningMethod(cfg.API.TokenSigningMethod, jwt.GetSigningMethod(ApiTokenSigningMethod), "TokenSigningMethod", sectionName, logger),
+		BulkMaxSize:        parseInt(cfg.API.BulkMaxSize, ApiBulkMaxSize, "BulkMaxSize", sectionName, logger),
 	}
 
 	return &BaseApiConfigProvider{
@@ -275,7 +252,7 @@ type BaseApiConfigProvider struct {
 	logger zerolog.Logger
 }
 
-func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) error {
+func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 	p.mx.Lock()
 	defer p.mx.Unlock()
 
@@ -290,7 +267,7 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) error {
 		p.conf.TokenSigningMethod = m
 	}
 
-	return nil
+	p.conf.BulkMaxSize = parseInt(cfg.API.BulkMaxSize, p.conf.BulkMaxSize, "BulkMaxSize", sectionName, p.logger)
 }
 
 func (p *BaseApiConfigProvider) Get() ApiConfig {
@@ -332,7 +309,7 @@ type BaseRemediationConfigProvider struct {
 	logger zerolog.Logger
 }
 
-func (p *BaseRemediationConfigProvider) Update(cfg RemediationConf) error {
+func (p *BaseRemediationConfigProvider) Update(cfg RemediationConf) {
 	p.mx.Lock()
 	defer p.mx.Unlock()
 
@@ -374,8 +351,6 @@ func (p *BaseRemediationConfigProvider) Update(cfg RemediationConf) error {
 
 		p.conf.ExternalAPI = cfg.ExternalAPI
 	}
-
-	return nil
 }
 
 func (p *BaseRemediationConfigProvider) Get() RemediationConfig {
@@ -433,7 +408,7 @@ func NewUserInterfaceConfigProvider(cfg UserInterfaceConf, logger zerolog.Logger
 	}
 }
 
-func (p *BaseUserInterfaceConfigProvider) Update(conf UserInterfaceConf) error {
+func (p *BaseUserInterfaceConfigProvider) Update(conf UserInterfaceConf) {
 	p.mx.Lock()
 	defer p.mx.Unlock()
 
@@ -475,8 +450,6 @@ func (p *BaseUserInterfaceConfigProvider) Update(conf UserInterfaceConf) error {
 
 		p.conf.IsAllowChangeSeverityToInfo = conf.IsAllowChangeSeverityToInfo
 	}
-
-	return nil
 }
 
 func (p *BaseUserInterfaceConfigProvider) Get() UserInterfaceConf {
@@ -502,7 +475,7 @@ type BaseDataStorageConfigProvider struct {
 	logger zerolog.Logger
 }
 
-func (p *BaseDataStorageConfigProvider) Update(cfg CanopsisConf) error {
+func (p *BaseDataStorageConfigProvider) Update(cfg CanopsisConf) {
 	p.mx.Lock()
 	defer p.mx.Unlock()
 
@@ -511,8 +484,6 @@ func (p *BaseDataStorageConfigProvider) Update(cfg CanopsisConf) error {
 	if ok {
 		p.conf.TimeToExecute = t
 	}
-
-	return nil
 }
 
 func (p *BaseDataStorageConfigProvider) Get() DataStorageConfig {

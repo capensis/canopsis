@@ -3,9 +3,12 @@ package pbehavior
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
@@ -17,16 +20,7 @@ import (
 	"time"
 )
 
-const (
-	OperationCreate = iota
-	OperationUpdate
-	OperationDelete
-)
-
-const (
-	CalculateAll  = ""
-	CalculateNone = "none"
-)
+const calculateAll = "all"
 
 // Computer is used to implement pbehavior intervals recompute on singnal from channel.
 type Computer interface {
@@ -36,22 +30,26 @@ type Computer interface {
 }
 
 type ComputeTask struct {
-	// PbehaviorID defines for which pbehavior intervals should be recomputed.
+	// PbehaviorIds defines for which pbehavior intervals should be recomputed.
 	// If empty all intervals are recomputed.
-	PbehaviorID string
-	// UpdateAlarms prescribes to update alarms by pbehavior. PbehaviorID shouldn't be empty.
-	OperationType int
+	PbehaviorIds []string
 }
 
 // cancelableComputer recomputes pbehaviors.
 type cancelableComputer struct {
-	logger       zerolog.Logger
-	service      Service
-	dbClient     mongo.DbClient
-	eventManager EventManager
-	encoder      encoding.Encoder
-	publisher    libamqp.Publisher
-	queue        string
+	logger              zerolog.Logger
+	service             Service
+	dbClient            mongo.DbClient
+	alarmCollection     mongo.DbCollection
+	entityCollection    mongo.DbCollection
+	pbehaviorCollection mongo.DbCollection
+	eventManager        EventManager
+	encoder             encoding.Encoder
+	publisher           libamqp.Publisher
+	queue               string
+
+	mxIds          sync.Mutex
+	idsToRecompute []string
 }
 
 // NewCancelableComputer creates new computer.
@@ -65,98 +63,106 @@ func NewCancelableComputer(
 	logger zerolog.Logger,
 ) Computer {
 	return &cancelableComputer{
-		logger:       logger,
-		service:      service,
-		dbClient:     dbClient,
-		eventManager: eventManager,
-		encoder:      encoder,
-		publisher:    publisher,
-		queue:        queue,
+		logger:              logger,
+		service:             service,
+		dbClient:            dbClient,
+		alarmCollection:     dbClient.Collection(mongo.AlarmMongoCollection),
+		entityCollection:    dbClient.Collection(mongo.EntityMongoCollection),
+		pbehaviorCollection: dbClient.Collection(mongo.PbehaviorMongoCollection),
+		eventManager:        eventManager,
+		encoder:             encoder,
+		publisher:           publisher,
+		queue:               queue,
 	}
 }
 
-func (c *cancelableComputer) Compute(parentCtx context.Context, ch <-chan ComputeTask) {
-	var ctx context.Context
-	var cancel context.CancelFunc
-	c.logger.Debug().Msg("compute started")
-	defer func() {
-		if cancel != nil {
-			cancel()
+func (c *cancelableComputer) Compute(ctx context.Context, ch <-chan ComputeTask) {
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	startComputeCh := make(chan bool, 1)
+	defer close(startComputeCh)
+
+	done := make(chan bool)
+
+	go func() {
+		defer close(done)
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case _, ok := <-startComputeCh:
+				if !ok {
+					return
+				}
+
+				c.mxIds.Lock()
+				idsToRecompute := c.idsToRecompute
+				c.idsToRecompute = c.idsToRecompute[:0]
+				c.mxIds.Unlock()
+
+				if len(idsToRecompute) == 0 {
+					continue
+				}
+
+				c.computePbehavior(ctx, idsToRecompute)
+
+				select {
+				case startComputeCh <- true:
+				default:
+				}
+			}
 		}
-		c.logger.Debug().Msg("compute ended")
 	}()
 
-	ongoingID := CalculateNone
-	ongoingMx := sync.Mutex{}
-
-	wg := sync.WaitGroup{}
-
+loop:
 	for {
 		select {
-		case <-parentCtx.Done():
-			return
+		case <-ctx.Done():
+			break loop
 		case task, ok := <-ch:
 			if !ok {
-				return
+				break loop
 			}
 
-			pbehaviorID := task.PbehaviorID
-
-			ongoingMx.Lock()
-			currentOngoing := ongoingID
-			ongoingMx.Unlock()
-
-			// Cancel ongoing calculation if
-			// - ongoing calculated pbehavior is the same as in the signal
-			// - ongoing calculation calculates all pbehavior
-			// - new calculation calculates all pbehavior
-			if currentOngoing != CalculateNone && (pbehaviorID == CalculateAll || currentOngoing == CalculateAll || currentOngoing == pbehaviorID) {
-				c.logger.Info().Str("pbehaviorID", pbehaviorID).Str("ongoingID", currentOngoing).Msg("Test cancel log")
-				c.logger.Debug().Msg("API pbehavior recompute: STOP SIGNAL!!!")
-
-				cancel()
-				wg.Wait()
-				// If canceled calculation calculates all pbehavior keep it
-				if currentOngoing != CalculateAll {
-					ongoingID = pbehaviorID
-				} else {
-					ongoingID = CalculateAll
-				}
+			c.mxIds.Lock()
+			if len(task.PbehaviorIds) == 0 {
+				c.idsToRecompute = append(c.idsToRecompute, calculateAll)
 			} else {
-				// Wait ongoing calculation to avoid conflicts
-				wg.Wait()
-				ongoingID = pbehaviorID
+				c.idsToRecompute = append(c.idsToRecompute, task.PbehaviorIds...)
 			}
+			c.mxIds.Unlock()
 
-			ctx, cancel = context.WithCancel(parentCtx)
-			wg.Add(1)
-
-			go func(ctx context.Context, pbhId string, opType int) {
-				defer func() {
-					ongoingMx.Lock()
-					ongoingID = CalculateNone
-					ongoingMx.Unlock()
-
-					wg.Done()
-				}()
-
-				c.computePbehavior(ctx, pbhId, opType)
-			}(ctx, ongoingID, task.OperationType)
+			select {
+			case startComputeCh <- true:
+			default:
+			}
 		}
 	}
+
+	cancel()
+	<-done
 }
 
 // computePbehavior obtains lock and calls computer.
 func (c *cancelableComputer) computePbehavior(
 	ctx context.Context,
-	pbehaviorID string,
-	operationType int,
+	pbehaviorIds []string,
 ) {
+	all := false
+	for _, id := range pbehaviorIds {
+		if id == calculateAll {
+			all = true
+			break
+		}
+	}
+
 	var err error
-	if pbehaviorID == "" {
+	if all {
 		err = c.service.Recompute(ctx)
 	} else {
-		err = c.service.RecomputeByID(ctx, pbehaviorID)
+		err = c.service.RecomputeByIds(ctx, pbehaviorIds)
 	}
 
 	if err != nil {
@@ -164,12 +170,17 @@ func (c *cancelableComputer) computePbehavior(
 		return
 	}
 
-	c.logger.Info().Str("pbehavior", pbehaviorID).Msg("API pbehavior recompute: pbehavior recomputed")
+	excludeIds := make([]string, 0)
 
-	if pbehaviorID != "" {
-		err := c.updateAlarms(ctx, pbehaviorID, operationType)
-		if err != nil {
-			return
+	for _, pbehaviorID := range pbehaviorIds {
+		if pbehaviorID != calculateAll {
+			c.logger.Info().Str("pbehavior", pbehaviorID).Msg("API pbehavior recompute: pbehavior recomputed")
+
+			excludeIds, err = c.updateAlarms(ctx, pbehaviorID, excludeIds)
+			if err != nil {
+				c.logger.Err(err).Msgf("API pbehavior update alarms failed")
+				return
+			}
 		}
 	}
 }
@@ -177,81 +188,92 @@ func (c *cancelableComputer) computePbehavior(
 func (c *cancelableComputer) updateAlarms(
 	ctx context.Context,
 	pbehaviorID string,
-	operationType int,
-) error {
-	switch operationType {
-	case OperationCreate:
-		cursor, err := c.findAlarmsMatchPbhFilter(ctx, pbehaviorID)
-		if err != nil {
-			c.logger.Err(err).Msg("API pbehavior recompute: cannot find alarms")
-			return err
-		}
+	excludeIds []string,
+) ([]string, error) {
+	eventGenerator := libevent.NewGenerator(entity.NewAdapter(c.dbClient))
 
-		err = c.sendAlarmEvents(ctx, cursor, pbehaviorID)
-		if err != nil {
-			return err
-		}
-	case OperationUpdate:
-		cursor, err := c.findAlarmsMatchPbhFilter(ctx, pbehaviorID)
-		if err != nil {
-			return err
-		}
-
-		err = c.sendAlarmEvents(ctx, cursor, pbehaviorID)
-		if err != nil {
-			return err
-		}
-
-		cursor, err = c.findAlarmsMatchPbhID(ctx, pbehaviorID)
-		if err != nil {
-			return err
-		}
-
-		err = c.sendAlarmEvents(ctx, cursor, pbehaviorID)
-		if err != nil {
-			return err
-		}
-	case OperationDelete:
-		cursor, err := c.findAlarmsMatchPbhID(ctx, pbehaviorID)
-		if err != nil {
-			c.logger.Err(err).Msg("API pbehavior recompute: cannot find alarms")
-			return err
-		}
-
-		err = c.sendAlarmEvents(ctx, cursor, pbehaviorID)
-		if err != nil {
-			return err
-		}
+	cursor, err := c.findEntitiesMatchPbhFilter(ctx, pbehaviorID, excludeIds)
+	if err != nil {
+		return nil, err
 	}
 
-	return nil
+	idsByFilter, err := c.sendAlarmEvents(ctx, cursor, pbehaviorID, eventGenerator)
+	if err != nil {
+		return nil, err
+	}
+
+	excludeIds = append(excludeIds, idsByFilter...)
+	cursor, err = c.findEntitiesMatchPbhID(ctx, pbehaviorID, excludeIds)
+	if err != nil {
+		return nil, err
+	}
+
+	idsByPbhInfo, err := c.sendAlarmEvents(ctx, cursor, pbehaviorID, eventGenerator)
+	if err != nil {
+		return nil, err
+	}
+
+	excludeIds = append(excludeIds, idsByPbhInfo...)
+
+	return excludeIds, nil
 }
 
-func (c *cancelableComputer) sendAlarmEvents(ctx context.Context, cursor mongo.Cursor, pbehaviorID string) error {
+func (c *cancelableComputer) sendAlarmEvents(ctx context.Context, cursor mongo.Cursor, pbehaviorID string, eventGenerator libevent.Generator) ([]string, error) {
+	if cursor == nil {
+		return nil, nil
+	}
+
+	defer cursor.Close(ctx)
+
+	ids := make([]string, 0)
 	now := time.Now()
 	for cursor.Next(ctx) {
-		alarm := types.AlarmWithEntity{}
-		err := cursor.Decode(&alarm)
+		entity := types.Entity{}
+		err := cursor.Decode(&entity)
 		if err != nil {
-			c.logger.Err(err).Msg("API pbehavior recompute: cannot decode alarm")
-			return err
-		}
-
-		resolveResult, err := c.service.Resolve(ctx, alarm.Entity.ID, now)
-		if err != nil {
-			c.logger.Err(err).Msg("API pbehavior recompute: cannot resolve pbehavior for entity")
-			return err
-		}
-
-		event := c.eventManager.GetEvent(resolveResult, alarm.Alarm, now)
-		if event.EventType == "" {
+			c.logger.Err(err).Msg("cannot decode alarm")
 			continue
 		}
 
+		ids = append(ids, entity.ID)
+		resolveResult, err := c.service.Resolve(ctx, entity.ID, now)
+		if err != nil {
+			return nil, fmt.Errorf("cannot resolve pbehavior for entity: %w", err)
+		}
+
+		eventType, output := c.eventManager.GetEventType(resolveResult, entity.PbehaviorInfo)
+		if eventType == "" {
+			continue
+		}
+
+		alarm, err := c.findLastAlarm(ctx, entity.ID)
+		if err != nil {
+			return nil, fmt.Errorf("cannot find alarm: %w", err)
+		}
+
+		event := types.Event{
+			Initiator: types.InitiatorSystem,
+		}
+		if alarm == nil {
+			event, err = eventGenerator.Generate(ctx, entity)
+			if err != nil {
+				return nil, fmt.Errorf("cannot generate event: %w", err)
+			}
+
+		} else {
+			event.Connector = alarm.Value.Connector
+			event.ConnectorName = alarm.Value.ConnectorName
+			event.Component = alarm.Value.Component
+			event.Resource = alarm.Value.Resource
+			event.SourceType = event.DetectSourceType()
+		}
+
+		event.EventType = eventType
+		event.Output = output
+		event.PbehaviorInfo = NewPBehaviorInfo(types.CpsTime{Time: now}, resolveResult)
 		body, err := c.encoder.Encode(event)
 		if err != nil {
-			c.logger.Err(err).Msg("API pbehavior recompute: cannot encode event")
-			return err
+			return nil, fmt.Errorf("cannot encode event: %w", err)
 		}
 
 		err = c.publisher.Publish(
@@ -267,33 +289,29 @@ func (c *cancelableComputer) sendAlarmEvents(ctx context.Context, cursor mongo.C
 		)
 
 		if err != nil {
-			c.logger.Err(err).Str("pbehavior", pbehaviorID).Str("alarm", alarm.Alarm.ID).Msgf("API pbehavior recompute: cannot send %s event", event.EventType)
-			return err
+			return nil, fmt.Errorf("cannot send event: %w", err)
 		}
 
-		c.logger.Info().Str("pbehavior", pbehaviorID).Str("alarm", alarm.Alarm.ID).Msgf("API pbehavior recompute: send %s event", event.EventType)
+		c.logger.Info().Str("pbehavior", pbehaviorID).Str("entity", entity.ID).Msgf("send %s event", event.EventType)
 	}
 
-	return nil
+	return ids, nil
 }
 
-func (c *cancelableComputer) findAlarmsMatchPbhFilter(
-	parentCtx context.Context,
+func (c *cancelableComputer) findEntitiesMatchPbhFilter(
+	ctx context.Context,
 	pbehaviorID string,
+	excludeIds []string,
 ) (mongo.Cursor, error) {
-	ctx, cancel := context.WithCancel(parentCtx)
-	defer cancel()
-
-	pbehaviorCollection := c.dbClient.Collection(PBehaviorCollectionName)
 	pbehavior := PBehavior{}
-	err := pbehaviorCollection.FindOne(ctx, bson.M{"_id": pbehaviorID},
+	err := c.pbehaviorCollection.FindOne(ctx, bson.M{"_id": pbehaviorID},
 		options.FindOne().SetProjection(bson.M{
 			"filter": 1,
 		})).Decode(&pbehavior)
 
 	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
-			return nil, fmt.Errorf("cannot find pbehavior id=%s", pbehaviorID)
+			return nil, nil
 		} else {
 			return nil, err
 		}
@@ -305,50 +323,45 @@ func (c *cancelableComputer) findAlarmsMatchPbhFilter(
 		return nil, err
 	}
 
-	entityCollection := c.dbClient.Collection(mongo.EntityMongoCollection)
-	return entityCollection.Aggregate(ctx, []bson.M{
-		{"$match": filter},
-		{"$project": bson.M{
-			"entity": "$$ROOT",
-		}},
-		{"$lookup": bson.M{
-			"from": mongo.AlarmMongoCollection,
-			"let":  bson.M{"eid": "$entity._id"},
-			"pipeline": []bson.M{
-				{"$match": bson.M{"$expr": bson.M{"$eq": bson.A{"$$eid", "$d"}}}},
-				{"$match": bson.M{"$or": []bson.M{
-					{"v.resolved": bson.M{"$in": bson.A{false, nil}}},
-					{"v.resolved": bson.M{"$exists": false}},
-				}}},
-			},
-			"as": "alarm",
-		}},
-		{"$unwind": "$alarm"},
-	})
+	if len(excludeIds) > 0 {
+		filter = bson.M{"$and": bson.A{
+			bson.M{"_id": bson.M{"$nin": excludeIds}},
+			filter,
+		}}
+	}
+
+	return c.entityCollection.Find(ctx, filter)
 }
 
-func (c *cancelableComputer) findAlarmsMatchPbhID(
-	parentCtx context.Context,
+func (c *cancelableComputer) findEntitiesMatchPbhID(
+	ctx context.Context,
 	pbehaviorID string,
+	excludeIds []string,
 ) (mongo.Cursor, error) {
-	ctx, cancel := context.WithCancel(parentCtx)
-	defer cancel()
+	filter := bson.M{"pbehavior_info.id": pbehaviorID}
 
-	return c.dbClient.Collection(mongo.AlarmMongoCollection).Aggregate(ctx, []bson.M{
-		{"$match": bson.M{"v.pbehavior_info.id": pbehaviorID}},
-		{"$match": bson.M{"$or": []bson.M{
-			{"v.resolved": bson.M{"$in": bson.A{false, nil}}},
-			{"v.resolved": bson.M{"$exists": false}},
-		}}},
-		{"$project": bson.M{
-			"alarm": "$$ROOT",
-		}},
-		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
-			"localField":   "alarm.d",
-			"foreignField": "_id",
-			"as":           "entity",
-		}},
-		{"$unwind": "$entity"},
-	})
+	if len(excludeIds) > 0 {
+		filter["_id"] = bson.M{"$nin": excludeIds}
+	}
+
+	return c.entityCollection.Find(ctx, filter)
+}
+
+func (c *cancelableComputer) findLastAlarm(
+	ctx context.Context,
+	entityID string,
+) (*types.Alarm, error) {
+	alarm := types.Alarm{}
+	err := c.alarmCollection.
+		FindOne(ctx, bson.M{"d": entityID}, options.FindOne().SetSort(bson.M{"t": -1})).
+		Decode(&alarm)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, nil
+		}
+
+		return nil, err
+	}
+
+	return &alarm, nil
 }

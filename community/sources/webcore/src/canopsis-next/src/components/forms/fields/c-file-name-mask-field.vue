@@ -3,12 +3,12 @@
     v-flex(v-show="title", xs12)
       v-layout
         h4.subheading.grey--text.text--darken-2 {{ title }}
-        c-help-icon.storage-help-tooltip(v-if="helpText", :text="helpText", max-width="250", right)
+        c-help-icon.ml-2.storage-help-tooltip(v-if="helpText", :text="helpText", max-width="250", top)
     v-flex(xs12)
       v-layout(column)
         v-text-field(
           v-field="value",
-          v-validate="'required'",
+          v-validate="rules",
           :value="value",
           :label="label",
           :placeholder="placeholder",
@@ -50,9 +50,20 @@ export default {
       type: Boolean,
       default: false,
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
     helpText: {
       type: String,
       required: false,
+    },
+  },
+  computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
     },
   },
 };

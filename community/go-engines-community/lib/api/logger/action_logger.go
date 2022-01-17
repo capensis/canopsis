@@ -1,11 +1,10 @@
 package logger
 
 import (
+	"context"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -47,10 +46,17 @@ const (
 	ValueTypeBroadcastMessage   = "broadcastmessage"
 	ValueAssociativeTable       = "associativetable"
 	ValueTypeIdleRule           = "idlerule"
+
+	ValueTypeResolveRule  = "resolverule"
+	ValueTypeFlappingRule = "flappingrule"
+
+	ValueTypeUserPreferences = "userpreferences"
+
+	ValueTypeFilter = "filter"
 )
 
 type ActionLogger interface {
-	Action(c *gin.Context, logEntry LogEntry) error
+	Action(ctx context.Context, userID string, logEntry LogEntry) error
 	Err(err error, msg string)
 }
 
@@ -80,10 +86,9 @@ func NewActionLogger(dbClient mongo.DbClient, zLog zerolog.Logger) ActionLogger 
 	}
 }
 
-func (l *logger) Action(c *gin.Context, logEntry LogEntry) error {
+func (l *logger) Action(ctx context.Context, userID string, logEntry LogEntry) error {
 	if logEntry.Author == "" {
-		userID := c.MustGet(auth.UserKey)
-		logEntry.Author = userID.(string)
+		logEntry.Author = userID
 	}
 
 	logEntry.Time = time.Now()
@@ -96,7 +101,7 @@ func (l *logger) Action(c *gin.Context, logEntry LogEntry) error {
 		Str("time", logEntry.Time.String()).
 		Msg("ActionLog: ")
 
-	_, err := l.dbCollection.UpdateOne(c.Request.Context(), bson.M{"value_type": logEntry.ValueType, "value_id": logEntry.ValueID}, bson.M{"$set": logEntry}, options.Update().SetUpsert(true))
+	_, err := l.dbCollection.UpdateOne(ctx, bson.M{"value_type": logEntry.ValueType, "value_id": logEntry.ValueID}, bson.M{"$set": logEntry}, options.Update().SetUpsert(true))
 	return err
 }
 

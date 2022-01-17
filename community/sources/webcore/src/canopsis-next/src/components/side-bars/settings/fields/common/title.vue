@@ -1,12 +1,11 @@
 <template lang="pug">
-  v-list-group(data-test="settingsWidgetTitle")
-    v-list-tile(slot="activator") {{ title }}
-      .font-italic.caption.ml-1 ({{ $t('common.optional') }})
+  v-list-group
+    template(#activator="")
+      v-list-tile {{ title }}
+        div.font-italic.caption.ml-1 ({{ $t('common.optional') }})
     v-container
       v-text-field(
-        data-test="widgetTitleField",
-        :value="value",
-        @input="$emit('input', $event)",
+        v-field="value",
         :placeholder="$t('settings.widgetTitle')"
       )
 </template>
@@ -19,8 +18,14 @@
  */
 export default {
   props: {
-    value: String,
-    title: String,
+    value: {
+      type: String,
+      required: false,
+    },
+    title: {
+      type: String,
+      required: false,
+    },
   },
 };
 </script>

@@ -5,6 +5,9 @@
 </template>
 
 <script>
+import { convertDateToString } from '@/helpers/date/date';
+import { convertDurationToString, toSeconds } from '@/helpers/date/duration';
+
 export default {
   props: {
     failedAt: {
@@ -52,9 +55,11 @@ export default {
     },
 
     timeToCompleteLabel() {
-      const duration = this.$options.filters.duration(this.timeToComplete.seconds);
+      const { value, unit } = this.timeToComplete;
 
-      return this.$t('remediationInstructionExecute.timeToComplete', { duration });
+      return this.$t('remediationInstructionExecute.timeToComplete', {
+        duration: convertDurationToString(toSeconds(value, unit)),
+      });
     },
 
     label() {
@@ -75,7 +80,7 @@ export default {
   },
   methods: {
     convertDate(date) {
-      return this.$options.filters.date(date, 'dateTimePicker', true);
+      return convertDateToString(date, 'dateTimePicker');
     },
   },
 };

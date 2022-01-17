@@ -158,8 +158,8 @@ func (a mongoAdapter) GetAlarmsWithSnoozeMark(ctx context.Context) ([]types.Alar
 	})
 }
 
-func (a mongoAdapter) GetAlarmsWithFlappingStatus(ctx context.Context) ([]types.Alarm, error) {
-	return a.getAlarms(ctx, bson.M{
+func (a mongoAdapter) GetAlarmsWithFlappingStatus(ctx context.Context) ([]types.AlarmWithEntity, error) {
+	return a.getAlarmsWithEntity(ctx, bson.M{
 		"v.status.val": types.AlarmStatusFlapping,
 		"$or": []bson.M{
 			{"v.resolved": nil},
@@ -183,20 +183,17 @@ func (a mongoAdapter) GetAllOpenedResourceAlarmsByComponent(ctx context.Context,
 	return a.getAlarmsWithEntity(ctx, req)
 }
 
-func (a mongoAdapter) GetUnacknowledgedAlarmsByComponent(ctx context.Context, component string) ([]types.Alarm, error) {
-	return a.getAlarms(ctx, bson.M{
+func (a mongoAdapter) GetUnacknowledgedAlarmsByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error) {
+	return a.getAlarmsWithEntity(ctx, bson.M{
 		"v.component": component,
 		"v.meta":      bson.M{"$exists": false},
-		"$or": []bson.M{
-			{"v.resolved": nil},
-			{"v.resolved": bson.M{"$exists": false}},
-		},
-		"v.ack": nil,
+		"v.resolved":  nil,
+		"v.ack":       nil,
 	})
 }
 
-func (a mongoAdapter) GetAlarmsWithoutTicketByComponent(ctx context.Context, component string) ([]types.Alarm, error) {
-	return a.getAlarms(ctx, bson.M{
+func (a mongoAdapter) GetAlarmsWithoutTicketByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error) {
+	return a.getAlarmsWithEntity(ctx, bson.M{
 		"v.component": component,
 		"v.meta":      bson.M{"$exists": false},
 		"$or": []bson.M{
@@ -262,6 +259,19 @@ func (a mongoAdapter) GetOpenedMetaAlarm(ctx context.Context, ruleId string, val
 	return al, nil
 }
 
+func (a mongoAdapter) GetOpenedMetaAlarmWithEntity(ctx context.Context, ruleId string, valuePath string) (types.AlarmWithEntity, error) {
+	filter := bson.M{
+		"v.meta":     ruleId,
+		"v.resolved": nil,
+	}
+
+	if valuePath != "" {
+		filter["v.meta_value_path"] = valuePath
+	}
+
+	return a.getAlarmWithEntity(ctx, filter)
+}
+
 func (a mongoAdapter) GetLastAlarm(ctx context.Context, connector, connectorName, id string) (types.Alarm, error) {
 	alarm := types.Alarm{}
 	query := bson.M{
@@ -282,8 +292,13 @@ func (a mongoAdapter) GetLastAlarm(ctx context.Context, connector, connectorName
 	return alarm, nil
 }
 
-func (a mongoAdapter) GetUnresolved(ctx context.Context) ([]types.Alarm, error) {
-	return a.getAlarms(ctx, bson.M{"v.resolved": nil})
+func (a mongoAdapter) GetLastAlarmWithEntity(ctx context.Context, connector, connectorName, id string) (types.AlarmWithEntity, error) {
+	filter := bson.M{
+		"d":                id,
+		"v.connector":      connector,
+		"v.connector_name": connectorName,
+	}
+	return a.getAlarmWithEntity(ctx, filter)
 }
 
 // GetOpenedAlarmsByIDs gets ongoing alarms related the provided entity ids
@@ -307,6 +322,14 @@ func (a mongoAdapter) GetOpenedAlarmsWithEntityByIDs(ctx context.Context, ids []
 	*alarms, err = a.getAlarmsWithEntity(ctx, filter)
 
 	return err
+}
+
+func (a mongoAdapter) GetOpenedAlarmsWithEntity(ctx context.Context) (libmongo.Cursor, error) {
+	filter := bson.M{
+		"v.resolved": nil,
+	}
+
+	return a.entityAggregateCursor(ctx, filter)
 }
 
 func (a mongoAdapter) GetCountOpenedAlarmsByIDs(ctx context.Context, ids []string) (int64, error) {
@@ -426,6 +449,27 @@ func (a mongoAdapter) GetOpenedAlarmsWithLastDatesBefore(
 	})
 }
 
+func (a mongoAdapter) GetOpenedAlarmsWithEntityAfter(ctx context.Context, createdAfter types.CpsTime) (libmongo.Cursor, error) {
+	return a.mainDbCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{
+			"v.resolved": nil,
+			"t":          bson.M{"$lt": createdAfter},
+		}},
+		{"$project": bson.M{
+			"alarm": "$$ROOT",
+			"_id":   0,
+		}},
+		{"$lookup": bson.M{
+			"from":         libmongo.EntityMongoCollection,
+			"localField":   "alarm.d",
+			"foreignField": "_id",
+			"as":           "entity",
+		}},
+		{"$unwind": "$entity"},
+		{"$match": bson.M{"entity.enabled": true}},
+	})
+}
+
 func (a mongoAdapter) GetOpenedAlarmsByConnectorIdleRules(ctx context.Context) ([]types.Alarm, error) {
 	cursor, err := a.mainDbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
@@ -506,6 +550,29 @@ func (a mongoAdapter) GetLastAlarmByEntityID(ctx context.Context, entityID strin
 	return nil, nil
 }
 
+func (a mongoAdapter) entityAggregateCursor(ctx context.Context, filter bson.M) (libmongo.Cursor, error) {
+	cursor, err := a.mainDbCollection.Aggregate(ctx, []bson.M{
+		{"$match": filter},
+		{"$project": bson.M{
+			"alarm": "$$ROOT",
+			"_id":   0,
+		}},
+		{"$lookup": bson.M{
+			"from":         libmongo.EntityMongoCollection,
+			"localField":   "alarm.d",
+			"foreignField": "_id",
+			"as":           "entity",
+		}},
+		{"$unwind": "$entity"},
+		{"$match": bson.M{"entity.enabled": true}},
+	})
+
+	if err != nil {
+		return nil, err
+	}
+	return cursor, nil
+}
+
 func (a mongoAdapter) getAlarmsWithEntity(ctx context.Context, filter bson.M) ([]types.AlarmWithEntity, error) {
 	cursor, err := a.mainDbCollection.Aggregate(ctx, []bson.M{
 		{"$match": filter},
@@ -535,6 +602,43 @@ func (a mongoAdapter) getAlarmsWithEntity(ctx context.Context, filter bson.M) ([
 	}
 
 	return alarmsWithEntity, nil
+}
+
+func (a mongoAdapter) getAlarmWithEntity(ctx context.Context, filter bson.M) (types.AlarmWithEntity, error) {
+	cursor, err := a.mainDbCollection.Aggregate(ctx, []bson.M{
+		{"$match": filter},
+		{"$sort": bson.M{"v.creation_date": -1}},
+		{"$limit": 1},
+		{"$project": bson.M{
+			"alarm": "$$ROOT",
+			"_id":   0,
+		}},
+		{"$lookup": bson.M{
+			"from":         libmongo.EntityMongoCollection,
+			"localField":   "alarm.d",
+			"foreignField": "_id",
+			"as":           "entity",
+		}},
+		{"$unwind": "$entity"},
+	})
+
+	if err != nil {
+		return types.AlarmWithEntity{}, err
+	}
+
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
+		var alarmWithEntity types.AlarmWithEntity
+		err = cursor.Decode(&alarmWithEntity)
+		if err != nil {
+			return alarmWithEntity, err
+		}
+		alarmWithEntity.Alarm.Value.Transform()
+		return alarmWithEntity, err
+	}
+
+	return types.AlarmWithEntity{}, errt.NewNotFound(errors.New("not found document"))
 }
 
 func (a mongoAdapter) getAlarms(ctx context.Context, filter bson.M) ([]types.Alarm, error) {
@@ -580,9 +684,9 @@ func (a mongoAdapter) DeleteResolvedAlarms(ctx context.Context, duration time.Du
 	return err
 }
 
-func (a mongoAdapter) DeleteArchivedResolvedAlarms(ctx context.Context, duration time.Duration) (int64, error) {
+func (a mongoAdapter) DeleteArchivedResolvedAlarms(ctx context.Context, before types.CpsTime) (int64, error) {
 	return a.archivedDbCollection.DeleteMany(ctx, bson.M{
-		"v.resolved": bson.M{"$lte": time.Now().Unix() - int64(duration.Seconds())},
+		"v.resolved": bson.M{"$lte": before},
 	})
 }
 
@@ -597,12 +701,12 @@ func (a *mongoAdapter) CopyAlarmToResolvedCollection(ctx context.Context, alarm 
 	return err
 }
 
-func (a *mongoAdapter) ArchiveResolvedAlarms(ctx context.Context, duration time.Duration) (int64, error) {
+func (a *mongoAdapter) ArchiveResolvedAlarms(ctx context.Context, before types.CpsTime) (int64, error) {
 	writeModels := make([]mongo.WriteModel, 0, bulkMaxSize)
 	archivedIds := make([]string, 0, bulkMaxSize)
 
 	cursor, err := a.resolvedDbCollection.Find(ctx, bson.M{
-		"v.resolved": bson.M{"$lte": time.Now().Unix() - int64(duration.Seconds())},
+		"v.resolved": bson.M{"$lte": before},
 	})
 
 	if err != nil {
@@ -670,4 +774,36 @@ func (a *mongoAdapter) ArchiveResolvedAlarms(ctx context.Context, duration time.
 	}
 
 	return archived, nil
+}
+
+func (a mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, createdAfter types.CpsTime, idsWithPbehaviors []string) (libmongo.Cursor, error) {
+	filter := bson.M{
+		"v.resolved": nil,
+		"t":          bson.M{"$lt": createdAfter},
+	}
+
+	if len(idsWithPbehaviors) > 0 {
+		filter["$or"] = []bson.M{
+			{"d": bson.M{"$in": idsWithPbehaviors}},
+			{"v.pbehavior_info": bson.M{"$ne": nil}},
+		}
+	} else {
+		filter["v.pbehavior_info"] = bson.M{"$ne": nil}
+	}
+
+	return a.mainDbCollection.Aggregate(ctx, []bson.M{
+		{"$match": filter},
+		{"$project": bson.M{
+			"alarm": "$$ROOT",
+			"_id":   0,
+		}},
+		{"$lookup": bson.M{
+			"from":         libmongo.EntityMongoCollection,
+			"localField":   "alarm.d",
+			"foreignField": "_id",
+			"as":           "entity",
+		}},
+		{"$unwind": "$entity"},
+		{"$match": bson.M{"entity.enabled": true}},
+	})
 }

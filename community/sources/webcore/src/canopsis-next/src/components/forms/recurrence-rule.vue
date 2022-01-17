@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-layout(row)
-      v-tabs.recurrence-rule-tabs(centered, fixed-tabs, slider-color="primary")
+      v-tabs.recurrence-rule-tabs(slider-color="primary", fixed-tabs, centered)
         v-tab {{ $t('recurrenceRule.tabs.simple') }}
         v-tab-item
           v-layout(column)
@@ -274,13 +274,13 @@ export default {
           ...mapValues(this.form.advancedRecurrenceRuleOptions, o => o.split(',').filter(v => v)),
         });
 
-        if (!this.errors.has('rRule') && !this.recurrenceRuleObject.isFullyConvertibleToText()) {
+        if (!this.errors.has('recurrenceRule') && !this.recurrenceRuleObject.isFullyConvertibleToText()) {
           this.errors.add({
             field: 'recurrenceRule',
             msg: this.$t('recurrenceRule.errors.main'),
           });
         } else {
-          this.errors.remove('rRule');
+          this.errors.remove('recurrenceRule');
 
           this.$emit('input', this.recurrenceRuleString.replace(/.*RRULE:/, ''));
         }

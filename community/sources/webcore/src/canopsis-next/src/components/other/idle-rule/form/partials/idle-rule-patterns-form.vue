@@ -21,7 +21,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { PATTERNS_TYPES } from '@/constants';
 
-import { formValidationHeaderMixin, validationErrorsMixin } from '@/mixins/form';
+import { formValidationHeaderMixin, validationErrorsMixinCreator } from '@/mixins/form';
 
 import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
 
@@ -37,7 +37,7 @@ export default {
   components: { PatternsList },
   mixins: [
     formValidationHeaderMixin,
-    validationErrorsMixin(),
+    validationErrorsMixinCreator(),
   ],
   model: {
     prop: 'form',

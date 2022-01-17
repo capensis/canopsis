@@ -1,13 +1,14 @@
 package alarm
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/alarm/alarm.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm Adapter,Service,EventProcessor
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/alarm/alarm.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm Adapter,Service,EventProcessor,ActivationService
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"time"
 )
 
 type Adapter interface {
@@ -34,18 +35,18 @@ type Adapter interface {
 	GetAlarmsWithSnoozeMark(ctx context.Context) ([]types.Alarm, error)
 
 	// GetAlarmsWithFlappingStatus returns all alarms whose status is flapping
-	GetAlarmsWithFlappingStatus(ctx context.Context) ([]types.Alarm, error)
+	GetAlarmsWithFlappingStatus(ctx context.Context) ([]types.AlarmWithEntity, error)
 
 	// GetAllOpenedResourceAlarmsByComponent returns all ongoing alarms for component
 	GetAllOpenedResourceAlarmsByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error)
 
 	// GetUnacknowledgedAlarmsByComponent returns all ongoing alarms which have
 	// not been acknowledged, given a component's name.
-	GetUnacknowledgedAlarmsByComponent(ctx context.Context, component string) ([]types.Alarm, error)
+	GetUnacknowledgedAlarmsByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error)
 
 	// GetAlarmsWithoutTicketByComponent returns all ongoing alarms which do
 	// not have a ticket, given a component's name.
-	GetAlarmsWithoutTicketByComponent(ctx context.Context, component string) ([]types.Alarm, error)
+	GetAlarmsWithoutTicketByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error)
 
 	GetOpenedAlarmByAlarmId(ctx context.Context, id string) (types.Alarm, error)
 	GetAlarmByAlarmId(ctx context.Context, id string) (types.Alarm, error)
@@ -55,17 +56,17 @@ type Adapter interface {
 	GetOpenedAlarm(ctx context.Context, connector, connectorName, id string) (types.Alarm, error)
 
 	GetOpenedMetaAlarm(ctx context.Context, ruleId string, valuePath string) (types.Alarm, error)
+	GetOpenedMetaAlarmWithEntity(ctx context.Context, ruleId string, valuePath string) (types.AlarmWithEntity, error)
 
 	// GetLastAlarm find the last alarm with an id
 	GetLastAlarm(ctx context.Context, connector, connectorName, id string) (types.Alarm, error)
-
-	// GetUnresolved returns all alarms that have v.resolved to null or absent field.
-	GetUnresolved(ctx context.Context) ([]types.Alarm, error)
+	GetLastAlarmWithEntity(ctx context.Context, connector, connectorName, id string) (types.AlarmWithEntity, error)
 
 	// GetOpenedAlarmsByIDs gets ongoing alarms related the provided entity ids
 	GetOpenedAlarmsByIDs(ctx context.Context, ids []string, alarms *[]types.Alarm) error
 	GetOpenedAlarmsWithEntityByIDs(ctx context.Context, ids []string, alarms *[]types.AlarmWithEntity) error
 	GetCountOpenedAlarmsByIDs(ctx context.Context, ids []string) (int64, error)
+	GetOpenedAlarmsWithEntity(ctx context.Context) (mongo.Cursor, error)
 
 	// GetOpenedAlarmsByAlarmIDs gets ongoing alarms related the provided alarm ids
 	GetOpenedAlarmsByAlarmIDs(ctx context.Context, ids []string, alarms *[]types.Alarm) error
@@ -80,6 +81,8 @@ type Adapter interface {
 
 	GetOpenedAlarmsByConnectorIdleRules(ctx context.Context) ([]types.Alarm, error)
 
+	GetOpenedAlarmsWithEntityAfter(ctx context.Context, createdAfter types.CpsTime) (mongo.Cursor, error)
+
 	CountResolvedAlarm(ctx context.Context, alarmList []string) (int, error)
 
 	GetLastAlarmByEntityID(ctx context.Context, entityID string) (*types.Alarm, error)
@@ -87,14 +90,16 @@ type Adapter interface {
 	// DeleteResolvedAlarms deletes resolved alarms from resolved collection after some duration
 	DeleteResolvedAlarms(ctx context.Context, duration time.Duration) error
 
-	// DeleteResolvedAlarms deletes resolved alarms from archived collection after some duration
-	DeleteArchivedResolvedAlarms(ctx context.Context, duration time.Duration) (int64, error)
+	// DeleteArchivedResolvedAlarms deletes resolved alarms from archived collection after some time.
+	DeleteArchivedResolvedAlarms(ctx context.Context, before types.CpsTime) (int64, error)
 
 	// CopyAlarmToResolvedCollection copies alarm to resolved alarm collection
 	CopyAlarmToResolvedCollection(ctx context.Context, alarm types.Alarm) error
 
-	// ArchiveResolvedAlarms archives alarm to archived alarm collection
-	ArchiveResolvedAlarms(ctx context.Context, duration time.Duration) (int64, error)
+	// ArchiveResolvedAlarms archives alarm to archived alarm collection.
+	ArchiveResolvedAlarms(ctx context.Context, before types.CpsTime) (int64, error)
+
+	FindToCheckPbehaviorInfo(ctx context.Context, createdAfter types.CpsTime, idsWithPbehaviors []string) (mongo.Cursor, error)
 }
 
 type EventProcessor interface {
@@ -106,8 +111,8 @@ type EventProcessor interface {
 }
 
 type Service interface {
-	// ResolveAlarms that have v.resolved to null
-	ResolveAlarms(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error)
+	// ResolveClosed close ok alarms.
+	ResolveClosed(ctx context.Context) ([]types.Alarm, error)
 
 	// ResolveCancels close canceled alarms when time has expired
 	ResolveCancels(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error)
@@ -120,5 +125,5 @@ type Service interface {
 
 	// UpdateFlappingAlarms updates the status of the flapping alarms, removing
 	// the flapping status if needed.
-	UpdateFlappingAlarms(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error)
+	UpdateFlappingAlarms(ctx context.Context) ([]types.Alarm, error)
 }

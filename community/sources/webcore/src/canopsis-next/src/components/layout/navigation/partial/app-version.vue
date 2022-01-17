@@ -13,7 +13,6 @@ import { createNamespacedHelpers } from 'vuex';
 
 const { mapGetters } = createNamespacedHelpers('info');
 
-
 export default {
   computed: {
     ...mapGetters(['version', 'stack', 'edition']),

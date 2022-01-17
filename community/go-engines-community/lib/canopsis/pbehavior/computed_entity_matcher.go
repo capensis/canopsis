@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -22,6 +23,7 @@ type ComputedEntityMatcher interface {
 	Match(ctx context.Context, entityID string) ([]string, error)
 	// MatchAll matches entities to filters by precomputed data.
 	MatchAll(ctx context.Context, entityIDs []string) (map[string][]string, error)
+	GetComputedEntityIDs(ctx context.Context) ([]string, error)
 }
 
 func NewComputedEntityMatcher(
@@ -183,6 +185,34 @@ func (m *computedEntityMatcher) MatchAll(ctx context.Context, entityIDs []string
 	}
 
 	return matchedKeysByEntityID, nil
+}
+
+func (m *computedEntityMatcher) GetComputedEntityIDs(ctx context.Context) ([]string, error) {
+	var cursor uint64
+	entityIDs := make([]string, 0)
+	processedKeys := make(map[string]bool)
+
+	for {
+		res := m.redisClient.Scan(ctx, cursor, fmt.Sprintf("%s*", m.key), redisStep)
+		if err := res.Err(); err != nil {
+			return nil, fmt.Errorf("cannot scan keys: %w", err)
+		}
+
+		var keys []string
+		keys, cursor = res.Val()
+		for _, key := range keys {
+			if !processedKeys[key] {
+				processedKeys[key] = true
+				entityIDs = append(entityIDs, strings.ReplaceAll(key, m.key, ""))
+			}
+		}
+
+		if cursor == 0 {
+			break
+		}
+	}
+
+	return entityIDs, nil
 }
 
 func (m *computedEntityMatcher) findEntityIDs(ctx context.Context, filter string) ([]string, error) {
