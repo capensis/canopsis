@@ -9,7 +9,7 @@ Feature: Create a scenario
     {
       "name": "test-scenario-to-create-1-name",
       "enabled": true,
-      "priority": 10,
+      "priority": 20,
       "triggers": ["create"],
       "actions": [
         {
@@ -27,12 +27,13 @@ Feature: Create a scenario
           "parameters": {
             "output": "test-scenario-to-create-1-action-1-output",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
           "drop_scenario_if_not_matched": false,
-          "emit_trigger": false
+          "emit_trigger": false,
+          "comment": "test comment"
         },
         {
           "alarm_patterns": [
@@ -65,7 +66,7 @@ Feature: Create a scenario
             },
             "retry_count": 3,
             "retry_delay": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -91,7 +92,7 @@ Feature: Create a scenario
             "type": "test-type-to-edit-scenario",
             "start_on_trigger": true,
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -108,7 +109,7 @@ Feature: Create a scenario
       "name": "test-scenario-to-create-1-name",
       "author": "root",
       "enabled": true,
-      "priority": 10,
+      "priority": 20,
       "triggers": ["create"],
       "actions": [
         {
@@ -128,12 +129,13 @@ Feature: Create a scenario
             "user": "root",
             "output": "test-scenario-to-create-1-action-1-output",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
           "drop_scenario_if_not_matched": false,
-          "emit_trigger": false
+          "emit_trigger": false,
+          "comment": "test comment"
         },
         {
           "alarm_patterns": [
@@ -166,7 +168,7 @@ Feature: Create a scenario
             },
             "retry_count": 3,
             "retry_delay": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -189,7 +191,7 @@ Feature: Create a scenario
             "author": "root",
             "user": "root",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             },
             "name": "test-scenario-to-create-1-action-3-name",
@@ -225,7 +227,7 @@ Feature: Create a scenario
     {
       "name": "test-scenario-to-create-2-name",
       "enabled": true,
-      "priority": 11,
+      "priority": 21,
       "triggers": ["create"],
       "actions": [
         {
@@ -243,7 +245,7 @@ Feature: Create a scenario
           "parameters": {
             "output": "test-scenario-to-create-2-action-1-output",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -282,7 +284,7 @@ Feature: Create a scenario
             },
             "retry_count": 3,
             "retry_delay": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -308,7 +310,7 @@ Feature: Create a scenario
             "type": "test-type-to-edit-scenario",
             "start_on_trigger": true,
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -327,7 +329,7 @@ Feature: Create a scenario
       "name": "test-scenario-to-create-2-name",
       "author": "root",
       "enabled": true,
-      "priority": 11,
+      "priority": 21,
       "triggers": ["create"],
       "actions": [
         {
@@ -347,7 +349,7 @@ Feature: Create a scenario
             "user": "root",
             "output": "test-scenario-to-create-2-action-1-output",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -386,7 +388,7 @@ Feature: Create a scenario
             },
             "retry_count": 3,
             "retry_delay": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -409,7 +411,7 @@ Feature: Create a scenario
             "author": "root",
             "user": "root",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             },
             "name": "test-scenario-to-create-2-action-3-name",
@@ -448,7 +450,7 @@ Feature: Create a scenario
       "priority": 12,
       "triggers": ["create"],
       "delay": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "actions": [
@@ -467,7 +469,7 @@ Feature: Create a scenario
           "parameters": {
             "output": "test snooze",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -487,7 +489,7 @@ Feature: Create a scenario
       "priority": 12,
       "triggers": ["create"],
       "delay": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "actions": [
@@ -508,7 +510,7 @@ Feature: Create a scenario
             "user": "root",
             "output": "test snooze",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -573,7 +575,7 @@ Feature: Create a scenario
           "parameters": {
             "output": "test snooze",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -618,7 +620,7 @@ Feature: Create a scenario
           "parameters": {
             "output": "test snooze",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -682,7 +684,7 @@ Feature: Create a scenario
           "parameters": {
             "output": "test snooze",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -744,7 +746,7 @@ Feature: Create a scenario
     }
     """
     Then the response code should be 400
-    Then the response body should be:
+    Then the response body should contain:
     """
     {
       "errors": {
@@ -770,7 +772,7 @@ Feature: Create a scenario
           "parameters": {
             "output": "test snooze",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -1017,7 +1019,7 @@ Feature: Create a scenario
           "parameters": {
             "output": "test-scenario-to-create-1-action-1-output",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },
@@ -1069,7 +1071,7 @@ Feature: Create a scenario
           "parameters": {
             "output": "test-scenario-to-create-1-action-1-output",
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },

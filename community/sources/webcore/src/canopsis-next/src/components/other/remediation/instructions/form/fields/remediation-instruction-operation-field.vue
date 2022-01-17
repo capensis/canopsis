@@ -63,7 +63,7 @@ import { isOmitEqual } from '@/helpers/validators/is-omit-equal';
 import { remediationInstructionStepOperationToForm } from '@/helpers/forms/remediation-instruction';
 
 import { formMixin, validationChildrenMixin } from '@/mixins/form';
-import confirmableFormMixin from '@/mixins/confirmable-form';
+import { confirmableFormMixinCreator } from '@/mixins/confirmable-form';
 
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 import JobsChips from '@/components/other/remediation/instructions/partials/jobs-chips.vue';
@@ -84,7 +84,7 @@ export default {
   mixins: [
     formMixin,
     validationChildrenMixin,
-    confirmableFormMixin({
+    confirmableFormMixinCreator({
       field: 'operation',
       method: 'remove',
       comparator(operation) {

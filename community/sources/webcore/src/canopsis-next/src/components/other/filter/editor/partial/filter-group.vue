@@ -75,7 +75,7 @@ import FilterRule from './filter-rule.vue';
  * Component representing a group in MongoDB filter
  */
 export default {
-  name: 'filter-group', // We need it for recursive
+  name: 'FilterGroup', // We need it for recursive
   components: {
     PatternInformation,
     OperatorField,

@@ -1,22 +1,29 @@
 package appinfo
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"net/http"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
 )
 
 type api struct {
-	store Store
+	enforcer security.Enforcer
+	store    Store
 }
 
 func NewApi(
+	enforcer security.Enforcer,
 	store Store,
 ) *api {
 	return &api{
-		store: store,
+		enforcer: enforcer,
+		store:    store,
 	}
 }
 
@@ -29,64 +36,49 @@ func NewApi(
 // @Security ApiKeyAuth
 // @Security BasicAuth
 // @Success 200 {object} AppInfoResponse
-// @Router /internal/app_info [get]
+// @Router /app-info [get]
 func (a *api) GetAppInfo(c *gin.Context) {
-	userInterface, err := a.store.RetrieveUserInterfaceConfig(c.Request.Context())
+	response := AppInfoResponse{}
+	var err error
+
+	response.UserInterfaceConf, err = a.store.RetrieveUserInterfaceConfig(c.Request.Context())
 	if err != nil {
 		panic(err)
 	}
-	global, err := a.store.RetrieveGlobalConf(c.Request.Context())
+	response.VersionConf, err = a.store.RetrieveVersionConfig(c.Request.Context())
 	if err != nil {
 		panic(err)
 	}
-	version, err := a.store.RetrieveVersionConfig(c.Request.Context())
+	response.Login, err = a.store.RetrieveLoginConfig(c.Request.Context())
 	if err != nil {
 		panic(err)
 	}
-	remediation, err := a.store.RetrieveRemediationConfig(c.Request.Context())
-	if err != nil {
-		panic(err)
+
+	user, ok := c.Get(auth.UserKey)
+	if ok {
+		ok, err := a.enforcer.Enforce(user.(string), apisecurity.PermAppInfoRead, model.PermissionCan)
+		if err != nil {
+			panic(err)
+		}
+
+		if ok {
+			response.GlobalConf, err = a.store.RetrieveGlobalConfig(c.Request.Context())
+			if err != nil {
+				panic(err)
+			}
+
+			remediation, err := a.store.RetrieveRemediationConfig(c.Request.Context())
+			if err != nil {
+				panic(err)
+			}
+			response.Remediation = &remediation
+		}
 	}
-	c.JSON(http.StatusOK, AppInfoResponse{
-		UserInterfaceConf: userInterface,
-		GlobalConf:        global,
-		VersionConf:       version,
-		Remediation:       remediation,
-	})
+
+	c.JSON(http.StatusOK, response)
 }
 
-// Get login information
-// @Summary Get login information
-// @Description Get login information
-// @Tags internal
-// @ID internal-get-login-info
-// @Produce json
-// @Success 200 {object} LoginConfigResponse
-// @Router /internal/login_info [get]
-func (a *api) LoginInfo(c *gin.Context) {
-	login, err := a.store.RetrieveLoginConfig(c.Request.Context())
-	if err != nil {
-		panic(err)
-	}
-
-	userInterface, err := a.store.RetrieveUserInterfaceConfig(c.Request.Context())
-	if err != nil {
-		panic(err)
-	}
-
-	version, err := a.store.RetrieveVersionConfig(c.Request.Context())
-	if err != nil {
-		panic(err)
-	}
-
-	c.JSON(http.StatusOK, LoginConfigResponse{
-		LoginConfig:       login,
-		UserInterfaceConf: userInterface,
-		VersionConf:       version,
-	})
-}
-
-// update user interface
+// Update user interface
 // @Summary update user interface
 // @Description update user interface
 // @Tags internal
@@ -118,7 +110,7 @@ func (a *api) UpdateUserInterface(c *gin.Context) {
 	c.JSON(http.StatusOK, request)
 }
 
-// delete user interface
+// Delete user interface
 // @Summary delete user interface
 // @Description delete user interface
 // @Tags internal

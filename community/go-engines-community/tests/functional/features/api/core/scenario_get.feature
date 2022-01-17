@@ -57,7 +57,7 @@ Feature: Get a scenario
                 },
                 "start_on_trigger": true,
                 "duration": {
-                  "seconds": 3,
+                  "value": 3,
                   "unit": "s"
                 },
                 "tstart": null,
@@ -98,7 +98,7 @@ Feature: Get a scenario
           ],
           "author": "test-scenario-to-get-2-author",
           "delay": {
-            "seconds": 10,
+            "value": 10,
             "unit": "s"
           },
           "disable_during_periods": null,
@@ -207,7 +207,7 @@ Feature: Get a scenario
             },
             "start_on_trigger": true,
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             },
             "tstart": null,
