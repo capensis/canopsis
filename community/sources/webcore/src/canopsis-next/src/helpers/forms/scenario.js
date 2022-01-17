@@ -1,9 +1,9 @@
-import moment from 'moment-timezone';
 import { omit, isNumber } from 'lodash';
 
 import { flattenErrorMap } from '@/helpers/forms/flatten-error-map';
+import { getLocaleTimezone } from '@/helpers/date/date';
 
-import { durationToForm, formToDuration } from '../date/duration';
+import { durationToForm } from '../date/duration';
 
 import { formToAction, actionToForm } from './action';
 import { enabledToForm } from './shared/common';
@@ -22,7 +22,6 @@ import { enabledToForm } from './shared/common';
 
 /**
  * @typedef {Scenario} ScenarioForm
- * @property {DurationForm} delay
  * @property {ActionForm[]} actions
  */
 
@@ -30,10 +29,10 @@ import { enabledToForm } from './shared/common';
  * Convert scenario to form
  *
  * @param {Scenario} [scenario = {}]
- * @param {string} [timezone = moment.tz.guess()]
+ * @param {string} [timezone = getLocaleTimezone()]
  * @returns {ScenarioForm}
  */
-export const scenarioToForm = (scenario = {}, timezone = moment.tz.guess()) => ({
+export const scenarioToForm = (scenario = {}, timezone = getLocaleTimezone()) => ({
   name: scenario.name || '',
   priority: scenario.priority || 1,
   enabled: enabledToForm(scenario.enabled),
@@ -51,13 +50,13 @@ export const scenarioToForm = (scenario = {}, timezone = moment.tz.guess()) => (
  * Convert form to scenario
  *
  * @param {ScenarioForm} form
- * @param {string} [timezone = moment.tz.guess()]
+ * @param {string} [timezone = getLocaleTimezone()]
  * @returns {Scenario}
  */
-export const formToScenario = (form, timezone = moment.tz.guess()) => ({
+export const formToScenario = (form, timezone = getLocaleTimezone()) => ({
   ...omit(form, ['delay', 'actions']),
-  delay: form.delay && isNumber(form.delay.value)
-    ? formToDuration(form.delay)
+  delay: isNumber(form.delay?.value)
+    ? form.delay
     : undefined,
   actions: form.actions.map(action => formToAction(action, timezone)),
 });

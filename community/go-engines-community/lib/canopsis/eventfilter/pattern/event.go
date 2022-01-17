@@ -32,7 +32,7 @@ type EventPattern struct {
 	Author        StringPattern               `bson:"author"`
 	RK            StringPattern               `bson:"routing_key"`
 	AckResources  BoolPattern                 `bson:"ack_resources"`
-	Duration      IntegerRefPattern           `bson:"duration"`
+	Duration      IntegerPattern              `bson:"duration"`
 	Ticket        StringPattern               `bson:"ticket"`
 	StatName      StringPattern               `bson:"stat_name"`
 	Debug         BoolPattern                 `bson:"debug"`
@@ -339,16 +339,16 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 // The zero value of an EventPatternList (i.e. an EventPatternList that has not
 // been set) is considered valid, and matches all events.
 type EventPatternList struct {
-	Patterns []EventPattern
+	Patterns []EventPattern `swaggerignore:"true"`
 
 	// Set is a boolean indicating whether the EventPatternList has been set
 	// explicitly or not.
-	Set bool
+	Set bool `swaggerignore:"true"`
 
 	// Valid is a boolean indicating whether the event patterns or valid or
 	// not.
 	// Valid is also false if the EventPatternList has not been set.
-	Valid bool
+	Valid bool `swaggerignore:"true"`
 }
 
 func (l *EventPatternList) UnmarshalJSON(b []byte) error {

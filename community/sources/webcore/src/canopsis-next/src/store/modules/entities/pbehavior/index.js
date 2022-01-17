@@ -1,8 +1,11 @@
-import request from '@/services/request';
-import i18n from '@/i18n';
-import schemas from '@/store/schemas';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
+
+import i18n from '@/i18n';
+
+import request from '@/services/request';
+
+import schemas from '@/store/schemas';
 
 import commentModule from './comment';
 import entitiesModule from './entities';
@@ -26,10 +29,14 @@ export default {
   },
   getters: {
     allIds: state => state.allIds,
-    items: (state, getters, rootState, rootGetters) =>
-      rootGetters['entities/getList'](ENTITIES_TYPES.pbehavior, state.allIds),
-    getItem: (state, getters, rootState, rootGetters) => id =>
-      rootGetters['entities/getItem'](ENTITIES_TYPES.pbehavior, id),
+    items: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](
+      ENTITIES_TYPES.pbehavior,
+      state.allIds,
+    ),
+    getItem: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem'](
+      ENTITIES_TYPES.pbehavior,
+      id,
+    ),
     pending: state => state.pending,
     meta: state => state.meta,
   },
@@ -90,8 +97,12 @@ export default {
       } catch (err) {
         commit(types.FETCH_BY_ID_FAILED, err);
 
-        console.warn(err);
+        console.error(err);
       }
+    },
+
+    fetchListByEntityIdWithoutStore(context, { id }) {
+      return request.get(API_ROUTES.pbehavior.pbehaviorById, { params: { id } });
     },
 
     async create({ dispatch }, { data }) {
@@ -134,4 +145,3 @@ export default {
     },
   },
 };
-

@@ -1,4 +1,4 @@
-# Nettoyage, sauvegarde et restauration des bases de données (MongoDB et InfluxDB)
+# Nettoyage, sauvegarde et restauration des bases de données
 
 ## MongoDB
 
@@ -84,48 +84,6 @@ mongorestore --username cpsmongo --password canopsis --db canopsis /chemin/vers/
     Lors de la sauvegarde de la base, la commande crée un sous-dossier dans `/chemin/vers/sauvegarde` pour y stocker les fichiers. Ce sous-dossier doit être ajouté au chemin dans la commande `mongorestore`.
 
 Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.
-```shell
-canoctl start
-```
-
-## InfluxDB
-
-### Sauvegarde
-
-Utilisez la commande `influxd backup` via une tâche cron. De préférence, faites la sauvegarde sur un système de fichiers externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.influxdata.com/influxdb/v1.7/administration/backup_and_restore/#backup).
-
-```sh
-influxd backup -portable -database canopsis /chemin/vers/sauvegarde
-```
-
-### Restauration
-
-!!! attention
-    Cette manipulation a une incidence métier importante et ne doit être réalisée que par une personne compétente. La restauration de la base de données ne doit être effectuée que si celle-ci est endommagée, pour corriger l'incident.
-
-Avant de procéder à la restauration, arrêtez l'hyperviseur.
-```shell
-canoctl stop
-```
-
-Utilisez la commande `influxd restore`. De préférence, récupérez la sauvegarde depuis un système de fichiers externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.influxdata.com/influxdb/v1.7/administration/backup_and_restore/#restore).
-
-```sh
-influxd restore -portable /chemin/vers/sauvegarde
-```
-
-!!! note
-    Il est possible que la commande retourne un message d'erreur :
-
-    ```
-    error updating meta: DB metadata not changed. database may already exist
-    restore: DB metadata not changed. database may already exist
-    ```
-
-    Il s'agit uniquement des métadonnées qui sont déjà présentes dans InfluxDB et qui n'ont pas changé. Le contenu de la table `canopsis` a bien été restauré.
-
-Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.
-
 ```shell
 canoctl start
 ```

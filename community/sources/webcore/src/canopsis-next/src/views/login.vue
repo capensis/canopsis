@@ -30,7 +30,7 @@ export default {
   mixins: [authMixin, entitiesInfoMixin],
   async mounted() {
     try {
-      await this.fetchLoginInfos();
+      await this.fetchAppInfo();
 
       this.setTitle();
     } catch ({ status, data }) {

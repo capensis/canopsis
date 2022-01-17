@@ -17,8 +17,10 @@ export default {
     services: {},
   },
   getters: {
-    getListByServiceId: (state, getters, rootState, rootGetters) => serviceId =>
-      rootGetters['entities/getList'](ENTITIES_TYPES.weatherService, get(state.services[serviceId], 'allIds', [])),
+    getListByServiceId: (state, getters, rootState, rootGetters) => serviceId => rootGetters['entities/getList'](
+      ENTITIES_TYPES.weatherService,
+      get(state.services[serviceId], 'allIds', []),
+    ),
     getPendingByServiceId: state => serviceId => get(state.services[serviceId], 'pending'),
     getMetaByServiceId: state => serviceId => get(state.services[serviceId], 'meta', {}),
   },

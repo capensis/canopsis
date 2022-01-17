@@ -1,5 +1,5 @@
 <template lang="pug">
-  span(data-test="actionsPanelItem")
+  span
     template(v-if="isDropDown")
       v-list-tile(:disabled="disabled", @click.stop="method")
         v-list-tile-title
@@ -19,7 +19,6 @@
         @click="method"
       )
 </template>
-
 
 <script>
 /**

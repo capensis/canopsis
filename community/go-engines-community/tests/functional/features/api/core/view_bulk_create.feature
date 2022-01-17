@@ -15,7 +15,7 @@ Feature: Bulk create views
         "tags": ["test-view-to-bulk-create-1-tag"],
         "periodic_refresh": {
           "enabled": true,
-          "seconds": 600,
+          "value": 10,
           "unit": "m"
         },
         "tabs": [
@@ -46,7 +46,7 @@ Feature: Bulk create views
         "tags": ["test-view-to-bulk-create-2-tag"],
         "periodic_refresh": {
           "enabled": true,
-          "seconds": 600,
+          "value": 10,
           "unit": "m"
         },
         "tabs": [
@@ -90,7 +90,7 @@ Feature: Bulk create views
         "tags": ["test-view-to-bulk-create-1-tag"],
         "periodic_refresh": {
           "enabled": true,
-          "seconds": 600,
+          "value": 10,
           "unit": "m"
         },
         "tabs": [
@@ -128,7 +128,7 @@ Feature: Bulk create views
         "tags": ["test-view-to-bulk-create-2-tag"],
         "periodic_refresh": {
           "enabled": true,
-          "seconds": 600,
+          "value": 10,
           "unit": "m"
         },
         "tabs": [
@@ -167,7 +167,7 @@ Feature: Bulk create views
         "tags": ["test-view-to-bulk-create-3-tag"],
         "periodic_refresh": {
           "enabled": true,
-          "seconds": 600,
+          "value": 10,
           "unit": "m"
         },
         "tabs": [
@@ -211,7 +211,7 @@ Feature: Bulk create views
       "tags": ["test-view-to-bulk-create-3-tag"],
       "periodic_refresh": {
         "enabled": true,
-        "seconds": 600,
+        "value": 10,
         "unit": "m"
       },
       "tabs": [

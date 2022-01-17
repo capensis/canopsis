@@ -119,7 +119,6 @@ function parseRuleToFilter(rule) {
   return parsedRule;
 }
 
-
 export default function parseGroupToFilter(group) {
   const parsedGroup = cloneDeep(FILTER_DEFAULT_VALUES.group);
   let groupContent = Object.values(group)[0];

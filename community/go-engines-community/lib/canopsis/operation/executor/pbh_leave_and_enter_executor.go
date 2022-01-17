@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -11,20 +12,22 @@ import (
 
 type pbhLeaveAndEnterExecutor struct {
 	configProvider config.AlarmConfigProvider
+
+	metricsSender metrics.Sender
 }
 
 // NewAckExecutor creates new executor.
-func NewPbhLeaveAndEnterExecutor(configProvider config.AlarmConfigProvider) operationlib.Executor {
-	return &pbhLeaveAndEnterExecutor{configProvider: configProvider}
+func NewPbhLeaveAndEnterExecutor(configProvider config.AlarmConfigProvider, metricsSender metrics.Sender) operationlib.Executor {
+	return &pbhLeaveAndEnterExecutor{configProvider: configProvider, metricsSender: metricsSender}
 }
 
 func (e *pbhLeaveAndEnterExecutor) Exec(
-	_ context.Context,
+	ctx context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
-	_ types.Entity,
+	entity *types.Entity,
 	time types.CpsTime,
-	role, initiator string,
+	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
 	var params types.OperationPbhParameters
 	var ok bool
@@ -32,7 +35,13 @@ func (e *pbhLeaveAndEnterExecutor) Exec(
 		return "", fmt.Errorf("invalid parameters")
 	}
 
-	if alarm.Value.PbehaviorInfo == params.PbehaviorInfo {
+	if userID == "" {
+		userID = params.User
+	}
+
+	currPbehaviorInfo := alarm.Value.PbehaviorInfo
+
+	if currPbehaviorInfo.Same(params.PbehaviorInfo) {
 		return "", nil
 	}
 
@@ -41,12 +50,17 @@ func (e *pbhLeaveAndEnterExecutor) Exec(
 		params.PbehaviorInfo,
 		params.Author,
 		utils.TruncateString(params.Output, e.configProvider.Get().OutputLength),
+		userID,
 		role,
 		initiator,
 	)
 	if err != nil {
 		return "", err
 	}
+
+	entity.PbehaviorInfo = alarm.Value.PbehaviorInfo
+
+	go e.metricsSender.SendPbhLeaveAndEnter(context.Background(), alarm, *entity, currPbehaviorInfo.CanonicalType, currPbehaviorInfo.Timestamp.Time)
 
 	return types.AlarmChangeTypePbhLeaveAndEnter, nil
 }

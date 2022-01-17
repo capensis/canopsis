@@ -18,7 +18,7 @@ import widgetStatsChartWrapperMixin from '@/mixins/widget/stats/stats-chart-wrap
 
 import { SORT_ORDERS } from '@/constants';
 
-import StatsParetoChart from './stats-pareto-chart.vue';
+const StatsParetoChart = () => import(/* webpackChunkName: "Charts" */ './stats-pareto-chart.vue');
 
 export default {
   components: {

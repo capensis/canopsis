@@ -37,7 +37,6 @@ import { STATS_DISPLAY_MODE, STATS_CRITICITY, SORT_ORDERS } from '@/constants';
 
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
-import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 import widgetStatsTableWrapperMixin from '@/mixins/widget/stats/stats-table-wrapper';
@@ -46,7 +45,6 @@ export default {
   mixins: [
     entitiesStatsMixin,
     widgetFetchQueryMixin,
-    entitiesUserPreferenceMixin,
     widgetStatsQueryMixin,
     widgetStatsWrapperMixin,
     widgetStatsTableWrapperMixin,
@@ -102,9 +100,13 @@ export default {
 
         if (value < criticityLevels.minor) {
           return colors.ok;
-        } else if (value < criticityLevels.major) {
+        }
+
+        if (value < criticityLevels.major) {
           return colors.minor;
-        } else if (value < criticityLevels.critical) {
+        }
+
+        if (value < criticityLevels.critical) {
           return colors.major;
         }
 
@@ -119,11 +121,16 @@ export default {
         if (mode === STATS_DISPLAY_MODE.criticity) {
           if (value < criticityLevels.minor) {
             return STATS_CRITICITY.ok;
-          } else if (value < criticityLevels.major) {
+          }
+
+          if (value < criticityLevels.major) {
             return STATS_CRITICITY.minor;
-          } else if (value < criticityLevels.critical) {
+          }
+
+          if (value < criticityLevels.critical) {
             return STATS_CRITICITY.major;
           }
+
           return STATS_CRITICITY.critical;
         }
 

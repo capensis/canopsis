@@ -22,11 +22,11 @@
 </template>
 
 <script>
-import moment from 'moment';
 import { isEmpty } from 'lodash';
 
 import { DATETIME_FORMATS } from '@/constants';
 
+import { convertDateToDateObject, convertDateToString } from '@/helpers/date/date';
 import uid from '@/helpers/uid';
 
 import { formBaseMixin } from '@/mixins/form';
@@ -69,7 +69,7 @@ export default {
     },
     dateObjectPreparer: {
       type: Function,
-      default: value => moment(value, DATETIME_FORMATS.dateTimePicker).toDate(),
+      default: value => convertDateToDateObject(value, DATETIME_FORMATS.dateTimePicker),
     },
   },
   data() {
@@ -137,7 +137,7 @@ export default {
   },
   methods: {
     updateObjectField(value) {
-      this.updateModel(moment(value).format(DATETIME_FORMATS.dateTimePicker));
+      this.updateModel(convertDateToString(value, DATETIME_FORMATS.dateTimePicker));
     },
 
     focus() {

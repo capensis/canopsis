@@ -19,7 +19,7 @@ Feature: get service entities with assigned instructions
       "description": "test-instruction-get-assigned-instruction-in-weather-api-1-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 1,
+        "value": 1,
         "unit": "s"
       },
       "steps": [
@@ -28,7 +28,7 @@ Feature: get service entities with assigned instructions
           "operations": [
             {
               "name": "test-instruction-get-assigned-instruction-in-weather-api-1-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-get-assigned-instruction-in-weather-api-1-step-1-operation-1-description",
               "jobs": []
             }
@@ -57,7 +57,7 @@ Feature: get service entities with assigned instructions
       "description": "test-instruction-get-assigned-instruction-in-weather-api-2-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 1,
+        "value": 1,
         "unit": "s"
       },
       "steps": [
@@ -66,7 +66,7 @@ Feature: get service entities with assigned instructions
           "operations": [
             {
               "name": "test-instruction-get-assigned-instruction-in-weather-api-2-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-get-assigned-instruction-in-weather-api-2-step-1-operation-1-description",
               "jobs": []
             }
@@ -145,6 +145,7 @@ Feature: get service entities with assigned instructions
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
       "enabled": true,
+      "sli_avail_state": 1,
       "entity_patterns": [
         {"name": "test-alarm-weather-widget-instructions-resource-1"},
         {"name": "test-alarm-weather-widget-instructions-resource-2"},
@@ -153,6 +154,7 @@ Feature: get service entities with assigned instructions
       ]
     }
     """
+    Then the response code should be 201
     When I wait the end of 2 events processing
     When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-1?with_instructions=true
     Then the response code should be 200
@@ -215,12 +217,12 @@ Feature: get service entities with assigned instructions
       "description": "test-instruction-get-assigned-instruction-in-weather-api-1-1-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 1,
+        "value": 1,
         "unit": "s"
       },
       "jobs": [
         {
-          "job": "test-job-to-run-auto-instruction-6"
+          "job": "test-job-to-run-auto-instruction-7"
         }
       ],
       "priority": 30
@@ -240,12 +242,12 @@ Feature: get service entities with assigned instructions
       "description": "test-instruction-get-assigned-instruction-in-weather-api-1-1-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 1,
+        "value": 1,
         "unit": "s"
       },
       "jobs": [
         {
-          "job": "test-job-to-run-auto-instruction-6"
+          "job": "test-job-to-run-auto-instruction-7"
         }
       ],
       "priority": 31
@@ -289,11 +291,13 @@ Feature: get service entities with assigned instructions
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
       "enabled": true,
+      "sli_avail_state": 1,
       "entity_patterns": [
         {"name": "test-alarm-weather-widget-instructions-resource-5"}
       ]
     }
     """
+    Then the response code should be 201
     When I wait the end of 2 events processing
     When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-2?with_instructions=true
     Then the response code should be 200
@@ -373,7 +377,7 @@ Feature: get service entities with assigned instructions
       "description": "test-instruction-get-assigned-instruction-in-weather-api-5-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 1,
+        "value": 1,
         "unit": "s"
       },
       "steps": [
@@ -382,7 +386,7 @@ Feature: get service entities with assigned instructions
           "operations": [
             {
               "name": "test-instruction-get-assigned-instruction-in-weather-api-5-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-get-assigned-instruction-in-weather-api-5-step-1-operation-1-description",
               "jobs": []
             }
@@ -422,11 +426,13 @@ Feature: get service entities with assigned instructions
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
       "enabled": true,
+      "sli_avail_state": 1,
       "entity_patterns": [
         {"name": "test-alarm-weather-widget-instructions-resource-6"}
       ]
     }
     """
+    Then the response code should be 201
     When I wait the end of 2 events processing
     When I do POST /api/v4/cat/executions:
     """json
