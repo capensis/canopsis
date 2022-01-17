@@ -302,27 +302,23 @@ Feature: Create an eventfilter
       "author": "root"
     }
     """
-    When I do GET /api/v4/eventfilter/rules?search=Another%20entity%20copy
+    When I do GET /api/v4/eventfilter/rules/{{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """
     {
-      "data": [
-        {
-          "type":"enrichment",
-          "description":"Another entity copy",
-          "patterns":[{}],
-          "priority":0,
-          "enabled":true,
-          "config": {
-            "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
-            "on_success":"pass",
-            "on_failure":"pass"
-          },
-          "external_data":{"entity":{"type":"entity"}},
-          "author": "root"
-        }
-      ]
+      "type":"enrichment",
+      "description":"Another entity copy",
+      "patterns":[{}],
+      "priority":0,
+      "enabled":true,
+      "config": {
+        "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
+        "on_success":"pass",
+        "on_failure":"pass"
+      },
+      "external_data":{"entity":{"type":"entity"}},
+      "author": "root"
     }
     """
     When I do POST /api/v4/eventfilter/rules:
@@ -359,27 +355,23 @@ Feature: Create an eventfilter
       "author": "root"
     }
     """
-    When I do GET /api/v4/eventfilter/rules?search=More%20entity%20copy
+    When I do GET /api/v4/eventfilter/rules/{{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """
     {
-      "data": [
-        {
-          "type":"enrichment",
-          "description":"More entity copy",
-          "patterns":null,
-          "priority":0,
-          "enabled":true,
-          "config": {
-            "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
-            "on_success":"pass",
-            "on_failure":"pass"
-          },
-          "external_data":{"entity":{"type":"entity"}},
-          "author": "root"
-        }
-      ]
+      "type":"enrichment",
+      "description":"More entity copy",
+      "patterns":null,
+      "priority":0,
+      "enabled":true,
+      "config": {
+        "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
+        "on_success":"pass",
+        "on_failure":"pass"
+      },
+      "external_data":{"entity":{"type":"entity"}},
+      "author": "root"
     }
     """
     When I do POST /api/v4/eventfilter/rules:
