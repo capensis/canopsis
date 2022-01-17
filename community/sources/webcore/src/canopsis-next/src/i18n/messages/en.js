@@ -2024,6 +2024,7 @@ export default {
   },
 
   pbehavior: {
+    periodsCalendar: 'Calendar with periods',
     buttons: {
       addFilter: 'Add filter',
       editFilter: 'Edit filter',
