@@ -1212,7 +1212,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/eventfilter.EventFilter"
+                                "$ref": "#/definitions/eventfilter.CreateRequest"
                             }
                         }
                     }
@@ -3700,7 +3700,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/eventfilter.Rule"
+                            "$ref": "#/definitions/eventfilter.CreateRequest"
                         }
                     }
                 ],
@@ -3806,7 +3806,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/eventfilter.Rule"
+                            "$ref": "#/definitions/eventfilter.UpdateRequest"
                         }
                     },
                     "400": {
@@ -10963,7 +10963,7 @@ var doc = `{
                 },
                 "item": {
                     "type": "object",
-                    "$ref": "#/definitions/eventfilter.EventFilter"
+                    "$ref": "#/definitions/eventfilter.CreateRequest"
                 },
                 "status": {
                     "type": "integer"
@@ -11010,18 +11010,15 @@ var doc = `{
             "required": [
                 "_id",
                 "description",
-                "enabled",
                 "type"
             ],
             "properties": {
                 "_id": {
                     "type": "string"
                 },
-                "actions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/eventfilter.Action"
-                    }
+                "config": {
+                    "type": "object",
+                    "$ref": "#/definitions/eventfilter.RuleConfig"
                 },
                 "created": {
                     "type": "integer"
@@ -11034,13 +11031,9 @@ var doc = `{
                 },
                 "external_data": {
                     "type": "object",
-                    "additionalProperties": true
-                },
-                "on_failure": {
-                    "type": "string"
-                },
-                "on_success": {
-                    "type": "string"
+                    "additionalProperties": {
+                        "$ref": "#/definitions/eventfilter.ExternalDataParameters"
+                    }
                 },
                 "patterns": {
                     "type": "object",
@@ -11077,6 +11070,50 @@ var doc = `{
                     "$ref": "#/definitions/eventfilter.BulkUpdateRequestItem"
                 },
                 "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "eventfilter.CreateRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "type"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "config": {
+                    "type": "object",
+                    "$ref": "#/definitions/eventfilter.RuleConfig"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "external_data": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/eventfilter.ExternalDataParameters"
+                    }
+                },
+                "patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EventPatternList"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updated": {
                     "type": "integer"
                 }
             }
@@ -11175,6 +11212,47 @@ var doc = `{
                 },
                 "resource": {
                     "type": "string"
+                }
+            }
+        },
+        "eventfilter.UpdateRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "type"
+            ],
+            "properties": {
+                "config": {
+                    "type": "object",
+                    "$ref": "#/definitions/eventfilter.RuleConfig"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "external_data": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/eventfilter.ExternalDataParameters"
+                    }
+                },
+                "patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EventPatternList"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updated": {
+                    "type": "integer"
                 }
             }
         },
