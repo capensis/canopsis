@@ -1295,7 +1295,7 @@ definitions:
       id:
         type: string
       item:
-        $ref: '#/definitions/eventfilter.EventFilter'
+        $ref: '#/definitions/eventfilter.CreateRequest'
         type: object
       status:
         type: integer
@@ -1327,10 +1327,9 @@ definitions:
     properties:
       _id:
         type: string
-      actions:
-        items:
-          $ref: '#/definitions/eventfilter.Action'
-        type: array
+      config:
+        $ref: '#/definitions/eventfilter.RuleConfig'
+        type: object
       created:
         type: integer
       description:
@@ -1338,12 +1337,9 @@ definitions:
       enabled:
         type: boolean
       external_data:
-        additionalProperties: true
+        additionalProperties:
+          $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
-      on_failure:
-        type: string
-      on_success:
-        type: string
       patterns:
         $ref: '#/definitions/pattern.EventPatternList'
         type: object
@@ -1356,7 +1352,6 @@ definitions:
     required:
     - _id
     - description
-    - enabled
     - type
     type: object
   eventfilter.BulkUpdateResponseItem:
@@ -1374,6 +1369,36 @@ definitions:
         type: object
       status:
         type: integer
+    type: object
+  eventfilter.CreateRequest:
+    properties:
+      _id:
+        type: string
+      config:
+        $ref: '#/definitions/eventfilter.RuleConfig'
+        type: object
+      created:
+        type: integer
+      description:
+        type: string
+      enabled:
+        type: boolean
+      external_data:
+        additionalProperties:
+          $ref: '#/definitions/eventfilter.ExternalDataParameters'
+        type: object
+      patterns:
+        $ref: '#/definitions/pattern.EventPatternList'
+        type: object
+      priority:
+        type: integer
+      type:
+        type: string
+      updated:
+        type: integer
+    required:
+    - description
+    - type
     type: object
   eventfilter.ExternalDataParameters:
     properties:
@@ -1440,6 +1465,34 @@ definitions:
         type: string
       resource:
         type: string
+    type: object
+  eventfilter.UpdateRequest:
+    properties:
+      config:
+        $ref: '#/definitions/eventfilter.RuleConfig'
+        type: object
+      created:
+        type: integer
+      description:
+        type: string
+      enabled:
+        type: boolean
+      external_data:
+        additionalProperties:
+          $ref: '#/definitions/eventfilter.ExternalDataParameters'
+        type: object
+      patterns:
+        $ref: '#/definitions/pattern.EventPatternList'
+        type: object
+      priority:
+        type: integer
+      type:
+        type: string
+      updated:
+        type: integer
+    required:
+    - description
+    - type
     type: object
   export.Field:
     properties:
@@ -4492,7 +4545,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/eventfilter.EventFilter'
+            $ref: '#/definitions/eventfilter.CreateRequest'
           type: array
       produces:
       - application/json
@@ -6028,7 +6081,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/eventfilter.Rule'
+          $ref: '#/definitions/eventfilter.CreateRequest'
       produces:
       - application/json
       responses:
@@ -6117,7 +6170,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/eventfilter.Rule'
+            $ref: '#/definitions/eventfilter.UpdateRequest'
         "400":
           description: Bad Request
           schema:

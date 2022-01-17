@@ -41,7 +41,7 @@ func NewApi(
 // @Produce json
 // @Security ApiKeyAuth
 // @Security BasicAuth
-// @Param body body eventfilter.Rule true "body"
+// @Param body body CreateRequest true "body"
 // @Success 201 {object} eventfilter.Rule
 // @Failure 400 {object} common.ErrorResponse
 // @Router /eventfilter/rules [post]
@@ -145,7 +145,7 @@ func (a api) Get(c *gin.Context) {
 // @Security BasicAuth
 // @Param id path string true "eventfilter id"
 // @Param body body eventfilter.Rule true "body"
-// @Success 200 {object} eventfilter.Rule
+// @Success 200 {object} UpdateRequest
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
 // @Router /eventfilter/rules/{id} [put]
@@ -223,7 +223,7 @@ func (a api) Delete(c *gin.Context) {
 // @Produce json
 // @Security JWTAuth
 // @Security BasicAuth
-// @Param body body []EventFilter true "body"
+// @Param body body []CreateRequest true "body"
 // @Success 207 {array} []BulkCreateResponseItem
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /bulk/eventfilters [post]
