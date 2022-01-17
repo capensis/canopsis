@@ -55,7 +55,7 @@ func Default(
 	deferFunc DeferFunc,
 ) (API, error) {
 	// Retrieve config.
-	dbClient, err := mongo.NewClient(ctx, 0, 0)
+	dbClient, err := mongo.NewClient(ctx, 0, 0, logger)
 	if err != nil {
 		logger.Err(err).Msg("cannot connect to mongodb")
 		return nil, err
