@@ -6,7 +6,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
@@ -18,25 +17,23 @@ type API interface {
 	Get(c *gin.Context)
 	Update(c *gin.Context)
 	Delete(c *gin.Context)
-	UpdatePositions(c *gin.Context)
+	Copy(c *gin.Context)
+	UpdateGridPositions(c *gin.Context)
 }
 
 type api struct {
 	store        Store
-	tabStore     viewtab.Store
 	enforcer     security.Enforcer
 	actionLogger logger.ActionLogger
 }
 
 func NewApi(
 	store Store,
-	tabStore viewtab.Store,
 	enforcer security.Enforcer,
 	actionLogger logger.ActionLogger,
 ) API {
 	return &api{
 		store:        store,
-		tabStore:     tabStore,
 		enforcer:     enforcer,
 		actionLogger: actionLogger,
 	}
@@ -241,29 +238,41 @@ func (a *api) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// Update widgets positions
-// @Summary Update widgets positions
-// @Description Update widgets positions
+// Copy widget
+// @Summary Copy widget
+// @Description Copy widget
 // @Tags widgets
-// @ID widgets-update-positions
+// @ID widgets-copy
 // @Accept json
 // @Produce json
 // @Security JWTAuth
 // @Security BasicAuth
-// @Param body body []string true "body"
-// @Success 204
+// @Param id path string true "widget id"
+// @Param body body CopyRequest true "body"
+// @Success 201 {object} view.Widget
+// @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
-// @Router /widget-positions [put]
-func (a *api) UpdatePositions(c *gin.Context) {
-	request := EditPositionRequest{}
+// @Router /widget-copy/{id} [post]
+func (a *api) Copy(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+	id := c.Param("id")
+	request := CopyRequest{}
 
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey).(string)
-	ok, err := a.checkAccess(c.Request.Context(), request.Items, userId, model.PermissionUpdate)
+	widget, err := a.store.GetOneBy(c.Request.Context(), id)
+	if err != nil {
+		panic(err)
+	}
+	if widget == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	ok, err := a.checkAccessByTab(c.Request.Context(), widget.Tab, userId, model.PermissionRead)
 	if err != nil {
 		panic(err)
 	}
@@ -273,7 +282,75 @@ func (a *api) UpdatePositions(c *gin.Context) {
 		return
 	}
 
-	ok, err = a.store.UpdatePositions(c.Request.Context(), request.Items)
+	ok, err = a.checkAccessByTab(c.Request.Context(), request.Tab, userId, model.PermissionUpdate)
+	if err != nil {
+		panic(err)
+	}
+
+	if !ok {
+		c.JSON(http.StatusForbidden, common.ForbiddenResponse)
+		return
+	}
+
+	newWidget, err := a.store.Copy(c.Request.Context(), *widget, request)
+	if err != nil {
+		panic(err)
+	}
+
+	if newWidget == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	err = a.actionLogger.Action(c, userId, logger.LogEntry{
+		Action:    logger.ActionCreate,
+		ValueType: logger.ValueTypeWidget,
+		ValueID:   newWidget.ID,
+	})
+	if err != nil {
+		a.actionLogger.Err(err, "failed to log action")
+	}
+
+	c.JSON(http.StatusCreated, newWidget)
+}
+
+// Update widgets grid positions
+// @Summary Update widgets grid positions
+// @Description Update widgets grid positions
+// @Tags widgets
+// @ID widgets-update-grid-positions
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []EditGridPositionItemRequest true "body"
+// @Success 204
+// @Failure 404 {object} common.ErrorResponse
+// @Router /widget-grid-positions [put]
+func (a *api) UpdateGridPositions(c *gin.Context) {
+	request := EditGridPositionRequest{}
+
+	if err := c.ShouldBind(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	userId := c.MustGet(auth.UserKey).(string)
+	ids := make([]string, len(request.Items))
+	for i, item := range request.Items {
+		ids[i] = item.ID
+	}
+	ok, err := a.checkAccess(c.Request.Context(), ids, userId, model.PermissionUpdate)
+	if err != nil {
+		panic(err)
+	}
+
+	if !ok {
+		c.JSON(http.StatusForbidden, common.ForbiddenResponse)
+		return
+	}
+
+	ok, err = a.store.UpdateGridPositions(c.Request.Context(), request.Items)
 	if err != nil {
 		valErr := ValidationErr{}
 		if errors.As(err, &valErr) {
@@ -308,10 +385,10 @@ func (a *api) checkAccess(ctx context.Context, ids []string, userId, perm string
 }
 
 func (a *api) checkAccessByTab(ctx context.Context, tabId string, userId, perm string) (bool, error) {
-	tab, err := a.tabStore.GetOneBy(ctx, tabId)
-	if err != nil || tab == nil {
+	viewId, err := a.store.FindViewIdByTab(ctx, tabId)
+	if err != nil || viewId == "" {
 		return false, err
 	}
 
-	return a.enforcer.Enforce(userId, tab.View, perm)
+	return a.enforcer.Enforce(userId, viewId, perm)
 }

@@ -3,6 +3,7 @@ package viewtab
 import (
 	"context"
 	"errors"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -18,15 +19,18 @@ type Store interface {
 	Insert(ctx context.Context, r EditRequest) (*view.Tab, error)
 	Update(ctx context.Context, oldTab view.Tab, r EditRequest) (*view.Tab, error)
 	Delete(ctx context.Context, id string) (bool, error)
+	Copy(ctx context.Context, tab view.Tab, r CopyRequest) (*view.Tab, error)
 	UpdatePositions(ctx context.Context, tabs []view.Tab) (bool, error)
 }
 
-func NewStore(dbClient mongo.DbClient) Store {
+func NewStore(dbClient mongo.DbClient, widgetStore widget.Store) Store {
 	return &store{
 		collection:         dbClient.Collection(mongo.ViewTabMongoCollection),
 		widgetCollection:   dbClient.Collection(mongo.WidgetMongoCollection),
 		playlistCollection: dbClient.Collection(mongo.PlaylistMongoCollection),
 		userPrefCollection: dbClient.Collection(mongo.UserPreferencesMongoCollection),
+
+		widgetStore: widgetStore,
 	}
 }
 
@@ -35,6 +39,8 @@ type store struct {
 	widgetCollection   mongo.DbCollection
 	playlistCollection mongo.DbCollection
 	userPrefCollection mongo.DbCollection
+
+	widgetStore widget.Store
 }
 
 func (s *store) Find(ctx context.Context, ids []string) ([]view.Tab, error) {
@@ -78,7 +84,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*view.Tab, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r EditRequest) (*view.Tab, error) {
-	count, err := s.collection.CountDocuments(ctx, bson.M{})
+	count, err := s.collection.CountDocuments(ctx, bson.M{"view": r.View})
 	if err != nil {
 		return nil, err
 	}
@@ -145,6 +151,50 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func (s *store) Copy(ctx context.Context, tab view.Tab, r CopyRequest) (*view.Tab, error) {
+	count, err := s.collection.CountDocuments(ctx, bson.M{"view": r.View})
+	if err != nil {
+		return nil, err
+	}
+	id := tab.ID
+	now := types.CpsTime{Time: time.Now()}
+	tab.ID = utils.NewID()
+	tab.View = r.View
+	tab.Author = r.Author
+	tab.Position = count
+	tab.Created = now
+	tab.Updated = now
+
+	_, err = s.collection.InsertOne(ctx, tab)
+	if err != nil {
+		return nil, err
+	}
+
+	cursor, err := s.widgetCollection.Find(ctx, bson.M{"tab": id})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		w := view.Widget{}
+		err := cursor.Decode(&w)
+		if err != nil {
+			return nil, err
+		}
+
+		_, err = s.widgetStore.Copy(ctx, w, widget.CopyRequest{
+			Tab:    tab.ID,
+			Author: r.Author,
+		})
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &tab, nil
 }
 
 func (s *store) UpdatePositions(ctx context.Context, tabs []view.Tab) (bool, error) {

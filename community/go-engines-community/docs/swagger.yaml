@@ -2417,9 +2417,6 @@ definitions:
       updated:
         type: integer
     type: object
-  primitive.M:
-    additionalProperties: true
-    type: object
   resolverule.CreateRequest:
     properties:
       _id:
@@ -3751,6 +3748,13 @@ definitions:
       updated:
         type: integer
     type: object
+  viewtab.CopyRequest:
+    properties:
+      view:
+        type: string
+    required:
+    - view
+    type: object
   viewtab.EditRequest:
     properties:
       title:
@@ -3760,6 +3764,21 @@ definitions:
     required:
     - title
     - view
+    type: object
+  widget.CopyRequest:
+    properties:
+      tab:
+        type: string
+    required:
+    - tab
+    type: object
+  widget.EditGridPositionItemRequest:
+    properties:
+      _id:
+        type: string
+      grid_parameters:
+        additionalProperties: true
+        type: object
     type: object
   widget.EditRequest:
     properties:
@@ -8710,6 +8729,45 @@ paths:
       summary: Update user by id
       tags:
       - users
+  /view-copy/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Copy view
+      operationId: views-copy
+      parameters:
+      - description: view id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/view.EditRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/viewgroup.View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Copy view
+      tags:
+      - views
   /view-export:
     post:
       consumes:
@@ -8962,6 +9020,45 @@ paths:
       summary: Update views positions
       tags:
       - views
+  /view-tab-copy/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Copy view tab
+      operationId: viewtabs-copy
+      parameters:
+      - description: tab id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/viewtab.CopyRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/view.Tab'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Copy view tab
+      tags:
+      - viewtabs
   /view-tab-positions:
     put:
       consumes:
@@ -9386,6 +9483,45 @@ paths:
       summary: Find all entity by service id
       tags:
       - weather-services
+  /widget-copy/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Copy widget
+      operationId: widgets-copy
+      parameters:
+      - description: widget id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/widget.CopyRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/view.Widget'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Copy widget
+      tags:
+      - widgets
   /widget-filters:
     post:
       consumes:
@@ -9502,12 +9638,12 @@ paths:
       summary: Update widget filter by id
       tags:
       - widgetfilters
-  /widget-positions:
+  /widget-grid-positions:
     put:
       consumes:
       - application/json
-      description: Update widgets positions
-      operationId: widgets-update-positions
+      description: Update widgets grid positions
+      operationId: widgets-update-grid-positions
       parameters:
       - description: body
         in: body
@@ -9515,7 +9651,7 @@ paths:
         required: true
         schema:
           items:
-            type: string
+            $ref: '#/definitions/widget.EditGridPositionItemRequest'
           type: array
       produces:
       - application/json
@@ -9528,7 +9664,7 @@ paths:
       security:
       - JWTAuth: []
       - BasicAuth: []
-      summary: Update widgets positions
+      summary: Update widgets grid positions
       tags:
       - widgets
   /widgets:

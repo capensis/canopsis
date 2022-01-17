@@ -180,38 +180,38 @@
     "updated": 1611229670
   },
   {
-    "_id": "test-tab-to-widget-update-position-1",
-    "title": "test-tab-to-widget-update-position-1-title",
-    "view": "test-view-to-widget-update-position-1",
+    "_id": "test-tab-to-widget-update-grid-position-1",
+    "title": "test-tab-to-widget-update-grid-position-1-title",
+    "view": "test-view-to-widget-update-grid-position-1",
     "position": 0,
-    "author": "test-author-to-widget-update-position",
+    "author": "test-author-to-widget-update-grid-position",
     "created": 1611229670,
     "updated": 1611229670
   },
   {
-    "_id": "test-tab-to-widget-update-position-2",
-    "title": "test-tab-to-widget-update-position-2-title",
-    "view": "test-view-to-widget-update-position-2",
+    "_id": "test-tab-to-widget-update-grid-position-2",
+    "title": "test-tab-to-widget-update-grid-position-2-title",
+    "view": "test-view-to-widget-update-grid-position-2",
     "position": 1,
-    "author": "test-author-to-widget-update-position",
+    "author": "test-author-to-widget-update-grid-position",
     "created": 1611229670,
     "updated": 1611229670
   },
   {
-    "_id": "test-tab-to-widget-update-position-3",
-    "title": "test-tab-to-widget-update-position-3-title",
-    "view": "test-view-to-widget-update-position-2",
+    "_id": "test-tab-to-widget-update-grid-position-3",
+    "title": "test-tab-to-widget-update-grid-position-3-title",
+    "view": "test-view-to-widget-update-grid-position-2",
     "position": 0,
-    "author": "test-author-to-widget-update-position",
+    "author": "test-author-to-widget-update-grid-position",
     "created": 1611229670,
     "updated": 1611229670
   },
   {
-    "_id": "test-tab-to-widget-update-position-4",
-    "title": "test-tab-to-widget-update-position-4-title",
-    "view": "test-view-to-widget-update-position-3",
+    "_id": "test-tab-to-widget-update-grid-position-4",
+    "title": "test-tab-to-widget-update-grid-position-4-title",
+    "view": "test-view-to-widget-update-grid-position-3",
     "position": 0,
-    "author": "test-author-to-widget-update-position",
+    "author": "test-author-to-widget-update-grid-position",
     "created": 1611229670,
     "updated": 1611229670
   },
@@ -257,6 +257,69 @@
     "view": "test-view-to-widgetfilter-check-access",
     "position": 0,
     "author": "test-author-to-widgetfilter-check-access",
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-tab-to-view-copy-1",
+    "title": "test-tab-to-view-copy-1-title",
+    "view": "test-view-to-copy-1",
+    "position": 0,
+    "author": "test-author-to-view-copy",
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-tab-to-copy-1",
+    "title": "test-tab-to-copy-1-title",
+    "view": "test-view-to-tab-copy-1",
+    "position": 0,
+    "author": "test-author-to-tab-copy",
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-tab-to-copy-2",
+    "title": "test-tab-to-copy-2-title",
+    "view": "test-view-to-tab-copy-2",
+    "position": 0,
+    "author": "test-author-to-tab-copy",
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-tab-to-copy-3",
+    "title": "test-tab-to-copy-3-title",
+    "view": "test-view-to-tab-copy-3",
+    "position": 0,
+    "author": "test-author-to-tab-copy",
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-tab-to-widget-copy-1",
+    "title": "test-tab-to-widget-copy-1-title",
+    "view": "test-view-to-widget-copy-1",
+    "position": 0,
+    "author": "test-author-to-widget-copy",
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-tab-to-widget-copy-2",
+    "title": "test-tab-to-widget-copy-2-title",
+    "view": "test-view-to-widget-copy-2",
+    "position": 0,
+    "author": "test-author-to-widget-copy",
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-tab-to-widget-copy-3",
+    "title": "test-tab-to-widget-copy-3-title",
+    "view": "test-view-to-widget-copy-3",
+    "position": 0,
+    "author": "test-author-to-widget-copy",
     "created": 1611229670,
     "updated": 1611229670
   }

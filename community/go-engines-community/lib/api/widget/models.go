@@ -16,14 +16,24 @@ type EditRequest struct {
 	Author         string                 `json:"author" swaggerignore:"true"`
 }
 
-type EditPositionRequest struct {
-	Items []string `json:"items" binding:"required,notblank,unique"`
+type EditGridPositionItemRequest struct {
+	ID             string                 `json:"_id"`
+	GridParameters map[string]interface{} `json:"grid_parameters"`
 }
 
-func (r EditPositionRequest) MarshalJSON() ([]byte, error) {
+type EditGridPositionRequest struct {
+	Items []EditGridPositionItemRequest `json:"items" binding:"required,notblank"`
+}
+
+func (r EditGridPositionRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(r.Items)
 }
 
-func (r *EditPositionRequest) UnmarshalJSON(b []byte) error {
+func (r *EditGridPositionRequest) UnmarshalJSON(b []byte) error {
 	return json.Unmarshal(b, &r.Items)
+}
+
+type CopyRequest struct {
+	Tab    string `json:"tab" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
 }

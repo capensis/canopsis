@@ -16,6 +16,7 @@ type API interface {
 	Get(c *gin.Context)
 	Update(c *gin.Context)
 	Delete(c *gin.Context)
+	Copy(c *gin.Context)
 	UpdatePositions(c *gin.Context)
 }
 
@@ -259,6 +260,83 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// Copy view tab
+// @Summary Copy view tab
+// @Description Copy view tab
+// @Tags viewtabs
+// @ID viewtabs-copy
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param id path string true "tab id"
+// @Param body body CopyRequest true "body"
+// @Success 201 {object} view.Tab
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Failure 404 {object} common.ErrorResponse
+// @Router /view-tab-copy/{id} [post]
+func (a *api) Copy(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+	id := c.Param("id")
+	request := CopyRequest{}
+
+	if err := c.ShouldBind(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	tab, err := a.store.GetOneBy(c.Request.Context(), id)
+	if err != nil {
+		panic(err)
+	}
+
+	if tab == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	ok, err := a.enforcer.Enforce(userId, tab.View, model.PermissionRead)
+	if err != nil {
+		panic(err)
+	}
+
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+		return
+	}
+
+	ok, err = a.enforcer.Enforce(userId, request.View, model.PermissionUpdate)
+	if err != nil {
+		panic(err)
+	}
+
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+		return
+	}
+
+	newTab, err := a.store.Copy(c.Request.Context(), *tab, request)
+	if err != nil {
+		panic(err)
+	}
+
+	if newTab == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	err = a.actionLogger.Action(c, userId, logger.LogEntry{
+		Action:    logger.ActionCreate,
+		ValueType: logger.ValueTypeViewTab,
+		ValueID:   newTab.ID,
+	})
+	if err != nil {
+		a.actionLogger.Err(err, "failed to log action")
+	}
+
+	c.JSON(http.StatusCreated, newTab)
 }
 
 // Update view tabs positions

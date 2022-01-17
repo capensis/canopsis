@@ -6,7 +6,7 @@
     "title": "test-widget-to-view-get-1-title",
     "updated": 1611229670,
     "grid_parameters": {
-      "test-widget-to-view-get-1-gridparameter": "test-widget-to-view-get-1-gridparameter-value"
+      "desktop": {"x": 0, "y": 0}
     },
     "parameters": {
       "test-widget-to-view-get-1-parameter-1": {
@@ -19,7 +19,6 @@
       ]
     },
     "tab": "test-tab-to-view-get-1",
-    "position": 0,
     "type": "test-widget-to-view-get-1-type"
   },
   {
@@ -29,7 +28,7 @@
     "title": "test-widget-to-view-get-2-title",
     "updated": 1611229670,
     "grid_parameters": {
-      "test-widget-to-view-get-2-gridparameter": "test-widget-to-view-get-2-gridparameter-value"
+      "desktop": {"x": 0, "y": 1}
     },
     "parameters": {
       "test-widget-to-view-get-2-parameter-1": {
@@ -42,7 +41,6 @@
       ]
     },
     "tab": "test-tab-to-view-get-1",
-    "position": 1,
     "type": "test-widget-to-view-get-2-type"
   },
   {
@@ -50,8 +48,6 @@
     "title": "test-widget-to-junit-edit-dir-param-title",
     "type": "Junit",
     "tab": "test-tab-to-junit-edit-dir-param",
-    "position": 0,
-    "grid_parameters": {},
     "parameters": {
       "directory": "test-widget-to-junit-edit-dir-param-param-dir"
     },
@@ -69,7 +65,6 @@
     "title": "test-widget-to-view-delete-title",
     "type": "test-widget-to-view-delete-type",
     "tab": "test-tab-to-view-delete",
-    "position": 0,
     "author": "test-author-to-view-delete",
     "created": 1611229670,
     "updated": 1611229670
@@ -79,7 +74,6 @@
     "title": "test-widget-to-user-preferences-update-1-title",
     "type": "test-widget-to-user-preferences-update-1-type",
     "tab": "test-tab-to-user-preferences-update-1",
-    "position": 0,
     "author": "test-author-to-user-preferences-update",
     "created": 1611229670,
     "updated": 1611229670
@@ -89,7 +83,6 @@
     "title": "test-widget-to-user-preferences-update-2-title",
     "type": "test-widget-to-user-preferences-update-2-type",
     "tab": "test-tab-to-user-preferences-update-2",
-    "position": 0,
     "author": "test-author-to-user-preferences-update",
     "created": 1611229670,
     "updated": 1611229670
@@ -99,7 +92,6 @@
     "title": "test-widget-to-junit-test-suites-get-1-title",
     "type": "Junit",
     "tab": "test-tab-to-junit-test-suites-get",
-    "position": 0,
     "author": "test-author-to-user-preferences-update",
     "created": 1611229670,
     "updated": 1611229670
@@ -115,7 +107,6 @@
         "7e5d2a21-be12-47d1-a286-0b46b6b2b99b"
       ]
     },
-    "position": 1,
     "author": "test-author-to-user-preferences-update",
     "created": 1611229670,
     "updated": 1611229670
@@ -125,7 +116,6 @@
     "title": "test-widget-to-delete-title",
     "type": "test-widget-to-delete-type",
     "tab": "test-tab-to-widget-edit",
-    "position": 0,
     "author": "test-author-to-widget-edit",
     "created": 1611229670,
     "updated": 1611229670
@@ -135,9 +125,8 @@
     "title": "test-widget-to-get-title",
     "type": "test-widget-to-get-type",
     "tab": "test-tab-to-widget-edit",
-    "position": 1,
     "grid_parameters": {
-      "test-widget-to-get-gridparameter": "test-widget-to-get-gridparameter-value"
+      "desktop": {"x": 0, "y": 0}
     },
     "parameters": {
       "test-widget-to-get-parameter-1": {
@@ -158,7 +147,6 @@
     "title": "test-widget-to-update-title",
     "type": "test-widget-to-update-type",
     "tab": "test-tab-to-widget-edit",
-    "position": 2,
     "author": "test-author-to-widget-edit",
     "created": 1611229670,
     "updated": 1611229670
@@ -168,48 +156,43 @@
     "title": "test-widget-to-check-access-title",
     "type": "test-widget-to-check-access-type",
     "tab": "test-tab-to-widget-check-access",
-    "position": 0,
     "author": "test-author-to-widget-check-access",
     "created": 1611229670,
     "updated": 1611229670
   },
   {
-    "_id": "test-widget-to-update-position-2",
-    "title": "test-widget-to-update-position-2-title",
-    "type": "test-widget-to-update-position-2-type",
-    "tab": "test-tab-to-widget-update-position-2",
-    "position": 0,
-    "author": "test-author-to-widget-update-position",
+    "_id": "test-widget-to-update-grid-position-2",
+    "title": "test-widget-to-update-grid-position-2-title",
+    "type": "test-widget-to-update-grid-position-2-type",
+    "tab": "test-tab-to-widget-update-grid-position-2",
+    "author": "test-author-to-widget-update-grid-position",
     "created": 1611229670,
     "updated": 1611229670
   },
   {
-    "_id": "test-widget-to-update-position-3-1",
-    "title": "test-widget-to-update-position-3-1-title",
-    "type": "test-widget-to-update-position-3-1-type",
-    "tab": "test-tab-to-widget-update-position-3",
-    "position": 0,
-    "author": "test-author-to-widget-update-position",
+    "_id": "test-widget-to-update-grid-position-3-1",
+    "title": "test-widget-to-update-grid-position-3-1-title",
+    "type": "test-widget-to-update-grid-position-3-1-type",
+    "tab": "test-tab-to-widget-update-grid-position-3",
+    "author": "test-author-to-widget-update-grid-position",
     "created": 1611229670,
     "updated": 1611229670
   },
   {
-    "_id": "test-widget-to-update-position-3-2",
-    "title": "test-widget-to-update-position-3-2-title",
-    "type": "test-widget-to-update-position-3-2-type",
-    "tab": "test-tab-to-widget-update-position-3",
-    "position": 0,
-    "author": "test-author-to-widget-update-position",
+    "_id": "test-widget-to-update-grid-position-3-2",
+    "title": "test-widget-to-update-grid-position-3-2-title",
+    "type": "test-widget-to-update-grid-position-3-2-type",
+    "tab": "test-tab-to-widget-update-grid-position-3",
+    "author": "test-author-to-widget-update-grid-position",
     "created": 1611229670,
     "updated": 1611229670
   },
   {
-    "_id": "test-widget-to-update-position-4",
-    "title": "test-widget-to-update-position-4-title",
-    "type": "test-widget-to-update-position-4-type",
-    "tab": "test-tab-to-widget-update-position-4",
-    "position": 0,
-    "author": "test-author-to-widget-update-position",
+    "_id": "test-widget-to-update-grid-position-4",
+    "title": "test-widget-to-update-grid-position-4-title",
+    "type": "test-widget-to-update-grid-position-4-type",
+    "tab": "test-tab-to-widget-update-grid-position-4",
+    "author": "test-author-to-widget-update-grid-position",
     "created": 1611229670,
     "updated": 1611229670
   },
@@ -218,9 +201,8 @@
     "title": "test-widget-to-export-1-title",
     "type": "test-widget-to-export-1-type",
     "tab": "test-tab-to-export-1",
-    "position": 0,
     "grid_parameters": {
-      "test-widget-to-view-export-1-gridparameter": "test-widget-to-view-export-1-gridparameter-value"
+      "desktop": {"x": 0, "y": 0}
     },
     "parameters": {
       "main_filter": "test-widgetfilter-to-export-2",
@@ -242,7 +224,6 @@
     "title": "test-widget-to-user-preferences-get-1-title",
     "type": "test-widget-to-user-preferences-get-1-type",
     "tab": "test-tab-to-user-preferences-get",
-    "position": 0,
     "author": "test-author-to-user-preferences-get",
     "created": 1611229670,
     "updated": 1611229670
@@ -252,7 +233,6 @@
     "title": "test-widget-to-user-preferences-get-2-title",
     "type": "test-widget-to-user-preferences-get-2-type",
     "tab": "test-tab-to-user-preferences-get",
-    "position": 1,
     "author": "test-author-to-user-preferences-get",
     "created": 1611229670,
     "updated": 1611229670
@@ -262,9 +242,101 @@
     "title": "test-widget-to-widgetfilter-edit-title",
     "type": "test-widget-to-widgetfilter-edit-type",
     "tab": "test-tab-to-widgetfilter-edit",
-    "position": 0,
     "author": "test-author-to-widgetfilter-edit",
     "created": 1611229670,
     "updated": 1611229670
+  },
+  {
+    "_id": "test-widget-to-view-copy-1",
+    "author": "test-widget-to-view-copy-1-author",
+    "created": 1611229670,
+    "title": "test-widget-to-view-copy-1-title",
+    "updated": 1611229670,
+    "grid_parameters": {
+      "desktop": {"x": 0, "y": 0}
+    },
+    "parameters": {
+      "main_filter": "test-widgetfilter-to-view-copy-1",
+      "test-widget-to-view-copy-1-parameter-1": {
+        "test-widget-to-view-copy-1-parameter-1-subparameter": "test-widget-to-view-copy-1-parameter-1-subvalue"
+      },
+      "test-widget-to-view-copy-1-parameter-2": [
+        {
+          "test-widget-to-view-copy-1-parameter-2-subparameter": "test-widget-to-view-copy-1-parameter-2-subvalue"
+        }
+      ]
+    },
+    "tab": "test-tab-to-view-copy-1",
+    "type": "test-widget-to-view-copy-1-type"
+  },
+  {
+    "_id": "test-widget-to-tab-copy-1",
+    "author": "test-widget-to-tab-copy-1-author",
+    "created": 1611229670,
+    "title": "test-widget-to-tab-copy-1-title",
+    "updated": 1611229670,
+    "grid_parameters": {
+      "desktop": {"x": 0, "y": 0}
+    },
+    "parameters": {
+      "main_filter": "test-widgetfilter-to-tab-copy-1",
+      "test-widget-to-tab-copy-1-parameter-1": {
+        "test-widget-to-tab-copy-1-parameter-1-subparameter": "test-widget-to-tab-copy-1-parameter-1-subvalue"
+      },
+      "test-widget-to-tab-copy-1-parameter-2": [
+        {
+          "test-widget-to-tab-copy-1-parameter-2-subparameter": "test-widget-to-tab-copy-1-parameter-2-subvalue"
+        }
+      ]
+    },
+    "tab": "test-tab-to-copy-1",
+    "type": "test-widget-to-tab-copy-1-type"
+  },
+  {
+    "_id": "test-widget-to-copy-1",
+    "author": "test-widget-to-copy-1-author",
+    "created": 1611229670,
+    "title": "test-widget-to-copy-1-title",
+    "updated": 1611229670,
+    "grid_parameters": {
+      "desktop": {"x": 0, "y": 1}
+    },
+    "parameters": {
+      "main_filter": "test-widgetfilter-to-widget-copy-1",
+      "test-widget-to-copy-1-parameter-1": {
+        "test-widget-to-copy-1-parameter-1-subparameter": "test-widget-to-copy-1-parameter-1-subvalue"
+      },
+      "test-widget-to-copy-1-parameter-2": [
+        {
+          "test-widget-to-copy-1-parameter-2-subparameter": "test-widget-to-copy-1-parameter-2-subvalue"
+        }
+      ]
+    },
+    "tab": "test-tab-to-widget-copy-1",
+    "type": "test-widget-to-copy-1-type"
+  },
+  {
+    "_id": "test-widget-to-copy-2",
+    "author": "test-widget-to-copy-2-author",
+    "created": 1611229670,
+    "title": "test-widget-to-copy-2-title",
+    "updated": 1611229670,
+    "grid_parameters": {
+      "desktop": {"x": 0, "y": 0}
+    },
+    "tab": "test-tab-to-widget-copy-2",
+    "type": "test-widget-to-copy-2-type"
+  },
+  {
+    "_id": "test-widget-to-copy-3",
+    "author": "test-widget-to-copy-3-author",
+    "created": 1611229670,
+    "title": "test-widget-to-copy-3-title",
+    "updated": 1611229670,
+    "grid_parameters": {
+      "desktop": {"x": 0, "y": 0}
+    },
+    "tab": "test-tab-to-widget-copy-3",
+    "type": "test-widget-to-copy-3-type"
   }
 ]

@@ -13,7 +13,7 @@ Feature: Get a widget
       "title": "test-widget-to-get-title",
       "type": "test-widget-to-get-type",
       "grid_parameters": {
-        "test-widget-to-get-gridparameter": "test-widget-to-get-gridparameter-value"
+        "desktop": {"x": 0, "y": 0}
       },
       "parameters": {
         "test-widget-to-get-parameter-1": {
