@@ -189,18 +189,19 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 		},
 		logger,
 	))
-	engine.AddPeriodicalWorker(&periodicalWorker{
+	engine.AddPeriodicalWorker("local cache", &periodicalWorker{
 		RuleService:        eventFilterService,
 		PeriodicalInterval: options.PeriodicalWaitTime,
+		Logger:             logger,
 	})
-	engine.AddPeriodicalWorker(libengine.NewRunInfoPeriodicalWorker(
+	engine.AddPeriodicalWorker("run info", libengine.NewRunInfoPeriodicalWorker(
 		canopsis.PeriodicalWaitTime,
 		libengine.NewRunInfoManager(runInfoRedisClient),
 		libengine.NewInstanceRunInfo(canopsis.FIFOEngineName, options.ConsumeFromQueue, options.PublishToQueue),
 		amqpChannel,
 		logger,
 	))
-	engine.AddPeriodicalWorker(libengine.NewLockedPeriodicalWorker(
+	engine.AddPeriodicalWorker("outdated rates", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(engineLockRedisClient),
 		redis.FifoDeleteOutdatedRatesLockKey,
 		&deleteOutdatedRatesWorker{
@@ -213,7 +214,7 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 		},
 		logger,
 	))
-	engine.AddPeriodicalWorker(libengine.NewLoadConfigPeriodicalWorker(
+	engine.AddPeriodicalWorker("config", libengine.NewLoadConfigPeriodicalWorker(
 		canopsis.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),
 		timezoneConfigProvider,

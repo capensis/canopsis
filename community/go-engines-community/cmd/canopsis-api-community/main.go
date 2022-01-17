@@ -1,5 +1,7 @@
 package main
 
+//go:generate swag init  -d ../../lib -g ../cmd/canopsis-api-community/main.go -o ../../docs
+
 import (
 	"context"
 	"os"
@@ -48,7 +50,7 @@ func main() {
 	}
 
 	// Retrieve config.
-	dbClient, err := mongo.NewClient(ctx, 0, 0)
+	dbClient, err := mongo.NewClient(ctx, 0, 0, logger)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("cannot connect to mongodb")
 	}
