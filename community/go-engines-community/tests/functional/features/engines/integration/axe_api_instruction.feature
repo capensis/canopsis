@@ -33,7 +33,7 @@ Feature: instruction execution should be added to alarm steps
       "description": "test-instruction-axe-api-instruction-1-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -42,7 +42,7 @@ Feature: instruction execution should be added to alarm steps
           "operations": [
             {
               "name": "test-instruction-axe-api-instruction-1-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-axe-api-instruction-1-step-1-operation-1-description"
             }
           ],
@@ -121,7 +121,7 @@ Feature: instruction execution should be added to alarm steps
       "description": "test-instruction-axe-api-instruction-2-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -130,7 +130,7 @@ Feature: instruction execution should be added to alarm steps
           "operations": [
             {
               "name": "test-instruction-axe-api-instruction-2-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-axe-api-instruction-2-step-1-operation-1-description"
             }
           ],
@@ -142,7 +142,7 @@ Feature: instruction execution should be added to alarm steps
           "operations": [
             {
               "name": "test-instruction-axe-api-instruction-2-step-2-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-axe-api-instruction-2-step-2-operation-1-description"
             }
           ],
@@ -227,7 +227,7 @@ Feature: instruction execution should be added to alarm steps
       "description": "test-instruction-axe-api-instruction-3-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -236,7 +236,7 @@ Feature: instruction execution should be added to alarm steps
           "operations": [
             {
               "name": "test-instruction-axe-api-instruction-3-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-axe-api-instruction-3-step-1-operation-1-description"
             }
           ],
@@ -319,7 +319,7 @@ Feature: instruction execution should be added to alarm steps
       "description": "test-instruction-axe-api-instruction-4-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -328,7 +328,7 @@ Feature: instruction execution should be added to alarm steps
           "operations": [
             {
               "name": "test-instruction-axe-api-instruction-4-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-axe-api-instruction-4-step-1-operation-1-description"
             }
           ],
@@ -423,7 +423,7 @@ Feature: instruction execution should be added to alarm steps
       "description": "test-instruction-axe-api-instruction-5-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -432,7 +432,7 @@ Feature: instruction execution should be added to alarm steps
           "operations": [
             {
               "name": "test-instruction-axe-api-instruction-5-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-axe-api-instruction-5-step-1-operation-1-description"
             }
           ],
@@ -515,7 +515,7 @@ Feature: instruction execution should be added to alarm steps
       "description": "test-instruction-axe-api-instruction-6-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -524,7 +524,7 @@ Feature: instruction execution should be added to alarm steps
           "operations": [
             {
               "name": "test-instruction-axe-api-instruction-6-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-axe-api-instruction-6-step-1-operation-1-description"
             }
           ],
@@ -536,7 +536,7 @@ Feature: instruction execution should be added to alarm steps
           "operations": [
             {
               "name": "test-instruction-axe-api-instruction-6-step-2-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-axe-api-instruction-6-step-2-operation-1-description"
             }
           ],
@@ -594,99 +594,6 @@ Feature: instruction execution should be added to alarm steps
     }
     """
 
-  Scenario: given paused instruction by ping timeout should add instruction pause step to alarm steps
-    Given I am admin
-    When I send an event:
-    """
-    {
-      "connector" : "test-connector-axe-api-instruction-7",
-      "connector_name" : "test-connector-name-axe-api-instruction-7",
-      "source_type" : "resource",
-      "event_type" : "check",
-      "component" : "test-component-axe-api-instruction-7",
-      "resource" : "test-resource-axe-api-instruction-7",
-      "state" : 1,
-      "output" : "noveo alarm"
-    }
-    """
-    When I wait the end of event processing
-    When I do GET /api/v4/alarms?search=test-resource-axe-api-instruction-7
-    Then the response code should be 200
-    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
-    When I do POST /api/v4/cat/instructions:
-    """
-    {
-      "type": 0,
-      "name": "test-instruction-axe-api-instruction-7-name",
-      "filter":{
-        "$and":[
-           {
-              "name": "test filter"
-           }
-        ]
-      },
-      "description": "test-instruction-axe-api-instruction-7-description",
-      "enabled": true,
-      "timeout_after_execution": {
-        "seconds": 10,
-        "unit": "s"
-      },
-      "steps": [
-        {
-          "name": "test-instruction-axe-api-instruction-7-step-1",
-          "operations": [
-            {
-              "name": "test-instruction-axe-api-instruction-7-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
-              "description": "test-instruction-axe-api-instruction-7-step-1-operation-1-description"
-            }
-          ],
-          "stop_on_fail": true,
-          "endpoint": "test-instruction-axe-api-instruction-7-step-1-endpoint"
-        }
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/cat/executions:
-    """
-    {
-      "alarm": "{{ .alarmID }}",
-      "instruction": "{{ .lastResponse._id }}"
-    }
-    """
-    Then the response code should be 200
-    When I wait the end of event processing
-    Then I wait 5s
-    When I wait the end of event processing
-    When I do GET /api/v4/alarms?search=test-resource-axe-api-instruction-7&with_steps=true
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-    {
-      "data": [
-        {
-          "v": {
-            "steps": [
-              {},
-              {},
-              {
-                "_t": "instructionstart",
-                "a": "root",
-                "m": "Instruction test-instruction-axe-api-instruction-7-name."
-              },
-              {
-                "_t": "instructionpause",
-                "a": "system",
-                "m": "Instruction test-instruction-axe-api-instruction-7-name."
-              }
-            ]
-          }
-        }
-      ]
-    }
-    """
-
   Scenario: given aborted execution by instruction update should add instruction abort step to alarm steps
     Given I am admin
     When I send an event:
@@ -729,7 +636,7 @@ Feature: instruction execution should be added to alarm steps
       "description": "test-instruction-axe-api-instruction-8-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -738,7 +645,7 @@ Feature: instruction execution should be added to alarm steps
           "operations": [
             {
               "name": "test-instruction-axe-api-instruction-8-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-axe-api-instruction-8-step-1-operation-1-description"
             }
           ],
@@ -774,7 +681,7 @@ Feature: instruction execution should be added to alarm steps
       "description": "test-instruction-axe-api-instruction-8-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -783,7 +690,7 @@ Feature: instruction execution should be added to alarm steps
           "operations": [
             {
               "name": "test-instruction-axe-api-instruction-8-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-axe-api-instruction-8-step-1-operation-1-description"
             }
           ],

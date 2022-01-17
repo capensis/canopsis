@@ -5,35 +5,36 @@
 package mock_config
 
 import (
+	reflect "reflect"
+
 	config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	gomock "github.com/golang/mock/gomock"
-	reflect "reflect"
 )
 
-// MockAlarmConfigProvider is a mock of AlarmConfigProvider interface
+// MockAlarmConfigProvider is a mock of AlarmConfigProvider interface.
 type MockAlarmConfigProvider struct {
 	ctrl     *gomock.Controller
 	recorder *MockAlarmConfigProviderMockRecorder
 }
 
-// MockAlarmConfigProviderMockRecorder is the mock recorder for MockAlarmConfigProvider
+// MockAlarmConfigProviderMockRecorder is the mock recorder for MockAlarmConfigProvider.
 type MockAlarmConfigProviderMockRecorder struct {
 	mock *MockAlarmConfigProvider
 }
 
-// NewMockAlarmConfigProvider creates a new mock instance
+// NewMockAlarmConfigProvider creates a new mock instance.
 func NewMockAlarmConfigProvider(ctrl *gomock.Controller) *MockAlarmConfigProvider {
 	mock := &MockAlarmConfigProvider{ctrl: ctrl}
 	mock.recorder = &MockAlarmConfigProviderMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockAlarmConfigProvider) EXPECT() *MockAlarmConfigProviderMockRecorder {
 	return m.recorder
 }
 
-// Get mocks base method
+// Get mocks base method.
 func (m *MockAlarmConfigProvider) Get() config.AlarmConfig {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get")
@@ -41,36 +42,36 @@ func (m *MockAlarmConfigProvider) Get() config.AlarmConfig {
 	return ret0
 }
 
-// Get indicates an expected call of Get
+// Get indicates an expected call of Get.
 func (mr *MockAlarmConfigProviderMockRecorder) Get() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockAlarmConfigProvider)(nil).Get))
 }
 
-// MockTimezoneConfigProvider is a mock of TimezoneConfigProvider interface
+// MockTimezoneConfigProvider is a mock of TimezoneConfigProvider interface.
 type MockTimezoneConfigProvider struct {
 	ctrl     *gomock.Controller
 	recorder *MockTimezoneConfigProviderMockRecorder
 }
 
-// MockTimezoneConfigProviderMockRecorder is the mock recorder for MockTimezoneConfigProvider
+// MockTimezoneConfigProviderMockRecorder is the mock recorder for MockTimezoneConfigProvider.
 type MockTimezoneConfigProviderMockRecorder struct {
 	mock *MockTimezoneConfigProvider
 }
 
-// NewMockTimezoneConfigProvider creates a new mock instance
+// NewMockTimezoneConfigProvider creates a new mock instance.
 func NewMockTimezoneConfigProvider(ctrl *gomock.Controller) *MockTimezoneConfigProvider {
 	mock := &MockTimezoneConfigProvider{ctrl: ctrl}
 	mock.recorder = &MockTimezoneConfigProviderMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockTimezoneConfigProvider) EXPECT() *MockTimezoneConfigProviderMockRecorder {
 	return m.recorder
 }
 
-// Get mocks base method
+// Get mocks base method.
 func (m *MockTimezoneConfigProvider) Get() config.TimezoneConfig {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get")
@@ -78,36 +79,36 @@ func (m *MockTimezoneConfigProvider) Get() config.TimezoneConfig {
 	return ret0
 }
 
-// Get indicates an expected call of Get
+// Get indicates an expected call of Get.
 func (mr *MockTimezoneConfigProviderMockRecorder) Get() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockTimezoneConfigProvider)(nil).Get))
 }
 
-// MockRemediationConfigProvider is a mock of RemediationConfigProvider interface
+// MockRemediationConfigProvider is a mock of RemediationConfigProvider interface.
 type MockRemediationConfigProvider struct {
 	ctrl     *gomock.Controller
 	recorder *MockRemediationConfigProviderMockRecorder
 }
 
-// MockRemediationConfigProviderMockRecorder is the mock recorder for MockRemediationConfigProvider
+// MockRemediationConfigProviderMockRecorder is the mock recorder for MockRemediationConfigProvider.
 type MockRemediationConfigProviderMockRecorder struct {
 	mock *MockRemediationConfigProvider
 }
 
-// NewMockRemediationConfigProvider creates a new mock instance
+// NewMockRemediationConfigProvider creates a new mock instance.
 func NewMockRemediationConfigProvider(ctrl *gomock.Controller) *MockRemediationConfigProvider {
 	mock := &MockRemediationConfigProvider{ctrl: ctrl}
 	mock.recorder = &MockRemediationConfigProviderMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockRemediationConfigProvider) EXPECT() *MockRemediationConfigProviderMockRecorder {
 	return m.recorder
 }
 
-// Get mocks base method
+// Get mocks base method.
 func (m *MockRemediationConfigProvider) Get() config.RemediationConfig {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get")
@@ -115,36 +116,36 @@ func (m *MockRemediationConfigProvider) Get() config.RemediationConfig {
 	return ret0
 }
 
-// Get indicates an expected call of Get
+// Get indicates an expected call of Get.
 func (mr *MockRemediationConfigProviderMockRecorder) Get() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockRemediationConfigProvider)(nil).Get))
 }
 
-// MockUserInterfaceConfigProvider is a mock of UserInterfaceConfigProvider interface
+// MockUserInterfaceConfigProvider is a mock of UserInterfaceConfigProvider interface.
 type MockUserInterfaceConfigProvider struct {
 	ctrl     *gomock.Controller
 	recorder *MockUserInterfaceConfigProviderMockRecorder
 }
 
-// MockUserInterfaceConfigProviderMockRecorder is the mock recorder for MockUserInterfaceConfigProvider
+// MockUserInterfaceConfigProviderMockRecorder is the mock recorder for MockUserInterfaceConfigProvider.
 type MockUserInterfaceConfigProviderMockRecorder struct {
 	mock *MockUserInterfaceConfigProvider
 }
 
-// NewMockUserInterfaceConfigProvider creates a new mock instance
+// NewMockUserInterfaceConfigProvider creates a new mock instance.
 func NewMockUserInterfaceConfigProvider(ctrl *gomock.Controller) *MockUserInterfaceConfigProvider {
 	mock := &MockUserInterfaceConfigProvider{ctrl: ctrl}
 	mock.recorder = &MockUserInterfaceConfigProviderMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockUserInterfaceConfigProvider) EXPECT() *MockUserInterfaceConfigProviderMockRecorder {
 	return m.recorder
 }
 
-// Get mocks base method
+// Get mocks base method.
 func (m *MockUserInterfaceConfigProvider) Get() config.UserInterfaceConf {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get")
@@ -152,36 +153,36 @@ func (m *MockUserInterfaceConfigProvider) Get() config.UserInterfaceConf {
 	return ret0
 }
 
-// Get indicates an expected call of Get
+// Get indicates an expected call of Get.
 func (mr *MockUserInterfaceConfigProviderMockRecorder) Get() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockUserInterfaceConfigProvider)(nil).Get))
 }
 
-// MockDataStorageConfigProvider is a mock of DataStorageConfigProvider interface
+// MockDataStorageConfigProvider is a mock of DataStorageConfigProvider interface.
 type MockDataStorageConfigProvider struct {
 	ctrl     *gomock.Controller
 	recorder *MockDataStorageConfigProviderMockRecorder
 }
 
-// MockDataStorageConfigProviderMockRecorder is the mock recorder for MockDataStorageConfigProvider
+// MockDataStorageConfigProviderMockRecorder is the mock recorder for MockDataStorageConfigProvider.
 type MockDataStorageConfigProviderMockRecorder struct {
 	mock *MockDataStorageConfigProvider
 }
 
-// NewMockDataStorageConfigProvider creates a new mock instance
+// NewMockDataStorageConfigProvider creates a new mock instance.
 func NewMockDataStorageConfigProvider(ctrl *gomock.Controller) *MockDataStorageConfigProvider {
 	mock := &MockDataStorageConfigProvider{ctrl: ctrl}
 	mock.recorder = &MockDataStorageConfigProviderMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockDataStorageConfigProvider) EXPECT() *MockDataStorageConfigProviderMockRecorder {
 	return m.recorder
 }
 
-// Get mocks base method
+// Get mocks base method.
 func (m *MockDataStorageConfigProvider) Get() config.DataStorageConfig {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get")
@@ -189,7 +190,7 @@ func (m *MockDataStorageConfigProvider) Get() config.DataStorageConfig {
 	return ret0
 }
 
-// Get indicates an expected call of Get
+// Get indicates an expected call of Get.
 func (mr *MockDataStorageConfigProviderMockRecorder) Get() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockDataStorageConfigProvider)(nil).Get))

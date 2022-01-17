@@ -22,8 +22,8 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { submittableMixin } from '@/mixins/submittable';
-import modalInnerMixin from '@/plugins/modals/mixins/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { modalInnerMixin } from '@/mixins/modal/inner';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -35,7 +35,7 @@ export default {
   components: { ModalWrapper },
   mixins: [
     modalInnerMixin,
-    submittableMixin(),
+    submittableMixinCreator(),
   ],
   data() {
     return {
@@ -64,4 +64,3 @@ export default {
   },
 };
 </script>
-

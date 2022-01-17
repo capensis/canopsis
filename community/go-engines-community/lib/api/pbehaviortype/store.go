@@ -34,8 +34,8 @@ type store struct {
 func NewStore(db mongo.DbClient) Store {
 	// temporarily until feat/#2344/mongo-indexes not merged
 	keys := bson.M{"priority": 1}
-	indexOptions := options.Index().SetBackground(true).SetUnique(true)
-	_, err := db.Collection(pbehavior.TypeCollectionName).Indexes().CreateOne(
+	indexOptions := options.Index().SetUnique(true)
+	_, err := db.Collection(mongo.PbehaviorTypeMongoCollection).Indexes().CreateOne(
 		context.Background(), mongodriver.IndexModel{
 			Keys:    &keys,
 			Options: indexOptions,
@@ -52,7 +52,7 @@ func NewStore(db mongo.DbClient) Store {
 }
 
 func (s *store) getCollection() mongo.DbCollection {
-	return s.db.Collection(pbehavior.TypeCollectionName)
+	return s.db.Collection(mongo.PbehaviorTypeMongoCollection)
 }
 
 // Find pbehavior types according to query.

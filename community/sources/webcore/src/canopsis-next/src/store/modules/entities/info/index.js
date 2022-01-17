@@ -1,188 +1,58 @@
-import { get } from 'lodash';
-
-import { API_ROUTES, INSTRUCTION_EXECUTE_FETCHING_INTERVAL_SECONDS } from '@/config';
+import { API_ROUTES } from '@/config';
 import { POPUP_TYPES } from '@/constants';
 
 import request from '@/services/request';
-
-import { toSeconds } from '@/helpers/date/duration';
+import { durationToSeconds } from '@/helpers/date/duration';
 
 const types = {
-  FETCH_LOGIN_INFOS: 'FETCH_LOGIN_INFOS',
-  FETCH_APP_INFOS: 'FETCH_APP_INFOS',
+  FETCH_APP_INFO: 'FETCH_APP_INFO',
 };
 
 export default {
   namespaced: true,
   state: {
-    version: '',
-    logo: '',
-    appTitle: '',
-    footer: '',
-    edition: '',
-    stack: '',
-    description: '',
-    language: '',
-    isLDAPAuthEnabled: false,
-    isCASAuthEnabled: false,
-    isSAMLAuthEnabled: false,
-    allowChangeSeverityToInfo: false,
-    casConfig: {},
-    samlConfig: {},
-    popupTimeout: undefined,
-    maxMatchedItems: '',
-    checkCountRequestTimeout: '',
-    timezone: undefined,
-    fileUploadMaxSize: 0,
-    remediation: {},
+    appInfo: {},
   },
   getters: {
-    version: state => state.version,
-    logo: state => state.logo,
-    appTitle: state => state.appTitle,
-    popupTimeout: state => state.popupTimeout,
-    maxMatchedItems: state => state.maxMatchedItems,
-    checkCountRequestTimeout: state => state.checkCountRequestTimeout,
-    allowChangeSeverityToInfo: state => state.allowChangeSeverityToInfo,
-    footer: state => state.footer,
-    edition: state => state.edition,
-    stack: state => state.stack,
-    description: state => state.description,
-    language: state => state.language,
-    isLDAPAuthEnabled: state => state.isLDAPAuthEnabled,
-    isCASAuthEnabled: state => state.isCASAuthEnabled,
-    isSAMLAuthEnabled: state => state.isSAMLAuthEnabled,
-    casConfig: state => state.casConfig,
-    samlConfig: state => state.samlConfig,
-    timezone: state => state.timezone,
-    fileUploadMaxSize: state => state.fileUploadMaxSize,
-    remediation: state => state.remediation,
-    remediationJobConfigTypes: state => get(state.remediation, 'job_config_types', []),
-    remediationPauseManualInstructionIntervalSeconds: state =>
-      get(state.remediation, 'pause_manual_instruction_interval.seconds', INSTRUCTION_EXECUTE_FETCHING_INTERVAL_SECONDS),
+    appInfo: state => state.appInfo,
+    version: state => state.appInfo.version,
+    logo: state => state.appInfo.logo,
+    appTitle: state => state.appInfo.app_title,
+    popupTimeout: state => state.appInfo.popup_timeout || {},
+    maxMatchedItems: state => state.appInfo.max_matched_items,
+    checkCountRequestTimeout: state => state.appInfo.check_count_request_timeout,
+    allowChangeSeverityToInfo: state => state.appInfo.allow_change_severity_to_info,
+    footer: state => state.appInfo.footer,
+    edition: state => state.appInfo.edition,
+    stack: state => state.appInfo.stack,
+    description: state => state.appInfo.login_page_description,
+    language: state => state.appInfo.language,
+    timezone: state => state.appInfo.timezone,
+    fileUploadMaxSize: state => state.appInfo.file_upload_max_size ?? 0,
+    remediationJobConfigTypes: state => state.appInfo.remediation?.job_config_types ?? [],
+    casConfig: state => state.appInfo?.login?.casconfig,
+    samlConfig: state => state.appInfo?.login?.saml2config,
+    isLDAPAuthEnabled: state => !!state.appInfo?.login?.ldapconfig?.enable,
+    isCASAuthEnabled: state => !!state.appInfo?.login?.casconfig?.enable,
+    isSAMLAuthEnabled: state => !!state.appInfo?.login?.saml2config?.enable,
   },
   mutations: {
-    [types.FETCH_LOGIN_INFOS](state, {
-      version,
-      userInterface = {},
-      loginConfig = {},
-    }) {
-      state.version = version;
-      state.logo = userInterface.logo;
-      state.appTitle = userInterface.app_title;
-      state.footer = userInterface.footer;
-      state.description = userInterface.login_page_description;
-      state.language = userInterface.language;
-      state.popupTimeout = userInterface.popup_timeout || {};
-
-      state.isLDAPAuthEnabled = loginConfig.ldapconfig ? loginConfig.ldapconfig.enable : false;
-      state.isCASAuthEnabled = loginConfig.casconfig ? loginConfig.casconfig.enable : false;
-      state.isSAMLAuthEnabled = loginConfig.saml2config ? loginConfig.saml2config.enable : false;
-
-      state.casConfig = loginConfig.casconfig;
-      state.samlConfig = loginConfig.saml2config;
-    },
-    [types.FETCH_APP_INFOS](state, {
-      version,
-      logo,
-      appTitle,
-      popupTimeout,
-      maxMatchedItems,
-      checkCountRequestTimeout,
-      allowChangeSeverityToInfo,
-      edition,
-      stack,
-      language,
-      timezone,
-      fileUploadMaxSize,
-      remediation,
-    }) {
-      state.version = version;
-      state.logo = logo;
-      state.appTitle = appTitle;
-      state.popupTimeout = popupTimeout || {};
-      state.maxMatchedItems = maxMatchedItems;
-      state.checkCountRequestTimeout = checkCountRequestTimeout;
-      state.allowChangeSeverityToInfo = allowChangeSeverityToInfo;
-      state.edition = edition;
-      state.stack = stack;
-      state.language = language;
-      state.timezone = timezone;
-      state.fileUploadMaxSize = fileUploadMaxSize;
-      state.remediation = remediation;
+    [types.FETCH_APP_INFO](state, { appInfo }) {
+      state.appInfo = appInfo;
     },
   },
   actions: {
-    async fetchLoginInfos({ commit, dispatch }) {
-      const {
-        version,
-        user_interface: userInterface,
-        login_config: loginConfig,
-      } = await request.get(API_ROUTES.infos.login, { fullResponse: true });
+    async fetchAppInfo({ commit, dispatch }) {
+      const appInfo = await request.get(API_ROUTES.infos.app);
 
-      const { language, popup_timeout: popupTimeout } = userInterface;
+      commit(types.FETCH_APP_INFO, { appInfo });
 
-      commit(types.FETCH_LOGIN_INFOS, {
-        version,
-        userInterface: userInterface || {},
-        loginConfig: loginConfig || {},
-      });
-
-      if (language) {
-        dispatch('i18n/setGlobalLocale', language, { root: true });
+      if (appInfo.language) {
+        dispatch('i18n/setGlobalLocale', appInfo.language, { root: true });
       }
 
-      if (popupTimeout) {
-        dispatch('setPopupTimeouts', { popupTimeout });
-      }
-    },
-
-    async fetchAppInfos({ commit, dispatch }) {
-      try {
-        const {
-          version,
-          logo,
-          app_title: appTitle,
-          popup_timeout: popupTimeout,
-          max_matched_items: maxMatchedItems,
-          check_count_request_timeout: checkCountRequestTimeout,
-          allow_change_severity_to_info: allowChangeSeverityToInfo,
-          file_upload_max_size: fileUploadMaxSize,
-          remediation,
-          edition,
-          stack,
-          language,
-          timezone,
-        } = await request.get(API_ROUTES.infos.app);
-
-        commit(
-          types.FETCH_APP_INFOS,
-          {
-            version,
-            logo,
-            appTitle,
-            edition,
-            popupTimeout,
-            maxMatchedItems,
-            checkCountRequestTimeout,
-            allowChangeSeverityToInfo,
-            stack,
-            language,
-            timezone,
-            fileUploadMaxSize,
-            remediation,
-          },
-        );
-
-        if (language) {
-          dispatch('i18n/setGlobalLocale', language, { root: true });
-        }
-
-        if (popupTimeout) {
-          dispatch('setPopupTimeouts', { popupTimeout });
-        }
-      } catch (err) {
-        console.error(err);
+      if (appInfo.popup_timeout) {
+        dispatch('setPopupTimeouts', { popupTimeout: appInfo.popup_timeout });
       }
     },
 
@@ -191,11 +61,8 @@ export default {
     },
 
     setPopupTimeouts({ dispatch }, { popupTimeout = {} }) {
-      const { interval: intervalInfo, unit: unitInfo } = popupTimeout.info;
-      const { interval: intervalError, unit: unitError } = popupTimeout.error;
-
-      const timeInfo = toSeconds(intervalInfo, unitInfo) * 1000;
-      const timeError = toSeconds(intervalError, unitError) * 1000;
+      const timeInfo = durationToSeconds(popupTimeout.info) * 1000;
+      const timeError = durationToSeconds(popupTimeout.error) * 1000;
 
       dispatch('popups/setDefaultCloseTime', { type: POPUP_TYPES.success, time: timeInfo }, { root: true });
       dispatch('popups/setDefaultCloseTime', { type: POPUP_TYPES.info, time: timeInfo }, { root: true });
