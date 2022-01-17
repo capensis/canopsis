@@ -10,10 +10,10 @@ export const widgetPeriodicRefreshMixin = {
     'widget.parameters.periodic_refresh': {
       immediate: true,
       handler(value, oldValue) {
-        const periodicRefresh = value || {};
-        const oldPeriodicRefresh = oldValue || {};
+        const periodicRefresh = value;
+        const oldPeriodicRefresh = oldValue ?? {};
 
-        if (periodicRefresh.enabled && periodicRefresh.value) {
+        if (periodicRefresh?.enabled && periodicRefresh?.value) {
           const valueIsChanged = periodicRefresh.value !== oldPeriodicRefresh.value;
           const enabledIsChanged = periodicRefresh.enabled !== oldPeriodicRefresh.enabled;
 

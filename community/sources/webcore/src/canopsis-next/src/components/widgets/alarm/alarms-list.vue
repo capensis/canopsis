@@ -252,7 +252,7 @@ export default {
     },
 
     expandFirstAlarm() {
-      if (this.alarms[0] && !this.firstAlarmExpanded) {
+      if (!this.firstAlarmExpanded) {
         this.$set(this.$refs.alarmsTable.expanded, this.alarms[0]._id, true);
       }
     },
