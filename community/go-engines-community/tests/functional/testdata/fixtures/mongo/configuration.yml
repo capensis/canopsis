@@ -24,6 +24,7 @@ configuration:
       outputlength: 255
       stealthyinterval: 0
     api:
+      bulkmaxsize: 10000
       tokenexpiration: 24h
       tokensigningmethod: HS256
     file:

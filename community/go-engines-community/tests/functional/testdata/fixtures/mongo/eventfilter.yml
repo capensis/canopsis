@@ -53,6 +53,61 @@ eventfilter:
     type: break
     updated: 1608635535
   eventfilter_5:
+    _id: test-eventfilter-to-bulk-update-1
+    author: root
+    created: 1608635535
+    description: break filter
+    enabled: true
+    patterns:
+    - resource: test-eventfilter-to-bulk-update-1-pattern
+    priority: 3
+    type: break
+    updated: 1608635535
+  eventfilter_6:
+    _id: test-eventfilter-to-bulk-update-2
+    author: root
+    created: 1608635535
+    description: break filter
+    enabled: true
+    patterns:
+    - resource: test-eventfilter-to-bulk-update-2-pattern
+    priority: 3
+    type: break
+    updated: 1608635535
+  eventfilter_7:
+    _id: test-eventfilter-to-bulk-update-3
+    author: root
+    created: 1608635535
+    description: break filter
+    enabled: true
+    patterns:
+    - resource: test-eventfilter-to-bulk-update-3-pattern
+    priority: 3
+    type: break
+    updated: 1608635535
+  eventfilter_8:
+    _id: test-eventfilter-to-bulk-update-4
+    author: root
+    created: 1608635535
+    description: break filter
+    enabled: true
+    patterns:
+    - resource: test-eventfilter-to-bulk-update-4-pattern
+    priority: 3
+    type: break
+    updated: 1608635535
+  eventfilter_9:
+    _id: test-eventfilter-to-bulk-update-5
+    author: root
+    created: 1608635535
+    description: break filter
+    enabled: true
+    patterns:
+    - resource: test-eventfilter-to-bulk-update-5-pattern
+    priority: 3
+    type: break
+    updated: 1608635535
+  eventfilter_10:
     _id: test-eventfilter-to-delete
     author: root
     created: 1608635535
@@ -63,7 +118,29 @@ eventfilter:
     priority: 4
     type: break
     updated: 1608635535
-  eventfilter_6:
+  eventfilter_11:
+    _id: test-eventfilter-to-bulk-delete-1
+    author: root
+    created: 1608635535
+    description: break filter
+    enabled: true
+    patterns:
+    - resource: test-eventfilter-to-bulk-delete-1-pattern
+    priority: 4
+    type: break
+    updated: 1608635535
+  eventfilter_12:
+    _id: test-eventfilter-to-bulk-delete-2
+    author: root
+    created: 1608635535
+    description: break filter
+    enabled: true
+    patterns:
+    - resource: test-eventfilter-to-bulk-delete-2-pattern
+    priority: 4
+    type: break
+    updated: 1608635535
+  eventfilter_13:
     _id: test-eventfilter-check-id
     author: root
     created: 1608635535
