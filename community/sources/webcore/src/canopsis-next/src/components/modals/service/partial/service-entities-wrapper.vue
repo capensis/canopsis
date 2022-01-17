@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { getAvailableActionsByEntities, isActionTypeAvailableForEntity } from '@/helpers/entities/context';
+import { getAvailableActionsByEntities, isActionTypeAvailableForEntity } from '@/helpers/entities/entity';
 import { filterById, mapIds } from '@/helpers/entities';
 
 import { widgetActionPanelServiceEntityMixin } from '@/mixins/widget/actions-panel/service-entity';
@@ -63,7 +63,7 @@ export default {
         .filter(this.actionsAccessFilterHandler)
         .map(action => ({
           ...action,
-          disabled: this.isActionAvailableForSelectedAction(action.type),
+          disabled: !this.hasEntityWithoutAction(action.type),
         }));
     },
 
@@ -75,11 +75,12 @@ export default {
       return this.$actionsQueue.queue
         .reduce((acc, { actionType, entities }) => {
           const entitiesIds = mapIds(entities);
-          const pendingIds = acc[actionType];
 
-          acc[actionType] = pendingIds
-            ? pendingIds.concat(entitiesIds)
-            : entitiesIds;
+          if (acc[actionType]) {
+            acc[actionType].push(...entitiesIds);
+          } else {
+            acc[actionType] = entitiesIds;
+          }
 
           return acc;
         }, {});
@@ -96,10 +97,10 @@ export default {
       return pendingEntitiesIds.includes(id);
     },
 
-    isActionAvailableForSelectedAction(type) {
+    hasEntityWithoutAction(type) {
       return this.selectedEntities
         .filter(entity => isActionTypeAvailableForEntity(type, entity))
-        .every(({ _id: id }) => this.isEntityActionPending(type, id));
+        .some(({ _id: id }) => !this.isEntityActionPending(type, id));
     },
 
     applyActionForSelected({ type }) {

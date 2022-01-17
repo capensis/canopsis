@@ -4,9 +4,6 @@ import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('pbehavior');
 
-/**
- * @mixin
- */
 export const entitiesPbehaviorMixin = {
   mixins: [entitiesPbehaviorCommentMixin],
   computed: {
@@ -25,6 +22,7 @@ export const entitiesPbehaviorMixin = {
       createPbehavior: 'create',
       bulkCreatePbehaviors: 'bulkCreate',
       updatePbehavior: 'update',
+      bulkUpdatePbehaviors: 'bulkUpdate',
       removePbehavior: 'remove',
       bulkRemovePbehaviors: 'bulkRemove',
       fetchPbehaviorsByEntityId: 'fetchListByEntityId',
@@ -32,25 +30,39 @@ export const entitiesPbehaviorMixin = {
     }),
 
     async createPbehaviors(pbehaviors) {
-      return Promise.all(pbehaviors.map(async (data) => {
-        const pbehavior = await this.createPbehavior({ data });
+      const response = await this.bulkCreatePbehaviors({ data: pbehaviors });
 
-        await this.updateSeveralPbehaviorComments({ comments: data.comments, pbehavior });
-      }));
+      await Promise.all(
+        response.map(({ id, item: pbehavior }) => this.updateSeveralPbehaviorComments({
+          comments: pbehavior.comments,
+          pbehavior: {
+            ...pbehavior,
+            _id: id,
+            comments: [],
+          },
+        })),
+      );
+
+      return response;
     },
 
     removePbehaviors(pbehaviors) {
-      return Promise.all(pbehaviors.map(({ _id }) => this.removePbehavior({ id: _id })));
+      return this.bulkRemovePbehaviors({
+        data: pbehaviors.map(({ _id }) => ({ _id })),
+      });
     },
 
-    updatePbehaviors(pbehaviors) {
-      return Promise.all(pbehaviors.map(pbehavior => Promise.all([
-        this.updatePbehavior({ data: pbehavior, id: pbehavior._id }),
-        this.updateSeveralPbehaviorComments({
+    async updatePbehaviors(pbehaviors) {
+      const response = await this.bulkUpdatePbehaviors({ data: pbehaviors });
+
+      await Promise.all(
+        pbehaviors.map(pbehavior => this.updateSeveralPbehaviorComments({
           pbehavior: this.getPbehavior(pbehavior._id),
           comments: pbehavior.comments,
-        }),
-      ])));
+        })),
+      );
+
+      return response;
     },
   },
 };
