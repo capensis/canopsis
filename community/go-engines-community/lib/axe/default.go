@@ -65,7 +65,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 	defer depmake.Catch(logger)
 
 	m := DependencyMaker{}
-	dbClient := m.DepMongoClient(ctx)
+	dbClient := m.DepMongoClient(ctx, logger)
 	cfg := m.DepConfig(ctx, dbClient)
 	config.SetDbClientRetry(dbClient, cfg)
 	if pgPool != nil {
@@ -185,6 +185,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		&messageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			EventProcessor: alarm.NewEventProcessor(
+				dbClient,
 				alarm.NewAdapter(dbClient),
 				entity.NewAdapter(dbClient),
 				correlation.NewRuleAdapter(dbClient),

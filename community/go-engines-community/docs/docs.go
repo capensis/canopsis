@@ -9809,6 +9809,10 @@ var doc = `{
                 "m": {
                     "type": "string"
                 },
+                "statecounter": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CropCounter"
+                },
                 "t": {
                     "type": "integer"
                 },
