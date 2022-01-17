@@ -8733,7 +8733,7 @@ paths:
       tags:
       - users
   /view-copy/{id}:
-    put:
+    post:
       consumes:
       - application/json
       description: Copy view
