@@ -9,8 +9,8 @@ import (
 	"time"
 )
 
-// AlarmActivationService checks alarm and sends activation event
-// if alarm doesn't have active snooze and pbehavior
+// ActivationService checks alarm and sends activation event
+// if alarm doesn't have active snooze and pbehavior.
 type ActivationService interface {
 	Process(*types.Alarm) (bool, error)
 }

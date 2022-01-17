@@ -55,7 +55,7 @@ func Default(
 	deferFunc DeferFunc,
 ) (API, error) {
 	// Retrieve config.
-	dbClient, err := mongo.NewClient(ctx, 0, 0)
+	dbClient, err := mongo.NewClient(ctx, 0, 0, logger)
 	if err != nil {
 		logger.Err(err).Msg("cannot connect to mongodb")
 		return nil, err
@@ -338,28 +338,15 @@ func updateConfig(
 					continue
 				}
 
-				err = timezoneConfigProvider.Update(cfg)
-				if err != nil {
-					logger.Err(err).Msg("fail to update tz config")
-					continue
-				}
-
-				err = apiConfigProvider.Update(cfg)
-				if err != nil {
-					logger.Err(err).Msg("fail to update api config")
-					continue
-				}
+				timezoneConfigProvider.Update(cfg)
+				apiConfigProvider.Update(cfg)
 
 				userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
 				if err != nil {
 					logger.Err(err).Msg("fail to load user interface config")
 					continue
 				}
-				err = userInterfaceConfigProvider.Update(userInterfaceConfig)
-				if err != nil {
-					logger.Err(err).Msg("fail to update user interface config")
-					continue
-				}
+				userInterfaceConfigProvider.Update(userInterfaceConfig)
 			case <-ctx.Done():
 				return
 			}
