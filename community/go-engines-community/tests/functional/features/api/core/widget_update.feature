@@ -11,7 +11,7 @@ Feature: Update a widget
       "tab": "test-tab-to-widget-edit",
       "type": "test-widget-to-update-type",
       "grid_parameters": {
-        "test-widget-to-update-gridparameter": "test-widget-to-update-gridparameter-value"
+        "desktop": {"x": 0, "y": 0}
       },
       "parameters": {
         "test-widget-to-update-param-str": "teststr",
@@ -30,7 +30,7 @@ Feature: Update a widget
       "title": "test-widget-to-update-title-updated",
       "type": "test-widget-to-update-type",
       "grid_parameters": {
-        "test-widget-to-update-gridparameter": "test-widget-to-update-gridparameter-value"
+        "desktop": {"x": 0, "y": 0}
       },
       "parameters": {
         "test-widget-to-update-param-str": "teststr",

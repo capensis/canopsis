@@ -7955,6 +7955,68 @@ var doc = `{
                 }
             }
         },
+        "/view-copy/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Copy view",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "views"
+                ],
+                "summary": "Copy view",
+                "operationId": "views-copy",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "view id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/view.EditRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/viewgroup.View"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/view-export": {
             "post": {
                 "security": [
@@ -8355,6 +8417,68 @@ var doc = `{
                 ],
                 "responses": {
                     "204": {},
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/view-tab-copy/{id}": {
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Copy view tab",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "viewtabs"
+                ],
+                "summary": "Copy view tab",
+                "operationId": "viewtabs-copy",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "tab id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/viewtab.CopyRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/view.Tab"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -9051,6 +9175,68 @@ var doc = `{
                 }
             }
         },
+        "/widget-copy/{id}": {
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Copy widget",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "widgets"
+                ],
+                "summary": "Copy widget",
+                "operationId": "widgets-copy",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "widget id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/widget.CopyRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/view.Widget"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/widget-filters": {
             "post": {
                 "security": [
@@ -9238,7 +9424,7 @@ var doc = `{
                 }
             }
         },
-        "/widget-positions": {
+        "/widget-grid-positions": {
             "put": {
                 "security": [
                     {
@@ -9248,7 +9434,7 @@ var doc = `{
                         "BasicAuth": []
                     }
                 ],
-                "description": "Update widgets positions",
+                "description": "Update widgets grid positions",
                 "consumes": [
                     "application/json"
                 ],
@@ -9258,8 +9444,8 @@ var doc = `{
                 "tags": [
                     "widgets"
                 ],
-                "summary": "Update widgets positions",
-                "operationId": "widgets-update-positions",
+                "summary": "Update widgets grid positions",
+                "operationId": "widgets-update-grid-positions",
                 "parameters": [
                     {
                         "description": "body",
@@ -9269,7 +9455,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "type": "string"
+                                "$ref": "#/definitions/widget.EditGridPositionItemRequest"
                             }
                         }
                     }
@@ -13049,10 +13235,6 @@ var doc = `{
                 }
             }
         },
-        "primitive.M": {
-            "type": "object",
-            "additionalProperties": true
-        },
         "resolverule.CreateRequest": {
             "type": "object",
             "required": [
@@ -15011,6 +15193,17 @@ var doc = `{
                 }
             }
         },
+        "viewtab.CopyRequest": {
+            "type": "object",
+            "required": [
+                "view"
+            ],
+            "properties": {
+                "view": {
+                    "type": "string"
+                }
+            }
+        },
         "viewtab.EditRequest": {
             "type": "object",
             "required": [
@@ -15023,6 +15216,29 @@ var doc = `{
                 },
                 "view": {
                     "type": "string"
+                }
+            }
+        },
+        "widget.CopyRequest": {
+            "type": "object",
+            "required": [
+                "tab"
+            ],
+            "properties": {
+                "tab": {
+                    "type": "string"
+                }
+            }
+        },
+        "widget.EditGridPositionItemRequest": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "grid_parameters": {
+                    "type": "object",
+                    "additionalProperties": true
                 }
             }
         },

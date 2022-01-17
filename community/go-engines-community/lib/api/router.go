@@ -672,7 +672,7 @@ func RegisterRoutes(
 			engineinfo.GetRunInfo(ctx, runInfoManager),
 		)
 
-		viewAPI := view.NewApi(view.NewStore(dbClient), enforcer, actionLogger)
+		viewAPI := view.NewApi(view.NewStore(dbClient, viewtab.NewStore(dbClient, widget.NewStore(dbClient))), enforcer, actionLogger)
 		viewRouter := protected.Group("/views")
 		{
 			viewRouter.POST(
@@ -710,7 +710,7 @@ func RegisterRoutes(
 			)
 		}
 
-		viewTabAPI := viewtab.NewApi(viewtab.NewStore(dbClient), enforcer, actionLogger)
+		viewTabAPI := viewtab.NewApi(viewtab.NewStore(dbClient, widget.NewStore(dbClient)), enforcer, actionLogger)
 		viewTabRouter := protected.Group("/view-tabs")
 		{
 			viewTabRouter.POST(
@@ -737,7 +737,7 @@ func RegisterRoutes(
 			)
 		}
 
-		widgetAPI := widget.NewApi(widget.NewStore(dbClient), viewtab.NewStore(dbClient), enforcer, actionLogger)
+		widgetAPI := widget.NewApi(widget.NewStore(dbClient), enforcer, actionLogger)
 		widgetRouter := protected.Group("/widgets")
 		{
 			widgetRouter.POST(
@@ -824,6 +824,15 @@ func RegisterRoutes(
 			)
 		}
 
+		protected.POST(
+			"/view-copy/:id",
+			middleware.Authorize(apisecurity.ObjView, model.PermissionCreate, enforcer),
+			middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+			middleware.AuthorizeByID(model.PermissionRead, enforcer),
+			middleware.SetAuthor(),
+			viewAPI.Copy,
+		)
+
 		protected.PUT(
 			"/view-positions",
 			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
@@ -846,16 +855,32 @@ func RegisterRoutes(
 			middleware.ReloadEnforcerPolicyOnChange(enforcer),
 		)
 
+		protected.POST(
+			"/view-tab-copy/:id",
+			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+			middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+			middleware.SetAuthor(),
+			viewTabAPI.Copy,
+		)
+
 		protected.PUT(
 			"/view-tab-positions",
 			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
 			viewTabAPI.UpdatePositions,
 		)
 
-		protected.PUT(
-			"/widget-positions",
+		protected.POST(
+			"/widget-copy/:id",
 			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
-			widgetAPI.UpdatePositions,
+			middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+			middleware.SetAuthor(),
+			widgetAPI.Copy,
+		)
+
+		protected.PUT(
+			"/widget-grid-positions",
+			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+			widgetAPI.UpdateGridPositions,
 		)
 
 		// broadcast message API
@@ -1004,7 +1029,7 @@ func RegisterRoutes(
 
 		playlistRouter := protected.Group("/playlists")
 		{
-			playlistApi := playlist.NewApi(playlist.NewStore(dbClient), viewtab.NewStore(dbClient), enforcer, actionLogger)
+			playlistApi := playlist.NewApi(playlist.NewStore(dbClient), viewtab.NewStore(dbClient, widget.NewStore(dbClient)), enforcer, actionLogger)
 			playlistRouter.POST(
 				"",
 				middleware.Authorize(authObjPlaylist, permCreate, enforcer),

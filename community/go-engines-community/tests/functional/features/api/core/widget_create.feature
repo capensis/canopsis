@@ -11,7 +11,7 @@ Feature: Create a widget
       "tab": "test-tab-to-widget-edit",
       "type": "test-widget-to-create-1-type",
       "grid_parameters": {
-        "test-widget-to-create-1-gridparameter": "test-widget-to-create-1-gridparameter-value"
+        "desktop": {"x": 0, "y": 0}
       },
       "parameters": {
         "test-widget-to-create-1-param-str": "teststr",
@@ -29,7 +29,7 @@ Feature: Create a widget
       "title": "test-widget-to-create-1-title",
       "type": "test-widget-to-create-1-type",
       "grid_parameters": {
-        "test-widget-to-create-1-gridparameter": "test-widget-to-create-1-gridparameter-value"
+        "desktop": {"x": 0, "y": 0}
       },
       "parameters": {
         "test-widget-to-create-1-param-str": "teststr",
@@ -49,7 +49,7 @@ Feature: Create a widget
       "title": "test-widget-to-create-1-title",
       "type": "test-widget-to-create-1-type",
       "grid_parameters": {
-        "test-widget-to-create-1-gridparameter": "test-widget-to-create-1-gridparameter-value"
+        "desktop": {"x": 0, "y": 0}
       },
       "parameters": {
         "test-widget-to-create-1-param-str": "teststr",

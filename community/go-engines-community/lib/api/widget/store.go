@@ -15,11 +15,13 @@ import (
 
 type Store interface {
 	FindViewIds(ctx context.Context, ids []string) (map[string]string, error)
+	FindViewIdByTab(ctx context.Context, tabId string) (string, error)
 	GetOneBy(ctx context.Context, id string) (*view.Widget, error)
 	Insert(ctx context.Context, r EditRequest) (*view.Widget, error)
 	Update(ctx context.Context, r EditRequest) (*view.Widget, error)
 	Delete(ctx context.Context, id string) (bool, error)
-	UpdatePositions(ctx context.Context, ids []string) (bool, error)
+	Copy(ctx context.Context, widget view.Widget, r CopyRequest) (*view.Widget, error)
+	UpdateGridPositions(ctx context.Context, items []EditGridPositionItemRequest) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient) Store {
@@ -74,6 +76,21 @@ func (s *store) FindViewIds(ctx context.Context, ids []string) (map[string]strin
 	return viewIds, nil
 }
 
+func (s *store) FindViewIdByTab(ctx context.Context, tabId string) (string, error) {
+	result := struct {
+		View string `bson:"view"`
+	}{}
+	err := s.tabCollection.FindOne(ctx, bson.M{"_id": tabId}).Decode(&result)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return "", nil
+		}
+		return "", err
+	}
+
+	return result.View, nil
+}
+
 func (s *store) GetOneBy(ctx context.Context, id string) (*view.Widget, error) {
 	model := &view.Widget{}
 	err := s.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&model)
@@ -88,18 +105,13 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*view.Widget, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r EditRequest) (*view.Widget, error) {
-	count, err := s.collection.CountDocuments(ctx, bson.M{})
-	if err != nil {
-		return nil, err
-	}
 	now := types.CpsTime{Time: time.Now()}
 	widget := transformEditRequestToModel(r)
 	widget.ID = utils.NewID()
-	widget.Position = count
 	widget.Created = &now
 	widget.Updated = &now
 
-	_, err = s.collection.InsertOne(ctx, widget)
+	_, err := s.collection.InsertOne(ctx, widget)
 	if err != nil {
 		return nil, err
 	}
@@ -116,7 +128,6 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*view.Widget, error)
 	now := types.CpsTime{Time: time.Now()}
 	widget := transformEditRequestToModel(r)
 	widget.ID = oldWidget.ID
-	widget.Position = oldWidget.Position
 	widget.Created = oldWidget.Created
 	widget.Updated = &now
 	// Empty InternalParameters to remove from update query.
@@ -162,15 +173,73 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	return true, nil
 }
 
-func (s *store) UpdatePositions(ctx context.Context, ids []string) (bool, error) {
-	widgets := make([]view.Widget, 0)
+func (s *store) Copy(ctx context.Context, widget view.Widget, r CopyRequest) (*view.Widget, error) {
+	now := types.CpsTime{Time: time.Now()}
+	id := widget.ID
+	widget.ID = utils.NewID()
+	widget.Tab = r.Tab
+	widget.Author = r.Author
+	widget.Created = &now
+	widget.Updated = &now
+
+	cursor, err := s.filterCollection.Find(ctx, bson.M{
+		"widget": id,
+		"user":   bson.M{"$in": bson.A{"", nil}},
+	})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	filters := make([]interface{}, 0)
+	for cursor.Next(ctx) {
+		filter := view.Filter{}
+		err := cursor.Decode(&filter)
+		if err != nil {
+			return nil, err
+		}
+
+		newId := utils.NewID()
+		if widget.Parameters.MainFilter == filter.ID {
+			widget.Parameters.MainFilter = newId
+		}
+
+		filter.ID = newId
+		filter.Widget = widget.ID
+		filter.Author = r.Author
+		filter.Created = &now
+		filter.Updated = &now
+		filters = append(filters, filter)
+	}
+
+	_, err = s.collection.InsertOne(ctx, widget)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(filters) > 0 {
+		_, err := s.filterCollection.InsertMany(ctx, filters)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &widget, nil
+}
+
+func (s *store) UpdateGridPositions(ctx context.Context, items []EditGridPositionItemRequest) (bool, error) {
+	ids := make([]string, len(items))
+	for i, item := range items {
+		ids[i] = item.ID
+	}
+	widgets := make([]view.Widget, 0, len(items))
 	cursor, err := s.collection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}})
 	if err != nil {
 		return false, err
 	}
 
 	err = cursor.All(ctx, &widgets)
-	if err != nil || len(widgets) != len(ids) {
+	if err != nil || len(widgets) != len(items) {
 		return false, err
 	}
 
@@ -187,15 +256,15 @@ func (s *store) UpdatePositions(ctx context.Context, ids []string) (bool, error)
 	if err != nil {
 		return false, err
 	}
-	if count != int64(len(ids)) {
+	if count != int64(len(items)) {
 		return false, ValidationErr{error: errors.New("widgets are missing")}
 	}
 
 	writeModels := make([]mongodriver.WriteModel, len(widgets))
-	for i, id := range ids {
+	for i, item := range items {
 		writeModels[i] = mongodriver.NewUpdateOneModel().
-			SetFilter(bson.M{"_id": id}).
-			SetUpdate(bson.M{"$set": bson.M{"position": i}})
+			SetFilter(bson.M{"_id": item.ID}).
+			SetUpdate(bson.M{"$set": bson.M{"grid_parameters": item.GridParameters}})
 	}
 
 	res, err := s.collection.BulkWrite(ctx, writeModels)

@@ -24,7 +24,7 @@
             author = "";
         }
 
-        doc.tabs.forEach(function (tab) {
+        doc.tabs.forEach(function (tab, tabIndex) {
             var tabId = tab._id;
             if (tabIds[tabId] > 0) {
                 tabIds[tabId]++;
@@ -87,6 +87,7 @@
             tab._id = tabId;
             tab.loader_id = tabId;
             tab.view = doc._id;
+            tab.position = tabIndex;
             tab.author = author;
             tab.created = created;
             tab.updated = updated;

@@ -333,33 +333,33 @@
     "updated": 1611229670
   },
   {
-    "_id": "test-view-to-widget-update-position-1",
+    "_id": "test-view-to-widget-update-grid-position-1",
     "enabled": true,
-    "title": "test-view-to-widget-update-position-1-title",
-    "description": "test-view-to-widget-update-position-1-description",
-    "author": "test-author-to-widget-update-position",
+    "title": "test-view-to-widget-update-grid-position-1-title",
+    "description": "test-view-to-widget-update-grid-position-1-description",
+    "author": "test-author-to-widget-update-grid-position",
     "group_id": "test-viewgroup-to-view-edit",
     "position": 30,
     "created": 1611229670,
     "updated": 1611229670
   },
   {
-    "_id": "test-view-to-widget-update-position-2",
+    "_id": "test-view-to-widget-update-grid-position-2",
     "enabled": true,
-    "title": "test-view-to-widget-update-position-2-title",
-    "description": "test-view-to-widget-update-position-2-description",
-    "author": "test-author-to-widget-update-position",
+    "title": "test-view-to-widget-update-grid-position-2-title",
+    "description": "test-view-to-widget-update-grid-position-2-description",
+    "author": "test-author-to-widget-update-grid-position",
     "group_id": "test-viewgroup-to-view-edit",
     "position": 31,
     "created": 1611229670,
     "updated": 1611229670
   },
   {
-    "_id": "test-view-to-widget-update-position-3",
+    "_id": "test-view-to-widget-update-grid-position-3",
     "enabled": true,
-    "title": "test-view-to-widget-update-position-3-title",
-    "description": "test-view-to-widget-update-position-3-description",
-    "author": "test-author-to-widget-update-position",
+    "title": "test-view-to-widget-update-grid-position-3-title",
+    "description": "test-view-to-widget-update-grid-position-3-description",
+    "author": "test-author-to-widget-update-grid-position",
     "group_id": "test-viewgroup-to-view-edit",
     "position": 32,
     "created": 1611229670,
@@ -455,6 +455,113 @@
     "author": "test-author-to-widgetfilter-check-access",
     "group_id": "test-viewgroup-to-view-edit",
     "position": 39,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-copy-1",
+    "enabled": true,
+    "title": "test-view-to-copy-1-title",
+    "description": "test-view-to-copy-1-description",
+    "periodic_refresh": {
+      "enabled": true,
+      "value": 100,
+      "unit": "m"
+    },
+    "tags": [
+      "test-view-to-copy-1-tag"
+    ],
+    "author": "test-author-to-copy",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 40,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-copy-2",
+    "enabled": true,
+    "title": "test-view-to-copy-2-title",
+    "description": "test-view-to-copy-2-description",
+    "author": "test-author-to-copy",
+    "group_id": "test-viewgroup-to-view-copy",
+    "position": 41,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-copy-3",
+    "enabled": true,
+    "title": "test-view-to-copy-3-title",
+    "description": "test-view-to-copy-3-description",
+    "author": "test-author-to-copy",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 42,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-tab-copy-1",
+    "enabled": true,
+    "title": "test-view-to-tab-copy-1-title",
+    "description": "test-view-to-tab-copy-1-description",
+    "author": "test-author-to-tab-copy",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 43,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-tab-copy-2",
+    "enabled": true,
+    "title": "test-view-to-tab-copy-2-title",
+    "description": "test-view-to-tab-copy-2-description",
+    "author": "test-author-to-tab-copy",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 44,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-tab-copy-3",
+    "enabled": true,
+    "title": "test-view-to-tab-copy-3-title",
+    "description": "test-view-to-tab-copy-3-description",
+    "author": "test-author-to-tab-copy",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 45,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-widget-copy-1",
+    "enabled": true,
+    "title": "test-view-to-widget-copy-1-title",
+    "description": "test-view-to-widget-copy-1-description",
+    "author": "test-author-to-widget-copy",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 46,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-widget-copy-2",
+    "enabled": true,
+    "title": "test-view-to-widget-copy-2-title",
+    "description": "test-view-to-widget-copy-2-description",
+    "author": "test-author-to-widget-copy",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 47,
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-view-to-widget-copy-3",
+    "enabled": true,
+    "title": "test-view-to-widget-copy-3-title",
+    "description": "test-view-to-widget-copy-3-description",
+    "author": "test-author-to-widget-copy",
+    "group_id": "test-viewgroup-to-view-edit",
+    "position": 48,
     "created": 1611229670,
     "updated": 1611229670
   }

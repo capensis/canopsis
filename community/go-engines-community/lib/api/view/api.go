@@ -18,6 +18,7 @@ import (
 
 type API interface {
 	common.CrudAPI
+	Copy(c *gin.Context)
 	UpdatePositions(c *gin.Context)
 	Import(c *gin.Context)
 	Export(c *gin.Context)
@@ -138,7 +139,7 @@ func (a *api) Create(c *gin.Context) {
 	}
 
 	userID := c.MustGet(auth.UserKey).(string)
-	view, err := a.store.Insert(c.Request.Context(), userID, request)
+	view, err := a.store.Insert(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
 	}
@@ -236,6 +237,53 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// Copy view
+// @Summary Copy view
+// @Description Copy view
+// @Tags views
+// @ID views-copy
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param id path string true "view id"
+// @Param body body EditRequest true "body"
+// @Success 201 {object} viewgroup.View
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Failure 404 {object} common.ErrorResponse
+// @Router /view-copy/{id} [put]
+func (a *api) Copy(c *gin.Context) {
+	request := EditRequest{}
+
+	if err := c.ShouldBind(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	userId := c.MustGet(auth.UserKey).(string)
+	id := c.Param("id")
+	view, err := a.store.Copy(c.Request.Context(), id, request)
+	if err != nil {
+		panic(err)
+	}
+
+	if view == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+		Action:    logger.ActionCreate,
+		ValueType: logger.ValueTypeView,
+		ValueID:   view.ID,
+	})
+	if err != nil {
+		a.actionLogger.Err(err, "failed to log action")
+	}
+
+	c.JSON(http.StatusCreated, view)
 }
 
 // Update views positions

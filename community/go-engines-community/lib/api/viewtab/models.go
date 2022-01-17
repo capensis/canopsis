@@ -22,3 +22,8 @@ func (r EditPositionRequest) MarshalJSON() ([]byte, error) {
 func (r *EditPositionRequest) UnmarshalJSON(b []byte) error {
 	return json.Unmarshal(b, &r.Items)
 }
+
+type CopyRequest struct {
+	View   string `json:"view" binding:"required"`
+	Author string `json:"author" swaggerignore:"true"`
+}

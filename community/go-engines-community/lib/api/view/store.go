@@ -6,6 +6,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -21,17 +22,18 @@ const permissionPrefix = "Rights on view :"
 type Store interface {
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
 	GetOneBy(ctx context.Context, id string) (*viewgroup.View, error)
-	Insert(ctx context.Context, userID string, r EditRequest) (*viewgroup.View, error)
+	Insert(ctx context.Context, r EditRequest) (*viewgroup.View, error)
 	Update(ctx context.Context, r EditRequest) (*viewgroup.View, error)
 	// UpdatePositions receives some groups and views with updated positions and updates
 	// positions for all groups and views in db and moves views to another groups if necessary.
 	UpdatePositions(ctx context.Context, r EditPositionRequest) (bool, error)
 	Delete(ctx context.Context, id string) (bool, error)
+	Copy(ctx context.Context, id string, r EditRequest) (*viewgroup.View, error)
 	Export(ctx context.Context, r ExportRequest) (ExportResponse, error)
 	Import(ctx context.Context, r ImportRequest, userId string) error
 }
 
-func NewStore(dbClient mongo.DbClient) Store {
+func NewStore(dbClient mongo.DbClient, tabStore viewtab.Store) Store {
 	return &store{
 		collection:             dbClient.Collection(mongo.ViewMongoCollection),
 		tabCollection:          dbClient.Collection(mongo.ViewTabMongoCollection),
@@ -42,6 +44,8 @@ func NewStore(dbClient mongo.DbClient) Store {
 		userPrefCollection:     dbClient.Collection(mongo.UserPreferencesMongoCollection),
 		defaultSearchByFields:  []string{"_id", "title", "description", "author"},
 		defaultSortBy:          "position",
+
+		tabStore: tabStore,
 	}
 }
 
@@ -55,6 +59,8 @@ type store struct {
 	userPrefCollection     mongo.DbCollection
 	defaultSearchByFields  []string
 	defaultSortBy          string
+
+	tabStore viewtab.Store
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
@@ -125,7 +131,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*viewgroup.View, error
 	return nil, nil
 }
 
-func (s *store) Insert(ctx context.Context, userID string, r EditRequest) (*viewgroup.View, error) {
+func (s *store) Insert(ctx context.Context, r EditRequest) (*viewgroup.View, error) {
 	count, err := s.collection.CountDocuments(ctx, bson.M{})
 	if err != nil {
 		return nil, err
@@ -155,7 +161,7 @@ func (s *store) Insert(ctx context.Context, userID string, r EditRequest) (*view
 		return nil, err
 	}
 
-	err = s.createPermissions(ctx, userID, map[string]string{newView.ID: newView.Title})
+	err = s.createPermissions(ctx, r.Author, map[string]string{newView.ID: newView.Title})
 	if err != nil {
 		return nil, err
 	}
@@ -228,6 +234,42 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	return true, nil
 }
 
+func (s *store) Copy(ctx context.Context, id string, r EditRequest) (*viewgroup.View, error) {
+	v, err := s.GetOneBy(ctx, id)
+	if err != nil || v == nil {
+		return nil, err
+	}
+
+	newView, err := s.Insert(ctx, r)
+	if err != nil {
+		return nil, err
+	}
+
+	cursor, err := s.tabCollection.Find(ctx, bson.M{"view": v.ID})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		t := view.Tab{}
+		err := cursor.Decode(&t)
+		if err != nil {
+			return nil, err
+		}
+
+		_, err = s.tabStore.Copy(ctx, t, viewtab.CopyRequest{
+			View:   newView.ID,
+			Author: newView.Author,
+		})
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return newView, nil
+}
+
 func (s *store) UpdatePositions(ctx context.Context, r EditPositionRequest) (bool, error) {
 	groupPositions, viewPositionsByGroup, err := s.findViewPositions(ctx)
 	if err != nil || len(groupPositions) == 0 {
@@ -282,11 +324,10 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 		}},
 		{"$sort": bson.M{"filters.title": 1}},
 		{"$project": bson.M{
-			"widgets._id":      0,
-			"widgets.author":   0,
-			"widgets.updated":  0,
-			"widgets.created":  0,
-			"widgets.position": 0,
+			"widgets._id":     0,
+			"widgets.author":  0,
+			"widgets.updated": 0,
+			"widgets.created": 0,
 		}},
 		{"$group": bson.M{
 			"_id": bson.M{
@@ -302,7 +343,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 		{"$addFields": bson.M{
 			"widgets.filters": "$filters",
 		}},
-		{"$sort": bson.M{"widgets.position": 1}},
+		{"$sort": bson.D{{"widgets.grid_parameters.desktop.y", 1}, {"widgets.grid_parameters.desktop.x", 1}}},
 		{"$group": bson.M{
 			"_id": bson.M{
 				"_id": "$_id._id",
@@ -658,7 +699,6 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 							GridParameters: widget.GridParameters,
 							Parameters:     widget.Parameters,
 							Author:         userId,
-							Position:       int64(wi),
 							Created:        &now,
 							Updated:        &now,
 						})
@@ -999,7 +1039,7 @@ func getNestedObjectsPipeline() []bson.M {
 		{"$addFields": bson.M{
 			"widgets.filters": "$filters",
 		}},
-		{"$sort": bson.M{"widgets.position": 1}},
+		{"$sort": bson.D{{"widgets.grid_parameters.desktop.y", 1}, {"widgets.grid_parameters.desktop.x", 1}}},
 		{"$group": bson.M{
 			"_id": bson.M{
 				"_id": "$_id._id",

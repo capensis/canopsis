@@ -57,7 +57,6 @@ type Widget struct {
 	Parameters         Parameters             `bson:"parameters" json:"parameters"`
 	InternalParameters InternalParameters     `bson:"internal_parameters,omitempty" json:"-"`
 	Author             string                 `bson:"author" json:"author,omitempty"`
-	Position           int64                  `bson:"position" json:"-"`
 	Created            *types.CpsTime         `bson:"created" json:"created,omitempty" swaggertype:"integer"`
 	Updated            *types.CpsTime         `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
 }

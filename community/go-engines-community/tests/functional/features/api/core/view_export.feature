@@ -46,7 +46,7 @@ Feature: Export views
                       "title": "test-widget-to-export-1-title",
                       "type": "test-widget-to-export-1-type",
                       "grid_parameters": {
-                        "test-widget-to-view-export-1-gridparameter": "test-widget-to-view-export-1-gridparameter-value"
+                        "desktop": {"x": 0, "y": 0}
                       },
                       "parameters": {
                         "main_filter": "test-widgetfilter-to-export-2",

@@ -179,5 +179,32 @@
     "query": "{\"test\":\"test\"}",
     "created": 1611229670,
     "updated": 1611229670
+  },
+  {
+    "_id": "test-widgetfilter-to-view-copy-1",
+    "title": "test-widgetfilter-to-view-copy-1-title",
+    "widget": "test-widget-to-view-copy-1",
+    "author": "test-user-to-view-copy",
+    "query": "{\"test\":\"test\"}",
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-widgetfilter-to-tab-copy-1",
+    "title": "test-widgetfilter-to-tab-copy-1-title",
+    "widget": "test-widget-to-tab-copy-1",
+    "author": "test-user-to-tab-copy",
+    "query": "{\"test\":\"test\"}",
+    "created": 1611229670,
+    "updated": 1611229670
+  },
+  {
+    "_id": "test-widgetfilter-to-widget-copy-1",
+    "title": "test-widgetfilter-to-widget-copy-1-title",
+    "widget": "test-widget-to-copy-1",
+    "author": "test-user-to-widget-copy",
+    "query": "{\"test\":\"test\"}",
+    "created": 1611229670,
+    "updated": 1611229670
   }
 ]

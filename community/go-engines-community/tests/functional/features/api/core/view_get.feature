@@ -107,7 +107,7 @@ Feature: Get a view
               "created": 1611229670,
               "updated": 1611229670,
               "grid_parameters": {
-                "test-widget-to-view-get-1-gridparameter": "test-widget-to-view-get-1-gridparameter-value"
+                "desktop": {"x": 0, "y": 0}
               },
               "parameters": {
                 "test-widget-to-view-get-1-parameter-1": {
@@ -146,7 +146,7 @@ Feature: Get a view
               "created": 1611229670,
               "updated": 1611229670,
               "grid_parameters": {
-                "test-widget-to-view-get-2-gridparameter": "test-widget-to-view-get-2-gridparameter-value"
+                "desktop": {"x": 0, "y": 1}
               },
               "parameters": {
                 "test-widget-to-view-get-2-parameter-1": {

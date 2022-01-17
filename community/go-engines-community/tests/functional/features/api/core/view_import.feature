@@ -30,7 +30,7 @@ Feature: Import views
                     "title": "test-widget-to-import-1-title",
                     "type": "test-widget-to-import-1-type",
                     "grid_parameters": {
-                      "test-widget-to-view-import-1-gridparameter": "test-widget-to-view-import-1-gridparameter-value"
+                      "desktop": {"x": 0, "y": 0}
                     },
                     "parameters": {
                       "main_filter": "test-widgetfilter-to-import-2",
@@ -137,7 +137,7 @@ Feature: Import views
               "title": "test-widget-to-import-1-title",
               "type": "test-widget-to-import-1-type",
               "grid_parameters": {
-                "test-widget-to-view-import-1-gridparameter": "test-widget-to-view-import-1-gridparameter-value"
+                "desktop": {"x": 0, "y": 0}
               },
               "parameters": {
                 "test-widget-to-view-import-1-parameter-1": {
