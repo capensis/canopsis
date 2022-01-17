@@ -10,7 +10,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { ACTIVE_LOGGED_USERS_COUNT_FETCHING_INTERVAL } from '@/config';
+import { SOCKET_ROOMS } from '@/config';
 
 const { mapActions } = createNamespacedHelpers('auth');
 
@@ -27,30 +27,28 @@ export default {
     };
   },
   mounted() {
-    this.startFetchLoggedUsersCount();
+    this.fetchData();
+
+    this.$socket
+      .join(SOCKET_ROOMS.loggedUserCount)
+      .addListener(this.setCount);
   },
   beforeDestroy() {
-    this.stopFetchLoggedUsersCount();
+    this.$socket
+      .leave(SOCKET_ROOMS.loggedUserCount)
+      .removeListener(this.setCount);
   },
   methods: {
     ...mapActions(['fetchLoggedUsersCountWithoutStore']),
 
-    async startFetchLoggedUsersCount() {
-      const { count } = await this.fetchLoggedUsersCountWithoutStore();
-
+    setCount(count) {
       this.count = count;
-
-      if (this.requestTimer) {
-        this.stopFetchLoggedUsersCount();
-      }
-
-      this.requestTimer = setTimeout(this.startFetchLoggedUsersCount, ACTIVE_LOGGED_USERS_COUNT_FETCHING_INTERVAL);
     },
 
-    stopFetchLoggedUsersCount() {
-      clearTimeout(this.requestTimer);
+    async fetchData() {
+      const { count = 0 } = await this.fetchLoggedUsersCountWithoutStore();
 
-      this.requestTimer = undefined;
+      this.setCount(count);
     },
   },
 };

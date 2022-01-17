@@ -1,8 +1,10 @@
-FROM node:10.24.1-alpine AS build
+FROM node:14.18.1-buster-slim AS build
 
 WORKDIR /canopsis-next
 COPY sources/webcore/src/canopsis-next /canopsis-next
-RUN export FORCE_COLOR=0 NPM_CONFIG_COLOR=false NPM_CONFIG_PROGRESS=false NPM_CONFIG_SPIN=false && yarn && NODE_ENV=production yarn build --mode production
+RUN export FORCE_COLOR=0 NPM_CONFIG_COLOR=false NPM_CONFIG_PROGRESS=false NPM_CONFIG_SPIN=false NODE_OPTIONS="--max-old-space-size=6144" \
+	&& yarn \
+	&& NODE_ENV=production yarn build --mode production
 
 FROM nginx:1.20.1-alpine
 

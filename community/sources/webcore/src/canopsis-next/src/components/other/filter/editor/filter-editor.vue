@@ -26,7 +26,6 @@
     v-alert(:value="errors.has('filter')", type="error") {{ $t('filterEditor.errors.required') }}
 </template>
 
-
 <script>
 import { get } from 'lodash';
 
@@ -34,7 +33,6 @@ import { ENTITIES_TYPES, FILTER_OPERATORS, FILTER_INPUT_TYPES, ENTITY_TYPES, MAX
 
 import { filterToForm, formToFilter } from '@/helpers/forms/filter';
 import { checkIfGroupIsEmpty } from '@/helpers/filter/editor/filter-check';
-
 
 import { entitiesFilterHintsMixin } from '@/mixins/entities/associative-table/filter-hints';
 import entitiesEntityCategoryMixin from '@/mixins/entities/entity-category';
@@ -214,11 +212,11 @@ export default {
         this.impactLevelHint,
         this.typeHint,
         {
-          name: this.$t('entity.fields.impact'),
+          name: this.$t('entity.impact'),
           value: 'impact',
         },
         {
-          name: this.$t('entity.fields.depends'),
+          name: this.$t('entity.depends'),
           value: 'depends',
         },
       ];
@@ -289,7 +287,7 @@ export default {
       try {
         this.advancedJson = formToFilter(this.form);
       } catch (err) {
-        console.warn(err);
+        console.error(err);
 
         this.$popups.error({ text: this.$t('errors.default') });
       }
@@ -301,7 +299,7 @@ export default {
 
         this.advancedJson = advancedJson;
       } catch (err) {
-        console.warn(err);
+        console.error(err);
 
         /**
          * We need to use setTimeout instead of $nextTick here because we already used reset inside json-field

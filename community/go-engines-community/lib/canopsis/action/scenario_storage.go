@@ -90,7 +90,7 @@ func (s *scenarioStorage) GetTriggeredScenarios(
 			continue
 		}
 
-		if scenario.Delay != nil && scenario.Delay.Seconds > 0 {
+		if scenario.Delay != nil && scenario.Delay.Value > 0 {
 			continue
 		}
 
@@ -118,7 +118,7 @@ func (s *scenarioStorage) RunDelayedScenarios(
 			continue
 		}
 
-		if scenario.Delay != nil && scenario.Delay.Seconds > 0 {
+		if scenario.Delay != nil && scenario.Delay.Value > 0 {
 			// Check if at least on action matches alarm.
 			matched := false
 			for _, action := range scenario.Actions {

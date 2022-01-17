@@ -7,7 +7,6 @@ import (
 	"fmt"
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -15,7 +14,6 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
 	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"math/rand"
 	"net/url"
 	"text/template"
@@ -176,7 +174,8 @@ func (c *AmqpClient) ICallRPCAxeRequest(ctx context.Context, eid string, doc str
 		return err
 	}
 
-	event.Alarm = alarm
+	event.Alarm = &alarm.Alarm
+	event.Entity = &alarm.Entity
 	body, err := c.encoder.Encode(event)
 	if err != nil {
 		return err
@@ -229,7 +228,8 @@ func (c *AmqpClient) ICallRPCWebhookRequest(ctx context.Context, eid string, doc
 		return err
 	}
 
-	event.Alarm = alarm
+	event.Alarm = &alarm.Alarm
+	event.Entity = &alarm.Entity
 	body, err := c.encoder.Encode(event)
 	if err != nil {
 		return err
@@ -253,23 +253,39 @@ func (c *AmqpClient) ICallRPCWebhookRequest(ctx context.Context, eid string, doc
 	return nil
 }
 
-func (c *AmqpClient) findAlarm(ctx context.Context, eid string) (*types.Alarm, error) {
-	res := c.mongoClient.Collection(libalarm.AlarmCollectionName).FindOne(ctx, bson.M{"d": eid})
-	if err := res.Err(); err != nil {
-		if err == mongodriver.ErrNoDocuments {
-			return nil, fmt.Errorf("couldn't find an alarm for eid = %s", eid)
-		}
-
-		return nil, err
-	}
-
-	var alarm types.Alarm
-	err := res.Decode(&alarm)
+func (c *AmqpClient) findAlarm(ctx context.Context, eid string) (*types.AlarmWithEntity, error) {
+	cursor, err := c.mongoClient.Collection(mongo.AlarmMongoCollection).Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"d": eid}},
+		{"$sort": bson.M{"v.creation_date": -1}},
+		{"$limit": 1},
+		{"$project": bson.M{
+			"alarm": "$$ROOT",
+			"_id":   0,
+		}},
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "alarm.d",
+			"foreignField": "_id",
+			"as":           "entity",
+		}},
+		{"$unwind": "$entity"},
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	return &alarm, nil
+	defer cursor.Close(ctx)
+	if cursor.Next(ctx) {
+		var alarm types.AlarmWithEntity
+		err := cursor.Decode(&alarm)
+		if err != nil {
+			return nil, err
+		}
+
+		return &alarm, nil
+	}
+
+	return nil, fmt.Errorf("couldn't find an alarm for eid = %s", eid)
 }
 
 func (c *AmqpClient) executeRPC(queue string, body []byte) ([]byte, error) {

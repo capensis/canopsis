@@ -1,5 +1,0 @@
-ARG BASE
-
-FROM ${BASE} AS build
-
-COPY cmd/canopsis-reconfigure/canopsis-cat.toml.example /opt/canopsis/etc/canopsis.toml

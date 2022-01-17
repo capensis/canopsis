@@ -1,11 +1,13 @@
 package auth
 
 import (
+	"context"
 	"net/http"
 	"strings"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
@@ -31,6 +33,7 @@ func NewApi(
 	tokenStore token.Store,
 	providers []security.Provider,
 	sessionStore session.Store,
+	websocketHub websocket.Hub,
 	cookieName string,
 	cookieMaxAge int,
 	cookieSecure bool,
@@ -40,6 +43,7 @@ func NewApi(
 		tokenService: tokenService,
 		tokenStore:   tokenStore,
 		providers:    providers,
+		websocketHub: websocketHub,
 		sessionStore: sessionStore,
 		logger:       logger,
 
@@ -54,6 +58,7 @@ type api struct {
 	tokenService token.Service
 	tokenStore   token.Store
 	providers    []security.Provider
+	websocketHub websocket.Hub
 	logger       zerolog.Logger
 
 	cookieName     string
@@ -107,16 +112,19 @@ func (a *api) Login(c *gin.Context) {
 		panic(err)
 	}
 
+	now := time.Now()
 	err = a.tokenStore.Save(c.Request.Context(), token.Token{
 		ID:       accessToken,
 		User:     user.ID,
 		Provider: provider,
-		Created:  types.CpsTime{Time: time.Now()},
+		Created:  types.CpsTime{Time: now},
 		Expired:  types.CpsTime{Time: expiresAt},
 	})
 	if err != nil {
 		panic(err)
 	}
+
+	a.sendWebsocketMessage(c.Request.Context())
 
 	response := loginResponse{AccessToken: accessToken}
 
@@ -149,6 +157,8 @@ func (a *api) Logout(c *gin.Context) {
 		return
 	}
 
+	a.sendWebsocketMessage(c.Request.Context())
+
 	c.SetSameSite(a.cookieSameSite)
 	c.SetCookie(a.cookieName, tokenString, -1, "", "", a.cookieSecure, false)
 	c.Status(http.StatusNoContent)
@@ -166,19 +176,13 @@ func (a *api) Logout(c *gin.Context) {
 // @Success 204
 // @Router /logged-user-count [get]
 func (a *api) GetLoggedUserCount(c *gin.Context) {
-	count, err := a.tokenStore.Count(c.Request.Context())
-	if err != nil {
-		panic(err)
-	}
-
-	// todo : remove after session delete
-	sessionCount, err := a.sessionStore.GetActiveSessionsCount(c.Request.Context())
+	count, err := a.fetchLoggedUserCount(c.Request.Context())
 	if err != nil {
 		panic(err)
 	}
 
 	c.JSON(http.StatusOK, loggedUserCountResponse{
-		Count: count + sessionCount,
+		Count: count,
 	})
 }
 
@@ -212,6 +216,29 @@ func (a *api) GetFileAccess(c *gin.Context) {
 	c.SetSameSite(a.cookieSameSite)
 	c.SetCookie(a.cookieName, tokenString, a.cookieMaxAge, "", "", a.cookieSecure, false)
 	c.Status(http.StatusNoContent)
+}
+
+func (a *api) sendWebsocketMessage(ctx context.Context) {
+	count, err := a.fetchLoggedUserCount(ctx)
+	if err != nil {
+		panic(err)
+	}
+	a.websocketHub.Send(websocket.RoomLoggedUserCount, count)
+}
+
+func (a *api) fetchLoggedUserCount(ctx context.Context) (int64, error) {
+	count, err := a.tokenStore.Count(ctx)
+	if err != nil {
+		return 0, err
+	}
+
+	// todo : remove after session delete
+	sessionCount, err := a.sessionStore.GetActiveSessionsCount(ctx)
+	if err != nil {
+		return 0, err
+	}
+
+	return count + sessionCount, nil
 }
 
 func getToken(c *gin.Context) string {

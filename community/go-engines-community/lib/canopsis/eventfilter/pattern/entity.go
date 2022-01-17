@@ -18,6 +18,7 @@ type EntityRegexMatches struct {
 	ID             RegexMatches
 	Name           RegexMatches
 	Component      RegexMatches
+	Category       RegexMatches
 	Infos          map[string]InfoRegexMatches
 	ComponentInfos map[string]InfoRegexMatches
 	Type           RegexMatches
@@ -42,6 +43,7 @@ type EntityFields struct {
 	ComponentInfos map[string]InfoPattern `bson:"component_infos"`
 	Type           StringPattern          `bson:"type"`
 	Component      StringPattern          `bson:"component"`
+	Category       StringPattern          `bson:"category"`
 
 	// When unmarshalling a BSON document, the fields of this document that are
 	// not defined in this struct are added to UnexpectedFields.
@@ -80,7 +82,68 @@ func (e EntityFields) AsMongoDriverQuery() bson.M {
 	if !e.Component.Empty() {
 		query["component"] = e.Component.AsMongoDriverQuery()
 	}
+	if !e.Category.Empty() {
+		query["category"] = e.Category.AsMongoDriverQuery()
+	}
 	return query
+}
+
+func (e EntityFields) AsSqlQuery(table ...string) (string, error) {
+	prefix := ""
+	if len(table) > 1 {
+		panic(fmt.Errorf("too many arguments, expected one: %+v", table))
+	}
+	if len(table) > 0 {
+		prefix = table[0] + "."
+	}
+
+	conds := make([]string, 0)
+	if !e.ID.Empty() {
+		// Int id is used in SQL database. String id is stored to custom_id field.
+		conds = append(conds, fmt.Sprintf("%scustom_id %s", prefix, e.ID.AsSqlQuery()))
+	}
+	if !e.Name.Empty() {
+		conds = append(conds, fmt.Sprintf("%sname %s", prefix, e.Name.AsSqlQuery()))
+	}
+	if !e.Type.Empty() {
+		conds = append(conds, fmt.Sprintf("%stype %s", prefix, e.Type.AsSqlQuery()))
+	}
+	if !e.Component.Empty() {
+		conds = append(conds, fmt.Sprintf("%scomponent %s", prefix, e.Component.AsSqlQuery()))
+	}
+	if !e.Category.Empty() {
+		conds = append(conds, fmt.Sprintf("%scategory %s", prefix, e.Category.AsSqlQuery()))
+	}
+	if !e.Enabled.Empty() {
+		conds = append(conds, fmt.Sprintf("%senabled %s", prefix, e.Enabled.AsSqlQuery()))
+	}
+	if len(e.Infos) != 0 {
+		for key, value := range e.Infos {
+			if value.Value.IsSet() {
+				conds = append(conds, fmt.Sprintf("%sinfos->>'%s' %s", prefix, key, value.Value.AsSqlQuery()))
+			}
+			if value.Name.IsSet() {
+				return "", fmt.Errorf("where clause for infos.name is not supported for SQL")
+			}
+			if value.Description.IsSet() {
+				return "", fmt.Errorf("where clause for infos.description is not supported for SQL")
+			}
+		}
+	}
+	if len(e.ComponentInfos) != 0 {
+		for key, value := range e.ComponentInfos {
+			if value.Value.IsSet() {
+				conds = append(conds, fmt.Sprintf("%scomponent_infos->>'%s' %s", prefix, key, value.Value.AsSqlQuery()))
+			}
+			if value.Name.IsSet() {
+				return "", fmt.Errorf("where clause for infos.name is not supported for SQL")
+			}
+			if value.Description.IsSet() {
+				return "", fmt.Errorf("where clause for infos.description is not supported for SQL")
+			}
+		}
+	}
+	return strings.Join(conds, " AND "), nil
 }
 
 // EntityPattern is a type representing a pattern that can be applied to an
@@ -107,6 +170,7 @@ func (e EntityPattern) IsSet() bool {
 		e.EntityFields.Name.IsSet() ||
 		e.EntityFields.ID.IsSet() ||
 		e.EntityFields.Component.IsSet() ||
+		e.EntityFields.Category.IsSet() ||
 		len(e.EntityFields.Infos) > 0 ||
 		len(e.EntityFields.ComponentInfos) > 0
 }
@@ -123,6 +187,14 @@ func (e EntityPattern) AsMongoDriverQuery() bson.M {
 	return query
 }
 
+func (e EntityPattern) AsSqlQuery(table ...string) (string, error) {
+	if e.ShouldNotBeNil {
+		return e.EntityFields.AsSqlQuery(table...)
+	}
+
+	return "", nil
+}
+
 // Matches returns true if an entity is matched by a pattern. If the pattern
 // contains regular expressions with sub-expressions, the values of the
 // sub-expressions are written in the matches argument.
@@ -133,6 +205,7 @@ func (e EntityPattern) Matches(entity *types.Entity, matches *EntityRegexMatches
 
 	match := !e.ShouldBeNil &&
 		e.Component.Matches(entity.Component, &matches.Component) &&
+		e.Category.Matches(entity.Category, &matches.Category) &&
 		e.ID.Matches(entity.ID, &matches.ID) &&
 		e.Name.Matches(entity.Name, &matches.Name) &&
 		e.Enabled.Matches(entity.Enabled) &&
@@ -227,6 +300,15 @@ func (e EntityPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 		resultBson[bsonFieldName] = e.Component
 	}
 
+	if e.Category.IsSet() {
+		bsonFieldName, err := GetFieldBsonName(e, "Category", "category")
+		if err != nil {
+			return bsontype.Undefined, nil, err
+		}
+
+		resultBson[bsonFieldName] = e.Category
+	}
+
 	if e.Type.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(e, "Type", "type")
 		if err != nil {
@@ -280,16 +362,16 @@ func (e *EntityPattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte) er
 // The zero value of an EntityPatternList (i.e. an EntityPatternList that has
 // not been set) is considered valid, and matches all entities.
 type EntityPatternList struct {
-	Patterns []EntityPattern
+	Patterns []EntityPattern `swaggerignore:"true"`
 
 	// Set is a boolean indicating whether the EntityPatternList has been set
 	// explicitly or not.
-	Set bool
+	Set bool `swaggerignore:"true"`
 
 	// Valid is a boolean indicating whether the event patterns or valid or
 	// not.
 	// Valid is also false if the EntityPatternList has not been set.
-	Valid bool
+	Valid bool `swaggerignore:"true"`
 }
 
 func (l *EntityPatternList) UnmarshalJSON(b []byte) error {
@@ -380,6 +462,22 @@ func (l EntityPatternList) AsNegativeMongoDriverQuery() bson.M {
 		patternFilters = append(patternFilters, entitiesPattern.AsMongoDriverQuery())
 	}
 	return bson.M{"$nor": patternFilters}
+}
+
+func (l EntityPatternList) AsSqlQuery(table ...string) (string, error) {
+	if !l.Set {
+		return "", nil
+	}
+
+	conds := make([]string, len(l.Patterns))
+	var err error
+	for i, v := range l.Patterns {
+		conds[i], err = v.AsSqlQuery(table...)
+		if err != nil {
+			return "", err
+		}
+	}
+	return strings.Join(conds, " OR "), nil
 }
 
 // Matches returns true if the entity is matched by the EntityPatternList.

@@ -7,7 +7,7 @@ import (
 func ValidateExdateRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(ExdateRequest)
 
-	if r.End.Before(r.Begin.Time) {
+	if r.End.Before(r.Begin) {
 		sl.ReportError(r.End, "End", "End", "gtfield", "Begin")
 	}
 }

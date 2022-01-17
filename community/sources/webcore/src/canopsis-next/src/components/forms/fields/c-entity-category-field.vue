@@ -94,6 +94,12 @@ export default {
   },
   methods: {
     async createCategory() {
+      const isValid = await this.$validator.validate(this.newCategoryFieldName);
+
+      if (!isValid) {
+        return;
+      }
+
       this.creating = true;
 
       const category = await this.createEntityCategory({
@@ -107,7 +113,7 @@ export default {
       this.creating = false;
       this.clearCategory();
 
-      return this.updateModel(category);
+      this.updateModel(category);
     },
 
     clearCategory() {
@@ -116,7 +122,7 @@ export default {
     },
 
     fetchList() {
-      this.fetchEntityCategoriesList({
+      return this.fetchEntityCategoriesList({
         params: { limit: MAX_LIMIT },
       });
     },
