@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -47,6 +48,12 @@ type ActionProcessor interface {
 type Action struct {
 	ActionBase
 	ActionProcessor
+
+	timezoneConfig *config.TimezoneConfig
+}
+
+func (a *Action) SetTimezoneConfig(cfg *config.TimezoneConfig) {
+	a.timezoneConfig = cfg
 }
 
 func (a *Action) UnmarshalJSON(b []byte) error {
@@ -129,6 +136,7 @@ func (a *Action) UnmarshalBSONValue(_ bsontype.Type, b []byte) error {
 		a.ActionProcessor = p
 	case SetFieldFromTemplate:
 		var p SetFieldFromTemplateProcessor
+		p.Value.SetTimezoneConfig(a.timezoneConfig)
 		err = bson.Unmarshal(b, &p)
 		unexpectedFields = p.UnexpectedFields
 		p.UnexpectedFields = nil

@@ -4,7 +4,7 @@ Feature: Update entity service
   Scenario: given update request should update entity
     When I am admin
     When I do PUT /api/v4/entityservices/test-entityservice-to-update:
-    """
+    """json
     {
       "name": "test-entityservice-to-update-name",
       "output_template": "test-entityservice-to-update-output-updated",
@@ -12,6 +12,7 @@ Feature: Update entity service
       "impact_level": 2,
       "enabled": true,
       "entity_patterns": [{"name": "test-entityservice-to-update-pattern-updated"}],
+      "sli_avail_state": 1,
       "infos": [
         {
           "description": "test-entityservice-to-update-info-1-description",
@@ -48,7 +49,7 @@ Feature: Update entity service
     """
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-entityservice-to-update",
       "category": {
@@ -61,7 +62,6 @@ Feature: Update entity service
       "depends": [],
       "enabled": true,
       "enable_history": [],
-      "enabled": true,
       "entity_patterns": [
         {
           "name": "test-entityservice-to-update-pattern-updated"
@@ -104,6 +104,7 @@ Feature: Update entity service
       "measurements": null,
       "name": "test-entityservice-to-update-name",
       "output_template": "test-entityservice-to-update-output-updated",
+      "sli_avail_state": 1,
       "type": "service"
     }
     """
@@ -111,18 +112,19 @@ Feature: Update entity service
   Scenario: given invalid update request should return errors
     When I am admin
     When I do PUT /api/v4/entityservices/test-entityservice-not-found:
-    """
+    """json
     {}
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "enabled": "Enabled is missing.",
         "impact_level": "ImpactLevel is missing.",
         "name": "Name is missing.",
-        "output_template": "OutputTemplate is missing."
+        "output_template": "OutputTemplate is missing.",
+        "sli_avail_state": "SliAvailState is missing."
       }
     }
     """
@@ -130,26 +132,23 @@ Feature: Update entity service
   Scenario: given invalid update request should return errors
     When I am admin
     When I do PUT /api/v4/entityservices/test-entityservice-to-update:
-    """
+    """json
     {
-      "name": "test-entityservice-to-update-name",
-      "output_template": "test-entityservice-to-update-output",
       "category": "test-category-not-exist",
-      "impact_level": 3,
-      "enabled": true,
-      "entity_patterns": [{"name": "test-entityservice-to-update-pattern"}],
       "infos": [
         {}
-      ]
+      ],
+      "sli_avail_state": 4
     }
     """
     Then the response code should be 400
-    Then the response body should be:
-    """
+    Then the response body should contain:
+    """json
     {
       "errors": {
         "category": "Category doesn't exist.",
-        "infos.0.name": "Name is missing."
+        "infos.0.name": "Name is missing.",
+        "sli_avail_state": "SliAvailState should be 3 or less."
       }
     }
     """
@@ -157,19 +156,14 @@ Feature: Update entity service
   Scenario: given update request with already exists name should return error
     When I am admin
     When I do PUT /api/v4/entityservices/test-entityservice-to-update:
-    """
+    """json
     {
-      "name": "test-entityservice-to-check-unique-name-name",
-      "output_template": "test-entityservice-to-update-output",
-      "category": "test-category-to-entityservice-edit",
-      "impact_level": 4,
-      "enabled": true,
-      "entity_patterns": [{"name": "test-entityservice-to-update-pattern"}]
+      "name": "test-entityservice-to-check-unique-name-name"
     }
     """
     Then the response code should be 400
-    Then the response body should be:
-    """
+    Then the response body should contain:
+    """json
     {
       "errors": {
           "name": "Name already exists."
@@ -189,19 +183,20 @@ Feature: Update entity service
   Scenario: given update request with not exist id should return not found error
     When I am admin
     When I do PUT /api/v4/entityservices/test-entityservice-not-found:
-    """
+    """json
     {
       "name": "test-entityservice-to-update-not-found-name",
       "output_template": "test-entityservice-to-update-not-found-output",
       "category": "test-category-to-entityservice-edit",
       "impact_level": 2,
       "enabled": true,
+      "sli_avail_state": 1,
       "entity_patterns": [{"name": "test-entityservice-to-update-not-found-pattern"}]
     }
     """
     Then the response code should be 404
     Then the response body should be:
-    """
+    """json
     {
       "error": "Not found"
     }

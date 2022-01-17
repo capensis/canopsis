@@ -91,7 +91,7 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-2"
     }
     """
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-event-filters-2
     Then the response code should be 200
@@ -301,7 +301,7 @@ Feature: modify event on event filter
       "manager": "test-manager-che-event-filters-3"
     }
     """
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-event-filters-3
     Then the response code should be 200
@@ -466,7 +466,7 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-4"
     }
     """
-    When I save response createComponentTimestamp={{ now.UTC.Unix }}
+    When I save response createComponentTimestamp={{ now }}
     When I wait the end of event processing
     When I send an event:
     """
@@ -481,7 +481,7 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-4"
     }
     """
-    When I save response createResourceTimestamp={{ now.UTC.Unix }}
+    When I save response createResourceTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-event-filters-4
     Then the response code should be 200
@@ -644,7 +644,7 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-5"
     }
     """
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I send an event:
     """
@@ -762,13 +762,14 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-6"
     }
     """
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do PUT /api/v4/entitybasics?_id=test-resource-che-event-filters-6/test-component-che-event-filters-6:
     """
     {
       "enabled": false,
       "impact_level": 1,
+      "sli_avail_state": 0,
       "infos": [],
       "impact": [
         "test-component-che-event-filters-6"
@@ -930,7 +931,7 @@ Feature: modify event on event filter
   Scenario: given check event and enrichment event filter with set_entity_info action
   should update event and entity
     Given I am admin
-    When I do POST /api/v2/eventfilter/rules:
+    When I do POST /api/v4/eventfilter/rules:
     """
     {
       "type": "enrichment",
@@ -950,13 +951,15 @@ Feature: modify event on event filter
           "to": "Entity"
         }
       ],
+      "description": "test-event-filter-che-event-filters-7-1-description",
+      "enabled": true,
       "on_success": "pass",
       "on_failure": "pass",
       "priority": 1
     }
     """
-    Then the response code should be 200
-    When I do POST /api/v2/eventfilter/rules:
+    Then the response code should be 201
+    When I do POST /api/v4/eventfilter/rules:
     """
     {
       "type": "enrichment",
@@ -977,12 +980,14 @@ Feature: modify event on event filter
           "value": 1592215337
         }
       ],
+      "description": "test-event-filter-che-event-filters-7-2-description",
+      "enabled": true,
       "priority": 2,
       "on_success": "pass",
       "on_failure": "pass"
     }
     """
-    Then the response code should be 200
+    Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
     """
@@ -997,7 +1002,7 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-7"
     }
     """
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-event-filters-7
     Then the response code should be 200
@@ -1083,7 +1088,7 @@ Feature: modify event on event filter
   Scenario: given check event and enrichment event filter with copy_to_entity_info action
   should update event and entity
     Given I am admin
-    When I do POST /api/v2/eventfilter/rules:
+    When I do POST /api/v4/eventfilter/rules:
     """
     {
       "type": "enrichment",
@@ -1103,13 +1108,15 @@ Feature: modify event on event filter
           "to": "Entity"
         }
       ],
+      "description": "test-event-filter-che-event-filters-8-1-description",
+      "enabled": true,
       "on_success": "pass",
       "on_failure": "pass",
       "priority": 1
     }
     """
-    Then the response code should be 200
-    When I do POST /api/v2/eventfilter/rules:
+    Then the response code should be 201
+    When I do POST /api/v4/eventfilter/rules:
     """
     {
       "type": "enrichment",
@@ -1137,13 +1144,15 @@ Feature: modify event on event filter
           "from": "Event.ExtraInfos.testdate"
         }
       ],
+      "description": "test-event-filter-che-event-filters-8-2-description",
+      "enabled": true,
       "priority": 2,
       "on_success": "pass",
       "on_failure": "pass"
     }
     """
-    Then the response code should be 200
-    When I do POST /api/v2/eventfilter/rules:
+    Then the response code should be 201
+    When I do POST /api/v4/eventfilter/rules:
     """
     {
       "type": "enrichment",
@@ -1158,13 +1167,15 @@ Feature: modify event on event filter
           "value": "{{ `{{ .Event.Output }}` }} (client: {{ `{{ .Event.Entity.Infos.customer.Value }}` }})"
         }
       ],
+      "description": "test-event-filter-che-event-filters-8-3-description",
+      "enabled": true,
       "priority": 3,
       "on_success": "pass",
       "on_failure": "pass"
     }
     """
-    Then the response code should be 200
-    When I do POST /api/v2/eventfilter/rules:
+    Then the response code should be 201
+    When I do POST /api/v4/eventfilter/rules:
     """
     {
       "type": "enrichment",
@@ -1184,11 +1195,13 @@ Feature: modify event on event filter
         }
       ],
       "priority": 4,
+      "description": "test-event-filter-che-event-filters-8-4-description",
+      "enabled": true,
       "on_success": "pass",
       "on_failure": "pass"
     }
     """
-    Then the response code should be 200
+    Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
     """
@@ -1205,7 +1218,7 @@ Feature: modify event on event filter
       "testdate": 1592215337
     }
     """
-    When I save response createTimestamp={{ now.UTC.Unix }}
+    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-event-filters-8
     Then the response code should be 200

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -65,12 +66,17 @@ func NewStore(
 }
 
 func (s *store) Insert(ctx context.Context, model *Response) error {
+	now := libtypes.NewCpsTime(time.Now().Unix())
+
 	if model.ID == "" {
 		model.ID = utils.NewID()
 	}
 
-	now := libtypes.NewCpsTime(time.Now().Unix())
-	doc, err := s.transformModelToDocument(model)
+	model.Created = &now
+	model.Updated = &now
+	model.Comments = make([]*pbehavior.Comment, 0)
+
+	doc, err := s.transformModelToDocument(*model)
 	if err != nil {
 		return err
 	}
@@ -79,11 +85,13 @@ func (s *store) Insert(ctx context.Context, model *Response) error {
 	doc.Created = now
 	doc.Updated = now
 
-	// If model.Stop is nill, insert to mongo using map so that
+	// If model.Stop is nil, insert to mongo using map so that
 	// tstop field can be cleared
 	if model.Stop == nil {
 		m := make(map[string]interface{})
-		p, err := bson.Marshal(doc)
+		var p []byte
+
+		p, err = bson.Marshal(doc)
 		if err != nil {
 			return err
 		}
@@ -95,21 +103,11 @@ func (s *store) Insert(ctx context.Context, model *Response) error {
 
 		delete(m, "tstop")
 		_, err = s.dbCollection.InsertOne(ctx, m)
-		if err != nil {
-			return err
-		}
 	} else {
 		_, err = s.dbCollection.InsertOne(ctx, doc)
-		if err != nil {
-			return err
-		}
 	}
 
-	model.Created = &now
-	model.Updated = &now
-	model.Comments = make(pbehavior.Comments, 0)
-
-	return nil
+	return err
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
@@ -312,14 +310,37 @@ func (s *store) FindEntities(ctx context.Context, pbhID string, request Entities
 }
 
 func (s *store) Update(ctx context.Context, model *Response) (bool, error) {
-	doc, err := s.transformModelToDocument(model)
+	if model == nil {
+		return true, nil
+	}
+
+	prevDoc := pbehavior.PBehavior{}
+	err := s.dbCollection.FindOne(ctx, bson.M{"_id": model.ID}).Decode(&prevDoc)
+	if err != nil {
+		if err == mongodriver.ErrNoDocuments {
+			return false, nil
+		}
+
+		return false, err
+	}
+
+	now := libtypes.NewCpsTime(time.Now().Unix())
+	doc, err := s.transformModelToDocument(*model)
 	if err != nil {
 		return false, err
 	}
 
-	doc.Updated = libtypes.NewCpsTime(time.Now().Unix())
+	created := prevDoc.Created
+	model.Comments = prevDoc.Comments
+	model.LastAlarmDate = prevDoc.LastAlarmDate
+	model.Created = &created
+	model.Updated = &now
+	doc.Updated = now
 
-	var update bson.M
+	// If model.Stop is nil, insert to mongo using map so that
+	// tstop field can be cleared
+	var update interface{}
+
 	if model.Stop == nil {
 		m := make(map[string]interface{})
 		p, err := bson.Marshal(doc)
@@ -341,27 +362,16 @@ func (s *store) Update(ctx context.Context, model *Response) (bool, error) {
 		update = bson.M{"$set": doc}
 	}
 
-	result, err := s.dbCollection.UpdateOne(
-		ctx,
-		bson.M{"_id": model.ID},
-		update,
-	)
+	result, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": model.ID}, update)
 	if err != nil {
 		return false, err
 	}
-
-	updatedModel, err := s.GetOneBy(ctx, bson.M{"_id": model.ID})
-	if err != nil {
-		return false, err
-	}
-
-	*model = *updatedModel
 
 	return result.MatchedCount > 0, nil
 }
 
 func (s *store) UpdateByFilter(ctx context.Context, model *Response, filters bson.M) (bool, error) {
-	doc, err := s.transformModelToDocument(model)
+	doc, err := s.transformModelToDocument(*model)
 	if err != nil {
 		return false, err
 	}
@@ -418,7 +428,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	return deleted > 0, nil
 }
 
-func (s *store) transformModelToDocument(model *Response) (*pbehavior.PBehavior, error) {
+func (s *store) transformModelToDocument(model Response) (pbehavior.PBehavior, error) {
 	exdates := make([]pbehavior.Exdate, len(model.Exdates))
 	for i := range model.Exdates {
 		exdates[i].Type = model.Exdates[i].Type.ID
@@ -433,10 +443,10 @@ func (s *store) transformModelToDocument(model *Response) (*pbehavior.PBehavior,
 
 	filter, err := json.Marshal(model.Filter)
 	if err != nil {
-		return nil, err
+		return pbehavior.PBehavior{}, err
 	}
 
-	return &pbehavior.PBehavior{
+	return pbehavior.PBehavior{
 		Author:     model.Author,
 		Enabled:    model.Enabled,
 		Filter:     string(filter),

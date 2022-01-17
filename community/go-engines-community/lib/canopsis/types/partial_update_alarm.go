@@ -9,12 +9,12 @@ import (
 )
 
 // PartialUpdateAck add ack step to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateAck(timestamp CpsTime, author, output, role, initiator string) error {
+func (a *Alarm) PartialUpdateAck(timestamp CpsTime, author, output, userID, role, initiator string) error {
 	if a.Value.ACK != nil {
 		return nil
 	}
 
-	newStep := NewAlarmStep(AlarmStepAck, timestamp, author, output, role, initiator)
+	newStep := NewAlarmStep(AlarmStepAck, timestamp, author, output, userID, role, initiator)
 	a.Value.ACK = &newStep
 
 	err := a.Value.Steps.Add(newStep)
@@ -29,12 +29,12 @@ func (a *Alarm) PartialUpdateAck(timestamp CpsTime, author, output, role, initia
 }
 
 // PartialUpdateUnack deletes ack step from alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateUnack(timestamp CpsTime, author, output, role, initiator string) error {
+func (a *Alarm) PartialUpdateUnack(timestamp CpsTime, author, output, userID, role, initiator string) error {
 	if a.Value.ACK == nil {
 		return nil
 	}
 
-	newStep := NewAlarmStep(AlarmStepAckRemove, timestamp, author, output, role, initiator)
+	newStep := NewAlarmStep(AlarmStepAckRemove, timestamp, author, output, userID, role, initiator)
 	a.Value.ACK = nil
 
 	err := a.Value.Steps.Add(newStep)
@@ -49,8 +49,8 @@ func (a *Alarm) PartialUpdateUnack(timestamp CpsTime, author, output, role, init
 }
 
 // PartialUpdateAssocTicket add ticket to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateAssocTicket(timestamp CpsTime, ticketData map[string]string, author, ticketNumber, role, initiator string) error {
-	newStep := NewAlarmStep(AlarmStepAssocTicket, timestamp, author, ticketNumber, role, initiator)
+func (a *Alarm) PartialUpdateAssocTicket(timestamp CpsTime, ticketData map[string]string, author, ticketNumber, userID, role, initiator string) error {
+	newStep := NewAlarmStep(AlarmStepAssocTicket, timestamp, author, ticketNumber, userID, role, initiator)
 	ticketStep := newStep.NewTicket(ticketNumber, ticketData)
 	a.Value.Ticket = &ticketStep
 
@@ -66,16 +66,16 @@ func (a *Alarm) PartialUpdateAssocTicket(timestamp CpsTime, ticketData map[strin
 }
 
 // PartialUpdateSnooze add snooze step to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateSnooze(timestamp CpsTime, duration CpsNumber, author, output, role, initiator string) error {
+func (a *Alarm) PartialUpdateSnooze(timestamp CpsTime, duration DurationWithUnit, author, output, userID, role, initiator string) error {
 	if a.Value.Snooze != nil {
 		return nil
 	}
 
-	newStep := NewAlarmStep(AlarmStepSnooze, timestamp, author, output, role, initiator)
-	if duration == 0 {
+	newStep := NewAlarmStep(AlarmStepSnooze, timestamp, author, output, userID, role, initiator)
+	if duration.Value == 0 {
 		return errt.NewUnknownError(errors.New("no duration for snoozing"))
 	}
-	newStep.Value = CpsNumber(timestamp.Time.Unix()) + duration
+	newStep.Value = CpsNumber(duration.AddTo(timestamp).Unix())
 	a.Value.Snooze = &newStep
 
 	err := a.Value.Steps.Add(newStep)
@@ -103,12 +103,12 @@ func (a *Alarm) PartialUpdateUnsnooze(timestamp CpsTime) error {
 	return nil
 }
 
-func (a *Alarm) PartialUpdatePbhEnter(timestamp CpsTime, pbehaviorInfo PbehaviorInfo, author, output, role, initiator string) error {
-	if a.Value.PbehaviorInfo == pbehaviorInfo {
+func (a *Alarm) PartialUpdatePbhEnter(timestamp CpsTime, pbehaviorInfo PbehaviorInfo, author, output, userID, role, initiator string) error {
+	if a.Value.PbehaviorInfo.Same(pbehaviorInfo) {
 		return nil
 	}
 
-	newStep := NewAlarmStep(AlarmStepPbhEnter, timestamp, author, output, role, initiator)
+	newStep := NewAlarmStep(AlarmStepPbhEnter, timestamp, author, output, userID, role, initiator)
 	newStep.PbehaviorCanonicalType = pbehaviorInfo.CanonicalType
 	a.Value.PbehaviorInfo = pbehaviorInfo
 
@@ -123,13 +123,13 @@ func (a *Alarm) PartialUpdatePbhEnter(timestamp CpsTime, pbehaviorInfo Pbehavior
 	return nil
 }
 
-func (a *Alarm) PartialUpdatePbhLeave(timestamp CpsTime, author, output, role, initiator string) error {
+func (a *Alarm) PartialUpdatePbhLeave(timestamp CpsTime, author, output, userID, role, initiator string) error {
 	if a.Value.Snooze != nil {
 		ResolveSnoozeAfterPbhLeave(timestamp, a)
 		a.AddUpdate("$set", bson.M{"v.snooze": a.Value.Snooze})
 	}
 
-	newStep := NewAlarmStep(AlarmStepPbhLeave, timestamp, author, output, role, initiator)
+	newStep := NewAlarmStep(AlarmStepPbhLeave, timestamp, author, output, userID, role, initiator)
 	newStep.PbehaviorCanonicalType = a.Value.PbehaviorInfo.CanonicalType
 	a.Value.PbehaviorInfo = PbehaviorInfo{}
 
@@ -157,8 +157,8 @@ func (a *Alarm) PartialUpdatePbhLeave(timestamp CpsTime, author, output, role, i
 	return nil
 }
 
-func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo PbehaviorInfo, author, output, role, initiator string) error {
-	if a.Value.PbehaviorInfo == pbehaviorInfo {
+func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo PbehaviorInfo, author, output, userID, role, initiator string) error {
+	if a.Value.PbehaviorInfo.Same(pbehaviorInfo) {
 		return nil
 	}
 
@@ -168,13 +168,13 @@ func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo P
 	}
 
 	leaveOutput := fmt.Sprintf(
-		"Pbehavior %s. Type: %s. Reason: %s",
+		"Pbehavior %s. Type: %s. Reason: %s.",
 		a.Value.PbehaviorInfo.Name,
 		a.Value.PbehaviorInfo.TypeName,
 		a.Value.PbehaviorInfo.Reason,
 	)
 
-	leaveStep := NewAlarmStep(AlarmStepPbhLeave, timestamp, author, leaveOutput, role, initiator)
+	leaveStep := NewAlarmStep(AlarmStepPbhLeave, timestamp, author, leaveOutput, userID, role, initiator)
 	leaveStep.PbehaviorCanonicalType = a.Value.PbehaviorInfo.CanonicalType
 
 	err := a.Value.Steps.Add(leaveStep)
@@ -182,7 +182,7 @@ func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo P
 		return err
 	}
 
-	enterStep := NewAlarmStep(AlarmStepPbhEnter, timestamp, author, output, role, initiator)
+	enterStep := NewAlarmStep(AlarmStepPbhEnter, timestamp, author, output, userID, role, initiator)
 	enterStep.PbehaviorCanonicalType = pbehaviorInfo.CanonicalType
 
 	a.Value.PbehaviorInfo = pbehaviorInfo
@@ -211,8 +211,8 @@ func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo P
 }
 
 // PartialUpdateDeclareTicket add ticket to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateDeclareTicket(timestamp CpsTime, author, output, ticketNumber string, data map[string]string, role, initiator string) error {
-	newStep := NewAlarmStep(AlarmStepDeclareTicket, timestamp, author, output, role, initiator)
+func (a *Alarm) PartialUpdateDeclareTicket(timestamp CpsTime, author, output, ticketNumber string, data map[string]string, userID, role, initiator string) error {
+	newStep := NewAlarmStep(AlarmStepDeclareTicket, timestamp, author, output, userID, role, initiator)
 	ticketStep := newStep.NewTicket(ticketNumber, data)
 	a.Value.Ticket = &ticketStep
 
@@ -259,12 +259,12 @@ func (a *Alarm) PartialUpdateResolve(timestamp CpsTime) error {
 	return nil
 }
 
-func (a *Alarm) PartialUpdateDone(timestamp CpsTime, author, output, role, initiator string) error {
+func (a *Alarm) PartialUpdateDone(timestamp CpsTime, author, output, userID, role, initiator string) error {
 	if a.Value.Done != nil {
 		return nil
 	}
 
-	newStep := NewAlarmStep(AlarmStepDone, timestamp, author, output, role, initiator)
+	newStep := NewAlarmStep(AlarmStepDone, timestamp, author, output, userID, role, initiator)
 	a.Value.Done = &newStep
 
 	err := a.Value.Steps.Add(newStep)
@@ -278,8 +278,8 @@ func (a *Alarm) PartialUpdateDone(timestamp CpsTime, author, output, role, initi
 	return nil
 }
 
-func (a *Alarm) PartialUpdateComment(timestamp CpsTime, author, output, role, initiator string) error {
-	newStep := NewAlarmStep(AlarmStepComment, timestamp, author, output, role, initiator)
+func (a *Alarm) PartialUpdateComment(timestamp CpsTime, author, output, userID, role, initiator string) error {
+	newStep := NewAlarmStep(AlarmStepComment, timestamp, author, output, userID, role, initiator)
 	err := a.Value.Steps.Add(newStep)
 	if err != nil {
 		return err
@@ -291,8 +291,8 @@ func (a *Alarm) PartialUpdateComment(timestamp CpsTime, author, output, role, in
 }
 
 func (a *Alarm) PartialUpdateAddInstructionStep(stepType string, timestamp CpsTime,
-	execution, author, msg, role, initiator string) error {
-	newStep := NewAlarmStep(stepType, timestamp, author, msg, role, initiator)
+	execution, author, msg, userID, role, initiator string) error {
+	newStep := NewAlarmStep(stepType, timestamp, author, msg, userID, role, initiator)
 	err := a.Value.Steps.Add(newStep)
 	if err != nil {
 		return err
@@ -311,8 +311,8 @@ func (a *Alarm) PartialUpdateCropSteps() {
 	}
 }
 
-func (a *Alarm) PartialUpdateAddStep(stepType string, timestamp CpsTime, author, msg, role, initiator string) error {
-	newStep := NewAlarmStep(stepType, timestamp, author, msg, role, initiator)
+func (a *Alarm) PartialUpdateAddStep(stepType string, timestamp CpsTime, author, msg, userID, role, initiator string) error {
+	newStep := NewAlarmStep(stepType, timestamp, author, msg, userID, role, initiator)
 	err := a.Value.Steps.Add(newStep)
 	if err != nil {
 		return err

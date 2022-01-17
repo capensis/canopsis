@@ -7,9 +7,11 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -22,7 +24,6 @@ const (
 	ObjectMongoCollection             = "object"
 	RightsMongoCollection             = "default_rights"
 	SessionMongoCollection            = "session"
-	SessionStatsMongoCollection       = "default_session"
 	AlarmMongoCollection              = "periodical_alarm"
 	EntityMongoCollection             = "default_entities"
 	PbehaviorMongoCollection          = "pbehavior"
@@ -73,6 +74,15 @@ const (
 
 	ResolveRuleMongoCollection  = "resolve_rule"
 	FlappingRuleMongoCollection = "flapping_rule"
+
+	UserPreferencesMongoCollection = "userpreferences"
+
+	FilterMongoCollection = "filter"
+)
+
+const (
+	transactionReplicaSetVersion     = "4.0"
+	transactionShardedClusterVersion = "4.2"
 )
 
 type SingleResultHelper interface {
@@ -118,6 +128,7 @@ type DbClient interface {
 	Disconnect(ctx context.Context) error
 	SetRetry(count int, timeout time.Duration)
 	Ping(ctx context.Context, rp *readpref.ReadPref) error
+	WithTransaction(ctx context.Context, f func(context.Context) error) error
 }
 
 type dbClient struct {
@@ -125,6 +136,8 @@ type dbClient struct {
 	Database        *mongo.Database
 	RetryCount      int
 	MinRetryTimeout time.Duration
+
+	TransactionEnabled bool
 }
 
 type dbCollection struct {
@@ -138,7 +151,7 @@ func (c *dbCollection) Aggregate(ctx context.Context, pipeline interface{},
 	var mongoCursor *mongo.Cursor
 	var err error
 
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		mongoCursor, err = c.mongoCollection.Aggregate(ctx, pipeline, opts...)
 		return err
 	})
@@ -154,7 +167,7 @@ func (c *dbCollection) BulkWrite(ctx context.Context, models []mongo.WriteModel,
 	opts ...*options.BulkWriteOptions) (*mongo.BulkWriteResult, error) {
 	var res *mongo.BulkWriteResult
 	var err error
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res, err = c.mongoCollection.BulkWrite(ctx, models, opts...)
 		return err
 	})
@@ -166,7 +179,7 @@ func (c *dbCollection) CountDocuments(ctx context.Context, filter interface{},
 	opts ...*options.CountOptions) (int64, error) {
 	var res int64
 	var err error
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res, err = c.mongoCollection.CountDocuments(ctx, filter, opts...)
 		return err
 	})
@@ -178,7 +191,7 @@ func (c *dbCollection) DeleteMany(ctx context.Context, filter interface{},
 	opts ...*options.DeleteOptions) (int64, error) {
 	var res *mongo.DeleteResult
 	var err error
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res, err = c.mongoCollection.DeleteMany(ctx, filter, opts...)
 		return err
 	})
@@ -193,7 +206,7 @@ func (c *dbCollection) Distinct(ctx context.Context, fieldName string, filter in
 	opts ...*options.DistinctOptions) ([]interface{}, error) {
 	var res []interface{}
 	var err error
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res, err = c.mongoCollection.Distinct(ctx, fieldName, filter, opts...)
 		return err
 	})
@@ -203,7 +216,7 @@ func (c *dbCollection) Distinct(ctx context.Context, fieldName string, filter in
 
 func (c *dbCollection) Drop(ctx context.Context) error {
 	var err error
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		err = c.mongoCollection.Drop(ctx)
 		return err
 	})
@@ -216,7 +229,7 @@ func (c *dbCollection) Find(ctx context.Context, filter interface{},
 	var mongoCursor *mongo.Cursor
 	var err error
 
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		mongoCursor, err = c.mongoCollection.Find(ctx, filter, opts...)
 		return err
 	})
@@ -231,7 +244,7 @@ func (c *dbCollection) Find(ctx context.Context, filter interface{},
 func (c *dbCollection) FindOne(ctx context.Context, filter interface{},
 	opts ...*options.FindOneOptions) SingleResultHelper {
 	var res *mongo.SingleResult
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res = c.mongoCollection.FindOne(ctx, filter, opts...)
 		return res.Err()
 	})
@@ -242,7 +255,7 @@ func (c *dbCollection) FindOne(ctx context.Context, filter interface{},
 func (c *dbCollection) FindOneAndDelete(ctx context.Context, filter interface{},
 	opts ...*options.FindOneAndDeleteOptions) SingleResultHelper {
 	var res *mongo.SingleResult
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res = c.mongoCollection.FindOneAndDelete(ctx, filter, opts...)
 		return res.Err()
 	})
@@ -253,7 +266,7 @@ func (c *dbCollection) FindOneAndDelete(ctx context.Context, filter interface{},
 func (c *dbCollection) FindOneAndReplace(ctx context.Context, filter, replacement interface{},
 	opts ...*options.FindOneAndReplaceOptions) SingleResultHelper {
 	var res *mongo.SingleResult
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res = c.mongoCollection.FindOneAndReplace(ctx, filter, replacement, opts...)
 		return res.Err()
 	})
@@ -264,7 +277,7 @@ func (c *dbCollection) FindOneAndReplace(ctx context.Context, filter, replacemen
 func (c *dbCollection) FindOneAndUpdate(ctx context.Context, filter, update interface{},
 	opts ...*options.FindOneAndUpdateOptions) SingleResultHelper {
 	var res *mongo.SingleResult
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res = c.mongoCollection.FindOneAndUpdate(ctx, filter, update, opts...)
 		return res.Err()
 	})
@@ -276,7 +289,7 @@ func (c *dbCollection) DeleteOne(ctx context.Context, filter interface{},
 	opts ...*options.DeleteOptions) (int64, error) {
 	var res *mongo.DeleteResult
 	var err error
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res, err = c.mongoCollection.DeleteOne(ctx, filter, opts...)
 		return err
 	})
@@ -295,7 +308,7 @@ func (c *dbCollection) InsertOne(ctx context.Context, document interface{},
 	opts ...*options.InsertOneOptions) (interface{}, error) {
 	var res *mongo.InsertOneResult
 	var err error
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res, err = c.mongoCollection.InsertOne(ctx, document, opts...)
 		return err
 	})
@@ -311,7 +324,7 @@ func (c *dbCollection) InsertMany(ctx context.Context, documents []interface{},
 	opts ...*options.InsertManyOptions) ([]interface{}, error) {
 	var res *mongo.InsertManyResult
 	var err error
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res, err = c.mongoCollection.InsertMany(ctx, documents, opts...)
 		return err
 	})
@@ -326,7 +339,7 @@ func (c *dbCollection) ReplaceOne(ctx context.Context, filter, replacement inter
 	opts ...*options.ReplaceOptions) (*mongo.UpdateResult, error) {
 	var res *mongo.UpdateResult
 	var err error
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res, err = c.mongoCollection.ReplaceOne(ctx, filter, replacement, opts...)
 		return err
 	})
@@ -341,7 +354,7 @@ func (c *dbCollection) UpdateMany(ctx context.Context, filter interface{}, updat
 	opts ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
 	var res *mongo.UpdateResult
 	var err error
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res, err = c.mongoCollection.UpdateMany(ctx, filter, update, opts...)
 		return err
 	})
@@ -356,7 +369,7 @@ func (c *dbCollection) UpdateOne(ctx context.Context, filter interface{}, update
 	opts ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
 	var res *mongo.UpdateResult
 	var err error
-	c.retry(func() error {
+	c.retry(ctx, func(ctx context.Context) error {
 		res, err = c.mongoCollection.UpdateOne(ctx, filter, update, opts...)
 		return err
 	})
@@ -367,11 +380,14 @@ func (c *dbCollection) UpdateOne(ctx context.Context, filter interface{}, update
 	return res, nil
 }
 
-func (c *dbCollection) retry(f func() error) {
+func (c *dbCollection) retry(ctx context.Context, f func(context.Context) error) {
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
 	timeout := c.minRetryTimeout
 
 	for i := 0; i <= c.retryCount; i++ {
-		err := f()
+		err := f(ctx)
 		if err == nil {
 			return
 		}
@@ -384,14 +400,18 @@ func (c *dbCollection) retry(f func() error) {
 			return
 		}
 
-		time.Sleep(timeout)
-		timeout *= 2
+		select {
+		case <-ctx.Done():
+			return
+		case <-time.After(timeout):
+			timeout *= 2
+		}
 	}
 }
 
 // NewClient creates a new connection to the MongoDB database.
 // It uses EnvURL as configuration source.
-func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duration) (DbClient, error) {
+func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duration, logger zerolog.Logger) (DbClient, error) {
 	mongoURL, dbName, err := getURL()
 	if err != nil {
 		return nil, err
@@ -413,12 +433,16 @@ func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duratio
 
 	db := client.Database(dbName)
 
-	return &dbClient{
+	dbClient := &dbClient{
 		Client:          client,
 		Database:        db,
 		RetryCount:      retryCount,
 		MinRetryTimeout: minRetryTimeout,
-	}, nil
+	}
+
+	dbClient.checkTransactionEnabled(ctx, logger)
+
+	return dbClient, nil
 }
 
 func NewClientWithOptions(
@@ -427,6 +451,7 @@ func NewClientWithOptions(
 	minRetryTimeout time.Duration,
 	serverSelectionTimeout time.Duration,
 	socketTimeout time.Duration,
+	logger zerolog.Logger,
 ) (DbClient, error) {
 	mongoURL, dbName, err := getURL()
 	if err != nil {
@@ -451,12 +476,16 @@ func NewClientWithOptions(
 
 	db := client.Database(dbName)
 
-	return &dbClient{
+	dbClient := &dbClient{
 		Client:          client,
 		Database:        db,
 		RetryCount:      retryCount,
 		MinRetryTimeout: minRetryTimeout,
-	}, nil
+	}
+
+	dbClient.checkTransactionEnabled(ctx, logger)
+
+	return dbClient, nil
 }
 
 func (c *dbClient) Collection(name string) DbCollection {
@@ -480,6 +509,76 @@ func (c *dbClient) SetRetry(count int, timeout time.Duration) {
 	c.MinRetryTimeout = timeout
 }
 
+func (c *dbClient) WithTransaction(ctx context.Context, f func(context.Context) error) error {
+	if !c.TransactionEnabled {
+		return f(ctx)
+	}
+
+	session, err := c.Client.StartSession()
+	if err != nil {
+		return err
+	}
+
+	defer session.EndSession(ctx)
+
+	_, err = session.WithTransaction(ctx, func(sessCtx mongo.SessionContext) (interface{}, error) {
+		return nil, f(sessCtx)
+	})
+
+	return err
+}
+
+func (c *dbClient) checkTransactionEnabled(ctx context.Context, logger zerolog.Logger) {
+	res, err := c.Database.RunCommand(ctx, bson.D{{"hello", 1}}).
+		DecodeBytes()
+	if err != nil {
+		logger.Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
+		return
+	}
+
+	helloResult := helloCommandResult{}
+	err = bson.Unmarshal(res, &helloResult)
+	if err != nil {
+		logger.Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
+		return
+	}
+
+	if !helloResult.IsReplicaSet() && !helloResult.IsShardedCluster() {
+		logger.Warn().Msg("MongoDB version does not support transactions, transactions are disabled")
+		return
+	}
+
+	res, err = c.Client.Database("admin").RunCommand(ctx, bson.D{{"getParameter", 1}, {"featureCompatibilityVersion", 1}}).
+		DecodeBytes()
+	if err != nil {
+		logger.Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
+		return
+	}
+
+	fCVResult := struct {
+		FeatureCompatibilityVersion struct {
+			Version string `bson:"version"`
+		} `bson:"featureCompatibilityVersion"`
+	}{}
+
+	err = bson.Unmarshal(res, &fCVResult)
+	if err != nil {
+		logger.Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
+		return
+	}
+
+	version := fCVResult.FeatureCompatibilityVersion.Version
+	if helloResult.IsReplicaSet() && !isVersionGte(version, transactionReplicaSetVersion) ||
+		helloResult.IsShardedCluster() && !isVersionGte(version, transactionShardedClusterVersion) {
+		logger.Warn().Msg("MongoDB version does not support transactions, transactions are disabled")
+
+		return
+	}
+
+	logger.Info().Msg("MongoDB version supports transactions, transactions are enabled")
+	c.TransactionEnabled = true
+}
+
 // getURL parses URL value in EnvURL environment variable
 func getURL() (mongoURL, dbName string, err error) {
 	mongoURL = os.Getenv(EnvURL)
@@ -497,4 +596,48 @@ func getURL() (mongoURL, dbName string, err error) {
 func IsConnectionError(err error) bool {
 	return mongo.IsNetworkError(err) ||
 		strings.Contains(err.Error(), "server selection error")
+}
+
+type helloCommandResult struct {
+	SetName string `bson:"setName"`
+	Msg     string `bson:"msg"`
+}
+
+func (r helloCommandResult) IsReplicaSet() bool {
+	return r.SetName != ""
+}
+
+func (r helloCommandResult) IsShardedCluster() bool {
+	return r.Msg == "isdbgrid"
+}
+
+func isVersionGte(version, expectedVersion string) bool {
+	if version == "" || expectedVersion == "" {
+		return false
+	}
+
+	versionParts := strings.Split(version, ".")
+	expectedVersionParts := strings.Split(expectedVersion, ".")
+
+	for i, ev := range expectedVersionParts {
+		if len(versionParts) <= i {
+			return true
+		}
+
+		v := versionParts[i]
+		vi, err := strconv.Atoi(v)
+		if err != nil {
+			return false
+		}
+		evi, err := strconv.Atoi(ev)
+		if err != nil {
+			return false
+		}
+
+		if vi < evi {
+			return false
+		}
+	}
+
+	return true
 }

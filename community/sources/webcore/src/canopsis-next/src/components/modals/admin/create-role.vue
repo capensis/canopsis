@@ -9,8 +9,7 @@
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary.white--text(
           :disabled="isDisabled",
-          type="submit",
-          data-test="submitButton"
+          type="submit"
         ) {{ $t('common.submit') }}
 </template>
 
@@ -19,9 +18,9 @@ import { MODALS } from '@/constants';
 
 import { roleToForm, formToRole } from '@/helpers/forms/role';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
-import { validationErrorsMixin } from '@/mixins/form/validation-errors';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import RoleForm from '@/components/other/role/role-form.vue';
 
@@ -34,9 +33,9 @@ export default {
   },
   components: { RoleForm, ModalWrapper },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
-    validationErrorsMixin(),
+    modalInnerMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     return {
@@ -53,16 +52,11 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        try {
-          await this.config.action(formToRole(this.form));
+        await this.config.action(formToRole(this.form));
 
-          this.$modals.hide();
-        } catch (err) {
-          this.setFormErrors(err);
-        }
+        this.$modals.hide();
       }
     },
   },
 };
 </script>
-

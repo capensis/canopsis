@@ -6,7 +6,7 @@ Feature: Get entity service
     When I do GET /api/v4/entityservices/test-entityservice-to-get
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-entityservice-to-get",
       "category": {
@@ -19,7 +19,6 @@ Feature: Get entity service
       "depends": [],
       "enabled": true,
       "enable_history": [],
-      "enabled": true,
       "entity_patterns": [
         {
           "name": "test-entityservice-to-get-pattern"
@@ -67,6 +66,7 @@ Feature: Get entity service
       "measurements": null,
       "name": "test-entityservice-to-get-name",
       "output_template": "test-entityservice-to-get-output",
+      "sli_avail_state": 0,
       "type": "service"
     }
     """
@@ -85,7 +85,7 @@ Feature: Get entity service
     When I do GET /api/v4/entityservices/test-entityservice-not-found
     Then the response code should be 404
     Then the response body should be:
-    """
+    """json
     {
       "error": "Not found"
     }
