@@ -30,7 +30,9 @@ export function prepareRemediationInstructionsFiltersToQuery(filters = []) {
   }
 
   const result = filters.reduce((acc, filter) => {
-    const key = filter.with ? PARAMETERS_FILTERS_TYPES.include : PARAMETERS_FILTERS_TYPES.exclude;
+    const key = filter.with
+      ? PARAMETERS_FILTERS_TYPES.include
+      : PARAMETERS_FILTERS_TYPES.exclude;
 
     if (
       acc[key].types.includes(REMEDIATION_INSTRUCTION_TYPES.auto)

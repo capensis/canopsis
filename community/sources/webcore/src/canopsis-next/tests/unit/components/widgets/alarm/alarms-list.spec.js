@@ -1,9 +1,10 @@
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
 import { saveAs } from 'file-saver';
+import { omit } from 'lodash';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
-import { mockDateNow, mockPopups } from '@unit/utils/mock-hooks';
+import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { fakeStaticAlarms } from '@unit/data/alarm';
 import { alarmListWidgetToForm } from '@/helpers/forms/widgets/alarm';
@@ -12,6 +13,9 @@ import {
   EXPORT_STATUSES,
   FILTER_DEFAULT_VALUES,
   FILTER_MONGO_OPERATORS,
+  MODALS,
+  QUICK_RANGES,
+  REMEDIATION_INSTRUCTION_TYPES, TIME_UNITS,
   USERS_PERMISSIONS,
 } from '@/constants';
 
@@ -73,10 +77,16 @@ const selectCorrelationField = wrapper => wrapper.find('v-switch-stub');
 const selectFilterSelectorField = wrapper => wrapper.find('filter-selector-stub');
 const selectCategoryField = wrapper => wrapper.find('c-entity-category-field-stub');
 const selectTablePaginationField = wrapper => wrapper.find('c-table-pagination-stub');
-const selectExportButtonField = wrapper => wrapper.findAll('c-action-btn-stub').at(1);
+const selectExportButton = wrapper => wrapper.findAll('c-action-btn-stub').at(1);
+const selectLiveReportingButton = wrapper => wrapper.findAll('c-action-btn-stub').at(0);
+const selectInstructionsFiltersField = wrapper => wrapper.find('alarms-list-remediation-instructions-filters-stub');
+const selectRemoveHistoryButton = wrapper => wrapper.find('v-chip-stub');
+const selectPagination = wrapper => wrapper.find('c-pagination-stub');
+const selectAlarmsExpandPanelTour = wrapper => wrapper.find('alarms-expand-panel-tour-stub');
 
 describe('alarms-list', () => {
   const $popups = mockPopups();
+  const $modals = mockModals();
 
   const nowTimestamp = 1386435600000;
   mockDateNow(nowTimestamp);
@@ -111,6 +121,8 @@ describe('alarms-list', () => {
     correlation: userPreferences.content.isCorrelationEnabled,
     category: userPreferences.content.category,
     limit: userPreferences.content.itemsPerPage,
+    tstart: QUICK_RANGES.last1Year.start,
+    tstop: QUICK_RANGES.last1Year.stop,
     opened: null,
     search: 'search',
   };
@@ -138,6 +150,7 @@ describe('alarms-list', () => {
   const updateView = jest.fn();
   const updateQuery = jest.fn();
   const hideSideBar = jest.fn();
+  const fetchAlarmsList = jest.fn();
   const createAlarmsListExport = jest.fn().mockReturnValue(exportAlarmData);
   const fetchAlarmsListExport = jest.fn().mockReturnValue(exportAlarmData);
   const fetchAlarmsListCsvFile = jest.fn().mockReturnValue(exportAlarmFile);
@@ -198,6 +211,7 @@ describe('alarms-list', () => {
       getExportByWidgetId: () => () => ({}),
     },
     actions: {
+      fetchList: fetchAlarmsList,
       createAlarmsListExport,
       fetchAlarmsListExport,
       fetchAlarmsListCsvFile,
@@ -215,10 +229,36 @@ describe('alarms-list', () => {
   ]);
 
   afterEach(() => {
-    updateUserPreference.mockReset();
-    updateView.mockReset();
-    updateQuery.mockReset();
-    hideSideBar.mockReset();
+    updateUserPreference.mockClear();
+    updateView.mockClear();
+    updateQuery.mockClear();
+    hideSideBar.mockClear();
+  });
+
+  it('Query updated after mount', async () => {
+    factory({
+      store,
+      propsData: {
+        widget,
+      },
+    });
+
+    await flushPromises();
+
+    expect(updateQuery).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        id: widget._id,
+        query: {
+          ...omit(defaultQuery, ['search', 'tstart', 'tstop']),
+          multiSortBy: [],
+          page: 1,
+          with_instructions: true,
+          opened: true,
+        },
+      },
+      undefined,
+    );
   });
 
   it('Correlation updated after trigger correlation field', async () => {
@@ -244,6 +284,10 @@ describe('alarms-list', () => {
         widget,
       },
     });
+
+    await flushPromises();
+
+    updateQuery.mockClear();
 
     const correlationField = selectCorrelationField(wrapper);
 
@@ -300,6 +344,10 @@ describe('alarms-list', () => {
       },
     });
 
+    await flushPromises();
+
+    updateQuery.mockClear();
+
     const filterSelectorField = selectFilterSelectorField(wrapper);
 
     const newFilter = {
@@ -354,6 +402,10 @@ describe('alarms-list', () => {
       },
     });
 
+    await flushPromises();
+
+    updateQuery.mockClear();
+
     const filterSelectorField = selectFilterSelectorField(wrapper);
 
     const newFilter = {
@@ -403,6 +455,10 @@ describe('alarms-list', () => {
         widget,
       },
     });
+
+    await flushPromises();
+
+    updateQuery.mockClear();
 
     const filterSelectorField = selectFilterSelectorField(wrapper);
 
@@ -459,6 +515,10 @@ describe('alarms-list', () => {
       },
     });
 
+    await flushPromises();
+
+    updateQuery.mockClear();
+
     const filterSelectorField = selectFilterSelectorField(wrapper);
 
     filterSelectorField.vm.$emit('update:condition');
@@ -514,6 +574,10 @@ describe('alarms-list', () => {
       },
     });
 
+    await flushPromises();
+
+    updateQuery.mockClear();
+
     const mainFilter = {
       title: 'main-filter',
       filter: {},
@@ -559,6 +623,244 @@ describe('alarms-list', () => {
     );
   });
 
+  it('Instruction filters updated after trigger filter field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        widget,
+      },
+    });
+
+    await flushPromises();
+
+    updateQuery.mockClear();
+
+    const manualInstructionFilter = {
+      manual: true,
+      instructions: [{
+        _id: 'manual-instruction-id',
+      }],
+      _id: 'id1',
+    };
+    const autoInstructionFilter = {
+      auto: true,
+      instructions: [{
+        _id: 'auto-instruction-id',
+      }],
+      _id: 'id2',
+    };
+    const allAndWithInstructionFilter = {
+      all: true,
+      with: true,
+      instructions: [{
+        _id: 'all-and-with-instruction-id',
+      }, {
+        _id: 'all-instruction-id',
+      }],
+      _id: 'id3',
+    };
+
+    const newRemediationInstructionsFilters = [
+      manualInstructionFilter,
+      autoInstructionFilter,
+      allAndWithInstructionFilter,
+    ];
+    const excludeInstructionsIds = [
+      autoInstructionFilter.instructions[0]._id,
+      manualInstructionFilter.instructions[0]._id,
+    ];
+    const includeInstructionsIds = [
+      allAndWithInstructionFilter.instructions[0]._id,
+      allAndWithInstructionFilter.instructions[1]._id,
+    ];
+
+    const instructionsFiltersField = selectInstructionsFiltersField(wrapper);
+
+    instructionsFiltersField.vm.$emit('update:filters', newRemediationInstructionsFilters);
+
+    await flushPromises();
+
+    expect(updateUserPreference).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        data: {
+          content: {
+            ...userPreferences.content,
+            remediationInstructionsFilters: newRemediationInstructionsFilters,
+          },
+        },
+      },
+      undefined,
+    );
+    expect(updateQuery).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        id: widget._id,
+        query: {
+          ...defaultQuery,
+          include_types: [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto],
+          exclude_types: [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto],
+          exclude_instructions: excludeInstructionsIds,
+          include_instructions: includeInstructionsIds,
+          page: 1,
+        },
+      },
+      undefined,
+    );
+  });
+
+  it('Locked instruction filters updated after trigger filter field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        widget,
+      },
+    });
+
+    await flushPromises();
+
+    updateQuery.mockClear();
+
+    const manualInstructionFilter = {
+      manual: true,
+      instructions: [{
+        _id: 'manual-instruction-id',
+      }],
+      _id: 'id1',
+    };
+    const autoInstructionFilter = {
+      auto: true,
+      disabled: true,
+      instructions: [{
+        _id: 'auto-instruction-id',
+      }],
+      _id: 'id2',
+    };
+    const disabledFilters = [autoInstructionFilter._id];
+
+    const newRemediationInstructionsFilters = [
+      manualInstructionFilter,
+      autoInstructionFilter,
+    ];
+    const excludeInstructionsIds = [
+      manualInstructionFilter.instructions[0]._id,
+    ];
+
+    const instructionsFiltersField = selectInstructionsFiltersField(wrapper);
+
+    instructionsFiltersField.vm.$emit('update:locked-filters', newRemediationInstructionsFilters);
+
+    await flushPromises();
+
+    expect(updateUserPreference).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        data: {
+          content: {
+            ...userPreferences.content,
+            disabledWidgetRemediationInstructionsFilters: disabledFilters,
+          },
+        },
+      },
+      undefined,
+    );
+    expect(updateQuery).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        id: widget._id,
+        query: {
+          ...defaultQuery,
+          exclude_types: [REMEDIATION_INSTRUCTION_TYPES.manual],
+          exclude_instructions: excludeInstructionsIds,
+          page: 1,
+        },
+      },
+      undefined,
+    );
+  });
+
+  it('Interval query removed after click on the button', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        widget,
+      },
+    });
+
+    await flushPromises();
+
+    updateQuery.mockClear();
+
+    const removeHistoryButton = selectRemoveHistoryButton(wrapper);
+
+    removeHistoryButton.vm.$emit('input');
+
+    await flushPromises();
+
+    expect(updateQuery).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        id: widget._id,
+        query: omit(defaultQuery, ['tstart', 'tstop']),
+      },
+      undefined,
+    );
+  });
+
+  it('Interval modal showed after click on the live reporting button', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        widget,
+      },
+      mocks: {
+        $modals,
+      },
+    });
+
+    await flushPromises();
+
+    updateQuery.mockClear();
+
+    const liveReportingButton = selectLiveReportingButton(wrapper);
+
+    liveReportingButton.vm.$emit('click');
+
+    await flushPromises();
+
+    expect($modals.show).toHaveBeenCalledWith(
+      {
+        name: MODALS.editLiveReporting,
+        config: {
+          action: expect.any(Function),
+          tstart: defaultQuery.tstart,
+          tstop: defaultQuery.tstop,
+        },
+      },
+    );
+
+    const [modalArguments] = $modals.show.mock.calls[0];
+
+    const actionValue = {
+      tstart: QUICK_RANGES.last3Hour.start,
+      tstop: QUICK_RANGES.last3Hour.stop,
+    };
+
+    modalArguments.config.action(actionValue);
+
+    expect(updateQuery).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        id: widget._id,
+        query: {
+          ...defaultQuery,
+          ...actionValue,
+        },
+      },
+      undefined,
+    );
+  });
+
   it('Category updated after trigger category field', async () => {
     const wrapper = factory({
       store: createMockedStoreModules([
@@ -582,6 +884,10 @@ describe('alarms-list', () => {
         widget,
       },
     });
+
+    await flushPromises();
+
+    updateQuery.mockClear();
 
     const categoryField = selectCategoryField(wrapper);
 
@@ -626,6 +932,10 @@ describe('alarms-list', () => {
       },
     });
 
+    await flushPromises();
+
+    updateQuery.mockClear();
+
     const tablePagination = selectTablePaginationField(wrapper);
 
     const newLimit = Faker.datatype.number();
@@ -666,6 +976,10 @@ describe('alarms-list', () => {
         widget,
       },
     });
+
+    await flushPromises();
+
+    updateQuery.mockClear();
 
     const tablePagination = selectTablePaginationField(wrapper);
 
@@ -718,7 +1032,11 @@ describe('alarms-list', () => {
       },
     });
 
-    const exportButton = selectExportButtonField(wrapper);
+    await flushPromises();
+
+    updateQuery.mockClear();
+
+    const exportButton = selectExportButton(wrapper);
 
     exportButton.vm.$emit('click');
 
@@ -772,7 +1090,7 @@ describe('alarms-list', () => {
     );
 
     jest.useRealTimers();
-    dateSpy.mockReset();
+    dateSpy.mockClear();
   });
 
   it('Widget exported after trigger export button with long request time', async () => {
@@ -815,7 +1133,11 @@ describe('alarms-list', () => {
       },
     });
 
-    const exportButton = selectExportButtonField(wrapper);
+    await flushPromises();
+
+    updateQuery.mockClear();
+
+    const exportButton = selectExportButton(wrapper);
 
     exportButton.vm.$emit('click');
 
@@ -888,7 +1210,7 @@ describe('alarms-list', () => {
       },
     });
 
-    const exportButton = selectExportButtonField(wrapper);
+    const exportButton = selectExportButton(wrapper);
 
     exportButton.vm.$emit('click');
 
@@ -937,7 +1259,7 @@ describe('alarms-list', () => {
       },
     });
 
-    const exportButton = selectExportButtonField(wrapper);
+    const exportButton = selectExportButton(wrapper);
 
     exportButton.vm.$emit('click');
 
@@ -990,7 +1312,7 @@ describe('alarms-list', () => {
       },
     });
 
-    const exportButton = selectExportButtonField(wrapper);
+    const exportButton = selectExportButton(wrapper);
 
     exportButton.vm.$emit('click');
 
@@ -1003,6 +1325,386 @@ describe('alarms-list', () => {
     expect($popups.error).toHaveBeenCalledWith({
       text: 'errors.default',
     });
+
+    jest.useRealTimers();
+  });
+
+  it('Query updated after trigger pagination', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        widget,
+      },
+    });
+
+    await flushPromises();
+
+    updateQuery.mockClear();
+
+    const pagination = selectPagination(wrapper);
+
+    const newPage = Faker.datatype.number();
+
+    pagination.vm.$emit('input', newPage);
+
+    await flushPromises();
+
+    expect(updateQuery).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        id: widget._id,
+        query: {
+          ...defaultQuery,
+          page: newPage,
+        },
+      },
+      undefined,
+    );
+  });
+
+  it('First alarm expanded after click on the prev step with first step', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        widget,
+      },
+    });
+
+    const alarmsExpandPanelTour = selectAlarmsExpandPanelTour(wrapper);
+
+    alarmsExpandPanelTour.vm.callbacks.onPreviousStep(1);
+  });
+
+  it('First alarm not expanded after click on the next step with already expanded alarm', async () => {
+    const expanded = {
+      [alarms[0]._id]: true,
+    };
+    const wrapper = factory({
+      store,
+      stubs: {
+        ...stubs,
+        'alarms-list-table': {
+          template: '<div />',
+          data: () => ({
+            expanded,
+          }),
+        },
+      },
+      propsData: {
+        widget,
+      },
+    });
+
+    const alarmsExpandPanelTour = selectAlarmsExpandPanelTour(wrapper);
+
+    alarmsExpandPanelTour.vm.callbacks.onNextStep();
+
+    expect(expanded).toBe(expanded);
+  });
+
+  it('First alarm not expanded after click on the prev step with second step', async () => {
+    const expanded = {};
+    const wrapper = factory({
+      store,
+      stubs: {
+        ...stubs,
+        'alarms-list-table': {
+          template: '<div />',
+          data: () => ({
+            expanded,
+          }),
+        },
+      },
+      propsData: {
+        widget,
+      },
+    });
+
+    const alarmsExpandPanelTour = selectAlarmsExpandPanelTour(wrapper);
+
+    alarmsExpandPanelTour.vm.callbacks.onPreviousStep(2);
+
+    expect(expanded).toEqual({
+      [alarms[0]._id]: true,
+    });
+  });
+
+  it('Alarms not fetched after change query without columns', async () => {
+    const wrapper = factory({
+      store,
+      data: () => ({
+        testQuery: {},
+      }),
+      computed: {
+        query: {
+          get() {
+            return this.testQuery;
+          },
+          set() {},
+        },
+      },
+      propsData: {
+        widget: {
+          ...widget,
+          parameters: {
+            ...widget.parameters,
+            widgetColumns: [],
+          },
+        },
+      },
+    });
+
+    wrapper.vm.testQuery = defaultQuery;
+
+    await flushPromises();
+
+    expect(fetchAlarmsList).not.toHaveBeenCalled();
+  });
+
+  it('Alarms fetched after change query', async () => {
+    const expanded = {};
+    const wrapper = factory({
+      store,
+      data: () => ({
+        testQuery: {},
+      }),
+      computed: {
+        query: {
+          get() {
+            return this.testQuery;
+          },
+          set() {},
+        },
+      },
+      stubs: {
+        ...stubs,
+        'alarms-list-table': {
+          template: '<div />',
+          data: () => ({ expanded }),
+        },
+      },
+      propsData: {
+        widget,
+      },
+    });
+
+    wrapper.vm.testQuery = defaultQuery;
+
+    await flushPromises();
+
+    expect(fetchAlarmsList).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        widgetId: widget._id,
+        params: {
+          ...defaultQuery,
+
+          tstart: expect.any(Number),
+          tstop: expect.any(Number),
+        },
+      },
+      undefined,
+    );
+  });
+
+  it('Alarms fetched after change query nonce', async () => {
+    const firstAlarmId = alarms[0]._id;
+
+    const expanded = {
+      'non-exist-id': true,
+      [firstAlarmId]: true,
+    };
+    const wrapper = factory({
+      store,
+      data: () => ({
+        testTabQueryNonce: 0,
+      }),
+      computed: {
+        tabQueryNonce: {
+          get() {
+            return this.testTabQueryNonce;
+          },
+          set() {},
+        },
+      },
+      stubs: {
+        ...stubs,
+        'alarms-list-table': {
+          template: '<div />',
+          data: () => ({ expanded }),
+        },
+      },
+      propsData: {
+        widget,
+      },
+    });
+
+    wrapper.vm.testTabQueryNonce += 1;
+
+    await flushPromises();
+
+    expect(fetchAlarmsList).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        widgetId: widget._id,
+        params: {
+          ...defaultQuery,
+
+          tstart: expect.any(Number),
+          tstop: expect.any(Number),
+          with_steps: true,
+        },
+      },
+      undefined,
+    );
+    expect(expanded).toEqual({
+      'non-exist-id': false,
+      [firstAlarmId]: true,
+    });
+  });
+
+  it('Periodic started after mount with enabled value', async () => {
+    jest.useFakeTimers();
+
+    const expanded = {};
+    factory({
+      store,
+      stubs: {
+        ...stubs,
+        'alarms-list-table': {
+          template: '<div />',
+          data: () => ({ expanded }),
+        },
+      },
+      propsData: {
+        widget: {
+          ...widget,
+          parameters: {
+            ...widget.parameters,
+            periodic_refresh: {
+              enabled: true,
+              unit: TIME_UNITS.second,
+              value: 1,
+            },
+          },
+        },
+      },
+    });
+
+    expect(setInterval).toHaveBeenCalledTimes(1);
+    expect(setInterval).toHaveBeenCalledWith(
+      expect.any(Function),
+      1000,
+    );
+
+    jest.runTimersToTime(1000);
+
+    expect(fetchAlarmsList).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        widgetId: widget._id,
+        params: {
+          ...defaultQuery,
+
+          tstart: expect.any(Number),
+          tstop: expect.any(Number),
+        },
+      },
+      undefined,
+    );
+
+    jest.useRealTimers();
+  });
+
+  it('Interval cleared after update periodic refresh', async () => {
+    jest.useFakeTimers();
+
+    const expanded = {};
+    const wrapper = factory({
+      store,
+      stubs: {
+        ...stubs,
+        'alarms-list-table': {
+          template: '<div />',
+          data: () => ({ expanded }),
+        },
+      },
+      propsData: {
+        widget: {
+          ...widget,
+          parameters: {
+            ...widget.parameters,
+            periodic_refresh: {
+              enabled: true,
+              unit: TIME_UNITS.minute,
+              value: 1,
+            },
+          },
+        },
+      },
+    });
+
+    expect(setInterval).toHaveBeenCalled();
+    setInterval.mockClear();
+
+    await wrapper.setProps({
+      widget: {
+        ...widget,
+        parameters: {
+          ...widget.parameters,
+          periodic_refresh: {
+            enabled: true,
+            unit: TIME_UNITS.minute,
+            value: 2,
+          },
+        },
+      },
+    });
+
+    expect(clearInterval).toHaveBeenCalledTimes(1);
+
+    expect(setInterval).toHaveBeenCalledTimes(1);
+    expect(setInterval).toHaveBeenCalledWith(
+      expect.any(Function),
+      120000,
+    );
+
+    jest.useRealTimers();
+  });
+
+  it('Interval cleared after destroy', async () => {
+    jest.useFakeTimers();
+
+    const expanded = {};
+    const wrapper = factory({
+      store,
+      stubs: {
+        ...stubs,
+        'alarms-list-table': {
+          template: '<div />',
+          data: () => ({ expanded }),
+        },
+      },
+      propsData: {
+        widget: {
+          ...widget,
+          parameters: {
+            ...widget.parameters,
+            periodic_refresh: {
+              enabled: true,
+              unit: TIME_UNITS.minute,
+              value: 1,
+            },
+          },
+        },
+      },
+    });
+
+    expect(setInterval).toHaveBeenCalledTimes(1);
+
+    wrapper.destroy();
+
+    expect(clearInterval).toHaveBeenCalledTimes(1);
 
     jest.useRealTimers();
   });
