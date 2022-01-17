@@ -7956,7 +7956,7 @@ var doc = `{
             }
         },
         "/view-copy/{id}": {
-            "put": {
+            "post": {
                 "security": [
                     {
                         "JWTAuth": []

@@ -253,7 +253,7 @@ func (a *api) Delete(c *gin.Context) {
 // @Success 201 {object} viewgroup.View
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
-// @Router /view-copy/{id} [put]
+// @Router /view-copy/{id} [post]
 func (a *api) Copy(c *gin.Context) {
 	request := EditRequest{}
 
