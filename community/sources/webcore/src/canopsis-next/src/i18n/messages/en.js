@@ -291,7 +291,6 @@ export default {
     impactChain: 'Impact chain',
     impactDepends: 'Impact/Depends',
     treeOfDependencies: 'Tree of dependencies',
-    pbehaviors: 'Pbehaviors',
     infosSearchLabel: 'Search infos',
     eventStatisticsMessage: '{ok} OK events\n{ko} KO Events',
     eventStatistics: 'Event statistics',
