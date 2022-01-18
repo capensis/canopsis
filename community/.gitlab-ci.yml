@@ -14,14 +14,12 @@ variables:
   CANOPSIS_TAG: "ci"
   CANOPSIS_DOCKER_MODE: "test-ci"
   CANOPSIS_ENV_CONFIRM: "0"
-  CANOPSIS_BUILD_NEXT: "0"
 
 stage_test:
   stage: test
   tags: ["canopsis"]
   script:
     - set
-    #- ./CI/ci-gitlab.sh
     - ./build-docker.sh
 
 

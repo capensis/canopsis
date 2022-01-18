@@ -18,6 +18,8 @@ class Socket {
     this.url = '';
     this.protocols = '';
     this.sendQueue = [];
+    this.listeners = {};
+    this.reconnecting = false;
     this.reconnectsCount = 0;
     this.lastPingedAt = 0;
     this.lastPongedAt = 0;
@@ -48,11 +50,14 @@ class Socket {
     this.url = url;
     this.protocols = protocols;
     this.connection = new WebSocket(url, protocols);
+    this.connection.addEventListener('open', this.baseOpenHandler);
+    this.connection.addEventListener('close', this.baseCloseHandler);
+    this.connection.addEventListener('error', this.baseErrorHandler);
+    this.connection.addEventListener('message', this.baseMessageHandler);
 
-    this.on('open', this.baseOpenHandler);
-    this.on('close', this.baseCloseHandler);
-    this.on('error', this.baseErrorHandler);
-    this.on('message', this.baseMessageHandler);
+    Object.entries(this.listeners).map(([event, listeners = []]) => (
+      listeners.forEach(listener => this.connection.addEventListener(event, listener))
+    ));
 
     return this;
   }
@@ -66,7 +71,12 @@ class Socket {
     this.reconnectsCount += 1;
     this.lastPingedAt = 0;
     this.lastPongedAt = 0;
-    this.disconnect();
+
+    if (this.connection) {
+      this.connection.close();
+      this.connection = undefined;
+    }
+
     this.connect(this.url, this.protocols);
 
     if (this.token) {
@@ -86,6 +96,8 @@ class Socket {
    * @returns {Socket}
    */
   disconnect(code, reason) {
+    this.listeners = [];
+
     if (this.connection) {
       this.connection.close(code, reason);
       this.connection = undefined;
@@ -104,6 +116,14 @@ class Socket {
   on(eventType, listener) {
     this.connection.addEventListener(eventType, listener);
 
+    if (!this.listeners[eventType]) {
+      this.listeners[eventType] = [];
+    }
+
+    if (!this.listeners[eventType].includes(listener)) {
+      this.listeners[eventType].push(listener);
+    }
+
     return this;
   }
 
@@ -117,6 +137,10 @@ class Socket {
   off(eventType, listener) {
     this.connection.removeEventListener(eventType, listener);
 
+    if (this.listeners[eventType]) {
+      this.listeners[eventType] = this.listeners[eventType].filter(item => item !== listener);
+    }
+
     return this;
   }
 
@@ -127,8 +151,10 @@ class Socket {
    * @returns {Socket}
    */
   send(data) {
-    if (!this.isConnectionOpen && !find(this.sendQueue, data)) {
-      this.sendQueue.push(data);
+    if (!this.isConnectionOpen) {
+      if (!find(this.sendQueue, data)) {
+        this.sendQueue.push(data);
+      }
 
       return this;
     }
@@ -255,19 +281,29 @@ class Socket {
       return;
     }
 
+    this.reconnecting = true;
+
     if (this.reconnectsCount >= MAX_RECONNECTS_COUNT) {
-      throw new Error('Network problem');
+      const errorEvent = new ErrorEvent(EVENTS_TYPES.networkError, {
+        message: `Amount of reconnecting hit the limit of ${MAX_RECONNECTS_COUNT}`,
+      });
+
+      this.connection.dispatchEvent(errorEvent);
+
+      return;
     }
 
-    this.reconnect();
-
-    setTimeout(() => this.startReconnecting(), RECONNECT_INTERVAL);
+    setTimeout(() => {
+      this.reconnect();
+      this.startReconnecting();
+    }, RECONNECT_INTERVAL);
   }
 
   /**
    * Base handler for 'open' event
    */
   baseOpenHandler() {
+    this.reconnecting = false;
     this.reconnectsCount = 0;
 
     if (this.sendQueue.length) {
@@ -282,7 +318,7 @@ class Socket {
    * Base handler for 'close' event
    */
   baseCloseHandler() {
-    if (this.reconnectsCount) {
+    if (this.reconnecting) {
       return;
     }
 
@@ -301,7 +337,7 @@ class Socket {
       return;
     }
 
-    if (this.reconnectsCount) {
+    if (this.reconnecting) {
       return;
     }
 
@@ -317,9 +353,9 @@ class Socket {
     const { type, room, msg, error } = JSON.parse(data);
 
     if (type === RESPONSE_MESSAGES_TYPES.error) {
-      const event = new ErrorEvent('error', { message: error });
-
-      this.connection.dispatchEvent(event);
+      this.connection.dispatchEvent(
+        new ErrorEvent('error', { message: error }),
+      );
       return;
     }
 

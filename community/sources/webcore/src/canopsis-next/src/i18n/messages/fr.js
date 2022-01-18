@@ -1068,7 +1068,7 @@ export default {
           title: 'Compteur',
         },
         [WIDGET_TYPES.testingWeather]: {
-          title: 'Scénario des tests',
+          title: 'Scénarios Junit',
         },
       },
     },
@@ -1630,6 +1630,20 @@ export default {
         },
       },
     },
+    webSocketError: {
+      title: 'Erreur de connexion WebSocket',
+      text: '<p>Les Websockets ne sont pas disponibles, les fonctionnalités suivantes sont donc restreintes:</p>'
+        + '<p>'
+        + '<ul>'
+        + '<li>En-tête Healthcheck</li>'
+        + '<li>Graphique du réseau Healthcheck</li>'
+        + '<li>Messages diffusés actifs</li>'
+        + '<li>Sessions d\'utilisateurs actifs</li>'
+        + '<li>Exécution de la remédiation</li>'
+        + '</ul>'
+        + '</p>'
+        + '<p>Veuillez vérifier la configuration de votre serveur.</p>',
+    },
     confirmationPhrase: {
       phrase: 'Phrase',
       updateStorageSettings: {
@@ -2010,6 +2024,7 @@ export default {
   },
 
   pbehavior: {
+    periodsCalendar: 'Calendrier avec périodes',
     buttons: {
       addFilter: 'Ajouter un filtre',
       editFilter: 'Modifier le filtre',
@@ -2303,6 +2318,7 @@ export default {
     remainingAction: 'Continuer avec les actions restantes',
     addAction: 'Ajouter une action',
     emptyActions: 'Aucune action ajoutée pour le moment',
+    output: 'Format d\'action de sortie',
     urlHelp: '<p>Les variables accessibles sont : <strong>.Alarm</strong>, <strong>.Entity</strong> et <strong>.Children</strong></p>'
       + '<i>Quelques exemples :</i>'
       + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'
@@ -2425,6 +2441,7 @@ export default {
       [TEST_SUITE_STATUSES.skipped]: 'Ignoré',
       [TEST_SUITE_STATUSES.error]: 'En erreur',
       [TEST_SUITE_STATUSES.failed]: 'Échoué',
+      [TEST_SUITE_STATUSES.total]: 'Temps total pris',
     },
     popups: {
       systemMessageCopied: 'Message système copié dans le presse-papier',

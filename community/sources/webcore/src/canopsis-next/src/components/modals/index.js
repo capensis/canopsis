@@ -69,6 +69,10 @@ export const PbehaviorPlanning = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-planning.vue'),
   loading: LoaderOverlay,
 });
+export const PbehaviorRecurrenceRule = () => ({
+  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-recurrence-rule.vue'),
+  loading: ModalLoaderOverlay,
+});
 export const SelectExceptionsLists = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/select-exceptions-lists.vue'),
   loading: LoaderOverlay,
@@ -128,6 +132,10 @@ export const ImageViewer = () => ({
 export const ImagesViewer = () => ({
   component: import(/* webpackChunkName: "Common" */ './common/images-viewer.vue'),
   loading: LoaderOverlay,
+});
+export const Info = () => ({
+  component: import(/* webpackChunkName: "Common" */ './common/info.vue'),
+  loading: ModalLoaderOverlay,
 });
 export const CreateWidget = () => ({
   component: import(/* webpackChunkName: "Widget" */ './view/create-widget.vue'),

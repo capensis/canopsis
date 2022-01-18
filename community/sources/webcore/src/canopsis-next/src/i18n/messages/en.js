@@ -1068,7 +1068,7 @@ export default {
           title: 'Counter',
         },
         [WIDGET_TYPES.testingWeather]: {
-          title: 'Testing weather',
+          title: 'Junit scenarios',
         },
       },
     },
@@ -1630,6 +1630,20 @@ export default {
         },
       },
     },
+    webSocketError: {
+      title: 'WebSocket connection error',
+      text: '<p>Websockets are unavailable, so the following functionalities are restricted:</p>'
+        + '<p>'
+        + '<ul>'
+        + '<li>Healthcheck header</li>'
+        + '<li>Healthcheck network graph</li>'
+        + '<li>Active broadcast messages</li>'
+        + '<li>Active users sessions</li>'
+        + '<li>Remediation execution</li>'
+        + '</ul>'
+        + '</p>'
+        + '<p>Please check your server configuration.</p>',
+    },
     confirmationPhrase: {
       phrase: 'Phrase',
       updateStorageSettings: {
@@ -2010,6 +2024,7 @@ export default {
   },
 
   pbehavior: {
+    periodsCalendar: 'Calendar with periods',
     buttons: {
       addFilter: 'Add filter',
       editFilter: 'Edit filter',
@@ -2302,6 +2317,7 @@ export default {
     remainingAction: 'Continue with remaining actions',
     addAction: 'Add action',
     emptyActions: 'No actions added yet',
+    output: 'Output Action Format',
     urlHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>'
       + '<i>For example:</i>'
       + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'
@@ -2424,6 +2440,7 @@ export default {
       [TEST_SUITE_STATUSES.skipped]: 'Skipped',
       [TEST_SUITE_STATUSES.error]: 'Error',
       [TEST_SUITE_STATUSES.failed]: 'Failed',
+      [TEST_SUITE_STATUSES.total]: 'Total time taken',
     },
     popups: {
       systemMessageCopied: 'System message copied to clipboard',
