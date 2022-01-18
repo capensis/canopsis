@@ -22,8 +22,8 @@ Feature: update alarm on pbehavior
     {
       "enabled": true,
       "name": "test-pbehavior-1",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -36,7 +36,7 @@ Feature: update alarm on pbehavior
     }
     """
     Then the response code should be 201
-    When I wait 1s
+    When I wait the end of event processing
     When I send an event:
     """json
     {
@@ -77,7 +77,7 @@ Feature: update alarm on pbehavior
               },
               {
                 "_t": "pbhenter",
-                "m": "Pbehavior test-pbehavior-1. Type: Engine maintenance. Reason: Test Engine"
+                "m": "Pbehavior test-pbehavior-1. Type: Engine maintenance. Reason: Test Engine."
               }
             ]
           }
@@ -113,8 +113,8 @@ Feature: update alarm on pbehavior
     {
       "enabled": true,
       "name": "test-pbehavior-2",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -154,7 +154,7 @@ Feature: update alarm on pbehavior
               },
               {
                 "_t": "pbhenter",
-                "m": "Pbehavior test-pbehavior-2. Type: Engine maintenance. Reason: Test Engine"
+                "m": "Pbehavior test-pbehavior-2. Type: Engine maintenance. Reason: Test Engine."
               }
             ]
           }
@@ -190,8 +190,8 @@ Feature: update alarm on pbehavior
     {
       "enabled": true,
       "name": "test-pbehavior-3",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -237,8 +237,8 @@ Feature: update alarm on pbehavior
     {
       "enabled": true,
       "name": "test-pbehavior-4",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "2s")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "2s" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -255,3 +255,302 @@ Feature: update alarm on pbehavior
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-pbehavior-4"}]}&with_steps=true
     Then the response code should be 200
     Then the response key "data.0.v.pbh_inactive_duration" should not be "0"
+
+  Scenario: given pbehavior and entity without alarm should update last alarm date of pbehavior
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-pbehavior-5",
+      "connector_name" : "test-connector-name-pbehavior-5",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" : "test-component-pbehavior-5",
+      "resource" : "test-resource-pbehavior-5",
+      "state" : 0,
+      "output" : "test-output-pbehavior-5"
+    }
+    """
+    When I wait the end of event processing
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-5",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "filter":{
+        "$and":[
+          {
+            "name": "test-resource-pbehavior-5"
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "last_alarm_date": null
+    }
+    """
+    When I save response pbehaviorID={{ .lastResponse._id }}
+    When I wait the end of event processing
+    When I do GET /api/v4/pbehaviors/{{ .pbehaviorID }}
+    Then the response code should be 200
+    Then the response key "last_alarm_date" should not be "null"
+
+  Scenario: given deleted pbehavior should delete alarm with pbehavior info
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-pbehavior-6",
+      "connector_name" : "test-connector-name-pbehavior-6",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" : "test-component-pbehavior-6",
+      "resource" : "test-resource-pbehavior-6",
+      "state" : 1,
+      "output" : "noveo alarm"
+    }
+    """
+    When I wait the end of event processing
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-6",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "filter":{
+        "$and":[
+          {
+            "name": "test-resource-pbehavior-6"
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of event processing
+    When I do DELETE /api/v4/pbehaviors/{{ .lastResponse._id }}
+    Then the response code should be 204
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-pbehavior-6"}]}&with_steps=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "connector" : "test-connector-pbehavior-6",
+            "connector_name" : "test-connector-name-pbehavior-6",
+            "component" : "test-component-pbehavior-6",
+            "resource" : "test-resource-pbehavior-6",
+            "steps": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc"
+              },
+              {
+                "_t": "pbhenter",
+                "m": "Pbehavior test-pbehavior-6. Type: Engine maintenance. Reason: Test Engine."
+              },
+              {
+                "_t": "pbhleave",
+                "m": "Pbehavior test-pbehavior-6. Type: Engine maintenance. Reason: Test Engine."
+              }
+            ]
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given updated pbehavior filter should delete alarm with pbehavior info
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-pbehavior-7",
+      "connector_name" : "test-connector-name-pbehavior-7",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" : "test-component-pbehavior-7",
+      "resource" : "test-resource-pbehavior-7",
+      "state" : 1,
+      "output" : "noveo alarm"
+    }
+    """
+    When I wait the end of event processing
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-7",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "filter":{
+        "$and":[
+          {
+            "name": "test-resource-pbehavior-7"
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of event processing
+    When I do PUT /api/v4/pbehaviors/{{ .lastResponse._id }}:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-7",
+      "tstart": {{ .lastResponse.tstart }},
+      "tstop": {{ .lastResponse.tstop }},
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "filter":{
+        "$and":[
+          {
+            "name": "test-resource-pbehavior-7-another"
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-pbehavior-7"}]}&with_steps=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "connector" : "test-connector-pbehavior-7",
+            "connector_name" : "test-connector-name-pbehavior-7",
+            "component" : "test-component-pbehavior-7",
+            "resource" : "test-resource-pbehavior-7",
+            "steps": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc"
+              },
+              {
+                "_t": "pbhenter",
+                "m": "Pbehavior test-pbehavior-7. Type: Engine maintenance. Reason: Test Engine."
+              },
+              {
+                "_t": "pbhleave",
+                "m": "Pbehavior test-pbehavior-7. Type: Engine maintenance. Reason: Test Engine."
+              }
+            ]
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given pbehavior and alarm should update alarm pbehavior info on periodical
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-pbehavior-8",
+      "connector_name" : "test-connector-name-pbehavior-8",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" : "test-component-pbehavior-8",
+      "resource" : "test-resource-pbehavior-8",
+      "state" : 1,
+      "output" : "noveo alarm"
+    }
+    """
+    When I wait the end of event processing
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-8",
+      "tstart": {{ nowAdd "2s" }},
+      "tstop": {{ nowAdd "10m" }},
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "filter":{
+        "$and":[
+          {
+            "name": "test-resource-pbehavior-8"
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-pbehavior-8"}]}&with_steps=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "pbehavior_info": {
+              "name": "test-pbehavior-8"
+            },
+            "connector" : "test-connector-pbehavior-8",
+            "connector_name" : "test-connector-name-pbehavior-8",
+            "component" : "test-component-pbehavior-8",
+            "resource" : "test-resource-pbehavior-8",
+            "steps": [
+              {
+                "_t": "stateinc",
+                "val": 1
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "pbhenter",
+                "m": "Pbehavior test-pbehavior-8. Type: Engine maintenance. Reason: Test Engine."
+              }
+            ]
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """

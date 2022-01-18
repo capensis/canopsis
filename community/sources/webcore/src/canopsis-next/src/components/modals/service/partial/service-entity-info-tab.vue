@@ -36,7 +36,7 @@ import {
   MODALS,
   PBEHAVIOR_TYPE_TYPES,
   USERS_PERMISSIONS,
-  WIDGETS_ACTIONS_TYPES,
+  WEATHER_ACTIONS_TYPES,
 } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
@@ -90,53 +90,51 @@ export default {
     },
 
     actionsMap() {
-      const { weather: weatherActionsTypes } = WIDGETS_ACTIONS_TYPES;
-
       return {
         ack: {
-          type: weatherActionsTypes.entityAck,
+          type: WEATHER_ACTIONS_TYPES.entityAck,
           eventType: EVENT_ENTITY_TYPES.ack,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
           action: this.prepareAckAction,
         },
         assocTicket: {
-          type: weatherActionsTypes.entityAssocTicket,
+          type: WEATHER_ACTIONS_TYPES.entityAssocTicket,
           eventType: EVENT_ENTITY_TYPES.assocTicket,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
           action: this.prepareAssocTicketAction,
         },
         validate: {
-          type: weatherActionsTypes.entityValidate,
+          type: WEATHER_ACTIONS_TYPES.entityValidate,
           eventType: EVENT_ENTITY_TYPES.validate,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.validate].icon,
           action: this.prepareValidateAction,
         },
         invalidate: {
-          type: weatherActionsTypes.entityInvalidate,
+          type: WEATHER_ACTIONS_TYPES.entityInvalidate,
           eventType: EVENT_ENTITY_TYPES.invalidate,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.invalidate].icon,
           action: this.prepareInvalidateAction,
         },
         pause: {
-          type: weatherActionsTypes.entityPause,
+          type: WEATHER_ACTIONS_TYPES.entityPause,
           eventType: EVENT_ENTITY_TYPES.pause,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pause].icon,
           action: this.preparePauseAction,
         },
         play: {
-          type: weatherActionsTypes.entityPlay,
+          type: WEATHER_ACTIONS_TYPES.entityPlay,
           eventType: EVENT_ENTITY_TYPES.play,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.play].icon,
           action: this.preparePlayAction,
         },
         cancel: {
-          type: weatherActionsTypes.entityCancel,
+          type: WEATHER_ACTIONS_TYPES.entityCancel,
           eventType: EVENT_ENTITY_TYPES.cancel,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
           action: this.prepareCancelAction,
         },
         comment: {
-          type: weatherActionsTypes.entityComment,
+          type: WEATHER_ACTIONS_TYPES.entityComment,
           eventType: EVENT_ENTITY_TYPES.comment,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.comment].icon,
           action: this.prepareCommentAction,
@@ -169,8 +167,8 @@ export default {
       }
 
       if (
-        this.entity.alarm_display_name &&
-        (!this.entity.status || this.entity.status.val !== ENTITIES_STATUSES.cancelled)
+        this.entity.alarm_display_name
+        && (!this.entity.status || this.entity.status.val !== ENTITIES_STATUSES.cancelled)
       ) {
         actions.push(filteredActionsMap.cancel);
       }

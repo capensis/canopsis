@@ -25,17 +25,23 @@ export default {
     widgets: {},
   },
   getters: {
-    getListByWidgetId: (state, getters, rootState, rootGetters) => widgetId =>
-      rootGetters['entities/getList'](ENTITIES_TYPES.alarm, get(state.widgets[widgetId], 'allIds', [])),
+    getListByWidgetId: (state, getters, rootState, rootGetters) => widgetId => rootGetters['entities/getList'](
+      ENTITIES_TYPES.alarm,
+      get(state.widgets[widgetId], 'allIds', []),
+    ),
 
     getMetaByWidgetId: state => widgetId => get(state.widgets[widgetId], 'meta', {}),
     getPendingByWidgetId: state => widgetId => get(state.widgets[widgetId], 'pending'),
     getExportByWidgetId: state => widgetId => get(state.widgets[widgetId], 'exportData'),
 
-    getItem: (state, getters, rootState, rootGetters) => id =>
-      rootGetters['entities/getItem'](ENTITIES_TYPES.alarm, id),
-    getList: (state, getters, rootState, rootGetters) => ids =>
-      rootGetters['entities/getList'](ENTITIES_TYPES.alarm, ids),
+    getItem: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem'](
+      ENTITIES_TYPES.alarm,
+      id,
+    ),
+    getList: (state, getters, rootState, rootGetters) => ids => rootGetters['entities/getList'](
+      ENTITIES_TYPES.alarm,
+      ids,
+    ),
   },
   mutations: {
     [types.FETCH_LIST](state, { widgetId, params }) {
@@ -55,19 +61,10 @@ export default {
     },
   },
   actions: {
-    async fetchListWithoutStore({ dispatch }, { params, withoutCatch = false }) {
-      try {
-        return request.get(API_ROUTES.alarmList, { params });
-      } catch (err) {
-        if (withoutCatch) {
-          throw err;
-        }
-
-        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
-
-        return { alarms: [], total: 0 };
-      }
+    async fetchListWithoutStore(context, { params }) {
+      return request.get(API_ROUTES.alarmList, { params });
     },
+
     async fetchList({ commit, dispatch }, { widgetId, params, withoutPending } = {}) {
       try {
         await useRequestCancelling(async (source) => {

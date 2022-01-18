@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -11,18 +12,20 @@ import (
 
 type pbhEnterExecutor struct {
 	configProvider config.AlarmConfigProvider
+
+	metricsSender metrics.Sender
 }
 
 // NewAckExecutor creates new executor.
-func NewPbhEnterExecutor(configProvider config.AlarmConfigProvider) operationlib.Executor {
-	return &pbhEnterExecutor{configProvider: configProvider}
+func NewPbhEnterExecutor(configProvider config.AlarmConfigProvider, metricsSender metrics.Sender) operationlib.Executor {
+	return &pbhEnterExecutor{configProvider: configProvider, metricsSender: metricsSender}
 }
 
 func (e *pbhEnterExecutor) Exec(
 	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
-	_ types.Entity,
+	entity *types.Entity,
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
@@ -32,7 +35,11 @@ func (e *pbhEnterExecutor) Exec(
 		return "", fmt.Errorf("invalid parameters")
 	}
 
-	if alarm.Value.PbehaviorInfo == params.PbehaviorInfo {
+	if userID == "" {
+		userID = params.User
+	}
+
+	if alarm.Value.PbehaviorInfo.Same(params.PbehaviorInfo) {
 		return "", nil
 	}
 
@@ -48,6 +55,10 @@ func (e *pbhEnterExecutor) Exec(
 	if err != nil {
 		return "", err
 	}
+
+	entity.PbehaviorInfo = alarm.Value.PbehaviorInfo
+
+	go e.metricsSender.SendPbhEnter(context.Background(), alarm, *entity)
 
 	return types.AlarmChangeTypePbhEnter, nil
 }

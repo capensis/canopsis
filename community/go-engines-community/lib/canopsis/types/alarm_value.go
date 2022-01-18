@@ -246,11 +246,14 @@ type ByTimestamp struct {
 }
 
 func (s ByTimestamp) Less(i, j int) bool {
-	return s.AlarmSteps[i].Timestamp.Before(s.AlarmSteps[j].Timestamp.Time)
+	return s.AlarmSteps[i].Timestamp.Before(s.AlarmSteps[j].Timestamp)
 }
 
 // PbehaviorInfo represents current state of entity.
 type PbehaviorInfo struct {
+	// Timestamp is time when entity enters pbehavior.
+	// Use pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.
+	Timestamp *CpsTime `bson:"timestamp" json:"timestamp"`
 	// ID is ID of pbehavior.PBehavior.
 	ID string `bson:"id" json:"id"`
 	// Name is Name of pbehavior.PBehavior.
@@ -297,6 +300,12 @@ func (i *PbehaviorInfo) OneOf(t []string) bool {
 
 func (i PbehaviorInfo) IsZero() bool {
 	return i == PbehaviorInfo{}
+}
+
+func (i PbehaviorInfo) Same(v PbehaviorInfo) bool {
+	v.Timestamp = i.Timestamp
+
+	return i == v
 }
 
 // AlarmValue represents a full description of an alarm.
