@@ -12,6 +12,7 @@ type Response struct {
 	entity.Entity  `bson:",inline"`
 	EntityPatterns pattern.EntityPatternList `bson:"entity_patterns" json:"entity_patterns"`
 	OutputTemplate string                    `bson:"output_template" json:"output_template"`
+	SliAvailState  int64                     `bson:"sli_avail_state" json:"sli_avail_state"`
 }
 
 type AlarmWithEntity struct {
@@ -32,6 +33,42 @@ type UpdateRequest struct {
 	ID string `json:"-"`
 }
 
+type BulkUpdateRequestItem struct {
+	EditRequest
+	ID string `json:"_id" binding:"required"`
+}
+
+type BulkDeleteRequestItem struct {
+	ID string `json:"_id" binding:"required"`
+}
+
+// for swagger
+type BulkCreateResponseItem struct {
+	ID     string            `json:"id,omitempty"`
+	Item   CreateRequest     `json:"item"`
+	Status int               `json:"status"`
+	Error  string            `json:"error,omitempty"`
+	Errors map[string]string `json:"errors,omitempty"`
+}
+
+// for swagger
+type BulkUpdateResponseItem struct {
+	ID     string                `json:"id,omitempty"`
+	Item   BulkUpdateRequestItem `json:"item"`
+	Status int                   `json:"status"`
+	Error  string                `json:"error,omitempty"`
+	Errors map[string]string     `json:"errors,omitempty"`
+}
+
+// for swagger
+type BulkDeleteResponseItem struct {
+	ID     string                `json:"id,omitempty"`
+	Item   BulkDeleteRequestItem `json:"item"`
+	Status int                   `json:"status"`
+	Error  string                `json:"error,omitempty"`
+	Errors map[string]string     `json:"errors,omitempty"`
+}
+
 type ContextGraphRequest struct {
 	pagination.Query
 	ID string `form:"_id"`
@@ -45,6 +82,7 @@ type EditRequest struct {
 	ImpactLevel    int64                     `json:"impact_level" binding:"required,min=1,max=10"`
 	EntityPatterns pattern.EntityPatternList `json:"entity_patterns"`
 	Infos          []entitybasic.InfoRequest `json:"infos" binding:"dive"`
+	SliAvailState  *int64                    `json:"sli_avail_state" binding:"required,min=0,max=3"`
 }
 
 type ContextGraphAggregationResult struct {

@@ -5,7 +5,9 @@ export default {
     trendColor(value) {
       if (value > 0) {
         return 'primary';
-      } else if (value < 0) {
+      }
+
+      if (value < 0) {
         return 'error';
       }
 
@@ -15,7 +17,9 @@ export default {
     trendIcon(value) {
       if (value > 0) {
         return 'trending_up';
-      } else if (value < 0) {
+      }
+
+      if (value < 0) {
         return 'trending_down';
       }
 

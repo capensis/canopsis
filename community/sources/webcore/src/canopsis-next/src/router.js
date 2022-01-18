@@ -1,40 +1,46 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import { ROUTER_MODE } from '@/config';
-import { CRUD_ACTIONS, ROUTES_NAMES, ROUTES, USERS_PERMISSIONS } from '@/constants';
+import { ROUTER_MODE, ROUTER_ACCESS_TOKEN_KEY } from '@/config';
+import {
+  CRUD_ACTIONS,
+  ROUTES_NAMES,
+  ROUTES,
+  USERS_PERMISSIONS,
+} from '@/constants';
 import store from '@/store';
 import {
   checkAppInfoAccessForRoute,
   checkUserAccessForRoute,
-  getViewStatsPathByRoute,
 } from '@/helpers/router';
 
 import Login from '@/views/login.vue';
-import Home from '@/views/home.vue';
-import View from '@/views/view.vue';
-import Alarm from '@/views/alarm.vue';
-import AdminPermissions from '@/views/admin/permissions.vue';
-import AdminUsers from '@/views/admin/users.vue';
-import AdminRoles from '@/views/admin/roles.vue';
-import AdminParameters from '@/views/admin/parameters.vue';
-import AdminBroadcastMessages from '@/views/admin/broadcast-messages.vue';
-import AdminPlaylists from '@/views/admin/playlists.vue';
-import AdminPlanning from '@/views/admin/planning.vue';
-import AdminRemediation from '@/views/admin/remediation.vue';
-import AdminHealthcheck from '@/views/admin/healthcheck.vue';
-import ExploitationPbehaviors from '@/views/exploitation/pbehaviors.vue';
-import ExploitationEventFilter from '@/views/exploitation/event-filter.vue';
-import ExploitationSnmpRules from '@/views/exploitation/snmp-rules.vue';
-import ExploitationDynamicInfos from '@/views/exploitation/dynamic-infos.vue';
-import ExploitationMetaAlarmRules from '@/views/exploitation/meta-alarm-rules.vue';
-import ExploitationScenarios from '@/views/exploitation/scenarios.vue';
-import ExploitationIdleRules from '@/views/exploitation/idle-rules.vue';
-import ExploitationFlappingRules from '@/views/exploitation/flapping-rules.vue';
-import ExploitationResolveRules from '@/views/exploitation/resolve-rules.vue';
-import Playlist from '@/views/playlist.vue';
-import NotificationInstructionStats from '@/views/notification/instruction-stats.vue';
 import Error from '@/views/error.vue';
+
+const Home = () => import(/* webpackChunkName: "Home" */ '@/views/home.vue');
+const View = () => import(/* webpackChunkName: "View" */ '@/views/view.vue');
+const Alarm = () => import(/* webpackChunkName: "Alarm" */ '@/views/alarm.vue');
+const AdminPermissions = () => import(/* webpackChunkName: "Permission" */ '@/views/admin/permissions.vue');
+const AdminUsers = () => import(/* webpackChunkName: "User" */ '@/views/admin/users.vue');
+const AdminRoles = () => import(/* webpackChunkName: "Role" */ '@/views/admin/roles.vue');
+const AdminParameters = () => import(/* webpackChunkName: "Parameters" */ '@/views/admin/parameters.vue');
+const AdminBroadcastMessages = () => import(/* webpackChunkName: "BroadcastMessage" */ '@/views/admin/broadcast-messages.vue');
+const AdminPlaylists = () => import(/* webpackChunkName: "Playlist" */ '@/views/admin/playlists.vue');
+const AdminPlanning = () => import(/* webpackChunkName: "Planning" */ '@/views/admin/planning.vue');
+const AdminRemediation = () => import(/* webpackChunkName: "Remediation" */ '@/views/admin/remediation.vue');
+const AdminHealthcheck = () => import(/* webpackChunkName: "Healthcheck" */ '@/views/admin/healthcheck.vue');
+const AdminKPI = () => import(/* webpackChunkName: "KPI" */ '@/views/admin/kpi.vue');
+const ExploitationPbehaviors = () => import(/* webpackChunkName: "Pbehavior" */ '@/views/exploitation/pbehaviors.vue');
+const ExploitationEventFilter = () => import(/* webpackChunkName: "EventFilter" */ '@/views/exploitation/event-filter.vue');
+const ExploitationSnmpRules = () => import(/* webpackChunkName: "SnmpRule" */ '@/views/exploitation/snmp-rules.vue');
+const ExploitationDynamicInfos = () => import(/* webpackChunkName: "DynamicInfo" */ '@/views/exploitation/dynamic-infos.vue');
+const ExploitationMetaAlarmRules = () => import(/* webpackChunkName: "MetaAlarmRule" */ '@/views/exploitation/meta-alarm-rules.vue');
+const ExploitationScenarios = () => import(/* webpackChunkName: "Scenario" */ '@/views/exploitation/scenarios.vue');
+const ExploitationIdleRules = () => import(/* webpackChunkName: "IdleRule" */ '@/views/exploitation/idle-rules.vue');
+const ExploitationFlappingRules = () => import(/* webpackChunkName: "AlarmStatusRule" */ '@/views/exploitation/flapping-rules.vue');
+const ExploitationResolveRules = () => import(/* webpackChunkName: "AlarmStatusRule" */ '@/views/exploitation/resolve-rules.vue');
+const Playlist = () => import(/* webpackChunkName: "Playlist" */ '@/views/playlist.vue');
+const NotificationInstructionStats = () => import(/* webpackChunkName: "InstructionStats" */ '@/views/notification/instruction-stats.vue');
 
 Vue.use(Router);
 
@@ -86,7 +92,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.action,
+        id: USERS_PERMISSIONS.technical.permission,
       },
     },
   },
@@ -176,6 +182,18 @@ const routes = [
       requiresPermission: {
         action: CRUD_ACTIONS.can,
         id: USERS_PERMISSIONS.technical.healthcheck,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminKPI,
+    name: ROUTES_NAMES.adminKPI,
+    component: AdminKPI,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        action: CRUD_ACTIONS.can,
+        id: USERS_PERMISSIONS.technical.kpi,
       },
     },
   },
@@ -324,10 +342,19 @@ const router = new Router({
 /**
  * If requiresLogin is undefined then we can visit this page with auth and without auth
  */
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const isRequiresAuth = to.matched.some(v => v.meta.requiresLogin);
   const isDontRequiresAuth = to.matched.some(v => v.meta.requiresLogin === false);
   const isLoggedIn = store.getters['auth/isLoggedIn'];
+  const { query: { [ROUTER_ACCESS_TOKEN_KEY]: accessToken, ...restQuery } = {} } = to;
+
+  if (accessToken) {
+    await store.dispatch('auth/applyAccessToken', accessToken);
+
+    return router.replace({
+      query: restQuery,
+    });
+  }
 
   if (!isLoggedIn && isRequiresAuth) {
     return next({
@@ -355,6 +382,8 @@ router.beforeResolve(async (to, from, next) => {
 
     next();
   } catch (err) {
+    console.error(err);
+
     next({
       name: ROUTES_NAMES.home,
     });
@@ -362,19 +391,8 @@ router.beforeResolve(async (to, from, next) => {
 });
 
 router.afterEach((to, from) => {
-  const isLoggedIn = store.getters['auth/isLoggedIn'];
-
   if (to.path !== from.path) {
     store.dispatch('entities/sweep');
-  }
-
-  if (isLoggedIn) {
-    store.dispatch('viewStats/update', {
-      data: {
-        visible: !(document.visibilityState === 'hidden'),
-        path: getViewStatsPathByRoute(to),
-      },
-    });
   }
 });
 

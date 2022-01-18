@@ -3,7 +3,7 @@ import { omit, pick } from 'lodash';
 import { IDLE_RULE_ALARM_CONDITIONS, IDLE_RULE_TYPES, TIME_UNITS } from '@/constants';
 
 import { enabledToForm } from '@/helpers/forms/shared/common';
-import { durationToForm, formToDuration } from '@/helpers/date/duration';
+import { durationToForm } from '@/helpers/date/duration';
 import { formToAction, actionToForm } from '@/helpers/forms/action';
 
 /**
@@ -31,7 +31,6 @@ import { formToAction, actionToForm } from '@/helpers/forms/action';
 
 /**
  * @typedef {IdleRule} IdleRuleForm
- * @property {DurationForm} duration
  * @property {ActionForm} operation
  */
 
@@ -70,8 +69,6 @@ export const formToIdleRule = (form) => {
   if (!isEntityType) {
     idleRule.operation = pick(formToAction(form.operation), ['type', 'parameters']);
   }
-
-  idleRule.duration = formToDuration(form.duration);
 
   return idleRule;
 };

@@ -5,9 +5,9 @@ import (
 	"errors"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
-	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"time"
@@ -19,13 +19,13 @@ func NewEnrichmentCenter(
 	adapter libentity.Adapter,
 	enableEnrich bool,
 	entityServiceManager entityservice.Manager,
-	logger zerolog.Logger,
+	metricMetaUpdater metrics.MetaUpdater,
 ) EnrichmentCenter {
 	return &center{
 		adapter:              adapter,
 		enableEnrich:         enableEnrich,
 		entityServiceManager: entityServiceManager,
-		logger:               logger,
+		metricMetaUpdater:    metricMetaUpdater,
 	}
 }
 
@@ -33,7 +33,7 @@ type center struct {
 	adapter              libentity.Adapter
 	enableEnrich         bool
 	entityServiceManager entityservice.Manager
-	logger               zerolog.Logger
+	metricMetaUpdater    metrics.MetaUpdater
 }
 
 func (c *center) Handle(ctx context.Context, event types.Event, fields EnrichFields) (*types.Entity, UpdatedEntityServices, error) {
@@ -60,6 +60,25 @@ func (c *center) Handle(ctx context.Context, event types.Event, fields EnrichFie
 		if has {
 			updatedServices.UpdatedComponentInfosResources = resources
 		}
+	}
+
+	updatedEntities := make([]string, 0)
+	metaUpdated := false
+	for _, entity := range entities {
+		if eventEntity.ID == entity.ID {
+			// Update new event entity synchronously to update metrics in following engines.
+			c.metricMetaUpdater.UpdateById(context.Background(), eventEntity.ID)
+			metaUpdated = true
+		} else {
+			updatedEntities = append(updatedEntities, entity.ID)
+		}
+	}
+	if !metaUpdated {
+		updatedEntities = append(updatedEntities, eventEntity.ID)
+	}
+	updatedEntities = append(updatedEntities, resources...)
+	if len(updatedEntities) > 0 {
+		go c.metricMetaUpdater.UpdateById(context.Background(), updatedEntities...)
 	}
 
 	if !eventEntity.Enabled {
@@ -163,12 +182,15 @@ func (c *center) UpdateEntityInfos(ctx context.Context, entity *types.Entity) (U
 	updatedServices.AddedTo = addedTo[entity.ID]
 	updatedServices.RemovedFrom = removedFrom[entity.ID]
 
+	updatedEntities := []string{entity.ID}
 	// Update component infos for related resource entities
 	if entity.Type == types.EntityTypeComponent {
 		resources, err := c.adapter.UpdateComponentInfosByComponent(ctx, entity.ID)
 		if err != nil {
 			return updatedServices, err
 		}
+
+		updatedEntities = append(updatedEntities, resources...)
 
 		if len(resources) > 0 {
 			has, err := c.entityServiceManager.HasEntityServiceByComponentInfos(ctx)
@@ -180,6 +202,8 @@ func (c *center) UpdateEntityInfos(ctx context.Context, entity *types.Entity) (U
 			}
 		}
 	}
+
+	go c.metricMetaUpdater.UpdateById(context.Background(), updatedEntities...)
 
 	return updatedServices, nil
 }

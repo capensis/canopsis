@@ -1,11 +1,15 @@
 .DS_Store
 node_modules
 /dist
+/build
+/coverage
+/__diff_output__
 
 # testing data
 /tests/e2e/reports/
 /tests/e2e/records/
 selenium-debug.log
+selenium-server.log
 
 # local env files
 .env.local

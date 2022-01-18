@@ -6,45 +6,46 @@ package mock_operation
 
 import (
 	context "context"
+	reflect "reflect"
+
 	types "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	gomock "github.com/golang/mock/gomock"
-	reflect "reflect"
 )
 
-// MockExecutor is a mock of Executor interface
+// MockExecutor is a mock of Executor interface.
 type MockExecutor struct {
 	ctrl     *gomock.Controller
 	recorder *MockExecutorMockRecorder
 }
 
-// MockExecutorMockRecorder is the mock recorder for MockExecutor
+// MockExecutorMockRecorder is the mock recorder for MockExecutor.
 type MockExecutorMockRecorder struct {
 	mock *MockExecutor
 }
 
-// NewMockExecutor creates a new mock instance
+// NewMockExecutor creates a new mock instance.
 func NewMockExecutor(ctrl *gomock.Controller) *MockExecutor {
 	mock := &MockExecutor{ctrl: ctrl}
 	mock.recorder = &MockExecutorMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockExecutor) EXPECT() *MockExecutorMockRecorder {
 	return m.recorder
 }
 
-// Exec mocks base method
-func (m *MockExecutor) Exec(arg0 context.Context, arg1 types.Operation, arg2 *types.Alarm, arg3 types.Entity, arg4 types.CpsTime, arg5, arg6 string) (types.AlarmChangeType, error) {
+// Exec mocks base method.
+func (m *MockExecutor) Exec(arg0 context.Context, arg1 types.Operation, arg2 *types.Alarm, arg3 *types.Entity, arg4 types.CpsTime, arg5, arg6, arg7 string) (types.AlarmChangeType, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Exec", arg0, arg1, arg2, arg3, arg4, arg5, arg6)
+	ret := m.ctrl.Call(m, "Exec", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 	ret0, _ := ret[0].(types.AlarmChangeType)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// Exec indicates an expected call of Exec
-func (mr *MockExecutorMockRecorder) Exec(arg0, arg1, arg2, arg3, arg4, arg5, arg6 interface{}) *gomock.Call {
+// Exec indicates an expected call of Exec.
+func (mr *MockExecutorMockRecorder) Exec(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Exec", reflect.TypeOf((*MockExecutor)(nil).Exec), arg0, arg1, arg2, arg3, arg4, arg5, arg6)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Exec", reflect.TypeOf((*MockExecutor)(nil).Exec), arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 }
