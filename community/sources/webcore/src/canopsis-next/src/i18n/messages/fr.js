@@ -212,6 +212,7 @@ export default {
     exportAsCsv: 'Export as csv',
     criteria: 'Critères',
     ratingSettings: 'Paramètres d\'évaluation',
+    pbehavior: 'Comportement périodique | Comportements périodiques',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -291,9 +292,9 @@ export default {
     impactChain: 'Chaîne d\'impact',
     impactDepends: 'Impacts/Dépendances',
     treeOfDependencies: 'Arbre des dépendances',
-    pbehaviors: 'Comportements périodiques',
     infosSearchLabel: 'Rechercher une info',
-    eventStatistics: '{ok} OK événements\n{ko} KO événements',
+    eventStatisticsMessage: '{ok} OK événements\n{ko} KO événements',
+    eventStatistics: 'Statistiques d\'événement',
     actions: {
       titles: {
         editEntity: 'Éditer l\'entité',
