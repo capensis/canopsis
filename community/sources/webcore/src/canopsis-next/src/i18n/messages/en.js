@@ -2440,6 +2440,7 @@ export default {
       [TEST_SUITE_STATUSES.skipped]: 'Skipped',
       [TEST_SUITE_STATUSES.error]: 'Error',
       [TEST_SUITE_STATUSES.failed]: 'Failed',
+      [TEST_SUITE_STATUSES.total]: 'Total time taken',
     },
     popups: {
       systemMessageCopied: 'System message copied to clipboard',
