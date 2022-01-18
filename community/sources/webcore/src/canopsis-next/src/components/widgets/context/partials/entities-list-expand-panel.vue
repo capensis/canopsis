@@ -1,23 +1,26 @@
 <template lang="pug">
-  v-tabs.visible(v-model="activeTab", color="secondary lighten-1", slider-color="primary", dark, centered)
-    v-tab {{ $t('context.expandPanel.tabs.pbehaviors') }}
+  v-tabs(color="secondary lighten-1", slider-color="primary", dark, centered)
+    v-tab {{ $t('context.pbehaviors') }}
     v-tab-item
       pbehaviors-list-tab(:item-id="item._id", :tab-id="tabId")
+
     template(v-if="item.type !== $constants.ENTITY_TYPES.service")
-      v-tab {{ $t('context.expandPanel.tabs.impactDepends') }}
-      v-tab-item
+      v-tab {{ $t('context.impactDepends') }}
+      v-tab-item(lazy)
         impact-depends-tab(:impact="item.impact", :depends="item.depends")
-    v-tab {{ $t('context.expandPanel.tabs.infos') }}
-    v-tab-item
+
+    v-tab {{ $t('common.infos') }}
+    v-tab-item(lazy)
       infos-tab(:infos="item.infos", :columns-filters="columnsFilters")
+
     template(v-if="item.type === $constants.ENTITY_TYPES.service")
-      v-tab {{ $t('context.expandPanel.tabs.treeOfDependencies') }}
-      v-tab-item
+      v-tab {{ $t('context.treeOfDependencies') }}
+      v-tab-item(lazy)
         tree-of-dependencies-tab(:item="item", :widget="widget")
-    template
-      v-tab {{ $t('context.expandPanel.tabs.impactChain') }}
-      v-tab-item
-        impact-chain-dependencies-tab(:item="item", :widget="widget")
+
+    v-tab {{ $t('context.impactChain') }}
+    v-tab-item(lazy)
+      impact-chain-dependencies-tab(:item="item", :widget="widget")
 </template>
 
 <script>
@@ -53,18 +56,5 @@ export default {
       default: () => [],
     },
   },
-  data() {
-    return {
-      activeTab: 0,
-    };
-  },
 };
 </script>
-
-<style lang="scss" scoped>
-.v-tabs.visible {
-  & /deep/ > .v-tabs__bar {
-    display: block;
-  }
-}
-</style>
