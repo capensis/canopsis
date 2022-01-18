@@ -97,17 +97,17 @@ import { USERS_PERMISSIONS } from '@/constants';
 
 import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
 
-import FilterSelector from '@/components/other/filter/filter-selector.vue';
-
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
-import widgetColumnsMixin from '@/mixins/widget/columns';
+import { widgetColumnsMixin } from '@/mixins/widget/columns';
 import { exportCsvMixinCreator } from '@/mixins/widget/export';
-import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
+import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
 import { permissionsWidgetsContextEntityFilters } from '@/mixins/permissions/widgets/context-entity/filters';
 import { permissionsWidgetsContextEntityCategory } from '@/mixins/permissions/widgets/context-entity/category';
+
+import FilterSelector from '@/components/other/filter/filter-selector.vue';
 
 import EntityColumnCell from './columns-formatting/entity-column-cell.vue';
 import EntitiesListExpandPanel from './partials/entities-list-expand-panel.vue';

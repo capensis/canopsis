@@ -41,7 +41,7 @@ import { omit } from 'lodash';
 import { permissionsWidgetsServiceWeatherFilters } from '@/mixins/permissions/widgets/service-weather/filters';
 import { permissionsWidgetsServiceWeatherCategory } from '@/mixins/permissions/widgets/service-weather/category';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
-import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
+import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import entitiesServiceMixin from '@/mixins/entities/service';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 
