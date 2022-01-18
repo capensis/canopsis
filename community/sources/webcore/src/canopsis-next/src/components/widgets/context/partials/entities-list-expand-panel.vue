@@ -1,6 +1,6 @@
 <template lang="pug">
   v-tabs(color="secondary lighten-1", slider-color="primary", dark, centered)
-    v-tab {{ $t('context.pbehaviors') }}
+    v-tab {{ $tc('common.pbehavior', 2) }}
     v-tab-item
       pbehaviors-list-tab(:item-id="item._id", :tab-id="tabId")
 
