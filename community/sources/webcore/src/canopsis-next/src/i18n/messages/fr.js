@@ -288,21 +288,12 @@ export default {
     impacts: 'Impacts',
     dependencies: 'Dépendances',
     noEventsFilter: 'Aucun filtre d\'événements',
-    expandPanel: {
-      infos: 'Les informations',
-      type: 'Type',
-      enabled: 'Activé',
-      disabled: 'Désactivé',
-      infosSearchLabel: 'Rechercher une info',
-      tabs: {
-        main: 'Principal',
-        pbehaviors: 'Comportements périodiques',
-        impactDepends: 'Impacts/Dépendances',
-        infos: 'Infos',
-        treeOfDependencies: 'Arbre des dépendances',
-        impactChain: 'Chaîne d\'impact',
-      },
-    },
+    impactChain: 'Chaîne d\'impact',
+    impactDepends: 'Impacts/Dépendances',
+    treeOfDependencies: 'Arbre des dépendances',
+    pbehaviors: 'Comportements périodiques',
+    infosSearchLabel: 'Rechercher une info',
+    eventStatistics: '{ok} OK événements\n{ko} KO événements',
     actions: {
       titles: {
         editEntity: 'Éditer l\'entité',
@@ -2282,7 +2273,6 @@ export default {
     executionCount: 'Nombre de\nexécutions',
     alarmStates: 'Alarmes affectées par l\'état',
     okAlarmStates: 'Nombre de résultats\nÉtats OK',
-    rating: 'Évaluation',
     notAvailable: 'Indisponible',
     instructionChanged: 'L\'instruction a été modifiée',
     actions: {
