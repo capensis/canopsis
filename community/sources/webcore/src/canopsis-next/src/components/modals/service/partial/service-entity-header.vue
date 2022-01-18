@@ -25,14 +25,14 @@
         v-alert.entity-alert.ma-0.px-2.py-1(
           v-if="alertIsVisible",
           v-model="alertIsVisible",
-          dismissible,
           color="black",
+          dismissible,
           @click.stop=""
         ) {{ $t('serviceWeather.cannotBeApplied') }}
 </template>
 
 <script>
-import { get, uniq } from 'lodash';
+import { get } from 'lodash';
 
 import { ENTITIES_STATUSES, EVENT_ENTITY_TYPES, WEATHER_ICONS } from '@/constants';
 
@@ -88,7 +88,7 @@ export default {
 
       mainIcons.push(...this.entity.pbehaviors.map(({ type }) => type.icon_name));
 
-      return uniq(mainIcons);
+      return mainIcons;
     },
 
     extraIcons() {
