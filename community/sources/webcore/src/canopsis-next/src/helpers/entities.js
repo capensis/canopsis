@@ -90,8 +90,16 @@ export function generateWidgetByType(type) {
             value: 'name',
           },
           {
+            label: i18n.t('context.eventStatistics'),
+            value: 'ok_events',
+          },
+          {
             label: i18n.t('common.type'),
             value: 'type',
+          },
+          {
+            label: i18n.tc('common.pbehavior'),
+            value: 'pbehavior_info',
           },
         ],
         serviceDependenciesColumns: [
