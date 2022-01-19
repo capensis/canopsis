@@ -5,12 +5,8 @@
         span {{ title }}
       template(slot="text")
         event-filter-form(
-          v-model="form.general",
+          v-model="form",
           :is-disabled-id-field="isDisabledIdField"
-        )
-        event-filter-enrichment-form(
-          v-if="isEnrichmentType",
-          v-model="form.enrichmentOptions"
         )
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
@@ -22,16 +18,15 @@
 </template>
 
 <script>
-import { MODALS, EVENT_FILTER_RULE_TYPES } from '@/constants';
+import { MODALS } from '@/constants';
 
-import { eventFilterRuleToForm, formToEventFilterRule } from '@/helpers/forms/event-filter-rule';
+import { eventFilterToForm, formToEventFilter } from '@/helpers/forms/event-filter-rule';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';
-import EventFilterEnrichmentForm from '@/components/other/event-filter/form/event-filter-enrichment-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -40,17 +35,15 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { EventFilterForm, EventFilterEnrichmentForm, ModalWrapper },
+  components: { EventFilterForm, ModalWrapper },
   mixins: [
     modalInnerMixin,
-    submittableMixinCreator({
-      formField: 'form.general',
-    }),
+    submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],
   data() {
     return {
-      form: eventFilterRuleToForm(this.modal.config.rule),
+      form: eventFilterToForm(this.modal.config.rule),
     };
   },
   computed: {
@@ -61,10 +54,6 @@ export default {
     isDisabledIdField() {
       return this.config.isDisabledIdField;
     },
-
-    isEnrichmentType() {
-      return this.form.general.type === EVENT_FILTER_RULE_TYPES.enrichment;
-    },
   },
   methods: {
     async submit() {
@@ -72,7 +61,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(formToEventFilterRule(this.form));
+          await this.config.action(formToEventFilter(this.form));
         }
 
         this.$modals.hide();

@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout(column)
     v-layout(align-center, justify-space-between)
-      h2 {{ $t('modals.eventFilterRule.actions') }}
+      h2 {{ $t('eventFilter.actions') }}
       c-action-btn(
         icon="add",
         color="primary",
@@ -58,7 +58,7 @@ export default {
         name: MODALS.createEventFilterRuleAction,
         config: {
           ruleAction,
-          title: this.$t('modals.eventFilterRule.editAction'),
+          title: this.$t('eventFilter.editAction'),
           action: action => this.updateItemInArray(index, action),
         },
       });

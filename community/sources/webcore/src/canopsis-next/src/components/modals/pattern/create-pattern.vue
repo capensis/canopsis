@@ -2,7 +2,7 @@
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
       template(slot="title")
-        span {{ $t('modals.eventFilterRule.editPattern') }}
+        span {{ $t('eventFilter.editPattern') }}
       template(slot="text")
         pattern-form(
           v-model="form",

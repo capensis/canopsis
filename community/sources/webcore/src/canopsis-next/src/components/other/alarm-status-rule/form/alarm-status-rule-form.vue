@@ -19,13 +19,7 @@
       name="freq_limit",
       type="number"
     )
-    v-textarea(
-      v-field="form.description",
-      v-validate="'required'",
-      :label="$t('common.description')",
-      :error-messages="errors.collect('description')",
-      name="description"
-    )
+    c-description-field(v-field="form.description", required)
     c-patterns-field(
       v-field="form.patterns",
       :some-required="flapping",

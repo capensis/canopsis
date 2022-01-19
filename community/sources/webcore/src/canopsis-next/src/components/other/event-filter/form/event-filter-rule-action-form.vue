@@ -30,24 +30,24 @@
     )
     v-text-field(
       v-if="showingFrom",
-      v-field="form.from",
+      v-field="form.value",
       v-validate="'required'",
       :label="$t('common.from')",
-      :error-messages="errors.collect('from')",
+      :error-messages="errors.collect('value')",
       key="from",
-      name="from"
+      name="value"
     )
       v-tooltip(slot="append", left)
         v-icon(slot="activator") help
-        div(v-html="$t('modals.eventFilterRule.tooltips.copyFromHelp')")
+        div(v-html="$t('eventFilter.tooltips.copyFromHelp')")
     v-text-field(
       v-if="showingTo",
-      v-field="form.to",
+      v-field="form.name",
       v-validate="'required'",
       :label="$t('common.to')",
-      :error-messages="errors.collect('to')",
+      :error-messages="errors.collect('name')",
       key="to",
-      name="to"
+      name="name"
     )
 </template>
 
@@ -74,7 +74,7 @@ export default {
       return Object.values(EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES).map(value => ({
         value,
 
-        text: this.$t(`modals.eventFilterRule.actionsTypes.${value}.text`),
+        text: this.$t(`eventFilter.actionsTypes.${value}.text`),
       }));
     },
 

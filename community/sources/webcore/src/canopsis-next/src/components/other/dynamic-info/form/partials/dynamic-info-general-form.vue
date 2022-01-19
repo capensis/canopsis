@@ -1,29 +1,16 @@
 <template lang="pug">
   div
-    v-text-field(
-      v-validate,
-      v-field="form._id",
-      :label="$t('modals.createDynamicInfo.steps.general.fields.id')",
-      :disabled="isDisabledIdField",
-      :error-messages="errors.collect('_id')",
-      name="_id"
-    )
+    c-id-field(v-field="form._id", :disabled="isDisabledIdField")
     v-text-field(
       v-field="form.name",
       v-validate="'required'",
-      :label="$t('modals.createDynamicInfo.steps.general.fields.name')",
+      :label="$t('common.name')",
       :error-messages="errors.collect('name')",
       name="name"
     )
     c-enabled-field(v-field="form.enabled")
     c-disable-during-periods-field(v-field="form.disable_during_periods")
-    v-textarea(
-      v-field="form.description",
-      v-validate="'required'",
-      :label="$t('modals.createDynamicInfo.steps.general.fields.description')",
-      :error-messages="errors.collect('description')",
-      name="description"
-    )
+    c-description-field(v-field="form.description", required)
 </template>
 
 <script>
