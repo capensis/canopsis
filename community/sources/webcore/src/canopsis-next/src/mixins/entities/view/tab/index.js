@@ -11,8 +11,9 @@ export const entitiesViewTabMixin = {
       fetchViewTab: 'fetchItem',
       createViewTab: 'create',
       updateViewTab: 'update',
-      updateViewTabPositions: 'updatePositions',
+      copyViewTab: 'copy',
       removeViewTab: 'remove',
+      updateViewTabPositions: 'updatePositions',
     }),
 
     async updateViewTabAndFetch({ id, data }) {

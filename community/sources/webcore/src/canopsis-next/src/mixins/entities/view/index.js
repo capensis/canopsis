@@ -23,6 +23,7 @@ export const entitiesViewMixin = {
       updateViewsPositions: 'updatePositions',
       updateViewWithoutStore: 'updateWithoutStore',
       removeView: 'remove',
+      copyView: 'copy',
       bulkCreateViewsWithoutStore: 'bulkCreateWithoutStore',
       exportViewsWithoutStore: 'exportWithoutStore',
       importViewsWithoutStore: 'importWithoutStore',

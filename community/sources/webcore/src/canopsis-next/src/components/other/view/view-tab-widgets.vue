@@ -9,7 +9,7 @@
     grid-edit-widgets(
       v-if="editing",
       :tab="tab",
-      @update:widgets-fields="updateWidgetsFieldsForUpdateById"
+      @update:widgets-grid="updateWidgetsGrid"
     )
       template(#default="{ widget }")
         widget-wrapper(:widget="widget", :tab="tab", editing)
@@ -18,6 +18,7 @@
 <script>
 import { queryMixin } from '@/mixins/query';
 import { activeViewMixin } from '@/mixins/active-view';
+import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
 import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 
 import GridOverviewWidget from '@/components/widgets/grid-overview-widget.vue';
@@ -33,6 +34,7 @@ export default {
   mixins: [
     queryMixin,
     activeViewMixin,
+    entitiesViewTabMixin,
     entitiesWidgetMixin,
   ],
   props: {
@@ -43,7 +45,7 @@ export default {
   },
   data() {
     return {
-      widgetsFieldsForUpdateById: {},
+      widgetsGrid: {},
     };
   },
   created() {
@@ -54,15 +56,22 @@ export default {
     this.unregisterEditingOffHandler(this.updatePositions);
   },
   methods: {
-    updateWidgetsFieldsForUpdateById(widgetsFieldsForUpdateById) {
-      this.widgetsFieldsForUpdateById = {
-        ...this.widgetsFieldsForUpdateById,
-        ...widgetsFieldsForUpdateById,
+    updateWidgetsGrid(widgetsGrid) {
+      this.widgetsGrid = {
+        ...this.widgetsGrid,
+        ...widgetsGrid,
       };
     },
 
-    updatePositions() {
-      return new Promise(resolve => setTimeout(resolve, 5000));
+    async updatePositions() {
+      const data = Object.entries(this.widgetsGrid).map(([id, gridParameters]) => ({
+        _id: id,
+        grid_parameters: gridParameters,
+      }));
+
+      await this.updateWidgetGridPositions({ data });
+
+      return this.fetchViewTab({ id: this.tab._id });
     },
 
     /**
