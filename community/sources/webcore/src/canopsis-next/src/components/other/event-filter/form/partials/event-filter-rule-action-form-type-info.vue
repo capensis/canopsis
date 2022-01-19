@@ -27,11 +27,11 @@ export default {
   },
   computed: {
     message() {
-      return this.$t(`modals.eventFilterRule.actionsTypes.${this.type}.message`);
+      return this.$t(`eventFilter.actionsTypes.${this.type}.message`);
     },
 
     description() {
-      return this.$t(`modals.eventFilterRule.actionsTypes.${this.type}.description`);
+      return this.$t(`eventFilter.actionsTypes.${this.type}.description`);
     },
 
     image() {

@@ -1,4 +1,4 @@
-import { cloneDeep, isUndefined, pick } from 'lodash';
+import { cloneDeep } from 'lodash';
 
 import {
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
@@ -6,316 +6,121 @@ import {
   EVENT_FILTER_RULE_TYPES,
 } from '@/constants';
 
-import { enabledToForm } from './shared/common';
-
 /**
- * @typedef { 'enrichment' | 'drop' | 'break' } EventFilterRuleType
- */
-
-/**
- * @typedef {Object} EventFilterRuleSetFieldAction
- * @property {'set_field'} type
- * @property {string} name
- * @property {string|number|boolean} value
- */
-
-/**
- * @typedef {EventFilterRuleSetFieldAction} EventFilterRuleSetFieldFromTemplateAction
- * @property {'set_field_from_template'} type
- */
-
-/**
- * @typedef {EventFilterRuleSetFieldAction} EventFilterRuleSetEntityInfoAction
- * @property {'set_entity_info'} type
- * @property {string} description
- */
-
-/**
- * @typedef {EventFilterRuleSetEntityInfoAction} EventFilterRuleSetEntityInfoFromTemplateAction
- * @property {'set_entity_info_from_template'} type
- */
-
-/**
- * @typedef {Object} EventFilterRuleCopyAction
- * @property {'copy'} type
- * @property {string} from
- * @property {string} to
- */
-
-/**
- * @typedef {Object} EventFilterRuleCopyToEntityInfoAction
- * @property {'copy_to_entity_info'} type
- * @property {string} from
- * @property {string} name
- * @property {string} description
+ * @typedef { 'enrichment' | 'drop' | 'break' } EventFilterType
  */
 
 /**
  * @typedef {
- *   EventFilterRuleSetFieldAction |
- *   EventFilterRuleSetFieldFromTemplateAction |
- *   EventFilterRuleSetEntityInfoAction |
- *   EventFilterRuleSetEntityInfoFromTemplateAction |
- *   EventFilterRuleCopyAction |
- *   EventFilterRuleCopyToEntityInfoAction
- * } EventFilterRuleAction
+ *  'set_field' |
+ *  'set_field_from_template' |
+ *  'set_entity_info' |
+ *  'set_entity_info_from_template' |
+ *  'copy' |
+ *  'copy_to_entity_info'
+ * } EventFilterActionType
  */
 
 /**
- * @typedef {
- *   EventFilterRuleSetFieldAction &
- *   EventFilterRuleSetFieldFromTemplateAction &
- *   EventFilterRuleSetEntityInfoAction &
- *   EventFilterRuleSetEntityInfoFromTemplateAction &
- *   EventFilterRuleCopyAction &
- *   EventFilterRuleCopyToEntityInfoAction
- * } EventFilterRuleActionForm
- */
-
-/**
- * @typedef {Object} EventFilterRuleEnrichment
- * @property {EventFilterRuleAction[]} actions
- * @property {Object} external_data
- * @property {string} on_success
- * @property {string} on_failure
- */
-
-/**
- * @typedef {Object} EventFilterRuleGeneral
- * @property {string} _id
- * @property {EventFilterRuleType} type
- * @property {string} description
- * @property {Array} patterns
- * @property {number} priority
- * @property {boolean} enabled
- */
-
-/**
- * @typedef {EventFilterRuleEnrichment & EventFilterRuleGeneral} EventFilterRule
- */
-
-/**
- * @typedef {EventFilterRuleGeneral} EventFilterRuleGeneralForm
- */
-
-/**
- * @typedef {EventFilterRuleEnrichment} EventFilterRuleEnrichmentForm
- */
-
-/**
- * @typedef {Object} EventFilterRuleForm
- * @property {EventFilterRuleGeneralForm} general
- * @property {EventFilterRuleEnrichmentForm} enrichmentOptions
- */
-
-/**
- * @typedef { 'enrichment' | 'drop' | 'break' } EventFilterRuleType
- */
-
-/**
- * @typedef {
- *    'set_field' |
- *    'set_field_from_template' |
- *    'set_entity_info_from_template' |
- *    'copy'
- * } EventFilterRuleActionType
- */
-
-/**
- * @typedef {Object} EventFilterRuleAction
+ * @typedef {Object} EventFilterAction
+ * @property {string} type
  * @property {string} name
- * @property {EventFilterRuleActionType} type
  * @property {string} value
+ * @property {string} description
  */
 
 /**
- * @typedef {Object} EventFilterRuleEnrichment
- * @property {EventFilterRuleAction[]} actions
- * @property {Object} external_data
+ * @typedef {EventFilterAction} EventFilterActionForm
+ */
+
+/**
+ * @typedef {Object} EventFilterConfig
+ * @property {EventFilterAction[]} actions
  * @property {string} on_success
  * @property {string} on_failure
  */
 
 /**
- * @typedef {Object} EventFilterRuleGeneral
- * @property {string} _id
- * @property {EventFilterRuleType} type
- * @property {string} description
- * @property {Array} patterns
- * @property {number} priority
- * @property {boolean} enabled
- */
-
-/**
- * @typedef {EventFilterRuleEnrichment & EventFilterRuleGeneral} EventFilterRule
- */
-
-/**
- * @typedef {EventFilterRuleGeneral} EventFilterRuleGeneralForm
- */
-
-/**
- * @typedef {EventFilterRuleEnrichment} EventFilterRuleEnrichmentForm
- */
-
-/**
- * @typedef {Object} EventFilterRuleForm
- * @property {EventFilterRuleGeneralForm} general
- * @property {EventFilterRuleEnrichmentForm} enrichmentOptions
- */
-
-/**
- * @typedef { 'enrichment' | 'drop' | 'break' } EventFilterRuleType
- */
-
-/**
- * @typedef {
- *    'set_field' |
- *    'set_field_from_template' |
- *    'set_entity_info_from_template' |
- *    'copy'
- * } EventFilterRuleActionType
- */
-
-/**
- * @typedef {Object} EventFilterRuleAction
- * @property {string} name
- * @property {EventFilterRuleActionType} type
- * @property {string} value
- */
-
-/**
- * @typedef {Object} EventFilterRuleEnrichment
- * @property {EventFilterRuleAction[]} actions
+ * @typedef {Object} EventFilter
  * @property {Object} external_data
- * @property {string} on_success
- * @property {string} on_failure
- */
-
-/**
- * @typedef {Object} EventFilterRuleGeneral
  * @property {string} _id
- * @property {EventFilterRuleType} type
+ * @property {EventFilterType} type
  * @property {string} description
  * @property {Array} patterns
  * @property {number} priority
  * @property {boolean} enabled
+ * @property {EventFilterConfig} config
  */
 
 /**
- * @typedef {EventFilterRuleEnrichment & EventFilterRuleGeneral} EventFilterRule
+ * @typedef {EventFilter} EventFilterForm
  */
 
 /**
- * @typedef {EventFilterRuleGeneral} EventFilterRuleGeneralForm
+ * @typedef {EventFilterConfig} EventFilterConfigForm
  */
 
 /**
- * @typedef {EventFilterRuleEnrichment} EventFilterRuleEnrichmentForm
- */
-
-/**
- * @typedef {Object} EventFilterRuleForm
- * @property {EventFilterRuleGeneralForm} general
- * @property {EventFilterRuleEnrichmentForm} enrichmentOptions
- */
-
-/**
- * Convert event filter rule to form
+ * Convert event filter to form
  *
- * @param {EventFilterRule} [rule={}]
- * @returns {EventFilterRuleForm}
+ * @param {EventFilterConfig} [eventFilterConfig={}]
+ * @returns {EventFilterConfigForm}
  */
-export const eventFilterRuleToForm = (rule = {}) => ({
-  general: {
-    _id: rule._id || '',
-    type: rule.type || EVENT_FILTER_RULE_TYPES.drop,
-    description: rule.description || '',
-    patterns: rule.patterns ? cloneDeep(rule.patterns) : [],
-    priority: rule.priority || 0,
-    enabled: enabledToForm(rule.enabled),
-  },
-  enrichmentOptions: {
-    actions: rule.actions ? cloneDeep(rule.actions) : [],
-    external_data: rule.external_data ? cloneDeep(rule.external_data) : {},
-    on_success: rule.on_success || EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES.pass,
-    on_failure: rule.on_failure || EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES.pass,
-  },
+export const eventFilterConfigToForm = eventFilterConfig => ({
+  actions: eventFilterConfig?.actions ? cloneDeep(eventFilterConfig.actions) : [],
+  on_success: eventFilterConfig?.on_success ?? EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES.pass,
+  on_failure: eventFilterConfig?.on_failure ?? EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES.pass,
 });
 
 /**
- * Convert event filter rule action to form
+ * Convert event filter to form
  *
- * @param {EventFilterRuleAction} [ruleAction = {}]
- * @return {EventFilterRuleActionForm}
+ * @param {EventFilter} [eventFilter={}]
+ * @returns {EventFilterForm}
  */
-export const eventFilterRuleActionToForm = (ruleAction = {}) => ({
-  type: ruleAction.type || EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField,
-  name: ruleAction.name || '',
-  value: !isUndefined(ruleAction.value) ? ruleAction.value : '',
-  description: ruleAction.description || '',
-  from: ruleAction.from || '',
-  to: ruleAction.to || '',
+export const eventFilterToForm = eventFilter => ({
+  _id: eventFilter?._id || '',
+  type: eventFilter?.type || EVENT_FILTER_RULE_TYPES.drop,
+  description: eventFilter?.description || '',
+  patterns: eventFilter?.patterns ? cloneDeep(eventFilter?.patterns) : [],
+  priority: eventFilter?.priority || 0,
+  enabled: eventFilter?.enabled ?? true,
+  external_data: eventFilter?.external_data ? cloneDeep(eventFilter.external_data) : {},
+  config: eventFilterConfigToForm(eventFilter?.config),
 });
 
 /**
- * Convert form to event filter rule action fields
+ * Convert event filter action to form
  *
- * @param  {EventFilterRuleActionForm} form
- * @return {EventFilterRuleAction}
+ * @param {EventFilterAction} [eventFilterAction = {}]
+ * @return {EventFilterActionForm}
  */
-export const formToEventFilterRuleAction = (form) => {
-  const fields = ['type'];
-
-  switch (form.type) {
-    case EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfo:
-    case EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate:
-      fields.push('description');
-    // eslint-disable-next-line no-fallthrough
-    case EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField:
-    case EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate:
-      fields.push('name', 'value');
-      break;
-    case EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy:
-      fields.push('from', 'to');
-      break;
-    case EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo:
-      fields.push('from', 'name', 'description');
-      break;
-    default:
-  }
-
-  return pick(form, fields);
-};
-
-/**
- * Convert form.enrichmentOptions to event filter rule fields
- *
- * @param {EventFilterRuleEnrichmentForm} [enrichmentOptions={}]
- * @returns {EventFilterRuleEnrichment}
- */
-export const formEnrichmentOptionsToEventFilterRule = (enrichmentOptions = {}) => ({
-  actions: enrichmentOptions.actions,
-  external_data: enrichmentOptions.external_data,
-  on_success: enrichmentOptions.on_success,
-  on_failure: enrichmentOptions.on_failure,
+export const eventFilterRuleActionToForm = (eventFilterAction = {}) => ({
+  type: eventFilterAction.type ?? EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField,
+  name: eventFilterAction.name ?? '',
+  value: eventFilterAction.value ?? '',
+  description: eventFilterAction.description || '',
 });
 
 /**
- * Convert form to event filter rule fields
+ * Convert form config to event filter config
  *
- * @param {EventFilterRuleForm} form
- * @returns {EventFilterRule}
+ * @param {EventFilterConfigForm} [eventFilterConfig={}]
+ * @returns {EventFilterConfig}
  */
-export const formToEventFilterRule = ({ general, enrichmentOptions }) => {
-  const isEnrichmentType = general.type === EVENT_FILTER_RULE_TYPES.enrichment;
+export const formEventFilterConfigToEventFilterConfig = (eventFilterConfig = {}) => ({
+  actions: eventFilterConfig.actions,
+  on_success: eventFilterConfig.on_success,
+  on_failure: eventFilterConfig.on_failure,
+});
 
-  if (isEnrichmentType) {
-    return {
-      ...general,
-      ...formEnrichmentOptionsToEventFilterRule(enrichmentOptions),
-    };
-  }
-
-  return { ...general };
-};
+/**
+ * Convert form to event filter fields
+ *
+ * @param {EventFilterForm} eventFilterForm
+ * @returns {EventFilter}
+ */
+export const formToEventFilter = eventFilterForm => ({
+  ...eventFilterForm,
+  config: formEventFilterConfigToEventFilterConfig(eventFilterForm.config),
+});

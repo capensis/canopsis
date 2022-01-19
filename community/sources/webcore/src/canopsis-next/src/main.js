@@ -130,6 +130,9 @@ import CAlarmMetricParametersField from '@/components/forms/fields/c-alarm-metri
 import CFiltersField from '@/components/forms/fields/c-filters-field.vue';
 import CStateTypeField from '@/components/forms/fields/c-state-type-field.vue';
 import CRecordsPerPageField from '@/components/forms/fields/c-records-per-page-field.vue';
+import CIdField from '@/components/forms/fields/c-id-field.vue';
+import CDescriptionField from '@/components/forms/fields/c-description-field.vue';
+import CEventFilterTypeField from '@/components/forms/fields/c-event-filter-type-field.vue';
 
 /**
  * Icons
@@ -319,6 +322,9 @@ Vue.component('c-sampling-field', CSamplingField);
 Vue.component('c-alarm-metric-parameters-field', CAlarmMetricParametersField);
 Vue.component('c-state-type-field', CStateTypeField);
 Vue.component('c-records-per-page-field', CRecordsPerPageField);
+Vue.component('c-id-field', CIdField);
+Vue.component('c-description-field', CDescriptionField);
+Vue.component('c-event-filter-type-field', CEventFilterTypeField);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,

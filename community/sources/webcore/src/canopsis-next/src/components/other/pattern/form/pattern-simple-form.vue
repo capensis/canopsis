@@ -223,7 +223,7 @@ export default {
         config: {
           title: this.$t('modals.eventFilterRule.tooltips.addObjectRuleField'),
           field: {
-            label: this.$t('modals.eventFilterRule.field'),
+            label: this.$t('eventFilter.field'),
             validationRules: 'required',
             name: 'field',
           },
@@ -245,10 +245,10 @@ export default {
       this.$modals.show({
         name: MODALS.textFieldEditor,
         config: {
-          title: this.$t('modals.eventFilterRule.tooltips.editObjectRuleField'),
+          title: this.$t('eventFilter.tooltips.editObjectRuleField'),
           field: {
             value: treeViewItem.name,
-            label: this.$t('modals.eventFilterRule.field'),
+            label: this.$t('eventFilter.field'),
             validationRules: 'required',
             name: 'field',
           },

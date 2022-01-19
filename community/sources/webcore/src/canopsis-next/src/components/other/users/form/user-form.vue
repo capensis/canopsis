@@ -2,11 +2,7 @@
   div
     c-progress-overlay(:pending="pending")
     v-layout(row)
-      v-text-field(
-        v-field="form._id",
-        :label="$t('common.id')",
-        :disabled="onlyUserPrefs || !isNew"
-      )
+      c-id-field(v-field="form._id", :disabled="onlyUserPrefs || !isNew")
     v-layout(row)
       v-text-field(
         v-field="form.name",

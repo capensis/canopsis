@@ -1,7 +1,7 @@
 <template lang="pug">
   modal-wrapper(close)
     template(slot="title")
-      span {{ $t('modals.eventFilterRule.editActions') }}
+      span {{ $t('eventFilter.editActions') }}
     template(slot="text")
       event-filter-rule-actions-form(v-model="form.actions")
     template(slot="actions")

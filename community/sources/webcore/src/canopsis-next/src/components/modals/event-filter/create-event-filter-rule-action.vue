@@ -21,7 +21,7 @@ import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import { eventFilterRuleActionToForm, formToEventFilterRuleAction } from '@/helpers/forms/event-filter-rule';
+import { eventFilterRuleActionToForm } from '@/helpers/forms/event-filter-rule';
 
 import EventFilterRuleActionForm from '@/components/other/event-filter/form/event-filter-rule-action-form.vue';
 
@@ -45,7 +45,7 @@ export default {
   },
   computed: {
     title() {
-      return this.modal.config.title || this.$t('modals.eventFilterRule.addAction');
+      return this.modal.config.title || this.$t('eventFilter.addAction');
     },
   },
   methods: {
@@ -54,7 +54,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(formToEventFilterRuleAction(this.form));
+          await this.config.action(this.form);
         }
 
         this.$modals.hide();

@@ -2,7 +2,7 @@
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
       template(slot="title")
-        span {{ $t('modals.eventFilterRule.externalData') }}
+        span {{ $t('eventFilter.externalData') }}
       template(slot="text")
         v-textarea(:value="externalDataValue", @input="checkValidity")
       template(slot="actions")

@@ -1,7 +1,7 @@
 <template lang="pug">
   v-tabs(slider-color="primary", fixed-tabs)
-    v-tab(:disabled="patternWasChanged") {{ $t('modals.eventFilterRule.simpleEditor') }}
-    v-tab {{ $t('modals.eventFilterRule.advancedEditor') }}
+    v-tab(:disabled="patternWasChanged") {{ $t('eventFilter.simpleEditor') }}
+    v-tab {{ $t('eventFilter.advancedEditor') }}
     v-tab-item
       pattern-simple-form(
         v-field="form",

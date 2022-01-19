@@ -1,33 +1,36 @@
 <template lang="pug">
   div
-    v-layout(align-center)
-      v-text-field(
-        v-field="form._id",
-        :label="$t('common.id')",
-        :error-messages="errors.collect('_id')",
-        :disabled="isDisabledIdField",
-        :readonly="isDisabledIdField",
-        name="_id",
-        @input="errors.remove('_id')"
-      )
-        v-tooltip(v-show="!isDisabledIdField", slot="append", left)
-          v-icon(slot="activator") help
-          span {{ $t('eventFilter.idHelp') }}
-    v-select(v-field="form.type", :items="ruleTypes", :label="$t('common.type')")
-    v-textarea(
-      v-field="form.description",
-      v-validate="'required'",
-      :label="$t('common.description')",
-      :error-messages="errors.collect('description')",
-      name="description"
-    )
+    c-id-field(v-field="form._id", :disabled="isDisabledIdField", :help-text="$t('eventFilter.idHelp')")
+    c-event-filter-type-field(v-field="form.type")
+    c-description-field(v-field="form.description", required)
     c-priority-field(v-field="form.priority")
     c-enabled-field(v-field="form.enabled")
     patterns-list(v-field="form.patterns")
+
+    template(v-if="isChangeEntityType")
+
+    template(v-if="isEnrichmentType")
+      v-container.pa-0
+        v-divider
+        h3.my-2 {{ $t('eventFilter.enrichmentOptions') }}
+        v-layout
+          v-btn.mx-0(@click="showEditActionsModal") {{ $t('eventFilter.editActions') }}
+          v-btn(@click="showEditExternalDataModal") {{ $t('eventFilter.externalData') }}
+        v-select(
+          v-field="form.config.on_success",
+          :label="$t('eventFilter.onSuccess')",
+          :items="eventFilterAfterTypes"
+        )
+        v-select(
+          v-field="form.config.on_failure",
+          :label="$t('eventFilter.onFailure')",
+          :items="eventFilterAfterTypes"
+        )
+      v-alert(:value="errors.has('actions')", type="error") {{ $t('eventFilter.actionsRequired') }}
 </template>
 
 <script>
-import { EVENT_FILTER_RULE_TYPES } from '@/constants';
+import { EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES, EVENT_FILTER_RULE_TYPES, MODALS } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
@@ -52,8 +55,59 @@ export default {
     },
   },
   computed: {
-    ruleTypes() {
-      return Object.values(EVENT_FILTER_RULE_TYPES);
+    isEnrichmentType() {
+      return this.form.type === EVENT_FILTER_RULE_TYPES.enrichment;
+    },
+
+    isChangeEntityType() {
+      return this.form.type === EVENT_FILTER_RULE_TYPES.changeEntity;
+    },
+
+    eventFilterAfterTypes() {
+      return Object.values(EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES);
+    },
+  },
+  created() {
+    this.attachRequiredRule();
+  },
+  beforeDestroy() {
+    this.detachRequiredRule();
+  },
+  methods: {
+    showEditActionsModal() {
+      this.$modals.show({
+        name: MODALS.eventFilterRuleActions,
+        config: {
+          actions: this.form.config.actions,
+          action: (actions) => {
+            this.updateField('config.actions', actions);
+            this.$nextTick(() => this.$validator.validate('actions'));
+          },
+        },
+      });
+    },
+
+    showEditExternalDataModal() {
+      this.$modals.show({
+        name: MODALS.eventFilterRuleExternalData,
+        config: {
+          value: this.form.external_data,
+          action: externalData => this.updateField('external_data', externalData),
+        },
+      });
+    },
+
+    attachRequiredRule() {
+      this.$validator.attach({
+        name: 'actions',
+        rules: 'required:true',
+        getter: () => (this.isEnrichmentType ? this.form.actions : true),
+        context: () => this,
+      });
+    },
+
+    detachRequiredRule() {
+      this.$validator.detach('actions');
     },
   },
 };

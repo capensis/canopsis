@@ -9,13 +9,7 @@
       :error-messages="errors.collect('name')",
       name="name"
     )
-    v-textarea(
-      v-field="form.description",
-      v-validate="'required'",
-      :label="$t('common.description')",
-      :error-messages="errors.collect('description')",
-      name="description"
-    )
+    c-description-field(v-field="form.description", required)
     v-layout(row, justify-space-between)
       v-flex(xs7)
         c-duration-field(
