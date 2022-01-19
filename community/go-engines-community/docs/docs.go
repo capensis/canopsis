@@ -8369,7 +8369,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/view.ViewGroup"
+                                "$ref": "#/definitions/view.ImportItemRequest"
                             }
                         }
                     }
@@ -14985,6 +14985,32 @@ var doc = `{
                 }
             }
         },
+        "view.ImportItemRequest": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated": {
+                    "type": "integer"
+                },
+                "views": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/view.View"
+                    }
+                }
+            }
+        },
         "view.Parameters": {
             "type": "object",
             "properties": {
@@ -15024,14 +15050,12 @@ var doc = `{
         "view.View": {
             "type": "object",
             "properties": {
-                "_id": {
-                    "type": "string"
-                },
                 "author": {
                     "type": "string"
                 },
                 "created": {
-                    "type": "integer"
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
                 },
                 "description": {
                     "type": "string"
@@ -15040,18 +15064,17 @@ var doc = `{
                     "type": "boolean"
                 },
                 "group": {
-                    "type": "object",
-                    "$ref": "#/definitions/view.ViewGroup"
+                    "type": "string"
                 },
-                "periodic_refresh": {
+                "id": {
+                    "type": "string"
+                },
+                "periodicRefresh": {
                     "type": "object",
                     "$ref": "#/definitions/types.DurationWithEnabled"
                 },
-                "tabs": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/viewtab.Tab"
-                    }
+                "position": {
+                    "type": "integer"
                 },
                 "tags": {
                     "type": "array",
@@ -15063,27 +15086,8 @@ var doc = `{
                     "type": "string"
                 },
                 "updated": {
-                    "type": "integer"
-                }
-            }
-        },
-        "view.ViewGroup": {
-            "type": "object",
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "author": {
-                    "type": "string"
-                },
-                "created": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updated": {
-                    "type": "integer"
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
                 }
             }
         },

@@ -3609,6 +3609,23 @@ definitions:
       updated:
         type: integer
     type: object
+  view.ImportItemRequest:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        type: integer
+      title:
+        type: string
+      updated:
+        type: integer
+      views:
+        items:
+          $ref: '#/definitions/view.View'
+        type: array
+    type: object
   view.Parameters:
     properties:
       directory:
@@ -3635,26 +3652,24 @@ definitions:
     type: object
   view.View:
     properties:
-      _id:
-        type: string
       author:
         type: string
       created:
-        type: integer
+        $ref: '#/definitions/types.CpsTime'
+        type: object
       description:
         type: string
       enabled:
         type: boolean
       group:
-        $ref: '#/definitions/view.ViewGroup'
-        type: object
-      periodic_refresh:
+        type: string
+      id:
+        type: string
+      periodicRefresh:
         $ref: '#/definitions/types.DurationWithEnabled'
         type: object
-      tabs:
-        items:
-          $ref: '#/definitions/viewtab.Tab'
-        type: array
+      position:
+        type: integer
       tags:
         items:
           type: string
@@ -3662,20 +3677,8 @@ definitions:
       title:
         type: string
       updated:
-        type: integer
-    type: object
-  view.ViewGroup:
-    properties:
-      _id:
-        type: string
-      author:
-        type: string
-      created:
-        type: integer
-      title:
-        type: string
-      updated:
-        type: integer
+        $ref: '#/definitions/types.CpsTime'
+        type: object
     type: object
   viewgroup.EditRequest:
     properties:
@@ -8978,7 +8981,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/view.ViewGroup'
+            $ref: '#/definitions/view.ImportItemRequest'
           type: array
       produces:
       - application/json
