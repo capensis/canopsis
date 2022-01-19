@@ -7999,7 +7999,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/viewgroup.View"
+                            "$ref": "#/definitions/view.View"
                         }
                     },
                     "400": {
@@ -8369,7 +8369,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/viewgroup.ViewGroup"
+                                "$ref": "#/definitions/view.ViewGroup"
                             }
                         }
                     }
@@ -8470,7 +8470,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/view.Tab"
+                            "$ref": "#/definitions/viewtab.Tab"
                         }
                     },
                     "400": {
@@ -8572,7 +8572,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/view.Tab"
+                            "$ref": "#/definitions/viewtab.Tab"
                         }
                     },
                     "400": {
@@ -8616,7 +8616,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/view.Tab"
+                            "$ref": "#/definitions/viewtab.Tab"
                         }
                     },
                     "404": {
@@ -8670,7 +8670,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/view.Tab"
+                            "$ref": "#/definitions/viewtab.Tab"
                         }
                     },
                     "400": {
@@ -8792,7 +8792,7 @@ var doc = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/viewgroup.View"
+                                                "$ref": "#/definitions/view.View"
                                             }
                                         }
                                     }
@@ -8844,7 +8844,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/viewgroup.View"
+                            "$ref": "#/definitions/view.View"
                         }
                     },
                     "400": {
@@ -8888,7 +8888,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/viewgroup.View"
+                            "$ref": "#/definitions/view.View"
                         }
                     },
                     "404": {
@@ -8942,7 +8942,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/viewgroup.View"
+                            "$ref": "#/definitions/view.View"
                         }
                     },
                     "400": {
@@ -9219,7 +9219,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/view.Widget"
+                            "$ref": "#/definitions/widget.Widget"
                         }
                     },
                     "400": {
@@ -9508,7 +9508,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/view.Widget"
+                            "$ref": "#/definitions/widget.Widget"
                         }
                     },
                     "400": {
@@ -9552,7 +9552,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/view.Widget"
+                            "$ref": "#/definitions/widget.Widget"
                         }
                     },
                     "404": {
@@ -9606,7 +9606,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/view.Widget"
+                            "$ref": "#/definitions/widget.Widget"
                         }
                     },
                     "400": {
@@ -14925,13 +14925,39 @@ var doc = `{
                 "groups": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/viewgroup.ViewGroup"
+                        "$ref": "#/definitions/view.ExportViewGroupResponse"
                     }
                 },
                 "views": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/viewgroup.View"
+                        "$ref": "#/definitions/view.View"
+                    }
+                }
+            }
+        },
+        "view.ExportViewGroupResponse": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated": {
+                    "type": "integer"
+                },
+                "views": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/view.View"
                     }
                 }
             }
@@ -14995,97 +15021,7 @@ var doc = `{
                 }
             }
         },
-        "view.Tab": {
-            "type": "object",
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "author": {
-                    "type": "string"
-                },
-                "created": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updated": {
-                    "type": "integer"
-                }
-            }
-        },
-        "view.Widget": {
-            "type": "object",
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "author": {
-                    "type": "string"
-                },
-                "created": {
-                    "type": "integer"
-                },
-                "grid_parameters": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "parameters": {
-                    "type": "object",
-                    "$ref": "#/definitions/view.Parameters"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                },
-                "updated": {
-                    "type": "integer"
-                }
-            }
-        },
-        "viewgroup.EditRequest": {
-            "type": "object",
-            "required": [
-                "title"
-            ],
-            "properties": {
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "viewgroup.Tab": {
-            "type": "object",
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "author": {
-                    "type": "string"
-                },
-                "created": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.CpsTime"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updated": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.CpsTime"
-                },
-                "widgets": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/viewgroup.Widget"
-                    }
-                }
-            }
-        },
-        "viewgroup.View": {
+        "view.View": {
             "type": "object",
             "properties": {
                 "_id": {
@@ -15105,7 +15041,7 @@ var doc = `{
                 },
                 "group": {
                     "type": "object",
-                    "$ref": "#/definitions/viewgroup.ViewGroup"
+                    "$ref": "#/definitions/view.ViewGroup"
                 },
                 "periodic_refresh": {
                     "type": "object",
@@ -15114,7 +15050,7 @@ var doc = `{
                 "tabs": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/viewgroup.Tab"
+                        "$ref": "#/definitions/viewtab.Tab"
                     }
                 },
                 "tags": {
@@ -15128,6 +15064,37 @@ var doc = `{
                 },
                 "updated": {
                     "type": "integer"
+                }
+            }
+        },
+        "view.ViewGroup": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
+        "viewgroup.EditRequest": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "title": {
+                    "type": "string"
                 }
             }
         },
@@ -15155,45 +15122,8 @@ var doc = `{
                 "views": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/viewgroup.View"
+                        "$ref": "#/definitions/view.View"
                     }
-                }
-            }
-        },
-        "viewgroup.Widget": {
-            "type": "object",
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "author": {
-                    "type": "string"
-                },
-                "created": {
-                    "type": "integer"
-                },
-                "filters": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/view.Filter"
-                    }
-                },
-                "grid_parameters": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "parameters": {
-                    "type": "object",
-                    "$ref": "#/definitions/view.Parameters"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                },
-                "updated": {
-                    "type": "integer"
                 }
             }
         },
@@ -15220,6 +15150,34 @@ var doc = `{
                 },
                 "view": {
                     "type": "string"
+                }
+            }
+        },
+        "viewtab.Tab": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "widgets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/widget.Widget"
+                    }
                 }
             }
         },
@@ -15270,6 +15228,43 @@ var doc = `{
                 },
                 "type": {
                     "type": "string"
+                }
+            }
+        },
+        "widget.Widget": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "filters": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/view.Filter"
+                    }
+                },
+                "grid_parameters": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "parameters": {
+                    "type": "object",
+                    "$ref": "#/definitions/view.Parameters"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updated": {
+                    "type": "integer"
                 }
             }
         },

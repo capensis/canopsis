@@ -56,7 +56,7 @@ func NewApi(
 // @Param search query string false "search query"
 // @Param sort query string false "sort query"
 // @Param sort_by query string false "sort query"
-// @Success 200 {object} common.PaginatedListResponse{data=[]viewgroup.View}
+// @Success 200 {object} common.PaginatedListResponse{data=[]View}
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /views [get]
 func (a *api) List(c *gin.Context) {
@@ -102,7 +102,7 @@ func (a *api) List(c *gin.Context) {
 // @Security JWTAuth
 // @Security BasicAuth
 // @Param id path string true "view id"
-// @Success 200 {object} viewgroup.View
+// @Success 200 {object} View
 // @Failure 404 {object} common.ErrorResponse
 // @Router /views/{id} [get]
 func (a *api) Get(c *gin.Context) {
@@ -128,7 +128,7 @@ func (a *api) Get(c *gin.Context) {
 // @Security JWTAuth
 // @Security BasicAuth
 // @Param body body EditRequest true "body"
-// @Success 201 {object} viewgroup.View
+// @Success 201 {object} View
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /views [post]
 func (a *api) Create(c *gin.Context) {
@@ -167,7 +167,7 @@ func (a *api) Create(c *gin.Context) {
 // @Security BasicAuth
 // @Param id path string true "view id"
 // @Param body body EditRequest true "body"
-// @Success 200 {object} viewgroup.View
+// @Success 200 {object} View
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
 // @Router /views/{id} [put]
@@ -250,7 +250,7 @@ func (a *api) Delete(c *gin.Context) {
 // @Security BasicAuth
 // @Param id path string true "view id"
 // @Param body body EditRequest true "body"
-// @Success 201 {object} viewgroup.View
+// @Success 201 {object} View
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
 // @Router /view-copy/{id} [post]
@@ -343,7 +343,7 @@ func (a *api) UpdatePositions(c *gin.Context) {
 // @Produce json
 // @Security JWTAuth
 // @Security BasicAuth
-// @Param body body []viewgroup.ViewGroup true "body"
+// @Param body body []ViewGroup true "body"
 // @Success 204
 // @Router /view-import [post]
 func (a *api) Import(c *gin.Context) {
@@ -359,7 +359,7 @@ func (a *api) Import(c *gin.Context) {
 		if group.Views == nil {
 			continue
 		}
-		for _, view := range *group.Views {
+		for _, view := range group.Views {
 			if view.ID == "" {
 				continue
 			}

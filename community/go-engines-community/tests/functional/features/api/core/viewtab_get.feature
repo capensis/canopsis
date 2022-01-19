@@ -12,6 +12,70 @@ Feature: Get a view tab
       "_id": "test-tab-to-get",
       "title": "test-tab-to-get-title",
       "author": "test-author-to-tab-get",
+      "widgets": [
+        {
+          "_id": "test-widget-to-tab-get-1",
+          "author": "test-user-to-tab-get",
+          "created": 1611229670,
+          "filters": [
+            {
+              "_id": "test-widgetfilter-to-tab-get-1",
+              "author": "test-user-to-tab-get",
+              "created": 1611229670,
+              "query": "{\"test\":\"test\"}",
+              "title": "test-widgetfilter-to-tab-get-1-title",
+              "updated": 1611229670
+            }
+          ],
+          "grid_parameters": {
+            "desktop": {"x": 0,"y": 0}
+          },
+          "parameters": {
+            "test-widget-to-tab-get-1-parameter-1": {
+              "test-widget-to-tab-get-1-parameter-1-subparameter": "test-widget-to-tab-get-1-parameter-1-subvalue"
+            },
+            "test-widget-to-tab-get-1-parameter-2": [
+              {
+                "test-widget-to-tab-get-1-parameter-2-subparameter": "test-widget-to-tab-get-1-parameter-2-subvalue"
+              }
+            ]
+          },
+          "title": "test-widget-to-tab-get-1-title",
+          "type": "test-widget-to-tab-get-1-type",
+          "updated": 1611229670
+        },
+        {
+          "_id": "test-widget-to-tab-get-2",
+          "author": "test-user-to-tab-get",
+          "created": 1611229670,
+          "filters": [
+            {
+              "_id": "test-widgetfilter-to-tab-get-2",
+              "author": "test-user-to-tab-get",
+              "created": 1611229670,
+              "query": "{\"test\":\"test\"}",
+              "title": "test-widgetfilter-to-tab-get-2-title",
+              "updated": 1611229670
+            }
+          ],
+          "grid_parameters": {
+            "desktop": {"x": 0,"y": 1}
+          },
+          "parameters": {
+            "test-widget-to-tab-get-2-parameter-1": {
+              "test-widget-to-tab-get-2-parameter-1-subparameter": "test-widget-to-tab-get-2-parameter-1-subvalue"
+            },
+            "test-widget-to-tab-get-2-parameter-2": [
+              {
+                "test-widget-to-tab-get-2-parameter-2-subparameter": "test-widget-to-tab-get-2-parameter-2-subvalue"
+              }
+            ]
+          },
+          "title": "test-widget-to-tab-get-2-title",
+          "type": "test-widget-to-tab-get-2-type",
+          "updated": 1611229670
+        }
+      ],
       "created": 1611229670,
       "updated": 1611229670
     }

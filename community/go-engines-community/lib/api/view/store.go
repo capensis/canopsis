@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
@@ -21,14 +20,14 @@ const permissionPrefix = "Rights on view :"
 
 type Store interface {
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
-	GetOneBy(ctx context.Context, id string) (*viewgroup.View, error)
-	Insert(ctx context.Context, r EditRequest) (*viewgroup.View, error)
-	Update(ctx context.Context, r EditRequest) (*viewgroup.View, error)
+	GetOneBy(ctx context.Context, id string) (*View, error)
+	Insert(ctx context.Context, r EditRequest) (*View, error)
+	Update(ctx context.Context, r EditRequest) (*View, error)
 	// UpdatePositions receives some groups and views with updated positions and updates
 	// positions for all groups and views in db and moves views to another groups if necessary.
 	UpdatePositions(ctx context.Context, r EditPositionRequest) (bool, error)
 	Delete(ctx context.Context, id string) (bool, error)
-	Copy(ctx context.Context, id string, r EditRequest) (*viewgroup.View, error)
+	Copy(ctx context.Context, id string, r EditRequest) (*View, error)
 	Export(ctx context.Context, r ExportRequest) (ExportResponse, error)
 	Import(ctx context.Context, r ImportRequest, userId string) error
 }
@@ -108,7 +107,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	return &res, nil
 }
 
-func (s *store) GetOneBy(ctx context.Context, id string) (*viewgroup.View, error) {
+func (s *store) GetOneBy(ctx context.Context, id string) (*View, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
@@ -119,7 +118,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*viewgroup.View, error
 	defer cursor.Close(ctx)
 
 	if cursor.Next(ctx) {
-		model := &viewgroup.View{}
+		model := &View{}
 		err := cursor.Decode(model)
 		if err != nil {
 			return nil, err
@@ -131,7 +130,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*viewgroup.View, error
 	return nil, nil
 }
 
-func (s *store) Insert(ctx context.Context, r EditRequest) (*viewgroup.View, error) {
+func (s *store) Insert(ctx context.Context, r EditRequest) (*View, error) {
 	count, err := s.collection.CountDocuments(ctx, bson.M{})
 	if err != nil {
 		return nil, err
@@ -169,7 +168,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*viewgroup.View, err
 	return newView, nil
 }
 
-func (s *store) Update(ctx context.Context, r EditRequest) (*viewgroup.View, error) {
+func (s *store) Update(ctx context.Context, r EditRequest) (*View, error) {
 	oldView := view.View{}
 	err := s.collection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&oldView)
 	if err != nil {
@@ -234,7 +233,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	return true, nil
 }
 
-func (s *store) Copy(ctx context.Context, id string, r EditRequest) (*viewgroup.View, error) {
+func (s *store) Copy(ctx context.Context, id string, r EditRequest) (*View, error) {
 	v, err := s.GetOneBy(ctx, id)
 	if err != nil || v == nil {
 		return nil, err
@@ -252,7 +251,7 @@ func (s *store) Copy(ctx context.Context, id string, r EditRequest) (*viewgroup.
 	defer cursor.Close(ctx)
 
 	for cursor.Next(ctx) {
-		t := view.Tab{}
+		t := viewtab.Tab{}
 		err := cursor.Decode(&t)
 		if err != nil {
 			return nil, err
@@ -291,8 +290,8 @@ func (s *store) UpdatePositions(ctx context.Context, r EditPositionRequest) (boo
 }
 
 func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, error) {
-	groups := make([]viewgroup.ViewGroup, 0)
-	views := make([]viewgroup.View, 0)
+	groups := make([]ExportViewGroupResponse, 0)
+	views := make([]View, 0)
 
 	nestedObjectsPipeline := []bson.M{
 		{"$lookup": bson.M{
@@ -477,15 +476,15 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 		}
 
 		for i, group := range groups {
-			foundViews := make([]viewgroup.View, 0, len(viewsByGroup[group.ID]))
-			for _, v := range *group.Views {
+			foundViews := make([]View, 0, len(viewsByGroup[group.ID]))
+			for _, v := range group.Views {
 				if viewsByGroup[group.ID][v.ID] {
 					v.ID = ""
 					foundViews = append(foundViews, v)
 				}
 			}
-			*group.Views = foundViews
-			if len(*group.Views) != len(viewsByGroup[group.ID]) {
+			groups[i].Views = foundViews
+			if len(groups[i].Views) != len(viewsByGroup[group.ID]) {
 				return ExportResponse{}, ValidationError{field: fmt.Sprintf("groups.%d", i), error: fmt.Errorf("views not found")}
 			}
 
@@ -516,7 +515,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 			groupIds = append(groupIds, g.ID)
 		}
 		if g.Views != nil {
-			for _, v := range *g.Views {
+			for _, v := range g.Views {
 				if v.ID != "" {
 					viewIds = append(viewIds, v.ID)
 				}
@@ -594,7 +593,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 		groupViewIds := make([]string, 0)
 
 		if g.Views != nil {
-			for vi, v := range *g.Views {
+			for vi, v := range g.Views {
 				if v.ID != "" && existedViewIds[v.ID] {
 					groupViewIds = append(groupViewIds, v.ID)
 					continue
@@ -810,7 +809,7 @@ func (s *store) createPermissions(ctx context.Context, userID string, views map[
 	return err
 }
 
-func (s *store) updatePermissions(ctx context.Context, view viewgroup.View) error {
+func (s *store) updatePermissions(ctx context.Context, view View) error {
 	_, err := s.aclCollection.UpdateOne(ctx,
 		bson.M{
 			"_id":          view.ID,
@@ -1023,7 +1022,13 @@ func getNestedObjectsPipeline() []bson.M {
 			"as":           "filters",
 		}},
 		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
-		{"$match": bson.M{"filters.user": nil}},
+		{"$addFields": bson.M{
+			"filters.user": bson.M{"$cond": bson.M{
+				"if":   "$filters.user",
+				"then": "$filters.user",
+				"else": "",
+			}},
+		}},
 		{"$sort": bson.M{"filters.title": 1}},
 		{"$group": bson.M{
 			"_id": bson.M{
@@ -1037,7 +1042,10 @@ func getNestedObjectsPipeline() []bson.M {
 			"filters": bson.M{"$push": "$filters"},
 		}},
 		{"$addFields": bson.M{
-			"widgets.filters": "$filters",
+			"widgets.filters": bson.M{"$filter": bson.M{
+				"input": bson.M{"$filter": bson.M{"input": "$filters", "cond": "$$this._id"}},
+				"cond":  bson.M{"$eq": bson.A{"$$this.user", ""}},
+			}},
 		}},
 		{"$sort": bson.D{{"widgets.grid_parameters.desktop.y", 1}, {"widgets.grid_parameters.desktop.x", 1}}},
 		{"$group": bson.M{

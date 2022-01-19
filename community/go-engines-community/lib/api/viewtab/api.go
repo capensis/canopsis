@@ -47,7 +47,7 @@ func NewApi(
 // @Security JWTAuth
 // @Security BasicAuth
 // @Param id path string true "tab id"
-// @Success 200 {object} view.Tab
+// @Success 200 {object} Tab
 // @Failure 404 {object} common.ErrorResponse
 // @Router /view-tabs/{id} [get]
 func (a *api) Get(c *gin.Context) {
@@ -84,7 +84,7 @@ func (a *api) Get(c *gin.Context) {
 // @Security JWTAuth
 // @Security BasicAuth
 // @Param body body EditRequest true "body"
-// @Success 201 {object} view.Tab
+// @Success 201 {object} Tab
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /view-tabs [post]
 func (a *api) Create(c *gin.Context) {
@@ -133,7 +133,7 @@ func (a *api) Create(c *gin.Context) {
 // @Security BasicAuth
 // @Param id path string true "tab id"
 // @Param body body EditRequest true "body"
-// @Success 200 {object} view.Tab
+// @Success 200 {object} Tab
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
 // @Router /view-tabs/{id} [put]
@@ -273,7 +273,7 @@ func (a *api) Delete(c *gin.Context) {
 // @Security BasicAuth
 // @Param id path string true "tab id"
 // @Param body body CopyRequest true "body"
-// @Success 201 {object} view.Tab
+// @Success 201 {object} Tab
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
 // @Router /view-tab-copy/{id} [post]

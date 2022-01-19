@@ -14,13 +14,13 @@ import (
 )
 
 type Store interface {
-	Find(ctx context.Context, ids []string) ([]view.Tab, error)
-	GetOneBy(ctx context.Context, id string) (*view.Tab, error)
-	Insert(ctx context.Context, r EditRequest) (*view.Tab, error)
-	Update(ctx context.Context, oldTab view.Tab, r EditRequest) (*view.Tab, error)
+	Find(ctx context.Context, ids []string) ([]Tab, error)
+	GetOneBy(ctx context.Context, id string) (*Tab, error)
+	Insert(ctx context.Context, r EditRequest) (*Tab, error)
+	Update(ctx context.Context, oldTab Tab, r EditRequest) (*Tab, error)
 	Delete(ctx context.Context, id string) (bool, error)
-	Copy(ctx context.Context, tab view.Tab, r CopyRequest) (*view.Tab, error)
-	UpdatePositions(ctx context.Context, tabs []view.Tab) (bool, error)
+	Copy(ctx context.Context, tab Tab, r CopyRequest) (*Tab, error)
+	UpdatePositions(ctx context.Context, tabs []Tab) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient, widgetStore widget.Store) Store {
@@ -43,8 +43,8 @@ type store struct {
 	widgetStore widget.Store
 }
 
-func (s *store) Find(ctx context.Context, ids []string) ([]view.Tab, error) {
-	tabs := make([]view.Tab, 0)
+func (s *store) Find(ctx context.Context, ids []string) ([]Tab, error) {
+	tabs := make([]Tab, 0)
 	cursor, err := s.collection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}})
 	if err != nil {
 		return nil, err
@@ -55,12 +55,12 @@ func (s *store) Find(ctx context.Context, ids []string) ([]view.Tab, error) {
 		return nil, err
 	}
 
-	tabsByID := make(map[string]view.Tab, len(tabs))
+	tabsByID := make(map[string]Tab, len(tabs))
 	for _, tab := range tabs {
 		tabsByID[tab.ID] = tab
 	}
 
-	sortedTabs := make([]view.Tab, 0, len(tabs))
+	sortedTabs := make([]Tab, 0, len(tabs))
 	for _, id := range ids {
 		if tab, ok := tabsByID[id]; ok {
 			sortedTabs = append(sortedTabs, tab)
@@ -70,20 +70,78 @@ func (s *store) Find(ctx context.Context, ids []string) ([]view.Tab, error) {
 	return sortedTabs, nil
 }
 
-func (s *store) GetOneBy(ctx context.Context, id string) (*view.Tab, error) {
-	model := view.Tab{}
-	err := s.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&model)
+func (s *store) GetOneBy(ctx context.Context, id string) (*Tab, error) {
+	tabs := make([]Tab, 0)
+	cursor, err := s.collection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"_id": id}},
+		{"$lookup": bson.M{
+			"from":         mongo.WidgetMongoCollection,
+			"localField":   "_id",
+			"foreignField": "tab",
+			"as":           "widgets",
+		}},
+		{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.WidgetFiltersMongoCollection,
+			"localField":   "widgets._id",
+			"foreignField": "widget",
+			"as":           "filters",
+		}},
+		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"filters.user": bson.M{"$cond": bson.M{
+				"if":   "$filters.user",
+				"then": "$filters.user",
+				"else": "",
+			}},
+		}},
+		{"$sort": bson.M{"filters.title": 1}},
+		{"$group": bson.M{
+			"_id": bson.M{
+				"_id":     "$_id",
+				"widgets": "$widgets._id",
+			},
+			"data":    bson.M{"$first": "$$ROOT"},
+			"widgets": bson.M{"$first": "$widgets"},
+			"filters": bson.M{"$push": "$filters"},
+		}},
+		{"$addFields": bson.M{
+			"widgets.filters": bson.M{"$filter": bson.M{
+				"input": bson.M{"$filter": bson.M{"input": "$filters", "cond": "$$this._id"}},
+				"cond":  bson.M{"$eq": bson.A{"$$this.user", ""}},
+			}},
+		}},
+		{"$sort": bson.D{{"widgets.grid_parameters.desktop.y", 1}, {"widgets.grid_parameters.desktop.x", 1}}},
+		{"$group": bson.M{
+			"_id":     "$_id._id",
+			"data":    bson.M{"$first": "$data"},
+			"widgets": bson.M{"$push": "$widgets"},
+		}},
+		{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
+			"$data",
+			bson.M{"widgets": bson.M{"$filter": bson.M{
+				"input": "$widgets",
+				"cond":  "$$this._id",
+			}}},
+		}}}},
+	})
 	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return nil, nil
-		}
 		return nil, err
 	}
 
-	return &model, nil
+	err = cursor.All(ctx, &tabs)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(tabs) > 0 {
+		return &tabs[0], nil
+	}
+
+	return nil, nil
 }
 
-func (s *store) Insert(ctx context.Context, r EditRequest) (*view.Tab, error) {
+func (s *store) Insert(ctx context.Context, r EditRequest) (*Tab, error) {
 	count, err := s.collection.CountDocuments(ctx, bson.M{"view": r.View})
 	if err != nil {
 		return nil, err
@@ -104,10 +162,10 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*view.Tab, error) {
 		return nil, err
 	}
 
-	return &tab, nil
+	return s.GetOneBy(ctx, tab.ID)
 }
 
-func (s *store) Update(ctx context.Context, oldTab view.Tab, r EditRequest) (*view.Tab, error) {
+func (s *store) Update(ctx context.Context, oldTab Tab, r EditRequest) (*Tab, error) {
 	now := types.CpsTime{Time: time.Now()}
 	tab := view.Tab{
 		ID:       oldTab.ID,
@@ -115,7 +173,7 @@ func (s *store) Update(ctx context.Context, oldTab view.Tab, r EditRequest) (*vi
 		View:     r.View,
 		Author:   r.Author,
 		Position: oldTab.Position,
-		Created:  oldTab.Created,
+		Created:  *oldTab.Created,
 		Updated:  now,
 	}
 
@@ -124,7 +182,7 @@ func (s *store) Update(ctx context.Context, oldTab view.Tab, r EditRequest) (*vi
 		return nil, err
 	}
 
-	return &tab, nil
+	return s.GetOneBy(ctx, tab.ID)
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
@@ -153,40 +211,42 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	return true, nil
 }
 
-func (s *store) Copy(ctx context.Context, tab view.Tab, r CopyRequest) (*view.Tab, error) {
+func (s *store) Copy(ctx context.Context, tab Tab, r CopyRequest) (*Tab, error) {
 	count, err := s.collection.CountDocuments(ctx, bson.M{"view": r.View})
 	if err != nil {
 		return nil, err
 	}
-	id := tab.ID
 	now := types.CpsTime{Time: time.Now()}
-	tab.ID = utils.NewID()
-	tab.View = r.View
-	tab.Author = r.Author
-	tab.Position = count
-	tab.Created = now
-	tab.Updated = now
+	newTab := view.Tab{
+		ID:       utils.NewID(),
+		Title:    tab.Title,
+		View:     r.View,
+		Author:   r.Author,
+		Position: count,
+		Created:  now,
+		Updated:  now,
+	}
 
-	_, err = s.collection.InsertOne(ctx, tab)
+	_, err = s.collection.InsertOne(ctx, newTab)
 	if err != nil {
 		return nil, err
 	}
 
-	cursor, err := s.widgetCollection.Find(ctx, bson.M{"tab": id})
+	cursor, err := s.widgetCollection.Find(ctx, bson.M{"tab": tab.ID})
 	if err != nil {
 		return nil, err
 	}
 	defer cursor.Close(ctx)
 
 	for cursor.Next(ctx) {
-		w := view.Widget{}
+		w := widget.Widget{}
 		err := cursor.Decode(&w)
 		if err != nil {
 			return nil, err
 		}
 
 		_, err = s.widgetStore.Copy(ctx, w, widget.CopyRequest{
-			Tab:    tab.ID,
+			Tab:    newTab.ID,
 			Author: r.Author,
 		})
 		if err != nil {
@@ -194,10 +254,10 @@ func (s *store) Copy(ctx context.Context, tab view.Tab, r CopyRequest) (*view.Ta
 		}
 	}
 
-	return &tab, nil
+	return s.GetOneBy(ctx, newTab.ID)
 }
 
-func (s *store) UpdatePositions(ctx context.Context, tabs []view.Tab) (bool, error) {
+func (s *store) UpdatePositions(ctx context.Context, tabs []Tab) (bool, error) {
 	viewId := ""
 	for _, tab := range tabs {
 		if viewId == "" {
