@@ -33,6 +33,10 @@ export default {
       return request.delete(`${API_ROUTES.viewTab}/${id}`);
     },
 
+    copy(context, { id, data } = {}) {
+      return request.post(`${API_ROUTES.viewTabCopy}/${id}`, data);
+    },
+
     updatePositions(context, { data } = {}) {
       return request.put(API_ROUTES.viewTabPosition, data);
     },

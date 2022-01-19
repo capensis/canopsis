@@ -42,7 +42,7 @@ export default {
       return request.post(`${API_ROUTES.view}/${id}/clone`, data);
     },
 
-    async update({ commit }, { id, data }) {
+    async update({ commit }, { id, data } = {}) {
       const result = await request.put(`${API_ROUTES.view}/${id}`, data);
 
       const { entities } = normalize(result, viewSchema);
@@ -52,27 +52,31 @@ export default {
       return result;
     },
 
-    updateWithoutStore(context, { id, data }) {
+    updateWithoutStore(context, { id, data } = {}) {
       return request.put(`${API_ROUTES.view}/${id}`, data);
     },
 
-    updatePositions(context, { data }) {
+    updatePositions(context, { data } = {}) {
       return request.put(API_ROUTES.viewPosition, data);
     },
 
-    remove(context, { id }) {
+    remove(context, { id } = {}) {
       return request.delete(`${API_ROUTES.view}/${id}`);
     },
 
-    bulkCreateWithoutStore(context, { data }) {
+    copy(context, { id, data } = {}) {
+      return request.post(`${API_ROUTES.viewCopy}/${id}`, data);
+    },
+
+    bulkCreateWithoutStore(context, { data } = {}) {
       return request.post(API_ROUTES.bulkView, data);
     },
 
-    exportWithoutStore(context, { data }) {
+    exportWithoutStore(context, { data } = {}) {
       return request.post(API_ROUTES.viewExport, data);
     },
 
-    importWithoutStore(context, { data }) {
+    importWithoutStore(context, { data } = {}) {
       return request.post(API_ROUTES.viewImport, data);
     },
   },
