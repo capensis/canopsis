@@ -7,38 +7,27 @@
     c-enabled-field(v-field="form.enabled")
     patterns-list(v-field="form.patterns")
 
-    template(v-if="isChangeEntityType")
-
-    template(v-if="isEnrichmentType")
-      v-container.pa-0
-        v-divider
-        h3.my-2 {{ $t('eventFilter.enrichmentOptions') }}
-        v-layout
-          v-btn.mx-0(@click="showEditActionsModal") {{ $t('eventFilter.editActions') }}
-          v-btn(@click="showEditExternalDataModal") {{ $t('eventFilter.externalData') }}
-        v-select(
-          v-field="form.config.on_success",
-          :label="$t('eventFilter.onSuccess')",
-          :items="eventFilterAfterTypes"
-        )
-        v-select(
-          v-field="form.config.on_failure",
-          :label="$t('eventFilter.onFailure')",
-          :items="eventFilterAfterTypes"
-        )
-      v-alert(:value="errors.has('actions')", type="error") {{ $t('eventFilter.actionsRequired') }}
+    template(v-if="isChangeEntityType || isEnrichmentType")
+      v-divider.my-3
+      c-information-block(:title="$t('eventFilter.configuration')")
+        template(v-if="isChangeEntityType")
+          event-filter-change-entity-form(v-field="form.config")
+        template(v-if="isEnrichmentType")
+          event-filter-enrichment-form(v-field="form.config")
 </template>
 
 <script>
-import { EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES, EVENT_FILTER_RULE_TYPES, MODALS } from '@/constants';
+import { EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES, EVENT_FILTER_RULE_TYPES } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
 import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
+import EventFilterEnrichmentForm from '@/components/other/event-filter/form/event-filter-enrichment-form.vue';
+import EventFilterChangeEntityForm from '@/components/other/event-filter/form/event-filter-change-entity-form.vue';
 
 export default {
   inject: ['$validator'],
-  components: { PatternsList },
+  components: { PatternsList, EventFilterEnrichmentForm, EventFilterChangeEntityForm },
   mixins: [formMixin],
   model: {
     prop: 'form',
@@ -65,49 +54,6 @@ export default {
 
     eventFilterAfterTypes() {
       return Object.values(EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES);
-    },
-  },
-  created() {
-    this.attachRequiredRule();
-  },
-  beforeDestroy() {
-    this.detachRequiredRule();
-  },
-  methods: {
-    showEditActionsModal() {
-      this.$modals.show({
-        name: MODALS.eventFilterRuleActions,
-        config: {
-          actions: this.form.config.actions,
-          action: (actions) => {
-            this.updateField('config.actions', actions);
-            this.$nextTick(() => this.$validator.validate('actions'));
-          },
-        },
-      });
-    },
-
-    showEditExternalDataModal() {
-      this.$modals.show({
-        name: MODALS.eventFilterRuleExternalData,
-        config: {
-          value: this.form.external_data,
-          action: externalData => this.updateField('external_data', externalData),
-        },
-      });
-    },
-
-    attachRequiredRule() {
-      this.$validator.attach({
-        name: 'actions',
-        rules: 'required:true',
-        getter: () => (this.isEnrichmentType ? this.form.actions : true),
-        context: () => this,
-      });
-    },
-
-    detachRequiredRule() {
-      this.$validator.detach('actions');
     },
   },
 };

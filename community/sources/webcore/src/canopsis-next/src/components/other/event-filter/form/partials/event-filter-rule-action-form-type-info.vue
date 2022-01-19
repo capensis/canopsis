@@ -6,7 +6,7 @@
         v-icon(color="info") help_outline
     v-expand-transition(v-if="opened")
       v-layout(column)
-        div {{ description }}
+        div.pre-wrap {{ description }}
         img(:src="image", @click="showImageViewerModal")
 </template>
 

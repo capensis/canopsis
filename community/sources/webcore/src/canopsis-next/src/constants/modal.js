@@ -42,7 +42,6 @@ export const MODALS = {
   createPatternRule: 'create-pattern-rule',
   addEventFilterRuleToPattern: 'add-event-filter-rule-to-pattern',
   eventFilterRuleActions: 'event-filter-rule-actions',
-  eventFilterRuleExternalData: 'event-filter-rule-external-data',
   createEventFilterRuleAction: 'create-event-filter-rule-action',
   filtersList: 'filters-list',
   createSnmpRule: 'create-snmp-rule',

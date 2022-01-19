@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash';
+import { cloneDeep, pick } from 'lodash';
 
 import {
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
@@ -7,7 +7,7 @@ import {
 } from '@/constants';
 
 /**
- * @typedef { 'enrichment' | 'drop' | 'break' } EventFilterType
+ * @typedef { 'enrichment' | 'drop' | 'break' | 'change_entity' } EventFilterType
  */
 
 /**
@@ -34,15 +34,26 @@ import {
  */
 
 /**
- * @typedef {Object} EventFilterConfig
+ * @typedef {Object} EventFilterEnrichmentConfig
  * @property {EventFilterAction[]} actions
  * @property {string} on_success
  * @property {string} on_failure
  */
 
 /**
+ * @typedef {Object} EventFilterChangeEntityConfig
+ * @property {string} resource
+ * @property {string} component
+ * @property {string} connector
+ * @property {string} connector_name
+ */
+
+/**
+ * @typedef {EventFilterEnrichmentConfig | EventFilterChangeEntityConfig} EventFilterConfig
+ */
+
+/**
  * @typedef {Object} EventFilter
- * @property {Object} external_data
  * @property {string} _id
  * @property {EventFilterType} type
  * @property {string} description
@@ -57,7 +68,7 @@ import {
  */
 
 /**
- * @typedef {EventFilterConfig} EventFilterConfigForm
+ * @typedef {EventFilterEnrichmentConfig & EventFilterChangeEntityConfig} EventFilterConfigForm
  */
 
 /**
@@ -70,6 +81,10 @@ export const eventFilterConfigToForm = eventFilterConfig => ({
   actions: eventFilterConfig?.actions ? cloneDeep(eventFilterConfig.actions) : [],
   on_success: eventFilterConfig?.on_success ?? EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES.pass,
   on_failure: eventFilterConfig?.on_failure ?? EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES.pass,
+  resource: eventFilterConfig?.resource ?? '',
+  component: eventFilterConfig?.component ?? '',
+  connector: eventFilterConfig?.connector ?? '',
+  connector_name: eventFilterConfig?.connector_name ?? '',
 });
 
 /**
@@ -85,7 +100,6 @@ export const eventFilterToForm = eventFilter => ({
   patterns: eventFilter?.patterns ? cloneDeep(eventFilter?.patterns) : [],
   priority: eventFilter?.priority || 0,
   enabled: eventFilter?.enabled ?? true,
-  external_data: eventFilter?.external_data ? cloneDeep(eventFilter.external_data) : {},
   config: eventFilterConfigToForm(eventFilter?.config),
 });
 
@@ -95,23 +109,11 @@ export const eventFilterToForm = eventFilter => ({
  * @param {EventFilterAction} [eventFilterAction = {}]
  * @return {EventFilterActionForm}
  */
-export const eventFilterRuleActionToForm = (eventFilterAction = {}) => ({
-  type: eventFilterAction.type ?? EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField,
-  name: eventFilterAction.name ?? '',
-  value: eventFilterAction.value ?? '',
-  description: eventFilterAction.description || '',
-});
-
-/**
- * Convert form config to event filter config
- *
- * @param {EventFilterConfigForm} [eventFilterConfig={}]
- * @returns {EventFilterConfig}
- */
-export const formEventFilterConfigToEventFilterConfig = (eventFilterConfig = {}) => ({
-  actions: eventFilterConfig.actions,
-  on_success: eventFilterConfig.on_success,
-  on_failure: eventFilterConfig.on_failure,
+export const eventFilterRuleActionToForm = eventFilterAction => ({
+  type: eventFilterAction?.type ?? EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField,
+  name: eventFilterAction?.name ?? '',
+  value: eventFilterAction?.value ?? '',
+  description: eventFilterAction?.description || '',
 });
 
 /**
@@ -120,7 +122,17 @@ export const formEventFilterConfigToEventFilterConfig = (eventFilterConfig = {})
  * @param {EventFilterForm} eventFilterForm
  * @returns {EventFilter}
  */
-export const formToEventFilter = eventFilterForm => ({
-  ...eventFilterForm,
-  config: formEventFilterConfigToEventFilterConfig(eventFilterForm.config),
-});
+export const formToEventFilter = (eventFilterForm) => {
+  const { config, ...eventFilter } = eventFilterForm;
+
+  switch (eventFilterForm.type) {
+    case EVENT_FILTER_RULE_TYPES.changeEntity:
+      eventFilter.config = pick(config, ['resource', 'component', 'connector', 'connector_name']);
+      break;
+    case EVENT_FILTER_RULE_TYPES.enrichment:
+      eventFilter.config = pick(config, ['actions', 'on_success', 'on_failure']);
+      break;
+  }
+
+  return eventFilter;
+};
