@@ -9,7 +9,14 @@
     :name="name",
     @input="errors.remove(name)"
   )
-    c-help-icon(v-if="helpText", slot="append", :text="helpText", icon="help", color="grey darken-1", left)
+    c-help-icon(
+      v-if="helpText",
+      slot="append",
+      :text="helpText",
+      icon="help",
+      color="grey darken-1",
+      left
+    )
 </template>
 
 <script>

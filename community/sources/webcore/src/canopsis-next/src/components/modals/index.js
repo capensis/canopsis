@@ -225,10 +225,6 @@ export const EventFilterRuleActions = () => ({
   component: import(/* webpackChunkName: "EventFilters" */ './event-filter/event-filter-rule-actions.vue'),
   loading: ModalLoaderOverlay,
 });
-export const EventFilterRuleExternalData = () => ({
-  component: import(/* webpackChunkName: "EventFilters" */ './event-filter/event-filter-rule-external-data.vue'),
-  loading: ModalLoaderOverlay,
-});
 export const CreateEventFilterRuleAction = () => ({
   component: import(/* webpackChunkName: "EventFilters" */ './event-filter/create-event-filter-rule-action.vue'),
   loading: ModalLoaderOverlay,
