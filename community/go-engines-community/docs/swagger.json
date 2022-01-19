@@ -7983,7 +7983,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/viewgroup.View"
+                            "$ref": "#/definitions/view.View"
                         }
                     },
                     "400": {
@@ -8353,7 +8353,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/viewgroup.ViewGroup"
+                                "$ref": "#/definitions/view.ViewGroup"
                             }
                         }
                     }
@@ -8454,7 +8454,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/view.Tab"
+                            "$ref": "#/definitions/viewtab.Tab"
                         }
                     },
                     "400": {
@@ -8556,7 +8556,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/view.Tab"
+                            "$ref": "#/definitions/viewtab.Tab"
                         }
                     },
                     "400": {
@@ -8600,7 +8600,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/view.Tab"
+                            "$ref": "#/definitions/viewtab.Tab"
                         }
                     },
                     "404": {
@@ -8654,7 +8654,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/view.Tab"
+                            "$ref": "#/definitions/viewtab.Tab"
                         }
                     },
                     "400": {
@@ -8776,7 +8776,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/viewgroup.View"
+                                                "$ref": "#/definitions/view.View"
                                             }
                                         }
                                     }
@@ -8828,7 +8828,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/viewgroup.View"
+                            "$ref": "#/definitions/view.View"
                         }
                     },
                     "400": {
@@ -8872,7 +8872,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/viewgroup.View"
+                            "$ref": "#/definitions/view.View"
                         }
                     },
                     "404": {
@@ -8926,7 +8926,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/viewgroup.View"
+                            "$ref": "#/definitions/view.View"
                         }
                     },
                     "400": {
@@ -9203,7 +9203,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/view.Widget"
+                            "$ref": "#/definitions/widget.Widget"
                         }
                     },
                     "400": {
@@ -9492,7 +9492,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/view.Widget"
+                            "$ref": "#/definitions/widget.Widget"
                         }
                     },
                     "400": {
@@ -9536,7 +9536,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/view.Widget"
+                            "$ref": "#/definitions/widget.Widget"
                         }
                     },
                     "404": {
@@ -9590,7 +9590,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/view.Widget"
+                            "$ref": "#/definitions/widget.Widget"
                         }
                     },
                     "400": {
@@ -14909,13 +14909,39 @@
                 "groups": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/viewgroup.ViewGroup"
+                        "$ref": "#/definitions/view.ExportViewGroupResponse"
                     }
                 },
                 "views": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/viewgroup.View"
+                        "$ref": "#/definitions/view.View"
+                    }
+                }
+            }
+        },
+        "view.ExportViewGroupResponse": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated": {
+                    "type": "integer"
+                },
+                "views": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/view.View"
                     }
                 }
             }
@@ -14979,97 +15005,7 @@
                 }
             }
         },
-        "view.Tab": {
-            "type": "object",
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "author": {
-                    "type": "string"
-                },
-                "created": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updated": {
-                    "type": "integer"
-                }
-            }
-        },
-        "view.Widget": {
-            "type": "object",
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "author": {
-                    "type": "string"
-                },
-                "created": {
-                    "type": "integer"
-                },
-                "grid_parameters": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "parameters": {
-                    "type": "object",
-                    "$ref": "#/definitions/view.Parameters"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                },
-                "updated": {
-                    "type": "integer"
-                }
-            }
-        },
-        "viewgroup.EditRequest": {
-            "type": "object",
-            "required": [
-                "title"
-            ],
-            "properties": {
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "viewgroup.Tab": {
-            "type": "object",
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "author": {
-                    "type": "string"
-                },
-                "created": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.CpsTime"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updated": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.CpsTime"
-                },
-                "widgets": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/viewgroup.Widget"
-                    }
-                }
-            }
-        },
-        "viewgroup.View": {
+        "view.View": {
             "type": "object",
             "properties": {
                 "_id": {
@@ -15089,7 +15025,7 @@
                 },
                 "group": {
                     "type": "object",
-                    "$ref": "#/definitions/viewgroup.ViewGroup"
+                    "$ref": "#/definitions/view.ViewGroup"
                 },
                 "periodic_refresh": {
                     "type": "object",
@@ -15098,7 +15034,7 @@
                 "tabs": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/viewgroup.Tab"
+                        "$ref": "#/definitions/viewtab.Tab"
                     }
                 },
                 "tags": {
@@ -15112,6 +15048,37 @@
                 },
                 "updated": {
                     "type": "integer"
+                }
+            }
+        },
+        "view.ViewGroup": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
+        "viewgroup.EditRequest": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "title": {
+                    "type": "string"
                 }
             }
         },
@@ -15139,45 +15106,8 @@
                 "views": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/viewgroup.View"
+                        "$ref": "#/definitions/view.View"
                     }
-                }
-            }
-        },
-        "viewgroup.Widget": {
-            "type": "object",
-            "properties": {
-                "_id": {
-                    "type": "string"
-                },
-                "author": {
-                    "type": "string"
-                },
-                "created": {
-                    "type": "integer"
-                },
-                "filters": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/view.Filter"
-                    }
-                },
-                "grid_parameters": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "parameters": {
-                    "type": "object",
-                    "$ref": "#/definitions/view.Parameters"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                },
-                "updated": {
-                    "type": "integer"
                 }
             }
         },
@@ -15204,6 +15134,34 @@
                 },
                 "view": {
                     "type": "string"
+                }
+            }
+        },
+        "viewtab.Tab": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "widgets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/widget.Widget"
+                    }
                 }
             }
         },
@@ -15254,6 +15212,43 @@
                 },
                 "type": {
                     "type": "string"
+                }
+            }
+        },
+        "widget.Widget": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "filters": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/view.Filter"
+                    }
+                },
+                "grid_parameters": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "parameters": {
+                    "type": "object",
+                    "$ref": "#/definitions/view.Parameters"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updated": {
+                    "type": "integer"
                 }
             }
         },

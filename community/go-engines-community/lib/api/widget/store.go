@@ -16,11 +16,11 @@ import (
 type Store interface {
 	FindViewIds(ctx context.Context, ids []string) (map[string]string, error)
 	FindViewIdByTab(ctx context.Context, tabId string) (string, error)
-	GetOneBy(ctx context.Context, id string) (*view.Widget, error)
-	Insert(ctx context.Context, r EditRequest) (*view.Widget, error)
-	Update(ctx context.Context, r EditRequest) (*view.Widget, error)
+	GetOneBy(ctx context.Context, id string) (*Widget, error)
+	Insert(ctx context.Context, r EditRequest) (*Widget, error)
+	Update(ctx context.Context, r EditRequest) (*Widget, error)
 	Delete(ctx context.Context, id string) (bool, error)
-	Copy(ctx context.Context, widget view.Widget, r CopyRequest) (*view.Widget, error)
+	Copy(ctx context.Context, widget Widget, r CopyRequest) (*Widget, error)
 	UpdateGridPositions(ctx context.Context, items []EditGridPositionItemRequest) (bool, error)
 }
 
@@ -91,20 +91,61 @@ func (s *store) FindViewIdByTab(ctx context.Context, tabId string) (string, erro
 	return result.View, nil
 }
 
-func (s *store) GetOneBy(ctx context.Context, id string) (*view.Widget, error) {
-	model := &view.Widget{}
-	err := s.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&model)
+func (s *store) GetOneBy(ctx context.Context, id string) (*Widget, error) {
+	widgets := make([]Widget, 0)
+	cursor, err := s.collection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"_id": id}},
+		{"$lookup": bson.M{
+			"from":         mongo.WidgetFiltersMongoCollection,
+			"localField":   "_id",
+			"foreignField": "widget",
+			"as":           "filters",
+		}},
+		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"filters.user": bson.M{"$cond": bson.M{
+				"if":   "$filters.user",
+				"then": "$filters.user",
+				"else": "",
+			}},
+		}},
+		{"$sort": bson.M{"filters.title": 1}},
+		{"$group": bson.M{
+			"_id":     nil,
+			"data":    bson.M{"$first": "$$ROOT"},
+			"filters": bson.M{"$push": "$filters"},
+		}},
+		{"$addFields": bson.M{
+			"filters": bson.M{"$filter": bson.M{
+				"input": bson.M{"$filter": bson.M{"input": "$filters", "cond": "$$this._id"}},
+				"cond":  bson.M{"$eq": bson.A{"$$this.user", ""}},
+			}},
+		}},
+		{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
+			"$data",
+			bson.M{"filters": bson.M{"$filter": bson.M{
+				"input": "$filters",
+				"cond":  "$$this._id",
+			}}},
+		}}}},
+	})
 	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return nil, nil
-		}
 		return nil, err
 	}
 
-	return model, nil
+	err = cursor.All(ctx, &widgets)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(widgets) > 0 {
+		return &widgets[0], nil
+	}
+
+	return nil, nil
 }
 
-func (s *store) Insert(ctx context.Context, r EditRequest) (*view.Widget, error) {
+func (s *store) Insert(ctx context.Context, r EditRequest) (*Widget, error) {
 	now := types.CpsTime{Time: time.Now()}
 	widget := transformEditRequestToModel(r)
 	widget.ID = utils.NewID()
@@ -116,10 +157,10 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*view.Widget, error)
 		return nil, err
 	}
 
-	return &widget, nil
+	return s.GetOneBy(ctx, widget.ID)
 }
 
-func (s *store) Update(ctx context.Context, r EditRequest) (*view.Widget, error) {
+func (s *store) Update(ctx context.Context, r EditRequest) (*Widget, error) {
 	oldWidget, err := s.GetOneBy(ctx, r.ID)
 	if err != nil || oldWidget == nil {
 		return nil, err
@@ -147,7 +188,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*view.Widget, error)
 		return nil, err
 	}
 
-	return &widget, nil
+	return s.GetOneBy(ctx, widget.ID)
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
@@ -173,17 +214,22 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	return true, nil
 }
 
-func (s *store) Copy(ctx context.Context, widget view.Widget, r CopyRequest) (*view.Widget, error) {
+func (s *store) Copy(ctx context.Context, widget Widget, r CopyRequest) (*Widget, error) {
 	now := types.CpsTime{Time: time.Now()}
-	id := widget.ID
-	widget.ID = utils.NewID()
-	widget.Tab = r.Tab
-	widget.Author = r.Author
-	widget.Created = &now
-	widget.Updated = &now
+	newWidget := view.Widget{
+		ID:             utils.NewID(),
+		Tab:            r.Tab,
+		Title:          widget.Title,
+		Type:           widget.Type,
+		GridParameters: widget.GridParameters,
+		Parameters:     widget.Parameters,
+		Author:         r.Author,
+		Created:        &now,
+		Updated:        &now,
+	}
 
 	cursor, err := s.filterCollection.Find(ctx, bson.M{
-		"widget": id,
+		"widget": widget.ID,
 		"user":   bson.M{"$in": bson.A{"", nil}},
 	})
 	if err != nil {
@@ -200,19 +246,19 @@ func (s *store) Copy(ctx context.Context, widget view.Widget, r CopyRequest) (*v
 		}
 
 		newId := utils.NewID()
-		if widget.Parameters.MainFilter == filter.ID {
-			widget.Parameters.MainFilter = newId
+		if newWidget.Parameters.MainFilter == filter.ID {
+			newWidget.Parameters.MainFilter = newId
 		}
 
 		filter.ID = newId
-		filter.Widget = widget.ID
+		filter.Widget = newWidget.ID
 		filter.Author = r.Author
 		filter.Created = &now
 		filter.Updated = &now
 		filters = append(filters, filter)
 	}
 
-	_, err = s.collection.InsertOne(ctx, widget)
+	_, err = s.collection.InsertOne(ctx, newWidget)
 	if err != nil {
 		return nil, err
 	}
@@ -224,7 +270,7 @@ func (s *store) Copy(ctx context.Context, widget view.Widget, r CopyRequest) (*v
 		}
 	}
 
-	return &widget, nil
+	return s.GetOneBy(ctx, newWidget.ID)
 }
 
 func (s *store) UpdateGridPositions(ctx context.Context, items []EditGridPositionItemRequest) (bool, error) {

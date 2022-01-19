@@ -15,7 +15,34 @@ Feature: Copy a view tab
     """json
     {
       "title": "test-tab-to-copy-1-title",
-      "author": "root"
+      "author": "root",
+      "widgets": [
+        {
+          "title": "test-widget-to-tab-copy-1-title",
+          "type": "test-widget-to-tab-copy-1-type",
+          "grid_parameters": {
+            "desktop": {"x": 0, "y": 0}
+          },
+          "parameters": {
+            "test-widget-to-tab-copy-1-parameter-1": {
+              "test-widget-to-tab-copy-1-parameter-1-subparameter": "test-widget-to-tab-copy-1-parameter-1-subvalue"
+            },
+            "test-widget-to-tab-copy-1-parameter-2": [
+              {
+                "test-widget-to-tab-copy-1-parameter-2-subparameter": "test-widget-to-tab-copy-1-parameter-2-subvalue"
+              }
+            ]
+          },
+          "author": "root",
+          "filters": [
+            {
+              "title": "test-widgetfilter-to-tab-copy-1-title",
+              "query": "{\"test\":\"test\"}",
+              "author": "root"
+            }
+          ]
+        }
+      ]
     }
     """
     When I do GET /api/v4/view-tabs/{{ .lastResponse._id}}
@@ -24,9 +51,40 @@ Feature: Copy a view tab
     """json
     {
       "title": "test-tab-to-copy-1-title",
-      "author": "root"
+      "author": "root",
+      "widgets": [
+        {
+          "title": "test-widget-to-tab-copy-1-title",
+          "type": "test-widget-to-tab-copy-1-type",
+          "grid_parameters": {
+            "desktop": {"x": 0, "y": 0}
+          },
+          "parameters": {
+            "test-widget-to-tab-copy-1-parameter-1": {
+              "test-widget-to-tab-copy-1-parameter-1-subparameter": "test-widget-to-tab-copy-1-parameter-1-subvalue"
+            },
+            "test-widget-to-tab-copy-1-parameter-2": [
+              {
+                "test-widget-to-tab-copy-1-parameter-2-subparameter": "test-widget-to-tab-copy-1-parameter-2-subvalue"
+              }
+            ]
+          },
+          "author": "root",
+          "filters": [
+            {
+              "title": "test-widgetfilter-to-tab-copy-1-title",
+              "query": "{\"test\":\"test\"}",
+              "author": "root"
+            }
+          ]
+        }
+      ]
     }
     """
+    Then the response key "_id" should not be "test-tab-to-copy-1"
+    Then the response key "widgets.0._id" should not be "test-widget-to-tab-copy-1"
+    Then the response key "widgets.0.filters.0._id" should not be "test-widgetfilter-to-tab-copy-1"
+    Then the response key "widgets.0.parameters.main_filter" should not be "test-widgetfilter-to-tab-copy-1"
     When I do GET /api/v4/views/test-view-to-tab-copy-2
     Then the response code should be 200
     Then the response body should contain:
@@ -38,43 +96,11 @@ Feature: Copy a view tab
           "_id": "test-tab-to-copy-2"
         },
         {
-          "title": "test-tab-to-copy-1-title",
-          "author": "root",
-          "widgets": [
-            {
-              "title": "test-widget-to-tab-copy-1-title",
-              "type": "test-widget-to-tab-copy-1-type",
-              "grid_parameters": {
-                "desktop": {"x": 0, "y": 0}
-              },
-              "parameters": {
-                "test-widget-to-tab-copy-1-parameter-1": {
-                  "test-widget-to-tab-copy-1-parameter-1-subparameter": "test-widget-to-tab-copy-1-parameter-1-subvalue"
-                },
-                "test-widget-to-tab-copy-1-parameter-2": [
-                  {
-                    "test-widget-to-tab-copy-1-parameter-2-subparameter": "test-widget-to-tab-copy-1-parameter-2-subvalue"
-                  }
-                ]
-              },
-              "author": "root",
-              "filters": [
-                {
-                  "title": "test-widgetfilter-to-tab-copy-1-title",
-                  "query": "{\"test\":\"test\"}",
-                  "author": "root"
-                }
-              ]
-            }
-          ]
+          "title": "test-tab-to-copy-1-title"
         }
       ]
     }
     """
-    Then the response key "tabs.1._id" should not be "test-tab-to-copy-1"
-    Then the response key "tabs.1.widgets.0._id" should not be "test-widget-to-tab-copy-1"
-    Then the response key "tabs.1.widgets.0.filters.0._id" should not be "test-widgetfilter-to-tab-copy-1"
-    Then the response key "tabs.1.widgets.0.parameters.main_filter" should not be "test-widgetfilter-to-tab-copy-1"
 
   Scenario: given copy request and no auth user should not allow access
     When I do POST /api/v4/view-tab-copy/test-tab-to-copy-1

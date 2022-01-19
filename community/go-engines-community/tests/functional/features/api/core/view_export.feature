@@ -75,7 +75,8 @@ Feature: Export views
                   ]
                 },
                 {
-                  "title": "test-tab-to-export-2-title"
+                  "title": "test-tab-to-export-2-title",
+                  "widgets": []
                 }
               ]
             },

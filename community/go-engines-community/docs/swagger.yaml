@@ -3570,11 +3570,28 @@ definitions:
     properties:
       groups:
         items:
-          $ref: '#/definitions/viewgroup.ViewGroup'
+          $ref: '#/definitions/view.ExportViewGroupResponse'
         type: array
       views:
         items:
-          $ref: '#/definitions/viewgroup.View'
+          $ref: '#/definitions/view.View'
+        type: array
+    type: object
+  view.ExportViewGroupResponse:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        type: integer
+      title:
+        type: string
+      updated:
+        type: integer
+      views:
+        items:
+          $ref: '#/definitions/view.View'
         type: array
     type: object
   view.Filter:
@@ -3616,67 +3633,7 @@ definitions:
       video_filemask:
         type: string
     type: object
-  view.Tab:
-    properties:
-      _id:
-        type: string
-      author:
-        type: string
-      created:
-        type: integer
-      title:
-        type: string
-      updated:
-        type: integer
-    type: object
-  view.Widget:
-    properties:
-      _id:
-        type: string
-      author:
-        type: string
-      created:
-        type: integer
-      grid_parameters:
-        additionalProperties: true
-        type: object
-      parameters:
-        $ref: '#/definitions/view.Parameters'
-        type: object
-      title:
-        type: string
-      type:
-        type: string
-      updated:
-        type: integer
-    type: object
-  viewgroup.EditRequest:
-    properties:
-      title:
-        type: string
-    required:
-    - title
-    type: object
-  viewgroup.Tab:
-    properties:
-      _id:
-        type: string
-      author:
-        type: string
-      created:
-        $ref: '#/definitions/types.CpsTime'
-        type: object
-      title:
-        type: string
-      updated:
-        $ref: '#/definitions/types.CpsTime'
-        type: object
-      widgets:
-        items:
-          $ref: '#/definitions/viewgroup.Widget'
-        type: array
-    type: object
-  viewgroup.View:
+  view.View:
     properties:
       _id:
         type: string
@@ -3689,14 +3646,14 @@ definitions:
       enabled:
         type: boolean
       group:
-        $ref: '#/definitions/viewgroup.ViewGroup'
+        $ref: '#/definitions/view.ViewGroup'
         type: object
       periodic_refresh:
         $ref: '#/definitions/types.DurationWithEnabled'
         type: object
       tabs:
         items:
-          $ref: '#/definitions/viewgroup.Tab'
+          $ref: '#/definitions/viewtab.Tab'
         type: array
       tags:
         items:
@@ -3706,6 +3663,26 @@ definitions:
         type: string
       updated:
         type: integer
+    type: object
+  view.ViewGroup:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        type: integer
+      title:
+        type: string
+      updated:
+        type: integer
+    type: object
+  viewgroup.EditRequest:
+    properties:
+      title:
+        type: string
+    required:
+    - title
     type: object
   viewgroup.ViewGroup:
     properties:
@@ -3723,33 +3700,8 @@ definitions:
         type: integer
       views:
         items:
-          $ref: '#/definitions/viewgroup.View'
+          $ref: '#/definitions/view.View'
         type: array
-    type: object
-  viewgroup.Widget:
-    properties:
-      _id:
-        type: string
-      author:
-        type: string
-      created:
-        type: integer
-      filters:
-        items:
-          $ref: '#/definitions/view.Filter'
-        type: array
-      grid_parameters:
-        additionalProperties: true
-        type: object
-      parameters:
-        $ref: '#/definitions/view.Parameters'
-        type: object
-      title:
-        type: string
-      type:
-        type: string
-      updated:
-        type: integer
     type: object
   viewtab.CopyRequest:
     properties:
@@ -3767,6 +3719,25 @@ definitions:
     required:
     - title
     - view
+    type: object
+  viewtab.Tab:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+      title:
+        type: string
+      updated:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+      widgets:
+        items:
+          $ref: '#/definitions/widget.Widget'
+        type: array
     type: object
   widget.CopyRequest:
     properties:
@@ -3801,6 +3772,31 @@ definitions:
     - tab
     - title
     - type
+    type: object
+  widget.Widget:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        type: integer
+      filters:
+        items:
+          $ref: '#/definitions/view.Filter'
+        type: array
+      grid_parameters:
+        additionalProperties: true
+        type: object
+      parameters:
+        $ref: '#/definitions/view.Parameters'
+        type: object
+      title:
+        type: string
+      type:
+        type: string
+      updated:
+        type: integer
     type: object
   widgetfilter.CreateRequest:
     properties:
@@ -8756,7 +8752,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/viewgroup.View'
+            $ref: '#/definitions/view.View'
         "400":
           description: Bad Request
           schema:
@@ -8982,7 +8978,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/viewgroup.ViewGroup'
+            $ref: '#/definitions/view.ViewGroup'
           type: array
       produces:
       - application/json
@@ -9047,7 +9043,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/view.Tab'
+            $ref: '#/definitions/viewtab.Tab'
         "400":
           description: Bad Request
           schema:
@@ -9110,7 +9106,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/view.Tab'
+            $ref: '#/definitions/viewtab.Tab'
         "400":
           description: Bad Request
           schema:
@@ -9158,7 +9154,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/view.Tab'
+            $ref: '#/definitions/viewtab.Tab'
         "404":
           description: Not Found
           schema:
@@ -9192,7 +9188,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/view.Tab'
+            $ref: '#/definitions/viewtab.Tab'
         "400":
           description: Bad Request
           schema:
@@ -9247,7 +9243,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/viewgroup.View'
+                    $ref: '#/definitions/view.View'
                   type: array
               type: object
         "400":
@@ -9278,7 +9274,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/viewgroup.View'
+            $ref: '#/definitions/view.View'
         "400":
           description: Bad Request
           schema:
@@ -9326,7 +9322,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/viewgroup.View'
+            $ref: '#/definitions/view.View'
         "404":
           description: Not Found
           schema:
@@ -9360,7 +9356,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/viewgroup.View'
+            $ref: '#/definitions/view.View'
         "400":
           description: Bad Request
           schema:
@@ -9510,7 +9506,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/view.Widget'
+            $ref: '#/definitions/widget.Widget'
         "400":
           description: Bad Request
           schema:
@@ -9689,7 +9685,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/view.Widget'
+            $ref: '#/definitions/widget.Widget'
         "400":
           description: Bad Request
           schema:
@@ -9737,7 +9733,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/view.Widget'
+            $ref: '#/definitions/widget.Widget'
         "404":
           description: Not Found
           schema:
@@ -9771,7 +9767,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/view.Widget'
+            $ref: '#/definitions/widget.Widget'
         "400":
           description: Bad Request
           schema:

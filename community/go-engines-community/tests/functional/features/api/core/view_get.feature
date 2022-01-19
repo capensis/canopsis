@@ -168,6 +168,7 @@ Feature: Get a view
           "_id": "test-tab-to-view-get-2",
           "title": "test-tab-to-view-get-2-title",
           "author": "test-tab-to-view-get-2-author",
+          "widgets": [],
           "created": 1611229670,
           "updated": 1611229670
         }

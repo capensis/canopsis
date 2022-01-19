@@ -48,7 +48,7 @@ func NewApi(
 // @Security JWTAuth
 // @Security BasicAuth
 // @Param id path string true "widget id"
-// @Success 200 {object} view.Widget
+// @Success 200 {object} Widget
 // @Failure 404 {object} common.ErrorResponse
 // @Router /widgets/{id} [get]
 func (a *api) Get(c *gin.Context) {
@@ -85,7 +85,7 @@ func (a *api) Get(c *gin.Context) {
 // @Security JWTAuth
 // @Security BasicAuth
 // @Param body body EditRequest true "body"
-// @Success 201 {object} view.Widget
+// @Success 201 {object} Widget
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /widgets [post]
 func (a *api) Create(c *gin.Context) {
@@ -134,7 +134,7 @@ func (a *api) Create(c *gin.Context) {
 // @Security BasicAuth
 // @Param id path string true "widget id"
 // @Param body body EditRequest true "body"
-// @Success 200 {object} view.Widget
+// @Success 200 {object} Widget
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
 // @Router /widgets/{id} [put]
@@ -249,7 +249,7 @@ func (a *api) Delete(c *gin.Context) {
 // @Security BasicAuth
 // @Param id path string true "widget id"
 // @Param body body CopyRequest true "body"
-// @Success 201 {object} view.Widget
+// @Success 201 {object} Widget
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
 // @Router /widget-copy/{id} [post]

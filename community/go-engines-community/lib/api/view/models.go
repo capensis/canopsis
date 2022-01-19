@@ -3,7 +3,7 @@ package view
 import (
 	"encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -45,9 +45,31 @@ type EditPositionItemRequest struct {
 	Views []string `json:"views" binding:"required"`
 }
 
+type View struct {
+	ID              string                     `bson:"_id" json:"_id,omitempty"`
+	Enabled         bool                       `bson:"enabled" json:"enabled"`
+	Title           string                     `bson:"title" json:"title"`
+	Description     string                     `bson:"description" json:"description"`
+	Tabs            []viewtab.Tab              `bson:"tabs" json:"tabs,omitempty"`
+	Tags            []string                   `bson:"tags" json:"tags"`
+	PeriodicRefresh *types.DurationWithEnabled `bson:"periodic_refresh" json:"periodic_refresh"`
+	Group           *ViewGroup                 `bson:"group" json:"group,omitempty"`
+	Author          string                     `bson:"author" json:"author,omitempty"`
+	Created         *types.CpsTime             `bson:"created" json:"created,omitempty" swaggertype:"integer"`
+	Updated         *types.CpsTime             `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
+}
+
+type ViewGroup struct {
+	ID      string         `bson:"_id" json:"_id,omitempty"`
+	Title   string         `bson:"title" json:"title"`
+	Author  string         `bson:"author" json:"author,omitempty"`
+	Created *types.CpsTime `bson:"created" json:"created,omitempty" swaggertype:"integer"`
+	Updated *types.CpsTime `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
+}
+
 type AggregationResult struct {
-	Data       []viewgroup.View `bson:"data" json:"data"`
-	TotalCount int64            `bson:"total_count" json:"total_count"`
+	Data       []View `bson:"data" json:"data"`
+	TotalCount int64  `bson:"total_count" json:"total_count"`
 }
 
 func (r *AggregationResult) GetData() interface{} {
@@ -58,8 +80,13 @@ func (r *AggregationResult) GetTotal() int64 {
 	return r.TotalCount
 }
 
+type ImportItemRequest struct {
+	ViewGroup
+	Views []View `json:"views"`
+}
+
 type ImportRequest struct {
-	Items []viewgroup.ViewGroup `json:"items" binding:"required,notblank,dive"`
+	Items []ImportItemRequest `json:"items" binding:"required,notblank,dive"`
 }
 
 func (r ImportRequest) MarshalJSON() ([]byte, error) {
@@ -78,7 +105,12 @@ type ExportRequest struct {
 	Views []string `json:"views"`
 }
 
+type ExportViewGroupResponse struct {
+	ViewGroup `bson:",inline"`
+	Views     []View `json:"views"`
+}
+
 type ExportResponse struct {
-	Groups []viewgroup.ViewGroup `json:"groups"`
-	Views  []viewgroup.View      `json:"views"`
+	Groups []ExportViewGroupResponse `json:"groups"`
+	Views  []View                    `json:"views"`
 }
