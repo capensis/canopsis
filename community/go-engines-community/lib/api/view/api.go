@@ -343,7 +343,7 @@ func (a *api) UpdatePositions(c *gin.Context) {
 // @Produce json
 // @Security JWTAuth
 // @Security BasicAuth
-// @Param body body []ViewGroup true "body"
+// @Param body body []ImportItemRequest true "body"
 // @Success 204
 // @Router /view-import [post]
 func (a *api) Import(c *gin.Context) {
