@@ -7,9 +7,10 @@
 
 - name: Initialize PostgreSQL
   command: "postgresql-{{ postgresql_main_version }}-setup initdb"
-  creates: "{{ postgresql_conf_path }}"
   register: initdbcmd
   failed_when: initdbcmd.rc != 0
+  args:
+    creates: "{{ postgresql_conf_path }}"
 
 - name: Run timescaledb-tune for the current environment
   # note: we need to use the yes(1) Unix command because the -yes option is buggy,
