@@ -23,7 +23,7 @@
   blockinfile:
     path: "{{ postgresql_conf_path }}"
     block: "timescaledb.telemetry_level=off"
-    owner: "{{ postgresql_unix_user }}" 
+    owner: "{{ postgresql_unix_user }}"
     group: "{{ postgresql_unix_user }}"
     mode: '0600'
     create: no

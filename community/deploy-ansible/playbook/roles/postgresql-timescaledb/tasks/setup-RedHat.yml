@@ -17,12 +17,12 @@
 
 - name: Import PostgreSQL GPG key into RPM
   rpm_key:
-    key: /etc/pki/rpm-gpg/RPM-GPG-KEY-PKGCLOUD-TIMESCALEDB 
+    key: /etc/pki/rpm-gpg/RPM-GPG-KEY-PKGCLOUD-TIMESCALEDB
     state: present
 
 - name: Import pkgcloud TimescaleDB GPG key into RPM
   rpm_key:
-    key: /etc/pki/rpm-gpg/RPM-GPG-KEY-PKGCLOUD-TIMESCALEDB 
+    key: /etc/pki/rpm-gpg/RPM-GPG-KEY-PKGCLOUD-TIMESCALEDB
     state: present
 
 - name: Add PostgreSQL repo
