@@ -79,6 +79,7 @@ func (a *api) List(c *gin.Context) {
 // @Param limit query integer true "items per page"
 // @Param sort query string false "sort query"
 // @Param sort_by query string false "sort query"
+// @Param with_instructions query boolean false "show assigned instructions and execution flags"
 // @Success 200 {object} common.PaginatedListResponse{data=[]Entity}
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /weather-services/{id} [get]
