@@ -3,6 +3,10 @@ package action_test
 import (
 	"context"
 	"fmt"
+	"sync"
+	"testing"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -13,9 +17,6 @@ import (
 	mock_engine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/engine"
 	"github.com/golang/mock/gomock"
 	"go.mongodb.org/mongo-driver/bson"
-	"sync"
-	"testing"
-	"time"
 )
 
 type entityPatternListWrapper struct {
@@ -79,7 +80,7 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 	taskChannel := make(chan action.Task)
 	defer close(taskChannel)
 
-	pool := action.NewWorkerPool(5, axeRpcMock, webhookRpcMock, alarmAdapterMock, json.NewEncoder(), log.NewLogger(true))
+	pool := action.NewWorkerPool(5, axeRpcMock, webhookRpcMock, alarmAdapterMock, json.NewEncoder(), log.NewLogger(true), nil)
 	resultChannel, err := pool.RunWorkers(ctx, taskChannel)
 	if err != nil {
 		t.Fatal("error shouldn't be raised")
@@ -97,9 +98,9 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 				Action: action.Action{
 					EntityPatterns: p,
 					Type:           "action_1",
-					Parameters: &types.OperationParameters{
-						Output: "output 1",
-						Author: "author 1",
+					Parameters: map[string]interface{}{
+						"output": "output 1",
+						"author": "author 1",
 					},
 				},
 				Alarm: types.Alarm{
@@ -125,9 +126,9 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 				Action: action.Action{
 					EntityPatterns: p,
 					Type:           "action_2",
-					Parameters: &types.OperationParameters{
-						Output: "output 2",
-						Author: "author 2",
+					Parameters: map[string]interface{}{
+						"output": "output 2",
+						"author": "author 2",
 					},
 				},
 				Alarm: types.Alarm{
@@ -143,9 +144,9 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 				Action: action.Action{
 					EntityPatterns: p,
 					Type:           "action_3",
-					Parameters: &types.OperationParameters{
-						Output: "output 3",
-						Author: "author 3",
+					Parameters: map[string]interface{}{
+						"output": "output 3",
+						"author": "author 3",
 					},
 				},
 				Alarm: types.Alarm{
@@ -172,9 +173,9 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 				Action: action.Action{
 					EntityPatterns: p,
 					Type:           "action_1",
-					Parameters: &types.OperationParameters{
-						Output: "rendered output: {{.Entity.ID}}",
-						Author: "rendered author: {{.Alarm.ID}}",
+					Parameters: map[string]interface{}{
+						"output": "rendered output: {{.Entity.ID}}",
+						"author": "rendered author: {{.Alarm.ID}}",
 					},
 				},
 				Alarm: types.Alarm{
@@ -281,7 +282,7 @@ func TestPool_RunWorkers_GivenCancelContext_ShouldCancelTasks(t *testing.T) {
 	taskChannel := make(chan action.Task)
 
 	poolSize := 5
-	pool := action.NewWorkerPool(poolSize, axeRpcMock, webhookRpcMock, alarmAdapterMock, json.NewEncoder(), log.NewLogger(true))
+	pool := action.NewWorkerPool(poolSize, axeRpcMock, webhookRpcMock, alarmAdapterMock, json.NewEncoder(), log.NewLogger(true), nil)
 	resultChannel, err := pool.RunWorkers(ctx, taskChannel)
 	if err != nil {
 		t.Fatal("error shouldn't be raised")

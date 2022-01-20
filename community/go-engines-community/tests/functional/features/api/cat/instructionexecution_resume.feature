@@ -16,20 +16,20 @@ Feature: pause a instruction execution
         {
           "endpoint": "test-instruction-execution-resume-1-step-1-endpoint",
           "name": "test-instruction-execution-resume-1-step-1-name",
-          "time_to_complete": {"seconds": 4, "unit":"s"},
+          "time_to_complete": {"value": 4, "unit":"s"},
           "operations": [
             {
               "started_at": 1597905434,
               "completed_at": 1597905437,
               "name": "test-instruction-execution-resume-1-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-resume-1-step-1-operation-1-description",
               "jobs": []
             },
             {
               "completed_at": 0,
               "name": "test-instruction-execution-resume-1-step-1-operation-2-name",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-execution-resume-1-step-1-operation-2-description",
               "jobs": []
             }
@@ -37,14 +37,14 @@ Feature: pause a instruction execution
         },
         {
           "name": "test-instruction-execution-resume-1-step-2-name",
-          "time_to_complete": {"seconds": 6, "unit":"s"},
+          "time_to_complete": {"value": 6, "unit":"s"},
           "endpoint": "test-instruction-execution-resume-1-step-2-endpoint",
           "operations": [
             {
               "started_at": 0,
               "completed_at": 0,
               "name": "test-instruction-execution-resume-1-step-2-operation-1-name",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 6, "unit":"s"},
               "description": "",
               "jobs": []
             }

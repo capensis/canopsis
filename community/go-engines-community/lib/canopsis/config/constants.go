@@ -1,19 +1,20 @@
 package config
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"html/template"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
 // Default config values
 const (
-	AlarmBaggotTime           = 60 * time.Second
 	AlarmCancelAutosolveDelay = 60 * 60 * time.Second
 	AlarmDefaultNameScheme    = "{{ rand_string 2 }}-{{ rand_string 2 }}-{{ rand_string 2 }}"
 
 	ApiTokenExpiration    = 24 * time.Hour
 	ApiTokenSigningMethod = "HS256"
+	ApiBulkMaxSize        = 10000
 
 	RemediationHttpTimeout                    = 30 * time.Second
 	RemediationLaunchJobRetriesAmount         = 3
@@ -21,6 +22,9 @@ const (
 	RemediationWaitJobCompleteRetriesAmount   = 12
 	RemediationWaitJobCompleteRetriesInterval = 5 * time.Second
 	RemediationPauseManualInstructionInterval = 15 * time.Second
+
+	MetricsSliInterval    = time.Hour
+	MaxMetricsSliInterval = time.Hour
 )
 
 func CreateDisplayNameTpl(text string) (*template.Template, error) {

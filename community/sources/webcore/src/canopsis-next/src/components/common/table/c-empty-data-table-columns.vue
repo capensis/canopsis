@@ -1,5 +1,5 @@
 <template lang="pug">
-  .v-table__overflow
+  div.v-table__overflow
     table.v-datatable.v-table.theme--light
       tbody
         tr

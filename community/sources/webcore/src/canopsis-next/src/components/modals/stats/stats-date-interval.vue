@@ -25,8 +25,9 @@ import { pick } from 'lodash';
 
 import { MODALS, TIME_UNITS, QUICK_RANGES } from '@/constants';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import StatsDateIntervalForm from '@/components/widgets/stats/stats-date-interval-form.vue';
 
@@ -39,8 +40,9 @@ export default {
   },
   components: { StatsDateIntervalForm, ModalWrapper },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
+    modalInnerMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     const { interval } = this.modal.config;

@@ -1,26 +1,23 @@
 # L'enrichissement
 
-Canopsis étant un hyperviseur, une des fonctions attendues concerne l'enrichissement de données.  
+Canopsis étant un hyperviseur, une des fonctions attendues concerne l'enrichissement de données.
 
-Nous pouvons considérer que les informations transmises par les sources de données et notamment les superviseurs, sont des informations *pauvres*.
+Nous pouvons considérer que les informations transmises par les sources de données (et notamment les superviseurs) sont des informations *pauvres*.
 
 Elles sont pauvres dans le sens où elles nous signifient dans la majeure partie des cas qu'il y a une alarme (ou une mise à jour d'alarme) concernant une entité.
 
 !!! note "Une entité ?"
-    Une entité est un composant typé (composant, ressource, observateur)
+    Une entité est un composant typé (composant, ressource, service).
 
 Pour aider les pilotes des centres d'opérations, il est indispensable d'enrichir ces informations et ainsi de qualifier au plus juste les alarmes à traiter.
 
-L'idée est donc de classer les alarmes, apporter de l'information objective sur des météos de services, afin de faciliter la prise de décision.
+Le but est donc de classer les alarmes et d'apporter de l'information objective sur des météos de services, afin de faciliter la prise de décision.
 
 Plusieurs possibilités sont offertes dans Canopsis :
 
 * Enrichissement systématique depuis les évènements
 * Enrichissement conditionné par des règles de gestion appliquées aux évènements (Pro)
 * Enrichissement par l'intermédiaire de référentiels externes (Pro)
-
-!!! attention
-    Dans tous les cas, ces possibilités ne sont offertes que par l'utilisation des moteurs Go.
 
 ## Enrichissement depuis les évènements
 
@@ -90,9 +87,9 @@ Considérons l'évènement suivant :
 
 Chose importante, les attributs pris en charge sont décrits [dans la partie sur les champs des évènements de la documentation de l'event-filter du moteur `engine-che`](../../guide-administration/moteurs/moteur-che-event_filter.md#champs-des-evenements).
 
-Dans notre cas, l'attribut `groupe` est personalisé et sera donc positionné *automatiquement* dans un dictionnaire **`extrainfos`**.
+Dans notre cas, l'attribut `groupe` est personalisé et sera donc *automatiquement* inséré dans un dictionnaire **`extrainfos`**.
 
-On commence en ajoutant une règle via le menu adéquat
+On commence en ajoutant une règle via le menu adéquat :
 
 ![Menu Event-filter](./img/event_filter_menu.png "Menu Event-filter")
 
@@ -102,12 +99,12 @@ Ensuite, on définit sur quels évènements sera exécutée cette règle. Dans n
 
 ![Définition du pattern](./img/event_filter_edit_pattern.png "Définition du pattern")
 
-Dernière étape, nous allons récupérer le contenu de l'attribut `groupe` et le positionner dans un nouvel attribut d'entité `domainemetier`.
+Dernière étape, nous allons récupérer le contenu de l'attribut `groupe` et le placer dans un nouvel attribut d'entité `domainemetier`.
 
 ![Ajout d'une action](./img/event_filter_ajout_action.png "Ajout d'une action")
 
 !!! attention
-    Pour manipuler l'entité comme nous venons de le faire, une opération préalable est nécessaire. Une règle de [copie d'entité](../../guide-administration/moteurs/moteur-che-event_filter.md#ajout-dinformations-a-lentite) doit être présente
+    Pour manipuler l'entité comme nous venons de le faire, une opération préalable est nécessaire. Une règle de [copie d'entité](../../guide-administration/moteurs/moteur-che-event_filter.md#ajout-dinformations-a-lentite) doit être présente.
 
 Le résultat pourra être observé sur un Bac à alarmes, par exemple :
 
@@ -121,7 +118,7 @@ L'enrichissement par référentiel externe passe par le développement d'un *dri
 
 Dans l'édition Pro de Canopsis, il est notamment possible d'interconnecter les outils **Service Now** et **iTop**.
 
-Pour plus d'informations, n'hésitez pas à nous consulter.
+Pour plus d'informations, n'hésitez pas à [nous consulter](https://www.capensis.fr/canopsis/).
 
 ## Annexes
 
@@ -129,12 +126,12 @@ Pour plus d'informations, n'hésitez pas à nous consulter.
 
 De manière générale, vous pouvez consulter le contenu de la base de données qui porte les entités, le Contexte.
 
-Pour cela, vous devez instancier un widget « Explorateur de contexte » et effectuer une recherche sur l'entité voulue.
+Pour cela, vous devez instancier un widget « Explorateur de contexte » et y faire une recherche sur l'entité voulue.
 
-Voici un exemple avec `ressource-doc1`.
+Voici un exemple avec `ressource-doc1` :
 
 ![Contexte](./img/consulter_contexte.png "Consulter le contexte")
 
-Puis avec `ressource-doc2`.
+Puis avec `ressource-doc2` :
 
 ![Contexte](./img/consulter_contexte2.png "Consulter le contexte")

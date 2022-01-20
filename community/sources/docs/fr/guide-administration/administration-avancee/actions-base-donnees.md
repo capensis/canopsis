@@ -1,4 +1,4 @@
-# Nettoyage, sauvegarde et restauration des bases de données (MongoDB et InfluxDB)
+# Nettoyage, sauvegarde et restauration des bases de données
 
 ## MongoDB
 
@@ -7,7 +7,7 @@
 Cette section va lister différentes commandes pour purger des collections de la base de données. La connexion à la base et le nettoyage peuvent se faire via la ligne de commande (`mongo canopsis -u cpsmongo -p MOT_DE_PASSE --host XXXX`) ou bien via [Robo3T](https://robomongo.org). Dans les sous-sections suivantes, les commandes ont été réalisées en ligne de commande.
 
 !!! attention
-    Cette manipulation a un impact métier important et ne doit être réalisée que par une personne compétente. **Avant toute opération, il est vivement conseillé de faire une [sauvegarde de la base MongoDB](#sauvegarde)**.
+    Cette manipulation a une incidence métier importante et ne doit être réalisée que par une personne compétente. **Avant toute opération, il est vivement conseillé de faire une [sauvegarde de la base MongoDB](#sauvegarde)**.
 
 Avant de supprimer des documents, vous pouvez toujours vérifier la liste des documents concernés avec `db.<nom de la collection>.find(<requête>)` et voir leur nombre `db.<nom de la collection>.count(<requête>)`. Ces fonctions prennent en paramètre une requête, qui va filtrer sur les documents de la collection.
 
@@ -67,7 +67,7 @@ mongodump --username cpsmongo --password canopsis --db canopsis --out /chemin/ve
 ### Restauration
 
 !!! attention
-    Cette manipulation a un impact métier important et ne doit être réalisée que par une personne compétente. La restauration de la base de données ne doit être effectuée que si celle-ci est endommagée, pour corriger l'incident.
+    Cette manipulation a une incidence métier importante et ne doit être réalisée que par une personne compétente. La restauration de la base de données ne doit être effectuée que si celle-ci est endommagée, pour corriger l'incident.
 
 Avant de procéder à la restauration, arrêtez l'hyperviseur.
 ```shell
@@ -84,48 +84,6 @@ mongorestore --username cpsmongo --password canopsis --db canopsis /chemin/vers/
     Lors de la sauvegarde de la base, la commande crée un sous-dossier dans `/chemin/vers/sauvegarde` pour y stocker les fichiers. Ce sous-dossier doit être ajouté au chemin dans la commande `mongorestore`.
 
 Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.
-```shell
-canoctl start
-```
-
-## InfluxDB
-
-### Sauvegarde
-
-Utilisez la commande `influxd backup` via une tâche cron. De préférence, faites la sauvegarde sur un système de fichiers externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.influxdata.com/influxdb/v1.7/administration/backup_and_restore/#backup).
-
-```sh
-influxd backup -portable -database canopsis /chemin/vers/sauvegarde
-```
-
-### Restauration
-
-!!! attention
-    Cette manipulation a un impact métier important et ne doit être réalisée que par une personne compétente. La restauration de la base de données ne doit être effectuée que si celle-ci est endommagée, pour de corriger l'incident.
-
-Avant de procéder à la restauration, arrêtez l'hyperviseur.
-```shell
-canoctl stop
-```
-
-Utilisez la commande `influxd restore`. De préférence, récupérez la sauvegarde depuis un système de fichiers externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.influxdata.com/influxdb/v1.7/administration/backup_and_restore/#restore).
-
-```sh
-influxd restore -portable /chemin/vers/sauvegarde
-```
-
-!!! note
-    Il est possible que la commande retourne un message d'erreur :
-
-    ```
-    error updating meta: DB metadata not changed. database may already exist
-    restore: DB metadata not changed. database may already exist
-    ```
-
-    Il s'agit uniquement des métadonnées qui sont déjà présentes dans InfluxDB et qui n'ont pas changé. Le contenu de la table `canopsis` a bien été restauré.
-
-Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.
-
 ```shell
 canoctl start
 ```

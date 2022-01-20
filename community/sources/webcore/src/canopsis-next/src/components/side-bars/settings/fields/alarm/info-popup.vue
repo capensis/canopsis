@@ -4,7 +4,6 @@
       div.subheading {{ $t('settings.infoPopup.title') }}
       v-layout(justify-end)
         v-btn.primary(
-          data-test="infoPopupButton",
           small,
           @click="edit"
         ) {{ $t('common.create') }}/{{ $t('common.edit') }}
@@ -13,7 +12,10 @@
 <script>
 import { MODALS } from '@/constants';
 
+import { formMixin } from '@/mixins/form';
+
 export default {
+  mixins: [formMixin],
   model: {
     prop: 'popups',
     event: 'input',
@@ -35,7 +37,7 @@ export default {
         config: {
           infoPopups: this.popups,
           columns: this.columns,
-          action: popups => this.$emit('input', popups),
+          action: popups => this.updateModel(popups),
         },
       });
     },

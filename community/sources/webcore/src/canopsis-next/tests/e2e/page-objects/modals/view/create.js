@@ -40,9 +40,8 @@ const commands = {
   },
   setViewGroupTags(value) {
     if (isArray(value)) {
-      value.forEach(tag =>
-        this.customSetValue('@viewFieldGroupTags', tag)
-          .customKeyup('@viewFieldGroupTags', this.api.Keys.ENTER));
+      value.forEach(tag => this.customSetValue('@viewFieldGroupTags', tag)
+        .customKeyup('@viewFieldGroupTags', this.api.Keys.ENTER));
     } else {
       this.customSetValue('@viewFieldGroupTags', value)
         .customKeyup('@viewFieldGroupTags', this.api.Keys.ENTER);

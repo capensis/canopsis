@@ -16,15 +16,12 @@ export CANOPSIS_ENV_CONFIRM=${CANOPSIS_ENV_CONFIRM:=1}
 export CANOPSIS_PACKAGE_TAG=${CANOPSIS_PACKAGE_TAG:="${CANOPSIS_TAG}"}
 export CANOPSIS_PACKAGE_REL=${CANOPSIS_PACKAGE_REL:="1"}
 
-# By default, pull, commit and push sources/webcore/src/canopsis-next from
-# the canopsis/canopsis-next repository.
-export CANOPSIS_BUILD_NEXT=${CANOPSIS_BUILD_NEXT:="0"}
-
 # Only avoid undefined variable error
 export http_proxy=${http_proxy:=""}
 export https_proxy=${https_proxy:=""}
 
 export FORCE_COLOR=0
+export CLICOLOR=0
 export NO_COLOR=1
 export DOCKER_SCAN_SUGGEST=false
 export NPM_CONFIG_PROGRESS=false
@@ -38,7 +35,6 @@ function env_recap() {
     echo "CANOPSIS_PACKAGE_TAG: ${CANOPSIS_PACKAGE_TAG}"
     echo "CANOPSIS_PACKAGE_REL: ${CANOPSIS_PACKAGE_REL}"
     echo "CANOPSIS_DOCKER_MODE: ${CANOPSIS_DOCKER_MODE}"
-    echo "CANOPSIS_BUILD_NEXT: ${CANOPSIS_BUILD_NEXT}"
 }
 
 function ensure_env() {

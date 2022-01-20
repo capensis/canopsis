@@ -36,7 +36,7 @@ func (w *lockedPeriodicalWorker) GetInterval() time.Duration {
 	return w.worker.GetInterval()
 }
 
-func (w *lockedPeriodicalWorker) Work(ctx context.Context) error {
+func (w *lockedPeriodicalWorker) Work(ctx context.Context) {
 	ttl := w.GetInterval()
 	if ttl > ttlDiff {
 		ttl -= ttlDiff
@@ -47,13 +47,12 @@ func (w *lockedPeriodicalWorker) Work(ctx context.Context) error {
 	if err != nil {
 		if err == redislock.ErrNotObtained {
 			w.logger.Debug().Msg("lock already obtained")
-
-			return nil
+			return
 		}
 
 		w.logger.Err(err).Msg("cannot obtain lock")
-		return nil
+		return
 	}
 
-	return w.worker.Work(ctx)
+	w.worker.Work(ctx)
 }

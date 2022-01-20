@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { TIME_UNITS, DATETIME_FORMATS, ALARM_INTERVAL_FIELDS, DATETIME_INTERVAL_TYPES } from '@/constants';
+import { TIME_UNITS, ALARM_INTERVAL_FIELDS, DATETIME_FORMATS, DATETIME_INTERVAL_TYPES } from '@/constants';
 
 import { convertDateIntervalToDateObject } from '@/helpers/date/date-intervals';
 import { convertDateToStartOfUnitString, subtractUnitFromDate } from '@/helpers/date/date';

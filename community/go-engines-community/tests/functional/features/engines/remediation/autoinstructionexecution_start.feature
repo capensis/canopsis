@@ -17,10 +17,7 @@ Feature: run an auto instruction
     }
     """
     When I wait the end of event processing
-    When I wait 8s
-    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-1&with_steps=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-1&with_steps=true until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -117,10 +114,7 @@ Feature: run an auto instruction
     }
     """
     When I wait the end of event processing
-    When I wait 4s
-    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-2&with_steps=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-2&with_steps=true until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -180,10 +174,7 @@ Feature: run an auto instruction
     }
     """
     When I wait the end of event processing
-    When I wait 4s
-    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-3&with_steps=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-3&with_steps=true until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -269,10 +260,7 @@ Feature: run an auto instruction
    }
    """
    When I wait the end of event processing
-   When I wait 8s
-   When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-4-1&with_steps=true
-   Then the response code should be 200
-   Then the response body should contain:
+   When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-4-1&with_steps=true until response code is 200 and body contains:
    """json
    {
      "data": [
@@ -397,10 +385,7 @@ Feature: run an auto instruction
     }
     """
     When I wait the end of event processing
-    When I wait 8s
-    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-5&with_steps=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-5&with_steps=true until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -435,3 +420,140 @@ Feature: run an auto instruction
       ]
     }
     """
+
+  Scenario: given two new alarms for the same instruction should run next auto instructions for both alarms if instruction failed
+    When I am admin
+    When I send an event:
+   """json
+   {
+     "connector": "test-connector-to-run-auto-instruction-6",
+     "connector_name": "test-connector-name-to-run-auto-instruction-6",
+     "source_type": "resource",
+     "event_type": "check",
+     "component": "test-component-to-run-auto-instruction-6",
+     "resource": "test-resource-to-run-auto-instruction-6-1",
+     "state": 1,
+     "output": "test-output-to-run-auto-instruction-6"
+   }
+   """
+    When I wait the end of event processing
+    When I send an event:
+   """json
+   {
+     "connector": "test-connector-to-run-auto-instruction-6",
+     "connector_name": "test-connector-name-to-run-auto-instruction-6",
+     "source_type": "resource",
+     "event_type": "check",
+     "component": "test-component-to-run-auto-instruction-6",
+     "resource": "test-resource-to-run-auto-instruction-6-2",
+     "state": 1,
+     "output": "test-output-to-run-auto-instruction-6"
+   }
+   """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-6-1&with_steps=true until response code is 200 and body contains:
+   """json
+   {
+     "data": [
+       {
+         "v": {
+           "resource": "test-resource-to-run-auto-instruction-6-1",
+           "steps": [
+             {},
+             {},
+             {
+               "_t": "autoinstructionstart",
+               "a": "system",
+               "m": "Instruction test-instruction-to-run-auto-instruction-6-1-name."
+             },
+             {
+               "_t": "instructionjobstart",
+               "a": "system",
+               "m": "Instruction test-instruction-to-run-auto-instruction-6-1-name. Job test-job-to-run-auto-instruction-6-name."
+             },
+             {
+               "_t": "instructionjobfail",
+               "a": "system",
+               "m": "Instruction test-instruction-to-run-auto-instruction-6-1-name. Job test-job-to-run-auto-instruction-6-name."
+             },
+             {
+               "_t": "autoinstructionfail",
+               "a": "system",
+               "m": "Instruction test-instruction-to-run-auto-instruction-6-1-name."
+             },
+             {
+               "_t": "autoinstructionstart",
+               "a": "system",
+               "m": "Instruction test-instruction-to-run-auto-instruction-6-2-name."
+             },
+             {
+               "_t": "instructionjobstart",
+               "a": "system",
+               "m": "Instruction test-instruction-to-run-auto-instruction-6-2-name. Job test-job-to-run-auto-instruction-2-name."
+             },
+             {
+               "_t": "instructionjobcomplete",
+               "a": "system",
+               "m": "Instruction test-instruction-to-run-auto-instruction-6-2-name. Job test-job-to-run-auto-instruction-2-name."
+             },
+             {
+               "_t": "autoinstructioncomplete",
+               "a": "system",
+               "m": "Instruction test-instruction-to-run-auto-instruction-6-2-name."
+             }
+           ]
+         }
+       }
+     ]
+   }
+   """
+    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-6-2&with_steps=true until response code is 200 and body contains:
+   """json
+   {
+     "data": [
+       {
+         "v": {
+           "resource": "test-resource-to-run-auto-instruction-6-2",
+           "steps": [
+             {},
+             {},
+             {
+               "_t": "autoinstructionalreadyrunning",
+               "a": "system"
+             },
+             {
+               "_t": "instructionjobfail",
+               "a": "system",
+               "m": "Instruction test-instruction-to-run-auto-instruction-6-1-name. Job test-job-to-run-auto-instruction-6-name."
+             },
+             {
+               "_t": "autoinstructionfail",
+               "a": "system",
+               "m": "Instruction test-instruction-to-run-auto-instruction-6-1-name."
+             },
+             {
+               "_t": "autoinstructionstart",
+               "a": "system",
+               "m": "Instruction test-instruction-to-run-auto-instruction-6-3-name."
+             },
+             {
+               "_t": "instructionjobstart",
+               "a": "system",
+               "m": "Instruction test-instruction-to-run-auto-instruction-6-3-name. Job test-job-to-run-auto-instruction-2-name."
+             },
+             {
+               "_t": "instructionjobcomplete",
+               "a": "system",
+               "m": "Instruction test-instruction-to-run-auto-instruction-6-3-name. Job test-job-to-run-auto-instruction-2-name."
+             },
+             {
+               "_t": "autoinstructioncomplete",
+               "a": "system",
+               "m": "Instruction test-instruction-to-run-auto-instruction-6-3-name."
+             }
+           ]
+         }
+       }
+     ]
+   }
+   """
