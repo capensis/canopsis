@@ -9,7 +9,7 @@
       v-divider
     v-card-text.pa-0.position-relative
       component(
-        v-bind="getWidgetPropsByType(widget.type)",
+        v-bind="widgetProps",
         :widget="widget",
         :tab-id="tab._id",
         :editing="editing"
@@ -75,6 +75,40 @@ export default {
      */
     widgetWrapperStyles() {
       return { minHeight: `${WIDGET_GRID_ROW_HEIGHT * 2}px` };
+    },
+
+    widgetProps() {
+      const widgetComponentsMap = {
+        [WIDGET_TYPES.alarmList]: 'alarms-list-widget',
+        [WIDGET_TYPES.context]: 'entities-list-widget',
+        [WIDGET_TYPES.serviceWeather]: 'service-weather-widget',
+        [WIDGET_TYPES.statsHistogram]: 'stats-histogram-widget',
+        [WIDGET_TYPES.statsCurves]: 'stats-curves-widget',
+        [WIDGET_TYPES.statsTable]: 'stats-table-widget',
+        [WIDGET_TYPES.statsCalendar]: 'stats-calendar-widget',
+        [WIDGET_TYPES.statsNumber]: 'stats-number-widget',
+        [WIDGET_TYPES.statsPareto]: 'stats-pareto-widget',
+        [WIDGET_TYPES.text]: 'text-widget',
+        [WIDGET_TYPES.counter]: 'counter-widget',
+        [WIDGET_TYPES.testingWeather]: 'testing-weather-widget',
+      };
+      let widgetSpecificsProp = {};
+
+      Object.entries(WIDGET_TYPES_RULES).forEach(([key, rule]) => {
+        if (rule.edition !== this.edition) {
+          widgetComponentsMap[key] = 'c-alert-overlay';
+          widgetSpecificsProp = {
+            message: this.$t('errors.statsWrongEditionError'),
+            value: true,
+          };
+        }
+      });
+
+      return {
+        ...widgetSpecificsProp,
+
+        is: widgetComponentsMap[this.widget.type],
+      };
     },
   },
   methods: {

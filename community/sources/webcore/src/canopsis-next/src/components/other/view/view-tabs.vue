@@ -28,7 +28,8 @@
         template(v-if="updatable && editing")
           v-btn(small, flat, icon, @click.prevent="showUpdateTabModal(tab)")
             v-icon(small) edit
-          clone-tab-btn(:tab="tab")
+          v-btn(small, flat, icon, @click.prevent="showSelectViewModal(tab)")
+            v-icon(small) file_copy
           v-btn(small, flat, icon, @click.prevent="showDeleteTabModal(tab)")
             v-icon(small) delete
     template(v-if="$scopedSlots.default")
@@ -46,7 +47,7 @@
 import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
-import { MODALS } from '@/constants';
+import { MODALS, ROUTES_NAMES } from '@/constants';
 
 import { activeViewMixin } from '@/mixins/active-view';
 import { vuetifyTabsMixin } from '@/mixins/vuetify/tabs';
@@ -128,6 +129,51 @@ export default {
             validationRules: 'required',
           },
           action: title => this.updateViewTabAndFetch({ id: tab._id, data: { ...tab, title } }),
+        },
+      });
+    },
+
+    showSelectViewModal(tab) {
+      this.$modals.show({
+        name: MODALS.selectView,
+        config: {
+          action: viewId => this.showCloneTabModal(tab, viewId),
+        },
+      });
+    },
+
+    showCloneTabModal(tab, viewId) {
+      this.$modals.show({
+        name: MODALS.textFieldEditor,
+        config: {
+          title: this.$t('modals.viewTab.duplicate.title'),
+          field: {
+            name: 'text',
+            label: this.$t('modals.viewTab.fields.title'),
+            validationRules: 'required',
+          },
+          action: async (title) => {
+            const data = {
+              title,
+              view: viewId,
+            };
+
+            const newTab = await this.copyViewTab({ id: tab._id, data });
+
+            if (this.view._id === viewId) {
+              await this.fetchActiveView();
+            }
+
+            this.$router.push({
+              name: ROUTES_NAMES.view,
+              params: {
+                id: viewId,
+              },
+              query: {
+                tabId: newTab._id,
+              },
+            });
+          },
         },
       });
     },

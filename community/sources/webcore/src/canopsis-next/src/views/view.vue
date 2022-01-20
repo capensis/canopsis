@@ -48,15 +48,15 @@ export default {
     activeTab() {
       const { tabId } = this.$route.query;
 
-      if (this.view?.tabs?.length) {
-        if (!tabId) {
-          return this.view.tabs[0];
-        }
-
-        return this.view.tabs.find(tab => tab._id === tabId) ?? null;
+      if (!this.view?.tabs?.length) {
+        return null;
       }
 
-      return null;
+      if (!tabId) {
+        return this.view.tabs[0];
+      }
+
+      return this.view.tabs.find(tab => tab._id === tabId) ?? null;
     },
 
     isViewTabsReady() {
@@ -69,12 +69,13 @@ export default {
   },
 
   created() {
-    this.registerViewOnceWatcher();
     this.$periodicRefresh.register(this.refreshView);
   },
 
-  mounted() {
-    this.fetchActiveView({ id: this.id });
+  async mounted() {
+    await this.fetchActiveView({ id: this.id });
+
+    this.goToFirstTab();
   },
 
   beforeDestroy() {
@@ -91,18 +92,12 @@ export default {
       }
     },
 
-    registerViewOnceWatcher() {
-      const unwatch = this.$watch('view', (view) => {
-        if (view) {
-          const { tabId } = this.$route.query;
+    goToFirstTab() {
+      const { tabId } = this.$route.query;
 
-          if (!tabId && view.tabs && view.tabs.length) {
-            this.$router.replace({ query: { tabId: view.tabs[0]._id } });
-          }
-
-          unwatch();
-        }
-      });
+      if (!tabId && this.view?.tabs?.length) {
+        this.$router.replace({ query: { tabId: this.view.tabs[0]._id } });
+      }
     },
   },
 };

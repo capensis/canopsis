@@ -1,15 +1,15 @@
 <template lang="pug">
-  modal-wrapper(data-test="selectViewTabModal", close)
-    template(slot="title")
+  modal-wrapper(close)
+    template(#title="")
       span {{ $t('modals.selectViewTab.title') }}
-    template(slot="text")
+    template(#text="")
       v-expansion-panel(dark)
         v-expansion-panel-content.secondary(v-for="group in groups", :key="group._id", ripple)
-          template(slot="header")
+          template(#header="")
             div {{ group.title }}
           v-expansion-panel.px-2(dark)
             v-expansion-panel-content.secondary.lighten-1(v-for="view in group.views", :key="view._id", ripple)
-              template(slot="header")
+              template(#header="")
                 div {{ view.title }}
               v-list.pa-0
                 v-list-tile.secondary.lighten-2(
@@ -38,6 +38,9 @@ export default {
     entitiesViewGroupMixin,
     permissionsEntitiesGroupMixin,
   ],
+  mounted() {
+    this.fetchAllGroupsListWithViews();
+  },
   methods: {
     async selectTab(tabId, viewId) {
       if (this.config.action) {

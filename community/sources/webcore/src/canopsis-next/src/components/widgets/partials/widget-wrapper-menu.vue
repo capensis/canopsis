@@ -1,9 +1,10 @@
 <template lang="pug">
   v-menu(offset-y)
-    v-btn.ma-0(slot="activator", icon, small)
-      v-icon(small) more_horiz
+    template(#activator="{ on }")
+      v-btn.ma-0(v-on="on", icon, small)
+        v-icon(small) more_horiz
     v-list(dense)
-      v-list-tile(@click="showSettings({ tabId: tab._id, widget })")
+      v-list-tile(@click="showSettings")
         div {{ $t('common.edit') }}
       v-list-tile(@click="showSelectViewTabModal")
         div {{ $t('common.duplicate') }}
@@ -39,6 +40,15 @@ export default {
     },
   },
   methods: {
+    showSettings() {
+      this.$sidebar.show({
+        name: SIDE_BARS_BY_WIDGET_TYPES[this.widget.type],
+        config: {
+          widget: this.widget,
+        },
+      });
+    },
+
     /**
      * Redirect to selected view and tab, if it's different then the view/tab we're actually on
      */
