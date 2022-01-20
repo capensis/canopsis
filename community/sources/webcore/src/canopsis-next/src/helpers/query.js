@@ -146,21 +146,19 @@ export function convertWeatherWidgetToQuery(widget) {
  * @param {Object} widget
  * @returns {{}}
  */
-export function convertWidgetStatsParameterToQuery(widget) {
-  const statsList = Object.keys(widget.parameters.stats).reduce((acc, stat) => {
-    acc[stat] = {
-      ...omit(widget.parameters.stats[stat], ['position']),
-      stat: widget.parameters.stats[stat].stat.value,
-    };
-    return acc;
-  }, {});
+export const convertWidgetStatsParameterToQuery = widget => ({
+  ...widget.parameters,
 
-  return {
-    ...widget.parameters,
+  stats: Object.entries(widget.parameters.stats)
+    .reduce((acc, [statsKey, stats]) => {
+      acc[statsKey] = {
+        ...omit(stats, ['position']),
+        stat: stats.stat.value,
+      };
 
-    stats: statsList,
-  };
-}
+      return acc;
+    }, {}),
+});
 
 /**
  * This function converts widget with type 'StatsCalendar' to query Object

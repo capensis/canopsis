@@ -17,11 +17,11 @@
 <script>
 import { MAX_LIMIT } from '@/constants';
 
-import entitiesRemediationConfigurationsMixin from '@/mixins/entities/remediation/configurations';
+import { entitiesRemediationConfigurationMixin } from '@/mixins/entities/remediation/configuration';
 
 export default {
   inject: ['$validator'],
-  mixins: [entitiesRemediationConfigurationsMixin],
+  mixins: [entitiesRemediationConfigurationMixin],
   model: {
     prop: 'value',
     event: 'input',

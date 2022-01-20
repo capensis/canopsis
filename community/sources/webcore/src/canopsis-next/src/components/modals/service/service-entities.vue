@@ -18,7 +18,7 @@
         v-layout(v-else, column)
           v-flex(xs12)
             v-layout(justify-center)
-              v-progress-circular(indeterminate, color="primary")
+              v-progress-circular(color="primary", indeterminate)
     template(slot="actions")
       v-alert.ma-0.pa-1.pr-2(
         :value="events.queue.length",
@@ -41,16 +41,16 @@
 </template>
 
 <script>
-import moment from 'moment-timezone';
-
 import { MODALS, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPE_TYPES, SORT_ORDERS } from '@/constants';
 import { PAGINATION_LIMIT } from '@/config';
 
 import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 import { addKeyInEntities } from '@/helpers/entities';
+import { getNowTimestamp } from '@/helpers/date/date';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import eventActionsMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import entitiesServiceEntityMixin from '@/mixins/entities/service-entity';
@@ -70,11 +70,12 @@ export default {
   },
   components: { ServiceTemplate, ModalWrapper },
   mixins: [
+    modalInnerMixin,
     eventActionsMixin,
     entitiesPbehaviorMixin,
     entitiesServiceEntityMixin,
-    submittableMixin(),
-    confirmableModalMixin({ field: 'events' }),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator({ field: 'events' }),
     localQueryMixin,
   ],
   data() {
@@ -138,7 +139,7 @@ export default {
             data: pbehaviorToRequest({
               ...pbehavior,
 
-              tstop: moment().unix(),
+              tstop: getNowTimestamp(),
             }),
           }));
         }

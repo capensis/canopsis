@@ -3,8 +3,6 @@ version: '2'
 volumes:
   mongodbdata:
     driver: local
-  influxdbdata:
-    driver: local
   rabbitmqdata:
     driver: local
 
@@ -38,22 +36,6 @@ services:
     mem_reservation: 3g
     oom_score_adj: -1000
     command: '--wiredTigerCacheSizeGB 2560'
-  influxdb:
-    image: influxdb:${INFLUX_TAG}
-    ports:
-      - "8086:8086"
-    restart: unless-stopped
-    mem_limit: 3g
-    mem_reservation: 3g
-    oom_score_adj: -1000
-    environment:
-      - INFLUXDB_DB=canopsis
-      - INFLUXDB_ADMIN_USER=admin
-      - INFLUXDB_ADMIN_PASSWORD=admin
-      - INFLUXDB_USER=cpsinflux
-      - INFLUXDB_USER_PASSWORD=canopsis
-    volumes:
-      - influxdbdata:/var/lib/influxdb
   redis:
     image: redis:${REDIS_TAG}
     restart: unless-stopped
@@ -135,7 +117,6 @@ services:
     links:
       - mongodb
       - rabbitmq
-      - influxdb
     restart: unless-stopped
   reconfigure:
     image: canopsis/canopsis-reconfigure:${CANOPSIS_IMAGE_TAG}

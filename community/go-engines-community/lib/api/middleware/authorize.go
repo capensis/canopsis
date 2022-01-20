@@ -11,7 +11,7 @@ import (
 
 // Authorize determines if current subject has been authorized to take
 // an action on an object. Use OnlyAuth middleware to only check if user is authenticated.
-
+//
 // Note: if new user is created, then enforcer.LoadPolicy() should be called to reload security policies,
 // it throws http.StatusForbidden otherwise!
 func Authorize(

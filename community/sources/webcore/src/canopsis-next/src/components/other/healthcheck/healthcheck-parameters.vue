@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout.my-2(v-if="!form", justify-center)
-    v-progress-circular(indeterminate, color="primary")
+    v-progress-circular(color="primary", indeterminate)
   v-flex(v-else, xs10, offset-xs1, md8, offset-md2, lg6, offset-lg3)
     v-form(@submit.prevent="submit")
       healthcheck-form(v-model="form")
@@ -15,8 +15,8 @@
 <script>
 import { healthcheckParametersToForm } from '@/helpers/forms/healthcheck';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { validationErrorsMixin } from '@/mixins/form/validation-errors';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 import { entitiesHealthcheckParametersMixin } from '@/mixins/entities/healthcheck';
 
 import HealthcheckForm from '@/components/other/healthcheck/form/healthcheck-form.vue';
@@ -27,8 +27,8 @@ export default {
   },
   components: { HealthcheckForm },
   mixins: [
-    submittableMixin(),
-    validationErrorsMixin(),
+    submittableMixinCreator(),
+    validationErrorsMixinCreator(),
     entitiesHealthcheckParametersMixin,
   ],
   data() {
@@ -46,13 +46,9 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        try {
-          await this.updateHealthcheckParameters({ data: this.form });
+        await this.updateHealthcheckParameters({ data: this.form });
 
-          this.$popups.success({ text: this.$t('success.default') });
-        } catch (err) {
-          this.setFormErrors(err);
-        }
+        this.$popups.success({ text: this.$t('success.default') });
       }
     },
   },
