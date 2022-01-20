@@ -203,6 +203,13 @@ type InstructionWithAlarms struct {
 	Created              types.CpsTime             `bson:"created,omitempty" json:"-"`
 }
 
+type ExecutionStatus struct {
+	ID               string `bson:"_id"`
+	AutoRunning      *bool  `bson:"auto_running"`
+	ManualRunning    *bool  `bson:"manual_running"`
+	AutoAllCompleted *bool  `bson:"auto_all_completed"`
+}
+
 type Execution struct {
 	ID     string `bson:"_id" json:"_id"`
 	Status int    `bson:"status" json:"status"`
