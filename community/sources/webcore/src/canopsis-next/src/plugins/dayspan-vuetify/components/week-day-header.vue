@@ -10,9 +10,9 @@ export default {
       }
 
       return !(
-        this.$dayspan.features.hideOnMove &&
-        this.placeholder &&
-        this.placeholder.event.id === calendarEvent.event.id
+        this.$dayspan.features.hideOnMove
+        && this.placeholder
+        && this.placeholder.event.id === calendarEvent.event.id
       );
     },
   },

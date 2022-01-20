@@ -6,32 +6,40 @@ Vous trouverez ici toute la documentation nécessaire au développement autour d
 
 Canopsis repose sur un ensemble d'API REST ([voir une définition](https://www.redhat.com/fr/topics/api/what-is-a-rest-api)), pour son fonctionnement interne et pour son interfaçage avec d'autres programmes.
 
-Ces API ont connu 4 versions différentes : l'APIv4 est la version actuelle, mais d'anciennes APIv1 et APIv2 sont encore utilisées à ce jour. L'APIv3 a été totalement abandonnée.
+Ces API ont connu 4 versions différentes. L'APIv4 est la version actuelle.
 
-### Nouvelles APIv4
+### APIv4
 
-La documentation des nouvelles APIv4 est disponible [avec Swagger](./swagger).
+La documentation des nouvelles APIv4 est disponible [par le biais de Swagger](./swagger).
 
 Ces nouvelles API suivent l'[OpenAPI Specification 2.0](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/2.0.md).
 
-### Anciennes APIv1 et APIv2
+### Anciennes API
 
-* [`/api/contextgraph/import`](api/api-v2-import.md)
-* [`/api/internal`](api/api-internal.md)
-* [`/api/v2/broadcast-message`](api/api-v2-broadcast-message.md)
-* [`/api/v2/dynamic-infos`](api/api-v2-dynamic-infos.md)
-* [`/api/v2/event`](api/api-v2-event.md) et [structure d'un évènement](struct-event.md)
-* [`/api/v2/eventfilter`](api/api-v2-event-filter.md)
-* [`/api/v2/healthcheck`](api/api-v2-healthcheck.md)
-* [`/api/v2/metaalarmrule`](api/api-v2-meta-alarm-rule.md)
-* [`/api/v2/watcherng`](api/api-v2-watcherng.md)
-* [`/api/v2/weather`](api/api-v2-weather.md)
+Les anciennes API v1 ou v2 ne sont plus utilisées par les dernières versions de Canopsis, et n'ont donc plus lieu d'être utilisées ou documentées.
+
+### URL de l'API
+
+L'API Canopsis peut être interrogée sur deux URL différentes :
+
+ - `http://<canopsis>/backend/api/v4/`: via le reverse-proxy Nginx (avec les [en-têtes CORS](https://developer.mozilla.org/fr/docs/Web/HTTP/CORS))
+ - `http://<canopsis>:8082/api/v4/`: moteur `canopsis-api` directement (sans les en-têtes CORS)
+
+> Remplacer `<canopsis>` par l'adresse IP ou le nom de domaine du Canopsis déployé.
+
+Si l'API est interrogée via un navigateur (Firefox, Chrome, Safari, etc) ou un framework emulant un navigateur (Angular, Electron, etc) et pour lesquels en-têtes CORS sont nécessaires, alors il faut utiliser l'URL du reverse-proxy Nginx.
+
+L'usage de l'URL du moteur `canopsis-api` est possible pour des requêtes dites "classiques", par exemple via des scripts, via l'outil `curl` ou encore via des webhooks de solutions externes.
+
+## Structure des évènements
+
+* [Structure des évènements](struct-event.md)
 
 ## Collections de base de données
 
 * [Collection `default_entities` pour les entités](base-de-donnees/default-entities.md)
 * [Collection `periodical_alarm` pour les alarmes](base-de-donnees/periodical-alarm.md)
 
-## Guides de développement
+## Aides au développement
 
 * [Développement d'un linkbuilder](dev-linkbuilder.md)

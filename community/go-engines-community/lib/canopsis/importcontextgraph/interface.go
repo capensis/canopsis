@@ -39,7 +39,7 @@ type ConfigurationItem struct {
 	Name             *string                    `json:"name" bson:"name,omitempty"`
 	Depends          []string                   `json:"-" bson:"depends"`
 	Impact           []string                   `json:"-" bson:"impact"`
-	EnableHistory    []string                   `json:"-" bson:"enable_history"`
+	EnableHistory    []int64                    `json:"-" bson:"enable_history"`
 	Measurements     []interface{}              `json:"measurements" bson:"measurements"`
 	EntityPatterns   *pattern.EntityPatternList `bson:"entity_patterns,omitempty" json:"entity_patterns"`
 	OutputTemplate   *string                    `bson:"output_template,omitempty" json:"output_template"`

@@ -19,8 +19,7 @@ Dans ce contexte, le connecteur **prometheus2canopsis** est un programme qui :
 
     Port d'écoute par défaut : 8080/tcp (configurable)
 
-- *lit et transforme* les données reçues pour en faire des
-[évènements Canopsis][struct-event]
+- *lit et transforme* les données reçues pour en faire des évènements Canopsis
 
     Le message envoyé par l'Alertmanager (JSON) est décodé et un évènement
     Canopsis est construit pour chaque alerte. Le contenu placé dans l'évènement
@@ -31,7 +30,6 @@ Dans ce contexte, le connecteur **prometheus2canopsis** est un programme qui :
 bus AMQP (instance RabbitMQ de Canopsis)
 
 [webhook]: https://prometheus.io/docs/alerting/latest/configuration/#webhook_config
-[struct-event]: ../../guide-developpement/struct-event.md
 
 ## Intégration du connecteur
 
@@ -45,9 +43,9 @@ Deux méthodes d'installation ou d'exécution sont proposées :
 
 - Installation en tant que service sur un système de production
 - Exécution en tant que conteneur *Docker* avec l'image fournie :  
-[canopsis/canopsis-connector-prometheus2canopsis][dockerhub-image]
+[canopsis/canopsis-connector-prometheus2canopsis][docker-image]
 
-[dockerhub-image]: https://hub.docker.com/r/canopsis/canopsis-connector-prometheus2canopsis
+[docker-image]: https://git.canopsis.net/docker/community/container_registry/179
 
 ### Configuration connecteur
 

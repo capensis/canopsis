@@ -1,15 +1,12 @@
 <template lang="pug">
-  test-suite-summary-row(:label="label")
+  c-information-block-row(:label="label")
     v-layout
       v-flex(xs2) {{ count }}
       v-flex(v-if="testsStatusPercent") {{ testsStatusPercent | percentage(precision) }}
 </template>
 
 <script>
-import TestSuiteSummaryRow from './test-suite-summary-row.vue';
-
 export default {
-  components: { TestSuiteSummaryRow },
   props: {
     label: {
       type: String,

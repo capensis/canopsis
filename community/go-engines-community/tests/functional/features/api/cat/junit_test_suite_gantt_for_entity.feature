@@ -7,7 +7,7 @@ Feature: get test suite's gantt intervals for entity
     When I do GET /api/v4/cat/junit/test-suites-entity-gantt?_id=test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -60,6 +60,8 @@ Feature: get test suite's gantt intervals for entity
         }
       ],
       "meta": {
+        "time": 10,
+        "avg_time": 0,
         "page": 1,
         "page_count": 1,
         "per_page": 10,
@@ -73,7 +75,7 @@ Feature: get test suite's gantt intervals for entity
     When I do GET /api/v4/cat/junit/test-suites-entity-gantt?_id=test-case-to-get-entity-gantt-1-1-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -126,6 +128,8 @@ Feature: get test suite's gantt intervals for entity
         }
       ],
       "meta": {
+        "time": 10,
+        "avg_time": 0,
         "page": 1,
         "page_count": 1,
         "per_page": 10,

@@ -11,14 +11,6 @@
     group: root
     mode: 0644
 
-- name: deploy Canopsis influx storage configuration templates
-  template:
-    src: common-engines/storage-influxdb.j2
-    dest: "{{ canopsis_home }}/etc/influx/storage.conf"
-    owner: root
-    group: root
-    mode: 0644
-
 - name: deploy Canopsis mongo store configuration templates
   template:
     src: common-engines/mongo_store.j2
@@ -54,25 +46,25 @@
     group: root
     mode: 0644
 
-- name: Override canopsis.toml with canopsis-core.toml.example
+- name: Override canopsis.toml with canopsis-community.toml.example
   copy:
-    src: "{{ canopsis_home }}/etc/canopsis-core.toml.example"
+    src: "{{ canopsis_home }}/etc/canopsis-community.toml.example"
     dest: "{{ canopsis_home }}/etc/canopsis.toml"
     remote_src: yes
     owner: root
     group: root
     mode: preserve
-  when: canopsis_edition == "core"
+  when: canopsis_edition == "community"
 
-- name: Override canopsis.toml with canopsis-cat.toml.example
+- name: Override canopsis.toml with canopsis-pro.toml.example
   copy:
-    src: "{{ canopsis_home }}/etc/canopsis-cat.toml.example"
+    src: "{{ canopsis_home }}/etc/canopsis-pro.toml.example"
     dest: "{{ canopsis_home }}/etc/canopsis.toml"
     remote_src: yes
     owner: root
     group: root
     mode: preserve
-  when: canopsis_edition == "cat"
+  when: canopsis_edition == "pro"
 
 - name: Override amqp2engines.conf with amqp2engines-core.conf.example
   copy:
@@ -82,7 +74,7 @@
     owner: root
     group: root
     mode: preserve
-  when: canopsis_edition == "core"
+  when: canopsis_edition == "community"
 
 - name: Override amqp2engines.conf with amqp2engines-cat.conf.example
   copy:
@@ -92,4 +84,4 @@
     owner: root
     group: root
     mode: preserve
-  when: canopsis_edition == "cat"
+  when: canopsis_edition == "pro"

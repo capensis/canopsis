@@ -8,7 +8,6 @@ export function conditionForRemovingPatterns(value) {
   return !value || !value.length;
 }
 
-
 /**
  * Get conditions for removing empty patterns by unsetSeveralFieldsWithConditions
  *

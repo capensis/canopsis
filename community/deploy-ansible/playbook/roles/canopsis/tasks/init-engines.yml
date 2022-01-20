@@ -1,26 +1,11 @@
 ---
-- name: Start and enable default Canopsis Python engines
-  systemd:
-    name: "canopsis-engine@{{ item.module }}-{{ item.name }}.service"
-    state: started
-    enabled: true
-  with_items: "{{ canopsis_core_python_engines }}"
-
-- name: Start and enable Canopsis Python engines (CAT additions)
-  systemd:
-    name: "canopsis-engine-cat@{{ item.module }}-{{ item.name }}.service"
-    state: started
-    enabled: true
-  with_items: "{{ canopsis_cat_python_additional_engines }}"
-  when: canopsis_edition == "cat"
-
-- name: Start and enable Canopsis Python engines (CAT additions, part 2)
+- name: Start and enable Canopsis Python engines (Pro additions)
   systemd:
     name: "canopsis-engine-cat@{{ item.name }}.service"
     state: started
     enabled: true
-  with_items: "{{ canopsis_cat_python_additional_engines_broken_names }}"
-  when: canopsis_edition == "cat"
+  with_items: "{{ canopsis_pro_python_additional_engines_broken_names }}"
+  when: canopsis_edition == "pro"
 
 - name: Initializing RabbitMQ for Go engines
   shell: "eval $(sed -e '/^#/d' -e 's/^/export /' /opt/canopsis/etc/go-engines-vars.conf) && {{ canopsis_home }}/bin/canopsis-reconfigure && sleep 2"
@@ -30,46 +15,46 @@
   register: reconfigurecmd
   failed_when: reconfigurecmd.rc != 0
 
-- name: Choose Canopsis API edition (if Core)
+- name: Choose Canopsis API edition (if using Community)
   file:
-    src: /opt/canopsis/bin/canopsis-api-core
+    src: /opt/canopsis/bin/canopsis-api-community
     dest: /opt/canopsis/bin/canopsis-api
     state: link
-  when: canopsis_edition == "core"
+  when: canopsis_edition == "community"
 
-- name: Choose Canopsis API edition (if CAT)
+- name: Choose Canopsis API edition (if using Pro)
   file:
-    src: /opt/canopsis/bin/canopsis-api-cat
+    src: /opt/canopsis/bin/canopsis-api-pro
     dest: /opt/canopsis/bin/canopsis-api
     state: link
-  when: canopsis_edition == "cat"
+  when: canopsis_edition == "pro"
 
 - name: Start and enable default Canopsis Go engines
   systemd:
     name: "canopsis-engine-go@{{ item.name }}.service"
     state: started
     enabled: true
-  with_items: "{{ canopsis_core_go_engines }}"
+  with_items: "{{ canopsis_community_go_engines }}"
 
-- name: Start and enable default Canopsis Go engines (CAT additions)
+- name: Start and enable default Canopsis Go engines (Pro additions)
   systemd:
     name: "canopsis-engine-go@{{ item.name }}.service"
     state: started
     enabled: true
-  with_items: "{{ canopsis_cat_go_additional_engines }}"
-  when: canopsis_edition == "cat"
+  with_items: "{{ canopsis_pro_go_additional_engines }}"
+  when: canopsis_edition == "pro"
 
 - name: Start and enable other default Canopsis services
   systemd:
     name: "canopsis-service@{{ item.name }}.service"
     state: started
     enabled: true
-  with_items: "{{ canopsis_core_other_default_services }}"
+  with_items: "{{ canopsis_community_other_default_services }}"
 
-- name: Start and enable other default Canopsis services (CAT additions)
+- name: Start and enable other default Canopsis services (Pro additions)
   systemd:
     name: "canopsis-service@{{ item.name }}.service"
     state: started
     enabled: true
-  with_items: "{{ canopsis_cat_other_default_services }}"
-  when: canopsis_edition == "cat"
+  with_items: "{{ canopsis_pro_other_default_services }}"
+  when: canopsis_edition == "pro"

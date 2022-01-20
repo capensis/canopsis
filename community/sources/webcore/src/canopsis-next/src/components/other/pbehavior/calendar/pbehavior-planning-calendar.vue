@@ -3,7 +3,7 @@
     :calendar="calendar",
     :config="calendarConfig",
     :events="events",
-    :readOnly="readOnly",
+    :read-only="readOnly",
     fluid,
     fill-height,
     current-time-for-today,
@@ -20,7 +20,7 @@
     )
       pbehavior-create-event(
         slot-scope="{ calendarEvent, close, edit }",
-        :calendarEvent="calendarEvent",
+        :calendar-event="calendarEvent",
         :filter="filter",
         @close="close",
         @submit="edit",
@@ -33,7 +33,7 @@
     )
       pbehavior-create-event(
         slot-scope="{ calendarEvent, close, add }",
-        :calendarEvent="calendarEvent",
+        :calendar-event="calendarEvent",
         :filter="filter",
         @close="close",
         @submit="add",
@@ -47,7 +47,6 @@
 </template>
 
 <script>
-import moment from 'moment';
 import { get, omit, uniqBy } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Op } from 'dayspan';
@@ -58,10 +57,10 @@ import uid from '@/helpers/uid';
 import { getMostReadableTextColor, getRandomHexColor } from '@/helpers/color';
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/calendar/dayspan';
 import { pbehaviorToTimespanRequest } from '@/helpers/forms/timespans-pbehavior';
-import { convertDateToTimestampByTimezone } from '@/helpers/date/date';
+import { convertDateToTimestampByTimezone, convertDateToMoment } from '@/helpers/date/date';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
-import entitiesPbehaviorTimespansMixin from '@/mixins/entities/pbehavior/timespans';
+import { entitiesPbehaviorTimespansMixin } from '@/mixins/entities/pbehavior/timespans';
 
 import PbehaviorCreateEvent from './partials/pbehavior-create-event.vue';
 import PbehaviorPlanningCalendarLegend from './partials/pbehavior-planning-calendar-legend.vue';
@@ -190,7 +189,7 @@ export default {
 
       if (startTimestamps.length) {
         const startTimestamp = Math.min.apply(null, startTimestamps);
-        const calendarStart = moment.unix(startTimestamp);
+        const calendarStart = convertDateToMoment(startTimestamp);
 
         this.calendar.set({ around: calendarStart });
       }
@@ -245,7 +244,6 @@ export default {
         from,
         to,
       });
-
 
       return this.fetchTimespansListWithoutStore({ data: timespan });
     },

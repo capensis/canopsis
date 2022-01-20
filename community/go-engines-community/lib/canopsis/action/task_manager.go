@@ -474,7 +474,7 @@ func (e *redisBasedManager) processEmittedTrigger(
 
 func (e *redisBasedManager) startExecution(ctx context.Context, scenario Scenario,
 	alarm types.Alarm, entity types.Entity, ackResources bool, data AdditionalData) {
-	e.logger.Debug().Msgf("Execute scenario = %s for alarm = %s", alarm.ID, scenario.ID)
+	e.logger.Debug().Msgf("Execute scenario = %s for alarm = %s", scenario.ID, alarm.ID)
 	var executions []Execution
 	for _, action := range scenario.Actions {
 		executions = append(

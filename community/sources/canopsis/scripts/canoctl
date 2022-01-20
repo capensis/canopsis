@@ -17,12 +17,9 @@ help_usage()
 	exit 1
 }
 
-# Here, we're checking for a specific Go file instead of looking for
-# a package, because it's simpler and because this required file used
-# to be missing in some installations.
 check_go_prerequisites_or_die()
 {
-	if ! [ -f /opt/canopsis/etc/canopsis-core.toml.example ]; then
+	if ! [ -f /opt/canopsis/etc/canopsis-community.toml.example ]; then
 		echo "A Go component is required, but could not be found." >&2
 		echo "Is the canopsis-engines-go package installed?" >&2
 		exit 1

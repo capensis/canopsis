@@ -1,8 +1,5 @@
 # amqp2engines.conf for a CAT Go stack
 
-[engine:scheduler]
-[engine:task_importctx]
-
 #
 # CAT additional components.
 #

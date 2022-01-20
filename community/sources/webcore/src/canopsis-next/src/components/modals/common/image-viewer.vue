@@ -3,7 +3,11 @@
 </template>
 
 <script>
-export default {};
+import { modalInnerMixin } from '@/mixins/modal/inner';
+
+export default {
+  mixins: [modalInnerMixin],
+};
 </script>
 
 <style lang="scss">
