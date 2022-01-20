@@ -1847,6 +1847,107 @@ Feature: create and update alarm by main event stream
     }
     """
 
+  Scenario: given changestate with same state as already existed one should not update alarm state anymore
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "event_type" : "check",
+      "connector" : "test-connector-axe-18-a",
+      "connector_name" : "test-connector-name-axe-18-a",
+      "source_type" : "resource",
+      "component" :  "test-component-axe-18-a",
+      "resource" : "test-resource-axe-18-a",
+      "state" : 2,
+      "output" : "test-output-axe-18-a",
+      "long_output" : "test-long-output-axe-18-a",
+      "author" : "test-author-axe-18-a",
+      "timestamp": {{ (now.Add (parseDuration "-19s")).UTC.Unix }}
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "event_type" : "changestate",
+      "state": 2,
+      "connector" : "test-connector-axe-18-a",
+      "connector_name" : "test-connector-name-axe-18-a",
+      "source_type" : "resource",
+      "component" :  "test-component-axe-18-a",
+      "resource" : "test-resource-axe-18-a",
+      "output" : "test-output-axe-18-a",
+      "long_output" : "test-long-output-axe-18-a",
+      "author" : "test-author-axe-18-a",
+      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "event_type" : "check",
+      "connector" : "test-connector-axe-18-a",
+      "connector_name" : "test-connector-name-axe-18-a",
+      "source_type" : "resource",
+      "component" :  "test-component-axe-18-a",
+      "resource" : "test-resource-axe-18-a",
+      "state" : 3,
+      "output" : "test-output-axe-18-a",
+      "long_output" : "test-long-output-axe-18-a",
+      "author" : "test-author-axe-18-a"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-18-a"}]}&with_steps=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "component": "test-component-axe-18-a",
+            "connector": "test-connector-axe-18-a",
+            "connector_name": "test-connector-name-axe-18-a",
+            "resource": "test-resource-axe-18-a",
+            "state": {
+              "_t": "changestate",
+              "a": "test-author-axe-18-a",
+              "m": "test-output-axe-18-a",
+              "val": 2
+            },
+            "status": {
+              "val": 1
+            },
+            "steps": [
+              {
+                "_t": "stateinc",
+                "val": 2
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "changestate",
+                "a": "test-author-axe-18-a",
+                "m": "test-output-axe-18-a",
+                "val": 2
+              }
+            ]
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
   Scenario: given change state event should resolve alarm anyway
     Given I am admin
     When I send an event:
