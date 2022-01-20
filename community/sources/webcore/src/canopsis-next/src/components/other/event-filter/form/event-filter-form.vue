@@ -1,6 +1,10 @@
 <template lang="pug">
   div
-    c-id-field(v-field="form._id", :disabled="isDisabledIdField", :help-text="$t('eventFilter.idHelp')")
+    c-id-field(
+      v-field="form._id",
+      :disabled="isDisabledIdField",
+      :help-text="$t('eventFilter.idHelp')"
+    )
     c-event-filter-type-field(v-field="form.type")
     c-description-field(v-field="form.description", required)
     c-priority-field(v-field="form.priority")
@@ -17,7 +21,7 @@
 </template>
 
 <script>
-import { EVENT_FILTER_ENRICHMENT_AFTER_TYPES, EVENT_FILTER_TYPES } from '@/constants';
+import { EVENT_FILTER_TYPES } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
@@ -50,10 +54,6 @@ export default {
 
     isChangeEntityType() {
       return this.form.type === EVENT_FILTER_TYPES.changeEntity;
-    },
-
-    eventFilterAfterTypes() {
-      return Object.values(EVENT_FILTER_ENRICHMENT_AFTER_TYPES);
     },
   },
 };
