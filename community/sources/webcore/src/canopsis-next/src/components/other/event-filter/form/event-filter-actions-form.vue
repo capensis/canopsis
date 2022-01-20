@@ -10,7 +10,7 @@
       )
     v-list.py-0(dark)
       draggable(v-field="actions", :class="{ 'pa-2': !actions.length }")
-        event-filter-rule-actions-list-item(
+        event-filter-actions-list-item(
           v-for="(action, index) in actions",
           :key="`${action.type}_${action.name}`",
           :action="action",
@@ -26,10 +26,10 @@ import { MODALS } from '@/constants';
 
 import { formArrayMixin } from '@/mixins/form/array';
 
-import EventFilterRuleActionsListItem from './partials/event-filter-rule-actions-list-item.vue';
+import EventFilterActionsListItem from './partials/event-filter-actions-list-item.vue';
 
 export default {
-  components: { Draggable, EventFilterRuleActionsListItem },
+  components: { Draggable, EventFilterActionsListItem },
   mixins: [
     formArrayMixin,
   ],
@@ -46,7 +46,7 @@ export default {
   methods: {
     showCreateActionModal() {
       this.$modals.show({
-        name: MODALS.createEventFilterRuleAction,
+        name: MODALS.createEventFilterAction,
         config: {
           action: action => this.addItemIntoArray(action),
         },
@@ -55,7 +55,7 @@ export default {
 
     showEditActionModal(index, ruleAction) {
       this.$modals.show({
-        name: MODALS.createEventFilterRuleAction,
+        name: MODALS.createEventFilterAction,
         config: {
           ruleAction,
           title: this.$t('eventFilter.editAction'),

@@ -25,7 +25,7 @@ import {
   HEALTHCHECK_ENGINES_NAMES,
   GROUPS_NAVIGATION_TYPES,
   ALARM_METRIC_PARAMETERS,
-  USER_METRIC_PARAMETERS, EVENT_FILTER_RULE_TYPES,
+  USER_METRIC_PARAMETERS, EVENT_FILTER_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -1118,7 +1118,7 @@ export default {
         title: 'Éditer un rôle',
       },
     },
-    eventFilterRule: {
+    createEventFilter: {
       create: {
         title: 'Créer une règle',
         success: 'Règle créée avec succès !',
@@ -1782,10 +1782,10 @@ export default {
     onSuccess: 'En cas de succès',
     onFailure: 'En cas d\'échec',
     types: {
-      [EVENT_FILTER_RULE_TYPES.drop]: 'Drop',
-      [EVENT_FILTER_RULE_TYPES.break]: 'Break',
-      [EVENT_FILTER_RULE_TYPES.enrichment]: 'Enrichment',
-      [EVENT_FILTER_RULE_TYPES.changeEntity]: 'Change entity',
+      [EVENT_FILTER_TYPES.drop]: 'Drop',
+      [EVENT_FILTER_TYPES.break]: 'Break',
+      [EVENT_FILTER_TYPES.enrichment]: 'Enrichment',
+      [EVENT_FILTER_TYPES.changeEntity]: 'Change entity',
     },
     tooltips: {
       addValueRuleField: 'Ajouter une règle',

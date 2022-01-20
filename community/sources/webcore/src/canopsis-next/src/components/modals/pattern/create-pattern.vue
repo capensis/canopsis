@@ -21,7 +21,7 @@
 <script>
 import { cloneDeep, get } from 'lodash';
 
-import { MODALS, EVENT_FILTER_RULE_OPERATORS } from '@/constants';
+import { MODALS, EVENT_FILTER_OPERATORS } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -55,7 +55,7 @@ export default {
   },
   computed: {
     operators() {
-      return this.config.operators || EVENT_FILTER_RULE_OPERATORS;
+      return this.config.operators || EVENT_FILTER_OPERATORS;
     },
 
     patternWasChanged() {

@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES, EVENT_FILTER_RULE_TYPES } from '@/constants';
+import { EVENT_FILTER_ENRICHMENT_AFTER_TYPES, EVENT_FILTER_TYPES } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
@@ -45,15 +45,15 @@ export default {
   },
   computed: {
     isEnrichmentType() {
-      return this.form.type === EVENT_FILTER_RULE_TYPES.enrichment;
+      return this.form.type === EVENT_FILTER_TYPES.enrichment;
     },
 
     isChangeEntityType() {
-      return this.form.type === EVENT_FILTER_RULE_TYPES.changeEntity;
+      return this.form.type === EVENT_FILTER_TYPES.changeEntity;
     },
 
     eventFilterAfterTypes() {
-      return Object.values(EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES);
+      return Object.values(EVENT_FILTER_ENRICHMENT_AFTER_TYPES);
     },
   },
 };

@@ -20,7 +20,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { eventFilterToForm, formToEventFilter } from '@/helpers/forms/event-filter-rule';
+import { eventFilterToForm, formToEventFilter } from '@/helpers/forms/event-filter';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -31,7 +31,7 @@ import EventFilterForm from '@/components/other/event-filter/form/event-filter-f
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.createEventFilterRule,
+  name: MODALS.createEventFilter,
   $_veeValidate: {
     validator: 'new',
   },
@@ -48,7 +48,7 @@ export default {
   },
   computed: {
     title() {
-      return this.config.title || this.$t('modals.eventFilterRule.create.title');
+      return this.config.title || this.$t('modals.createEventFilter.create.title');
     },
 
     isDisabledIdField() {

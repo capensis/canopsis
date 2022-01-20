@@ -4,7 +4,7 @@
       template(slot="title")
         span {{ title }}
       template(slot="text")
-        event-filter-rule-action-form(v-model="form")
+        event-filter-action-form(v-model="form")
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
@@ -21,18 +21,18 @@ import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import { eventFilterRuleActionToForm } from '@/helpers/forms/event-filter-rule';
+import { eventFilterActionToForm } from '@/helpers/forms/event-filter';
 
-import EventFilterRuleActionForm from '@/components/other/event-filter/form/event-filter-rule-action-form.vue';
+import EventFilterActionForm from '@/components/other/event-filter/form/event-filter-action-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.createEventFilterRuleAction,
+  name: MODALS.createEventFilterAction,
   $_veeValidate: {
     validator: 'new',
   },
-  components: { EventFilterRuleActionForm, ModalWrapper },
+  components: { EventFilterActionForm, ModalWrapper },
   mixins: [
     modalInnerMixin,
     submittableMixinCreator(),
@@ -40,7 +40,7 @@ export default {
   ],
   data() {
     return {
-      form: eventFilterRuleActionToForm(this.modal.config.ruleAction),
+      form: eventFilterActionToForm(this.modal.config.ruleAction),
     };
   },
   computed: {

@@ -2,11 +2,11 @@
   div
     v-select(
       v-model="form.type",
-      :items="eventFilterRuleActionTypes",
+      :items="eventFilterActionTypes",
       :label="$t('common.type')"
     )
     v-expand-transition
-      event-filter-rule-action-form-type-info(v-if="form.type", :type="form.type")
+      event-filter-action-form-type-info(v-if="form.type", :type="form.type")
     v-text-field(
       v-field="form.description",
       :label="$t('common.description')",
@@ -43,11 +43,11 @@
 <script>
 import { EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES } from '@/constants';
 
-import EventFilterRuleActionFormTypeInfo from './partials/event-filter-rule-action-form-type-info.vue';
+import EventFilterActionFormTypeInfo from './partials/event-filter-action-form-type-info.vue';
 
 export default {
   inject: ['$validator'],
-  components: { EventFilterRuleActionFormTypeInfo },
+  components: { EventFilterActionFormTypeInfo },
   model: {
     prop: 'form',
     event: 'input',
@@ -59,7 +59,7 @@ export default {
     },
   },
   computed: {
-    eventFilterRuleActionTypes() {
+    eventFilterActionTypes() {
       return Object.values(EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES).map(value => ({
         value,
 

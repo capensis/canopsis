@@ -2,8 +2,8 @@ import { cloneDeep, pick } from 'lodash';
 
 import {
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
-  EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES,
-  EVENT_FILTER_RULE_TYPES,
+  EVENT_FILTER_ENRICHMENT_AFTER_TYPES,
+  EVENT_FILTER_TYPES,
 } from '@/constants';
 
 /**
@@ -79,8 +79,8 @@ import {
  */
 export const eventFilterConfigToForm = eventFilterConfig => ({
   actions: eventFilterConfig?.actions ? cloneDeep(eventFilterConfig.actions) : [],
-  on_success: eventFilterConfig?.on_success ?? EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES.pass,
-  on_failure: eventFilterConfig?.on_failure ?? EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES.pass,
+  on_success: eventFilterConfig?.on_success ?? EVENT_FILTER_ENRICHMENT_AFTER_TYPES.pass,
+  on_failure: eventFilterConfig?.on_failure ?? EVENT_FILTER_ENRICHMENT_AFTER_TYPES.pass,
   resource: eventFilterConfig?.resource ?? '',
   component: eventFilterConfig?.component ?? '',
   connector: eventFilterConfig?.connector ?? '',
@@ -95,7 +95,7 @@ export const eventFilterConfigToForm = eventFilterConfig => ({
  */
 export const eventFilterToForm = eventFilter => ({
   _id: eventFilter?._id || '',
-  type: eventFilter?.type || EVENT_FILTER_RULE_TYPES.drop,
+  type: eventFilter?.type || EVENT_FILTER_TYPES.drop,
   description: eventFilter?.description || '',
   patterns: eventFilter?.patterns ? cloneDeep(eventFilter?.patterns) : [],
   priority: eventFilter?.priority || 0,
@@ -109,7 +109,7 @@ export const eventFilterToForm = eventFilter => ({
  * @param {EventFilterAction} [eventFilterAction = {}]
  * @return {EventFilterActionForm}
  */
-export const eventFilterRuleActionToForm = eventFilterAction => ({
+export const eventFilterActionToForm = eventFilterAction => ({
   type: eventFilterAction?.type ?? EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField,
   name: eventFilterAction?.name ?? '',
   value: eventFilterAction?.value ?? '',
@@ -126,10 +126,10 @@ export const formToEventFilter = (eventFilterForm) => {
   const { config, ...eventFilter } = eventFilterForm;
 
   switch (eventFilterForm.type) {
-    case EVENT_FILTER_RULE_TYPES.changeEntity:
+    case EVENT_FILTER_TYPES.changeEntity:
       eventFilter.config = pick(config, ['resource', 'component', 'connector', 'connector_name']);
       break;
-    case EVENT_FILTER_RULE_TYPES.enrichment:
+    case EVENT_FILTER_TYPES.enrichment:
       eventFilter.config = pick(config, ['actions', 'on_success', 'on_failure']);
       break;
   }

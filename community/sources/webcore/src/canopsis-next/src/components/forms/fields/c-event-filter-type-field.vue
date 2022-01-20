@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { EVENT_FILTER_RULE_TYPES } from '@/constants';
+import { EVENT_FILTER_TYPES } from '@/constants';
 
 export default {
   inject: ['$validator'],
@@ -34,7 +34,7 @@ export default {
   },
   computed: {
     eventFilterTypes() {
-      return Object.values(EVENT_FILTER_RULE_TYPES).map(type => ({
+      return Object.values(EVENT_FILTER_TYPES).map(type => ({
         value: type,
         text: this.$t(`eventFilter.types.${type}`),
       }));
