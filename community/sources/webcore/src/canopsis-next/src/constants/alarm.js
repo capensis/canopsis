@@ -48,13 +48,6 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   executeInstruction: 'executeInstruction',
 };
 
-export const EVENT_FILTER_RULE_TYPES = {
-  drop: 'drop',
-  break: 'break',
-  enrichment: 'enrichment',
-  changeEntity: 'change_entity',
-};
-
 export const META_ALARMS_RULE_TYPES = {
   relation: 'relation',
   timebased: 'timebased',

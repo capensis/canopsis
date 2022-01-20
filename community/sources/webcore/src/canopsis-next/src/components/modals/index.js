@@ -217,16 +217,16 @@ export const CreateBroadcastMessage = () => ({
   component: import(/* webpackChunkName: "BroadcastMessage" */ './admin/create-broadcast-message.vue'),
   loading: ModalLoaderOverlay,
 });
-export const CreateEventFilterRule = () => ({
-  component: import(/* webpackChunkName: "EventFilters" */ './event-filter/create-event-filter-rule.vue'),
+export const CreateEventFilter = () => ({
+  component: import(/* webpackChunkName: "EventFilters" */ './event-filter/create-event-filter.vue'),
   loading: ModalLoaderOverlay,
 });
-export const EventFilterRuleActions = () => ({
-  component: import(/* webpackChunkName: "EventFilters" */ './event-filter/event-filter-rule-actions.vue'),
+export const EventFilterActions = () => ({
+  component: import(/* webpackChunkName: "EventFilters" */ './event-filter/event-filter-actions.vue'),
   loading: ModalLoaderOverlay,
 });
-export const CreateEventFilterRuleAction = () => ({
-  component: import(/* webpackChunkName: "EventFilters" */ './event-filter/create-event-filter-rule-action.vue'),
+export const CreateEventFilterAction = () => ({
+  component: import(/* webpackChunkName: "EventFilters" */ './event-filter/create-event-filter-action.vue'),
   loading: ModalLoaderOverlay,
 });
 export const CreatePattern = () => ({

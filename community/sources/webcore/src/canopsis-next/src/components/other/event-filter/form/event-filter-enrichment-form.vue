@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES, MODALS } from '@/constants';
+import { EVENT_FILTER_ENRICHMENT_AFTER_TYPES, MODALS } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
@@ -39,7 +39,7 @@ export default {
   },
   computed: {
     eventFilterAfterTypes() {
-      return Object.values(EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES);
+      return Object.values(EVENT_FILTER_ENRICHMENT_AFTER_TYPES);
     },
   },
   created() {
@@ -51,7 +51,7 @@ export default {
   methods: {
     showEditActionsModal() {
       this.$modals.show({
-        name: MODALS.eventFilterRuleActions,
+        name: MODALS.eventFilterActions,
         config: {
           actions: this.form.actions,
           action: (updatedActions) => {
