@@ -42,12 +42,11 @@ func (e *changeStateExecutor) Exec(
 	}
 
 	currentState := alarm.Value.State.Value
-	isStateLocked := alarm.Value.State.Type == types.AlarmStepChangeState
 	if currentState == types.AlarmStateOK {
 		return "", fmt.Errorf("cannot change ok state")
 	}
 
-	if currentState == params.State && isStateLocked {
+	if currentState == params.State && alarm.IsStateLocked() {
 		return "", nil
 	}
 
