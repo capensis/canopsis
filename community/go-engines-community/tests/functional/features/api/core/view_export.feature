@@ -91,7 +91,8 @@ Feature: Export views
               },
               "tags": [
                 "test-view-to-export-2-tag"
-              ]
+              ],
+              "tabs": []
             }
           ]
         },
@@ -156,7 +157,8 @@ Feature: Export views
               },
               "tags": [
                 "test-view-to-export-2-tag"
-              ]
+              ],
+              "tabs": []
             }
           ]
         }
@@ -197,7 +199,8 @@ Feature: Export views
           },
           "tags": [
             "test-view-to-export-2-tag"
-          ]
+          ],
+          "tabs": []
         }
       ]
     }

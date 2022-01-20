@@ -205,6 +205,7 @@ Feature: Get a view
       "tags": [
         "test-view-to-get-2-tag"
       ],
+      "tabs": [],
       "updated": 1611229670
     }
     """

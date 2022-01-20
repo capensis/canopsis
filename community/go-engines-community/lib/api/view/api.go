@@ -56,7 +56,7 @@ func NewApi(
 // @Param search query string false "search query"
 // @Param sort query string false "sort query"
 // @Param sort_by query string false "sort query"
-// @Success 200 {object} common.PaginatedListResponse{data=[]View}
+// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /views [get]
 func (a *api) List(c *gin.Context) {
@@ -102,7 +102,7 @@ func (a *api) List(c *gin.Context) {
 // @Security JWTAuth
 // @Security BasicAuth
 // @Param id path string true "view id"
-// @Success 200 {object} View
+// @Success 200 {object} Response
 // @Failure 404 {object} common.ErrorResponse
 // @Router /views/{id} [get]
 func (a *api) Get(c *gin.Context) {
@@ -128,7 +128,7 @@ func (a *api) Get(c *gin.Context) {
 // @Security JWTAuth
 // @Security BasicAuth
 // @Param body body EditRequest true "body"
-// @Success 201 {object} View
+// @Success 201 {object} Response
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /views [post]
 func (a *api) Create(c *gin.Context) {
@@ -167,7 +167,7 @@ func (a *api) Create(c *gin.Context) {
 // @Security BasicAuth
 // @Param id path string true "view id"
 // @Param body body EditRequest true "body"
-// @Success 200 {object} View
+// @Success 200 {object} Response
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
 // @Router /views/{id} [put]

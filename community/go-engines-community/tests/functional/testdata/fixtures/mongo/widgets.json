@@ -342,19 +342,8 @@
     "created": 1611229670,
     "title": "test-widget-to-copy-1-title",
     "updated": 1611229670,
-    "grid_parameters": {
-      "desktop": {"x": 0, "y": 1}
-    },
     "parameters": {
-      "main_filter": "test-widgetfilter-to-widget-copy-1",
-      "test-widget-to-copy-1-parameter-1": {
-        "test-widget-to-copy-1-parameter-1-subparameter": "test-widget-to-copy-1-parameter-1-subvalue"
-      },
-      "test-widget-to-copy-1-parameter-2": [
-        {
-          "test-widget-to-copy-1-parameter-2-subparameter": "test-widget-to-copy-1-parameter-2-subvalue"
-        }
-      ]
+      "main_filter": "test-widgetfilter-to-widget-copy-1"
     },
     "tab": "test-tab-to-widget-copy-1",
     "type": "test-widget-to-copy-1-type"

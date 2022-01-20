@@ -1,5 +1,23 @@
 [
   {
+    "_id": "test-tab-to-viewgroup-get-1",
+    "title": "test-tab-to-viewgroup-get-1-title",
+    "view": "test-view-to-viewgroup-get-1",
+    "position": 0,
+    "author": "test-user-to-viewgroup-get",
+    "updated": 1611229670,
+    "created": 1611229670
+  },
+  {
+    "_id": "test-tab-to-viewgroup-get-2",
+    "title": "test-tab-to-viewgroup-get-2-title",
+    "view": "test-view-to-viewgroup-get-1",
+    "position": 1,
+    "author": "test-user-to-viewgroup-get",
+    "updated": 1611229670,
+    "created": 1611229670
+  },
+  {
     "_id": "test-tab-to-view-get-1",
     "title": "test-tab-to-view-get-1-title",
     "view": "test-view-to-get-1",

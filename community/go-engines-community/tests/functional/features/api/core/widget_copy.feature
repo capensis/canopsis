@@ -7,15 +7,31 @@ Feature: Copy a widget
     When I do POST /api/v4/widget-copy/test-widget-to-copy-1:
     """json
     {
-      "tab": "test-tab-to-widget-copy-2"
+      "tab": "test-tab-to-widget-copy-2",
+      "title": "test-widget-to-copy-1-title-updated",
+      "type": "test-widget-to-copy-1-type-updated",
+      "grid_parameters": {
+        "desktop": {"x": 0, "y": 1}
+      },
+      "parameters": {
+        "main_filter": "test-widgetfilter-to-widget-copy-1",
+        "test-widget-to-copy-1-parameter-1": {
+          "test-widget-to-copy-1-parameter-1-subparameter": "test-widget-to-copy-1-parameter-1-subvalue"
+        },
+        "test-widget-to-copy-1-parameter-2": [
+          {
+            "test-widget-to-copy-1-parameter-2-subparameter": "test-widget-to-copy-1-parameter-2-subvalue"
+          }
+        ]
+      }
     }
     """
     Then the response code should be 201
     Then the response body should contain:
     """json
     {
-      "title": "test-widget-to-copy-1-title",
-      "type": "test-widget-to-copy-1-type",
+      "title": "test-widget-to-copy-1-title-updated",
+      "type": "test-widget-to-copy-1-type-updated",
       "grid_parameters": {
         "desktop": {"x": 0, "y": 1}
       },
@@ -44,8 +60,8 @@ Feature: Copy a widget
     Then the response body should contain:
     """json
     {
-      "title": "test-widget-to-copy-1-title",
-      "type": "test-widget-to-copy-1-type",
+      "title": "test-widget-to-copy-1-title-updated",
+      "type": "test-widget-to-copy-1-type-updated",
       "grid_parameters": {
         "desktop": {"x": 0, "y": 1}
       },
@@ -86,7 +102,7 @@ Feature: Copy a widget
               "_id": "test-widget-to-copy-2"
             },
             {
-              "title": "test-widget-to-copy-1-title"
+              "title": "test-widget-to-copy-1-title-updated"
             }
           ]
         }
@@ -115,7 +131,9 @@ Feature: Copy a widget
     """json
     {
       "errors": {
-        "tab": "Tab is missing."
+        "tab": "Tab is missing.",
+        "title": "Title is missing.",
+        "type": "Type is missing."
       }
     }
     """
@@ -125,14 +143,18 @@ Feature: Copy a widget
     When I do POST /api/v4/widget-copy/test-widget-to-copy-1:
     """json
     {
-      "tab": "test-tab-to-widget-check-access"
+      "tab": "test-tab-to-widget-check-access",
+      "title": "test-widget-to-copy-1-title-updated",
+      "type": "test-widget-to-copy-1-type-updated"
     }
     """
     Then the response code should be 403
     When I do POST /api/v4/widget-copy/test-widget-to-copy-3:
     """json
     {
-      "tab": "test-tab-to-widget-copy-2"
+      "tab": "test-tab-to-widget-copy-2",
+      "title": "test-widget-to-copy-1-title-updated",
+      "type": "test-widget-to-copy-1-type-updated"
     }
     """
     Then the response code should be 403
@@ -142,7 +164,9 @@ Feature: Copy a widget
     When I do POST /api/v4/widget-copy/test-widget-to-copy-1:
     """json
     {
-      "tab": "test-tab-not-found"
+      "tab": "test-tab-not-found",
+      "title": "test-widget-to-copy-1-title-updated",
+      "type": "test-widget-to-copy-1-type-updated"
     }
     """
     Then the response code should be 403

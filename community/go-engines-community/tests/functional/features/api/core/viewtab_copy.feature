@@ -7,6 +7,7 @@ Feature: Copy a view tab
     When I do POST /api/v4/view-tab-copy/test-tab-to-copy-1:
     """json
     {
+      "title": "test-tab-to-copy-1-title-updated",
       "view": "test-view-to-tab-copy-2"
     }
     """
@@ -14,7 +15,7 @@ Feature: Copy a view tab
     Then the response body should contain:
     """json
     {
-      "title": "test-tab-to-copy-1-title",
+      "title": "test-tab-to-copy-1-title-updated",
       "author": "root",
       "widgets": [
         {
@@ -50,7 +51,7 @@ Feature: Copy a view tab
     Then the response body should contain:
     """json
     {
-      "title": "test-tab-to-copy-1-title",
+      "title": "test-tab-to-copy-1-title-updated",
       "author": "root",
       "widgets": [
         {
@@ -96,7 +97,7 @@ Feature: Copy a view tab
           "_id": "test-tab-to-copy-2"
         },
         {
-          "title": "test-tab-to-copy-1-title"
+          "title": "test-tab-to-copy-1-title-updated"
         }
       ]
     }
@@ -123,7 +124,8 @@ Feature: Copy a view tab
     """json
     {
       "errors": {
-        "view": "View is missing."
+        "view": "View is missing.",
+        "title": "Title is missing."
       }
     }
     """
@@ -133,14 +135,16 @@ Feature: Copy a view tab
     When I do POST /api/v4/view-tab-copy/test-tab-to-copy-1:
     """json
     {
-      "view": "test-view-to-tab-check-access"
+      "view": "test-view-to-tab-check-access",
+      "title": "test-tab-to-copy-1-title-updated"
     }
     """
     Then the response code should be 403
     When I do POST /api/v4/view-tab-copy/test-tab-to-copy-3:
     """json
     {
-      "view": "test-view-to-tab-copy-2"
+      "view": "test-view-to-tab-copy-2",
+      "title": "test-tab-to-copy-1-title-updated"
     }
     """
     Then the response code should be 403
@@ -150,7 +154,8 @@ Feature: Copy a view tab
     When I do POST /api/v4/view-tab-copy/test-tab-to-copy-1:
     """json
     {
-      "view": "test-view-not-found"
+      "view": "test-view-not-found",
+      "title": "test-tab-to-copy-1-title-updated"
     }
     """
     Then the response code should be 403

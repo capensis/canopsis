@@ -10,6 +10,7 @@ type ListRequest struct {
 	pagination.Query
 	Search    string `form:"search"`
 	WithViews bool   `form:"with_views"`
+	WithTabs  bool   `form:"with_tabs"`
 	WithFlags bool   `form:"with_flags"`
 }
 
@@ -20,13 +21,13 @@ type EditRequest struct {
 }
 
 type ViewGroup struct {
-	ID        string         `bson:"_id" json:"_id,omitempty"`
-	Title     string         `bson:"title" json:"title"`
-	Author    string         `bson:"author" json:"author,omitempty"`
-	Views     *[]view.View   `bson:"views,omitempty" json:"views,omitempty"`
-	Created   *types.CpsTime `bson:"created" json:"created,omitempty" swaggertype:"integer"`
-	Updated   *types.CpsTime `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
-	Deletable *bool          `bson:"deletable,omitempty" json:"deletable,omitempty"`
+	ID        string           `bson:"_id" json:"_id,omitempty"`
+	Title     string           `bson:"title" json:"title"`
+	Author    string           `bson:"author" json:"author,omitempty"`
+	Views     *[]view.Response `bson:"views,omitempty" json:"views,omitempty"`
+	Created   *types.CpsTime   `bson:"created" json:"created,omitempty" swaggertype:"integer"`
+	Updated   *types.CpsTime   `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
+	Deletable *bool            `bson:"deletable,omitempty" json:"deletable,omitempty"`
 }
 
 type AggregationResult struct {

@@ -8462,7 +8462,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/viewtab.CopyRequest"
+                            "$ref": "#/definitions/viewtab.EditRequest"
                         }
                     }
                 ],
@@ -8470,7 +8470,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/viewtab.Tab"
+                            "$ref": "#/definitions/viewtab.Response"
                         }
                     },
                     "400": {
@@ -8572,7 +8572,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/viewtab.Tab"
+                            "$ref": "#/definitions/viewtab.Response"
                         }
                     },
                     "400": {
@@ -8616,7 +8616,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/viewtab.Tab"
+                            "$ref": "#/definitions/viewtab.Response"
                         }
                     },
                     "404": {
@@ -8670,7 +8670,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/viewtab.Tab"
+                            "$ref": "#/definitions/viewtab.Response"
                         }
                     },
                     "400": {
@@ -8792,7 +8792,7 @@ var doc = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/view.View"
+                                                "$ref": "#/definitions/view.Response"
                                             }
                                         }
                                     }
@@ -8844,7 +8844,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/view.View"
+                            "$ref": "#/definitions/view.Response"
                         }
                     },
                     "400": {
@@ -8888,7 +8888,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/view.View"
+                            "$ref": "#/definitions/view.Response"
                         }
                     },
                     "404": {
@@ -8942,7 +8942,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/view.View"
+                            "$ref": "#/definitions/view.Response"
                         }
                     },
                     "400": {
@@ -9217,7 +9217,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/widget.CopyRequest"
+                            "$ref": "#/definitions/widget.EditRequest"
                         }
                     }
                 ],
@@ -9225,7 +9225,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/widget.Widget"
+                            "$ref": "#/definitions/widget.Response"
                         }
                     },
                     "400": {
@@ -9514,7 +9514,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/widget.Widget"
+                            "$ref": "#/definitions/widget.Response"
                         }
                     },
                     "400": {
@@ -9558,7 +9558,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/widget.Widget"
+                            "$ref": "#/definitions/widget.Response"
                         }
                     },
                     "404": {
@@ -9612,7 +9612,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/widget.Widget"
+                            "$ref": "#/definitions/widget.Response"
                         }
                     },
                     "400": {
@@ -13848,6 +13848,9 @@ var doc = `{
                 "alarm_display_name": {
                     "type": "string"
                 },
+                "alarm_id": {
+                    "type": "string"
+                },
                 "assigned_instructions": {
                     "type": "array",
                     "items": {
@@ -14952,7 +14955,7 @@ var doc = `{
                 "views": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/view.View"
+                        "$ref": "#/definitions/view.Response"
                     }
                 }
             }
@@ -14978,7 +14981,7 @@ var doc = `{
                 "views": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/view.View"
+                        "$ref": "#/definitions/view.Response"
                     }
                 }
             }
@@ -15027,7 +15030,7 @@ var doc = `{
                 "views": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/view.View"
+                        "$ref": "#/definitions/view.Response"
                     }
                 }
             }
@@ -15065,6 +15068,52 @@ var doc = `{
                 },
                 "video_filemask": {
                     "type": "string"
+                }
+            }
+        },
+        "view.Response": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "group": {
+                    "type": "object",
+                    "$ref": "#/definitions/view.ViewGroup"
+                },
+                "periodic_refresh": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithEnabled"
+                },
+                "tabs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/viewtab.Response"
+                    }
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated": {
+                    "type": "integer"
                 }
             }
         },
@@ -15112,6 +15161,26 @@ var doc = `{
                 }
             }
         },
+        "view.ViewGroup": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
         "viewgroup.EditRequest": {
             "type": "object",
             "required": [
@@ -15147,19 +15216,8 @@ var doc = `{
                 "views": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/view.View"
+                        "$ref": "#/definitions/view.Response"
                     }
-                }
-            }
-        },
-        "viewtab.CopyRequest": {
-            "type": "object",
-            "required": [
-                "view"
-            ],
-            "properties": {
-                "view": {
-                    "type": "string"
                 }
             }
         },
@@ -15178,7 +15236,7 @@ var doc = `{
                 }
             }
         },
-        "viewtab.Tab": {
+        "viewtab.Response": {
             "type": "object",
             "properties": {
                 "_id": {
@@ -15201,19 +15259,8 @@ var doc = `{
                 "widgets": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/widget.Widget"
+                        "$ref": "#/definitions/widget.Response"
                     }
-                }
-            }
-        },
-        "widget.CopyRequest": {
-            "type": "object",
-            "required": [
-                "tab"
-            ],
-            "properties": {
-                "tab": {
-                    "type": "string"
                 }
             }
         },
@@ -15256,7 +15303,7 @@ var doc = `{
                 }
             }
         },
-        "widget.Widget": {
+        "widget.Response": {
             "type": "object",
             "properties": {
                 "_id": {

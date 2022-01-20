@@ -33,12 +33,7 @@ func (r *EditGridPositionRequest) UnmarshalJSON(b []byte) error {
 	return json.Unmarshal(b, &r.Items)
 }
 
-type CopyRequest struct {
-	Tab    string `json:"tab" binding:"required"`
-	Author string `json:"author" swaggerignore:"true"`
-}
-
-type Widget struct {
+type Response struct {
 	ID             string                 `bson:"_id" json:"_id,omitempty"`
 	Title          string                 `bson:"title" json:"title"`
 	Tab            string                 `bson:"tab" json:"-"`
