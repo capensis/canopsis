@@ -2833,6 +2833,10 @@ definitions:
         type: integer
       alarm_display_name:
         type: string
+      assigned_instructions:
+        items:
+          $ref: '#/definitions/alarm.InstructionWithAlarms'
+        type: array
       category:
         $ref: '#/definitions/entitycategory.Category'
         type: object
@@ -2854,7 +2858,13 @@ definitions:
         additionalProperties:
           $ref: '#/definitions/serviceweather.Info'
         type: object
+      is_all_auto_instructions_completed:
+        type: boolean
+      is_auto_instruction_running:
+        type: boolean
       is_grey:
+        type: boolean
+      is_manual_instruction_waiting_result:
         type: boolean
       last_update_date:
         type: integer
@@ -9268,6 +9278,10 @@ paths:
         in: query
         name: sort_by
         type: string
+      - description: show assigned instructions and execution flags
+        in: query
+        name: with_instructions
+        type: boolean
       produces:
       - application/json
       responses:
