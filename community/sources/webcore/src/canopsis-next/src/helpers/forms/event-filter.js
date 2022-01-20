@@ -74,7 +74,7 @@ import {
 /**
  * Convert event filter to form
  *
- * @param {EventFilterConfig} [eventFilterConfig={}]
+ * @param {EventFilterConfig} eventFilterConfig
  * @returns {EventFilterConfigForm}
  */
 export const eventFilterConfigToForm = eventFilterConfig => ({
@@ -90,7 +90,7 @@ export const eventFilterConfigToForm = eventFilterConfig => ({
 /**
  * Convert event filter to form
  *
- * @param {EventFilter} [eventFilter={}]
+ * @param {EventFilter} eventFilter
  * @returns {EventFilterForm}
  */
 export const eventFilterToForm = eventFilter => ({
@@ -106,7 +106,7 @@ export const eventFilterToForm = eventFilter => ({
 /**
  * Convert event filter action to form
  *
- * @param {EventFilterAction} [eventFilterAction = {}]
+ * @param {EventFilterAction} eventFilterAction
  * @return {EventFilterActionForm}
  */
 export const eventFilterActionToForm = eventFilterAction => ({

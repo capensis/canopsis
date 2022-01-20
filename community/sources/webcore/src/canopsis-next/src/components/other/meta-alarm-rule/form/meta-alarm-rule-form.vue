@@ -1,6 +1,10 @@
 <template lang="pug">
   div
-    c-id-field(v-field="form._id", :disabled="isDisabledIdField", :help-text="$t('metaAlarmRule.idHelp')")
+    c-id-field(
+      v-field="form._id",
+      :disabled="isDisabledIdField",
+      :help-text="$t('metaAlarmRule.idHelp')"
+    )
     v-text-field(
       v-validate="'required'",
       v-field="form.name",

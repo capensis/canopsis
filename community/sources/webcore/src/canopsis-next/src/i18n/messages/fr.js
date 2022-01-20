@@ -25,7 +25,8 @@ import {
   HEALTHCHECK_ENGINES_NAMES,
   GROUPS_NAVIGATION_TYPES,
   ALARM_METRIC_PARAMETERS,
-  USER_METRIC_PARAMETERS, EVENT_FILTER_TYPES,
+  USER_METRIC_PARAMETERS,
+  EVENT_FILTER_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -1781,6 +1782,11 @@ export default {
     actions: 'Actions',
     onSuccess: 'En cas de succès',
     onFailure: 'En cas d\'échec',
+    configuration: 'Configuration',
+    resource: 'ID de ressource ou modèle',
+    component: 'ID de composant ou modèle',
+    connector: 'ID ou modèle de connecteur',
+    connectorName: 'Nom ou modèle de connecteur',
     types: {
       [EVENT_FILTER_TYPES.drop]: 'Drop',
       [EVENT_FILTER_TYPES.break]: 'Break',
