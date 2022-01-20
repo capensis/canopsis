@@ -18,7 +18,6 @@
 <script>
 import { queryMixin } from '@/mixins/query';
 import { activeViewMixin } from '@/mixins/active-view';
-import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
 import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 
 import GridOverviewWidget from '@/components/widgets/grid-overview-widget.vue';
@@ -34,7 +33,6 @@ export default {
   mixins: [
     queryMixin,
     activeViewMixin,
-    entitiesViewTabMixin,
     entitiesWidgetMixin,
   ],
   props: {
@@ -52,8 +50,8 @@ export default {
     this.registerEditingOffHandler(this.updatePositions);
   },
   beforeDestroy() {
-    this.removeWidgetsQueries();
     this.unregisterEditingOffHandler(this.updatePositions);
+    this.removeWidgetsQueries();
   },
   methods: {
     updateWidgetsGrid(widgetsGrid) {
@@ -64,14 +62,15 @@ export default {
     },
 
     async updatePositions() {
-      const data = Object.entries(this.widgetsGrid).map(([id, gridParameters]) => ({
-        _id: id,
-        grid_parameters: gridParameters,
-      }));
+      const data = Object.entries(this.widgetsGrid)
+        .map(([id, gridParameters]) => ({
+          _id: id,
+          grid_parameters: gridParameters,
+        }));
 
       await this.updateWidgetGridPositions({ data });
 
-      return this.fetchViewTab({ id: this.tab._id });
+      return this.fetchActiveView();
     },
 
     /**

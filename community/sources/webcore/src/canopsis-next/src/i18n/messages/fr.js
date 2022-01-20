@@ -818,9 +818,6 @@ export default {
       },
     },
     view: {
-      select: {
-        title: 'Sélectionner une vue',
-      },
       create: {
         title: 'Créer une vue',
       },
@@ -1279,6 +1276,9 @@ export default {
           formatter: 'Format (groupe de capture avec \\x)',
         },
       },
+    },
+    selectView: {
+      title: 'Sélectionner une vue',
     },
     selectViewTab: {
       title: 'Sélectionnez l\'onglet',

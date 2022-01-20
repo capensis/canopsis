@@ -11,7 +11,7 @@ export default {
       const { data } = await dispatch('entities/fetch', {
         params,
         route: `${API_ROUTES.viewTab}/${id}`,
-        schema: [viewTabSchema],
+        schema: viewTabSchema,
       }, { root: true });
 
       return data;
