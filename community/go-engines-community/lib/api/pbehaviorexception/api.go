@@ -1,7 +1,9 @@
 package pbehaviorexception
 
 import (
+	"context"
 	"errors"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -112,7 +114,7 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypePbehaviorException,
 		ValueID:   exception.ID,
@@ -173,7 +175,7 @@ func (a *api) Update(c *gin.Context) {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypePbehaviorException,
 		ValueID:   exception.ID,
@@ -244,7 +246,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionDelete,
 		ValueType: logger.ValueTypePbehaviorException,
 		ValueID:   c.Param("id"),
@@ -257,9 +259,7 @@ func (a *api) Delete(c *gin.Context) {
 }
 
 func (a *api) sendComputeTask(exceptionID string) {
-	task := pbehavior.ComputeTask{
-		PbehaviorID: "",
-	}
+	task := pbehavior.ComputeTask{}
 
 	select {
 	case a.computeChan <- task:

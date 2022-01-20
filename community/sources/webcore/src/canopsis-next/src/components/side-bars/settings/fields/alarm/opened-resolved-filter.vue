@@ -1,9 +1,10 @@
 <template lang="pug">
-  v-list-group(data-test="filterOnOpenResolved")
-    v-list-tile(slot="activator") {{ $t('settings.filterOnOpenResolved') }}
+  v-list-group
+    template(#activator="")
+      v-list-tile {{ $t('settings.filterOnOpenResolved') }}
     v-container
       v-layout
-        v-radio-group.mt-0(v-field="value", hide-details, mandatory)
+        v-radio-group.mt-0(v-field="value", name="opened", hide-details, mandatory)
           v-radio(
             v-for="type in types",
             :key="type.value",

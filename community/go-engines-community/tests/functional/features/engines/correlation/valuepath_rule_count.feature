@@ -59,7 +59,10 @@ Feature: correlation feature - valuegroup rule with threshold count
       "name": "test-valuegroup-correlation-1",
       "type": "valuegroup",
       "config": {
-        "time_interval": 10,
+        "time_interval": {
+          "value": 10,
+          "unit": "s"
+        },
         "threshold_count": 2,
         "value_paths": [
           "entity.infos.infoenrich.value"
@@ -289,7 +292,10 @@ Feature: correlation feature - valuegroup rule with threshold count
       "name": "test-valuegroup-correlation-1",
       "type": "valuegroup",
       "config": {
-        "time_interval": 10,
+        "time_interval": {
+          "value": 10,
+          "unit": "s"
+        },
         "threshold_count": 2,
         "value_paths": [
           "entity.infos.infoenrich2.value",
@@ -692,7 +698,10 @@ Feature: correlation feature - valuegroup rule with threshold count
       "name": "test-valuegroup-correlation-3",
       "type": "valuegroup",
       "config": {
-        "time_interval": 3,
+        "time_interval": {
+          "value": 3,
+          "unit": "s"
+        },
         "threshold_count": 2,
         "value_paths": [
           "entity.infos.infoenrich4.value"
@@ -865,7 +874,10 @@ Feature: correlation feature - valuegroup rule with threshold count
       "name": "test-valuegroup-correlation-4",
       "type": "valuegroup",
       "config": {
-        "time_interval": 3,
+        "time_interval": {
+          "value": 3,
+          "unit": "s"
+        },
         "threshold_count": 2,
         "value_paths": [
           "entity.infos.infoenrich5.value"
@@ -1012,7 +1024,10 @@ Feature: correlation feature - valuegroup rule with threshold count
       "name": "test-valuegroup-correlation-5",
       "type": "valuegroup",
       "config": {
-        "time_interval": 5,
+        "time_interval": {
+          "value": 5,
+          "unit": "s"
+        },
         "threshold_count": 2,
         "value_paths": [
           "entity.infos.infoenrich6.value"
@@ -1177,7 +1192,10 @@ Feature: correlation feature - valuegroup rule with threshold count
       "name": "test-valuegroup-correlation-6",
       "type": "valuegroup",
       "config": {
-        "time_interval": 10,
+        "time_interval": {
+          "value": 10,
+          "unit": "s"
+        },
         "threshold_count": 2,
         "value_paths": [
           "entity.infos.infoenrich7.value"

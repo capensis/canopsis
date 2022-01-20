@@ -140,7 +140,6 @@ export default {
         },
       }, this.options);
     },
-
   },
   watch: {
     chartData(data, oldData) {

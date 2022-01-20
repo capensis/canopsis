@@ -236,7 +236,7 @@ func (s *pool) getRPCAxeEvent(task Task) (*types.RPCAxeEvent, error) {
 func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*types.RPCWebhookEvent, error) {
 	children := make([]types.Alarm, 0)
 	if len(task.Alarm.Value.Children) > 0 {
-		err := s.alarmAdapter.GetOpenedAlarmsByAlarmIDs(ctx, task.Alarm.Value.Children, &children)
+		err := s.alarmAdapter.GetOpenedAlarmsByIDs(ctx, task.Alarm.Value.Children, &children)
 		if err != nil {
 			return nil, fmt.Errorf("cannot find children : %v", err)
 		}

@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"github.com/mitchellh/mapstructure"
 	"github.com/rs/zerolog"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	mongooptions "go.mongodb.org/mongo-driver/mongo/options"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -46,8 +48,37 @@ type Config struct {
 
 // IndexConfig represent format of index in config file.
 type IndexConfig struct {
-	Keys    map[string]int         `yaml:"keys"`
+	Keys    IndexConfigKeys        `yaml:"keys"`
 	Options map[string]interface{} `yaml:"options"`
+}
+
+type IndexConfigKeys struct {
+	Keys   []string
+	Values []int
+}
+
+func (k *IndexConfigKeys) UnmarshalYAML(value *yaml.Node) error {
+	var err error
+
+	if len(value.Content)%2 != 0 {
+		return fmt.Errorf("content length should be an even number")
+	}
+
+	halfLen := len(value.Content)/2
+
+	k.Keys = make([]string, halfLen)
+	k.Values = make([]int, halfLen)
+
+	for i := 0; i < halfLen; i++ {
+		k.Keys[i] = value.Content[2*i].Value
+		k.Values[i], err = strconv.Atoi(value.Content[2*i+1].Value)
+
+		if err != nil {
+			return fmt.Errorf("failed to convert %s to int, error = %s", value.Content[2*i+1].Value,  err)
+		}
+	}
+
+	return nil
 }
 
 func (s *baseIndexService) Create(ctx context.Context) error {
@@ -170,9 +201,16 @@ func (s *baseIndexService) createIndexes(ctx context.Context, config *Config) {
 				continue
 			}
 
+			keysLen := len(params.Keys.Keys)
+
+			indexKeys := make(bson.D, keysLen)
+			for i := 0; i < keysLen; i++ {
+				indexKeys[i] = bson.E{Key: params.Keys.Keys[i], Value: params.Keys.Values[i]}
+			}
+
 			indexOptions.Name = &indexName
 			_, err = collection.Indexes().CreateOne(ctx, mongo.IndexModel{
-				Keys:    &params.Keys,
+				Keys:    indexKeys,
 				Options: &indexOptions,
 			})
 

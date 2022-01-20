@@ -10,7 +10,6 @@ RabbitMQ UI   | Interface web de RabbitMQ                   | TCP/15672         
 API Canopsis  | API REST de Canopsis                        | TCP/8082              |
 Nginx         | Accès à l'interface web et API              | TCP/80,443            |
 Redis         | Serveur de cache                            | TCP/6739              |
-InfluxDB      | Métriques                                   | TCP/8086              |
 SNMP          | Passage des traps SNMP                      | UDP/162               |
 
 ## Matrice des flux

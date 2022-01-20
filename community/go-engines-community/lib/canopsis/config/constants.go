@@ -14,6 +14,7 @@ const (
 
 	ApiTokenExpiration    = 24 * time.Hour
 	ApiTokenSigningMethod = "HS256"
+	ApiBulkMaxSize        = 10000
 
 	RemediationHttpTimeout                    = 30 * time.Second
 	RemediationLaunchJobRetriesAmount         = 3
@@ -21,6 +22,9 @@ const (
 	RemediationWaitJobCompleteRetriesAmount   = 12
 	RemediationWaitJobCompleteRetriesInterval = 5 * time.Second
 	RemediationPauseManualInstructionInterval = 15 * time.Second
+
+	MetricsSliInterval    = time.Hour
+	MaxMetricsSliInterval = time.Hour
 )
 
 func CreateDisplayNameTpl(text string) (*template.Template, error) {
