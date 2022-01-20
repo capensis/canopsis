@@ -45,12 +45,12 @@ type EditPositionItemRequest struct {
 	Views []string `json:"views" binding:"required"`
 }
 
-type View struct {
+type Response struct {
 	ID              string                     `bson:"_id" json:"_id,omitempty"`
 	Enabled         bool                       `bson:"enabled" json:"enabled"`
 	Title           string                     `bson:"title" json:"title"`
 	Description     string                     `bson:"description" json:"description"`
-	Tabs            []viewtab.Tab              `bson:"tabs" json:"tabs,omitempty"`
+	Tabs            *[]viewtab.Response        `bson:"tabs" json:"tabs,omitempty"`
 	Tags            []string                   `bson:"tags" json:"tags"`
 	PeriodicRefresh *types.DurationWithEnabled `bson:"periodic_refresh" json:"periodic_refresh"`
 	Group           *ViewGroup                 `bson:"group" json:"group,omitempty"`
@@ -68,8 +68,8 @@ type ViewGroup struct {
 }
 
 type AggregationResult struct {
-	Data       []View `bson:"data" json:"data"`
-	TotalCount int64  `bson:"total_count" json:"total_count"`
+	Data       []Response `bson:"data" json:"data"`
+	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
 func (r *AggregationResult) GetData() interface{} {
@@ -82,7 +82,7 @@ func (r *AggregationResult) GetTotal() int64 {
 
 type ImportItemRequest struct {
 	ViewGroup
-	Views []View `json:"views"`
+	Views []Response `json:"views"`
 }
 
 type ImportRequest struct {
@@ -107,10 +107,10 @@ type ExportRequest struct {
 
 type ExportViewGroupResponse struct {
 	ViewGroup `bson:",inline"`
-	Views     []View `json:"views"`
+	Views     []Response `json:"views"`
 }
 
 type ExportResponse struct {
 	Groups []ExportViewGroupResponse `json:"groups"`
-	Views  []View                    `json:"views"`
+	Views  []Response                `json:"views"`
 }

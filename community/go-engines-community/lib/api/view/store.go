@@ -20,14 +20,14 @@ const permissionPrefix = "Rights on view :"
 
 type Store interface {
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
-	GetOneBy(ctx context.Context, id string) (*View, error)
-	Insert(ctx context.Context, r EditRequest) (*View, error)
-	Update(ctx context.Context, r EditRequest) (*View, error)
+	GetOneBy(ctx context.Context, id string) (*Response, error)
+	Insert(ctx context.Context, r EditRequest) (*Response, error)
+	Update(ctx context.Context, r EditRequest) (*Response, error)
 	// UpdatePositions receives some groups and views with updated positions and updates
 	// positions for all groups and views in db and moves views to another groups if necessary.
 	UpdatePositions(ctx context.Context, r EditPositionRequest) (bool, error)
 	Delete(ctx context.Context, id string) (bool, error)
-	Copy(ctx context.Context, id string, r EditRequest) (*View, error)
+	Copy(ctx context.Context, id string, r EditRequest) (*Response, error)
 	Export(ctx context.Context, r ExportRequest) (ExportResponse, error)
 	Import(ctx context.Context, r ImportRequest, userId string) error
 }
@@ -107,7 +107,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	return &res, nil
 }
 
-func (s *store) GetOneBy(ctx context.Context, id string) (*View, error) {
+func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
@@ -118,7 +118,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*View, error) {
 	defer cursor.Close(ctx)
 
 	if cursor.Next(ctx) {
-		model := &View{}
+		model := &Response{}
 		err := cursor.Decode(model)
 		if err != nil {
 			return nil, err
@@ -130,7 +130,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*View, error) {
 	return nil, nil
 }
 
-func (s *store) Insert(ctx context.Context, r EditRequest) (*View, error) {
+func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	count, err := s.collection.CountDocuments(ctx, bson.M{})
 	if err != nil {
 		return nil, err
@@ -168,7 +168,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*View, error) {
 	return newView, nil
 }
 
-func (s *store) Update(ctx context.Context, r EditRequest) (*View, error) {
+func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	oldView := view.View{}
 	err := s.collection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&oldView)
 	if err != nil {
@@ -233,7 +233,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	return true, nil
 }
 
-func (s *store) Copy(ctx context.Context, id string, r EditRequest) (*View, error) {
+func (s *store) Copy(ctx context.Context, id string, r EditRequest) (*Response, error) {
 	v, err := s.GetOneBy(ctx, id)
 	if err != nil || v == nil {
 		return nil, err
@@ -251,13 +251,14 @@ func (s *store) Copy(ctx context.Context, id string, r EditRequest) (*View, erro
 	defer cursor.Close(ctx)
 
 	for cursor.Next(ctx) {
-		t := viewtab.Tab{}
+		t := viewtab.Response{}
 		err := cursor.Decode(&t)
 		if err != nil {
 			return nil, err
 		}
 
-		_, err = s.tabStore.Copy(ctx, t, viewtab.CopyRequest{
+		_, err = s.tabStore.Copy(ctx, t, viewtab.EditRequest{
+			Title:  t.Title,
 			View:   newView.ID,
 			Author: newView.Author,
 		})
@@ -291,7 +292,7 @@ func (s *store) UpdatePositions(ctx context.Context, r EditPositionRequest) (boo
 
 func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, error) {
 	groups := make([]ExportViewGroupResponse, 0)
-	views := make([]View, 0)
+	views := make([]Response, 0)
 
 	nestedObjectsPipeline := []bson.M{
 		{"$lookup": bson.M{
@@ -476,7 +477,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 		}
 
 		for i, group := range groups {
-			foundViews := make([]View, 0, len(viewsByGroup[group.ID]))
+			foundViews := make([]Response, 0, len(viewsByGroup[group.ID]))
 			for _, v := range group.Views {
 				if viewsByGroup[group.ID][v.ID] {
 					v.ID = ""
@@ -624,83 +625,88 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 				maxViewPosition++
 				newViewTitles[viewId] = v.Title
 
-				for ti, tab := range v.Tabs {
-					if tab.Title == "" {
-						return ValidationError{
-							field: fmt.Sprintf("%d.views.%d.tabs.%d.title", gi, vi, ti),
-							error: fmt.Errorf("value is missing"),
-						}
-					}
-
-					tabId := utils.NewID()
-					newTabs = append(newTabs, view.Tab{
-						ID:       tabId,
-						Title:    tab.Title,
-						View:     viewId,
-						Author:   userId,
-						Position: int64(ti),
-						Created:  now,
-						Updated:  now,
-					})
-					for wi, widget := range tab.Widgets {
-						if widget.Title == "" {
+				if v.Tabs != nil {
+					for ti, tab := range *v.Tabs {
+						if tab.Title == "" {
 							return ValidationError{
-								field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.title", gi, vi, ti, wi),
-								error: fmt.Errorf("value is missing"),
-							}
-						}
-						if widget.Type == "" {
-							return ValidationError{
-								field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.type", gi, vi, ti, wi),
+								field: fmt.Sprintf("%d.views.%d.tabs.%d.title", gi, vi, ti),
 								error: fmt.Errorf("value is missing"),
 							}
 						}
 
-						widgetId := utils.NewID()
-						mainFilterId := ""
-
-						for fi, filter := range widget.Filters {
-							if filter.Title == "" {
-								return ValidationError{
-									field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.filters.%d.title", gi, vi, ti, wi, fi),
-									error: fmt.Errorf("value is missing"),
-								}
-							}
-							if filter.Query == "" {
-								return ValidationError{
-									field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.filters.%d.query", gi, vi, ti, wi, fi),
-									error: fmt.Errorf("value is missing"),
-								}
-							}
-
-							filterId := utils.NewID()
-							newWidgetFilters = append(newWidgetFilters, view.Filter{
-								ID:      filterId,
-								Title:   filter.Title,
-								Widget:  widgetId,
-								Query:   filter.Query,
-								Author:  userId,
-								Created: &now,
-								Updated: &now,
-							})
-
-							if widget.Parameters.MainFilter != "" && filter.ID == widget.Parameters.MainFilter {
-								mainFilterId = filterId
-							}
-						}
-
-						widget.Parameters.MainFilter = mainFilterId
-						newWidgets = append(newWidgets, view.Widget{
-							ID:             widgetId,
-							Tab:            tabId,
-							Title:          widget.Title,
-							Type:           widget.Type,
-							GridParameters: widget.GridParameters,
-							Parameters:     widget.Parameters,
-							Author:         userId,
-							Created:        &now,
-							Updated:        &now,
+						tabId := utils.NewID()
+						newTabs = append(newTabs, view.Tab{
+							ID:       tabId,
+							Title:    tab.Title,
+							View:     viewId,
+							Author:   userId,
+							Position: int64(ti),
+							Created:  now,
+							Updated:  now,
 						})
+
+						if tab.Widgets != nil {
+							for wi, widget := range *tab.Widgets {
+								if widget.Title == "" {
+									return ValidationError{
+										field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.title", gi, vi, ti, wi),
+										error: fmt.Errorf("value is missing"),
+									}
+								}
+								if widget.Type == "" {
+									return ValidationError{
+										field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.type", gi, vi, ti, wi),
+										error: fmt.Errorf("value is missing"),
+									}
+								}
+
+								widgetId := utils.NewID()
+								mainFilterId := ""
+
+								for fi, filter := range widget.Filters {
+									if filter.Title == "" {
+										return ValidationError{
+											field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.filters.%d.title", gi, vi, ti, wi, fi),
+											error: fmt.Errorf("value is missing"),
+										}
+									}
+									if filter.Query == "" {
+										return ValidationError{
+											field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.filters.%d.query", gi, vi, ti, wi, fi),
+											error: fmt.Errorf("value is missing"),
+										}
+									}
+
+									filterId := utils.NewID()
+									newWidgetFilters = append(newWidgetFilters, view.Filter{
+										ID:      filterId,
+										Title:   filter.Title,
+										Widget:  widgetId,
+										Query:   filter.Query,
+										Author:  userId,
+										Created: &now,
+										Updated: &now,
+									})
+
+									if widget.Parameters.MainFilter != "" && filter.ID == widget.Parameters.MainFilter {
+										mainFilterId = filterId
+									}
+								}
+
+								widget.Parameters.MainFilter = mainFilterId
+								newWidgets = append(newWidgets, view.Widget{
+									ID:             widgetId,
+									Tab:            tabId,
+									Title:          widget.Title,
+									Type:           widget.Type,
+									GridParameters: widget.GridParameters,
+									Parameters:     widget.Parameters,
+									Author:         userId,
+									Created:        &now,
+									Updated:        &now,
+								})
+							}
+						}
 					}
 				}
 			}
@@ -809,7 +815,7 @@ func (s *store) createPermissions(ctx context.Context, userID string, views map[
 	return err
 }
 
-func (s *store) updatePermissions(ctx context.Context, view View) error {
+func (s *store) updatePermissions(ctx context.Context, view Response) error {
 	_, err := s.aclCollection.UpdateOne(ctx,
 		bson.M{
 			"_id":          view.ID,

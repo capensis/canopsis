@@ -77,15 +77,52 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds []str
 	if r.WithViews {
 		project = append(project,
 			bson.M{"$unwind": bson.M{"path": "$views", "preserveNullAndEmptyArrays": true}},
+			bson.M{"$addFields": bson.M{
+				"views.group": "$group",
+			}},
+		)
+
+		if r.WithTabs {
+			project = append(project,
+				bson.M{"$lookup": bson.M{
+					"from":         mongo.ViewTabMongoCollection,
+					"localField":   "views._id",
+					"foreignField": "view",
+					"as":           "tabs",
+				}},
+				bson.M{"$unwind": bson.M{"path": "$tabs", "preserveNullAndEmptyArrays": true}},
+				bson.M{"$sort": bson.M{"tabs.position": 1}},
+				bson.M{"$group": bson.M{
+					"_id": bson.M{
+						"_id":  "$_id",
+						"view": "$views._id",
+					},
+					"group":     bson.M{"$first": "$group"},
+					"deletable": bson.M{"$first": "$deletable"},
+					"views":     bson.M{"$first": "$views"},
+					"tabs":      bson.M{"$push": "$tabs"},
+				}},
+				bson.M{"$addFields": bson.M{
+					"_id": "$_id._id",
+					"views.tabs": bson.M{"$filter": bson.M{
+						"input": bson.M{"$cond": bson.M{
+							"if":   "$tabs",
+							"then": "$tabs",
+							"else": bson.A{},
+						}},
+						"cond": "$$this._id",
+					}},
+				}},
+			)
+		}
+
+		project = append(project,
 			bson.M{"$sort": bson.M{"views.position": 1}},
 			bson.M{"$group": bson.M{
 				"_id":       "$_id",
 				"group":     bson.M{"$first": "$group"},
 				"deletable": bson.M{"$first": "$deletable"},
 				"views":     bson.M{"$push": "$views"},
-			}},
-			bson.M{"$addFields": bson.M{
-				"views.group": "$group",
 			}},
 			bson.M{"$replaceRoot": bson.M{
 				"newRoot": bson.M{"$mergeObjects": bson.A{

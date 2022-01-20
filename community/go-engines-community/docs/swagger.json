@@ -8446,7 +8446,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/viewtab.CopyRequest"
+                            "$ref": "#/definitions/viewtab.EditRequest"
                         }
                     }
                 ],
@@ -8454,7 +8454,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/viewtab.Tab"
+                            "$ref": "#/definitions/viewtab.Response"
                         }
                     },
                     "400": {
@@ -8556,7 +8556,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/viewtab.Tab"
+                            "$ref": "#/definitions/viewtab.Response"
                         }
                     },
                     "400": {
@@ -8600,7 +8600,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/viewtab.Tab"
+                            "$ref": "#/definitions/viewtab.Response"
                         }
                     },
                     "404": {
@@ -8654,7 +8654,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/viewtab.Tab"
+                            "$ref": "#/definitions/viewtab.Response"
                         }
                     },
                     "400": {
@@ -8776,7 +8776,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/view.View"
+                                                "$ref": "#/definitions/view.Response"
                                             }
                                         }
                                     }
@@ -8828,7 +8828,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/view.View"
+                            "$ref": "#/definitions/view.Response"
                         }
                     },
                     "400": {
@@ -8872,7 +8872,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/view.View"
+                            "$ref": "#/definitions/view.Response"
                         }
                     },
                     "404": {
@@ -8926,7 +8926,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/view.View"
+                            "$ref": "#/definitions/view.Response"
                         }
                     },
                     "400": {
@@ -9201,7 +9201,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/widget.CopyRequest"
+                            "$ref": "#/definitions/widget.EditRequest"
                         }
                     }
                 ],
@@ -9209,7 +9209,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/widget.Widget"
+                            "$ref": "#/definitions/widget.Response"
                         }
                     },
                     "400": {
@@ -9498,7 +9498,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/widget.Widget"
+                            "$ref": "#/definitions/widget.Response"
                         }
                     },
                     "400": {
@@ -9542,7 +9542,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/widget.Widget"
+                            "$ref": "#/definitions/widget.Response"
                         }
                     },
                     "404": {
@@ -9596,7 +9596,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/widget.Widget"
+                            "$ref": "#/definitions/widget.Response"
                         }
                     },
                     "400": {
@@ -13832,6 +13832,9 @@
                 "alarm_display_name": {
                     "type": "string"
                 },
+                "alarm_id": {
+                    "type": "string"
+                },
                 "assigned_instructions": {
                     "type": "array",
                     "items": {
@@ -14936,7 +14939,7 @@
                 "views": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/view.View"
+                        "$ref": "#/definitions/view.Response"
                     }
                 }
             }
@@ -14962,7 +14965,7 @@
                 "views": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/view.View"
+                        "$ref": "#/definitions/view.Response"
                     }
                 }
             }
@@ -15011,7 +15014,7 @@
                 "views": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/view.View"
+                        "$ref": "#/definitions/view.Response"
                     }
                 }
             }
@@ -15049,6 +15052,52 @@
                 },
                 "video_filemask": {
                     "type": "string"
+                }
+            }
+        },
+        "view.Response": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "group": {
+                    "type": "object",
+                    "$ref": "#/definitions/view.ViewGroup"
+                },
+                "periodic_refresh": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithEnabled"
+                },
+                "tabs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/viewtab.Response"
+                    }
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated": {
+                    "type": "integer"
                 }
             }
         },
@@ -15096,6 +15145,26 @@
                 }
             }
         },
+        "view.ViewGroup": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
         "viewgroup.EditRequest": {
             "type": "object",
             "required": [
@@ -15131,19 +15200,8 @@
                 "views": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/view.View"
+                        "$ref": "#/definitions/view.Response"
                     }
-                }
-            }
-        },
-        "viewtab.CopyRequest": {
-            "type": "object",
-            "required": [
-                "view"
-            ],
-            "properties": {
-                "view": {
-                    "type": "string"
                 }
             }
         },
@@ -15162,7 +15220,7 @@
                 }
             }
         },
-        "viewtab.Tab": {
+        "viewtab.Response": {
             "type": "object",
             "properties": {
                 "_id": {
@@ -15185,19 +15243,8 @@
                 "widgets": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/widget.Widget"
+                        "$ref": "#/definitions/widget.Response"
                     }
-                }
-            }
-        },
-        "widget.CopyRequest": {
-            "type": "object",
-            "required": [
-                "tab"
-            ],
-            "properties": {
-                "tab": {
-                    "type": "string"
                 }
             }
         },
@@ -15240,7 +15287,7 @@
                 }
             }
         },
-        "widget.Widget": {
+        "widget.Response": {
             "type": "object",
             "properties": {
                 "_id": {

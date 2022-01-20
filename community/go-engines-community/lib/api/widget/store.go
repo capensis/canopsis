@@ -16,11 +16,11 @@ import (
 type Store interface {
 	FindViewIds(ctx context.Context, ids []string) (map[string]string, error)
 	FindViewIdByTab(ctx context.Context, tabId string) (string, error)
-	GetOneBy(ctx context.Context, id string) (*Widget, error)
-	Insert(ctx context.Context, r EditRequest) (*Widget, error)
-	Update(ctx context.Context, r EditRequest) (*Widget, error)
+	GetOneBy(ctx context.Context, id string) (*Response, error)
+	Insert(ctx context.Context, r EditRequest) (*Response, error)
+	Update(ctx context.Context, r EditRequest) (*Response, error)
 	Delete(ctx context.Context, id string) (bool, error)
-	Copy(ctx context.Context, widget Widget, r CopyRequest) (*Widget, error)
+	Copy(ctx context.Context, widget Response, r EditRequest) (*Response, error)
 	UpdateGridPositions(ctx context.Context, items []EditGridPositionItemRequest) (bool, error)
 }
 
@@ -91,8 +91,8 @@ func (s *store) FindViewIdByTab(ctx context.Context, tabId string) (string, erro
 	return result.View, nil
 }
 
-func (s *store) GetOneBy(ctx context.Context, id string) (*Widget, error) {
-	widgets := make([]Widget, 0)
+func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
+	widgets := make([]Response, 0)
 	cursor, err := s.collection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{"_id": id}},
 		{"$lookup": bson.M{
@@ -145,7 +145,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Widget, error) {
 	return nil, nil
 }
 
-func (s *store) Insert(ctx context.Context, r EditRequest) (*Widget, error) {
+func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	now := types.CpsTime{Time: time.Now()}
 	widget := transformEditRequestToModel(r)
 	widget.ID = utils.NewID()
@@ -160,7 +160,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Widget, error) {
 	return s.GetOneBy(ctx, widget.ID)
 }
 
-func (s *store) Update(ctx context.Context, r EditRequest) (*Widget, error) {
+func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	oldWidget, err := s.GetOneBy(ctx, r.ID)
 	if err != nil || oldWidget == nil {
 		return nil, err
@@ -214,15 +214,15 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	return true, nil
 }
 
-func (s *store) Copy(ctx context.Context, widget Widget, r CopyRequest) (*Widget, error) {
+func (s *store) Copy(ctx context.Context, widget Response, r EditRequest) (*Response, error) {
 	now := types.CpsTime{Time: time.Now()}
 	newWidget := view.Widget{
 		ID:             utils.NewID(),
 		Tab:            r.Tab,
-		Title:          widget.Title,
-		Type:           widget.Type,
-		GridParameters: widget.GridParameters,
-		Parameters:     widget.Parameters,
+		Title:          r.Title,
+		Type:           r.Type,
+		GridParameters: r.GridParameters,
+		Parameters:     r.Parameters,
 		Author:         r.Author,
 		Created:        &now,
 		Updated:        &now,
