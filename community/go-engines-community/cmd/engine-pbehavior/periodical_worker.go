@@ -48,8 +48,8 @@ func (w *periodicalWorker) Work(ctx context.Context) {
 		return
 	}
 
-	processedEntityIds := w.processAlarms(ctx, types.CpsTime{Time: now}, computedEntityIDs)
-	w.processEntities(ctx, types.CpsTime{Time: now}, computedEntityIDs, processedEntityIds)
+	processedEntityIds := w.processAlarms(ctx, now, computedEntityIDs)
+	w.processEntities(ctx, now, computedEntityIDs, processedEntityIds)
 }
 
 func (w *periodicalWorker) compute(ctx context.Context, now time.Time) {
@@ -69,8 +69,8 @@ func (w *periodicalWorker) compute(ctx context.Context, now time.Time) {
 	}
 }
 
-func (w *periodicalWorker) processAlarms(ctx context.Context, computedAt types.CpsTime, computedEntityIDs []string) []string {
-	cursor, err := w.AlarmAdapter.FindToCheckPbehaviorInfo(ctx, computedAt, computedEntityIDs)
+func (w *periodicalWorker) processAlarms(ctx context.Context, computedAt time.Time, computedEntityIDs []string) []string {
+	cursor, err := w.AlarmAdapter.FindToCheckPbehaviorInfo(ctx, types.CpsTime{Time: computedAt}, computedEntityIDs)
 	if err != nil {
 		w.Logger.Err(err).Msg("get alarms from mongo failed")
 		return nil
@@ -94,7 +94,7 @@ func (w *periodicalWorker) processAlarms(ctx context.Context, computedAt types.C
 
 		if len(alarm.Value.Steps) > 0 {
 			lastStep := alarm.Value.Steps[len(alarm.Value.Steps)-1]
-			if !lastStep.Timestamp.Before(computedAt) {
+			if lastStep.Timestamp.Unix() >= computedAt.Unix() {
 				continue
 			}
 		}
@@ -125,7 +125,7 @@ func (w *periodicalWorker) processAlarms(ctx context.Context, computedAt types.C
 	return processedEntityIds
 }
 
-func (w *periodicalWorker) processEntities(ctx context.Context, computedAt types.CpsTime, computedEntityIDs, processedEntityIds []string) {
+func (w *periodicalWorker) processEntities(ctx context.Context, computedAt time.Time, computedEntityIDs, processedEntityIds []string) {
 	cursor, err := w.EntityAdapter.FindToCheckPbehaviorInfo(ctx, computedEntityIDs, processedEntityIds)
 	if err != nil {
 		w.Logger.Err(err).Msg("get alarms from mongo failed")
@@ -145,7 +145,7 @@ func (w *periodicalWorker) processEntities(ctx context.Context, computedAt types
 			continue
 		}
 
-		if entity.PbehaviorInfo.Timestamp != nil && !entity.PbehaviorInfo.Timestamp.Before(computedAt) {
+		if entity.PbehaviorInfo.Timestamp != nil && entity.PbehaviorInfo.Timestamp.Unix() >= computedAt.Unix() {
 			continue
 		}
 
