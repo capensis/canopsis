@@ -135,7 +135,7 @@ describe('export-csv', () => {
   it('Renders `export-csv` with default props', () => {
     const wrapper = snapshotFactory();
 
-    const menuContents = wrapper.findAll('.v-menu__content');
+    const menuContents = wrapper.findAllMenus();
 
     expect(wrapper.element).toMatchSnapshot();
     menuContents.wrappers.forEach((menuContent) => {
@@ -155,7 +155,7 @@ describe('export-csv', () => {
       },
     });
 
-    const menuContents = wrapper.findAll('.v-menu__content');
+    const menuContents = wrapper.findAllMenus();
 
     expect(wrapper.element).toMatchSnapshot();
     menuContents.wrappers.forEach((menuContent) => {
