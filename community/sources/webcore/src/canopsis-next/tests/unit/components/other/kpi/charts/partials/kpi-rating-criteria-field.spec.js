@@ -280,7 +280,7 @@ describe('kpi-rating-criteria-field', () => {
 
     await flushPromises();
 
-    const menuContent = wrapper.find('.v-menu__content');
+    const menuContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
@@ -309,7 +309,7 @@ describe('kpi-rating-criteria-field', () => {
 
     await flushPromises();
 
-    const menuContent = wrapper.find('.v-menu__content');
+    const menuContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
