@@ -1,0 +1,19 @@
+---
+- name: Create canopsis database for PostgreSQL
+  postgresql_db:
+    name: "{{ canopsis_postgresql_db }}"
+    state: present
+
+- name: Enable TimescaleDB extension on canopsis PostgreSQL database
+  postgresql_ext:
+    name: timescaledb
+    db: "{{ canopsis_postgresql_db }}"
+    state: present
+    cascade: true
+
+- name: Create Canopsis user account for PostgreSQL
+  postgresql_user:
+    db: "{{ canopsis_postgresql_db }}"
+    name: "{{ canopsis_postgresql_user }}"
+    password: "{{ canopsis_postgresql_password }}"
+    state: present
