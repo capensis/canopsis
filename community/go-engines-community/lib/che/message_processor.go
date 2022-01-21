@@ -53,7 +53,6 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		return nil, nil
 	}
 
-	p.Logger.Debug().Msgf("valid input event: %v", string(d.Body))
 	trace.Log(ctx, "event.event_type", event.EventType)
 	trace.Log(ctx, "event.timestamp", event.Timestamp.String())
 	trace.Log(ctx, "event.source_type", event.SourceType)
@@ -181,8 +180,6 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		p.logError(err, "cannot encode event", d.Body)
 		return nil, nil
 	}
-
-	p.Logger.Debug().Msgf("output event about to be published: %+v", string(body))
 
 	return body, nil
 }

@@ -953,6 +953,86 @@
     "type": "service"
   },
   {
+    "_id": "test-entityservice-to-bulk-update-1",
+    "depends": [],
+    "enable_history": [],
+    "enabled": true,
+    "impact": [],
+    "impact_level": 3,
+    "infos": {
+      "test-entityservice-to-bulk-update-1-customer-name": {
+        "description": "test-entityservice-to-bulk-update-1-customer-description",
+        "name": "test-entityservice-to-bulk-update-1-customer-name",
+        "value": "test-entityservice-to-bulk-update-1-customer-value"
+      }
+    },
+    "measurements": null,
+    "entity_patterns": [{"name": "test-entityservice-to-bulk-update-1-pattern"}],
+    "name": "test-entityservice-to-bulk-update-1-name",
+    "output_template": "test-entityservice-to-bulk-update-1-output",
+    "type": "service"
+  },
+  {
+    "_id": "test-entityservice-to-bulk-update-2",
+    "depends": [],
+    "enable_history": [],
+    "enabled": true,
+    "impact": [],
+    "impact_level": 3,
+    "infos": {
+      "test-entityservice-to-bulk-update-2-customer-name": {
+        "description": "test-entityservice-to-bulk-update-2-customer-description",
+        "name": "test-entityservice-to-bulk-update-2-customer-name",
+        "value": "test-entityservice-to-bulk-update-2-customer-value"
+      }
+    },
+    "measurements": null,
+    "entity_patterns": [{"name": "test-entityservice-to-bulk-update-2-pattern"}],
+    "name": "test-entityservice-to-bulk-update-2-name",
+    "output_template": "test-entityservice-to-bulk-update-2-output",
+    "type": "service"
+  },
+  {
+    "_id": "test-entityservice-to-bulk-delete-1",
+    "depends": [],
+    "enable_history": [],
+    "enabled": true,
+    "impact": [],
+    "impact_level": 3,
+    "infos": {
+      "test-entityservice-to-bulk-delete-1-customer-name": {
+        "description": "test-entityservice-to-bulk-delete-1-customer-description",
+        "name": "test-entityservice-to-bulk-delete-1-customer-name",
+        "value": "test-entityservice-to-bulk-delete-1-customer-value"
+      }
+    },
+    "measurements": null,
+    "entity_patterns": [{"name": "test-entityservice-to-bulk-delete-1-pattern"}],
+    "name": "test-entityservice-to-bulk-delete-1-name",
+    "output_template": "test-entityservice-to-bulk-delete-1-output",
+    "type": "service"
+  },
+  {
+    "_id": "test-entityservice-to-bulk-delete-2",
+    "depends": [],
+    "enable_history": [],
+    "enabled": true,
+    "impact": [],
+    "impact_level": 3,
+    "infos": {
+      "test-entityservice-to-bulk-delete-2-customer-name": {
+        "description": "test-entityservice-to-bulk-delete-2-customer-description",
+        "name": "test-entityservice-to-bulk-delete-2-customer-name",
+        "value": "test-entityservice-to-bulk-delete-2-customer-value"
+      }
+    },
+    "measurements": null,
+    "entity_patterns": [{"name": "test-entityservice-to-bulk-delete-2-pattern"}],
+    "name": "test-entityservice-to-bulk-delete-2-name",
+    "output_template": "test-entityservice-to-bulk-delete-2-output",
+    "type": "service"
+  },  
+  {
     "_id": "test-entityservice-to-delete",
     "depends": [],
     "enable_history": [],
@@ -4514,6 +4594,47 @@
     "name": "test-api-correlation-2",
     "type": "metaalarm",
     "component": "metaalarm",
+    "impact_level": 1
+  },
+  {
+    "_id": "dynamic-info-update-connector/dynamic-info-update-connectorname",
+    "depends": ["dynamic-info-update-component"],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": ["dynamic-info-update-resource-1/dynamic-info-update-component"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "dynamic-info-update-connectorname",
+    "type": "connector",
+    "impact_level": 1
+  },
+  {
+    "_id": "dynamic-info-update-component",
+    "depends": ["dynamic-info-update-resource-1/dynamic-info-update-component"],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": ["dynamic-info-update-connector/dynamic-info-update-connectorname"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "dynamic-info-update-component",
+    "type": "component",
+    "component": "dynamic-info-update-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "dynamic-info-update-resource-1/dynamic-info-update-component",
+    "depends": ["dynamic-info-update-connector/dynamic-info-update-connectorname"],
+    "enable_history": [1597030219],
+    "enabled": true,
+    "impact": ["dynamic-info-update-component"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "dynamic-info-update-resource-1",
+    "type": "resource",
+    "component": "dynamic-info-update-component",
     "impact_level": 1
   }
 ]

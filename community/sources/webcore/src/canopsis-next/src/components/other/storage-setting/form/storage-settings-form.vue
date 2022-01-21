@@ -77,7 +77,7 @@
 <script>
 import { isNumber } from 'lodash';
 
-import { DATETIME_FORMATS } from '@/constants';
+import { convertDateToString } from '@/helpers/date/date';
 
 export default {
   inject: ['$validator'],
@@ -126,25 +126,25 @@ export default {
 
     junitSubTitle() {
       return this.$t('storageSettings.history.scriptLaunched', {
-        launchedAt: this.$options.filters.date(this.history.junit, DATETIME_FORMATS.long, true),
+        launchedAt: convertDateToString(this.history.junit),
       });
     },
 
     remediationSubTitle() {
       return this.$t('storageSettings.history.scriptLaunched', {
-        launchedAt: this.$options.filters.date(this.history.remediation, DATETIME_FORMATS.long, true),
+        launchedAt: convertDateToString(this.history.remediation),
       });
     },
 
     pbehaviorSubTitle() {
       return this.$t('storageSettings.history.scriptLaunched', {
-        launchedAt: this.$options.filters.date(this.history.pbehavior, DATETIME_FORMATS.long, true),
+        launchedAt: convertDateToString(this.history.pbehavior),
       });
     },
 
     healthCheckSubTitle() {
       return this.$t('storageSettings.history.scriptLaunched', {
-        launchedAt: this.$options.filters.date(this.history.health_check, DATETIME_FORMATS.long, true),
+        launchedAt: convertDateToString(this.history.health_check),
       });
     },
 
@@ -153,7 +153,7 @@ export default {
 
       const result = [
         this.$t('storageSettings.history.scriptLaunched', {
-          launchedAt: this.$options.filters.date(time, DATETIME_FORMATS.long, true),
+          launchedAt: convertDateToString(time),
         }),
       ];
 
@@ -177,7 +177,7 @@ export default {
 
       const result = [
         this.$t('storageSettings.history.scriptLaunched', {
-          launchedAt: this.$options.filters.date(time, DATETIME_FORMATS.long, true),
+          launchedAt: convertDateToString(time),
         }),
       ];
 

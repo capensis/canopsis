@@ -23,6 +23,7 @@ import {
   CAT_ENGINES,
 } from '@/constants';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { healthcheckNodesMixin } from '@/mixins/healthcheck/healthcheck-nodes';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
@@ -33,7 +34,7 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.healthcheckEnginesChainReference,
   components: { HealthcheckNetworkGraph, ModalWrapper },
-  mixins: [healthcheckNodesMixin, entitiesInfoMixin],
+  mixins: [modalInnerMixin, healthcheckNodesMixin, entitiesInfoMixin],
   computed: {
     enginesGraph() {
       return {

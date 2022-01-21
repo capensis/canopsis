@@ -5,7 +5,7 @@
     "author": "root",
     "name": "Default rule",
     "duration": {
-      "seconds": 60,
+      "value": 1,
       "unit": "m"
     },
     "priority": 1,

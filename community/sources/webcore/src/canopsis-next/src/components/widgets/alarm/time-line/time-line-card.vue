@@ -67,7 +67,6 @@ export default {
     padding-left: 5px;
     padding-top: 5px;
 
-
     .chips {
       font-size: 15px;
       height: 25px;
