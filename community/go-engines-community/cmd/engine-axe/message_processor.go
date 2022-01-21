@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"runtime/trace"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -10,7 +12,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
-	"runtime/trace"
 )
 
 type messageProcessor struct {
@@ -61,9 +62,15 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	event.AlarmChange = &alarmChange
 
 	if p.FeatureStatEvents {
+		var alarm types.Alarm
+
 		if event.Alarm == nil {
-			p.Logger.Warn().Msg("event.Alarm should not be nil")
-		} else if event.Entity == nil {
+			alarm = types.Alarm{Value: types.AlarmValue{}}
+		} else {
+			alarm = *event.Alarm
+		}
+
+		if event.Entity == nil {
 			p.Logger.Warn().Msg("event.Entity should not be nil")
 		} else {
 			go func() {
@@ -71,7 +78,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 					ctx,
 					*event.AlarmChange,
 					event.Timestamp,
-					*event.Alarm,
+					alarm,
 					*event.Entity,
 					event.Author,
 					event.EventType,
