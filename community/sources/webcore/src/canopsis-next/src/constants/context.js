@@ -302,6 +302,9 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.junitTestCaseUpdate]: {
     icon: 'keyboard_arrow_up',
   },
+  [EVENT_ENTITY_TYPES.executeInstruction]: {
+    icon: 'assignment',
+  },
 };
 
 export const UNKNOWN_VALUE_STYLE = {
@@ -410,6 +413,7 @@ export const WEATHER_ACTIONS_TYPES = {
   alarmsList: 'alarmsList',
   pbehaviorList: 'pbehaviorList',
   variablesHelp: 'variablesHelp',
+  executeInstruction: 'executeInstruction',
 };
 
 export const COUNTER_ACTIONS_TYPES = {

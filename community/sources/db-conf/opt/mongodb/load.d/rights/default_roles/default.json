@@ -214,6 +214,10 @@
         "checksum": 1,
         "desc": ""
       },
+      "serviceweather_executeInstruction": {
+        "checksum": 1,
+        "desc": ""
+      },
       "serviceweather_entityLinks": {
         "checksum": 1,
         "desc": ""
