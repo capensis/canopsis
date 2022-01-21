@@ -268,7 +268,7 @@ export default {
         name: MODALS.executeRemediationInstruction,
         config: {
           assignedInstruction,
-          alarm: this.item,
+          alarmId: this.item._id,
           onOpen: refreshAlarm,
           onClose: refreshAlarm,
           onComplete: refreshAlarm,
