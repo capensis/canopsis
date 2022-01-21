@@ -8,10 +8,11 @@ import (
 
 type ListRequest struct {
 	pagination.Query
-	Search    string `form:"search"`
-	WithViews bool   `form:"with_views"`
-	WithTabs  bool   `form:"with_tabs"`
-	WithFlags bool   `form:"with_flags"`
+	Search      string `form:"search" json:"search"`
+	WithViews   bool   `form:"with_views" json:"with_views"`
+	WithTabs    bool   `form:"with_tabs" json:"with_tabs"`
+	WithWidgets bool   `form:"with_widgets" json:"with_widgets"`
+	WithFlags   bool   `form:"with_flags" json:"with_flags"`
 }
 
 type EditRequest struct {
