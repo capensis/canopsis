@@ -94,11 +94,11 @@ export const eventFilterConfigToForm = eventFilterConfig => ({
  * @returns {EventFilterForm}
  */
 export const eventFilterToForm = eventFilter => ({
-  _id: eventFilter?._id || '',
-  type: eventFilter?.type || EVENT_FILTER_TYPES.drop,
-  description: eventFilter?.description || '',
+  _id: eventFilter?._id ?? '',
+  type: eventFilter?.type ?? EVENT_FILTER_TYPES.drop,
+  description: eventFilter?.description ?? '',
   patterns: eventFilter?.patterns ? cloneDeep(eventFilter?.patterns) : [],
-  priority: eventFilter?.priority || 0,
+  priority: eventFilter?.priority ?? 0,
   enabled: eventFilter?.enabled ?? true,
   config: eventFilterConfigToForm(eventFilter?.config),
 });
@@ -113,7 +113,7 @@ export const eventFilterActionToForm = eventFilterAction => ({
   type: eventFilterAction?.type ?? EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField,
   name: eventFilterAction?.name ?? '',
   value: eventFilterAction?.value ?? '',
-  description: eventFilterAction?.description || '',
+  description: eventFilterAction?.description ?? '',
 });
 
 /**
