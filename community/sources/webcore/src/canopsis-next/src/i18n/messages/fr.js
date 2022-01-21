@@ -2623,7 +2623,7 @@ export default {
     /**
      * Admin access
      */
-    [USERS_PERMISSIONS.technical.action]: {
+    [USERS_PERMISSIONS.technical.permission]: {
       title: 'Droits',
     },
     [USERS_PERMISSIONS.technical.role]: {
