@@ -46,6 +46,11 @@ const ICONS_COLORS = {
   [ICON_NAMES.arrowDownward]: 'error',
 };
 
+const PASSED_STATUSES = [
+  TEST_SUITE_STATUSES.passed,
+  TEST_SUITE_STATUSES.total,
+];
+
 const MIN_SKIPPED_TO_SECTIONS_COUNT = 40;
 
 export default {
@@ -167,7 +172,9 @@ export default {
       const { time = 0, status, message } = this.items[dataPoint.dataIndex];
 
       const timeDiv = `<div>${time.toFixed(3)}s</div>`;
-      const statusDiv = `<div>${this.$t(`testSuite.statuses.${status}`)}${message ? `: ${message}` : ''}</div>`;
+      const statusDiv = status !== TEST_SUITE_STATUSES.total
+        ? `<div>${this.$t(`testSuite.statuses.${status}`)}${message ? `: ${message}` : ''}</div>`
+        : '';
 
       return `<div>${timeDiv}${statusDiv}</div>`;
     },
@@ -182,8 +189,8 @@ export default {
 
       let icon;
 
-      if (status === TEST_SUITE_STATUSES.passed) {
-        if (avgStatus === TEST_SUITE_STATUSES.passed) {
+      if (PASSED_STATUSES.includes(status)) {
+        if (PASSED_STATUSES.includes(avgStatus)) {
           if (time < avgTime) {
             icon = ICON_NAMES.arrowUpward;
           } else if (time > avgTime) {
@@ -219,8 +226,17 @@ export default {
       const fixedAvgTime = avgTime.toFixed(3);
 
       const icon = `&nbsp;${this.getHistoricalTooltipIcon(item)}`;
-      const currentDiv = `<div>${this.$t('common.current')}: ${this.$t(`testSuite.statuses.${status}`)} ${fixedTime}s${icon}</div>`;
-      const averageDiv = `<div>${this.$t('common.average')}: ${this.$t(`testSuite.statuses.${avgStatus}`)} ${fixedAvgTime}s</div>`;
+
+      const statusMessage = status !== TEST_SUITE_STATUSES.total
+        ? `${this.$t(`testSuite.statuses.${status}`)} `
+        : '';
+
+      const avgStatusMessage = avgStatus !== TEST_SUITE_STATUSES.total
+        ? `${this.$t(`testSuite.statuses.${avgStatus}`)} `
+        : '';
+
+      const currentDiv = `<div>${this.$t('common.current')}: ${statusMessage}${fixedTime}s${icon}</div>`;
+      const averageDiv = `<div>${this.$t('common.average')}: ${avgStatusMessage}${fixedAvgTime}s</div>`;
 
       return `<div>${currentDiv}${averageDiv}</div>`;
     },

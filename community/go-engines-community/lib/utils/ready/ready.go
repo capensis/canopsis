@@ -59,7 +59,7 @@ func CheckRedis(ctx context.Context) error {
 
 // CheckMongo connects to mongo with mongo.Timeout
 func CheckMongo(ctx context.Context) error {
-	_, err := mongo.NewClient(ctx, 0, 0)
+	_, err := mongo.NewClient(ctx, 0, 0, log.NewLogger(false))
 	return err
 }
 
