@@ -2524,6 +2524,7 @@ export default {
 
   quickRanges: {
     title: 'Valeurs usuelles',
+    timeField: 'Champ de temps',
     types: {
       [QUICK_RANGES.custom.value]: 'Personnalisé',
       [QUICK_RANGES.last2Days.value]: '2 derniers jours',
