@@ -2024,6 +2024,7 @@ export default {
   },
 
   pbehavior: {
+    periodsCalendar: 'Calendrier avec périodes',
     buttons: {
       addFilter: 'Ajouter un filtre',
       editFilter: 'Modifier le filtre',
@@ -2440,6 +2441,7 @@ export default {
       [TEST_SUITE_STATUSES.skipped]: 'Ignoré',
       [TEST_SUITE_STATUSES.error]: 'En erreur',
       [TEST_SUITE_STATUSES.failed]: 'Échoué',
+      [TEST_SUITE_STATUSES.total]: 'Temps total pris',
     },
     popups: {
       systemMessageCopied: 'Message système copié dans le presse-papier',
