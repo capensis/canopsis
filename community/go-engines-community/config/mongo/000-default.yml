@@ -77,7 +77,6 @@ indexes:
         priority: 1
       options:
         unique: true
-        background: true
 
   junit_test_suite:
     test_suite_id_1:
