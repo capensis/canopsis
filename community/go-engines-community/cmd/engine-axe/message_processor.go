@@ -103,12 +103,8 @@ func (p *messageProcessor) updatePbhLastAlarmDate(ctx context.Context, event typ
 }
 
 func (p *messageProcessor) handleStats(ctx context.Context, event types.Event, msg []byte) {
+	var alarm types.Alarm
 	if !p.FeatureStatEvents {
-		return
-	}
-
-	if event.Alarm == nil {
-		p.Logger.Warn().Msg("event.Alarm should not be nil")
 		return
 	}
 
@@ -117,12 +113,18 @@ func (p *messageProcessor) handleStats(ctx context.Context, event types.Event, m
 		return
 	}
 
+	if event.Alarm == nil {
+		alarm = types.Alarm{Value: types.AlarmValue{}}
+	} else {
+		alarm = *event.Alarm
+	}
+
 	go func() {
 		err := p.StatsService.ProcessAlarmChange(
 			ctx,
 			*event.AlarmChange,
 			event.Timestamp,
-			*event.Alarm,
+			alarm,
 			*event.Entity,
 			event.Author,
 			event.EventType,
