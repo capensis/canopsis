@@ -310,7 +310,7 @@ export default {
         exportCsvSeparator,
         exportCsvDatetimeFormat,
       } = this.widget.parameters;
-      const columns = widgetExportColumns && widgetExportColumns.length
+      const columns = widgetExportColumns?.length
         ? widgetExportColumns
         : widgetColumns;
 

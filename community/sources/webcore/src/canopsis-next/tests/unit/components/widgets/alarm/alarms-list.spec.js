@@ -9,7 +9,7 @@ import { createMockedStoreModules } from '@unit/utils/store';
 import { fakeStaticAlarms } from '@unit/data/alarm';
 import { alarmListWidgetToForm } from '@/helpers/forms/widgets/alarm';
 import {
-  CANOPSIS_EDITION,
+  CANOPSIS_EDITION, EXPORT_CSV_DATETIME_FORMATS,
   EXPORT_STATUSES,
   FILTER_DEFAULT_VALUES,
   FILTER_MONGO_OPERATORS,
@@ -1091,6 +1091,132 @@ describe('alarms-list', () => {
 
     jest.useRealTimers();
     dateSpy.mockClear();
+  });
+
+  /**
+   * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997
+   * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/4102
+   */
+  it('Widget exported after trigger export button with invalid structure', async () => {
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        alarmModule,
+        sideBarModule,
+        infoModule,
+        queryModule,
+        viewModule,
+        userPreferenceModule,
+        {
+          ...authModule,
+          getters: {
+            currentUser: {},
+            currentUserPermissionsById: {
+              [USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
+            },
+          },
+        },
+      ]),
+      propsData: {
+        widget: {
+          ...widget,
+          parameters: {
+            ...widget.parameters,
+            exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds,
+          },
+        },
+      },
+    });
+
+    await flushPromises();
+
+    updateQuery.mockClear();
+
+    const exportButton = selectExportButton(wrapper);
+
+    exportButton.vm.$emit('click');
+
+    expect(createAlarmsListExport).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        data: {
+          search: defaultQuery.search,
+          category: defaultQuery.category,
+          correlation: defaultQuery.correlation,
+          opened: defaultQuery.opened,
+          fields: widget.parameters.widgetExportColumns.map(({ label, value }) => ({
+            label,
+            name: value,
+          })),
+          separator: widget.parameters.exportCsvSeparator,
+          time_format: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
+        },
+        widgetId: widget._id,
+      },
+      undefined,
+    );
+
+    wrapper.destroy();
+  });
+
+  it('Widget exported after trigger export button without export columns', async () => {
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        alarmModule,
+        sideBarModule,
+        infoModule,
+        queryModule,
+        viewModule,
+        userPreferenceModule,
+        {
+          ...authModule,
+          getters: {
+            currentUser: {},
+            currentUserPermissionsById: {
+              [USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
+            },
+          },
+        },
+      ]),
+      propsData: {
+        widget: {
+          ...widget,
+          parameters: {
+            ...widget.parameters,
+            widgetExportColumns: [],
+          },
+        },
+      },
+    });
+
+    await flushPromises();
+
+    updateQuery.mockClear();
+
+    const exportButton = selectExportButton(wrapper);
+
+    exportButton.vm.$emit('click');
+
+    expect(createAlarmsListExport).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        data: {
+          search: defaultQuery.search,
+          category: defaultQuery.category,
+          correlation: defaultQuery.correlation,
+          opened: defaultQuery.opened,
+          fields: widget.parameters.widgetColumns.map(({ label, value }) => ({
+            label,
+            name: value,
+          })),
+          separator: widget.parameters.exportCsvSeparator,
+          time_format: widget.parameters.exportCsvDatetimeFormat,
+        },
+        widgetId: widget._id,
+      },
+      undefined,
+    );
+
+    wrapper.destroy();
   });
 
   it('Widget exported after trigger export button with long request time', async () => {
