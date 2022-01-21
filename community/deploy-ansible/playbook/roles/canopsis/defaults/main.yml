@@ -25,7 +25,7 @@ canopsis_mongo_user: cpsmongo
 canopsis_mongo_password: canopsis
 canopsis_mongo_port: "27017"
 
-canopsis_postgresql_user: cpspostgres 
+canopsis_postgresql_user: cpspostgres
 canopsis_postgresql_password: password
 canopsis_postgresql_host: localhost
 canopsis_postgresql_port: "5432"
