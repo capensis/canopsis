@@ -20,7 +20,7 @@ Pour rappel, SELinux n'est pas supporté.
 
 Composant | Versions         |
 ----------|------------------|
-MongoDB   | 3.6              |
+MongoDB   | 4.2              |
 Nginx     | stable           |
 RabbitMQ  | 3.7 (recommandé) |
 Redis     | ≥ 5.0            |

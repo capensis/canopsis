@@ -69,6 +69,10 @@ export const PbehaviorPlanning = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-planning.vue'),
   loading: ModalLoaderOverlay,
 });
+export const PbehaviorRecurrenceRule = () => ({
+  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-recurrence-rule.vue'),
+  loading: ModalLoaderOverlay,
+});
 export const SelectExceptionsLists = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/select-exceptions-lists.vue'),
   loading: ModalLoaderOverlay,
