@@ -139,9 +139,9 @@ Feature: get service entities with assigned instructions
     When I do POST /api/v4/entityservices:
     """json
     {
-      "_id": "test-pbehavior-weather-service-entity-1",
-      "name": "test-pbehavior-weather-service-entity-1",
-      "output_template": "test-pbehavior-weather-service-entity-1",
+      "_id": "test-entity-instruction-weather-services-1",
+      "name": "test-entity-instruction-weather-services-1",
+      "output_template": "test-entity-instruction-weather-services-1",
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
       "enabled": true,
@@ -156,7 +156,7 @@ Feature: get service entities with assigned instructions
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
-    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-1?with_instructions=true
+    When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-1?with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -285,9 +285,9 @@ Feature: get service entities with assigned instructions
     When I do POST /api/v4/entityservices:
     """json
     {
-      "_id": "test-pbehavior-weather-service-entity-2",
-      "name": "test-pbehavior-weather-service-entity-2",
-      "output_template": "test-pbehavior-weather-service-entity-2",
+      "_id": "test-entity-instruction-weather-services-2",
+      "name": "test-entity-instruction-weather-services-2",
+      "output_template": "test-entity-instruction-weather-services-2",
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
       "enabled": true,
@@ -299,7 +299,7 @@ Feature: get service entities with assigned instructions
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
-    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-2?with_instructions=true
+    When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-2?with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -320,7 +320,7 @@ Feature: get service entities with assigned instructions
     }
     """
     When I wait 6s
-    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-2?with_instructions=true
+    When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-2?with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -341,7 +341,7 @@ Feature: get service entities with assigned instructions
     }
     """
     When I wait 6s
-    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-2?with_instructions=true
+    When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-2?with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -420,9 +420,9 @@ Feature: get service entities with assigned instructions
     When I do POST /api/v4/entityservices:
     """json
     {
-      "_id": "test-pbehavior-weather-service-entity-3",
-      "name": "test-pbehavior-weather-service-entity-3",
-      "output_template": "test-pbehavior-weather-service-entity-3",
+      "_id": "test-entity-instruction-weather-services-3",
+      "name": "test-entity-instruction-weather-services-3",
+      "output_template": "test-entity-instruction-weather-services-3",
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
       "enabled": true,
@@ -444,7 +444,7 @@ Feature: get service entities with assigned instructions
     Then the response code should be 200
     When I save response executionID={{ .lastResponse._id }}
     When I wait the end of event processing
-    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-3?with_instructions=true
+    When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-3?with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -459,7 +459,7 @@ Feature: get service entities with assigned instructions
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
     Then the response code should be 200
     When I wait the end of event processing
-    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-3?with_instructions=true
+    When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-3?with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -472,7 +472,7 @@ Feature: get service entities with assigned instructions
     }
     """
     When I wait 4s
-    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-3?with_instructions=true
+    When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-3?with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
     """json
