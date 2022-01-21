@@ -5,7 +5,7 @@
     dest: /etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
     owner: root
     group: root
-    chmod: '0644'
+    mode: '0644'
 
 - name: Install pkgcloud TimescaleDB GPG key to /etc/pki/rpm-gpg
   copy:
@@ -13,7 +13,7 @@
     dest: /etc/pki/rpm-gpg/RPM-GPG-KEY-PKGCLOUD-TIMESCALEDB
     owner: root
     group: root
-    chmod: '0644'
+    mode: '0644'
 
 - name: Import PostgreSQL GPG key into RPM
   rpm_key:
@@ -31,7 +31,7 @@
     dest: /etc/yum.repos.d/canopsis-pgdg-redhat-all.repo
     owner: root
     group: root
-    chmod: '0644'
+    mode: '0644'
 
 - name: Add packagecloud-timescaledb repo
   template:
@@ -39,7 +39,7 @@
     dest: /etc/yum.repos.d/canopsis-packagecloud-timescaledb.repo
     owner: root
     group: root
-    chmod: '0644'
+    mode: '0644'
 
 - name: Install TimescaleDB from upstream repositories
   yum:
