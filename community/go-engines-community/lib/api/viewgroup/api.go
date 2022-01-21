@@ -36,11 +36,7 @@ func NewApi(
 // @Produce json
 // @Security ApiKeyAuth
 // @Security BasicAuth
-// @Param page query integer true "current page"
-// @Param limit query integer true "items per page"
-// @Param search query string false "search query"
-// @Param sort query string false "sort query"
-// @Param sort_by query string false "sort query"
+// @Param request query ListRequest true "request"
 // @Success 200 {object} common.PaginatedListResponse{data=[]ViewGroup}
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /view-groups [get]

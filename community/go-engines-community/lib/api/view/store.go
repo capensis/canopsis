@@ -316,7 +316,13 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 			"as":           "filters",
 		}},
 		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
-		{"$match": bson.M{"filters.user": nil}},
+		{"$addFields": bson.M{
+			"filters.user": bson.M{"$cond": bson.M{
+				"if":   "$filters.user",
+				"then": "$filters.user",
+				"else": "",
+			}},
+		}},
 		{"$project": bson.M{
 			"filters.author":  0,
 			"filters.updated": 0,
@@ -341,7 +347,10 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 			"filters": bson.M{"$push": "$filters"},
 		}},
 		{"$addFields": bson.M{
-			"widgets.filters": "$filters",
+			"widgets.filters": bson.M{"$filter": bson.M{
+				"input": bson.M{"$filter": bson.M{"input": "$filters", "cond": "$$this._id"}},
+				"cond":  bson.M{"$eq": bson.A{"$$this.user", ""}},
+			}},
 		}},
 		{"$sort": bson.D{{"widgets.grid_parameters.desktop.y", 1}, {"widgets.grid_parameters.desktop.x", 1}}},
 		{"$group": bson.M{

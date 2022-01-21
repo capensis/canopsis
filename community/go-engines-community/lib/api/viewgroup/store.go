@@ -91,6 +91,77 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds []str
 					"as":           "tabs",
 				}},
 				bson.M{"$unwind": bson.M{"path": "$tabs", "preserveNullAndEmptyArrays": true}},
+			)
+
+			if r.WithWidgets {
+				project = append(project,
+					bson.M{"$lookup": bson.M{
+						"from":         mongo.WidgetMongoCollection,
+						"localField":   "tabs._id",
+						"foreignField": "tab",
+						"as":           "widgets",
+					}},
+					bson.M{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
+					bson.M{"$lookup": bson.M{
+						"from":         mongo.WidgetFiltersMongoCollection,
+						"localField":   "widgets._id",
+						"foreignField": "widget",
+						"as":           "filters",
+					}},
+					bson.M{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
+					bson.M{"$addFields": bson.M{
+						"filters.user": bson.M{"$cond": bson.M{
+							"if":   "$filters.user",
+							"then": "$filters.user",
+							"else": "",
+						}},
+					}},
+					bson.M{"$sort": bson.M{"filters.title": 1}},
+					bson.M{"$group": bson.M{
+						"_id": bson.M{
+							"_id":     "$_id",
+							"view":    "$views._id",
+							"tab":     "$tabs._id",
+							"widgets": "$widgets._id",
+						},
+						"group":     bson.M{"$first": "$group"},
+						"deletable": bson.M{"$first": "$deletable"},
+						"views":     bson.M{"$first": "$views"},
+						"tabs":      bson.M{"$first": "$tabs"},
+						"widgets":   bson.M{"$first": "$widgets"},
+						"filters":   bson.M{"$push": "$filters"},
+					}},
+					bson.M{"$addFields": bson.M{
+						"_id": "$_id._id",
+						"widgets.filters": bson.M{"$filter": bson.M{
+							"input": bson.M{"$filter": bson.M{"input": "$filters", "cond": "$$this._id"}},
+							"cond":  bson.M{"$eq": bson.A{"$$this.user", ""}},
+						}},
+					}},
+					bson.M{"$sort": bson.D{{"widgets.grid_parameters.desktop.y", 1}, {"widgets.grid_parameters.desktop.x", 1}}},
+					bson.M{"$group": bson.M{
+						"_id": bson.M{
+							"_id":  "$_id",
+							"view": "$views._id",
+							"tab":  "$tabs._id",
+						},
+						"group":     bson.M{"$first": "$group"},
+						"deletable": bson.M{"$first": "$deletable"},
+						"views":     bson.M{"$first": "$views"},
+						"tabs":      bson.M{"$first": "$tabs"},
+						"widgets":   bson.M{"$push": "$widgets"},
+					}},
+					bson.M{"$addFields": bson.M{
+						"_id": "$_id._id",
+						"tabs.widgets": bson.M{"$filter": bson.M{
+							"input": "$widgets",
+							"cond":  "$$this.title",
+						}},
+					}},
+				)
+			}
+
+			project = append(project,
 				bson.M{"$sort": bson.M{"tabs.position": 1}},
 				bson.M{"$group": bson.M{
 					"_id": bson.M{
@@ -105,12 +176,8 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds []str
 				bson.M{"$addFields": bson.M{
 					"_id": "$_id._id",
 					"views.tabs": bson.M{"$filter": bson.M{
-						"input": bson.M{"$cond": bson.M{
-							"if":   "$tabs",
-							"then": "$tabs",
-							"else": bson.A{},
-						}},
-						"cond": "$$this._id",
+						"input": "$tabs",
+						"cond":  "$$this._id",
 					}},
 				}},
 			)
@@ -130,12 +197,8 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds []str
 					bson.M{
 						"deletable": "$deletable",
 						"views": bson.M{"$filter": bson.M{
-							"input": bson.M{"$cond": bson.M{
-								"if":   "$views",
-								"then": "$views",
-								"else": bson.A{},
-							}},
-							"cond": bson.M{"$in": bson.A{"$$this._id", authorizedViewIds}},
+							"input": "$views",
+							"cond":  bson.M{"$in": bson.A{"$$this._id", authorizedViewIds}},
 						}},
 					},
 				}},

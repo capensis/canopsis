@@ -3743,6 +3743,25 @@ definitions:
     required:
     - title
     type: object
+  viewgroup.ListRequest:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      paginate:
+        type: boolean
+      search:
+        type: string
+      with_flags:
+        type: boolean
+      with_tabs:
+        type: boolean
+      with_views:
+        type: boolean
+      with_widgets:
+        type: boolean
+    type: object
   viewgroup.ViewGroup:
     properties:
       _id:
@@ -8845,28 +8864,30 @@ paths:
       description: Get paginated list of view groups
       operationId: viewgroups-find-all
       parameters:
-      - description: current page
-        in: query
-        name: page
-        required: true
-        type: integer
-      - description: items per page
-        in: query
+      - in: query
         name: limit
-        required: true
         type: integer
-      - description: search query
-        in: query
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: paginate
+        type: boolean
+      - in: query
         name: search
         type: string
-      - description: sort query
-        in: query
-        name: sort
-        type: string
-      - description: sort query
-        in: query
-        name: sort_by
-        type: string
+      - in: query
+        name: with_flags
+        type: boolean
+      - in: query
+        name: with_tabs
+        type: boolean
+      - in: query
+        name: with_views
+        type: boolean
+      - in: query
+        name: with_widgets
+        type: boolean
       produces:
       - application/json
       responses:

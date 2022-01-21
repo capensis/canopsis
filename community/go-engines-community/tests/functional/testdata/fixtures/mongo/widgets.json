@@ -44,6 +44,41 @@
     "type": "test-widget-to-view-get-2-type"
   },
   {
+    "_id": "test-widget-to-viewgroup-get-1",
+    "author": "test-user-to-viewgroup-get",
+    "created": 1611229670,
+    "title": "test-widget-to-viewgroup-get-1-title",
+    "updated": 1611229670,
+    "grid_parameters": {
+      "desktop": {"x": 0, "y": 0}
+    },
+    "parameters": {
+      "test-widget-to-viewgroup-get-1-parameter-1": {
+        "test-widget-to-viewgroup-get-1-parameter-1-subparameter": "test-widget-to-viewgroup-get-1-parameter-1-subvalue"
+      },
+      "test-widget-to-viewgroup-get-1-parameter-2": [
+        {
+          "test-widget-to-viewgroup-get-1-parameter-2-subparameter": "test-widget-to-viewgroup-get-1-parameter-2-subvalue"
+        }
+      ]
+    },
+    "tab": "test-tab-to-viewgroup-get-1",
+    "type": "test-widget-to-viewgroup-get-1-type"
+  },
+  {
+    "_id": "test-widget-to-viewgroup-get-2",
+    "author": "test-user-to-viewgroup-get",
+    "created": 1611229670,
+    "title": "test-widget-to-viewgroup-get-2-title",
+    "updated": 1611229670,
+    "grid_parameters": {
+      "desktop": {"x": 0, "y": 1}
+    },
+    "parameters": {},
+    "tab": "test-tab-to-viewgroup-get-1",
+    "type": "test-widget-to-viewgroup-get-2-type"
+  },
+  {
     "_id": "test-widget-to-tab-get-1",
     "author": "test-user-to-tab-get",
     "created": 1611229670,

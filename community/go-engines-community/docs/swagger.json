@@ -8069,34 +8069,42 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "current page",
-                        "name": "page",
-                        "in": "query",
-                        "required": true
+                        "name": "limit",
+                        "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "items per page",
-                        "name": "limit",
-                        "in": "query",
-                        "required": true
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "paginate",
+                        "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "search query",
                         "name": "search",
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "description": "sort query",
-                        "name": "sort",
+                        "type": "boolean",
+                        "name": "with_flags",
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "description": "sort query",
-                        "name": "sort_by",
+                        "type": "boolean",
+                        "name": "with_tabs",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "with_views",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "with_widgets",
                         "in": "query"
                     }
                 ],
@@ -15173,6 +15181,35 @@
             "properties": {
                 "title": {
                     "type": "string"
+                }
+            }
+        },
+        "viewgroup.ListRequest": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "paginate": {
+                    "type": "boolean"
+                },
+                "search": {
+                    "type": "string"
+                },
+                "with_flags": {
+                    "type": "boolean"
+                },
+                "with_tabs": {
+                    "type": "boolean"
+                },
+                "with_views": {
+                    "type": "boolean"
+                },
+                "with_widgets": {
+                    "type": "boolean"
                 }
             }
         },
