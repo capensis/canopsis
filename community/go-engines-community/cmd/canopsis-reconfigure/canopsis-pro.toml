@@ -197,6 +197,14 @@ noWait = false
 # args =
 
 [[RabbitMQ.queues]]
+name = "Engine_dynamic_infos_rpc_server"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+
+[[RabbitMQ.queues]]
 name = "Engine_correlation"
 durable = true
 autoDelete = false
@@ -311,6 +319,7 @@ FilePattern = "/tmp/import_%s.json"
 # Auth token expiration ttl. It's used also used for session ttl (deprected).
 TokenExpiration = "24h"
 TokenSigningMethod = "HS256"
+BulkMaxSize = 10000
 
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
 # to catch up following parameters.

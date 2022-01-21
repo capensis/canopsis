@@ -79,7 +79,6 @@ module.exports = {
     createRole(browser, generatedRole);
   },
 
-
   'Check searching': (browser) => {
     const [role] = browser.globals.roles;
     const rolesPage = browser.page.admin.roles();

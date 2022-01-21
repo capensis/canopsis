@@ -7,10 +7,15 @@
         :isEditingMode="isEditingMode",
         :hasUpdateAccess="hasUpdateAccess",
         :updateViewMethod="updateViewMethod",
-        @update:widgetsFields="updateWidgetsFieldsForUpdateById"
+        @update:widgets-fields="updateWidgetsFieldsForUpdateById"
       )
     div.fab
       v-layout(data-test="controlViewLayout", row)
+        v-fade-transition
+          v-tooltip(v-if="pageScrolled", top)
+            v-btn(slot="activator", color="secondary lighten-2", fab, dark, @click="scrollToTop")
+              v-icon arrow_upward
+            span {{ $t('common.toTheTop') }}
         v-tooltip(top)
           v-btn(
             slot="activator",
@@ -129,6 +134,7 @@ import { authMixin } from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
 import entitiesViewMixin from '@/mixins/entities/view';
 import periodicRefreshMixin from '@/mixins/view/periodic-refresh';
+import { scrollToTopMixin } from '@/mixins/scroll-to-top';
 
 export default {
   components: {
@@ -139,6 +145,7 @@ export default {
     queryMixin,
     entitiesViewMixin,
     periodicRefreshMixin,
+    scrollToTopMixin,
   ],
   props: {
     id: {

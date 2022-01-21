@@ -24,9 +24,9 @@ import { MODALS } from '@/constants';
 
 import { entityToForm, formToEntity } from '@/helpers/forms/entity';
 
-import { validationErrorsMixin } from '@/mixins/form/validation-errors';
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import EntityForm from '@/components/other/entity/form/entity-form.vue';
 
@@ -42,9 +42,9 @@ export default {
     ModalWrapper,
   },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
-    validationErrorsMixin(),
+    modalInnerMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     return {
@@ -61,13 +61,9 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        try {
-          await this.config.action(formToEntity(this.form));
+        await this.config.action(formToEntity(this.form));
 
-          this.$modals.hide();
-        } catch (err) {
-          this.setFormErrors(err);
-        }
+        this.$modals.hide();
       }
     },
 

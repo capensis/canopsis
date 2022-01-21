@@ -23,6 +23,9 @@ import {
   ALARMS_OPENED_VALUES,
   HEALTHCHECK_SERVICES_NAMES,
   HEALTHCHECK_ENGINES_NAMES,
+  GROUPS_NAVIGATION_TYPES,
+  ALARM_METRIC_PARAMETERS,
+  USER_METRIC_PARAMETERS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -197,6 +200,18 @@ export default {
     graph: 'Graphique | Graphiques',
     systemStatus: 'État du système',
     downloadAsPng: 'Télécharger en PNG',
+    rating: 'Notation | Notations',
+    sampling: 'Échantillonnage',
+    parametersToDisplay: '{count} paramètres à afficher',
+    uptime: 'Uptime',
+    maintenance: 'Maintenance',
+    downtime: 'Downtime',
+    toTheTop: 'Jusqu\'au sommet',
+    time: 'Temps',
+    lastModifiedOn: 'Dernière modification le',
+    exportAsCsv: 'Export as csv',
+    criteria: 'Critères',
+    ratingSettings: 'Paramètres d\'évaluation',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -254,6 +269,12 @@ export default {
       november: 'Novembre',
       december: 'Décembre',
     },
+    stateTypes: {
+      [ENTITIES_STATES.ok]: 'Ok',
+      [ENTITIES_STATES.minor]: 'Mineur',
+      [ENTITIES_STATES.major]: 'Majeur',
+      [ENTITIES_STATES.critical]: 'Critique',
+    },
   },
   variableTypes: {
     string: 'Chaîne de caractères',
@@ -261,12 +282,6 @@ export default {
     boolean: 'Booléen',
     null: 'Nul',
     array: 'Tableau',
-  },
-  user: {
-    role: 'Rôle',
-    defaultView: 'Vue par défaut',
-    seeProfile: 'Voir le profil',
-    selectDefaultView: 'Sélectionner une vue par défaut',
   },
   context: {
     impacts: 'Impacts',
@@ -308,44 +323,44 @@ export default {
     },
   },
   search: {
-    alarmAdvancedSearch: '<span>Aide sur la recherche avancée :</span>\n' +
-    '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n' +
-    '<p>Le "-" avant la recherche est obligatoire</p>\n' +
-    '<p>Opérateurs:\n' +
-    '    <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n' +
-    '<p>Les types de valeurs : Chaîne de caractères entre guillemets doubles, Booléen ("TRUE", "FALSE"), Entier, Nombre flottant, "NULL"</p>\n' +
-    '<dl><dt>Exemples :</dt><dt>- Connector = "connector_1"</dt>\n' +
-    '    <dd>Alarmes dont le connecteur est "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n' +
-    '    <dd>Alarmes dont le connecteur est "connector_1" et la ressource est "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n' +
-    '    <dd>Alarmes dont le connecteur est "connector_1" ou la ressource est "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n' +
-    '    <dd>Alarmes dont le connecteur contient 1 ou 2</dd><dt>- NOT Connector = "connector_1"</dt>\n' +
-    '    <dd>Alarmes dont le connecteur n\'est pas "connector_1"</dd>\n' +
-    '</dl>',
-    contextAdvancedSearch: '<span>Aide sur la recherche avancée :</span>\n' +
-      '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n' +
-      '<p>Le "-" avant la recherche est obligatoire</p>\n' +
-      '<p>Opérateurs:\n' +
-      '    <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n' +
-      '<p>Les types de valeurs : Chaîne de caractères entre guillemets doubles, Booléen ("TRUE", "FALSE"), Entier, Nombre flottant, "NULL"</p>\n' +
-      '<dl><dt>Exemples :</dt><dt>- Name = "name_1"</dt>\n' +
-      '    <dd>Entités dont le names est "name_1"</dd><dt>- Name="name_1" AND Type="service"</dt>\n' +
-      '    <dd>Entités dont le names est "name_1" et la types est "service"</dd><dt>- infos.custom.value="Custom value" OR Type="resource"</dt>\n' +
-      '    <dd>Entités dont le infos.custom.value est "Custom value" ou la type est "resource"</dd><dt>- infos.custom.value LIKE 1 OR infos.custom.value LIKE 2</dt>\n' +
-      '    <dd>Entités dont le infos.custom.value contient 1 or 2</dd><dt>- NOT Name = "name_1"</dt>\n' +
-      '    <dd>Entités dont le name n\'est pas "name_1"</dd>\n' +
-      '</dl>',
-    dynamicInfoAdvancedSearch: '<span>Aide sur la recherche avancée :</span>\n' +
-      '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n' +
-      '<p>Le "-" avant la recherche est obligatoire</p>\n' +
-      '<p>Opérateurs:\n' +
-      '    <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n' +
-      '<p>Pour effectuer une recherche dans les "modèles", utilisez le mot-clé "pattern" comme &lt;NomColonne&gt;</p>\n' +
-      '<p>Les types de valeurs : Chaîne de caractères entre guillemets doubles, Booléen ("TRUE", "FALSE"), Entier, Nombre flottant, "NULL"</p>\n' +
-      '<dl><dt>Examples :</dt><dt>- description = "testdyninfo"</dt>\n' +
-      '    <dd>Règles d\'Informations dynamiques dont la description est "testdyninfo"</dd><dt>- pattern = "SEARCHPATTERN1"</dt>\n' +
-      '    <dd>Règles d\'Informations dynamiques dont un des modèles est "SEARCHPATTERN1"</dd><dt>- pattern LIKE "SEARCHPATTERN2"</dt>\n' +
-      '    <dd>Règles d\'Informations dynamiques dont un des modèles contient "SEARCHPATTERN2"</dd>' +
-      '</dl>',
+    alarmAdvancedSearch: '<span>Aide sur la recherche avancée :</span>\n'
+    + '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n'
+    + '<p>Le "-" avant la recherche est obligatoire</p>\n'
+    + '<p>Opérateurs:\n'
+    + '    <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n'
+    + '<p>Les types de valeurs : Chaîne de caractères entre guillemets doubles, Booléen ("TRUE", "FALSE"), Entier, Nombre flottant, "NULL"</p>\n'
+    + '<dl><dt>Exemples :</dt><dt>- Connector = "connector_1"</dt>\n'
+    + '    <dd>Alarmes dont le connecteur est "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n'
+    + '    <dd>Alarmes dont le connecteur est "connector_1" et la ressource est "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n'
+    + '    <dd>Alarmes dont le connecteur est "connector_1" ou la ressource est "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n'
+    + '    <dd>Alarmes dont le connecteur contient 1 ou 2</dd><dt>- NOT Connector = "connector_1"</dt>\n'
+    + '    <dd>Alarmes dont le connecteur n\'est pas "connector_1"</dd>\n'
+    + '</dl>',
+    contextAdvancedSearch: '<span>Aide sur la recherche avancée :</span>\n'
+      + '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n'
+      + '<p>Le "-" avant la recherche est obligatoire</p>\n'
+      + '<p>Opérateurs:\n'
+      + '    <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n'
+      + '<p>Les types de valeurs : Chaîne de caractères entre guillemets doubles, Booléen ("TRUE", "FALSE"), Entier, Nombre flottant, "NULL"</p>\n'
+      + '<dl><dt>Exemples :</dt><dt>- Name = "name_1"</dt>\n'
+      + '    <dd>Entités dont le names est "name_1"</dd><dt>- Name="name_1" AND Type="service"</dt>\n'
+      + '    <dd>Entités dont le names est "name_1" et la types est "service"</dd><dt>- infos.custom.value="Custom value" OR Type="resource"</dt>\n'
+      + '    <dd>Entités dont le infos.custom.value est "Custom value" ou la type est "resource"</dd><dt>- infos.custom.value LIKE 1 OR infos.custom.value LIKE 2</dt>\n'
+      + '    <dd>Entités dont le infos.custom.value contient 1 or 2</dd><dt>- NOT Name = "name_1"</dt>\n'
+      + '    <dd>Entités dont le name n\'est pas "name_1"</dd>\n'
+      + '</dl>',
+    dynamicInfoAdvancedSearch: '<span>Aide sur la recherche avancée :</span>\n'
+      + '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n'
+      + '<p>Le "-" avant la recherche est obligatoire</p>\n'
+      + '<p>Opérateurs:\n'
+      + '    <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n'
+      + '<p>Pour effectuer une recherche dans les "modèles", utilisez le mot-clé "pattern" comme &lt;NomColonne&gt;</p>\n'
+      + '<p>Les types de valeurs : Chaîne de caractères entre guillemets doubles, Booléen ("TRUE", "FALSE"), Entier, Nombre flottant, "NULL"</p>\n'
+      + '<dl><dt>Examples :</dt><dt>- description = "testdyninfo"</dt>\n'
+      + '    <dd>Règles d\'Informations dynamiques dont la description est "testdyninfo"</dd><dt>- pattern = "SEARCHPATTERN1"</dt>\n'
+      + '    <dd>Règles d\'Informations dynamiques dont un des modèles est "SEARCHPATTERN1"</dd><dt>- pattern LIKE "SEARCHPATTERN2"</dt>\n'
+      + '    <dd>Règles d\'Informations dynamiques dont un des modèles contient "SEARCHPATTERN2"</dd>'
+      + '</dl>',
     submit: 'Rechercher',
     clear: 'Ne plus appliquer cette recherche',
   },
@@ -464,6 +479,25 @@ export default {
       allAutoInstructionExecuted: 'Toutes les instructions automatiques ont été exécutées',
       awaitingInstructionComplete: 'En attente de l\'instruction pour terminer',
     },
+    metrics: {
+      [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Nombre d\'alarmes créées',
+      [ALARM_METRIC_PARAMETERS.activeAlarms]: 'Nombre d\'alarmes actives',
+      [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: 'Nombre d\'alarmes non affichées',
+      [ALARM_METRIC_PARAMETERS.instructionAlarms]: 'Nombre d\'alarmes en cours de correction automatique',
+      [ALARM_METRIC_PARAMETERS.pbehaviorAlarms]: 'Nombre d\'alarmes avec PBehavior',
+      [ALARM_METRIC_PARAMETERS.correlationAlarms]: 'Nombre d\'alarmes corrélées',
+      [ALARM_METRIC_PARAMETERS.ackAlarms]: 'Nombre d\'alarmes avec acquittement',
+      [ALARM_METRIC_PARAMETERS.ackActiveAlarms]: 'Number of active alarms with acks',
+      [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: 'Nombre d\'accusés de réception annulés',
+      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: 'Nombre d\'alarmes actives avec acks',
+      [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: 'Nombre d\'alarmes actives sans tickets',
+      [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '% d\'alarmes corrélées',
+      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% d\'alarmes avec correction automatique',
+      [ALARM_METRIC_PARAMETERS.ratioTickets]: '% d\'alarmes avec tickets créés',
+      [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '% d\'alarmes non affichées',
+      [ALARM_METRIC_PARAMETERS.averageAck]: 'Délai moyen d\'acquittement des alarmes',
+      [ALARM_METRIC_PARAMETERS.averageResolve]: 'Temps moyen pour résoudre les alarmes',
+    },
   },
   weather: {
     moreInfos: 'Plus d\'infos',
@@ -481,25 +515,25 @@ export default {
     created: 'Date de création',
     updated: 'Date de dernière modification',
     lastAlarmDate: 'Date de la dernière alarme',
-    searchHelp: '<span>Aide sur la recherche avancée :</span>\n' +
-      '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n' +
-      '<p>Le "-" avant la recherche est obligatoire</p>\n' +
-      '<p>Opérateurs : <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n' +
-      '<p>Pour effectuer une recherche dans les "patterns", utilisez le mot-clé "pattern" comme &lt;NomColonne&gt;</p>\n' +
-      '<p>Les types de valeurs : String entre doubles guillemets, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
-      '<dl>' +
-      '  <dt>Examples :</dt>' +
-      '  <dt>- name = "name_1"</dt>\n' +
-      '  <dd>Le nom du comportement périodique est "name_1"</dd>\n' +
-      '  <dt>- rrule = "rrule_1"</dt>\n' +
-      '  <dd>La règle de comportement périodique est "rrule_1"</dd>\n' +
-      '  <dt>- filter = "filter_1"</dt>\n' +
-      '  <dd>Le filtre de comportement périodique est "filter_1"</dd>\n' +
-      '  <dt>- type.name = "type_name_1"</dt>\n' +
-      '  <dd>Le nom du type de comportement périodique est "type_name_1"</dd>\n' +
-      '  <dt>- reason.name = "reason_name_1"</dt>\n' +
-      '  <dd>Le nom de la raison du comportement périodique est "reason_name_1"</dd>' +
-      '</dl>',
+    searchHelp: '<span>Aide sur la recherche avancée :</span>\n'
+      + '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n'
+      + '<p>Le "-" avant la recherche est obligatoire</p>\n'
+      + '<p>Opérateurs : <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n'
+      + '<p>Pour effectuer une recherche dans les "patterns", utilisez le mot-clé "pattern" comme &lt;NomColonne&gt;</p>\n'
+      + '<p>Les types de valeurs : String entre doubles guillemets, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n'
+      + '<dl>'
+      + '  <dt>Examples :</dt>'
+      + '  <dt>- name = "name_1"</dt>\n'
+      + '  <dd>Le nom du comportement périodique est "name_1"</dd>\n'
+      + '  <dt>- rrule = "rrule_1"</dt>\n'
+      + '  <dd>La règle de comportement périodique est "rrule_1"</dd>\n'
+      + '  <dt>- filter = "filter_1"</dt>\n'
+      + '  <dd>Le filtre de comportement périodique est "filter_1"</dd>\n'
+      + '  <dt>- type.name = "type_name_1"</dt>\n'
+      + '  <dd>Le nom du type de comportement périodique est "type_name_1"</dd>\n'
+      + '  <dt>- reason.name = "reason_name_1"</dt>\n'
+      + '  <dd>Le nom de la raison du comportement périodique est "reason_name_1"</dd>'
+      + '</dl>',
     tabs: {
       filter: 'Filtre',
       comments: 'Commentaires',
@@ -704,12 +738,12 @@ export default {
     },
     screenshotMask: {
       title: 'Règle de nommage des fichiers capture d\'écran',
-      helpText: '<dl>' +
-        '<dt>Définissez la règle de nommage des fichiers dont les captures d\'écran sont créées à l\'aide des variables suivantes:<dt>\n' +
-        '<dd>- nom du cas de test %test_case%</dd>\n' +
-        '<dd>- date (YYYY, MM, DD)</dd>\n' +
-        '<dd>- temps d\'exécution (hh, mm, ss)</dd>' +
-        '</dl>',
+      helpText: '<dl>'
+        + '<dt>Définissez la règle de nommage des fichiers dont les captures d\'écran sont créées à l\'aide des variables suivantes:<dt>\n'
+        + '<dd>- nom du cas de test %test_case%</dd>\n'
+        + '<dd>- date (YYYY, MM, DD)</dd>\n'
+        + '<dd>- temps d\'exécution (hh, mm, ss)</dd>'
+        + '</dl>',
     },
     videoDirectories: {
       title: 'Paramètres de stockage vidéo',
@@ -717,20 +751,21 @@ export default {
     },
     videoMask: {
       title: 'Règle de nommage des fichiers vidéo',
-      helpText: '<dl>' +
-        '<dt>Définissez la règle de nommage des fichiers dont les vidéos sont créées à l\'aide des variables suivantes:<dt>\n' +
-        '<dd>- nom du cas de test %test_case%</dd>\n' +
-        '<dd>- date (YYYY, MM, DD)</dd>\n' +
-        '<dd>- temps d\'exécution (hh, mm, ss)</dd>' +
-        '</dl>',
+      helpText: '<dl>'
+        + '<dt>Définissez la règle de nommage des fichiers dont les vidéos sont créées à l\'aide des variables suivantes:<dt>\n'
+        + '<dd>- nom du cas de test %test_case%</dd>\n'
+        + '<dd>- date (YYYY, MM, DD)</dd>\n'
+        + '<dd>- temps d\'exécution (hh, mm, ss)</dd>'
+        + '</dl>',
     },
+    stickyHeader: 'En-tête collant',
     reportFileRegexp: {
       title: 'Masque de fichier de rapport',
-      helpText: '<dl>' +
-        '<dt>Définir le nom de fichier regexp de quel rapport:<dt>\n' +
-        '<dd>Par exemple:</dd>\n' +
-        '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n' +
-        '</dl>',
+      helpText: '<dl>'
+        + '<dt>Définir le nom de fichier regexp de quel rapport:<dt>\n'
+        + '<dd>Par exemple:</dd>\n'
+        + '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n'
+        + '</dl>',
     },
   },
   modals: {
@@ -982,6 +1017,9 @@ export default {
       edit: {
         title: 'Éditer un filtre',
       },
+      duplicate: {
+        title: 'Dupliquer un filtre',
+      },
       fields: {
         title: 'Nom',
       },
@@ -1030,7 +1068,7 @@ export default {
           title: 'Compteur',
         },
         [WIDGET_TYPES.testingWeather]: {
-          title: 'Scénario des tests',
+          title: 'Scénarios Junit',
         },
       },
     },
@@ -1119,8 +1157,8 @@ export default {
         addObjectRuleField: 'Ajouter un groupe de règles',
         editObjectRuleField: 'Éditer le groupe de règles',
         removeRuleField: 'Supprimer le groupe/la règle',
-        copyFromHelp: '<p>Les variables accessibles sont: <strong>Event</strong></p>' +
-          '<i>Quelques exemples:</i> <span>"Event.ExtraInfos.datecustom"</span>',
+        copyFromHelp: '<p>Les variables accessibles sont: <strong>Event</strong></p>'
+          + '<i>Quelques exemples:</i> <span>"Event.ExtraInfos.datecustom"</span>',
       },
       actionsTypes: {
         [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
@@ -1466,9 +1504,9 @@ export default {
       },
       addPayload: 'Ajouter un payload',
       deletePayload: 'Supprimer le payload',
-      payloadHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>' +
-        '<i>Quelques exemples:</i>' +
-        '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
+      payloadHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>'
+        + '<i>Quelques exemples:</i>'
+        + '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
     },
     clickOutsideConfirmation: {
       title: 'Êtes-vous sûr(e) ?',
@@ -1592,19 +1630,33 @@ export default {
         },
       },
     },
+    webSocketError: {
+      title: 'Erreur de connexion WebSocket',
+      text: '<p>Les Websockets ne sont pas disponibles, les fonctionnalités suivantes sont donc restreintes:</p>'
+        + '<p>'
+        + '<ul>'
+        + '<li>En-tête Healthcheck</li>'
+        + '<li>Graphique du réseau Healthcheck</li>'
+        + '<li>Messages diffusés actifs</li>'
+        + '<li>Sessions d\'utilisateurs actifs</li>'
+        + '<li>Exécution de la remédiation</li>'
+        + '</ul>'
+        + '</p>'
+        + '<p>Veuillez vérifier la configuration de votre serveur.</p>',
+    },
     confirmationPhrase: {
       phrase: 'Phrase',
       updateStorageSettings: {
         title: 'Changement de politique de stockage. Êtes vous sur ?',
-        text: 'Vous êtes sur le point d\'enregistrer une politique d\'archivage et/ou de suppression de données.\n' +
-          '<strong>Les opérations qui en découleront, notamment la suppression de données, seront irreversibles.</strong>',
+        text: 'Vous êtes sur le point d\'enregistrer une politique d\'archivage et/ou de suppression de données.\n'
+          + '<strong>Les opérations qui en découleront, notamment la suppression de données, seront irreversibles.</strong>',
         phraseText: 'Merci de recopier le texte qui suit pour confirmer:',
         phrase: 'modifier la politique de stockage',
       },
       cleanStorage: {
         title: 'Archivage/Suppression des entités désactivées. Êtes vous sur ?',
-        text: 'Vous êtes sur le point d\'archiver et/ou de supprimer des données.\n' +
-          '<strong>Les opérations de suppression sont irreversibles.</strong>',
+        text: 'Vous êtes sur le point d\'archiver et/ou de supprimer des données.\n'
+          + '<strong>Les opérations de suppression sont irreversibles.</strong>',
         phraseText: 'Merci de recopier le texte qui suit pour confirmer:',
         phrase: 'archiver ou supprimer',
       },
@@ -1790,21 +1842,21 @@ export default {
     autoResolve: 'Résolution automatique',
     idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
     corelId: 'Identifiant de corrélation',
-    corelIdHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>' +
-      '<i>Quelques exemples:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
+    corelIdHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>'
+      + '<i>Quelques exemples:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
     corelStatus: 'Statut de corrélation',
-    corelStatusHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>' +
-      '<i>Quelques exemples:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
+    corelStatusHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>'
+      + '<i>Quelques exemples:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
     corelParent: 'Corrélation parent',
     corelChild: 'Corrélation enfant',
-    outputTemplateHelp: '<p>Les variables accessibles sont:</p>\n' +
-      '<p><strong>.Count</strong>: Le nombre d\'alarmes conséquences attachées à la méta-alarme.</p>' +
-      '<p><strong>.Children</strong>: L\'ensemble des variables de la dernière alarme conséquence attachée à la méta-alarme.</p>' +
-      '<p><strong>.Rule</strong>: Les informations administratives de la méta-alarme en elle-même.</p>' +
-      '<p>Quelques exemples:</p>' +
-      '<p><strong>{{ .Count }} conséquences;</strong> Message de la dernière alarme conséquence : <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Règle : <strong>{{ .Rule.Name }};</strong></p>' +
-      '<p>Un message informatif statique</p>' +
-      '<p>Corrélé par la règle <strong>{{ .Rule.Name }}</strong></p>',
+    outputTemplateHelp: '<p>Les variables accessibles sont:</p>\n'
+      + '<p><strong>.Count</strong>: Le nombre d\'alarmes conséquences attachées à la méta-alarme.</p>'
+      + '<p><strong>.Children</strong>: L\'ensemble des variables de la dernière alarme conséquence attachée à la méta-alarme.</p>'
+      + '<p><strong>.Rule</strong>: Les informations administratives de la méta-alarme en elle-même.</p>'
+      + '<p>Quelques exemples:</p>'
+      + '<p><strong>{{ .Count }} conséquences;</strong> Message de la dernière alarme conséquence : <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Règle : <strong>{{ .Rule.Name }};</strong></p>'
+      + '<p>Un message informatif statique</p>'
+      + '<p>Corrélé par la règle <strong>{{ .Rule.Name }}</strong></p>',
     errors: {
       noValuePaths: 'Vous devez ajouter au moins un chemin de valeur',
     },
@@ -1838,34 +1890,6 @@ export default {
       stateSettings: 'Paramètres d\'état',
       storageSettings: 'Paramètres de stockage',
       notificationsSettings: 'Paramètres des notifications',
-    },
-    interfaceLanguage: 'Langue de l\'interface',
-    groupsNavigationType: {
-      title: 'Type d\'affichage de la barre de vues',
-      items: {
-        sideBar: 'Barre latérale',
-        topBar: 'Barre d\'entête',
-      },
-    },
-    userInterfaceForm: {
-      title: 'Interface utilisateur',
-      fields: {
-        appTitle: 'Titre de l\'application',
-        language: 'Langue par défaut',
-        footer: 'Page d\'identification : pied de page',
-        description: 'Page d\'identification : description',
-        logo: 'Logo',
-        infoPopupTimeout: 'Délai d\'affichage pour les popups d\'informations',
-        errorPopupTimeout: 'Délai d\'affichage pour les popups d\'erreurs',
-        popupTimeoutUnit: 'Unité',
-        allowChangeSeverityToInfo: 'Autorise le changement de criticité en Info',
-        maxMatchedItems: 'Seuil d\'éléments avant avertissement',
-        checkCountRequestTimeout: 'Délai d\'expiration de la requête',
-      },
-      tooltips: {
-        maxMatchedItems: 'Avertit l\'utilisateur lorsque le nombre d\'éléments correspondant aux modèles est supérieur à cette valeur',
-        checkCountRequestTimeout: 'Définit le délai d\'expiration (en secondes) de la demande d\'éléments correspondants',
-      },
     },
   },
   view: {
@@ -2000,6 +2024,7 @@ export default {
   },
 
   pbehavior: {
+    periodsCalendar: 'Calendrier avec périodes',
     buttons: {
       addFilter: 'Ajouter un filtre',
       editFilter: 'Modifier le filtre',
@@ -2177,7 +2202,6 @@ export default {
     },
     table: {
       rating: 'Évaluation',
-      lastModifiedOn: 'Dernière modification le',
       monthExecutions: '№ d\'exécutions\nce mois-ci',
       lastExecutedOn: 'Dernière exécution le',
     },
@@ -2215,6 +2239,7 @@ export default {
       success: '{instructionName} a été exécutée avec succès',
       failed: '{instructionName} a échoué. Veuillez faire remonter ce problème',
       connectionError: 'Il y a un problème de connexion. Veuillez cliquer sur le bouton d\'actualisation ou recharger la page.',
+      wasAborted: '{instructionName} a été abandonné',
       wasPaused: 'La consigne {instructionName} sur l\'alarme {alarmName} a été interrompue à {date}. Vous pouvez la reprendre manuellement.',
     },
     jobs: {
@@ -2252,7 +2277,6 @@ export default {
     executedOn: 'Exécuté sur',
     lastExecutedOn: 'Dernière exécution le',
     modifiedOn: 'Dernière modification le',
-    lastModifiedOn: 'Dernière modification le',
     averageCompletionTime: 'Temps moyen\n\'achèvement',
     executionCount: 'Nombre de\nexécutions',
     alarmStates: 'Alarmes affectées par l\'état',
@@ -2294,23 +2318,24 @@ export default {
     remainingAction: 'Continuer avec les actions restantes',
     addAction: 'Ajouter une action',
     emptyActions: 'Aucune action ajoutée pour le moment',
-    urlHelp: '<p>Les variables accessibles sont : <strong>.Alarm</strong>, <strong>.Entity</strong> et <strong>.Children</strong></p>' +
-      '<i>Quelques exemples :</i>' +
-      '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>' +
-      '<pre>"https://exampleurl.com?entity_id={{ .Entity.ID }}"</pre>' +
-      '<pre>"https://exampleurl.com?children_count={{ len .Children }}"</pre>' +
-      '<pre>"https://exampleurl.com?children={{ range .Children }}{{ .ID }}{{ end }}"</pre>',
-    outputHelp: '<p>Les variables accessibles sont : <strong>.Alarm</strong> et <strong>.Entity</strong></p>' +
-      '<i>Quelques exemples:</i>' +
-      '<pre>Resource - {{ .Alarm.Value.Resource }}. Entity - {{ .Entity.ID }}.</pre>',
-    payloadHelp: '<p>Les variables accessibles sont : <strong>.Alarm</strong>, <strong>.Entity</strong> et <strong>.Children</strong></p>' +
-      '<i>Quelques exemples:</i>' +
-      '<pre>{\n' +
-      '  resource: "{{ .Alarm.Value.Resource }}",\n' +
-      '  entity: "{{ .Entity.ID }}",\n' +
-      '  children_count: "{{ len .Children }}",\n' +
-      '  children: {{ range .Children }}{{ .ID }}{{ end }}\n' +
-      '}</pre>',
+    output: 'Format d\'action de sortie',
+    urlHelp: '<p>Les variables accessibles sont : <strong>.Alarm</strong>, <strong>.Entity</strong> et <strong>.Children</strong></p>'
+      + '<i>Quelques exemples :</i>'
+      + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'
+      + '<pre>"https://exampleurl.com?entity_id={{ .Entity.ID }}"</pre>'
+      + '<pre>"https://exampleurl.com?children_count={{ len .Children }}"</pre>'
+      + '<pre>"https://exampleurl.com?children={{ range .Children }}{{ .ID }}{{ end }}"</pre>',
+    outputHelp: '<p>Les variables accessibles sont : <strong>.Alarm</strong> et <strong>.Entity</strong></p>'
+      + '<i>Quelques exemples:</i>'
+      + '<pre>Resource - {{ .Alarm.Value.Resource }}. Entity - {{ .Entity.ID }}.</pre>',
+    payloadHelp: '<p>Les variables accessibles sont : <strong>.Alarm</strong>, <strong>.Entity</strong> et <strong>.Children</strong></p>'
+      + '<i>Quelques exemples:</i>'
+      + '<pre>{\n'
+      + '  resource: "{{ .Alarm.Value.Resource }}",\n'
+      + '  entity: "{{ .Entity.ID }}",\n'
+      + '  children_count: "{{ len .Children }}",\n'
+      + '  children: {{ range .Children }}{{ .ID }}{{ end }}\n'
+      + '}</pre>',
     actions: {
       [ACTION_TYPES.snooze]: 'Mettre en veille',
       [ACTION_TYPES.pbehavior]: 'Définir un comportement périodique',
@@ -2341,22 +2366,17 @@ export default {
   },
 
   entity: {
+    manageInfos: 'Gérer les informations',
+    form: 'Formulaire',
+    impact: 'Impacts',
+    depends: 'Dépendances',
+    addInformation: 'Ajouter une information',
+    emptyInfos: 'Aucune information',
+    availabilityState: 'État de haute disponibilité',
     types: {
       connector: 'type de connecteur',
       component: 'composant',
       resource: 'ressource',
-    },
-    fields: {
-      type: 'Type',
-      manageInfos: 'Gérer les informations',
-      form: 'Formulaire',
-      impact: 'Impacts',
-      depends: 'Dépendances',
-    },
-    manageInfos: {
-      title: 'Informations',
-      createTitle: 'Ajouter une information',
-      emptyInfos: 'Aucune information',
     },
   },
 
@@ -2371,22 +2391,24 @@ export default {
   },
 
   users: {
-    table: {
-      username: 'Identifiant utilisateur',
-      firstName: 'Prénom',
-      lastName: 'Nom',
-      role: 'Rôle',
-      enabled: 'Actif',
-      auth: 'Type d\'auth.',
+    seeProfile: 'Voir le profil',
+    selectDefaultView: 'Sélectionner une vue par défaut',
+    username: 'Identifiant utilisateur',
+    firstName: 'Prénom',
+    lastName: 'Nom',
+    email: 'Email',
+    role: 'Rôle',
+    enabled: 'Actif',
+    password: 'Mot de passe',
+    language: 'Langue par défaut',
+    auth: 'Type d\'auth.',
+    navigationType: 'Type d\'affichage de la barre de vues',
+    navigationTypes: {
+      [GROUPS_NAVIGATION_TYPES.sideBar]: 'Barre latérale',
+      [GROUPS_NAVIGATION_TYPES.topBar]: 'Barre d\'entête',
     },
-    fields: {
-      username: 'Identifiant utilisateur',
-      firstName: 'Prénom',
-      lastName: 'Nom',
-      email: 'Email',
-      password: 'Mot de passe',
-      role: 'Rôle',
-      language: 'Langue de l\'interface par défaut',
+    metrics: {
+      [USER_METRIC_PARAMETERS.totalUserActivity]: 'Durée totale de l\'activité',
     },
   },
 
@@ -2419,6 +2441,7 @@ export default {
       [TEST_SUITE_STATUSES.skipped]: 'Ignoré',
       [TEST_SUITE_STATUSES.error]: 'En erreur',
       [TEST_SUITE_STATUSES.failed]: 'Échoué',
+      [TEST_SUITE_STATUSES.total]: 'Temps total pris',
     },
     popups: {
       systemMessageCopied: 'Message système copié dans le presse-papier',
@@ -2600,7 +2623,7 @@ export default {
     /**
      * Admin access
      */
-    [USERS_PERMISSIONS.technical.action]: {
+    [USERS_PERMISSIONS.technical.permission]: {
       title: 'Droits',
     },
     [USERS_PERMISSIONS.technical.role]: {
@@ -2624,6 +2647,10 @@ export default {
     [USERS_PERMISSIONS.technical.healthcheck]: {
       title: 'Bilan de santé',
       message: 'La fonction Healthcheck est le tableau de bord avec des indications d\'états et d\'erreurs de tous les systèmes inclus dans Canopsis.',
+    },
+    [USERS_PERMISSIONS.technical.kpi]: {
+      title: 'KPI',
+      message: '', // TODO: add correct message
     },
 
     /**
@@ -2668,6 +2695,62 @@ export default {
       countOverLimit: 'Le modèle que vous avez défini cible {count} entités. Cela peut affecter les performances, en êtes-vous sûr ?',
       countRequestError: 'Le calcul du nombre d\'entités ciblées par le modèle s\'est terminé avec une erreur. Il se peut que ce nombre dépasse la limite conseillée et que cela affecte les performances, êtes-vous sûr ?',
     },
+  },
+
+  userInterface: {
+    title: 'Interface utilisateur',
+    appTitle: 'Titre de l\'application',
+    language: 'Langue par défaut',
+    footer: 'Page d\'identification : pied de page',
+    description: 'Page d\'identification : description',
+    logo: 'Logo',
+    infoPopupTimeout: 'Délai d\'affichage pour les popups d\'informations',
+    errorPopupTimeout: 'Délai d\'affichage pour les popups d\'erreurs',
+    allowChangeSeverityToInfo: 'Autorise le changement de criticité en Info',
+    maxMatchedItems: 'Seuil d\'éléments avant avertissement',
+    checkCountRequestTimeout: 'Délai d\'expiration de la requête',
+    tooltips: {
+      maxMatchedItems: 'Avertit l\'utilisateur lorsque le nombre d\'éléments correspondant aux modèles est supérieur à cette valeur',
+      checkCountRequestTimeout: 'Définit le délai d\'expiration (en secondes) de la demande d\'éléments correspondants',
+    },
+  },
+
+  kpi: {
+    alarmMetrics: 'Métriques d\'alarme',
+    sli: 'SLI',
+  },
+
+  kpiMetrics: {
+    parameter: 'Paramètre à comparer',
+    tooltip: {
+      [USER_METRIC_PARAMETERS.totalUserActivity]: '{value} temps total d\'activité',
+
+      [ALARM_METRIC_PARAMETERS.createdAlarms]: '{value} alarmes créées',
+      [ALARM_METRIC_PARAMETERS.activeAlarms]: '{value} alarmes actives',
+      [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: '{value} alarmes non affichées',
+      [ALARM_METRIC_PARAMETERS.instructionAlarms]: '{value} alarmes en cours de correction automatique',
+      [ALARM_METRIC_PARAMETERS.pbehaviorAlarms]: '{value} alarmes sous PBehavior',
+      [ALARM_METRIC_PARAMETERS.correlationAlarms]: '{value} alarmes avec corrélation',
+      [ALARM_METRIC_PARAMETERS.ackAlarms]: '{value} alarmes avec ack',
+      [ALARM_METRIC_PARAMETERS.ackActiveAlarms]: '{value} alarmes actives avec acks',
+      [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: '{value} alarmes avec acquittement annulé',
+      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: '{value} alarmes actives avec acks',
+      [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: '{value} alarmes actives sans tickets',
+      [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '{value}% d\'alarmes avec correction automatique',
+      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '{value}% d\'alarmes avec instructions',
+      [ALARM_METRIC_PARAMETERS.ratioTickets]: '{value}% d\'alarmes avec tickets créés',
+      [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '{value}% des alarmes non affichées',
+      [ALARM_METRIC_PARAMETERS.averageAck]: '{value} accuser les alarmes',
+      [ALARM_METRIC_PARAMETERS.averageResolve]: '{value} pour résoudre les alarmes',
+    },
+  },
+
+  kpiFilters: {
+    helpInformation: 'Ici, les modèles de filtre pour des tranches de données supplémentaires pour les compteurs et les évaluations peuvent être ajoutés.',
+  },
+
+  kpiRatingSettings: {
+    helpInformation: 'La liste des paramètres à utiliser pour la notation.',
   },
 
   ...featureService.get('i18n.fr'),

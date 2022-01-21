@@ -65,7 +65,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 	defer depmake.Catch(logger)
 
 	m := DependencyMaker{}
-	dbClient := m.DepMongoClient(ctx)
+	dbClient := m.DepMongoClient(ctx, logger)
 	cfg := m.DepConfig(ctx, dbClient)
 	config.SetDbClientRetry(dbClient, cfg)
 	if pgPool != nil {
@@ -93,7 +93,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		logger,
 	)
 
-	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider)
+	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)
 
 	pbhRpcClient := libengine.NewRPCClient(
 		canopsis.AxeRPCConsumerName,
@@ -185,6 +185,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		&messageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			EventProcessor: alarm.NewEventProcessor(
+				dbClient,
 				alarm.NewAdapter(dbClient),
 				entity.NewAdapter(dbClient),
 				correlation.NewRuleAdapter(dbClient),
@@ -225,14 +226,14 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 	))
 	engineAxe.AddConsumer(serviceRpcClient)
 	engineAxe.AddConsumer(pbhRpcClient)
-	engineAxe.AddPeriodicalWorker(libengine.NewRunInfoPeriodicalWorker(
+	engineAxe.AddPeriodicalWorker("run info", libengine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		libengine.NewRunInfoManager(runInfoRedisClient),
 		libengine.NewInstanceRunInfo(canopsis.AxeEngineName, canopsis.AxeQueueName, options.PublishToQueue, nil, rpcPublishQueues),
 		amqpChannel,
 		logger,
 	))
-	engineAxe.AddPeriodicalWorker(libengine.NewLockedPeriodicalWorker(
+	engineAxe.AddPeriodicalWorker("alarms", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),
 		redis.AxePeriodicalLockKey,
 		&periodicalWorker{
@@ -254,7 +255,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		},
 		logger,
 	))
-	engineAxe.AddPeriodicalWorker(libengine.NewLockedPeriodicalWorker(
+	engineAxe.AddPeriodicalWorker("resolve archiver", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),
 		redis.AxeResolvedArchiverPeriodicalLockKey,
 		&resolvedArchiverWorker{
@@ -267,13 +268,13 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		},
 		logger,
 	))
-	engineAxe.AddPeriodicalWorker(libengine.NewLoadConfigPeriodicalWorker(
+	engineAxe.AddPeriodicalWorker("alarm config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(dbClient),
 		alarmConfigProvider,
 		logger,
 	))
-	engineAxe.AddPeriodicalWorker(libengine.NewLoadConfigPeriodicalWorker(
+	engineAxe.AddPeriodicalWorker("tz config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(dbClient),
 		timezoneConfigProvider,

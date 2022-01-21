@@ -5,8 +5,8 @@
     "instruction": {
       "rate": true,
       "rate_frequency": {
-        "seconds": 604800,
-        "unit": "s"
+        "value": 1,
+        "unit": "w"
       }
     }
   }

@@ -1,0 +1,390 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-json-field Renders \`c-json-field\` with custom props correctly 1`] = `
+<div
+  class="layout row wrap"
+>
+  <div
+    class="flex xs12"
+  >
+    <div
+      class="v-input v-textarea v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-text-field__slot"
+          >
+            <textarea
+              aria-label=""
+              data-vv-validate-on="none"
+              name="json"
+              rows="5"
+            />
+          </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light"
+          >
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="flex xs12"
+  >
+    <button
+      class="ml-0 v-btn v-btn--disabled v-btn--outline v-btn--depressed theme--light primary--text"
+      disabled="disabled"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        common.parse
+      </div>
+    </button>
+    <button
+      class="v-btn v-btn--disabled v-btn--outline v-btn--depressed theme--light grey--text text--darken-1"
+      disabled="disabled"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        common.reset
+      </div>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`c-json-field Renders \`c-json-field\` with custom props correctly 2`] = `
+<div
+  class="layout row wrap"
+>
+  <div
+    class="flex xs12"
+  >
+    <div
+      class="v-input v-textarea v-text-field v-input--is-label-active v-input--is-dirty v-input--is-readonly theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-text-field__slot"
+          >
+            <textarea
+              aria-label=""
+              data-vv-validate-on="none"
+              name="json"
+              readonly="readonly"
+              rows="5"
+            />
+          </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light"
+          >
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`c-json-field Renders \`c-json-field\` with custom props correctly 3`] = `
+<div
+  class="layout row wrap"
+>
+  <div
+    class="flex xs12"
+  >
+    <div
+      class="v-input v-textarea v-textarea--auto-grow v-textarea--no-resize v-text-field v-text-field--box v-text-field--enclosed v-text-field--outline v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-text-field__slot"
+          >
+            <label
+              aria-hidden="true"
+              class="v-label v-label--active v-label--is-disabled theme--light"
+              style="left: 0px; position: absolute;"
+            >
+              JSON field
+            </label>
+            <textarea
+              aria-label="JSON field"
+              data-vv-validate-on="none"
+              disabled="disabled"
+              name="jsonField"
+              rows="4"
+            />
+          </div>
+          <div
+            class="v-input__append-inner"
+          >
+            <span
+              class="v-tooltip v-tooltip--left"
+            >
+              <transition-stub
+                name="slide-x-reverse-transition"
+              />
+              <span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  help
+                </i>
+              </span>
+            </span>
+          </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light"
+          >
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="flex xs12"
+  >
+    <button
+      class="ml-0 v-btn v-btn--disabled v-btn--outline v-btn--depressed theme--light primary--text"
+      disabled="disabled"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        common.parse
+      </div>
+    </button>
+    <button
+      class="v-btn v-btn--disabled v-btn--outline v-btn--depressed theme--light grey--text text--darken-1"
+      disabled="disabled"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        common.reset
+      </div>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`c-json-field Renders \`c-json-field\` with default props and changed value correctly 1`] = `
+<div
+  class="layout row wrap"
+>
+  <div
+    class="flex xs12"
+  >
+    <div
+      class="v-input v-textarea v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-text-field__slot"
+          >
+            <textarea
+              aria-label=""
+              data-vv-validate-on="none"
+              name="json"
+              rows="5"
+            />
+          </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light"
+          >
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="flex xs12"
+  >
+    <button
+      class="ml-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        common.parse
+      </div>
+    </button>
+    <button
+      class="v-btn v-btn--outline v-btn--depressed theme--light grey--text text--darken-1"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        common.reset
+      </div>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`c-json-field Renders \`c-json-field\` with default props and incorrect value correctly 1`] = `
+<div
+  class="layout row wrap"
+>
+  <div
+    class="flex xs12"
+  >
+    <div
+      class="v-input v-textarea v-text-field v-input--has-state v-input--is-label-active v-input--is-dirty theme--light error--text"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-text-field__slot"
+          >
+            <textarea
+              aria-label=""
+              data-vv-validate-on="none"
+              name="json"
+              rows="5"
+            />
+          </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light error--text"
+          >
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            >
+              <div
+                class="v-messages__message"
+              >
+                errors.JSONNotValid
+              </div>
+            </transition-group-stub>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`c-json-field Renders \`c-json-field\` with default props correctly 1`] = `
+<div
+  class="layout row wrap"
+>
+  <div
+    class="flex xs12"
+  >
+    <div
+      class="v-input v-textarea v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-text-field__slot"
+          >
+            <textarea
+              aria-label=""
+              data-vv-validate-on="none"
+              name="json"
+              rows="5"
+            />
+          </div>
+        </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light"
+          >
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!---->
+</div>
+`;
