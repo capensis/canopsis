@@ -109,7 +109,7 @@ export function generateWidgetByType(type) {
           order: SORT_ORDERS.asc,
         },
         exportCsvSeparator: EXPORT_CSV_SEPARATORS.comma,
-        exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds,
+        exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
         widgetExportColumns: defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_COLUMNS),
       };
       break;
