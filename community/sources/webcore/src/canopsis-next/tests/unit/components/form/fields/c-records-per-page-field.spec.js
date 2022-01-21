@@ -99,7 +99,7 @@ describe('c-records-per-page-field', () => {
   it('Renders `c-records-per-page-field` with default props', () => {
     const wrapper = snapshotFactory();
 
-    const menuContent = wrapper.find('.v-menu__content');
+    const menuContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
@@ -112,7 +112,7 @@ describe('c-records-per-page-field', () => {
       },
     });
 
-    const menuContent = wrapper.find('.v-menu__content');
+    const menuContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
