@@ -76,7 +76,6 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	lockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
-	corrRedisClient := m.DepRedisSession(ctx, redis.CorrelationLockStorage, logger, cfg)
 	pbhRedisClient := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
 	runInfoRedisClient := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 
@@ -132,6 +131,10 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		rpcPublishQueues = append(rpcPublishQueues, canopsis.RemediationRPCQueueServerName)
 	}
 
+	metaAlarmEventProcessor := alarm.NewMetaAlarmEventProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
+		alarmStatusService, alarmConfigProvider, json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName,
+		metricsSender, logger)
+
 	engineAxe := libengine.New(
 		nil,
 		func(ctx context.Context) {
@@ -146,11 +149,6 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 			}
 
 			err = lockRedisClient.Close()
-			if err != nil {
-				logger.Error().Err(err).Msg("failed to close redis connection")
-			}
-
-			err = corrRedisClient.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
@@ -192,8 +190,8 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 				alarmConfigProvider,
 				m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
 				alarmStatusService,
-				redis.NewLockClient(corrRedisClient),
 				metricsSender,
+				metaAlarmEventProcessor,
 				logger,
 			),
 			RemediationRpcClient:   remediationRpcClient,
@@ -216,7 +214,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 			ServiceRpc:               serviceRpcClient,
 			PbhRpc:                   pbhRpcClient,
 			RemediationRpc:           remediationRpcClient,
-			AlarmAdapter:             alarm.NewAdapter(dbClient),
+			MetaAlarmEventProcessor:  metaAlarmEventProcessor,
 			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
 			Encoder:                  json.NewEncoder(),
 			Decoder:                  json.NewDecoder(),

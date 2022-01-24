@@ -16,10 +16,7 @@ type mongoAdapter struct {
 	dbCollection mongo.DbCollection
 }
 
-func (a mongoAdapter) Get() ([]Rule, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a mongoAdapter) Get(ctx context.Context) ([]Rule, error) {
 	cursor, err := a.dbCollection.Find(ctx, bson.M{
 		"type": bson.M{
 			"$ne": RuleManualGroup,
@@ -38,10 +35,7 @@ func (a mongoAdapter) Get() ([]Rule, error) {
 	return rules, err
 }
 
-func (a mongoAdapter) Save(rule Rule) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a mongoAdapter) Save(ctx context.Context, rule Rule) error {
 	_, err := a.dbCollection.InsertOne(ctx, rule)
 	if err != nil {
 		return err
@@ -50,10 +44,7 @@ func (a mongoAdapter) Save(rule Rule) error {
 	return err
 }
 
-func (a mongoAdapter) GetManualRule() (Rule, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a mongoAdapter) GetManualRule(ctx context.Context) (Rule, error) {
 	cursor, err := a.dbCollection.Find(ctx, bson.M{
 		"type": bson.M{
 			"$eq": RuleManualGroup,
@@ -76,10 +67,7 @@ func (a mongoAdapter) GetManualRule() (Rule, error) {
 	return rules[0], nil
 }
 
-func (a mongoAdapter) GetRule(id string) (Rule, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func (a mongoAdapter) GetRule(ctx context.Context, id string) (Rule, error) {
 	res := a.dbCollection.FindOne(ctx, bson.M{"_id": id})
 	if res.Err() != nil {
 		return Rule{}, res.Err()
