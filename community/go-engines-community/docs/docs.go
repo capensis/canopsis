@@ -180,6 +180,11 @@ var doc = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "name": "time_field",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "name": "tstart",
                         "in": "query"
@@ -482,6 +487,11 @@ var doc = `{
                     {
                         "type": "string",
                         "name": "sort_key",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "time_field",
                         "in": "query"
                     },
                     {
@@ -10134,6 +10144,9 @@ var doc = `{
                 "separator": {
                     "type": "string"
                 },
+                "time_field": {
+                    "type": "string"
+                },
                 "time_format": {
                     "type": "string"
                 },
@@ -10211,6 +10224,9 @@ var doc = `{
                     "type": "boolean"
                 },
                 "search": {
+                    "type": "string"
+                },
+                "time_field": {
                     "type": "string"
                 },
                 "tstart": {
@@ -10318,6 +10334,9 @@ var doc = `{
                     "type": "string"
                 },
                 "sort_key": {
+                    "type": "string"
+                },
+                "time_field": {
                     "type": "string"
                 },
                 "tstart": {
