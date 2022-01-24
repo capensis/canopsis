@@ -1,14 +1,14 @@
 <template lang="pug">
-div
-  v-tooltip(v-if="isEnabled", :disabled="!formattedData.text", right)
-    div.color-indicator(
-      slot="activator",
-      :class="{ 'white--text': isEnabled }",
-      :style="{ backgroundColor: formattedData.color }"
-    )
-      slot {{ value }}
-    span {{ formattedData.text }}
-  slot(v-else)
+  div
+    v-tooltip(v-if="isEnabled", :disabled="!formattedData.text", right)
+      div.color-indicator(
+        slot="activator",
+        :class="{ 'white--text': isEnabled }",
+        :style="{ backgroundColor: formattedData.color }"
+      )
+        slot {{ value }}
+      span {{ formattedData.text }}
+    slot(v-else)
 </template>
 
 <script>
