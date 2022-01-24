@@ -39,6 +39,10 @@ export const entitiesViewGroupMixin = {
       });
     },
 
+    /**
+     * TODO: rename method
+     * @return {Promise<unknown[]>}
+     */
     fetchAllGroupsListWithViewsWithCurrentUser() {
       return Promise.all([
         this.fetchGroupsList({
@@ -46,6 +50,8 @@ export const entitiesViewGroupMixin = {
             limit: MAX_LIMIT,
             page: 1,
             with_views: true,
+            with_tabs: true,
+            with_widgets: true,
             with_flags: true,
           },
         }),

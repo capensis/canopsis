@@ -1,19 +1,34 @@
 import { setField } from '@/helpers/immutable';
 
 import { prepareQuery } from '@/helpers/query';
-import { formToWidget } from '@/helpers/forms/widgets/common';
+import { widgetToForm, formToWidget } from '@/helpers/forms/widgets/common';
 
 import { queryMixin } from '@/mixins/query';
-
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 export const widgetSettingsMixin = {
   mixins: [
     queryMixin,
-    entitiesUserPreferenceMixin,
-    confirmableModalMixinCreator({ field: 'settings', closeMethod: '$sidebar.hide' }),
+    entitiesWidgetMixin,
+    entitiesUserPreferenceMixin, // TODO: remove it
+    confirmableModalMixinCreator({ field: 'settings', closeMethod: '$sidebar.hide' }), // TODO: change field to form
   ],
+  computed: {
+    config() {
+      return this.sidebar.config ?? {};
+    },
+
+    widget() {
+      return this.config.widget;
+    },
+  },
+  data() {
+    return {
+      form: widgetToForm(this.sidebar.config?.widget),
+    };
+  },
   methods: {
     /**
      * Validate settings form
@@ -21,11 +36,7 @@ export const widgetSettingsMixin = {
      * @returns {boolean|Promise<boolean>}
      */
     isFormValid() {
-      if (this.$validator) {
-        return this.$validator.validateAll();
-      }
-
-      return true;
+      return this.$validator?.validateAll() ?? true;
     },
 
     /**
@@ -33,7 +44,7 @@ export const widgetSettingsMixin = {
      *
      * @returns {Object}
      */
-    prepareWidgetSettings() {
+    prepareWidgetSettings() { // TODO: remove it
       return this.settings.widget;
     },
 
@@ -43,7 +54,7 @@ export const widgetSettingsMixin = {
      * @param {Object} newQuery
      * @returns {Object}
      */
-    prepareWidgetQuery(newQuery) {
+    prepareWidgetQuery(newQuery) { // TODO: refactor it
       return newQuery;
     },
 
@@ -52,7 +63,7 @@ export const widgetSettingsMixin = {
      *
      * @returns {Object}
      */
-    getPreparedUserPreference() {
+    getPreparedUserPreference() { // TODO: remove it
       return setField(this.userPreference, 'content', value => ({
         ...value,
         ...this.settings.userPreferenceContent,
@@ -69,18 +80,29 @@ export const widgetSettingsMixin = {
 
       if (isFormValid) {
         const data = formToWidget(this.settings.widget);
+        let method = this.createWidget;
+
+        if (this.widget) {
+          if (this.widget._id) {
+            method = this.updateWidget;
+          } else {
+            method = this.copyWidget;
+          }
+        }
+
+        const newWidget = await method({ data });
 
         /**
          * TODO: update widget request
          */
 
-        if (data._id) {
+        if (newWidget._id) {
           const userPreference = this.getPreparedUserPreference();
 
           await this.updateUserPreference({ data: userPreference });
 
-          const oldQuery = this.getQueryById(data._id);
-          const newQuery = prepareQuery(data, userPreference);
+          const oldQuery = this.getQueryById(newWidget._id);
+          const newQuery = prepareQuery(newWidget, userPreference);
 
           this.updateQuery({
             id: data._id,

@@ -243,7 +243,7 @@ export function convertStatsParetoWidgetToQuery(widget) {
  * @returns {{filters: *}}
  */
 export function convertCounterWidgetToQuery(widget) {
-  const { viewFilters, isCorrelationEnabled = false } = widget.parameters;
+  const { viewFilters = [], isCorrelationEnabled = false } = widget.parameters;
 
   return {
     ...convertAlarmStateFilterToQuery(widget),

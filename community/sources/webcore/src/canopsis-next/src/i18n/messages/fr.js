@@ -837,11 +837,13 @@ export default {
       success: {
         create: 'Nouvelle vue créée !',
         edit: 'Vue éditée avec succès !',
+        duplicate: 'Afficher dupliqué avec succès !',
         delete: 'Vue supprimée avec succès !',
       },
       fail: {
         create: 'Erreur lors de la création de la vue...',
-        edit: 'Erreur lors de  l\'édition de la vue...',
+        edit: 'Erreur lors de l\'édition de la vue...',
+        duplicate: 'Échec de la duplication de la vue...',
         delete: 'Erreur lors de la suppression de la vue...',
       },
     },

@@ -62,15 +62,22 @@ export default {
     },
 
     async updatePositions() {
-      const data = Object.entries(this.widgetsGrid)
-        .map(([id, gridParameters]) => ({
-          _id: id,
-          grid_parameters: gridParameters,
-        }));
+      try {
+        const data = Object.entries(this.widgetsGrid)
+          .map(([id, gridParameters]) => ({
+            _id: id,
+            grid_parameters: gridParameters,
+          }));
 
-      await this.updateWidgetGridPositions({ data });
+        if (!data.length) {
+          return;
+        }
 
-      return this.fetchActiveView();
+        await this.updateWidgetGridPositions({ data });
+        await this.fetchActiveView();
+      } catch (err) {
+        this.$popups.error({ text: this.$t('errors.default') });
+      }
     },
 
     /**

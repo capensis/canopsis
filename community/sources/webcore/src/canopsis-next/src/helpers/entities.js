@@ -1,4 +1,4 @@
-import { get, omit, cloneDeep, isObject, groupBy } from 'lodash';
+import { omit, cloneDeep, isObject, groupBy } from 'lodash';
 
 import i18n from '@/i18n';
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT, COLORS } from '@/config';
@@ -310,48 +310,6 @@ export function generateViewTab(title = '') {
     widgets: [],
   };
 }
-
-/**
- * Generate copy of view tab
- *
- * @param {ViewTab} tab
- * @returns {ViewTab}
- */
-export function generateCopyOfViewTab(tab) {
-  return {
-    ...generateViewTab(),
-    ...omit(tab, ['_id', 'widgets']),
-
-    widgets: tab.widgets.map(widget => ({
-      ...generateWidgetByType(widget.type),
-      ...omit(widget, ['_id']),
-    })),
-  };
-}
-
-/**
- * Get mappings for widgets ids from old tab to new tab
- *
- * @param {Object} oldTab
- * @param {Object} newTab
- * @returns {{ oldId: string, newId: string }[]}
- */
-export function getViewsTabsWidgetsIdsMappings(oldTab, newTab) {
-  return oldTab.widgets.map((widget, widgetIndex) => ({
-    oldId: widget._id,
-    newId: get(newTab, `widgets.${widgetIndex}._id`, null),
-  }));
-}
-
-/**
- * Get mappings for widgets from old view to new view
- *
- * @param {View | ViewRequest} oldView
- * @param {View | ViewRequest} newView
- * @returns {{ oldId: string, newId: string }[]}
- */
-export const getViewsWidgetsIdsMappings = (oldView, newView) => oldView.tabs
-  .reduce((acc, tab, index) => acc.concat(getViewsTabsWidgetsIdsMappings(tab, newView.tabs[index])), []);
 
 /**
  * Checks if alarm is resolved

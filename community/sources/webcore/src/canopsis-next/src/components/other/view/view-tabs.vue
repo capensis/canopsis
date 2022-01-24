@@ -54,15 +54,9 @@ import { vuetifyTabsMixin } from '@/mixins/vuetify/tabs';
 import { entitiesViewMixin } from '@/mixins/entities/view';
 import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
 
-import CloneTabBtn from './buttons/clone-tab-btn.vue';
-
-/**
- * TODO: move clone tab
- */
 export default {
   components: {
     Draggable,
-    CloneTabBtn,
   },
   mixins: [
     activeViewMixin,

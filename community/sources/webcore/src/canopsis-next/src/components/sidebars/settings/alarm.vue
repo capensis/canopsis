@@ -189,14 +189,9 @@ export default {
     return {
       settings: {
         widget: alarmListWidgetToForm(widget),
-        userPreferenceContent: { itemsPerPage: PAGINATION_LIMIT },
+        userPreferenceContent: { itemsPerPage: PAGINATION_LIMIT }, // TODO: finish it
       },
     };
-  },
-  computed: {
-    config() {
-      return this.sidebar.config ?? {};
-    },
   },
   mounted() {
     const { content } = this.userPreference;
