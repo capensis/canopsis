@@ -12641,10 +12641,6 @@ var doc = `{
                 }
             }
         },
-        "primitive.M": {
-            "type": "object",
-            "additionalProperties": true
-        },
         "resolverule.CreateRequest": {
             "type": "object",
             "required": [
@@ -13248,6 +13244,9 @@ var doc = `{
                 "alarm_display_name": {
                     "type": "string"
                 },
+                "alarm_id": {
+                    "type": "string"
+                },
                 "assigned_instructions": {
                     "type": "array",
                     "items": {
@@ -13764,12 +13763,6 @@ var doc = `{
                 },
                 "pbh_inactive_duration": {
                     "type": "integer"
-                },
-                "related_parents": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 },
                 "resolved": {
                     "type": "object",

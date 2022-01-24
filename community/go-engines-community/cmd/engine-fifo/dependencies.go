@@ -18,13 +18,12 @@ import (
 )
 
 type Options struct {
-	PrintEventOnError         bool
-	ModeDebug                 bool
-	ConsumeFromQueue          string
-	PublishToQueue            string
-	LockTtl                   int
-	EnableMetaAlarmProcessing bool
-	EventsStatsFlushInterval  time.Duration
+	PrintEventOnError        bool
+	ModeDebug                bool
+	ConsumeFromQueue         string
+	PublishToQueue           string
+	LockTtl                  int
+	EventsStatsFlushInterval time.Duration
 }
 
 // DependencyMaker can be created with DependencyMaker{}
@@ -56,7 +55,6 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 		options.LockTtl,
 		json.NewDecoder(),
 		json.NewEncoder(),
-		options.EnableMetaAlarmProcessing,
 	)
 	statsCh := make(chan statistics.Message)
 	statsSender := ratelimit.NewStatsSender(statsCh, logger)
