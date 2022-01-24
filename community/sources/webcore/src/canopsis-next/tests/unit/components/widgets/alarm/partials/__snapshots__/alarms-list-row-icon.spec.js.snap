@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with all auto instructions 1`] = `
+<span
+  class="v-tooltip v-tooltip--top"
+>
+  <transition-stub
+    name="slide-y-reverse-transition"
+  />
+  <span>
+    <i
+      aria-hidden="true"
+      class="v-icon instruction-icon material-icons theme--light black--text error--text"
+      style="font-size: 16px;"
+    >
+      assignment_late
+    </i>
+  </span>
+</span>
+`;
+
+exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with auto instruction running 1`] = `
+<span
+  class="v-tooltip v-tooltip--top"
+>
+  <transition-stub
+    name="slide-y-reverse-transition"
+  />
+  <span>
+    <i
+      aria-hidden="true"
+      class="v-icon instruction-icon material-icons theme--light black--text instruction-icon--auto-running"
+      style="font-size: 16px;"
+    >
+      assignment
+    </i>
+  </span>
+</span>
+`;
+
+exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with instruction 1`] = `
+<span
+  class="v-tooltip v-tooltip--top"
+>
+  <transition-stub
+    name="slide-y-reverse-transition"
+  />
+  <span>
+    <i
+      aria-hidden="true"
+      class="v-icon instruction-icon material-icons theme--light black--text"
+      style="font-size: 16px;"
+    >
+      assignment
+    </i>
+  </span>
+</span>
+`;
+
+exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with manual instruction waiting result 1`] = `
+<span
+  class="v-tooltip v-tooltip--top"
+>
+  <transition-stub
+    name="slide-y-reverse-transition"
+  />
+  <span>
+    <i
+      aria-hidden="true"
+      class="v-icon instruction-icon material-icons theme--light black--text instruction-icon--auto-running"
+      style="font-size: 16px;"
+    >
+      assignment
+    </i>
+  </span>
+</span>
+`;
