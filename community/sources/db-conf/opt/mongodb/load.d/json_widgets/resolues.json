@@ -51,7 +51,7 @@
     },
     "moreInfoTemplate": "",
     "periodic_refresh": {
-      "seconds": 60,
+      "value": 1,
       "unit": "m",
       "enabled": false
     }
