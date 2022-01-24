@@ -5,7 +5,6 @@ import { DEFAULT_PERIODIC_REFRESH } from '@/constants';
 import uuid from '../uuid';
 
 import { durationWithEnabledToForm } from '../date/duration';
-import { generateViewTab } from '../entities';
 
 import { enabledToForm } from './shared/common';
 
@@ -102,19 +101,11 @@ export const viewToForm = (view = {}) => ({
  * @param {View} view
  * @returns {ViewRequest}
  */
-export const viewToRequest = (view) => {
-  const request = {
-    ...omit(view, ['_id', 'group', 'group_id', 'created', 'updated']),
+export const viewToRequest = view => ({
+  ...omit(view, ['_id', 'group', 'group_id', 'created', 'updated']),
 
-    group: view.group._id,
-  };
-
-  if (!view.tabs) {
-    request.tabs = [generateViewTab('Default')];
-  }
-
-  return request;
-};
+  group: view.group._id,
+});
 
 /**
  * Convert view group to request

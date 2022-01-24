@@ -837,11 +837,13 @@ export default {
       success: {
         create: 'New view created!',
         edit: 'View successfully edited!',
+        duplicate: 'View successfully duplicated!',
         delete: 'View successfully deleted!',
       },
       fail: {
         create: 'View creation failed...',
         edit: 'View edition failed...',
+        duplicate: 'View duplication failed...',
         delete: 'View deletion failed...',
       },
     },

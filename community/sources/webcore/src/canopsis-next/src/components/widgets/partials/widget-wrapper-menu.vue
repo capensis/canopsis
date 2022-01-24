@@ -52,7 +52,7 @@ export default {
     /**
      * Redirect to selected view and tab, if it's different then the view/tab we're actually on
      */
-    redirectToSelectedViewAndTab({ tabId, viewId }) {
+    redirectToSelectedViewAndTab({ viewId, tabId }) {
       return new Promise((resolve, reject) => {
         if (this.tab._id === tabId) {
           return resolve();
@@ -69,10 +69,10 @@ export default {
     /**
      * Copy a widget's parameters, and open corresponding settings panel
      */
-    cloneWidget({ viewId, tabId }) {
+    async cloneWidget({ viewId, tabId }) {
       const newWidget = omit(this.widget, ['_id']);
 
-      this.redirectToSelectedViewAndTab({ tabId, viewId });
+      await this.redirectToSelectedViewAndTab({ viewId, tabId });
 
       this.$sidebar.show({
         name: SIDE_BARS_BY_WIDGET_TYPES[newWidget.type],

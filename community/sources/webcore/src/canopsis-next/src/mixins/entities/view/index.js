@@ -30,21 +30,43 @@ export const entitiesViewMixin = {
     }),
 
     async createViewWithPopup({ data }) {
-      await this.createView({ data });
+      try {
+        await this.createView({ data });
 
-      this.$popups.success({ text: this.$t('modals.view.success.create') });
+        this.$popups.success({ text: this.$t('modals.view.success.create') });
+      } catch (err) {
+        this.$popups.error({ text: this.$t('modals.view.fail.create') });
+      }
     },
 
     async updateViewWithPopup({ id, data }) {
-      await this.updateView({ id, data });
+      try {
+        await this.updateView({ id, data });
 
-      this.$popups.success({ text: this.$t('modals.view.success.edit') });
+        this.$popups.success({ text: this.$t('modals.view.success.edit') });
+      } catch (err) {
+        this.$popups.error({ text: this.$t('modals.view.fail.edit') });
+      }
+    },
+
+    async copyViewWithPopup({ id, data }) {
+      try {
+        await this.createView({ id, data });
+
+        this.$popups.success({ text: this.$t('modals.view.success.duplicate') });
+      } catch (err) {
+        this.$popups.error({ text: this.$t('modals.view.fail.duplicate') });
+      }
     },
 
     async removeViewWithPopup({ id }) {
-      await this.removeView({ id });
+      try {
+        await this.removeView({ id });
 
-      this.$popups.success({ text: this.$t('modals.view.success.delete') });
+        this.$popups.success({ text: this.$t('modals.view.success.delete') });
+      } catch (err) {
+        this.$popups.error({ text: this.$t('modals.view.fail.delete') });
+      }
     },
   },
 };
