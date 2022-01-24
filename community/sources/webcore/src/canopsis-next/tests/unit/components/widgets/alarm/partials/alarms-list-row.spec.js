@@ -42,6 +42,7 @@ const snapshotFactory = (options = {}) => mount(AlarmsListRow, {
 
 const selectExpandButton = wrapper => wrapper.find('c-expand-btn-stub');
 const selectTableRow = wrapper => wrapper.find('tr');
+const selectCheckbox = wrapper => wrapper.find('v-checkbox-functional-stub');
 
 describe('alarms-list-row', () => {
   const fetchItem = jest.fn();
@@ -64,6 +65,35 @@ describe('alarms-list-row', () => {
   afterEach(() => {
     updateQuery.mockClear();
     fetchItem.mockClear();
+  });
+
+  it('Alarm selected after trigger checkbox', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        row: {
+          item: {
+            v: {
+              status: {},
+            },
+          },
+          expanded: false,
+        },
+        widget: {},
+        columns: [],
+        selectable: true,
+      },
+    });
+
+    const checkbox = selectCheckbox(wrapper);
+
+    checkbox.vm.$emit('change', true);
+
+    const inputEvents = wrapper.emitted('input');
+
+    expect(inputEvents).toHaveLength(1);
+
+    const [eventData] = inputEvents[0];
+    expect(eventData).toBe(true);
   });
 
   it('Listeners from feature called after trigger', () => {
