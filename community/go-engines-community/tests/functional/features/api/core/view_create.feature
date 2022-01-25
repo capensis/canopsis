@@ -41,6 +41,13 @@ Feature: Create a view
       },
       "tags": [
         "test-view-to-create-1-tag"
+      ],
+      "tabs": [
+        {
+          "author": "root",
+          "title": "Default",
+          "widgets": []
+        }
       ]
     }
     """
@@ -85,6 +92,13 @@ Feature: Create a view
       },
       "tags": [
         "test-view-to-create-2-tag"
+      ],
+      "tabs": [
+        {
+          "author": "root",
+          "title": "Default",
+          "widgets": []
+        }
       ]
     }
     """

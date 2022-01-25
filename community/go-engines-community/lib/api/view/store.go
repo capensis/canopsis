@@ -16,12 +16,15 @@ import (
 	"time"
 )
 
-const permissionPrefix = "Rights on view :"
+const (
+	permissionPrefix = "Rights on view :"
+	defaultTabTitle  = "Default"
+)
 
 type Store interface {
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
 	GetOneBy(ctx context.Context, id string) (*Response, error)
-	Insert(ctx context.Context, r EditRequest) (*Response, error)
+	Insert(ctx context.Context, r EditRequest, withDefaultTab bool) (*Response, error)
 	Update(ctx context.Context, r EditRequest) (*Response, error)
 	// UpdatePositions receives some groups and views with updated positions and updates
 	// positions for all groups and views in db and moves views to another groups if necessary.
@@ -130,7 +133,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	return nil, nil
 }
 
-func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
+func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) (*Response, error) {
 	count, err := s.collection.CountDocuments(ctx, bson.M{})
 	if err != nil {
 		return nil, err
@@ -153,6 +156,21 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	})
 	if err != nil {
 		return nil, err
+	}
+
+	if withDefaultTab {
+		_, err := s.tabCollection.InsertOne(ctx, view.Tab{
+			ID:       utils.NewID(),
+			Title:    defaultTabTitle,
+			View:     id,
+			Author:   r.Author,
+			Position: 0,
+			Created:  now,
+			Updated:  now,
+		})
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	newView, err := s.GetOneBy(ctx, id)
@@ -239,7 +257,7 @@ func (s *store) Copy(ctx context.Context, id string, r EditRequest) (*Response, 
 		return nil, err
 	}
 
-	newView, err := s.Insert(ctx, r)
+	newView, err := s.Insert(ctx, r, false)
 	if err != nil {
 		return nil, err
 	}

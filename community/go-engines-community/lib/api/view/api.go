@@ -139,7 +139,7 @@ func (a *api) Create(c *gin.Context) {
 	}
 
 	userID := c.MustGet(auth.UserKey).(string)
-	view, err := a.store.Insert(c.Request.Context(), request)
+	view, err := a.store.Insert(c.Request.Context(), request, true)
 	if err != nil {
 		panic(err)
 	}
