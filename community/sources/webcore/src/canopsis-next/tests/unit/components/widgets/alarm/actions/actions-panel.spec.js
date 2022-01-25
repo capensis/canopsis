@@ -18,6 +18,7 @@ import {
   REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
 } from '@/constants';
 import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
+import featuresService from '@/services/features';
 import ActionsPanel from '@/components/widgets/alarm/actions/actions-panel.vue';
 
 const localVue = createVueInstance();
@@ -1085,6 +1086,44 @@ describe('actions-panel', () => {
       expectedFetchAlarmData,
       undefined,
     );
+  });
+
+  it('Custom action called after trigger button', () => {
+    const customAction = {
+      type: 'custom-type',
+      icon: 'custom-icon',
+      title: 'custom-title',
+      method: jest.fn(),
+    };
+    const featureHasSpy = jest.spyOn(featuresService, 'has')
+      .mockReturnValueOnce(true);
+    const featureGetSpy = jest.spyOn(featuresService, 'get')
+      .mockReturnValueOnce((
+      ) => ({
+        inline: [customAction],
+        dropDown: [],
+      }));
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        alarmModule,
+      ]),
+      propsData: {
+        item: alarm,
+        widget,
+        parentAlarm,
+      },
+    });
+
+    const executeInstructionAction = selectActionByType(wrapper, customAction.type);
+
+    executeInstructionAction.trigger('click');
+
+    expect(customAction.method).toBeCalled();
+
+    featureHasSpy.mockClear();
+    featureGetSpy.mockClear();
   });
 
   it('Renders `actions-panel` with unresolved alarm and flapping status', () => {
