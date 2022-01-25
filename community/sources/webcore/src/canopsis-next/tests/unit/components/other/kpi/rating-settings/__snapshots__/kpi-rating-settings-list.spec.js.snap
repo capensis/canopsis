@@ -82,7 +82,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="true"
@@ -139,7 +138,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="true"
@@ -196,7 +194,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="true"
@@ -253,7 +250,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -310,7 +306,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -367,7 +362,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -424,7 +418,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -481,7 +474,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -538,7 +530,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -595,7 +586,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="true"
@@ -652,7 +642,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="true"
@@ -820,7 +809,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="true"
@@ -877,7 +865,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="true"
@@ -934,7 +921,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="true"
@@ -991,7 +977,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -1048,7 +1033,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -1105,7 +1089,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -1162,7 +1145,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -1219,7 +1201,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -1276,7 +1257,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -1333,7 +1313,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="true"
@@ -1390,7 +1369,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="true"
@@ -1626,7 +1604,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -1683,7 +1660,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="true"
@@ -1740,7 +1716,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="true"
@@ -1797,7 +1772,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -1854,7 +1828,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -1911,7 +1884,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -1968,7 +1940,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -2025,7 +1996,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -2082,7 +2052,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -2139,7 +2108,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="true"
@@ -2196,7 +2164,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="true"
@@ -2330,7 +2297,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="true"
@@ -2387,7 +2353,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="true"
@@ -2444,7 +2409,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="true"
@@ -2501,7 +2465,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -2558,7 +2521,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -2615,7 +2577,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -2672,7 +2633,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -2729,7 +2689,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -2786,7 +2745,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="false"
@@ -2843,7 +2801,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="true"
@@ -2900,7 +2857,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                     >
                       <div
                         class="v-input--selection-controls__input"
-                        data-test="vCheckboxFunctional"
                       >
                         <input
                           aria-checked="true"

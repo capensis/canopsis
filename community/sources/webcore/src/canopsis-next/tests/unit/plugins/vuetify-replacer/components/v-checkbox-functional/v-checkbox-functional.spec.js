@@ -1,8 +1,14 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import VCheckboxFunctional from '@/plugins/vuetify-replacer/components/v-checkbox-functional/v-checkbox-functional.vue';
 
 const localVue = createVueInstance();
+
+const factory = (options = {}) => shallowMount(VCheckboxFunctional, {
+  localVue,
+
+  ...options,
+});
 
 const snapshotFactory = (options = {}) => mount(VCheckboxFunctional, {
   localVue,
@@ -15,7 +21,7 @@ const selectLabel = wrapper => wrapper.find('label');
 
 describe('v-checkbox-functional', () => {
   it('Value changed after click on the control element', () => {
-    const wrapper = snapshotFactory({
+    const wrapper = factory({
       propsData: {
         inputValue: true,
       },
@@ -34,7 +40,7 @@ describe('v-checkbox-functional', () => {
   });
 
   it('Value changed after click on the label', () => {
-    const wrapper = snapshotFactory({
+    const wrapper = factory({
       propsData: {
         inputValue: false,
       },
