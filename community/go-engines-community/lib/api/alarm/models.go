@@ -38,6 +38,7 @@ type FilterRequest struct {
 type BaseFilterRequest struct {
 	Filter                  string         `form:"filter" json:"filter"`
 	Search                  string         `form:"search" json:"search"`
+	TimeField               string         `form:"time_field" json:"time_field" binding:"oneoforempty=t creation_date resolved last_update_date last_event_date"`
 	StartFrom               *types.CpsTime `form:"tstart" json:"tstart" swaggertype:"integer"`
 	StartTo                 *types.CpsTime `form:"tstop" json:"tstop" swaggertype:"integer"`
 	Opened                  *bool          `form:"opened" json:"opened"`
