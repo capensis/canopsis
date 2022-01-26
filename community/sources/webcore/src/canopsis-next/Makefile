@@ -25,7 +25,7 @@ VERSION:=$(shell git -C "$(MONOREPO_ROOT)" for-each-ref refs/tags --sort=-author
 GITCOMMIT:=$(shell git -C "$(MONOREPO_ROOT)" log -n 1 --format=oneline --abbrev=12 --pretty="%h" 2>/dev/null || echo "unknown Git commit")
 
 # Version of NodeJS to use
-NODE_VERSION=14.18.1
+NODE_VERSION=14.18.3
 
 # Yarn/NPM flags
 export FORCE_COLOR=0
