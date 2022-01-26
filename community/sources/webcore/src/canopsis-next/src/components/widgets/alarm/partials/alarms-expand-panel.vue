@@ -228,10 +228,8 @@ export default {
       },
     },
 
-    isTourEnabled(value, oldValue) {
-      if (value !== oldValue) {
-        this.refreshTabs();
-      }
+    isTourEnabled() {
+      this.refreshTabs();
     },
   },
   methods: {
