@@ -55,6 +55,7 @@ export default {
       form: {
         tstart: config.tstart || '',
         tstop: config.tstop || '',
+        time_field: config.time_field || '',
       },
     };
   },

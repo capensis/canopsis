@@ -77,7 +77,7 @@ export const USERS_PERMISSIONS = {
   technical: {
     view: `${USER_PERMISSIONS_PREFIXES.technical.admin}_userview`,
     role: `${USER_PERMISSIONS_PREFIXES.technical.admin}_role`,
-    action: `${USER_PERMISSIONS_PREFIXES.technical.admin}_action`,
+    permission: `${USER_PERMISSIONS_PREFIXES.technical.admin}_permission`,
     user: `${USER_PERMISSIONS_PREFIXES.technical.admin}_user`,
     parameters: `${USER_PERMISSIONS_PREFIXES.technical.admin}_parameters`,
     broadcastMessage: `${USER_PERMISSIONS_PREFIXES.technical.admin}_broadcastMessage`,
@@ -190,6 +190,7 @@ export const USERS_PERMISSIONS = {
         entityPlay: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_entityPlay`,
         entityCancel: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_entityCancel`,
         entityManagePbehaviors: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_entityManagePbehaviors`,
+        executeInstruction: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_executeInstruction`,
 
         entityLinks: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_entityLinks`,
 
@@ -342,15 +343,17 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
   weather: {
     [WEATHER_ACTIONS_TYPES.entityAck]: USERS_PERMISSIONS.business.serviceWeather.actions.entityAck,
     [WEATHER_ACTIONS_TYPES.entityAssocTicket]:
-    USERS_PERMISSIONS.business.serviceWeather.actions.entityAssocTicket,
+      USERS_PERMISSIONS.business.serviceWeather.actions.entityAssocTicket,
     [WEATHER_ACTIONS_TYPES.entityValidate]: USERS_PERMISSIONS.business.serviceWeather.actions.entityValidate,
     [WEATHER_ACTIONS_TYPES.entityInvalidate]:
-    USERS_PERMISSIONS.business.serviceWeather.actions.entityInvalidate,
+      USERS_PERMISSIONS.business.serviceWeather.actions.entityInvalidate,
     [WEATHER_ACTIONS_TYPES.entityPause]: USERS_PERMISSIONS.business.serviceWeather.actions.entityPause,
     [WEATHER_ACTIONS_TYPES.entityPlay]: USERS_PERMISSIONS.business.serviceWeather.actions.entityPlay,
     [WEATHER_ACTIONS_TYPES.entityCancel]: USERS_PERMISSIONS.business.serviceWeather.actions.entityCancel,
     [WEATHER_ACTIONS_TYPES.entityManagePbehaviors]:
-    USERS_PERMISSIONS.business.serviceWeather.actions.entityManagePbehaviors,
+      USERS_PERMISSIONS.business.serviceWeather.actions.entityManagePbehaviors,
+    [WEATHER_ACTIONS_TYPES.executeInstruction]:
+      USERS_PERMISSIONS.business.serviceWeather.actions.executeInstruction,
 
     [WEATHER_ACTIONS_TYPES.entityLinks]: USERS_PERMISSIONS.business.serviceWeather.actions.entityLinks,
 
