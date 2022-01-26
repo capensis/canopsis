@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(data-test="tableWidget")
+  div
     v-layout.white(row, wrap, justify-space-between, align-center)
       v-flex
         c-advanced-search-field(
@@ -18,7 +18,6 @@
         )
       v-flex
         filter-selector(
-          data-test="tableFilterSelector",
           :label="$t('settings.selectAFilter')",
           :filters="viewFilters",
           :locked-filters="widgetViewFilters",
@@ -41,7 +40,6 @@
         )
       v-flex
         v-chip.primary.white--text(
-          data-test="resetAlarmsDateInterval",
           v-if="activeRange",
           close,
           label,
@@ -63,7 +61,6 @@
         )
     v-layout(row, wrap, align-center)
       c-pagination(
-        data-test="topPagination",
         v-if="hasColumns",
         :page="query.page",
         :limit="query.limit",
@@ -181,7 +178,8 @@ export default {
     },
 
     isTourEnabled() {
-      return this.checkIsTourEnabled(TOURS.alarmsExpandPanel) && !!this.alarms.length;
+      return this.checkIsTourEnabled(TOURS.alarmsExpandPanel)
+        && !!this.alarms.length;
     },
 
     activeRange() {
@@ -207,7 +205,9 @@ export default {
   methods: {
     refreshExpanded() {
       Object.entries(this.$refs.alarmsTable.expanded).forEach(([id, expanded]) => {
-        if (expanded && !this.alarms.some(alarm => alarm._id === id)) {
+        const isAlarmExist = this.alarms.some(alarm => alarm._id === id);
+
+        if (expanded && !isAlarmExist) {
           this.$set(this.$refs.alarmsTable.expanded, id, false);
         }
       });
@@ -252,7 +252,7 @@ export default {
     },
 
     expandFirstAlarm() {
-      if (this.alarms[0] && !this.firstAlarmExpanded) {
+      if (!this.firstAlarmExpanded) {
         this.$set(this.$refs.alarmsTable.expanded, this.alarms[0]._id, true);
       }
     },
@@ -310,7 +310,7 @@ export default {
         exportCsvSeparator,
         exportCsvDatetimeFormat,
       } = this.widget.parameters;
-      const columns = widgetExportColumns && widgetExportColumns.length
+      const columns = widgetExportColumns?.length
         ? widgetExportColumns
         : widgetColumns;
 
@@ -326,7 +326,9 @@ export default {
           /**
            * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997
            */
-          time_format: isObject(exportCsvDatetimeFormat) ? exportCsvDatetimeFormat.value : exportCsvDatetimeFormat,
+          time_format: isObject(exportCsvDatetimeFormat)
+            ? exportCsvDatetimeFormat.value
+            : exportCsvDatetimeFormat,
         },
       });
     },
