@@ -62,7 +62,7 @@ func NewEngine(
 		entityservice.NewManager(
 			entityServiceAdapter,
 			entityAdapter,
-			entityservice.NewStorage(serviceRedisSession, json.NewEncoder(), json.NewDecoder()),
+			entityservice.NewStorage(entityServiceAdapter, serviceRedisSession, json.NewEncoder(), json.NewDecoder(), logger),
 			logger,
 		),
 		metricsEntityMetaUpdater,
