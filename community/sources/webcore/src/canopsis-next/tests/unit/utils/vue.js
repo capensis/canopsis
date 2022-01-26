@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import Vuetify from 'vuetify';
 import { get, merge } from 'lodash';
+import VueAsyncComputed from 'vue-async-computed';
 import { shallowMount as testUtilsShallowMount, mount as testUtilsMount, createLocalVue } from '@vue/test-utils';
 
 import { MqLayout } from '@unit/stubs/mq';
@@ -48,6 +49,7 @@ jest.mock('@/i18n', () => ({
   te: mocks.$te,
 }));
 
+Vue.use(VueAsyncComputed);
 Vue.use(Vuex);
 Vue.use(Vuetify);
 Vue.use(UpdateFieldPlugin);
