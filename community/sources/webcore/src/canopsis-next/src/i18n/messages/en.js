@@ -227,6 +227,7 @@ export default {
       [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
       [EVENT_ENTITY_TYPES.assocTicket]: 'Associate ticket',
       [EVENT_ENTITY_TYPES.comment]: 'Comment',
+      [EVENT_ENTITY_TYPES.executeInstruction]: 'Execute instruction',
     },
     times: {
       second: 'second | seconds',
@@ -2523,6 +2524,7 @@ export default {
 
   quickRanges: {
     title: 'Quick ranges',
+    timeField: 'Time field',
     types: {
       [QUICK_RANGES.custom.value]: 'Custom',
       [QUICK_RANGES.last2Days.value]: 'Last 2 days',
