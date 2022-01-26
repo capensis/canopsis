@@ -1,0 +1,33 @@
+---
+- name: Include OS-specific variables
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- include_tasks: "setup-RedHat.yml"
+  when: ansible_os_family == 'RedHat'
+
+- name: Initialize PostgreSQL
+  command: "postgresql-{{ postgresql_main_version }}-setup initdb"
+  register: initdbcmd
+  failed_when: initdbcmd.rc != 0
+  args:
+    creates: "{{ postgresql_conf_path }}"
+
+- name: Run timescaledb-tune for the current environment
+  # note: we need to use the yes(1) Unix command because the -yes option is buggy,
+  # and we need to inject postgresql_bin_path into the $PATH because the
+  # -pg-config option is buggy too..
+  shell: "yes | PATH={{ (postgresql_bin_path + ':$PATH') }} timescaledb-tune -color false -pg-config {{ postgresql_pgconfig_path | quote }} -out-path {{ postgresql_conf_path | quote }} -yes"
+  register: tunecmd
+  failed_when: tunecmd.rc != 0
+
+- name: Disable all telemetry in TimescaleDB configuration file
+  blockinfile:
+    path: "{{ postgresql_conf_path }}"
+    block: "timescaledb.telemetry_level=off"
+    owner: "{{ postgresql_unix_user }}"
+    group: "{{ postgresql_unix_user }}"
+    mode: '0600'
+    create: no
+
+- name: Start and enable PostgreSQL on boot
+  systemd: "name={{ postgresql_daemon }} state=started enabled=yes"

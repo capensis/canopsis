@@ -382,3 +382,25 @@ export function uppercaseHelper(str) {
 
   return str.toUpperCase();
 }
+
+/**
+ * Replace `pattern` by `replacement` string inside the `source` string
+ *
+ * Example: {{replace 'Ubuntu Debian Linux Fedora' '(Ubuntu) (Debian) (Linux)' '$3 $2 $1' flags='g'}}
+ *
+ * @param {string} source
+ * @param {string} pattern
+ * @param {string} replacement
+ * @param {Object} [options = {}]
+ * @return {string}
+ */
+export function replaceHelper(source, pattern, replacement, options = {}) {
+  if (arguments.length < 4) {
+    throw new Error('handlebars Helper {{compare}} expects 4 arguments');
+  }
+
+  const flags = get(options, ['hash', 'flags']);
+  const regex = new RegExp(String(pattern), flags);
+
+  return String(source).replace(regex, replacement);
+}

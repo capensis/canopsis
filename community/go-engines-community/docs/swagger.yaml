@@ -311,6 +311,8 @@ definitions:
         type: string
       separator:
         type: string
+      time_field:
+        type: string
       time_format:
         type: string
       tstart:
@@ -362,6 +364,8 @@ definitions:
       opened:
         type: boolean
       search:
+        type: string
+      time_field:
         type: string
       tstart:
         type: integer
@@ -433,6 +437,8 @@ definitions:
       sort_dir:
         type: string
       sort_key:
+        type: string
+      time_field:
         type: string
       tstart:
         type: integer
@@ -2833,6 +2839,10 @@ definitions:
         type: integer
       alarm_display_name:
         type: string
+      assigned_instructions:
+        items:
+          $ref: '#/definitions/alarm.InstructionWithAlarms'
+        type: array
       category:
         $ref: '#/definitions/entitycategory.Category'
         type: object
@@ -2854,7 +2864,13 @@ definitions:
         additionalProperties:
           $ref: '#/definitions/serviceweather.Info'
         type: object
+      is_all_auto_instructions_completed:
+        type: boolean
+      is_auto_instruction_running:
+        type: boolean
       is_grey:
+        type: boolean
+      is_manual_instruction_waiting_result:
         type: boolean
       last_update_date:
         type: integer
@@ -3818,6 +3834,9 @@ paths:
         name: search
         type: string
       - in: query
+        name: time_field
+        type: string
+      - in: query
         name: tstart
         type: integer
       - in: query
@@ -4007,6 +4026,9 @@ paths:
         type: string
       - in: query
         name: sort_key
+        type: string
+      - in: query
+        name: time_field
         type: string
       - in: query
         name: tstart
@@ -9268,6 +9290,10 @@ paths:
         in: query
         name: sort_by
         type: string
+      - description: show assigned instructions and execution flags
+        in: query
+        name: with_instructions
+        type: boolean
       produces:
       - application/json
       responses:

@@ -5,7 +5,7 @@
       "models_userview": {
         "checksum": 15
       },
-      "models_action": {
+      "models_permission": {
         "checksum": 15
       },
       "models_role": {
@@ -211,6 +211,10 @@
         "desc": ""
       },
       "serviceweather_entityManagePbehaviors": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_executeInstruction": {
         "checksum": 1,
         "desc": ""
       },
