@@ -1,5 +1,6 @@
 db.default_entities.createIndex({enabled: 1}, {name: "enabled_1"});
 
+db.periodical_alarm.createIndex({t: 1}, {name: "t_1"});
 db.periodical_alarm.createIndex({d: 1}, {name: "d_1"});
 db.periodical_alarm.createIndex(
     {
@@ -14,6 +15,9 @@ db.periodical_alarm.createIndex(
     }
 );
 db.periodical_alarm.createIndex({"v.resolved": 1}, {name: "v.resolved_1"});
+db.periodical_alarm.createIndex({"v.creation_date": 1}, {name: "v.creation_date_1"});
+db.periodical_alarm.createIndex({"v.last_event_date": 1}, {name: "v.last_event_date_1"});
+db.periodical_alarm.createIndex({"v.last_update_date": 1}, {name: "v.last_update_date_1"});
 
 db.junit_test_suite.createIndex({test_suite_id: 1}, {name: "test_suite_id_1"});
 db.junit_test_suite.createIndex({entity_id: 1}, {name: "entity_id_1"});
