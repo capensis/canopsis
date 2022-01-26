@@ -71,8 +71,7 @@ DOCKER_GOLANG_VERSION = 1.17.5
 # note: the golang image only supports the latest two main release branches of Alpine!
 DOCKER_ALPINE_BUILD_VERSION = 3.14
 DOCKERFILE_PATH = $(COMMUNITY_ROOT_DIR)/Dockerfile
-#DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
-DOCKER_IMAGE_BASE_PATH = canopsis
+DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
 
 .PHONY: all docker-images deps
 all: $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
