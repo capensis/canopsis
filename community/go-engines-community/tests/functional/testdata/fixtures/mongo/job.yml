@@ -144,6 +144,14 @@ job:
     name: test-job-to-run-auto-instruction-6-name
     payload: '{"test-job-to-run-auto-instruction-6-key": "test-job-to-run-auto-instruction-6-val"}'
   job_19:
+    _id: test-job-to-run-auto-instruction-7
+    author: test-user-author-1-id
+    config: test-job-config-to-run-auto-instruction
+    created: 1596712203
+    external_id: test-job-long-succeeded
+    name: test-job-to-run-auto-instruction-7-name
+    payload: '{"test-job-to-run-auto-instruction-7-key": "test-job-to-run-auto-instruction-7-val"}'
+  job_20:
     _id: test-job-to-get-running-job
     author: test-job-to-get-running-job-author
     config: test-job-config-running
@@ -151,7 +159,7 @@ job:
     external_id: test-job-id
     name: test-job-to-get-running-job-name
     payload: '{"key1": "val1","key2": "val2"}'
-  job_20:
+  job_21:
     _id: test-job-metrics-axe
     author: test-author-metrics-axe
     config: test-job-config-metrics-axe
