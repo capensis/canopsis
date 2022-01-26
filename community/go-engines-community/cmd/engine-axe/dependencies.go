@@ -118,7 +118,9 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 	}
 
 	engineAxe := engine.New(
-		nil,
+		func(ctx context.Context) error {
+			return alarmStatusService.Load(ctx)
+		},
 		func(ctx context.Context) {
 			err := dbClient.Disconnect(ctx)
 			if err != nil {
@@ -216,6 +218,11 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 		amqpChannel,
 		logger,
 	))
+	engineAxe.AddPeriodicalWorker(&reloadLocalCachePeriodicalWorker{
+		PeriodicalInterval: options.PeriodicalWaitTime,
+		AlarmStatusService: alarmStatusService,
+		Logger:             logger,
+	})
 	engineAxe.AddPeriodicalWorker(engine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),
 		redis.AxePeriodicalLockKey,
@@ -224,7 +231,6 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 			ChannelPub:         amqpChannel,
 			AlarmService:       alarm.NewService(alarm.NewAdapter(dbClient), resolverule.NewAdapter(dbClient), alarmStatusService, logger),
 			AlarmAdapter:       alarm.NewAdapter(dbClient),
-			AlarmStatusService: alarmStatusService,
 			Encoder:            json.NewEncoder(),
 			IdleAlarmService: idlealarm.NewService(
 				idlerule.NewRuleAdapter(dbClient),
