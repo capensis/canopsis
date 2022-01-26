@@ -1,3 +1,4 @@
+const path = require('path');
 const { merge } = require('lodash');
 const { process, getCacheKey } = require('vue-jest');
 
@@ -8,6 +9,9 @@ module.exports = {
     const configWithDirectives = merge(config, {
       globals: {
         'vue-jest': {
+          transform: {
+            js: path.resolve(__dirname, './jest.transform'),
+          },
           templateCompiler: {
             compilerOptions: {
               directives: {
