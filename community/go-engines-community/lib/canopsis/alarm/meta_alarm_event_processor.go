@@ -198,19 +198,19 @@ func (p *metaAlarmEventProcessor) ProcessWebhookRpc(ctx context.Context, event t
 	alarm := event.Alarm
 
 	if alarm.IsMetaAlarm() {
-		alarms := make([]types.Alarm, 0)
-		err := p.adapter.GetOpenedAlarmsByIDs(ctx, alarm.Value.Children, &alarms)
+		children := make([]types.Alarm, 0)
+		err := p.adapter.GetOpenedAlarmsByIDs(ctx, alarm.Value.Children, &children)
 		if err != nil {
 			return fmt.Errorf("cannot fetch alarms: %w", err)
 		}
 
-		for _, alarm := range alarms {
+		for _, child := range children {
 			childEvent := types.Event{
 				EventType:     types.EventTypeDeclareTicketWebhook,
-				Connector:     alarm.Value.Connector,
-				ConnectorName: alarm.Value.ConnectorName,
-				Resource:      alarm.Value.Resource,
-				Component:     alarm.Value.Component,
+				Connector:     child.Value.Connector,
+				ConnectorName: child.Value.ConnectorName,
+				Resource:      child.Value.Resource,
+				Component:     child.Value.Component,
 				Timestamp:     types.NewCpsTime(),
 				Ticket:        ticketId,
 				TicketData:    ticketData,
@@ -229,18 +229,22 @@ func (p *metaAlarmEventProcessor) ProcessWebhookRpc(ctx context.Context, event t
 	}
 
 	if event.AckResources && event.Entity.Type == types.EntityTypeComponent {
-		alarms, err := p.adapter.GetUnacknowledgedAlarmsByComponent(ctx, event.Alarm.Value.Component)
+		resources, err := p.adapter.GetAlarmsWithoutTicketByComponent(ctx, event.Alarm.Value.Component)
 		if err != nil {
 			return fmt.Errorf("cannot fetch alarms: %w", err)
 		}
 
-		for _, alarm := range alarms {
+		for _, resource := range resources {
+			if resource.Entity.Type != types.EntityTypeResource {
+				continue
+			}
+
 			resourceEvent := types.Event{
 				EventType:     types.EventTypeDeclareTicketWebhook,
-				Connector:     alarm.Alarm.Value.Connector,
-				ConnectorName: alarm.Alarm.Value.ConnectorName,
-				Resource:      alarm.Alarm.Value.Resource,
-				Component:     alarm.Alarm.Value.Component,
+				Connector:     resource.Alarm.Value.Connector,
+				ConnectorName: resource.Alarm.Value.ConnectorName,
+				Resource:      resource.Alarm.Value.Resource,
+				Component:     resource.Alarm.Value.Component,
 				Timestamp:     types.NewCpsTime(),
 				Ticket:        ticketId,
 				TicketData:    ticketData,
@@ -271,6 +275,10 @@ func (p *metaAlarmEventProcessor) ProcessAckResources(ctx context.Context, event
 	}
 
 	for _, alarm := range alarms {
+		if alarm.Entity.Type != types.EntityTypeResource {
+			continue
+		}
+
 		resourceEvent := types.Event{
 			EventType:     event.EventType,
 			Connector:     alarm.Alarm.Value.Connector,
