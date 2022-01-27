@@ -205,9 +205,7 @@ export default {
   methods: {
     refreshExpanded() {
       Object.entries(this.$refs.alarmsTable.expanded).forEach(([id, expanded]) => {
-        const isAlarmExist = this.alarms.some(alarm => alarm._id === id);
-
-        if (expanded && !isAlarmExist) {
+        if (expanded && !this.alarms.some(alarm => alarm._id === id)) {
           this.$set(this.$refs.alarmsTable.expanded, id, false);
         }
       });
