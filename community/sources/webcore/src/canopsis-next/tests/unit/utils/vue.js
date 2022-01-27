@@ -18,6 +18,8 @@ import SetSeveralPlugin from '@/plugins/set-several';
 /**
  * @typedef {Wrapper<Vue>} CustomWrapper
  * @property {Function} getValidator
+ * @property {Function} findAllTooltips
+ * @property {Function} findTooltip
  * @property {Function} findAllMenus
  * @property {Function} findMenu
  */
@@ -81,6 +83,8 @@ const enhanceWrapper = (wrapper) => {
   wrapper.getValidator = () => wrapper.vm.$validator;
   wrapper.findAllMenus = () => wrapper.findAll('.v-menu__content');
   wrapper.findMenu = () => wrapper.find('.v-menu__content');
+  wrapper.findAllTooltips = () => wrapper.findAll('.v-tooltip__content');
+  wrapper.findTooltip = () => wrapper.find('.v-tooltip__content');
 };
 
 /**
