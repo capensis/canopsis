@@ -23,7 +23,7 @@ Feature: Instruction update
       "description": "test-instruction-to-update-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -32,7 +32,7 @@ Feature: Instruction update
           "operations": [
             {
               "name": "test-instruction-to-update-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-2"
@@ -65,7 +65,7 @@ Feature: Instruction update
       },
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -74,7 +74,7 @@ Feature: Instruction update
           "operations": [
             {
               "name": "test-instruction-to-update-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-step-1-operation-1-description",
               "jobs": [
                 {
@@ -118,7 +118,7 @@ Feature: Instruction update
       "description": "test-instruction-to-update-description-changed",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -127,7 +127,7 @@ Feature: Instruction update
           "operations": [
             {
               "name": "test-instruction-to-update-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1",
@@ -136,7 +136,7 @@ Feature: Instruction update
             },
             {
               "name": "test-instruction-to-update-step-1-operation-2-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-step-1-operation-2-description",
               "jobs": [
                 "test-job-to-instruction-edit-2"
@@ -151,7 +151,7 @@ Feature: Instruction update
           "operations": [
             {
               "name": "test-instruction-to-update-step-2-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-step-2-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-2",
@@ -185,7 +185,7 @@ Feature: Instruction update
       },
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -194,7 +194,7 @@ Feature: Instruction update
           "operations": [
             {
               "name": "test-instruction-to-update-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-step-1-operation-1-description",
               "jobs": [
                 {
@@ -235,7 +235,7 @@ Feature: Instruction update
             },
             {
               "name": "test-instruction-to-update-step-1-operation-2-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-step-1-operation-2-description",
               "jobs": [
                 {
@@ -266,7 +266,7 @@ Feature: Instruction update
           "operations": [
             {
               "name": "test-instruction-to-update-step-2-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-step-2-operation-1-description",
               "jobs": [
                 {
@@ -381,7 +381,7 @@ Feature: Instruction update
       "description": "test-instruction-with-pbh-to-edit-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "alarm_patterns": [
@@ -401,7 +401,7 @@ Feature: Instruction update
               "name": "test-instruction-with-pbh-to-edit-step-1-operation-1-name",
               "description": "test-instruction-with-pbh-to-edit-step-1-operation-1-description",
               "time_to_complete": {
-                "seconds": 10,
+                "value": 10,
                 "unit": "m"
               }
             }

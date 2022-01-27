@@ -26,7 +26,6 @@ func TestHub_Send_GivenNotJoinedToRoomConnection_ShouldNotSendMessageToConnectio
 
 	done := make(chan bool)
 	defer close(done)
-	userId := "test-user"
 	room := "test-room"
 	msgBody := map[string]string{"test": "msg"}
 	w := httptest.NewRecorder()
@@ -46,7 +45,7 @@ func TestHub_Send_GivenNotJoinedToRoomConnection_ShouldNotSendMessageToConnectio
 
 	go hub.Start(ctx)
 
-	err := hub.Connect(userId, w, r)
+	err := hub.Connect(w, r)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -62,7 +61,6 @@ func TestHub_Send_GivenJoinedToRoomConnection_ShouldSendMessageToConnection(t *t
 
 	done := make(chan bool)
 	defer close(done)
-	userId := "test-user"
 	room := "test-room"
 	msgBody := map[string]string{"test": "msg"}
 	w := httptest.NewRecorder()
@@ -71,7 +69,7 @@ func TestHub_Send_GivenJoinedToRoomConnection_ShouldSendMessageToConnection(t *t
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
 	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
-	mockAuthorizer.EXPECT().Auth(gomock.Any(), gomock.Any()).Return(true, nil)
+	mockAuthorizer.EXPECT().Authorize(gomock.Any(), gomock.Any()).Return(true, nil)
 	hub := libwebsocket.NewHub(mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
 	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 	mockConnection.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -97,7 +95,7 @@ func TestHub_Send_GivenJoinedToRoomConnection_ShouldSendMessageToConnection(t *t
 
 	go hub.Start(ctx)
 
-	err := hub.Connect(userId, w, r)
+	err := hub.Connect(w, r)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -113,7 +111,6 @@ func TestHub_Send_GivenLeftRoomConnection_ShouldNotSendMessageToConnection(t *te
 
 	done := make(chan bool)
 	defer close(done)
-	userId := "test-user"
 	room := "test-room"
 	msgBody := map[string]string{"test": "msg"}
 	w := httptest.NewRecorder()
@@ -122,7 +119,7 @@ func TestHub_Send_GivenLeftRoomConnection_ShouldNotSendMessageToConnection(t *te
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
 	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
-	mockAuthorizer.EXPECT().Auth(gomock.Any(), gomock.Any()).Return(true, nil)
+	mockAuthorizer.EXPECT().Authorize(gomock.Any(), gomock.Any()).Return(true, nil)
 	hub := libwebsocket.NewHub(mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
 	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 	mockConnection.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -152,7 +149,7 @@ func TestHub_Send_GivenLeftRoomConnection_ShouldNotSendMessageToConnection(t *te
 
 	go hub.Start(ctx)
 
-	err := hub.Connect(userId, w, r)
+	err := hub.Connect(w, r)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -168,7 +165,6 @@ func TestHub_Send_GivenDisconnectedConnection_ShouldNotSendMessageToConnection(t
 
 	done := make(chan bool)
 	defer close(done)
-	userId := "test-user"
 	room := "test-room"
 	msgBody := map[string]string{"test": "msg"}
 	w := httptest.NewRecorder()
@@ -177,7 +173,7 @@ func TestHub_Send_GivenDisconnectedConnection_ShouldNotSendMessageToConnection(t
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
 	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
-	mockAuthorizer.EXPECT().Auth(gomock.Any(), gomock.Any()).Return(true, nil)
+	mockAuthorizer.EXPECT().Authorize(gomock.Any(), gomock.Any()).Return(true, nil)
 	hub := libwebsocket.NewHub(mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
 	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 	mockConnection.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -209,7 +205,7 @@ func TestHub_Send_GivenDisconnectedConnection_ShouldNotSendMessageToConnection(t
 
 	go hub.Start(ctx)
 
-	err := hub.Connect(userId, w, r)
+	err := hub.Connect(w, r)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -225,7 +221,6 @@ func TestHub_Send_GivenErrOnWriteMessage_ShouldCloseConnection(t *testing.T) {
 
 	done := make(chan bool)
 	defer close(done)
-	userId := "test-user"
 	room := "test-room"
 	msgBody := map[string]string{"test": "msg"}
 	w := httptest.NewRecorder()
@@ -234,7 +229,7 @@ func TestHub_Send_GivenErrOnWriteMessage_ShouldCloseConnection(t *testing.T) {
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
 	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
-	mockAuthorizer.EXPECT().Auth(gomock.Any(), gomock.Any()).Return(true, nil)
+	mockAuthorizer.EXPECT().Authorize(gomock.Any(), gomock.Any()).Return(true, nil)
 	hub := libwebsocket.NewHub(mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
 	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 	mockConnection.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -259,7 +254,7 @@ func TestHub_Send_GivenErrOnWriteMessage_ShouldCloseConnection(t *testing.T) {
 
 	go hub.Start(ctx)
 
-	err := hub.Connect(userId, w, r)
+	err := hub.Connect(w, r)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -275,7 +270,6 @@ func TestHub_Send_GivenErrOnWriteError_ShouldCloseConnection(t *testing.T) {
 
 	done := make(chan bool)
 	defer close(done)
-	userId := "test-user"
 	room := "test-room"
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest(http.MethodPost, "/test-ws", nil)
@@ -283,7 +277,7 @@ func TestHub_Send_GivenErrOnWriteError_ShouldCloseConnection(t *testing.T) {
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
 	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
-	mockAuthorizer.EXPECT().Auth(gomock.Any(), gomock.Any()).Return(false, nil)
+	mockAuthorizer.EXPECT().Authorize(gomock.Any(), gomock.Any()).Return(false, nil)
 	hub := libwebsocket.NewHub(mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
 	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 	mockConnection.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -299,108 +293,7 @@ func TestHub_Send_GivenErrOnWriteError_ShouldCloseConnection(t *testing.T) {
 
 	go hub.Start(ctx)
 
-	err := hub.Connect(userId, w, r)
-	if err != nil {
-		t.Errorf("expected no error but got %v", err)
-	}
-
-	waitDone(t, done)
-}
-
-func TestHub_Connect_GivenJoinedToRoomConnection_ShouldNotJoinToRoomTwice(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	done := make(chan bool)
-	defer close(done)
-	userId := "test-user"
-	room := "test-room"
-	w := httptest.NewRecorder()
-	r := httptest.NewRequest(http.MethodPost, "/test-ws", nil)
-	mockConnection := mock_websocket.NewMockConnection(ctrl)
-	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
-	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
-	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
-	mockAuthorizer.EXPECT().Auth(gomock.Any(), gomock.Any()).Return(true, nil)
-	hub := libwebsocket.NewHub(mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
-	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
-	mockConnection.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
-	readTime := 0
-	mockConnection.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *libwebsocket.RMessage) error {
-		readTime++
-		switch readTime {
-		case 1, 2:
-			msg.Type = libwebsocket.RMessageJoin
-			msg.Room = room
-			return nil
-		default:
-			done <- true
-			return &websocket.CloseError{Code: websocket.CloseNormalClosure}
-		}
-	}).Times(3)
-	mockConnection.EXPECT().WriteJSON(gomock.Eq(libwebsocket.WMessage{
-		Type:  libwebsocket.WMessageFail,
-		Room:  room,
-		Error: "connection has already joined to room",
-	})).Return(nil)
-
-	go hub.Start(ctx)
-
-	err := hub.Connect(userId, w, r)
-	if err != nil {
-		t.Errorf("expected no error but got %v", err)
-	}
-
-	waitDone(t, done)
-}
-
-func TestHub_Connect_GivenLeftRoomConnection_ShouldNotLeftRoomTwice(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	done := make(chan bool)
-	defer close(done)
-	userId := "test-user"
-	room := "test-room"
-	w := httptest.NewRecorder()
-	r := httptest.NewRequest(http.MethodPost, "/test-ws", nil)
-	mockConnection := mock_websocket.NewMockConnection(ctrl)
-	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
-	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
-	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
-	mockAuthorizer.EXPECT().Auth(gomock.Any(), gomock.Any()).Return(true, nil)
-	hub := libwebsocket.NewHub(mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
-	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
-	mockConnection.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
-	readTime := 0
-	mockConnection.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *libwebsocket.RMessage) error {
-		readTime++
-		msg.Room = room
-		switch readTime {
-		case 1:
-			msg.Type = libwebsocket.RMessageJoin
-			return nil
-		case 2, 3:
-			msg.Type = libwebsocket.RMessageLeave
-			return nil
-		default:
-			done <- true
-			return &websocket.CloseError{Code: websocket.CloseNormalClosure}
-		}
-	}).Times(4)
-	mockConnection.EXPECT().WriteJSON(gomock.Eq(libwebsocket.WMessage{
-		Type:  libwebsocket.WMessageFail,
-		Room:  room,
-		Error: "connection hasn't joined to room",
-	})).Return(nil)
-
-	go hub.Start(ctx)
-
-	err := hub.Connect(userId, w, r)
+	err := hub.Connect(w, r)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -416,7 +309,6 @@ func TestHub_Connect_GivenUnauthUser_ShouldNotJoinToRoom(t *testing.T) {
 
 	done := make(chan bool)
 	defer close(done)
-	userId := "test-user"
 	room := "test-room"
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest(http.MethodPost, "/test-ws", nil)
@@ -424,7 +316,7 @@ func TestHub_Connect_GivenUnauthUser_ShouldNotJoinToRoom(t *testing.T) {
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
 	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
-	mockAuthorizer.EXPECT().Auth(gomock.Eq(userId), gomock.Eq(room)).Return(false, nil)
+	mockAuthorizer.EXPECT().Authorize(gomock.Eq(""), gomock.Eq(room)).Return(false, nil)
 	hub := libwebsocket.NewHub(mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
 	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 	mockConnection.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -449,7 +341,7 @@ func TestHub_Connect_GivenUnauthUser_ShouldNotJoinToRoom(t *testing.T) {
 
 	go hub.Start(ctx)
 
-	err := hub.Connect(userId, w, r)
+	err := hub.Connect(w, r)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -465,7 +357,6 @@ func TestHub_Connect_GivenInvalidRMessage_ShouldSendError(t *testing.T) {
 
 	done := make(chan bool)
 	defer close(done)
-	userId := "test-user"
 	room := "test-room"
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest(http.MethodPost, "/test-ws", nil)
@@ -473,7 +364,7 @@ func TestHub_Connect_GivenInvalidRMessage_ShouldSendError(t *testing.T) {
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
 	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
-	mockAuthorizer.EXPECT().Auth(gomock.Any(), gomock.Any()).Return(true, nil)
+	mockAuthorizer.EXPECT().Authorize(gomock.Any(), gomock.Any()).Return(true, nil)
 	hub := libwebsocket.NewHub(mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
 	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 	mockConnection.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
@@ -499,7 +390,7 @@ func TestHub_Connect_GivenInvalidRMessage_ShouldSendError(t *testing.T) {
 
 	go hub.Start(ctx)
 
-	err := hub.Connect(userId, w, r)
+	err := hub.Connect(w, r)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}

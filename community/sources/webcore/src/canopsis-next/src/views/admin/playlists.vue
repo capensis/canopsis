@@ -51,7 +51,10 @@ export default {
           action: async (newPlaylist) => {
             await this.createPlaylist({ data: newPlaylist });
 
-            this.fetchList();
+            await Promise.all([
+              this.fetchCurrentUser(),
+              this.fetchList(),
+            ]);
           },
         },
       });
@@ -67,7 +70,10 @@ export default {
           action: async (newPlaylist) => {
             await this.updatePlaylist({ id: playlist._id, data: newPlaylist });
 
-            this.fetchList();
+            await Promise.all([
+              this.fetchCurrentUser(),
+              this.fetchList(),
+            ]);
           },
         },
       });
@@ -80,7 +86,10 @@ export default {
           action: async () => {
             await this.removePlaylist({ id });
 
-            this.fetchList();
+            await Promise.all([
+              this.fetchCurrentUser(),
+              this.fetchList(),
+            ]);
           },
         },
       });
@@ -95,14 +104,17 @@ export default {
           action: async (newPlaylist) => {
             await this.createPlaylist({ data: newPlaylist });
 
-            this.fetchList();
+            await Promise.all([
+              this.fetchCurrentUser(),
+              this.fetchList(),
+            ]);
           },
         },
       });
     },
 
     fetchList() {
-      this.fetchPlaylistsList({ params: this.getQuery() });
+      return this.fetchPlaylistsList({ params: this.getQuery() });
     },
   },
 };

@@ -15,7 +15,7 @@ Feature: Update a view
       "tags": ["test-view-to-update-1-tag-updated"],
       "periodic_refresh": {
         "enabled": true,
-        "seconds": 600,
+        "value": 10,
         "unit": "m"
       },
       "tabs": [
@@ -58,7 +58,7 @@ Feature: Update a view
       "title": "test-view-to-update-1-title",
       "periodic_refresh": {
         "enabled": true,
-        "seconds": 600,
+        "value": 10,
         "unit": "m"
       },
       "tabs": [

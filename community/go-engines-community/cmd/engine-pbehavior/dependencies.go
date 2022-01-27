@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -34,7 +35,7 @@ type DependencyMaker struct {
 
 func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Logger) engine.Engine {
 	m := DependencyMaker{}
-	dbClient := m.DepMongoClient(ctx)
+	dbClient := m.DepMongoClient(ctx, logger)
 	cfg := m.DepConfig(ctx, dbClient)
 	config.SetDbClientRetry(dbClient, cfg)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
@@ -156,21 +157,23 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		},
 		logger,
 	))
-	enginePbehavior.AddPeriodicalWorker(engine.NewRunInfoPeriodicalWorker(
+	enginePbehavior.AddPeriodicalWorker("run info", engine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		engine.NewRunInfoManager(runInfoRedisSession),
 		engine.NewInstanceRunInfo(canopsis.PBehaviorEngineName, canopsis.PBehaviorQueueName, options.PublishToQueue),
 		amqpChannel,
 		logger,
 	))
-	enginePbehavior.AddPeriodicalWorker(engine.NewLockedPeriodicalWorker(
+	enginePbehavior.AddPeriodicalWorker("alarms", engine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisSession),
 		redis.PbehaviorPeriodicalLockKey,
 		&periodicalWorker{
 			ChannelPub:             amqpChannel,
 			PeriodicalInterval:     options.PeriodicalWaitTime,
 			PbhService:             pbehavior.NewService(pbehavior.NewModelProvider(dbClient), entityMatcher, pbhStore, pbhLockerClient),
-			DbClient:               dbClient,
+			PbhEntityMatcher:       entityMatcher,
+			AlarmAdapter:           alarm.NewAdapter(dbClient),
+			EntityAdapter:          entity.NewAdapter(dbClient),
 			EventManager:           eventManager,
 			FrameDuration:          frameDuration,
 			Encoder:                json.NewEncoder(),
@@ -179,7 +182,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		},
 		logger,
 	))
-	enginePbehavior.AddPeriodicalWorker(engine.NewLockedPeriodicalWorker(
+	enginePbehavior.AddPeriodicalWorker("cleaner", engine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisSession),
 		redis.PbehaviorCleanPeriodicalLockKey,
 		&cleanPeriodicalWorker{
@@ -192,13 +195,13 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		},
 		logger,
 	))
-	enginePbehavior.AddPeriodicalWorker(engine.NewLoadConfigPeriodicalWorker(
+	enginePbehavior.AddPeriodicalWorker("tz config", engine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(dbClient),
 		timezoneConfigProvider,
 		logger,
 	))
-	enginePbehavior.AddPeriodicalWorker(engine.NewLoadConfigPeriodicalWorker(
+	enginePbehavior.AddPeriodicalWorker("data storage config", engine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(dbClient),
 		dataStorageConfigProvider,

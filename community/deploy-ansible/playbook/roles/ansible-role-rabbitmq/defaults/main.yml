@@ -3,7 +3,16 @@ rabbitmq_daemon: rabbitmq-server
 rabbitmq_state: started
 rabbitmq_enabled: true
 
-# XXX: newer versions have Erlang problems on CentOS 7
+# XXX: newer versions from packagecloud.io need a newer Erlang on CentOS 7
+#
+# For example:
+# rabbitmq-server-3.8.11-1.el7.noarch  from https://packagecloud.io/rabbitmq/rabbitmq-server/el/7/
+# erlang-23.2.3-1.el7.x86_64           from https://packagecloud.io/rabbitmq/erlang/el/7
+#
+# but the Erlang dependency isn't handled by this role at the moment.
+#
+# Note that the latest RabbitMQ releases are not officially supported on CentOS 7 anymore, though:
+# https://www.rabbitmq.com/install-rpm.html#supported-distributions
 rabbitmq_version: "3.6.11"
 
 rabbitmq_rpm: "rabbitmq-server-{{ rabbitmq_version }}-1.el{{ ansible_distribution_major_version }}.noarch.rpm"

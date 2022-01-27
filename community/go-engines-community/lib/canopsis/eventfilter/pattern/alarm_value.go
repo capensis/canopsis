@@ -237,11 +237,8 @@ func (p AlarmValuePattern) Matches(value types.AlarmValue, matches *AlarmValueRe
 		p.TotalStateChanges.Matches(value.TotalStateChanges) &&
 		p.Parents.Matches(value.Parents) &&
 		p.Children.Matches(value.Children)
-	if !match {
-		return false
-	}
 
-	return true
+	return match
 }
 
 func (p AlarmValuePattern) MarshalBSONValue() (bsontype.Type, []byte, error) {

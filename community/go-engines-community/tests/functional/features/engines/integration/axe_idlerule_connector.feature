@@ -11,7 +11,7 @@ Feature: update connector alarm
       "enabled": true,
       "priority": 60,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -131,7 +131,7 @@ Feature: update connector alarm
       "enabled": true,
       "priority": 60,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -148,8 +148,8 @@ Feature: update connector alarm
     {
       "enabled": true,
       "name": "test-pbehavior-axe-idlerule-connector-2",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -162,7 +162,7 @@ Feature: update connector alarm
     }
     """
     Then the response code should be 201
-    When I wait 1s
+    When I wait the next periodical process
     When I send an event:
     """
     {
@@ -204,8 +204,7 @@ Feature: update connector alarm
               },
               {
                 "_t": "pbhenter",
-                "a": "system",
-                "m": "Pbehavior test-pbehavior-axe-idlerule-connector-2. Type: Engine maintenance. Reason: Test Engine"
+                "m": "Pbehavior test-pbehavior-axe-idlerule-connector-2. Type: Engine maintenance. Reason: Test Engine."
               }
             ]
           }
@@ -230,7 +229,7 @@ Feature: update connector alarm
       "enabled": true,
       "priority": 60,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -253,7 +252,8 @@ Feature: update connector alarm
         {
           "_id": "test-connector-axe-idlerule-connector-3/test-connector-name-axe-idlerule-connector-3"
         }
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
@@ -353,7 +353,7 @@ Feature: update connector alarm
       "enabled": true,
       "priority": 60,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -468,7 +468,7 @@ Feature: update connector alarm
       "enabled": true,
       "priority": 60,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -550,7 +550,7 @@ Feature: update connector alarm
       "enabled": true,
       "priority": 44,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -655,7 +655,7 @@ Feature: update connector alarm
       "enabled": true,
       "priority": 44,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [

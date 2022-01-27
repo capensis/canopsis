@@ -36,7 +36,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 	defer depmake.Catch(logger)
 
 	m := DependencyMaker{}
-	mongoClient := m.DepMongoClient(ctx)
+	mongoClient := m.DepMongoClient(ctx, logger)
 	cfg := m.DepConfig(ctx, mongoClient)
 	config.SetDbClientRetry(mongoClient, cfg)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
@@ -155,14 +155,14 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 		},
 		logger,
 	))
-	engine.AddPeriodicalWorker(libengine.NewRunInfoPeriodicalWorker(
+	engine.AddPeriodicalWorker("run info", libengine.NewRunInfoPeriodicalWorker(
 		canopsis.PeriodicalWaitTime,
 		libengine.NewRunInfoManager(runInfoRedisClient),
 		libengine.NewInstanceRunInfo(canopsis.FIFOEngineName, options.ConsumeFromQueue, options.PublishToQueue),
 		amqpChannel,
 		logger,
 	))
-	engine.AddPeriodicalWorker(libengine.NewLockedPeriodicalWorker(
+	engine.AddPeriodicalWorker("outdated rates", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(engineLockRedisClient),
 		redis.FifoDeleteOutdatedRatesLockKey,
 		&deleteOutdatedRatesWorker{
@@ -173,6 +173,12 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 			RateLimitAdapter:          ratelimit.NewAdapter(mongoClient),
 			Logger:                    logger,
 		},
+		logger,
+	))
+	engine.AddPeriodicalWorker("config", libengine.NewLoadConfigPeriodicalWorker(
+		canopsis.PeriodicalWaitTime,
+		config.NewAdapter(mongoClient),
+		timezoneConfigProvider,
 		logger,
 	))
 

@@ -12,7 +12,8 @@
           :pagination.sync="pagination",
           :total-items="serviceEntitiesMeta.total_count",
           :pending="serviceEntitiesPending",
-          @add:event="addEventToQueue"
+          @add:event="addEventToQueue",
+          @refresh="fetchList"
         )
         v-layout(v-else, column)
           v-flex(xs12)
@@ -116,9 +117,13 @@ export default {
   },
   methods: {
     fetchList() {
+      const params = this.getQuery();
+
+      params.with_instructions = true;
+
       return this.fetchServiceEntitiesList({
         id: this.service._id,
-        params: this.getQuery(),
+        params,
       });
     },
 

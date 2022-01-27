@@ -35,7 +35,7 @@ type service struct {
 
 func (s *service) GetTimespans(ctx context.Context, r TimespansRequest) ([]timespansItemResponse, error) {
 	location := s.timezoneConfigProvider.Get().Location
-	startAt := r.StartAt.In(location)
+	startAt := r.StartAt.Time.In(location)
 	var endAt time.Time
 	if r.EndAt == nil {
 		endAt = r.ViewTo.Time
@@ -58,8 +58,8 @@ func (s *service) GetTimespans(ctx context.Context, r TimespansRequest) ([]times
 
 	var spans []timespan.Span
 	viewSpan := timespan.New(
-		r.ViewFrom.In(location),
-		r.ViewTo.In(location),
+		r.ViewFrom.Time.In(location),
+		r.ViewTo.Time.In(location),
 	)
 
 	exdates, err := s.getExdates(ctx, r)

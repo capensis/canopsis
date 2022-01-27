@@ -27,6 +27,7 @@ func (modelTransformer) TransformEditRequestToModel(r EditRequest) libaction.Sce
 
 		actions[i] = libaction.Action{
 			Type:                     r.Actions[i].Type,
+			Comment:                  r.Actions[i].Comment,
 			Parameters:               params,
 			AlarmPatterns:            r.Actions[i].AlarmPatterns,
 			EntityPatterns:           r.Actions[i].EntityPatterns,

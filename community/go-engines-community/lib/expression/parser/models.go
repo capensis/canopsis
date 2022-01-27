@@ -23,6 +23,15 @@ func (e *Expression) Query() bson.M {
 	return bson.M{"$or": or}
 }
 
+func (e *Expression) GetFields() []string {
+	fields := make([]string, 0, len(e.Or))
+	for _, v := range e.Or {
+		fields = append(fields, v.GetFields()...)
+	}
+
+	return fields
+}
+
 type OrCondition struct {
 	And []*Condition `@@ { "AND" @@ }`
 }
@@ -40,6 +49,15 @@ func (c *OrCondition) Query() bson.M {
 	return bson.M{"$and": and}
 }
 
+func (c *OrCondition) GetFields() []string {
+	fields := make([]string, 0, len(c.And))
+	for _, v := range c.And {
+		fields = append(fields, v.GetFields()...)
+	}
+
+	return fields
+}
+
 type Condition struct {
 	Operand *ConditionOperand `  @@`
 	Not     *Condition        `| "NOT" @@`
@@ -51,6 +69,18 @@ func (c *Condition) Query() bson.M {
 	}
 	if c.Not != nil {
 		return c.Not.Operand.NotQuery()
+	}
+
+	return nil
+}
+
+func (c *Condition) GetFields() []string {
+	if c.Operand != nil {
+		return c.Operand.GetFields()
+	}
+
+	if c.Not != nil {
+		return c.Not.Operand.GetFields()
 	}
 
 	return nil
@@ -72,6 +102,15 @@ func (o *ConditionOperand) Query() bson.M {
 	}
 
 	return bson.M{left: right}
+}
+
+func (o *ConditionOperand) GetFields() []string {
+	if o.Operand != nil {
+		field, _ := o.Operand.Val().(string)
+		return []string{field}
+	}
+
+	return nil
 }
 
 func (o *ConditionOperand) NotQuery() bson.M {

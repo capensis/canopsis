@@ -8,8 +8,8 @@ Feature: get pbehavior
     {
       "enabled": true,
       "name": "test-pbehavior-api-1",
-      "tstart": {{ now.UTC.Unix }},
-      "tstop": {{ (now.UTC.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -49,8 +49,8 @@ Feature: get pbehavior
     {
       "enabled": true,
       "name": "test-pbehavior-api-2",
-      "tstart": {{ (now.Add (parseDuration "-24h")).Unix }},
-      "tstop": {{ (now.Add (parseDuration "-23h50m50s")).Unix }},
+      "tstart": {{ nowAdd "-24h" }},
+      "tstop": {{ nowAdd "-23h" }},
       "rrule": "FREQ=DAILY",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
@@ -91,8 +91,8 @@ Feature: get pbehavior
     {
       "enabled": false,
       "name": "test-pbehavior-api-3",
-      "tstart": {{ now.UTC.Unix }},
-      "tstop": {{ (now.UTC.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -146,8 +146,8 @@ Feature: get pbehavior
     {
       "enabled": true,
       "name": "test-pbehavior-api-4-1",
-      "tstart": {{ now.UTC.Unix }},
-      "tstop": {{ (now.UTC.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -160,14 +160,15 @@ Feature: get pbehavior
     }
     """
     Then the response code should be 201
+    When I wait the end of event processing
     When I wait 1s
     When I do POST /api/v4/pbehaviors:
     """json
     {
       "enabled": true,
       "name": "test-pbehavior-api-4-2",
-      "tstart": {{ (now.UTC.Add (parseDuration "10m")).Unix }},
-      "tstop": {{ (now.UTC.Add (parseDuration "20m")).Unix }},
+      "tstart": {{ nowAdd "10m" }},
+      "tstop": {{ nowAdd "20m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{

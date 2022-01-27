@@ -29,7 +29,7 @@ func (e *junitExecutor) Exec(
 	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
-	_ types.Entity,
+	_ *types.Entity,
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
@@ -37,6 +37,10 @@ func (e *junitExecutor) Exec(
 	var ok bool
 	if params, ok = operation.Parameters.(types.OperationParameters); !ok {
 		return "", fmt.Errorf("invalid parameters")
+	}
+
+	if userID == "" {
+		userID = params.User
 	}
 
 	alarmStepType, ok := e.alarmStepTypeMap[operation.Type]

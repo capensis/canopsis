@@ -230,6 +230,8 @@ describe('kpi-alarms-chart', () => {
   });
 
   it('Renders `kpi-alarms-chart` with percent by hour', async () => {
+    const firstMetric = metricsInPercentByHour[0];
+    const lastMetric = metricsInPercentByHour[metricsInPercentByHour.length - 1];
     const wrapper = snapshotFactory({
       propsData: {
         metrics: [{
@@ -237,6 +239,10 @@ describe('kpi-alarms-chart', () => {
           data: metricsInPercentByHour,
         }],
         sampling: SAMPLINGS.hour,
+        interval: {
+          from: firstMetric.timestamp,
+          to: lastMetric.timestamp,
+        },
       },
     });
 
@@ -248,6 +254,8 @@ describe('kpi-alarms-chart', () => {
   });
 
   it('Renders `kpi-alarms-chart` with percent by day', async () => {
+    const firstMetric = metricsInPercentByDay[0];
+    const lastMetric = metricsInPercentByDay[metricsInPercentByDay.length - 1];
     const wrapper = snapshotFactory({
       propsData: {
         metrics: [{
@@ -255,6 +263,10 @@ describe('kpi-alarms-chart', () => {
           data: metricsInPercentByDay,
         }],
         sampling: SAMPLINGS.day,
+        interval: {
+          from: firstMetric.timestamp,
+          to: lastMetric.timestamp,
+        },
       },
     });
 
@@ -266,6 +278,8 @@ describe('kpi-alarms-chart', () => {
   });
 
   it('Renders `kpi-alarms-chart` with percent by week', async () => {
+    const firstMetric = metricsInPercentByWeek[0];
+    const lastMetric = metricsInPercentByWeek[metricsInPercentByWeek.length - 1];
     const wrapper = snapshotFactory({
       propsData: {
         metrics: [{
@@ -273,6 +287,10 @@ describe('kpi-alarms-chart', () => {
           data: metricsInPercentByWeek,
         }],
         sampling: SAMPLINGS.week,
+        interval: {
+          from: firstMetric.timestamp,
+          to: lastMetric.timestamp,
+        },
       },
     });
 
@@ -284,6 +302,8 @@ describe('kpi-alarms-chart', () => {
   });
 
   it('Renders `kpi-alarms-chart` with percent by month', async () => {
+    const firstMetric = metricsInPercentByMonth[0];
+    const lastMetric = metricsInPercentByMonth[metricsInPercentByMonth.length - 1];
     const wrapper = snapshotFactory({
       propsData: {
         metrics: [{
@@ -291,6 +311,10 @@ describe('kpi-alarms-chart', () => {
           data: metricsInPercentByMonth,
         }],
         sampling: SAMPLINGS.month,
+        interval: {
+          from: firstMetric.timestamp,
+          to: lastMetric.timestamp,
+        },
       },
     });
 
@@ -302,6 +326,8 @@ describe('kpi-alarms-chart', () => {
   });
 
   it('Renders `kpi-alarms-chart` with time by hour', async () => {
+    const firstMetric = metricsInTimeByHour[0];
+    const lastMetric = metricsInTimeByHour[metricsInTimeByHour.length - 1];
     const wrapper = snapshotFactory({
       propsData: {
         metrics: [{
@@ -309,6 +335,10 @@ describe('kpi-alarms-chart', () => {
           data: metricsInTimeByHour,
         }],
         sampling: SAMPLINGS.hour,
+        interval: {
+          from: firstMetric.timestamp,
+          to: lastMetric.timestamp,
+        },
       },
     });
 
@@ -320,6 +350,8 @@ describe('kpi-alarms-chart', () => {
   });
 
   it('Renders `kpi-alarms-chart` with time by day', async () => {
+    const firstMetric = metricsInTimeByDay[0];
+    const lastMetric = metricsInTimeByDay[metricsInTimeByDay.length - 1];
     const wrapper = snapshotFactory({
       propsData: {
         metrics: [{
@@ -327,6 +359,10 @@ describe('kpi-alarms-chart', () => {
           data: metricsInTimeByDay,
         }],
         sampling: SAMPLINGS.day,
+        interval: {
+          from: firstMetric.timestamp,
+          to: lastMetric.timestamp,
+        },
       },
     });
 
@@ -338,6 +374,8 @@ describe('kpi-alarms-chart', () => {
   });
 
   it('Renders `kpi-alarms-chart` with time by week', async () => {
+    const firstMetric = metricsInTimeByWeek[0];
+    const lastMetric = metricsInTimeByWeek[metricsInTimeByWeek.length - 1];
     const wrapper = snapshotFactory({
       propsData: {
         metrics: [{
@@ -345,6 +383,10 @@ describe('kpi-alarms-chart', () => {
           data: metricsInTimeByWeek,
         }],
         sampling: SAMPLINGS.week,
+        interval: {
+          from: firstMetric.timestamp,
+          to: lastMetric.timestamp,
+        },
       },
     });
 
@@ -356,6 +398,8 @@ describe('kpi-alarms-chart', () => {
   });
 
   it('Renders `kpi-alarms-chart` with time by month', async () => {
+    const firstMetric = metricsInTimeByMonth[0];
+    const lastMetric = metricsInTimeByMonth[metricsInTimeByMonth.length - 1];
     const wrapper = snapshotFactory({
       propsData: {
         metrics: [{
@@ -363,6 +407,10 @@ describe('kpi-alarms-chart', () => {
           data: metricsInTimeByMonth,
         }],
         sampling: SAMPLINGS.month,
+        interval: {
+          from: firstMetric.timestamp,
+          to: lastMetric.timestamp,
+        },
       },
     });
 
@@ -374,6 +422,8 @@ describe('kpi-alarms-chart', () => {
   });
 
   it('Renders `kpi-alarms-chart` with count by hour', async () => {
+    const firstMetric = metricsInCountByHour[0];
+    const lastMetric = metricsInCountByHour[metricsInCountByHour.length - 1];
     const wrapper = snapshotFactory({
       propsData: {
         metrics: [{
@@ -381,6 +431,10 @@ describe('kpi-alarms-chart', () => {
           data: metricsInCountByHour,
         }],
         sampling: SAMPLINGS.hour,
+        interval: {
+          from: firstMetric.timestamp,
+          to: lastMetric.timestamp,
+        },
       },
     });
 
@@ -392,6 +446,8 @@ describe('kpi-alarms-chart', () => {
   });
 
   it('Renders `kpi-alarms-chart` with count by day', async () => {
+    const firstMetric = metricsInCountByDay[0];
+    const lastMetric = metricsInCountByDay[metricsInCountByHour.length - 1];
     const wrapper = snapshotFactory({
       propsData: {
         metrics: [{
@@ -399,6 +455,10 @@ describe('kpi-alarms-chart', () => {
           data: metricsInCountByDay,
         }],
         sampling: SAMPLINGS.day,
+        interval: {
+          from: firstMetric.timestamp,
+          to: lastMetric.timestamp,
+        },
       },
     });
 
@@ -410,6 +470,8 @@ describe('kpi-alarms-chart', () => {
   });
 
   it('Renders `kpi-alarms-chart` with count by week', async () => {
+    const firstMetric = metricsInCountByWeek[0];
+    const lastMetric = metricsInCountByWeek[metricsInCountByWeek.length - 1];
     const wrapper = snapshotFactory({
       propsData: {
         metrics: [{
@@ -417,6 +479,10 @@ describe('kpi-alarms-chart', () => {
           data: metricsInCountByWeek,
         }],
         sampling: SAMPLINGS.week,
+        interval: {
+          from: firstMetric.timestamp,
+          to: lastMetric.timestamp,
+        },
       },
     });
 
@@ -428,6 +494,8 @@ describe('kpi-alarms-chart', () => {
   });
 
   it('Renders `kpi-alarms-chart` with count by month', async () => {
+    const firstMetric = metricsInCountByMonth[0];
+    const lastMetric = metricsInCountByMonth[metricsInCountByMonth.length - 1];
     const wrapper = snapshotFactory({
       propsData: {
         metrics: [{
@@ -435,6 +503,10 @@ describe('kpi-alarms-chart', () => {
           data: metricsInCountByMonth,
         }],
         sampling: SAMPLINGS.month,
+        interval: {
+          from: firstMetric.timestamp,
+          to: lastMetric.timestamp,
+        },
       },
     });
 
@@ -446,6 +518,8 @@ describe('kpi-alarms-chart', () => {
   });
 
   it('Renders `kpi-alarms-chart` with all types by hour', async () => {
+    const firstMetric = metricsInPercentByHour[0];
+    const lastMetric = metricsInPercentByHour[metricsInPercentByHour.length - 1];
     const wrapper = snapshotFactory({
       propsData: {
         metrics: [{
@@ -459,6 +533,10 @@ describe('kpi-alarms-chart', () => {
           data: metricsInCountByHour,
         }],
         sampling: SAMPLINGS.hour,
+        interval: {
+          from: firstMetric.timestamp,
+          to: lastMetric.timestamp,
+        },
       },
     });
 
@@ -470,6 +548,8 @@ describe('kpi-alarms-chart', () => {
   });
 
   it('Renders `kpi-alarms-chart` with all types by day', async () => {
+    const firstMetric = metricsInPercentByDay[0];
+    const lastMetric = metricsInPercentByDay[metricsInPercentByDay.length - 1];
     const wrapper = snapshotFactory({
       propsData: {
         metrics: [{
@@ -483,6 +563,10 @@ describe('kpi-alarms-chart', () => {
           data: metricsInCountByDay,
         }],
         sampling: SAMPLINGS.day,
+        interval: {
+          from: firstMetric.timestamp,
+          to: lastMetric.timestamp,
+        },
       },
     });
 
@@ -494,6 +578,8 @@ describe('kpi-alarms-chart', () => {
   });
 
   it('Renders `kpi-alarms-chart` with all types by week', async () => {
+    const firstMetric = metricsInPercentByWeek[0];
+    const lastMetric = metricsInPercentByWeek[metricsInPercentByWeek.length - 1];
     const wrapper = snapshotFactory({
       propsData: {
         metrics: [{
@@ -507,6 +593,10 @@ describe('kpi-alarms-chart', () => {
           data: metricsInCountByWeek,
         }],
         sampling: SAMPLINGS.week,
+        interval: {
+          from: firstMetric.timestamp,
+          to: lastMetric.timestamp,
+        },
       },
     });
 
@@ -518,6 +608,8 @@ describe('kpi-alarms-chart', () => {
   });
 
   it('Renders `kpi-alarms-chart` with all types by month', async () => {
+    const firstMetric = metricsInPercentByMonth[0];
+    const lastMetric = metricsInPercentByMonth[metricsInPercentByMonth.length - 1];
     const wrapper = snapshotFactory({
       propsData: {
         metrics: [{
@@ -531,6 +623,10 @@ describe('kpi-alarms-chart', () => {
           data: metricsInCountByMonth,
         }],
         sampling: SAMPLINGS.month,
+        interval: {
+          from: firstMetric.timestamp,
+          to: lastMetric.timestamp,
+        },
       },
     });
 

@@ -15,7 +15,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -24,7 +24,7 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-with-approval-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1"
@@ -88,7 +88,7 @@ Feature: instruction approval update
               {
                 "name": "test-instruction-to-update-with-approval-step-1-operation-1-name",
                 "time_to_complete": {
-                  "seconds": 1,
+                  "value": 1,
                   "unit": "s"
                 },
                 "description": "test-instruction-to-update-with-approval-step-1-operation-1-description"
@@ -120,7 +120,7 @@ Feature: instruction approval update
             "operations": [
               {
                 "name": "test-instruction-to-update-with-approval-step-1-operation-1-name",
-                "time_to_complete": {"seconds": 1, "unit":"s"},
+                "time_to_complete": {"value": 1, "unit":"s"},
                 "description": "test-instruction-to-update-with-approval-step-1-operation-1-description",
                 "jobs": [
                   {
@@ -171,7 +171,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-2-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -180,7 +180,7 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-2-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-with-approval-2-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1"
@@ -244,7 +244,7 @@ Feature: instruction approval update
               {
                 "name": "test-instruction-to-update-with-approval-2-step-1-operation-1-name",
                 "time_to_complete": {
-                  "seconds": 1,
+                  "value": 1,
                   "unit": "s"
                 },
                 "description": "test-instruction-to-update-with-approval-2-step-1-operation-1-description"
@@ -276,7 +276,7 @@ Feature: instruction approval update
             "operations": [
               {
                 "name": "test-instruction-to-update-with-approval-2-step-1-operation-1-name",
-                "time_to_complete": {"seconds": 1, "unit":"s"},
+                "time_to_complete": {"value": 1, "unit":"s"},
                 "description": "test-instruction-to-update-with-approval-2-step-1-operation-1-description",
                 "jobs": [
                   {
@@ -397,7 +397,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-3-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -406,7 +406,7 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-3-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-with-approval-3-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1"
@@ -449,7 +449,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-3-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -458,7 +458,7 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-3-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-with-approval-3-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1"
@@ -501,7 +501,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-3-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -510,7 +510,7 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-3-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-with-approval-3-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1"
@@ -553,7 +553,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-3-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -562,7 +562,7 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-3-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-with-approval-3-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1"
@@ -605,7 +605,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-3-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -614,7 +614,7 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-3-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-with-approval-3-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1"
@@ -658,7 +658,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-4-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -667,7 +667,7 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-4-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-with-approval-4-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1"
@@ -712,7 +712,7 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-4-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-with-approval-4-step-1-operation-1-description",
               "jobs": [
                 {
@@ -778,7 +778,7 @@ Feature: instruction approval update
             {
               "name": "test-instruction-to-update-with-approval-4-step-1-operation-1-name",
               "time_to_complete": {
-                "seconds": 1,
+                "value": 1,
                 "unit": "s"
               },
               "description": "test-instruction-to-update-with-approval-4-step-1-operation-1-description"
@@ -805,7 +805,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-5-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -814,7 +814,7 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-5-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-with-approval-5-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1"
@@ -845,7 +845,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-5-description-changed",
       "enabled": false,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -854,7 +854,7 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-5-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-with-approval-5-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1",
@@ -907,7 +907,7 @@ Feature: instruction approval update
               {
                 "name": "test-instruction-to-update-with-approval-5-step-1-operation-1-name",
                 "time_to_complete": {
-                  "seconds": 1,
+                  "value": 1,
                   "unit": "s"
                 },
                 "description": "test-instruction-to-update-with-approval-5-step-1-operation-1-description"
@@ -939,7 +939,7 @@ Feature: instruction approval update
             "operations": [
               {
                 "name": "test-instruction-to-update-with-approval-5-step-1-operation-1-name",
-                "time_to_complete": {"seconds": 1, "unit":"s"},
+                "time_to_complete": {"value": 1, "unit":"s"},
                 "description": "test-instruction-to-update-with-approval-5-step-1-operation-1-description",
                 "jobs": [
                   {
@@ -992,7 +992,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-6-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -1001,7 +1001,7 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-6-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-with-approval-6-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1"
@@ -1031,7 +1031,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-6-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -1040,7 +1040,7 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-6-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-with-approval-6-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1"
@@ -1096,7 +1096,7 @@ Feature: instruction approval update
               {
                 "name": "test-instruction-to-update-with-approval-6-step-1-operation-1-name",
                 "time_to_complete": {
-                  "seconds": 1,
+                  "value": 1,
                   "unit": "s"
                 },
                 "description": "test-instruction-to-update-with-approval-6-step-1-operation-1-description"
@@ -1128,7 +1128,7 @@ Feature: instruction approval update
             "operations": [
               {
                 "name": "test-instruction-to-update-with-approval-6-step-1-operation-1-name",
-                "time_to_complete": {"seconds": 1, "unit":"s"},
+                "time_to_complete": {"value": 1, "unit":"s"},
                 "description": "test-instruction-to-update-with-approval-6-step-1-operation-1-description",
                 "jobs": [
                   {
@@ -1185,7 +1185,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-7-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -1194,7 +1194,7 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-7-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-with-approval-7-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1"
@@ -1225,7 +1225,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-7-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -1234,7 +1234,7 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-7-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-with-approval-7-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1",
@@ -1291,7 +1291,7 @@ Feature: instruction approval update
               {
                 "name": "test-instruction-to-update-with-approval-7-step-1-operation-1-name",
                 "time_to_complete": {
-                  "seconds": 1,
+                  "value": 1,
                   "unit": "s"
                 },
                 "description": "test-instruction-to-update-with-approval-7-step-1-operation-1-description"
@@ -1323,7 +1323,7 @@ Feature: instruction approval update
             "operations": [
               {
                 "name": "test-instruction-to-update-with-approval-7-step-1-operation-1-name",
-                "time_to_complete": {"seconds": 1, "unit":"s"},
+                "time_to_complete": {"value": 1, "unit":"s"},
                 "description": "test-instruction-to-update-with-approval-7-step-1-operation-1-description",
                 "jobs": [
                   {
@@ -1378,7 +1378,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-7-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -1387,7 +1387,7 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-7-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-with-approval-7-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1"
@@ -1439,7 +1439,7 @@ Feature: instruction approval update
               {
                 "name": "test-instruction-to-update-with-approval-7-step-1-operation-1-name",
                 "time_to_complete": {
-                  "seconds": 1,
+                  "value": 1,
                   "unit": "s"
                 },
                 "description": "test-instruction-to-update-with-approval-7-step-1-operation-1-description"
@@ -1471,7 +1471,7 @@ Feature: instruction approval update
             "operations": [
               {
                 "name": "test-instruction-to-update-with-approval-7-step-1-operation-1-name",
-                "time_to_complete": {"seconds": 1, "unit":"s"},
+                "time_to_complete": {"value": 1, "unit":"s"},
                 "description": "test-instruction-to-update-with-approval-7-step-1-operation-1-description",
                 "jobs": [
                   {
@@ -1528,7 +1528,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-8-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -1537,7 +1537,7 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-8-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-with-approval-8-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1"
@@ -1568,7 +1568,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-8-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -1577,7 +1577,7 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-8-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-with-approval-8-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1",
@@ -1637,7 +1637,7 @@ Feature: instruction approval update
               {
                 "name": "test-instruction-to-update-with-approval-8-step-1-operation-1-name",
                 "time_to_complete": {
-                  "seconds": 1,
+                  "value": 1,
                   "unit": "s"
                 },
                 "description": "test-instruction-to-update-with-approval-8-step-1-operation-1-description"
@@ -1669,7 +1669,7 @@ Feature: instruction approval update
             "operations": [
               {
                 "name": "test-instruction-to-update-with-approval-8-step-1-operation-1-name",
-                "time_to_complete": {"seconds": 1, "unit":"s"},
+                "time_to_complete": {"value": 1, "unit":"s"},
                 "description": "test-instruction-to-update-with-approval-8-step-1-operation-1-description",
                 "jobs": [
                   {
@@ -1745,7 +1745,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-8-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -1754,7 +1754,7 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-8-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-with-approval-8-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1",
@@ -1798,7 +1798,7 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-8-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-with-approval-8-step-1-operation-1-description",
               "jobs": [
                 {
@@ -1867,7 +1867,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-9-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -1876,7 +1876,7 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-9-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-with-approval-9-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1"
@@ -1957,7 +1957,7 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-9-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-with-approval-9-step-1-operation-1-description",
               "jobs": [
                 {
@@ -2001,7 +2001,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-3-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "steps": [
@@ -2010,7 +2010,7 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-3-step-1-operation-1-name",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-update-with-approval-3-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1"
@@ -2066,7 +2066,7 @@ Feature: instruction approval update
               {
                 "name": "test-instruction-to-update-with-approval-3-step-1-operation-1-name",
                 "time_to_complete": {
-                  "seconds": 1,
+                  "value": 1,
                   "unit": "s"
                 },
                 "description": "test-instruction-to-update-with-approval-3-step-1-operation-1-description"
@@ -2098,7 +2098,7 @@ Feature: instruction approval update
             "operations": [
               {
                 "name": "test-instruction-to-update-with-approval-3-step-1-operation-1-name",
-                "time_to_complete": {"seconds": 1, "unit":"s"},
+                "time_to_complete": {"value": 1, "unit":"s"},
                 "description": "test-instruction-to-update-with-approval-3-step-1-operation-1-description",
                 "jobs": [
                   {
@@ -2164,7 +2164,7 @@ Feature: instruction approval update
             {
               "name": "test-instruction-to-update-with-approval-3-step-1-operation-1-name",
               "time_to_complete": {
-                "seconds": 1,
+                "value": 1,
                 "unit": "s"
               },
               "description": "test-instruction-to-update-with-approval-3-step-1-operation-1-description"
@@ -2228,7 +2228,7 @@ Feature: instruction approval update
             {
               "name": "test-instruction-to-update-with-approval-3-step-1-operation-1-name",
               "time_to_complete": {
-                "seconds": 1,
+                "value": 1,
                 "unit": "s"
               },
               "description": "test-instruction-to-update-with-approval-3-step-1-operation-1-description"
@@ -2256,7 +2256,7 @@ Feature: instruction approval update
       "enabled": true,
       "priority": 1000,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "jobs": [
@@ -2316,10 +2316,10 @@ Feature: instruction approval update
         },
         "enabled": true,
         "timeout_after_execution": {
-          "seconds": 2,
+          "value": 2,
           "unit": "s"
         },
-        "priority": 1000,
+        "priority": 12,
         "jobs": [
           {
             "job": {
@@ -2366,7 +2366,7 @@ Feature: instruction approval update
         },
         "enabled": true,
         "timeout_after_execution": {
-          "seconds": 10,
+          "value": 10,
           "unit": "m"
         },
         "priority": 1000,
@@ -2450,7 +2450,7 @@ Feature: instruction approval update
       },
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "m"
       },
       "priority": 1000,

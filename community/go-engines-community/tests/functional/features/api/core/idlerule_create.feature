@@ -14,7 +14,7 @@ Feature: Create a idle rule
       "enabled": true,
       "priority": 20,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "alarm_patterns": [
@@ -32,7 +32,7 @@ Feature: Create a idle rule
         "parameters": {
           "output": "test-idle-rule-to-create-1-operation-output",
           "duration": {
-            "seconds": 3,
+            "value": 3,
             "unit": "s"
           }
         }
@@ -52,7 +52,7 @@ Feature: Create a idle rule
       "enabled": true,
       "priority": 20,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "alarm_patterns": [
@@ -71,7 +71,7 @@ Feature: Create a idle rule
           "author": "root",
           "output": "test-idle-rule-to-create-1-operation-output",
           "duration": {
-            "seconds": 3,
+            "value": 3,
             "unit": "s"
           }
         }
@@ -91,7 +91,7 @@ Feature: Create a idle rule
       "enabled": true,
       "priority": 21,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -113,7 +113,7 @@ Feature: Create a idle rule
       "enabled": true,
       "priority": 21,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -137,7 +137,7 @@ Feature: Create a idle rule
       "enabled": true,
       "priority": 22,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "alarm_patterns": [
@@ -159,7 +159,7 @@ Feature: Create a idle rule
           "type": "test-type-to-edit-idle-rule",
           "start_on_trigger": true,
           "duration": {
-            "seconds": 3,
+            "value": 3,
             "unit": "s"
           }
         }
@@ -181,7 +181,7 @@ Feature: Create a idle rule
       "enabled": true,
       "priority": 22,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "alarm_patterns": [
@@ -204,7 +204,7 @@ Feature: Create a idle rule
           "type": "test-type-to-edit-idle-rule",
           "start_on_trigger": true,
           "duration": {
-            "seconds": 3,
+            "value": 3,
             "unit": "s"
           }
         }
@@ -233,7 +233,7 @@ Feature: Create a idle rule
     """
     {
       "errors": {
-        "duration.seconds": "Seconds is missing.",
+        "duration.value": "Value is missing.",
         "duration.unit": "Unit is missing.",
         "enabled": "Enabled is missing.",
         "name": "Name is missing.",

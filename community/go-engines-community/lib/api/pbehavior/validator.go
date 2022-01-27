@@ -58,7 +58,7 @@ func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.Struct
 		}
 	}
 	// Stop must be > Start
-	if rStop != nil && rStart != nil && rStop.Before(rStart.Time) {
+	if rStop != nil && rStart != nil && rStop.Before(*rStart) {
 		sl.ReportError(rStop, "Stop", "Stop", "gtfield", "Start")
 	}
 	// Filter must be valid mongo filter

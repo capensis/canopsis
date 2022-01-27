@@ -3,9 +3,9 @@ package appinfo
 import (
 	"context"
 	"sort"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"go.mongodb.org/mongo-driver/bson"
@@ -16,10 +16,10 @@ import (
 const defaultPopupInterval = 3 //seconds
 
 type Store interface {
-	RetrieveLoginConfig(ctx context.Context) (LoginConfig, error)
+	RetrieveLoginConfig(ctx context.Context) (LoginConf, error)
 	RetrieveUserInterfaceConfig(ctx context.Context) (UserInterfaceConf, error)
 	RetrieveVersionConfig(ctx context.Context) (VersionConf, error)
-	RetrieveGlobalConf(ctx context.Context) (GlobalConf, error)
+	RetrieveGlobalConfig(ctx context.Context) (GlobalConf, error)
 	RetrieveRemediationConfig(ctx context.Context) (RemediationConf, error)
 	UpdateUserInterfaceConfig(ctx context.Context, conf *UserInterfaceConf) error
 	DeleteUserInterfaceConfig(ctx context.Context) error
@@ -40,8 +40,8 @@ func NewStore(db mongo.DbClient, authProviders []string) Store {
 	}
 }
 
-func (s *store) RetrieveLoginConfig(ctx context.Context) (LoginConfig, error) {
-	var login = LoginConfig{}
+func (s *store) RetrieveLoginConfig(ctx context.Context) (LoginConf, error) {
+	var login = LoginConf{}
 	for _, p := range s.authProviders {
 		switch p {
 		case security.AuthMethodLdap:
@@ -94,7 +94,7 @@ func (s *store) RetrieveVersionConfig(ctx context.Context) (VersionConf, error) 
 	return version, err
 }
 
-func (s *store) RetrieveGlobalConf(ctx context.Context) (GlobalConf, error) {
+func (s *store) RetrieveGlobalConfig(ctx context.Context) (GlobalConf, error) {
 	conf := config.CanopsisConf{}
 	err := s.configCollection.FindOne(ctx, bson.M{"_id": config.ConfigKeyName}).Decode(&conf)
 	if err != nil {
@@ -137,18 +137,13 @@ func (s *store) RetrieveRemediationConfig(ctx context.Context) (RemediationConf,
 		return result.JobConfigTypes[i].Name < result.JobConfigTypes[j].Name
 	})
 
-	d, err := time.ParseDuration(conf.PauseManualInstructionInterval)
-	if err == nil {
-		result.PauseManualInstructionInterval.Seconds = int64(d.Seconds())
-	}
-
 	return result, nil
 }
 
 func (s *store) UpdateUserInterfaceConfig(ctx context.Context, model *UserInterfaceConf) error {
-	defaultInterval := IntervalUnit{
-		Interval: defaultPopupInterval,
-		Unit:     "s",
+	defaultInterval := types.DurationWithUnit{
+		Value: defaultPopupInterval,
+		Unit:  "s",
 	}
 
 	if model.PopupTimeout == nil {

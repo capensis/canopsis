@@ -105,7 +105,7 @@ func (p *messageProcessor) processEvent(ctx context.Context, event types.Event, 
 			p.Logger.Info().Msg("entity resolving has been fixed")
 		}
 
-		return libpbehavior.NewPBehaviorInfo(resolveResult), nil
+		return libpbehavior.NewPBehaviorInfo(types.CpsTime{Time: now}, resolveResult), nil
 	}
 
 	if errors.Is(err, context.DeadlineExceeded) {

@@ -50,8 +50,16 @@ type CpsTime struct {
 }
 
 // NewCpsTime create a CpsTime from a timestamp
-func NewCpsTime(timestamp int64) CpsTime {
-	return CpsTime{time.Unix(timestamp, 0)}
+func NewCpsTime(timestamp ...int64) CpsTime {
+	if len(timestamp) == 0 {
+		return CpsTime{Time: time.Now()}
+	}
+
+	if len(timestamp) > 1 {
+		panic(fmt.Errorf("too much arguments, expected one: %+v", timestamp))
+	}
+
+	return CpsTime{time.Unix(timestamp[0], 0)}
 }
 
 // MarshalJSON converts from CpsTime to timestamp as bytes
@@ -125,177 +133,162 @@ func (t CpsTime) Format() string {
 	return t.Time.Format(time.RFC3339Nano)
 }
 
-// CpsDuration allow conversions from/to time.Duration to/from string
-type CpsDuration time.Duration
-
-// MarshalJSON converts a CpsDuration to string
-func (t CpsDuration) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + t.Duration().String() + "\""), nil
+func (t CpsTime) Before(u CpsTime) bool {
+	return t.Time.Before(u.Time)
 }
 
-// UnmarshalJSON converts a string to CpsDuration
-func (t *CpsDuration) UnmarshalJSON(b []byte) error {
-	sduration := string(b)
-
-	if len(sduration) < 3 {
-		return errors.New("bad duration: string length below 3 chars")
-	}
-
-	if sduration[0] != '"' || sduration[len(sduration)-1] != '"' {
-		return errors.New("bad duration: not a string")
-	}
-
-	parsed, err := time.ParseDuration(sduration[1 : len(sduration)-1])
-	if err != nil {
-		return err
-	}
-	*t = CpsDuration(parsed)
-	return nil
+func (t CpsTime) After(u CpsTime) bool {
+	return t.Time.After(u.Time)
 }
 
-// MarshalBSONValue converts from CpsDuration to bytes
-func (t CpsDuration) MarshalBSONValue() (bsontype.Type, []byte, error) {
-	return bson.MarshalValue(t.Duration().String())
+func (t CpsTime) In(loc *time.Location) CpsTime {
+	return CpsTime{Time: t.Time.In(loc)}
 }
 
-// UnmarshalBSONValue converts from bytes to CpsDuration
-func (t *CpsDuration) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
-	switch valueType {
-	case bsontype.String:
-		str, _, ok := bsoncore.ReadString(b)
-		if !ok {
-			return errors.New("invalid value, expected string")
-		}
-
-		d, err := time.ParseDuration(str)
-		if err != nil {
-			return err
-		}
-
-		*t = CpsDuration(d)
-	default:
-		return fmt.Errorf("unexpected type %v", valueType)
-	}
-
-	return nil
-}
-
-// Duration return the CpsDuration casted to time.Duration
-func (t CpsDuration) Duration() time.Duration {
-	return time.Duration(t)
-}
-
-// CpsShortDuration allow conversions from/to time.Duration to/from string
-type CpsShortDuration int64
-
-// MarshalJSON converts a CpsDuration to string
-func (t CpsShortDuration) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + t.String() + "\""), nil
-}
-
-// UnmarshalJSON converts a string to CpsShortDuration
-func (t *CpsShortDuration) UnmarshalJSON(b []byte) error {
-	str := string(b)
-
-	if len(str) < 3 {
-		return errors.New("bad duration: string length below 3 chars")
-	}
-
-	if str[0] != '"' || str[len(str)-1] != '"' {
-		return errors.New("bad duration: not a string")
-	}
-
-	parsed, err := ParseCpsShortDuration(str[1 : len(str)-1])
-	if err != nil {
-		return err
-	}
-	*t = parsed
-	return nil
-}
-
-// MarshalBSONValue converts from CpsShortDuration to bytes
-func (t CpsShortDuration) MarshalBSONValue() (bsontype.Type, []byte, error) {
-	return bson.MarshalValue(t.String())
-}
-
-// UnmarshalBSONValue converts from bytes to CpsShortDuration
-func (t *CpsShortDuration) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
-	switch valueType {
-	case bsontype.String:
-		str, _, ok := bsoncore.ReadString(b)
-		if !ok {
-			return errors.New("invalid value, expected string")
-		}
-
-		d, err := ParseCpsShortDuration(str)
-		if err != nil {
-			return err
-		}
-
-		*t = d
-	default:
-		return fmt.Errorf("unexpected type %v", valueType)
-	}
-
-	return nil
-}
-
-// Duration return the CpsShortDuration casted to time.Duration
-func (t CpsShortDuration) Duration() time.Duration {
-	return time.Duration(t)
-}
-
-func ParseCpsShortDuration(str string) (CpsShortDuration, error) {
-	if str == "" {
-		return 0, nil
-	}
-
-	r := regexp.MustCompile(`(?P<val>\d+)(?P<t>[hms])`)
-	res := r.FindStringSubmatch(str)
-	if len(res) == 0 {
-		return 0, nil
-	}
-
-	val, err := strconv.Atoi(res[1])
-	if err != nil {
-		return 0, err
-	}
-
-	switch res[2] {
-	case "h":
-		return CpsShortDuration(int64(val) * int64(time.Hour)), nil
-	case "m":
-		return CpsShortDuration(int64(val) * int64(time.Minute)), nil
-	case "s":
-		return CpsShortDuration(int64(val) * int64(time.Second)), nil
-	}
-
-	return 0, nil
-}
-
-func (t CpsShortDuration) String() string {
-	d := t.Duration()
-	if h := d / time.Hour; h > 0 {
-		return fmt.Sprintf("%dh", h)
-	}
-	if m := d / time.Minute; m > 0 {
-		return fmt.Sprintf("%dm", m)
-	}
-	if s := d / time.Second; s > 0 {
-		return fmt.Sprintf("%ds", s)
-	}
-
-	return ""
+func (t CpsTime) EqualDay(u CpsTime) bool {
+	dateFormat := "2006-01-02"
+	return t.Time.In(time.UTC).Format(dateFormat) == u.Time.In(time.UTC).Format(dateFormat)
 }
 
 // DurationWithUnit represent duration with user-preferred units
 type DurationWithUnit struct {
-	Seconds int64  `bson:"seconds" json:"seconds" binding:"required,min=1"`
-	Unit    string `bson:"unit" json:"unit" binding:"required,oneof=s m h d w M y"`
+	Value int64  `bson:"value" json:"value" binding:"required,min=1"`
+	Unit  string `bson:"unit" json:"unit" binding:"required,oneof=s m h d w M y"`
 }
 
-func (t DurationWithUnit) Duration() time.Duration {
-	return time.Duration(t.Seconds) * time.Second
+func (d DurationWithUnit) AddTo(t CpsTime) CpsTime {
+	var r time.Time
+
+	switch d.Unit {
+	case "s":
+		r = t.Add(time.Duration(d.Value) * time.Second)
+	case "m":
+		r = t.Add(time.Duration(d.Value) * time.Minute)
+	case "h":
+		r = t.Add(time.Duration(d.Value) * time.Hour)
+	case "d":
+		r = t.AddDate(0, 0, int(d.Value))
+	case "w":
+		r = t.AddDate(0, 0, 7*int(d.Value))
+	case "M":
+		r = t.AddDate(0, int(d.Value), 0)
+	case "y":
+		r = t.AddDate(int(d.Value), 0, 0)
+	default:
+		r = t.Add(time.Duration(d.Value) * time.Second)
+	}
+
+	return CpsTime{Time: r}
+}
+
+func (d DurationWithUnit) SubFrom(t CpsTime) CpsTime {
+	var r time.Time
+
+	switch d.Unit {
+	case "s":
+		r = t.Add(-time.Duration(d.Value) * time.Second)
+	case "m":
+		r = t.Add(-time.Duration(d.Value) * time.Minute)
+	case "h":
+		r = t.Add(-time.Duration(d.Value) * time.Hour)
+	case "d":
+		r = t.AddDate(0, 0, -int(d.Value))
+	case "w":
+		r = t.AddDate(0, 0, -7*int(d.Value))
+	case "M":
+		r = t.AddDate(0, -int(d.Value), 0)
+	case "y":
+		r = t.AddDate(-int(d.Value), 0, 0)
+	default:
+		r = t.Add(-time.Duration(d.Value) * time.Second)
+	}
+
+	return CpsTime{Time: r}
+}
+
+func (d DurationWithUnit) To(unit string) (DurationWithUnit, error) {
+	newDuration := DurationWithUnit{
+		Value: d.Value,
+		Unit:  unit,
+	}
+
+	if d.Unit == unit || d.Value == 0 {
+		return newDuration, nil
+	}
+
+	in := int64(0)
+
+	switch d.Unit {
+	case "m":
+		if unit == "s" {
+			in = 60
+		}
+	case "h":
+		switch unit {
+		case "m":
+			in = 60
+		case "s":
+			in = 60 * 60
+		}
+	case "d":
+		switch unit {
+		case "h":
+			in = 24
+		case "m":
+			in = 24 * 60
+		case "s":
+			in = 24 * 60 * 60
+		}
+	case "w":
+		switch unit {
+		case "d":
+			in = 7
+		case "h":
+			in = 7 * 24
+		case "m":
+			in = 7 * 24 * 60
+		case "s":
+			in = 7 * 24 * 60 * 60
+		}
+	}
+
+	if in > 0 {
+		newDuration.Value *= in
+		return newDuration, nil
+	}
+
+	return DurationWithUnit{}, fmt.Errorf("cannot transform unit %q to %q", d.Unit, unit)
+}
+
+func (d DurationWithUnit) String() string {
+	return fmt.Sprintf("%d%s", d.Value, d.Unit)
+}
+
+func ParseDurationWithUnit(str string) (DurationWithUnit, error) {
+	d := DurationWithUnit{}
+	if str == "" {
+		return d, fmt.Errorf("invalid duration %q", str)
+	}
+
+	r := regexp.MustCompile(`^(-?)(?P<val>\d+)(?P<t>[smhdwMy])$`)
+	res := r.FindStringSubmatch(str)
+	if len(res) == 0 {
+		return d, fmt.Errorf("invalid duration %q", str)
+	}
+
+	val, err := strconv.Atoi(res[2])
+	if err != nil {
+		return d, fmt.Errorf("invalid duration %q: %w", str, err)
+	}
+
+	d.Value = int64(val)
+	d.Unit = res[3]
+
+	if res[1] == "-" {
+		d.Value = -d.Value
+	}
+
+	return d, nil
 }
 
 type DurationWithEnabled struct {

@@ -22,7 +22,10 @@ Feature: Get a metaalarm-rule
           "_id": "test-metaalarm-to-get-2",
           "auto_resolve": false,
           "config": {
-            "time_interval": 10
+            "time_interval": {
+              "value": 10,
+              "unit": "s"
+            }
           },
           "name": "Test alarm get",
           "author": "test-metaalarm-to-get-2-author",

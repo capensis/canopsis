@@ -3,8 +3,6 @@
 </template>
 
 <script>
-import { pickBy } from 'lodash';
-
 import { MODALS, CONTEXT_ACTIONS_TYPES } from '@/constants';
 
 import { widgetActionsPanelContextMixin } from '@/mixins/widget/actions-panel/context';
@@ -47,31 +45,29 @@ export default {
     };
   },
   computed: {
-    filteredActionsMap() {
-      return pickBy(this.actionsMap, this.actionsAccessFilterHandler);
-    },
-
     actions() {
-      const { filteredActionsMap } = this;
-      const actions = [filteredActionsMap.pbehavior];
-      const everyDeletable = this.items.every(({ deletable }) => deletable);
+      const actions = [this.actionsMap.pbehavior];
+      const someOneDeletable = this.items.some(({ deletable }) => deletable);
 
-      if (everyDeletable) {
-        actions.unshift(this.filteredActionsMap.deleteEntity);
+      if (someOneDeletable) {
+        actions.unshift(this.actionsMap.deleteEntity);
       }
 
-      return actions.filter(action => !!action);
+      return actions.filter(this.actionsAccessFilterHandler);
     },
   },
   methods: {
     showDeleteEntitiesModal() {
+      const deletableItems = this.items.filter(({ deletable }) => deletable);
+
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
+          text: this.items.length !== deletableItems.length
+            ? this.$t('context.popups.massDeleteWarning')
+            : '',
           action: async () => {
-            const requests = this.items.map(this.removeContextEntityOrService);
-
-            await Promise.all(requests);
+            await Promise.all(deletableItems.map(this.removeContextEntityOrService));
 
             await this.fetchContextEntitiesListWithPreviousParams();
           },

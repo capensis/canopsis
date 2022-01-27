@@ -1,7 +1,3 @@
-# Services web Canopsis
+# Service `webserver` de Canopsis
 
 [Documentation sur les sessions](session.md)
-
-[Activation de HTTPS](https.md)
-
-Voir aussi : la [documentation sur Nginx](../administration-avancee/configuration-services/reverse-proxy-nginx.md).

@@ -64,15 +64,14 @@ export BUILDKIT_PROGRESS:=plain
 DOCKER_NO_CACHE = 
 DOCKER_TAG = $(VERSION)
 # Alpine version used in final containers (https://hub.docker.com/_/alpine?tab=tags)
-DOCKER_ALPINE_VERSION = 3.12.8
+DOCKER_ALPINE_VERSION = 3.14.3
 # Version of the Go compiler (https://hub.docker.com/_/golang?tab=tags)
-DOCKER_GOLANG_VERSION = 1.17.2
+DOCKER_GOLANG_VERSION = 1.17.5
 # Alpine version used in the Golang build container (https://hub.docker.com/_/golang?tab=tags&page=1&name=alpine)
-# (note: Alpine 3.14+ is currenly on hold; see issue canopsis/canopsis-pro#3871)
-DOCKER_ALPINE_BUILD_VERSION = 3.13
+# note: the golang image only supports the latest two main release branches of Alpine!
+DOCKER_ALPINE_BUILD_VERSION = 3.14
 DOCKERFILE_PATH = $(COMMUNITY_ROOT_DIR)/Dockerfile
-#DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
-DOCKER_IMAGE_BASE_PATH = canopsis
+DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
 
 .PHONY: all docker-images deps
 all: $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
@@ -138,10 +137,10 @@ $(MONOREPO_ROOT)/.dockerignore:
 
 .PHONY: docker-check-version docker-go-builder $(DOCKER_CMD_TARGETS)
 
-# We require at least Docker 19.03 for the BuildKit features we use
+# We require at least Docker 20.10 for the BuildKit features we use, and the usage of Alpine 3.14+
 docker-check-version:
-	@if test "$$(docker version --format '{{.Server.Version}}' 2>/dev/null | awk -F'.' '{print 0+$$1 $$2}')" -lt 1903 ; then\
-		echo "ERROR: Docker >= 19.03 is required";\
+	@if test "$$(docker version --format '{{.Server.Version}}' 2>/dev/null | awk -F'.' '{print 0+$$1 $$2}')" -lt 2010 ; then\
+		echo "ERROR: Docker >= 20.10 is required";\
 		exit 1;\
 	fi
 
@@ -184,15 +183,15 @@ docker-cmd-engine-webhook: TARGET=engine-webhook
 install: $(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPSIS_EDITION).toml $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
 	@echo "==> Installing files for $(CANOPSIS_EDITION)"
 	# Install cmds
-	install -d -m 755 -- "$(DESTDIR)$(PREFIX)/opt/canopsis/bin"
-	install -c -m 755 -- $(foreach cmd,$(CMDS),"$(CURRENT_BUILD_OUTPUT_DIR)/cmd/$(cmd)") "$(DESTDIR)$(PREFIX)/opt/canopsis/bin/"
-	( cd -- "$(DESTDIR)$(PREFIX)/opt/canopsis/bin" && ln -sf "canopsis-api-$(CANOPSIS_EDITION)" canopsis-api )
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/bin"
+	install -c -m 755 -p -- $(foreach cmd,$(CMDS),"$(CURRENT_BUILD_OUTPUT_DIR)/cmd/$(cmd)") "$(DESTDIR)/opt/canopsis/bin/"
+	( cd -- "$(DESTDIR)/opt/canopsis/bin" && ln -sf "canopsis-api-$(CANOPSIS_EDITION)" canopsis-api )
 	# Install plugins
-	$(foreach plugin,$(PLUGINS),install -d -m 755 -- "$(DESTDIR)$(PREFIX)/opt/canopsis/lib/go/plugins/$(dir $(plugin))" && install -c -m 644 -- "$(CURRENT_BUILD_OUTPUT_DIR)/plugins/$(plugin)" "$(DESTDIR)$(PREFIX)/opt/canopsis/lib/go/plugins/$(dir $(plugin))")
+	$(foreach plugin,$(PLUGINS),install -d -m 755 -- "$(DESTDIR)/opt/canopsis/lib/go/plugins/$(dir $(plugin))" && install -c -m 644 -- "$(CURRENT_BUILD_OUTPUT_DIR)/plugins/$(plugin)" "$(DESTDIR)/opt/canopsis/lib/go/plugins/$(dir $(plugin))")
 	# Install configuration files
-	install -d -m 755 -- "$(DESTDIR)$(PREFIX)/opt/canopsis/etc"
-	install -c -m 644 -- "$(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPSIS_EDITION).toml" "$(DESTDIR)$(PREFIX)/opt/canopsis/etc/"
-	( cd -- "$(DESTDIR)$(PREFIX)/opt/canopsis/etc" && ln -sf "canopsis-$(CANOPSIS_EDITION).toml" canopsis.toml )
+	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/etc"
+	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPSIS_EDITION).toml" "$(DESTDIR)/opt/canopsis/etc/"
+	( cd -- "$(DESTDIR)/opt/canopsis/etc" && ln -sf "canopsis-$(CANOPSIS_EDITION).toml" canopsis.toml )
 
 #
 # TESTS

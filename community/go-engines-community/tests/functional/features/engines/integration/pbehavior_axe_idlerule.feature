@@ -12,7 +12,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 50,
       "duration": {
-        "seconds": 3,
+        "value": 3,
         "unit": "s"
       },
       "entity_patterns": [
@@ -26,7 +26,7 @@ Feature: update alarm on idle rule
           "name": "test-pbehavior-pbehavior-axe-idlerule-1",
           "start_on_trigger": true,
           "duration": {
-            "seconds": 600,
+            "value": 10,
             "unit": "m"
           },
           "type": "test-maintenance-type-to-engine",
@@ -98,7 +98,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "pbhenter",
                 "a": "system",
-                "m": "Pbehavior test-pbehavior-pbehavior-axe-idlerule-1. Type: Engine maintenance. Reason: Test Engine"
+                "m": "Pbehavior test-pbehavior-pbehavior-axe-idlerule-1. Type: Engine maintenance. Reason: Test Engine."
               }
             ]
           }
@@ -149,7 +149,7 @@ Feature: update alarm on idle rule
       "enabled": true,
       "priority": 50,
       "duration": {
-        "seconds": 1,
+        "value": 1,
         "unit": "s"
       },
       "entity_patterns": [
@@ -167,13 +167,14 @@ Feature: update alarm on idle rule
     }
     """
     Then the response code should be 201
+    When I wait the next periodical process
     When I do POST /api/v4/pbehaviors:
     """json
     {
       "name": "test-pbehavior-pbehavior-axe-idlerule-2-name",
       "enabled": true,
-      "tstart": {{ now.UTC.Unix }},
-      "tstop": {{ (now.UTC.Add (parseDuration "7s")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "7s" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -186,7 +187,7 @@ Feature: update alarm on idle rule
     }
     """
     Then the response code should be 201
-    When I wait the next periodical process
+    When I wait the end of event processing
     When I send an event:
     """json
     {
@@ -239,7 +240,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "pbhenter",
                 "a": "root",
-                "m": "Pbehavior test-pbehavior-pbehavior-axe-idlerule-2-name. Type: Engine maintenance. Reason: Test Engine"
+                "m": "Pbehavior test-pbehavior-pbehavior-axe-idlerule-2-name. Type: Engine maintenance. Reason: Test Engine."
               }
             ]
           }
@@ -284,12 +285,12 @@ Feature: update alarm on idle rule
               {
                 "_t": "pbhenter",
                 "a": "root",
-                "m": "Pbehavior test-pbehavior-pbehavior-axe-idlerule-2-name. Type: Engine maintenance. Reason: Test Engine"
+                "m": "Pbehavior test-pbehavior-pbehavior-axe-idlerule-2-name. Type: Engine maintenance. Reason: Test Engine."
               },
               {
                 "_t": "pbhleave",
                 "a": "system",
-                "m": "Pbehavior test-pbehavior-pbehavior-axe-idlerule-2-name. Type: Engine maintenance. Reason: Test Engine"
+                "m": "Pbehavior test-pbehavior-pbehavior-axe-idlerule-2-name. Type: Engine maintenance. Reason: Test Engine."
               },
               {
                 "_t": "ack",
@@ -311,46 +312,6 @@ Feature: update alarm on idle rule
 
   Scenario: given entity idle rule should disable it on pbehavior and create alarm after pbehavior
     Given I am admin
-    When I do POST /api/v4/idle-rules:
-    """json
-    {
-      "name": "test-idlerule-pbehavior-axe-idlerule-3-name",
-      "type": "entity",
-      "enabled": true,
-      "priority": 51,
-      "duration": {
-        "seconds": 1,
-        "unit": "s"
-      },
-      "entity_patterns": [
-        {
-          "name": "test-resource-pbehavior-axe-idlerule-3"
-        }
-      ],
-      "disable_during_periods": ["maintenance"]
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/pbehaviors:
-    """json
-    {
-      "name": "test-pbehavior-pbehavior-axe-idlerule-3-name",
-      "enabled": true,
-      "tstart": {{ now.UTC.Unix }},
-      "tstop": {{ (now.UTC.Add (parseDuration "7s")).Unix }},
-      "type": "test-maintenance-type-to-engine",
-      "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
-          {
-            "name": "test-resource-pbehavior-axe-idlerule-3"
-          }
-        ]
-      }
-    }
-    """
-    Then the response code should be 201
-    When I wait the next periodical process
     When I send an event:
     """json
     {
@@ -365,6 +326,46 @@ Feature: update alarm on idle rule
     }
     """
     When I wait the end of event processing
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "name": "test-pbehavior-pbehavior-axe-idlerule-3-name",
+      "enabled": true,
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "7s" }},
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "filter":{
+        "$and":[
+          {
+            "name": "test-resource-pbehavior-axe-idlerule-3"
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of event processing
+    When I do POST /api/v4/idle-rules:
+    """json
+    {
+      "name": "test-idlerule-pbehavior-axe-idlerule-3-name",
+      "type": "entity",
+      "enabled": true,
+      "priority": 51,
+      "duration": {
+        "value": 1,
+        "unit": "s"
+      },
+      "entity_patterns": [
+        {
+          "name": "test-resource-pbehavior-axe-idlerule-3"
+        }
+      ],
+      "disable_during_periods": ["maintenance"]
+    }
+    """
+    Then the response code should be 201
     When I wait 4s
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-pbehavior-axe-idlerule-3/test-component-pbehavior-axe-idlerule-3"}]}&with_steps=true
     Then the response code should be 200
@@ -380,7 +381,7 @@ Feature: update alarm on idle rule
       }
     }
     """
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-pbehavior-axe-idlerule-3/test-component-pbehavior-axe-idlerule-3"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
@@ -432,38 +433,18 @@ Feature: update alarm on idle rule
       "source_type" : "resource",
       "component" :  "test-component-pbehavior-axe-idlerule-4",
       "resource" : "test-resource-pbehavior-axe-idlerule-4",
-      "state" : 0,
+      "state" : 3,
       "output" : "test-output-pbehavior-axe-idlerule-4"
     }
     """
     When I wait the end of event processing
-    When I do POST /api/v4/idle-rules:
-    """json
-    {
-      "name": "test-idlerule-pbehavior-axe-idlerule-4-name",
-      "type": "entity",
-      "enabled": true,
-      "priority": 52,
-      "duration": {
-        "seconds": 1,
-        "unit": "s"
-      },
-      "entity_patterns": [
-        {
-          "name": "test-resource-pbehavior-axe-idlerule-4"
-        }
-      ],
-      "disable_during_periods": ["maintenance"]
-    }
-    """
-    Then the response code should be 201
     When I do POST /api/v4/pbehaviors:
     """json
     {
       "name": "test-pbehavior-pbehavior-axe-idlerule-4-name",
       "enabled": true,
-      "tstart": {{ now.UTC.Unix }},
-      "tstop": {{ (now.UTC.Add (parseDuration "7s")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "7s" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -476,21 +457,27 @@ Feature: update alarm on idle rule
     }
     """
     Then the response code should be 201
-    When I wait the next periodical process
-    When I send an event:
+    When I wait the end of event processing
+    When I do POST /api/v4/idle-rules:
     """json
     {
-      "event_type" : "check",
-      "connector" : "test-connector-pbehavior-axe-idlerule-4",
-      "connector_name" : "test-connector-name-pbehavior-axe-idlerule-4",
-      "source_type" : "resource",
-      "component" :  "test-component-pbehavior-axe-idlerule-4",
-      "resource" : "test-resource-pbehavior-axe-idlerule-4",
-      "state" : 3,
-      "output" : "test-output-pbehavior-axe-idlerule-4"
+      "name": "test-idlerule-pbehavior-axe-idlerule-4-name",
+      "type": "entity",
+      "enabled": true,
+      "priority": 52,
+      "duration": {
+        "value": 1,
+        "unit": "s"
+      },
+      "entity_patterns": [
+        {
+          "name": "test-resource-pbehavior-axe-idlerule-4"
+        }
+      ],
+      "disable_during_periods": ["maintenance"]
     }
     """
-    When I wait the end of event processing
+    Then the response code should be 201
     When I wait 4s
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-pbehavior-axe-idlerule-4/test-component-pbehavior-axe-idlerule-4"}]}&with_steps=true
     Then the response code should be 200

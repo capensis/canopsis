@@ -3,6 +3,7 @@ package executor
 import (
 	"context"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -10,9 +11,10 @@ import (
 type instructionExecutor struct {
 	alarmStepTypeMap   map[string]string
 	alarmChangeTypeMap map[string]types.AlarmChangeType
+	metricsSender      metrics.Sender
 }
 
-func NewInstructionExecutor() operation.Executor {
+func NewInstructionExecutor(metricsSender metrics.Sender) operation.Executor {
 	return &instructionExecutor{
 		alarmStepTypeMap: map[string]string{
 			// Manual instruction
@@ -54,6 +56,7 @@ func NewInstructionExecutor() operation.Executor {
 			types.EventTypeInstructionJobAborted:   types.AlarmChangeTypeInstructionJobAbort,
 			types.EventTypeInstructionJobFailed:    types.AlarmChangeTypeInstructionJobFail,
 		},
+		metricsSender: metricsSender,
 	}
 }
 
@@ -61,7 +64,7 @@ func (e *instructionExecutor) Exec(
 	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
-	_ types.Entity,
+	_ *types.Entity,
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
@@ -69,6 +72,10 @@ func (e *instructionExecutor) Exec(
 	var ok bool
 	if params, ok = operation.Parameters.(types.OperationInstructionParameters); !ok {
 		return "", fmt.Errorf("invalid parameters")
+	}
+
+	if userID == "" {
+		userID = params.User
 	}
 
 	alarmStepType, ok := e.alarmStepTypeMap[operation.Type]
@@ -93,6 +100,11 @@ func (e *instructionExecutor) Exec(
 	)
 	if err != nil {
 		return "", err
+	}
+
+	switch alarmChangeType {
+	case types.AlarmStepAutoInstructionStart, types.AlarmStepAutoInstructionAlreadyRunning:
+		go e.metricsSender.SendAutoInstructionStart(context.Background(), *alarm, time.Time)
 	}
 
 	return alarmChangeType, nil

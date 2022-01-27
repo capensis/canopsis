@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"net/http"
 	"runtime/debug"
-	"sync"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"golang.org/x/sync/errgroup"
@@ -32,18 +32,27 @@ type API interface {
 	AddRouter(Router)
 	// AddWorker adds new worker.
 	AddWorker(string, Worker)
-	// AddNoRoute adds handlers for no roure.
-	AddNoRoute([]gin.HandlerFunc)
+	// AddNoRoute adds handlers for no route.
+	AddNoRoute(...gin.HandlerFunc)
+	// AddNoMethod adds handlers for no method.
+	AddNoMethod(...gin.HandlerFunc)
+	// SetWebsocketHub sets websocket hub.
+	SetWebsocketHub(websocket.Hub)
+	// GetWebsocketHub gets websocket hub.
+	GetWebsocketHub() websocket.Hub
 }
 
 type api struct {
-	addr            string
-	deferFunc       DeferFunc
-	logger          zerolog.Logger
-	routers         []Router
-	noRouteHandlers []gin.HandlerFunc
-	workers         map[string]Worker
-	waitGroup       sync.WaitGroup
+	addr      string
+	deferFunc DeferFunc
+	logger    zerolog.Logger
+	routers   []Router
+	workers   map[string]Worker
+
+	noRouteHandlers  []gin.HandlerFunc
+	noMethodHandlers []gin.HandlerFunc
+
+	websocketHub websocket.Hub
 }
 
 // New creates new api.
@@ -69,8 +78,12 @@ func (a *api) AddRouter(router Router) {
 	a.routers = append(a.routers, router)
 }
 
-func (a *api) AddNoRoute(handlers []gin.HandlerFunc) {
+func (a *api) AddNoRoute(handlers ...gin.HandlerFunc) {
 	a.noRouteHandlers = handlers
+}
+
+func (a *api) AddNoMethod(handlers ...gin.HandlerFunc) {
+	a.noMethodHandlers = handlers
 }
 
 func (a *api) Run(ctx context.Context) (resErr error) {
@@ -110,10 +123,18 @@ func (a *api) Run(ctx context.Context) (resErr error) {
 	return workersGroup.Wait()
 }
 
+func (a *api) SetWebsocketHub(v websocket.Hub) {
+	a.websocketHub = v
+}
+func (a *api) GetWebsocketHub() websocket.Hub {
+	return a.websocketHub
+}
+
 func (a *api) registerRoutes() http.Handler {
 	ginRouter := gin.New()
 	ginRouter.Use(gin.Logger())
 	ginRouter.Use(middleware.Recovery(a.logger))
+	ginRouter.HandleMethodNotAllowed = true
 
 	for _, router := range a.routers {
 		router(ginRouter)
@@ -121,6 +142,10 @@ func (a *api) registerRoutes() http.Handler {
 
 	if len(a.noRouteHandlers) > 0 {
 		ginRouter.NoRoute(a.noRouteHandlers...)
+	}
+
+	if len(a.noMethodHandlers) > 0 {
+		ginRouter.NoMethod(a.noMethodHandlers...)
 	}
 
 	return ginRouter

@@ -18,10 +18,10 @@ import (
 )
 
 type Store interface {
-	Insert(context.Context, EditRequest) (*idlerule.Rule, error)
+	Insert(context.Context, CreateRequest) (*idlerule.Rule, error)
 	Find(context.Context, FilteredQuery) (*AggregationResult, error)
 	GetOneBy(ctx context.Context, id string) (*idlerule.Rule, error)
-	Update(context.Context, EditRequest) (*idlerule.Rule, error)
+	Update(context.Context, UpdateRequest) (*idlerule.Rule, error)
 	Delete(ctx context.Context, id string) (bool, error)
 	CountByPatterns(ctx context.Context, filter CountByPatternRequest, timeout int, overLimit int) (*CountByPatternResult, error)
 }
@@ -99,10 +99,14 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*idlerule.Rule, error)
 	return rule, nil
 }
 
-func (s *store) Insert(ctx context.Context, r EditRequest) (*idlerule.Rule, error) {
+func (s *store) Insert(ctx context.Context, r CreateRequest) (*idlerule.Rule, error) {
 	now := types.CpsTime{Time: time.Now()}
-	rule := transformRequestToModel(r)
-	rule.ID = utils.NewID()
+	rule := transformRequestToModel(r.EditRequest)
+	if r.ID == "" {
+		r.ID = utils.NewID()
+	}
+
+	rule.ID = r.ID
 	rule.Created = now
 	rule.Updated = now
 
@@ -119,14 +123,14 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*idlerule.Rule, erro
 	return &rule, nil
 }
 
-func (s *store) Update(ctx context.Context, r EditRequest) (*idlerule.Rule, error) {
+func (s *store) Update(ctx context.Context, r UpdateRequest) (*idlerule.Rule, error) {
 	prevRule, err := s.GetOneBy(ctx, r.ID)
 	if err != nil || prevRule == nil {
 		return nil, err
 	}
 
 	now := types.CpsTime{Time: time.Now()}
-	rule := transformRequestToModel(r)
+	rule := transformRequestToModel(r.EditRequest)
 	rule.ID = r.ID
 	rule.Created = prevRule.Created
 	rule.Updated = now
@@ -303,7 +307,7 @@ func (s *store) getSort(r FilteredQuery) bson.M {
 	}
 
 	if sortBy == "duration" {
-		sortBy = "duration.seconds"
+		sortBy = "duration.value"
 	}
 
 	return common.GetSortQuery(sortBy, r.Sort)

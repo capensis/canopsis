@@ -16,10 +16,14 @@ Feature: Export entities
     }
     """
     Then the response code should be 200
-    When I do GET /api/v4/entity-export/{{ .lastResponse._id }}
-    Then the response code should be 200
-    When I wait 1s
-    When I do GET /api/v4/entity-export/{{ .lastResponse._id }}/download
+    When I save response exportID={{ .lastResponse._id }}
+    When I do GET /api/v4/entity-export/{{ .exportID }} until response code is 200 and body contains:
+    """json
+    {
+       "status": 1
+    }
+    """
+    When I do GET /api/v4/entity-export/{{ .exportID }}/download
     Then the response code should be 200
     Then the response raw body should be:
     """csv
@@ -44,10 +48,14 @@ Feature: Export entities
     }
     """
     Then the response code should be 200
-    When I do GET /api/v4/entity-export/{{ .lastResponse._id }}
-    Then the response code should be 200
-    When I wait 1s
-    When I do GET /api/v4/entity-export/{{ .lastResponse._id }}/download
+    When I save response exportID={{ .lastResponse._id }}
+    When I do GET /api/v4/entity-export/{{ .exportID }} until response code is 200 and body contains:
+    """json
+    {
+       "status": 1
+    }
+    """
+    When I do GET /api/v4/entity-export/{{ .exportID }}/download
     Then the response code should be 200
     Then the response raw body should be:
     """csv

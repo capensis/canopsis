@@ -14,7 +14,7 @@ Feature: create a PBehavior
   Scenario: POST a valid PBehavior
     When I am admin
     When I do POST /api/v4/pbehaviors:
-    """
+    """json
     {
       "enabled":true,
       "name":"test-pbehavior-to-create-1",
@@ -41,7 +41,7 @@ Feature: create a PBehavior
     """
     Then the response code should be 201
     Then the response body should contain:
-    """
+    """json
     {
       "enabled":true,
       "author":"root",
@@ -81,7 +81,7 @@ Feature: create a PBehavior
   Scenario: POST a valid PBehavior
     When I am admin
     When I do POST /api/v4/pbehaviors:
-    """
+    """json
     {
       "enabled":true,
       "name":"test-pbehavior-to-create-2",
@@ -110,7 +110,7 @@ Feature: create a PBehavior
     When I do GET /api/v4/pbehaviors/{{ .lastResponse._id}}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "author": "root",
       "comments": null,
@@ -181,31 +181,31 @@ Feature: create a PBehavior
   Scenario: POST a valid PBehavior with custom ID
     When I am admin
     When I do POST /api/v4/pbehaviors:
-    """
-      {
-        "_id": "custom-id",
-        "enabled":true,
-        "name": "test-pbehavior-to-create-3",
-        "tstart":1591172881,
-        "tstop":1591536400,
-        "type":"test-type-to-pbh-edit-1",
-        "reason":"test-reason-1",
-        "filter":{
-          "$and":[
-             {
-                "name": "test filter"
-             }
-          ]
-        },
-        "exdates":[
-          {
-            "begin": 1591164001,
-            "end": 1591167601,
-            "type": "test-type-to-pbh-edit-1"
-          }
-        ],
-        "exceptions": ["test-exception-to-pbh-edit"]
-      }
+    """json
+    {
+      "_id": "custom-id",
+      "enabled":true,
+      "name": "test-pbehavior-to-create-3",
+      "tstart":1591172881,
+      "tstop":1591536400,
+      "type":"test-type-to-pbh-edit-1",
+      "reason":"test-reason-1",
+      "filter":{
+        "$and":[
+           {
+              "name": "test filter"
+           }
+        ]
+      },
+      "exdates":[
+        {
+          "begin": 1591164001,
+          "end": 1591167601,
+          "type": "test-type-to-pbh-edit-1"
+        }
+      ],
+      "exceptions": ["test-exception-to-pbh-edit"]
+    }
     """
     Then the response code should be 201
     When I do GET /api/v4/pbehaviors/custom-id
@@ -214,35 +214,35 @@ Feature: create a PBehavior
   Scenario: POST a valid PBehavior with the custom ID that already exists should cause dup error
     When I am admin
     When I do POST /api/v4/pbehaviors:
-    """
-      {
-        "_id": "test-pbehavior-to-update",
-        "enabled":true,
-        "name": "test-pbehavior-to-create-4",
-        "tstart":1591172881,
-        "tstop":1591536400,
-        "type":"test-type-to-pbh-edit-1",
-        "reason":"test-reason-1",
-        "filter":{
-          "$and":[
-             {
-                "name": "test filter"
-             }
-          ]
-        },
-        "exdates":[
-          {
-            "begin": 1591164001,
-            "end": 1591167601,
-            "type": "test-type-to-pbh-edit-1"
-          }
-        ],
-        "exceptions": ["test-exception-to-pbh-edit"]
-      }
+    """json
+    {
+      "_id": "test-pbehavior-to-check-unique",
+      "enabled":true,
+      "name": "test-pbehavior-to-create-4",
+      "tstart":1591172881,
+      "tstop":1591536400,
+      "type":"test-type-to-pbh-edit-1",
+      "reason":"test-reason-1",
+      "filter":{
+        "$and":[
+           {
+              "name": "test filter"
+           }
+        ]
+      },
+      "exdates":[
+        {
+          "begin": 1591164001,
+          "end": 1591167601,
+          "type": "test-type-to-pbh-edit-1"
+        }
+      ],
+      "exceptions": ["test-exception-to-pbh-edit"]
+    }
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "_id": "ID already exists."
@@ -250,10 +250,48 @@ Feature: create a PBehavior
     }
     """
 
+  Scenario: POST a valid PBehavior with the name that already exists should cause dup error
+    When I am admin
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled":true,
+      "name": "test-pbehavior-to-check-unique-name",
+      "tstart":1591172881,
+      "tstop":1591536400,
+      "type":"test-type-to-pbh-edit-1",
+      "reason":"test-reason-1",
+      "filter":{
+        "$and":[
+           {
+              "name": "test filter"
+           }
+        ]
+      },
+      "exdates":[
+        {
+          "begin": 1591164001,
+          "end": 1591167601,
+          "type": "test-type-to-pbh-edit-1"
+        }
+      ],
+      "exceptions": ["test-exception-to-pbh-edit"]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "name": "Name already exists."
+      }
+    }
+    """
+
   Scenario: POST a valid pause PBehavior without Stop
     When I am admin
     When I do POST /api/v4/pbehaviors:
-    """
+    """json
     {
       "enabled":true,
       "name": "test-pbehavior-to-create-5",
@@ -279,7 +317,7 @@ Feature: create a PBehavior
     """
     Then the response code should be 201
     Then the response body should contain:
-    """
+    """json
     {
       "enabled":true,
       "author":"root",
@@ -319,7 +357,7 @@ Feature: create a PBehavior
   Scenario: POST an invalid PBehavior, where tstart > tstop
     When I am admin
     When I do POST /api/v4/pbehaviors:
-    """
+    """json
     {
       "tstart":1592172881,
       "tstop":1591536400
@@ -327,7 +365,7 @@ Feature: create a PBehavior
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "tstop": "Stop should be greater than Start."
@@ -338,14 +376,14 @@ Feature: create a PBehavior
   Scenario: POST an invalid PBehavior with not existed reason
     When I am admin
     When I do POST /api/v4/pbehaviors:
-    """
+    """json
     {
       "reason": "notexist"
     }
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "reason": "Reason doesn't exist."
@@ -356,7 +394,7 @@ Feature: create a PBehavior
   Scenario: POST an invalid PBehavior, where tstart > tstop
     When I am admin
     When I do POST /api/v4/pbehaviors:
-    """
+    """json
     {
       "exdates":[
         {
@@ -369,7 +407,7 @@ Feature: create a PBehavior
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "exdates.0.end": "End should be greater than Begin."
@@ -380,14 +418,14 @@ Feature: create a PBehavior
   Scenario: POST an invalid PBehavior with not existed type
     When I am admin
     When I do POST /api/v4/pbehaviors:
-    """
+    """json
     {
       "type":"notexist"
     }
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "type": "Type doesn't exist."
@@ -398,7 +436,7 @@ Feature: create a PBehavior
   Scenario: POST an invalid PBehavior, where filter is invalid
     When I am admin
     When I do POST /api/v4/pbehaviors:
-    """
+    """json
     {
       "filter": "{}"
     }
@@ -416,7 +454,7 @@ Feature: create a PBehavior
   Scenario: POST an invalid PBehavior, where Stop is missing
     When I am admin
     When I do POST /api/v4/pbehaviors:
-    """
+    """json
     {
       "tstart":1591172881,
       "type":"test-type-to-pbh-edit-1"
@@ -424,7 +462,7 @@ Feature: create a PBehavior
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "tstop": "Stop is missing."
@@ -435,14 +473,14 @@ Feature: create a PBehavior
   Scenario: POST an invalid PBehavior, where ID is invalid
     When I am admin
     When I do POST /api/v4/pbehaviors:
-    """
+    """json
     {
       "_id": "invalid/id"
     }
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "_id": "ID cannot contain /?.$ characters."
@@ -450,14 +488,14 @@ Feature: create a PBehavior
     }
     """
     When I do POST /api/v4/pbehaviors:
-    """
+    """json
     {
       "_id": "invalidid?key=value"
     }
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "_id": "ID cannot contain /?.$ characters."
@@ -465,14 +503,14 @@ Feature: create a PBehavior
     }
     """
     When I do POST /api/v4/pbehaviors:
-    """
+    """json
     {
       "_id": "$invalidid"
     }
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "_id": "ID cannot contain /?.$ characters."
@@ -480,14 +518,14 @@ Feature: create a PBehavior
     }
     """
     When I do POST /api/v4/pbehaviors:
-    """
+    """json
     {
       "_id": "invalid.id"
     }
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "_id": "ID cannot contain /?.$ characters."
@@ -498,7 +536,7 @@ Feature: create a PBehavior
   Scenario: POST a valid PBehavior with strange ids
     When I am admin
     When I do POST /api/v4/pbehaviors:
-    """
+    """json
     {
       "_id": "strange \\id&key=value!*@!'\"-_:;<>",
       "enabled":true,

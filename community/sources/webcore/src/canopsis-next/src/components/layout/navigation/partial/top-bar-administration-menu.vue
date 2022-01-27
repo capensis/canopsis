@@ -58,7 +58,7 @@ export default {
         {
           route: { name: ROUTES_NAMES.adminRights },
           icon: 'verified_user',
-          permission: USERS_PERMISSIONS.technical.action,
+          permission: USERS_PERMISSIONS.technical.permission,
         },
         {
           route: { name: ROUTES_NAMES.adminRoles },

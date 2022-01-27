@@ -1,7 +1,7 @@
 Feature: update service when alarm is updated by action pbehavior
   I need to be able to update service when action pbehavior is applied to alarm.
 
-  Scenario: given entity service and scenario should update meta alarm and update children
+  Scenario: given entity service and scenario with pbehavior action for dependency should update service alarm
     Given I am admin
     When I do POST /api/v4/entityservices:
     """json
@@ -10,7 +10,8 @@ Feature: update service when alarm is updated by action pbehavior
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-action-axe-pbehavior-service-1"}]
+      "entity_patterns": [{"name": "test-resource-action-axe-pbehavior-service-1"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
@@ -33,8 +34,8 @@ Feature: update service when alarm is updated by action pbehavior
           "type": "pbehavior",
           "parameters": {
             "name": "test-pbehavior-action-axe-pbehavior-service-1",
-            "tstart": {{ now.Unix }},
-            "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+            "tstart": {{ now }},
+            "tstop": {{ nowAdd "10m" }},
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"
           },

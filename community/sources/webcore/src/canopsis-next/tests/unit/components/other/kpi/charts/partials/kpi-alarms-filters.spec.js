@@ -44,6 +44,10 @@ describe('kpi-alarms-filters', () => {
   };
 
   mockDateNow(nowTimestamp);
+  /**
+   * Year ago date
+   */
+  const nowSubtractYearTimestamp = 1354899600;
 
   it('Query changed after trigger a quick interval field', async () => {
     const wrapper = factory({
@@ -106,6 +110,78 @@ describe('kpi-alarms-filters', () => {
     });
   });
 
+  it('Query changed after trigger a sampling field to hour with large interval diff', async () => {
+    const wrapper = factory({
+      propsData: {
+        query: {
+          ...initialQuery,
+          interval: {
+            from: 0,
+            to: initialQuery.interval.to,
+          },
+        },
+      },
+    });
+
+    const samplingField = wrapper.find('c-sampling-field-stub');
+
+    samplingField.vm.$emit('input', SAMPLINGS.hour);
+
+    await flushPromises();
+
+    const inputEvents = wrapper.emitted('input');
+
+    expect(inputEvents).toHaveLength(1);
+
+    const [eventData] = inputEvents[0];
+
+    expect(eventData.sampling).toEqual(SAMPLINGS.hour);
+    expect(eventData).toEqual({
+      ...initialQuery,
+      interval: {
+        from: nowSubtractYearTimestamp,
+        to: initialQuery.interval.to,
+      },
+      sampling: SAMPLINGS.hour,
+    });
+  });
+
+  it('Query changed after trigger a sampling field to hour with normal interval diff', async () => {
+    const wrapper = factory({
+      propsData: {
+        query: {
+          ...initialQuery,
+          interval: {
+            from: nowSubtractYearTimestamp + 1,
+            to: initialQuery.interval.to,
+          },
+        },
+      },
+    });
+
+    const samplingField = wrapper.find('c-sampling-field-stub');
+
+    samplingField.vm.$emit('input', SAMPLINGS.hour);
+
+    await flushPromises();
+
+    const inputEvents = wrapper.emitted('input');
+
+    expect(inputEvents).toHaveLength(1);
+
+    const [eventData] = inputEvents[0];
+
+    expect(eventData.sampling).toEqual(SAMPLINGS.hour);
+    expect(eventData).toEqual({
+      ...initialQuery,
+      interval: {
+        from: nowSubtractYearTimestamp + 1,
+        to: initialQuery.interval.to,
+      },
+      sampling: SAMPLINGS.hour,
+    });
+  });
+
   it('Query changed after trigger a parameters field', async () => {
     const newParameters = [ALARM_METRIC_PARAMETERS.ticketActiveAlarms, ALARM_METRIC_PARAMETERS.ackAlarms];
     const wrapper = factory({
@@ -165,6 +241,48 @@ describe('kpi-alarms-filters', () => {
       propsData: {
         query: {
           sampling: SAMPLINGS.day,
+          filter: null,
+          parameters: [ALARM_METRIC_PARAMETERS.ticketActiveAlarms, ALARM_METRIC_PARAMETERS.ackAlarms],
+          interval: {
+            from: QUICK_RANGES.last30Days.start,
+            to: QUICK_RANGES.last30Days.stop,
+          },
+        },
+      },
+    });
+
+    await flushPromises();
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `kpi-alarms-filters` with hour sampling', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        minDate: 0,
+        query: {
+          sampling: SAMPLINGS.hour,
+          filter: null,
+          parameters: [ALARM_METRIC_PARAMETERS.ticketActiveAlarms, ALARM_METRIC_PARAMETERS.ackAlarms],
+          interval: {
+            from: QUICK_RANGES.last30Days.start,
+            to: QUICK_RANGES.last30Days.stop,
+          },
+        },
+      },
+    });
+
+    await flushPromises();
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `kpi-alarms-filters` with hour sampling and normal interval', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        minDate: nowSubtractYearTimestamp + 1,
+        query: {
+          sampling: SAMPLINGS.hour,
           filter: null,
           parameters: [ALARM_METRIC_PARAMETERS.ticketActiveAlarms, ALARM_METRIC_PARAMETERS.ackAlarms],
           interval: {

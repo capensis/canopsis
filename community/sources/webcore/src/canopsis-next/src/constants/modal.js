@@ -19,6 +19,7 @@ export const MODALS = {
   infoPopupSetting: 'info-popup-setting',
   addInfoPopup: 'add-info-popup',
   confirmation: 'confirmation',
+  confirmationPhrase: 'confirmation-phrase',
   clickOutsideConfirmation: 'click-outside-confirmation',
   createWidget: 'create-widget',
   createFilter: 'create-filter',
@@ -54,6 +55,7 @@ export const MODALS = {
   createPlaylist: 'create-playlist',
   managePlaylistTabs: 'manage-playlist-tabs',
   pbehaviorPlanning: 'pbehavior-planning',
+  pbehaviorRecurrenceRule: 'pbehavior-recurrence-rule',
   createRecurrenceRule: 'create-recurrence-rule',
   selectExceptionsLists: 'select-exceptions-lists',
   pbehaviorRecurrentChangesConfirmation: 'pbehavior-recurrent-changes-confirmation',
@@ -80,4 +82,5 @@ export const MODALS = {
   healthcheckEngine: 'healthcheck-engine',
   healthcheckEnginesChainReference: 'healthcheck-engines-chain-reference',
   patterns: 'patterns',
+  info: 'info',
 };

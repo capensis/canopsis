@@ -23,50 +23,43 @@ func (w *cleanPeriodicalWorker) GetInterval() time.Duration {
 	return w.PeriodicalInterval
 }
 
-func (w *cleanPeriodicalWorker) Work(ctx context.Context) error {
+func (w *cleanPeriodicalWorker) Work(ctx context.Context) {
 	schedule := w.DataStorageConfigProvider.Get().TimeToExecute
 	// Skip if schedule is not defined.
 	if schedule == nil {
-		return nil
+		return
 	}
 	// Check now = schedule.
 	location := w.TimezoneConfigProvider.Get().Location
-	now := time.Now().In(location)
+	now := types.NewCpsTime().In(location)
 	if now.Weekday() != schedule.Weekday || now.Hour() != schedule.Hour {
-		return nil
+		return
 	}
 
 	conf, err := w.LimitConfigAdapter.Get(ctx)
 	if err != nil {
 		w.Logger.Err(err).Msg("fail to retrieve data storage config")
-		return nil
+		return
 	}
 	// Skip if already executed today.
-	dateFormat := "2006-01-02"
-	if conf.History.Pbehavior != nil && conf.History.Pbehavior.Time.Format(dateFormat) == now.Format(dateFormat) {
-		return nil
+	if conf.History.Pbehavior != nil && conf.History.Pbehavior.EqualDay(now) {
+		return
 	}
 
-	if conf.Config.Pbehavior.DeleteAfter == nil || !*conf.Config.Pbehavior.DeleteAfter.Enabled {
-		return nil
+	d := conf.Config.Pbehavior.DeleteAfter
+	if d == nil || !*d.Enabled || d.Value == 0 {
+		return
 	}
 
-	d := conf.Config.Pbehavior.DeleteAfter.Duration()
-	if d == 0 {
-		return nil
-	}
-
-	deleted, err := w.PbehaviorCleaner.Clean(ctx, d)
+	deleted, err := w.PbehaviorCleaner.Clean(ctx, d.SubFrom(now))
 	if err != nil {
 		w.Logger.Err(err).Msg("cannot accumulate week statistics")
 	} else if deleted > 0 {
 		w.Logger.Info().Int64("count", deleted).Msg("pbehaviors were deleted")
 	}
 
-	err = w.LimitConfigAdapter.UpdateHistoryPbehavior(ctx, types.CpsTime{Time: now})
+	err = w.LimitConfigAdapter.UpdateHistoryPbehavior(ctx, now)
 	if err != nil {
 		w.Logger.Err(err).Msg("cannot update config history")
 	}
-
-	return nil
 }

@@ -42,7 +42,10 @@ Feature: Update a metaalarmrule
       "_id": "test-alarm-get-metaalarm-rule-1",
       "auto_resolve": false,
       "config": {
-        "time_interval": 45
+        "time_interval": {
+          "value": 45,
+          "unit": "s"
+        }
       },
       "name": "Test alarm get",
       "patterns": null,
@@ -64,7 +67,10 @@ Feature: Update a metaalarmrule
     {
       "auto_resolve": false,
       "config": {
-        "time_interval": 20,
+        "time_interval": {
+          "value": 20,
+          "unit": "s"
+        },
         "entity_patterns": [
           {
             "address": "current"
@@ -95,9 +101,12 @@ Feature: Update a metaalarmrule
       "auto_resolve": true,
       "name": "complex-test-1",
       "type": "complex",
-      "output_template": "{{ .Children.Alarm.Value.State.Message }}",
+      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {
-        "time_interval": 60,
+        "time_interval": {
+          "value": 1,
+          "unit": "m"
+        },
         "threshold_rate": 1,
         "event_patterns": [
           {

@@ -2,6 +2,7 @@ package statistics
 
 import (
 	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"strconv"
 	"sync"
 	"time"
@@ -14,6 +15,7 @@ import (
 )
 
 const secondsInMinute = 60
+const secondsInDay = 86400
 const redisTimeout = 5 * time.Second
 
 type statsListener struct {
@@ -220,9 +222,8 @@ func (l *statsListener) saveToDB(ctx context.Context) {
 			return
 		}
 
-		writeModels := fillEmptyIds(writeModelsByID, lastSavedID, minIds[collectionName],
+		err = fillEmptyIds(ctx, collection, writeModelsByID, lastSavedID, minIds[collectionName],
 			maxIds[collectionName], interval)
-		_, err = collection.BulkWrite(ctx, writeModels)
 		if err != nil {
 			l.logger.Error().Err(err).Msg("Failed to flush statistics: failed to save statistics to mongo")
 			return
@@ -239,15 +240,20 @@ func (l *statsListener) saveToDB(ctx context.Context) {
 // fillEmptyIds adds write models with empty counters if there are ids between minID and maxID
 // or between lastSavedID and maxID.
 func fillEmptyIds(
-	writeModelsByID map[int64]mongodriver.WriteModel,
+	ctx context.Context, collection mongo.DbCollection, writeModelsByID map[int64]mongodriver.WriteModel,
 	lastSavedID, minID, maxID, interval int64,
-) []mongodriver.WriteModel {
-	writeModels := make([]mongodriver.WriteModel, 0)
+) error {
+	writeModels := make([]mongodriver.WriteModel, 0, canopsis.DefaultBulkSize)
 	var id int64
 	if lastSavedID == 0 || lastSavedID > minID {
 		id = minID
 	} else {
 		id = lastSavedID
+	}
+
+	// for minute collection we should keep only last 1440 because of capped collection, for hours collection we still need to fill zeroes for all timeline
+	if interval == secondsInMinute && id < maxID - secondsInDay {
+		id = maxID - secondsInDay
 	}
 
 	for ; id <= maxID; id += interval {
@@ -259,9 +265,25 @@ func fillEmptyIds(
 				SetUpdate(bson.M{"$setOnInsert": bson.M{"_id": id, "received": 0, "dropped": 0}}).
 				SetUpsert(true))
 		}
+
+		if len(writeModels) == canopsis.DefaultBulkSize {
+			_, err := collection.BulkWrite(ctx, writeModels)
+			if err != nil {
+				return err
+			}
+
+			writeModels = writeModels[:0]
+		}
 	}
 
-	return writeModels
+	if len(writeModels) > 0 {
+		_, err := collection.BulkWrite(ctx, writeModels)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // getLastID fetches max id from collection.

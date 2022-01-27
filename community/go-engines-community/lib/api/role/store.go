@@ -338,7 +338,7 @@ func getTypes(ctx context.Context, rightsCollection mongo.DbCollection, permissi
 			"_id":          bson.M{"$in": ids},
 			"crecord_type": securitymodel.LineTypeObject,
 			"type": bson.M{"$in": bson.A{
-				nil,
+				nil, "",
 				securitymodel.LineObjectTypeCRUD,
 				securitymodel.LineObjectTypeRW,
 			}},

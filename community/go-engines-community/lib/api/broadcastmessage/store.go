@@ -2,6 +2,7 @@ package broadcastmessage
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -10,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 type Store interface {
@@ -18,7 +20,7 @@ type Store interface {
 	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
 	Update(ctx context.Context, model *BroadcastMessage) (bool, error)
 	Delete(ctx context.Context, id string) (bool, error)
-	GetActive(ctx context.Context) ([]*BroadcastMessage, error)
+	GetActive(ctx context.Context) ([]BroadcastMessage, error)
 }
 
 type store struct {
@@ -44,15 +46,15 @@ func (s store) Insert(ctx context.Context, model *BroadcastMessage) error {
 }
 
 func (s store) GetById(ctx context.Context, id string) (*BroadcastMessage, error) {
-	bm := &BroadcastMessage{}
-	d := s.dbCollection.FindOne(ctx, bson.M{"_id": id})
-	if d.Err() != nil {
-		return nil, d.Err()
-	}
-	if err := d.Decode(&bm); err != nil {
+	bm := BroadcastMessage{}
+	err := s.dbCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&bm)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, nil
+		}
 		return nil, err
 	}
-	return bm, nil
+	return &bm, nil
 }
 
 func (s store) Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error) {
@@ -115,7 +117,7 @@ func (s store) Delete(ctx context.Context, id string) (bool, error) {
 	return deleted > 0, nil
 }
 
-func (s store) GetActive(ctx context.Context) ([]*BroadcastMessage, error) {
+func (s store) GetActive(ctx context.Context) ([]BroadcastMessage, error) {
 	now := time.Now().Unix()
 	cursor, err := s.dbCollection.Find(ctx, bson.M{"$and": bson.A{
 		bson.M{
@@ -133,17 +135,13 @@ func (s store) GetActive(ctx context.Context) ([]*BroadcastMessage, error) {
 		return nil, err
 	}
 
-	actives := make([]*BroadcastMessage, 0)
-	defer cursor.Close(ctx)
-	for cursor.Next(ctx) {
-		var bm BroadcastMessage
-		err = cursor.Decode(&bm)
-		if err != nil {
-			return nil, err
-		}
-		actives = append(actives, &bm)
+	messages := make([]BroadcastMessage, 0)
+	err = cursor.All(ctx, &messages)
+	if err != nil {
+		return nil, err
 	}
-	return actives, nil
+
+	return messages, nil
 }
 
 func NewStore(

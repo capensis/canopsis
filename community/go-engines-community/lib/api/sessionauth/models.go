@@ -15,7 +15,3 @@ type loginResponse struct {
 	} `json:"contact"`
 	Email string `json:"mail"`
 }
-
-type sessionsCountResponse struct {
-	Count int64 `json:"count"`
-}

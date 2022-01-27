@@ -1,7 +1,6 @@
 package websocket
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,8 +19,7 @@ type api struct {
 }
 
 func (a *api) Handler(c *gin.Context) {
-	userId := c.MustGet(auth.UserKey).(string)
-	err := a.hub.Connect(userId, c.Writer, c.Request)
+	err := a.hub.Connect(c.Writer, c.Request)
 	if err != nil {
 		panic(err)
 	}

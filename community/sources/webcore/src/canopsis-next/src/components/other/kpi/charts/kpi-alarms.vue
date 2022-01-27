@@ -7,6 +7,7 @@
       :sampling="pagination.sampling",
       :downloading="downloading",
       :min-date="minDate",
+      :interval="interval",
       responsive,
       @export:csv="exportAlarmMetricsAsCsv",
       @export:png="exportAlarmMetricsAsPng",
@@ -64,6 +65,14 @@ export default {
       },
     };
   },
+  computed: {
+    interval() {
+      return {
+        from: convertStartDateIntervalToTimestamp(this.query.interval.from),
+        to: convertStopDateIntervalToTimestamp(this.query.interval.to),
+      };
+    },
+  },
   mounted() {
     this.fetchList();
   },
@@ -73,14 +82,8 @@ export default {
     },
 
     getFileName() {
-      const fromTime = convertDateToString(
-        convertStartDateIntervalToTimestamp(this.query.interval.from),
-        DATETIME_FORMATS.short,
-      );
-      const toTime = convertDateToString(
-        convertStopDateIntervalToTimestamp(this.query.interval.to),
-        DATETIME_FORMATS.short,
-      );
+      const fromTime = convertDateToString(this.interval.from, DATETIME_FORMATS.short);
+      const toTime = convertDateToString(this.interval.to, DATETIME_FORMATS.short);
 
       return [KPI_ALARM_METRICS_FILENAME_PREFIX, fromTime, toTime, this.query.sampling].join('-');
     },

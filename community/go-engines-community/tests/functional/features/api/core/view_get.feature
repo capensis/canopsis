@@ -26,7 +26,7 @@ Feature: Get a view
           "title": "test-view-to-get-1-title",
           "periodic_refresh": {
             "enabled": true,
-            "seconds": 1,
+            "value": 1,
             "unit": "s"
           },
           "tabs": [
@@ -76,7 +76,7 @@ Feature: Get a view
           "title": "test-view-to-get-2-title",
           "periodic_refresh": {
             "enabled": true,
-            "seconds": 1,
+            "value": 1,
             "unit": "s"
           },
           "tabs": [
@@ -135,7 +135,7 @@ Feature: Get a view
       "title": "test-view-to-get-1-title",
       "periodic_refresh": {
         "enabled": true,
-        "seconds": 1,
+        "value": 1,
         "unit": "s"
       },
       "tabs": [
