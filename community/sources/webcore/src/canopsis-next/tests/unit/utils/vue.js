@@ -17,6 +17,10 @@ import SetSeveralPlugin from '@/plugins/set-several';
 /**
  * @typedef {Wrapper<Vue>} CustomWrapper
  * @property {Function} getValidator
+ * @property {Function} findAllTooltips
+ * @property {Function} findTooltip
+ * @property {Function} findAllMenus
+ * @property {Function} findMenu
  */
 
 document.body.setAttribute('data-app', true);
@@ -69,6 +73,19 @@ const stubs = {
 export const createVueInstance = () => createLocalVue();
 
 /**
+ * New functionality add to wrapper
+ *
+ * @param {CustomWrapper} wrapper
+ */
+const enhanceWrapper = (wrapper) => {
+  wrapper.getValidator = () => wrapper.vm.$validator;
+  wrapper.findAllMenus = () => wrapper.findAll('.v-menu__content');
+  wrapper.findMenu = () => wrapper.find('.v-menu__content');
+  wrapper.findAllTooltips = () => wrapper.findAll('.v-tooltip__content');
+  wrapper.findTooltip = () => wrapper.find('.v-tooltip__content');
+};
+
+/**
  * Function for mount vue component with mocked i18n, constants and config.
  *
  * @param {Object} component
@@ -85,7 +102,7 @@ export const mount = (component, options = {}) => {
     merge({ mocks, stubs }, options),
   );
 
-  wrapper.getValidator = () => wrapper.vm.$validator;
+  enhanceWrapper(wrapper);
 
   return wrapper;
 };
@@ -103,7 +120,7 @@ export const shallowMount = (component, options = {}) => {
     merge(options, { mocks, stubs }),
   );
 
-  wrapper.getValidator = () => wrapper.vm.$validator;
+  enhanceWrapper(wrapper);
 
   afterEach(() => {
     jest.clearAllMocks();
