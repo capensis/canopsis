@@ -1043,7 +1043,7 @@ describe('actions-panel', () => {
         id: `${alarmData._id}${assignedInstruction._id}`,
         name: MODALS.executeRemediationInstruction,
         config: {
-          alarm: alarmData,
+          alarmId: alarmData._id,
           assignedInstruction,
           onOpen: expect.any(Function),
           onClose: expect.any(Function),

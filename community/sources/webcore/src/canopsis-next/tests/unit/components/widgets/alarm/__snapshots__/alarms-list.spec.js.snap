@@ -1,0 +1,102 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
+<div>
+  <div
+    class="layout white row wrap justify-space-between align-center"
+  >
+    <div
+      class="flex"
+    >
+      <c-advanced-search-field-stub
+        columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        query="[object Object]"
+        tooltip="search.alarmAdvancedSearch"
+      />
+    </div>
+    <!---->
+    <!---->
+    <div
+      class="flex"
+    >
+      <filter-selector-stub
+        condition="$and"
+        entitiestype="alarm"
+        filters=""
+        hasaccesstoaddfilter="true"
+        itemtext="title"
+        itemvalue="title"
+        label="settings.selectAFilter"
+        lockedfilters=""
+      />
+    </div>
+    <div
+      class="flex"
+    >
+      <alarms-list-remediation-instructions-filters-stub
+        filters=""
+        lockedfilters=""
+      />
+    </div>
+    <div
+      class="flex"
+    >
+      <span
+        class="v-chip primary white--text v-chip--label v-chip--removable theme--light"
+        tabindex="0"
+      >
+        <span
+          class="v-chip__content"
+        >
+          quickRanges.types.last1Year
+          <div
+            class="v-chip__close"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              cancel
+            </i>
+          </div>
+        </span>
+      </span>
+      <c-action-btn-stub
+        color="primary"
+        icon="schedule"
+        tooltip="liveReporting.button"
+      />
+    </div>
+    <!---->
+  </div>
+  <div
+    class="layout row wrap align-center"
+  >
+    <c-pagination-stub
+      limit="13"
+      total="10"
+      type="top"
+    />
+  </div>
+  <alarms-list-table-stub
+    alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    expandable="true"
+    hascolumns="true"
+    hidegroups="true"
+    istourenabled="true"
+    pagination="[object Object]"
+    selectable="true"
+    totalitems="10"
+    widget="[object Object]"
+  >
+    <c-table-pagination-stub
+      rows-per-page="13"
+      total-items="10"
+    />
+  </alarms-list-table-stub>
+  <alarms-expand-panel-tour-stub
+    callbacks="[object Object]"
+  />
+</div>
+`;
