@@ -87,7 +87,7 @@ Feature: update meta alarm on action
       "output": "test-output-pbehavior-action-correlation-1"
     }
     """
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
     When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
     Then the response code should be 200
     Then the response body should contain:
