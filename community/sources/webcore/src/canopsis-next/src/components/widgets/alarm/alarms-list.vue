@@ -277,7 +277,7 @@ export default {
       this.$modals.show({
         name: MODALS.editLiveReporting,
         config: {
-          ...pick(this.query, ['tstart', 'tstop']),
+          ...pick(this.query, ['tstart', 'tstop', 'time_field']),
           action: params => this.query = { ...this.query, ...params },
         },
       });

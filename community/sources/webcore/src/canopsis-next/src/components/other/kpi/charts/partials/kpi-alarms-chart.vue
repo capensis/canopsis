@@ -20,6 +20,7 @@ import {
 } from '@/helpers/date/duration';
 import { getDateLabelBySampling, isRatioMetric, isTimeMetric } from '@/helpers/metrics';
 import { getMetricColor } from '@/helpers/color';
+import { convertDateToStartOfUnitTimestamp, getNowTimestamp } from '@/helpers/date/date';
 
 import BarChart from '@/components/common/chart/bar-chart.vue';
 
@@ -37,6 +38,13 @@ export default {
     metrics: {
       type: Array,
       default: () => [],
+    },
+    interval: {
+      type: Object,
+      default: () => ({
+        from: 0,
+        to: getNowTimestamp(),
+      }),
     },
     sampling: {
       type: String,
@@ -104,6 +112,8 @@ export default {
         scales: {
           x: {
             type: 'time',
+            min: this.interval.from * 1000,
+            max: this.interval.to * 1000,
             ticks: {
               min: this.minDate * 1000,
               max: Date.now(),
@@ -177,7 +187,7 @@ export default {
             limits: {
               x: {
                 min: this.minDate * 1000,
-                max: Date.now(),
+                max: convertDateToStartOfUnitTimestamp(getNowTimestamp(), TIME_UNITS.hour) * 1000,
               },
             },
             pan: {

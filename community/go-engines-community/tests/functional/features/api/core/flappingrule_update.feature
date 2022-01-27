@@ -22,7 +22,7 @@ Feature: Update an flapping rule
         }
       ],
       "duration": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "freq_limit": 3,
@@ -53,7 +53,7 @@ Feature: Update an flapping rule
         }
       ],
       "duration": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "freq_limit": 3,
@@ -90,7 +90,7 @@ Feature: Update an flapping rule
         }
       ],
       "duration": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "freq_limit": 3,
@@ -120,7 +120,7 @@ Feature: Update an flapping rule
         "entity_patterns": "EntityPatterns or AlarmPatterns is required.",
         "name": "Name is missing.",
         "freq_limit": "FreqLimit is missing.",
-        "duration.seconds": "Seconds is missing.",
+        "duration.value": "Value is missing.",
         "duration.unit": "Unit is missing.",
         "priority": "Priority is missing."
       }

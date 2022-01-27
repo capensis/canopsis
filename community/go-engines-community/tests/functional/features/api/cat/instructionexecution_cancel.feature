@@ -17,7 +17,7 @@ Feature: cancel a instruction execution
       "description": "test-instruction-execution-cancel-1-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -26,12 +26,12 @@ Feature: cancel a instruction execution
           "operations": [
             {
               "name": "test-instruction-execution-cancel-1-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-cancel-1-step-1-operation-1-description"
             },
             {
               "name": "test-instruction-execution-cancel-1-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-execution-cancel-1-step-1-operation-2-description"
             }
           ],
@@ -68,7 +68,7 @@ Feature: cancel a instruction execution
       "description": "test-instruction-execution-cancel-2-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -77,12 +77,12 @@ Feature: cancel a instruction execution
           "operations": [
             {
               "name": "test-instruction-execution-cancel-2-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-cancel-2-step-1-operation-1-description"
             },
             {
               "name": "test-instruction-execution-cancel-2-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-execution-cancel-2-step-1-operation-2-description"
             }
           ],
@@ -130,7 +130,7 @@ Feature: cancel a instruction execution
       "description": "test-instruction-cancel-execution-running-1-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -139,12 +139,12 @@ Feature: cancel a instruction execution
           "operations": [
             {
               "name": "test-instruction-cancel-execution-running-1-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-cancel-execution-running-1-step-1-operation-1-description"
             },
             {
               "name": "test-instruction-cancel-execution-running-1-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-cancel-execution-running-1-step-1-operation-2-description"
             }
           ],

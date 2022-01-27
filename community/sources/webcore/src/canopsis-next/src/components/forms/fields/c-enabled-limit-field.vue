@@ -64,10 +64,6 @@ export default {
     limitFieldName() {
       return `${this.name}.limit`;
     },
-
-    hasDuration() {
-      return !this.value.value;
-    },
   },
 };
 </script>

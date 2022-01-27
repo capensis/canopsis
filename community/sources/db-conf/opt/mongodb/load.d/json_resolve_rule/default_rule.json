@@ -5,11 +5,9 @@
     "author": "root",
     "name": "Default rule",
     "duration": {
-      "seconds": 60,
+      "value": 1,
       "unit": "m"
     },
-    "alarm_patterns": [],
-    "entity_patterns": [],
     "priority": 1,
     "created": 1635403887,
     "updated": 1635403887

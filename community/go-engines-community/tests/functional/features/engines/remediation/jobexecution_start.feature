@@ -39,7 +39,7 @@ Feature: run a job
       "description": "test-instruction-to-job-execution-start-1-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -48,7 +48,7 @@ Feature: run a job
           "operations": [
             {
               "name": "test-instruction-to-job-execution-start-1-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-job-execution-start-1-step-1-operation-1-description",
               "jobs": ["{{ .job1ID }}", "{{ .job2ID }}"]
             }
@@ -124,7 +124,7 @@ Feature: run a job
               "name": "test-instruction-to-job-execution-start-1-step-1-operation-1",
               "completed_at": 0,
               "time_to_complete": {
-                "seconds": 1,
+                "value": 1,
                 "unit": "s"
               },
               "jobs": [
@@ -148,32 +148,6 @@ Feature: run a job
               ]
             }
           ]
-        }
-      ]
-    }
-    """
-    When I do PUT /api/v4/cat/executions/{{ .executionID }}/ping
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "jobs": [
-        {
-          "_id": "",
-          "name": "test-job-to-job-execution-start-1-1-name",
-          "status": null,
-          "fail_reason": "",
-          "payload": "",
-          "started_at": 0,
-          "launched_at": 0,
-          "completed_at": 0
-        },
-        {
-          "name": "test-job-to-job-execution-start-1-2-name",
-          "status": 1,
-          "fail_reason": "",
-          "output": "test-job-execution-succeeded-output",
-          "payload": "{\"resource2\": \"test-resource-to-job-execution-start-1\",\"entity2\": \"test-resource-to-job-execution-start-1/test-component-to-job-execution-start-1\"}"
         }
       ]
     }
@@ -213,7 +187,7 @@ Feature: run a job
               "name": "test-instruction-to-job-execution-start-1-step-1-operation-1",
               "completed_at": 0,
               "time_to_complete": {
-                "seconds": 1,
+                "value": 1,
                 "unit": "s"
               },
               "jobs": [
@@ -234,29 +208,6 @@ Feature: run a job
               ]
             }
           ]
-        }
-      ]
-    }
-    """
-    When I do PUT /api/v4/cat/executions/{{ .executionID }}/ping
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "jobs": [
-        {
-          "name": "test-job-to-job-execution-start-1-1-name",
-          "status": 1,
-          "fail_reason": "",
-          "output": "test-job-execution-succeeded-output",
-          "payload": "{\"resource1\": \"test-resource-to-job-execution-start-1\",\"entity1\": \"test-resource-to-job-execution-start-1/test-component-to-job-execution-start-1\"}"
-        },
-        {
-          "name": "test-job-to-job-execution-start-1-2-name",
-          "status": 1,
-          "fail_reason": "",
-          "output": "test-job-execution-succeeded-output",
-          "payload": "{\"resource2\": \"test-resource-to-job-execution-start-1\",\"entity2\": \"test-resource-to-job-execution-start-1/test-component-to-job-execution-start-1\"}"
         }
       ]
     }
@@ -337,7 +288,7 @@ Feature: run a job
       "description": "test-instruction-to-job-execution-start-2-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -346,7 +297,7 @@ Feature: run a job
           "operations": [
             {
               "name": "test-instruction-to-job-execution-start-2-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-job-execution-start-2-step-1-operation-1-description",
               "jobs": ["{{ .jobID }}"]
             }
@@ -463,7 +414,7 @@ Feature: run a job
       "description": "test-instruction-to-job-execution-start-3-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -472,7 +423,7 @@ Feature: run a job
           "operations": [
             {
               "name": "test-instruction-to-job-execution-start-3-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-job-execution-start-3-step-1-operation-1-description",
               "jobs": ["{{ .jobID }}"]
             }
@@ -567,7 +518,7 @@ Feature: run a job
       "description": "test-instruction-to-job-execution-start-4-1-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -576,7 +527,7 @@ Feature: run a job
           "operations": [
             {
               "name": "test-instruction-to-job-execution-start-4-1-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-job-execution-start-4-1-step-1-operation-1-description",
               "jobs": ["{{ .jobID }}"]
             }
@@ -602,7 +553,7 @@ Feature: run a job
       "description": "test-instruction-to-job-execution-start-4-2-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -611,7 +562,7 @@ Feature: run a job
           "operations": [
             {
               "name": "test-instruction-to-job-execution-start-4-2-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-job-execution-start-4-2-step-1-operation-1-description",
               "jobs": ["{{ .jobID }}"]
             }
@@ -729,7 +680,7 @@ Feature: run a job
       "description": "test-instruction-to-job-execution-start-5-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -738,13 +689,13 @@ Feature: run a job
           "operations": [
             {
               "name": "test-instruction-to-job-execution-start-5-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-job-execution-start-5-step-1-operation-1-description",
               "jobs": []
             },
             {
               "name": "test-instruction-to-job-execution-start-5-step-1-operation-2",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-job-execution-start-5-step-1-operation-2-description",
               "jobs": ["{{ .jobID }}"]
             }
@@ -824,7 +775,7 @@ Feature: run a job
       "description": "test-instruction-to-job-execution-start-6-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -833,7 +784,7 @@ Feature: run a job
           "operations": [
             {
               "name": "test-instruction-to-job-execution-start-6-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-job-execution-start-6-step-1-operation-1-description",
               "jobs": ["{{ .jobID }}"]
             }
@@ -913,7 +864,7 @@ Feature: run a job
       "description": "test-instruction-to-job-execution-start-7-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -922,7 +873,7 @@ Feature: run a job
           "operations": [
             {
               "name": "test-instruction-to-job-execution-start-7-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-job-execution-start-7-step-1-operation-1-description",
               "jobs": ["{{ .jobID }}"]
             }
@@ -1006,7 +957,7 @@ Feature: run a job
       "description": "test-instruction-to-job-execution-start-8-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -1015,7 +966,7 @@ Feature: run a job
           "operations": [
             {
               "name": "test-instruction-to-job-execution-start-8-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-job-execution-start-8-step-1-operation-1-description",
               "jobs": ["{{ .jobID }}"]
             }
@@ -1080,19 +1031,27 @@ Feature: run a job
     """
     Then the response key "started_at" should not be "0"
     When I wait 2s
-    When I do PUT /api/v4/cat/executions/{{ .executionID }}/ping
+    When I do GET /api/v4/cat/executions/{{ .executionID }}
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "jobs": [
+      "steps": [
         {
-          "name": "test-job-to-job-execution-start-8-name",
-          "status": 1,
-          "fail_reason": "",
-          "output": "test-job-execution-succeeded-output",
-          "payload": "",
-          "query": null
+          "operations": [
+            {
+              "jobs": [
+                {
+                  "name": "test-job-to-job-execution-start-8-name",
+                  "status": 1,
+                  "fail_reason": "",
+                  "output": "test-job-execution-succeeded-output",
+                  "payload": "",
+                  "query": null
+                }
+              ]
+            }
+          ]
         }
       ]
     }
@@ -1129,7 +1088,7 @@ Feature: run a job
       "description": "test-instruction-to-job-execution-start-9-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -1138,7 +1097,7 @@ Feature: run a job
           "operations": [
             {
               "name": "test-instruction-to-job-execution-start-9-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-job-execution-start-9-step-1-operation-1-description",
               "jobs": ["{{ .jobID }}"]
             }
@@ -1206,22 +1165,30 @@ Feature: run a job
     """
     Then the response key "started_at" should not be "0"
     When I wait 2s
-    When I do PUT /api/v4/cat/executions/{{ .executionID }}/ping
+    When I do GET /api/v4/cat/executions/{{ .executionID }}
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "jobs": [
+      "steps": [
         {
-          "name": "test-job-to-job-execution-start-9-name",
-          "status": 1,
-          "fail_reason": "",
-          "output": "test-job-execution-params-succeeded-output",
-          "payload": "",
-          "query": {
-            "resource1": "test-resource-to-job-execution-start-9",
-            "entity1": "test-resource-to-job-execution-start-9/test-component-to-job-execution-start-9"
-          }
+          "operations": [
+            {
+              "jobs": [
+                {
+                  "name": "test-job-to-job-execution-start-9-name",
+                  "status": 1,
+                  "fail_reason": "",
+                  "output": "test-job-execution-params-succeeded-output",
+                  "payload": "",
+                  "query": {
+                    "resource1": "test-resource-to-job-execution-start-9",
+                    "entity1": "test-resource-to-job-execution-start-9/test-component-to-job-execution-start-9"
+                  }
+                }
+              ]
+            }
+          ]
         }
       ]
     }
@@ -1255,7 +1222,7 @@ Feature: run a job
       "description": "test-instruction-to-job-execution-start-10-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -1264,7 +1231,7 @@ Feature: run a job
           "operations": [
             {
               "name": "test-instruction-to-job-execution-start-10-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-job-execution-start-10-step-1-operation-1-description",
               "jobs": ["{{ .jobID }}"]
             }
@@ -1329,19 +1296,27 @@ Feature: run a job
     """
     Then the response key "started_at" should not be "0"
     When I wait 2s
-    When I do PUT /api/v4/cat/executions/{{ .executionID }}/ping
+    When I do GET /api/v4/cat/executions/{{ .executionID }}
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "jobs": [
+      "steps": [
         {
-          "name": "test-job-to-job-execution-start-10-name",
-          "status": 1,
-          "fail_reason": "",
-          "output": "test-job-execution-succeeded-output",
-          "payload": "{\"resource1\": \"test-resource-to-job-execution-start-10\", \"entity1\": \"test-resource-to-job-execution-start-10/test-component-to-job-execution-start-10\"}",
-          "query": null
+          "operations": [
+            {
+              "jobs": [
+                {
+                  "name": "test-job-to-job-execution-start-10-name",
+                  "status": 1,
+                  "fail_reason": "",
+                  "output": "test-job-execution-succeeded-output",
+                  "payload": "{\"resource1\": \"test-resource-to-job-execution-start-10\", \"entity1\": \"test-resource-to-job-execution-start-10/test-component-to-job-execution-start-10\"}",
+                  "query": null
+                }
+              ]
+            }
+          ]
         }
       ]
     }

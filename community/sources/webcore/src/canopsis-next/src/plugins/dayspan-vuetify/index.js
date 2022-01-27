@@ -1,4 +1,4 @@
-import { Identifier } from 'dayspan';
+import { Identifier, Constants } from 'dayspan';
 import DaySpanVuetify from 'dayspan-vuetify/src/plugin';
 
 import DsDay from './components/day.vue';
@@ -23,6 +23,16 @@ Identifier.Day.__proto__.get = function get(context) {
   context.dayOfWeek = context.date.weekday();
 
   return originalGet.call(this, context);
+};
+
+/**
+ * We've added this code to using `seconds` duration inside a schedule
+ */
+Constants.DURATION_TO_MILLIS = {
+  second: Constants.MILLIS_IN_SECOND,
+  seconds: Constants.MILLIS_IN_SECOND,
+
+  ...Constants.DURATION_TO_MILLIS,
 };
 /* eslint-enable no-proto, no-param-reassign */
 

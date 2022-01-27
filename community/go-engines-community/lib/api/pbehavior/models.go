@@ -49,6 +49,42 @@ type UpdateRequest struct {
 	ID string `json:"-"`
 }
 
+type BulkUpdateRequestItem struct {
+	EditRequest
+	ID string `json:"_id" binding:"required"`
+}
+
+type BulkDeleteRequestItem struct {
+	ID string `json:"_id" binding:"required"`
+}
+
+// for swagger
+type BulkCreateResponseItem struct {
+	ID     string            `json:"id,omitempty"`
+	Item   CreateRequest     `json:"item"`
+	Status int               `json:"status"`
+	Error  string            `json:"error,omitempty"`
+	Errors map[string]string `json:"errors,omitempty"`
+}
+
+// for swagger
+type BulkUpdateResponseItem struct {
+	ID     string                `json:"id,omitempty"`
+	Item   BulkUpdateRequestItem `json:"item"`
+	Status int                   `json:"status"`
+	Error  string                `json:"error,omitempty"`
+	Errors map[string]string     `json:"errors,omitempty"`
+}
+
+// for swagger
+type BulkDeleteResponseItem struct {
+	ID     string                `json:"id,omitempty"`
+	Item   BulkDeleteRequestItem `json:"item"`
+	Status int                   `json:"status"`
+	Error  string                `json:"error,omitempty"`
+	Errors map[string]string     `json:"errors,omitempty"`
+}
+
 type PatchRequest struct {
 	Author     string                             `json:"author" swaggerignore:"true"`
 	Enabled    *bool                              `json:"enabled"`

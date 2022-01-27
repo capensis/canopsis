@@ -102,5 +102,5 @@ export async function checkUserAccessForRoute(to = {}) {
     type: POPUP_TYPES.error,
   });
 
-  throw new Error('User don\'t have access to page');
+  throw new Error(`User doesn't have access to page '${to.path}' with permission id '${permissionId}'`);
 }

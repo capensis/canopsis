@@ -78,7 +78,7 @@ Feature: Get a view group
               "title": "test-view-to-viewgroup-get-2-title",
               "periodic_refresh": {
                 "enabled": true,
-                "seconds": 1,
+                "value": 1,
                 "unit": "s"
               },
               "tabs": [
@@ -121,7 +121,7 @@ Feature: Get a view group
               "title": "test-view-to-viewgroup-get-1-title",
               "periodic_refresh": {
                 "enabled": true,
-                "seconds": 1,
+                "value": 1,
                 "unit": "s"
               },
               "tabs": [
@@ -230,7 +230,7 @@ Feature: Get a view group
               "title": "test-view-to-viewgroup-get-2-title",
               "periodic_refresh": {
                 "enabled": true,
-                "seconds": 1,
+                "value": 1,
                 "unit": "s"
               },
               "tabs": [
@@ -273,7 +273,7 @@ Feature: Get a view group
               "title": "test-view-to-viewgroup-get-1-title",
               "periodic_refresh": {
                 "enabled": true,
-                "seconds": 1,
+                "value": 1,
                 "unit": "s"
               },
               "tabs": [

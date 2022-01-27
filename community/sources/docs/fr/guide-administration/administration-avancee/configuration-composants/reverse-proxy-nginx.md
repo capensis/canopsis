@@ -54,7 +54,7 @@ Suivez la procédure suivante, si le service HTTP doit être accessible avec un 
 
 À partir de Canopsis 4.4.0, une configuration activant HTTPS, HTTP/2 et les Websockets est disponible, mais n'est pas encore activée par défaut.
 
-Consultez le [Guide d'activation d'HTTPS](../../webserver/https.md) pour en savoir plus.
+Consultez le [Guide d'activation d'HTTPS](reverse-proxy-nginx-https.md) pour en savoir plus.
 
 ### Modifications personnelles
 

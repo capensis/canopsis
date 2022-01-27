@@ -3,6 +3,7 @@ package export
 import (
 	"context"
 	"errors"
+	"fmt"
 	"os"
 	"sync"
 	"time"
@@ -21,6 +22,8 @@ const (
 	TaskStatusFailed
 )
 
+const fileNameTimeLayout = "2006-01-02T15-04-05"
+
 // TaskExecutor is used to implement export task executor.
 type TaskExecutor interface {
 	// StartExecute creates new export task.
@@ -32,9 +35,11 @@ type TaskExecutor interface {
 }
 
 type Task struct {
+	Filename     string
 	ExportFields Fields
 	Separator    rune
 	DataFetcher  DataFetcher
+	DataCursor   DataCursor
 }
 
 type Fields []Field
@@ -64,14 +69,21 @@ func (f *Fields) Labels() []string {
 
 type DataFetcher func(ctx context.Context, page, limit int64) ([]map[string]string, int64, error)
 
+type DataCursor interface {
+	Next(ctx context.Context) bool
+	Scan(*map[string]string) error
+	Close()
+}
+
 type taskWithID struct {
 	Task
 	ID string
 }
 
 type TaskStatus struct {
-	Status int    `bson:"status"`
-	File   string `bson:"file"`
+	Status   int    `bson:"status"`
+	File     string `bson:"file"`
+	Filename string `bson:"filename"`
 }
 
 func NewTaskExecutor(
@@ -165,8 +177,13 @@ func (e *taskExecutor) StartExecute(ctx context.Context, t Task) (string, error)
 	}
 
 	id := utils.NewID()
-	_, err := e.collection.InsertOne(ctx, bson.M{"_id": id, "status": TaskStatusRunning,
-		"created": types.CpsTime{Time: time.Now()}})
+	now := time.Now().UTC()
+	_, err := e.collection.InsertOne(ctx, bson.M{
+		"_id":      id,
+		"status":   TaskStatusRunning,
+		"created":  types.CpsTime{Time: now},
+		"filename": fmt.Sprintf("%s-%s.csv", t.Filename, now.Format(fileNameTimeLayout)),
+	})
 	if err != nil {
 		e.logger.Err(err).Msg("cannot save export task")
 		return "", err
@@ -197,7 +214,15 @@ func (e *taskExecutor) GetStatus(ctx context.Context, id string) (*TaskStatus, e
 }
 
 func (e *taskExecutor) executeTask(ctx context.Context, t taskWithID) {
-	fileName, err := ExportCsv(ctx, t.ExportFields, t.Separator, t.DataFetcher)
+	var err error
+	var fileName string
+
+	if t.DataFetcher != nil {
+		fileName, err = ExportCsv(ctx, t.ExportFields, t.Separator, t.DataFetcher)
+	} else {
+		fileName, err = ExportCsvByCursor(ctx, t.ExportFields, t.Separator, t.DataCursor)
+	}
+
 	if err != nil {
 		e.logger.Err(err).Msg("cannot export data")
 
@@ -249,7 +274,7 @@ func (e *taskExecutor) deleteTasks(ctx context.Context) {
 
 		if t.File != "" {
 			err = os.Remove(t.File)
-			if err != nil {
+			if err != nil && !os.IsNotExist(err) {
 				e.logger.Err(err).Msg("cannot remove export file")
 				continue
 			}

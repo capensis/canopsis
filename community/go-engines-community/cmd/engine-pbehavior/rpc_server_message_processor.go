@@ -80,7 +80,7 @@ func (p *createPbehaviorMessageProcessor) Process(
 	alarm *types.Alarm,
 	entity *types.Entity,
 	params types.ActionPBehaviorParameters,
-	msg []byte,
+	_ []byte,
 ) (*types.Event, error) {
 	pbehavior, err := p.createPbehavior(ctx, params, entity)
 	if err != nil {
@@ -146,32 +146,31 @@ func (p *createPbehaviorMessageProcessor) createPbehavior(
 		}
 	}
 
-	now := types.NewCpsTime(time.Now().Unix())
-	var start, stop *types.CpsTime
+	now := types.NewCpsTime()
+	var start, stop types.CpsTime
 	if params.Tstart != nil && params.Tstop != nil {
-		start = &types.CpsTime{Time: time.Unix(*params.Tstart, 0)}
-		stop = &types.CpsTime{Time: time.Unix(*params.Tstop, 0)}
+		start = types.NewCpsTime(*params.Tstart)
+		stop = types.NewCpsTime(*params.Tstop)
 	} else if params.StartOnTrigger != nil && *params.StartOnTrigger &&
-		params.Duration != nil && params.Duration.Seconds > 0 {
-		now := time.Now()
-		start = &types.CpsTime{Time: now}
-		stop = &types.CpsTime{Time: now.Add(time.Duration(params.Duration.Seconds) * time.Second)}
+		params.Duration != nil && params.Duration.Value > 0 {
+		start = now
+		stop = params.Duration.AddTo(now)
 	}
 
-	if start == nil {
+	if start.IsZero() {
 		return nil, fmt.Errorf("invalid action parameters, tstart with tstop or start_on_trigger with duration must be defined: %+v", params)
 	}
 
 	pbehavior := libpbehavior.PBehavior{
 		ID:      utils.NewID(),
-		Author:  params.Author,
+		Author:  params.UserID,                       // since author now contains username, we should use user_id in author
 		Enabled: true,
 		Filter:  fmt.Sprintf(`{"_id": "%s"}`, entity.ID),
 		Name:    params.Name,
 		Reason:  params.Reason,
 		RRule:   params.RRule,
-		Start:   start,
-		Stop:    stop,
+		Start:   &start,
+		Stop:    &stop,
 		Type:    params.Type,
 		Created: now,
 		Updated: now,

@@ -1,11 +1,11 @@
 ---
-- name: Create canopsis Vhost for rabbitmq
+- name: Create canopsis Vhost for RabbitMQ
   rabbitmq_vhost:
     name: "{{ canopsis_amqp_vhost }}"
     state: present
     node: "{{ canopsis_rabbit_nodename }}"
 
-- name: Create canopsis rabbit user
+- name: Create canopsis user for RabbitMQ
   rabbitmq_user:
     user: "{{ canopsis_amqp_userid }}"
     node: "{{ canopsis_rabbit_nodename }}"
@@ -18,7 +18,7 @@
         write_priv: .*
     state: present
 
-- name: Enables the rabbitmq_management plugin
+- name: Enable the rabbitmq_management plugin
   rabbitmq_plugin:
     names: rabbitmq_management
     state: enabled

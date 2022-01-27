@@ -19,7 +19,7 @@ func TestCleaner_Clean_GivenPbehaviorsWithoutRrule_ShouldDeleteThem(t *testing.T
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	d := time.Hour * 24 * 7
+	before := types.CpsTime{Time: time.Now().Add(-time.Hour * 24 * 7)}
 	var expectedDeleted int64 = 10
 
 	mockClient := mock_mongo.NewMockDbClient(ctrl)
@@ -32,7 +32,7 @@ func TestCleaner_Clean_GivenPbehaviorsWithoutRrule_ShouldDeleteThem(t *testing.T
 	mockCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockCursor, nil)
 	cleaner := pbehavior.NewCleaner(mockClient, zerolog.Nop())
 
-	deleted, err := cleaner.Clean(ctx, d)
+	deleted, err := cleaner.Clean(ctx, before)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -48,8 +48,8 @@ func TestCleaner_Clean_GivenPbehaviorsWithRrule_ShouldDeleteThem(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	d := time.Hour * 24 * 7
 	now := time.Now()
+	before := types.CpsTime{Time: now.Add(-time.Hour * 24 * 7)}
 	start := types.CpsTime{Time: now.AddDate(0, 0, -100)}
 	var expectedDeleted int64 = 2
 	pbehaviors := []pbehavior.PBehavior{
@@ -106,7 +106,7 @@ func TestCleaner_Clean_GivenPbehaviorsWithRrule_ShouldDeleteThem(t *testing.T) {
 	mockCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockCursor, nil)
 
 	cleaner := pbehavior.NewCleaner(mockClient, zerolog.Nop())
-	deleted, err := cleaner.Clean(ctx, d)
+	deleted, err := cleaner.Clean(ctx, before)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}

@@ -28,7 +28,7 @@ Feature: get a instruction
           },
           "enabled": true,
           "timeout_after_execution": {
-            "seconds": 2,
+            "value": 2,
             "unit": "s"
           },
           "steps": [
@@ -37,7 +37,7 @@ Feature: get a instruction
               "operations": [
                 {
                   "name": "test-instruction-to-get-1-step-1-operation-1-name",
-                  "time_to_complete": {"seconds": 1, "unit":"s"},
+                  "time_to_complete": {"value": 1, "unit":"s"},
                   "description": "test-instruction-to-get-1-step-1-operation-1-description",
                   "jobs": [
                     {
@@ -90,7 +90,7 @@ Feature: get a instruction
                 },
                 {
                   "name": "test-instruction-to-get-1-step-1-operation-2-name",
-                  "time_to_complete": {"seconds": 3, "unit":"s"},
+                  "time_to_complete": {"value": 3, "unit":"s"},
                   "description": "test-instruction-to-get-1-step-1-operation-2-description",
                   "jobs": [
                     {
@@ -127,7 +127,7 @@ Feature: get a instruction
               "operations": [
                 {
                   "name": "test-instruction-to-get-1-step-2-operation-1-name",
-                  "time_to_complete": {"seconds": 6, "unit":"s"},
+                  "time_to_complete": {"value": 6, "unit":"s"},
                   "description": "test-instruction-to-get-1-step-2-operation-1-description",
                   "jobs": [
                     {
@@ -259,7 +259,7 @@ Feature: get a instruction
           ],
           "priority": 0,
           "timeout_after_execution": {
-            "seconds": 2,
+            "value": 2,
             "unit": "s"
           },
           "last_executed_on": 1596712203,
@@ -397,7 +397,7 @@ Feature: get a instruction
       },
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 2,
+        "value": 2,
         "unit": "s"
       },
       "steps": [
@@ -406,7 +406,7 @@ Feature: get a instruction
           "operations": [
             {
                "name": "test-instruction-to-get-1-step-1-operation-1-name",
-               "time_to_complete": {"seconds": 1, "unit":"s"},
+               "time_to_complete": {"value": 1, "unit":"s"},
                "description": "test-instruction-to-get-1-step-1-operation-1-description",
                "jobs": [
                  {
@@ -459,7 +459,7 @@ Feature: get a instruction
               },
              {
                "name": "test-instruction-to-get-1-step-1-operation-2-name",
-               "time_to_complete": {"seconds": 3, "unit":"s"},
+               "time_to_complete": {"value": 3, "unit":"s"},
                "description": "test-instruction-to-get-1-step-1-operation-2-description",
                "jobs": [
                  {
@@ -496,7 +496,7 @@ Feature: get a instruction
          "operations": [
            {
              "name": "test-instruction-to-get-1-step-2-operation-1-name",
-             "time_to_complete": {"seconds": 6, "unit":"s"},
+             "time_to_complete": {"value": 6, "unit":"s"},
              "description": "test-instruction-to-get-1-step-2-operation-1-description",
              "jobs": [
                {

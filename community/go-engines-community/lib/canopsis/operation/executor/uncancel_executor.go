@@ -25,7 +25,7 @@ func (e *uncancelExecutor) Exec(
 	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
-	entity types.Entity,
+	entity *types.Entity,
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
@@ -33,6 +33,10 @@ func (e *uncancelExecutor) Exec(
 	var ok bool
 	if params, ok = operation.Parameters.(types.OperationParameters); !ok {
 		return "", fmt.Errorf("invalid parameters")
+	}
+
+	if userID == "" {
+		userID = params.User
 	}
 
 	if alarm.Value.Canceled == nil {
@@ -52,7 +56,7 @@ func (e *uncancelExecutor) Exec(
 	alarm.AddUpdate("$push", bson.M{"v.steps": newStep})
 
 	currentStatus := alarm.Value.Status.Value
-	newStatus := e.alarmStatusService.ComputeStatus(*alarm, entity)
+	newStatus := e.alarmStatusService.ComputeStatus(*alarm, *entity)
 
 	if newStatus == currentStatus {
 		alarm.AddUpdate("$set", bson.M{"v.canceled": alarm.Value.Canceled})

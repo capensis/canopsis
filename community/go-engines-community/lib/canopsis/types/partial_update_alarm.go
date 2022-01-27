@@ -66,16 +66,16 @@ func (a *Alarm) PartialUpdateAssocTicket(timestamp CpsTime, ticketData map[strin
 }
 
 // PartialUpdateSnooze add snooze step to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateSnooze(timestamp CpsTime, duration CpsNumber, author, output, userID, role, initiator string) error {
+func (a *Alarm) PartialUpdateSnooze(timestamp CpsTime, duration DurationWithUnit, author, output, userID, role, initiator string) error {
 	if a.Value.Snooze != nil {
 		return nil
 	}
 
 	newStep := NewAlarmStep(AlarmStepSnooze, timestamp, author, output, userID, role, initiator)
-	if duration == 0 {
+	if duration.Value == 0 {
 		return errt.NewUnknownError(errors.New("no duration for snoozing"))
 	}
-	newStep.Value = CpsNumber(timestamp.Time.Unix()) + duration
+	newStep.Value = CpsNumber(duration.AddTo(timestamp).Unix())
 	a.Value.Snooze = &newStep
 
 	err := a.Value.Steps.Add(newStep)
@@ -104,7 +104,7 @@ func (a *Alarm) PartialUpdateUnsnooze(timestamp CpsTime) error {
 }
 
 func (a *Alarm) PartialUpdatePbhEnter(timestamp CpsTime, pbehaviorInfo PbehaviorInfo, author, output, userID, role, initiator string) error {
-	if a.Value.PbehaviorInfo == pbehaviorInfo {
+	if a.Value.PbehaviorInfo.Same(pbehaviorInfo) {
 		return nil
 	}
 
@@ -158,7 +158,7 @@ func (a *Alarm) PartialUpdatePbhLeave(timestamp CpsTime, author, output, userID,
 }
 
 func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo PbehaviorInfo, author, output, userID, role, initiator string) error {
-	if a.Value.PbehaviorInfo == pbehaviorInfo {
+	if a.Value.PbehaviorInfo.Same(pbehaviorInfo) {
 		return nil
 	}
 
@@ -168,7 +168,7 @@ func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo P
 	}
 
 	leaveOutput := fmt.Sprintf(
-		"Pbehavior %s. Type: %s. Reason: %s",
+		"Pbehavior %s. Type: %s. Reason: %s.",
 		a.Value.PbehaviorInfo.Name,
 		a.Value.PbehaviorInfo.TypeName,
 		a.Value.PbehaviorInfo.Reason,

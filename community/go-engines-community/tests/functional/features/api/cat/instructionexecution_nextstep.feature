@@ -17,7 +17,7 @@ Feature: move a instruction execution to next step
       "description": "test-instruction-execution-next-step-1-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -26,7 +26,7 @@ Feature: move a instruction execution to next step
           "operations": [
             {
               "name": "test-instruction-execution-next-step-1-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-next-step-1-step-1-operation-1-description connector {{ `{{ .Alarm.Value.Connector }}` }} entity {{ `{{ .Entity.ID }}` }}"
             }
           ],
@@ -38,7 +38,7 @@ Feature: move a instruction execution to next step
           "operations": [
             {
               "name": "test-instruction-execution-next-step-1-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 6, "unit":"s"},
               "description": "test-instruction-execution-next-step-1-step-2-operation-1-description connector {{ `{{ .Alarm.Value.Connector }}` }} entity {{ `{{ .Entity.ID }}` }}"
             }
           ],
@@ -68,12 +68,12 @@ Feature: move a instruction execution to next step
       "steps": [
         {
           "name": "test-instruction-execution-next-step-1-step-1",
-          "time_to_complete": {"seconds": 1, "unit":"s"},
+          "time_to_complete": {"value": 1, "unit":"s"},
           "failed_at": 0,
           "operations": [
             {
               "name": "test-instruction-execution-next-step-1-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-next-step-1-step-1-operation-1-description connector test-instruction-execution-next-step-connector entity test-instruction-execution-next-step-resource-1/test-instruction-execution-next-step-component",
               "jobs": []
             }
@@ -82,14 +82,14 @@ Feature: move a instruction execution to next step
         },
         {
           "name": "test-instruction-execution-next-step-1-step-2",
-          "time_to_complete": {"seconds": 6, "unit":"s"},
+          "time_to_complete": {"value": 6, "unit":"s"},
           "completed_at": 0,
           "failed_at": 0,
           "operations": [
             {
               "completed_at": 0,
               "name": "test-instruction-execution-next-step-1-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 6, "unit":"s"},
               "description": "test-instruction-execution-next-step-1-step-2-operation-1-description connector test-instruction-execution-next-step-connector entity test-instruction-execution-next-step-resource-1/test-instruction-execution-next-step-component",
               "jobs": []
             }
@@ -119,7 +119,7 @@ Feature: move a instruction execution to next step
       "description": "test-instruction-execution-next-step-2-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -128,7 +128,7 @@ Feature: move a instruction execution to next step
           "operations": [
             {
               "name": "test-instruction-execution-next-step-2-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-next-step-2-step-1-operation-1-description"
             }
           ],
@@ -140,7 +140,7 @@ Feature: move a instruction execution to next step
           "operations": [
             {
               "name": "test-instruction-execution-next-step-2-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 6, "unit":"s"},
               "description": "test-instruction-execution-next-step-2-step-2-operation-1-description"
             }
           ],
@@ -175,12 +175,12 @@ Feature: move a instruction execution to next step
       "steps": [
         {
           "name": "test-instruction-execution-next-step-2-step-1",
-          "time_to_complete": {"seconds": 1, "unit":"s"},
+          "time_to_complete": {"value": 1, "unit":"s"},
           "completed_at": 0,
           "operations": [
             {
               "name": "test-instruction-execution-next-step-2-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-next-step-2-step-1-operation-1-description",
               "jobs": []
             }
@@ -189,14 +189,14 @@ Feature: move a instruction execution to next step
         },
         {
           "name": "test-instruction-execution-next-step-2-step-2",
-          "time_to_complete": {"seconds": 6, "unit":"s"},
+          "time_to_complete": {"value": 6, "unit":"s"},
           "completed_at": 0,
           "failed_at": 0,
           "operations": [
             {
               "completed_at": 0,
               "name": "test-instruction-execution-next-step-2-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 6, "unit":"s"},
               "description": "test-instruction-execution-next-step-2-step-2-operation-1-description",
               "jobs": []
             }
@@ -226,7 +226,7 @@ Feature: move a instruction execution to next step
       "description": "test-instruction-execution-next-step-3-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -235,12 +235,12 @@ Feature: move a instruction execution to next step
           "operations": [
             {
               "name": "test-instruction-execution-next-step-3-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-next-step-3-step-1-operation-1-description"
             },
             {
               "name": "test-instruction-execution-next-step-3-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-execution-next-step-3-step-1-operation-2-description"
             }
           ],
@@ -252,7 +252,7 @@ Feature: move a instruction execution to next step
           "operations": [
             {
               "name": "test-instruction-execution-next-step-3-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 6, "unit":"s"},
               "description": "test-instruction-execution-next-step-3-step-2-operation-1-description"
             }
           ],
@@ -286,17 +286,17 @@ Feature: move a instruction execution to next step
       "steps": [
         {
           "name": "test-instruction-execution-next-step-3-step-1",
-          "time_to_complete": {"seconds": 4, "unit":"s"},
+          "time_to_complete": {"value": 4, "unit":"s"},
           "failed_at": 0,
           "operations": [
             {
               "name": "test-instruction-execution-next-step-3-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-next-step-3-step-1-operation-1-description"
             },
             {
               "name": "test-instruction-execution-next-step-3-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-execution-next-step-3-step-1-operation-2-description",
               "jobs": []
             }
@@ -305,12 +305,12 @@ Feature: move a instruction execution to next step
         },
         {
           "name": "test-instruction-execution-next-step-3-step-2",
-          "time_to_complete": {"seconds": 6, "unit":"s"},
+          "time_to_complete": {"value": 6, "unit":"s"},
           "failed_at": 0,
           "operations": [
             {
               "name": "test-instruction-execution-next-step-3-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 6, "unit":"s"},
               "description": "test-instruction-execution-next-step-3-step-2-operation-1-description",
               "jobs": []
             }
@@ -344,7 +344,7 @@ Feature: move a instruction execution to next step
       "description": "test-instruction-execution-next-step-5-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -353,12 +353,12 @@ Feature: move a instruction execution to next step
           "operations": [
             {
               "name": "test-instruction-execution-next-step-5-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-next-step-5-step-1-operation-1-description"
             },
             {
               "name": "test-instruction-execution-next-step-5-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-execution-next-step-5-step-1-operation-2-description"
             }
           ],
@@ -370,7 +370,7 @@ Feature: move a instruction execution to next step
           "operations": [
             {
               "name": "test-instruction-execution-next-step-5-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 6, "unit":"s"},
               "description": "test-instruction-execution-next-step-5-step-2-operation-1-description"
             }
           ],
@@ -407,17 +407,17 @@ Feature: move a instruction execution to next step
       "steps": [
         {
           "name": "test-instruction-execution-next-step-5-step-1",
-          "time_to_complete": {"seconds": 4, "unit":"s"},
+          "time_to_complete": {"value": 4, "unit":"s"},
           "completed_at": 0,
           "operations": [
             {
               "name": "test-instruction-execution-next-step-5-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-next-step-5-step-1-operation-1-description"
             },
             {
               "name": "test-instruction-execution-next-step-5-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-execution-next-step-5-step-1-operation-2-description",
               "jobs": []
             }
@@ -426,7 +426,7 @@ Feature: move a instruction execution to next step
         },
         {
           "name": "test-instruction-execution-next-step-5-step-2",
-          "time_to_complete": {"seconds": 6, "unit":"s"},
+          "time_to_complete": {"value": 6, "unit":"s"},
           "completed_at": 0,
           "failed_at": 0,
           "operations": [
@@ -434,7 +434,7 @@ Feature: move a instruction execution to next step
               "started_at": 0,
               "completed_at": 0,
               "name": "test-instruction-execution-next-step-5-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 6, "unit":"s"},
               "description": "",
               "jobs": []
             }
@@ -465,7 +465,7 @@ Feature: move a instruction execution to next step
       "description": "test-instruction-execution-next-step-6-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -474,12 +474,12 @@ Feature: move a instruction execution to next step
           "operations": [
             {
               "name": "test-instruction-execution-next-step-6-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-next-step-6-step-1-operation-1-description"
             },
             {
               "name": "test-instruction-execution-next-step-6-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-execution-next-step-6-step-1-operation-2-description"
             }
           ],
@@ -491,7 +491,7 @@ Feature: move a instruction execution to next step
           "operations": [
             {
               "name": "test-instruction-execution-next-step-6-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 6, "unit":"s"},
               "description": "test-instruction-execution-next-step-6-step-2-operation-1-description"
             }
           ],
@@ -530,17 +530,17 @@ Feature: move a instruction execution to next step
       "steps": [
         {
           "name": "test-instruction-execution-next-step-6-step-1",
-          "time_to_complete": {"seconds": 4, "unit":"s"},
+          "time_to_complete": {"value": 4, "unit":"s"},
           "failed_at": 0,
           "operations": [
             {
               "name": "test-instruction-execution-next-step-6-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-next-step-6-step-1-operation-1-description"
             },
             {
               "name": "test-instruction-execution-next-step-6-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-execution-next-step-6-step-1-operation-2-description",
               "jobs": []
             }
@@ -549,12 +549,12 @@ Feature: move a instruction execution to next step
         },
         {
           "name": "test-instruction-execution-next-step-6-step-2",
-          "time_to_complete": {"seconds": 6, "unit":"s"},
+          "time_to_complete": {"value": 6, "unit":"s"},
           "completed_at": 0,
           "operations": [
             {
               "name": "test-instruction-execution-next-step-6-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 6, "unit":"s"},
               "description": "test-instruction-execution-next-step-6-step-2-operation-1-description",
               "jobs": []
             }

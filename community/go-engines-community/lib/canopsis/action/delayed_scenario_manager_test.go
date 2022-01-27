@@ -51,8 +51,8 @@ func TestDelayedScenarioManager_AddDelayedScenario_GivenMatchedDelayedScenario_S
 	scenario := action.Scenario{
 		ID: "test-scenario-id",
 		Delay: &types.DurationWithUnit{
-			Seconds: 10,
-			Unit:    "s",
+			Value: 10,
+			Unit:  "s",
 		},
 		Actions: []action.Action{
 			{

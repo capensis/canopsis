@@ -6,6 +6,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -13,21 +14,31 @@ import (
 )
 
 // NewChangeStateExecutor creates new executor.
-func NewChangeStateExecutor(configProvider config.AlarmConfigProvider, alarmStatusService alarmstatus.Service) operationlib.Executor {
-	return &changeStateExecutor{configProvider: configProvider, alarmStatusService: alarmStatusService}
+func NewChangeStateExecutor(
+	configProvider config.AlarmConfigProvider,
+	alarmStatusService alarmstatus.Service,
+	metricsSender metrics.Sender,
+) operationlib.Executor {
+	return &changeStateExecutor{
+		configProvider:     configProvider,
+		alarmStatusService: alarmStatusService,
+		metricsSender:      metricsSender,
+	}
 }
 
 type changeStateExecutor struct {
 	configProvider     config.AlarmConfigProvider
 	alarmStatusService alarmstatus.Service
+
+	metricsSender metrics.Sender
 }
 
 // Exec emits change state event.
 func (e *changeStateExecutor) Exec(
-	_ context.Context,
+	ctx context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
-	entity types.Entity,
+	entity *types.Entity,
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
@@ -37,12 +48,16 @@ func (e *changeStateExecutor) Exec(
 		return "", fmt.Errorf("invalid parameters")
 	}
 
+	if userID == "" {
+		userID = params.User
+	}
+
 	currentState := alarm.Value.State.Value
 	if currentState == types.AlarmStateOK {
 		return "", fmt.Errorf("cannot change ok state")
 	}
 
-	if currentState == params.State {
+	if currentState == params.State && alarm.IsStateLocked() {
 		return "", nil
 	}
 
@@ -59,11 +74,12 @@ func (e *changeStateExecutor) Exec(
 	}
 
 	currentStatus := alarm.Value.Status.Value
-	newStatus := e.alarmStatusService.ComputeStatus(*alarm, entity)
+	newStatus := e.alarmStatusService.ComputeStatus(*alarm, *entity)
 
 	if newStatus == currentStatus {
 		alarm.AddUpdate("$set", bson.M{"v.state": alarm.Value.State})
 		alarm.AddUpdate("$push", bson.M{"v.steps": alarm.Value.State})
+
 		return types.AlarmChangeTypeChangeState, nil
 	}
 
@@ -87,6 +103,8 @@ func (e *changeStateExecutor) Exec(
 		"v.last_update_date":                  alarm.Value.LastUpdateDate,
 	})
 	alarm.AddUpdate("$push", bson.M{"v.steps": bson.M{"$each": bson.A{alarm.Value.State, alarm.Value.Status}}})
+
+	go e.metricsSender.SendUpdateState(context.Background(), *alarm, *entity, currentState)
 
 	return types.AlarmChangeTypeChangeState, nil
 }

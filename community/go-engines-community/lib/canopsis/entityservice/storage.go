@@ -5,7 +5,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"github.com/go-redis/redis/v8"
-	"github.com/rs/zerolog"
 )
 
 const cacheKey = "services"
@@ -13,7 +12,7 @@ const cacheKey = "services"
 type Storage interface {
 	SaveAll(ctx context.Context, data []ServiceData) error
 	Save(ctx context.Context, data ServiceData) error
-	Load(ctx context.Context, ) ([]ServiceData, error)
+	Load(ctx context.Context) ([]ServiceData, error)
 	Get(ctx context.Context, id string) (*ServiceData, error)
 	Delete(ctx context.Context, id string) error
 }
@@ -22,13 +21,11 @@ func NewStorage(
 	client redis.Cmdable,
 	encoder encoding.Encoder,
 	decoder encoding.Decoder,
-	logger zerolog.Logger,
 ) Storage {
 	return &redisStorage{
 		client:  client,
 		encoder: encoder,
 		decoder: decoder,
-		logger:  logger,
 	}
 }
 
@@ -36,7 +33,6 @@ type redisStorage struct {
 	client  redis.Cmdable
 	encoder encoding.Encoder
 	decoder encoding.Decoder
-	logger  zerolog.Logger
 }
 
 type ServiceData struct {

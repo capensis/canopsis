@@ -57,7 +57,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		sortBy = r.SortBy
 	}
 	if sortBy == "interval" {
-		sortBy = "interval.seconds"
+		sortBy = "interval.value"
 	}
 
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(

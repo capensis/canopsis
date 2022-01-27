@@ -11,3 +11,4 @@ Ces formats peuvent être réutilisés par différentes parties de Canopsis. Ils
 
 * [Format des expressions régulières Canopsis](format-regex.md) : concerne notamment l'opérateur `regex_match`.
 * [Format de syntaxe des `valuepath`](format-valuepath.md) : concerne notamment les règles de corrélation des alarmes. Plus précisément l'expression des chemins d'accès au valeurs.
+* [Format des temps des alarmes](format-temps-alarmes.md) : récapitule le format des temps et durées des différents champs structurant une alarme.

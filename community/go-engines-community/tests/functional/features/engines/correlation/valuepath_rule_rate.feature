@@ -7,7 +7,10 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "name": "test-valuegroup-correlation-rate-1",
       "type": "valuegroup",
       "config": {
-        "time_interval": 10,
+        "time_interval": {
+          "value": 10,
+          "unit": "s"
+        },
         "threshold_rate": 0.4,
         "value_paths": [
           "entity.infos.valuegroupRate1.value"
@@ -135,7 +138,10 @@ Feature: correlation feature - valuegroup rule with threshold rate
         "name": "test-valuegroup-correlation-rate-2",
         "type": "valuegroup",
         "config": {
-          "time_interval": 10,
+          "time_interval": {
+            "value": 10,
+            "unit": "s"
+          },
           "threshold_rate": 0.4,
           "value_paths": [
             "entity.infos.valuegroupRate2.value"
@@ -242,7 +248,10 @@ Feature: correlation feature - valuegroup rule with threshold rate
         "name": "test-valuegroup-correlation-rate-3",
         "type": "valuegroup",
         "config": {
-          "time_interval": 3,
+          "time_interval": {
+            "value": 3,
+            "unit": "s"
+          },
           "threshold_rate": 0.4,
           "value_paths": [
             "entity.infos.valuegroupRate3.value"
@@ -335,7 +344,10 @@ Feature: correlation feature - valuegroup rule with threshold rate
         "name": "test-valuegroup-correlation-rate-4",
         "type": "valuegroup",
         "config": {
-          "time_interval": 3,
+          "time_interval": {
+            "value": 3,
+            "unit": "s"
+          },
           "threshold_rate": 0.4,
           "value_paths": [
             "entity.infos.valuegroupRate4.value"
@@ -453,7 +465,10 @@ Feature: correlation feature - valuegroup rule with threshold rate
         "name": "test-valuegroup-correlation-rate-5",
         "type": "valuegroup",
         "config": {
-          "time_interval": 5,
+          "time_interval": {
+            "value": 5,
+            "unit": "s"
+          },
           "threshold_rate": 0.6,
           "value_paths": [
             "entity.infos.valuegroupRate5.value"
@@ -575,7 +590,10 @@ Feature: correlation feature - valuegroup rule with threshold rate
             }
           }
         ],
-        "time_interval": 15,
+        "time_interval": {
+          "value": 15,
+          "unit": "s"
+        },
         "threshold_rate": 0.5,
         "value_paths": [
           "entity.infos.valuegroupRate6And7.value"
@@ -713,7 +731,10 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "name": "test-valuegroup-correlation-rate-8",
       "type": "valuegroup",
       "config": {
-        "time_interval": 15,
+        "time_interval": {
+          "value": 15,
+          "unit": "s"
+        },
         "threshold_rate": 0.5,
         "value_paths": [
           "entity.infos.valuegroupRate81.value",

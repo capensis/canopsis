@@ -35,7 +35,7 @@ Feature: update meta alarm on action
       "output": "test-output-pbehavior-action-correlation-1",
       "long_output": "test-long-output-pbehavior-action-correlation-1",
       "author": "test-author-pbehavior-action-correlation-1",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I wait the end of 2 events processing
@@ -64,8 +64,8 @@ Feature: update meta alarm on action
           ],
           "parameters": {
             "name": "test-pbehavior-action-correlation-1",
-            "tstart": {{ now.Unix }},
-            "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+            "tstart": {{ now }},
+            "tstop": {{ nowAdd "10m" }},
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"
           },
@@ -90,7 +90,7 @@ Feature: update meta alarm on action
       "output": "test-output-pbehavior-action-correlation-1",
       "long_output": "test-long-output-pbehavior-action-correlation-1",
       "author": "test-author-pbehavior-action-correlation-1",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I wait the end of event processing
@@ -167,7 +167,7 @@ Feature: update meta alarm on action
               },
               {
                 "_t": "pbhenter",
-                "m": "Pbehavior test-pbehavior-action-correlation-1. Type: Engine maintenance. Reason: Test Engine",
+                "m": "Pbehavior test-pbehavior-action-correlation-1. Type: Engine maintenance. Reason: Test Engine.",
                 "val": 0
               }
             ]

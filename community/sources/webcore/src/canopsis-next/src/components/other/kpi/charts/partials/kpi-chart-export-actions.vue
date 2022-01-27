@@ -1,10 +1,10 @@
 <template lang="pug">
   v-layout(justify-end)
     v-btn.ma-0.mr-4(:loading="downloading", color="primary", small, @click="$emit('export:csv')")
-      v-icon(left) file_download
+      v-icon(small, left) file_download
       span {{ $t('common.exportAsCsv') }}
     v-btn.ma-0(color="primary", small, @click="exportChartAsPng")
-      v-icon(left) file_download
+      v-icon(small, left) file_download
       span {{ $t('common.downloadAsPng') }}
 </template>
 

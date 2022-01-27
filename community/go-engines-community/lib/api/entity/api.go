@@ -2,6 +2,7 @@ package entity
 
 import (
 	"context"
+	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
@@ -116,6 +117,7 @@ func (a *api) StartExport(c *gin.Context) {
 
 	fields := exportFields.Fields()
 	taskID, err := a.exportExecutor.StartExecute(c.Request.Context(), export.Task{
+		Filename:     "entities",
 		ExportFields: exportFields,
 		Separator:    separator,
 		DataFetcher: func(ctx context.Context, page, limit int64) ([]map[string]string, int64, error) {
@@ -205,7 +207,7 @@ func (a *api) DownloadExport(c *gin.Context) {
 	}
 
 	c.Status(http.StatusOK)
-	c.Header("Content-Disposition", `attachment; filename="entities.csv"`)
+	c.Header("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, t.Filename))
 	c.Header("Content-Type", "text/csv")
 	c.ContentType()
 	c.File(t.File)

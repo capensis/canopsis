@@ -3,9 +3,6 @@ package entityservice
 import (
 	"context"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"math"
 	"runtime/trace"
 	"sync"
@@ -13,6 +10,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -20,6 +18,9 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
 	libamqp "github.com/streadway/amqp"
+	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"golang.org/x/sync/errgroup"
 )
 
 const (
@@ -345,7 +346,7 @@ func (s *service) calculateState(ctx context.Context, event types.Event) error {
 	oldCounters, newCounters, isAlarmChanged := GetAlarmCountersFromEvent(event)
 	addedToServices, removedFromServices, unchangedServices := GetServiceIDsFromEvent(event, serviceIDs)
 
-	wg := sync.WaitGroup{}
+	g, ctx := errgroup.WithContext(ctx)
 	workers := int(math.Min(float64(len(services)), float64(maxWorkersCount)))
 	workerCh := make(chan workerMsg)
 	go func() {
@@ -403,43 +404,28 @@ func (s *service) calculateState(ctx context.Context, event types.Event) error {
 		}
 	}()
 
-	errCh := make(chan error, workers)
-	defer close(errCh)
-
 	for i := 0; i < workers; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-
+		g.Go(func() error {
 			for {
 				select {
 				case <-ctx.Done():
-					return
+					return nil
 				case msg, ok := <-workerCh:
 					if !ok {
-						return
+						return nil
 					}
 
-					err := s.calculateServiceState(ctx, msg, event, event.Alarm, oldCounters,
+					err := s.calculateServiceState(ctx, msg, event, oldCounters,
 						newCounters, isAlarmChanged)
 					if err != nil {
-						errCh <- err
-						return
+						return err
 					}
 				}
 			}
-		}()
+		})
 	}
 
-	wg.Wait()
-
-	select {
-	case err := <-errCh:
-		return err
-	default:
-	}
-
-	return nil
+	return g.Wait()
 }
 
 type workerMsg struct {
@@ -452,7 +438,6 @@ func (s *service) calculateServiceState(
 	ctx context.Context,
 	msg workerMsg,
 	event types.Event,
-	alarm *types.Alarm,
 	oldCounters, newCounters *AlarmCounters,
 	isAlarmChanged bool,
 ) error {
@@ -465,9 +450,14 @@ func (s *service) calculateServiceState(
 		}
 
 		if lock == nil {
+			alarmID := ""
+			if event.Alarm != nil {
+				alarmID = event.Alarm.ID
+			}
 			s.logger.Debug().
 				Str("service", msg.Service.ID).
-				Str("alarm", alarm.ID).
+				Str("entity", event.GetEID()).
+				Str("alarm", alarmID).
 				Msg("service update in progress, skip event")
 
 			return nil
@@ -480,12 +470,10 @@ func (s *service) calculateServiceState(
 			}
 		}()
 
-		if alarm != nil {
-			key := fmt.Sprintf("%s&&%s", msg.Service.ID, alarm.ID)
-			cacheAlarmCounters, err = s.countersCache.RemoveAndGet(ctx, key)
-			if err != nil {
-				return err
-			}
+		key := fmt.Sprintf("%s&&%s", msg.Service.ID, event.GetEID())
+		cacheAlarmCounters, err = s.countersCache.RemoveAndGet(ctx, key)
+		if err != nil {
+			return err
 		}
 	}
 
@@ -589,40 +577,7 @@ func (s *service) UpdateService(ctx context.Context, event types.Event) error {
 		return err
 	}
 
-	cursor, err := s.adapter.GetCounters(ctx, serviceID)
-	if err != nil {
-		return err
-	}
-
-	defer cursor.Close(ctx)
-
-	counters := AlarmCounters{}
-	count := 0
-	for cursor.Next(ctx) {
-		count++
-		alarm := types.Alarm{}
-		err := cursor.Decode(&alarm)
-		if err != nil {
-			return err
-		}
-
-		alarmCounters := GetAlarmCountersFromAlarm(alarm)
-		counters = counters.Add(alarmCounters)
-		if s.lockClient != nil {
-			key := fmt.Sprintf("%s&&%s", serviceID, alarm.ID)
-			err := s.countersCache.Replace(ctx, key, alarmCounters)
-			if err != nil {
-				return err
-			}
-		}
-	}
-
-	err = s.countersCache.Replace(ctx, serviceID, counters)
-	if err != nil {
-		s.logger.Error().Err(err).Msg("Unable to process state")
-	}
-
-	err = s.updateServiceState(ctx, serviceID, serviceData.OutputTemplate, counters)
+	err = s.computeServiceCounters(ctx, serviceID, serviceData.OutputTemplate, s.lockClient != nil)
 	if err != nil {
 		return err
 	}
@@ -668,7 +623,6 @@ func (s *service) ComputeAllServices(parentCtx context.Context) error {
 		return nil
 	}
 
-	wg := sync.WaitGroup{}
 	workers := int(math.Min(float64(len(services)), float64(maxWorkersCount)))
 	workerCh := make(chan ServiceData)
 	go func() {
@@ -682,75 +636,28 @@ func (s *service) ComputeAllServices(parentCtx context.Context) error {
 		}
 	}()
 
-	errCh := make(chan error, workers)
-	defer close(errCh)
-
+	g, ctx := errgroup.WithContext(ctx)
 	for i := 0; i < workers; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-
+		g.Go(func() error {
 			for {
 				select {
 				case <-ctx.Done():
-					return
+					return nil
 				case data, ok := <-workerCh:
 					if !ok {
-						return
+						return nil
 					}
 
-					cursor, err := s.adapter.GetCounters(ctx, data.ID)
+					err := s.computeServiceCounters(ctx, data.ID, data.OutputTemplate, false)
 					if err != nil {
-						errCh <- err
-						return
-					}
-
-					counters := AlarmCounters{}
-					count := 0
-					for cursor.Next(ctx) {
-						count++
-						alarm := types.Alarm{}
-						err := cursor.Decode(&alarm)
-						if err != nil {
-							errCh <- err
-							return
-						}
-
-						alarmCounters := GetAlarmCountersFromAlarm(alarm)
-						counters = counters.Add(alarmCounters)
-					}
-
-					err = cursor.Close(ctx)
-					if err != nil {
-						errCh <- err
-						return
-					}
-
-					err = s.countersCache.Replace(ctx, data.ID, counters)
-					if err != nil {
-						errCh <- err
-						return
-					}
-
-					err = s.updateServiceState(ctx, data.ID, data.OutputTemplate, counters)
-					if err != nil {
-						errCh <- err
-						return
+						return err
 					}
 				}
 			}
-		}()
+		})
 	}
 
-	wg.Wait()
-
-	select {
-	case err := <-errCh:
-		return err
-	default:
-	}
-
-	return nil
+	return g.Wait()
 }
 
 func (s *service) ClearCache(ctx context.Context) error {
@@ -925,6 +832,78 @@ func (s *service) processSkippedQueue(ctx context.Context, serviceID string) err
 		}
 
 		s.logger.Debug().Str("entity", entityID).Msgf("send skipped event")
+	}
+
+	return nil
+}
+
+func (s *service) computeServiceCounters(ctx context.Context, serviceID, outputTemplate string,
+	saveAlarmCounters bool) error {
+	alarmCursor, err := s.adapter.GetOpenAlarmsOfServiceDependencies(ctx, serviceID)
+	if err != nil {
+		return err
+	}
+
+	defer alarmCursor.Close(ctx)
+
+	processedEntities := make(map[string]bool)
+	counters := AlarmCounters{}
+	for alarmCursor.Next(ctx) {
+		alarm := types.Alarm{}
+		err := alarmCursor.Decode(&alarm)
+		if err != nil {
+			return err
+		}
+
+		alarmCounters := GetAlarmCountersFromAlarm(alarm)
+		counters = counters.Add(alarmCounters)
+		processedEntities[alarm.EntityID] = true
+		if saveAlarmCounters {
+			key := fmt.Sprintf("%s&&%s", serviceID, alarm.EntityID)
+			err := s.countersCache.Replace(ctx, key, alarmCounters)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	entityCursor, err := s.adapter.GetServiceDependencies(ctx, serviceID)
+	if err != nil {
+		return err
+	}
+
+	defer entityCursor.Close(ctx)
+
+	for entityCursor.Next(ctx) {
+		e := types.Entity{}
+		err := entityCursor.Decode(&e)
+		if err != nil {
+			return err
+		}
+
+		if processedEntities[e.ID] {
+			continue
+		}
+
+		alarmCounters := GetAlarmCountersFromEntity(e)
+		counters = counters.Add(alarmCounters)
+		if saveAlarmCounters && !alarmCounters.IsZero() {
+			key := fmt.Sprintf("%s&&%s", serviceID, e.ID)
+			err := s.countersCache.Replace(ctx, key, alarmCounters)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	err = s.countersCache.Replace(ctx, serviceID, counters)
+	if err != nil {
+		s.logger.Error().Err(err).Msg("Unable to process state")
+	}
+
+	err = s.updateServiceState(ctx, serviceID, outputTemplate, counters)
+	if err != nil {
+		return err
 	}
 
 	return nil

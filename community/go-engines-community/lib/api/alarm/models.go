@@ -38,6 +38,7 @@ type FilterRequest struct {
 type BaseFilterRequest struct {
 	Filter                  string         `form:"filter" json:"filter"`
 	Search                  string         `form:"search" json:"search"`
+	TimeField               string         `form:"time_field" json:"time_field" binding:"oneoforempty=t creation_date resolved last_update_date last_event_date"`
 	StartFrom               *types.CpsTime `form:"tstart" json:"tstart" swaggertype:"integer"`
 	StartTo                 *types.CpsTime `form:"tstop" json:"tstop" swaggertype:"integer"`
 	Opened                  *bool          `form:"opened" json:"opened"`
@@ -160,20 +161,22 @@ type AlarmValue struct {
 }
 
 type AlarmStep struct {
-	Type      string          `bson:"_t" json:"_t"`
-	Timestamp *types.CpsTime  `bson:"t" json:"t" swaggertype:"integer"`
-	Author    string          `bson:"a" json:"a"`
-	UserID    string          `bson:"user_id,omitempty" json:"user_id,omitempty"`
-	Message   string          `bson:"m" json:"m"`
-	Value     types.CpsNumber `bson:"val" json:"val"`
-	Initiator string          `bson:"initiator" json:"initiator"`
-	Execution string          `bson:"exec,omitempty" json:"-"`
+	Type         string             `bson:"_t" json:"_t"`
+	Timestamp    *types.CpsTime     `bson:"t" json:"t" swaggertype:"integer"`
+	Author       string             `bson:"a" json:"a"`
+	UserID       string             `bson:"user_id,omitempty" json:"user_id,omitempty"`
+	Message      string             `bson:"m" json:"m"`
+	Value        types.CpsNumber    `bson:"val" json:"val"`
+	Initiator    string             `bson:"initiator" json:"initiator"`
+	Execution    string             `bson:"exec,omitempty" json:"-"`
+	StateCounter *types.CropCounter `bson:"statecounter,omitempty" json:"statecounter,omitempty"`
 }
 
 type AlarmTicket struct {
 	Type      string            `bson:"_t" json:"_t"`
 	Timestamp types.CpsTime     `bson:"t" json:"t" swaggertype:"integer"`
 	Author    string            `bson:"a" json:"a"`
+	UserID    string            `bson:"user_id,omitempty" json:"user_id,omitempty"`
 	Message   string            `bson:"m" json:"m"`
 	Value     string            `bson:"val" json:"val"`
 	Data      map[string]string `bson:"data" json:"data"`
@@ -199,6 +202,13 @@ type InstructionWithAlarms struct {
 	Execution            *Execution                `bson:"-" json:"execution"`
 	AlarmsWithExecutions []Execution               `bson:"alarms_with_executions" json:"-"`
 	Created              types.CpsTime             `bson:"created,omitempty" json:"-"`
+}
+
+type ExecutionStatus struct {
+	ID               string `bson:"_id"`
+	AutoRunning      *bool  `bson:"auto_running"`
+	ManualRunning    *bool  `bson:"manual_running"`
+	AutoAllCompleted *bool  `bson:"auto_all_completed"`
 }
 
 type Execution struct {

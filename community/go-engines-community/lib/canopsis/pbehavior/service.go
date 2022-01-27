@@ -18,6 +18,7 @@ type Service interface {
 	Compute(ctx context.Context, span timespan.Span) (int, error)
 	Recompute(ctx context.Context) error
 	RecomputeByID(ctx context.Context, pbehaviorID string) error
+	RecomputeByIds(ctx context.Context, pbehaviorIds []string) error
 
 	Resolve(ctx context.Context, entityID string, t time.Time) (ResolveResult, error)
 }
@@ -72,29 +73,15 @@ func (s *service) Compute(ctx context.Context, span timespan.Span) (int, error) 
 		return 0, err
 	}
 
-	return s.compute(ctx, span)
+	return s.compute(ctx, &span)
 }
 
 func (s *service) Recompute(ctx context.Context) error {
-	span, err := s.store.GetSpan(ctx)
-	if err != nil {
-		return err
-	}
-
-	_, err = s.compute(ctx, span)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	_, err := s.compute(ctx, nil)
+	return err
 }
 
 func (s *service) RecomputeByID(ctx context.Context, pbehaviorID string) (resErr error) {
-	span, err := s.store.GetSpan(ctx)
-	if err != nil {
-		return err
-	}
-
 	lock, err := s.lockClient.Obtain(ctx, s.lockKey, s.lockDuration, &redislock.Options{
 		RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(s.lockBackoff), s.lockRetries),
 	})
@@ -109,20 +96,69 @@ func (s *service) RecomputeByID(ctx context.Context, pbehaviorID string) (resErr
 		}
 	}()
 
-	res, err := s.computer.Recompute(ctx, span, pbehaviorID)
+	span, err := s.store.GetSpan(ctx)
+	if err != nil {
+		return err
+	}
+	res, err := s.computer.Recompute(ctx, span, []string{pbehaviorID})
 	if err != nil {
 		return err
 	}
 
-	if res.Name == "" {
+	computedPbehavior := res[pbehaviorID]
+	if computedPbehavior.Name == "" {
 		err = s.store.DelComputedPbehavior(ctx, pbehaviorID)
 		if err != nil {
 			return err
 		}
 	} else {
-		err = s.store.SetComputedPbehavior(ctx, pbehaviorID, res)
+		err = s.store.SetComputedPbehavior(ctx, pbehaviorID, computedPbehavior)
 		if err != nil {
 			return err
+		}
+	}
+
+	return s.load(ctx, span)
+}
+
+func (s *service) RecomputeByIds(ctx context.Context, pbehaviorIds []string) (resErr error) {
+	lock, err := s.lockClient.Obtain(ctx, s.lockKey, s.lockDuration, &redislock.Options{
+		RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(s.lockBackoff), s.lockRetries),
+	})
+	if err != nil {
+		return fmt.Errorf("cannot obtain lock: %w", err)
+	}
+
+	defer func() {
+		err = lock.Release(ctx)
+		if err != nil && !errors.Is(err, redislock.ErrLockNotHeld) && resErr == nil {
+			resErr = fmt.Errorf("cannot release lock: %w", err)
+		}
+	}()
+
+	span, err := s.store.GetSpan(ctx)
+	if err != nil {
+		return err
+	}
+
+	res, err := s.computer.Recompute(ctx, span, pbehaviorIds)
+	if err != nil {
+		return err
+	}
+
+	for _, pbehaviorID := range pbehaviorIds {
+		computedPbehavior := res[pbehaviorID]
+
+		if computedPbehavior.Name == "" {
+			err = s.store.DelComputedPbehavior(ctx, pbehaviorID)
+			if err != nil {
+				return err
+			}
+		} else {
+			err = s.store.SetComputedPbehavior(ctx, pbehaviorID, computedPbehavior)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
@@ -142,7 +178,7 @@ func (s *service) Resolve(ctx context.Context, entityID string, t time.Time) (Re
 	return s.resolver.Resolve(ctx, t, pbhIDs)
 }
 
-func (s *service) compute(ctx context.Context, span timespan.Span) (count int, resErr error) {
+func (s *service) compute(ctx context.Context, span *timespan.Span) (count int, resErr error) {
 	lock, err := s.lockClient.Obtain(ctx, s.lockKey, s.lockDuration, &redislock.Options{
 		RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(s.lockBackoff), s.lockRetries),
 	})
@@ -157,12 +193,20 @@ func (s *service) compute(ctx context.Context, span timespan.Span) (count int, r
 		}
 	}()
 
-	res, err := s.computer.Compute(ctx, span)
+	if span == nil {
+		currentSpan, err := s.store.GetSpan(ctx)
+		if err != nil {
+			return 0, err
+		}
+		span = &currentSpan
+	}
+
+	res, err := s.computer.Compute(ctx, *span)
 	if err != nil {
 		return 0, err
 	}
 
-	err = s.store.SetSpan(ctx, span)
+	err = s.store.SetSpan(ctx, *span)
 	if err != nil {
 		return 0, err
 	}
@@ -173,7 +217,7 @@ func (s *service) compute(ctx context.Context, span timespan.Span) (count int, r
 	}
 
 	s.resolver = NewTypeResolver(
-		span,
+		*span,
 		res.computedPbehaviors,
 		res.typesByID,
 		res.defaultActiveType,

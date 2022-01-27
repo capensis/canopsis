@@ -227,6 +227,7 @@ export default {
       [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
       [EVENT_ENTITY_TYPES.assocTicket]: 'Associate ticket',
       [EVENT_ENTITY_TYPES.comment]: 'Comment',
+      [EVENT_ENTITY_TYPES.executeInstruction]: 'Execute instruction',
     },
     times: {
       second: 'second | seconds',
@@ -317,6 +318,9 @@ export default {
     fab: {
       common: 'Add a new entity',
       addService: 'Add a new service entity',
+    },
+    popups: {
+      massDeleteWarning: 'The mass deletion cannot be applied for some of selected elements, so they won\'t be deleted.',
     },
   },
   search: {
@@ -512,6 +516,25 @@ export default {
     created: 'Creation date',
     updated: 'Last update date',
     lastAlarmDate: 'Last alarm date',
+    searchHelp: '<span>Help on the advanced research :</span>\n'
+      + '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n'
+      + '<p>The "-" before the research is required</p>\n'
+      + '<p>Operators : <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n'
+      + '<p>For querying patterns, use "pattern" keyword as the &lt;ColumnName&gt; alias</p>\n'
+      + '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n'
+      + '<dl>'
+      + '  <dt>Examples :</dt>'
+      + '  <dt>- name = "name_1"</dt>\n'
+      + '  <dd>Pbehavior name are "name_1"</dd>\n'
+      + '  <dt>- rrule = "rrule_1"</dt>\n'
+      + '  <dd>Pbehavior rrule are "rrule_1"</dd>\n'
+      + '  <dt>- filter = "filter_1"</dt>\n'
+      + '  <dd>Pbehavior filter are "filter_1"</dd>\n'
+      + '  <dt>- type.name = "type_name_1"</dt>\n'
+      + '  <dd>Pbehavior type name are "type_name_1"</dd>\n'
+      + '  <dt>- reason.name = "reason_name_1"</dt>\n'
+      + '  <dd>Pbehavior reason name are "reason_name_1"</dd>'
+      + '</dl>',
     tabs: {
       filter: 'Filter',
       comments: 'Comments',
@@ -995,6 +1018,9 @@ export default {
       edit: {
         title: 'Edit filter',
       },
+      duplicate: {
+        title: 'Duplicate filter',
+      },
       fields: {
         title: 'Title',
       },
@@ -1043,7 +1069,7 @@ export default {
           title: 'Counter',
         },
         [WIDGET_TYPES.testingWeather]: {
-          title: 'Testing weather',
+          title: 'Junit scenarios',
         },
       },
     },
@@ -1259,6 +1285,7 @@ export default {
       title: 'Select tab',
     },
     createDynamicInfo: {
+      alarmUpdate: 'The rule will update existing alarms!',
       create: {
         title: 'Create dynamic information',
         success: 'Dynamic information successfully created!',
@@ -1602,6 +1629,37 @@ export default {
         duplicate: {
           title: 'Duplicate resolve rule',
         },
+      },
+    },
+    webSocketError: {
+      title: 'WebSocket connection error',
+      text: '<p>Websockets are unavailable, so the following functionalities are restricted:</p>'
+        + '<p>'
+        + '<ul>'
+        + '<li>Healthcheck header</li>'
+        + '<li>Healthcheck network graph</li>'
+        + '<li>Active broadcast messages</li>'
+        + '<li>Active users sessions</li>'
+        + '<li>Remediation execution</li>'
+        + '</ul>'
+        + '</p>'
+        + '<p>Please check your server configuration.</p>',
+    },
+    confirmationPhrase: {
+      phrase: 'Phrase',
+      updateStorageSettings: {
+        title: 'Updating storage policy. Are you sure ?',
+        text: 'You are about to change the storage policy.\n'
+          + '<strong>Associated operations, deleting data, won\'t be cancellable.</strong>',
+        phraseText: 'Please, type the following to confirm:',
+        phrase: 'update the storage policy',
+      },
+      cleanStorage: {
+        title: 'Archive/delete disabled entities. Are you sure ?',
+        text: 'You are about to archive and/or delete data.\n'
+          + '<strong>Deletion operation won\'t be cancellable.</strong>',
+        phraseText: 'Please, type the following to confirm:',
+        phrase: 'archive or delete',
       },
     },
   },
@@ -1958,9 +2016,16 @@ export default {
       [USER_PERMISSIONS_PREFIXES.business.counter]: 'Rights for Counter',
       [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Rights for Testing Weather',
     },
+    api: {
+      general: 'General',
+      rules: 'Rules',
+      remediation: 'Remediation',
+      pbehavior: 'PBehavior',
+    },
   },
 
   pbehavior: {
+    periodsCalendar: 'Calendar with periods',
     buttons: {
       addFilter: 'Add filter',
       editFilter: 'Edit filter',
@@ -2020,6 +2085,10 @@ export default {
     systemStatusChipError: 'The system is not operational',
     systemStatusServerError: 'System configuration is invalid, please contact the administrator',
     systemsOperational: 'All systems are operational',
+    validation: {
+      max_value: 'The field must be equal or less than the optimal instance count',
+      min_value: 'The field must be equal or more than the minimal instance count',
+    },
     nodes: {
       [HEALTHCHECK_SERVICES_NAMES.mongo]: {
         name: 'MongoDB',
@@ -2249,6 +2318,7 @@ export default {
     remainingAction: 'Continue with remaining actions',
     addAction: 'Add action',
     emptyActions: 'No actions added yet',
+    output: 'Output Action Format',
     urlHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>'
       + '<i>For example:</i>'
       + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'
@@ -2371,6 +2441,7 @@ export default {
       [TEST_SUITE_STATUSES.skipped]: 'Skipped',
       [TEST_SUITE_STATUSES.error]: 'Error',
       [TEST_SUITE_STATUSES.failed]: 'Failed',
+      [TEST_SUITE_STATUSES.total]: 'Total time taken',
     },
     popups: {
       systemMessageCopied: 'System message copied to clipboard',
@@ -2393,7 +2464,7 @@ export default {
     },
   },
 
-  storageSetting: {
+  storageSettings: {
     alarm: {
       title: 'Alarm data storage',
       titleHelp: 'When switched on, the resolved alarms data will be archived and/or deleted after the defined time period.',
@@ -2419,11 +2490,6 @@ export default {
       archiveDependencies: 'Remove the impacting and dependent entities as well',
       archiveDependenciesHelp: 'For connectors, all impacting and dependent components and resources will be archived or deleted forever. For components, all dependent resources will be archived or deleted forever as well.',
       cleanStorage: 'Clean storage',
-      confirmation: {
-        title: 'Delete disabled entities?',
-        archive: 'Are you sure you want to archive all disabled entities? This action cannot be canceled.',
-        delete: 'Are you sure you want to delete all disabled entities from the archive forever? This action cannot be canceled.',
-      },
     },
     pbehavior: {
       title: 'PBehavior data storage',
@@ -2458,6 +2524,7 @@ export default {
 
   quickRanges: {
     title: 'Quick ranges',
+    timeField: 'Time field',
     types: {
       [QUICK_RANGES.custom.value]: 'Custom',
       [QUICK_RANGES.last2Days.value]: 'Last 2 days',
@@ -2557,7 +2624,7 @@ export default {
     /**
      * Admin access
      */
-    [USERS_PERMISSIONS.technical.action]: {
+    [USERS_PERMISSIONS.technical.permission]: {
       title: 'Rights',
     },
     [USERS_PERMISSIONS.technical.role]: {
