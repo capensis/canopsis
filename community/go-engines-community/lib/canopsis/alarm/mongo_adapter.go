@@ -124,28 +124,6 @@ func (a mongoAdapter) PartialMassUpdateOpen(ctx context.Context, alarms []types.
 	return err
 }
 
-func (a mongoAdapter) PartialUpdateOpenWithCondition(ctx context.Context, alarm *types.Alarm, cond bson.M) error {
-	update := alarm.GetUpdate()
-	if len(update) == 0 {
-		return nil
-	}
-
-	_, err := a.mainDbCollection.UpdateOne(ctx, bson.M{"$and": []bson.M{
-		{
-			"_id":        alarm.ID,
-			"v.resolved": nil,
-		},
-		cond,
-	}}, update)
-	if err != nil {
-		return err
-	}
-
-	alarm.CleanUpdate()
-
-	return nil
-}
-
 func (a mongoAdapter) GetAlarmsByID(ctx context.Context, id string) ([]types.Alarm, error) {
 	return a.getAlarms(ctx, bson.M{"d": id})
 }
