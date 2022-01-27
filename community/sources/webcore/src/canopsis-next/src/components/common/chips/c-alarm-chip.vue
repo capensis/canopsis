@@ -1,7 +1,8 @@
 <template lang="pug">
   div.chip-container
     v-badge(:value="!!badgeValue", color="secondary", overlap)
-      span.caption(slot="badge") {{ badgeValue }}
+      template(#badge="")
+        span.caption {{ badgeValue }}
       span.chip(:style="{ backgroundColor: style.color }") {{ style.text }}
 </template>
 
