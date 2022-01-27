@@ -218,11 +218,8 @@ func (a mongoAdapter) GetAlarmsWithoutTicketByComponent(ctx context.Context, com
 	return a.getAlarmsWithEntity(ctx, bson.M{
 		"v.component": component,
 		"v.meta":      bson.M{"$exists": false},
-		"$or": []bson.M{
-			{"v.resolved": nil},
-			{"v.resolved": bson.M{"$exists": false}},
-		},
-		"v.ticket": nil,
+		"v.resolved":  nil,
+		"v.ticket":    nil,
 	})
 }
 
