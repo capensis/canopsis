@@ -3,7 +3,7 @@
     v-model="isOpen",
     :ignore-click-outside="hasMaximizedModal",
     :custom-close-conditional="closeCondition",
-    :width="400",
+    :width="450",
     right,
     fixed,
     temporary
@@ -47,7 +47,7 @@ export default {
 
     isOpen: {
       get() {
-        return !this.sidebar.hidden && this.ready;
+        return this.sidebar.name && !this.sidebar.hidden && this.ready;
       },
       set(value) {
         if (!value) {

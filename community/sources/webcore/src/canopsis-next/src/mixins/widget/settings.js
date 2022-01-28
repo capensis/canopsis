@@ -1,51 +1,50 @@
-import { setField } from '@/helpers/immutable';
-
-import { prepareQuery } from '@/helpers/query';
 import { widgetToForm, formToWidget } from '@/helpers/forms/widgets/common';
 
 import { queryMixin } from '@/mixins/query';
 import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
-import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
+import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 export const widgetSettingsMixin = {
+  $_veeValidate: {
+    validator: 'new',
+  },
+  props: {
+    sidebar: {
+      type: Object,
+      required: true,
+    },
+  },
   mixins: [
     queryMixin,
     entitiesWidgetMixin,
-    entitiesUserPreferenceMixin, // TODO: remove it
-    confirmableModalMixinCreator({ field: 'settings', closeMethod: '$sidebar.hide' }), // TODO: change field to form
+    entitiesViewTabMixin,
+    confirmableModalMixinCreator({ field: 'form', closeMethod: '$sidebar.hide' }),
   ],
+  data() {
+    return {
+      form: widgetToForm(this.sidebar.config?.widget),
+    };
+  },
   computed: {
     config() {
       return this.sidebar.config ?? {};
     },
 
     widget() {
-      return this.config.widget;
+      return this.config.widget ?? {};
     },
-  },
-  data() {
-    return {
-      form: widgetToForm(this.sidebar.config?.widget),
-    };
+
+    duplicate() {
+      return this.config.duplicate;
+    },
   },
   methods: {
     /**
-     * Validate settings form
-     *
-     * @returns {boolean|Promise<boolean>}
+     * Update main filter updated at value. We are using this value for checking which filter was changed later
      */
-    isFormValid() {
-      return this.$validator?.validateAll() ?? true;
-    },
-
-    /**
-     * We can customize widgets preparation by replacing the methods in the component
-     *
-     * @returns {Object}
-     */
-    prepareWidgetSettings() { // TODO: remove it
-      return this.settings.widget;
+    updateMainFilterUpdatedAt() {
+      this.form.parameters.main_filter_updated_at = Date.now();
     },
 
     /**
@@ -59,48 +58,34 @@ export const widgetSettingsMixin = {
     },
 
     /**
-     * Get prepared userPreferences for request sending
-     *
-     * @returns {Object}
-     */
-    getPreparedUserPreference() { // TODO: remove it
-      return setField(this.userPreference, 'content', value => ({
-        ...value,
-        ...this.settings.userPreferenceContent,
-      }));
-    },
-
-    /**
      * Submit settings form
      *
      * @returns {Promise<void>}
      */
     async submit() {
-      const isFormValid = await this.isFormValid();
+      const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        const data = formToWidget(this.settings.widget);
-        let method = this.createWidget;
+        const { _id: widgetId, tab: tabId } = this.widget;
+        const data = formToWidget(this.form);
 
-        if (this.widget) {
-          if (this.widget._id) {
-            method = this.updateWidget;
-          } else {
-            method = this.copyWidget;
-          }
+        data.tab = tabId;
+
+        if (this.duplicate) {
+          await this.copyWidget({ id: widgetId, data });
+        } else if (widgetId) {
+          await this.updateWidget({ id: widgetId, data });
+        } else {
+          await this.createWidget({ data });
         }
 
-        const newWidget = await method({ data });
+        await this.fetchViewTab({ id: tabId });
 
         /**
          * TODO: update widget request
          */
 
-        if (newWidget._id) {
-          const userPreference = this.getPreparedUserPreference();
-
-          await this.updateUserPreference({ data: userPreference });
-
+        /*        if (newWidget._id) {
           const oldQuery = this.getQueryById(newWidget._id);
           const newQuery = prepareQuery(newWidget, userPreference);
 
@@ -108,7 +93,7 @@ export const widgetSettingsMixin = {
             id: data._id,
             query: this.prepareWidgetQuery(newQuery, oldQuery),
           });
-        }
+        } */
 
         this.$sidebar.hide();
       }

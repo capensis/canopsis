@@ -1,32 +1,32 @@
 <template lang="pug">
   div
     v-list.pt-0(expand)
-      field-title(v-model="settings.widget.title", :title="$t('common.title')")
+      field-title(v-model="form.title", :title="$t('common.title')")
       v-divider
-      field-periodic-refresh(v-model="settings.widget.parameters.periodicRefresh")
+      field-periodic-refresh(v-model="form.parameters.periodicRefresh")
       v-divider
       template(v-if="hasAccessToListFilters")
         field-filters(
-          v-model="settings.widget.parameters.mainFilter",
+          v-model="form.parameters.mainFilter",
           :entities-type="$constants.ENTITIES_TYPES.entity",
-          :filters.sync="settings.widget.parameters.viewFilters",
-          :condition.sync="settings.widget.parameters.mainFilterCondition",
+          :filters.sync="form.parameters.viewFilters",
+          :condition.sync="form.parameters.mainFilterCondition",
           :addable="hasAccessToAddFilter",
           :editable="hasAccessToEditFilter",
           @input="updateMainFilterUpdatedAt"
         )
         v-divider
-      alarms-list-modal-form(v-model="settings.widget.parameters.alarmsList")
+      alarms-list-modal-form(v-model="form.parameters.alarmsList")
       v-divider
       field-number(
-        v-model="settings.widget.parameters.limit",
+        v-model="form.parameters.limit",
         :title="$t('settings.limit')"
       )
       v-divider
-      field-color-indicator(v-model="settings.widget.parameters.colorIndicator")
+      field-color-indicator(v-model="form.parameters.colorIndicator")
       v-divider
       field-columns(
-        v-model="settings.widget.parameters.serviceDependenciesColumns",
+        v-model="form.parameters.serviceDependenciesColumns",
         :label="$t('settings.treeOfDependenciesColumnNames')",
         with-color-indicator
       )
@@ -35,78 +35,77 @@
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-sort-column(
-            v-model="settings.widget.parameters.sort",
+            v-model="form.parameters.sort",
             :columns="sortColumns",
             :columns-label="$t('settings.orderBy')"
           )
           v-divider
-          field-default-elements-per-page(v-model="settings.widget.parameters.modalItemsPerPage")
+          field-default-elements-per-page(v-model="form.parameters.modalItemsPerPage")
             span(slot="title") {{ $t('settings.defaultNumberOfElementsPerPage') }}
               span.font-italic.caption.ml-1 (Modal)
           v-divider
           field-template(
             data-test="widgetTemplateWeatherItem",
-            v-model="settings.widget.parameters.blockTemplate",
+            v-model="form.parameters.blockTemplate",
             :title="$t('settings.weatherTemplate')"
           )
           v-divider
           field-template(
             data-test="widgetTemplateModal",
-            v-model="settings.widget.parameters.modalTemplate",
+            v-model="form.parameters.modalTemplate",
             :title="$t('settings.modalTemplate')"
           )
           v-divider
           field-template(
             data-test="widgetTemplateEntities",
-            v-model="settings.widget.parameters.entityTemplate",
+            v-model="form.parameters.entityTemplate",
             :title="$t('settings.entityTemplate')"
           )
           v-divider
           field-grid-size(
             data-test="columnSM",
-            v-model="settings.widget.parameters.columnSM",
+            v-model="form.parameters.columnSM",
             :title="$t('settings.columnSM')"
           )
           v-divider
           field-grid-size(
             data-test="columnMD",
-            v-model="settings.widget.parameters.columnMD",
+            v-model="form.parameters.columnMD",
             :title="$t('settings.columnMD')"
           )
           v-divider
           field-grid-size(
             data-test="columnLG",
-            v-model="settings.widget.parameters.columnLG",
+            v-model="form.parameters.columnLG",
             :title="$t('settings.columnLG')"
           )
           v-divider
-          margins-form(v-model="settings.widget.parameters.margin")
+          margins-form(v-model="form.parameters.margin")
           v-divider
           field-slider(
             data-test="widgetHeightFactory",
-            v-model="settings.widget.parameters.heightFactor",
+            v-model="form.parameters.heightFactor",
             :title="$t('settings.height')",
             :min="1",
             :max="20"
           )
           v-divider
           field-counters-selector(
-            v-model="settings.widget.parameters.counters",
+            v-model="form.parameters.counters",
             :title="$t('settings.counters')"
           )
           v-divider
-          field-modal-type(v-model="settings.widget.parameters.modalType")
+          field-modal-type(v-model="form.parameters.modalType")
+      v-divider
     v-btn.primary(data-test="submitWeather", @click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
-
 import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { sideBarSettingsWidgetAlarmMixin } from '@/mixins/side-bar/settings/widgets/alarm';
-import { rightsWidgetsServiceWeatherListFilters } from '@/mixins/rights/widgets/service-weather/filters';
+import { permissionsWidgetsServiceWeatherFilters } from '@/mixins/permissions/widgets/service-weather/filters';
 
 import FieldTitle from '@/components/sidebars/settings/fields/common/title.vue';
 import FieldSortColumn from '@/components/sidebars/settings/fields/service-weather/sort-column.vue';
@@ -128,9 +127,6 @@ import MarginsForm from '@/components/sidebars/settings/forms/margins.vue';
 
 export default {
   name: SIDE_BARS.serviceWeatherSettings,
-  $_veeValidate: {
-    validator: 'new',
-  },
   components: {
     FieldTitle,
     FieldSortColumn,
@@ -153,30 +149,21 @@ export default {
   mixins: [
     widgetSettingsMixin,
     sideBarSettingsWidgetAlarmMixin,
-    rightsWidgetsServiceWeatherListFilters,
+    permissionsWidgetsServiceWeatherFilters,
   ],
-  data() {
-    const { widget } = this.config;
-
-    return {
-      settings: {
-        widget: this.prepareWidgetWithAlarmParametersSettings(cloneDeep(widget), true),
-      },
-      sortColumns: [
-        { label: 'name', value: 'name' },
-        { label: 'state', value: 'state' },
-      ],
-    };
+  computed: {
+    sortColumns() {
+      return [
+        { label: this.$t('common.name'), value: 'name' },
+        { label: this.$t('common.state'), value: 'state' },
+      ];
+    },
   },
   methods: {
-    prepareWidgetSettings() {
+    prepareWidgetSettings() { // TODO: remove it
       const { widget } = this.settings;
 
       return this.prepareWidgetWithAlarmParametersSettings(widget);
-    },
-
-    updateMainFilterUpdatedAt() {
-      this.settings.widget.parameters.mainFilterUpdatedAt = Date.now();
     },
   },
 };

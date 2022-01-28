@@ -25,7 +25,7 @@ import {
 } from '@/constants';
 
 import { widgetToForm } from '@/helpers/forms/widgets/common';
-import { alarmListWidgetDefaultParametersToForm } from '@/helpers/forms/widgets/alarm';
+import { alarmListWidgetDefaultParametersToFormParameters } from '@/helpers/forms/widgets/alarm';
 import { convertDateToString } from '@/helpers/date/date';
 
 import uuid from './uuid';
@@ -70,10 +70,10 @@ export const generateWidgetId = type => uuid(`widget_${type}`);
  * @param {string} type
  * @returns {Object}
  */
-export function generateWidgetByType(type) {
+export function generateWidgetByType(type) { // TODO: remove it
   const widget = widgetToForm({ type });
 
-  const alarmsListDefaultParameters = alarmListWidgetDefaultParametersToForm();
+  const alarmsListDefaultParameters = alarmListWidgetDefaultParametersToFormParameters();
 
   let specialParameters = {};
 

@@ -6,9 +6,17 @@ import {
   DEFAULT_WIDGET_GRID_PARAMETERS,
 } from '@/constants';
 
-import { generateWidgetId } from '@/helpers/entities';
-
-import { formToAlarmListWidget } from './alarm';
+import {
+  alarmListWidgetParametersToFormParameters,
+  formParametersToAlarmListWidgetParameters,
+} from './alarm';
+import {
+  contextWidgetParametersToFormParameters,
+  formParametersToContextWidgetParameters,
+} from '@/helpers/forms/widgets/context';
+import {
+  serviceWeatherWidgetParametersToFormParameters,
+} from '@/helpers/forms/widgets/service-weather';
 
 /**
  * @typedef { 'AlarmsList' | 'Context' | 'ServiceWeather' | 'StatsCalendar' | 'Text' | 'Counter' | 'Junit' } WidgetType
@@ -56,23 +64,57 @@ import { formToAlarmListWidget } from './alarm';
  * @typedef {Widget} WidgetForm
  */
 
+export const widgetParametersToFormParameters = ({ type, parameters } = {}) => {
+  switch (type) {
+    case WIDGET_TYPES.alarmList:
+      return alarmListWidgetParametersToFormParameters(parameters);
+    case WIDGET_TYPES.context:
+      return contextWidgetParametersToFormParameters(parameters);
+    case WIDGET_TYPES.serviceWeather:
+      return serviceWeatherWidgetParametersToFormParameters(parameters);
+    default:
+      return parameters ? cloneDeep(parameters) : {};
+  }
+};
+
+export const getDefaultGridParameters = () => Object.values(WIDGET_GRID_SIZES_KEYS).reduce((acc, size) => {
+  acc[size] = { ...DEFAULT_WIDGET_GRID_PARAMETERS };
+
+  return acc;
+}, {});
+
+export const getEmptyWidgetByType = type => ({
+  type,
+  title: '',
+  parameters: {},
+  grid_parameters: getDefaultGridParameters(),
+});
+
 /**
  * Convert widget to form object
  *
  * @param {Widget} [widget = {}]
  * @returns {WidgetForm}
  */
-export const widgetToForm = (widget = { type: WIDGET_TYPES.alarmList }) => ({
-  _id: widget._id || generateWidgetId(widget.type),
+export const widgetToForm = (widget = { type: WIDGET_TYPES.alarmList }) => ({ // TODO: We've removed ID generation here
   type: widget.type,
-  title: widget.title || '',
-  parameters: widget.parameters ? cloneDeep(widget.parameters) : {},
-  grid_parameters: Object.values(WIDGET_GRID_SIZES_KEYS).reduce((acc, size) => {
-    acc[size] = { ...DEFAULT_WIDGET_GRID_PARAMETERS };
-
-    return acc;
-  }, {}),
+  title: widget.title ?? '',
+  parameters: widgetParametersToFormParameters(widget),
+  grid_parameters: widget.grid_parameters
+    ? cloneDeep(widget.grid_parameters)
+    : getDefaultGridParameters(),
 });
+
+export const formParametersToWidgetParameters = ({ type, parameters = {} } = {}) => {
+  switch (type) {
+    case WIDGET_TYPES.alarmList:
+      return formParametersToAlarmListWidgetParameters(parameters);
+    case WIDGET_TYPES.context:
+      return formParametersToContextWidgetParameters(parameters);
+    default:
+      return parameters;
+  }
+};
 
 /**
  * Convert form object to widget
@@ -80,10 +122,8 @@ export const widgetToForm = (widget = { type: WIDGET_TYPES.alarmList }) => ({
  * @param {WidgetForm} form
  * @returns {Widget}
  */
-export const formToWidget = (form) => {
-  const method = {
-    [WIDGET_TYPES.alarmList]: formToAlarmListWidget,
-  }[form.type];
+export const formToWidget = form => ({
+  ...form,
 
-  return method ? method(form) : form;
-};
+  parameters: formParametersToWidgetParameters(form),
+});

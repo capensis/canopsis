@@ -142,7 +142,7 @@ const infoPopupsToForm = (infoPopups = []) => infoPopups.map(infoPopup => ({
  * @param {Sort} [sort = {}]
  * @return {Sort}
  */
-const widgetSortToForm = (sort = {}) => ({
+export const widgetSortToForm = (sort = {}) => ({
   order: sort.order || SORT_ORDERS.asc,
   column: sort.column ? columnValueToForm(sort.column) : '',
 });
@@ -153,19 +153,21 @@ const widgetSortToForm = (sort = {}) => ({
  * @param {AlarmListWidgetDefaultParameters} [parameters = {}]
  * @return {AlarmListWidgetDefaultParametersForm}
  */
-export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
-  itemsPerPage: parameters.itemsPerPage || PAGINATION_LIMIT,
+export const alarmListWidgetDefaultParametersToFormParameters = (parameters = {}) => ({
+  itemsPerPage: parameters.itemsPerPage ?? PAGINATION_LIMIT,
   infoPopups: infoPopupsToForm(parameters.infoPopups),
-  moreInfoTemplate: parameters.moreInfoTemplate || '',
+  moreInfoTemplate: parameters.moreInfoTemplate ?? '',
   isAckNoteRequired: !!parameters.isAckNoteRequired,
   isSnoozeNoteRequired: !!parameters.isSnoozeNoteRequired,
   isMultiAckEnabled: !!parameters.isMultiAckEnabled,
   isHtmlEnabledOnTimeLine: !!parameters.isHtmlEnabledOnTimeLine,
   sticky_header: !!parameters.sticky_header,
-  fastAckOutput: parameters.fastAckOutput || {
-    enabled: false,
-    value: 'auto ack',
-  },
+  fastAckOutput: parameters.fastAckOutput
+    ? { ...parameters.fastAckOutput }
+    : {
+      enabled: false,
+      value: 'auto ack',
+    },
   widgetColumns: parameters.widgetColumns
     ? widgetColumnsToForm(parameters.widgetColumns)
     : defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_COLUMNS),
@@ -175,10 +177,12 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   serviceDependenciesColumns: parameters.serviceDependenciesColumns
     ? widgetColumnsToForm(parameters.serviceDependenciesColumns)
     : defaultColumnsToColumns(DEFAULT_SERVICE_DEPENDENCIES_COLUMNS),
-  linksCategoriesAsList: parameters.linksCategoriesAsList || {
-    enabled: false,
-    limit: DEFAULT_CATEGORIES_LIMIT,
-  },
+  linksCategoriesAsList: parameters.linksCategoriesAsList
+    ? { ...parameters.linksCategoriesAsList }
+    : {
+      enabled: false,
+      limit: DEFAULT_CATEGORIES_LIMIT,
+    },
 });
 
 /**
@@ -187,9 +191,9 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
  * @param {AlarmListWidgetParameters} [parameters = {}]
  * @return {AlarmListWidgetParametersForm}
  */
-const alarmListWidgetParametersToForm = (parameters = {}) => ({
+export const alarmListWidgetParametersToFormParameters = (parameters = {}) => ({
   ...parameters,
-  ...alarmListWidgetDefaultParametersToForm(parameters),
+  ...alarmListWidgetDefaultParametersToFormParameters(parameters),
 
   periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
   viewFilters: parameters.viewFilters || [],
@@ -218,7 +222,7 @@ export const alarmListWidgetToForm = (alarmListWidget = { type: WIDGET_TYPES.ala
   return {
     ...widget,
     type: WIDGET_TYPES.alarmList,
-    parameters: alarmListWidgetParametersToForm(alarmListWidget.parameters),
+    parameters: alarmListWidgetParametersToFormParameters(alarmListWidget.parameters),
   };
 };
 
@@ -235,7 +239,7 @@ export const generateDefaultAlarmListWidget = () => alarmListWidgetToForm();
  * @param {Sort} sort
  * @return {Sort}
  */
-const formSortToWidgetSort = (sort = {}) => ({
+export const formSortToWidgetSort = (sort = {}) => ({
   order: sort.order,
   column: formToColumnValue(sort.column),
 });
@@ -262,6 +266,16 @@ const formInfoPopupsToInfoPopups = infoPopups => infoPopups.map(infoPopup => ({
   column: columnValueToForm(infoPopup.column),
 }));
 
+export const formParametersToAlarmListWidgetParameters = (parameters = {}) => ({
+  ...parameters,
+  widgetColumns: formWidgetColumnsToColumns(parameters.widgetColumns),
+  widgetGroupColumns: formWidgetColumnsToColumns(parameters.widgetGroupColumns),
+  widgetExportColumns: formWidgetColumnsToColumns(parameters.widgetExportColumns),
+  serviceDependenciesColumns: formWidgetColumnsToColumns(parameters.serviceDependenciesColumns),
+  infoPopups: formInfoPopupsToInfoPopups(parameters.infoPopups),
+  sort: formSortToWidgetSort(parameters.sort),
+});
+
 /**
  * Convert alarm list settings form to alarm list object
  *
@@ -273,14 +287,6 @@ export const formToAlarmListWidget = (form = {}) => {
 
   return {
     ...form,
-    parameters: {
-      ...parameters,
-      widgetColumns: formWidgetColumnsToColumns(parameters.widgetColumns),
-      widgetGroupColumns: formWidgetColumnsToColumns(parameters.widgetGroupColumns),
-      widgetExportColumns: formWidgetColumnsToColumns(parameters.widgetExportColumns),
-      serviceDependenciesColumns: formWidgetColumnsToColumns(parameters.serviceDependenciesColumns),
-      infoPopups: formInfoPopupsToInfoPopups(parameters.infoPopups),
-      sort: formSortToWidgetSort(parameters.sort),
-    },
+    parameters: formParametersToAlarmListWidgetParameters(parameters),
   };
 };
