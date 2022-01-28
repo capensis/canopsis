@@ -1,13 +1,5 @@
 ---
-# NOT REQUIRED ANYMORE: pymongo is preinstalled by pip-ansible.sh
-#
-# workaround for https://github.com/ansible/ansible/issues/34153
-#- name: force pymongo 3.4.0
-#  pip:
-#    name: pymongo
-#    version: 3.4.0
-
-- name: Create canopsis user
+- name: Create canopsis user for MongoDB
   mongodb_user:
     login_database: "admin"
     login_user: "{{ mongodb_user_admin_name }}"
