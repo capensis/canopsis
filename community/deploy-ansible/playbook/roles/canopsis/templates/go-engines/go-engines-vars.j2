@@ -1,11 +1,12 @@
 # systemd-compatible EnvironmentFile for Canopsis Go engines.
 # provisioned by canoctl
 #
-# If you need to source this file in Bash, use this command:
+# If you need to source this file in Bash, use this command:
 # set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
 #
 CPS_MONGO_URL="mongodb://{{ canopsis_mongo_user }}:{{ canopsis_mongo_password }}@{{ canopsis_mongo_host }}:{{ canopsis_mongo_port }}/{{ canopsis_mongo_db }}"
 CPS_AMQP_URL="amqp://{{ canopsis_amqp_userid }}:{{ canopsis_amqp_password }}@{{ canopsis_amqp_host }}:{{ canopsis_amqp_port }}/{{ canopsis_amqp_vhost }}"
+CPS_POSTGRES_URL="postgresql://{{ canopsis_postgresql_user }}:{{ canopsis_postgresql_password }}@{{ canopsis_postgresql_host }}:{{ canopsis_postgresql_port }}/{{ canopsis_postgresql_db }}"
 CPS_REDIS_URL="redis://{{ canopsis_redis_host }}:{{ canopsis_redis_port }}/{{ canopsis_redis_dbnum }}"
 CPS_API_URL="http://{{ canopsis_api_host }}:{{ canopsis_api_port }}"
 CPS_OLD_API_URL="http://{{ canopsis_oldapi_host }}:{{ canopsis_oldapi_port }}"

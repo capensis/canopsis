@@ -247,7 +247,7 @@ export const convertDateToString = (date, format = DATETIME_FORMATS.long, defaul
  */
 export const convertDateToStringWithFormatForToday = (date, format, defaultValue) => {
   const dateObject = convertDateToMoment(date);
-  const resultFormat = dateObject.isSame(new Date(), 'day') ? DATETIME_FORMATS.time : format;
+  const resultFormat = dateObject.isSame(Date.now(), 'day') ? DATETIME_FORMATS.time : format;
 
   return convertDateToString(date, resultFormat, defaultValue);
 };
@@ -275,19 +275,6 @@ export const convertDateToTimezoneDateString = (date, timezone, format, defaultV
  * @return {moment.Moment}
  */
 export const convertDateToStartOfUnitMoment = (date, unit) => convertDateToMoment(date).startOf(unit);
-
-/**
- * Convert date to start of unit as formatted string
- *
- * @param {LocalDate} date
- * @param {string} unit
- * @param {?string} [format]
- * @return {string}
- */
-export const convertDateToStartOfUnitString = (date, unit, format) => convertDateToString(
-  convertDateToStartOfUnitMoment(date, unit),
-  format,
-);
 
 /**
  * Convert date to start of unit as timestamp
@@ -350,6 +337,19 @@ export const convertDateToEndOfUnitDateObject = (date, unit) => convertDateToDat
  */
 export const convertDateToEndOfUnitString = (date, unit, format) => convertDateToString(
   convertDateToEndOfUnitMoment(date, unit),
+  format,
+);
+
+/**
+ * Convert date to start of unit as formatted string
+ *
+ * @param {LocalDate} date
+ * @param {string} unit
+ * @param {?string} [format]
+ * @return {string}
+ */
+export const convertDateToStartOfUnitString = (date, unit, format) => convertDateToString(
+  convertDateToStartOfUnitMoment(date, unit),
   format,
 );
 
@@ -433,5 +433,14 @@ export const convertDateToEndOfDayDateObject = date => convertDateToEndOfDayMome
  * @return {boolean}
  */
 export const isSameOrBeforeDate = (left, right) => convertDateToMoment(left).isSameOrBefore(right);
+
+/**
+ * Format date/timestamp/unix/moment to string format
+ *
+ * @param {Date|number|moment.Moment} date
+ * @param {string} format
+ * @return {string}
+ */
+export const formatDate = (date, format) => convertDateToMoment(date).format(format);
 
 export default convertDateToMoment;
