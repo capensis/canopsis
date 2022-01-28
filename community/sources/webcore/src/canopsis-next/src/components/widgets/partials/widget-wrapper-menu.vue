@@ -20,8 +20,6 @@
 </template>
 
 <script>
-import { omit } from 'lodash';
-
 import { MODALS, ROUTES_NAMES, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 
 import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
@@ -70,14 +68,18 @@ export default {
      * Copy a widget's parameters, and open corresponding settings panel
      */
     async cloneWidget({ viewId, tabId }) {
-      const newWidget = omit(this.widget, ['_id']);
+      const newWidget = {
+        ...this.widget,
+
+        tab: tabId,
+      };
 
       await this.redirectToSelectedViewAndTab({ viewId, tabId });
 
       this.$sidebar.show({
         name: SIDE_BARS_BY_WIDGET_TYPES[newWidget.type],
         config: {
-          tabId,
+          duplicate: true,
           widget: newWidget,
         },
       });
@@ -98,7 +100,7 @@ export default {
     /**
      * Show delete widget modal window
      */
-    showDeleteWidgetModal() {
+    showDeleteWidgetModal() { // TODO: resolve problem with viewTab refetching
       this.$modals.show({
         name: MODALS.confirmation,
         config: {

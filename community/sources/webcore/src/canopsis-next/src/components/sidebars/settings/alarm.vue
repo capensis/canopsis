@@ -1,50 +1,50 @@
 <template lang="pug">
   div
     v-list.pt-0(expand)
-      field-title(v-model="settings.widget.title", :title="$t('common.title')")
+      field-title(v-model="form.title", :title="$t('common.title')")
       v-divider
-      field-periodic-refresh(v-model="settings.widget.parameters.periodic_refresh")
+      field-periodic-refresh(v-model="form.parameters.periodic_refresh")
       v-divider
       v-list-group
         template(#activator="")
           v-list-tile {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-default-sort-column(
-            v-model="settings.widget.parameters.sort",
-            :columns="settings.widget.parameters.widgetColumns",
+            v-model="form.parameters.sort",
+            :columns="form.parameters.widgetColumns",
             :columns-label="$t('settings.columnName')"
           )
           v-divider
           field-columns(
-            v-model="settings.widget.parameters.widgetColumns",
+            v-model="form.parameters.widgetColumns",
             :label="$t('settings.columnNames')",
             with-html,
             with-color-indicator
           )
           v-divider
           field-columns(
-            v-model="settings.widget.parameters.widgetGroupColumns",
+            v-model="form.parameters.widgetGroupColumns",
             :label="$t('settings.groupColumnNames')",
             with-html,
             with-color-indicator
           )
           v-divider
           field-columns(
-            v-model="settings.widget.parameters.serviceDependenciesColumns",
+            v-model="form.parameters.serviceDependenciesColumns",
             :label="$t('settings.trackColumnNames')",
             with-color-indicator
           )
           v-divider
-          field-default-elements-per-page(v-model="settings.userPreferenceContent.itemsPerPage")
+          field-default-elements-per-page(v-model="form.parameters.itemsPerPage")
           v-divider
-          field-opened-resolved-filter(v-model="settings.widget.parameters.opened")
+          field-opened-resolved-filter(v-model="form.parameters.opened")
           v-divider
           template(v-if="hasAccessToListFilters")
             field-filters(
-              v-model="settings.widget.parameters.mainFilter",
+              v-model="form.parameters.mainFilter",
               :entities-type="$constants.ENTITIES_TYPES.alarm",
-              :filters.sync="settings.widget.parameters.viewFilters",
-              :condition.sync="settings.widget.parameters.mainFilterCondition",
+              :filters.sync="form.parameters.viewFilters",
+              :condition.sync="form.parameters.mainFilterCondition",
               :addable="hasAccessToAddFilter",
               :editable="hasAccessToEditFilter",
               @input="updateMainFilterUpdatedAt"
@@ -52,30 +52,30 @@
             v-divider
           template(v-if="hasAccessToListRemediationInstructionsFilters")
             field-remediation-instructions-filters(
-              v-model="settings.widget.parameters.remediationInstructionsFilters",
+              v-model="form.parameters.remediationInstructionsFilters",
               :addable="hasAccessToAddRemediationInstructionsFilter",
               :editable="hasAccessToEditRemediationInstructionsFilter"
             )
             v-divider
-          field-live-reporting(v-model="settings.widget.parameters.liveReporting")
+          field-live-reporting(v-model="form.parameters.liveReporting")
           v-divider
           field-info-popup(
-            v-model="settings.widget.parameters.infoPopups",
-            :columns="settings.widget.parameters.widgetColumns"
+            v-model="form.parameters.infoPopups",
+            :columns="form.parameters.widgetColumns"
           )
           v-divider
           field-text-editor(
-            v-model="settings.widget.parameters.moreInfoTemplate",
+            v-model="form.parameters.moreInfoTemplate",
             :title="$t('settings.moreInfosModal')"
           )
           v-divider
           field-grid-range-size(
-            v-model="settings.widget.parameters.expandGridRangeSize",
+            v-model="form.parameters.expandGridRangeSize",
             :title="$t('settings.expandGridRangeSize')"
           )
           v-divider
           field-switcher(
-            v-model="settings.widget.parameters.isHtmlEnabledOnTimeLine",
+            v-model="form.parameters.isHtmlEnabledOnTimeLine",
             :title="$t('settings.isHtmlEnabledOnTimeLine')"
           )
           v-divider
@@ -84,32 +84,32 @@
               v-list-tile Ack
             v-list.grey.lighten-4.px-2.py-0(expand)
             field-switcher(
-              v-model="settings.widget.parameters.isAckNoteRequired",
+              v-model="form.parameters.isAckNoteRequired",
               :title="$t('settings.isAckNoteRequired')"
             )
             v-divider
             field-switcher(
-              v-model="settings.widget.parameters.isMultiAckEnabled",
+              v-model="form.parameters.isMultiAckEnabled",
               :title="$t('settings.isMultiAckEnabled')"
             )
             v-divider
-            field-fast-ack-output(v-model="settings.widget.parameters.fastAckOutput")
+            field-fast-ack-output(v-model="form.parameters.fastAckOutput")
           v-divider
           field-switcher(
-            v-model="settings.widget.parameters.isSnoozeNoteRequired",
+            v-model="form.parameters.isSnoozeNoteRequired",
             :title="$t('settings.isSnoozeNoteRequired')"
           )
           v-divider
           field-enabled-limit(
-            v-model="settings.widget.parameters.linksCategoriesAsList",
+            v-model="form.parameters.linksCategoriesAsList",
             :title="$t('settings.linksCategoriesAsList')",
             :label="$t('settings.linksCategoriesLimit')"
           )
           v-divider
-          export-csv-form(v-model="settings.widget.parameters", datetime-format)
+          export-csv-form(v-model="form.parameters", datetime-format)
           v-divider
           field-switcher(
-            v-model="settings.widget.parameters.sticky_header",
+            v-model="form.parameters.sticky_header",
             :title="$t('settings.stickyHeader')"
           )
       v-divider
@@ -117,12 +117,9 @@
 </template>
 
 <script>
-import { get } from 'lodash';
-
-import { PAGINATION_LIMIT } from '@/config';
 import { SIDE_BARS } from '@/constants';
 
-import { alarmListWidgetToForm, formToAlarmListWidget } from '@/helpers/forms/widgets/alarm';
+import { formToAlarmListWidget } from '@/helpers/forms/widgets/alarm';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
@@ -151,9 +148,6 @@ import ExportCsvForm from '@/components/sidebars/settings/forms/export-csv.vue';
  */
 export default {
   name: SIDE_BARS.alarmSettings,
-  $_veeValidate: {
-    validator: 'new',
-  },
   components: {
     FieldTitle,
     FieldDefaultSortColumn,
@@ -177,35 +171,8 @@ export default {
     permissionsWidgetsAlarmsListFilters,
     permissionsWidgetsAlarmsListRemediationInstructionsFilters,
   ],
-  props: {
-    sidebar: {
-      type: Object,
-      required: true,
-    },
-  },
-  data() {
-    const { widget } = this.sidebar.config;
-
-    return {
-      settings: {
-        widget: alarmListWidgetToForm(widget),
-        userPreferenceContent: { itemsPerPage: PAGINATION_LIMIT }, // TODO: finish it
-      },
-    };
-  },
-  mounted() {
-    const { content } = this.userPreference;
-
-    this.settings.userPreferenceContent = {
-      itemsPerPage: get(content, 'itemsPerPage', PAGINATION_LIMIT),
-    };
-  },
   methods: {
-    updateMainFilterUpdatedAt() {
-      this.settings.widget.parameters.mainFilterUpdatedAt = Date.now();
-    },
-
-    prepareWidgetSettings() {
+    prepareWidgetSettings() { // TODO: remove it
       const { widget } = this.settings;
 
       return formToAlarmListWidget(widget);

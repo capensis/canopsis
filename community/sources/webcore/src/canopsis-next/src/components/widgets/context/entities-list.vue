@@ -106,8 +106,8 @@ import { exportCsvMixinCreator } from '@/mixins/widget/export';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
-import { permissionsWidgetsContextEntityFilters } from '@/mixins/permissions/widgets/context-entity/filters';
-import { permissionsWidgetsContextEntityCategory } from '@/mixins/permissions/widgets/context-entity/category';
+import { permissionsWidgetsContextFilters } from '@/mixins/permissions/widgets/context/filters';
+import { permissionsWidgetsContextCategory } from '@/mixins/permissions/widgets/context/category';
 
 import EntityColumnCell from './columns-formatting/entity-column-cell.vue';
 import EntitiesListExpandPanel from './partials/entities-list-expand-panel.vue';
@@ -131,8 +131,8 @@ export default {
     widgetFilterSelectMixin,
     entitiesContextEntityMixin,
     entitiesAlarmColumnsFiltersMixin,
-    permissionsWidgetsContextEntityFilters,
-    permissionsWidgetsContextEntityCategory,
+    permissionsWidgetsContextFilters,
+    permissionsWidgetsContextCategory,
     exportCsvMixinCreator({
       createExport: 'createContextExport',
       fetchExport: 'fetchContextExport',

@@ -9,27 +9,25 @@ export const types = {
 export default {
   namespaced: true,
   state: {
-    sidebar: {
-      hidden: true,
-    },
+    name: null,
+    config: {},
+    hidden: true,
   },
   getters: {
-    sidebar: state => state.sidebar,
+    sidebar: state => state,
   },
   mutations: {
     [types.SHOW](state, { name, config = {} }) {
-      state.sidebar = {
-        name,
-        config,
-
-        hidden: false,
-      };
+      state.name = name;
+      state.config = config;
+      state.hidden = false;
     },
     [types.HIDE](state) {
-      state.sidebar.hidden = true;
+      state.hidden = true;
     },
     [types.HIDE_COMPLETED](state) {
-      state.sidebar = {};
+      state.name = null;
+      state.config = {};
     },
   },
   actions: {

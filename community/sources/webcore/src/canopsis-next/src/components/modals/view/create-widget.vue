@@ -28,13 +28,12 @@ import {
   WIDGET_ICONS,
 } from '@/constants';
 
-import { generateWidgetByType } from '@/helpers/entities';
-
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 import ModalWrapper from '../modal-wrapper.vue';
 import { getNewWidgetGridParametersY } from '@/helpers/grid-layout';
+import { getEmptyWidgetByType } from '@/helpers/forms/widgets/common';
 
 /**
  * Modal to create widget
@@ -80,12 +79,14 @@ export default {
     },
 
     getWidgetWithUpdatedGridParametersByType(type) {
-      const widget = generateWidgetByType(type);
-      const newGridParametersY = getNewWidgetGridParametersY(this.config.tab.widgets);
+      const { tab } = this.config;
+      const widget = getEmptyWidgetByType(type);
+      const newGridParametersY = getNewWidgetGridParametersY(tab.widgets);
 
       widget.grid_parameters.mobile.y = newGridParametersY.mobile;
       widget.grid_parameters.tablet.y = newGridParametersY.tablet;
       widget.grid_parameters.desktop.y = newGridParametersY.desktop;
+      widget.tab = tab._id;
 
       return widget;
     },
