@@ -496,6 +496,13 @@
         "desc": "Service weather: Access to pbehaviors management"
     },
     {
+        "_id": "serviceweather_executeInstruction",
+        "loader_id": "serviceweather_executeInstruction",
+        "crecord_name": "serviceweather_executeInstruction",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to execute instruction"
+    },
+    {
         "_id": "serviceweather_entityLinks",
         "loader_id": "serviceweather_entityLinks",
         "crecord_name": "serviceweather_entityLinks",
