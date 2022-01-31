@@ -15336,7 +15336,6 @@ var doc = `{
             "type": "object",
             "required": [
                 "tab",
-                "title",
                 "type"
             ],
             "properties": {

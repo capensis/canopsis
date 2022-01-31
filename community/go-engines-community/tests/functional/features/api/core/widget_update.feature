@@ -77,7 +77,6 @@ Feature: Update a widget
     """json
     {
       "errors": {
-        "title": "Title is missing.",
         "type": "Type is missing.",
         "tab": "Tab is missing."
       }

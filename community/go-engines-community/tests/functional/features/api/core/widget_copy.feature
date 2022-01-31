@@ -132,7 +132,6 @@ Feature: Copy a widget
     {
       "errors": {
         "tab": "Tab is missing.",
-        "title": "Title is missing.",
         "type": "Type is missing."
       }
     }
