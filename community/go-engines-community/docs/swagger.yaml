@@ -71,6 +71,8 @@ definitions:
         type: object
       is_all_auto_instructions_completed:
         type: boolean
+      is_auto_instruction_failed:
+        type: boolean
       is_auto_instruction_running:
         type: boolean
       is_manual_instruction_waiting_result:
@@ -2426,9 +2428,6 @@ definitions:
       updated:
         type: integer
     type: object
-  primitive.M:
-    additionalProperties: true
-    type: object
   resolverule.CreateRequest:
     properties:
       _id:
@@ -2839,6 +2838,8 @@ definitions:
         type: integer
       alarm_display_name:
         type: string
+      alarm_id:
+        type: string
       assigned_instructions:
         items:
           $ref: '#/definitions/alarm.InstructionWithAlarms'
@@ -2865,6 +2866,8 @@ definitions:
           $ref: '#/definitions/serviceweather.Info'
         type: object
       is_all_auto_instructions_completed:
+        type: boolean
+      is_auto_instruction_failed:
         type: boolean
       is_auto_instruction_running:
         type: boolean

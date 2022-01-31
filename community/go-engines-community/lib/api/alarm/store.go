@@ -27,6 +27,8 @@ import (
 const (
 	InstructionExecutionStatusRunning    = 0
 	InstructionExecutionStatusPaused     = 1
+	InstructionExecutionStatusAborted    = 4
+	InstructionExecutionStatusFailed     = 4
 	InstructionExecutionStatusWaitResult = 5
 	InstructionTypeManual                = 0
 	InstructionTypeAuto                  = 1
@@ -338,7 +340,7 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 	pipeline := make([]bson.M, 0)
 	pipeline = append(pipeline, bson.M{"$match": bson.M{"$and": []bson.M{
 		{
-			"d": bson.M{"$in": childrenIds},
+			"d":         bson.M{"$in": childrenIds},
 			"v.parents": bson.M{"$in": parentIds},
 		},
 	}}})
@@ -610,6 +612,13 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 				}}},
 				0,
 			}},
+			"auto_failed": bson.M{"$gt": bson.A{
+				bson.M{"$size": bson.M{"$filter": bson.M{
+					"input": "$auto_statuses",
+					"cond":  bson.M{"$in": bson.A{"$$this", []int{InstructionExecutionStatusAborted, InstructionExecutionStatusFailed}}},
+				}}},
+				0,
+			}},
 			"manual_running": bson.M{"$gt": bson.A{
 				bson.M{"$size": bson.M{"$filter": bson.M{
 					"input": "$manual_statuses",
@@ -682,6 +691,7 @@ func (s *store) fillInstructionFlags(ctx context.Context, result *AggregationRes
 	for i, v := range result.Data {
 		result.Data[i].IsAutoInstructionRunning = statusesByAlarm[v.ID].AutoRunning
 		result.Data[i].IsAllAutoInstructionsCompleted = statusesByAlarm[v.ID].AutoAllCompleted
+		result.Data[i].IsAutoInstructionFailed = statusesByAlarm[v.ID].AutoFailed
 		result.Data[i].IsManualInstructionWaitingResult = statusesByAlarm[v.ID].ManualRunning
 	}
 
