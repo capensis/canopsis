@@ -18,41 +18,43 @@ import { widgetToForm } from '@/helpers/forms/widgets/common';
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
 
 /**
- * @typedef {Object} FastAckOutput
+ * @typedef {Object} WidgetFastAckOutput
  * @property {boolean} enabled
  * @property {string} value
  */
 
 /**
- * @typedef {Object} LinksCategoriesAsList
+ * @typedef {Object} WidgetLinksCategoriesAsList
  * @property {boolean} enabled
  * @property {number} limit
  */
 
 /**
- * @typedef {Object} LiveReporting
+ * @typedef {Object} WidgetLiveReporting
  * @property {string} [tstart]
  * @property {string} [tstop]
  */
 
 /**
- * @typedef {Object} Sort
- * @property {string} order
- * @property {string} column
- */
-
-/**
- * @typedef {Object} InfoPopup
+ * @typedef {Object} WidgetInfoPopup
  * @property {string} column
  * @property {string} template
  */
 
 /**
- * @typedef {Object} AlarmListWidgetDefaultParameters
- * @property {FastAckOutput} fastAckOutput
- * @property {LinksCategoriesAsList} linksCategoriesAsList
+ * @typedef {Object} AlarmListBaseParameters
  * @property {number} itemsPerPage
- * @property {InfoPopup[]} infoPopups
+ * @property {string} moreInfoTemplate
+ * @property {WidgetInfoPopup[]} infoPopups
+ * @property {WidgetColumn[]} widgetColumns
+ */
+
+/**
+ * @typedef {Object} AlarmListWidgetDefaultParameters
+ * @property {WidgetFastAckOutput} fastAckOutput
+ * @property {WidgetLinksCategoriesAsList} linksCategoriesAsList
+ * @property {number} itemsPerPage
+ * @property {WidgetInfoPopup[]} infoPopups
  * @property {string} moreInfoTemplate
  * @property {WidgetColumn[]} widgetColumns
  * @property {WidgetColumn[]} widgetGroupColumns
@@ -72,20 +74,20 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
 /**
  * @typedef {AlarmListWidgetDefaultParameters} AlarmListWidgetParameters
  * @property {DurationWithEnabled} periodic_refresh
- * @property {Array} viewFilters
- * @property {Object|null} mainFilter
- * @property {number} mainFilterUpdatedAt
- * @property {LiveReporting} liveReporting
- * @property {Sort} sort
+ * @property {WidgetFilter[]} filters
+ * @property {string | null} main_filter
+ * @property {number} main_filter_updated_at
+ * @property {WidgetLiveReporting} liveReporting
+ * @property {WidgetSort} sort
  * @property {boolean | null} opened
  * @property {number[]} expandGridRangeSize
- * @property {CsvSeparators} exportCsvSeparator
+ * @property {WidgetCsvSeparator} exportCsvSeparator
  * @property {string} exportCsvDatetimeFormat
  */
 
 /**
  * @typedef {AlarmListWidgetParameters} AlarmListWidgetParametersForm
- * @property {DurationWithEnabledForm} periodic_refresh
+ * @property {DurationWithEnabled} periodic_refresh
  */
 
 /**
@@ -128,10 +130,10 @@ export const widgetColumnsToForm = (widgetColumns = []) => widgetColumns.map(col
 /**
  * Convert alarm list infoPopups parameters to form
  *
- * @param {InfoPopup[]} [infoPopups = []]
- * @return {InfoPopup[]}
+ * @param {WidgetInfoPopup[]} [infoPopups = []]
+ * @return {WidgetInfoPopup[]}
  */
-const infoPopupsToForm = (infoPopups = []) => infoPopups.map(infoPopup => ({
+export const infoPopupsToForm = (infoPopups = []) => infoPopups.map(infoPopup => ({
   ...infoPopup,
   column: columnValueToForm(infoPopup.column),
 }));
@@ -139,12 +141,27 @@ const infoPopupsToForm = (infoPopups = []) => infoPopups.map(infoPopup => ({
 /**
  * Convert widget sort parameters to form
  *
- * @param {Sort} [sort = {}]
- * @return {Sort}
+ * @param {WidgetSort} [sort = {}]
+ * @return {WidgetSort}
  */
 export const widgetSortToForm = (sort = {}) => ({
   order: sort.order || SORT_ORDERS.asc,
   column: sort.column ? columnValueToForm(sort.column) : '',
+});
+
+/**
+ * Convert alarm list base parameters (we are using it inside another widgets with alarmList) to form
+ *
+ * @param {AlarmListBaseParameters} [alarmListParameters = {}]
+ * @return {AlarmListBaseParameters}
+ */
+export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
+  itemsPerPage: alarmListParameters.itemsPerPage ?? PAGINATION_LIMIT,
+  moreInfoTemplate: alarmListParameters.moreInfoTemplate ?? '',
+  infoPopups: infoPopupsToForm(alarmListParameters.infoPopups),
+  widgetColumns: alarmListParameters.widgetColumns
+    ? widgetColumnsToForm(alarmListParameters.widgetColumns)
+    : defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_COLUMNS),
 });
 
 /**
@@ -236,8 +253,8 @@ export const generateDefaultAlarmListWidget = () => alarmListWidgetToForm();
 /**
  * Convert form sort parameters to widget sort
  *
- * @param {Sort} sort
- * @return {Sort}
+ * @param {WidgetSort} sort
+ * @return {WidgetSort}
  */
 export const formSortToWidgetSort = (sort = {}) => ({
   order: sort.order,
@@ -258,13 +275,26 @@ export const formWidgetColumnsToColumns = widgetColumns => widgetColumns.map(col
 /**
  * Convert infoPopups parameters to alarm list
  *
- * @param {InfoPopup[]} infoPopups
- * @return {InfoPopup[]}
+ * @param {WidgetInfoPopup[]} infoPopups
+ * @return {WidgetInfoPopup[]}
  */
-const formInfoPopupsToInfoPopups = infoPopups => infoPopups.map(infoPopup => ({
+export const formInfoPopupsToInfoPopups = infoPopups => infoPopups.map(infoPopup => ({
   ...infoPopup,
   column: columnValueToForm(infoPopup.column),
 }));
+
+/**
+ * Convert form to alarm list base parameters (we are using it inside another widgets with alarmList)
+ *
+ * @param {AlarmListBaseParameters} [form = {}]
+ * @return {AlarmListBaseParameters}
+ */
+export const formToAlarmListBaseParameters = (form = {}) => ({
+  itemsPerPage: form.itemsPerPage,
+  moreInfoTemplate: form.moreInfoTemplate,
+  infoPopups: formInfoPopupsToInfoPopups(form.infoPopups),
+  widgetColumns: formWidgetColumnsToColumns(form.widgetColumns),
+});
 
 export const formParametersToAlarmListWidgetParameters = (parameters = {}) => ({
   ...parameters,

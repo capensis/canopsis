@@ -1,8 +1,8 @@
 import { widgetToForm, formToWidget } from '@/helpers/forms/widgets/common';
 
 import { queryMixin } from '@/mixins/query';
+import { activeViewMixin } from '@/mixins/active-view';
 import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
-import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 export const widgetSettingsMixin = {
@@ -17,8 +17,8 @@ export const widgetSettingsMixin = {
   },
   mixins: [
     queryMixin,
+    activeViewMixin,
     entitiesWidgetMixin,
-    entitiesViewTabMixin,
     confirmableModalMixinCreator({ field: 'form', closeMethod: '$sidebar.hide' }),
   ],
   data() {
@@ -79,7 +79,7 @@ export const widgetSettingsMixin = {
           await this.createWidget({ data });
         }
 
-        await this.fetchViewTab({ id: tabId });
+        await this.fetchActiveView();
 
         /**
          * TODO: update widget request

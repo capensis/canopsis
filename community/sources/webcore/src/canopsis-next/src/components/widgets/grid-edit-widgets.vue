@@ -91,6 +91,8 @@ export default {
   watch: {
     'tab.widgets': function tabWidgets(widgets) {
       this.layouts = this.getLayoutsForAllSizes(widgets);
+
+      this.updatedLayout();
     },
 
     $mq: {
