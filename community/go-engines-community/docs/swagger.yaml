@@ -2911,6 +2911,8 @@ definitions:
       t:
         $ref: '#/definitions/types.CpsTime'
         type: object
+      user_id:
+        type: string
       val:
         type: integer
     type: object
@@ -2935,6 +2937,8 @@ definitions:
       t:
         $ref: '#/definitions/types.CpsTime'
         type: object
+      user_id:
+        type: string
       val:
         type: string
     type: object
@@ -4731,7 +4735,7 @@ paths:
       parameters:
       - description: Entity id
         in: query
-        name: id
+        name: _id
         required: true
         type: string
       responses:
@@ -4757,7 +4761,7 @@ paths:
       parameters:
       - description: Entity id
         in: query
-        name: id
+        name: _id
         required: true
         type: string
       produces:
@@ -4785,7 +4789,7 @@ paths:
       parameters:
       - description: Entity id
         in: query
-        name: id
+        name: _id
         required: true
         type: string
       - description: body
