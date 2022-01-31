@@ -11,14 +11,21 @@ import (
 )
 
 const (
-	cacheKey           = "services"
+	cacheKey = "services"
+	// lastUpdateCacheKey is used to prevent race condition when multiple goroutine or instances update cache.
 	lastUpdateCacheKey = "services-last-update"
 )
 
 type Storage interface {
+	// ReloadAll loads all enabled services from database and saves their data to cache.
 	ReloadAll(ctx context.Context) ([]ServiceData, error)
-	Reload(ctx context.Context, id string) (*ServiceData, bool, bool, error)
+	// Reload loads service by id from database and saves its data to cache.
+	// Return parameter isNew contains true if service didn't exist in cache.
+	// Return parameter isDisabled contains true if service is disabled. Service data is nil in this case.
+	Reload(ctx context.Context, id string) (s *ServiceData, isNew bool, isDisabled bool, err error)
+	// GetAll returns all services data from cache.
 	GetAll(ctx context.Context) ([]ServiceData, error)
+	// Get returns service data  by id from cache.
 	Get(ctx context.Context, id string) (*ServiceData, error)
 }
 
