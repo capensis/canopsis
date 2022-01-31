@@ -68,10 +68,9 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event typ
 	ruleIdentifier := event.MetaAlarmRuleID
 	rule, err := p.ruleAdapter.GetRule(ctx, ruleIdentifier)
 	if err != nil {
-		// the rule can be deleted
-		if err.Error() != "not found" {
-			return nil, fmt.Errorf("cannot fetch rule id=%q: %w", ruleIdentifier, err)
-		}
+		return nil, fmt.Errorf("cannot fetch meta alarm rule id=%q: %w", ruleIdentifier, err)
+	} else if rule.ID == "" {
+		return nil, fmt.Errorf("meta alarm rule id=%q not found", ruleIdentifier)
 	} else {
 		ruleIdentifier = rule.Name
 	}
@@ -85,12 +84,8 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event typ
 		metaAlarm.Value.Meta = event.MetaAlarmRuleID
 		metaAlarm.Value.MetaValuePath = event.MetaAlarmValuePath
 
-		if len(event.ExtraInfos) > 0 {
-			if nameInf, ok := event.ExtraInfos["display_name"]; ok {
-				if name, isStr := nameInf.(string); isStr {
-					metaAlarm.Value.DisplayName = name
-				}
-			}
+		if event.DisplayName != "" {
+			metaAlarm.Value.DisplayName = event.DisplayName
 		}
 
 		var childAlarms []types.Alarm
@@ -486,6 +481,9 @@ func (p *metaAlarmEventProcessor) resolveParents(ctx context.Context, childAlarm
 						rule, err := p.ruleAdapter.GetRule(ctx, parentAlarm.Alarm.Value.Meta)
 						if err != nil {
 							return fmt.Errorf("cannot fetch meta alarm rule: %w", err)
+						}
+						if rule.ID == "" {
+							return fmt.Errorf("meta alarm rule %s not found", parentAlarm.Alarm.Value.Meta)
 						}
 						if !rule.AutoResolve {
 							return nil

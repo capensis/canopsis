@@ -97,7 +97,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		changeType, err := s.storeAlarm(ctx, event)
 
 		go func() {
-			err := s.metaAlarmEventProcessor.Process(ctx, *event)
+			err := s.metaAlarmEventProcessor.Process(context.Background(), *event)
 			if err != nil {
 				s.logger.Err(err).Msg("cannot process meta alarm")
 			}
@@ -142,7 +142,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 
 	if changeType == types.AlarmChangeTypeResolve {
 		go func() {
-			err := s.adapter.CopyAlarmToResolvedCollection(ctx, *event.Alarm)
+			err := s.adapter.CopyAlarmToResolvedCollection(context.Background(), *event.Alarm)
 			if err != nil {
 				s.logger.Err(err).Msg("cannot update resolved alarm")
 			}
@@ -159,14 +159,14 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	}
 
 	go func() {
-		err := s.metaAlarmEventProcessor.Process(ctx, *event)
+		err := s.metaAlarmEventProcessor.Process(context.Background(), *event)
 		if err != nil {
 			s.logger.Err(err).Msg("cannot process meta alarm")
 		}
 	}()
 
 	go func() {
-		if err = s.processAckResources(ctx, *event); err != nil {
+		if err = s.processAckResources(context.Background(), *event); err != nil {
 			s.logger.Err(err).Msg("cannot ack resources")
 		}
 	}()
