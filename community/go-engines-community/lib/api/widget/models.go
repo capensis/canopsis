@@ -9,7 +9,7 @@ import (
 type EditRequest struct {
 	ID             string                 `json:"-"`
 	Tab            string                 `json:"tab" binding:"required"`
-	Title          string                 `json:"title" binding:"required,max=255"`
+	Title          string                 `json:"title" binding:"max=255"`
 	Type           string                 `json:"type" binding:"required,max=255"`
 	GridParameters map[string]interface{} `json:"grid_parameters"`
 	Parameters     view.Parameters        `json:"parameters"`

@@ -3840,7 +3840,6 @@ definitions:
         type: string
     required:
     - tab
-    - title
     - type
     type: object
   widget.Response:

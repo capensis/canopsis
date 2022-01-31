@@ -15320,7 +15320,6 @@
             "type": "object",
             "required": [
                 "tab",
-                "title",
                 "type"
             ],
             "properties": {
