@@ -54,7 +54,6 @@ import uid from '@/helpers/uid';
 import { formToTestingWeatherWidget, testingWeatherWidgetToForm } from '@/helpers/forms/widgets/testing-weather';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
-import { sideBarSettingsWidgetAlarmMixin } from '@/mixins/side-bar/settings/widgets/alarm';
 import { entitiesTestSuitesMixin } from '@/mixins/entities/test-suite';
 
 import FieldTitle from '@/components/sidebars/settings/fields/common/title.vue';
@@ -81,7 +80,6 @@ export default {
   },
   mixins: [
     widgetSettingsMixin,
-    sideBarSettingsWidgetAlarmMixin,
     entitiesTestSuitesMixin,
   ],
   data() {

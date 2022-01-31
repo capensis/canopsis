@@ -12,7 +12,6 @@ import {
 } from './alarm';
 import {
   contextWidgetParametersToFormParameters,
-  formParametersToContextWidgetParameters,
 } from '@/helpers/forms/widgets/context';
 import {
   serviceWeatherWidgetParametersToFormParameters,
@@ -23,15 +22,36 @@ import {
  */
 
 /**
- * @typedef { 'comma' | 'semicolon' | 'tab' | 'space' } CsvSeparators
+ * @typedef { 'comma' | 'semicolon' | 'tab' | 'space' } WidgetCsvSeparator
+ */
+
+/**
+ * @typedef {Object} WidgetFilter
+ * @property {string} [_id]
+ * @property {string} title
+ * @property {string} query
  */
 
 /**
  * @typedef {Object} WidgetColumn
  * @property {string} value
  * @property {string} label
- * @property {boolean} isHtml
- * @property {boolean} colorIndicator
+ * @property {boolean} [isHtml]
+ * @property {boolean} [colorIndicator]
+ */
+
+/**
+ * @typedef {Object} WidgetSort
+ * @property {string} order
+ * @property {string} [column]
+ */
+
+/**
+ * @typedef {Object} WidgetMargin
+ * @property {number} top
+ * @property {number} right
+ * @property {number} bottom
+ * @property {number} left
  */
 
 /**
@@ -52,11 +72,19 @@ import {
  */
 
 /**
+ * @typedef {
+ *   AlarmListWidgetParameters |
+ *   ContextWidgetParameters |
+ *   ServiceWeatherWidgetParameters
+ * } WidgetParameters
+ */
+
+/**
  * @typedef {Object} Widget
  * @property {string} _id
  * @property {WidgetType} type
  * @property {string} title
- * @property {Object} parameters
+ * @property {WidgetParameters} parameters
  * @property {WidgetGridParameters} grid_parameters
  */
 
@@ -109,8 +137,6 @@ export const formParametersToWidgetParameters = ({ type, parameters = {} } = {})
   switch (type) {
     case WIDGET_TYPES.alarmList:
       return formParametersToAlarmListWidgetParameters(parameters);
-    case WIDGET_TYPES.context:
-      return formParametersToContextWidgetParameters(parameters);
     default:
       return parameters;
   }

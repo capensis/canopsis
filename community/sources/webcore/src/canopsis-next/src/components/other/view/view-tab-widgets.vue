@@ -55,10 +55,7 @@ export default {
   },
   methods: {
     updateWidgetsGrid(widgetsGrid) {
-      this.widgetsGrid = {
-        ...this.widgetsGrid,
-        ...widgetsGrid,
-      };
+      this.widgetsGrid = widgetsGrid;
     },
 
     async updatePositions() {

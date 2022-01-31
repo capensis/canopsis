@@ -22,11 +22,14 @@
 <script>
 import { MODALS, ROUTES_NAMES, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 
+import { activeViewMixin } from '@/mixins/active-view';
 import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
-import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
 
 export default {
-  mixins: [entitiesWidgetMixin, entitiesViewTabMixin],
+  mixins: [
+    activeViewMixin,
+    entitiesWidgetMixin,
+  ],
   props: {
     widget: {
       type: Object,
@@ -100,14 +103,14 @@ export default {
     /**
      * Show delete widget modal window
      */
-    showDeleteWidgetModal() { // TODO: resolve problem with viewTab refetching
+    showDeleteWidgetModal() {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
             await this.removeWidget({ id: this.widget._id });
 
-            return this.fetchViewTab({ id: this.tab._id });
+            return this.fetchActiveView();
           },
         },
       });

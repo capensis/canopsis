@@ -330,11 +330,11 @@ export const WEATHER_ACK_EVENT_OUTPUT = {
 export const DEFAULT_CONTEXT_WIDGET_COLUMNS = [
   {
     labelKey: 'common.name',
-    value: 'entity.name',
+    value: 'name',
   },
   {
     labelKey: 'common.type',
-    value: 'entity.type',
+    value: 'type',
   },
 ];
 
