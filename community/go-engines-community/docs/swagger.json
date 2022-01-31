@@ -2065,7 +2065,7 @@
                     {
                         "type": "string",
                         "description": "Entity id",
-                        "name": "id",
+                        "name": "_id",
                         "in": "query",
                         "required": true
                     }
@@ -2110,7 +2110,7 @@
                     {
                         "type": "string",
                         "description": "Entity id",
-                        "name": "id",
+                        "name": "_id",
                         "in": "query",
                         "required": true
                     },
@@ -2164,7 +2164,7 @@
                     {
                         "type": "string",
                         "description": "Entity id",
-                        "name": "id",
+                        "name": "_id",
                         "in": "query",
                         "required": true
                     }
@@ -11427,6 +11427,9 @@
                     "type": "object",
                     "$ref": "#/definitions/types.CpsTime"
                 },
+                "user_id": {
+                    "type": "string"
+                },
                 "val": {
                     "type": "integer"
                 }
@@ -11462,6 +11465,9 @@
                 "t": {
                     "type": "object",
                     "$ref": "#/definitions/types.CpsTime"
+                },
+                "user_id": {
+                    "type": "string"
                 },
                 "val": {
                     "type": "string"
