@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 // RulesAdapter is a type that provides access to the MongoDB collection containing
@@ -69,8 +70,12 @@ func (a mongoAdapter) GetManualRule(ctx context.Context) (Rule, error) {
 
 func (a mongoAdapter) GetRule(ctx context.Context, id string) (Rule, error) {
 	res := a.dbCollection.FindOne(ctx, bson.M{"_id": id})
-	if res.Err() != nil {
-		return Rule{}, res.Err()
+	if err := res.Err(); err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return Rule{}, nil
+		}
+
+		return Rule{}, err
 	}
 
 	var rule Rule

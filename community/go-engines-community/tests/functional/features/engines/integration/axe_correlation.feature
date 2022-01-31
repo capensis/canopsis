@@ -1918,6 +1918,7 @@ Feature: create and update meta alarm
       "event_type": "manual_metaalarm_group",
       "component":  "metaalarm",
       "output": "test-output-axe-correlation-15",
+      "display_name": "test-metalarm-axe-correlation-15",
       "ma_children": [
         "test-resource-axe-correlation-15-1/test-component-axe-correlation-15",
         "test-resource-axe-correlation-15-2/test-component-axe-correlation-15"
@@ -1986,6 +1987,7 @@ Feature: create and update meta alarm
             "component": "metaalarm",
             "connector": "engine",
             "connector_name": "correlation",
+            "display_name": "test-metalarm-axe-correlation-15",
             "state": {
               "_t": "stateinc",
               "val": 2
@@ -2111,6 +2113,7 @@ Feature: create and update meta alarm
             "component": "metaalarm",
             "connector": "engine",
             "connector_name": "correlation",
+            "display_name": "test-metalarm-axe-correlation-15",
             "state": {
               "_t": "stateinc",
               "val": 3
@@ -2221,6 +2224,7 @@ Feature: create and update meta alarm
             "component": "metaalarm",
             "connector": "engine",
             "connector_name": "correlation",
+            "display_name": "test-metalarm-axe-correlation-15",
             "state": {
               "_t": "statedec",
               "val": 2
