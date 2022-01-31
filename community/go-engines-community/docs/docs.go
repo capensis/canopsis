@@ -9157,6 +9157,9 @@ var doc = `{
                 "is_all_auto_instructions_completed": {
                     "type": "boolean"
                 },
+                "is_auto_instruction_failed": {
+                    "type": "boolean"
+                },
                 "is_auto_instruction_running": {
                     "type": "boolean"
                 },
@@ -12641,10 +12644,6 @@ var doc = `{
                 }
             }
         },
-        "primitive.M": {
-            "type": "object",
-            "additionalProperties": true
-        },
         "resolverule.CreateRequest": {
             "type": "object",
             "required": [
@@ -13248,6 +13247,9 @@ var doc = `{
                 "alarm_display_name": {
                     "type": "string"
                 },
+                "alarm_id": {
+                    "type": "string"
+                },
                 "assigned_instructions": {
                     "type": "array",
                     "items": {
@@ -13286,6 +13288,9 @@ var doc = `{
                     }
                 },
                 "is_all_auto_instructions_completed": {
+                    "type": "boolean"
+                },
+                "is_auto_instruction_failed": {
                     "type": "boolean"
                 },
                 "is_auto_instruction_running": {
