@@ -2081,7 +2081,7 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Entity id",
-                        "name": "id",
+                        "name": "_id",
                         "in": "query",
                         "required": true
                     }
@@ -2126,7 +2126,7 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Entity id",
-                        "name": "id",
+                        "name": "_id",
                         "in": "query",
                         "required": true
                     },
@@ -2180,7 +2180,7 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Entity id",
-                        "name": "id",
+                        "name": "_id",
                         "in": "query",
                         "required": true
                     }
@@ -11443,6 +11443,9 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/types.CpsTime"
                 },
+                "user_id": {
+                    "type": "string"
+                },
                 "val": {
                     "type": "integer"
                 }
@@ -11478,6 +11481,9 @@ var doc = `{
                 "t": {
                     "type": "object",
                     "$ref": "#/definitions/types.CpsTime"
+                },
+                "user_id": {
+                    "type": "string"
                 },
                 "val": {
                     "type": "string"
