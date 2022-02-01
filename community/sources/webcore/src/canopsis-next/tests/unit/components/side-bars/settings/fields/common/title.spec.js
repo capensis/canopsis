@@ -3,7 +3,7 @@ import Faker from 'faker';
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
 
-import Title from '@/components/side-bars/settings/fields/common/title.vue';
+import Title from '@/components/sidebars/settings/fields/common/title.vue';
 
 const localVue = createVueInstance();
 

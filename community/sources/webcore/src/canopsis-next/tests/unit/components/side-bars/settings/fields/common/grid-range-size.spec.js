@@ -1,7 +1,7 @@
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { createNumberInputStub } from '@unit/stubs/input';
-import GridRangeSize from '@/components/side-bars/settings/fields/common/grid-range-size.vue';
+import GridRangeSize from '@/components/sidebars/settings/fields/common/grid-range-size.vue';
 
 const localVue = createVueInstance();
 

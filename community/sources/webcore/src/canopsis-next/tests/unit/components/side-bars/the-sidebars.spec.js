@@ -5,7 +5,7 @@ import { createMockedStoreModules } from '@unit/utils/store';
 import { mockRequestAnimationFrame } from '@unit/utils/mock-hooks';
 import { SIDE_BARS } from '@/constants';
 
-import TheSidebars from '@/components/side-bars/the-sidebars.vue';
+import TheSidebars from '@/plugins/sidebar/components/the-sidebar.vue';
 
 const localVue = createVueInstance();
 

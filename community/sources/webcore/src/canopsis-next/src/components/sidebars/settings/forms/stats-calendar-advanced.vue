@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-list-group(data-test="advancedSettings")
+  v-list-group
     v-list-tile(slot="activator")
       div(:class="validationHeaderClass") {{ $t('settings.advancedSettings') }}
     v-list.grey.lighten-4.px-2.py-0(expand)
@@ -15,19 +15,15 @@
       v-divider
       field-switcher(
         v-field="value.considerPbehaviors",
-        :title="$t('settings.considerPbehaviors.title')",
-        data-test="widgetConsiderPbehaviors"
+        :title="$t('settings.considerPbehaviors.title')"
       )
       v-divider
-      field-criticity-levels(
-        v-field="value.criticityLevels",
-        data-test="widgetCriticityLevels"
-      )
+      field-criticity-levels(v-field="value.criticityLevels")
       v-divider
       field-levels-colors-selector(
         v-field="value.criticityLevelsColors",
-        colorType="hex",
-        hideSuffix
+        color-type="hex",
+        hide-suffix
       )
 </template>
 

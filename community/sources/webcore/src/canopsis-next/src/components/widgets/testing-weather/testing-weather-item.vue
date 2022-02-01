@@ -32,7 +32,7 @@ import {
   TEST_SUITE_COLORS,
 } from '@/constants';
 
-import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
+import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/common';
 
 import { authMixin } from '@/mixins/auth';
 

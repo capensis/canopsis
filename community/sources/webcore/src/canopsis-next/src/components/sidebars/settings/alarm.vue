@@ -43,7 +43,7 @@
             field-filters(
               v-model="form.parameters.mainFilter",
               :entities-type="$constants.ENTITIES_TYPES.alarm",
-              :filters.sync="form.parameters.viewFilters",
+              :filters.sync="form.parameters.filters",
               :condition.sync="form.parameters.mainFilterCondition",
               :addable="hasAccessToAddFilter",
               :editable="hasAccessToEditFilter",
@@ -119,8 +119,6 @@
 <script>
 import { SIDE_BARS } from '@/constants';
 
-import { formToAlarmListWidget } from '@/helpers/forms/widgets/alarm';
-
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
 import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
@@ -171,12 +169,5 @@ export default {
     permissionsWidgetsAlarmsListFilters,
     permissionsWidgetsAlarmsListRemediationInstructionsFilters,
   ],
-  methods: {
-    prepareWidgetSettings() { // TODO: remove it
-      const { widget } = this.settings;
-
-      return formToAlarmListWidget(widget);
-    },
-  },
 };
 </script>

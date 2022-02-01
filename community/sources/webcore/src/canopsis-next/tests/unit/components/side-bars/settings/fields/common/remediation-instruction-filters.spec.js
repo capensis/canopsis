@@ -3,7 +3,7 @@ import { createButtonStub } from '@unit/stubs/button';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { MODALS } from '@/constants';
 
-import RemediationInstructionsFilters from '@/components/side-bars/settings/fields/common/remediation-instructions-filters.vue';
+import RemediationInstructionsFilters from '@/components/sidebars/settings/fields/common/remediation-instructions-filters.vue';
 
 const localVue = createVueInstance();
 

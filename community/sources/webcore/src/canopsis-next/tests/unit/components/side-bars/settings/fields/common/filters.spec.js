@@ -1,7 +1,7 @@
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { ENTITIES_TYPES, FILTER_MONGO_OPERATORS } from '@/constants';
 
-import Filters from '@/components/side-bars/settings/fields/common/filters.vue';
+import Filters from '@/components/sidebars/settings/fields/common/filters.vue';
 
 const localVue = createVueInstance();
 

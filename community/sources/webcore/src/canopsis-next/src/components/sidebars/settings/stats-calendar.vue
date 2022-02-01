@@ -1,22 +1,19 @@
 <template lang="pug">
   div
     v-list.pt-0(expand)
-      field-title(v-model="settings.widget.title", :title="$t('common.title')")
+      field-title(v-model="form.title", :title="$t('common.title')")
       v-divider
-      alarms-list-modal-form(v-model="settings.widget.parameters.alarmsList")
+      alarms-list-modal-form(v-model="form.parameters.alarmsList")
       v-divider
-      stats-calendar-advanced-form(v-model="settings.widget.parameters")
+      stats-calendar-advanced-form(v-model="form.parameters")
       v-divider
-    v-btn.primary(data-test="submitStatsCalendarButton", @click="submit") {{ $t('common.save') }}
+    v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
-
 import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
-import { sideBarSettingsWidgetAlarmMixin } from '@/mixins/side-bar/settings/widgets/alarm';
 
 import FieldTitle from '@/components/sidebars/settings/fields/common/title.vue';
 import FieldOpenedResolvedFilter from '@/components/sidebars/settings/fields/alarm/opened-resolved-filter.vue';
@@ -32,9 +29,6 @@ import StatsCalendarAdvancedForm from '@/components/sidebars/settings/forms/stat
  */
 export default {
   name: SIDE_BARS.statsCalendarSettings,
-  $_veeValidate: {
-    validator: 'new',
-  },
   components: {
     FieldTitle,
     FieldOpenedResolvedFilter,
@@ -45,22 +39,6 @@ export default {
     AlarmsListModalForm,
     StatsCalendarAdvancedForm,
   },
-  mixins: [widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],
-  data() {
-    const { widget } = this.config;
-
-    return {
-      settings: {
-        widget: this.prepareWidgetWithAlarmParametersSettings(cloneDeep(widget), true),
-      },
-    };
-  },
-  methods: {
-    prepareWidgetSettings() {
-      const { widget } = this.settings;
-
-      return this.prepareWidgetWithAlarmParametersSettings(widget);
-    },
-  },
+  mixins: [widgetSettingsMixin],
 };
 </script>

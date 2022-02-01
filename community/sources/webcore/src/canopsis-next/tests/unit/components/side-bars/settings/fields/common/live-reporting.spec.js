@@ -5,7 +5,7 @@ import { mockModals } from '@unit/utils/mock-hooks';
 import { fakeTimestamp } from '@unit/data/date';
 import { MODALS } from '@/constants';
 
-import LiveReporting from '@/components/side-bars/settings/fields/common/live-reporting.vue';
+import LiveReporting from '@/components/sidebars/settings/fields/common/live-reporting.vue';
 
 const localVue = createVueInstance();
 

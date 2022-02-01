@@ -1,34 +1,33 @@
 <template lang="pug">
   div
     v-list.pt-0(expand)
-      field-title(v-model="settings.widget.title", :title="$t('common.title')")
+      field-title(v-model="form.title", :title="$t('common.title')")
       v-divider
       field-filter-editor(
-        v-model="settings.widget.parameters.mfilter",
+        v-model="form.parameters.mfilter",
         :hidden-fields="['title']",
         :entities-type="$constants.ENTITIES_TYPES.entity"
       )
       v-divider
       field-text-editor(
-        v-model="settings.widget.parameters.template",
+        v-model="form.parameters.template",
         :title="$t('settings.templateEditor')"
       )
       v-divider
       v-list-group(v-if="isCatVersion")
-        v-list-tile(slot="activator") {{ $t('settings.stats') }}
-          div.font-italic.caption.ml-1 ({{ $t('common.optional') }})
+        template(#activator="")
+          v-list-tile {{ $t('settings.stats') }}
+            div.font-italic.caption.ml-1 ({{ $t('common.optional') }})
         v-list.grey.lighten-4.px-2.py-0(expand)
-          field-stats-selector(v-model="settings.widget.parameters.stats")
+          field-stats-selector(v-model="form.parameters.stats")
           v-divider
-          field-date-interval(v-model="settings.widget.parameters.dateInterval")
+          field-date-interval(v-model="form.parameters.dateInterval")
           v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
 import { SIDE_BARS } from '@/constants';
-
-import { textWidgetToForm } from '@/helpers/forms/widgets/text';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
@@ -41,9 +40,6 @@ import FieldTextEditor from '@/components/sidebars/settings/fields/common/text-e
 
 export default {
   name: SIDE_BARS.textSettings,
-  $_veeValidate: {
-    validator: 'new',
-  },
   components: {
     FieldTitle,
     FieldDateInterval,
@@ -52,14 +48,5 @@ export default {
     FieldTextEditor,
   },
   mixins: [widgetSettingsMixin, entitiesInfoMixin],
-  data() {
-    const { widget } = this.config;
-
-    return {
-      settings: {
-        widget: textWidgetToForm(widget),
-      },
-    };
-  },
 };
 </script>

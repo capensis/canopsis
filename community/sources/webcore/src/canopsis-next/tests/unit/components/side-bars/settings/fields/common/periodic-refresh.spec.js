@@ -2,7 +2,7 @@ import flushPromises from 'flush-promises';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
-import PeriodicRefresh from '@/components/side-bars/settings/fields/common/periodic-refresh.vue';
+import PeriodicRefresh from '@/components/sidebars/settings/fields/common/periodic-refresh.vue';
 import { TIME_UNITS } from '@/constants';
 
 const localVue = createVueInstance();

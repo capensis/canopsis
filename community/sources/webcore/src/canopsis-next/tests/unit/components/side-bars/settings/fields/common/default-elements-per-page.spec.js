@@ -1,7 +1,7 @@
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
-import DefaultElementsPerPage from '@/components/side-bars/settings/fields/common/default-elements-per-page.vue';
+import DefaultElementsPerPage from '@/components/sidebars/settings/fields/common/default-elements-per-page.vue';
 
 const localVue = createVueInstance();
 

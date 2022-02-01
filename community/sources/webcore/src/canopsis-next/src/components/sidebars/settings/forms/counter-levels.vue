@@ -2,7 +2,7 @@
   v-list-group
     v-list-tile(slot="activator") {{ $t('settings.counterLevels.title') }}
     v-list.grey.lighten-4.px-2.py-0(expand)
-      v-list-group(data-test="elementsPerPage")
+      v-list-group
         v-list-tile.items-per-page-title(slot="activator")
           slot(name="title")
             span {{ $t('settings.counterLevels.fields.counter') }}

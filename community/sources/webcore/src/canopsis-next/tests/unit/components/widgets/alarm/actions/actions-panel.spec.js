@@ -17,7 +17,7 @@ import {
   QUICK_RANGES,
   REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
 } from '@/constants';
-import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
+import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/common';
 import featuresService from '@/services/features';
 import ActionsPanel from '@/components/widgets/alarm/actions/actions-panel.vue';
 
@@ -820,7 +820,11 @@ describe('actions-panel', () => {
 
     historyAction.trigger('click');
 
-    const defaultWidget = generateDefaultAlarmListWidget();
+    const defaultWidget = {
+      ...generateDefaultAlarmListWidget(),
+
+      _id: Faker.datatype.string(),
+    };
 
     const filter = {
       title: entity.name,

@@ -1,13 +1,12 @@
 <template lang="pug">
-  v-list-group(data-test="levelsColorsSelector")
+  v-list-group
     v-list-tile(slot="activator") {{$t('settings.colorsSelector.title')}}
     v-container
       v-layout(wrap)
         v-flex(
           v-for="level in $constants.STATS_CRITICITY",
-          xs12,
-          :data-test="`levelsColor-${level}`",
-          :key="level"
+          :key="level",
+          xs12
         )
           c-color-picker-field(
             v-field="levelsColors[level]",
@@ -18,7 +17,7 @@
 </template>
 
 <script>
-import { ALARM_STATS_CALENDAR_COLORS, STATS_CRITICITY } from '@/constants';
+import { ALARM_LEVELS_COLORS, STATS_CRITICITY } from '@/constants';
 
 export default {
   model: {
@@ -28,7 +27,7 @@ export default {
   props: {
     levelsColors: {
       type: Object,
-      default: () => ({ ...ALARM_STATS_CALENDAR_COLORS }),
+      default: () => ({ ...ALARM_LEVELS_COLORS }),
     },
     hideSuffix: {
       type: Boolean,

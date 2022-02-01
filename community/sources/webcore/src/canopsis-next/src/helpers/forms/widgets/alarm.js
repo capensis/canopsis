@@ -1,4 +1,4 @@
-import { isString, isUndefined } from 'lodash';
+import { isString, cloneDeep } from 'lodash';
 
 import {
   DEFAULT_ALARMS_WIDGET_COLUMNS,
@@ -7,14 +7,13 @@ import {
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   EXPORT_CSV_DATETIME_FORMATS,
   EXPORT_CSV_SEPARATORS,
+  FILTER_DEFAULT_VALUES,
   GRID_SIZES,
   SORT_ORDERS,
-  WIDGET_TYPES,
 } from '@/constants';
 import { DEFAULT_CATEGORIES_LIMIT, PAGINATION_LIMIT } from '@/config';
 
 import { defaultColumnsToColumns } from '@/helpers/entities';
-import { widgetToForm } from '@/helpers/forms/widgets/common';
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
 
 /**
@@ -68,36 +67,18 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  */
 
 /**
- * @typedef {AlarmListWidgetDefaultParameters} AlarmListWidgetDefaultParametersForm
- */
-
-/**
  * @typedef {AlarmListWidgetDefaultParameters} AlarmListWidgetParameters
  * @property {DurationWithEnabled} periodic_refresh
  * @property {WidgetFilter[]} filters
  * @property {string | null} main_filter
  * @property {number} main_filter_updated_at
+ * @property {WidgetFilterCondition} main_filter_condition
  * @property {WidgetLiveReporting} liveReporting
  * @property {WidgetSort} sort
  * @property {boolean | null} opened
  * @property {number[]} expandGridRangeSize
  * @property {WidgetCsvSeparator} exportCsvSeparator
  * @property {string} exportCsvDatetimeFormat
- */
-
-/**
- * @typedef {AlarmListWidgetParameters} AlarmListWidgetParametersForm
- * @property {DurationWithEnabled} periodic_refresh
- */
-
-/**
- * @typedef {Widget} AlarmListWidget
- * @property {AlarmListWidgetParameters} parameters
- */
-
-/**
- * @typedef {Widget & AlarmListWidget} AlarmListWidgetForm
- * @property {AlarmListWidgetParametersForm} parameters
  */
 
 /**
@@ -168,9 +149,9 @@ export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
  * Convert alarm list widget parameters to form
  *
  * @param {AlarmListWidgetDefaultParameters} [parameters = {}]
- * @return {AlarmListWidgetDefaultParametersForm}
+ * @return {AlarmListWidgetDefaultParameters}
  */
-export const alarmListWidgetDefaultParametersToFormParameters = (parameters = {}) => ({
+export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   itemsPerPage: parameters.itemsPerPage ?? PAGINATION_LIMIT,
   infoPopups: infoPopupsToForm(parameters.infoPopups),
   moreInfoTemplate: parameters.moreInfoTemplate ?? '',
@@ -206,49 +187,37 @@ export const alarmListWidgetDefaultParametersToFormParameters = (parameters = {}
  * Convert alarm list widget parameters to form
  *
  * @param {AlarmListWidgetParameters} [parameters = {}]
- * @return {AlarmListWidgetParametersForm}
+ * @return {AlarmListWidgetParameters}
  */
-export const alarmListWidgetParametersToFormParameters = (parameters = {}) => ({
+export const alarmListWidgetParametersToForm = (parameters = {}) => ({
   ...parameters,
-  ...alarmListWidgetDefaultParametersToFormParameters(parameters),
+  ...alarmListWidgetDefaultParametersToForm(parameters),
 
   periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
-  viewFilters: parameters.viewFilters || [],
-  mainFilter: parameters.mainFilter || null,
-  mainFilterUpdatedAt: parameters.mainFilterUpdatedAt || 0,
-  liveReporting: parameters.liveReporting || {},
+  // TODO: renamed from viewFilters
+  filters: parameters.filters
+    ? cloneDeep(parameters.filters)
+    : [],
+  // TODO: renamed from mainFilter
+  main_filter: parameters.main_filter ?? null,
+  // TODO: renamed from mainFilterCondition
+  main_filter_condition: parameters.main_filter_condition ?? FILTER_DEFAULT_VALUES.condition,
+  // TODO: renamed from mainFilterUpdatedAt
+  main_filter_updated_at: parameters.main_filter_updated_at || 0,
+  liveReporting: parameters.liveReporting
+    ? cloneDeep(parameters.liveReporting)
+    : {},
   sort: widgetSortToForm(parameters.sort),
-  opened: isUndefined(parameters.opened) ? true : parameters.opened,
-  expandGridRangeSize: parameters.expandGridRangeSize || [GRID_SIZES.min, GRID_SIZES.max],
-  exportCsvSeparator: parameters.exportCsvSeparator || EXPORT_CSV_SEPARATORS.comma,
-  exportCsvDatetimeFormat: parameters.exportCsvDatetimeFormat || EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
+  opened: parameters.opened ?? true,
+  expandGridRangeSize: parameters.expandGridRangeSize
+    ? [...parameters.expandGridRangeSize]
+    : [GRID_SIZES.min, GRID_SIZES.max],
+  exportCsvSeparator: parameters.exportCsvSeparator ?? EXPORT_CSV_SEPARATORS.comma,
+  exportCsvDatetimeFormat: parameters.exportCsvDatetimeFormat ?? EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
   widgetExportColumns: parameters.widgetExportColumns
     ? widgetColumnsToForm(parameters.widgetExportColumns)
     : defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS),
 });
-
-/**
- * Convert alarm list widget to form object
- *
- * @param {AlarmListWidget} [alarmListWidget = {}]
- * @returns {AlarmListWidgetForm}
- */
-export const alarmListWidgetToForm = (alarmListWidget = { type: WIDGET_TYPES.alarmList }) => {
-  const widget = widgetToForm(alarmListWidget);
-
-  return {
-    ...widget,
-    type: WIDGET_TYPES.alarmList,
-    parameters: alarmListWidgetParametersToFormParameters(alarmListWidget.parameters),
-  };
-};
-
-/**
- * Generate alarm list widget with default parameters.
- *
- * @return {AlarmListWidgetForm}
- */
-export const generateDefaultAlarmListWidget = () => alarmListWidgetToForm();
 
 /**
  * Convert form sort parameters to widget sort
@@ -296,27 +265,19 @@ export const formToAlarmListBaseParameters = (form = {}) => ({
   widgetColumns: formWidgetColumnsToColumns(form.widgetColumns),
 });
 
-export const formParametersToAlarmListWidgetParameters = (parameters = {}) => ({
-  ...parameters,
-  widgetColumns: formWidgetColumnsToColumns(parameters.widgetColumns),
-  widgetGroupColumns: formWidgetColumnsToColumns(parameters.widgetGroupColumns),
-  widgetExportColumns: formWidgetColumnsToColumns(parameters.widgetExportColumns),
-  serviceDependenciesColumns: formWidgetColumnsToColumns(parameters.serviceDependenciesColumns),
-  infoPopups: formInfoPopupsToInfoPopups(parameters.infoPopups),
-  sort: formSortToWidgetSort(parameters.sort),
-});
-
 /**
- * Convert alarm list settings form to alarm list object
+ * Convert form parameters to alarm list widget parameters
  *
- * @param {AlarmListWidgetForm} [form = {}]
- * @returns {AlarmListWidget}
+ * @param {AlarmListWidgetParameters} form
+ * @return {AlarmListWidgetParameters}
  */
-export const formToAlarmListWidget = (form = {}) => {
-  const { parameters } = form;
+export const formToAlarmListWidgetParameters = form => ({
+  ...form,
 
-  return {
-    ...form,
-    parameters: formParametersToAlarmListWidgetParameters(parameters),
-  };
-};
+  widgetColumns: formWidgetColumnsToColumns(form.widgetColumns),
+  widgetGroupColumns: formWidgetColumnsToColumns(form.widgetGroupColumns),
+  widgetExportColumns: formWidgetColumnsToColumns(form.widgetExportColumns),
+  serviceDependenciesColumns: formWidgetColumnsToColumns(form.serviceDependenciesColumns),
+  infoPopups: formInfoPopupsToInfoPopups(form.infoPopups),
+  sort: formSortToWidgetSort(form.sort),
+});

@@ -3,7 +3,7 @@ import Faker from 'faker';
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { createInputStub } from '@unit/stubs/input';
-import FastAckOutput from '@/components/side-bars/settings/fields/alarm/fast-ack-output.vue';
+import FastAckOutput from '@/components/sidebars/settings/fields/alarm/fast-ack-output.vue';
 
 const localVue = createVueInstance();
 

@@ -93,7 +93,6 @@ export const API_ROUTES = {
   weatherService: '/api/v4/weather-services',
   alarmListExport: '/api/v4/alarm-export',
   contextExport: '/api/v4/entity-export',
-  actions: '/api/v2/actions',
   event: '/api/v4/event',
   userPreferences: '/api/v4/user-preferences',
   view: '/api/v4/views',
@@ -132,7 +131,6 @@ export const API_ROUTES = {
     userInterface: '/api/v4/internal/user_interface',
   },
   associativeTable: '/api/v4/associativetable',
-  sessionTracePath: '/api/v2/session_tracepath',
   sessionsCount: '/api/v4/sessions-count',
   broadcastMessage: {
     list: '/api/v4/broadcast-message',

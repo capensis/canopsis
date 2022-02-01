@@ -5,7 +5,7 @@ import { mockModals } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { MODALS } from '@/constants';
 
-import InfoPopup from '@/components/side-bars/settings/fields/alarm/info-popup.vue';
+import InfoPopup from '@/components/sidebars/settings/fields/alarm/info-popup.vue';
 
 const localVue = createVueInstance();
 

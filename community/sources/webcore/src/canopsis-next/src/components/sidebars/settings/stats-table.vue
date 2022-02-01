@@ -9,7 +9,6 @@
       )
       v-divider
       field-filter-editor(
-        data-test="widgetFilterEditor",
         v-model="settings.widget.parameters.mfilter",
         :hidden-fields="['title']",
         :entities-type="$constants.ENTITIES_TYPES.entity"
@@ -17,7 +16,7 @@
       v-divider
       field-stats-selector(v-model="settings.widget.parameters.stats", required, with-trend, with-sorting)
       v-divider
-      v-list-group(data-test="advancedSettings")
+      v-list-group
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-default-sort-column(
@@ -26,7 +25,7 @@
             :columns-label="$t('settings.columnName')"
           )
           v-divider
-    v-btn.primary(data-test="submitStatsTable", @click="submit") {{ $t('common.save') }}
+    v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
@@ -44,9 +43,6 @@ import FieldDefaultSortColumn from '@/components/sidebars/settings/fields/common
 
 export default {
   name: SIDE_BARS.statsTableSettings,
-  $_veeValidate: {
-    validator: 'new',
-  },
   components: {
     FieldTitle,
     FieldDateInterval,

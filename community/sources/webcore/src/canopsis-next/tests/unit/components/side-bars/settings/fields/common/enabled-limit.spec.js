@@ -2,7 +2,7 @@ import flushPromises from 'flush-promises';
 
 import { mount, createVueInstance } from '@unit/utils/vue';
 
-import EnabledLimit from '@/components/side-bars/settings/fields/common/enabled-limit.vue';
+import EnabledLimit from '@/components/sidebars/settings/fields/common/enabled-limit.vue';
 
 const localVue = createVueInstance();
 

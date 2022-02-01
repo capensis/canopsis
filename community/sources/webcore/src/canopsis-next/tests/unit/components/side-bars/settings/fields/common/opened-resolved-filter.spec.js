@@ -1,6 +1,6 @@
 import { mount, createVueInstance } from '@unit/utils/vue';
 
-import OpenedResolvedFilter from '@/components/side-bars/settings/fields/alarm/opened-resolved-filter.vue';
+import OpenedResolvedFilter from '@/components/sidebars/settings/fields/alarm/opened-resolved-filter.vue';
 import { ALARMS_OPENED_VALUES } from '@/constants';
 
 const localVue = createVueInstance();

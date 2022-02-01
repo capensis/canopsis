@@ -3,7 +3,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { SORT_ORDERS } from '@/constants';
 
-import DefaultSortColumn from '@/components/side-bars/settings/fields/common/default-sort-column.vue';
+import DefaultSortColumn from '@/components/sidebars/settings/fields/common/default-sort-column.vue';
 
 const localVue = createVueInstance();
 
