@@ -479,6 +479,7 @@ export default {
       hasAutoInstructionInRunning: 'Automatic instruction in progress',
       allAutoInstructionExecuted: 'All automatic instructions has been executed',
       awaitingInstructionComplete: 'Awaiting for the instruction to complete',
+      autoInstructionsFailed: 'Automatic instructions failed',
     },
     metrics: {
       [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Number of created alarms',
