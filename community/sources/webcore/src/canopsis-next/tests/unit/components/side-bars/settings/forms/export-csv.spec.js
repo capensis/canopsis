@@ -2,7 +2,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { EXPORT_CSV_DATETIME_FORMATS, EXPORT_CSV_SEPARATORS } from '@/constants';
 
-import ExportCsv from '@/components/side-bars/settings/forms/export-csv.vue';
+import ExportCsv from '@/components/sidebars/settings/forms/export-csv.vue';
 
 const localVue = createVueInstance();
 

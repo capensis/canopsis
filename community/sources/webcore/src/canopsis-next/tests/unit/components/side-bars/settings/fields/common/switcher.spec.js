@@ -1,6 +1,6 @@
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
-import Switcher from '@/components/side-bars/settings/fields/common/switcher.vue';
+import Switcher from '@/components/sidebars/settings/fields/common/switcher.vue';
 
 const localVue = createVueInstance();
 

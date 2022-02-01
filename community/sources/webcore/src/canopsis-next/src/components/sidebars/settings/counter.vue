@@ -1,70 +1,67 @@
 <template lang="pug">
   div
     v-list.pt-0(expand)
-      field-title(v-model="settings.widget.title", :title="$t('common.title')")
+      field-title(v-model="form.title", :title="$t('common.title')")
       v-divider
       field-filters(
         :entities-type="$constants.ENTITIES_TYPES.alarm",
-        :filters.sync="settings.widget.parameters.viewFilters",
+        :filters.sync="form.parameters.filters",
         hide-select,
         addable,
         editable
       )
       v-divider
-      field-opened-resolved-filter(v-model="settings.widget.parameters.opened")
+      field-opened-resolved-filter(v-model="form.parameters.opened")
       v-divider
-      alarms-list-modal-form(v-model="settings.widget.parameters.alarmsList")
+      alarms-list-modal-form(v-model="form.parameters.alarmsList")
       v-divider
       v-list-group
-        v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
+        template(#activator="")
+          v-list-tile {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-template(
-            v-model="settings.widget.parameters.blockTemplate",
+            v-model="form.parameters.blockTemplate",
             :title="$t('settings.blockTemplate')"
           )
           v-divider
           field-grid-size(
-            v-model="settings.widget.parameters.columnSM",
+            v-model="form.parameters.columnSM",
             :title="$t('settings.columnSM')"
           )
           v-divider
           field-grid-size(
-            v-model="settings.widget.parameters.columnMD",
+            v-model="form.parameters.columnMD",
             :title="$t('settings.columnMD')"
           )
           v-divider
           field-grid-size(
-            v-model="settings.widget.parameters.columnLG",
+            v-model="form.parameters.columnLG",
             :title="$t('settings.columnLG')"
           )
           v-divider
-          margins-form(v-model="settings.widget.parameters.margin")
+          margins-form(v-model="form.parameters.margin")
           v-divider
           field-slider(
-            data-test="widgetHeightFactory",
-            v-model="settings.widget.parameters.heightFactor",
+            v-model="form.parameters.heightFactor",
             :title="$t('settings.height')",
             :min="1",
             :max="20"
           )
           v-divider
-          counter-levels-form(v-model="settings.widget.parameters.levels")
+          counter-levels-form(v-model="form.parameters.levels")
           v-divider
           field-switcher(
-            v-model="settings.widget.parameters.isCorrelationEnabled",
+            v-model="form.parameters.isCorrelationEnabled",
             :title="$t('settings.isCorrelationEnabled')"
           )
       v-divider
-    v-btn.primary(data-test="submitWeather", @click="submit") {{ $t('common.save') }}
+    v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
-
 import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
-import { sideBarSettingsWidgetAlarmMixin } from '@/mixins/side-bar/settings/widgets/alarm';
 
 import FieldTitle from '@/components/sidebars/settings/fields/common/title.vue';
 import FieldOpenedResolvedFilter from '@/components/sidebars/settings/fields/alarm/opened-resolved-filter.vue';
@@ -79,9 +76,6 @@ import CounterLevelsForm from '@/components/sidebars/settings/forms/counter-leve
 
 export default {
   name: SIDE_BARS.counterSettings,
-  $_veeValidate: {
-    validator: 'new',
-  },
   components: {
     FieldTitle,
     FieldOpenedResolvedFilter,
@@ -94,22 +88,6 @@ export default {
     MarginsForm,
     CounterLevelsForm,
   },
-  mixins: [widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],
-  data() {
-    const { widget } = this.config;
-
-    return {
-      settings: {
-        widget: this.prepareWidgetWithAlarmParametersSettings(cloneDeep(widget), true),
-      },
-    };
-  },
-  methods: {
-    prepareWidgetSettings() {
-      const { widget } = this.settings;
-
-      return this.prepareWidgetWithAlarmParametersSettings(widget);
-    },
-  },
+  mixins: [widgetSettingsMixin],
 };
 </script>

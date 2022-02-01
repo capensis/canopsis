@@ -4,7 +4,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { MODALS } from '@/constants';
 
-import TextEditor from '@/components/side-bars/settings/fields/common/text-editor.vue';
+import TextEditor from '@/components/sidebars/settings/fields/common/text-editor.vue';
 
 const localVue = createVueInstance();
 

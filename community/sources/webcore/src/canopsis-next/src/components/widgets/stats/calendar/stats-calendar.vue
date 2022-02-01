@@ -33,7 +33,7 @@ import { DATETIME_FORMATS, MODALS, MAX_LIMIT } from '@/constants';
 
 import { convertDateToString } from '@/helpers/date/date';
 import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/calendar/dayspan';
-import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
+import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/common';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';

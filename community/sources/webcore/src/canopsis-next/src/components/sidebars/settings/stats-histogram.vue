@@ -6,7 +6,6 @@
       field-date-interval(v-model="settings.widget.parameters.dateInterval")
       v-divider
       field-filter-editor(
-        data-test="widgetFilterEditor",
         v-model="settings.widget.parameters.mfilter",
         :hidden-fields="['title']",
         :entities-type="$constants.ENTITIES_TYPES.entity"
@@ -21,7 +20,7 @@
       v-divider
       field-stats-annotation-line(v-model="settings.widget.parameters.annotationLine")
       v-divider
-    v-btn.primary(data-test="submitStatsHistogramButton", @click="submit") {{ $t('common.save') }}
+    v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
@@ -40,9 +39,6 @@ import FieldStatsAnnotationLine from '@/components/sidebars/settings/fields/stat
 
 export default {
   name: SIDE_BARS.statsHistogramSettings,
-  $_veeValidate: {
-    validator: 'new',
-  },
   components: {
     FieldTitle,
     FieldFilterEditor,

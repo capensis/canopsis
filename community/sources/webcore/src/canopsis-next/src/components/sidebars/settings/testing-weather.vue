@@ -1,30 +1,31 @@
 <template lang="pug">
   div
     v-list.pt-0(expand)
-      field-title(v-model="settings.widget.title", :title="$t('common.title')")
+      field-title(v-model="form.title", :title="$t('common.title')")
       v-divider
-      field-periodic-refresh(v-model="settings.widget.parameters.periodic_refresh")
+      field-periodic-refresh(v-model="form.parameters.periodic_refresh")
       v-divider
       field-storage(
-        v-model="settings.widget.parameters.directory",
+        v-model="form.parameters.directory",
         :title="$t('settings.resultDirectory')",
-        :disabled="settings.widget.parameters.is_api",
+        :disabled="form.parameters.is_api",
         @add="editResultDirectory",
         @edit="editResultDirectory",
         @remove="removeResultDirectory"
       )
       v-divider
       v-list-group
-        v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
+        template(#activator="")
+          v-list-tile {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-switcher(
-            v-model="settings.widget.parameters.is_api",
+            v-model="form.parameters.is_api",
             :title="$t('settings.receiveByApi')"
           )
           v-divider
           field-storages(
-            v-model="settings.widget.parameters.screenshot_directories",
-            :disabled="settings.widget.parameters.is_api",
+            v-model="form.parameters.screenshot_directories",
+            :disabled="form.parameters.is_api",
             :help-text="$t('settings.screenshotDirectories.helpText')",
             :title="$t('settings.screenshotDirectories.title')",
             @add="editScreenshotStorage",
@@ -32,26 +33,23 @@
           )
           v-divider
           field-storages(
-            v-model="settings.widget.parameters.video_directories",
-            :disabled="settings.widget.parameters.is_api",
+            v-model="form.parameters.video_directories",
+            :disabled="form.parameters.is_api",
             :help-text="$t('settings.videoDirectories.helpText')",
             :title="$t('settings.videoDirectories.title')",
             @add="editVideoStorage",
             @edit="editVideoStorage"
           )
           v-divider
-          field-file-name-masks(v-model="settings.widget.parameters")
+          field-file-name-masks(v-model="form.parameters")
           v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
-
 import { MODALS, SIDE_BARS } from '@/constants';
 
 import uid from '@/helpers/uid';
-import { formToTestingWeatherWidget, testingWeatherWidgetToForm } from '@/helpers/forms/widgets/testing-weather';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { entitiesTestSuitesMixin } from '@/mixins/entities/test-suite';
@@ -66,9 +64,6 @@ import FieldFileNameMasks from '@/components/sidebars/settings/fields/testing-we
 
 export default {
   name: SIDE_BARS.testingWeatherSettings,
-  $_veeValidate: {
-    validator: 'new',
-  },
   components: {
     FieldTitle,
     FieldDuration,
@@ -82,15 +77,6 @@ export default {
     widgetSettingsMixin,
     entitiesTestSuitesMixin,
   ],
-  data() {
-    const { widget } = this.config;
-
-    return {
-      settings: {
-        widget: testingWeatherWidgetToForm(cloneDeep(widget)),
-      },
-    };
-  },
   methods: {
     showDefineStorageModal({ title, field, action }) {
       this.$modals.show({
@@ -119,13 +105,13 @@ export default {
           placeholder: this.$t('modals.defineStorage.field.placeholder'),
         },
         action: (directory) => {
-          this.settings.widget.parameters.directory = directory;
+          this.form.parameters.directory = directory;
         },
       });
     },
 
     removeResultDirectory() {
-      this.settings.widget.parameters.directory = '';
+      this.form.parameters.directory = '';
     },
 
     getStorageByString(directory) {
@@ -144,9 +130,9 @@ export default {
         },
         action: (directory) => {
           if (storage) {
-            this.settings.widget.parameters.screenshot_directories.splice(index, 1, directory);
+            this.form.parameters.screenshot_directories.splice(index, 1, directory);
           } else {
-            this.settings.widget.parameters.screenshot_directories.push(this.getStorageByString(directory));
+            this.form.parameters.screenshot_directories.push(this.getStorageByString(directory));
           }
         },
       });
@@ -161,18 +147,12 @@ export default {
         },
         action: (directory) => {
           if (storage) {
-            this.settings.widget.parameters.video_directories.splice(index, 1, directory);
+            this.form.parameters.video_directories.splice(index, 1, directory);
           } else {
-            this.settings.widget.parameters.video_directories.push(this.getStorageByString(directory));
+            this.form.parameters.video_directories.push(this.getStorageByString(directory));
           }
         },
       });
-    },
-
-    prepareWidgetSettings() {
-      const { widget } = this.settings;
-
-      return formToTestingWeatherWidget(widget);
     },
   },
 };

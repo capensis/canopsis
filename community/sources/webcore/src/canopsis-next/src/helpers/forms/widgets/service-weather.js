@@ -6,7 +6,15 @@ import {
   COLOR_INDICATOR_TYPES,
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
+  DEFAULT_PERIODIC_REFRESH,
+  FILTER_DEFAULT_VALUES,
+  DEFAULT_SERVICE_WEATHER_BLOCK_TEMPLATE,
+  DEFAULT_SERVICE_WEATHER_MODAL_TEMPLATE,
+  DEFAULT_SERVICE_WEATHER_ENTITY_TEMPLATE,
+  DEFAULT_WIDGET_MARGIN,
 } from '@/constants';
+
+import { durationWithEnabledToForm } from '@/helpers/date/duration';
 
 import { defaultColumnsToColumns } from '@/helpers/entities';
 
@@ -31,8 +39,10 @@ import {
 
 /**
  * @typedef {Object} ServiceWeatherWidgetParameters
+ * @property {DurationWithEnabled} periodic_refresh
  * @property {WidgetFilter[]} filters
  * @property {string | null} main_filter
+ * @property {WidgetFilterCondition} main_filter_condition
  * @property {WidgetSort} sort
  * @property {string} blockTemplate
  * @property {string} modalTemplate
@@ -57,21 +67,20 @@ import {
  * @param {ServiceWeatherWidgetParameters} [parameters = {}]
  * @return {ServiceWeatherWidgetParameters}
  */
-export const serviceWeatherWidgetParametersToFormParameters = (parameters = {}) => ({
-  filters: parameters.filters
+export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
+  // TODO: renamed from periodicRefresh
+  periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
+  filters: parameters.filters // TODO: renamed from viewFilters
     ? cloneDeep(parameters.filters)
     : [],
+  // TODO: renamed from mainFilter
   main_filter: parameters.main_filter ?? null,
+  // TODO: renamed from mainFilterCondition
+  main_filter_condition: parameters.main_filter_condition ?? FILTER_DEFAULT_VALUES.condition,
   sort: parameters.sort ? { ...parameters.sort } : { order: SORT_ORDERS.asc },
-  blockTemplate: parameters.blockTemplate ?? `<p><strong><span style="font-size: 18px;">{{entity.name}}</span></strong></p>
-<hr id="null">
-<p>{{ entity.output }}</p>
-<p> Dernière mise à jour : {{ timestamp entity.last_update_date }}</p>`,
-
-  modalTemplate: parameters.modalTemplate ?? '{{ entities name="entity._id" }}',
-  entityTemplate: parameters.entityTemplate ?? `<ul>
-    <li><strong>Libellé</strong> : {{entity.name}}</li>
-</ul>`,
+  blockTemplate: parameters.blockTemplate ?? DEFAULT_SERVICE_WEATHER_BLOCK_TEMPLATE,
+  modalTemplate: parameters.modalTemplate ?? DEFAULT_SERVICE_WEATHER_MODAL_TEMPLATE,
+  entityTemplate: parameters.entityTemplate ?? DEFAULT_SERVICE_WEATHER_ENTITY_TEMPLATE,
   columnSM: parameters.columnSM ?? 6,
   columnMD: parameters.columnMD ?? 4,
   columnLG: parameters.columnLG ?? 3,
@@ -82,16 +91,14 @@ export const serviceWeatherWidgetParametersToFormParameters = (parameters = {}) 
     : defaultColumnsToColumns(DEFAULT_SERVICE_DEPENDENCIES_COLUMNS),
   margin: parameters.margin
     ? { ...parameters.margin }
-    : {
-      top: 1,
-      right: 1,
-      bottom: 1,
-      left: 1,
-    },
+    : { ...DEFAULT_WIDGET_MARGIN },
   heightFactor: parameters.heightFactor ?? 6,
   modalType: parameters.modalType ?? SERVICE_WEATHER_WIDGET_MODAL_TYPES.both,
   modalItemsPerPage: parameters.modalItemsPerPage ?? PAGINATION_LIMIT,
   alarmsList: alarmListBaseParametersToForm(parameters.alarmsList),
+  counters: parameters.counters
+    ? cloneDeep(parameters.counters)
+    : { enabled: false, types: [] },
 });
 
 /**
@@ -100,7 +107,7 @@ export const serviceWeatherWidgetParametersToFormParameters = (parameters = {}) 
  * @param {ServiceWeatherWidgetParameters} form
  * @return {ServiceWeatherWidgetParameters}
  */
-export const formParametersToServiceWeatherWidgetParameters = form => ({
+export const formToServiceWeatherWidgetParameters = form => ({
   ...form,
 
   alarmsList: formToAlarmListBaseParameters(form.alarmsList),

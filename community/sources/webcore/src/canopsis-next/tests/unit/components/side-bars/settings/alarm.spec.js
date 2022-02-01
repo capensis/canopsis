@@ -7,7 +7,7 @@ import { createMockedStoreModules } from '@unit/utils/store';
 import { createButtonStub } from '@unit/stubs/button';
 import { createInputStub } from '@unit/stubs/input';
 import { mockDateNow } from '@unit/utils/mock-hooks';
-import { alarmListWidgetToForm } from '@/helpers/forms/widgets/alarm';
+
 import {
   ALARMS_OPENED_VALUES,
   CANOPSIS_EDITION, EXPORT_CSV_DATETIME_FORMATS, EXPORT_CSV_SEPARATORS,
@@ -16,8 +16,9 @@ import {
   USERS_PERMISSIONS,
 } from '@/constants';
 import ClickOutside from '@/services/click-outside';
+import { generateDefaultAlarmListWidgetForm } from '@/helpers/forms/widgets/common';
 
-import AlarmSettings from '@/components/side-bars/settings/alarm.vue';
+import AlarmSettings from '@/components/sidebars/settings/alarm.vue';
 
 const localVue = createVueInstance();
 
@@ -120,7 +121,7 @@ describe('alarm', () => {
       category: '_id',
     },
   };
-  const widget = alarmListWidgetToForm();
+  const widget = generateDefaultAlarmListWidgetForm();
   const view = {
     enabled: true,
     title: 'Alarm widgets',
@@ -923,7 +924,7 @@ describe('alarm', () => {
       store,
       propsData: {
         config: {
-          widget: alarmListWidgetToForm(),
+          widget: generateDefaultAlarmListWidgetForm(),
         },
       },
     });
@@ -967,7 +968,7 @@ describe('alarm', () => {
       ]),
       propsData: {
         config: {
-          widget: alarmListWidgetToForm(),
+          widget: generateDefaultAlarmListWidgetForm(),
         },
       },
     });

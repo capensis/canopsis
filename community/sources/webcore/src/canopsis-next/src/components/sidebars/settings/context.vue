@@ -28,8 +28,8 @@
             field-filters(
               v-model="form.parameters.mainFilter",
               :entities-type="$constants.ENTITIES_TYPES.entity",
-              :filters.sync="form.parameters.viewFilters",
-              :condition.sync="form.parameters.mainFilterCondition",
+              :filters.sync="form.parameters.filters",
+              :condition.sync="form.parameters.main_filter_condition",
               :addable="hasAccessToAddFilter",
               :editable="hasAccessToEditFilter",
               @input="updateMainFilterUpdatedAt"
@@ -39,7 +39,7 @@
           v-divider
           export-csv-form(v-model="form.parameters")
       v-divider
-    v-btn.primary(data-test="submitContext", @click="submit") {{ $t('common.save') }}
+    v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>

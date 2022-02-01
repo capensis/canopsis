@@ -6,11 +6,12 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createButtonStub } from '@unit/stubs/button';
 import { createInputStub } from '@unit/stubs/input';
-import { textWidgetToForm } from '@/helpers/forms/widgets/text';
+
 import { CANOPSIS_EDITION, QUICK_RANGES, TIME_UNITS, WIDGET_TYPES } from '@/constants';
 import ClickOutside from '@/services/click-outside';
+import { widgetToForm } from '@/helpers/forms/widgets/common';
 
-import TextSettings from '@/components/side-bars/settings/text.vue';
+import TextSettings from '@/components/sidebars/settings/text.vue';
 
 const localVue = createVueInstance();
 
@@ -53,10 +54,16 @@ const selectFieldStatsSelector = wrapper => wrapper.find('input.field-stats-sele
 const selectFieldDateInterval = wrapper => wrapper.find('input.field-date-interval');
 
 describe('text', () => {
+  const generateDefaultTextWidgetForm = () => ({
+    ...widgetToForm({ type: WIDGET_TYPES.alarmList }),
+
+    _id: Faker.datatype.string(),
+  });
+
   const userPreferences = {
     content: Faker.helpers.createTransaction(),
   };
-  const widget = textWidgetToForm();
+  const widget = generateDefaultTextWidgetForm();
   const view = {
     enabled: true,
     title: 'Text widgets',
@@ -529,7 +536,7 @@ describe('text', () => {
     const wrapper = snapshotFactory({
       propsData: {
         config: {
-          widget: textWidgetToForm(),
+          widget: generateDefaultTextWidgetForm(),
         },
       },
       store: createMockedStoreModules([
@@ -556,7 +563,7 @@ describe('text', () => {
     const wrapper = snapshotFactory({
       propsData: {
         config: {
-          widget: textWidgetToForm(),
+          widget: generateDefaultTextWidgetForm(),
         },
       },
       store: createMockedStoreModules([

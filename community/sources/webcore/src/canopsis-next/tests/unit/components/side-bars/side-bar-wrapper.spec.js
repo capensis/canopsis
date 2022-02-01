@@ -6,7 +6,7 @@ import { createButtonStub } from '@unit/stubs/button';
 import { mockRequestAnimationFrame } from '@unit/utils/mock-hooks';
 import { SIDE_BARS } from '@/constants';
 
-import SideBarWrapper from '@/components/side-bars/side-bar-wrapper.vue';
+import SideBarWrapper from '@/components/sidebars/side-bar-wrapper.vue';
 
 const localVue = createVueInstance();
 

@@ -9,7 +9,6 @@
       )
       v-divider
       field-filter-editor(
-        data-test="widgetFilterEditor",
         v-model="settings.widget.parameters.mfilter",
         :hidden-fields="['title']",
         :entities-type="$constants.ENTITIES_TYPES.entity"
@@ -17,7 +16,7 @@
       v-divider
       field-stat-selector(v-model="settings.widget.parameters.stat")
       v-divider
-      v-list-group(data-test="advancedSettings")
+      v-list-group
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-stat-display-mode(v-model="settings.widget.parameters.displayMode")
@@ -26,7 +25,7 @@
           v-divider
           field-sort-order(v-model="settings.widget.parameters.sortOrder")
           v-divider
-    v-btn.primary(data-test="statsNumberSubmitButton", @click="submit") {{ $t('common.save') }}
+    v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
@@ -46,9 +45,6 @@ import FieldSortOrder from '@/components/sidebars/settings/fields/stats/sort-ord
 
 export default {
   name: SIDE_BARS.statsNumberSettings,
-  $_veeValidate: {
-    validator: 'new',
-  },
   components: {
     FieldTitle,
     FieldDateInterval,

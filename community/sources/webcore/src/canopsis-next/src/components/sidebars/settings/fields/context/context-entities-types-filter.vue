@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-list-group(data-test="contextTypeOfEntities")
+  v-list-group
     v-list-tile(slot="activator") {{ $t('settings.contextTypeOfEntities.title') }}
     v-container
       v-checkbox(

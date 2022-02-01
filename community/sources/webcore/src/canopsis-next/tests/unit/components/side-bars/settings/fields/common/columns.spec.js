@@ -2,7 +2,7 @@ import flushPromises from 'flush-promises';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
-import Columns from '@/components/side-bars/settings/fields/common/columns.vue';
+import Columns from '@/components/sidebars/settings/fields/common/columns.vue';
 
 const localVue = createVueInstance();
 

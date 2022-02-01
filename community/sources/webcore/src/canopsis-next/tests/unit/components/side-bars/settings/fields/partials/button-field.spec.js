@@ -2,7 +2,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { createButtonStub } from '@unit/stubs/button';
 
-import ButtonField from '@/components/side-bars/settings/fields/partials/button-field.vue';
+import ButtonField from '@/components/sidebars/settings/fields/partials/button-field.vue';
 
 const localVue = createVueInstance();
 

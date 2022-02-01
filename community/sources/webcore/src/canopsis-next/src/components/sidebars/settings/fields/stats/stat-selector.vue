@@ -1,13 +1,9 @@
 <template lang="pug">
-  v-container.pa-3(data-test="statSelector", fluid)
+  v-container.pa-3(fluid)
     v-layout(align-center, justify-space-between)
       .subheading(:class="validationHeaderClass") {{ $t('settings.statsSelect.title') }}
         .font-italic.caption.ml-1 ({{ $t('settings.statsNumbers.defaultStat') }})
-      v-btn.primary(
-        data-test="selectButton",
-        small,
-        @click="openAddStatModal"
-      ) {{ $t('common.select') }}
+      v-btn.primary(small, @click="openAddStatModal") {{ $t('common.select') }}
 </template>
 
 <script>

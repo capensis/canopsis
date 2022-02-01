@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-list-group(data-test="criticityLevels")
+  v-list-group
     v-list-tile(slot="activator")
       div(:class="validationHeaderClass") {{ $t('settings.criticityLevels') }}
     v-container
@@ -12,7 +12,6 @@
                 v-field.number="levels.minor",
                 v-validate="'required|min_value:0'",
                 :error-messages="errors.collect('minor')",
-                data-test="criticityLevelsMinor",
                 data-vv-name="minor",
                 type="number"
               )
@@ -24,7 +23,6 @@
                 v-field.number="levels.major",
                 v-validate="`required|min_value:${levels.minor + 1}`",
                 :error-messages="errors.collect('major')",
-                data-test="criticityLevelsMajor",
                 data-vv-name="major",
                 type="number"
               )
@@ -36,7 +34,6 @@
                 v-field.number="levels.critical",
                 v-validate="`required|min_value:${levels.major + 1}`",
                 :error-messages="errors.collect('critical')",
-                data-test="criticityLevelsCritical",
                 data-vv-name="critical",
                 type="number"
               )

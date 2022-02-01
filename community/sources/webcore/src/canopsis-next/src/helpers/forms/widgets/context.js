@@ -7,6 +7,7 @@ import {
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   EXPORT_CSV_DATETIME_FORMATS,
   EXPORT_CSV_SEPARATORS,
+  FILTER_DEFAULT_VALUES,
   SORT_ORDERS,
 } from '@/constants';
 
@@ -16,6 +17,7 @@ import { defaultColumnsToColumns } from '@/helpers/entities';
  * @typedef {Object} ContextWidgetParameters
  * @property {WidgetFilter[]} filters
  * @property {string | null} main_filter
+ * @property {WidgetFilterCondition} main_filter_condition
  * @property {number} itemsPerPage
  * @property {WidgetColumn[]} widgetColumns
  * @property {WidgetColumn[]} serviceDependenciesColumns
@@ -32,11 +34,14 @@ import { defaultColumnsToColumns } from '@/helpers/entities';
  * @param {ContextWidgetParameters | {}} [parameters = {}]
  * @return {ContextWidgetParameters}
  */
-export const contextWidgetParametersToFormParameters = (parameters = {}) => ({ // TODO: add counters if needed
-  filters: parameters.filters
+export const contextWidgetParametersToForm = (parameters = {}) => ({
+  filters: parameters.filters // TODO: renamed from viewFilters
     ? cloneDeep(parameters.filters)
     : [],
+  // TODO: renamed from mainFilter
   main_filter: parameters.main_filter ?? null,
+  // TODO: renamed from mainFilterCondition
+  main_filter_condition: parameters.main_filter_condition ?? FILTER_DEFAULT_VALUES.condition,
   itemsPerPage: parameters.itemsPerPage ?? PAGINATION_LIMIT,
   widgetColumns: parameters.widgetColumns
     ? cloneDeep(parameters.widgetColumns)

@@ -7,15 +7,31 @@ import {
 } from '@/constants';
 
 import {
-  alarmListWidgetParametersToFormParameters,
-  formParametersToAlarmListWidgetParameters,
+  alarmListWidgetParametersToForm,
+  formToAlarmListWidgetParameters,
 } from './alarm';
 import {
-  contextWidgetParametersToFormParameters,
-} from '@/helpers/forms/widgets/context';
+  contextWidgetParametersToForm,
+} from './context';
 import {
-  serviceWeatherWidgetParametersToFormParameters,
-} from '@/helpers/forms/widgets/service-weather';
+  serviceWeatherWidgetParametersToForm,
+  formToServiceWeatherWidgetParameters,
+} from './service-weather';
+import {
+  statsCalendarWidgetParametersToForm,
+  formToStatsCalendarWidgetParameters,
+} from './stats-calendar';
+import {
+  counterWidgetParametersToForm,
+  formToCounterWidgetParameters,
+} from './counter';
+import {
+  testingWeatherWidgetParametersToForm,
+  formToTestingWeatherWidgetParameters,
+} from './testing-weather';
+import {
+  textWidgetParametersToForm,
+} from './text';
 
 /**
  * @typedef { 'AlarmsList' | 'Context' | 'ServiceWeather' | 'StatsCalendar' | 'Text' | 'Counter' | 'Junit' } WidgetType
@@ -30,6 +46,10 @@ import {
  * @property {string} [_id]
  * @property {string} title
  * @property {string} query
+ */
+
+/**
+ * @typedef {'$and' | '$or'} WidgetFilterCondition
  */
 
 /**
@@ -55,6 +75,29 @@ import {
  */
 
 /**
+ * @typedef {Object} WidgetCriticityLevels
+ * @property {number} minor
+ * @property {number} major
+ * @property {number} critical
+ */
+
+/**
+ * @typedef {Object} WidgetCriticityLevelsColors
+ * @property {string} ok
+ * @property {string} minor
+ * @property {string} major
+ * @property {string} critical
+ */
+
+/**
+ * @typedef {Object} WidgetDateInterval
+ * @property {number} periodValue
+ * @property {DurationUnit} periodUnit
+ * @property {string} tstart
+ * @property {string} tstop
+ */
+
+/**
  * @typedef {Object} WidgetGridParameter
  * @property {number} y
  * @property {number} x
@@ -75,42 +118,89 @@ import {
  * @typedef {
  *   AlarmListWidgetParameters |
  *   ContextWidgetParameters |
- *   ServiceWeatherWidgetParameters
+ *   ServiceWeatherWidgetParameters |
+ *   StatsCalendarWidgetParameters |
+ *   CounterWidgetParameters |
+ *   TestingWeatherWidgetParameters |
+ *   TextWidgetParameters
  * } WidgetParameters
  */
 
 /**
- * @typedef {Object} Widget
- * @property {string} _id
+ * @typedef {
+ *   AlarmListWidgetParameters |
+ *   ContextWidgetParameters |
+ *   ServiceWeatherWidgetParameters |
+ *   StatsCalendarWidgetParameters |
+ *   CounterWidgetParameters |
+ *   TestingWeatherWidgetParametersForm |
+ *   TextWidgetParameters
+ * } WidgetParametersForm
+ */
+
+/**
+ * @typedef {Object} EmptyWidget
  * @property {WidgetType} type
  * @property {string} title
- * @property {WidgetParameters} parameters
+ * @property {{}} parameters
  * @property {WidgetGridParameters} grid_parameters
  */
 
 /**
- * @typedef {Widget} WidgetForm
+ * @typedef {EmptyWidget} Widget
+ * @property {WidgetParameters} parameters
  */
 
-export const widgetParametersToFormParameters = ({ type, parameters } = {}) => {
+/**
+ * @typedef {Widget} WidgetForm
+ * @typedef {WidgetParametersForm} parameters
+ */
+
+/**
+ * Convert widget parameters to form
+ *
+ * @param {WidgetType} type
+ * @param {WidgetParameters} [parameters = {}]
+ * @return {WidgetParametersForm}
+ */
+export const widgetParametersToForm = ({ type, parameters } = {}) => {
   switch (type) {
     case WIDGET_TYPES.alarmList:
-      return alarmListWidgetParametersToFormParameters(parameters);
+      return alarmListWidgetParametersToForm(parameters);
     case WIDGET_TYPES.context:
-      return contextWidgetParametersToFormParameters(parameters);
+      return contextWidgetParametersToForm(parameters);
     case WIDGET_TYPES.serviceWeather:
-      return serviceWeatherWidgetParametersToFormParameters(parameters);
+      return serviceWeatherWidgetParametersToForm(parameters);
+    case WIDGET_TYPES.statsCalendar:
+      return statsCalendarWidgetParametersToForm(parameters);
+    case WIDGET_TYPES.counter:
+      return counterWidgetParametersToForm(parameters);
+    case WIDGET_TYPES.testingWeather:
+      return testingWeatherWidgetParametersToForm(parameters);
+    case WIDGET_TYPES.text:
+      return textWidgetParametersToForm(parameters);
     default:
       return parameters ? cloneDeep(parameters) : {};
   }
 };
 
+/**
+ * Get default widget grid parameters
+ *
+ * @return {WidgetGridParameters}
+ */
 export const getDefaultGridParameters = () => Object.values(WIDGET_GRID_SIZES_KEYS).reduce((acc, size) => {
   acc[size] = { ...DEFAULT_WIDGET_GRID_PARAMETERS };
 
   return acc;
 }, {});
 
+/**
+ * Get empty widget by widget type
+ *
+ * @param {WidgetType} type
+ * @return {EmptyWidget}
+ */
 export const getEmptyWidgetByType = type => ({
   type,
   title: '',
@@ -124,19 +214,34 @@ export const getEmptyWidgetByType = type => ({
  * @param {Widget} [widget = {}]
  * @returns {WidgetForm}
  */
-export const widgetToForm = (widget = { type: WIDGET_TYPES.alarmList }) => ({ // TODO: We've removed ID generation here
+export const widgetToForm = (widget = { type: WIDGET_TYPES.alarmList }) => ({
   type: widget.type,
   title: widget.title ?? '',
-  parameters: widgetParametersToFormParameters(widget),
+  parameters: widgetParametersToForm(widget),
   grid_parameters: widget.grid_parameters
     ? cloneDeep(widget.grid_parameters)
     : getDefaultGridParameters(),
 });
 
-export const formParametersToWidgetParameters = ({ type, parameters = {} } = {}) => {
+/**
+ * Convert widget parameters to form
+ *
+ * @param {WidgetType} type
+ * @param {WidgetParametersForm} parameters
+ * @return {WidgetParameters}
+ */
+export const formToWidgetParameters = ({ type, parameters }) => {
   switch (type) {
     case WIDGET_TYPES.alarmList:
-      return formParametersToAlarmListWidgetParameters(parameters);
+      return formToAlarmListWidgetParameters(parameters);
+    case WIDGET_TYPES.serviceWeather:
+      return formToServiceWeatherWidgetParameters(parameters);
+    case WIDGET_TYPES.statsCalendar:
+      return formToStatsCalendarWidgetParameters(parameters);
+    case WIDGET_TYPES.counter:
+      return formToCounterWidgetParameters(parameters);
+    case WIDGET_TYPES.testingWeather:
+      return formToTestingWeatherWidgetParameters(parameters);
     default:
       return parameters;
   }
@@ -151,5 +256,19 @@ export const formParametersToWidgetParameters = ({ type, parameters = {} } = {})
 export const formToWidget = form => ({
   ...form,
 
-  parameters: formParametersToWidgetParameters(form),
+  parameters: formToWidgetParameters(form),
 });
+
+/**
+ * Generate alarm list widget form with default parameters.
+ *
+ * @return {WidgetForm}
+ */
+export const generateDefaultAlarmListWidgetForm = () => widgetToForm({ type: WIDGET_TYPES.alarmList });
+
+/**
+ * Generate alarm list widget with default parameters.
+ *
+ * @return {Widget}
+ */
+export const generateDefaultAlarmListWidget = () => formToWidget(generateDefaultAlarmListWidgetForm()); // TODO: put id
