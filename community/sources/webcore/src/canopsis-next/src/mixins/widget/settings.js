@@ -48,16 +48,6 @@ export const widgetSettingsMixin = {
     },
 
     /**
-     * We can customize widget query for updating after saving by replacing the methods in the component
-     *
-     * @param {Object} newQuery
-     * @returns {Object}
-     */
-    prepareWidgetQuery(newQuery) { // TODO: refactor it
-      return newQuery;
-    },
-
-    /**
      * Submit settings form
      *
      * @returns {Promise<void>}
@@ -82,7 +72,7 @@ export const widgetSettingsMixin = {
         await this.fetchActiveView();
 
         /**
-         * TODO: update widget request
+         * TODO: update query
          */
 
         /*        if (newWidget._id) {
