@@ -73,7 +73,7 @@
       :widget="widget",
       :alarms="alarms",
       :total-items="alarmsMeta.total_count",
-      :pagination.sync="vDataTablePagination",
+      :pagination.sync="pagination",
       :loading="alarmsPending",
       :is-tour-enabled="isTourEnabled",
       :hide-groups="!query.correlation",
