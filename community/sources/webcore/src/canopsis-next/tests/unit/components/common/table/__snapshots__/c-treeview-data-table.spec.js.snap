@@ -1,0 +1,2509 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\` prop 1`] = `
+<div
+  class="white treeview-data-table"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="treeview-data-table--tree mr-4"
+    >
+      <div
+        class="v-treeview theme--light"
+      >
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  0
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-treeview-node"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light v-treeview-node__toggle--open"
+            >
+              arrow_drop_down
+            </i>
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  3
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-treeview-node__children"
+          >
+            <div
+              class="v-treeview-node v-treeview-node--leaf"
+            >
+              <div
+                class="v-treeview-node__root"
+              >
+                <div
+                  class="v-treeview-node__content"
+                >
+                  <div
+                    class="v-treeview-node__label"
+                  >
+                    <div
+                      class="v-avatar white--text primary"
+                      style="height: 32px; width: 32px;"
+                    >
+                      0
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="v-treeview-node"
+            >
+              <div
+                class="v-treeview-node__root"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light v-treeview-node__toggle--open"
+                >
+                  arrow_drop_down
+                </i>
+                <div
+                  class="v-treeview-node__content"
+                >
+                  <div
+                    class="v-treeview-node__label"
+                  >
+                    <div
+                      class="v-avatar white--text primary"
+                      style="height: 32px; width: 32px;"
+                    >
+                      3
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="v-treeview-node__children"
+              >
+                <div
+                  class="v-treeview-node v-treeview-node--leaf"
+                >
+                  <div
+                    class="v-treeview-node__root"
+                  >
+                    <div
+                      class="v-treeview-node__content"
+                    >
+                      <div
+                        class="v-treeview-node__label"
+                      >
+                        <div
+                          class="v-avatar white--text primary"
+                          style="height: 32px; width: 32px;"
+                        >
+                          0
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="v-treeview-node v-treeview-node--leaf"
+                >
+                  <div
+                    class="v-treeview-node__root"
+                  >
+                    <div
+                      class="v-treeview-node__content"
+                    >
+                      <div
+                        class="v-treeview-node__label"
+                      >
+                        <div
+                          class="v-avatar white--text primary"
+                          style="height: 32px; width: 32px;"
+                        >
+                          0
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="v-treeview-node v-treeview-node--leaf"
+                >
+                  <div
+                    class="v-treeview-node__root"
+                  >
+                    <div
+                      class="v-treeview-node__content"
+                    >
+                      <div
+                        class="v-treeview-node__label"
+                      >
+                        <div
+                          class="v-avatar white--text primary"
+                          style="height: 32px; width: 32px;"
+                        >
+                          0
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="v-treeview-node v-treeview-node--leaf"
+            >
+              <div
+                class="v-treeview-node__root"
+              >
+                <div
+                  class="v-treeview-node__content"
+                >
+                  <div
+                    class="v-treeview-node__label"
+                  >
+                    <div
+                      class="v-avatar white--text primary"
+                      style="height: 32px; width: 32px;"
+                    >
+                      0
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  0
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex"
+    >
+      <div>
+        <div
+          class="v-table__overflow"
+        >
+          <table
+            class="v-datatable v-table theme--light"
+          >
+            <thead>
+              <tr>
+                <th
+                  aria-label="Username: Sorted ascending. Activate to sort descending."
+                  aria-sort="ascending"
+                  class="column active asc sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Username
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Firstname: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Firstname
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Lastname: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Lastname
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Email: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Email
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+              </tr>
+              <tr
+                class="v-datatable__progress"
+              >
+                <th
+                  class="column"
+                  colspan="4"
+                />
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  internet.userName6
+                </td>
+                <td>
+                  name.firstName6
+                </td>
+                <td>
+                  name.lastName6
+                </td>
+                <td>
+                  internet.email6
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName7
+                </td>
+                <td>
+                  name.firstName7
+                </td>
+                <td>
+                  name.lastName7
+                </td>
+                <td>
+                  internet.email7
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName73
+                </td>
+                <td>
+                  name.firstName73
+                </td>
+                <td>
+                  name.lastName73
+                </td>
+                <td>
+                  internet.email73
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName74
+                </td>
+                <td>
+                  name.firstName74
+                </td>
+                <td>
+                  name.lastName74
+                </td>
+                <td>
+                  internet.email74
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName740
+                </td>
+                <td>
+                  name.firstName740
+                </td>
+                <td>
+                  name.lastName740
+                </td>
+                <td>
+                  internet.email740
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName741
+                </td>
+                <td>
+                  name.firstName741
+                </td>
+                <td>
+                  name.lastName741
+                </td>
+                <td>
+                  internet.email741
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName742
+                </td>
+                <td>
+                  name.firstName742
+                </td>
+                <td>
+                  name.lastName742
+                </td>
+                <td>
+                  internet.email742
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName75
+                </td>
+                <td>
+                  name.firstName75
+                </td>
+                <td>
+                  name.lastName75
+                </td>
+                <td>
+                  internet.email75
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName8
+                </td>
+                <td>
+                  name.firstName8
+                </td>
+                <td>
+                  name.lastName8
+                </td>
+                <td>
+                  internet.email8
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom props 1`] = `
+<div
+  class="white treeview-data-table"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="treeview-data-table--tree mr-4"
+    >
+      <div
+        class="v-treeview theme--dark"
+      >
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  0
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-treeview-node"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--dark"
+            >
+              arrow_drop_down
+            </i>
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  3
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  0
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex"
+    >
+      <div>
+        <div
+          class="v-table__overflow"
+        >
+          <table
+            class="v-datatable v-table theme--dark"
+          >
+            <thead>
+              <tr>
+                <th
+                  aria-label="Username: Sorted ascending. Activate to sort descending."
+                  aria-sort="ascending"
+                  class="column active asc sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Username
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--dark"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Firstname: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Firstname
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--dark"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Lastname: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Lastname
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--dark"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Email: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Email
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--dark"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+              </tr>
+              <tr
+                class="v-datatable__progress"
+              >
+                <th
+                  class="column"
+                  colspan="4"
+                >
+                  <div
+                    aria-valuemax="100"
+                    aria-valuemin="0"
+                    class="v-progress-linear"
+                    role="progressbar"
+                    style="height: 2px;"
+                  >
+                    <div
+                      class="v-progress-linear__background primary"
+                      style="height: 2px; opacity: 0.3; width: 100%;"
+                    />
+                    <div
+                      class="v-progress-linear__bar"
+                    >
+                      <transition-stub
+                        name="fade-transition"
+                      >
+                        <div
+                          class="v-progress-linear__bar__indeterminate v-progress-linear__bar__indeterminate--active"
+                        >
+                          <div
+                            class="v-progress-linear__bar__indeterminate long primary"
+                          />
+                          <div
+                            class="v-progress-linear__bar__indeterminate short primary"
+                          />
+                        </div>
+                      </transition-stub>
+                      <transition-stub
+                        name="slide-x-transition"
+                      />
+                    </div>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  internet.userName6
+                </td>
+                <td>
+                  name.firstName6
+                </td>
+                <td>
+                  name.lastName6
+                </td>
+                <td>
+                  internet.email6
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName7
+                </td>
+                <td>
+                  name.firstName7
+                </td>
+                <td>
+                  name.lastName7
+                </td>
+                <td>
+                  internet.email7
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName8
+                </td>
+                <td>
+                  name.firstName8
+                </td>
+                <td>
+                  name.lastName8
+                </td>
+                <td>
+                  internet.email8
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom props and expand slots 1`] = `
+<div
+  class="white treeview-data-table"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="treeview-data-table--tree mr-4"
+    >
+      <div
+        class="v-treeview theme--light"
+      >
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="expand-slot"
+                />
+                <div
+                  class="expand-append-slot"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-treeview-node"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light"
+            >
+              arrow_drop_down
+            </i>
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="expand-slot"
+                />
+                <div
+                  class="expand-append-slot"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="expand-slot"
+                />
+                <div
+                  class="expand-append-slot"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex"
+    >
+      <div>
+        <div
+          class="v-table__overflow"
+        >
+          <table
+            class="v-datatable v-table theme--light"
+          >
+            <thead>
+              <tr>
+                <th
+                  aria-label="Username: Sorted ascending. Activate to sort descending."
+                  aria-sort="ascending"
+                  class="column active asc sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Username
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Firstname: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Firstname
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Lastname: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Lastname
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Email: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Email
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+              </tr>
+              <tr
+                class="v-datatable__progress"
+              >
+                <th
+                  class="column"
+                  colspan="4"
+                />
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  internet.userName6
+                </td>
+                <td>
+                  name.firstName6
+                </td>
+                <td>
+                  name.lastName6
+                </td>
+                <td>
+                  internet.email6
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName7
+                </td>
+                <td>
+                  name.firstName7
+                </td>
+                <td>
+                  name.lastName7
+                </td>
+                <td>
+                  internet.email7
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName8
+                </td>
+                <td>
+                  name.firstName8
+                </td>
+                <td>
+                  name.lastName8
+                </td>
+                <td>
+                  internet.email8
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default and required props (changed headers) 1`] = `
+<div
+  class="white treeview-data-table"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="treeview-data-table--tree mr-4"
+    >
+      <div
+        class="v-treeview theme--light"
+      >
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  0
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-treeview-node"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light"
+            >
+              arrow_drop_down
+            </i>
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  3
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  0
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex"
+    >
+      <div>
+        <div
+          class="v-table__overflow"
+        >
+          <table
+            class="v-datatable v-table theme--light"
+          >
+            <thead>
+              <tr>
+                <th
+                  aria-label="Username: Sorted ascending. Activate to sort descending."
+                  aria-sort="ascending"
+                  class="column active asc sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Username
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Firstname: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Firstname
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Lastname: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Lastname
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+              </tr>
+              <tr
+                class="v-datatable__progress"
+              >
+                <th
+                  class="column"
+                  colspan="3"
+                />
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  internet.userName6
+                </td>
+                <td>
+                  name.firstName6
+                </td>
+                <td>
+                  name.lastName6
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName7
+                </td>
+                <td>
+                  name.firstName7
+                </td>
+                <td>
+                  name.lastName7
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName8
+                </td>
+                <td>
+                  name.firstName8
+                </td>
+                <td>
+                  name.lastName8
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default and required props 1`] = `
+<div
+  class="white treeview-data-table"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="treeview-data-table--tree mr-4"
+    >
+      <div
+        class="v-treeview theme--light"
+      >
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  0
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-treeview-node"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light"
+            >
+              arrow_drop_down
+            </i>
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  3
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  0
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex"
+    >
+      <div>
+        <div
+          class="v-table__overflow"
+        >
+          <table
+            class="v-datatable v-table theme--light"
+          >
+            <thead>
+              <tr>
+                <th
+                  aria-label="Username: Sorted ascending. Activate to sort descending."
+                  aria-sort="ascending"
+                  class="column active asc sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Username
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Firstname: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Firstname
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Lastname: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Lastname
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Email: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Email
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+              </tr>
+              <tr
+                class="v-datatable__progress"
+              >
+                <th
+                  class="column"
+                  colspan="4"
+                />
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  internet.userName6
+                </td>
+                <td>
+                  name.firstName6
+                </td>
+                <td>
+                  name.lastName6
+                </td>
+                <td>
+                  internet.email6
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName7
+                </td>
+                <td>
+                  name.firstName7
+                </td>
+                <td>
+                  name.lastName7
+                </td>
+                <td>
+                  internet.email7
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName8
+                </td>
+                <td>
+                  name.firstName8
+                </td>
+                <td>
+                  name.lastName8
+                </td>
+                <td>
+                  internet.email8
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default and required props 2`] = `
+<div
+  class="white treeview-data-table"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="treeview-data-table--tree mr-4"
+    >
+      <div
+        class="v-treeview theme--light"
+      >
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  0
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-treeview-node"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light"
+            >
+              arrow_drop_down
+            </i>
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  3
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  0
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex"
+    >
+      <div>
+        <div
+          class="v-table__overflow"
+        >
+          <table
+            class="v-datatable v-table theme--light"
+          >
+            <thead>
+              <tr>
+                <th
+                  aria-label="Username: Sorted ascending. Activate to sort descending."
+                  aria-sort="ascending"
+                  class="column active asc sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Username
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Firstname: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Firstname
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Lastname: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Lastname
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Email: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Email
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+              </tr>
+              <tr
+                class="v-datatable__progress"
+              >
+                <th
+                  class="column"
+                  colspan="4"
+                />
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  internet.userName6
+                </td>
+                <td>
+                  name.firstName6
+                </td>
+                <td>
+                  name.lastName6
+                </td>
+                <td>
+                  internet.email6
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName7
+                </td>
+                <td>
+                  name.firstName7
+                </td>
+                <td>
+                  name.lastName7
+                </td>
+                <td>
+                  internet.email7
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName8
+                </td>
+                <td>
+                  name.firstName8
+                </td>
+                <td>
+                  name.lastName8
+                </td>
+                <td>
+                  internet.email8
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default and required props and trigger click 1`] = `
+<div
+  class="white treeview-data-table"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="treeview-data-table--tree mr-4"
+    >
+      <div
+        class="v-treeview theme--light"
+      >
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  0
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-treeview-node"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light v-treeview-node__toggle--open"
+            >
+              arrow_drop_down
+            </i>
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  3
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-treeview-node__children"
+          >
+            <div
+              class="v-treeview-node v-treeview-node--leaf"
+            >
+              <div
+                class="v-treeview-node__root"
+              >
+                <div
+                  class="v-treeview-node__content"
+                >
+                  <div
+                    class="v-treeview-node__label"
+                  >
+                    <div
+                      class="v-avatar white--text primary"
+                      style="height: 32px; width: 32px;"
+                    >
+                      0
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="v-treeview-node"
+            >
+              <div
+                class="v-treeview-node__root"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light v-treeview-node__toggle--open"
+                >
+                  arrow_drop_down
+                </i>
+                <div
+                  class="v-treeview-node__content"
+                >
+                  <div
+                    class="v-treeview-node__label"
+                  >
+                    <div
+                      class="v-avatar white--text primary"
+                      style="height: 32px; width: 32px;"
+                    >
+                      3
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="v-treeview-node__children"
+              >
+                <div
+                  class="v-treeview-node v-treeview-node--leaf"
+                >
+                  <div
+                    class="v-treeview-node__root"
+                  >
+                    <div
+                      class="v-treeview-node__content"
+                    >
+                      <div
+                        class="v-treeview-node__label"
+                      >
+                        <div
+                          class="v-avatar white--text primary"
+                          style="height: 32px; width: 32px;"
+                        >
+                          0
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="v-treeview-node v-treeview-node--leaf"
+                >
+                  <div
+                    class="v-treeview-node__root"
+                  >
+                    <div
+                      class="v-treeview-node__content"
+                    >
+                      <div
+                        class="v-treeview-node__label"
+                      >
+                        <div
+                          class="v-avatar white--text primary"
+                          style="height: 32px; width: 32px;"
+                        >
+                          0
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="v-treeview-node v-treeview-node--leaf"
+                >
+                  <div
+                    class="v-treeview-node__root"
+                  >
+                    <div
+                      class="v-treeview-node__content"
+                    >
+                      <div
+                        class="v-treeview-node__label"
+                      >
+                        <div
+                          class="v-avatar white--text primary"
+                          style="height: 32px; width: 32px;"
+                        >
+                          0
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="v-treeview-node v-treeview-node--leaf"
+            >
+              <div
+                class="v-treeview-node__root"
+              >
+                <div
+                  class="v-treeview-node__content"
+                >
+                  <div
+                    class="v-treeview-node__label"
+                  >
+                    <div
+                      class="v-avatar white--text primary"
+                      style="height: 32px; width: 32px;"
+                    >
+                      0
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  0
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex"
+    >
+      <div>
+        <div
+          class="v-table__overflow"
+        >
+          <table
+            class="v-datatable v-table theme--light"
+          >
+            <thead>
+              <tr>
+                <th
+                  aria-label="Username: Sorted ascending. Activate to sort descending."
+                  aria-sort="ascending"
+                  class="column active asc sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Username
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Firstname: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Firstname
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Lastname: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Lastname
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Email: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Email
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+              </tr>
+              <tr
+                class="v-datatable__progress"
+              >
+                <th
+                  class="column"
+                  colspan="4"
+                />
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  internet.userName6
+                </td>
+                <td>
+                  name.firstName6
+                </td>
+                <td>
+                  name.lastName6
+                </td>
+                <td>
+                  internet.email6
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName7
+                </td>
+                <td>
+                  name.firstName7
+                </td>
+                <td>
+                  name.lastName7
+                </td>
+                <td>
+                  internet.email7
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName73
+                </td>
+                <td>
+                  name.firstName73
+                </td>
+                <td>
+                  name.lastName73
+                </td>
+                <td>
+                  internet.email73
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName74
+                </td>
+                <td>
+                  name.firstName74
+                </td>
+                <td>
+                  name.lastName74
+                </td>
+                <td>
+                  internet.email74
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName740
+                </td>
+                <td>
+                  name.firstName740
+                </td>
+                <td>
+                  name.lastName740
+                </td>
+                <td>
+                  internet.email740
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName741
+                </td>
+                <td>
+                  name.firstName741
+                </td>
+                <td>
+                  name.lastName741
+                </td>
+                <td>
+                  internet.email741
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName742
+                </td>
+                <td>
+                  name.firstName742
+                </td>
+                <td>
+                  name.lastName742
+                </td>
+                <td>
+                  internet.email742
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName75
+                </td>
+                <td>
+                  name.firstName75
+                </td>
+                <td>
+                  name.lastName75
+                </td>
+                <td>
+                  internet.email75
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  internet.userName8
+                </td>
+                <td>
+                  name.firstName8
+                </td>
+                <td>
+                  name.lastName8
+                </td>
+                <td>
+                  internet.email8
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default props and data-table \`items\` slot 1`] = `
+<div
+  class="white treeview-data-table"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="treeview-data-table--tree mr-4"
+    >
+      <div
+        class="v-treeview theme--light"
+      >
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  0
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-treeview-node"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light"
+            >
+              arrow_drop_down
+            </i>
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  3
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  0
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex"
+    >
+      <div>
+        <div
+          class="v-table__overflow"
+        >
+          <table
+            class="v-datatable v-table theme--light"
+          >
+            <thead>
+              <tr>
+                <th
+                  aria-label="Username: Sorted ascending. Activate to sort descending."
+                  aria-sort="ascending"
+                  class="column active asc sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Username
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Firstname: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Firstname
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Lastname: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Lastname
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Email: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Email
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+              </tr>
+              <tr
+                class="v-datatable__progress"
+              >
+                <th
+                  class="column"
+                  colspan="4"
+                />
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                class="items-slot"
+              />
+              <tr
+                class="items-slot"
+              />
+              <tr
+                class="items-slot"
+              />
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default props and data-table values slots 1`] = `
+<div
+  class="white treeview-data-table"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="treeview-data-table--tree mr-4"
+    >
+      <div
+        class="v-treeview theme--light"
+      >
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  0
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-treeview-node"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light"
+            >
+              arrow_drop_down
+            </i>
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  3
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <div
+                  class="v-avatar white--text primary"
+                  style="height: 32px; width: 32px;"
+                >
+                  0
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex"
+    >
+      <div>
+        <div
+          class="v-table__overflow"
+        >
+          <table
+            class="v-datatable v-table theme--light"
+          >
+            <thead>
+              <tr>
+                <th
+                  aria-label="Username: Sorted ascending. Activate to sort descending."
+                  aria-sort="ascending"
+                  class="column active asc sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Username
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Firstname: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Firstname
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Lastname: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Lastname
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+                <th
+                  aria-label="Email: Not sorted. Activate to sort ascending."
+                  aria-sort="none"
+                  class="column sortable text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                  tabindex="0"
+                >
+                  Email
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                    style="font-size: 16px;"
+                  >
+                    arrow_upward
+                  </i>
+                </th>
+              </tr>
+              <tr
+                class="v-datatable__progress"
+              >
+                <th
+                  class="column"
+                  colspan="4"
+                />
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <span
+                    class="username-slot"
+                  />
+                </td>
+                <td>
+                  <span
+                    class="firstname-slot"
+                  />
+                </td>
+                <td>
+                  name.lastName6
+                </td>
+                <td>
+                  internet.email6
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span
+                    class="username-slot"
+                  />
+                </td>
+                <td>
+                  <span
+                    class="firstname-slot"
+                  />
+                </td>
+                <td>
+                  name.lastName7
+                </td>
+                <td>
+                  internet.email7
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span
+                    class="username-slot"
+                  />
+                </td>
+                <td>
+                  <span
+                    class="firstname-slot"
+                  />
+                </td>
+                <td>
+                  name.lastName8
+                </td>
+                <td>
+                  internet.email8
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -6,7 +6,7 @@ const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 /**
  * @mixin
  */
-export default {
+export const modalInnerItemsMixin = {
   computed: {
     ...entitiesMapGetters(['getList']),
 

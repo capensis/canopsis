@@ -23,6 +23,9 @@ import {
   ALARMS_OPENED_VALUES,
   HEALTHCHECK_SERVICES_NAMES,
   HEALTHCHECK_ENGINES_NAMES,
+  GROUPS_NAVIGATION_TYPES,
+  ALARM_METRIC_PARAMETERS,
+  USER_METRIC_PARAMETERS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -197,6 +200,18 @@ export default {
     graph: 'Graph | Graphs',
     systemStatus: 'System status',
     downloadAsPng: 'Download as PNG',
+    rating: 'Rating | Ratings',
+    sampling: 'Sampling',
+    parametersToDisplay: '{count} parameters to display',
+    uptime: 'Uptime',
+    maintenance: 'Maintenance',
+    downtime: 'Downtime',
+    toTheTop: 'To the top',
+    time: 'Time',
+    lastModifiedOn: 'Last modified on',
+    exportAsCsv: 'Export as csv',
+    criteria: 'Criteria',
+    ratingSettings: 'Rating settings',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -212,6 +227,7 @@ export default {
       [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
       [EVENT_ENTITY_TYPES.assocTicket]: 'Associate ticket',
       [EVENT_ENTITY_TYPES.comment]: 'Comment',
+      [EVENT_ENTITY_TYPES.executeInstruction]: 'Execute instruction',
     },
     times: {
       second: 'second | seconds',
@@ -254,6 +270,12 @@ export default {
       november: 'November',
       december: 'December',
     },
+    stateTypes: {
+      [ENTITIES_STATES.ok]: 'Ok',
+      [ENTITIES_STATES.minor]: 'Minor',
+      [ENTITIES_STATES.major]: 'Major',
+      [ENTITIES_STATES.critical]: 'Critical',
+    },
   },
   variableTypes: {
     string: 'String',
@@ -261,12 +283,6 @@ export default {
     boolean: 'Boolean',
     null: 'Null',
     array: 'Array',
-  },
-  user: {
-    role: 'Role',
-    defaultView: 'Default view',
-    seeProfile: 'See profile',
-    selectDefaultView: 'Select default view',
   },
   context: {
     impacts: 'Impacts',
@@ -303,46 +319,49 @@ export default {
       common: 'Add a new entity',
       addService: 'Add a new service entity',
     },
+    popups: {
+      massDeleteWarning: 'The mass deletion cannot be applied for some of selected elements, so they won\'t be deleted.',
+    },
   },
   search: {
-    alarmAdvancedSearch: '<span>Help on the advanced research :</span>\n' +
-      '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n' +
-      '<p>The "-" before the research is required</p>\n' +
-      '<p>Operators :\n' +
-      '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n' +
-      '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
-      '<dl><dt>Examples :</dt><dt>- Connector = "connector_1"</dt>\n' +
-      '    <dd>Alarms whose connectors are "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n' +
-      '    <dd>Alarms whose connectors is "connector_1" and the resources is "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n' +
-      '    <dd>Alarms whose connectors is "connector_1" or the resources is "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n' +
-      '    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = "connector_1"</dt>\n' +
-      '    <dd>Alarms whose connectors isn\'t "connector_1"</dd>\n' +
-      '</dl>',
-    contextAdvancedSearch: '<span>Help on the advanced research :</span>\n' +
-      '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n' +
-      '<p>The "-" before the research is required</p>\n' +
-      '<p>Operators :\n' +
-      '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n' +
-      '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
-      '<dl><dt>Examples :</dt><dt>- Name = "name_1"</dt>\n' +
-      '    <dd>Entities whose names are "name_1"</dd><dt>- Name="name_1" AND Type="service"</dt>\n' +
-      '    <dd>Entities whose names is "name_1" and the types is "service"</dd><dt>- infos.custom.value="Custom value" OR Type="resource"</dt>\n' +
-      '    <dd>Entities whose infos.custom.value is "Custom value" or the type is "resource"</dd><dt>- infos.custom.value LIKE 1 OR infos.custom.value LIKE 2</dt>\n' +
-      '    <dd>Entities whose infos.custom.value contains 1 or 2</dd><dt>- NOT Name = "name_1"</dt>\n' +
-      '    <dd>Entities whose name isn\'t "name_1"</dd>\n' +
-      '</dl>',
-    dynamicInfoAdvancedSearch: '<span>Help on the advanced research :</span>\n' +
-      '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n' +
-      '<p>The "-" before the research is required</p>\n' +
-      '<p>Operators :\n' +
-      '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n' +
-      '<p>For querying patterns, use "pattern" keyword as the &lt;ColumnName&gt; alias</p>\n' +
-      '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
-      '<dl><dt>Examples :</dt><dt>- description = "testdyninfo"</dt>\n' +
-      '    <dd>Dynamic info rules descriptions are "testdyninfo"</dd><dt>- pattern = "SEARCHPATTERN1"</dt>\n' +
-      '    <dd>Dynamic info rules whose one of its patterns is equal "SEARCHPATTERN1"</dd><dt>- pattern LIKE "SEARCHPATTERN2"</dt>\n' +
-      '    <dd>Dynamic info rules whose one of its patterns contains "SEARCHPATTERN2"</dd>' +
-      '</dl>',
+    alarmAdvancedSearch: '<span>Help on the advanced research :</span>\n'
+      + '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n'
+      + '<p>The "-" before the research is required</p>\n'
+      + '<p>Operators :\n'
+      + '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n'
+      + '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n'
+      + '<dl><dt>Examples :</dt><dt>- Connector = "connector_1"</dt>\n'
+      + '    <dd>Alarms whose connectors are "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n'
+      + '    <dd>Alarms whose connectors is "connector_1" and the resources is "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n'
+      + '    <dd>Alarms whose connectors is "connector_1" or the resources is "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n'
+      + '    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = "connector_1"</dt>\n'
+      + '    <dd>Alarms whose connectors isn\'t "connector_1"</dd>\n'
+      + '</dl>',
+    contextAdvancedSearch: '<span>Help on the advanced research :</span>\n'
+      + '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n'
+      + '<p>The "-" before the research is required</p>\n'
+      + '<p>Operators :\n'
+      + '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n'
+      + '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n'
+      + '<dl><dt>Examples :</dt><dt>- Name = "name_1"</dt>\n'
+      + '    <dd>Entities whose names are "name_1"</dd><dt>- Name="name_1" AND Type="service"</dt>\n'
+      + '    <dd>Entities whose names is "name_1" and the types is "service"</dd><dt>- infos.custom.value="Custom value" OR Type="resource"</dt>\n'
+      + '    <dd>Entities whose infos.custom.value is "Custom value" or the type is "resource"</dd><dt>- infos.custom.value LIKE 1 OR infos.custom.value LIKE 2</dt>\n'
+      + '    <dd>Entities whose infos.custom.value contains 1 or 2</dd><dt>- NOT Name = "name_1"</dt>\n'
+      + '    <dd>Entities whose name isn\'t "name_1"</dd>\n'
+      + '</dl>',
+    dynamicInfoAdvancedSearch: '<span>Help on the advanced research :</span>\n'
+      + '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n'
+      + '<p>The "-" before the research is required</p>\n'
+      + '<p>Operators :\n'
+      + '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n'
+      + '<p>For querying patterns, use "pattern" keyword as the &lt;ColumnName&gt; alias</p>\n'
+      + '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n'
+      + '<dl><dt>Examples :</dt><dt>- description = "testdyninfo"</dt>\n'
+      + '    <dd>Dynamic info rules descriptions are "testdyninfo"</dd><dt>- pattern = "SEARCHPATTERN1"</dt>\n'
+      + '    <dd>Dynamic info rules whose one of its patterns is equal "SEARCHPATTERN1"</dd><dt>- pattern LIKE "SEARCHPATTERN2"</dt>\n'
+      + '    <dd>Dynamic info rules whose one of its patterns contains "SEARCHPATTERN2"</dd>'
+      + '</dl>',
     submit: 'Search',
     clear: 'Clear search input',
   },
@@ -461,6 +480,25 @@ export default {
       allAutoInstructionExecuted: 'All automatic instructions has been executed',
       awaitingInstructionComplete: 'Awaiting for the instruction to complete',
     },
+    metrics: {
+      [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Number of created alarms',
+      [ALARM_METRIC_PARAMETERS.activeAlarms]: 'Number of active alarms',
+      [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: 'Number of non-displayed alarms',
+      [ALARM_METRIC_PARAMETERS.instructionAlarms]: 'Number of alarms under automatic remediation',
+      [ALARM_METRIC_PARAMETERS.pbehaviorAlarms]: 'Number of alarms with PBehavior',
+      [ALARM_METRIC_PARAMETERS.correlationAlarms]: 'Number of alarms with correlation',
+      [ALARM_METRIC_PARAMETERS.ackAlarms]: 'Total number of acks',
+      [ALARM_METRIC_PARAMETERS.ackActiveAlarms]: 'Number of active alarms with acks',
+      [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: 'Number of canceled acks',
+      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: 'Number of active alarms with acks',
+      [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: 'Number of active alarms without tickets',
+      [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '% of correlated alarms',
+      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% of alarms with auto remediation',
+      [ALARM_METRIC_PARAMETERS.ratioTickets]: '% of alarms with tickets created',
+      [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '% of non-displayed alarms',
+      [ALARM_METRIC_PARAMETERS.averageAck]: 'Average time to ack alarms',
+      [ALARM_METRIC_PARAMETERS.averageResolve]: 'Average time to resolve alarms',
+    },
   },
   weather: {
     moreInfos: 'More info',
@@ -478,6 +516,25 @@ export default {
     created: 'Creation date',
     updated: 'Last update date',
     lastAlarmDate: 'Last alarm date',
+    searchHelp: '<span>Help on the advanced research :</span>\n'
+      + '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n'
+      + '<p>The "-" before the research is required</p>\n'
+      + '<p>Operators : <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n'
+      + '<p>For querying patterns, use "pattern" keyword as the &lt;ColumnName&gt; alias</p>\n'
+      + '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n'
+      + '<dl>'
+      + '  <dt>Examples :</dt>'
+      + '  <dt>- name = "name_1"</dt>\n'
+      + '  <dd>Pbehavior name are "name_1"</dd>\n'
+      + '  <dt>- rrule = "rrule_1"</dt>\n'
+      + '  <dd>Pbehavior rrule are "rrule_1"</dd>\n'
+      + '  <dt>- filter = "filter_1"</dt>\n'
+      + '  <dd>Pbehavior filter are "filter_1"</dd>\n'
+      + '  <dt>- type.name = "type_name_1"</dt>\n'
+      + '  <dd>Pbehavior type name are "type_name_1"</dd>\n'
+      + '  <dt>- reason.name = "reason_name_1"</dt>\n'
+      + '  <dd>Pbehavior reason name are "reason_name_1"</dd>'
+      + '</dl>',
     tabs: {
       filter: 'Filter',
       comments: 'Comments',
@@ -682,12 +739,12 @@ export default {
     },
     screenshotMask: {
       title: 'Screenshots filename mask',
-      helpText: '<dl>' +
-        '<dt>Define the filename mask of which screenshots are created using the following variables:<dt>\n' +
-        '<dd>- test case name %test_case%</dd>\n' +
-        '<dd>- date (YYYY, MM, DD)</dd>\n' +
-        '<dd>- time of execution (hh, mm, ss)</dd>' +
-        '</dl>',
+      helpText: '<dl>'
+        + '<dt>Define the filename mask of which screenshots are created using the following variables:<dt>\n'
+        + '<dd>- test case name %test_case%</dd>\n'
+        + '<dd>- date (YYYY, MM, DD)</dd>\n'
+        + '<dd>- time of execution (hh, mm, ss)</dd>'
+        + '</dl>',
     },
     videoDirectories: {
       title: 'Video storage settings',
@@ -695,20 +752,21 @@ export default {
     },
     videoMask: {
       title: 'Videos filename mask',
-      helpText: '<dl>' +
-        '<dt>Define the filename mask of which videos are created using the following variables:<dt>\n' +
-        '<dd>- test case name %test_case%</dd>\n' +
-        '<dd>- date (YYYY, MM, DD)</dd>\n' +
-        '<dd>- time of execution (hh, mm, ss)</dd>' +
-        '</dl>',
+      helpText: '<dl>'
+        + '<dt>Define the filename mask of which videos are created using the following variables:<dt>\n'
+        + '<dd>- test case name %test_case%</dd>\n'
+        + '<dd>- date (YYYY, MM, DD)</dd>\n'
+        + '<dd>- time of execution (hh, mm, ss)</dd>'
+        + '</dl>',
     },
+    stickyHeader: 'Sticky header',
     reportFileRegexp: {
       title: 'Report file mask',
-      helpText: '<dl>' +
-        '<dt>Define the filename regexp of which report:<dt>\n' +
-        '<dd>For example:</dd>\n' +
-        '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n' +
-        '</dl>',
+      helpText: '<dl>'
+        + '<dt>Define the filename regexp of which report:<dt>\n'
+        + '<dd>For example:</dd>\n'
+        + '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n'
+        + '</dl>',
     },
   },
   modals: {
@@ -960,6 +1018,9 @@ export default {
       edit: {
         title: 'Edit filter',
       },
+      duplicate: {
+        title: 'Duplicate filter',
+      },
       fields: {
         title: 'Title',
       },
@@ -1008,7 +1069,7 @@ export default {
           title: 'Counter',
         },
         [WIDGET_TYPES.testingWeather]: {
-          title: 'Testing weather',
+          title: 'Junit scenarios',
         },
       },
     },
@@ -1097,8 +1158,8 @@ export default {
         addObjectRuleField: 'Add object rule field',
         editObjectRuleField: 'Edit object rule field',
         removeRuleField: 'Remove rule field',
-        copyFromHelp: '<p>The accessible variables are: <strong>Event</strong></p>' +
-          '<i>For example:</i> <span>"Event.ExtraInfos.datecustom"</span>',
+        copyFromHelp: '<p>The accessible variables are: <strong>Event</strong></p>'
+          + '<i>For example:</i> <span>"Event.ExtraInfos.datecustom"</span>',
       },
       actionsTypes: {
         [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
@@ -1224,6 +1285,7 @@ export default {
       title: 'Select tab',
     },
     createDynamicInfo: {
+      alarmUpdate: 'The rule will update existing alarms!',
       create: {
         title: 'Create dynamic information',
         success: 'Dynamic information successfully created!',
@@ -1443,9 +1505,9 @@ export default {
       },
       addPayload: 'Add payload',
       deletePayload: 'Delete payload',
-      payloadHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>' +
-        '<i>For example:</i>' +
-        '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
+      payloadHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'
+        + '<i>For example:</i>'
+        + '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
     },
     clickOutsideConfirmation: {
       title: 'Are you sure?',
@@ -1567,6 +1629,37 @@ export default {
         duplicate: {
           title: 'Duplicate resolve rule',
         },
+      },
+    },
+    webSocketError: {
+      title: 'WebSocket connection error',
+      text: '<p>Websockets are unavailable, so the following functionalities are restricted:</p>'
+        + '<p>'
+        + '<ul>'
+        + '<li>Healthcheck header</li>'
+        + '<li>Healthcheck network graph</li>'
+        + '<li>Active broadcast messages</li>'
+        + '<li>Active users sessions</li>'
+        + '<li>Remediation execution</li>'
+        + '</ul>'
+        + '</p>'
+        + '<p>Please check your server configuration.</p>',
+    },
+    confirmationPhrase: {
+      phrase: 'Phrase',
+      updateStorageSettings: {
+        title: 'Updating storage policy. Are you sure ?',
+        text: 'You are about to change the storage policy.\n'
+          + '<strong>Associated operations, deleting data, won\'t be cancellable.</strong>',
+        phraseText: 'Please, type the following to confirm:',
+        phrase: 'update the storage policy',
+      },
+      cleanStorage: {
+        title: 'Archive/delete disabled entities. Are you sure ?',
+        text: 'You are about to archive and/or delete data.\n'
+          + '<strong>Deletion operation won\'t be cancellable.</strong>',
+        phraseText: 'Please, type the following to confirm:',
+        phrase: 'archive or delete',
       },
     },
   },
@@ -1750,21 +1843,21 @@ export default {
     autoResolve: 'Auto resolve',
     idHelp: 'If no id is specified, a unique id will be generated automatically on rule creation',
     corelId: 'Corel ID',
-    corelIdHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>' +
-      '<i>For example:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
+    corelIdHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'
+      + '<i>For example:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
     corelStatus: 'Corel status',
-    corelStatusHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>' +
-      '<i>For example:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
+    corelStatusHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'
+      + '<i>For example:</i> <span>"{{ .Alarm.Value.Connector }}", "{{ .Entity.Component }}"</span>',
     corelParent: 'Corel parent',
     corelChild: 'Corel child',
-    outputTemplateHelp: '<p>The accessible variables are:</p>' +
-      '<p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p>' +
-      '<p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p>' +
-      '<p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p>' +
-      '<p>For example:</p>' +
-      '<p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p>' +
-      '<p>A static informative message</p>' +
-      '<p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>',
+    outputTemplateHelp: '<p>The accessible variables are:</p>'
+      + '<p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p>'
+      + '<p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p>'
+      + '<p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p>'
+      + '<p>For example:</p>'
+      + '<p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p>'
+      + '<p>A static informative message</p>'
+      + '<p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>',
     errors: {
       noValuePaths: 'You have to add at least 1 value path',
     },
@@ -1798,34 +1891,6 @@ export default {
       stateSettings: 'State settings',
       storageSettings: 'Storage settings',
       notificationsSettings: 'Notifications settings',
-    },
-    interfaceLanguage: 'Interface language',
-    groupsNavigationType: {
-      title: 'Groups navigation type',
-      items: {
-        sideBar: 'Side bar',
-        topBar: 'Top bar',
-      },
-    },
-    userInterfaceForm: {
-      title: 'User interface',
-      fields: {
-        appTitle: 'App title',
-        language: 'Default user interface language',
-        footer: 'Login footer',
-        description: 'Login page description',
-        logo: 'Logo',
-        infoPopupTimeout: 'Info popup timeout',
-        errorPopupTimeout: 'Error popup timeout',
-        popupTimeoutUnit: 'Unit',
-        allowChangeSeverityToInfo: 'Allow change severity to info',
-        maxMatchedItems: 'Max matched items',
-        checkCountRequestTimeout: 'Check max matched items request timeout (seconds)',
-      },
-      tooltips: {
-        maxMatchedItems: 'it need to warn user when number of items that match patterns is above this value',
-        checkCountRequestTimeout: 'it need to define request timeout value for max matched items checking',
-      },
     },
   },
   view: {
@@ -1951,9 +2016,16 @@ export default {
       [USER_PERMISSIONS_PREFIXES.business.counter]: 'Rights for Counter',
       [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Rights for Testing Weather',
     },
+    api: {
+      general: 'General',
+      rules: 'Rules',
+      remediation: 'Remediation',
+      pbehavior: 'PBehavior',
+    },
   },
 
   pbehavior: {
+    periodsCalendar: 'Calendar with periods',
     buttons: {
       addFilter: 'Add filter',
       editFilter: 'Edit filter',
@@ -2013,6 +2085,10 @@ export default {
     systemStatusChipError: 'The system is not operational',
     systemStatusServerError: 'System configuration is invalid, please contact the administrator',
     systemsOperational: 'All systems are operational',
+    validation: {
+      max_value: 'The field must be equal or less than the optimal instance count',
+      min_value: 'The field must be equal or more than the minimal instance count',
+    },
     nodes: {
       [HEALTHCHECK_SERVICES_NAMES.mongo]: {
         name: 'MongoDB',
@@ -2127,7 +2203,6 @@ export default {
     },
     table: {
       rating: 'Rating',
-      lastModifiedOn: 'Last modified on',
       monthExecutions: '№ of executions\nthis month',
       lastExecutedOn: 'Last executed on',
     },
@@ -2165,6 +2240,7 @@ export default {
       success: '{instructionName} has been successfully completed',
       failed: '{instructionName} has been failed. Please escalate this problem further',
       connectionError: 'There is a problem with connection. Please click on refresh button or reload the page.',
+      wasAborted: '{instructionName} has been aborted',
       wasPaused: 'The {instructionName} instruction on {alarmName} alarm was paused at {date}. You can resume it manually.',
     },
     jobs: {
@@ -2202,12 +2278,10 @@ export default {
     executedOn: 'Executed on',
     lastExecutedOn: 'Last executed on',
     modifiedOn: 'Modified on',
-    lastModifiedOn: 'Last modified on',
     averageCompletionTime: 'Average time\nof completion',
     executionCount: 'Number of\nexecutions',
     alarmStates: 'Alarms affected by state',
     okAlarmStates: 'Number of resulting\nOK states',
-    rating: 'Rating',
     notAvailable: 'N/a',
     instructionChanged: 'The instruction has been changed',
     actions: {
@@ -2244,23 +2318,24 @@ export default {
     remainingAction: 'Continue with remaining actions',
     addAction: 'Add action',
     emptyActions: 'No actions added yet',
-    urlHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>' +
-      '<i>For example:</i>' +
-      '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>' +
-      '<pre>"https://exampleurl.com?entity_id={{ .Entity.ID }}"</pre>' +
-      '<pre>"https://exampleurl.com?children_count={{ len .Children }}"</pre>' +
-      '<pre>"https://exampleurl.com?children={{ range .Children }}{{ .ID }}{{ end }}"</pre>',
-    outputHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>' +
-      '<i>For example:</i>' +
-      '<pre>Resource - {{ .Alarm.Value.Resource }}. Entity - {{ .Entity.ID }}.</pre>',
-    payloadHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>' +
-      '<i>For example:</i>' +
-      '<pre>{\n' +
-      '  resource: "{{ .Alarm.Value.Resource }}",\n' +
-      '  entity: "{{ .Entity.ID }}",\n' +
-      '  children_count: "{{ len .Children }}",\n' +
-      '  children: {{ range .Children }}{{ .ID }}{{ end }}\n' +
-      '}</pre>',
+    output: 'Output Action Format',
+    urlHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>'
+      + '<i>For example:</i>'
+      + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'
+      + '<pre>"https://exampleurl.com?entity_id={{ .Entity.ID }}"</pre>'
+      + '<pre>"https://exampleurl.com?children_count={{ len .Children }}"</pre>'
+      + '<pre>"https://exampleurl.com?children={{ range .Children }}{{ .ID }}{{ end }}"</pre>',
+    outputHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'
+      + '<i>For example:</i>'
+      + '<pre>Resource - {{ .Alarm.Value.Resource }}. Entity - {{ .Entity.ID }}.</pre>',
+    payloadHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>'
+      + '<i>For example:</i>'
+      + '<pre>{\n'
+      + '  resource: "{{ .Alarm.Value.Resource }}",\n'
+      + '  entity: "{{ .Entity.ID }}",\n'
+      + '  children_count: "{{ len .Children }}",\n'
+      + '  children: {{ range .Children }}{{ .ID }}{{ end }}\n'
+      + '}</pre>',
     actions: {
       [ACTION_TYPES.snooze]: 'Snooze',
       [ACTION_TYPES.pbehavior]: 'Pbehavior',
@@ -2291,22 +2366,17 @@ export default {
   },
 
   entity: {
+    manageInfos: 'Manage Infos',
+    form: 'Form',
+    impact: 'Impact',
+    depends: 'Depends',
+    addInformation: 'Add Information',
+    emptyInfos: 'No information',
+    availabilityState: 'Hi availability state',
     types: {
       connector: 'connector type',
       component: 'component',
       resource: 'resource',
-    },
-    fields: {
-      type: 'Type',
-      manageInfos: 'Manage Infos',
-      form: 'Form',
-      impact: 'Impact',
-      depends: 'Depends',
-    },
-    manageInfos: {
-      title: 'Informations',
-      createTitle: 'Add Information',
-      emptyInfos: 'No information',
     },
   },
 
@@ -2321,22 +2391,24 @@ export default {
   },
 
   users: {
-    table: {
-      username: 'Username',
-      firstName: 'First name',
-      lastName: 'Last name',
-      role: 'Role',
-      enabled: 'Enabled',
-      auth: 'Auth',
+    seeProfile: 'See profile',
+    selectDefaultView: 'Select default view',
+    username: 'Username',
+    firstName: 'First name',
+    lastName: 'Last name',
+    email: 'Email',
+    role: 'Role',
+    enabled: 'Enabled',
+    password: 'Password',
+    language: 'User interface language',
+    auth: 'Auth',
+    navigationType: 'Groups navigation type',
+    navigationTypes: {
+      [GROUPS_NAVIGATION_TYPES.sideBar]: 'Side bar',
+      [GROUPS_NAVIGATION_TYPES.topBar]: 'Top bar',
     },
-    fields: {
-      username: 'Username',
-      firstName: 'First name',
-      lastName: 'Last name',
-      email: 'Email',
-      password: 'Password',
-      language: 'User interface language',
-      role: 'Role',
+    metrics: {
+      [USER_METRIC_PARAMETERS.totalUserActivity]: 'Total activity time',
     },
   },
 
@@ -2369,6 +2441,7 @@ export default {
       [TEST_SUITE_STATUSES.skipped]: 'Skipped',
       [TEST_SUITE_STATUSES.error]: 'Error',
       [TEST_SUITE_STATUSES.failed]: 'Failed',
+      [TEST_SUITE_STATUSES.total]: 'Total time taken',
     },
     popups: {
       systemMessageCopied: 'System message copied to clipboard',
@@ -2391,7 +2464,7 @@ export default {
     },
   },
 
-  storageSetting: {
+  storageSettings: {
     alarm: {
       title: 'Alarm data storage',
       titleHelp: 'When switched on, the resolved alarms data will be archived and/or deleted after the defined time period.',
@@ -2417,11 +2490,6 @@ export default {
       archiveDependencies: 'Remove the impacting and dependent entities as well',
       archiveDependenciesHelp: 'For connectors, all impacting and dependent components and resources will be archived or deleted forever. For components, all dependent resources will be archived or deleted forever as well.',
       cleanStorage: 'Clean storage',
-      confirmation: {
-        title: 'Delete disabled entities?',
-        archive: 'Are you sure you want to archive all disabled entities? This action cannot be canceled.',
-        delete: 'Are you sure you want to delete all disabled entities from the archive forever? This action cannot be canceled.',
-      },
     },
     pbehavior: {
       title: 'PBehavior data storage',
@@ -2456,6 +2524,7 @@ export default {
 
   quickRanges: {
     title: 'Quick ranges',
+    timeField: 'Time field',
     types: {
       [QUICK_RANGES.custom.value]: 'Custom',
       [QUICK_RANGES.last2Days.value]: 'Last 2 days',
@@ -2555,7 +2624,7 @@ export default {
     /**
      * Admin access
      */
-    [USERS_PERMISSIONS.technical.action]: {
+    [USERS_PERMISSIONS.technical.permission]: {
       title: 'Rights',
     },
     [USERS_PERMISSIONS.technical.role]: {
@@ -2579,6 +2648,10 @@ export default {
     [USERS_PERMISSIONS.technical.healthcheck]: {
       title: 'Healthcheck',
       message: 'The Healthcheck feature is the dashboard with states and errors indications of all systems included to the Canopsis.',
+    },
+    [USERS_PERMISSIONS.technical.kpi]: {
+      title: 'KPI',
+      message: '', // TODO: add correct message
     },
 
     /**
@@ -2623,6 +2696,62 @@ export default {
       countOverLimit: 'The patterns you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
       countRequestError: 'The request to entities count by the patterns was finished with error. It means that you may have the count of entities over the limit and it can affect performance, are you sure ?',
     },
+  },
+
+  userInterface: {
+    title: 'User interface',
+    appTitle: 'App title',
+    language: 'Default user interface language',
+    footer: 'Login footer',
+    description: 'Login page description',
+    logo: 'Logo',
+    infoPopupTimeout: 'Info popup timeout',
+    errorPopupTimeout: 'Error popup timeout',
+    allowChangeSeverityToInfo: 'Allow change severity to info',
+    maxMatchedItems: 'Max matched items',
+    checkCountRequestTimeout: 'Check max matched items request timeout (seconds)',
+    tooltips: {
+      maxMatchedItems: 'it need to warn user when number of items that match patterns is above this value',
+      checkCountRequestTimeout: 'it need to define request timeout value for max matched items checking',
+    },
+  },
+
+  kpi: {
+    alarmMetrics: 'Alarm metrics',
+    sli: 'SLI',
+  },
+
+  kpiMetrics: {
+    parameter: 'Parameter to compare',
+    tooltip: {
+      [USER_METRIC_PARAMETERS.totalUserActivity]: '{value} total activity time',
+
+      [ALARM_METRIC_PARAMETERS.createdAlarms]: '{value} created alarms',
+      [ALARM_METRIC_PARAMETERS.activeAlarms]: '{value} active alarms',
+      [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: '{value} non-displayed alarms',
+      [ALARM_METRIC_PARAMETERS.instructionAlarms]: '{value} alarms under auto remediation',
+      [ALARM_METRIC_PARAMETERS.pbehaviorAlarms]: '{value} alarms under PBehavior',
+      [ALARM_METRIC_PARAMETERS.correlationAlarms]: '{value} alarms with correlation',
+      [ALARM_METRIC_PARAMETERS.ackAlarms]: '{value} alarms with acks',
+      [ALARM_METRIC_PARAMETERS.ackActiveAlarms]: '{value} active alarms with acks',
+      [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: '{value} alarms with cancelled acks',
+      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: '{value} active alarms with acks',
+      [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: '{value} active alarms without tickets',
+      [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '{value}% of alarms with auto remediation',
+      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '{value}% alarms with instructions',
+      [ALARM_METRIC_PARAMETERS.ratioTickets]: '{value}% of alarms with tickets created',
+      [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '{value}% of non-displayed alarms',
+      [ALARM_METRIC_PARAMETERS.averageAck]: '{value} to ack alarms',
+      [ALARM_METRIC_PARAMETERS.averageResolve]: '{value} to resolve alarms',
+    },
+  },
+
+  kpiFilters: {
+    helpInformation: 'Here the filter patterns for additional slices of data for counters and ratings can be added.',
+  },
+
+  kpiRatingSettings: {
+    helpInformation: 'The list of parameters to use for rating.',
   },
 
   ...featureService.get('i18n.en'),

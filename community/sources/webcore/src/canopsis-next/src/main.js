@@ -22,7 +22,7 @@ import App from '@/app.vue';
 import router from '@/router';
 import store from '@/store';
 import i18n from '@/i18n';
-import filters from '@/filters';
+import Filters from '@/filters';
 
 import featuresService from '@/services/features';
 
@@ -105,7 +105,7 @@ import CColorPickerField from '@/components/forms/fields/c-color-picker-field.vu
 import CEntityTypeField from '@/components/forms/fields/c-entity-type-field.vue';
 import CImpactLevelField from '@/components/forms/fields/c-impact-level-field.vue';
 import CSearchField from '@/components/forms/fields/c-search-field.vue';
-import CAdvancedSearch from '@/components/common/search/c-advanced-search.vue';
+import CAdvancedSearchField from '@/components/forms/fields/c-advanced-search-field.vue';
 import CEntityCategoryField from '@/components/forms/fields/c-entity-category-field.vue';
 import CStoragesField from '@/components/forms/fields/c-storages-field.vue';
 import CStorageField from '@/components/forms/fields/c-storage-field.vue';
@@ -121,8 +121,17 @@ import CUserPickerField from '@/components/forms/fields/c-user-picker-field.vue'
 import CInstructionTypeField from '@/components/forms/fields/c-instruction-type-field.vue';
 import CPriorityField from '@/components/forms/fields/c-priority-field.vue';
 import CQuickDateIntervalField from '@/components/forms/fields/c-quick-date-interval-field.vue';
+import CQuickDateIntervalTypeField from '@/components/forms/fields/c-quick-date-interval-type-field.vue';
 import CEnabledDurationField from '@/components/forms/fields/c-enabled-duration-field.vue';
 import CEnabledLimitField from '@/components/forms/fields/c-enabled-limit-field.vue';
+import CTimezoneField from '@/components/forms/fields/c-timezone-field.vue';
+import CLanguageField from '@/components/forms/fields/c-language-field.vue';
+import CSamplingField from '@/components/forms/fields/c-sampling-field.vue';
+import CAlarmMetricParametersField from '@/components/forms/fields/c-alarm-metric-parameters-field.vue';
+import CFiltersField from '@/components/forms/fields/c-filters-field.vue';
+import CStateTypeField from '@/components/forms/fields/c-state-type-field.vue';
+import CRecordsPerPageField from '@/components/forms/fields/c-records-per-page-field.vue';
+import COperatorField from '@/components/forms/fields/c-operator-field.vue';
 
 /**
  * Icons
@@ -144,7 +153,7 @@ import * as modalsComponents from '@/components/modals';
 Vue.use(VueAsyncComputed);
 Vue.use(VueResizeText);
 Vue.use(PortalVue);
-Vue.use(filters);
+Vue.use(Filters);
 Vue.use(Vuetify, {
   iconfont: 'md',
   theme: {
@@ -278,11 +287,10 @@ Vue.component('c-retry-field', CRetryField);
 Vue.component('c-mixed-field', CMixedField);
 Vue.component('c-array-mixed-field', CArrayMixedField);
 Vue.component('c-color-picker-field', CColorPickerField);
-Vue.component('c-json-field', CJsonField);
 Vue.component('c-entity-type-field', CEntityTypeField);
 Vue.component('c-impact-level-field', CImpactLevelField);
 Vue.component('c-search-field', CSearchField);
-Vue.component('c-advanced-search', CAdvancedSearch);
+Vue.component('c-advanced-search-field', CAdvancedSearchField);
 Vue.component('c-entity-category-field', CEntityCategoryField);
 Vue.component('c-storages-field', CStoragesField);
 Vue.component('c-storage-field', CStorageField);
@@ -300,12 +308,21 @@ Vue.component('c-user-picker-field', CUserPickerField);
 Vue.component('c-instruction-type-field', CInstructionTypeField);
 Vue.component('c-priority-field', CPriorityField);
 Vue.component('c-quick-date-interval-field', CQuickDateIntervalField);
+Vue.component('c-quick-date-interval-type-field', CQuickDateIntervalTypeField);
 Vue.component('c-enabled-duration-field', CEnabledDurationField);
 Vue.component('c-enabled-limit-field', CEnabledLimitField);
+Vue.component('c-timezone-field', CTimezoneField);
+Vue.component('c-language-field', CLanguageField);
+Vue.component('c-filters-field', CFiltersField);
 Vue.component('c-state-count-changes-chips', CStateCountChangesChips);
 Vue.component('c-information-block', CInformationBlock);
 Vue.component('c-information-block-row', CInformationBlockRow);
 Vue.component('c-responsive-list', CResponsiveList);
+Vue.component('c-sampling-field', CSamplingField);
+Vue.component('c-alarm-metric-parameters-field', CAlarmMetricParametersField);
+Vue.component('c-state-type-field', CStateTypeField);
+Vue.component('c-records-per-page-field', CRecordsPerPageField);
+Vue.component('c-operator-field', COperatorField);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
@@ -338,6 +355,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.importExportViews]: { maxWidth: 920, persistent: true },
     [MODALS.createPlaylist]: { maxWidth: 920, lazy: true },
     [MODALS.pbehaviorPlanning]: { fullscreen: true, lazy: true, persistent: true },
+    [MODALS.pbehaviorRecurrenceRule]: { fullscreen: true, lazy: true, persistent: true },
     [MODALS.pbehaviorRecurrentChangesConfirmation]: { maxWidth: 400, persistent: true },
     [MODALS.createRemediationInstruction]: { maxWidth: 960 },
     [MODALS.remediationInstructionApproval]: { maxWidth: 960 },
@@ -362,12 +380,11 @@ Vue.use(SocketPlugin);
 
 Vue.config.productionTip = false;
 
-/**
- * TODO: Update it to Vue.config.errorHandler after updating to 2.6.0+ Vue version
- */
-window.addEventListener('unhandledrejection', (err) => {
+Vue.config.errorHandler = (err) => {
+  console.error(err);
+
   store.dispatch('popups/error', { text: err.description || i18n.t('errors.default') });
-});
+};
 
 if (process.env.NODE_ENV === 'development') {
   Vue.config.devtools = true;

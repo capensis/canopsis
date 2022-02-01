@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`remediation-instructions-filters-list Renders \`remediation-instructions-filters-list\` with custom props 1`] = `
+<div>
+  <remediation-instructions-filters-item-stub
+    closable="true"
+    editable="true"
+    filter="[object Object]"
+    filters="[object Object],[object Object]"
+  />
+  <remediation-instructions-filters-item-stub
+    closable="true"
+    editable="true"
+    filter="[object Object]"
+    filters="[object Object],[object Object]"
+  />
+</div>
+`;
+
+exports[`remediation-instructions-filters-list Renders \`remediation-instructions-filters-list\` with default props 1`] = `<div />`;

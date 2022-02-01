@@ -81,10 +81,10 @@ export async function checkUserAccessForRoute(to = {}) {
   const permissionId = isFunction(requiresPermission.id) ? requiresPermission.id(to) : requiresPermission.id;
   const permissionAction = requiresPermission.action ? requiresPermission.action : CRUD_ACTIONS.read;
 
-  let currentUser = store.getters['auth/currentUser'];
+  const currentUser = store.getters['auth/currentUser'];
 
   if (isEmpty(currentUser)) {
-    currentUser = await store.watchOnce(state => state.auth.currentUser, v => !isEmpty(v));
+    await store.watchOnce(state => state.auth.currentUser, v => !isEmpty(v));
   }
 
   if (!store.getters['info/popupTimeout']) {
@@ -102,22 +102,5 @@ export async function checkUserAccessForRoute(to = {}) {
     type: POPUP_TYPES.error,
   });
 
-  throw new Error('User don\'t have access to page');
-}
-
-/**
- * Get path array for view stats requests by route
- *
- * @param {string} path
- * @param {Object} query
- * @returns {Array}
- */
-export function getViewStatsPathByRoute({ path, query } = {}) {
-  const { tabId } = query;
-
-  if (tabId) {
-    return [path, tabId];
-  }
-
-  return [path];
+  throw new Error(`User doesn't have access to page '${to.path}' with permission id '${permissionId}'`);
 }

@@ -15,7 +15,7 @@ import { DEFAULT_CATEGORIES_LIMIT, PAGINATION_LIMIT } from '@/config';
 
 import { defaultColumnsToColumns } from '@/helpers/entities';
 import { widgetToForm } from '@/helpers/forms/widgets/common';
-import { durationWithEnabledToForm, formToDurationWithEnabled } from '@/helpers/date/duration';
+import { durationWithEnabledToForm } from '@/helpers/date/duration';
 
 /**
  * @typedef {Object} FastAckOutput
@@ -62,6 +62,7 @@ import { durationWithEnabledToForm, formToDurationWithEnabled } from '@/helpers/
  * @property {boolean} isSnoozeNoteRequired
  * @property {boolean} isMultiAckEnabled
  * @property {boolean} isHtmlEnabledOnTimeLine
+ * @property {boolean} sticky_header
  */
 
 /**
@@ -160,6 +161,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isSnoozeNoteRequired: !!parameters.isSnoozeNoteRequired,
   isMultiAckEnabled: !!parameters.isMultiAckEnabled,
   isHtmlEnabledOnTimeLine: !!parameters.isHtmlEnabledOnTimeLine,
+  sticky_header: !!parameters.sticky_header,
   fastAckOutput: parameters.fastAckOutput || {
     enabled: false,
     value: 'auto ack',
@@ -189,7 +191,7 @@ const alarmListWidgetParametersToForm = (parameters = {}) => ({
   ...parameters,
   ...alarmListWidgetDefaultParametersToForm(parameters),
 
-  periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh || DEFAULT_PERIODIC_REFRESH),
+  periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
   viewFilters: parameters.viewFilters || [],
   mainFilter: parameters.mainFilter || null,
   mainFilterUpdatedAt: parameters.mainFilterUpdatedAt || 0,
@@ -279,7 +281,6 @@ export const formToAlarmListWidget = (form = {}) => {
       serviceDependenciesColumns: formWidgetColumnsToColumns(parameters.serviceDependenciesColumns),
       infoPopups: formInfoPopupsToInfoPopups(parameters.infoPopups),
       sort: formSortToWidgetSort(parameters.sort),
-      periodic_refresh: formToDurationWithEnabled(parameters.periodic_refresh),
     },
   };
 };

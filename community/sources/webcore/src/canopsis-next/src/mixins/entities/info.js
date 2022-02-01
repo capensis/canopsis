@@ -6,12 +6,10 @@ import { CANOPSIS_EDITION, USER_PERMISSIONS_TO_PAGES_RULES } from '@/constants';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('info');
 
-/**
- * @mixin
- */
 export const entitiesInfoMixin = {
   computed: {
     ...mapGetters({
+      appInfo: 'appInfo',
       version: 'version',
       logo: 'logo',
       appTitle: 'appTitle',
@@ -32,7 +30,6 @@ export const entitiesInfoMixin = {
       timezone: 'timezone',
       fileUploadMaxSize: 'fileUploadMaxSize',
       remediationJobConfigTypes: 'remediationJobConfigTypes',
-      remediationPauseManualInstructionIntervalSeconds: 'remediationPauseManualInstructionIntervalSeconds',
     }),
 
     isCatVersion() {
@@ -40,7 +37,7 @@ export const entitiesInfoMixin = {
     },
   },
   methods: {
-    ...mapActions(['fetchLoginInfos', 'fetchAppInfos', 'updateUserInterface']),
+    ...mapActions(['fetchAppInfo', 'updateUserInterface']),
 
     checkAppInfoAccessByPermission(permission) {
       const permissionAppInfoRules = USER_PERMISSIONS_TO_PAGES_RULES[permission];

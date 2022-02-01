@@ -7,7 +7,7 @@
     div.text-md-center
       strong {{ $t('alarmList.actions.iconsTitles.comment') }}
       div {{ $t('common.by') }}: {{ lastComment.a }}
-      div {{ $t('common.date') }}: {{ lastComment.t | date('long') }}
+      div {{ $t('common.date') }}: {{ date }}
       div.c-extra-details__message
         | {{ $tc('common.comment') }}:&nbsp;
         span(v-html="lastComment.m")
@@ -15,6 +15,8 @@
 
 <script>
 import { EVENT_ENTITY_STYLE, EVENT_ENTITY_TYPES } from '@/constants';
+
+import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 
 export default {
   props: {
@@ -24,6 +26,10 @@ export default {
     },
   },
   computed: {
+    date() {
+      return convertDateToStringWithFormatForToday(this.lastComment.t);
+    },
+
     icon() {
       return EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.comment].icon;
     },

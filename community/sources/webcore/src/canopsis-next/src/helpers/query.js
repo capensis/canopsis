@@ -146,21 +146,19 @@ export function convertWeatherWidgetToQuery(widget) {
  * @param {Object} widget
  * @returns {{}}
  */
-export function convertWidgetStatsParameterToQuery(widget) {
-  const statsList = Object.keys(widget.parameters.stats).reduce((acc, stat) => {
-    acc[stat] = {
-      ...omit(widget.parameters.stats[stat], ['position']),
-      stat: widget.parameters.stats[stat].stat.value,
-    };
-    return acc;
-  }, {});
+export const convertWidgetStatsParameterToQuery = widget => ({
+  ...widget.parameters,
 
-  return {
-    ...widget.parameters,
+  stats: Object.entries(widget.parameters.stats)
+    .reduce((acc, [statsKey, stats]) => {
+      acc[statsKey] = {
+        ...omit(stats, ['position']),
+        stat: stats.stat.value,
+      };
 
-    stats: statsList,
-  };
-}
+      return acc;
+    }, {}),
+});
 
 /**
  * This function converts widget with type 'StatsCalendar' to query Object
@@ -265,12 +263,12 @@ export function convertCounterWidgetToQuery(widget) {
  * @param {Object} userPreference
  * @returns {{}}
  */
-export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
+export function convertAlarmUserPreferenceToQuery({ content }) {
   const {
     itemsPerPage,
     category,
     isCorrelationEnabled = false,
-  } = widgetPreferences;
+  } = content;
 
   const query = {
     correlation: isCorrelationEnabled,
@@ -290,8 +288,8 @@ export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPr
  * @param {Object} userPreference
  * @returns {{ category: string }}
  */
-export function convertWeatherUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
-  const { category } = widgetPreferences;
+export function convertWeatherUserPreferenceToQuery({ content }) {
+  const { category } = content;
 
   return { category };
 }
@@ -302,8 +300,8 @@ export function convertWeatherUserPreferenceToQuery({ widget_preferences: widget
  * @param {Object} userPreference
  * @returns {{ category: string }}
  */
-export function convertContextUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
-  const { category, noEvents } = widgetPreferences;
+export function convertContextUserPreferenceToQuery({ content }) {
+  const { category, noEvents } = content;
 
   return {
     category,
@@ -319,10 +317,11 @@ export function convertContextUserPreferenceToQuery({ widget_preferences: widget
  * This function converts userPreference to query Object
  *
  * @param {Object} userPreference
- * @returns {{}}
+ * @param {WidgetType} widgetType
+ * @returns {Object}
  */
-export function convertUserPreferenceToQuery(userPreference) {
-  switch (userPreference.widgetXtype) {
+export function convertUserPreferenceToQuery(userPreference, widgetType) {
+  switch (widgetType) {
     case WIDGET_TYPES.alarmList:
       return convertAlarmUserPreferenceToQuery(userPreference);
     case WIDGET_TYPES.context:
@@ -375,7 +374,7 @@ export function convertWidgetToQuery(widget) {
  */
 export function prepareQuery(widget, userPreference) {
   const widgetQuery = convertWidgetToQuery(widget);
-  const userPreferenceQuery = convertUserPreferenceToQuery(userPreference);
+  const userPreferenceQuery = convertUserPreferenceToQuery(userPreference, widget.type);
   let query = {
     ...widgetQuery,
     ...userPreferenceQuery,

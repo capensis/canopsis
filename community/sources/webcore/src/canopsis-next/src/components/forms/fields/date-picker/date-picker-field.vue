@@ -11,7 +11,7 @@
   )
     div(slot="activator")
       v-text-field(
-        :value="value | date(format, true)",
+        :value="value | date(format)",
         :label="label",
         :error="error",
         :error-messages="errorMessages",

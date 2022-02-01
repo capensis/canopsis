@@ -1,5 +1,6 @@
-import { durationWithEnabledToForm, formToDurationWithEnabled } from '@/helpers/date/duration';
 import { TIME_UNITS } from '@/constants';
+
+import { durationWithEnabledToForm } from '@/helpers/date/duration';
 
 /**
  * @typedef {Object} DataStorageJunitConfig
@@ -67,56 +68,15 @@ import { TIME_UNITS } from '@/constants';
  */
 
 /**
- * @typedef {Object} DataStorageJunitConfigForm
- * @property {DurationWithEnabledForm} delete_after
- */
-
-/**
- * @typedef {Object} DataStorageRemediationConfigForm
- * @property {DurationWithEnabledForm} accumulate_after
- * @property {DurationWithEnabledForm} delete_after
- */
-
-/**
- * @typedef {Object} DataStorageAlarmConfigForm
- * @property {DurationWithEnabledForm} archive_after
- * @property {DurationWithEnabledForm} delete_after
- */
-
-/**
- * @typedef {DataStorageEntityConfig} DataStorageEntityConfigForm
- */
-
-/**
- * @typedef {Object} DataStoragePbehaviorConfigForm
- * @property {DurationWithEnabledForm} delete_after
- */
-
-/**
- * @typedef {Object} DataStorageHealthCheckConfigForm
- * @property {DurationWithEnabledForm} delete_after
- */
-
-/**
- * @typedef {Object} DataStorageConfigForm
- * @property {DataStorageJunitConfigForm} junit
- * @property {DataStorageRemediationConfigForm} remediation
- * @property {DataStorageAlarmConfigForm} alarm
- * @property {DataStorageAlarmConfigForm} entity
- * @property {DataStoragePbehaviorConfigForm} pbehavior
- * @property {DataStorageHealthCheckConfigForm} health_check
- */
-
-/**
  * @typedef {Object} DataStorageRequest
- * @property {DataStorageJunitConfigForm} junit
+ * @property {DataStorageJunitConfig} junit
  */
 
 /**
  * Convert data storage junit config to junit form object
  *
- * @param {DataStorageJunitConfig} junitConfig
- * @return {DataStorageJunitConfigForm}
+ * @param {DataStorageJunitConfig} [junitConfig = {}]
+ * @return {DataStorageJunitConfig}
  */
 export const dataStorageJunitSettingsToForm = (junitConfig = {}) => ({
   delete_after: junitConfig.delete_after
@@ -128,7 +88,7 @@ export const dataStorageJunitSettingsToForm = (junitConfig = {}) => ({
  * Convert data storage remediation config to remediation form object
  *
  * @param {DataStorageRemediationConfig} remediationConfig
- * @return {DataStorageRemediationConfigForm}
+ * @return {DataStorageRemediationConfig}
  */
 export const dataStorageRemediationSettingsToForm = (remediationConfig = {}) => ({
   accumulate_after: remediationConfig.accumulate_after
@@ -143,7 +103,7 @@ export const dataStorageRemediationSettingsToForm = (remediationConfig = {}) => 
  * Convert data storage alarm config to alarm form object
  *
  * @param {DataStorageAlarmConfig} alarmConfig
- * @return {DataStorageAlarmConfigForm}
+ * @return {DataStorageAlarmConfig}
  */
 export const dataStorageAlarmSettingsToForm = (alarmConfig = {}) => ({
   archive_after: alarmConfig.archive_after
@@ -158,7 +118,7 @@ export const dataStorageAlarmSettingsToForm = (alarmConfig = {}) => ({
  * Convert data storage pbehavior config to pbehavior form object
  *
  * @param {DataStoragePbehaviorConfig} pbehaviorConfig
- * @return {DataStoragePbehaviorConfigForm}
+ * @return {DataStoragePbehaviorConfig}
  */
 export const dataStoragePbehaviorSettingsToForm = (pbehaviorConfig = {}) => ({
   delete_after: pbehaviorConfig.delete_after
@@ -170,7 +130,7 @@ export const dataStoragePbehaviorSettingsToForm = (pbehaviorConfig = {}) => ({
  * Convert data storage entity config to entity form object
  *
  * @param {DataStorageEntityConfig} entityConfig
- * @return {DataStorageEntityConfigForm}
+ * @return {DataStorageEntityConfig}
  */
 export const dataStorageEntitySettingsToForm = (entityConfig = {}) => ({
   archive: entityConfig.archive || false,
@@ -181,7 +141,7 @@ export const dataStorageEntitySettingsToForm = (entityConfig = {}) => ({
  * Convert data storage health check config to health check form object
  *
  * @param {DataStorageHealthCheckConfig} healthCheckConfig
- * @return {DataStorageHealthCheckConfigForm}
+ * @return {DataStorageHealthCheckConfig}
  */
 export const dataStorageHealthCheckSettingsToForm = (healthCheckConfig = {}) => ({
   delete_after: healthCheckConfig.delete_after
@@ -193,7 +153,7 @@ export const dataStorageHealthCheckSettingsToForm = (healthCheckConfig = {}) => 
  * Convert data storage object to data storage form
  *
  * @param {DataStorageConfig} dataStorage
- * @return {DataStorageConfigForm}
+ * @return {DataStorageConfig}
  */
 export const dataStorageSettingsToForm = (dataStorage = {}) => ({
   junit: dataStorageJunitSettingsToForm(dataStorage.junit),
@@ -202,70 +162,4 @@ export const dataStorageSettingsToForm = (dataStorage = {}) => ({
   entity: dataStorageEntitySettingsToForm(dataStorage.entity),
   pbehavior: dataStoragePbehaviorSettingsToForm(dataStorage.pbehavior),
   health_check: dataStorageHealthCheckSettingsToForm(dataStorage.health_check),
-});
-
-/**
- * Convert junit data storage form to junit data storage object
- *
- * @param {DataStorageJunitConfigForm} form
- * @return {DataStorageJunitConfig}
- */
-export const formJunitToDataStorageSettings = (form = {}) => ({
-  delete_after: formToDurationWithEnabled(form.delete_after),
-});
-
-/**
- * Convert remediation data storage form to remediation data storage object
- *
- * @param {DataStorageRemediationConfigForm} form
- * @return {DataStorageRemediationConfig}
- */
-export const formToRemediationDataStorageSettings = (form = {}) => ({
-  delete_after: formToDurationWithEnabled(form.delete_after),
-  accumulate_after: formToDurationWithEnabled(form.accumulate_after),
-});
-
-/**
- * Convert alarm data storage form to alarm data storage object
- *
- * @param {DataStorageAlarmConfigForm} form
- * @return {DataStorageAlarmConfig}
- */
-export const formToAlarmDataStorageSettings = (form = {}) => ({
-  delete_after: formToDurationWithEnabled(form.delete_after),
-  archive_after: formToDurationWithEnabled(form.archive_after),
-});
-
-/**
- * Convert pbehavior data storage form to pbehavior data storage object
- *
- * @param {DataStoragePbehaviorConfigForm} form
- * @return {DataStoragePbehaviorConfig}
- */
-export const formToPbehaviorDataStorageSettings = (form = {}) => ({
-  delete_after: formToDurationWithEnabled(form.delete_after),
-});
-
-/**
- * Convert health check data storage form to health check data storage object
- *
- * @param {DataStorageHealthCheckConfigForm} form
- * @return {DataStorageHealthCheckConfig}
- */
-export const formToHealthCheckDataStorageSettings = (form = {}) => ({
-  delete_after: formToDurationWithEnabled(form.delete_after),
-});
-
-/**
- * Convert data storage form to data storage object
- *
- * @param {DataStorageConfigForm} form
- * @return {DataStorageConfig}
- */
-export const formToDataStorageSettings = (form = {}) => ({
-  junit: formJunitToDataStorageSettings(form.junit),
-  remediation: formToRemediationDataStorageSettings(form.remediation),
-  alarm: formToAlarmDataStorageSettings(form.alarm),
-  pbehavior: formToPbehaviorDataStorageSettings(form.pbehavior),
-  health_check: formToHealthCheckDataStorageSettings(form.health_check),
 });

@@ -1,0 +1,93 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`remediation-instructions-filters-item Renders \`remediation-instructions-filters-item\` with custom props 1`] = `
+<div
+  class="instruction-filter"
+>
+  <span
+    class="v-chip white--text v-chip--label v-chip--removable theme--light grey"
+    tabindex="0"
+  >
+    <span
+      class="v-chip__content"
+    >
+      <span
+        class="instruction-filter__text"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light white--text"
+          style="font-size: 16px;"
+        >
+          assignment
+        </i>
+        <i
+          aria-hidden="true"
+          class="v-icon pl-1 material-icons theme--light white--text"
+          style="font-size: 16px;"
+        >
+          lock
+        </i>
+        <strong
+          class="pl-2"
+        >
+          remediationInstructionsFilters.chip.with:
+        </strong>
+        <span
+          class="pl-1"
+        >
+          remediationInstructions.types.0
+        </span>
+      </span>
+      <div
+        class="v-chip__close"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+        >
+          check_box_outline_blank
+        </i>
+      </div>
+    </span>
+  </span>
+</div>
+`;
+
+exports[`remediation-instructions-filters-item Renders \`remediation-instructions-filters-item\` with default props 1`] = `
+<div
+  class="instruction-filter"
+>
+  <span
+    class="v-chip white--text v-chip--label theme--light primary"
+    tabindex="0"
+  >
+    <span
+      class="v-chip__content"
+    >
+      <span
+        class="instruction-filter__text"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light white--text"
+          style="font-size: 16px;"
+        >
+          assignment
+        </i>
+        <!---->
+        <strong
+          class="pl-2"
+        >
+          remediationInstructionsFilters.chip.without:
+        </strong>
+        <span
+          class="pl-1"
+        >
+          
+        </span>
+      </span>
+    </span>
+  </span>
+</div>
+`;

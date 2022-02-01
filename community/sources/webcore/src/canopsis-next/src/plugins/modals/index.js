@@ -1,13 +1,9 @@
-import { get, isFunction } from 'lodash';
-
-import { setField } from '@/helpers/immutable';
+import { get } from 'lodash';
 
 import modalsStoreModule from './store';
 
 import TheModals from './components/the-modals.vue';
 import ModalBase from './components/modal-base.vue';
-
-import innerMixin from './mixins/inner';
 
 export default {
   install(Vue, {
@@ -21,15 +17,9 @@ export default {
       throw new Error('Missing store option');
     }
 
-    const preparedComponents = Object.entries(components).reduce((acc, [key, value]) => {
-      acc[key] = isFunction(value) ? value : setField(value, 'mixins', (mixins = []) => [innerMixin, ...mixins]);
-
-      return acc;
-    }, {});
-
     Vue.component(componentName, TheModals);
     Vue.component('modal-base', {
-      components: preparedComponents,
+      components,
 
       extends: ModalBase,
     });

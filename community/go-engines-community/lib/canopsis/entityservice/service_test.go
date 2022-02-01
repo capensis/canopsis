@@ -32,7 +32,8 @@ func TestService_Process_GivenEvent_ShouldUpdateServices(t *testing.T) {
 		},
 	}
 	alarm := types.Alarm{
-		ID: "test-alarm",
+		ID:       "test-alarm",
+		EntityID: "test-entity",
 		Value: types.AlarmValue{
 			State: &types.AlarmStep{Value: types.AlarmStateCritical},
 		},
@@ -63,10 +64,10 @@ func TestService_Process_GivenEvent_ShouldUpdateServices(t *testing.T) {
 	mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
 	mockCountersCache := mock_entityservice.NewMockCountersCache(ctrl)
 	mockCountersCache.EXPECT().
-		RemoveAndGet(ctx, gomock.Eq(fmt.Sprintf("%s&&%s", serviceID, alarm.ID))).
+		RemoveAndGet(gomock.Any(), gomock.Eq(fmt.Sprintf("%s&&%s", serviceID, alarm.EntityID))).
 		Return(nil, nil)
 	mockCountersCache.EXPECT().
-		Update(ctx, gomock.Any()).
+		Update(gomock.Any(), gomock.Any()).
 		Do(func(_ context.Context, m map[string]entityservice.AlarmCounters) {
 			if counters, ok := m[serviceID]; ok {
 				if !reflect.DeepEqual(counters, serviceIncrements) {
@@ -80,7 +81,7 @@ func TestService_Process_GivenEvent_ShouldUpdateServices(t *testing.T) {
 			serviceID: newServiceCounters,
 		}, nil)
 	mockStorage := mock_entityservice.NewMockStorage(ctrl)
-	mockStorage.EXPECT().Load(ctx).Return(services, nil)
+	mockStorage.EXPECT().GetAll(ctx).Return(services, nil)
 	mockRedisClient := mock_v8.NewMockCmdable(ctrl)
 	mockLockClient := mock_redis.NewMockLockClient(ctrl)
 	mockServiceLock := mock_redis.NewMockLock(ctrl)
@@ -110,8 +111,9 @@ func TestService_Process_GivenEvent_ShouldUpdateServices(t *testing.T) {
 	)
 
 	event := types.Event{
-		Entity: &types.Entity{Impacts: []string{serviceID}},
-		Alarm:  &alarm,
+		Component: alarm.EntityID,
+		Entity:    &types.Entity{ID: alarm.EntityID, Impacts: []string{serviceID}},
+		Alarm:     &alarm,
 		AlarmChange: &types.AlarmChange{
 			Type:          types.AlarmChangeTypeStateIncrease,
 			PreviousState: types.AlarmStateMajor,
@@ -134,7 +136,8 @@ func TestService_Process_GivenEventAndCachedAlarmCounters_ShouldUpdateServices(t
 		},
 	}
 	alarm := types.Alarm{
-		ID: "test-alarm",
+		ID:       "test-alarm",
+		EntityID: "test-entity",
 		Value: types.AlarmValue{
 			State: &types.AlarmStep{Value: types.AlarmStateCritical},
 		},
@@ -169,7 +172,7 @@ func TestService_Process_GivenEventAndCachedAlarmCounters_ShouldUpdateServices(t
 	mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
 	mockCountersCache := mock_entityservice.NewMockCountersCache(ctrl)
 	mockCountersCache.EXPECT().
-		RemoveAndGet(gomock.Any(), gomock.Eq(fmt.Sprintf("%s&&%s", serviceID, alarm.ID))).
+		RemoveAndGet(gomock.Any(), gomock.Eq(fmt.Sprintf("%s&&%s", serviceID, alarm.EntityID))).
 		Return(&entityservice.AlarmCounters{
 			All:          1,
 			Alarms:       1,
@@ -191,7 +194,7 @@ func TestService_Process_GivenEventAndCachedAlarmCounters_ShouldUpdateServices(t
 			serviceID: newServiceCounters,
 		}, nil)
 	mockStorage := mock_entityservice.NewMockStorage(ctrl)
-	mockStorage.EXPECT().Load(gomock.Any()).Return(services, nil)
+	mockStorage.EXPECT().GetAll(gomock.Any()).Return(services, nil)
 	mockRedisClient := mock_v8.NewMockCmdable(ctrl)
 	mockLockClient := mock_redis.NewMockLockClient(ctrl)
 	mockServiceLock := mock_redis.NewMockLock(ctrl)
@@ -221,7 +224,8 @@ func TestService_Process_GivenEventAndCachedAlarmCounters_ShouldUpdateServices(t
 	)
 
 	event := types.Event{
-		Entity:      &types.Entity{Impacts: []string{serviceID}},
+		Component:   alarm.EntityID,
+		Entity:      &types.Entity{ID: alarm.EntityID, Impacts: []string{serviceID}},
 		Alarm:       &alarm,
 		AlarmChange: &types.AlarmChange{},
 	}
@@ -271,7 +275,7 @@ func TestService_Process_GivenEventAndLockedService_ShouldSkipEvent(t *testing.T
 	mockCountersCache.EXPECT().RemoveAndGet(gomock.Any(), gomock.Any()).Times(0)
 	mockCountersCache.EXPECT().Update(gomock.Any(), gomock.Any()).Times(0)
 	mockStorage := mock_entityservice.NewMockStorage(ctrl)
-	mockStorage.EXPECT().Load(gomock.Any()).Return(services, nil)
+	mockStorage.EXPECT().GetAll(gomock.Any()).Return(services, nil)
 	mockRedisClient := mock_v8.NewMockCmdable(ctrl)
 	mockRedisClient.EXPECT().
 		HSetNX(gomock.Any(), gomock.Eq(fmt.Sprintf("skipped-entities-%s", serviceID)), gomock.Any(), gomock.Eq(resendEventBody)).
@@ -318,13 +322,13 @@ func TestService_Process_GivenEventAndLockedService_ShouldSkipEvent(t *testing.T
 
 func TestService_UpdateService_GivenEvent_ShouldUpdateService(t *testing.T) {
 	serviceID := "test-service"
-	entityService := entityservice.EntityService{
-		Entity:         types.Entity{ID: serviceID, Enabled: true},
+	serviceData := entityservice.ServiceData{
 		EntityPatterns: pattern.EntityPatternList{},
 		OutputTemplate: "test-output",
 	}
 	alarm := types.Alarm{
-		ID: "test-alarm",
+		ID:       "test-alarm",
+		EntityID: "test-entity",
 		Value: types.AlarmValue{
 			State: &types.AlarmStep{Value: types.AlarmStateCritical},
 		},
@@ -356,15 +360,15 @@ func TestService_UpdateService_GivenEvent_ShouldUpdateService(t *testing.T) {
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	mockEncoder.EXPECT().Encode(gomock.Any()).Return(eventBody, nil)
 	mockAdapter := mock_entityservice.NewMockAdapter(ctrl)
-	mockAdapter.EXPECT().GetByID(gomock.Any(), gomock.Eq(serviceID)).Return(&entityService, nil)
 	mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
 	mockCursor := mock_mongo.NewMockCursor(ctrl)
 	mockAdapter.EXPECT().
-		GetCounters(gomock.Any(), gomock.Eq(serviceID)).
+		GetOpenAlarmsOfServiceDependencies(gomock.Any(), gomock.Eq(serviceID)).
 		Return(mockCursor, nil)
-	firstNextCall := mockCursor.EXPECT().Next(gomock.Any()).Return(true)
-	secondNextCall := mockCursor.EXPECT().Next(gomock.Any()).Return(false)
-	gomock.InOrder(firstNextCall, secondNextCall)
+	gomock.InOrder(
+		mockCursor.EXPECT().Next(gomock.Any()).Return(true),
+		mockCursor.EXPECT().Next(gomock.Any()).Return(false),
+	)
 	mockCursor.EXPECT().
 		Decode(gomock.Any()).
 		Do(func(v *types.Alarm) {
@@ -372,17 +376,21 @@ func TestService_UpdateService_GivenEvent_ShouldUpdateService(t *testing.T) {
 		}).
 		Return(nil)
 	mockCursor.EXPECT().Close(gomock.Any())
+	mockEntityCursor := mock_mongo.NewMockCursor(ctrl)
+	mockEntityCursor.EXPECT().Next(gomock.Any()).Return(false)
+	mockEntityCursor.EXPECT().Close(gomock.Any())
+	mockAdapter.EXPECT().GetServiceDependencies(gomock.Any(), gomock.Eq(serviceID)).Return(mockEntityCursor, nil)
 	mockAdapter.EXPECT().UpdateCounters(gomock.Any(), gomock.Eq(serviceID), gomock.Eq(newServiceCounters)).Return(nil)
 	mockCountersCache := mock_entityservice.NewMockCountersCache(ctrl)
 	firstReplaceCall := mockCountersCache.EXPECT().
-		Replace(gomock.Any(), gomock.Eq(fmt.Sprintf("%s&&%s", serviceID, alarm.ID)), gomock.Eq(serviceIncrements)).
+		Replace(gomock.Any(), gomock.Eq(fmt.Sprintf("%s&&%s", serviceID, alarm.EntityID)), gomock.Eq(serviceIncrements)).
 		Return(nil)
 	secondReplaceCall := mockCountersCache.EXPECT().
 		Replace(gomock.Any(), gomock.Eq(serviceID), gomock.Eq(newServiceCounters)).
 		Return(nil)
 	gomock.InOrder(firstReplaceCall, secondReplaceCall)
 	mockStorage := mock_entityservice.NewMockStorage(ctrl)
-	mockStorage.EXPECT().Save(gomock.Any(), gomock.Any()).Return(nil)
+	mockStorage.EXPECT().Reload(gomock.Any(), gomock.Any()).Return(&serviceData, false, false, nil)
 	mockRedisClient := mock_v8.NewMockCmdable(ctrl)
 	mockRedisClient.EXPECT().
 		HGetAll(gomock.Any(), gomock.Eq(fmt.Sprintf("skipped-entities-%s", serviceID))).

@@ -8,7 +8,10 @@ Feature: correlation feature - timebased rule
       "name": "test-timebased-correlation-1",
       "type": "timebased",
       "config": {
-        "time_interval": 10
+        "time_interval": {
+          "value": 10,
+          "unit": "s"
+        }
       },
       "patterns": {
         "entity_patterns": [
@@ -109,7 +112,10 @@ Feature: correlation feature - timebased rule
       "name": "test-timebased-correlation-2",
       "type": "timebased",
       "config": {
-        "time_interval": 3
+        "time_interval": {
+          "value": 3,
+          "unit": "s"
+        }
       },
       "patterns": {
         "entity_patterns": [
@@ -300,7 +306,10 @@ Feature: correlation feature - timebased rule
       "name": "test-timebased-correlation-3",
       "type": "timebased",
       "config": {
-        "time_interval": 3
+        "time_interval": {
+          "value": 3,
+          "unit": "s"
+        }
       },
       "patterns": {
         "entity_patterns": [

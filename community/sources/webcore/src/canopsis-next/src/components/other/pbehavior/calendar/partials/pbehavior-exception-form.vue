@@ -20,11 +20,10 @@
 </template>
 
 <script>
-import moment from 'moment';
-
 import { MODALS } from '@/constants';
 
 import uid from '@/helpers/uid';
+import { convertDateToStartOfDayDateObject } from '@/helpers/date/date';
 
 import { formArrayMixin } from '@/mixins/form';
 
@@ -60,12 +59,10 @@ export default {
     },
 
     addException() {
-      const startOfTodayMoment = moment().startOf('day');
-
       this.addItemIntoArray({
         key: uid(),
-        begin: startOfTodayMoment.toDate(),
-        end: startOfTodayMoment.toDate(),
+        begin: convertDateToStartOfDayDateObject(),
+        end: convertDateToStartOfDayDateObject(),
         type: '',
       });
     },

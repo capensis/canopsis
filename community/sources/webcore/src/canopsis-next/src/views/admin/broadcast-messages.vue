@@ -21,7 +21,7 @@
 import { MODALS } from '@/constants';
 
 import { permissionsTechnicalBroadcastMessageMixin } from '@/mixins/permissions/technical/broadcast-message';
-import { entitiesBroadcastMessagesMixin } from '@/mixins/entities/broadcast-message';
+import { entitiesBroadcastMessageMixin } from '@/mixins/entities/broadcast-message';
 import { localQueryMixin } from '@/mixins/query-local/query';
 
 import BroadcastMessagesList from '@/components/other/broadcast-message/broadcast-messages-list.vue';
@@ -33,7 +33,7 @@ export default {
   mixins: [
     localQueryMixin,
     permissionsTechnicalBroadcastMessageMixin,
-    entitiesBroadcastMessagesMixin,
+    entitiesBroadcastMessageMixin,
   ],
   mounted() {
     this.fetchList();
@@ -62,8 +62,9 @@ export default {
       this.$modals.show({
         name: MODALS.createBroadcastMessage,
         config: {
-          action: newMessage =>
-            this.callActionWithFetching(() => this.createBroadcastMessage({ data: newMessage })),
+          action: newMessage => this.callActionWithFetching(
+            () => this.createBroadcastMessage({ data: newMessage }),
+          ),
         },
       });
     },
@@ -75,8 +76,9 @@ export default {
           message,
           title: this.$t('modals.createBroadcastMessage.edit.title'),
 
-          action: newMessage =>
-            this.callActionWithFetching(() => this.updateBroadcastMessage({ id: message._id, data: newMessage })),
+          action: newMessage => this.callActionWithFetching(
+            () => this.updateBroadcastMessage({ id: message._id, data: newMessage }),
+          ),
         },
       });
     },

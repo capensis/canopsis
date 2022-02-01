@@ -125,7 +125,7 @@ Feature: send activation event on create
           "type":"snooze",
           "parameters":{
             "duration": {
-              "seconds": 600,
+              "value": 10,
               "unit": "m"
             }
           },
@@ -195,8 +195,8 @@ Feature: send activation event on create
           "type":"pbehavior",
           "parameters":{
             "name": "pbehavior-action-activation-event-4",
-            "tstart": {{ now.Unix }},
-            "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+            "tstart": {{ now }},
+            "tstop": {{ nowAdd "10m" }},
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"
           },
@@ -268,7 +268,7 @@ Feature: send activation event on create
             "name": "pbehavior-action-activation-event-5",
             "start_on_trigger": true,
             "duration": {
-              "seconds": 600,
+              "value": 600,
               "unit": "s"
             },
             "type": "test-maintenance-type-to-engine",
@@ -340,8 +340,8 @@ Feature: send activation event on create
           "type":"pbehavior",
           "parameters":{
             "name": "pbehavior-action-activation-event-6",
-            "tstart": {{ (now.Add (parseDuration "10m")).Unix }},
-            "tstop": {{ (now.Add (parseDuration "20m")).Unix }},
+            "tstart": {{ nowAdd "10m" }},
+            "tstop": {{ nowAdd "20m" }},
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"
           },
@@ -410,8 +410,8 @@ Feature: send activation event on create
           "type":"pbehavior",
           "parameters":{
             "name": "pbehavior-action-activation-event-7",
-            "tstart": {{ (now.Add (parseDuration "-20m")).Unix }},
-            "tstop": {{ (now.Add (parseDuration "-10m")).Unix }},
+            "tstart": {{ nowAdd "-20m" }},
+            "tstop": {{ nowAdd "-10m" }},
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"
           },
@@ -480,8 +480,8 @@ Feature: send activation event on create
           "type":"pbehavior",
           "parameters":{
             "name": "pbehavior-action-activation-event-8",
-            "tstart": {{ (now.Add (parseDuration "-24h")).Unix }},
-            "tstop": {{ (now.Add (parseDuration "-23h50m")).Unix }},
+            "tstart": {{ nowAdd "-24h" }},
+            "tstop": {{ nowAdd "-23h" }},
             "rrule": "FREQ=DAILY",
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"

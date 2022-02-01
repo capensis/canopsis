@@ -26,12 +26,14 @@
         :tooltip="props.disabled ? $t('remediationConfigurations.usingConfiguration') : $t('common.delete')",
         :disabled="props.disabled",
         type="delete",
-        @click="$emit('edit', props.item)"
+        @click="$emit('remove', props.item)"
       )
 </template>
 
 <script>
-import { permissionsTechnicalRemediationConfigurationMixin } from '@/mixins/permissions/technical/remediation-configuration';
+import {
+  permissionsTechnicalRemediationConfigurationMixin,
+} from '@/mixins/permissions/technical/remediation-configuration';
 
 export default {
   mixins: [permissionsTechnicalRemediationConfigurationMixin],

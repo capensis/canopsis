@@ -59,29 +59,29 @@ export default {
     headers() {
       return [
         {
-          text: this.$t('users.table.username'),
+          text: this.$t('users.username'),
           value: 'name',
         },
         {
-          text: this.$t('users.table.firstName'),
+          text: this.$t('users.firstName'),
           value: 'firstname',
           sortable: false,
         },
         {
-          text: this.$t('users.table.lastName'),
+          text: this.$t('users.lastName'),
           value: 'lastname',
           sortable: false,
         },
         {
-          text: this.$t('users.table.role'),
+          text: this.$t('users.role'),
           value: 'role.name',
         },
         {
-          text: this.$t('users.table.enabled'),
+          text: this.$t('users.enabled'),
           value: 'enable',
         },
         {
-          text: this.$t('users.table.auth'),
+          text: this.$t('users.auth'),
           value: 'source',
         },
         {

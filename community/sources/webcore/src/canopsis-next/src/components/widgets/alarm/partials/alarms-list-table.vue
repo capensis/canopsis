@@ -1,8 +1,8 @@
 <template lang="pug">
-  v-flex.white
+  v-flex.white(v-resize="changeHeaderPositionOnResize")
     v-flex.px-3(v-show="selectedIds.length", xs12)
       mass-actions-panel(
-        :itemsIds="selectedIds",
+        :items-ids="selectedIds",
         :widget="widget",
         @clear:items="clearSelected"
       )
@@ -18,19 +18,18 @@
         :select-all="selectable",
         :loading="loading || columnsFiltersPending",
         :expand="expandable",
-        data-test="tableWidget",
         ref="dataTable",
         item-key="_id",
         hide-actions,
         multi-sort,
         @update:pagination="updatePaginationHandler"
       )
-        template(slot="progress")
+        template(#progress="")
           v-fade-transition
-            v-progress-linear(height="2", indeterminate, color="primary")
-        template(slot="headerCell", slot-scope="props")
-          alarm-header-cell(:header="props.header")
-        template(slot="items", slot-scope="props")
+            v-progress-linear(color="primary", height="2", indeterminate)
+        template(#headerCell="{ header }")
+          alarm-header-cell(:header="header")
+        template(#items="props")
           alarms-list-row(
             v-model="props.selected",
             v-on="rowListeners",
@@ -44,18 +43,25 @@
             :parent-alarm="parentAlarm",
             :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)"
           )
-        template(slot="expand", slot-scope="props")
+        template(#expand="{ item, index }")
           alarms-expand-panel(
-            :alarm="props.item",
+            :alarm="item",
             :widget="widget",
             :hide-groups="hideGroups",
-            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)"
+            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)"
           )
     slot
-    component(v-bind="additionalComponent.props", v-on="additionalComponent.on", :is="additionalComponent.is")
+    component(
+      v-bind="additionalComponent.props",
+      v-on="additionalComponent.on",
+      :is="additionalComponent.is"
+    )
 </template>
 
 <script>
+import { TOP_BAR_HEIGHT } from '@/config';
+import { ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
+
 import { isResolvedAlarm } from '@/helpers/entities';
 
 import Observer from '@/services/observer';
@@ -65,8 +71,8 @@ import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-
 
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
 import MassActionsPanel from '../actions/mass-actions-panel.vue';
-import AlarmsExpandPanel from '../partials/alarms-expand-panel.vue';
-import AlarmsListRow from '../partials/alarms-list-row.vue';
+import AlarmsExpandPanel from './alarms-expand-panel.vue';
+import AlarmsListRow from './alarms-list-row.vue';
 
 /**
    * Alarm-list-table component
@@ -137,6 +143,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    stickyHeader: {
+      type: Boolean,
+      default: false,
+    },
     parentAlarm: {
       type: Object,
       default: null,
@@ -168,14 +178,10 @@ export default {
     },
 
     hasInstructionsAlarms() {
-      return this.alarms.some(alarm => alarm.assigned_instructions.length);
+      return this.alarms.some(alarm => alarm.assigned_instructions?.length);
     },
 
     headers() {
-      if (!this.hasColumns) {
-        return [];
-      }
-
       const headers = [...this.columns, { text: this.$t('common.actionsLabel'), sortable: false }];
 
       if ((this.expandable || this.hasInstructionsAlarms) && !this.selectable) {
@@ -194,7 +200,7 @@ export default {
         lg: { min: 13, max: Number.MAX_VALUE, label: 'lg' },
       };
 
-      const { label = COLUMNS_SIZES_VALUES.sm.label } = Object.values(COLUMNS_SIZES_VALUES)
+      const { label } = Object.values(COLUMNS_SIZES_VALUES)
         .find(({ min, max }) => columnsLength >= min && columnsLength <= max);
 
       return {
@@ -217,11 +223,44 @@ export default {
 
       return {};
     },
+
+    tableHeader() {
+      return this.$el.querySelector('.v-table__overflow > table > thead');
+    },
+
+    tableBody() {
+      return this.$el.querySelector('.v-table__overflow > table > tbody');
+    },
   },
+
   watch: {
     ...featuresService.get('components.alarmListTable.watch', {}),
+
+    stickyHeader(stickyHeader) {
+      if (stickyHeader) {
+        this.calculateHeaderOffsetPosition();
+        this.setHeaderPosition();
+        this.addShadowToHeader();
+
+        window.addEventListener('scroll', this.changeHeaderPosition);
+      } else {
+        window.removeEventListener('scroll', this.changeHeaderPosition);
+
+        this.resetHeaderPosition();
+      }
+    },
   },
+
+  created() {
+    this.translateY = 0;
+    this.previousTranslateY = 0;
+  },
+
   async mounted() {
+    if (this.stickyHeader) {
+      window.addEventListener('scroll', this.changeHeaderPosition);
+    }
+
     if (featuresService.has('components.alarmListTable.mounted')) {
       featuresService.call('components.alarmListTable.mounted', this, {});
     }
@@ -231,6 +270,8 @@ export default {
     this.columnsFiltersPending = false;
   },
   beforeDestroy() {
+    window.removeEventListener('scroll', this.changeHeaderPosition);
+
     if (featuresService.has('components.alarmListTable.beforeDestroy')) {
       featuresService.call('components.alarmListTable.beforeDestroy', this, {});
     }
@@ -238,6 +279,86 @@ export default {
 
   methods: {
     ...featuresService.get('components.alarmListTable.methods', {}),
+
+    startScrolling() {
+      if (this.translateY !== this.previousTranslateY) {
+        this.tableHeader.style.opacity = '0';
+      }
+
+      this.scrooling = true;
+    },
+
+    finishScrolling() {
+      if (!Number(this.tableHeader.style.opacity)) {
+        this.tableHeader.style.opacity = '1.0';
+      }
+
+      this.scrooling = false;
+    },
+
+    clearFinishTimer() {
+      if (this.finishTimer) {
+        clearTimeout(this.finishTimer);
+      }
+    },
+
+    setHeaderPosition() {
+      this.tableHeader.style.transform = `translateY(${this.translateY}px)`;
+    },
+
+    calculateHeaderOffsetPosition() {
+      const { top } = this.tableHeader.getBoundingClientRect();
+      const { height: bodyHeight } = this.tableBody.getBoundingClientRect();
+
+      const offset = top - this.translateY - TOP_BAR_HEIGHT;
+
+      this.previousTranslateY = this.translateY;
+      this.translateY = Math.min(bodyHeight, Math.max(0, -offset));
+    },
+
+    addShadowToHeader() {
+      this.tableHeader.classList.add('head-shadow');
+    },
+
+    removeShadowFromHeader() {
+      this.tableHeader.classList.remove('head-shadow');
+    },
+
+    changeHeaderPosition() {
+      this.clearFinishTimer();
+
+      this.calculateHeaderOffsetPosition();
+      this.setHeaderPosition();
+
+      if (!this.translateY) {
+        this.removeShadowFromHeader();
+        this.finishScrolling();
+
+        return;
+      }
+
+      if (!this.scrooling) {
+        this.addShadowToHeader();
+        this.startScrolling();
+      }
+
+      this.finishTimer = setTimeout(this.finishScrolling, ALARMS_LIST_HEADER_OPACITY_DELAY);
+    },
+
+    resetHeaderPosition() {
+      this.translateY = 0;
+      this.previousTranslateY = 0;
+
+      this.setHeaderPosition();
+      this.clearFinishTimer();
+      this.removeShadowFromHeader();
+    },
+
+    changeHeaderPositionOnResize() {
+      if (this.stickyHeader) {
+        this.changeHeaderPosition();
+      }
+    },
 
     checkIsTourEnabledForAlarmByIndex(index) {
       return this.isTourEnabled && index === 0;
@@ -256,6 +377,28 @@ export default {
 
 <style lang="scss">
   .alarms-list-table {
+    tbody {
+      position: relative;
+      z-index: 1;
+    }
+
+    thead {
+      position: relative;
+      transition: opacity 0.16s;
+      z-index: 2;
+
+      &.head-shadow {
+        tr:first-child {
+          border-bottom: none !important;
+          box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12) !important;
+        }
+      }
+
+      tr {
+        background: white;
+      }
+    }
+
     &.columns-lg {
       table.v-table {
         tbody, thead {

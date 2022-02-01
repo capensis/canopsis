@@ -1,6 +1,6 @@
 import { has, get, keyBy } from 'lodash';
 
-export const validationErrorsMixin = ({ formField = 'form' } = {}) => ({
+export const validationErrorsMixinCreator = ({ formField = 'form' } = {}) => ({
   computed: {
     fieldsByName() {
       return keyBy(this.$validator.fields.items, 'name');
@@ -28,20 +28,25 @@ export const validationErrorsMixin = ({ formField = 'form' } = {}) => ({
     },
 
     /**
-     * Set form errors from response error
+     * Set form errors from response error and returns true if form errors exists
      *
-     * @param {any} err
+     * @param {any} [err = {}]
+     * @return {boolean}
      */
     setFormErrors(err = {}) {
+      if (!this.$validator) {
+        return false;
+      }
+
       const existFieldErrors = this.getExistsFieldsErrors(err);
 
       if (existFieldErrors.length) {
         this.addExistsFieldsErrors(existFieldErrors);
-      } else {
-        console.error(err);
 
-        this.$popups.error({ text: this.$t('errors.default') });
+        return true;
       }
+
+      return false;
     },
   },
 });

@@ -10,8 +10,11 @@ import { MODALS } from '@/constants';
 
 import { addKeyInEntities } from '@/helpers/entities';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
+
 export default {
   name: MODALS.imagesViewer,
+  mixins: [modalInnerMixin],
   computed: {
     imagesWithKey() {
       return addKeyInEntities(this.config.images);

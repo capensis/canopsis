@@ -7,17 +7,17 @@
         v-flex.v-date-time-picker__subtitle-wrapper
           span.v-date-time-picker__subtitle(
             :class="{ 'grey--text darken-1': !localValue }"
-          ) {{ localValue | date(dateFormat, true, '−−/−−/−−−−') }}
+          ) {{ localValue | date(dateFormat, '−−/−−/−−−−') }}
         v-flex.v-date-time-picker__subtitle-wrapper
           time-picker-field.v-date-time-picker__subtitle(
-            :value="localValue | date('timePicker', true, null)",
+            :value="localValue | date('timePicker', null)",
             :round-hours="roundHours",
             @input="updateTime"
           )
       div
         v-date-picker(
           :locale="$i18n.locale",
-          :value="localValue | date('YYYY-MM-DD', true, null)",
+          :value="localValue | date('datePicker', null)",
           color="primary",
           no-title,
           @input="updateDate"

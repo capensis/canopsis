@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`kpi-rating-settings Renders \`kpi-rating-settings\` with default props 1`] = `
+<div
+  class="layout column"
+>
+  <span
+    class="pl-4 subheading grey--text text--darken-2"
+  >
+    kpiRatingSettings.helpInformation
+  </span>
+  <kpi-rating-settings-list-stub
+    pagination="[object Object]"
+    ratingsettings=""
+    totalitems="0"
+  />
+</div>
+`;
+
+exports[`kpi-rating-settings Renders \`kpi-rating-settings\` with full permissions 1`] = `
+<div
+  class="layout column"
+>
+  <span
+    class="pl-4 subheading grey--text text--darken-2"
+  >
+    kpiRatingSettings.helpInformation
+  </span>
+  <kpi-rating-settings-list-stub
+    pagination="[object Object]"
+    ratingsettings=""
+    totalitems="10"
+    updatable="true"
+  />
+</div>
+`;

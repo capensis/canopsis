@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { get, camelCase } from 'lodash';
 import tinycolor from 'tinycolor2';
 
 import { COLORS } from '@/config';
@@ -104,3 +104,10 @@ export const isValidColor = color => tinycolor(color).isValid();
  * @return {string}
  */
 export const getRandomHexColor = () => tinycolor.random().toHexString();
+
+/**
+ * Get color for metric
+ *
+ * @param {string} metric
+ */
+export const getMetricColor = metric => COLORS.metrics[camelCase(metric)] || COLORS.secondary;

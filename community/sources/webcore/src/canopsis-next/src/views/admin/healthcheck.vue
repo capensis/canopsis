@@ -31,7 +31,7 @@
 import { isEqual } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
-import { SOCKET_ROOMS } from '@/constants';
+import { SOCKET_ROOMS } from '@/config';
 
 import HealthcheckNetworkGraph from '@/components/other/healthcheck/exploitation/healthcheck-network-graph.vue';
 import HealthcheckGraphs from '@/components/other/healthcheck/exploitation/healthcheck-graphs.vue';
@@ -64,12 +64,14 @@ export default {
   mounted() {
     this.fetchList();
 
-    this.$socket.join(SOCKET_ROOMS.healthcheck);
-    this.$socket.getRoom(SOCKET_ROOMS.healthcheck).addListener(this.setData);
+    this.$socket
+      .join(SOCKET_ROOMS.healthcheck)
+      .addListener(this.setData);
   },
   beforeDestroy() {
-    this.$socket.getRoom(SOCKET_ROOMS.healthcheck).removeListener(this.setData);
-    this.$socket.leave(SOCKET_ROOMS.healthcheck);
+    this.$socket
+      .leave(SOCKET_ROOMS.healthcheck)
+      .removeListener(this.setData);
   },
   methods: {
     ...mapActions({

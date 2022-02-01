@@ -1,26 +1,30 @@
-FROM node:10.24.1-alpine AS build
+# Args defined here are only available to FROM commands
+# See https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
+ARG NGINX_VERSION
+ARG NODE_VERSION
 
-WORKDIR /canopsis-next
-COPY sources/webcore/src/canopsis-next /canopsis-next
-RUN export FORCE_COLOR=0 NPM_CONFIG_COLOR=false NPM_CONFIG_PROGRESS=false NPM_CONFIG_SPIN=false && yarn && NODE_ENV=production yarn build --mode production
+FROM node:${NODE_VERSION} AS build
 
-FROM nginx:1.20.1-alpine
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y make && rm -rf /var/lib/apt/lists/*
+
+# Copy only files needed to build the frontend
+COPY ./community/sources/webcore/src/canopsis-next /app/community/sources/webcore/src/canopsis-next
+WORKDIR /app/community/sources/webcore/src/canopsis-next
+RUN make
+
+# Avoid rebuilding the frontend when only files in community/docker have changed
+COPY ./community/docker /app/community/docker
+COPY ./community/deploy-ansible /app/community/deploy-ansible
+RUN make install DESTDIR=/installroot
+
+FROM nginx:${NGINX_VERSION}
 
 RUN mkdir -p -m 0750 /etc/nginx/ssl
 
-RUN apk --no-cache add openssl
-RUN apk --no-cache add openssl
+COPY --from=build /installroot/ /
 
-COPY docker/files/entrypoint-nginx.sh /entrypoint.sh
+COPY community/docker/files/entrypoint-nginx.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-COPY docker/files/etc/nginx/cors.inc /etc/nginx/cors.inc
-COPY docker/files/etc/nginx/default.conf /etc/nginx/conf.d/default.conf
-COPY docker/files/etc/nginx/https.inc /etc/nginx/https.inc
-COPY docker/files/etc/nginx/rundeck.inc /etc/nginx/rundeck.inc
-
-WORKDIR /opt/canopsis/var/www/src/canopsis-next/dist
-
-COPY --from=build /canopsis-next/dist /opt/canopsis/var/www/src/canopsis-next/dist
 
 EXPOSE 80
 

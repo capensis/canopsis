@@ -1,6 +1,7 @@
 <template lang="pug">
   v-list-group
-    v-list-tile(slot="activator") {{ $t('settings.exportCsv.title') }}
+    template(#activator="")
+      v-list-tile {{ $t('settings.exportCsv.title') }}
     v-container
       v-layout(row)
         v-select(

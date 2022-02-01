@@ -4,8 +4,8 @@ import axios from 'axios';
 
 import { DATETIME_FORMATS } from '@/constants';
 
-import { durationToString } from '@/helpers/date/duration';
-import { convertDateToString } from '@/helpers/date/date';
+import { convertDurationToString } from '@/helpers/date/duration';
+import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 
 import i18n from '@/i18n';
 
@@ -18,8 +18,7 @@ import i18n from '@/i18n';
  */
 function prepareAttributes(attributes) {
   return Object.entries(attributes)
-    .map(([key, value]) =>
-      `${Handlebars.escapeExpression(key)}="${Handlebars.escapeExpression(value)}"`)
+    .map(([key, value]) => `${Handlebars.escapeExpression(key)}="${Handlebars.escapeExpression(value)}"`)
     .join(' ');
 }
 
@@ -35,7 +34,7 @@ export function timestampHelper(date) {
   let result = '';
 
   if (date) {
-    result = convertDateToString(date, 'long');
+    result = convertDateToStringWithFormatForToday(date);
   }
 
   return result;
@@ -66,7 +65,7 @@ export function internalLinkHelper(options) {
  * @returns {String}
  */
 export function durationHelper(seconds) {
-  return durationToString(seconds, DATETIME_FORMATS.refreshFieldFormat);
+  return convertDurationToString(seconds, DATETIME_FORMATS.refreshFieldFormat);
 }
 
 /**
@@ -382,4 +381,26 @@ export function uppercaseHelper(str) {
   }
 
   return str.toUpperCase();
+}
+
+/**
+ * Replace `pattern` by `replacement` string inside the `source` string
+ *
+ * Example: {{replace 'Ubuntu Debian Linux Fedora' '(Ubuntu) (Debian) (Linux)' '$3 $2 $1' flags='g'}}
+ *
+ * @param {string} source
+ * @param {string} pattern
+ * @param {string} replacement
+ * @param {Object} [options = {}]
+ * @return {string}
+ */
+export function replaceHelper(source, pattern, replacement, options = {}) {
+  if (arguments.length < 4) {
+    throw new Error('handlebars Helper {{compare}} expects 4 arguments');
+  }
+
+  const flags = get(options, ['hash', 'flags']);
+  const regex = new RegExp(String(pattern), flags);
+
+  return String(source).replace(regex, replacement);
 }

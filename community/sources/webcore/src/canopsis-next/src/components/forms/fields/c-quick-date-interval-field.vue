@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout(row, align-center, wrap)
+  div.c-quick-interval
     date-picker-field(
       :value="intervalFromString",
       :label="$t('common.from')",
@@ -16,23 +16,25 @@
       @input="updateToDate"
     )
       v-icon(slot="append", color="black") calendar_today
-    v-flex(xs2)
-      v-select.ml-4(
+    div.c-quick-interval__range
+      c-quick-date-interval-type-field.ml-4(
         v-model="range",
-        :items="quickRanges",
-        :label="$t('quickRanges.title')",
-        hide-details,
-        return-object
+        :custom-filter="isAllowedQuickRange",
+        hide-details
       )
 </template>
 
 <script>
-import moment from 'moment';
+import { DATETIME_FORMATS, QUICK_RANGES } from '@/constants';
 
-import { DATETIME_FORMATS, DATETIME_INTERVAL_TYPES, QUICK_RANGES } from '@/constants';
+import { convertDateToString, convertDateToTimestamp, getNowTimestamp, getWeekdayNumber } from '@/helpers/date/date';
+import {
+  findQuickRangeValue,
+  convertStartDateIntervalToTimestamp,
+  convertStopDateIntervalToTimestamp,
+} from '@/helpers/date/date-intervals';
 
-import { getNowTimestamp } from '@/helpers/date/date';
-import { findRange, dateParse } from '@/helpers/date/date-intervals';
+import { formMixin } from '@/mixins/form';
 
 import DatePickerField from '@/components/forms/fields/date-picker/date-picker-field.vue';
 
@@ -40,6 +42,7 @@ export default {
   components: {
     DatePickerField,
   },
+  mixins: [formMixin],
   model: {
     event: 'input',
     prop: 'interval',
@@ -68,31 +71,32 @@ export default {
         }));
     },
 
-    intervalFromAsMoment() {
-      return this.convertIntervalFromFieldToMoment(this.interval.from);
+    intervalFromAsTimestamp() {
+      return convertStartDateIntervalToTimestamp(this.interval.from);
     },
 
-    intervalToAsMoment() {
-      return this.convertIntervalToFieldToMoment(this.interval.to);
+    intervalToAsTimestamp() {
+      return convertStopDateIntervalToTimestamp(this.interval.to);
     },
 
     intervalFromString() {
-      return this.intervalFromAsMoment.format(DATETIME_FORMATS.datePicker);
+      return convertDateToString(this.intervalFromAsTimestamp, DATETIME_FORMATS.datePicker);
     },
 
     intervalToString() {
-      return this.intervalToAsMoment.format(DATETIME_FORMATS.datePicker);
+      return convertDateToString(this.intervalToAsTimestamp, DATETIME_FORMATS.datePicker);
     },
 
     range: {
       get() {
-        const range = findRange(this.interval.from, this.interval.to);
+        const range = findQuickRangeValue(this.interval.from, this.interval.to);
 
         return this.quickRanges.find(({ value }) => value === range.value);
       },
+
       set({ start, stop }) {
         if (start && stop) {
-          this.$emit('input', {
+          this.updateModel({
             ...this.interval,
             from: start,
             to: stop,
@@ -102,18 +106,6 @@ export default {
     },
   },
   methods: {
-    convertIntervalFieldToMoment(date, type = DATETIME_INTERVAL_TYPES.start) {
-      return dateParse(date, type, DATETIME_FORMATS.datePicker);
-    },
-
-    convertIntervalFromFieldToMoment(date) {
-      return this.convertIntervalFieldToMoment(date, DATETIME_INTERVAL_TYPES.start);
-    },
-
-    convertIntervalToFieldToMoment(date) {
-      return this.convertIntervalFieldToMoment(date, DATETIME_INTERVAL_TYPES.stop);
-    },
-
     isGreaterMinDate(dateTimestamp) {
       if (this.min) {
         return dateTimestamp >= this.min;
@@ -123,36 +115,7 @@ export default {
     },
 
     isLessToDate(dateTimestamp) {
-      return dateTimestamp < this.intervalToAsMoment.unix();
-    },
-
-    isAllowedAccumulatedFromDate(dateTimestamp, weekday) {
-      return this.accumulatedBefore > dateTimestamp
-        /**
-         * NOTE: If the date is before the accumulation date, the data is grouped by week.
-         * In this case, we can only select Monday.
-         */
-        ? weekday === 1
-        : true;
-    },
-
-    isAllowedFromDate(date) {
-      const dateMoment = moment(date);
-      const dateTimestamp = dateMoment.unix();
-
-      return this.isLessToDate(dateTimestamp)
-        && this.isGreaterMinDate(dateTimestamp)
-        && this.isAllowedAccumulatedFromDate(dateTimestamp, dateMoment.isoWeekday());
-    },
-
-    isAllowedAccumulatedToDate(dateTimestamp, weekday) {
-      return this.accumulatedBefore > dateTimestamp
-        /**
-         * NOTE: If the date is before the accumulation date, the data is grouped by week.
-         * In this case, we can only select Sunday.
-         */
-        ? weekday === 7
-        : true;
+      return dateTimestamp < this.intervalToAsTimestamp;
     },
 
     isLessNowDate(dateTimestamp) {
@@ -160,16 +123,43 @@ export default {
     },
 
     isGreaterFromDate(dateTimestamp) {
-      return dateTimestamp > this.intervalFromAsMoment.unix();
+      return dateTimestamp > this.intervalFromAsTimestamp;
+    },
+
+    isAllowedAccumulatedFromDate(dateTimestamp) {
+      return this.accumulatedBefore > dateTimestamp
+        /**
+         * NOTE: If the date is before the accumulation date, the data is grouped by week.
+         * In this case, we can only select Monday.
+         */
+        ? getWeekdayNumber(dateTimestamp) === 1
+        : true;
+    },
+
+    isAllowedAccumulatedToDate(dateTimestamp) {
+      return this.accumulatedBefore > dateTimestamp
+        /**
+         * NOTE: If the date is before the accumulation date, the data is grouped by week.
+         * In this case, we can only select Sunday.
+         */
+        ? getWeekdayNumber(dateTimestamp) === 7
+        : true;
+    },
+
+    isAllowedFromDate(date) {
+      const dateTimestamp = convertDateToTimestamp(date);
+
+      return this.isLessToDate(dateTimestamp)
+        && this.isGreaterMinDate(dateTimestamp)
+        && this.isAllowedAccumulatedFromDate(dateTimestamp);
     },
 
     isAllowedToDate(date) {
-      const dateMoment = moment(date);
-      const dateTimestamp = dateMoment.unix();
+      const dateTimestamp = convertDateToTimestamp(date);
 
       return this.isGreaterFromDate(dateTimestamp)
         && this.isLessNowDate(dateTimestamp)
-        && this.isAllowedAccumulatedToDate(dateTimestamp, dateMoment.isoWeekday());
+        && this.isAllowedAccumulatedToDate(dateTimestamp);
     },
 
     isAllowedQuickRange({ start, stop }) {
@@ -177,30 +167,33 @@ export default {
         return true;
       }
 
-      const startMoment = this.convertIntervalFromFieldToMoment(start);
-      const stopMoment = this.convertIntervalToFieldToMoment(stop);
-      const startTimestamp = startMoment.unix();
-      const stopTimestamp = stopMoment.unix();
+      const startTimestamp = convertStartDateIntervalToTimestamp(start);
+      const stopTimestamp = convertStopDateIntervalToTimestamp(start);
 
       return this.isGreaterMinDate(startTimestamp)
-        && this.isAllowedAccumulatedFromDate(startTimestamp, startMoment.isoWeekday())
+        && this.isAllowedAccumulatedFromDate(startTimestamp)
         && this.isLessNowDate(stopTimestamp)
-        && this.isAllowedAccumulatedToDate(stopTimestamp, stopMoment.isoWeekday());
+        && this.isAllowedAccumulatedToDate(stopTimestamp);
     },
 
     updateFromDate(from) {
-      this.$emit('input', {
-        ...this.interval,
-        from,
-      });
+      this.updateField('from', from);
     },
 
     updateToDate(to) {
-      this.$emit('input', {
-        ...this.interval,
-        to,
-      });
+      this.updateField('to', to);
     },
   },
 };
 </script>
+
+<style scoped lang="scss">
+.c-quick-interval {
+  display: inline-flex;
+
+  &__range {
+    display: flex;
+    max-width: 180px;
+  }
+}
+</style>

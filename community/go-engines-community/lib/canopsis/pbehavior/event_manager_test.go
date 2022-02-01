@@ -230,6 +230,7 @@ func TestGetEvent(t *testing.T) {
 				t.Errorf("expected %s event type, got %s", dataset.expectedEventType, event.EventType)
 			}
 
+			event.PbehaviorInfo.Timestamp = nil
 			if event.PbehaviorInfo != dataset.expectedAlarmPbhInfo {
 				t.Errorf("expected events's pbehavior info = %v, got %v", dataset.expectedAlarmPbhInfo, event.PbehaviorInfo)
 			}

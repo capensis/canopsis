@@ -1,8 +1,8 @@
 import { cloneDeep, omit } from 'lodash';
 
-import { BASIC_ENTITY_TYPES } from '@/constants';
+import { BASIC_ENTITY_TYPES, ENTITIES_STATES } from '@/constants';
 
-import { enabledToForm, infosToArray } from './shared/common';
+import { infosToArray } from './shared/common';
 
 /**
  * @typedef {Object} Entity
@@ -13,6 +13,7 @@ import { enabledToForm, infosToArray } from './shared/common';
  * @property {boolean} enabled
  * @property {Array} depends
  * @property {Array} impact
+ * @property {number} sli_avail_state
  * @property {Array} changeable_depends
  * @property {Array} changeable_impact
  * @property {Object} infos
@@ -33,20 +34,21 @@ import { enabledToForm, infosToArray } from './shared/common';
 export const entityToForm = (entity = {}) => {
   const depends = entity.depends ? cloneDeep(entity.depends) : [];
   const impact = entity.impact ? cloneDeep(entity.impact) : [];
-  const changeableImpact = entity.changeable_impact || [];
-  const changeableDepends = entity.changeable_depends || [];
+  const changeableImpact = entity.changeable_impact ?? [];
+  const changeableDepends = entity.changeable_depends ?? [];
 
   return {
     impact,
     depends,
-    name: entity.name || '',
-    description: entity.description || '',
-    type: entity.type || BASIC_ENTITY_TYPES.connector,
-    enabled: enabledToForm(entity.enabled),
+    name: entity.name ?? '',
+    description: entity.description ?? '',
+    type: entity.type ?? BASIC_ENTITY_TYPES.connector,
+    enabled: entity.enabled ?? true,
     disabled_impact: impact.filter(id => !changeableImpact.includes(id)),
     disabled_depends: depends.filter(id => !changeableDepends.includes(id)),
     infos: infosToArray(entity.infos),
     impact_level: entity.impact_level,
+    sli_avail_state: entity.sli_avail_state ?? ENTITIES_STATES.ok,
   };
 };
 
@@ -57,8 +59,8 @@ export const entityToForm = (entity = {}) => {
  * @return {Entity}
  */
 export const formToEntity = (form) => {
-  const disabledImpact = form.disabled_impact || [];
-  const disabledDepends = form.disabled_depends || [];
+  const disabledImpact = form.disabled_impact ?? [];
+  const disabledDepends = form.disabled_depends ?? [];
 
   return {
     ...omit(form, ['disabled_impact', 'disabled_depends']),

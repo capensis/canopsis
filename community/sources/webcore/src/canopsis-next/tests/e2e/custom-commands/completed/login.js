@@ -11,16 +11,14 @@ module.exports.command = function login(username, password) {
     .clearUsername()
     .setUsername(username)
     .clearPassword()
-    .setPassword(password);
+    .customSetPassword(password);
 
   this.waitForFirstXHR(
     `${API_ROUTES.currentUser}`,
     WAIT_FOR_FIRST_XHR_TIME,
     () => loginPage.clickSubmitButton(),
     ({ responseData }) => {
-      const { data: [user] } = JSON.parse(responseData);
-
-      this.globals.currentUser = user;
+      this.globals.currentUser = JSON.parse(responseData);
 
       loginPage.verifyPageElementsAfter();
     },

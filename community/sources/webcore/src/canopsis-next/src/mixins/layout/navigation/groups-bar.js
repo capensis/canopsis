@@ -1,7 +1,7 @@
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 import { permissionsEntitiesGroupMixin } from '@/mixins/permissions/entities/group';
 
-import layoutNavigationEditingModeMixin from '../../layout/navigation/editing-mode';
+import layoutNavigationEditingModeMixin from './editing-mode';
 
 export default {
   mixins: [

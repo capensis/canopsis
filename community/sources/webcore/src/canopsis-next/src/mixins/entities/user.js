@@ -5,7 +5,7 @@ const { mapGetters, mapActions } = createNamespacedHelpers('user');
 /**
  * @mixin
  */
-export default {
+export const entitiesUserMixin = {
   computed: {
     ...mapGetters({
       users: 'items',

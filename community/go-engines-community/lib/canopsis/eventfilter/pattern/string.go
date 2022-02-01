@@ -52,6 +52,18 @@ func (p StringConditions) AsMongoDriverQuery() bson.M {
 	return query
 }
 
+func (p StringConditions) AsSqlQuery() string {
+	if p.Equal.Set {
+		return fmt.Sprintf("= '%s'", p.Equal.Value)
+	}
+
+	if p.RegexMatch.Set {
+		return fmt.Sprintf("~ '%s'", p.RegexMatch.Value)
+	}
+
+	return ""
+}
+
 // Matches returns true if the value satisfies each of the conditions defined
 // in the StringConditions. If the pattern contains a regular expression with
 // sub-expressions, the values of the sub-expressions are written in the

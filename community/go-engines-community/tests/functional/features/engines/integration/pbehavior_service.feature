@@ -1,7 +1,7 @@
 Feature: no update service when entity is inactive
   I need to be able to not update service when pause or maintenance pbehavior is in action.
 
-  Scenario: given entity service and maintenance pbehavior should not update service alarm on create and pbhenter event
+  Scenario: given entity service and maintenance pbehavior should not update service alarm on create with pbhenter event
     Given I am admin
     When I send an event:
     """json
@@ -24,7 +24,8 @@ Feature: no update service when entity is inactive
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-pbehavior-service-1"}]
+      "entity_patterns": [{"name": "test-resource-pbehavior-service-1"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
@@ -35,8 +36,8 @@ Feature: no update service when entity is inactive
     {
       "enabled": true,
       "name": "test-pbehavior-service-1",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -49,7 +50,7 @@ Feature: no update service when entity is inactive
     }
     """
     Then the response code should be 201
-    When I wait 1s
+    When I wait the end of 2 events processing
     When I send an event:
     """json
     {
@@ -88,7 +89,8 @@ Feature: no update service when entity is inactive
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-pbehavior-service-2"}]
+      "entity_patterns": [{"name": "test-resource-pbehavior-service-2"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
@@ -113,8 +115,8 @@ Feature: no update service when entity is inactive
     {
       "enabled": true,
       "name": "test-pbehavior-service-2",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -192,7 +194,8 @@ Feature: no update service when entity is inactive
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-pbehavior-service-3"}]
+      "entity_patterns": [{"name": "test-resource-pbehavior-service-3"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
@@ -217,8 +220,8 @@ Feature: no update service when entity is inactive
     {
       "enabled": true,
       "name": "test-pbehavior-service-3",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "2s")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "2s" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -313,7 +316,8 @@ Feature: no update service when entity is inactive
       "entity_patterns": [
         {"name": "test-resource-pbehavior-service-4-1"},
         {"name": "test-resource-pbehavior-service-4-2"}
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
@@ -338,8 +342,8 @@ Feature: no update service when entity is inactive
     {
       "enabled": true,
       "name": "test-pbehavior-service-4-1",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "2s")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "2s" }},
       "type": "test-inactive-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -357,8 +361,8 @@ Feature: no update service when entity is inactive
     {
       "enabled": true,
       "name": "test-pbehavior-service-4-2",
-      "tstart": {{ now.Unix }},
-      "tstop": {{ (now.Add (parseDuration "10m")).Unix }},
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -373,7 +377,6 @@ Feature: no update service when entity is inactive
     Then the response code should be 201
     When I wait the end of 2 events processing
     When I wait 2s
-    When I wait the next periodical process
     When I wait the end of 2 events processing
     When I send an event:
     """json

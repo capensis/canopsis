@@ -7,15 +7,22 @@
             div {{ $t('common.actionsLabel') }}:
             div(v-for="action in availableActions", :key="action.eventType")
               v-tooltip(top)
-                v-btn(
-                  slot="activator",
-                  :disabled="isActionDisabled(action.eventType)",
-                  depressed,
-                  small,
-                  light,
-                  @click.stop="action.action"
-                )
-                  v-icon {{ action.icon }}
+                template(slot="activator")
+                  service-entity-alarm-instruction-menu(
+                    v-if="action.eventType === $constants.EVENT_ENTITY_TYPES.executeInstruction",
+                    :assigned-instructions="entity.assigned_instructions",
+                    :icon="action.icon",
+                    @execute="executeAlarmInstruction"
+                  )
+                  v-btn(
+                    v-else,
+                    :disabled="isActionDisabled(action.eventType)",
+                    depressed,
+                    small,
+                    light,
+                    @click.stop="action.action"
+                  )
+                    v-icon {{ action.icon }}
                 span {{ $t(`common.actions.${action.eventType}`) }}
       v-tooltip(v-if="active && hasAccessToManagePbehaviors", top)
         v-btn(slot="activator", small, @click="showPbehaviorsListModal")
@@ -25,7 +32,7 @@
 </template>
 
 <script>
-import { isNull, pickBy } from 'lodash';
+import { isNull } from 'lodash';
 
 import {
   CRUD_ACTIONS,
@@ -36,17 +43,18 @@ import {
   MODALS,
   PBEHAVIOR_TYPE_TYPES,
   USERS_PERMISSIONS,
-  WIDGETS_ACTIONS_TYPES,
+  WEATHER_ACTIONS_TYPES,
 } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 import widgetActionPanelServiceEntityMixin from '@/mixins/widget/actions-panel/service-entity';
 
 import ServiceEntityTemplate from '@/components/modals/service/partial/service-entity-template.vue';
+import ServiceEntityAlarmInstructionMenu from './service-entity-alarm-instruction-menu.vue';
 
 export default {
   inject: ['$eventsQueue'],
-  components: { ServiceEntityTemplate },
+  components: { ServiceEntityAlarmInstructionMenu, ServiceEntityTemplate },
   mixins: [
     authMixin,
     widgetActionPanelServiceEntityMixin,
@@ -90,53 +98,56 @@ export default {
     },
 
     actionsMap() {
-      const { weather: weatherActionsTypes } = WIDGETS_ACTIONS_TYPES;
-
       return {
         ack: {
-          type: weatherActionsTypes.entityAck,
+          type: WEATHER_ACTIONS_TYPES.entityAck,
           eventType: EVENT_ENTITY_TYPES.ack,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
           action: this.prepareAckAction,
         },
         assocTicket: {
-          type: weatherActionsTypes.entityAssocTicket,
+          type: WEATHER_ACTIONS_TYPES.entityAssocTicket,
           eventType: EVENT_ENTITY_TYPES.assocTicket,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
           action: this.prepareAssocTicketAction,
         },
+        executeInstruction: {
+          type: WEATHER_ACTIONS_TYPES.executeInstruction,
+          eventType: EVENT_ENTITY_TYPES.executeInstruction,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.executeInstruction].icon,
+        },
         validate: {
-          type: weatherActionsTypes.entityValidate,
+          type: WEATHER_ACTIONS_TYPES.entityValidate,
           eventType: EVENT_ENTITY_TYPES.validate,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.validate].icon,
           action: this.prepareValidateAction,
         },
         invalidate: {
-          type: weatherActionsTypes.entityInvalidate,
+          type: WEATHER_ACTIONS_TYPES.entityInvalidate,
           eventType: EVENT_ENTITY_TYPES.invalidate,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.invalidate].icon,
           action: this.prepareInvalidateAction,
         },
         pause: {
-          type: weatherActionsTypes.entityPause,
+          type: WEATHER_ACTIONS_TYPES.entityPause,
           eventType: EVENT_ENTITY_TYPES.pause,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pause].icon,
           action: this.preparePauseAction,
         },
         play: {
-          type: weatherActionsTypes.entityPlay,
+          type: WEATHER_ACTIONS_TYPES.entityPlay,
           eventType: EVENT_ENTITY_TYPES.play,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.play].icon,
           action: this.preparePlayAction,
         },
         cancel: {
-          type: weatherActionsTypes.entityCancel,
+          type: WEATHER_ACTIONS_TYPES.entityCancel,
           eventType: EVENT_ENTITY_TYPES.cancel,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
           action: this.prepareCancelAction,
         },
         comment: {
-          type: weatherActionsTypes.entityComment,
+          type: WEATHER_ACTIONS_TYPES.entityComment,
           eventType: EVENT_ENTITY_TYPES.comment,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.comment].icon,
           action: this.prepareCommentAction,
@@ -144,38 +155,38 @@ export default {
       };
     },
 
-    filteredActionsMap() {
-      return pickBy(this.actionsMap, this.actionsAccessFilterHandler);
-    },
-
     availableActions() {
-      const { filteredActionsMap } = this;
-      const actions = [filteredActionsMap.comment];
+      const { actionsMap } = this;
+      const actions = [actionsMap.comment];
 
-      if (this.entity.state.val !== ENTITIES_STATES.ok && isNull(this.entity.ack)) {
-        actions.push(filteredActionsMap.ack);
+      if (this.entity.assigned_instructions && this.entity.assigned_instructions.length) {
+        actions.push(actionsMap.executeInstruction);
       }
 
-      actions.push(filteredActionsMap.assocTicket);
+      if (this.entity.state.val !== ENTITIES_STATES.ok && isNull(this.entity.ack)) {
+        actions.push(actionsMap.ack);
+      }
+
+      actions.push(actionsMap.assocTicket);
 
       if (this.entity.state.val === ENTITIES_STATES.major) {
-        actions.push(filteredActionsMap.validate, filteredActionsMap.invalidate);
+        actions.push(actionsMap.validate, actionsMap.invalidate);
       }
 
       if (this.paused) {
-        actions.push(filteredActionsMap.play);
+        actions.push(actionsMap.play);
       } else {
-        actions.push(filteredActionsMap.pause);
+        actions.push(actionsMap.pause);
       }
 
       if (
-        this.entity.alarm_display_name &&
-        (!this.entity.status || this.entity.status.val !== ENTITIES_STATUSES.cancelled)
+        this.entity.alarm_display_name
+        && (!this.entity.status || this.entity.status.val !== ENTITIES_STATUSES.cancelled)
       ) {
-        actions.push(filteredActionsMap.cancel);
+        actions.push(actionsMap.cancel);
       }
 
-      return actions.filter(action => !!action);
+      return actions.filter(this.actionsAccessFilterHandler);
     },
   },
   methods: {
@@ -196,6 +207,21 @@ export default {
           entityId: this.entity._id,
           onlyActive: true,
           availableActions: [CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
+        },
+      });
+    },
+
+    executeAlarmInstruction(assignedInstruction) {
+      const refreshEntities = () => this.$emit('refresh');
+
+      this.$modals.show({
+        name: MODALS.executeRemediationInstruction,
+        config: {
+          assignedInstruction,
+          alarmId: this.entity.alarm_id,
+          onOpen: refreshEntities,
+          onClose: refreshEntities,
+          onComplete: refreshEntities,
         },
       });
     },

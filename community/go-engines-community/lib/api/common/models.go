@@ -2,7 +2,9 @@ package common
 
 import (
 	"errors"
+	"github.com/valyala/fastjson"
 	"math"
+	"net/http"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -83,9 +85,10 @@ func NewErrorResponse(err error) ErrorResponse {
 }
 
 var NotFoundResponse = ErrorResponse{Error: "Not found"}
-var UnauthorizedResponse = ErrorResponse{Error: "Unauthorized"}
+var MethodNotAllowedResponse = ErrorResponse{Error: http.StatusText(http.StatusMethodNotAllowed)}
+var UnauthorizedResponse = ErrorResponse{Error: http.StatusText(http.StatusUnauthorized)}
 var InternalServerErrorResponse = ErrorResponse{Error: "Internal server error"}
-var ForbiddenResponse = ErrorResponse{Error: "Forbidden"}
+var ForbiddenResponse = ErrorResponse{Error: http.StatusText(http.StatusForbidden)}
 var ErrTimeoutResponse = ErrorResponse{Error: "Request timeout reached"}
 
 // ValidationErrorResponse is response for failed validation.
@@ -108,6 +111,21 @@ func NewValidationErrorResponse(err error, request interface{}) interface{} {
 	}
 
 	return ErrorResponse{Error: "request has invalid structure"}
+}
+
+func NewValidationErrorFastJsonValue(ar *fastjson.Arena, err error, request interface{}) *fastjson.Value {
+	var errs validator.ValidationErrors
+	if errors.As(err, &errs) {
+		value := ar.NewObject()
+		for _, fe := range errs {
+			field := transformNamespace(fe.Namespace(), request)
+			value.Set(field, ar.NewString(libvalidator.TranslateError(fe)))
+		}
+
+		return value
+	}
+
+	return ar.NewString("request has invalid structure")
 }
 
 // transformNamespace prepares field namespace for response.

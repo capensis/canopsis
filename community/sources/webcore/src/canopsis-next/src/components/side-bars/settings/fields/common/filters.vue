@@ -1,19 +1,19 @@
 <template lang="pug">
-  v-list-group(data-test="filters")
-    v-list-tile(slot="activator") {{ $t('settings.filters') }}
+  v-list-group
+    template(#activator="")
+      v-list-tile {{ $t('settings.filters') }}
     v-container
       filter-selector(
+        v-field="value",
         :label="$t('filterSelector.defaultFilter')",
-        :entitiesType="entitiesType",
-        :value="value",
+        :entities-type="entitiesType",
         :filters="filters",
         :condition="condition",
-        :hideSelect="hideSelect",
-        :hasAccessToAddFilter="hasAccessToAddFilter",
-        :hasAccessToEditFilter="hasAccessToEditFilter",
-        hideSelectIcon,
+        :hide-select="hideSelect",
+        :has-access-to-add-filter="addable",
+        :has-access-to-edit-filter="editable",
+        hide-select-icon,
         long,
-        @input="$emit('input', $event)",
         @update:condition="$emit('update:condition', $event)",
         @update:filters="updateFilters"
       )
@@ -48,13 +48,13 @@ export default {
       type: Boolean,
       default: false,
     },
-    hasAccessToAddFilter: {
+    addable: {
       type: Boolean,
-      default: true,
+      default: false,
     },
-    hasAccessToEditFilter: {
+    editable: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     entitiesType: {
       type: String,

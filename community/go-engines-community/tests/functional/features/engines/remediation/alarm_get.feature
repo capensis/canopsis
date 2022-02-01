@@ -16,7 +16,7 @@ Feature: update an instruction statistics
       "description": "test-instruction-to-alarm-get-auto-instruction-flags-1-1-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 1,
+        "value": 1,
         "unit": "s"
       },
       "jobs": [
@@ -41,7 +41,7 @@ Feature: update an instruction statistics
       "description": "test-instruction-to-alarm-get-auto-instruction-flags-1-2-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 1,
+        "value": 1,
         "unit": "s"
       },
       "jobs": [
@@ -125,7 +125,7 @@ Feature: update an instruction statistics
       "description": "test-instruction-to-alarm-get-auto-instruction-flags-2-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 1,
+        "value": 1,
         "unit": "s"
       },
       "steps": [
@@ -134,7 +134,7 @@ Feature: update an instruction statistics
           "operations": [
             {
               "name": "test-instruction-to-alarm-get-auto-instruction-flags-2-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-to-alarm-get-auto-instruction-flags-2-step-1-operation-1-description",
               "jobs": []
             }

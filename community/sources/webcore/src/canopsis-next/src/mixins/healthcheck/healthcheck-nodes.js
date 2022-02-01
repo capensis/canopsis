@@ -67,7 +67,6 @@ export const healthcheckNodesMixin = {
       return this.$te(nodeEdgeLabelKey) ? this.$t(nodeEdgeLabelKey) : nodeName;
     },
 
-
     /**
      * Get label for node
      *

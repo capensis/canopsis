@@ -13,7 +13,7 @@
       li
         button.v-pagination__navigation(
           data-test="paginationNextButton",
-          :disabled="page >= totalPages",
+          :disabled="isNextPageDisabled",
           :class="{ 'v-pagination__navigation--disabled': isNextPageDisabled }",
           @click="next"
         )
@@ -73,11 +73,7 @@ export default {
     },
 
     totalPages() {
-      if (this.total) {
-        return Math.ceil(this.total / this.limit) || 0;
-      }
-
-      return 0;
+      return Math.ceil(this.total / this.limit) || 0;
     },
 
     /**

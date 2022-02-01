@@ -1,62 +1,34 @@
 <template lang="pug">
   v-layout(align-center, row, wrap)
-    v-flex(
-      data-test="selectFilters",
-      v-show="!hideSelect",
-      v-bind="flexProps.select"
-    )
+    v-flex(v-show="!hideSelect", :xs12="long")
       v-select(
-        :value="value",
+        v-field="value",
         :items="preparedFilters",
         :label="label",
-        :itemText="itemText",
-        :itemValue="itemValue",
+        :item-text="itemText",
+        :item-value="itemValue",
         :multiple="isMultiple",
         :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
         return-object,
-        clearable,
-        @input="updateSelectedFilter"
+        clearable
       )
-        template(slot="prepend-item")
+        template(#prepend-item="")
           v-layout.pl-3
-            v-flex(v-show="!hideSelect", v-bind="flexProps.switch")
-              v-switch(
-                data-test="mixFilters",
-                color="primary",
+            v-flex(v-show="!hideSelect", :xs6="long")
+              c-enabled-field(
+                :value="isMultiple",
                 :label="$t('filterSelector.fields.mixFilters')",
-                :input-value="isMultiple",
                 :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
                 hide-details,
-                @change="updateIsMultipleFlag"
+                @input="updateIsMultipleFlag"
               )
-            v-flex(v-show="!hideSelect && isMultiple", v-bind="flexProps.radio")
-              v-radio-group.mb-0(
-                :value="condition",
-                :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
-                hide-details,
-                row,
-                @change="updateCondition"
-              )
-                v-radio(
-                  :value="$constants.FILTER_MONGO_OPERATORS.and",
-                  data-test="andFilters",
-                  label="AND",
-                  color="primary"
-                )
-                v-radio(
-                  :value="$constants.FILTER_MONGO_OPERATORS.or",
-                  data-test="orFilters",
-                  label="OR",
-                  color="primary"
-                )
+            v-flex(v-show="!hideSelect && isMultiple", :xs6="long")
+              c-operator-field(:value="condition", @input="updateCondition")
           v-divider.mt-3
-        template(slot="item", slot-scope="{ parent, item, tile }")
-          v-list-tile-action(
-            v-if="isMultiple",
-            :data-test="`filterOption-${item[itemText]}`",
-            @click.stop="parent.$emit('select', item)"
-          )
-            v-checkbox(:inputValue="tile.props.value", :color="parent.color")
+
+        template(#item="{ parent, item, tile }")
+          v-list-tile-action(v-if="isMultiple", @click.stop="parent.$emit('select', item)")
+            v-checkbox(:input-value="tile.props.value", :color="parent.color")
           v-list-tile-content
             v-list-tile-title
               span {{ item[itemText] }}
@@ -65,21 +37,19 @@
                 :color="tile.props.value ? parent.color : ''",
                 small
               ) {{ item.locked ? 'lock' : 'person' }}
-    v-flex(v-if="hasAccessToUserFilter", v-bind="flexProps.list")
-      v-tooltip(v-if="!long", bottom)
-        v-btn(
-          slot="activator",
-          data-test="showFiltersListButton",
-          icon,
-          small,
-          @click="showFiltersListModal"
-        )
-          v-icon filter_list
-        span {{ $t('filterSelector.buttons.list') }}
+
+    v-flex(v-if="hasAccessToUserFilter", :xs12="long")
+      c-action-btn(
+        v-if="!long",
+        :tooltip="$t('filterSelector.buttons.list')",
+        icon="filter_list",
+        small,
+        @click="showFiltersListModal"
+      )
       filters-form(
         v-else,
         :filters="filtersWithSelected",
-        :entitiesType="entitiesType",
+        :entities-type="entitiesType",
         @input="updateFilters"
       )
 </template>
@@ -89,10 +59,13 @@ import { isEmpty, omit } from 'lodash';
 
 import { ENTITIES_TYPES, MODALS, FILTER_DEFAULT_VALUES } from '@/constants';
 
+import { formMixin } from '@/mixins/form';
+
 import FiltersForm from '@/components/other/filter/form/filters-form.vue';
 
 export default {
   components: { FiltersForm },
+  mixins: [formMixin],
   props: {
     long: {
       type: Boolean,
@@ -157,15 +130,6 @@ export default {
     },
   },
   computed: {
-    flexProps() {
-      return {
-        switch: this.long ? { xs6: true } : {},
-        radio: this.long ? { xs6: true } : {},
-        select: this.long ? { xs12: true } : {},
-        list: this.long ? { xs12: true } : {},
-      };
-    },
-
     isMultiple() {
       return Array.isArray(this.value);
     },
@@ -176,7 +140,9 @@ export default {
 
       if (preparedFilters.length && preparedLockedFilters.length) {
         return preparedFilters.concat({ divider: true }, preparedLockedFilters);
-      } else if (preparedFilters.length) {
+      }
+
+      if (preparedFilters.length) {
         return preparedFilters;
       }
 
@@ -198,14 +164,10 @@ export default {
       const isValueArray = Array.isArray(this.value);
 
       if (checked && !isValueArray) {
-        this.updateSelectedFilter(!isEmpty(this.value) ? [this.value] : []);
+        this.updateModel(!isEmpty(this.value) ? [this.value] : []);
       } else if (!checked && isValueArray) {
-        this.updateSelectedFilter(!isEmpty(this.value[0]) ? this.value[0] : null);
+        this.updateModel(!isEmpty(this.value[0]) ? this.value[0] : null);
       }
-    },
-
-    updateSelectedFilter(newValue) {
-      this.$emit('input', newValue);
     },
 
     updateCondition(newCondition) {
@@ -225,7 +187,7 @@ export default {
 
       const newValue = this.isMultiple ? selectedFilters : selectedFilters[0];
 
-      return this.$emit('update:filters', filters.map(removeSelectedProperty), newValue);
+      this.$emit('update:filters', filters.map(removeSelectedProperty), newValue);
     },
 
     isFilterEqual(firstFilter, secondFilter) {

@@ -19,6 +19,8 @@ export const SOCKET_URL = removeTrailingSlashes(`${SOCKET_HOST}${SOCKET_ROUTE}`)
 
 export const ROUTER_MODE = 'history';
 
+export const ROUTER_ACCESS_TOKEN_KEY = 'access_token';
+
 export const LOCAL_STORAGE_ACCESS_TOKEN_KEY = VUE_APP_LOCAL_STORAGE_ACCESS_TOKEN_KEY || 'accessToken';
 
 export const PAGINATION_LIMIT = parseInt(VUE_APP_PAGINATION_LIMIT, 10);
@@ -42,10 +44,6 @@ export const LOCALE_PRIORITIES = {
 };
 
 export const POPUP_AUTO_CLOSE_DELAY = 3000;
-
-export const ACTIVE_LOGGED_USERS_COUNT_FETCHING_INTERVAL = 60000;
-
-export const ACTIVE_BROADCAST_MESSAGE_FETCHING_INTERVAL = 60000;
 
 export const VUETIFY_ANIMATION_DELAY = 300;
 
@@ -72,11 +70,19 @@ export const DEFAULT_APP_TITLE = 'Canopsis';
 
 export const EXPORT_VIEWS_AND_GROUPS_FILENAME_PREFIX = 'canopsis_groups_views-';
 
+export const SOCKET_ROOMS = {
+  healthcheck: 'healthcheck',
+  healthcheckStatus: 'healthcheck-status',
+  messageRates: 'message-rates',
+  loggedUserCount: 'logged-user-count',
+  broadcastMessages: 'broadcast-messages',
+  execution: 'execution',
+};
+
 export const API_ROUTES = {
   login: '/api/v4/login',
   logout: '/api/v4/logout',
   loggedUserCount: '/api/v4/logged-user-count',
-  viewStats: '/api/v4/view-stats',
   currentUser: '/api/v4/account/me',
   alarmList: '/api/v4/alarms',
   entity: '/api/v4/entities',
@@ -89,7 +95,7 @@ export const API_ROUTES = {
   contextExport: '/api/v4/entity-export',
   actions: '/api/v2/actions',
   event: '/api/v4/event',
-  userPreferences: '/rest/userpreferences/userpreferences',
+  userPreferences: '/api/v4/user-preferences',
   view: '/api/v4/views',
   bulkView: '/api/v4/bulk/views',
   viewPosition: '/api/v4/view-positions',
@@ -112,8 +118,7 @@ export const API_ROUTES = {
     upload: '/api/uploadmib',
   },
   infos: {
-    login: '/api/v4/internal/login_info',
-    app: '/api/v4/internal/app_info',
+    app: '/api/v4/app-info',
     userInterface: '/api/v4/internal/user_interface',
   },
   associativeTable: '/api/v4/associativetable',
@@ -148,9 +153,9 @@ export const API_ROUTES = {
     checkPriority: '/api/v4/scenarios/check-priority',
   },
   entityCategories: '/api/v4/entity-categories',
-  stateSetting: '/api/v4/state-settings/',
+  stateSetting: '/api/v4/state-settings',
   dataStorage: '/api/v4/data-storage',
-  notification: '/api/v4/notification/',
+  notification: '/api/v4/notification',
   idleRules: '/api/v4/idle-rules',
   idleRulesCount: '/api/v4/idle-rules/count',
   flappingRules: '/api/v4/flapping-rules',
@@ -160,6 +165,9 @@ export const API_ROUTES = {
   /**
    * Cat routes
    */
+  filters: '/api/v4/cat/filters',
+  ratingSettings: '/api/v4/cat/rating-settings',
+  bulkRatingSettings: '/api/v4/cat/rating-settings/bulk',
   dynamicInfo: '/api/v4/cat/dynamic-infos',
   metaAlarmRule: '/api/v4/cat/metaalarmrules',
   remediation: {
@@ -184,6 +192,15 @@ export const API_ROUTES = {
     engines: '/api/v4/cat/healthcheck',
     status: '/api/v4/cat/healthcheck/status',
     parameters: '/api/v4/cat/healthcheck/parameters',
+  },
+  metrics: {
+    alarm: '/api/v4/cat/metrics/alarm',
+    exportAlarm: '/api/v4/cat/metrics-export/alarm',
+    exportRating: '/api/v4/cat/metrics-export/rating',
+    exportSli: '/api/v4/cat/metrics-export/sli',
+    exportMetric: '/api/v4/cat/metrics-export',
+    sli: '/api/v4/cat/metrics/sli',
+    rating: '/api/v4/cat/metrics/rating',
   },
 };
 
@@ -264,15 +281,36 @@ export const COLORS = {
     '#AD1457',
     '#880E4F',
   ],
+  kpi: {
+    downtime: '#c4c4c4',
+    maintenance: '#ffa800',
+    uptime: '#5b6E7f',
+  },
+  metrics: {
+    activeAlarms: '#5a6d7e',
+    createdAlarms: '#fda701',
+    nonDisplayedAlarms: '#fd693b',
+    instructionAlarms: '#7bb242',
+    pbehaviorAlarms: '#d64315',
+    correlationAlarms: '#fdef75',
+    ackAlarms: '#fd5252',
+    cancelAckAlarms: '#9b27af',
+    ackActiveAlarms: '#81b0fd',
+    ticketActiveAlarms: '#2faa63',
+    withoutTicketActiveAlarms: '#747474',
+    ratioCorrelation: '#c31162',
+    ratioInstructions: '#cbda39',
+    ratioTickets: '#2195f1',
+    ratioNonDisplayed: '#f9bf2d',
+    averageAck: '#f5c6ab',
+    averageResolve: '#1afd01',
+    totalUserActivity: '#1fbbd1',
+  },
 };
 
 export const FILE_BASE_URL = `${API_HOST}${API_ROUTES.file}`;
 
 export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';
-
-export const INSTRUCTION_EXECUTE_FETCHING_INTERVAL = 10000;
-
-export const INSTRUCTION_EXECUTE_FETCHING_INTERVAL_SECONDS = 10;
 
 export const EXPORT_FETCHING_INTERVAL = 2000;
 
@@ -282,4 +320,12 @@ export const HEALTHCHECK_HISTORY_FILENAME_PREFIX = 'healthcheck_history-';
 
 export const HEALTHCHECK_LAST_HOUR_FILENAME_PREFIX = 'healthcheck_last_hour-';
 
-export const LOGIN_INFOS_FETCHING_INTERVAL = 10000;
+export const KPI_ALARM_METRICS_FILENAME_PREFIX = 'kpi_alarm_metrics';
+
+export const KPI_RATING_METRICS_FILENAME_PREFIX = 'kpi_rating_metrics';
+
+export const KPI_SLI_METRICS_FILENAME_PREFIX = 'kpi_sli_metrics';
+
+export const APP_INFO_FETCHING_INTERVAL = 10000;
+
+export const MIN_CLICK_OUTSIDE_DELAY_AFTER_REGISTERED = 100;

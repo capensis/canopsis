@@ -28,8 +28,9 @@ import { get } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -43,8 +44,9 @@ export default {
   },
   components: { ModalWrapper },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
+    modalInnerMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     const { info } = this.modal.config;
@@ -68,8 +70,8 @@ export default {
   created() {
     this.$validator.extend('unique-name', {
       getMessage: () => this.$t('validator.unique'),
-      validate: value => (this.initialName && this.initialName === value) ||
-        !this.existingNames.find(name => name === value),
+      validate: value => (this.initialName && this.initialName === value)
+        || !this.existingNames.find(name => name === value),
     });
   },
   methods: {

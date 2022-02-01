@@ -3,8 +3,9 @@ import { omit } from 'lodash';
 import { DEFAULT_PERIODIC_REFRESH } from '@/constants';
 
 import uuid from '../uuid';
-import { durationWithEnabledToForm, formToDurationWithEnabled } from '../date/duration';
-import { generateViewTab } from '../entities';
+
+import { durationWithEnabledToForm } from '../date/duration';
+import { generateCopyOfViewTab, generateViewTab } from '../entities';
 
 import { enabledToForm } from './shared/common';
 
@@ -29,35 +30,23 @@ import { enabledToForm } from './shared/common';
  */
 
 /**
- * @typedef {ViewGroup} View
- * @property {string} title
- * @property {string} description
- * @property {boolean} enabled
- * @property {string[]} tags
- * @property {ViewGroup} group
- * @property {ViewTab[]} tabs
- * @property {DurationWithEnabled} periodic_refresh
- */
-
-/**
- * @typedef {ViewGroupRequest} ViewRequest
- * @property {string} title
- * @property {string} description
- * @property {boolean} enabled
- * @property {string[]} tags
- * @property {string} group
- * @property {ViewTab[]} tabs
- * @property {DurationWithEnabled} periodic_refresh
- */
-
-/**
  * @typedef {Object} ViewForm
  * @property {string} title
  * @property {string} description
  * @property {boolean} enabled
  * @property {string[]} tags
- * @property {ViewGroup} group
- * @property {DurationWithEnabledForm} periodic_refresh
+ * @property {ViewGroup} [group]
+ * @property {DurationWithEnabled} periodic_refresh
+ */
+
+/**
+ * @typedef {ViewGroup & ViewForm} View
+ * @property {ViewTab[]} tabs
+ */
+
+/**
+ * @typedef {View} ViewRequest
+ * @property {string} group
  */
 
 /**
@@ -69,16 +58,6 @@ import { enabledToForm } from './shared/common';
  * @typedef {Object} ViewGroupWithViewsPosition
  * @property {string} _id
  * @property {string[]} views
- */
-
-/**
- * @typedef {ViewGroup} View
- * @property {string} description
- * @property {boolean} enabled
- * @property {string[]} tags
- * @property {ViewGroup} group
- * @property {ViewTab[]} tabs
- * @property {DurationWithEnabled} periodic_refresh
  */
 
 /**
@@ -111,24 +90,12 @@ import { enabledToForm } from './shared/common';
  * @returns {ViewForm}
  */
 export const viewToForm = (view = {}) => ({
-  title: view.title || '',
-  description: view.description || '',
+  title: view.title ?? '',
+  description: view.description ?? '',
   enabled: enabledToForm(view.enabled),
   tags: view.tags ? [...view.tags] : [],
   group: view.group ? { ...view.group } : null,
-  periodic_refresh: durationWithEnabledToForm(view.periodic_refresh || DEFAULT_PERIODIC_REFRESH),
-});
-
-/**
- * Convert form to view
- *
- * @param {ViewForm} form
- * @returns {View}
- */
-export const formToView = form => ({
-  ...form,
-
-  periodic_refresh: formToDurationWithEnabled(form.periodic_refresh),
+  periodic_refresh: durationWithEnabledToForm(view.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
 });
 
 /**
@@ -165,8 +132,7 @@ export const groupToRequest = group => omit(group, ['_id', 'views', 'created', '
  * @param {ViewGroupWithViews | {}} [group = {}]
  * @return {ViewGroupWithViewsPosition}
  */
-export const groupWithViewsToPositions = (group = {}) =>
-  ({ _id: group._id, views: group.views.map(view => view._id) });
+export const groupWithViewsToPositions = (group = {}) => ({ _id: group._id, views: group.views.map(view => view._id) });
 
 /**
  * Convert view groups with views to view group with view positions
@@ -240,8 +206,8 @@ export const getExportedGroupsAndViews = ({ groups, views }) => {
  * @param {number} groupIndex
  * @return {ExportedViewWrapper[]}
  */
-export const getExportedViewsWrappersFromGroup = ({ views = [], ...group }, groupIndex) =>
-  views.reduce((acc, { exported, ...view }, index) => {
+export const getExportedViewsWrappersFromGroup = ({ views = [], ...group }, groupIndex) => views
+  .reduce((acc, { exported, ...view }, index) => {
     if (exported) {
       acc.push({ view: { ...view, group }, path: `${groupIndex}.views.${index}` });
     }
@@ -255,12 +221,11 @@ export const getExportedViewsWrappersFromGroup = ({ views = [], ...group }, grou
  * @param {ExportedViewGroup[]} [groups = []]
  * @return {ExportedViewWrapper[]}
  */
-export const getExportedViewsWrappersFromGroups = (groups = []) =>
-  groups.reduce((acc, group, index) => {
-    acc.push(...getExportedViewsWrappersFromGroup(group, index));
+export const getExportedViewsWrappersFromGroups = (groups = []) => groups.reduce((acc, group, index) => {
+  acc.push(...getExportedViewsWrappersFromGroup(group, index));
 
-    return acc;
-  }, []);
+  return acc;
+}, []);
 
 /**
  * Get exported views wrappers
@@ -268,14 +233,21 @@ export const getExportedViewsWrappersFromGroups = (groups = []) =>
  * @param {ExportedViewGroup[]} [groups = []]
  * @return {ExportedViewGroupWrapper[]}
  */
-export const getExportedGroupsWrappers = (groups = []) =>
-  groups.reduce((acc, { exported, ...group }, index) => {
-    if (exported) {
-      acc.push({ group, path: index });
-    }
+export const getExportedGroupsWrappers = (groups = []) => groups.reduce((acc, { exported, ...group }, index) => {
+  if (exported) {
+    acc.push({ group, path: index });
+  }
 
-    return acc;
-  }, []);
+  return acc;
+}, []);
+
+/**
+ * Prepare imported view tabs
+ *
+ * @param {ViewTab[]} tabs
+ * @return {ViewTab[]}
+ */
+export const prepareImportedViewTabs = (tabs = []) => tabs.map(tab => generateCopyOfViewTab(tab));
 
 /**
  * Prepare imported views
@@ -284,8 +256,12 @@ export const getExportedGroupsWrappers = (groups = []) =>
  * @param {ViewGroup} [group]
  * @return {View[]}
  */
-export const prepareImportedViews = (views, group) =>
-  views.map(view => ({ ...view, _id: uuid(), group: group || view.group }));
+export const prepareImportedViews = (views, group) => views.map(view => ({
+  ...view,
+  _id: uuid(),
+  group: group || view.group,
+  tabs: prepareImportedViewTabs(view.tabs),
+}));
 
 /**
  * Prepare imported groups
@@ -293,9 +269,8 @@ export const prepareImportedViews = (views, group) =>
  * @param {ViewGroupWithViews[]} groups
  * @return {ViewGroupWithViews[]}
  */
-export const prepareImportedGroups = groups =>
-  groups.map(({ views, ...group }) => {
-    const preparedGroup = { ...group, _id: uuid() };
+export const prepareImportedGroups = groups => groups.map(({ views, ...group }) => {
+  const preparedGroup = { ...group, _id: uuid() };
 
-    return ({ ...preparedGroup, views: prepareImportedViews(views, preparedGroup) });
-  });
+  return { ...preparedGroup, views: prepareImportedViews(views, preparedGroup) };
+});

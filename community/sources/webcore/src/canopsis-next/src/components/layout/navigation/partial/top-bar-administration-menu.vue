@@ -58,7 +58,7 @@ export default {
         {
           route: { name: ROUTES_NAMES.adminRights },
           icon: 'verified_user',
-          permission: USERS_PERMISSIONS.technical.action,
+          permission: USERS_PERMISSIONS.technical.permission,
         },
         {
           route: { name: ROUTES_NAMES.adminRoles },
@@ -110,12 +110,18 @@ export default {
           icon: '$vuetify.icons.alt_route',
           permission: USERS_PERMISSIONS.technical.healthcheck,
         },
+        {
+          route: { name: ROUTES_NAMES.adminKPI },
+          icon: 'stacked_bar_chart',
+          permission: USERS_PERMISSIONS.technical.kpi,
+        },
       ];
     },
 
     permissionsWithDefaultType() {
       return [
         USERS_PERMISSIONS.technical.healthcheck,
+        USERS_PERMISSIONS.technical.kpi,
       ];
     },
   },

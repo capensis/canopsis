@@ -6,7 +6,7 @@
       template(slot="text")
         v-fade-transition
           v-layout(v-if="!remediationInstructionApproval", justify-center)
-            v-progress-circular(indeterminate, color="primary")
+            v-progress-circular(color="primary", indeterminate)
           v-layout(v-else, column)
             remediation-instruction-approval-alert(
               :approval="remediationInstructionApproval.approval"
@@ -40,15 +40,13 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { MODALS } from '@/constants';
 
-import modalInnerMixin from '@/plugins/modals/mixins/inner';
-
-import { submittableMixin } from '@/mixins/submittable';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
 
 import RemediationInstructionApprovalAlert from
   '@/components/other/remediation/instructions/partials/approval-alert.vue';
 import RemediationInstructionApprovalTabs from
   '@/components/other/remediation/instructions/partials/approval-tabs.vue';
-
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -63,7 +61,7 @@ export default {
   },
   mixins: [
     modalInnerMixin,
-    submittableMixin(),
+    submittableMixinCreator(),
   ],
   data() {
     return {

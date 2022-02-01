@@ -5,11 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"sort"
 	"time"
 
 	alarmapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
@@ -18,6 +18,7 @@ import (
 	libtypes "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 const linkFetchTimeout = 30 * time.Second
@@ -31,17 +32,17 @@ func NewStore(
 	dbClient mongo.DbClient,
 	legacyURL fmt.Stringer,
 	statsStore StatsStore,
+	alarmStore alarmapi.Store,
 	timezoneConfigProvider config.TimezoneConfigProvider,
-	entityTypeResolver pbehaviorlib.EntityTypeResolver,
 ) Store {
 	return &store{
 		dbCollection:           dbClient.Collection(mongo.EntityMongoCollection),
 		pbehaviorCollection:    dbClient.Collection(mongo.PbehaviorMongoCollection),
 		statsStore:             statsStore,
+		alarmStore:             alarmStore,
 		defaultSortBy:          "name",
 		links:                  alarmapi.NewLinksFetcher(legacyURL, linkFetchTimeout),
 		timezoneConfigProvider: timezoneConfigProvider,
-		entityTypeResolver:     entityTypeResolver,
 	}
 }
 
@@ -50,9 +51,9 @@ type store struct {
 	pbehaviorCollection    mongo.DbCollection
 	links                  alarmapi.LinksFetcher
 	statsStore             StatsStore
+	alarmStore             alarmapi.Store
 	defaultSortBy          string
 	timezoneConfigProvider config.TimezoneConfigProvider
-	entityTypeResolver     pbehaviorlib.EntityTypeResolver
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
@@ -119,60 +120,23 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 }
 
 func (s *store) FindEntities(ctx context.Context, id, apiKey string, query EntitiesListRequest) (*EntityAggregationResult, error) {
-	cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{"_id": id}},
-		// Find category
-		{"$lookup": bson.M{
-			"from":         mongo.EntityCategoryMongoCollection,
-			"localField":   "category",
-			"foreignField": "_id",
-			"as":           "category",
-		}},
-		{"$unwind": bson.M{"path": "$category", "preserveNullAndEmptyArrays": true}},
-		{"$project": bson.M{
-			"entity": "$$ROOT",
-		}},
-		{"$lookup": bson.M{
-			"from": mongo.AlarmMongoCollection,
-			"let":  bson.M{"eid": "$entity._id"},
-			"pipeline": []bson.M{
-				{"$match": bson.M{"$expr": bson.M{"$eq": bson.A{"$$eid", "$d"}}}},
-				{"$match": bson.M{"$or": []bson.M{
-					{"v.resolved": bson.M{"$in": bson.A{false, nil}}},
-					{"v.resolved": bson.M{"$exists": false}},
-				}}},
-			},
-			"as": "alarm",
-		}},
-		{"$unwind": bson.M{"path": "$alarm", "preserveNullAndEmptyArrays": true}},
-	})
+	var service libtypes.Entity
+	err := s.dbCollection.FindOne(ctx, bson.M{"_id": id, "enabled": true}).Decode(&service)
 	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, nil
+		}
 		return nil, err
 	}
 
-	var service entityservice.AlarmWithEntity
-	if cursor.Next(ctx) {
-		err := cursor.Decode(&service)
-		if err != nil {
-			cursor.Close(ctx)
-			return nil, err
-		}
-	}
-	cursor.Close(ctx)
-
-	if service.Entity.ID == "" {
-		return nil, nil
-	}
-
-	filter := bson.M{"$and": []bson.M{
-		{"$expr": bson.M{"$in": bson.A{"$_id", service.Entity.Depends}}},
-		{"$expr": bson.M{"$eq": bson.A{"$enabled", true}}},
-	}}
 	pipeline := []bson.M{
-		{"$match": filter},
+		{"$match": bson.M{"$and": []bson.M{
+			{"$expr": bson.M{"$in": bson.A{"$_id", service.Depends}}},
+			{"$expr": bson.M{"$eq": bson.A{"$enabled", true}}},
+		}}},
 	}
 	pipeline = append(pipeline, getFindEntitiesPipeline()...)
-	cursor, err = s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
+	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		query.Query,
 		pipeline,
 		s.getSort(query.SortBy, query.Sort),
@@ -193,56 +157,37 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 	}
 
 	pbhIDs := make([]string, 0)
-	entitiesWithoutPbh := make([]int, 0, len(res.Data))
-	entityIDs := make([]string, 0, len(res.Data))
-	for idx, v := range res.Data {
+	alarmIds := make([]string, 0, len(res.Data))
+	for _, v := range res.Data {
 		if v.PbehaviorInfo.ID != "" {
 			pbhIDs = append(pbhIDs, v.PbehaviorInfo.ID)
 		}
 
-		if !v.PbehaviorInfo.IsActive() || service.Alarm != nil && !service.Alarm.Value.PbehaviorInfo.IsActive() {
-			res.Data[idx].IsGrey = true
-		}
-
-		if v.PbehaviorInfo.ID == "" && !res.Data[idx].IsGrey {
-			entitiesWithoutPbh = append(entitiesWithoutPbh, idx)
-			entityIDs = append(entityIDs, v.ID)
+		if v.AlarmID != "" {
+			alarmIds = append(alarmIds, v.AlarmID)
 		}
 	}
 
-	now := time.Now().In(s.timezoneConfigProvider.Get().Location)
-
-	resolveResult, err := s.entityTypeResolver.ResolveAll(ctx, entityIDs, now)
-	if err != nil {
-		if errors.Is(err, pbehaviorlib.ErrNoComputed) || errors.Is(err, pbehaviorlib.ErrRecomputeNeed) {
-			return nil, nil
+	if query.WithInstructions {
+		assignedInstructionsMap, err := s.alarmStore.GetAssignedInstructionsMap(ctx, alarmIds)
+		if err != nil {
+			return nil, err
 		}
 
-		return nil, err
-	}
-
-	for _, idx := range entitiesWithoutPbh {
-		infos := make(map[string]libtypes.Info, len(res.Data[idx].Infos))
-		for k, v := range res.Data[idx].Infos {
-			infos[k] = libtypes.Info{
-				Description: v.Description,
-				Value:       v.Value,
-			}
+		statusesByAlarm, err := s.alarmStore.GetInstructionExecutionStatuses(ctx, alarmIds)
+		if err != nil {
+			return nil, err
 		}
-		entityID := res.Data[idx].ID
-		result := resolveResult[entityID]
 
-		if result.ResolvedPbhID != "" {
-			res.Data[idx].PbehaviorInfo = libtypes.PbehaviorInfo{
-				ID:            result.ResolvedPbhID,
-				Name:          result.ResolvedPbhName,
-				Reason:        result.ResolvedPbhReason,
-				TypeID:        result.ResolvedType.ID,
-				TypeName:      result.ResolvedType.Name,
-				CanonicalType: result.ResolvedType.Type,
-			}
-			res.Data[idx].IsGrey = true
-			pbhIDs = append(pbhIDs, result.ResolvedPbhID)
+		for idx, v := range res.Data {
+			sort.Slice(assignedInstructionsMap[v.AlarmID], func(i, j int) bool {
+				return assignedInstructionsMap[v.AlarmID][i].Name < assignedInstructionsMap[v.AlarmID][j].Name
+			})
+
+			res.Data[idx].AssignedInstructions = assignedInstructionsMap[v.AlarmID]
+			res.Data[idx].IsAutoInstructionRunning = statusesByAlarm[v.AlarmID].AutoRunning
+			res.Data[idx].IsAllAutoInstructionsCompleted = statusesByAlarm[v.AlarmID].AutoAllCompleted
+			res.Data[idx].IsManualInstructionWaitingResult = statusesByAlarm[v.AlarmID].ManualRunning
 		}
 	}
 
@@ -252,6 +197,10 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 	}
 
 	for i := range res.Data {
+		if !res.Data[i].PbehaviorInfo.IsActive() || !service.PbehaviorInfo.IsActive() {
+			res.Data[i].IsGrey = true
+		}
+
 		if v, ok := pbhs[res.Data[i].PbehaviorInfo.ID]; ok {
 			res.Data[i].Pbehaviors = []pbehavior.Response{v}
 		} else {
@@ -432,8 +381,8 @@ func getFindPipeline() []bson.M {
 			"status":           "$alarm.v.status",
 			"snooze":           "$alarm.v.snooze",
 			"ack":              "$alarm.v.ack",
-			"pbehavior_id":     "$alarm.v.pbehavior_info.id",
-			"alarms_total":     bson.M{"$sum": "$alarms_cumulative_data.watched_count"},
+			"pbehavior_id":     "$pbehavior_info.id",
+			"depends_total":    bson.M{"$size": "$depends"},
 			"impact_state":     bson.M{"$multiply": bson.A{"$alarm.v.state.val", "$impact_level"}},
 			"has_open_alarm": bson.M{"$cond": bson.M{
 				"if":   bson.M{"$gt": bson.A{"$alarms_cumulative_data.watched_not_acked_count", 0}},
@@ -524,16 +473,16 @@ func getFindIconPipeline() []bson.M {
 						// If service is not active return pbehavior type icon.
 						{
 							"case": bson.M{"$and": []bson.M{
-								{"$ifNull": bson.A{"$alarm.v.pbehavior_info", false}},
-								{"$ne": bson.A{"$alarm.v.pbehavior_info.canonical_type", pbehaviorlib.TypeActive}},
+								{"$ifNull": bson.A{"$pbehavior_info", false}},
+								{"$ne": bson.A{"$pbehavior_info.canonical_type", pbehaviorlib.TypeActive}},
 							}},
-							"then": "$alarm.v.pbehavior_info.canonical_type",
+							"then": "$pbehavior_info.canonical_type",
 						},
 						// If all watched alarms are not active return most priority pbehavior type of watched alarms.
 						{
 							"case": bson.M{"$and": []bson.M{
-								{"$gt": bson.A{"$alarms_total", 0}},
-								{"$eq": bson.A{"$watched_inactive_count", "$alarms_total"}},
+								{"$gt": bson.A{"$watched_inactive_count", 0}},
+								{"$eq": bson.A{"$watched_inactive_count", "$depends_total"}},
 							}},
 							"then": "$watched_pbehavior_type",
 						},
@@ -547,15 +496,15 @@ func getFindIconPipeline() []bson.M {
 				"branches": []bson.M{
 					{
 						"case": bson.M{"$and": []bson.M{
-							{"$ifNull": bson.A{"$alarm.v.pbehavior_info", false}},
-							{"$ne": bson.A{"$alarm.v.pbehavior_info.canonical_type", pbehaviorlib.TypeActive}},
+							{"$ifNull": bson.A{"$pbehavior_info", false}},
+							{"$ne": bson.A{"$pbehavior_info.canonical_type", pbehaviorlib.TypeActive}},
 						}},
 						"then": true,
 					},
 					{
 						"case": bson.M{"$and": []bson.M{
-							{"$gt": bson.A{"$alarms_total", 0}},
-							{"$eq": bson.A{"$watched_inactive_count", "$alarms_total"}},
+							{"$gt": bson.A{"$watched_inactive_count", 0}},
+							{"$eq": bson.A{"$watched_inactive_count", "$depends_total"}},
 						}},
 						"then": true,
 					},
@@ -567,8 +516,8 @@ func getFindIconPipeline() []bson.M {
 					{
 						// If only some watched alarms are not active return most priority pbehavior type of watched alarms.
 						"case": bson.M{"$and": []bson.M{
-							{"$gt": bson.A{"$alarms_total", 0}},
-							{"$lt": bson.A{"$watched_inactive_count", "$alarms_total"}},
+							{"$gt": bson.A{"$watched_inactive_count", 0}},
+							{"$lt": bson.A{"$watched_inactive_count", "$depends_total"}},
 						}},
 						"then": "$watched_pbehavior_type",
 					},
@@ -607,6 +556,7 @@ func getFindEntitiesPipeline() []bson.M {
 		{"$unwind": bson.M{"path": "$alarm", "preserveNullAndEmptyArrays": true}},
 		// Add alarms fields to result
 		{"$addFields": bson.M{
+			"alarm_id":         "$alarm._id",
 			"connector":        "$alarm.v.connector",
 			"connector_name":   "$alarm.v.connector_name",
 			"component":        "$alarm.v.component",
@@ -619,7 +569,7 @@ func getFindEntitiesPipeline() []bson.M {
 			"last_update_date": "$alarm.v.last_update_date",
 			"creation_date":    "$alarm.v.creation_date",
 			"display_name":     "$alarm.v.display_name",
-			"pbehavior_info":   "$alarm.v.pbehavior_info",
+			"pbehavior_info":   "$pbehavior_info",
 			"impact_state":     bson.M{"$multiply": bson.A{"$alarm.v.state.val", "$impact_level"}},
 		}},
 	}
@@ -652,10 +602,10 @@ func getFindEntitiesIconPipeline() []bson.M {
 					// If service is not active return pbehavior type icon.
 					[]bson.M{{
 						"case": bson.M{"$and": []bson.M{
-							{"$ifNull": bson.A{"$alarm.v.pbehavior_info", false}},
-							{"$ne": bson.A{"$alarm.v.pbehavior_info.canonical_type", pbehaviorlib.TypeActive}},
+							{"$ifNull": bson.A{"$pbehavior_info", false}},
+							{"$ne": bson.A{"$pbehavior_info.canonical_type", pbehaviorlib.TypeActive}},
 						}},
-						"then": "$alarm.v.pbehavior_info.canonical_type",
+						"then": "$pbehavior_info.canonical_type",
 					}},
 					// Else return state icon.
 					stateVals...,

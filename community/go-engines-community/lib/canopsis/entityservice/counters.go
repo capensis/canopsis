@@ -8,19 +8,33 @@ import (
 // GetAlarmCountersFromEvent returns counters for old alarm state and
 // for new alarm state base on alarm change type.
 func GetAlarmCountersFromEvent(event types.Event) (*AlarmCounters, *AlarmCounters, bool) {
-	if event.Alarm == nil {
-		return nil, nil, false
-	}
-
-	var oldCounters, currentCounters *AlarmCounters
-	alarmCounters := getAlarmCounters(*event.Alarm,
-		event.Alarm.Value.PbehaviorInfo.CanonicalType, event.Alarm.Value.PbehaviorInfo.TypeID)
 	isChanged := true
-
 	alarmChangeType := types.AlarmChangeTypeNone
 	if event.AlarmChange != nil {
 		alarmChangeType = event.AlarmChange.Type
 	}
+
+	var oldCounters, currentCounters *AlarmCounters
+
+	if event.Alarm == nil {
+		switch alarmChangeType {
+		case types.AlarmChangeTypePbhEnter, types.AlarmChangeTypePbhLeave, types.AlarmChangeTypePbhLeaveAndEnter:
+			currentCounters, oldCounters = &AlarmCounters{}, &AlarmCounters{}
+			*currentCounters = getEntityCounters(event.Entity.PbehaviorInfo.CanonicalType, event.Entity.PbehaviorInfo.TypeID)
+			*oldCounters = getEntityCounters(event.AlarmChange.PreviousPbehaviorCannonicalType, event.AlarmChange.PreviousPbehaviorTypeID)
+
+			if (event.AlarmChange.PreviousPbehaviorCannonicalType == "" ||
+				event.AlarmChange.PreviousPbehaviorCannonicalType == pbehavior.TypeActive) &&
+				event.Entity.PbehaviorInfo.IsActive() {
+				isChanged = false
+			}
+		}
+
+		return oldCounters, currentCounters, isChanged
+	}
+
+	alarmCounters := getAlarmCounters(*event.Alarm,
+		event.Alarm.Value.PbehaviorInfo.CanonicalType, event.Alarm.Value.PbehaviorInfo.TypeID)
 
 	switch alarmChangeType {
 	case types.AlarmChangeTypeAck:
@@ -72,6 +86,10 @@ func GetAlarmCountersFromAlarm(alarm types.Alarm) AlarmCounters {
 		alarm.Value.PbehaviorInfo.TypeID)
 }
 
+func GetAlarmCountersFromEntity(entity types.Entity) AlarmCounters {
+	return getEntityCounters(entity.PbehaviorInfo.CanonicalType, entity.PbehaviorInfo.TypeID)
+}
+
 // getAlarmCounters returns counters base on alarm.
 func getAlarmCounters(
 	alarm types.Alarm,
@@ -92,6 +110,20 @@ func getAlarmCounters(
 		}
 	} else {
 		counters.State = NewStateCounters(types.AlarmStateOK)
+		counters.PbehaviorCounters = map[string]int64{
+			pbhType: 1,
+		}
+	}
+
+	return counters
+}
+
+// getEntityCounters returns counters base on entity.
+func getEntityCounters(
+	pbhCanonicalType, pbhType string,
+) AlarmCounters {
+	counters := AlarmCounters{}
+	if pbhCanonicalType != "" && pbhCanonicalType != pbehavior.TypeActive {
 		counters.PbehaviorCounters = map[string]int64{
 			pbhType: 1,
 		}

@@ -1,0 +1,1328 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
+<div
+  class="c-advanced-data-table white white"
+>
+  <div
+    class="layout row wrap"
+  >
+    <div
+      class="flex xs4"
+    >
+      <c-search-field-stub
+        value="Filter"
+      />
+    </div>
+    <!---->
+  </div>
+  <div>
+    <div
+      class="v-table__overflow"
+    >
+      <table
+        class="v-datatable v-table theme--light"
+      >
+        <thead>
+          <tr>
+            <th
+              aria-label=": Not sorted."
+              aria-sort="none"
+              class="column text-xs-left"
+              role="columnheader"
+              scope="col"
+              width="20"
+            >
+              
+            </th>
+            <th
+              aria-label="common.title: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              common.title
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="common.created: Sorted descending. Activate to remove sorting."
+              aria-sort="descending"
+              class="column active desc sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              common.created
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="common.lastModifiedOn: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              common.lastModifiedOn
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="common.actionsLabel: Not sorted."
+              aria-sort="none"
+              class="column text-xs-left"
+              role="columnheader"
+              scope="col"
+            >
+              common.actionsLabel
+            </th>
+          </tr>
+          <tr
+            class="v-datatable__progress"
+          >
+            <th
+              class="column"
+              colspan="5"
+            >
+              <div
+                aria-valuemax="100"
+                aria-valuemin="0"
+                class="v-progress-linear"
+                role="progressbar"
+                style="height: 2px;"
+              >
+                <div
+                  class="v-progress-linear__background primary"
+                  style="height: 2px; opacity: 0.3; width: 100%;"
+                />
+                <div
+                  class="v-progress-linear__bar"
+                >
+                  <transition-stub
+                    name="fade-transition"
+                  >
+                    <div
+                      class="v-progress-linear__bar__indeterminate v-progress-linear__bar__indeterminate--active"
+                    >
+                      <div
+                        class="v-progress-linear__bar__indeterminate long primary"
+                      />
+                      <div
+                        class="v-progress-linear__bar__indeterminate short primary"
+                      />
+                    </div>
+                  </transition-stub>
+                  <transition-stub
+                    name="slide-x-transition"
+                  />
+                </div>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div
+                class="layout c-checkbox-wrapper row justify-start"
+              >
+                <!---->
+                <c-expand-btn-stub
+                  class="ml-2"
+                />
+              </div>
+            </td>
+            <td>
+              Filter
+            </td>
+            <td>
+              04/03/2021 19:44:48
+            </td>
+            <td>
+              04/03/2021 19:44:48
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="duplicate"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-datatable__expand-row"
+          >
+            <transition-group-stub
+              class="v-datatable__expand-col"
+              colspan="5"
+              tag="td"
+            />
+          </tr>
+          <tr>
+            <td>
+              <div
+                class="layout c-checkbox-wrapper row justify-start"
+              >
+                <!---->
+                <c-expand-btn-stub
+                  class="ml-2"
+                />
+              </div>
+            </td>
+            <td>
+              Filter 2
+            </td>
+            <td>
+              04/03/2021 20:19:50
+            </td>
+            <td>
+              04/03/2021 20:19:50
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="duplicate"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-datatable__expand-row"
+          >
+            <transition-group-stub
+              class="v-datatable__expand-col"
+              colspan="5"
+              tag="td"
+            />
+          </tr>
+          <tr>
+            <td>
+              <div
+                class="layout c-checkbox-wrapper row justify-start"
+              >
+                <!---->
+                <c-expand-btn-stub
+                  class="ml-2"
+                />
+              </div>
+            </td>
+            <td>
+              Filter 3
+            </td>
+            <td>
+              04/03/2021 20:20:49
+            </td>
+            <td>
+              04/03/2021 20:20:49
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="duplicate"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-datatable__expand-row"
+          >
+            <transition-group-stub
+              class="v-datatable__expand-col"
+              colspan="5"
+              tag="td"
+            />
+          </tr>
+          <tr>
+            <td>
+              <div
+                class="layout c-checkbox-wrapper row justify-start"
+              >
+                <!---->
+                <c-expand-btn-stub
+                  class="ml-2"
+                />
+              </div>
+            </td>
+            <td>
+              Filter 4
+            </td>
+            <td>
+              04/03/2021 18:23:34
+            </td>
+            <td>
+              04/03/2021 18:23:34
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="duplicate"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-datatable__expand-row"
+          >
+            <transition-group-stub
+              class="v-datatable__expand-col"
+              colspan="5"
+              tag="td"
+            />
+          </tr>
+          <tr>
+            <td>
+              <div
+                class="layout c-checkbox-wrapper row justify-start"
+              >
+                <!---->
+                <c-expand-btn-stub
+                  class="ml-2"
+                />
+              </div>
+            </td>
+            <td>
+              Filter 5
+            </td>
+            <td>
+              18/02/2021 10:58:51
+            </td>
+            <td>
+              18/02/2021 10:58:51
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="duplicate"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-datatable__expand-row"
+          >
+            <transition-group-stub
+              class="v-datatable__expand-col"
+              colspan="5"
+              tag="td"
+            />
+          </tr>
+          <tr>
+            <td>
+              <div
+                class="layout c-checkbox-wrapper row justify-start"
+              >
+                <!---->
+                <c-expand-btn-stub
+                  class="ml-2"
+                />
+              </div>
+            </td>
+            <td>
+              Filter 6
+            </td>
+            <td>
+              18/02/2021 10:58:41
+            </td>
+            <td>
+              18/02/2021 10:58:41
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="duplicate"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-datatable__expand-row"
+          >
+            <transition-group-stub
+              class="v-datatable__expand-col"
+              colspan="5"
+              tag="td"
+            />
+          </tr>
+          <tr>
+            <td>
+              <div
+                class="layout c-checkbox-wrapper row justify-start"
+              >
+                <!---->
+                <c-expand-btn-stub
+                  class="ml-2"
+                />
+              </div>
+            </td>
+            <td>
+              Filter 7
+            </td>
+            <td>
+              04/03/2021 20:24:11
+            </td>
+            <td>
+              04/03/2021 20:24:11
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="duplicate"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-datatable__expand-row"
+          >
+            <transition-group-stub
+              class="v-datatable__expand-col"
+              colspan="5"
+              tag="td"
+            />
+          </tr>
+          <tr>
+            <td>
+              <div
+                class="layout c-checkbox-wrapper row justify-start"
+              >
+                <!---->
+                <c-expand-btn-stub
+                  class="ml-2"
+                />
+              </div>
+            </td>
+            <td>
+              Filter 8
+            </td>
+            <td>
+              04/06/2021 11:41:37
+            </td>
+            <td>
+              04/06/2021 11:41:37
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="duplicate"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-datatable__expand-row"
+          >
+            <transition-group-stub
+              class="v-datatable__expand-col"
+              colspan="5"
+              tag="td"
+            />
+          </tr>
+          <tr>
+            <td>
+              <div
+                class="layout c-checkbox-wrapper row justify-start"
+              >
+                <!---->
+                <c-expand-btn-stub
+                  class="ml-2"
+                />
+              </div>
+            </td>
+            <td>
+              Filter 9
+            </td>
+            <td>
+              11/03/2021 11:06:41
+            </td>
+            <td>
+              11/03/2021 11:06:41
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="duplicate"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-datatable__expand-row"
+          >
+            <transition-group-stub
+              class="v-datatable__expand-col"
+              colspan="5"
+              tag="td"
+            />
+          </tr>
+          <tr>
+            <td>
+              <div
+                class="layout c-checkbox-wrapper row justify-start"
+              >
+                <!---->
+                <c-expand-btn-stub
+                  class="ml-2"
+                />
+              </div>
+            </td>
+            <td>
+              Filter 10
+            </td>
+            <td>
+              11/03/2021 13:02:36
+            </td>
+            <td>
+              11/03/2021 13:02:36
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="duplicate"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-datatable__expand-row"
+          >
+            <transition-group-stub
+              class="v-datatable__expand-col"
+              colspan="5"
+              tag="td"
+            />
+          </tr>
+          <tr>
+            <td>
+              <div
+                class="layout c-checkbox-wrapper row justify-start"
+              >
+                <!---->
+                <c-expand-btn-stub
+                  class="ml-2"
+                />
+              </div>
+            </td>
+            <td>
+              Filter 11
+            </td>
+            <td>
+              11/03/2021 12:29:20
+            </td>
+            <td>
+              11/03/2021 12:29:20
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="duplicate"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-datatable__expand-row"
+          >
+            <transition-group-stub
+              class="v-datatable__expand-col"
+              colspan="5"
+              tag="td"
+            />
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <c-table-pagination-stub
+    page="2"
+    rows-per-page="10"
+    total-items="50"
+  />
+</div>
+`;
+
+exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = `
+<div
+  class="c-advanced-data-table white white"
+>
+  <div
+    class="layout row wrap"
+  >
+    <div
+      class="flex xs4"
+    >
+      <c-search-field-stub />
+    </div>
+    <!---->
+  </div>
+  <div>
+    <div
+      class="v-table__overflow"
+    >
+      <table
+        class="v-datatable v-table theme--light"
+      >
+        <thead>
+          <tr>
+            <th
+              aria-label=": Not sorted."
+              aria-sort="none"
+              class="column text-xs-left"
+              role="columnheader"
+              scope="col"
+              width="20"
+            >
+              
+            </th>
+            <th
+              aria-label="common.title: Sorted ascending. Activate to sort descending."
+              aria-sort="ascending"
+              class="column active asc sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              common.title
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="common.created: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              common.created
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="common.lastModifiedOn: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              common.lastModifiedOn
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="common.actionsLabel: Not sorted."
+              aria-sort="none"
+              class="column text-xs-left"
+              role="columnheader"
+              scope="col"
+            >
+              common.actionsLabel
+            </th>
+          </tr>
+          <tr
+            class="v-datatable__progress"
+          >
+            <th
+              class="column"
+              colspan="5"
+            />
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td
+              class="text-xs-center"
+              colspan="5"
+            >
+              No data available
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <c-table-pagination-stub />
+</div>
+`;
+
+exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] = `
+<div
+  class="c-advanced-data-table white white"
+>
+  <div
+    class="layout row wrap"
+  >
+    <div
+      class="flex xs4"
+    >
+      <c-search-field-stub
+        value=""
+      />
+    </div>
+    <!---->
+  </div>
+  <div>
+    <div
+      class="v-table__overflow"
+    >
+      <table
+        class="v-datatable v-table theme--light"
+      >
+        <thead>
+          <tr>
+            <th
+              aria-label=": Not sorted."
+              aria-sort="none"
+              class="column text-xs-left"
+              role="columnheader"
+              scope="col"
+              width="20"
+            >
+              
+            </th>
+            <th
+              aria-label="common.title: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              common.title
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="common.created: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              common.created
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="common.lastModifiedOn: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              common.lastModifiedOn
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="common.actionsLabel: Not sorted."
+              aria-sort="none"
+              class="column text-xs-left"
+              role="columnheader"
+              scope="col"
+            >
+              common.actionsLabel
+            </th>
+          </tr>
+          <tr
+            class="v-datatable__progress"
+          >
+            <th
+              class="column"
+              colspan="5"
+            />
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div
+                class="layout c-checkbox-wrapper row justify-start"
+              >
+                <!---->
+                <c-expand-btn-stub
+                  class="ml-2"
+                  expanded="true"
+                />
+              </div>
+            </td>
+            <td>
+              Filter
+            </td>
+            <td>
+              04/03/2021 19:44:48
+            </td>
+            <td>
+              04/03/2021 19:44:48
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <!---->
+                <!---->
+                <!---->
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-datatable__expand-row"
+          >
+            <transition-group-stub
+              class="v-datatable__expand-col"
+              colspan="5"
+              tag="td"
+            >
+              <div
+                class="v-datatable__expand-content"
+              >
+                <div
+                  class="secondary lighten-2"
+                >
+                  <kpi-filters-expand-item-stub
+                    filter="[object Object]"
+                  />
+                </div>
+              </div>
+            </transition-group-stub>
+          </tr>
+          <tr>
+            <td>
+              <div
+                class="layout c-checkbox-wrapper row justify-start"
+              >
+                <!---->
+                <c-expand-btn-stub
+                  class="ml-2"
+                />
+              </div>
+            </td>
+            <td>
+              Filter 2
+            </td>
+            <td>
+              04/03/2021 20:19:50
+            </td>
+            <td>
+              04/03/2021 20:19:50
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <!---->
+                <!---->
+                <!---->
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-datatable__expand-row"
+          >
+            <transition-group-stub
+              class="v-datatable__expand-col"
+              colspan="5"
+              tag="td"
+            />
+          </tr>
+          <tr>
+            <td>
+              <div
+                class="layout c-checkbox-wrapper row justify-start"
+              >
+                <!---->
+                <c-expand-btn-stub
+                  class="ml-2"
+                />
+              </div>
+            </td>
+            <td>
+              Filter 3
+            </td>
+            <td>
+              04/03/2021 20:20:49
+            </td>
+            <td>
+              04/03/2021 20:20:49
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <!---->
+                <!---->
+                <!---->
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-datatable__expand-row"
+          >
+            <transition-group-stub
+              class="v-datatable__expand-col"
+              colspan="5"
+              tag="td"
+            />
+          </tr>
+          <tr>
+            <td>
+              <div
+                class="layout c-checkbox-wrapper row justify-start"
+              >
+                <!---->
+                <c-expand-btn-stub
+                  class="ml-2"
+                />
+              </div>
+            </td>
+            <td>
+              Filter 4
+            </td>
+            <td>
+              04/03/2021 18:23:34
+            </td>
+            <td>
+              04/03/2021 18:23:34
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <!---->
+                <!---->
+                <!---->
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-datatable__expand-row"
+          >
+            <transition-group-stub
+              class="v-datatable__expand-col"
+              colspan="5"
+              tag="td"
+            />
+          </tr>
+          <tr>
+            <td>
+              <div
+                class="layout c-checkbox-wrapper row justify-start"
+              >
+                <!---->
+                <c-expand-btn-stub
+                  class="ml-2"
+                />
+              </div>
+            </td>
+            <td>
+              Filter 5
+            </td>
+            <td>
+              18/02/2021 10:58:51
+            </td>
+            <td>
+              18/02/2021 10:58:51
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <!---->
+                <!---->
+                <!---->
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-datatable__expand-row"
+          >
+            <transition-group-stub
+              class="v-datatable__expand-col"
+              colspan="5"
+              tag="td"
+            />
+          </tr>
+          <tr>
+            <td>
+              <div
+                class="layout c-checkbox-wrapper row justify-start"
+              >
+                <!---->
+                <c-expand-btn-stub
+                  class="ml-2"
+                />
+              </div>
+            </td>
+            <td>
+              Filter 6
+            </td>
+            <td>
+              18/02/2021 10:58:41
+            </td>
+            <td>
+              18/02/2021 10:58:41
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <!---->
+                <!---->
+                <!---->
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-datatable__expand-row"
+          >
+            <transition-group-stub
+              class="v-datatable__expand-col"
+              colspan="5"
+              tag="td"
+            />
+          </tr>
+          <tr>
+            <td>
+              <div
+                class="layout c-checkbox-wrapper row justify-start"
+              >
+                <!---->
+                <c-expand-btn-stub
+                  class="ml-2"
+                />
+              </div>
+            </td>
+            <td>
+              Filter 7
+            </td>
+            <td>
+              04/03/2021 20:24:11
+            </td>
+            <td>
+              04/03/2021 20:24:11
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <!---->
+                <!---->
+                <!---->
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-datatable__expand-row"
+          >
+            <transition-group-stub
+              class="v-datatable__expand-col"
+              colspan="5"
+              tag="td"
+            />
+          </tr>
+          <tr>
+            <td>
+              <div
+                class="layout c-checkbox-wrapper row justify-start"
+              >
+                <!---->
+                <c-expand-btn-stub
+                  class="ml-2"
+                />
+              </div>
+            </td>
+            <td>
+              Filter 8
+            </td>
+            <td>
+              04/06/2021 11:41:37
+            </td>
+            <td>
+              04/06/2021 11:41:37
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <!---->
+                <!---->
+                <!---->
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-datatable__expand-row"
+          >
+            <transition-group-stub
+              class="v-datatable__expand-col"
+              colspan="5"
+              tag="td"
+            />
+          </tr>
+          <tr>
+            <td>
+              <div
+                class="layout c-checkbox-wrapper row justify-start"
+              >
+                <!---->
+                <c-expand-btn-stub
+                  class="ml-2"
+                />
+              </div>
+            </td>
+            <td>
+              Filter 9
+            </td>
+            <td>
+              11/03/2021 11:06:41
+            </td>
+            <td>
+              11/03/2021 11:06:41
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <!---->
+                <!---->
+                <!---->
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-datatable__expand-row"
+          >
+            <transition-group-stub
+              class="v-datatable__expand-col"
+              colspan="5"
+              tag="td"
+            />
+          </tr>
+          <tr>
+            <td>
+              <div
+                class="layout c-checkbox-wrapper row justify-start"
+              >
+                <!---->
+                <c-expand-btn-stub
+                  class="ml-2"
+                />
+              </div>
+            </td>
+            <td>
+              Filter 10
+            </td>
+            <td>
+              11/03/2021 13:02:36
+            </td>
+            <td>
+              11/03/2021 13:02:36
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <!---->
+                <!---->
+                <!---->
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-datatable__expand-row"
+          >
+            <transition-group-stub
+              class="v-datatable__expand-col"
+              colspan="5"
+              tag="td"
+            />
+          </tr>
+          <tr>
+            <td>
+              <div
+                class="layout c-checkbox-wrapper row justify-start"
+              >
+                <!---->
+                <c-expand-btn-stub
+                  class="ml-2"
+                />
+              </div>
+            </td>
+            <td>
+              Filter 11
+            </td>
+            <td>
+              11/03/2021 12:29:20
+            </td>
+            <td>
+              11/03/2021 12:29:20
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <!---->
+                <!---->
+                <!---->
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-datatable__expand-row"
+          >
+            <transition-group-stub
+              class="v-datatable__expand-col"
+              colspan="5"
+              tag="td"
+            />
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <c-table-pagination-stub
+    page="1"
+    rows-per-page="10"
+    total-items="50"
+  />
+</div>
+`;

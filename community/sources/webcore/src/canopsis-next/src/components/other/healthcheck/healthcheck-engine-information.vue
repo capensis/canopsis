@@ -61,7 +61,9 @@ export default {
 
     systemDownMessage() {
       return this.$t(
-        this.engine.name === HEALTHCHECK_ENGINES_NAMES.fifo ? 'healthcheck.engineDownOrSlow' : 'healthcheck.engineDownOrSlow',
+        this.engine.name === HEALTHCHECK_ENGINES_NAMES.fifo
+          ? 'healthcheck.engineDownOrSlow'
+          : 'healthcheck.engineDownOrSlow',
         { name: this.name },
       );
     },

@@ -1,10 +1,9 @@
-import i18n from '@/i18n';
-
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 
+import request from '@/services/request';
+
 import { createEntityModule } from '@/store/plugins/entities';
-import { broadcastMessageSchema } from '@/store/schemas';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -29,8 +28,10 @@ export default createEntityModule({
     activeMessagesPending: false,
   },
   getters: {
-    activeMessages: (state, getters, rootState, rootGetters) =>
-      rootGetters['entities/getList'](ENTITIES_TYPES.broadcastMessage, state.activeMessagesIds),
+    activeMessages: (state, getters, rootState, rootGetters) => rootGetters['entities/getList'](
+      ENTITIES_TYPES.broadcastMessage,
+      state.activeMessagesIds,
+    ),
 
     activeMessagesPending: state => state.activeMessagesPending,
   },
@@ -46,23 +47,8 @@ export default createEntityModule({
     },
   },
   actions: {
-    async fetchActiveList({ commit, dispatch }) {
-      try {
-        commit(types.FETCH_ACTIVE_LIST);
-
-        const { normalizedData } = await dispatch('entities/fetch', {
-          route: API_ROUTES.broadcastMessage.activeList,
-          schema: [broadcastMessageSchema],
-        }, { root: true });
-
-        commit(types.FETCH_ACTIVE_LIST_COMPLETED, {
-          allIds: normalizedData.result,
-        });
-      } catch (err) {
-        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
-
-        commit(types.FETCH_ACTIVE_LIST_FAILED);
-      }
+    async fetchActiveListWithoutStore() {
+      return request.get(API_ROUTES.broadcastMessage.activeList);
     },
   },
 });

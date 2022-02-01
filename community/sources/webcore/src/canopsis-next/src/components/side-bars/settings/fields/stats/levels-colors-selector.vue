@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { STATS_CALENDAR_COLORS, STATS_CRITICITY } from '@/constants';
+import { ALARM_STATS_CALENDAR_COLORS, STATS_CRITICITY } from '@/constants';
 
 export default {
   model: {
@@ -28,7 +28,7 @@ export default {
   props: {
     levelsColors: {
       type: Object,
-      default: () => ({ ...STATS_CALENDAR_COLORS.alarm }),
+      default: () => ({ ...ALARM_STATS_CALENDAR_COLORS }),
     },
     hideSuffix: {
       type: Boolean,

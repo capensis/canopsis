@@ -21,7 +21,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import entitiesRoleMixin from '@/mixins/entities/role';
+import { entitiesRoleMixin } from '@/mixins/entities/role';
 import { permissionsTechnicalRoleMixin } from '@/mixins/permissions/technical/role';
 import { localQueryMixin } from '@/mixins/query-local/query';
 

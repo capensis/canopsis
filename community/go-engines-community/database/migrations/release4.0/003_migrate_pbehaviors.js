@@ -99,10 +99,11 @@
 
         // Update alarms
         if (doc.eids && doc.eids.length > 0) {
-            var res = db.default_entities.aggregate([
+            var aggregate = db.default_entities.aggregate([
                 { $match: { _id: { $in: doc.eids } } },
                 { $group: { _id: "", ids: { $push: "$_id" } } }
-            ]).next();
+            ]);
+            var res = (aggregate.hasNext()?aggregate.next():null);
             if (res && res.ids) {
                 db.periodical_alarm.update(
                     {

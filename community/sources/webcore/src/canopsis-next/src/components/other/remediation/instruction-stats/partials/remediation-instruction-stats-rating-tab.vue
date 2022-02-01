@@ -7,7 +7,7 @@
     :total-items="totalItems",
     advanced-pagination
   )
-    template(slot="created", slot-scope="props") {{ props.item.created | date('long', true) }}
+    template(slot="created", slot-scope="props") {{ props.item.created | date }}
     template(slot="rating", slot-scope="props")
       rating-field(:value="props.item.rating", readonly)
 </template>
@@ -48,7 +48,7 @@ export default {
           sortable: false,
         },
         {
-          text: this.$t('remediationInstructionStats.rating'),
+          text: this.$tc('common.rating'),
           value: 'rating',
           sortable: false,
         },

@@ -23,6 +23,8 @@
               :label="$t('scenario.workflow')",
               :continue-label="$t('scenario.remainingAction')"
             )
+          v-layout.mt-1(row)
+            v-textarea(v-field="action.comment", :label="$tc('common.comment')")
           v-tabs(v-model="activeTab", centered, slider-color="primary", color="transparent", fixed-tabs)
             v-tab(:class="{ 'error--text': hasGeneralError }") {{ $t('common.general') }}
             v-tab(:class="{ 'error--text': hasPatternsError }") {{ $tc('common.pattern') }}
@@ -44,7 +46,7 @@
 
 <script>
 import { formMixin, validationChildrenMixin } from '@/mixins/form';
-import confirmableFormMixin from '@/mixins/confirmable-form';
+import { confirmableFormMixinCreator } from '@/mixins/confirmable-form';
 
 import ActionParametersForm from '@/components/other/action/form/action-parameters-form.vue';
 
@@ -59,7 +61,7 @@ export default {
   mixins: [
     formMixin,
     validationChildrenMixin,
-    confirmableFormMixin({
+    confirmableFormMixinCreator({
       field: 'action',
       method: 'removeAction',
       cloning: true,

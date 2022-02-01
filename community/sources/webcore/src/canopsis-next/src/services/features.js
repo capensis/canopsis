@@ -1,11 +1,15 @@
-import { mergeWith, get, has, flow, uniq, isArray, isFunction } from 'lodash';
+import {
+  mergeWith, get, has, flow, uniq, isArray, isFunction,
+} from 'lodash';
 
 class Features {
   constructor() {
     const features = require.context('../features/', true, /index\.js$/);
 
-    this.features = features.keys().map(key => features(key).default).reduce((acc, plugin) =>
-      mergeWith(acc, plugin, (objValue, srcValue) => {
+    this.features = features
+      .keys()
+      .map(key => features(key).default)
+      .reduce((acc, plugin) => mergeWith(acc, plugin, (objValue, srcValue) => {
         if (isFunction(objValue) && isFunction(srcValue)) {
           return flow([objValue, srcValue]);
         }

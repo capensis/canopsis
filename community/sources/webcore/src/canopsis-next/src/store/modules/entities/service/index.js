@@ -31,12 +31,16 @@ export default createEntityModule({
     widgets: {},
   },
   getters: {
-    getListByWidgetId: (state, getters, rootState, rootGetters) => widgetId =>
-      rootGetters['entities/getList'](ENTITIES_TYPES.service, get(state.widgets[widgetId], 'allIds', [])),
+    getListByWidgetId: (state, getters, rootState, rootGetters) => widgetId => rootGetters['entities/getList'](
+      ENTITIES_TYPES.service,
+      get(state.widgets[widgetId], 'allIds', []),
+    ),
     getPendingByWidgetId: state => widgetId => get(state.widgets[widgetId], 'pending'),
     getErrorByWidgetId: state => widgetId => get(state.widgets[widgetId], 'error'),
-    getItem: (state, getters, rootState, rootGetters) => id =>
-      rootGetters['entities/getItem'](ENTITIES_TYPES.service, id),
+    getItem: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem'](
+      ENTITIES_TYPES.service,
+      id,
+    ),
   },
   mutations: {
     [types.FETCH_LIST](state, { widgetId }) {

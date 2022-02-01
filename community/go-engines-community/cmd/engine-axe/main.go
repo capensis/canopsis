@@ -2,35 +2,16 @@ package main
 
 import (
 	"context"
-	"flag"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/axe"
 	"os"
 	"os/signal"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/debug"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 )
 
 func main() {
-	flagVersion := flag.Bool("version", false, "version infos")
-
-	opts := Options{}
-
-	flag.BoolVar(&opts.ModeDebug, "d", false, "debug")
-	flag.BoolVar(&opts.FeaturePrintEventOnError, "printEventOnError", false, "Print event on processing error")
-	flag.BoolVar(&opts.FeatureHideResources, "featureHideResources", false, "Enable Hide Resources Management - deprecated")
-	flag.BoolVar(&opts.FeatureStatEvents, "featureStatEvents", false, "Send statistic events")
-	flag.StringVar(&opts.PublishToQueue, "publishQueue", canopsis.ServiceQueueName, "Publish event to this queue")
-	flag.StringVar(&opts.PostProcessorsDirectory, "postProcessorsDirectory", ".", "The path of the directory containing the post-processing plugins.")
-	flag.BoolVar(&opts.IgnoreDefaultTomlConfig, "ignoreDefaultTomlConfig", false, "load toml file values into database. - deprecated")
-	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
-	flag.BoolVar(&opts.WithRemediation, "withRemediation", false, "Start remediation instructions")
-	flag.Parse()
-
-	if *flagVersion {
-		canopsis.PrintVersionExit()
-	}
-
+	opts := axe.ParseOptions()
 	logger := log.NewLogger(opts.ModeDebug)
 
 	if opts.FeatureHideResources {
@@ -43,12 +24,6 @@ func main() {
 
 	if opts.IgnoreDefaultTomlConfig {
 		logger.Info().Msg("ignoreDefaultTomlConfig option is deprecated")
-	}
-
-	if opts.FeatureStatEvents {
-		logger.Info().Msg("Statistic Events ENABLED")
-	} else {
-		logger.Info().Msg("Statistic Events DISABLED")
 	}
 
 	trace := debug.Start(logger)

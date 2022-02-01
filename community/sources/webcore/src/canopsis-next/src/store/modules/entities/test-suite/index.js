@@ -26,11 +26,15 @@ export default {
     widgets: {},
   },
   getters: {
-    getListByWidgetId: (state, getters, rootState, rootGetters) => widgetId =>
-      rootGetters['entities/getList'](ENTITIES_TYPES.testSuite, get(state.widgets[widgetId], 'allIds', [])),
+    getListByWidgetId: (state, getters, rootState, rootGetters) => widgetId => rootGetters['entities/getList'](
+      ENTITIES_TYPES.testSuite,
+      get(state.widgets[widgetId], 'allIds', []),
+    ),
     getPendingByWidgetId: state => widgetId => get(state.widgets[widgetId], 'pending'),
-    getItem: (state, getters, rootState, rootGetters) => id =>
-      rootGetters['entities/getItem'](ENTITIES_TYPES.testSuite, id),
+    getItem: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem'](
+      ENTITIES_TYPES.testSuite,
+      id,
+    ),
   },
   mutations: {
     [types.FETCH_LIST](state, { widgetId }) {

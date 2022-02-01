@@ -1,7 +1,7 @@
 // http://nightwatchjs.org/guide#external-globals
 
 const nightWatchRecord = require('nightwatch-record');
-const nightWatchRecordConfig = require('./nightwatch-record.config.js');
+const nightWatchRecordConfig = require('./nightwatch-record.config');
 
 module.exports = {
   asyncHookTimeout: 50000,

@@ -1,0 +1,60 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`kpi-rating-filters Renders \`kpi-rating-filters\` with query 1`] = `
+<div
+  class="kpi-rating-toolbar"
+>
+  <div
+    class="layout ml-4 my-4 wrap"
+  >
+    <c-quick-date-interval-field-stub
+      class="mr-4"
+      value="[object Object]"
+    />
+    <c-filters-field-stub
+      class="mr-4 kpi-rating-toolbar__filters"
+    />
+    <kpi-rating-criteria-field-stub
+      class="mr-4 kpi-rating-toolbar__criteria"
+      mandatory="true"
+    />
+    <kpi-rating-metric-field-stub
+      class="mr-4 kpi-rating-toolbar__metric"
+      value="ticket_active_alarms"
+    />
+    <c-records-per-page-field-stub
+      value="5"
+    />
+  </div>
+</div>
+`;
+
+exports[`kpi-rating-filters Renders \`kpi-rating-filters\` with total user active metric 1`] = `
+<div
+  class="kpi-rating-toolbar"
+>
+  <div
+    class="layout ml-4 my-4 wrap"
+  >
+    <c-quick-date-interval-field-stub
+      class="mr-4"
+      value="[object Object]"
+    />
+    <c-filters-field-stub
+      class="mr-4 kpi-rating-toolbar__filters"
+      disabled="true"
+    />
+    <kpi-rating-criteria-field-stub
+      class="mr-4 kpi-rating-toolbar__criteria"
+      mandatory="true"
+    />
+    <kpi-rating-metric-field-stub
+      class="mr-4 kpi-rating-toolbar__metric"
+      value="total_user_activity"
+    />
+    <c-records-per-page-field-stub
+      value="5"
+    />
+  </div>
+</div>
+`;

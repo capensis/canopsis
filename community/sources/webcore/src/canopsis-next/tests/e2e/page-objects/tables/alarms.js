@@ -3,7 +3,6 @@
 const el = require('../../helpers/el');
 const { scopedPageObject } = require('../../helpers/page-object-creators');
 
-
 const commands = {
   clickLiveReportingOpenButton() {
     return this.customClick('@liveReportingButton');

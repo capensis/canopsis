@@ -20,11 +20,11 @@ export default {
   },
   methods: {
     mapColumnEntity({ label, value, ...column }) {
-      return ({
+      return {
         ...column,
         value,
         text: label,
-      });
+      };
     },
   },
 };

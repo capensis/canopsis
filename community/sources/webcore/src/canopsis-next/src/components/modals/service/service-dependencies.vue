@@ -16,6 +16,8 @@ import { get } from 'lodash';
 
 import { MODALS } from '@/constants';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
+
 import ServiceDependenciesTable from '@/components/other/service/table/service-dependencies.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -23,6 +25,7 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.serviceDependencies,
   components: { ServiceDependenciesTable, ModalWrapper },
+  mixins: [modalInnerMixin],
   computed: {
     title() {
       const type = this.config.impact

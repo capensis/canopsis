@@ -1,5 +1,5 @@
 <template lang="pug">
-  shared-actions-panel(:actions="actions.inline", :dropDownActions="actions.dropDown")
+  shared-actions-panel(:actions="actions.inline", :drop-down-actions="actions.dropDown")
 </template>
 
 <script>
@@ -11,7 +11,7 @@ import {
   ENTITIES_STATUSES,
   EVENT_ENTITY_TYPES,
   EVENT_ENTITY_STYLE,
-  WIDGETS_ACTIONS_TYPES,
+  ALARM_LIST_ACTIONS_TYPES,
   META_ALARMS_RULE_TYPES,
   REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
 } from '@/constants';
@@ -58,96 +58,94 @@ export default {
     },
   },
   data() {
-    const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
-
     return {
       actionsMap: {
         ack: {
-          type: alarmsListActionsTypes.ack,
+          type: ALARM_LIST_ACTIONS_TYPES.ack,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
           title: this.$t('alarmList.actions.titles.ack'),
           method: this.showAckModal,
         },
         fastAck: {
-          type: alarmsListActionsTypes.fastAck,
+          type: ALARM_LIST_ACTIONS_TYPES.fastAck,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.fastAck].icon,
           title: this.$t('alarmList.actions.titles.fastAck'),
           method: this.createFastAckEvent,
         },
         ackRemove: {
-          type: alarmsListActionsTypes.ackRemove,
+          type: ALARM_LIST_ACTIONS_TYPES.ackRemove,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ackRemove].icon,
           title: this.$t('alarmList.actions.titles.ackRemove'),
           method: this.showAckRemoveModal,
         },
         pbehaviorAdd: {
-          type: alarmsListActionsTypes.pbehaviorAdd,
+          type: ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorAdd].icon,
           title: this.$t('alarmList.actions.titles.pbehavior'),
           method: this.showAddPbehaviorModal,
         },
         snooze: {
-          type: alarmsListActionsTypes.snooze,
+          type: ALARM_LIST_ACTIONS_TYPES.snooze,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.snooze].icon,
           title: this.$t('alarmList.actions.titles.snooze'),
           method: this.showSnoozeModal,
         },
         pbehaviorList: {
-          type: alarmsListActionsTypes.pbehaviorList,
+          type: ALARM_LIST_ACTIONS_TYPES.pbehaviorList,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorList].icon,
           title: this.$t('alarmList.actions.titles.pbehaviorList'),
           method: this.showPbehaviorsListModal,
         },
         declareTicket: {
-          type: alarmsListActionsTypes.declareTicket,
+          type: ALARM_LIST_ACTIONS_TYPES.declareTicket,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.declareTicket].icon,
           title: this.$t('alarmList.actions.titles.declareTicket'),
           method: this.showActionModal(MODALS.createDeclareTicketEvent),
         },
         associateTicket: {
-          type: alarmsListActionsTypes.associateTicket,
+          type: ALARM_LIST_ACTIONS_TYPES.associateTicket,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
           title: this.$t('alarmList.actions.titles.associateTicket'),
           method: this.showActionModal(MODALS.createAssociateTicketEvent),
         },
         cancel: {
-          type: alarmsListActionsTypes.cancel,
+          type: ALARM_LIST_ACTIONS_TYPES.cancel,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
           title: this.$t('alarmList.actions.titles.cancel'),
           method: this.showCancelEventModal,
         },
         changeState: {
-          type: alarmsListActionsTypes.changeState,
+          type: ALARM_LIST_ACTIONS_TYPES.changeState,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.changeState].icon,
           title: this.$t('alarmList.actions.titles.changeState'),
           method: this.showActionModal(MODALS.createChangeStateEvent),
         },
         variablesHelp: {
-          type: alarmsListActionsTypes.variablesHelp,
+          type: ALARM_LIST_ACTIONS_TYPES.variablesHelp,
           icon: 'help',
           title: this.$t('alarmList.actions.titles.variablesHelp'),
           method: this.showVariablesHelperModal,
         },
         history: {
-          type: alarmsListActionsTypes.history,
+          type: ALARM_LIST_ACTIONS_TYPES.history,
           icon: 'history',
           title: this.$t('alarmList.actions.titles.history'),
           method: this.showHistoryModal,
         },
         comment: {
-          type: alarmsListActionsTypes.comment,
+          type: ALARM_LIST_ACTIONS_TYPES.comment,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.comment].icon,
           title: this.$t('alarmList.actions.titles.comment'),
           method: this.showCreateCommentModal,
         },
         manualMetaAlarmUngroup: {
-          type: alarmsListActionsTypes.manualMetaAlarmUngroup,
+          type: ALARM_LIST_ACTIONS_TYPES.manualMetaAlarmUngroup,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.manualMetaAlarmUngroup].icon,
           title: this.$t('alarmList.actions.titles.manualMetaAlarmUngroup'),
           method: this.showManualMetaAlarmUngroupModal,
         },
         executeInstruction: {
-          type: alarmsListActionsTypes.executeInstruction,
+          type: ALARM_LIST_ACTIONS_TYPES.executeInstruction,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.executeInstruction].icon,
           method: this.showExecuteInstructionModal,
         },
@@ -262,7 +260,7 @@ export default {
     },
   },
   methods: {
-    async showExecuteInstructionModal(assignedInstruction) {
+    showExecuteInstructionModal(assignedInstruction) {
       const refreshAlarm = () => this.refreshAlarmById(this.item._id);
 
       this.$modals.show({
@@ -270,7 +268,7 @@ export default {
         name: MODALS.executeRemediationInstruction,
         config: {
           assignedInstruction,
-          alarm: this.item,
+          alarmId: this.item._id,
           onOpen: refreshAlarm,
           onClose: refreshAlarm,
           onComplete: refreshAlarm,

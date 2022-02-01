@@ -11,12 +11,14 @@ import (
 
 func NewAdapter(client mongo.DbClient) Adapter {
 	return &mongoAdapter{
-		collection: client.Collection(mongo.EntityMongoCollection),
+		collection:      client.Collection(mongo.EntityMongoCollection),
+		alarmCollection: client.Collection(mongo.AlarmMongoCollection),
 	}
 }
 
 type mongoAdapter struct {
-	collection mongo.DbCollection
+	collection      mongo.DbCollection
+	alarmCollection mongo.DbCollection
 }
 
 func (a *mongoAdapter) GetAll(ctx context.Context) ([]EntityService, error) {
@@ -127,7 +129,32 @@ func (a *mongoAdapter) UpdateBulk(ctx context.Context, models []mongodriver.Writ
 	return err
 }
 
-func (a *mongoAdapter) GetCounters(
+func (a *mongoAdapter) GetOpenAlarmsOfServiceDependencies(
+	ctx context.Context,
+	serviceID string,
+) (mongo.Cursor, error) {
+	cursor, err := a.alarmCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"v.resolved": nil}},
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "d",
+			"foreignField": "_id",
+			"as":           "entity",
+		}},
+		{"$unwind": bson.M{"path": "$entity"}},
+		{"$match": bson.M{
+			"entity.enabled": true,
+			"entity.impact":  serviceID,
+		}},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return cursor, nil
+}
+
+func (a *mongoAdapter) GetServiceDependencies(
 	ctx context.Context,
 	serviceID string,
 ) (mongo.Cursor, error) {
@@ -135,22 +162,6 @@ func (a *mongoAdapter) GetCounters(
 		{"$match": bson.M{
 			"enabled": true,
 			"impact":  serviceID,
-		}},
-		{"$lookup": bson.M{
-			"from":         mongo.AlarmMongoCollection,
-			"localField":   "_id",
-			"foreignField": "d",
-			"as":           "alarm",
-		}},
-		{"$unwind": bson.M{"path": "$alarm"}},
-		{"$match": bson.M{
-			"$or": []bson.M{
-				{"alarm.v.resolved": nil},
-				{"alarm.v.resolved": bson.M{"$exists": false}},
-			},
-		}},
-		{"$replaceRoot": bson.M{
-			"newRoot": "$alarm",
 		}},
 	})
 	if err != nil {

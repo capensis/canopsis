@@ -5,42 +5,40 @@
         v-layout(align-center)
           v-flex
             date-time-picker-text-field(
-              data-test="intervalStart",
-              v-model="tstartDateString",
+              v-field="value.tstart",
               v-validate="tstartRules",
               :label="$t('common.startDate')",
-              :dateObjectPreparer="startDateObjectPreparer",
-              :roundHours="roundHours",
+              :date-object-preparer="startDateObjectPreparer",
+              :round-hours="roundHours",
               name="tstart",
               @update:objectValue="$emit('update:startObjectValue', $event)"
             )
         v-layout(align-center)
           v-flex
             date-time-picker-text-field(
-              data-test="intervalStop",
-              v-model="tstopDateString",
+              v-field="value.tstop",
               v-validate="tstopRules",
               :label="$t('common.endDate')",
-              :dateObjectPreparer="stopDateObjectPreparer",
-              :roundHours="roundHours",
+              :date-object-preparer="stopDateObjectPreparer",
+              :round-hours="roundHours",
               name="tstop",
               @update:objectValue="$emit('update:stopObjectValue', $event)"
             )
-      v-flex.pl-1(xs6, data-test="intervalRange")
+      v-flex.pl-1(xs6)
+        c-quick-date-interval-type-field(v-model="range")
         v-select(
-          v-model="range",
-          :items="quickRanges",
-          :label="$t('quickRanges.title')",
-          return-object
+          v-field="value.time_field",
+          :items="intervalFields",
+          :label="$t('quickRanges.timeField')",
+          clearable
         )
 </template>
 
 <script>
-import moment from 'moment';
+import { TIME_UNITS, ALARM_INTERVAL_FIELDS, DATETIME_FORMATS, DATETIME_INTERVAL_TYPES } from '@/constants';
 
-import { STATS_DURATION_UNITS, QUICK_RANGES, DATETIME_FORMATS } from '@/constants';
-
-import { prepareDateToObject, findRange } from '@/helpers/date/date-intervals';
+import { convertDateIntervalToDateObject } from '@/helpers/date/date-intervals';
+import { convertDateToStartOfUnitString, subtractUnitFromDate } from '@/helpers/date/date';
 
 import { formMixin } from '@/mixins/form';
 
@@ -75,18 +73,9 @@ export default {
     },
   },
   computed: {
-    stopDateObjectPreparer() {
-      return this.preparerDateToObjectGetter('stop');
-    },
-    startDateObjectPreparer() {
-      return this.preparerDateToObjectGetter('start');
-    },
     range: {
       get() {
-        const { tstart, tstop } = this.value;
-        const range = findRange(tstart, tstop);
-
-        return this.quickRanges.find(({ value }) => value === range.value);
+        return this.value;
       },
       set(range) {
         if (range.value !== this.range.value) {
@@ -97,17 +86,20 @@ export default {
 
           if (!newValue.tstop || !newValue.tstart) {
             newValue = {
-              periodUnit: STATS_DURATION_UNITS.hour,
+              periodUnit: TIME_UNITS.hour,
               periodValue: 1,
 
-              tstart: moment()
-                .subtract(1, STATS_DURATION_UNITS.hour)
-                .startOf(STATS_DURATION_UNITS.hour)
-                .format(DATETIME_FORMATS.dateTimePicker),
+              tstart: convertDateToStartOfUnitString(
+                subtractUnitFromDate(Date.now(), 1, TIME_UNITS.hour),
+                TIME_UNITS.hour,
+                DATETIME_FORMATS.dateTimePicker,
+              ),
 
-              tstop: moment()
-                .startOf(STATS_DURATION_UNITS.hour)
-                .format(DATETIME_FORMATS.dateTimePicker),
+              tstop: convertDateToStartOfUnitString(
+                Date.now(),
+                TIME_UNITS.hour,
+                DATETIME_FORMATS.dateTimePicker,
+              ),
             };
           }
 
@@ -119,39 +111,24 @@ export default {
       },
     },
 
-    quickRanges() {
-      return Object.values(QUICK_RANGES).map(range => ({
-        ...range,
-
-        text: this.$t(`quickRanges.types.${range.value}`),
+    intervalFields() {
+      return Object.values(ALARM_INTERVAL_FIELDS).map(value => ({
+        value,
+        text: value,
       }));
     },
 
-    tstartDateString: {
-      get() {
-        return this.value.tstart;
-      },
-      set(value) {
-        if (value !== this.value.tstart) {
-          this.updateField('tstart', value);
-        }
-      },
-    },
-
-    tstopDateString: {
-      get() {
-        return this.value.tstop;
-      },
-      set(value) {
-        if (value !== this.value.tstop) {
-          this.updateField('tstop', value);
-        }
-      },
+    unit() {
+      return this.roundHours ? TIME_UNITS.hour : TIME_UNITS.minute;
     },
   },
   methods: {
-    preparerDateToObjectGetter(type) {
-      return date => prepareDateToObject(date, type, this.roundHours ? 'hour' : 'minute');
+    stopDateObjectPreparer(date) {
+      return convertDateIntervalToDateObject(date, DATETIME_INTERVAL_TYPES.stop, this.unit);
+    },
+
+    startDateObjectPreparer(date) {
+      return convertDateIntervalToDateObject(date, DATETIME_INTERVAL_TYPES.start, this.unit);
     },
   },
 };

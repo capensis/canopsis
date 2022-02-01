@@ -15,7 +15,7 @@
     )
       template(slot="toolbar", slot-scope="props")
         v-flex
-          c-advanced-search(
+          c-advanced-search-field(
             :query.sync="query",
             :columns="columns",
             :tooltip="$t('search.contextAdvancedSearch')"
@@ -32,7 +32,7 @@
             :has-access-to-edit-filter="hasAccessToEditFilter",
             :has-access-to-user-filter="hasAccessToUserFilter",
             :has-access-to-list-filters="hasAccessToListFilters",
-            :entitiesType="$constants.ENTITIES_TYPES.entity",
+            :entities-type="$constants.ENTITIES_TYPES.entity",
             @input="updateSelectedFilter",
             @update:condition="updateSelectedCondition",
             @update:filters="updateFilters"
@@ -63,7 +63,6 @@
               type="top",
               @input="updateQueryPage"
             )
-
       template(v-for="column in columns", :slot="column.value", slot-scope="props")
         entity-column-cell(
           :entity="props.item",
@@ -72,7 +71,6 @@
         )
       template(slot="actions", slot-scope="props")
         actions-panel(:item="props.item", :is-editing-mode="isEditingMode")
-
       template(slot="expand", slot-scope="props")
         entities-list-expand-panel(
           :item="props.item",
@@ -80,9 +78,9 @@
           :tab-id="tabId",
           :columns-filters="columnsFilters"
         )
-
       template(slot="mass-actions", slot-scope="props")
         mass-actions-panel.ml-3(:items="props.selected")
+
     c-table-pagination(
       :total-items="contextEntitiesMeta.total_count",
       :rows-per-page="query.limit",
@@ -104,7 +102,7 @@ import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
-import widgetExportMixinCreator from '@/mixins/widget/export';
+import { exportCsvMixinCreator } from '@/mixins/widget/export';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
@@ -135,7 +133,7 @@ export default {
     entitiesAlarmColumnsFiltersMixin,
     permissionsWidgetsContextEntityFilters,
     permissionsWidgetsContextEntityCategory,
-    widgetExportMixinCreator({
+    exportCsvMixinCreator({
       createExport: 'createContextExport',
       fetchExport: 'fetchContextExport',
       fetchExportFile: 'fetchContextCsvFile',
@@ -191,9 +189,7 @@ export default {
   },
   methods: {
     updateNoEvents(noEvents) {
-      this.updateWidgetPreferencesInUserPreference({
-        ...this.userPreference.widget_preferences,
-
+      this.updateContentInUserPreference({
         noEvents,
       });
 
@@ -207,9 +203,7 @@ export default {
     updateCategory(category) {
       const categoryId = category && category._id;
 
-      this.updateWidgetPreferencesInUserPreference({
-        ...this.userPreference.widget_preferences,
-
+      this.updateContentInUserPreference({
         category: categoryId,
       });
 
@@ -262,7 +256,6 @@ export default {
       return query;
     },
 
-
     fetchList() {
       if (this.hasColumns) {
         const params = this.getQuery();
@@ -287,8 +280,9 @@ export default {
         ? widgetExportColumns
         : widgetColumns;
 
-      this.exportWidgetAsCsv({
+      this.exportAsCsv({
         name: `${this.widget._id}-${new Date().toLocaleString()}`,
+        widgetId: this.widget._id,
         data: {
           fields: columns.map(({ label, value }) => ({ label, name: value })),
           search: query.search,

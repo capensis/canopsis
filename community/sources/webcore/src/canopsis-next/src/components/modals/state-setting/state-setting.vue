@@ -19,10 +19,10 @@ import { MODALS } from '@/constants';
 
 import { stateSettingToForm, formToStateSetting } from '@/helpers/forms/state-setting';
 
+import { modalInnerMixin } from '@/mixins/modal/inner';
 import { authMixin } from '@/mixins/auth';
-import { validationErrorsMixin } from '@/mixins/form/validation-errors';
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import StateSettingForm from '@/components/other/state-setting/form/state-setting-form.vue';
 
@@ -38,10 +38,10 @@ export default {
     ModalWrapper,
   },
   mixins: [
+    modalInnerMixin,
     authMixin,
-    validationErrorsMixin(),
-    submittableMixin(),
-    confirmableModalMixin(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     return {
@@ -58,15 +58,11 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        try {
-          if (this.config.action) {
-            await this.config.action(formToStateSetting(this.form));
-          }
-
-          this.$modals.hide();
-        } catch (err) {
-          this.setFormErrors(err);
+        if (this.config.action) {
+          await this.config.action(formToStateSetting(this.form));
         }
+
+        this.$modals.hide();
       }
     },
   },

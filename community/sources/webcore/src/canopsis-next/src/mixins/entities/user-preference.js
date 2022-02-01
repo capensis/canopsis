@@ -1,14 +1,8 @@
-import omit from 'lodash/omit';
 import { createNamespacedHelpers } from 'vuex';
-
-import { generateUserPreferenceByWidgetAndUser } from '@/helpers/entities';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('userPreference');
 
-/**
- * @mixin Helpers for the userPreference entity
- */
-export default {
+export const entitiesUserPreferenceMixin = {
   computed: {
     ...mapGetters({
       getUserPreferenceByWidget: 'getItemByWidget',
@@ -20,17 +14,20 @@ export default {
   },
   methods: {
     ...mapActions({
-      fetchUserPreferencesList: 'fetchList',
-      fetchUserPreferenceByWidgetId: 'fetchItemByWidgetId',
-      fetchUserPreferenceByWidgetIdWithoutStore: 'fetchItemByWidgetIdWithoutStore',
-      createUserPreference: 'create',
+      fetchUserPreference: 'fetchItem',
+      fetchUserPreferenceWithoutStore: 'fetchItemWithoutStore',
+      updateUserPreference: 'update',
     }),
 
-    updateWidgetPreferencesInUserPreference(widgetPreferences = {}) {
-      return this.createUserPreference({
-        userPreference: {
+    updateContentInUserPreference(content = {}) {
+      return this.updateUserPreference({
+        data: {
           ...this.userPreference,
-          widget_preferences: widgetPreferences,
+
+          content: {
+            ...this.userPreference.content,
+            ...content,
+          },
         },
       });
     },
@@ -43,20 +40,17 @@ export default {
      */
     copyUserPreferencesByWidgetsIdsMappings(widgetsIdsMappings) {
       return Promise.all(widgetsIdsMappings.map(async ({ oldId, newId }) => {
-        const userPreference = await this.fetchUserPreferenceByWidgetIdWithoutStore({ widgetId: oldId });
+        const userPreference = await this.fetchUserPreferenceWithoutStore({ id: oldId });
 
         if (!userPreference) {
           return Promise.resolve();
         }
 
-        const newUserPreference = generateUserPreferenceByWidgetAndUser({
-          _id: newId,
-        }, this.currentUser);
+        return this.updateUserPreference({
+          data: {
+            ...userPreference,
 
-        return this.createUserPreference({
-          userPreference: {
-            ...newUserPreference,
-            ...omit(userPreference, ['_id', 'widget_id']),
+            widget: newId,
           },
         });
       }));

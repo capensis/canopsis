@@ -6,7 +6,11 @@
     viewBox="0 0 24 24"
   >
     <g>
-      <rect fill="none" height="24" width="24" />
+      <rect
+        fill="none"
+        height="24"
+        width="24"
+      />
     </g>
     <g>
       <g>

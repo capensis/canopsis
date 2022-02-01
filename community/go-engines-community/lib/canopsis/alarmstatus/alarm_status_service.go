@@ -4,6 +4,7 @@ package alarmstatus
 
 import (
 	"context"
+	"github.com/rs/zerolog"
 	"sync"
 	"time"
 
@@ -17,16 +18,22 @@ type Service interface {
 	ComputeStatus(alarm types.Alarm, entity types.Entity) types.CpsNumber
 }
 
-func NewService(flappingRuleAdapter flappingrule.Adapter, configProvider config.AlarmConfigProvider) Service {
+func NewService(
+	flappingRuleAdapter flappingrule.Adapter,
+	configProvider config.AlarmConfigProvider,
+	logger zerolog.Logger,
+) Service {
 	return &service{
 		flappingRuleAdapter: flappingRuleAdapter,
 		configProvider:      configProvider,
+		logger:              logger,
 	}
 }
 
 type service struct {
 	flappingRuleAdapter flappingrule.Adapter
 	configProvider      config.AlarmConfigProvider
+	logger              zerolog.Logger
 
 	flappingRulesMx sync.RWMutex
 	flappingRules   []flappingrule.Rule
@@ -40,6 +47,12 @@ func (s *service) Load(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+
+	ids := make([]string, len(rules))
+	for i, rule := range rules {
+		ids[i] = rule.ID
+	}
+	s.logger.Debug().Strs("rules", ids).Msg("load flapping rules")
 
 	s.flappingRules = rules
 	return nil
@@ -72,6 +85,7 @@ func (s *service) isFlapping(alarm types.Alarm, entity types.Entity) bool {
 	s.flappingRulesMx.RLock()
 	defer s.flappingRulesMx.RUnlock()
 
+	now := types.NewCpsTime()
 	alarmWithEntity := types.AlarmWithEntity{
 		Alarm:  alarm,
 		Entity: entity,
@@ -80,9 +94,12 @@ func (s *service) isFlapping(alarm types.Alarm, entity types.Entity) bool {
 	freq := 0
 	for _, rule := range s.flappingRules {
 		if rule.Matches(alarmWithEntity) {
+			before := rule.Duration.SubFrom(now)
+
 			for i := len(alarm.Value.Steps) - 1; i >= 0; i-- {
 				step := alarm.Value.Steps[i]
-				if time.Since(step.Timestamp.Time) >= rule.Duration.Duration() {
+
+				if step.Timestamp.Before(before) {
 					break
 				}
 

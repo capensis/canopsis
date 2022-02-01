@@ -6,7 +6,6 @@ env2cfg makes configuration in canopsis easier:
 
 # export CPS_MONGO_URL="<valid_mongodb_url>"
 # export CPS_REDIS_URL="redis://<ip>:<port>/<db>"
-# export CPS_INFLUX_URL="<valid_influxdb_url>"
 # export CPS_AMQP_URL="<valid_amqp_url>"
 # env2cfg
 
@@ -41,7 +40,6 @@ class Env2Cfg(object):
     CPS_AMQP_URL = 'CPS_AMQP_URL'
     CPS_REDIS_URL = 'CPS_REDIS_URL'
     CPS_MONGO_URL = 'CPS_MONGO_URL'
-    CPS_INFLUX_URL = 'CPS_INFLUX_URL'
 
     MONGO_URI_KEY = 'db_uri'
 
@@ -80,7 +78,6 @@ class Env2Cfg(object):
         """
         self._check_empty(self.CPS_AMQP_URL)
         self._check_empty(self.CPS_REDIS_URL)
-        self._check_empty(self.CPS_INFLUX_URL)
         self.__check_mongo_dsn()
 
     @staticmethod
@@ -93,32 +90,6 @@ class Env2Cfg(object):
         dirs = os.path.dirname(fpath)
         if not os.path.isdir(dirs):
             os.makedirs(dirs)
-
-    def _update_influx(self):
-        """
-        Write the InfluxDB configuration.
-        """
-        pu = urlparse(os.environ.get(self.CPS_INFLUX_URL))
-
-        p = pjoin(root_path, 'etc', 'influx', 'storage.conf')
-
-        self._makedirs(p)
-
-        influx = ConfigParser()
-
-        influx.read(p)
-
-        if 'DATABASE' not in influx.sections():
-            influx.add_section('DATABASE')
-
-        influx.set('DATABASE', 'host', 'localhost' if pu.hostname is None else pu.hostname)
-        influx.set('DATABASE', 'port', '8086' if pu.port is None else str(pu.port))
-        influx.set('DATABASE', 'db', 'canopsis' if pu.path is '' else pu.path[1:])
-        influx.set('DATABASE', 'user', 'cpsinflux' if pu.username is None else pu.username)
-        influx.set('DATABASE', 'pwd', 'canopsis' if pu.password is None else pu.password)
-
-        with open(p, 'w') as fh:
-            influx.write(fh)
 
     def _update_amqp(self):
         """
@@ -227,7 +198,6 @@ class Env2Cfg(object):
         self._update_amqp()
         self._update_mongo()
         self._update_redis()
-        self._update_influx()
 
     @staticmethod
     def main():

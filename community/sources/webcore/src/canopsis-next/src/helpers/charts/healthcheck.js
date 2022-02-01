@@ -31,5 +31,6 @@ import { HEALTHCHECK_NETWORK_GRAPH_OPTIONS } from '@/constants';
  * @param {number} factor
  * @returns {number}
  */
-export const getHealthcheckNodeRenderedPositionDiff = (factor = 1) =>
-  HEALTHCHECK_NETWORK_GRAPH_OPTIONS.nodeSpace * HEALTHCHECK_NETWORK_GRAPH_OPTIONS.spacingFactor * factor;
+export const getHealthcheckNodeRenderedPositionDiff = (factor = 1) => HEALTHCHECK_NETWORK_GRAPH_OPTIONS.nodeSpace
+  * HEALTHCHECK_NETWORK_GRAPH_OPTIONS.spacingFactor
+  * factor;

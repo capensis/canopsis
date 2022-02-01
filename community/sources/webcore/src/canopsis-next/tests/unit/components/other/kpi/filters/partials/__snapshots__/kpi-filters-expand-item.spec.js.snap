@@ -1,0 +1,83 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`kpi-filters-expand-item Renders \`kpi-filters-expand-item\` with filter 1`] = `
+<div>
+  <div
+    class="v-tabs"
+  >
+    <div
+      class="v-tabs__bar theme--dark secondary lighten-1"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+      <div
+        class="v-tabs__wrapper"
+      >
+        <div
+          class="v-tabs__container v-tabs__container--centered"
+        >
+          <div
+            class="v-tabs__slider-wrapper"
+            style="transition: none;"
+          >
+            <div
+              class="v-tabs__slider primary"
+            />
+          </div>
+          <div
+            class="v-tabs__div"
+          >
+            <a
+              class="v-tabs__item v-tabs__item--active"
+            >
+              common.pattern:2
+            </a>
+          </div>
+        </div>
+      </div>
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+    <!---->
+  </div>
+  <div
+    class="layout pa-3 secondary lighten-2"
+  >
+    <div
+      class="flex xs12"
+    >
+      <div
+        class="pa-3 v-card v-sheet theme--light"
+      >
+        <div
+          class="v-window pt-2"
+        >
+          <div
+            class="v-window__container"
+          >
+            <transition-stub
+              name=""
+            >
+              <div
+                class="v-window-item"
+              >
+                <div
+                  class="flex offset-xs2 xs8"
+                >
+                  <c-patterns-field-stub
+                    disabled="disabled"
+                    entity="entity"
+                    value="[object Object]"
+                  />
+                </div>
+              </div>
+            </transition-stub>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

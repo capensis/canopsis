@@ -15,7 +15,7 @@
 import CategoryLinks from './category-links.vue';
 
 export default {
-  name: 'categories-list',
+  name: 'CategoriesList',
   components: { CategoryLinks },
   props: {
     categories: {

@@ -82,12 +82,14 @@ Feature: execute action on trigger
             "ticket": {
               "_t": "assocticket",
               "a": "root",
+              "user_id": "root",
               "m": "test-ticket-action-1",
               "val": "test-ticket-action-1"
             },
             "ack": {
               "_t": "ack",
               "a": "root",
+              "user_id": "root",
               "m": "test-output-action-1-test-connector-action-1"
             },
             "steps": [
@@ -100,11 +102,13 @@ Feature: execute action on trigger
               {
                 "_t": "assocticket",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-ticket-action-1"
               },
               {
                 "_t": "ack",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-output-action-1-test-connector-action-1"
               }
             ],
@@ -134,7 +138,7 @@ Feature: execute action on trigger
       "priority": 21,
       "triggers": ["create"],
       "delay": {
-        "seconds": 5,
+        "value": 5,
         "unit": "s"
       },
       "actions": [
@@ -206,12 +210,14 @@ Feature: execute action on trigger
             "ticket": {
               "_t": "assocticket",
               "a": "root",
+              "user_id": "root",
               "m": "test-ticket-action-2",
               "val": "test-ticket-action-2"
             },
             "ack": {
               "_t": "ack",
               "a": "root",
+              "user_id": "root",
               "m": "test-output-action-2-test-connector-action-2"
             },
             "steps": [
@@ -224,11 +230,13 @@ Feature: execute action on trigger
               {
                 "_t": "assocticket",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-ticket-action-2"
               },
               {
                 "_t": "ack",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-output-action-2-test-connector-action-2"
               }
             ],
@@ -336,12 +344,14 @@ Feature: execute action on trigger
             "ticket": {
               "_t": "assocticket",
               "a": "root",
+              "user_id": "root",
               "m": "test-ticket-action-3",
               "val": "test-ticket-action-3"
             },
             "ack": {
               "_t": "ack",
               "a": "root",
+              "user_id": "root",
               "m": "test-output-action-3-test-connector-action-3"
             },
             "steps": [
@@ -354,11 +364,13 @@ Feature: execute action on trigger
               {
                 "_t": "assocticket",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-ticket-action-3"
               },
               {
                 "_t": "ack",
                 "a": "root",
+                "user_id": "root",
                 "m": "test-output-action-3-test-connector-action-3"
               }
             ],

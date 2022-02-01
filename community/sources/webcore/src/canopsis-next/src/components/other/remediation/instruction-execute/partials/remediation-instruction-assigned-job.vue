@@ -18,12 +18,12 @@
           @click="$emit('execute-job', job)"
         ) {{ job.name }}
     td.text-xs-center
-      span(v-if="!isCancelledJob") {{ job.started_at | date('long', true, '-') }}
+      span(v-if="!isCancelledJob") {{ job.started_at | date('long', '-') }}
       span(v-else) -
     progress-cell.text-xs-center(:pending="shownLaunchedPendingJob")
-      span {{ job.launched_at | date('long', true, '-') }}
+      span {{ job.launched_at | date('long', '-') }}
     progress-cell.text-xs-center(:pending="shownCompletedPendingJob")
-      span {{ job.completed_at | date('long', true, '-') }}
+      span {{ job.completed_at | date('long', '-') }}
 </template>
 
 <script>

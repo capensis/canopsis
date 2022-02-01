@@ -5,7 +5,6 @@
 </template>
 
 <script>
-
 /**
  * Wrapper for each modal window
  *

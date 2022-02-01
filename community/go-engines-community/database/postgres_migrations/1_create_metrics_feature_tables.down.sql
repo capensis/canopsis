@@ -1,0 +1,18 @@
+BEGIN;
+DROP TABLE IF EXISTS total_alarm_number;
+DROP TABLE IF EXISTS non_displayed_alarm_number;
+DROP TABLE IF EXISTS pbh_alarm_number;
+DROP TABLE IF EXISTS instruction_alarm_number;
+DROP TABLE IF EXISTS correlation_alarm_number;
+DROP TABLE IF EXISTS ticket_alarm_number;
+DROP TABLE IF EXISTS ack_alarm_number;
+DROP TABLE IF EXISTS cancel_ack_alarm_number;
+DROP TABLE IF EXISTS ack_duration;
+DROP TABLE IF EXISTS resolve_duration;
+DROP TABLE IF EXISTS user_logins;
+DROP TABLE IF EXISTS user_activity;
+DROP TABLE IF EXISTS sli_duration;
+DROP TABLE IF EXISTS entities;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS metrics_criteria;
+COMMIT;

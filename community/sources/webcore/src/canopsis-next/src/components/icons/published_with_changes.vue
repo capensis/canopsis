@@ -16,7 +16,6 @@
       fill="#757575"
     />
   </svg>
-
 </template>
 
 <style scoped>

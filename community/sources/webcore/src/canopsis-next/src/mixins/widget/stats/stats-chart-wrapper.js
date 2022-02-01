@@ -1,5 +1,9 @@
 import { STATS_TYPES } from '@/constants';
 
+import { convertDateToString } from '@/helpers/date/date';
+import { convertNumberToRoundedPercentString } from '@/helpers/string';
+import { convertDurationToString } from '@/helpers/date/duration';
+
 import widgetStatsQueryMixin from './stats-query';
 
 export default {
@@ -28,7 +32,8 @@ export default {
          We then give it to the date filter, to display it with a date format
          */
         return this.stats[stats[0]].sum.map((value) => {
-          const start = this.$options.filters.date(value.start, 'medium', true);
+          const start = convertDateToString(value.start, 'medium');
+
           return [start];
         });
       }
@@ -130,11 +135,11 @@ export default {
 
     tooltipLabel(tooltipItem, data) {
       const PROPERTIES_FILTERS_MAP = {
-        [STATS_TYPES.stateRate.value]: value => this.$options.filters.percentage(value),
-        [STATS_TYPES.ackTimeSla.value]: value => this.$options.filters.percentage(value),
-        [STATS_TYPES.resolveTimeSla.value]: value => this.$options.filters.percentage(value),
-        [STATS_TYPES.timeInState.value]: value => this.$options.filters.duration(value),
-        [STATS_TYPES.mtbf.value]: value => this.$options.filters.duration(value),
+        [STATS_TYPES.stateRate.value]: convertNumberToRoundedPercentString,
+        [STATS_TYPES.ackTimeSla.value]: convertNumberToRoundedPercentString,
+        [STATS_TYPES.resolveTimeSla.value]: convertNumberToRoundedPercentString,
+        [STATS_TYPES.timeInState.value]: convertDurationToString,
+        [STATS_TYPES.mtbf.value]: convertDurationToString,
       };
 
       const { stats } = this.query;

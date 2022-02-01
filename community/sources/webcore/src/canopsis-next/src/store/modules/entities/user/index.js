@@ -10,7 +10,6 @@ export const types = {
   FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
 };
 
-
 export default createEntityModule({
   route: API_ROUTES.users,
   entityType: ENTITIES_TYPES.user,

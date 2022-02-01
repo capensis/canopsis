@@ -1,5 +1,6 @@
 import Vue from 'vue';
-import moment from 'moment';
+
+import { setDateLocale } from '@/helpers/date/date';
 
 import { DEFAULT_LOCALE, LOCALE_PRIORITIES } from '@/config';
 
@@ -22,8 +23,10 @@ export default {
   actions: {
     setLocale({ state, commit }, { locale = DEFAULT_LOCALE, priority = LOCALE_PRIORITIES.default }) {
       if (state.localePriority <= priority) {
-        moment.locale(locale);
+        setDateLocale(locale);
+
         Vue.set(i18n, 'locale', locale);
+
         Vue.$dayspan.setLocale(locale);
         Vue.$dayspan.refreshTimes(true);
 

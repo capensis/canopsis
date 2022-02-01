@@ -3,6 +3,16 @@ import { isEmpty, isString } from 'lodash';
 import { FILTER_DEFAULT_VALUES, FILTER_MONGO_OPERATORS } from '@/constants';
 
 /**
+ * @typedef {Object} FilterWithTitle
+ * @property {string} title
+ * @property {Object} filter
+ */
+
+/**
+ * @typedef {FilterWithTitle | Object} Filter
+ */
+
+/**
  * Prepare user main filter to query filter
  *
  * @param {Object|Array} [filterObject = {}]
@@ -46,7 +56,7 @@ export function getMainFilterAndCondition(widget, userPreference) {
     mainFilter: userMainFilter,
     mainFilterCondition: userMainFilterCondition = FILTER_MONGO_OPERATORS.and,
     mainFilterUpdatedAt: userMainFilterUpdatedAt = 0,
-  } = userPreference.widget_preferences;
+  } = userPreference.content;
 
   const {
     mainFilter: widgetMainFilter,
@@ -57,7 +67,7 @@ export function getMainFilterAndCondition(widget, userPreference) {
   let mainFilter = userMainFilter;
   let condition = userMainFilterCondition;
 
-  if (isEmpty(mainFilter) && !isEmpty(widgetMainFilter) && widgetMainFilterUpdatedAt >= userMainFilterUpdatedAt) {
+  if (!isEmpty(widgetMainFilter) && widgetMainFilterUpdatedAt >= userMainFilterUpdatedAt) {
     mainFilter = widgetMainFilter;
     condition = widgetMainFilterCondition;
   }

@@ -4,10 +4,10 @@ import { EXPORT_STATUSES } from '@/constants';
 import { saveCsvFile } from '@/helpers/file/files';
 
 /**
- * @typedef {Object} ExportMixin
+ * @typedef {Object} ExportCsvMixin
  * @property {Object} methods
- * @property {function} methods.exportWidgetAsCsv
- * @property {function} methods.generateWidgetFile
+ * @property {function} methods.exportAsCsv
+ * @property {function} methods.generateFile
  * @property {function} methods.waitGeneratingCsvFile
  */
 
@@ -17,35 +17,33 @@ import { saveCsvFile } from '@/helpers/file/files';
  * @param {string} createExport
  * @param {string} fetchExportFile
  * @param {string} fetchExport
- * @returns {ExportMixin}
+ * @returns {ExportCsvMixin}
  */
-export default ({ createExport, fetchExport, fetchExportFile }) => ({
+export const exportCsvMixinCreator = ({ createExport, fetchExport, fetchExportFile }) => ({
   methods: {
-    async generateWidgetFile({ data } = {}) {
-      const widgetId = this.widget._id;
+    async generateFile({ data, ...params }) {
+      const { _id: id } = await this[createExport]({ data, ...params });
 
-      const { _id: id } = await this[createExport]({ data, widgetId });
+      await this.waitGeneratingCsvFile({ id, ...params });
 
-      await this.waitGeneratingCsvFile({ id, widgetId });
-
-      return this[fetchExportFile]({ id, widgetId });
+      return this[fetchExportFile]({ id, ...params });
     },
 
-    async exportWidgetAsCsv({ data, name } = {}) {
+    async exportAsCsv({ data, name, ...params }) {
       try {
-        const file = await this.generateWidgetFile({ data });
+        const file = await this.generateFile({ data, ...params });
 
         saveCsvFile(file, name);
       } catch (err) {
-        this.$popups.error({ text: err.error || this.$t('errors.default') });
+        this.$popups.error({ text: err?.error ?? this.$t('errors.default') });
       }
     },
 
-    waitGeneratingCsvFile({ id, widgetId }) {
+    waitGeneratingCsvFile({ id, ...params }) {
       return new Promise((resolve, reject) => {
         setTimeout(async () => {
           try {
-            const exportData = await this[fetchExport]({ id, widgetId });
+            const exportData = await this[fetchExport]({ id, ...params });
 
             if (exportData.status === EXPORT_STATUSES.completed) {
               return resolve(exportData);
@@ -55,7 +53,7 @@ export default ({ createExport, fetchExport, fetchExportFile }) => ({
               return reject();
             }
 
-            return resolve(this.waitGeneratingCsvFile({ id, widgetId }));
+            return resolve(this.waitGeneratingCsvFile({ id, ...params }));
           } catch (err) {
             return reject(err);
           }

@@ -15,7 +15,8 @@
           v-field="form.instruction.rate_frequency",
           :disabled="!form.instruction.rate",
           :required="form.instruction.rate",
-          :label="$t('notificationSettings.instruction.duration')"
+          :label="$t('notificationSettings.instruction.duration')",
+          long
         )
 </template>
 

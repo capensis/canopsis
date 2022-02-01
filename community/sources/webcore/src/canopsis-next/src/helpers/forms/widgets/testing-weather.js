@@ -2,7 +2,7 @@ import { DEFAULT_PERIODIC_REFRESH, TEST_CASE_FILE_MASK, WIDGET_TYPES } from '@/c
 
 import { addKeyInEntities } from '@/helpers/entities';
 import { widgetToForm } from '@/helpers/forms/widgets/common';
-import { durationWithEnabledToForm, formToDurationWithEnabled } from '@/helpers/date/duration';
+import { durationWithEnabledToForm } from '@/helpers/date/duration';
 
 /**
  * @typedef {string} Storage
@@ -33,13 +33,12 @@ import { durationWithEnabledToForm, formToDurationWithEnabled } from '@/helpers/
 
 /**
  * @typedef {TestingWeatherWidgetParameters} TestingWeatherWidgetParametersForm
- * @property {DurationWithEnabledForm} periodic_refresh
  * @property {StorageForm[]} screenshot_directories
  * @property {StorageForm[]} video_directories
  */
 
 /**
- * @typedef {TestingWeatherWidget} TestingWeatherWidgetForm
+ * @typedef {Widget} TestingWeatherWidgetForm
  * @property {TestingWeatherWidgetParametersForm} parameters
  */
 
@@ -58,7 +57,7 @@ const storagesToFormStorages = (storages = []) => addKeyInEntities(storages.map(
  * @return {TestingWeatherWidgetParametersForm}
  */
 const testingWeatherWidgetParametersToForm = (parameters = {}) => ({
-  periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh || DEFAULT_PERIODIC_REFRESH),
+  periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
   directory: parameters.directory || '',
   is_api: !!parameters.is_api,
   screenshot_directories: storagesToFormStorages(parameters.screenshot_directories),
@@ -95,17 +94,16 @@ const formStoragesToStorages = (storages = []) => storages.map(({ directory }) =
 /**
  * Convert role form to role object
  *
- * @param {TestingWeatherWidgetForm} [form = {}]
+ * @param {TestingWeatherWidgetForm} form
  * @returns {TestingWeatherWidget}
  */
-export const formToTestingWeatherWidget = (form = {}) => {
+export const formToTestingWeatherWidget = (form) => {
   const { parameters } = form;
 
   return {
     ...form,
     parameters: {
       ...parameters,
-      periodic_refresh: formToDurationWithEnabled(parameters.periodic_refresh),
       screenshot_directories: formStoragesToStorages(parameters.screenshot_directories),
       video_directories: formStoragesToStorages(parameters.video_directories),
     },

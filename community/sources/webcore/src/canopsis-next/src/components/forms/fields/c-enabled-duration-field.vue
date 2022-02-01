@@ -5,7 +5,6 @@
         v-validate,
         v-field="duration.enabled",
         :label="label",
-        :disabled="hasDuration",
         :error-messages="errors.collect(enabledFieldName)",
         :name="enabledFieldName",
         color="primary"
@@ -68,10 +67,6 @@ export default {
         value,
         text: this.$tc(text, this.duration.value),
       }));
-    },
-
-    hasDuration() {
-      return !this.duration.value;
     },
   },
   created() {
