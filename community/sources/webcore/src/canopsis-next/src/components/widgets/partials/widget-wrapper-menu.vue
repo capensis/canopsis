@@ -45,7 +45,7 @@ export default {
       this.$sidebar.show({
         name: SIDE_BARS_BY_WIDGET_TYPES[this.widget.type],
         config: {
-          widget: this.widget,
+          widget: { ...this.widget, tab: this.tab._id },
         },
       });
     },
