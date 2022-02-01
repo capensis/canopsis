@@ -4,9 +4,9 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
 import { mockModals } from '@unit/utils/mock-hooks';
-import ServiceDependencies from '@/components/other/service/table/service-dependencies.vue';
-import CTreeviewDataTable from '@/components/common/table/c-treeview-data-table.vue';
 import { ENTITY_TYPES, MODALS } from '@/constants';
+import CTreeviewDataTable from '@/components/common/table/c-treeview-data-table.vue';
+import ServiceDependencies from '@/components/other/service/table/service-dependencies.vue';
 
 const localVue = createVueInstance();
 
