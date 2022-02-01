@@ -6,8 +6,9 @@ import { createMockedStoreModules } from '@unit/utils/store';
 import { fakeStaticAlarms } from '@unit/data/alarm';
 import { alarmListWidgetToForm } from '@/helpers/forms/widgets/alarm';
 
-import GroupAlarmsList from '@/components/widgets/alarm/group-alarms-list.vue';
 import { ALARMS_OPENED_VALUES, SORT_ORDERS } from '@/constants';
+
+import GroupAlarmsList from '@/components/widgets/alarm/group-alarms-list.vue';
 
 jest.mock('file-saver', () => ({
   saveAs: jest.fn(),
