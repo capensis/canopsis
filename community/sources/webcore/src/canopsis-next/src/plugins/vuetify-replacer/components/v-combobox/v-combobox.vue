@@ -79,8 +79,8 @@ export default {
           }
 
           consoleWarn(
-            `${propsJoined} ${multiple ? 'are' : 'is'} deprecated, use ` +
-            `${separator}${onlyBools ? '' : ':'}menu-props="${replacement}"${separator} instead`,
+            `${propsJoined} ${multiple ? 'are' : 'is'} deprecated, use `
+            + `${separator}${onlyBools ? '' : ':'}menu-props="${replacement}"${separator} instead`,
             this,
           );
         }
@@ -94,9 +94,9 @@ export default {
         /**
          * TODO: make this a computed property or helper or something
          */
-        this.attach === '' || // If used as a boolean prop (<v-menu attach>)
-        this.attach === true || // If bound to a boolean (<v-menu :attach="true">)
-        this.attach === 'attach' // If bound as boolean prop in pug (v-menu(attach))
+        this.attach === '' // If used as a boolean prop (<v-menu attach>)
+        || this.attach === true // If bound to a boolean (<v-menu :attach="true">)
+        || this.attach === 'attach' // If bound as boolean prop in pug (v-menu(attach))
       ) {
         props.attach = this.$el;
       } else {

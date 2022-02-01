@@ -1,7 +1,7 @@
 <template lang="pug">
   .fab
     v-layout(column)
-      c-refresh-btn(@click="$emit('refresh')")
+      c-refresh-btn(@click="$listeners.refresh")
       v-tooltip(v-if="hasAccess && $listeners.create", left)
         v-btn(
           :dark="dark",

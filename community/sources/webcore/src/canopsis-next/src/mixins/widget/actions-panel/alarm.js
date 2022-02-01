@@ -16,7 +16,6 @@ import { authMixin } from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
 
 /**
  * @mixin Mixin for the alarms list actions panel, show modal of the action
@@ -27,7 +26,6 @@ export const widgetActionsPanelAlarmMixin = {
     queryMixin,
     eventActionsAlarmMixin,
     entitiesPbehaviorMixin,
-    entitiesRemediationInstructionExecutionMixin,
   ],
   methods: {
     createFastAckEvent() {

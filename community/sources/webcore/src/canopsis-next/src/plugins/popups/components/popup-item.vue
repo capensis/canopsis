@@ -72,7 +72,7 @@ export default {
     },
   },
   watch: {
-    isVisible(value) {
+    visible(value) {
       if (!value) {
         this.removeWithTimeout();
       }

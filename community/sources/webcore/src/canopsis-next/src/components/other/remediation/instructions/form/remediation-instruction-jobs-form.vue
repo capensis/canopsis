@@ -34,7 +34,7 @@ import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { remediationInstructionJobToForm } from '@/helpers/forms/remediation-instruction';
 
 import { formArrayMixin } from '@/mixins/form';
-import { entitiesRemediationJobsMixin } from '@/mixins/entities/remediation/jobs';
+import { entitiesRemediationJobMixin } from '@/mixins/entities/remediation/job';
 
 import RemediationInstructionJobField from './fields/remediation-instruction-job-field.vue';
 
@@ -44,7 +44,7 @@ export default {
     Draggable,
     RemediationInstructionJobField,
   },
-  mixins: [formArrayMixin, entitiesRemediationJobsMixin],
+  mixins: [formArrayMixin, entitiesRemediationJobMixin],
   model: {
     prop: 'jobs',
     event: 'input',

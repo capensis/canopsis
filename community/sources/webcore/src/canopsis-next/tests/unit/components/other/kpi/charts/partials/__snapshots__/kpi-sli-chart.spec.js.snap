@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`kpi-sli-chart Renders \`kpi-sli-chart\` with downloading true 1`] = `
+<div>
+  <div
+    class=""
+  >
+    <canvas
+      height="400"
+      id="bar-chart"
+      style="display: block; box-sizing: border-box; user-select: none; webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 400px; width: 400px;"
+      width="400"
+    />
+  </div>
+  <kpi-chart-export-actions-stub
+    chart="[object Object]"
+    class="mt-4"
+    downloading="true"
+  />
+</div>
+`;
+
+exports[`kpi-sli-chart Renders \`kpi-sli-chart\` with time metrics by month 2`] = `
+<div>
+  <div
+    class=""
+  >
+    <canvas
+      height="400"
+      id="bar-chart"
+      style="display: block; box-sizing: border-box; user-select: none; webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 400px; width: 400px;"
+      width="400"
+    />
+  </div>
+  <kpi-chart-export-actions-stub
+    chart="[object Object]"
+    class="mt-4"
+  />
+</div>
+`;

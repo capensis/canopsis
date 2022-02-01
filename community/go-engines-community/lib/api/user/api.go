@@ -1,25 +1,36 @@
 package user
 
 import (
+	"context"
+	"encoding/json"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/valyala/fastjson"
 	"net/http"
 )
 
 type api struct {
 	store        Store
 	actionLogger logger.ActionLogger
+
+	metricMetaUpdater metrics.MetaUpdater
 }
 
 func NewApi(
 	store Store,
 	actionLogger logger.ActionLogger,
-) common.CrudAPI {
+	metricMetaUpdater metrics.MetaUpdater,
+) common.BulkCrudAPI {
 	return &api{
 		store:        store,
 		actionLogger: actionLogger,
+
+		metricMetaUpdater: metricMetaUpdater,
 	}
 }
 
@@ -103,7 +114,7 @@ func (a *api) Get(c *gin.Context) {
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /users [post]
 func (a *api) Create(c *gin.Context) {
-	var request EditRequest
+	var request Request
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
@@ -114,7 +125,7 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeUser,
 		ValueID:   user.ID,
@@ -122,6 +133,8 @@ func (a *api) Create(c *gin.Context) {
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
+
+	a.metricMetaUpdater.UpdateById(c.Request.Context(), user.ID)
 
 	c.JSON(http.StatusCreated, user)
 }
@@ -142,7 +155,7 @@ func (a *api) Create(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /users/{id} [put]
 func (a *api) Update(c *gin.Context) {
-	request := EditRequest{
+	request := Request{
 		ID: c.Param("id"),
 	}
 
@@ -161,7 +174,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypeUser,
 		ValueID:   user.ID,
@@ -169,6 +182,8 @@ func (a *api) Update(c *gin.Context) {
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
+
+	a.metricMetaUpdater.UpdateById(c.Request.Context(), user.ID)
 
 	c.JSON(http.StatusOK, user)
 }
@@ -197,7 +212,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionDelete,
 		ValueType: logger.ValueTypeUser,
 		ValueID:   id,
@@ -206,5 +221,269 @@ func (a *api) Delete(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
+	a.metricMetaUpdater.DeleteById(c.Request.Context(), id)
+
 	c.Status(http.StatusNoContent)
+}
+
+// Bulk create users
+// @Summary Bulk create users
+// @Description Bulk create users
+// @Tags users
+// @ID users-bulk-create
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []Request true "body"
+// @Success 207 {array} []BulkCreateResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/users [post]
+func (a *api) BulkCreate(c *gin.Context) {
+	contextUserId := c.MustGet(auth.UserKey).(string)
+
+	var ar fastjson.Arena
+
+	raw, err := c.GetRawData()
+	if err != nil {
+		panic(err)
+	}
+
+	jsonValue, err := fastjson.ParseBytes(raw)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	rawObjects, err := jsonValue.Array()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	ctx := c.Request.Context()
+	response := ar.NewArray()
+	userIds := make([]string, 0, len(rawObjects))
+
+	for idx, rawObject := range rawObjects {
+		object, err := rawObject.Object()
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		var request Request
+		err = json.Unmarshal(object.MarshalTo(nil), &request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		err = binding.Validator.ValidateStruct(request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
+			continue
+		}
+
+		user, err := a.store.Insert(ctx, request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, user.ID, http.StatusOK, rawObject, nil))
+
+		err = a.actionLogger.Action(context.Background(), contextUserId, logger.LogEntry{
+			Action:    logger.ActionCreate,
+			ValueType: logger.ValueTypeUser,
+			ValueID:   user.ID,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+
+		userIds = append(userIds, user.ID)
+	}
+
+	a.metricMetaUpdater.UpdateById(c.Request.Context(), userIds...)
+
+	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+}
+
+// Bulk update users
+// @Summary Bulk update users
+// @Description Bulk update users
+// @Tags users
+// @ID users-bulk-update
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []BulkUpdateRequestItem true "body"
+// @Success 207 {array} []BulkUpdateResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/users [put]
+func (a *api) BulkUpdate(c *gin.Context) {
+	contextUserId := c.MustGet(auth.UserKey).(string)
+
+	var ar fastjson.Arena
+
+	raw, err := c.GetRawData()
+	if err != nil {
+		panic(err)
+	}
+
+	jsonValue, err := fastjson.ParseBytes(raw)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	rawObjects, err := jsonValue.Array()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	ctx := c.Request.Context()
+	response := ar.NewArray()
+	userIds := make([]string, 0, len(rawObjects))
+
+	for idx, rawObject := range rawObjects {
+		object, err := rawObject.Object()
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		var request BulkUpdateRequestItem
+		err = json.Unmarshal(object.MarshalTo(nil), &request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		err = binding.Validator.ValidateStruct(request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
+			continue
+		}
+
+		user, err := a.store.Update(ctx, Request(request))
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		if user == nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			continue
+		}
+
+		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, user.ID, http.StatusOK, rawObject, nil))
+
+		err = a.actionLogger.Action(context.Background(), contextUserId, logger.LogEntry{
+			Action:    logger.ActionUpdate,
+			ValueType: logger.ValueTypeUser,
+			ValueID:   user.ID,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+
+		userIds = append(userIds, user.ID)
+	}
+
+	a.metricMetaUpdater.UpdateById(c.Request.Context(), userIds...)
+
+	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+}
+
+// Bulk delete users
+// @Summary Bulk delete users
+// @Description Bulk delete users
+// @Tags users
+// @ID users-bulk-delete
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []BulkDeleteRequestItem true "body"
+// @Success 207 {array} []BulkDeleteResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/users [delete]
+func (a *api) BulkDelete(c *gin.Context) {
+	contextUserId := c.MustGet(auth.UserKey).(string)
+
+	var ar fastjson.Arena
+
+	raw, err := c.GetRawData()
+	if err != nil {
+		panic(err)
+	}
+
+	jsonValue, err := fastjson.ParseBytes(raw)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	rawObjects, err := jsonValue.Array()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	ctx := c.Request.Context()
+	response := ar.NewArray()
+	userIds := make([]string, 0, len(rawObjects))
+
+	for idx, rawObject := range rawObjects {
+		object, err := rawObject.Object()
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		var request BulkDeleteRequestItem
+		err = json.Unmarshal(object.MarshalTo(nil), &request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		err = binding.Validator.ValidateStruct(request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
+			continue
+		}
+
+		ok, err := a.store.Delete(ctx, request.ID)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		if !ok {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			continue
+		}
+
+		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))
+
+		err = a.actionLogger.Action(context.Background(), contextUserId, logger.LogEntry{
+			Action:    logger.ActionDelete,
+			ValueType: logger.ValueTypeUser,
+			ValueID:   request.ID,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+
+		userIds = append(userIds, request.ID)
+	}
+
+	a.metricMetaUpdater.DeleteById(c.Request.Context(), userIds...)
+
+	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }

@@ -6,7 +6,9 @@
       field-filters(
         :entities-type="$constants.ENTITIES_TYPES.alarm",
         :filters.sync="settings.widget.parameters.viewFilters",
-        hide-select
+        hide-select,
+        addable,
+        editable
       )
       v-divider
       field-opened-resolved-filter(v-model="settings.widget.parameters.opened")
@@ -111,4 +113,3 @@ export default {
   },
 };
 </script>
-

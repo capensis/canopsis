@@ -2,11 +2,11 @@
   v-layout.remediation-instruction-stats-summary(column)
     remediation-instruction-stats-summary-row(
       :label="$t('common.created')",
-      :value="remediationInstruction.created | date('long', true)"
+      :value="remediationInstruction.created | date"
     )
     remediation-instruction-stats-summary-row(
-      :label="$t('remediationInstructionStats.lastModifiedOn')",
-      :value="remediationInstruction.last_modified | date('long', true)"
+      :label="$t('common.lastModifiedOn')",
+      :value="remediationInstruction.last_modified | date"
     )
     remediation-instruction-stats-summary-row(
       :label="$t('remediationInstructionStats.executionCount')",
@@ -14,7 +14,7 @@
     )
     remediation-instruction-stats-summary-row(
       :label="$t('remediationInstructionStats.lastExecutedOn')",
-      :value="remediationInstruction.last_executed_on | date('long', true)"
+      :value="remediationInstruction.last_executed_on | date"
     )
     remediation-instruction-stats-summary-row(:label="$t('remediationInstructionStats.alarmStates')")
       affect-alarm-states.remediation-instruction-stats-summary--alarm-states(

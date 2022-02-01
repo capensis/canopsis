@@ -227,6 +227,9 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 		api.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msgf("Long output field is not a string : %s. Replacing it by \"\"", longOutputValue.Type())
 	}
 
+	contextAuthor := c.MustGet(auth.Username).(string)
+	contextUser := c.MustGet(auth.UserKey).(string)
+
 	author, err := getStringField(value, "author")
 	if err != nil && !errors.Is(err, ErrFieldNotExists) {
 		api.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msg(err.Error())
@@ -234,8 +237,17 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 	}
 
 	if author == "" {
-		userID := c.MustGet(auth.UserKey).(string)
-		value.Set("author", fastjson.MustParse(fmt.Sprintf("%q", userID)))
+		value.Set("author", fastjson.MustParse(fmt.Sprintf("%q", contextAuthor)))
+	}
+
+	user, err := getStringField(value, "user_id")
+	if err != nil && !errors.Is(err, ErrFieldNotExists) {
+		api.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msg(err.Error())
+		return false
+	}
+
+	if user == "" {
+		value.Set("user_id", fastjson.MustParse(fmt.Sprintf("%q", contextUser)))
 	}
 
 	var eid string

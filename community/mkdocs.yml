@@ -62,8 +62,6 @@ plugins:
         locale: fr
         type: iso_date
     - search:
-        # requires Node
-        #prebuild_index: true
         lang:
           - en
 extra:
@@ -75,5 +73,9 @@ extra:
     - icon: fontawesome/brands/docker
       link: https://hub.docker.com/u/canopsis/
 
+extra_css:
+  - mkdocs.css
+
 extra_javascript:
-  - https://unpkg.com/mermaid@8.10.2/dist/mermaid.min.js
+  # sync this with the version used in https://squidfunk.github.io/mkdocs-material/reference/diagrams source
+  - https://unpkg.com/mermaid@8.13.3/dist/mermaid.min.js

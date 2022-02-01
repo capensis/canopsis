@@ -2,29 +2,29 @@
   div
     v-layout(justify-end)
       c-action-btn(
-        :tooltip="$t('entity.manageInfos.createTitle')",
+        :tooltip="$t('entity.addInformation')",
         icon="add",
         @click="showAddInfoModal"
       )
     v-data-table(
       :items="infos",
       :headers="tableHeaders",
-      :no-data-text="$t('entity.manageInfos.emptyInfos')",
+      :no-data-text="$t('entity.emptyInfos')",
       item-key="name"
     )
-      template(slot="items", slot-scope="props")
-        td {{ props.item.name }}
-        td {{ props.item.description }}
-        td {{ props.item.value }}
+      template(#items="{ item, index }")
+        td {{ item.name }}
+        td {{ item.description }}
+        td {{ item.value }}
         td
           v-layout(row)
             c-action-btn(
               type="edit",
-              @click="showEditInfoModal(props.index, props.item)"
+              @click="showEditInfoModal(index, item)"
             )
             c-action-btn(
               type="delete",
-              @click="removeItemFromArray(props.index)"
+              @click="removeItemFromArray(index)"
             )
 </template>
 

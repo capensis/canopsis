@@ -7,7 +7,7 @@
         create-type-form(v-model="form")
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.primary(type="submit") {{ $t('common.submit') }}
+        v-btn.primary(:disabled="isDisabled", type="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -15,7 +15,8 @@ import { MODALS } from '@/constants';
 
 import { pbehaviorTypeToForm, formToPbehaviorType } from '@/helpers/forms/type-pbehavior';
 
-import { validationErrorsMixin } from '@/mixins/form/validation-errors';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
 
 import CreateTypeForm from '@/components/other/pbehavior/types/form/create-pbehavior-type-form.vue';
 
@@ -31,7 +32,8 @@ export default {
     ModalWrapper,
   },
   mixins: [
-    validationErrorsMixin(),
+    modalInnerMixin,
+    submittableMixinCreator(),
   ],
   data() {
     return {
@@ -43,15 +45,11 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        try {
-          if (this.config.action) {
-            await this.config.action(formToPbehaviorType(this.form));
-          }
-
-          this.$modals.hide();
-        } catch (err) {
-          this.setFormErrors(err);
+        if (this.config.action) {
+          await this.config.action(formToPbehaviorType(this.form));
         }
+
+        this.$modals.hide();
       }
     },
   },

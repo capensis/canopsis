@@ -197,6 +197,14 @@ noWait = false
 # args =
 
 [[RabbitMQ.queues]]
+name = "Engine_dynamic_infos_rpc_server"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+
+[[RabbitMQ.queues]]
 name = "Engine_correlation"
 durable = true
 autoDelete = false
@@ -222,19 +230,6 @@ name = "Engine_remediation_rpc_server_job"
 durable = true
 autoDelete = false
 exclusive = false
-noWait = false
-# args =
-
-[[RabbitMQ.queues]]
-name = "Engine_kpi"
-durable = true
-autoDelete = false
-exclusive = false
-noWait = false
-# args =
-[RabbitMQ.queues.bind]
-key = "*.*.initkpi.#"
-exchange = "canopsis.events"
 noWait = false
 # args =
 
@@ -311,6 +306,15 @@ FilePattern = "/tmp/import_%s.json"
 # Auth token expiration ttl. It's used also used for session ttl (deprected).
 TokenExpiration = "24h"
 TokenSigningMethod = "HS256"
+BulkMaxSize = 10000
+
+[Canopsis.metrics]
+# Long SLI intervals are splitted to short intervals which are defined by SliInterval paramter.
+# Lower value provides more accurate metrics but requires more disk space.
+# Higher value provides less accurate metrics but requires less disk space.
+# 1h is recommended value since Canopsis UI lowest time sampling 1 hour.
+# Change value for external tools if more accurate metrics are required.
+SliInterval = "1h"
 
 # Remediation parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Remediation]

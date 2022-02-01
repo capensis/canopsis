@@ -10,7 +10,7 @@
     template(slot="headerCell", slot-scope="props")
       span.c-table-header__text--multiline {{ props.header.text }}
     template(slot="modified_on", slot-scope="props")
-      span {{ props.item.modified_on | date('long', true) }}
+      span {{ props.item.modified_on | date }}
     template(slot="execution_count", slot-scope="props")
       span {{ props.item.execution_count }}
     template(slot="avg_complete_time", slot-scope="props")

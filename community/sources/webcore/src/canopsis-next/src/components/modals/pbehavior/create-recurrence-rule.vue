@@ -25,8 +25,9 @@ import { MODALS } from '@/constants';
 import RecurrenceRuleForm from '@/components/forms/recurrence-rule.vue';
 import PbehaviorExceptionForm from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-form.vue';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -42,8 +43,9 @@ export default {
     ModalWrapper,
   },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
+    modalInnerMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     const { rrule, exdates, exceptions } = this.modal.config;

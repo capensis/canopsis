@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`info-popup Renders \`info-popup\` with custom props 1`] = `
+<div
+  class="container pa-3 fluid"
+>
+  <div
+    class="layout align-center justify-space-between"
+  >
+    <div
+      class="subheading"
+    >
+      settings.infoPopup.title
+    </div>
+    <div
+      class="layout justify-end"
+    >
+      <button
+        class="primary v-btn v-btn--small theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          common.create/common.edit
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`info-popup Renders \`info-popup\` with default props 1`] = `
+<div
+  class="container pa-3 fluid"
+>
+  <div
+    class="layout align-center justify-space-between"
+  >
+    <div
+      class="subheading"
+    >
+      settings.infoPopup.title
+    </div>
+    <div
+      class="layout justify-end"
+    >
+      <button
+        class="primary v-btn v-btn--small theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          common.create/common.edit
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+`;

@@ -3,13 +3,12 @@ package alarm
 import (
 	"context"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resolverule"
-	"runtime/trace"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resolverule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 )
@@ -39,12 +38,19 @@ func NewService(
 }
 
 func (s *service) ResolveClosed(ctx context.Context) ([]types.Alarm, error) {
-	defer trace.StartRegion(ctx, "alarm.ResolveAlarms").End()
+	now := types.NewCpsTime()
 
 	rules, err := s.resolveRuleAdapter.Get(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("canont fetch resolve rules: %w", err)
 	}
+
+	ids := make([]string, len(rules))
+	for i, rule := range rules {
+		ids[i] = rule.ID
+	}
+	s.logger.Debug().Strs("rules", ids).Msg("load resolve rules")
+
 	if len(rules) == 0 {
 		return nil, nil
 	}
@@ -65,8 +71,15 @@ func (s *service) ResolveClosed(ctx context.Context) ([]types.Alarm, error) {
 
 		for _, rule := range rules {
 			if rule.Matches(alarmWithEntity) {
-				if alarmWithEntity.Alarm.Closable(rule.Duration.Duration()) {
-					alarmsToResolve = append(alarmsToResolve, alarmWithEntity.Alarm)
+				alarmState := alarmWithEntity.Alarm.Value.State.Value
+
+				if alarmState == types.AlarmStateOK {
+					lastStep := alarmWithEntity.Alarm.Value.Steps[len(alarmWithEntity.Alarm.Value.Steps)-1]
+					before := rule.Duration.SubFrom(now)
+
+					if lastStep.Timestamp.Before(before) {
+						alarmsToResolve = append(alarmsToResolve, alarmWithEntity.Alarm)
+					}
 				}
 
 				break
@@ -78,13 +91,11 @@ func (s *service) ResolveClosed(ctx context.Context) ([]types.Alarm, error) {
 }
 
 func (s *service) ResolveCancels(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error) {
-	defer trace.StartRegion(ctx, "alarm.ResolveCancels").End()
-
 	canceledAlarms := make([]types.Alarm, 0)
 
 	alarms, err := s.adapter.GetAlarmsWithCancelMark(ctx)
 	if err != nil {
-		return canceledAlarms, fmt.Errorf("cancel alarms error: %v", err)
+		return canceledAlarms, fmt.Errorf("cannot fetch alarms: %w", err)
 	}
 
 	for _, alarm := range alarms {
@@ -97,13 +108,11 @@ func (s *service) ResolveCancels(ctx context.Context, alarmConfig config.AlarmCo
 }
 
 func (s *service) ResolveSnoozes(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error) {
-	defer trace.StartRegion(ctx, "alarm.ResolveSnoozes").End()
-
 	unsnoozedAlarms := make([]types.Alarm, 0)
 
 	alarms, err := s.adapter.GetAlarmsWithSnoozeMark(ctx)
 	if err != nil {
-		return unsnoozedAlarms, fmt.Errorf("snooze alarms error: %v", err)
+		return unsnoozedAlarms, fmt.Errorf("cannot fetch alarms: %w", err)
 	}
 
 	for _, alarm := range alarms {
@@ -116,13 +125,11 @@ func (s *service) ResolveSnoozes(ctx context.Context, alarmConfig config.AlarmCo
 }
 
 func (s *service) UpdateFlappingAlarms(ctx context.Context) ([]types.Alarm, error) {
-	defer trace.StartRegion(ctx, "alarm.UpdateFlappingAlarms").End()
-
 	updatedAlarms := make([]types.Alarm, 0)
 
 	flappingAlarms, err := s.adapter.GetAlarmsWithFlappingStatus(ctx)
 	if err != nil {
-		return updatedAlarms, fmt.Errorf("unable to get alarms with flapping status: %v", err)
+		return updatedAlarms, fmt.Errorf("cannot fetch alarms: %w", err)
 	}
 
 	for _, alarm := range flappingAlarms {
@@ -138,13 +145,11 @@ func (s *service) UpdateFlappingAlarms(ctx context.Context) ([]types.Alarm, erro
 }
 
 func (s *service) ResolveDone(ctx context.Context) ([]types.Alarm, error) {
-	defer trace.StartRegion(ctx, "alarm.ResolveDone").End()
-
 	doneAlarms := make([]types.Alarm, 0)
 
 	alarms, err := s.adapter.GetAlarmsWithDoneMark(ctx)
 	if err != nil {
-		return doneAlarms, fmt.Errorf("done alarms error: %v", err)
+		return doneAlarms, fmt.Errorf("cannot fetch alarms: %w", err)
 	}
 
 	for _, alarm := range alarms {

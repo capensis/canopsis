@@ -4,7 +4,7 @@ Feature: update service weather on event
   Scenario: given service for entity should update service weather on entity event
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "_id": "test-service-weather-1",
       "name": "test-service-weather-1",
@@ -12,13 +12,14 @@ Feature: update service weather on event
       "category": "test-category-service-weather",
       "enabled": true,
       "impact_level": 1,
-      "entity_patterns": [{"name": "test-resource-service-weather-1"}]
+      "entity_patterns": [{"name": "test-resource-service-weather-1"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-weather-1",
       "connector_name": "test-connector-name-service-weather-1",
@@ -34,7 +35,7 @@ Feature: update service weather on event
     When I do GET /api/v4/weather-services?filter={"name":"test-service-weather-1"}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -69,7 +70,7 @@ Feature: update service weather on event
   Scenario: given service for multiple entities should set service weather state as worst entity state
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "_id": "test-service-weather-2",
       "name": "test-service-weather-2",
@@ -81,13 +82,14 @@ Feature: update service weather on event
         {"name": "test-resource-service-weather-2-1"},
         {"name": "test-resource-service-weather-2-2"},
         {"name": "test-resource-service-weather-2-3"}
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-weather-2",
       "connector_name": "test-connector-name-service-weather-2",
@@ -102,7 +104,7 @@ Feature: update service weather on event
     """
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-weather-2",
       "connector_name": "test-connector-name-service-weather-2",
@@ -116,7 +118,7 @@ Feature: update service weather on event
     """
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-weather-2",
       "connector_name": "test-connector-name-service-weather-2",
@@ -132,7 +134,7 @@ Feature: update service weather on event
     When I do GET /api/v4/weather-services?filter={"name":"test-service-weather-2"}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -167,7 +169,7 @@ Feature: update service weather on event
   Scenario: given service for entity and no open alarm should get ok service weather state
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "_id": "test-service-weather-3",
       "name": "test-service-weather-3",
@@ -177,13 +179,14 @@ Feature: update service weather on event
       "impact_level": 1,
       "entity_patterns": [
         {"name": "test-resource-service-weather-3"}
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-weather-3",
       "connector_name": "test-connector-name-service-weather-3",
@@ -199,7 +202,7 @@ Feature: update service weather on event
     When I do GET /api/v4/weather-services?filter={"name":"test-service-weather-3"}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -237,7 +240,7 @@ Feature: update service weather on event
     should return false in is_action_required
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "_id": "test-service-weather-4",
       "name": "test-service-weather-4",
@@ -248,13 +251,14 @@ Feature: update service weather on event
       "entity_patterns": [
         {"name": "test-resource-service-weather-4-1"},
         {"name": "test-resource-service-weather-4-2"}
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-weather-4",
       "connector_name": "test-connector-name-service-weather-4",
@@ -268,7 +272,7 @@ Feature: update service weather on event
     """
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-weather-4",
       "connector_name": "test-connector-name-service-weather-4",
@@ -282,7 +286,7 @@ Feature: update service weather on event
     """
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-weather-4",
       "connector_name": "test-connector-name-service-weather-4",
@@ -295,7 +299,7 @@ Feature: update service weather on event
     """
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-weather-4",
       "connector_name": "test-connector-name-service-weather-4",
@@ -310,7 +314,7 @@ Feature: update service weather on event
     When I do GET /api/v4/weather-services?filter={"name":"test-service-weather-4"}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -345,7 +349,7 @@ Feature: update service weather on event
   Scenario: given service for entity should calculate impact_state regarding of impact_level
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "_id": "test-service-weather-5",
       "name": "test-service-weather-5",
@@ -353,13 +357,14 @@ Feature: update service weather on event
       "output_template": "Test-service-weather-5",
       "category": "test-category-service-weather",
       "impact_level": 5,
-      "entity_patterns": [{"name": "test-resource-service-weather-5"}]
+      "entity_patterns": [{"name": "test-resource-service-weather-5"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-weather-5",
       "connector_name": "test-connector-name-service-weather-5",
@@ -375,7 +380,7 @@ Feature: update service weather on event
     When I do GET /api/v4/weather-services?filter={"name":"test-service-weather-5"}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {

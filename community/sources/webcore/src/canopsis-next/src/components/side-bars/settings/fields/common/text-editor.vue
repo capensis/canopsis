@@ -5,16 +5,20 @@
     @edit="openTextEditorModal",
     @delete="deleteMoreInfoTemplate"
   )
-    .subheading(slot="title") {{ title }}
+    template(#title="")
+      div.subheading {{ title }}
 </template>
 
 <script>
 import { MODALS } from '@/constants';
 
+import { formMixin } from '@/mixins/form';
+
 import SettingsButtonField from '../partials/button-field.vue';
 
 export default {
   components: { SettingsButtonField },
+  mixins: [formMixin],
   props: {
     value: {
       type: String,
@@ -36,7 +40,7 @@ export default {
         name: MODALS.textEditor,
         config: {
           text: this.value,
-          action: value => this.$emit('input', value),
+          action: value => this.updateModel(value),
         },
       });
     },
@@ -45,11 +49,10 @@ export default {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () => this.$emit('input', ''),
+          action: () => this.updateModel(''),
         },
       });
     },
   },
 };
 </script>
-

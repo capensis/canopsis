@@ -1,0 +1,114 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`state-criticity-field Renders \`state-criticity-field\` with custom props correctly 1`] = `
+<div
+  class="layout row"
+>
+  <div
+    class="v-item-group theme--light v-btn-toggle"
+  >
+    <button
+      class="v-btn v-btn--depressed theme--light"
+      data-test="stateCriticity-0"
+      style="background-color: rgb(0, 166, 90);"
+      type="button"
+      value="0"
+    >
+      <div
+        class="v-btn__content"
+      >
+        modals.createChangeStateEvent.states.ok
+      </div>
+    </button>
+    <button
+      class="v-btn v-btn--depressed theme--light"
+      data-test="stateCriticity-1"
+      style="background-color: rgb(252, 220, 0);"
+      type="button"
+      value="1"
+    >
+      <div
+        class="v-btn__content"
+      >
+        modals.createChangeStateEvent.states.minor
+      </div>
+    </button>
+    <button
+      class="v-btn v-btn--depressed theme--light"
+      data-test="stateCriticity-3"
+      style="background-color: rgb(245, 105, 84);"
+      type="button"
+      value="3"
+    >
+      <div
+        class="v-btn__content"
+      >
+        modals.createChangeStateEvent.states.critical
+      </div>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`state-criticity-field Renders \`state-criticity-field\` with default props correctly 1`] = `
+<div
+  class="layout row"
+>
+  <div
+    class="v-item-group theme--light v-btn-toggle"
+  >
+    <button
+      class="v-btn v-btn--depressed theme--light"
+      data-test="stateCriticity-0"
+      style="background-color: rgb(0, 166, 90);"
+      type="button"
+      value="0"
+    >
+      <div
+        class="v-btn__content"
+      >
+        modals.createChangeStateEvent.states.ok
+      </div>
+    </button>
+    <button
+      class="v-btn v-btn--depressed theme--light"
+      data-test="stateCriticity-1"
+      style="background-color: rgb(252, 220, 0);"
+      type="button"
+      value="1"
+    >
+      <div
+        class="v-btn__content"
+      >
+        modals.createChangeStateEvent.states.minor
+      </div>
+    </button>
+    <button
+      class="v-btn v-btn--depressed theme--light"
+      data-test="stateCriticity-2"
+      style="background-color: rgb(255, 153, 0);"
+      type="button"
+      value="2"
+    >
+      <div
+        class="v-btn__content"
+      >
+        modals.createChangeStateEvent.states.major
+      </div>
+    </button>
+    <button
+      class="v-btn v-btn--depressed theme--light"
+      data-test="stateCriticity-3"
+      style="background-color: rgb(245, 105, 84);"
+      type="button"
+      value="3"
+    >
+      <div
+        class="v-btn__content"
+      >
+        modals.createChangeStateEvent.states.critical
+      </div>
+    </button>
+  </div>
+</div>
+`;

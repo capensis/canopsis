@@ -69,11 +69,11 @@ import { MAX_LIMIT } from '@/constants';
 import { isRemediationInstructionIntersectsWithFilterByType } from '@/helpers/forms/remediation-instruction-filter';
 
 import { formMixin } from '@/mixins/form';
-import { entitiesRemediationInstructionsMixin } from '@/mixins/entities/remediation/instructions';
+import { entitiesRemediationInstructionMixin } from '@/mixins/entities/remediation/instruction';
 
 export default {
   inject: ['$validator'],
-  mixins: [formMixin, entitiesRemediationInstructionsMixin],
+  mixins: [formMixin, entitiesRemediationInstructionMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -102,13 +102,11 @@ export default {
     },
 
     hasAnyAnotherOppositeFilterWithAuto() {
-      return this.filters.some(filter =>
-        this.form.with !== filter.with && (filter.auto || filter.all));
+      return this.filters.some(filter => this.form.with !== filter.with && (filter.auto || filter.all));
     },
 
     hasAnyAnotherOppositeFilterWithManual() {
-      return this.filters.some(filter =>
-        this.form.with !== filter.with && (filter.manual || filter.all));
+      return this.filters.some(filter => this.form.with !== filter.with && (filter.manual || filter.all));
     },
 
     preparedRemediationInstructions() {
@@ -117,8 +115,7 @@ export default {
           return acc;
         }
 
-        const filtersSomeComparator = filter =>
-          this.form.with !== filter.with
+        const filtersSomeComparator = filter => this.form.with !== filter.with
           && (
             (filter.all || find(filter.instructions, { _id: instruction._id }))
             || isRemediationInstructionIntersectsWithFilterByType(filter, instruction)
@@ -156,9 +153,8 @@ export default {
         [key]: value,
       };
 
-      newForm.instructions =
-        newForm.instructions
-          .filter(instruction => !isRemediationInstructionIntersectsWithFilterByType(newForm, instruction));
+      newForm.instructions = newForm.instructions
+        .filter(instruction => !isRemediationInstructionIntersectsWithFilterByType(newForm, instruction));
 
       this.updateModel(newForm);
     },

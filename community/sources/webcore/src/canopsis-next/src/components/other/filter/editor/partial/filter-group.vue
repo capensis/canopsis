@@ -1,6 +1,6 @@
 <template lang="pug">
   v-card.my-1.pa-2(data-test="filterGroup")
-    operator-field(v-field="group.condition")
+    c-operator-field(v-field="group.condition")
     v-layout.text-xs-center(wrap, justify-space-around)
       v-flex(xs5, md3)
         v-btn(
@@ -66,7 +66,6 @@ import uid from '@/helpers/uid';
 
 import { formMixin } from '@/mixins/form';
 
-import OperatorField from '@/components/forms/fields/operator-field.vue';
 import PatternInformation from '@/components/other/pattern/pattern-information.vue';
 
 import FilterRule from './filter-rule.vue';
@@ -75,10 +74,9 @@ import FilterRule from './filter-rule.vue';
  * Component representing a group in MongoDB filter
  */
 export default {
-  name: 'filter-group', // We need it for recursive
+  name: 'FilterGroup', // We need it for recursive
   components: {
     PatternInformation,
-    OperatorField,
     FilterRule,
   },
   mixins: [formMixin],

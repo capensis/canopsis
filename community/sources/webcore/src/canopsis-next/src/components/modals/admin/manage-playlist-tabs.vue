@@ -21,8 +21,9 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import ManagePlaylistTabsForm from '@/components/other/playlists/form/manage-playlist-tabs-form.vue';
 
@@ -35,8 +36,9 @@ export default {
     ModalWrapper,
   },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
+    modalInnerMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     return {

@@ -2,24 +2,48 @@ package pbehavior
 
 import (
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type EventManager interface {
 	GetEvent(ResolveResult, types.Alarm, time.Time) types.Event
+	GetEventType(resolveResult ResolveResult, curPbehaviorInfo types.PbehaviorInfo) (eventType string, output string)
 }
 
 type eventManager struct {
 }
 
 func (r eventManager) GetEvent(resolveResult ResolveResult, alarm types.Alarm, now time.Time) types.Event {
+	eventType, output := r.GetEventType(resolveResult, alarm.Value.PbehaviorInfo)
+	if eventType == "" {
+		return types.Event{}
+	}
+
+	event := types.Event{
+		Connector:     alarm.Value.Connector,
+		ConnectorName: alarm.Value.ConnectorName,
+		Component:     alarm.Value.Component,
+		Resource:      alarm.Value.Resource,
+		Timestamp:     types.CpsTime{Time: now},
+		EventType:     eventType,
+		Output:        output,
+		PbehaviorInfo: NewPBehaviorInfo(types.CpsTime{Time: now}, resolveResult),
+		Initiator:     types.InitiatorSystem,
+	}
+
+	event.SourceType = event.DetectSourceType()
+
+	return event
+}
+
+func (r eventManager) GetEventType(resolveResult ResolveResult, curPbehaviorInfo types.PbehaviorInfo) (string, string) {
 	resolvedType := resolveResult.ResolvedType
-	curPbehaviorInfo := alarm.Value.PbehaviorInfo
 
 	if resolvedType != nil && resolvedType.ID == curPbehaviorInfo.TypeID && resolveResult.ResolvedPbhID == curPbehaviorInfo.ID ||
 		resolvedType == nil && curPbehaviorInfo.IsDefaultActive() {
-		return types.Event{}
+		return "", ""
 	}
 
 	var eventType string
@@ -27,7 +51,7 @@ func (r eventManager) GetEvent(resolveResult ResolveResult, alarm types.Alarm, n
 	if resolvedType == nil {
 		eventType = types.EventTypePbhLeave
 		output = fmt.Sprintf(
-			"Pbehavior %s. Type: %s. Reason: %s",
+			"Pbehavior %s. Type: %s. Reason: %s.",
 			curPbehaviorInfo.Name,
 			curPbehaviorInfo.TypeName,
 			curPbehaviorInfo.Reason,
@@ -40,39 +64,27 @@ func (r eventManager) GetEvent(resolveResult ResolveResult, alarm types.Alarm, n
 		}
 
 		output = fmt.Sprintf(
-			"Pbehavior %s. Type: %s. Reason: %s",
+			"Pbehavior %s. Type: %s. Reason: %s.",
 			resolveResult.ResolvedPbhName,
 			resolvedType.Name,
 			resolveResult.ResolvedPbhReason,
 		)
 	}
 
-	event := types.Event{
-		Connector:     alarm.Value.Connector,
-		ConnectorName: alarm.Value.ConnectorName,
-		Component:     alarm.Value.Component,
-		Resource:      alarm.Value.Resource,
-		Timestamp:     types.CpsTime{Time: now},
-		EventType:     eventType,
-		Output:        output,
-	}
-
-	event.PbehaviorInfo = NewPBehaviorInfo(resolveResult)
-	event.SourceType = event.DetectSourceType()
-
-	return event
+	return eventType, output
 }
 
 func NewEventManager() EventManager {
 	return eventManager{}
 }
 
-func NewPBehaviorInfo(result ResolveResult) types.PbehaviorInfo {
+func NewPBehaviorInfo(time types.CpsTime, result ResolveResult) types.PbehaviorInfo {
 	if result.ResolvedType == nil {
 		return types.PbehaviorInfo{}
 	}
 
 	return types.PbehaviorInfo{
+		Timestamp:     &time,
 		ID:            result.ResolvedPbhID,
 		Name:          result.ResolvedPbhName,
 		Reason:        result.ResolvedPbhReason,

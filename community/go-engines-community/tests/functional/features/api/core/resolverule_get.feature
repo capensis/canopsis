@@ -27,7 +27,7 @@ Feature: Get a resolve rule
           "name": "test-resolve-rule-to-get-1-name",
           "description": "test-resolve-rule-to-get-1-description",
           "duration": {
-            "seconds": 10,
+            "value": 10,
             "unit": "s"
           },
           "entity_patterns": [
@@ -55,7 +55,7 @@ Feature: Get a resolve rule
           "name": "test-resolve-rule-to-get-2-name",
           "description": "test-resolve-rule-to-get-2-description",
           "duration": {
-            "seconds": 10,
+            "value": 10,
             "unit": "s"
           },
           "entity_patterns": [
@@ -99,7 +99,7 @@ Feature: Get a resolve rule
       "name": "test-resolve-rule-to-get-1-name",
       "description": "test-resolve-rule-to-get-1-description",
       "duration": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "entity_patterns": [

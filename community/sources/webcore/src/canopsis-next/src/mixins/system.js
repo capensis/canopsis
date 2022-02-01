@@ -2,7 +2,7 @@ import Vue from 'vue';
 
 import { DEFAULT_TIMEZONE } from '@/constants';
 
-export default {
+export const systemMixin = {
   provide() {
     return {
       $system: this.system,

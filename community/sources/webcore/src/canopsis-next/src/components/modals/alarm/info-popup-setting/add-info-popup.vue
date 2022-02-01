@@ -25,8 +25,9 @@ import { find } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import InfoPopupForm from '@/components/widgets/alarm/forms/info-popup-form.vue';
 
@@ -39,8 +40,9 @@ export default {
   },
   components: { InfoPopupForm, ModalWrapper },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
+    modalInnerMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     const [selectedColumn = {}] = this.modal.config.columns || [];

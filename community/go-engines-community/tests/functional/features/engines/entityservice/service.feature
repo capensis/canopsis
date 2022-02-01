@@ -4,7 +4,7 @@ Feature: update service on event
   Scenario: given entity service and new resource entity should update service alarm on resource event
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-service-1-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
@@ -14,14 +14,15 @@ Feature: update service on event
         {"name": "test-resource-service-1-1"},
         {"name": "test-resource-service-1-2"},
         {"name": "test-resource-service-1-3"}
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-1",
       "connector_name": "test-connector-name-service-1",
@@ -35,7 +36,7 @@ Feature: update service on event
     """
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-1",
       "connector_name": "test-connector-name-service-1",
@@ -49,7 +50,7 @@ Feature: update service on event
     """
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-1",
       "connector_name": "test-connector-name-service-1",
@@ -65,7 +66,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -114,7 +115,7 @@ Feature: update service on event
   Scenario: given entity service and new resource entity should update service alarm on service creation
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-2",
       "connector_name": "test-connector-name-service-2",
@@ -128,7 +129,7 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-2",
       "connector_name": "test-connector-name-service-2",
@@ -142,7 +143,7 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-2",
       "connector_name": "test-connector-name-service-2",
@@ -156,7 +157,7 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-service-2-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
@@ -166,7 +167,8 @@ Feature: update service on event
         {"name": "test-resource-service-2-1"},
         {"name": "test-resource-service-2-2"},
         {"name": "test-resource-service-2-3"}
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
@@ -175,7 +177,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -218,7 +220,7 @@ Feature: update service on event
   Scenario: given entity service and removed resource entity should update service alarm on resource event
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-service-3-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
@@ -226,14 +228,15 @@ Feature: update service on event
       "enabled": true,
       "entity_patterns": [{"infos": {
         "client": {"value": "test-client-service-3"}
-      }}]
+      }}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-3",
       "connector_name": "test-connector-name-service-3",
@@ -248,7 +251,7 @@ Feature: update service on event
     """
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-3",
       "connector_name": "test-connector-name-service-3",
@@ -265,7 +268,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -320,20 +323,21 @@ Feature: update service on event
   Scenario: given entity service with updated pattern should update service alarm to increase state
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-service-4-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-service-4-1"}]
+      "entity_patterns": [{"name": "test-resource-service-4-1"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-4",
       "connector_name": "test-connector-name-service-4",
@@ -347,7 +351,7 @@ Feature: update service on event
     """
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-4",
       "connector_name": "test-connector-name-service-4",
@@ -361,13 +365,14 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I do PUT /api/v4/entityservices/{{ .serviceID }}:
-    """
+    """json
     {
       "name": "test-entityservice-service-4-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-service-4-2"}]
+      "entity_patterns": [{"name": "test-resource-service-4-2"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 200
@@ -375,7 +380,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -424,20 +429,21 @@ Feature: update service on event
   Scenario: given entity service with updated pattern should update service alarm to decrease state
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-service-5-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-service-5-1"}]
+      "entity_patterns": [{"name": "test-resource-service-5-1"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-5",
       "connector_name": "test-connector-name-service-5",
@@ -451,7 +457,7 @@ Feature: update service on event
     """
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-5",
       "connector_name": "test-connector-name-service-5",
@@ -465,13 +471,14 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I do PUT /api/v4/entityservices/{{ .serviceID }}:
-    """
+    """json
     {
       "name": "test-entityservice-service-5-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-service-5-2"}]
+      "entity_patterns": [{"name": "test-resource-service-5-2"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 200
@@ -479,7 +486,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -528,20 +535,21 @@ Feature: update service on event
   Scenario: given entity service and resolved resource entity should update service alarm on resource event
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-service-6-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-service-6"}]
+      "entity_patterns": [{"name": "test-resource-service-6"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-6",
       "connector_name": "test-connector-name-service-6",
@@ -555,7 +563,7 @@ Feature: update service on event
     """
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-6",
       "connector_name": "test-connector-name-service-6",
@@ -568,7 +576,7 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-6",
       "connector_name": "test-connector-name-service-6",
@@ -583,7 +591,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -638,7 +646,7 @@ Feature: update service on event
   Scenario: given new entity service and resolved resource entity should not create service alarm on service creation
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-7",
       "connector_name": "test-connector-name-service-7",
@@ -652,7 +660,7 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-7",
       "connector_name": "test-connector-name-service-7",
@@ -665,7 +673,7 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-7",
       "connector_name": "test-connector-name-service-7",
@@ -678,13 +686,14 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-service-7-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-service-7"}]
+      "entity_patterns": [{"name": "test-resource-service-7"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
@@ -693,7 +702,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [],
       "meta": {
@@ -708,7 +717,7 @@ Feature: update service on event
   Scenario: given new entity service should count all alarms on service creation
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-8",
       "connector_name": "test-connector-name-service-8",
@@ -722,7 +731,7 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-8",
       "connector_name": "test-connector-name-service-8",
@@ -736,7 +745,7 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-8",
       "connector_name": "test-connector-name-service-8",
@@ -750,7 +759,7 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-8",
       "connector_name": "test-connector-name-service-8",
@@ -764,7 +773,7 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-8",
       "connector_name": "test-connector-name-service-8",
@@ -778,7 +787,7 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-8",
       "connector_name": "test-connector-name-service-8",
@@ -791,7 +800,7 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-8",
       "connector_name": "test-connector-name-service-8",
@@ -805,7 +814,7 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-8",
       "connector_name": "test-connector-name-service-8",
@@ -819,7 +828,7 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-service-8-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
@@ -832,7 +841,8 @@ Feature: update service on event
         {"name": "test-resource-service-8-4"},
         {"name": "test-resource-service-8-5"},
         {"name": "test-resource-service-8-6"}
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
@@ -841,7 +851,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -884,20 +894,21 @@ Feature: update service on event
   Scenario: given entity service and acked resource entity should update service counters on resource event
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-service-9-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-service-9"}]
+      "entity_patterns": [{"name": "test-resource-service-9"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-9",
       "connector_name": "test-connector-name-service-9",
@@ -911,7 +922,7 @@ Feature: update service on event
     """
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-9",
       "connector_name": "test-connector-name-service-9",
@@ -924,7 +935,7 @@ Feature: update service on event
     """
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-9",
       "connector_name": "test-connector-name-service-9",
@@ -940,7 +951,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -989,20 +1000,21 @@ Feature: update service on event
   Scenario: given entity service and ackremoved resource entity should update service counters on resource event
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-service-10-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-service-10"}]
+      "entity_patterns": [{"name": "test-resource-service-10"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-10",
       "connector_name": "test-connector-name-service-10",
@@ -1016,7 +1028,7 @@ Feature: update service on event
     """
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-10",
       "connector_name": "test-connector-name-service-10",
@@ -1029,7 +1041,7 @@ Feature: update service on event
     """
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-10",
       "connector_name": "test-connector-name-service-10",
@@ -1042,7 +1054,7 @@ Feature: update service on event
     """
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-10",
       "connector_name": "test-connector-name-service-10",
@@ -1058,7 +1070,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1107,7 +1119,7 @@ Feature: update service on event
   Scenario: given entity service and new resource entity with component infos by extra infos should update service alarm on resource event
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-service-11-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
@@ -1115,14 +1127,15 @@ Feature: update service on event
       "enabled": true,
       "entity_patterns": [{"component_infos": {
         "client": {"value": "test-client-service-11"}
-      }}]
+      }}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-11",
       "connector_name": "test-connector-name-service-11",
@@ -1136,7 +1149,7 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-11",
       "connector_name": "test-connector-name-service-11",
@@ -1152,7 +1165,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1195,7 +1208,7 @@ Feature: update service on event
   Scenario: given entity service and new resource entity with component infos by extra infos should update service alarm on component event
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-service-12-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
@@ -1203,14 +1216,15 @@ Feature: update service on event
       "enabled": true,
       "entity_patterns": [{"component_infos": {
         "client": {"value": "test-client-service-12"}
-      }}]
+      }}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-12",
       "connector_name": "test-connector-name-service-12",
@@ -1224,7 +1238,7 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-12",
       "connector_name": "test-connector-name-service-12",
@@ -1240,7 +1254,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1283,7 +1297,7 @@ Feature: update service on event
   Scenario: given entity service and removed resource entity with component infos by extra infos should update service alarm on component event
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-service-13-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
@@ -1291,14 +1305,15 @@ Feature: update service on event
       "enabled": true,
       "entity_patterns": [{"component_infos": {
         "client": {"value": "test-client-service-13"}
-      }}]
+      }}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-13",
       "connector_name": "test-connector-name-service-13",
@@ -1312,7 +1327,7 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-13",
       "connector_name": "test-connector-name-service-13",
@@ -1326,7 +1341,7 @@ Feature: update service on event
     """
     When I wait the end of 3 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-13",
       "connector_name": "test-connector-name-service-13",
@@ -1342,7 +1357,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1397,7 +1412,7 @@ Feature: update service on event
   Scenario: given entity service and updated resource entity by api should update service alarm on infos update
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-service-14-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
@@ -1405,14 +1420,15 @@ Feature: update service on event
       "enabled": true,
       "entity_patterns": [{"infos": {
         "manager": {"value": "test-manager-service-14"}
-      }}]
+      }}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-14",
       "connector_name": "test-connector-name-service-14",
@@ -1426,7 +1442,7 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I do PUT /api/v4/entitybasics?_id=test-resource-service-14/test-component-service-14:
-    """
+    """json
     {
       "enabled": true,
       "impact_level": 1,
@@ -1442,7 +1458,8 @@ Feature: update service on event
       ],
       "depends": [
         "test-connector-service-14/test-connector-name-service-14"
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 200
@@ -1450,7 +1467,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1493,7 +1510,7 @@ Feature: update service on event
   Scenario: should be able to retrieve dependencies and impacts
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "_id": "test-service-tree-1",
       "name": "test-service-tree-1",
@@ -1505,13 +1522,14 @@ Feature: update service on event
         {"name": "test-nested-service-1"},
         {"name": "test-nested-service-2"},
         {"name": "test-nested-service-3"}
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "_id": "test-nested-service-1",
       "name": "test-nested-service-1",
@@ -1522,13 +1540,14 @@ Feature: update service on event
       "entity_patterns": [
         {"name": "test-nested-service-resource-1"},
         {"name": "test-nested-service-resource-2"}
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "_id": "test-nested-service-2",
       "name": "test-nested-service-2",
@@ -1539,13 +1558,14 @@ Feature: update service on event
       "entity_patterns": [
         {"name": "test-nested-service-resource-3"},
         {"name": "test-nested-service-resource-4"}
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "_id": "test-nested-service-3",
       "name": "test-nested-service-3",
@@ -1556,13 +1576,14 @@ Feature: update service on event
       "entity_patterns": [
         {"name": "test-nested-service-resource-5"},
         {"name": "test-nested-service-resource-6"}
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-nested-service-connector",
@@ -1575,7 +1596,7 @@ Feature: update service on event
     """
     When I wait the end of 3 events processing
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-nested-service-connector",
@@ -1586,9 +1607,9 @@ Feature: update service on event
       "state": 2
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of 3 events processing
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-nested-service-connector",
@@ -1601,7 +1622,7 @@ Feature: update service on event
     """
     When I wait the end of 3 events processing
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-nested-service-connector",
@@ -1614,7 +1635,7 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-nested-service-connector",
@@ -1627,7 +1648,7 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-nested-service-connector",
@@ -1642,7 +1663,7 @@ Feature: update service on event
     When I do GET /api/v4/entityservice-dependencies?_id=test-service-tree-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1698,7 +1719,7 @@ Feature: update service on event
     When I do GET /api/v4/entityservice-dependencies?_id=test-nested-service-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1745,7 +1766,7 @@ Feature: update service on event
     When I do GET /api/v4/entityservice-dependencies?_id=test-nested-service-2
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1785,7 +1806,7 @@ Feature: update service on event
     When I do GET /api/v4/entityservice-dependencies?_id=test-nested-service-3
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1820,7 +1841,7 @@ Feature: update service on event
     When I do GET /api/v4/entityservice-impacts?_id=test-service-tree-1
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [],
       "meta": {
@@ -1834,7 +1855,7 @@ Feature: update service on event
     When I do GET /api/v4/entityservice-impacts?_id=test-nested-service-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1865,7 +1886,7 @@ Feature: update service on event
     When I do GET /api/v4/entityservice-impacts?_id=test-nested-service-2
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1896,7 +1917,7 @@ Feature: update service on event
     When I do GET /api/v4/entityservice-impacts?_id=test-nested-service-3
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1927,7 +1948,7 @@ Feature: update service on event
     When I do GET /api/v4/entityservice-impacts?_id=test-nested-service-resource-1/test-nested-service-component
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1958,7 +1979,7 @@ Feature: update service on event
     When I do GET /api/v4/entityservice-impacts?_id=test-nested-service-resource-3/test-nested-service-component
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1989,7 +2010,7 @@ Feature: update service on event
     When I do GET /api/v4/entityservice-impacts?_id=test-nested-service-resource-5/test-nested-service-component
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -2014,20 +2035,21 @@ Feature: update service on event
   Scenario: given deleted entity service should delete service alarm
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-service-15-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-service-15"}]
+      "entity_patterns": [{"name": "test-resource-service-15"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-15",
       "connector_name": "test-connector-name-service-15",
@@ -2043,7 +2065,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -2072,7 +2094,7 @@ Feature: update service on event
     Then the response code should be 204
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-15",
       "connector_name": "test-connector-name-service-15",
@@ -2089,7 +2111,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [],
       "meta": {
@@ -2104,20 +2126,21 @@ Feature: update service on event
   Scenario: given disabled entity service should not update service alarm
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-service-16-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-service-16"}]
+      "entity_patterns": [{"name": "test-resource-service-16"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-16",
       "connector_name": "test-connector-name-service-16",
@@ -2133,7 +2156,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -2159,19 +2182,20 @@ Feature: update service on event
     }
     """
     When I do PUT /api/v4/entityservices/{{ .serviceID }}:
-    """
+    """json
     {
       "name": "test-entityservice-service-16-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": false,
-      "entity_patterns": [{"name": "test-resource-service-16"}]
+      "entity_patterns": [{"name": "test-resource-service-16"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 200
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-16",
       "connector_name": "test-connector-name-service-16",
@@ -2188,7 +2212,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [],
       "meta": {
@@ -2203,20 +2227,21 @@ Feature: update service on event
   Scenario: given enabled entity service should create new service alarm
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-service-17-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-service-17"}]
+      "entity_patterns": [{"name": "test-resource-service-17"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-17",
       "connector_name": "test-connector-name-service-17",
@@ -2230,20 +2255,21 @@ Feature: update service on event
     """
     When I wait the end of 2 events processing
     When I do PUT /api/v4/entityservices/{{ .serviceID }}:
-    """
+    """json
     {
       "name": "test-entityservice-service-17-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": false,
-      "entity_patterns": [{"name": "test-resource-service-17"}]
+      "entity_patterns": [{"name": "test-resource-service-17"}],
+      "sli_avail_state": 0
     }
     """
-    When I save response disableTimestamp={{ now.Unix }}
+    When I save response disableTimestamp={{ now }}
     Then the response code should be 200
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-17",
       "connector_name": "test-connector-name-service-17",
@@ -2257,13 +2283,14 @@ Feature: update service on event
     """
     When I wait the end of event processing
     When I do PUT /api/v4/entityservices/{{ .serviceID }}:
-    """
+    """json
     {
       "name": "test-entityservice-service-17-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-service-17"}]
+      "entity_patterns": [{"name": "test-resource-service-17"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 200
@@ -2271,7 +2298,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true&sort_key=v.resolved
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -2342,33 +2369,35 @@ Feature: update service on event
   Scenario: given deleted entity service should update impact service alarm
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-service-18-name-1",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-service-18"}]
+      "entity_patterns": [{"name": "test-resource-service-18"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response dependServiceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-service-18-name-2",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-entityservice-service-18-name-1"}]
+      "entity_patterns": [{"name": "test-entityservice-service-18-name-1"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-18",
       "connector_name": "test-connector-name-service-18",
@@ -2384,7 +2413,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -2415,7 +2444,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -2470,33 +2499,35 @@ Feature: update service on event
   Scenario: given disabled entity service should update impact service alarm
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-service-19-name-1",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-service-19"}]
+      "entity_patterns": [{"name": "test-resource-service-19"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response dependServiceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-service-19-name-2",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-entityservice-service-19-name-1"}]
+      "entity_patterns": [{"name": "test-entityservice-service-19-name-1"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-19",
       "connector_name": "test-connector-name-service-19",
@@ -2512,7 +2543,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -2538,13 +2569,14 @@ Feature: update service on event
     }
     """
     When I do PUT /api/v4/entityservices/{{ .dependServiceID }}:
-    """
+    """json
     {
       "name": "test-entityservice-service-19-name-1",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": false,
-      "entity_patterns": [{"name": "test-resource-service-19"}]
+      "entity_patterns": [{"name": "test-resource-service-19"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 200
@@ -2552,7 +2584,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -2607,20 +2639,21 @@ Feature: update service on event
   Scenario: given disabled entity should update service alarm
     Given I am admin
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-entityservice-service-20-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-service-20"}]
+      "entity_patterns": [{"name": "test-resource-service-20"}],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-service-20",
       "connector_name": "test-connector-name-service-20",
@@ -2636,7 +2669,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -2662,7 +2695,7 @@ Feature: update service on event
     }
     """
     When I do PUT /api/v4/entitybasics?_id=test-resource-service-20/test-component-service-20:
-    """
+    """json
     {
       "impact_level": 1,
       "enabled": false,
@@ -2672,7 +2705,8 @@ Feature: update service on event
       ],
       "depends": [
         "test-connector-service-20/test-connector-name-service-20"
-      ]
+      ],
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 200
@@ -2680,7 +2714,7 @@ Feature: update service on event
     When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {

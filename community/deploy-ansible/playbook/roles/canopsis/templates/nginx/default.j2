@@ -27,7 +27,7 @@ server {
 	listen 80;
 	listen [::]:80;
 
-	root /opt/canopsis/var/www/src/canopsis-next/dist/;
+	root /opt/canopsis/srv/www/;
 
 	set $canopsis_api_url {{ CPS_API_URL }}; # see /etc/nginx/resolvers.inc if you modify this
 	set $canopsis_server_name {{ CPS_SERVER_NAME }};
@@ -100,5 +100,8 @@ server {
 		include /etc/nginx/cors.inc;
 		try_files $uri $uri/ /index.html;
 		error_page 404 /index.html;
+		# Working around SAML auth doing an HTTP request that Nginx
+		# won't accept (issue #3852)
+		error_page 405 =200 $uri;
 	}
 }

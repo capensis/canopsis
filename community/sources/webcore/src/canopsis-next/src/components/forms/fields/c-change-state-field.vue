@@ -45,7 +45,7 @@ export default {
     },
     name: {
       type: String,
-      required: 'changeState',
+      default: 'changeState',
     },
   },
   computed: {

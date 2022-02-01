@@ -42,24 +42,22 @@ import (
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/serviceweather"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/sessionauth"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/sessionstats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/userpreferences"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewstats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libentityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	libfile "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session/stats"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -95,8 +93,6 @@ const (
 	authBroadcastMessage = apisecurity.ObjBroadcastMessage
 
 	authAssociativeTable = apisecurity.ObjAssociativeTable
-
-	authAppInfoRead = apisecurity.PermAppInfoRead
 
 	authUserInterfaceUpdate = apisecurity.PermUserInterfaceUpdate
 	authUserInterfaceDelete = apisecurity.PermUserInterfaceDelete
@@ -136,16 +132,21 @@ func RegisterRoutes(
 	userInterfaceConfig config.UserInterfaceConfigProvider,
 	scenarioPriorityIntervals action.PriorityIntervals,
 	filesRoot string,
+	websocketHub websocket.Hub,
+	broadcastMessageChan chan<- bool,
+	metricsEntityMetaUpdater metrics.MetaUpdater,
+	metricsUserMetaUpdater metrics.MetaUpdater,
 	logger zerolog.Logger,
 ) {
 	sessionStore := security.GetSessionStore()
 	authMiddleware := security.GetAuthMiddleware()
-	security.RegisterCallbackRoutes(router)
+	security.RegisterCallbackRoutes(router, dbClient)
 	authApi := auth.NewApi(
 		security.GetTokenService(),
 		security.GetTokenStore(),
 		security.GetAuthProviders(),
 		security.GetSessionStore(),
+		websocketHub,
 		security.GetCookieOptions().FileAccessName,
 		security.GetCookieOptions().MaxAge,
 		security.GetCookieOptions().Secure,
@@ -154,29 +155,17 @@ func RegisterRoutes(
 	sessionauthApi := sessionauth.NewApi(
 		sessionStore,
 		security.GetAuthProviders(),
+		websocketHub,
+		security.GetTokenStore(),
 		logger,
 	)
 	router.POST("/auth", sessionauthApi.LoginHandler())
-	sessionStatsApi := sessionstats.NewApi(sessionStore, stats.NewManager(dbClient, security.GetConfig().Session.StatsFrame))
+
 	sessionProtected := router.Group("")
 	{
 		sessionProtected.Use(middleware.SessionAuth(dbClient, sessionStore), middleware.OnlyAuth())
 		sessionProtected.GET("/logout", sessionauthApi.LogoutHandler())
-
-		{
-			sessionProtected.GET("/api/v2/sessionstart", sessionStatsApi.StartHandler())
-			sessionProtected.POST("/api/v2/keepalive", sessionStatsApi.PingHandler())
-			sessionProtected.POST("/api/v2/session_tracepath", sessionStatsApi.ChangePathHandler())
-		}
 	}
-
-	getStatsHandlers := append(
-		authMiddleware,
-		middleware.SessionAuth(dbClient, sessionStore),
-		middleware.OnlyAuth(),
-		sessionStatsApi.ListHandler(),
-	)
-	router.GET("/api/v2/sessions", getStatsHandlers...)
 
 	unprotected := router.Group(baseUrl)
 	{
@@ -188,22 +177,23 @@ func RegisterRoutes(
 	{
 		protected.Use(authMiddleware...)
 
+		protected.Group("/ws").GET("", websocket.NewApi(websocketHub).Handler)
+
 		protected.GET("/account/me", account.NewApi(account.NewStore(dbClient)).Me)
 		protected.GET("/logged-user-count", authApi.GetLoggedUserCount)
-		protected.GET("/sessions-count", sessionauthApi.GetSessionsCount())
 		protected.GET("/file-access", authApi.GetFileAccess)
 
-		viewStatsRouter := protected.Group("/view-stats")
+		userPreferencesRouter := protected.Group("/user-preferences")
 		{
-			viewStatsApi := viewstats.NewApi(stats.NewManager(dbClient, security.GetConfig().Session.StatsFrame))
-			viewStatsRouter.GET("", middleware.OnlyAuth(), viewStatsApi.List)
-			viewStatsRouter.POST("", middleware.OnlyAuth(), viewStatsApi.Create)
-			viewStatsRouter.PUT("/:id", middleware.OnlyAuth(), viewStatsApi.Update)
+			userPreferencesRouter.Use(middleware.OnlyAuth())
+			userPreferencesApi := userpreferences.NewApi(userpreferences.NewStore(dbClient), actionLogger)
+			userPreferencesRouter.GET("/:id", userPreferencesApi.Get)
+			userPreferencesRouter.PUT("", userPreferencesApi.Update)
 		}
 
+		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder()), actionLogger, metricsUserMetaUpdater)
 		userRouter := protected.Group("/users")
 		{
-			userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder()), actionLogger)
 			userRouter.POST("",
 				middleware.Authorize(apisecurity.PermAcl, model.PermissionCreate, enforcer),
 				userApi.Create,
@@ -261,7 +251,8 @@ func RegisterRoutes(
 			)
 		}
 
-		alarmAPI := alarm.NewApi(alarm.NewStore(dbClient, GetLegacyURL()), exportExecutor, timezoneConfigProvider)
+		alarmStore := alarm.NewStore(dbClient, GetLegacyURL())
+		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, timezoneConfigProvider)
 		alarmRouter := protected.Group("/alarms")
 		{
 			alarmRouter.GET(
@@ -453,7 +444,8 @@ func RegisterRoutes(
 		}
 		entitybasicsRouter := protected.Group("/entitybasics")
 		{
-			entitybasicsAPI := entitybasic.NewApi(entitybasic.NewStore(dbClient), entityPublChan, actionLogger, logger)
+			entitybasicsAPI := entitybasic.NewApi(entitybasic.NewStore(dbClient), entityPublChan, metricsEntityMetaUpdater,
+				actionLogger, logger)
 			entitybasicsRouter.GET(
 				"",
 				middleware.Authorize(authObjEntity, permRead, enforcer),
@@ -470,9 +462,10 @@ func RegisterRoutes(
 				entitybasicsAPI.Delete,
 			)
 		}
+
+		entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient), entityPublChan, metricsEntityMetaUpdater, actionLogger, logger)
 		entityserviceRouter := protected.Group("/entityservices")
 		{
-			entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient), entityPublChan, actionLogger, logger)
 			entityserviceRouter.POST(
 				"",
 				middleware.Authorize(authObjEntityService, permCreate, enforcer),
@@ -598,8 +591,8 @@ func RegisterRoutes(
 				dbClient,
 				GetLegacyURL(),
 				statsStore,
+				alarmStore,
 				timezoneConfigProvider,
-				pbhEntityTypeResolver,
 			))
 			weatherRouter.GET(
 				"",
@@ -654,16 +647,10 @@ func RegisterRoutes(
 				eventApi.Send)
 		}
 
-		appInfoApi := appinfo.NewApi(appinfo.NewStore(dbClient, security.GetConfig().Security.AuthProviders))
+		appInfoApi := appinfo.NewApi(enforcer, appinfo.NewStore(dbClient, security.GetConfig().Security.AuthProviders))
+		protected.GET("app-info", appInfoApi.GetAppInfo)
 		appInfoRouter := protected.Group("/internal")
 		{
-			appInfoRouter.GET("login_info", appInfoApi.LoginInfo)
-			appInfoRouter.GET(
-				"app_info",
-				middleware.Authorize(authAppInfoRead, permCan, enforcer),
-				appInfoApi.GetAppInfo,
-			)
-
 			appInfoRouter.PUT(
 				"user_interface",
 				middleware.Authorize(authUserInterfaceUpdate, permCan, enforcer),
@@ -768,6 +755,7 @@ func RegisterRoutes(
 		// broadcast message API
 		broadcastMessageApi := broadcastmessage.NewApi(
 			broadcastmessage.NewStore(dbClient),
+			broadcastMessageChan,
 			actionLogger,
 		)
 		broadcastMessageRouter := protected.Group("/broadcast-message")
@@ -821,9 +809,9 @@ func RegisterRoutes(
 			)
 		}
 
+		scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient), actionLogger, scenarioPriorityIntervals)
 		scenarioRouter := protected.Group("/scenarios")
 		{
-			scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient), actionLogger, scenarioPriorityIntervals)
 			scenarioRouter.POST(
 				"",
 				middleware.Authorize(authObjAction, permCreate, enforcer),
@@ -887,7 +875,7 @@ func RegisterRoutes(
 				stateSettingsApi.Update,
 			)
 			stateSettingsRouter.GET(
-				"/",
+				"",
 				middleware.Authorize(authObjStateSettings, permCan, enforcer),
 				stateSettingsApi.List,
 			)
@@ -897,12 +885,12 @@ func RegisterRoutes(
 		{
 			notificationApi := notification.NewApi(notification.NewStore(dbClient), actionLogger)
 			notificationRouter.PUT(
-				"/",
+				"",
 				middleware.Authorize(authObjNotification, permCan, enforcer),
 				notificationApi.Update,
 			)
 			notificationRouter.GET(
-				"/",
+				"",
 				middleware.Authorize(authObjNotification, permCan, enforcer),
 				notificationApi.Get,
 			)
@@ -946,83 +934,9 @@ func RegisterRoutes(
 			)
 		}
 
-		bulkRouter := protected.Group("/bulk")
-		{
-			viewRouter := bulkRouter.Group("/views")
-			{
-				viewRouter.POST(
-					"",
-					middleware.Authorize(authObjView, permCreate, enforcer),
-					middleware.SetAuthorToBulk(),
-					viewAPI.BulkCreate,
-					middleware.ReloadEnforcerPolicyOnChange(enforcer),
-				)
-				viewRouter.PUT(
-					"",
-					middleware.Authorize(authObjView, permUpdate, enforcer),
-					middleware.ProvideAuthorizedIds(permUpdate, enforcer),
-					middleware.SetAuthorToBulk(),
-					viewAPI.BulkUpdate,
-				)
-				viewRouter.DELETE(
-					"",
-					middleware.Authorize(authObjView, permDelete, enforcer),
-					middleware.ProvideAuthorizedIds(permDelete, enforcer),
-					viewAPI.BulkDelete,
-					middleware.ReloadEnforcerPolicyOnChange(enforcer),
-				)
-			}
-
-			viewGroupRouter := bulkRouter.Group("/view-groups")
-			{
-				viewGroupRouter.POST(
-					"",
-					middleware.Authorize(authObjViewGroup, permCreate, enforcer),
-					middleware.SetAuthorToBulk(),
-					viewGroupAPI.BulkCreate,
-				)
-				viewGroupRouter.PUT(
-					"",
-					middleware.Authorize(authObjViewGroup, permUpdate, enforcer),
-					middleware.SetAuthorToBulk(),
-					viewGroupAPI.BulkUpdate,
-				)
-				viewGroupRouter.DELETE(
-					"",
-					middleware.Authorize(authObjViewGroup, permDelete, enforcer),
-					viewGroupAPI.BulkDelete,
-				)
-			}
-		}
-
-		dateStorageRouter := protected.Group("data-storage")
-		{
-			dateStorageAPI := datastorage.NewApi(datastorage.NewStore(dbClient))
-			dateStorageRouter.GET(
-				"",
-				middleware.Authorize(authDataStorageRead, permCan, enforcer),
-				dateStorageAPI.Get,
-			)
-			dateStorageRouter.PUT(
-				"",
-				middleware.Authorize(authDataStorageUpdate, permCan, enforcer),
-				dateStorageAPI.Update,
-			)
-		}
-
-		messageRateStatsRouter := protected.Group("/message-rate-stats")
-		{
-			messageRateStatsAPI := messageratestats.NewApi(messageratestats.NewStore(dbClient))
-			messageRateStatsRouter.GET(
-				"",
-				middleware.Authorize(authMessageRateStatsRead, permCan, enforcer),
-				messageRateStatsAPI.List,
-			)
-		}
-
+		idleRuleAPI := idlerule.NewApi(idlerule.NewStore(dbClient), actionLogger, userInterfaceConfig)
 		idleRuleRouter := protected.Group("/idle-rules")
 		{
-			idleRuleAPI := idlerule.NewApi(idlerule.NewStore(dbClient), actionLogger, userInterfaceConfig)
 			idleRuleRouter.POST(
 				"",
 				middleware.Authorize(authObjIdleRule, permCreate, enforcer),
@@ -1054,6 +968,211 @@ func RegisterRoutes(
 				"/count",
 				middleware.Authorize(authObjPbh, permCreate, enforcer),
 				idleRuleAPI.CountPatterns)
+		}
+
+		bulkRouter := protected.Group("/bulk")
+		{
+			scenarioRouter := bulkRouter.Group("/scenarios")
+			{
+				scenarioRouter.POST(
+					"",
+					middleware.Authorize(authObjAction, permCreate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					scenarioAPI.BulkCreate,
+				)
+				scenarioRouter.PUT(
+					"",
+					middleware.Authorize(authObjAction, permUpdate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					scenarioAPI.BulkUpdate,
+				)
+				scenarioRouter.DELETE(
+					"",
+					middleware.Authorize(authObjAction, permDelete, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					scenarioAPI.BulkDelete,
+				)
+			}
+
+			idleruleRouter := bulkRouter.Group("/idle-rules")
+			{
+				idleruleRouter.POST(
+					"",
+					middleware.Authorize(authObjIdleRule, permCreate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					idleRuleAPI.BulkCreate,
+				)
+				idleruleRouter.PUT(
+					"",
+					middleware.Authorize(authObjIdleRule, permUpdate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					idleRuleAPI.BulkUpdate,
+				)
+				idleruleRouter.DELETE(
+					"",
+					middleware.Authorize(authObjIdleRule, permDelete, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					idleRuleAPI.BulkDelete,
+				)
+			}
+
+			eventFilterRouter := bulkRouter.Group("/eventfilters")
+			{
+				eventFilterRouter.POST(
+					"",
+					middleware.Authorize(authEventFilter, permCreate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					eventFilterApi.BulkCreate,
+				)
+				eventFilterRouter.PUT(
+					"",
+					middleware.Authorize(authEventFilter, permUpdate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					eventFilterApi.BulkUpdate,
+				)
+				eventFilterRouter.DELETE(
+					"",
+					middleware.Authorize(authEventFilter, permDelete, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					eventFilterApi.BulkDelete,
+				)
+			}
+
+			entityserviceRouter := bulkRouter.Group("/entityservices")
+			{
+				entityserviceRouter.POST(
+					"",
+					middleware.Authorize(authObjEntityService, permCreate, enforcer),
+					middleware.PreProcessBulk(conf, false),
+					entityserviceAPI.BulkCreate,
+				)
+				entityserviceRouter.PUT(
+					"",
+					middleware.Authorize(authObjEntityService, permUpdate, enforcer),
+					middleware.PreProcessBulk(conf, false),
+					entityserviceAPI.BulkUpdate,
+				)
+				entityserviceRouter.DELETE(
+					"",
+					middleware.Authorize(authObjEntityService, permDelete, enforcer),
+					middleware.PreProcessBulk(conf, false),
+					entityserviceAPI.BulkDelete,
+				)
+			}
+
+			userRouter := bulkRouter.Group("/users")
+			{
+				userRouter.POST(
+					"",
+					middleware.Authorize(apisecurity.PermAcl, permCreate, enforcer),
+					middleware.PreProcessBulk(conf, false),
+					userApi.BulkCreate,
+				)
+				userRouter.PUT(
+					"",
+					middleware.Authorize(apisecurity.PermAcl, permUpdate, enforcer),
+					middleware.PreProcessBulk(conf, false),
+					userApi.BulkUpdate,
+				)
+				userRouter.DELETE(
+					"",
+					middleware.Authorize(apisecurity.PermAcl, permDelete, enforcer),
+					middleware.PreProcessBulk(conf, false),
+					userApi.BulkDelete,
+				)
+			}
+
+			viewRouter := bulkRouter.Group("/views")
+			{
+				viewRouter.POST(
+					"",
+					middleware.Authorize(authObjView, permCreate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					viewAPI.BulkCreate,
+					middleware.ReloadEnforcerPolicyOnChange(enforcer),
+				)
+				viewRouter.PUT(
+					"",
+					middleware.Authorize(authObjView, permUpdate, enforcer),
+					middleware.ProvideAuthorizedIds(permUpdate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					viewAPI.BulkUpdate,
+				)
+				viewRouter.DELETE(
+					"",
+					middleware.Authorize(authObjView, permDelete, enforcer),
+					middleware.ProvideAuthorizedIds(permDelete, enforcer),
+					viewAPI.BulkDelete,
+					middleware.ReloadEnforcerPolicyOnChange(enforcer),
+				)
+			}
+
+			viewGroupRouter := bulkRouter.Group("/view-groups")
+			{
+				viewGroupRouter.POST(
+					"",
+					middleware.Authorize(authObjViewGroup, permCreate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					viewGroupAPI.BulkCreate,
+				)
+				viewGroupRouter.PUT(
+					"",
+					middleware.Authorize(authObjViewGroup, permUpdate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					viewGroupAPI.BulkUpdate,
+				)
+				viewGroupRouter.DELETE(
+					"",
+					middleware.Authorize(authObjViewGroup, permDelete, enforcer),
+					viewGroupAPI.BulkDelete,
+				)
+			}
+
+			pbehaviorRouter := bulkRouter.Group("/pbehaviors")
+			{
+				pbehaviorRouter.POST(
+					"",
+					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionCreate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					pbehaviorApi.BulkCreate,
+				)
+				pbehaviorRouter.PUT(
+					"",
+					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionUpdate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					pbehaviorApi.BulkUpdate,
+				)
+				pbehaviorRouter.DELETE(
+					"",
+					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionDelete, enforcer),
+					pbehaviorApi.BulkDelete,
+				)
+			}
+		}
+
+		dateStorageRouter := protected.Group("data-storage")
+		{
+			dateStorageAPI := datastorage.NewApi(datastorage.NewStore(dbClient))
+			dateStorageRouter.GET(
+				"",
+				middleware.Authorize(authDataStorageRead, permCan, enforcer),
+				dateStorageAPI.Get,
+			)
+			dateStorageRouter.PUT(
+				"",
+				middleware.Authorize(authDataStorageUpdate, permCan, enforcer),
+				dateStorageAPI.Update,
+			)
+		}
+
+		messageRateStatsRouter := protected.Group("/message-rate-stats")
+		{
+			messageRateStatsAPI := messageratestats.NewApi(messageratestats.NewStore(dbClient))
+			messageRateStatsRouter.GET(
+				"",
+				middleware.Authorize(authMessageRateStatsRead, permCan, enforcer),
+				messageRateStatsAPI.List,
+			)
 		}
 
 		fileRouter := protected.Group("/file")
@@ -1146,32 +1265,5 @@ func RegisterRoutes(
 				flappingRuleAPI.Delete,
 			)
 		}
-	}
-}
-
-func GetProxy(
-	security Security,
-	enforcer libsecurity.Enforcer,
-	accessConfig proxy.AccessConfig,
-) []gin.HandlerFunc {
-	authMiddleware := security.GetAuthMiddleware()
-
-	return append(
-		authMiddleware,
-		middleware.ProxyAuthorize(enforcer, accessConfig),
-		ReverseProxyHandler(),
-	)
-}
-
-func RegisterWebsocketRoutes(
-	router gin.IRouter,
-	hub websocket.Hub,
-	security Security,
-) {
-	authMiddleware := security.GetWebsocketAuthMiddleware()
-	protected := router.Group("/api/v4/ws")
-	{
-		protected.Use(authMiddleware...)
-		protected.GET("", websocket.NewApi(hub).Handler)
 	}
 }

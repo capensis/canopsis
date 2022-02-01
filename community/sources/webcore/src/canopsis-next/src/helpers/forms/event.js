@@ -1,5 +1,3 @@
-import moment from 'moment';
-
 import {
   ENTITIES_STATES,
   EVENT_DEFAULT_ORIGIN,
@@ -7,6 +5,8 @@ import {
   EVENT_INITIATORS,
   MANUAL_META_ALARM_EVENT_DEFAULT_FIELDS,
 } from '@/constants';
+
+import { getNowTimestamp } from '@/helpers/date/date';
 
 /**
  * @typedef {
@@ -106,7 +106,7 @@ export const prepareEventByAlarm = (type, alarm, data = {}) => {
     state: alarm.v.state.val,
     event_type: type,
     crecord_type: type,
-    timestamp: moment().unix(),
+    timestamp: getNowTimestamp(),
     resource: alarm.v.resource,
     ref_rk: `${alarm.v.resource}/${alarm.v.component}`,
     origin: EVENT_DEFAULT_ORIGIN,
@@ -146,7 +146,8 @@ export const prepareManualMetaAlarmEventByAlarms = (type, alarms, data = {}) => 
  * @param {Object|Event} [data]
  * @return {Event[]|ManualMetaAlarmEvent[]}
  */
-export const prepareEventsByAlarms = (type, alarms, data) =>
-  ([EVENT_ENTITY_TYPES.manualMetaAlarmGroup, EVENT_ENTITY_TYPES.manualMetaAlarmUpdate].includes(type)
+export const prepareEventsByAlarms = (type, alarms, data) => (
+  [EVENT_ENTITY_TYPES.manualMetaAlarmGroup, EVENT_ENTITY_TYPES.manualMetaAlarmUpdate].includes(type)
     ? prepareManualMetaAlarmEventByAlarms(type, alarms, data)
-    : alarms.map(alarm => prepareEventByAlarm(type, alarm, data)));
+    : alarms.map(alarm => prepareEventByAlarm(type, alarm, data))
+);

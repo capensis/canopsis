@@ -1,8 +1,9 @@
 <template lang="pug">
-  v-list-group(data-test="defaultSortColumn")
-    v-list-tile(slot="activator") {{ $t('settings.defaultSortColumn') }}
+  v-list-group
+    template(#activator="")
+      v-list-tile {{ $t('settings.defaultSortColumn') }}
     v-container
-      v-layout(data-test="defaultSortColumnOrderByLayout", row)
+      v-layout(row)
         v-select(
           v-field="value.column",
           :items="columns",
@@ -10,7 +11,7 @@
           item-text="label",
           item-value="value"
         )
-      v-layout(data-test="defaultSortColumnOrdersLayout", row)
+      v-layout(row)
         v-select(
           v-field="value.order",
           :items="orders"

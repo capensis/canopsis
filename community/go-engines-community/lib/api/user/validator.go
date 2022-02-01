@@ -14,7 +14,8 @@ const minPasswordLength = 8
 const maxPasswordLength = 255
 
 type Validator interface {
-	ValidateEditRequest(ctx context.Context, sl validator.StructLevel)
+	ValidateRequest(ctx context.Context, sl validator.StructLevel)
+	ValidateBulkUpdateRequestItem(ctx context.Context, sl validator.StructLevel)
 }
 
 type baseValidator struct {
@@ -29,9 +30,19 @@ func NewValidator(dbClient mongo.DbClient) Validator {
 	}
 }
 
-func (v *baseValidator) ValidateEditRequest(ctx context.Context, sl validator.StructLevel) {
-	r := sl.Current().Interface().(EditRequest)
-	// Validate name
+func (v *baseValidator) ValidateBulkUpdateRequestItem(ctx context.Context, sl validator.StructLevel) {
+	r := sl.Current().Interface().(BulkUpdateRequestItem)
+
+	v.validateEditRequest(ctx, sl, r.ID, r.EditRequest)
+}
+
+func (v *baseValidator) ValidateRequest(ctx context.Context, sl validator.StructLevel) {
+	r := sl.Current().Interface().(Request)
+
+	v.validateEditRequest(ctx, sl, r.ID, r.EditRequest)
+}
+
+func (v *baseValidator) validateEditRequest(ctx context.Context, sl validator.StructLevel, id string, r EditRequest) {
 	if r.Name != "" {
 		// Check unique by id
 		res := struct {
@@ -39,14 +50,14 @@ func (v *baseValidator) ValidateEditRequest(ctx context.Context, sl validator.St
 		}{}
 		err := v.dbCollection.FindOne(ctx, bson.M{"_id": r.Name}).Decode(&res)
 		if err == nil {
-			if res.ID != r.ID {
+			if res.ID != id {
 				sl.ReportError(r.Name, "Name", "Name", "unique", "")
 			}
 		} else if err == mongodriver.ErrNoDocuments {
 			// Check unique by name
 			err := v.dbCollection.FindOne(ctx, bson.M{"crecord_name": r.Name}).Decode(&res)
 			if err == nil {
-				if res.ID != r.ID {
+				if res.ID != id {
 					sl.ReportError(r.Name, "Name", "Name", "unique", "")
 				}
 			} else if err != mongodriver.ErrNoDocuments {
@@ -58,7 +69,7 @@ func (v *baseValidator) ValidateEditRequest(ctx context.Context, sl validator.St
 	}
 	// Validate password
 	if r.Password == "" {
-		if r.ID == "" {
+		if id == "" {
 			sl.ReportError(r.Password, "Password", "Password", "required", "")
 		}
 	} else {

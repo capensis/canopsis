@@ -179,8 +179,7 @@ module.exports = {
 
     selectViewModal.verifyModalClosed();
 
-    browser.perform(() =>
-      browser.assert.urlContains(`${views.viewForCopying._id}?tabId=${views.viewForCopying.copyTabId}`));
+    browser.perform(() => browser.assert.urlContains(`${views.viewForCopying._id}?tabId=${views.viewForCopying.copyTabId}`));
   },
 
   'Go back into test view': (browser) => {

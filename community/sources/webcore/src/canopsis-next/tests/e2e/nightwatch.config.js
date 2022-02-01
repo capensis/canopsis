@@ -23,14 +23,14 @@ require('babel-plugin-require-context-hook/register')();
 const path = require('path');
 const deepmerge = require('deepmerge');
 
-/* eslint-disable import/no-extraneous-dependencies */
 const seleniumServer = require('selenium-server');
-const ChildProcess = require('nightwatch/lib/runner/cli/child-process');
-/* eslint-enable import/no-extraneous-dependencies */
+const chromedriver = require('chromedriver');
+const ChildProcess = require('nightwatch/lib/runner/concurrency/child-process');
+
 const { nightwatchRunWithQueue } = require('./helpers/nightwatch-child-process');
 
 const loadEnv = require('../../tools/load-env'); // eslint-disable-line import/no-extraneous-dependencies
-const nightWatchRecordConfig = require('./nightwatch-record.config.js');
+const nightWatchRecordConfig = require('./nightwatch-record.config');
 
 const localEnvPath = path.resolve(process.cwd(), 'tests', 'e2e', '.env.local');
 const baseEnvPath = path.resolve(process.cwd(), 'tests', 'e2e', '.env');
@@ -53,7 +53,7 @@ const seleniumConfig = {
   host: '127.0.0.1',
   port: 4444,
   cli_args: {
-    'webdriver.chrome.driver': process.env.CHROME_DRIVER_PATH,
+    'webdriver.chrome.driver': chromedriver.path,
   },
 };
 
@@ -61,6 +61,11 @@ const seleniumConfig = {
  * Put sel helper method into global object
  */
 global.sel = sel;
+global.window = {
+  location: {
+    href: process.env.VUE_DEV_SERVER_URL,
+  },
+};
 
 module.exports = deepmerge({
   src_folders: [path.resolve('tests', 'e2e', 'specs')],
@@ -102,7 +107,7 @@ module.exports = deepmerge({
         javascriptEnabled: true,
         acceptSslCerts: true,
         chromeOptions: {
-          args: ['--no-sandbox'],
+          args: ['--no-sandbox', '--ignore-certificate-errors'],
         },
       },
     },

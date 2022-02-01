@@ -9,45 +9,45 @@ Feature: Get and update data storage config
       "junit": {
         "delete_after": {
           "enabled": true,
-          "seconds": 864000,
+          "value": 10,
           "unit": "d"
         }
       },
       "remediation": {
         "accumulate_after": {
           "enabled": true,
-          "seconds": 864000,
+          "value": 10,
           "unit": "d"
         },
         "delete_after": {
           "enabled": true,
-          "seconds": 1728000,
+          "value": 20,
           "unit": "d"
         }
       },
       "alarm": {
         "archive_after": {
           "enabled": true,
-          "seconds": 864000,
+          "value": 10,
           "unit": "d"
         },
         "delete_after": {
           "enabled": true,
-          "seconds": 1728000,
+          "value": 20,
           "unit": "d"
         }
       },
       "pbehavior": {
         "delete_after": {
           "enabled": true,
-          "seconds": 1728000,
+          "value": 20,
           "unit": "d"
         }
       },
       "health_check": {
         "delete_after": {
           "enabled": true,
-          "seconds": 1728000,
+          "value": 20,
           "unit": "d"
         }
       }
@@ -61,45 +61,45 @@ Feature: Get and update data storage config
         "junit": {
           "delete_after": {
             "enabled": true,
-            "seconds": 864000,
+            "value": 10,
             "unit": "d"
           }
         },
         "remediation": {
           "accumulate_after": {
             "enabled": true,
-            "seconds": 864000,
+            "value": 10,
             "unit": "d"
           },
           "delete_after": {
             "enabled": true,
-            "seconds": 1728000,
+            "value": 20,
             "unit": "d"
           }
         },
         "alarm": {
           "archive_after": {
             "enabled": true,
-            "seconds": 864000,
+            "value": 10,
             "unit": "d"
           },
           "delete_after": {
             "enabled": true,
-            "seconds": 1728000,
+            "value": 20,
             "unit": "d"
           }
         },
         "pbehavior": {
           "delete_after": {
             "enabled": true,
-            "seconds": 1728000,
+            "value": 20,
             "unit": "d"
           }
         },
         "health_check": {
           "delete_after": {
             "enabled": true,
-            "seconds": 1728000,
+            "value": 20,
             "unit": "d"
           }
         }
@@ -123,45 +123,45 @@ Feature: Get and update data storage config
         "junit": {
           "delete_after": {
             "enabled": true,
-            "seconds": 864000,
+            "value": 10,
             "unit": "d"
           }
         },
         "remediation": {
           "accumulate_after": {
             "enabled": true,
-            "seconds": 864000,
+            "value": 10,
             "unit": "d"
           },
           "delete_after": {
             "enabled": true,
-            "seconds": 1728000,
+            "value": 20,
             "unit": "d"
           }
         },
         "alarm": {
           "archive_after": {
             "enabled": true,
-            "seconds": 864000,
+            "value": 10,
             "unit": "d"
           },
           "delete_after": {
             "enabled": true,
-            "seconds": 1728000,
+            "value": 20,
             "unit": "d"
           }
         },
         "pbehavior": {
           "delete_after": {
             "enabled": true,
-            "seconds": 1728000,
+            "value": 20,
             "unit": "d"
           }
         },
         "health_check": {
           "delete_after": {
             "enabled": true,
-            "seconds": 1728000,
+            "value": 20,
             "unit": "d"
           }
         }
@@ -255,11 +255,11 @@ Feature: Get and update data storage config
     {
       "remediation": {
         "accumulate_after": {
-          "seconds": 864000,
+          "value": 10,
           "unit": "d"
         },
         "delete_after": {
-          "seconds": 864000,
+          "value": 10,
           "unit": "d"
         }
       }
@@ -279,11 +279,11 @@ Feature: Get and update data storage config
     {
       "alarm": {
         "archive_after": {
-          "seconds": 864000,
+          "value": 10,
           "unit": "d"
         },
         "delete_after": {
-          "seconds": 864000,
+          "value": 10,
           "unit": "d"
         }
       }
@@ -304,7 +304,7 @@ Feature: Get and update data storage config
       "alarm": {
         "delete_after": {
           "enabled": true,
-          "seconds": 864000,
+          "value": 10,
           "unit": "d"
         }
       }

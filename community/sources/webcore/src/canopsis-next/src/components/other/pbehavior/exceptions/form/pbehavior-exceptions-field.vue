@@ -18,9 +18,9 @@
 </template>
 
 <script>
-import moment from 'moment';
-
 import uid from '@/helpers/uid';
+
+import { convertDateToStartOfDayDateObject } from '@/helpers/date/date';
 
 import { formArrayMixin } from '@/mixins/form';
 
@@ -55,12 +55,10 @@ export default {
   },
   methods: {
     addExceptionDate() {
-      const startOfTodayMoment = moment().startOf('day');
-
       this.addItemIntoArray({
         key: uid(),
-        begin: startOfTodayMoment.toDate(),
-        end: startOfTodayMoment.toDate(),
+        begin: convertDateToStartOfDayDateObject(),
+        end: convertDateToStartOfDayDateObject(),
         type: '',
       });
       this.$nextTick(() => this.$validator.validate('exdates'));

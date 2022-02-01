@@ -49,7 +49,6 @@ const commands = {
     return this.customClick('@refreshButton');
   },
 
-
   setSearchingText(value) {
     return this.customSetValue('@searchingTextField', value);
   },

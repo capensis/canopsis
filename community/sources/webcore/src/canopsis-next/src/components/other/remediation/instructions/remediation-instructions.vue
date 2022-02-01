@@ -20,18 +20,18 @@ import { MODALS } from '@/constants';
 
 import { remediationInstructionToForm, formToRemediationInstruction } from '@/helpers/forms/remediation-instruction';
 
-import { entitiesRemediationInstructionsMixin } from '@/mixins/entities/remediation/instructions';
-import { localQueryMixin } from '@/mixins/query-local/query';
 import { authMixin } from '@/mixins/auth';
+import { localQueryMixin } from '@/mixins/query-local/query';
+import { entitiesRemediationInstructionMixin } from '@/mixins/entities/remediation/instruction';
 
 import RemediationInstructionsList from './remediation-instructions-list.vue';
 
 export default {
   components: { RemediationInstructionsList },
   mixins: [
-    entitiesRemediationInstructionsMixin,
-    localQueryMixin,
     authMixin,
+    localQueryMixin,
+    entitiesRemediationInstructionMixin,
   ],
   mounted() {
     this.fetchList();
@@ -104,8 +104,9 @@ export default {
 
     async updateRemediationInstructionWithConfirm(remediationInstruction, data) {
       if (remediationInstruction.running) {
-        await this.showConfirmModalOnRunningRemediationInstruction(() =>
-          this.updateRemediationInstruction({ id: remediationInstruction._id, data }));
+        await this.showConfirmModalOnRunningRemediationInstruction(
+          () => this.updateRemediationInstruction({ id: remediationInstruction._id, data }),
+        );
       } else {
         await this.updateRemediationInstruction({ id: remediationInstruction._id, data });
       }

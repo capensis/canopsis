@@ -1,9 +1,15 @@
 {
   "root": true,
   "extends": [
-    "plugin:vue/essential",
+    "plugin:vue/strongly-recommended",
     "@vue/airbnb"
   ],
+
+  "parserOptions": {
+    "parser": "babel-eslint",
+    "sourceType": "module"
+  },
+
   "plugins": [
     "vue"
   ],
@@ -11,13 +17,17 @@
     "sel": true
   },
   "rules": {
+    "object-curly-newline": "off",
+    "arrow-parens": [2, "as-needed", { "requireForBlockBody": true }],
     "default-case": "off",
     "max-len": ["error", { "code": 120, "ignoreStrings": true, "ignoreTemplateLiterals": true, "ignoreRegExpLiterals": true }],
-    "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state", "config", "acc", "Vue", "browser"] }],
+    "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state", "config", "acc", "Vue", "browser", "wrapper"] }],
     "no-console": ["error", { "allow": ["warn", "error"] }],
     "no-return-assign": "off",
     "no-underscore-dangle": ["error", { "allow": ["_id", "_embedded", "_t", "_filter", "type_", "_original"] }],
     "no-bitwise": ["error", { "allow": ["&"] }],
+    "vue/require-default-prop": "off",
+    "vue/require-prop-types": "error",
     "vue/order-in-components": ["error", {
       "order": [
         "el",
@@ -42,6 +52,7 @@
         "renderError"
       ]
     }],
+    "import/no-cycle": "off", // TODO: We have a lot of cycle deps. Should be fixed.
     "import/prefer-default-export": "off"
   }
 }

@@ -59,7 +59,7 @@ import { remediationInstructionStepToForm } from '@/helpers/forms/remediation-in
 import { isOmitEqual } from '@/helpers/validators/is-omit-equal';
 import { toSeconds } from '@/helpers/date/duration';
 
-import confirmableFormMixin from '@/mixins/confirmable-form';
+import { confirmableFormMixinCreator } from '@/mixins/confirmable-form';
 
 import RemediationInstructionOperationsForm from '../remediation-instruction-operations-form.vue';
 
@@ -74,7 +74,7 @@ export default {
   mixins: [
     formMixin,
     validationChildrenMixin,
-    confirmableFormMixin({
+    confirmableFormMixinCreator({
       field: 'step',
       method: 'remove',
       comparator(step) {

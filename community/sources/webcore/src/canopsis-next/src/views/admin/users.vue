@@ -22,7 +22,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import entitiesUserMixin from '@/mixins/entities/user';
+import { entitiesUserMixin } from '@/mixins/entities/user';
 import { permissionsTechnicalUserMixin } from '@/mixins/permissions/technical/user';
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { authMixin } from '@/mixins/auth';

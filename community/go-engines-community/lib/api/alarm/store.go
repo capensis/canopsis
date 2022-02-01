@@ -34,9 +34,14 @@ const (
 )
 
 const linkFetchTimeout = 30 * time.Second
+const valuePrefix = "v."
+const defaultTimeFieldOpened = "t"
+const defaultTimeFieldResolved = "v.resolved"
 
 type Store interface {
 	Find(ctx context.Context, apiKey string, r ListRequestWithPagination) (*AggregationResult, error)
+	GetAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]InstructionWithAlarms, error)
+	GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string) (map[string]ExecutionStatus, error)
 	Count(ctx context.Context, r FilterRequest) (*Count, error)
 }
 
@@ -310,7 +315,8 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 	}
 
 	childrenIds := make([]string, 0)
-	for i := range result.Data {
+	parentIds := make([]string, len(result.Data))
+	for i, al := range result.Data {
 		if result.Data[i].ChildrenIDs != nil {
 			if len(result.Data[i].ChildrenIDs.Data) == 0 {
 				result.Data[i].Children = &Children{
@@ -321,6 +327,8 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 				childrenIds = append(childrenIds, result.Data[i].ChildrenIDs.Data...)
 			}
 		}
+
+		parentIds[i] = al.Entity.ID
 	}
 
 	if len(childrenIds) == 0 {
@@ -329,7 +337,10 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 
 	pipeline := make([]bson.M, 0)
 	pipeline = append(pipeline, bson.M{"$match": bson.M{"$and": []bson.M{
-		{"d": bson.M{"$in": childrenIds}},
+		{
+			"d": bson.M{"$in": childrenIds},
+			"v.parents": bson.M{"$in": parentIds},
+		},
 	}}})
 	s.addNestedObjects(r.FilterRequest, &pipeline)
 
@@ -352,29 +363,22 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 		return err
 	}
 
-	childrenByEntityID := make(map[string][]Alarm)
+	childrenByParents := make(map[string][]Alarm)
 	for _, ch := range children {
-		if _, ok := childrenByEntityID[ch.Entity.ID]; !ok {
-			childrenByEntityID[ch.Entity.ID] = make([]Alarm, 0)
-		}
+		for _, parent := range ch.Value.Parents {
+			if _, ok := childrenByParents[parent]; !ok {
+				childrenByParents[parent] = make([]Alarm, 0)
+			}
 
-		childrenByEntityID[ch.Entity.ID] = append(childrenByEntityID[ch.Entity.ID], ch)
+			childrenByParents[parent] = append(childrenByParents[parent], ch)
+		}
 	}
 
-	for i := range result.Data {
-		if result.Data[i].ChildrenIDs == nil {
-			continue
-		}
-		for _, chID := range result.Data[i].ChildrenIDs.Data {
-			if children, ok := childrenByEntityID[chID]; ok {
-				if result.Data[i].Children == nil {
-					result.Data[i].Children = &Children{
-						Data:  make([]Alarm, 0),
-						Total: result.Data[i].ChildrenIDs.Total,
-					}
-				}
-
-				result.Data[i].Children.Data = append(result.Data[i].Children.Data, children...)
+	for i, al := range result.Data {
+		if children, ok := childrenByParents[al.Entity.ID]; ok {
+			result.Data[i].Children = &Children{
+				Data:  children,
+				Total: len(children),
 			}
 		}
 	}
@@ -385,7 +389,7 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 			childrenAlarmIds[idx] = ch.ID
 		}
 
-		assignedInstructionMap, err := s.getAssignedInstructionsMap(ctx, childrenAlarmIds)
+		assignedInstructionMap, err := s.GetAssignedInstructionsMap(ctx, childrenAlarmIds)
 		if err != nil {
 			return err
 		}
@@ -413,7 +417,7 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 	return nil
 }
 
-func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]InstructionWithAlarms, error) {
+func (s *store) GetAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]InstructionWithAlarms, error) {
 	instructionCursor, err := s.dbInstructionCollection.Aggregate(
 		ctx,
 		[]bson.M{
@@ -573,38 +577,7 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 	return assignedInstructionsMap, nil
 }
 
-func (s *store) fillAssignedInstructions(ctx context.Context, result *AggregationResult) error {
-	var alarmIds []string
-	for _, alarmDocument := range result.Data {
-		alarmIds = append(alarmIds, alarmDocument.ID)
-	}
-
-	if len(alarmIds) == 0 {
-		return nil
-	}
-
-	assignedInstructionsMap, err := s.getAssignedInstructionsMap(ctx, alarmIds)
-	if err != nil {
-		return err
-	}
-
-	for i, alarmDocument := range result.Data {
-		sort.Slice(assignedInstructionsMap[alarmDocument.ID], func(i, j int) bool {
-			return assignedInstructionsMap[alarmDocument.ID][i].Name < assignedInstructionsMap[alarmDocument.ID][j].Name
-		})
-
-		result.Data[i].AssignedInstructions = assignedInstructionsMap[alarmDocument.ID]
-	}
-
-	return nil
-}
-
-func (s *store) fillInstructionFlags(ctx context.Context, result *AggregationResult) error {
-	alarmIDs := make([]string, len(result.Data))
-	for i, item := range result.Data {
-		alarmIDs[i] = item.ID
-	}
-
+func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string) (map[string]ExecutionStatus, error) {
 	cursor, err := s.dbInstructionExecutionCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"alarm": bson.M{"$in": alarmIDs},
@@ -653,23 +626,57 @@ func (s *store) fillInstructionFlags(ctx context.Context, result *AggregationRes
 		}},
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	type status struct {
-		ID               string `bson:"_id"`
-		AutoRunning      *bool  `bson:"auto_running"`
-		ManualRunning    *bool  `bson:"manual_running"`
-		AutoAllCompleted *bool  `bson:"auto_all_completed"`
-	}
-	executionStatuses := make([]status, 0)
+	executionStatuses := make([]ExecutionStatus, 0)
 	err = cursor.All(ctx, &executionStatuses)
+	if err != nil {
+		return nil, err
+	}
+	statusesByAlarm := make(map[string]ExecutionStatus, len(executionStatuses))
+	for _, v := range executionStatuses {
+		statusesByAlarm[v.ID] = v
+	}
+
+	return statusesByAlarm, nil
+}
+
+func (s *store) fillAssignedInstructions(ctx context.Context, result *AggregationResult) error {
+	var alarmIds []string
+	for _, alarmDocument := range result.Data {
+		alarmIds = append(alarmIds, alarmDocument.ID)
+	}
+
+	if len(alarmIds) == 0 {
+		return nil
+	}
+
+	assignedInstructionsMap, err := s.GetAssignedInstructionsMap(ctx, alarmIds)
 	if err != nil {
 		return err
 	}
-	statusesByAlarm := make(map[string]status, len(executionStatuses))
-	for _, v := range executionStatuses {
-		statusesByAlarm[v.ID] = v
+
+	for i, alarmDocument := range result.Data {
+		sort.Slice(assignedInstructionsMap[alarmDocument.ID], func(i, j int) bool {
+			return assignedInstructionsMap[alarmDocument.ID][i].Name < assignedInstructionsMap[alarmDocument.ID][j].Name
+		})
+
+		result.Data[i].AssignedInstructions = assignedInstructionsMap[alarmDocument.ID]
+	}
+
+	return nil
+}
+
+func (s *store) fillInstructionFlags(ctx context.Context, result *AggregationResult) error {
+	alarmIDs := make([]string, len(result.Data))
+	for i, item := range result.Data {
+		alarmIDs[i] = item.ID
+	}
+
+	statusesByAlarm, err := s.GetInstructionExecutionStatuses(ctx, alarmIDs)
+	if err != nil {
+		return err
 	}
 
 	for i, v := range result.Data {
@@ -789,7 +796,7 @@ func (s *store) addStartFromFilter(r FilterRequest, match *[]bson.M) {
 		return
 	}
 
-	*match = append(*match, bson.M{"t": bson.M{"$gte": r.StartFrom}})
+	*match = append(*match, bson.M{s.getTimeField(r): bson.M{"$gte": r.StartFrom}})
 }
 
 func (s *store) addStartToFilter(r FilterRequest, match *[]bson.M) {
@@ -797,7 +804,23 @@ func (s *store) addStartToFilter(r FilterRequest, match *[]bson.M) {
 		return
 	}
 
-	*match = append(*match, bson.M{"t": bson.M{"$lte": r.StartTo}})
+	*match = append(*match, bson.M{s.getTimeField(r): bson.M{"$lte": r.StartTo}})
+}
+
+func (s *store) getTimeField(r FilterRequest) string {
+	if r.TimeField == "t" {
+		return r.TimeField
+	}
+
+	if r.TimeField == "" {
+		if r.GetOpenedFilter() == OnlyResolved {
+			return defaultTimeFieldResolved
+		}
+
+		return defaultTimeFieldOpened
+	}
+
+	return fmt.Sprintf("%s%s", valuePrefix, r.TimeField)
 }
 
 func (s *store) addOpenedFilter(r FilterRequest, match *[]bson.M) {

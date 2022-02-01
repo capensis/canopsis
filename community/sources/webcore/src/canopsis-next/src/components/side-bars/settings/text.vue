@@ -4,19 +4,17 @@
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
       field-filter-editor(
-        data-test="widgetFilterEditor",
         v-model="settings.widget.parameters.mfilter",
         :hidden-fields="['title']",
         :entities-type="$constants.ENTITIES_TYPES.entity"
       )
       v-divider
       field-text-editor(
-        data-test="widgetTestTemplate",
         v-model="settings.widget.parameters.template",
         :title="$t('settings.templateEditor')"
       )
       v-divider
-      v-list-group(v-if="isCatVersion", data-test="textWidgetStats")
+      v-list-group(v-if="isCatVersion")
         v-list-tile(slot="activator") {{ $t('settings.stats') }}
           div.font-italic.caption.ml-1 ({{ $t('common.optional') }})
         v-list.grey.lighten-4.px-2.py-0(expand)
@@ -24,13 +22,13 @@
           v-divider
           field-date-interval(v-model="settings.widget.parameters.dateInterval")
           v-divider
-    v-btn.primary(data-test="submitText", @click="submit") {{ $t('common.save') }}
+    v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
-
 import { SIDE_BARS } from '@/constants';
+
+import { textWidgetToForm } from '@/helpers/forms/widgets/text';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
@@ -59,10 +57,9 @@ export default {
 
     return {
       settings: {
-        widget: cloneDeep(widget),
+        widget: textWidgetToForm(widget),
       },
     };
   },
 };
-
 </script>

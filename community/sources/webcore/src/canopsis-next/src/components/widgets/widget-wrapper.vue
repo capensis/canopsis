@@ -64,10 +64,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    updateTabMethod: {
-      type: Function,
-      required: true,
-    },
   },
   computed: {
     ...mapGetters(['edition']),

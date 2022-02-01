@@ -25,7 +25,7 @@ const DefaultPoolSize = 100
 type TypeComputer interface {
 	// Compute calculates types for provided timespan.
 	Compute(ctx context.Context, span timespan.Span) (ComputeResult, error)
-	Recompute(ctx context.Context, span timespan.Span, pbehaviorID string) (ComputedPbehavior, error)
+	Recompute(ctx context.Context, span timespan.Span, pbehaviorIds []string) (map[string]ComputedPbehavior, error)
 }
 
 // typeComputer computes periodical behavior timespans for provided interval.
@@ -189,32 +189,34 @@ func (c *typeComputer) Compute(
 func (c *typeComputer) Recompute(
 	ctx context.Context,
 	span timespan.Span,
-	pbehaviorID string,
-) (ComputedPbehavior, error) {
+	pbehaviorIds []string,
+) (map[string]ComputedPbehavior, error) {
 	stepChan := make(chan int, 1)
 	defer close(stepChan)
 	stepChan <- getPbehaviorsStep
 
-	var pbehavior *PBehavior
-	var models models
-	var computed ComputedPbehavior
+	var (
+		pbehaviorsByID map[string]*PBehavior
+		models         models
+		res            map[string]ComputedPbehavior
+	)
 
 	for {
 		select {
 		case <-ctx.Done():
-			return computed, nil
+			return nil, nil
 		case step := <-stepChan:
 			nextStep := -1
 			var err error
 
 			switch step {
 			case getPbehaviorsStep:
-				pbehavior, err = c.modelProvider.GetEnabledPbehavior(ctx, pbehaviorID)
+				pbehaviorsByID, err = c.modelProvider.GetEnabledPbehaviorsByIds(ctx, pbehaviorIds)
 				if err != nil {
 					err = fmt.Errorf("cannot fetch pbehavior: %w", err)
 					break
 				}
-				if pbehavior == nil {
+				if len(pbehaviorsByID) == 0 {
 					break
 				}
 
@@ -250,15 +252,18 @@ func (c *typeComputer) Recompute(
 
 				nextStep = computePbehaviorsStep
 			case computePbehaviorsStep:
-				computed, err = c.computePbehavior(pbehavior, span, models)
+				res, err = c.runWorkers(ctx, span, pbehaviorsByID, models)
+				if err != nil {
+					break
+				}
 			}
 
 			if err != nil {
-				return computed, err
+				return nil, err
 			}
 
 			if nextStep == -1 {
-				return computed, nil
+				return res, nil
 			}
 
 			stepChan <- nextStep
@@ -387,14 +392,14 @@ func (c *typeComputer) computePbehavior(
 	stop = stop.In(location)
 
 	if pbehavior.RRule == "" {
-		event = NewEvent(pbehavior.Start.In(location), stop)
+		event = NewEvent(pbehavior.Start.Time.In(location), stop)
 	} else {
 		rOption, err := rrule.StrToROption(pbehavior.RRule)
 		if err != nil {
 			return ComputedPbehavior{}, err
 		}
 
-		event = NewRecEvent(pbehavior.Start.In(location), stop, rOption)
+		event = NewRecEvent(pbehavior.Start.Time.In(location), stop, rOption)
 	}
 
 	resByExdate, err := c.computeByExdate(pbehavior, event, span, models)
@@ -450,8 +455,8 @@ func (c *typeComputer) computeByExdate(
 	location := event.span.From().Location()
 	res := make([]computedType, 0)
 	for _, exdate := range exdateList {
-		from := maxTime(span.From(), exdate.Begin.In(location))
-		to := minTime(span.To(), exdate.End.In(location))
+		from := maxTime(span.From(), exdate.Begin.Time.In(location))
+		to := minTime(span.To(), exdate.End.Time.In(location))
 		if from.After(to) {
 			continue
 		}

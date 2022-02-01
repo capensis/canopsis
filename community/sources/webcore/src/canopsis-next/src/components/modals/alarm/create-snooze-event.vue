@@ -24,10 +24,11 @@
 <script>
 import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
-import modalInnerItemsMixin from '@/mixins/modal/inner-items';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import { formToSnooze, snoozeToForm } from '@/helpers/forms/snooze-event';
 
@@ -48,10 +49,11 @@ export default {
     SnoozeEventForm,
   },
   mixins: [
+    modalInnerMixin,
     modalInnerItemsMixin,
     eventActionsAlarmMixin,
-    submittableMixin(),
-    confirmableModalMixin(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     return {

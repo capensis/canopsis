@@ -1,5 +1,5 @@
-import GridItem from './components/grid-item.vue';
-import GridLayout from './components/grid-layout.vue';
+const GridItem = () => import(/* webpackChunkName: "View" */ './components/grid-item.vue');
+const GridLayout = () => import(/* webpackChunkName: "View" */ './components/grid-layout.vue');
 
 export default {
   install(Vue) {

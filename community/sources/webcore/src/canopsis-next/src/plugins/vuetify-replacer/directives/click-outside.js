@@ -2,6 +2,8 @@ import { getZIndex } from 'vuetify/es5/util/helpers';
 
 import { get } from 'lodash';
 
+import { MIN_CLICK_OUTSIDE_DELAY_AFTER_REGISTERED } from '@/config';
+
 function defaultConditional() {
   return false;
 }
@@ -29,6 +31,13 @@ function defaultConditionalWithZIndex(e, el) {
  * @param binding
  */
 function directive(e, el, binding) {
+  // eslint-disable-next-line no-underscore-dangle
+  const delayAfterRegistered = Date.now() - el._outsideRegistredAt;
+
+  if (delayAfterRegistered < MIN_CLICK_OUTSIDE_DELAY_AFTER_REGISTERED) {
+    return;
+  }
+
   const handler = typeof binding.value === 'function' ? binding.value : get(binding, 'value.handler');
   const include = binding.args ? binding.args.include : binding.value.include;
   const { closeConditional } = binding.args ? binding.args : binding.value;
@@ -82,6 +91,8 @@ export default {
 
       el._clickOutside = onClick;
     }
+
+    el._outsideRegistredAt = Date.now();
   },
 
   unbind(el, binding) {

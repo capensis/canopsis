@@ -1,20 +1,16 @@
 <template lang="pug">
   v-layout
     v-flex(xs12)
-      time-interval-field(
+      c-duration-field(
         v-field="timebased.time_interval",
-        :interval-label="$t('metaAlarmRule.timeInterval')"
+        :label="$t('metaAlarmRule.timeInterval')",
+        required
       )
 </template>
 
 <script>
-import TimeIntervalField from '@/components/forms/fields/time-interval.vue';
-
 export default {
   inject: ['$validator'],
-  components: {
-    TimeIntervalField,
-  },
   model: {
     prop: 'timebased',
     event: 'input',
@@ -27,4 +23,3 @@ export default {
   },
 };
 </script>
-

@@ -18,13 +18,11 @@
         :time-to-complete="step.time_to_complete",
         :failed-at="step.failed_at"
       )
-      remediation-instruction-execute-operations(
+      remediation-instruction-execute-step-operations(
         :operations="step.operations",
         :step-number="stepNumber",
         :is-first-step="isFirstStep",
-        :execution-id="executionId",
-        @next="nextOperation",
-        @previous="previousOperation",
+        v-on="$listeners",
         @finish="showEndpointModal"
       )
 </template>
@@ -32,22 +30,15 @@
 <script>
 import { MODALS } from '@/constants';
 
-import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
-
-import RemediationInstructionExecuteOperations from './remediation-instruction-execute-operations.vue';
+import RemediationInstructionExecuteStepOperations from './remediation-instruction-execute-step-operations.vue';
 import RemediationInstructionStatus from './partials/remediation-instruction-status.vue';
 
 export default {
   components: {
-    RemediationInstructionExecuteOperations,
+    RemediationInstructionExecuteStepOperations,
     RemediationInstructionStatus,
   },
-  mixins: [entitiesRemediationInstructionExecutionMixin],
   props: {
-    executionId: {
-      type: String,
-      required: true,
-    },
     step: {
       type: Object,
       required: true,
@@ -66,14 +57,6 @@ export default {
     },
   },
   methods: {
-    previousOperation() {
-      this.previousOperationRemediationInstructionExecution({ id: this.executionId });
-    },
-
-    nextOperation() {
-      this.nextOperationRemediationInstructionExecution({ id: this.executionId });
-    },
-
     showEndpointModal() {
       this.$modals.show({
         name: MODALS.confirmation,

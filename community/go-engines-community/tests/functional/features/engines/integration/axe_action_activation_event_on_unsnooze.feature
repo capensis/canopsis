@@ -16,7 +16,7 @@ Feature: send activation event on unsnooze
           "type":"snooze",
           "parameters": {
             "duration": {
-              "seconds": 3,
+              "value": 3,
               "unit": "s"
             }
           },

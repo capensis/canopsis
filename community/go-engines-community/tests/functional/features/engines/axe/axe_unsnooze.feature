@@ -16,7 +16,7 @@ Feature: unsnooze alarm
       "output" : "test-output-axe-unsnooze-1",
       "long_output" : "test-long-output-axe-unsnooze-1",
       "author" : "test-author-axe-unsnooze-1",
-      "timestamp": {{ (now.Add (parseDuration "-10s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-10s" }}
     }
     """
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -34,7 +34,7 @@ Feature: unsnooze alarm
       "output" : "test-output-axe-unsnooze-1",
       "long_output" : "test-long-output-axe-unsnooze-1",
       "author" : "test-author-axe-unsnooze-1",
-      "timestamp": {{ (now.Add (parseDuration "-5s")).UTC.Unix }}
+      "timestamp": {{ nowAdd "-5s" }}
     }
     """
     When I save response snoozeEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
@@ -72,7 +72,7 @@ Feature: unsnooze alarm
                 "a": "test-author-axe-unsnooze-1",
                 "m": "test-output-axe-unsnooze-1",
                 "t": {{ .snoozeEventTimestamp }},
-                "val": {{ .snoozeEventTimestamp | sum 3 }}
+                "val": {{ .snoozeEventTimestamp | sumTime 3 }}
               }
             ]
           }

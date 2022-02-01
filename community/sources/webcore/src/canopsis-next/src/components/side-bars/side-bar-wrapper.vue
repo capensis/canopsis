@@ -1,17 +1,19 @@
 <template lang="pug">
   v-navigation-drawer(
-    data-test="sideBarWrapper",
     v-model="isOpen",
     :ignore-click-outside="hasMaximizedModal",
     :custom-close-conditional="closeCondition",
-    v-bind="navigationDrawerProps"
+    :width="400",
+    right,
+    fixed,
+    temporary
   )
     div(v-if="title")
       v-toolbar(color="secondary")
         v-list
           v-list-tile
             v-list-tile-title.white--text {{ title }}
-        v-btn(data-test="closeWidget", @click.stop="closeHandler", icon)
+        v-btn(icon, @click.stop="closeHandler")
           v-icon(color="white") close
       v-divider
       // @slot use this slot default
@@ -35,12 +37,6 @@ export default {
     };
   },
   mixins: [sideBarInnerMixin],
-  props: {
-    navigationDrawerProps: {
-      type: Object,
-      default: () => ({}),
-    },
-  },
   data() {
     return {
       ready: false,

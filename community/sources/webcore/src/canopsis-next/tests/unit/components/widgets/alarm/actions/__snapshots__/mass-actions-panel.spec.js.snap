@@ -1,0 +1,95 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with empty items 1`] = `
+<div
+  class="shared-actions-panel"
+>
+  <button
+    class="action-pbehaviorAdd"
+  >
+    alarmList.actions.titles.pbehavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="action-ack"
+  >
+    alarmList.actions.titles.ack|playlist_add_check|ack
+  </button>
+  <button
+    class="action-fastAck"
+  >
+    alarmList.actions.titles.fastAck|check|fastAck
+  </button>
+  <button
+    class="action-ackRemove"
+  >
+    alarmList.actions.titles.ackRemove|not_interested|ackRemove
+  </button>
+  <button
+    class="action-cancel"
+  >
+    alarmList.actions.titles.cancel|delete|cancel
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    alarmList.actions.titles.associateTicket|local_play|associateTicket
+  </button>
+  <button
+    class="action-snooze"
+  >
+    alarmList.actions.titles.snooze|alarm|snooze
+  </button>
+  <button
+    class="action-groupRequest"
+  >
+    alarmList.actions.titles.groupRequest|note_add|groupRequest
+  </button>
+  <button
+    class="action-manualMetaAlarmGroup"
+  >
+    alarmList.actions.titles.manualMetaAlarmGroup|center_focus_strong|manualMetaAlarmGroup
+  </button>
+</div>
+`;
+
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta alarm 1`] = `
+<div
+  class="shared-actions-panel"
+>
+  <button
+    class="action-pbehaviorAdd"
+  >
+    alarmList.actions.titles.pbehavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="action-ack"
+  >
+    alarmList.actions.titles.ack|playlist_add_check|ack
+  </button>
+  <button
+    class="action-fastAck"
+  >
+    alarmList.actions.titles.fastAck|check|fastAck
+  </button>
+  <button
+    class="action-ackRemove"
+  >
+    alarmList.actions.titles.ackRemove|not_interested|ackRemove
+  </button>
+  <button
+    class="action-cancel"
+  >
+    alarmList.actions.titles.cancel|delete|cancel
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    alarmList.actions.titles.associateTicket|local_play|associateTicket
+  </button>
+  <button
+    class="action-snooze"
+  >
+    alarmList.actions.titles.snooze|alarm|snooze
+  </button>
+</div>
+`;

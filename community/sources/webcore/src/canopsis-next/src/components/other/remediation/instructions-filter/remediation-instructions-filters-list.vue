@@ -7,18 +7,18 @@
       :filters="filters",
       :editable="editable",
       :closable="closable",
-      @remove="remove"
+      @remove="removeItemFromArray(index)"
     )
 </template>
 
 <script>
-import { formBaseMixin } from '@/mixins/form';
+import { formArrayMixin } from '@/mixins/form';
 
 import RemediationInstructionsFiltersItem from './remediation-instructions-filters-item.vue';
 
 export default {
   components: { RemediationInstructionsFiltersItem },
-  mixins: [formBaseMixin],
+  mixins: [formArrayMixin],
   model: {
     prop: 'filters',
     event: 'input',
@@ -35,11 +35,6 @@ export default {
     closable: {
       type: Boolean,
       default: false,
-    },
-  },
-  methods: {
-    remove(filter) {
-      this.updateModel(this.filters.filter(item => item._id !== filter._id));
     },
   },
 };

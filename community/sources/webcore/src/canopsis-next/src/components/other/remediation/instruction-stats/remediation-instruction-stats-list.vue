@@ -24,9 +24,9 @@
       template(slot="type", slot-scope="props")
         | {{ $t(`remediationInstructions.types.${props.item.type}`) }}
       template(slot="last_executed_on", slot-scope="props")
-        | {{ props.item.last_executed_on | date('long', true, null) }}
+        | {{ props.item.last_executed_on | date }}
       template(slot="last_modified", slot-scope="props")
-        | {{ props.item.last_modified | date('long', true, null) }}
+        | {{ props.item.last_modified | date }}
       template(slot="avg_complete_time", slot-scope="props")
         | {{ props.item.avg_complete_time | duration }}
       template(slot="alarm_states", slot-scope="props")
@@ -55,7 +55,9 @@
 </template>
 
 <script>
-import { permissionsTechnicalRemediationInstructionMixin } from '@/mixins/permissions/technical/remediation-instruction';
+import {
+  permissionsTechnicalRemediationInstructionMixin,
+} from '@/mixins/permissions/technical/remediation-instruction';
 
 import RatingField from '@/components/forms/fields/rating-field.vue';
 
@@ -112,7 +114,7 @@ export default {
           width: 180,
         },
         {
-          text: this.$t('remediationInstructionStats.lastModifiedOn'),
+          text: this.$t('common.lastModifiedOn'),
           value: 'last_modified',
           width: 180,
         },
@@ -141,7 +143,7 @@ export default {
           width: 150,
         },
         {
-          text: this.$t('remediationInstructionStats.rating'),
+          text: this.$tc('common.rating'),
           value: 'rating',
           sortable: false,
           width: 250,
@@ -165,7 +167,6 @@ export default {
   },
 };
 </script>
-
 
 <style lang="scss">
 .c-remediation-instruction-stats {

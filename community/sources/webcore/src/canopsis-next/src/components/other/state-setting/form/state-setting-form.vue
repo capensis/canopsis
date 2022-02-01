@@ -10,17 +10,17 @@
       state-setting-threshold-field.pl-4.pt-2(
         v-field="form.junit_thresholds.skipped",
         :label="$t('common.skipped')",
-        name="skipped"
+        name="junit_thresholds.skipped"
       )
       state-setting-threshold-field.pl-4.pt-2(
         v-field="form.junit_thresholds.errors",
         :label="$tc('common.error', 2)",
-        name="errors"
+        name="junit_thresholds.errors"
       )
       state-setting-threshold-field.pl-4.pt-2(
         v-field="form.junit_thresholds.failures",
         :label="$t('common.failures')",
-        name="failures"
+        name="junit_thresholds.failures"
       )
 </template>
 

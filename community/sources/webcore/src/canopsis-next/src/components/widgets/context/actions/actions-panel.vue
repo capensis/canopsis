@@ -5,7 +5,7 @@
 <script>
 import { pickBy } from 'lodash';
 
-import { MODALS, WIDGETS_ACTIONS_TYPES, ENTITY_TYPES } from '@/constants';
+import { MODALS, CONTEXT_ACTIONS_TYPES, ENTITY_TYPES } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
@@ -37,38 +37,36 @@ export default {
     },
   },
   data() {
-    const { context: contextActionsTypes } = WIDGETS_ACTIONS_TYPES;
-
     return {
       actionsMap: {
         editEntity: {
-          type: contextActionsTypes.editEntity,
+          type: CONTEXT_ACTIONS_TYPES.editEntity,
           icon: 'edit',
           iconColor: 'primary',
           title: this.$t('context.actions.titles.editEntity'),
           method: this.showEditEntityModal,
         },
         duplicateEntity: {
-          type: contextActionsTypes.duplicateEntity,
+          type: CONTEXT_ACTIONS_TYPES.duplicateEntity,
           icon: 'file_copy',
           title: this.$t('context.actions.titles.duplicateEntity'),
           method: this.showDuplicateServiceModal,
         },
         deleteEntity: {
-          type: contextActionsTypes.deleteEntity,
+          type: CONTEXT_ACTIONS_TYPES.deleteEntity,
           icon: 'delete',
           iconColor: 'error',
           title: this.$t('context.actions.titles.deleteEntity'),
           method: this.showDeleteEntityModal,
         },
         pbehavior: {
-          type: contextActionsTypes.pbehaviorAdd,
+          type: CONTEXT_ACTIONS_TYPES.pbehaviorAdd,
           icon: 'pause',
           title: this.$t('context.actions.titles.pbehavior'),
           method: this.showAddPbehaviorModal,
         },
         variablesHelp: {
-          type: contextActionsTypes.variablesHelp,
+          type: CONTEXT_ACTIONS_TYPES.variablesHelp,
           icon: 'help',
           title: this.$t('context.actions.titles.variablesHelp'),
           method: this.showVariablesHelpModal,

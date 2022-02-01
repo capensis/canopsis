@@ -1,8 +1,8 @@
 <template lang="pug">
-  div(data-test="tableWidget")
+  div
     v-layout.white(row, wrap, justify-space-between, align-center)
       v-flex
-        c-advanced-search(
+        c-advanced-search-field(
           :query.sync="query",
           :columns="columns",
           :tooltip="$t('search.alarmAdvancedSearch')"
@@ -18,7 +18,6 @@
         )
       v-flex
         filter-selector(
-          data-test="tableFilterSelector",
           :label="$t('settings.selectAFilter')",
           :filters="viewFilters",
           :locked-filters="widgetViewFilters",
@@ -35,13 +34,12 @@
         alarms-list-remediation-instructions-filters(
           :filters.sync="remediationInstructionsFilters",
           :locked-filters.sync="widgetRemediationInstructionsFilters",
-          :has-access-to-edit-filter="hasAccessToEditRemediationInstructionsFilter",
-          :has-access-to-user-filter="hasAccessToUserRemediationInstructionsFilter",
+          :editable="hasAccessToEditRemediationInstructionsFilter",
+          :addable="hasAccessToUserRemediationInstructionsFilter",
           :has-access-to-list-filters="hasAccessToListRemediationInstructionsFilters"
         )
       v-flex
         v-chip.primary.white--text(
-          data-test="resetAlarmsDateInterval",
           v-if="activeRange",
           close,
           label,
@@ -63,7 +61,6 @@
         )
     v-layout(row, wrap, align-center)
       c-pagination(
-        data-test="topPagination",
         v-if="hasColumns",
         :page="query.page",
         :limit="query.limit",
@@ -82,6 +79,7 @@
       :hide-groups="!query.correlation",
       :has-columns="hasColumns",
       :columns="columns",
+      :sticky-header="widget.parameters.sticky_header",
       selectable,
       expandable
     )
@@ -100,14 +98,14 @@ import { omit, pick, isEmpty, isObject } from 'lodash';
 
 import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
 
-import { findRange } from '@/helpers/date/date-intervals';
+import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
-import widgetExportMixinCreator from '@/mixins/widget/export';
+import { exportCsvMixinCreator } from '@/mixins/widget/export';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import widgetRemediationInstructionsFilterMixin from '@/mixins/widget/remediation-instructions-filter-select';
@@ -150,7 +148,7 @@ export default {
     permissionsWidgetsAlarmsListCorrelation,
     permissionsWidgetsAlarmsListFilters,
     permissionsWidgetsAlarmsListRemediationInstructionsFilters,
-    widgetExportMixinCreator({
+    exportCsvMixinCreator({
       createExport: 'createAlarmsListExport',
       fetchExport: 'fetchAlarmsListExport',
       fetchExportFile: 'fetchAlarmsListCsvFile',
@@ -180,14 +178,15 @@ export default {
     },
 
     isTourEnabled() {
-      return this.checkIsTourEnabled(TOURS.alarmsExpandPanel) && !!this.alarms.length;
+      return this.checkIsTourEnabled(TOURS.alarmsExpandPanel)
+        && !!this.alarms.length;
     },
 
     activeRange() {
       const { tstart, tstop } = this.query;
 
       if (tstart || tstop) {
-        return findRange(tstart, tstop);
+        return findQuickRangeValue(tstart, tstop);
       }
 
       return null;
@@ -213,9 +212,7 @@ export default {
     },
 
     updateCorrelation(correlation) {
-      this.updateWidgetPreferencesInUserPreference({
-        ...this.userPreference.widget_preferences,
-
+      this.updateContentInUserPreference({
         isCorrelationEnabled: correlation,
       });
 
@@ -229,9 +226,7 @@ export default {
     updateCategory(category) {
       const categoryId = category && category._id;
 
-      this.updateWidgetPreferencesInUserPreference({
-        ...this.userPreference.widget_preferences,
-
+      this.updateContentInUserPreference({
         category: categoryId,
       });
 
@@ -243,9 +238,7 @@ export default {
     },
 
     updateRecordsPerPage(limit) {
-      this.updateWidgetPreferencesInUserPreference({
-        ...this.userPreference.widget_preferences,
-
+      this.updateContentInUserPreference({
         itemsPerPage: limit,
       });
 
@@ -257,7 +250,7 @@ export default {
     },
 
     expandFirstAlarm() {
-      if (this.alarms[0] && !this.firstAlarmExpanded) {
+      if (!this.firstAlarmExpanded) {
         this.$set(this.$refs.alarmsTable.expanded, this.alarms[0]._id, true);
       }
     },
@@ -284,7 +277,7 @@ export default {
       this.$modals.show({
         name: MODALS.editLiveReporting,
         config: {
-          ...pick(this.query, ['tstart', 'tstop']),
+          ...pick(this.query, ['tstart', 'tstop', 'time_field']),
           action: params => this.query = { ...this.query, ...params },
         },
       });
@@ -315,12 +308,13 @@ export default {
         exportCsvSeparator,
         exportCsvDatetimeFormat,
       } = this.widget.parameters;
-      const columns = widgetExportColumns && widgetExportColumns.length
+      const columns = widgetExportColumns?.length
         ? widgetExportColumns
         : widgetColumns;
 
-      this.exportWidgetAsCsv({
+      this.exportAsCsv({
         name: `${this.widget._id}-${new Date().toLocaleString()}`,
+        widgetId: this.widget._id,
         data: {
           ...pick(query, ['search', 'category', 'correlation', 'opened']),
 
@@ -330,7 +324,9 @@ export default {
           /**
            * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997
            */
-          time_format: isObject(exportCsvDatetimeFormat) ? exportCsvDatetimeFormat.value : exportCsvDatetimeFormat,
+          time_format: isObject(exportCsvDatetimeFormat)
+            ? exportCsvDatetimeFormat.value
+            : exportCsvDatetimeFormat,
         },
       });
     },

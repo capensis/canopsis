@@ -1,4 +1,7 @@
-import formComputedPropertiesMixin, { modelPropKeyComputed, modelEventKeyComputed } from './internal/computed-properties';
+import formComputedPropertiesMixin, {
+  modelPropKeyComputed,
+  modelEventKeyComputed,
+} from './internal/computed-properties';
 
 /**
  * @mixin Form mixin

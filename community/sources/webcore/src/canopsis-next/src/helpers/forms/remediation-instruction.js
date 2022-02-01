@@ -1,4 +1,9 @@
-import { isUndefined, omit, pick, cloneDeep } from 'lodash';
+import {
+  isUndefined,
+  omit,
+  pick,
+  cloneDeep,
+} from 'lodash';
 
 import {
   REMEDIATION_INSTRUCTION_APPROVAL_TYPES,
@@ -8,13 +13,14 @@ import {
 } from '@/constants';
 
 import uuid from '@/helpers/uuid';
-import { durationToForm, formToDuration } from '@/helpers/date/duration';
+import { durationToForm } from '@/helpers/date/duration';
 import { flattenErrorMap } from '@/helpers/forms/flatten-error-map';
 
 import { enabledToForm } from './shared/common';
 
 /**
  * @typedef {Object} RemediationInstructionStepOperation
+ * @property {string} operation_id
  * @property {string} name
  * @property {string} description
  * @property {Array} jobs
@@ -23,7 +29,6 @@ import { enabledToForm } from './shared/common';
 
 /**
  * @typedef {RemediationInstructionStepOperation} RemediationInstructionStepOperationForm
- * @property {DurationForm} time_to_complete
  * @property {string} [key]
  */
 
@@ -42,9 +47,17 @@ import { enabledToForm } from './shared/common';
  */
 
 /**
- * @typedef {Object} RemediationInstructionApproval
- * @property {User} [user]
- * @property {Role} [role]
+ * @typedef {Object} RemediationInstructionApprovalUser
+ * @property {User} user
+ */
+
+/**
+ * @typedef {Object} RemediationInstructionApprovalRole
+ * @property {Role} role
+ */
+
+/**
+ * @typedef {RemediationInstructionApprovalUser | RemediationInstructionApprovalRole} RemediationInstructionApproval
  * @property {string} comment
  * @property {string} requested_by
  */
@@ -67,32 +80,39 @@ import { enabledToForm } from './shared/common';
  */
 
 /**
- * @typedef {Object} RemediationInstruction
+ * @typedef {Object} RemediationInstructionManual
+ * @property {RemediationInstructionStep[]} steps
+ */
+
+/**
+ * @typedef {Object} RemediationInstructionAuto
+ * @property {number} [priority]
+ * @property {RemediationInstructionJob[]} [jobs]
+ */
+
+/**
+ * @typedef {RemediationInstructionManual | RemediationInstructionAuto} RemediationInstruction
  * @property {number} type
  * @property {string} name
- * @property {number} priority
  * @property {boolean} enabled
  * @property {string} description
  * @property {Duration} timeout_after_execution
- * @property {Array} alarm_patterns
- * @property {Array} entity_patterns
+ * @property {Array} [alarm_patterns]
+ * @property {Array} [entity_patterns]
  * @property {string[]} active_on_pbh
  * @property {string[]} disabled_on_pbh
- * @property {RemediationInstructionStep[]} steps
- * @property {RemediationInstructionJob[]} jobs
  * @property {RemediationInstructionApproval} approval
  */
 
 /**
  * @typedef {RemediationInstruction} RemediationInstructionForm
- * @property {DurationForm} timeout_after_execution
  * @property {RemediationInstructionStepForm[]} steps
  * @property {RemediationInstructionJobForm[]} jobs
  * @property {RemediationInstructionApprovalForm} approval
  */
 
 /**
- * @typedef {Object | undefined} RemediationInstructionApprovalRequest
+ * @typedef {Object} RemediationInstructionApprovalRequest
  * @property {string} [user]
  * @property {string} [role]
  * @property {string} comment
@@ -107,9 +127,7 @@ import { enabledToForm } from './shared/common';
 export const remediationInstructionStepOperationToForm = (operation = {}) => ({
   name: operation.name || '',
   description: operation.description || '',
-  time_to_complete: operation.time_to_complete
-    ? durationToForm(operation.time_to_complete)
-    : { value: 0, unit: TIME_UNITS.minute },
+  time_to_complete: durationToForm(operation.time_to_complete ?? { value: 1, unit: TIME_UNITS.minute }),
   jobs: operation.jobs ? cloneDeep(operation.jobs) : [],
   key: uuid(),
 });
@@ -120,8 +138,8 @@ export const remediationInstructionStepOperationToForm = (operation = {}) => ({
  * @param {RemediationInstructionStepOperation[]} [operations = [undefined]]
  * @returns {Array}
  */
-const remediationInstructionStepOperationsToForm = (operations = [undefined]) =>
-  operations.map(remediationInstructionStepOperationToForm);
+const remediationInstructionStepOperationsToForm = (operations = [undefined]) => operations
+  .map(remediationInstructionStepOperationToForm);
 
 /**
  * Convert a remediation instruction step to form
@@ -211,7 +229,6 @@ export const remediationInstructionToForm = (remediationInstruction = {}) => ({
   jobs: remediationInstructionJobsToForm(remediationInstruction.jobs),
 });
 
-
 /**
  * Convert a remediation instruction step operations form array to a API compatible operation array
  *
@@ -224,7 +241,6 @@ const formJobsToRemediationInstructionJobs = (jobs = []) => jobs.map(job => ({
   job: job.job._id,
 }));
 
-
 /**
  * Convert a remediation instruction step operations form array to a API compatible operation array
  *
@@ -234,7 +250,6 @@ const formJobsToRemediationInstructionJobs = (jobs = []) => jobs.map(job => ({
 const formOperationsToRemediationInstructionOperations = operations => operations.map(operation => ({
   ...omit(operation, ['key']),
 
-  time_to_complete: formToDuration(operation.time_to_complete),
   jobs: operation.jobs.map(({ _id }) => _id),
 }));
 
@@ -254,7 +269,7 @@ const formStepsToRemediationInstructionSteps = steps => steps.map(step => ({
  * Convert a remediation instruction approval form
  *
  * @param {RemediationInstructionApprovalForm} approval
- * @returns {RemediationInstructionApprovalRequest}
+ * @returns {RemediationInstructionApprovalRequest | undefined}
  */
 const formApprovalToRemediationInstructionApproval = (approval) => {
   if (!approval.need_approve) {
@@ -292,7 +307,6 @@ export const formToRemediationInstruction = (form) => {
 
   return {
     ...instruction,
-    timeout_after_execution: formToDuration(form.timeout_after_execution),
     alarm_patterns: form.alarm_patterns.length ? form.alarm_patterns : undefined,
     entity_patterns: form.entity_patterns.length ? form.entity_patterns : undefined,
     approval: formApprovalToRemediationInstructionApproval(form.approval),

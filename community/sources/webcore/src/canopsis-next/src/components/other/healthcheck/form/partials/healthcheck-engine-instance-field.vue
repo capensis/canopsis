@@ -17,7 +17,7 @@
             v-text-field(
               v-field.number="value.minimal",
               v-validate="minimalRules",
-              :error-messages="errors.collect(minimalFieldName)",
+              :error-messages="getErrorMessages(minimalFieldName)",
               :name="minimalFieldName",
               :label="$t('common.minimal')",
               :disabled="!value.enabled",
@@ -31,7 +31,7 @@
             v-text-field.mt-0(
               v-field.number="value.optimal",
               v-validate="optimalRules",
-              :error-messages="errors.collect(optimalFieldName)",
+              :error-messages="getErrorMessages(optimalFieldName)",
               :name="optimalFieldName",
               :label="$t('common.optimal')",
               :disabled="!value.enabled",
@@ -91,6 +91,16 @@ export default {
         required: this.value.enabled,
         min_value: this.value.minimal,
       };
+    },
+  },
+  methods: {
+    getErrorMessages(name) {
+      return this.errors.collect(name, null, false)
+        .map((item) => {
+          const messageKey = `healthcheck.validation.${item.rule}`;
+
+          return this.$te(messageKey) ? this.$t(messageKey) : item.msg;
+        });
     },
   },
 };

@@ -154,6 +154,19 @@ Ainsi, pour afficher transformer un champ en une date au format `heure:minute:se
 
 La [documentation officielle de Go](https://golang.org/pkg/time/#pkg-constants) fournit par ailleurs les valeurs à utiliser pour des formats de dates standards. Pour obtenir une date suivant le RFC3339, il faudra utiliser `formattedDate \"2006-01-02T15:04:05Z07:00\"`. De même, `formattedDate \"02 Jan 06 15:04 MST\"` sera appelé pour générer une date au format RFC822.
 
+##### `localtime`
+
+La fonction `localtime` permet de renvoyer une date dans un autre fuseau horaire que celui paramétré par défaut sur votre instance Canopsis.
+
+Cette fonction prend en paramètre un [format de date](#formatteddate) ainsi que le nom de la timezone souhaitée.
+
+Par exemple : 
+
+* `{{ .Alarm.Value.CreationDate | localTime "2006-02-01 15:04:05" }}` va renvoyer la date dans le format indiqué et pour la timezone configurée par défaut dans Canopsis.
+* `{{ .Alarm.Value.CreationDate | localTime "2006-02-01 15:04:05" "Europe/London" }}` va renvoyer la date dans le format indiqué et pour la timezone "Europe/London".
+
+Une liste de timezones peut être trouvée sur [Wikipédia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+
 ### Cas particulier des méta alarmes
 
 Lorsque l'alarme à laquelle le webhook est confronté est une [méta alarme](../moteurs/moteur-correlation.md), il est possible de parcourir les alarmes conséquences pour en extraire le contenu.  

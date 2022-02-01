@@ -122,11 +122,12 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error
 
 	res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID},
 		bson.M{"$set": bson.M{
-			"description":  r.Description,
-			"enabled":      *r.Enabled,
-			"category":     r.Category,
-			"impact_level": r.ImpactLevel,
-			"infos":        transformInfos(r),
+			"description":     r.Description,
+			"enabled":         *r.Enabled,
+			"category":        r.Category,
+			"impact_level":    r.ImpactLevel,
+			"infos":           transformInfos(r),
+			"sli_avail_state": r.SliAvailState,
 		}},
 	)
 	if err != nil || res.MatchedCount == 0 {

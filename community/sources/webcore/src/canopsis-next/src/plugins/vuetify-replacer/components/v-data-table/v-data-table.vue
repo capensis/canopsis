@@ -159,7 +159,6 @@ export default {
         addDataAttributes(pagination.sortBy, pagination.descending);
       }
 
-
       data.attrs.tabIndex = 0;
       data.on = {
         click: () => {

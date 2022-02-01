@@ -1,7 +1,9 @@
 package pbehaviortype
 
 import (
+	"context"
 	"errors"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -133,7 +135,7 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	err := a.actionLogger.Action(c, logger.LogEntry{
+	err := a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypePbehaviorType,
 		ValueID:   pt.ID,
@@ -142,9 +144,7 @@ func (a *api) Create(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.computeChan <- pbehavior.ComputeTask{
-		PbehaviorID: "",
-	}
+	a.computeChan <- pbehavior.ComputeTask{}
 	c.JSON(http.StatusCreated, pt)
 }
 
@@ -190,7 +190,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypePbehaviorType,
 		ValueID:   pt.ID,
@@ -232,7 +232,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionDelete,
 		ValueType: logger.ValueTypePbehaviorType,
 		ValueID:   c.Param("id"),
@@ -245,9 +245,7 @@ func (a *api) Delete(c *gin.Context) {
 }
 
 func (a *api) sendComputeTask(typeID string) {
-	task := pbehavior.ComputeTask{
-		PbehaviorID: "",
-	}
+	task := pbehavior.ComputeTask{}
 
 	select {
 	case a.computeChan <- task:

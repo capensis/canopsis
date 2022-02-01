@@ -2,10 +2,10 @@
   v-tooltip(:top="top", :right="right", :bottom="bottom", :left="left")
     slot(slot="activator", name="button")
       v-btn.mx-1(
-        slot="activator",
         :disabled="disabled",
         :data-test="$attrs['data-test']",
         :loading="loading",
+        :small="small",
         icon,
         @click.stop.prevent="$listeners.click"
       )
@@ -19,7 +19,7 @@ export default {
     type: {
       type: String,
       default: null,
-      validate: value => ['edit', 'duplicate', 'delete'].includes(value),
+      validator: value => ['edit', 'duplicate', 'delete'].includes(value),
     },
     icon: {
       type: String,
@@ -57,6 +57,10 @@ export default {
       },
     },
     left: {
+      type: Boolean,
+      required: false,
+    },
+    small: {
       type: Boolean,
       required: false,
     },

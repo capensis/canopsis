@@ -1,7 +1,6 @@
 <template lang="pug">
-  div
-    side-bar-wrapper(:navigation-drawer-props="navigationDrawerProps[sideBarName] || defaultNavigationDrawerProps")
-      component(:is="sideBarName", :config="sideBarConfig")
+  side-bar-wrapper
+    component(:is="sideBarName", :config="sideBarConfig")
 </template>
 
 <script>
@@ -41,16 +40,5 @@ export default {
     TestingWeatherSettings,
   },
   mixins: [sideBarInnerMixin],
-  data() {
-    return {
-      navigationDrawerProps: {},
-      defaultNavigationDrawerProps: {
-        right: true,
-        fixed: true,
-        temporary: true,
-        width: 400,
-      },
-    };
-  },
 };
 </script>

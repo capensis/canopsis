@@ -75,8 +75,9 @@ export default {
   },
   computed: {
     availableOperators() {
-      return this.operators.filter(operator =>
-        !this.form.advancedFields.some(({ operator: fieldOperator }) => fieldOperator === operator));
+      return this.operators.filter(
+        operator => !this.form.advancedFields.some(({ operator: fieldOperator }) => fieldOperator === operator),
+      );
     },
   },
   methods: {

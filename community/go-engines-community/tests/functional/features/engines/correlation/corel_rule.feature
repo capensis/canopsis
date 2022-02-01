@@ -16,7 +16,10 @@ Feature: correlation feature - corel rule
             "component": "parent"
           }
         ],
-        "time_interval": 20,
+        "time_interval": {
+          "value": 20,
+          "unit": "s"
+        },
         "threshold_count": 2,
         "corel_id": "{{ `{{ .Alarm.Value.Connector }}` }}",
         "corel_status": "{{ `{{ .Entity.Component }}` }}",
@@ -116,7 +119,10 @@ Feature: correlation feature - corel rule
       "name": "test-corel-2",
       "type": "corel",
       "config": {
-        "time_interval": 20,
+        "time_interval": {
+          "value": 20,
+          "unit": "s"
+        },
         "threshold_count": 2,
         "entity_patterns": [
           {
@@ -283,7 +289,10 @@ Feature: correlation feature - corel rule
       "name": "test-corel-3",
       "type": "corel",
       "config": {
-        "time_interval": 20,
+        "time_interval": {
+          "value": 20,
+          "unit": "s"
+        },
         "threshold_count": 2,
         "entity_patterns": [
           {
@@ -467,7 +476,10 @@ Feature: correlation feature - corel rule
             "component": "parent-4"
           }
         ],
-        "time_interval": 5,
+        "time_interval": {
+          "value": 5,
+          "unit": "s"
+        },
         "threshold_count": 2,
         "corel_id": "{{ `{{ .Alarm.Value.Connector }}` }}",
         "corel_status": "{{ `{{ .Entity.Component }}` }}",
@@ -585,7 +597,10 @@ Feature: correlation feature - corel rule
             "component": "parent-5"
           }
         ],
-        "time_interval": 5,
+        "time_interval": {
+          "value": 5,
+          "unit": "s"
+        },
         "threshold_count": 2,
         "corel_id": "{{ `{{ .Alarm.Value.Connector }}` }}",
         "corel_status": "{{ `{{ .Entity.Component }}` }}",
@@ -703,7 +718,10 @@ Feature: correlation feature - corel rule
             "component": "parent-6"
           }
         ],
-        "time_interval": 5,
+        "time_interval": {
+          "value": 5,
+          "unit": "s"
+        },
         "threshold_count": 2,
         "corel_id": "{{ `{{ .Alarm.Value.Connector }}` }}",
         "corel_status": "{{ `{{ .Entity.Component }}` }}",
@@ -876,7 +894,10 @@ Feature: correlation feature - corel rule
             "component": "parent-7"
           }
         ],
-        "time_interval": 20,
+        "time_interval": {
+          "value": 20,
+          "unit": "s"
+        },
         "threshold_count": 2,
         "corel_id": "{{ `{{ .Alarm.Value.Connector }}` }}",
         "corel_status": "{{ `{{ .Entity.Component }}` }}",

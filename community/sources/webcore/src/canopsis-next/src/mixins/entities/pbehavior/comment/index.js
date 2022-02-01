@@ -58,8 +58,8 @@ export default {
           ...this.updateComments({ comments: changedComments, pbehaviorId: pbehavior._id }),
           ...this.removeComments({ comments: removedComments }),
         ]);
-      } catch (error) {
-        const message = Object.values(error).join('\n');
+      } catch (err) {
+        const message = Object.values(err).join('\n');
 
         this.$popups.error({ text: message || this.$t('errors.default') });
       }

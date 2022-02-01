@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`periodic-refresh-field Renders \`periodic-refresh-field\` with custom props 1`] = `
+<div
+  class="layout mb-3 align-top"
+>
+  <div
+    class="flex xs5"
+  >
+    <c-enabled-field-stub
+      hide-details="hide-details"
+      label="Custom label"
+      value="true"
+    />
+  </div>
+  <div
+    class="flex xs7"
+  >
+    <c-duration-field-stub
+      min="0"
+      name="customName.duration"
+      required="true"
+      value="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`periodic-refresh-field Renders \`periodic-refresh-field\` with default props 1`] = `
+<div
+  class="layout mb-3 align-top"
+>
+  <div
+    class="flex xs5"
+  >
+    <c-enabled-field-stub
+      hide-details="hide-details"
+      label=""
+      value="true"
+    />
+  </div>
+  <div
+    class="flex xs7"
+  >
+    <c-duration-field-stub
+      min="0"
+      name="periodic_refresh.duration"
+      required="true"
+      value="[object Object]"
+    />
+  </div>
+</div>
+`;

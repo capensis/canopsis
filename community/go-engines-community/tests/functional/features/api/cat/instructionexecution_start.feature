@@ -17,7 +17,7 @@ Feature: run a instruction
       "description": "test-instruction-execution-start-1-description",
       "enabled": true,
       "timeout_after_execution": {
-        "seconds": 10,
+        "value": 10,
         "unit": "s"
       },
       "steps": [
@@ -26,13 +26,13 @@ Feature: run a instruction
           "operations": [
             {
               "name": "test-instruction-execution-start-1-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-start-1-step-1-operation-1-description connector {{ `{{ .Alarm.Value.Connector }}` }} entity {{ `{{ .Entity.ID }}` }}",
               "jobs": ["test-instruction-execution-1"]
             },
             {
               "name": "test-instruction-execution-start-1-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-execution-start-1-step-1-operation-2-description connector {{ `{{ .Alarm.Value.Connector }}` }} entity {{ `{{ .Entity.ID }}` }}"
             }
           ],
@@ -44,7 +44,7 @@ Feature: run a instruction
           "operations": [
             {
               "name": "test-instruction-execution-start-1-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 6, "unit":"s"},
               "description": "test-instruction-execution-start-1-step-2-operation-1-description connector {{ `{{ .Alarm.Value.Connector }}` }} entity {{ `{{ .Entity.ID }}` }}"
             }
           ],
@@ -72,14 +72,14 @@ Feature: run a instruction
       "steps": [
         {
           "name": "test-instruction-execution-start-1-step-1",
-          "time_to_complete": {"seconds": 4, "unit":"s"},
+          "time_to_complete": {"value": 4, "unit":"s"},
           "completed_at": 0,
           "failed_at": 0,
           "operations": [
             {
               "completed_at": 0,
               "name": "test-instruction-execution-start-1-step-1-operation-1",
-              "time_to_complete": {"seconds": 1, "unit":"s"},
+              "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-start-1-step-1-operation-1-description connector test-instruction-execution-start-connector entity test-instruction-execution-start-resource-1/test-instruction-execution-start-component",
               "jobs": [
                 {
@@ -98,7 +98,7 @@ Feature: run a instruction
               "started_at": 0,
               "completed_at": 0,
               "name": "test-instruction-execution-start-1-step-1-operation-2",
-              "time_to_complete": {"seconds": 3, "unit":"s"},
+              "time_to_complete": {"value": 3, "unit":"s"},
               "description": "",
               "jobs": []
             }
@@ -107,7 +107,7 @@ Feature: run a instruction
         },
         {
           "name": "test-instruction-execution-start-1-step-2",
-          "time_to_complete": {"seconds": 6, "unit":"s"},
+          "time_to_complete": {"value": 6, "unit":"s"},
           "completed_at": 0,
           "failed_at": 0,
           "operations": [
@@ -115,7 +115,7 @@ Feature: run a instruction
               "started_at": 0,
               "completed_at": 0,
               "name": "test-instruction-execution-start-1-step-2-operation-1",
-              "time_to_complete": {"seconds": 6, "unit":"s"},
+              "time_to_complete": {"value": 6, "unit":"s"},
               "description": "",
               "jobs": []
             }

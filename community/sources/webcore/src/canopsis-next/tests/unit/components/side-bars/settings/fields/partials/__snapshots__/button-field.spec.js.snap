@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`button-field Renders \`button-field\` with custom props 1`] = `
+<div
+  class="container pa-3 fluid"
+>
+  <div
+    class="layout align-center justify-space-between"
+  >
+    <div
+      class="layout justify-end"
+    >
+      <button
+        class="primary v-btn v-btn--small theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <span>
+            common.create
+          </span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`button-field Renders \`button-field\` with default props 1`] = `
+<div
+  class="container pa-3 fluid"
+>
+  <div
+    class="layout align-center justify-space-between"
+  >
+    <div
+      class="layout justify-end"
+    >
+      <button
+        class="primary v-btn v-btn--small theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <span>
+            common.create
+          </span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+`;

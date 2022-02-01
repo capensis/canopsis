@@ -26,8 +26,9 @@ import { MODALS, STATS_TYPES } from '@/constants';
 
 import { setField } from '@/helpers/immutable';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import AddStatForm from '@/components/widgets/stats/add-stat-form.vue';
 
@@ -40,8 +41,9 @@ export default {
   },
   components: { AddStatForm, ModalWrapper },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
+    modalInnerMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     return {
@@ -73,7 +75,11 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          const preparedForm = setField(this.form, 'parameters', parameters => pick(parameters, this.form.stat.options));
+          const preparedForm = setField(
+            this.form,
+            'parameters',
+            parameters => pick(parameters, this.form.stat.options),
+          );
 
           await this.config.action(preparedForm);
         }

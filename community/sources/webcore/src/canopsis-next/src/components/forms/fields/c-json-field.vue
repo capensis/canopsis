@@ -2,7 +2,7 @@
   v-layout(row, wrap)
     v-flex(xs12)
       v-textarea(
-        v-validate="rule",
+        v-validate="",
         v-on="listeners",
         :value="localValue",
         :label="label",
@@ -38,11 +38,8 @@
 import { get, isString } from 'lodash';
 import { Validator } from 'vee-validate';
 
-import { PAYLOAD_VARIABLE_REGEXP } from '@/constants';
-
 import { convertPayloadToJson } from '@/helpers/payload-json';
-
-import { isValidJson } from '@/plugins/validator/helpers/is-valid-json';
+import { stringifyJson } from '@/helpers/json';
 
 export default {
   inject: {
@@ -74,7 +71,7 @@ export default {
     validateOn: {
       type: String,
       default: 'blur',
-      validate: value => ['blur', 'button'].includes(value),
+      validator: value => ['blur', 'button'].includes(value),
     },
     helpText: {
       type: String,
@@ -134,10 +131,6 @@ export default {
 
       return listeners;
     },
-
-    rule() {
-      return this.variables ? 'payload' : 'json';
-    },
   },
   watch: {
     value(newValue) {
@@ -150,32 +143,12 @@ export default {
       }
     },
   },
-  created() {
-    this.$validator.extend('payload', {
-      getMessage: () => this.$t('errors.JSONNotValid'),
-      /**
-       * Function for check json payload with variables is valid
-       *
-       * @param {string} json
-       * @return {boolean}
-       */
-      validate: (json) => {
-        try {
-          const string = json.replace(new RegExp(PAYLOAD_VARIABLE_REGEXP), '""');
-
-          return isValidJson(string);
-        } catch (e) {
-          return false;
-        }
-      },
-    });
-  },
   methods: {
     valueToLocalValue(value) {
       try {
         return this.variables
-          ? convertPayloadToJson(value, 4)
-          : this.$options.filters.json(value);
+          ? convertPayloadToJson(value)
+          : stringifyJson(value);
       } catch (err) {
         this.$popups.error({ text: this.$t('errors.default') });
 
@@ -218,13 +191,14 @@ export default {
     resetValidation(value) {
       this.localValue = value;
 
-      if (value === this.sourceValue) {
-        this.$validator.reset({ name: this.name });
-        return;
-      }
-
       if (this.errors.has(this.name)) {
         this.errors.remove(this.name);
+      }
+
+      if (value === this.sourceValue) {
+        this.$validator.reset({ name: this.name });
+
+        return;
       }
 
       if (!this.wasChanged) {

@@ -48,6 +48,13 @@ export const localQueryMixin = {
   },
 
   methods: {
+    updateQueryField(field, value) {
+      this.query = {
+        ...this.query,
+        [field]: value,
+      };
+    },
+
     customQueryCondition(query, oldQuery) {
       return !isEqual(query, oldQuery);
     },

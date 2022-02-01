@@ -67,9 +67,10 @@ export default {
         change: value => this.group.permissions.forEach((permission) => {
           const actions = getPermissionActions(permission);
 
-          actions.forEach(action =>
-            getCheckboxValue(permission._id, this.role.permissions, this.changedRole, action) !== value
-            && this.changeCheckboxValue(value, permission, action));
+          actions.forEach(
+            action => getCheckboxValue(permission._id, this.role.permissions, this.changedRole, action) !== value
+            && this.changeCheckboxValue(value, permission, action),
+          );
         }),
       };
 

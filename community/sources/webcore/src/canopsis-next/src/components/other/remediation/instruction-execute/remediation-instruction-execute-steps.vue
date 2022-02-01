@@ -8,7 +8,7 @@
       :is-last-step="index === steps.length - 1",
       :is-first-step="index === 0",
       :execution-id="executionId",
-      @next-step="$emit('next-step', $event)"
+      v-on="$listeners"
     )
 </template>
 

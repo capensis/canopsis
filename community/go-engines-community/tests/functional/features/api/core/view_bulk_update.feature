@@ -16,7 +16,7 @@ Feature: Bulk update a views
         "tags": ["test-view-to-bulk-update-1-tag"],
         "periodic_refresh": {
           "enabled": true,
-          "seconds": 600,
+          "value": 10,
           "unit": "m"
         },
         "tabs": [
@@ -48,7 +48,7 @@ Feature: Bulk update a views
         "tags": ["test-view-to-bulk-update-2-tag"],
         "periodic_refresh": {
           "enabled": true,
-          "seconds": 600,
+          "value": 10,
           "unit": "m"
         },
         "tabs": [
@@ -94,7 +94,7 @@ Feature: Bulk update a views
         "tags": ["test-view-to-bulk-update-1-tag"],
         "periodic_refresh": {
           "enabled": true,
-          "seconds": 600,
+          "value": 10,
           "unit": "m"
         },
         "tabs": [
@@ -134,7 +134,7 @@ Feature: Bulk update a views
         "tags": ["test-view-to-bulk-update-2-tag"],
         "periodic_refresh": {
           "enabled": true,
-          "seconds": 600,
+          "value": 10,
           "unit": "m"
         },
         "tabs": [

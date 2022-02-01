@@ -1,3 +1,5 @@
+import { isFunction } from 'lodash';
+
 /**
  * Mixin creator for polling
  *
@@ -22,6 +24,10 @@ export const pollingMixinCreator = ({ method, delayField = 'pollingDelay' }) => 
   },
   methods: {
     async polling() {
+      if (!isFunction(this[method])) {
+        throw new Error(`Method ${method} not found`);
+      }
+
       await this[method]();
 
       this.startPolling();

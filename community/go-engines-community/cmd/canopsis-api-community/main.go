@@ -1,5 +1,7 @@
 package main
 
+//go:generate swag init  -d ../../lib -g ../cmd/canopsis-api-community/main.go -o ../../docs
+
 import (
 	"context"
 	"os"
@@ -8,6 +10,7 @@ import (
 	_ "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/docs"
 	libapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	liblog "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -47,7 +50,7 @@ func main() {
 	}
 
 	// Retrieve config.
-	dbClient, err := mongo.NewClient(ctx, 0, 0)
+	dbClient, err := mongo.NewClient(ctx, 0, 0, logger)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("cannot connect to mongodb")
 	}
@@ -67,8 +70,11 @@ func main() {
 		ctx,
 		flags,
 		enforcer,
-		nil,
+		nil, nil,
 		logger,
+		metrics.NewNullMetaUpdater(),
+		metrics.NewNullMetaUpdater(),
+		nil,
 		func(ctx context.Context) {
 			err := dbClient.Disconnect(ctx)
 			if err != nil {

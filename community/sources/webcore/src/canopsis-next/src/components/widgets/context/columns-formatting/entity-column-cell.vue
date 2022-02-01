@@ -3,6 +3,8 @@
 </template>
 
 <script>
+import { get } from 'lodash';
+
 import { widgetColumnsFiltersMixin } from '@/mixins/widget/columns-filters';
 
 export default {
@@ -35,7 +37,9 @@ export default {
     },
 
     value() {
-      return this.$options.filters.get(this.entity, this.column.value, this.columnFilter, '');
+      const value = get(this.entity, this.column.value, '');
+
+      return this.columnFilter ? this.columnFilter(value) : value;
     },
 
     component() {

@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`kpi-alarms Renders \`kpi-alarms\` without metrics 1`] = `
+<div
+  class="position-relative"
+>
+  <c-progress-overlay-stub />
+  <kpi-alarms-filters-stub
+    mindate="1385830800"
+    query="[object Object]"
+  />
+  <kpi-alarms-chart-stub
+    interval="[object Object]"
+    metrics=""
+    min-date="1385830800"
+    responsive="responsive"
+    sampling="day"
+  />
+</div>
+`;

@@ -17,6 +17,11 @@ type HttpProvider interface {
 	Auth(*http.Request) (*User, error, bool)
 }
 
+// TokenProvider interface is used to implement user authentication by token.
+type TokenProvider interface {
+	Auth(ctx context.Context, token string) (*User, error)
+}
+
 // UserProvider is decorator for requests to user storage.
 type UserProvider interface {
 	// FindByUsername returns user with username or nil.

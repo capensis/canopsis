@@ -1,0 +1,541 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with default props 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <alarms-list-widget-stub
+      tabid="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with editing mode  1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <div
+    class="v-card__title widget-title white pa-2"
+  >
+    <div
+      class="layout justify-space-between align-center"
+    >
+      <div
+        class="flex"
+      >
+        <h4
+          class="ml-2 font-weight-regular"
+        >
+          
+        </h4>
+      </div>
+      <div
+        class="spacer"
+      />
+    </div>
+  </div>
+  <hr
+    class="v-divider theme--light"
+  />
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <alarms-list-widget-stub
+      iseditingmode="true"
+      tabid="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with title and editing mode  1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <div
+    class="v-card__title widget-title white pa-2"
+  >
+    <div
+      class="layout justify-space-between align-center"
+    >
+      <div
+        class="flex"
+      >
+        <h4
+          class="ml-2 font-weight-regular"
+        >
+          Title
+        </h4>
+      </div>
+      <div
+        class="spacer"
+      />
+    </div>
+  </div>
+  <hr
+    class="v-divider theme--light"
+  />
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <alarms-list-widget-stub
+      iseditingmode="true"
+      tabid="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmsList and cat edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <alarms-list-widget-stub
+      tabid="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmsList and core edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <alarms-list-widget-stub
+      message="errors.statsWrongEditionError"
+      tabid="tab-id"
+      value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type Context and cat edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <entities-list-widget-stub
+      tabid="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type Context and core edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <entities-list-widget-stub
+      message="errors.statsWrongEditionError"
+      tabid="tab-id"
+      value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type Counter and cat edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <counter-widget-stub
+      tabid="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type Counter and core edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <counter-widget-stub
+      message="errors.statsWrongEditionError"
+      tabid="tab-id"
+      value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type Junit and cat edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <testing-weather-widget-stub
+      tabid="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type Junit and core edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <c-alert-overlay-stub
+      message="errors.statsWrongEditionError"
+      tab-id="tab-id"
+      value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type ServiceWeather and cat edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <service-weather-widget-stub
+      tabid="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type ServiceWeather and core edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <service-weather-widget-stub
+      message="errors.statsWrongEditionError"
+      tabid="tab-id"
+      value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsCalendar and cat edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <stats-calendar-widget-stub
+      tabid="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsCalendar and core edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <c-alert-overlay-stub
+      message="errors.statsWrongEditionError"
+      tab-id="tab-id"
+      value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsCurves and cat edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <stats-curves-widget-stub
+      tabid="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsCurves and core edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <c-alert-overlay-stub
+      message="errors.statsWrongEditionError"
+      tab-id="tab-id"
+      value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsHistogram and cat edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <stats-histogram-widget-stub
+      tabid="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsHistogram and core edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <c-alert-overlay-stub
+      message="errors.statsWrongEditionError"
+      tab-id="tab-id"
+      value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsNumber and cat edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <stats-number-widget-stub
+      tabid="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsNumber and core edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <c-alert-overlay-stub
+      message="errors.statsWrongEditionError"
+      tab-id="tab-id"
+      value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsPareto and cat edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <stats-pareto-widget-stub
+      tabid="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsPareto and core edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <c-alert-overlay-stub
+      message="errors.statsWrongEditionError"
+      tab-id="tab-id"
+      value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsTable and cat edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <stats-table-widget-stub
+      tabid="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsTable and core edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <c-alert-overlay-stub
+      message="errors.statsWrongEditionError"
+      tab-id="tab-id"
+      value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type Text and cat edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <text-widget-stub
+      tabid="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type Text and core edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <text-widget-stub
+      message="errors.statsWrongEditionError"
+      tabid="tab-id"
+      value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with widget title  1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <div
+    class="v-card__title widget-title white pa-2"
+  >
+    <div
+      class="layout justify-space-between align-center"
+    >
+      <div
+        class="flex"
+      >
+        <h4
+          class="ml-2 font-weight-regular"
+        >
+          Title
+        </h4>
+      </div>
+      <div
+        class="spacer"
+      />
+    </div>
+  </div>
+  <hr
+    class="v-divider theme--light"
+  />
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <alarms-list-widget-stub
+      tabid="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;

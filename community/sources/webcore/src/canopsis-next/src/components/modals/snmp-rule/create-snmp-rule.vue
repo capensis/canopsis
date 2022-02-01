@@ -19,8 +19,9 @@ import { cloneDeep } from 'lodash';
 
 import { MODALS, SNMP_STATE_TYPES } from '@/constants';
 
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import SnmpRuleForm from '@/components/other/snmp-rule/form/snmp-rule-form.vue';
 
@@ -30,8 +31,9 @@ export default {
   name: MODALS.createSnmpRule,
   components: { SnmpRuleForm, ModalWrapper },
   mixins: [
-    submittableMixin(),
-    confirmableModalMixin(),
+    modalInnerMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     const defaultModuleMibObjectForm = {

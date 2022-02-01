@@ -227,7 +227,7 @@ func (a *Alarm) GetAppliedActions() (steps AlarmSteps, ticket *AlarmTicket) {
 		steps = append(steps, *a.Value.ACK)
 	}
 	if ticket = a.Value.Ticket; ticket != nil {
-		steps = append(steps, NewAlarmStep(ticket.Type, ticket.Timestamp, ticket.Author, ticket.Message, ticket.Role, ""))
+		steps = append(steps, NewAlarmStep(ticket.Type, ticket.Timestamp, ticket.Author, ticket.Message, ticket.UserID, ticket.Role, ""))
 	}
 	if a.IsSnoozed() {
 		steps = append(steps, *a.Value.Snooze)
@@ -246,12 +246,16 @@ func (a *Alarm) ApplyActions(steps AlarmSteps, ticket *AlarmTicket) error {
 		step.Timestamp = ts
 		switch step.Type {
 		case AlarmStepAck:
-			err := a.PartialUpdateAck(ts, step.Author, step.Message, step.Role, step.Initiator)
+			err := a.PartialUpdateAck(ts, step.Author, step.Message, step.UserID, step.Role, step.Initiator)
 			if err != nil {
 				return err
 			}
 		case AlarmStepSnooze:
-			err := a.PartialUpdateSnooze(ts, step.Value, step.Author, step.Message, step.Role, step.Initiator)
+			d := DurationWithUnit{
+				Value: int64(step.Value) - step.Timestamp.Unix(),
+				Unit:  "s",
+			}
+			err := a.PartialUpdateSnooze(ts, d, step.Author, step.Message, step.UserID, step.Role, step.Initiator)
 			if err != nil {
 				return err
 			}
@@ -264,7 +268,7 @@ func (a *Alarm) ApplyActions(steps AlarmSteps, ticket *AlarmTicket) error {
 				continue
 			}
 
-			err := a.PartialUpdateAssocTicket(ts, ticket.Data, step.Author, ticket.Value, step.Role, step.Initiator)
+			err := a.PartialUpdateAssocTicket(ts, ticket.Data, step.Author, ticket.Value, step.UserID, step.Role, step.Initiator)
 			if err != nil {
 				return err
 			}
@@ -277,7 +281,7 @@ func (a *Alarm) ApplyActions(steps AlarmSteps, ticket *AlarmTicket) error {
 				continue
 			}
 
-			err := a.PartialUpdateDeclareTicket(ts, step.Author, step.Message, ticket.Value, ticket.Data, step.Role, step.Initiator)
+			err := a.PartialUpdateDeclareTicket(ts, step.Author, step.Message, ticket.Value, ticket.Data, step.UserID, step.Role, step.Initiator)
 			if err != nil {
 				return err
 			}
@@ -328,50 +332,6 @@ func (a *Alarm) UpdateLongOutput(newOutput string) {
 			"v.long_output_history": a.Value.LongOutputHistory,
 		})
 	}
-}
-
-// updateState If Event is a check event and if the associated alarm is not
-// locked, increases or decreases the State of the alarm.
-func (a *Alarm) updateState(e Event) bool {
-	if e.EventType != EventTypeCheck && e.EventType != EventTypeMetaAlarm {
-		return false
-	}
-
-	currentAlarmState := a.CurrentState()
-	if e.State == currentAlarmState {
-		// State hasn't changed. Stop here
-		return false
-	}
-	if a.IsStateLocked() {
-		// Event is an OK, so the alarm should be resolved anyway
-		if e.State == AlarmStateOK {
-			a.Value.State.Type = ""
-		} else {
-			// Stop here: state should be preserved.
-			return false
-		}
-	}
-
-	// Create new Step to keep track of the alarm history
-	newStep := AlarmStep{
-		Type:      AlarmStepStateIncrease,
-		Timestamp: e.Timestamp,
-		Author:    e.Connector + "." + e.ConnectorName,
-		Message:   e.Output,
-		Value:     e.State,
-	}
-	if e.State < currentAlarmState {
-		newStep.Type = AlarmStepStateDecrease
-	}
-
-	a.Value.State = &newStep
-	a.Value.Steps.Add(newStep)
-
-	a.Value.StateChangesSinceStatusUpdate++
-	a.Value.TotalStateChanges++
-	a.Value.LastUpdateDate = e.Timestamp
-
-	return true
 }
 
 // Resolve mark as resolved an Alarm with a timestamp [sic]
@@ -434,7 +394,7 @@ func (a Alarm) IsSnoozed() bool {
 	}
 
 	snoozeEnd := a.Value.Snooze.Value.CpsTimestamp()
-	return snoozeEnd.After(time.Now())
+	return snoozeEnd.After(NewCpsTime())
 }
 
 // IsStateLocked checks that the Alarm is not Locked (by manual intervention for example)

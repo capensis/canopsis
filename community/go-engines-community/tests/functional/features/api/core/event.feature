@@ -465,6 +465,7 @@ Feature: send an event
       "sent_events": [
         {
           "author": "root",
+          "user_id": "root",
           "connector": "engine",
           "connector_name": "correlation",
           "source_type": "resource",

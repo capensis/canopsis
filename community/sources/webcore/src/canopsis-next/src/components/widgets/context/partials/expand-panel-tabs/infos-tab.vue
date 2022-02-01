@@ -11,10 +11,7 @@
         item-key="name"
       )
         template(slot="items", slot-scope="props")
-          td(
-            v-for="column in headers",
-            :key="column.value"
-          ) {{ props.item | get(column.value) }}
+          td(v-for="column in headers", :key="column.value") {{ props.item | get(column.value) }}
 </template>
 
 <script>
@@ -59,12 +56,12 @@ export default {
 
     items() {
       return Object.entries(this.infos).map(([infoKey, info = {}]) => {
-        const valueColumnFilter = this.columnsFiltersMap[`${INFOS_COLUMN_PREFIX}.${infoKey}.value`];
+        const valueColumnFilter = this.columnsFiltersMap[`${INFOS_COLUMN_PREFIX}.${infoKey}.value`] ?? String;
 
         return {
           name: infoKey,
           description: info.description,
-          value: this.$options.filters.get(info, 'value', valueColumnFilter || String),
+          value: valueColumnFilter(info.value),
         };
       });
     },

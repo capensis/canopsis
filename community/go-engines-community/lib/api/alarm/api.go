@@ -1,6 +1,7 @@
 package alarm
 
 import (
+	"fmt"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
@@ -153,6 +154,7 @@ func (a *api) StartExport(c *gin.Context) {
 	}
 
 	taskID, err := a.exportExecutor.StartExecute(c.Request.Context(), export.Task{
+		Filename:     "alarms",
 		ExportFields: exportFields,
 		Separator:    separator,
 		DataFetcher: getDataFetcher(a.store, apiKey, r, exportFields.Fields(),
@@ -225,7 +227,7 @@ func (a *api) DownloadExport(c *gin.Context) {
 	}
 
 	c.Status(http.StatusOK)
-	c.Header("Content-Disposition", `attachment; filename="alarms.csv"`)
+	c.Header("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, t.Filename))
 	c.Header("Content-Type", "text/csv")
 	c.ContentType()
 	c.File(t.File)

@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(data-test="sharedActionsPanel")
+  div
     mq-layout(mq="xl")
       v-layout
         actions-panel-item(
@@ -7,37 +7,39 @@
           v-bind="action",
           :key="`main-${index}`"
         )
-        v-menu(v-show="dropDownActions && dropDownActions.length", bottom, left, @click.native.stop)
-          v-btn(data-test="dropDownActionsButton", icon, slot="activator")
-            v-icon more_vert
-          v-list(data-test="dropDownActions")
+        v-menu(v-if="dropDownActions.length", bottom, left, @click.native.stop="")
+          template(#activator="{ on }")
+            v-btn(v-on="on", icon)
+              v-icon more_vert
+          v-list
             actions-panel-item(
               v-for="(action, index) in dropDownActions",
               v-bind="action",
-              isDropDown,
+              is-drop-down,
               :key="`drop-down-${index}`"
             )
-    mq-layout(mq="l")
+    mq-layout(:mq="['m', 't', 'l']")
       v-layout
         v-menu(
-          v-show="actions.length + Object.keys(actions).length > 0",
+          v-if="actions.length || dropDownActions.length",
           bottom,
           left,
-          @click.native.stop
+          @click.native.stop=""
         )
-          v-btn(icon, slot="activator")
-            v-icon more_vert
+          template(#activator="{ on }")
+            v-btn(v-on="on", icon)
+              v-icon more_vert
           v-list
             actions-panel-item(
               v-for="(action, index) in actions",
               v-bind="action",
-              isDropDown,
+              is-drop-down,
               :key="`mobile-main-${index}`"
             )
             actions-panel-item(
               v-for="(action, index) in dropDownActions",
               v-bind="action",
-              isDropDown,
+              is-drop-down,
               :key="`mobile-drop-down-${index}`"
             )
 </template>

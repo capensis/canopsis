@@ -54,7 +54,9 @@ export default {
     treeViewValue(value) {
       if (isString(value)) {
         return `"${value}"`;
-      } else if (isNull(value)) {
+      }
+
+      if (isNull(value)) {
         return 'null';
       }
 

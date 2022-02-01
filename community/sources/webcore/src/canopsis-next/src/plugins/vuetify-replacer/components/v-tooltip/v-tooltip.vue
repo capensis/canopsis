@@ -1,6 +1,6 @@
 <script>
 import VTooltip from 'vuetify/es5/components/VTooltip';
-import { getSlotType } from 'vuetify/lib/util/helpers';
+import { getSlotType } from 'vuetify/es5/util/helpers';
 
 export default {
   extends: VTooltip,

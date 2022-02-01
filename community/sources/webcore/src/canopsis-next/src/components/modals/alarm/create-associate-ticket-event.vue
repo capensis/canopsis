@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-form(data-test="createAssociateTicketModal", @submit.prevent="submit")
+  v-form(@submit.prevent="submit")
     modal-wrapper(close)
       template(slot="title")
         span {{ $t('modals.createAssociateTicket.title') }}
@@ -16,14 +16,12 @@
               v-validate="'required'",
               :label="$t('modals.createAssociateTicket.fields.ticket')",
               :error-messages="errors.collect('ticket')",
-              name="ticket",
-              data-test="createAssociateTicketNumberOfTicket"
+              name="ticket"
             )
           v-alert(:value="itemsWithoutAck.length", type="info")
             span {{ alertMessage }}
       template(slot="actions")
         v-btn(
-          data-test="createAssociateTicketCancelButton",
           depressed,
           flat,
           @click="$modals.hide"
@@ -31,7 +29,6 @@
         v-btn.primary(
           :loading="submitting",
           :disabled="isDisabled",
-          data-test="createAssociateTicketSubmitButton",
           type="submit"
         ) {{ $t('common.actions.saveChanges') }}
 </template>
@@ -41,10 +38,12 @@ import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
 import { prepareEventsByAlarms } from '@/helpers/forms/event';
 
-import modalInnerItemsMixin from '@/mixins/modal/inner-items';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
-import { submittableMixin } from '@/mixins/submittable';
-import { confirmableModalMixin } from '@/mixins/confirmable-modal';
 
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 
@@ -61,10 +60,11 @@ export default {
   },
   components: { AlarmGeneralTable, ModalWrapper },
   mixins: [
+    modalInnerMixin,
     modalInnerItemsMixin,
     eventActionsAlarmMixin,
-    submittableMixin(),
-    confirmableModalMixin(),
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     return {

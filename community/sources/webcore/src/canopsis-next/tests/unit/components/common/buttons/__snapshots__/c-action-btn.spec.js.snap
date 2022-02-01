@@ -1,0 +1,153 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 1`] = `
+<span
+  class="v-tooltip v-tooltip--bottom"
+>
+  <transition-stub
+    name="slide-y-transition"
+  />
+  <span>
+    <button
+      class="mx-1 v-btn v-btn--icon theme--light"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light color--text"
+        >
+          test_icon
+        </i>
+      </div>
+    </button>
+  </span>
+</span>
+`;
+
+exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <span>
+    tooltip
+  </span>
+</div>
+`;
+
+exports[`c-action-btn Renders \`c-action-btn\` with default delete type correctly. 1`] = `
+<span
+  class="v-tooltip v-tooltip--bottom"
+>
+  <transition-stub
+    name="slide-y-transition"
+  />
+  <span>
+    <button
+      class="mx-1 v-btn v-btn--icon theme--light"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light error--text"
+        >
+          delete
+        </i>
+      </div>
+    </button>
+  </span>
+</span>
+`;
+
+exports[`c-action-btn Renders \`c-action-btn\` with default delete type correctly. 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <span>
+    common.delete
+  </span>
+</div>
+`;
+
+exports[`c-action-btn Renders \`c-action-btn\` with default duplicate type correctly. 1`] = `
+<span
+  class="v-tooltip v-tooltip--bottom"
+>
+  <transition-stub
+    name="slide-y-transition"
+  />
+  <span>
+    <button
+      class="mx-1 v-btn v-btn--icon theme--light"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+        >
+          file_copy
+        </i>
+      </div>
+    </button>
+  </span>
+</span>
+`;
+
+exports[`c-action-btn Renders \`c-action-btn\` with default duplicate type correctly. 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <span>
+    common.duplicate
+  </span>
+</div>
+`;
+
+exports[`c-action-btn Renders \`c-action-btn\` with default edit type correctly. 1`] = `
+<span
+  class="v-tooltip v-tooltip--bottom"
+>
+  <transition-stub
+    name="slide-y-transition"
+  />
+  <span>
+    <button
+      class="mx-1 v-btn v-btn--icon theme--light"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+        >
+          edit
+        </i>
+      </div>
+    </button>
+  </span>
+</span>
+`;
+
+exports[`c-action-btn Renders \`c-action-btn\` with default edit type correctly. 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <span>
+    common.edit
+  </span>
+</div>
+`;

@@ -1,18 +1,13 @@
-import { cloneDeep, pick, isNumber } from 'lodash';
+import { DEFAULT_APP_TITLE, DEFAULT_LOCALE, POPUP_AUTO_CLOSE_DELAY } from '@/config';
 
-import { DEFAULT_APP_TITLE, DEFAULT_LOCALE } from '@/config';
+import { TIME_UNITS } from '@/constants';
 
-// TODO: change to duration
-/**
- * @typedef {Object} PopupTimeoutItem
- * @property {number} interval
- * @property {DurationUnit} unit
- */
+import { durationToForm } from '@/helpers/date/duration';
 
 /**
  * @typedef {Object} PopupTimeout
- * @property {PopupTimeoutItem} error
- * @property {PopupTimeoutItem} info
+ * @property {Duration} error
+ * @property {Duration} info
  */
 
 /**
@@ -24,22 +19,38 @@ import { DEFAULT_APP_TITLE, DEFAULT_LOCALE } from '@/config';
  * @property {string} timezone
  * @property {boolean} allow_change_severity_to_info
  * @property {PopupTimeout} popup_timeout
+ * @property {string} [logo]
  * @property {number} [max_matched_items]
  * @property {number} [check_count_request_timeout]
  */
+
 /**
  * @typedef {UserInterface} UserInterfaceForm
- * @property {number | string} [max_matched_items]
- * @property {number | string} [check_count_request_timeout]
+ * @property {File} [logo]
  */
 
 /**
  * @typedef {UserInterface} UserInterfaceRequest
  * @property {string} edition
- * @property {string | null} logo
+ * @property {string} logo
  * @property {string} stack
  * @property {string} version
  */
+
+/**
+ * Convert user interface popupTimeout to form
+ *
+ * @param {PopupTimeout} [popupTimeout = {}]
+ * @return {PopupTimeout}
+ */
+const userInterfacePopupTimeoutToForm = (popupTimeout = {}) => ({
+  info: popupTimeout.info
+    ? durationToForm(popupTimeout.info)
+    : { value: POPUP_AUTO_CLOSE_DELAY, unit: TIME_UNITS.second },
+  error: popupTimeout.error
+    ? durationToForm(popupTimeout.error)
+    : { value: POPUP_AUTO_CLOSE_DELAY, unit: TIME_UNITS.second },
+});
 
 /**
  * Convert userInterface object to form
@@ -48,41 +59,13 @@ import { DEFAULT_APP_TITLE, DEFAULT_LOCALE } from '@/config';
  * @returns {UserInterfaceForm}
  */
 export const userInterfaceToForm = (userInterface = {}) => ({
-  app_title: userInterface.app_title || DEFAULT_APP_TITLE,
-  language: userInterface.language || DEFAULT_LOCALE,
-  footer: userInterface.footer || '',
-  login_page_description: userInterface.login_page_description || '',
-  allow_change_severity_to_info: userInterface.allow_change_severity_to_info || false,
-  timezone: userInterface.timezone || '',
-  max_matched_items: userInterface.max_matched_items || '',
-  check_count_request_timeout: userInterface.check_count_request_timeout || '',
-  popup_timeout: userInterface.popup_timeout ? cloneDeep(userInterface.popup_timeout) : {},
+  app_title: userInterface.app_title ?? DEFAULT_APP_TITLE,
+  language: userInterface.language ?? DEFAULT_LOCALE,
+  footer: userInterface.footer ?? '',
+  login_page_description: userInterface.login_page_description ?? '',
+  allow_change_severity_to_info: userInterface.allow_change_severity_to_info ?? false,
+  timezone: userInterface.timezone ?? '',
+  max_matched_items: userInterface.max_matched_items ?? '',
+  check_count_request_timeout: userInterface.check_count_request_timeout ?? '',
+  popup_timeout: userInterfacePopupTimeoutToForm(userInterface.popup_timeout),
 });
-
-/**
- * Convert form to userInterface object
- *
- * @param {UserInterfaceForm | {}} [form = {}]
- * @returns {UserInterface}
- */
-export const formToUserInterface = (form = {}) => {
-  const userInterface = pick(form, [
-    'app_title',
-    'language',
-    'footer',
-    'login_page_description',
-    'allow_change_severity_to_info',
-    'timezone',
-    'popup_timeout',
-  ]);
-
-  if (isNumber(form.max_matched_items)) {
-    userInterface.max_matched_items = form.max_matched_items;
-  }
-
-  if (isNumber(form.check_count_request_timeout)) {
-    userInterface.check_count_request_timeout = form.check_count_request_timeout;
-  }
-
-  return userInterface;
-};
