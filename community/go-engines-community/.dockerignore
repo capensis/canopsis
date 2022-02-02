@@ -1,10 +1,10 @@
 **
+!.git/
 !build_all.sh
+!cmd/
+!config/
+!docs/
 !go.mod
 !go.sum
-!cmd/
 !lib/
-!.git/
 !Makefile
-!docs/
-!config/
