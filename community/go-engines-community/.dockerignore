@@ -3,6 +3,7 @@
 !build_all.sh
 !cmd/
 !config/
+!database/
 !docs/
 !go.mod
 !go.sum

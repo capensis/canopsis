@@ -39,7 +39,7 @@ RUN addgroup --system canopsis && adduser --system --disabled-password --shell /
 RUN mkdir -p /opt/canopsis/bin /opt/canopsis/etc /opt/canopsis/share
 RUN mkdir -p /opt/canopsis/var/lib/junit-files /opt/canopsis/var/lib/remediation-files /tmp/canopsis/junit && chown canopsis:canopsis /opt/canopsis/var/lib/junit-files /opt/canopsis/var/lib/remediation-files /tmp/canopsis/junit
 
-COPY community/go-engines-community/config /opt/canopsis/share/config/
+COPY community/go-engines-community/config /opt/canopsis/share/config
 
 ARG CANOPSIS_EDITION
 ARG CMD
@@ -62,6 +62,9 @@ FROM final-container AS canopsis-reconfigure
 USER root
 COPY community/go-engines-community/cmd/canopsis-reconfigure/canopsis-community.toml /canopsis-community.toml
 COPY community/go-engines-community/cmd/canopsis-reconfigure/canopsis-pro.toml /canopsis-pro.toml
+RUN mkdir -p /opt/canopsis/share/migrations/mongodb /opt/canopsis/share/migrations/postgresql
+COPY community/go-engines-community/database/migrations/* /opt/canopsis/share/migrations/mongodb/
+COPY community/go-engines-community/database/postgres_migrations/* /opt/canopsis/share/migrations/postgresql/
 USER canopsis:canopsis
 
 ARG CMD
