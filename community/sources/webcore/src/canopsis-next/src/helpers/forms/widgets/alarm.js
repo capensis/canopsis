@@ -69,10 +69,10 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
 /**
  * @typedef {AlarmListWidgetDefaultParameters} AlarmListWidgetParameters
  * @property {DurationWithEnabled} periodic_refresh
- * @property {WidgetFilter[]} filters
- * @property {string | null} main_filter
- * @property {number} main_filter_updated_at
- * @property {WidgetFilterCondition} main_filter_condition
+ * @property {WidgetFilter[]} viewFilters
+ * @property {string | null} mainFilter
+ * @property {number} mainFilterUpdatedAt
+ * @property {WidgetFilterCondition} mainFilterCondition
  * @property {WidgetLiveReporting} liveReporting
  * @property {WidgetSort} sort
  * @property {boolean | null} opened
@@ -194,16 +194,12 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
   ...alarmListWidgetDefaultParametersToForm(parameters),
 
   periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
-  // TODO: renamed from viewFilters
-  filters: parameters.filters
-    ? cloneDeep(parameters.filters)
+  viewFilters: parameters.viewFilters
+    ? cloneDeep(parameters.viewFilters)
     : [],
-  // TODO: renamed from mainFilter
-  main_filter: parameters.main_filter ?? null,
-  // TODO: renamed from mainFilterCondition
-  main_filter_condition: parameters.main_filter_condition ?? FILTER_DEFAULT_VALUES.condition,
-  // TODO: renamed from mainFilterUpdatedAt
-  main_filter_updated_at: parameters.main_filter_updated_at || 0,
+  mainFilter: parameters.mainFilter ?? null,
+  mainFilterCondition: parameters.mainFilterCondition ?? FILTER_DEFAULT_VALUES.condition,
+  mainFilterUpdatedAt: parameters.mainFilterUpdatedAt || 0,
   liveReporting: parameters.liveReporting
     ? cloneDeep(parameters.liveReporting)
     : {},

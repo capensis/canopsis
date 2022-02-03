@@ -15,9 +15,9 @@ import { defaultColumnsToColumns } from '@/helpers/entities';
 
 /**
  * @typedef {Object} ContextWidgetParameters
- * @property {WidgetFilter[]} filters
- * @property {string | null} main_filter
- * @property {WidgetFilterCondition} main_filter_condition
+ * @property {WidgetFilter[]} viewFilters
+ * @property {string | null} mainFilter
+ * @property {WidgetFilterCondition} mainFilterCondition
  * @property {number} itemsPerPage
  * @property {WidgetColumn[]} widgetColumns
  * @property {WidgetColumn[]} serviceDependenciesColumns
@@ -35,13 +35,11 @@ import { defaultColumnsToColumns } from '@/helpers/entities';
  * @return {ContextWidgetParameters}
  */
 export const contextWidgetParametersToForm = (parameters = {}) => ({
-  filters: parameters.filters // TODO: renamed from viewFilters
-    ? cloneDeep(parameters.filters)
+  viewFilters: parameters.viewFilters
+    ? cloneDeep(parameters.viewFilters)
     : [],
-  // TODO: renamed from mainFilter
-  main_filter: parameters.main_filter ?? null,
-  // TODO: renamed from mainFilterCondition
-  main_filter_condition: parameters.main_filter_condition ?? FILTER_DEFAULT_VALUES.condition,
+  mainFilter: parameters.mainFilter ?? null,
+  mainFilterCondition: parameters.mainFilterCondition ?? FILTER_DEFAULT_VALUES.condition,
   itemsPerPage: parameters.itemsPerPage ?? PAGINATION_LIMIT,
   widgetColumns: parameters.widgetColumns
     ? cloneDeep(parameters.widgetColumns)

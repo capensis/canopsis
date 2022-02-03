@@ -44,7 +44,7 @@ export const widgetSettingsMixin = {
      * Update main filter updated at value. We are using this value for checking which filter was changed later
      */
     updateMainFilterUpdatedAt() {
-      this.form.parameters.main_filter_updated_at = Date.now();
+      this.form.parameters.mainFilterUpdatedAt = Date.now();
     },
 
     /**

@@ -3,10 +3,6 @@ import { createNamespacedHelpers } from 'vuex';
 const { mapGetters, mapActions } = createNamespacedHelpers('view');
 
 /**
- * TODO: move activeView mechanism to another mixin
- */
-
-/**
  * @mixin Helpers for the view entity
  */
 export const entitiesViewMixin = {
