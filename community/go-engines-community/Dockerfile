@@ -71,6 +71,24 @@ ENV CMD ${CMD}
 CMD ["/bin/sh", "-c", "/${CMD} -conf /canopsis-${CPS_EDITION:-community}.toml"]
 
 #
+# engine-che override
+#
+
+FROM final-container AS engine-che
+
+USER root
+RUN mkdir -p /opt/canopsis/lib/go/plugins
+# XXX: horrible work around the fact that COPY can't be conditional, while mongo.so
+# only exists when CANOPSIS_EDITION is 'pro', so we use a pattern that will always
+# copy something AND mongo.so by accident if we're on Pro (sigh). The best solution
+# would be to move the condition to the 'make install' target, and just use that.
+# But conflicting Community/Pro binaries were added even though we warned that the
+# build system wasn't ready for this yet...
+COPY --from=builder /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/build/*/*ce* /opt/canopsis/lib/go/plugins/
+RUN find /opt/canopsis/lib/go/plugins \( \! -name mongo.so \) -type f -delete
+USER canopsis:canopsis
+
+#
 # engine-webhook override
 #
 
