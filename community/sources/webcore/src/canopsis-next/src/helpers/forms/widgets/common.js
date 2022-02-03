@@ -258,17 +258,3 @@ export const formToWidget = form => ({
 
   parameters: formToWidgetParameters(form),
 });
-
-/**
- * Generate alarm list widget form with default parameters.
- *
- * @return {WidgetForm}
- */
-export const generateDefaultAlarmListWidgetForm = () => widgetToForm({ type: WIDGET_TYPES.alarmList });
-
-/**
- * Generate alarm list widget with default parameters.
- *
- * @return {Widget}
- */
-export const generateDefaultAlarmListWidget = () => formToWidget(generateDefaultAlarmListWidgetForm()); // TODO: put id

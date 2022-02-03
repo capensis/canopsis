@@ -110,7 +110,6 @@ export const API_ROUTES = {
   viewPosition: '/api/v4/view-positions',
   viewGroup: '/api/v4/view-groups',
   bulkViewGroup: '/api/v4/bulk/view-groups',
-  stats: '/api/v2/stats',
   permissions: '/api/v4/permissions',
   users: '/api/v4/users',
   roles: '/api/v4/roles',

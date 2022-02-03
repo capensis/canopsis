@@ -71,7 +71,7 @@ export const PbehaviorPlanning = () => ({
 });
 export const PbehaviorRecurrenceRule = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-recurrence-rule.vue'),
-  loading: ModalLoaderOverlay,
+  loading: LoaderOverlay,
 });
 export const SelectExceptionsLists = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/select-exceptions-lists.vue'),
@@ -135,7 +135,7 @@ export const ImagesViewer = () => ({
 });
 export const Info = () => ({
   component: import(/* webpackChunkName: "Common" */ './common/info.vue'),
-  loading: ModalLoaderOverlay,
+  loading: LoaderOverlay,
 });
 export const CreateWidget = () => ({
   component: import(/* webpackChunkName: "Widget" */ './view/create-widget.vue'),
@@ -191,18 +191,6 @@ export const CreateFilter = () => ({
 });
 export const FiltersList = () => ({
   component: import(/* webpackChunkName: "Filters" */ './common/filters-list.vue'),
-  loading: LoaderOverlay,
-});
-export const AddStat = () => ({
-  component: import(/* webpackChunkName: "Stats" */ './stats/add-stat.vue'),
-  loading: LoaderOverlay,
-});
-export const StatsDateInterval = () => ({
-  component: import(/* webpackChunkName: "Stats" */ './stats/stats-date-interval.vue'),
-  loading: LoaderOverlay,
-});
-export const StatsDisplayMode = () => ({
-  component: import(/* webpackChunkName: "Stats" */ './stats/stats-display-mode.vue'),
   loading: LoaderOverlay,
 });
 export const CreateUser = () => ({

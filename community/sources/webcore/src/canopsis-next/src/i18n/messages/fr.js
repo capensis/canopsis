@@ -546,12 +546,7 @@ export default {
       [SIDE_BARS.alarmSettings]: 'Paramètres du bac à alarmes',
       [SIDE_BARS.contextSettings]: 'Paramètres de l\'explorateur de contexte',
       [SIDE_BARS.serviceWeatherSettings]: 'Paramètres de la météo des services',
-      [SIDE_BARS.statsHistogramSettings]: 'Paramètres de l\'histogramme',
-      [SIDE_BARS.statsCurvesSettings]: 'Paramètres de courbes de stats',
-      [SIDE_BARS.statsTableSettings]: 'Paramètres du tableau de stats',
       [SIDE_BARS.statsCalendarSettings]: 'Paramètres du calendrier',
-      [SIDE_BARS.statsNumberSettings]: 'Paramètres du compteur de stats',
-      [SIDE_BARS.statsParetoSettings]: 'Paramètres du diagramme de Pareto',
       [SIDE_BARS.textSettings]: 'Paramètres du widget de texte',
       [SIDE_BARS.counterSettings]: 'Paramètres du widget de compteur',
       [SIDE_BARS.testingWeatherSettings]: 'Paramètres du widget scénario des tests',
@@ -591,13 +586,6 @@ export default {
     duration: 'Durée',
     tstop: 'Date de fin',
     periodsNumber: 'Nombre d\'étapes',
-    statName: 'Nom de la statistique',
-    stats: 'Statistiques',
-    statsSelect: {
-      title: 'Sélecteur de statistique',
-      required: 'Veuillez sélectionner au moins une statistique',
-      draggable: 'Essayez de faire glisser un élément',
-    },
     yesNoMode: 'Mode Oui/Non',
     selectAFilter: 'Sélectionner un filtre',
     exportAsCsv: 'Exporter le widget sous forme de fichier csv',
@@ -617,17 +605,6 @@ export default {
         [STATS_CRITICITY.major]: 'majeur',
         [STATS_CRITICITY.critical]: 'critique',
       },
-    },
-    statsDateInterval: {
-      monthPeriodInfo: "Avec une période 'au mois', les dates de début/fin de calcul des statistiques seront arrondies au 1er jour du mois, à 00:00 UTC",
-    },
-    statsNumbers: {
-      title: 'Cellule de stats',
-      yesNoMode: 'Mode Oui/Non',
-      defaultStat: 'Défaut : Alarmes créées',
-      sortOrder: 'Sens de tri',
-      displayMode: 'Mode d\'affichage',
-      selectAColor: 'Sélectionner une couleur',
     },
     infoPopup: {
       title: 'Info popup',
@@ -669,31 +646,6 @@ export default {
         [ENTITY_TYPES.resource]: 'Ressource',
         [ENTITY_TYPES.service]: 'Service',
       },
-    },
-    statSelector: {
-      error: {
-        alreadyExist: 'Une statistique portant ce nom existe déjà.',
-      },
-    },
-    statsGroups: {
-      title: 'Groupes de statistiques',
-      manageGroups: 'Ajouter un groupe',
-      required: 'Veuillez créer au moins un groupe',
-    },
-    statsColor: {
-      title: 'Couleurs des statistiques',
-      pickColor: 'Sélectionner une couleur',
-    },
-    statsAnnotationLine: {
-      title: 'Ligne repère',
-      enabled: 'Activée',
-      value: 'Valeur',
-      label: 'Label',
-      pickLineColor: 'Couleur de la ligne',
-      pickLabelColor: 'Couleur du label',
-    },
-    statsPointsStyles: {
-      title: 'Forme des points',
     },
     considerPbehaviors: {
       title: 'Prendre en compte les comportements périodiques ?',
@@ -1043,23 +995,8 @@ export default {
         [WIDGET_TYPES.serviceWeather]: {
           title: 'Météo des services',
         },
-        [WIDGET_TYPES.statsHistogram]: {
-          title: 'Histogramme des statistiques',
-        },
-        [WIDGET_TYPES.statsCurves]: {
-          title: 'Courbes de statistiques',
-        },
-        [WIDGET_TYPES.statsTable]: {
-          title: 'Tableau de statistiques',
-        },
         [WIDGET_TYPES.statsCalendar]: {
           title: 'Calendrier',
-        },
-        [WIDGET_TYPES.statsNumber]: {
-          title: 'Compteur de statistiques',
-        },
-        [WIDGET_TYPES.statsPareto]: {
-          title: 'Diagramme de Pareto',
         },
         [WIDGET_TYPES.text]: {
           title: 'Texte',
@@ -1224,19 +1161,6 @@ export default {
       },
       fields: {
         title: 'Titre',
-      },
-    },
-    statsDateInterval: {
-      title: 'Stats - Intervalle de dates',
-      fields: {
-        periodValue: 'Période',
-        periodUnit: 'Unité',
-      },
-      errors: {
-        endDateLessOrEqualStartDate: 'La date de fin doit se situer après la date de début',
-      },
-      info: {
-        monthPeriodUnit: 'Les statistiques calculées seront situées entre {start} et {stop}',
       },
     },
     createSnmpRule: {
@@ -1753,6 +1677,8 @@ export default {
     statsRequestProblem: 'Erreur dans la récupération des statistiques',
     statsWrongEditionError: "Les widgets de statistiques ne sont pas disponibles dans l'édition 'core' de Canopsis",
     socketConnectionProblem: 'Problème de connexion aux websockets',
+    endDateLessOrEqualStartDate: 'La date de fin doit se situer après la date de début',
+    unknownWidgetType: 'Type de widget inconnu: {type}',
   },
   calendar: {
     today: 'Aujourd\'hui',

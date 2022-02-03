@@ -1,4 +1,4 @@
-import { omit, isUndefined, isEmpty } from 'lodash';
+import { isUndefined, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
 import {
@@ -141,26 +141,6 @@ export function convertWeatherWidgetToQuery(widget) {
 }
 
 /**
- * This function converts widget with type stats field to query Object
- *
- * @param {Object} widget
- * @returns {{}}
- */
-export const convertWidgetStatsParameterToQuery = widget => ({
-  ...widget.parameters,
-
-  stats: Object.entries(widget.parameters.stats)
-    .reduce((acc, [statsKey, stats]) => {
-      acc[statsKey] = {
-        ...omit(stats, ['position']),
-        stat: stats.stat.value,
-      };
-
-      return acc;
-    }, {}),
-});
-
-/**
  * This function converts widget with type 'StatsCalendar' to query Object
  *
  * @param {Object} widget
@@ -178,63 +158,6 @@ export function convertStatsCalendarWidgetToQuery(widget) {
   };
 
   return { ...query, ...convertAlarmStateFilterToQuery(widget) };
-}
-
-/**
- * This function converts widget with type 'Stats number' to query Object
- *
- * @param {Object} widget
- * @returns {{}}
- */
-export function convertStatsNumberWidgetToQuery(widget) {
-  const { stat } = widget.parameters;
-  const query = {
-    ...omit(widget.parameters, [
-      'statColors',
-      'criticityLevels',
-      'yesNoMode',
-      'statName',
-    ]),
-
-    trend: true,
-  };
-
-  if (stat) {
-    query.stats = {
-      [stat.title]: {
-        parameters: stat.parameters,
-        stat: stat.stat.value,
-        trend: true,
-      },
-    };
-  }
-
-  query.trend = true;
-
-  return query;
-}
-
-/**
- * This function converts widget with type 'Stats Pareto diagram' to query Object
- *
- * @param {Object} widget
- * @returns {{}}
- */
-export function convertStatsParetoWidgetToQuery(widget) {
-  const { stat } = widget.parameters;
-  const query = { ...widget.parameters };
-
-  if (stat) {
-    query.stats = {
-      [stat.title]: {
-        ...omit(stat, ['title']),
-        stat: stat.stat.value,
-        aggregate: ['sum'],
-      },
-    };
-  }
-
-  return query;
 }
 
 /**
@@ -347,15 +270,6 @@ export function convertWidgetToQuery(widget) {
       return convertContextWidgetToQuery(widget);
     case WIDGET_TYPES.serviceWeather:
       return convertWeatherWidgetToQuery(widget);
-    case WIDGET_TYPES.statsCurves:
-    case WIDGET_TYPES.statsHistogram:
-    case WIDGET_TYPES.statsTable:
-    case WIDGET_TYPES.text:
-      return convertWidgetStatsParameterToQuery(widget);
-    case WIDGET_TYPES.statsNumber:
-      return convertStatsNumberWidgetToQuery(widget);
-    case WIDGET_TYPES.statsPareto:
-      return convertStatsParetoWidgetToQuery(widget);
     case WIDGET_TYPES.statsCalendar:
       return convertStatsCalendarWidgetToQuery(widget);
     case WIDGET_TYPES.counter:

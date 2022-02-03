@@ -10,7 +10,7 @@ import {
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
-import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/common';
+import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 
 import { authMixin } from '@/mixins/auth';
 import { queryMixin } from '@/mixins/query';
