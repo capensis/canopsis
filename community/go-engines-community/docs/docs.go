@@ -180,6 +180,11 @@ var doc = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "name": "time_field",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "name": "tstart",
                         "in": "query"
@@ -482,6 +487,11 @@ var doc = `{
                     {
                         "type": "string",
                         "name": "sort_key",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "time_field",
                         "in": "query"
                     },
                     {
@@ -9002,6 +9012,12 @@ var doc = `{
                         "description": "sort query",
                         "name": "sort_by",
                         "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "show assigned instructions and execution flags",
+                        "name": "with_instructions",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -9497,6 +9513,9 @@ var doc = `{
                 "separator": {
                     "type": "string"
                 },
+                "time_field": {
+                    "type": "string"
+                },
                 "time_format": {
                     "type": "string"
                 },
@@ -9574,6 +9593,9 @@ var doc = `{
                     "type": "boolean"
                 },
                 "search": {
+                    "type": "string"
+                },
+                "time_field": {
                     "type": "string"
                 },
                 "tstart": {
@@ -9681,6 +9703,9 @@ var doc = `{
                     "type": "string"
                 },
                 "sort_key": {
+                    "type": "string"
+                },
+                "time_field": {
                     "type": "string"
                 },
                 "tstart": {
@@ -13356,6 +13381,12 @@ var doc = `{
                 "alarm_display_name": {
                     "type": "string"
                 },
+                "assigned_instructions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/alarm.InstructionWithAlarms"
+                    }
+                },
                 "category": {
                     "type": "object",
                     "$ref": "#/definitions/entitycategory.Category"
@@ -13387,7 +13418,16 @@ var doc = `{
                         "$ref": "#/definitions/serviceweather.Info"
                     }
                 },
+                "is_all_auto_instructions_completed": {
+                    "type": "boolean"
+                },
+                "is_auto_instruction_running": {
+                    "type": "boolean"
+                },
                 "is_grey": {
+                    "type": "boolean"
+                },
+                "is_manual_instruction_waiting_result": {
                     "type": "boolean"
                 },
                 "last_update_date": {

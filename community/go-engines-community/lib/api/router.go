@@ -251,7 +251,8 @@ func RegisterRoutes(
 			)
 		}
 
-		alarmAPI := alarm.NewApi(alarm.NewStore(dbClient, GetLegacyURL()), exportExecutor, timezoneConfigProvider)
+		alarmStore := alarm.NewStore(dbClient, GetLegacyURL())
+		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, timezoneConfigProvider)
 		alarmRouter := protected.Group("/alarms")
 		{
 			alarmRouter.GET(
@@ -590,6 +591,7 @@ func RegisterRoutes(
 				dbClient,
 				GetLegacyURL(),
 				statsStore,
+				alarmStore,
 				timezoneConfigProvider,
 			))
 			weatherRouter.GET(
