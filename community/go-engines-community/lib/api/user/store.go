@@ -29,22 +29,20 @@ type Store interface {
 
 func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder) Store {
 	return &store{
-		collection:             dbClient.Collection(mongo.RightsMongoCollection),
-		userPrefCollection:     dbClient.Collection(mongo.UserPreferencesMongoCollection),
-		widgetFilterCollection: dbClient.Collection(mongo.WidgetFiltersMongoCollection),
-		passwordEncoder:        passwordEncoder,
-		defaultSearchByFields:  []string{"_id", "crecord_name", "firstname", "lastname"},
-		defaultSortBy:          "name",
+		collection:            dbClient.Collection(mongo.RightsMongoCollection),
+		userPrefCollection:    dbClient.Collection(mongo.UserPreferencesMongoCollection),
+		passwordEncoder:       passwordEncoder,
+		defaultSearchByFields: []string{"_id", "crecord_name", "firstname", "lastname"},
+		defaultSortBy:         "name",
 	}
 }
 
 type store struct {
-	collection             mongo.DbCollection
-	userPrefCollection     mongo.DbCollection
-	widgetFilterCollection mongo.DbCollection
-	passwordEncoder        password.Encoder
-	defaultSearchByFields  []string
-	defaultSortBy          string
+	collection            mongo.DbCollection
+	userPrefCollection    mongo.DbCollection
+	passwordEncoder       password.Encoder
+	defaultSearchByFields []string
+	defaultSortBy         string
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
@@ -166,24 +164,11 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		return false, err
 	}
 
-	err = s.deleteWidgetFilters(ctx, id)
-	if err != nil {
-		return false, err
-	}
-
 	return true, nil
 }
 
 func (s *store) deleteUserPreferences(ctx context.Context, id string) error {
 	_, err := s.userPrefCollection.DeleteMany(ctx, bson.M{
-		"user": id,
-	})
-
-	return err
-}
-
-func (s *store) deleteWidgetFilters(ctx context.Context, id string) error {
-	_, err := s.widgetFilterCollection.DeleteMany(ctx, bson.M{
 		"user": id,
 	})
 

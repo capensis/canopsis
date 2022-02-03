@@ -102,42 +102,6 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds []str
 						"as":           "widgets",
 					}},
 					bson.M{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
-					bson.M{"$lookup": bson.M{
-						"from":         mongo.WidgetFiltersMongoCollection,
-						"localField":   "widgets._id",
-						"foreignField": "widget",
-						"as":           "filters",
-					}},
-					bson.M{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
-					bson.M{"$addFields": bson.M{
-						"filters.user": bson.M{"$cond": bson.M{
-							"if":   "$filters.user",
-							"then": "$filters.user",
-							"else": "",
-						}},
-					}},
-					bson.M{"$sort": bson.M{"filters.title": 1}},
-					bson.M{"$group": bson.M{
-						"_id": bson.M{
-							"_id":     "$_id",
-							"view":    "$views._id",
-							"tab":     "$tabs._id",
-							"widgets": "$widgets._id",
-						},
-						"group":     bson.M{"$first": "$group"},
-						"deletable": bson.M{"$first": "$deletable"},
-						"views":     bson.M{"$first": "$views"},
-						"tabs":      bson.M{"$first": "$tabs"},
-						"widgets":   bson.M{"$first": "$widgets"},
-						"filters":   bson.M{"$push": "$filters"},
-					}},
-					bson.M{"$addFields": bson.M{
-						"_id": "$_id._id",
-						"widgets.filters": bson.M{"$filter": bson.M{
-							"input": bson.M{"$filter": bson.M{"input": "$filters", "cond": "$$this._id"}},
-							"cond":  bson.M{"$eq": bson.A{"$$this.user", ""}},
-						}},
-					}},
 					bson.M{"$sort": bson.D{{"widgets.grid_parameters.desktop.y", 1}, {"widgets.grid_parameters.desktop.x", 1}}},
 					bson.M{"$group": bson.M{
 						"_id": bson.M{

@@ -17,16 +17,6 @@ Feature: Get a view tab
           "_id": "test-widget-to-tab-get-1",
           "author": "test-user-to-tab-get",
           "created": 1611229670,
-          "filters": [
-            {
-              "_id": "test-widgetfilter-to-tab-get-1",
-              "author": "test-user-to-tab-get",
-              "created": 1611229670,
-              "query": "{\"test\":\"test\"}",
-              "title": "test-widgetfilter-to-tab-get-1-title",
-              "updated": 1611229670
-            }
-          ],
           "grid_parameters": {
             "desktop": {"x": 0,"y": 0}
           },
@@ -48,16 +38,6 @@ Feature: Get a view tab
           "_id": "test-widget-to-tab-get-2",
           "author": "test-user-to-tab-get",
           "created": 1611229670,
-          "filters": [
-            {
-              "_id": "test-widgetfilter-to-tab-get-2",
-              "author": "test-user-to-tab-get",
-              "created": 1611229670,
-              "query": "{\"test\":\"test\"}",
-              "title": "test-widgetfilter-to-tab-get-2-title",
-              "updated": 1611229670
-            }
-          ],
           "grid_parameters": {
             "desktop": {"x": 0,"y": 1}
           },

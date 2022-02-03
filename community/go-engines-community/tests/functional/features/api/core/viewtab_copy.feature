@@ -34,14 +34,7 @@ Feature: Copy a view tab
               }
             ]
           },
-          "author": "root",
-          "filters": [
-            {
-              "title": "test-widgetfilter-to-tab-copy-1-title",
-              "query": "{\"test\":\"test\"}",
-              "author": "root"
-            }
-          ]
+          "author": "root"
         }
       ]
     }
@@ -70,22 +63,13 @@ Feature: Copy a view tab
               }
             ]
           },
-          "author": "root",
-          "filters": [
-            {
-              "title": "test-widgetfilter-to-tab-copy-1-title",
-              "query": "{\"test\":\"test\"}",
-              "author": "root"
-            }
-          ]
+          "author": "root"
         }
       ]
     }
     """
     Then the response key "_id" should not be "test-tab-to-copy-1"
     Then the response key "widgets.0._id" should not be "test-widget-to-tab-copy-1"
-    Then the response key "widgets.0.filters.0._id" should not be "test-widgetfilter-to-tab-copy-1"
-    Then the response key "widgets.0.parameters.main_filter" should not be "test-widgetfilter-to-tab-copy-1"
     When I do GET /api/v4/views/test-view-to-tab-copy-2
     Then the response code should be 200
     Then the response body should contain:

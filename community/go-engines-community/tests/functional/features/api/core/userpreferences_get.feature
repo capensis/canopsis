@@ -16,25 +16,7 @@ Feature: Get user preferences
         "test-map": {
           "nested": 1
         }
-      },
-      "filters": [
-        {
-          "_id": "test-widgetfilter-to-user-preferences-get-1",
-          "title": "test-widgetfilter-to-user-preferences-get-1-title",
-          "query": "{\"test\":\"test\"}",
-          "author": "test-user-to-user-preferences-get",
-          "created": 1611229670,
-          "updated": 1611229670
-        },
-        {
-          "_id": "test-widgetfilter-to-user-preferences-get-2",
-          "title": "test-widgetfilter-to-user-preferences-get-2-title",
-          "query": "{\"test\":\"test\"}",
-          "author": "test-user-to-user-preferences-get",
-          "created": 1611229670,
-          "updated": 1611229670
-        }
-      ]
+      }
     }
 	"""
     When I do GET /api/v4/user-preferences/test-widget-to-user-preferences-get-2
@@ -50,8 +32,7 @@ Feature: Get user preferences
         "test-map": {
           "nested": 1
         }
-      },
-      "filters": []
+      }
     }
 	"""
 

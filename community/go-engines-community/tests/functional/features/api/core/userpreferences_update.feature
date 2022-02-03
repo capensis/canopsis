@@ -9,8 +9,7 @@ Feature: Update user preferences
     """json
     {
       "widget": "test-widget-to-user-preferences-update-1",
-      "content": {},
-      "filters": []
+      "content": {}
     }
 	"""
     When I do PUT /api/v4/user-preferences:
@@ -39,8 +38,7 @@ Feature: Update user preferences
         "test-map": {
           "nested": 1
         }
-      },
-      "filters": []
+      }
     }
 	"""
     When I do GET /api/v4/user-preferences/test-widget-to-user-preferences-update-1
@@ -56,8 +54,7 @@ Feature: Update user preferences
         "test-map": {
           "nested": 1
         }
-      },
-      "filters": []
+      }
     }
 	"""
     When I do PUT /api/v4/user-preferences:
@@ -86,8 +83,7 @@ Feature: Update user preferences
         "test-map": {
           "nested": 3
         }
-      },
-      "filters": []
+      }
     }
 	"""
     When I do GET /api/v4/user-preferences/test-widget-to-user-preferences-update-1
@@ -103,8 +99,7 @@ Feature: Update user preferences
         "test-map": {
           "nested": 3
         }
-      },
-      "filters": []
+      }
     }
 	"""
 

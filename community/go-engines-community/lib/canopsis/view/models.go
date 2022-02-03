@@ -62,8 +62,6 @@ type Widget struct {
 }
 
 type Parameters struct {
-	MainFilter string `bson:"main_filter,omitempty" json:"main_filter,omitempty"`
-
 	// Junit
 	IsAPI                 bool     `bson:"is_api,omitempty" json:"is_api,omitempty"`
 	Directory             string   `bson:"directory,omitempty" json:"directory,omitempty"`
@@ -133,15 +131,4 @@ type InternalParameters struct {
 func (p InternalParameters) IsZero() bool {
 	return len(p.TestSuites) == 0 &&
 		len(p.RemainParameters) == 0
-}
-
-type Filter struct {
-	ID      string         `bson:"_id" json:"_id"`
-	Title   string         `bson:"title" json:"title"`
-	Widget  string         `bson:"widget" json:"-"`
-	User    string         `bson:"user,omitempty" json:"-"`
-	Query   string         `bson:"query" json:"query"`
-	Author  string         `bson:"author" json:"author,omitempty"`
-	Created *types.CpsTime `bson:"created" json:"created,omitempty" swaggertype:"integer"`
-	Updated *types.CpsTime `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
 }

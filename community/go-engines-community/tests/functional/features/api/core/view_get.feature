@@ -120,25 +120,7 @@ Feature: Get a view
                 ]
               },
               "title": "test-widget-to-view-get-1-title",
-              "type": "test-widget-to-view-get-1-type",
-              "filters": [
-                {
-                  "_id": "test-widgetfilter-to-view-get-1",
-                  "title": "test-widgetfilter-to-view-get-1-title",
-                  "query": "{\"test\":\"test\"}",
-                  "author": "test-user-to-view-get",
-                  "created": 1611229670,
-                  "updated": 1611229670
-                },
-                {
-                  "_id": "test-widgetfilter-to-view-get-2",
-                  "title": "test-widgetfilter-to-view-get-2-title",
-                  "query": "{\"test\":\"test\"}",
-                  "author": "test-user-to-view-get",
-                  "created": 1611229670,
-                  "updated": 1611229670
-                }
-              ]
+              "type": "test-widget-to-view-get-1-type"
             },
             {
               "_id": "test-widget-to-view-get-2",
@@ -159,8 +141,7 @@ Feature: Get a view
                 ]
               },
               "title": "test-widget-to-view-get-2-title",
-              "type": "test-widget-to-view-get-2-type",
-              "filters": []
+              "type": "test-widget-to-view-get-2-type"
             }
           ]
         },

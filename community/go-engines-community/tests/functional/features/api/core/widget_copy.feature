@@ -14,7 +14,6 @@ Feature: Copy a widget
         "desktop": {"x": 0, "y": 1}
       },
       "parameters": {
-        "main_filter": "test-widgetfilter-to-widget-copy-1",
         "test-widget-to-copy-1-parameter-1": {
           "test-widget-to-copy-1-parameter-1-subparameter": "test-widget-to-copy-1-parameter-1-subvalue"
         },
@@ -45,13 +44,6 @@ Feature: Copy a widget
           }
         ]
       },
-      "filters": [
-        {
-          "title": "test-widgetfilter-to-widget-copy-1-title",
-          "query": "{\"test\":\"test\"}",
-          "author": "root"
-        }
-      ],
       "author": "root"
     }
     """
@@ -75,19 +67,10 @@ Feature: Copy a widget
           }
         ]
       },
-      "filters": [
-        {
-          "title": "test-widgetfilter-to-widget-copy-1-title",
-          "query": "{\"test\":\"test\"}",
-          "author": "root"
-        }
-      ],
       "author": "root"
     }
     """
     Then the response key "_id" should not be "test-widget-to-copy-1"
-    Then the response key "filters.0._id" should not be "test-widgetfilter-to-widget-copy-1"
-    Then the response key "parameters.main_filter" should not be "test-widgetfilter-to-widget-copy-1"
     When I do GET /api/v4/views/test-view-to-widget-copy-2
     Then the response code should be 200
     Then the response body should contain:

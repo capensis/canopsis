@@ -91,14 +91,7 @@ Feature: Copy a view
                   }
                 ]
               },
-              "author": "root",
-              "filters": [
-                {
-                  "title": "test-widgetfilter-to-view-copy-1-title",
-                  "query": "{\"test\":\"test\"}",
-                  "author": "root"
-                }
-              ]
+              "author": "root"
             }
           ]
         }
@@ -108,8 +101,6 @@ Feature: Copy a view
     Then the response key "_id" should not be "test-view-to-copy-1"
     Then the response key "tabs.0._id" should not be "test-tab-to-view-copy-1"
     Then the response key "tabs.0.widgets.0._id" should not be "test-widget-to-view-copy-1"
-    Then the response key "tabs.0.widgets.0.filters.0._id" should not be "test-widgetfilter-to-view-copy-1"
-    Then the response key "tabs.0.widgets.0.parameters.main_filter" should not be "test-widgetfilter-to-view-copy-1"
     When I do GET /api/v4/permissions?search={{ .lastResponse._id}}
     Then the response code should be 200
     Then the response body should contain:

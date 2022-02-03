@@ -37,30 +37,28 @@ type Store interface {
 
 func NewStore(dbClient mongo.DbClient, tabStore viewtab.Store) Store {
 	return &store{
-		collection:             dbClient.Collection(mongo.ViewMongoCollection),
-		tabCollection:          dbClient.Collection(mongo.ViewTabMongoCollection),
-		widgetCollection:       dbClient.Collection(mongo.WidgetMongoCollection),
-		widgetFilterCollection: dbClient.Collection(mongo.WidgetFiltersMongoCollection),
-		groupCollection:        dbClient.Collection(mongo.ViewGroupMongoCollection),
-		aclCollection:          dbClient.Collection(mongo.RightsMongoCollection),
-		userPrefCollection:     dbClient.Collection(mongo.UserPreferencesMongoCollection),
-		defaultSearchByFields:  []string{"_id", "title", "description", "author"},
-		defaultSortBy:          "position",
+		collection:            dbClient.Collection(mongo.ViewMongoCollection),
+		tabCollection:         dbClient.Collection(mongo.ViewTabMongoCollection),
+		widgetCollection:      dbClient.Collection(mongo.WidgetMongoCollection),
+		groupCollection:       dbClient.Collection(mongo.ViewGroupMongoCollection),
+		aclCollection:         dbClient.Collection(mongo.RightsMongoCollection),
+		userPrefCollection:    dbClient.Collection(mongo.UserPreferencesMongoCollection),
+		defaultSearchByFields: []string{"_id", "title", "description", "author"},
+		defaultSortBy:         "position",
 
 		tabStore: tabStore,
 	}
 }
 
 type store struct {
-	collection             mongo.DbCollection
-	tabCollection          mongo.DbCollection
-	widgetCollection       mongo.DbCollection
-	widgetFilterCollection mongo.DbCollection
-	groupCollection        mongo.DbCollection
-	aclCollection          mongo.DbCollection
-	userPrefCollection     mongo.DbCollection
-	defaultSearchByFields  []string
-	defaultSortBy          string
+	collection            mongo.DbCollection
+	tabCollection         mongo.DbCollection
+	widgetCollection      mongo.DbCollection
+	groupCollection       mongo.DbCollection
+	aclCollection         mongo.DbCollection
+	userPrefCollection    mongo.DbCollection
+	defaultSearchByFields []string
+	defaultSortBy         string
 
 	tabStore viewtab.Store
 }
@@ -327,56 +325,19 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 			"as":           "widgets",
 		}},
 		{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
-		{"$lookup": bson.M{
-			"from":         mongo.WidgetFiltersMongoCollection,
-			"localField":   "widgets._id",
-			"foreignField": "widget",
-			"as":           "filters",
-		}},
-		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
-			"filters.user": bson.M{"$cond": bson.M{
-				"if":   "$filters.user",
-				"then": "$filters.user",
-				"else": "",
-			}},
-		}},
-		{"$project": bson.M{
-			"filters.author":  0,
-			"filters.updated": 0,
-			"filters.created": 0,
-		}},
-		{"$sort": bson.M{"filters.title": 1}},
 		{"$project": bson.M{
 			"widgets._id":     0,
 			"widgets.author":  0,
 			"widgets.updated": 0,
 			"widgets.created": 0,
 		}},
-		{"$group": bson.M{
-			"_id": bson.M{
-				"_id":     "$_id",
-				"tab":     "$tabs._id",
-				"widgets": "$widgets._id",
-			},
-			"data":    bson.M{"$first": "$$ROOT"},
-			"tabs":    bson.M{"$first": "$tabs"},
-			"widgets": bson.M{"$first": "$widgets"},
-			"filters": bson.M{"$push": "$filters"},
-		}},
-		{"$addFields": bson.M{
-			"widgets.filters": bson.M{"$filter": bson.M{
-				"input": bson.M{"$filter": bson.M{"input": "$filters", "cond": "$$this._id"}},
-				"cond":  bson.M{"$eq": bson.A{"$$this.user", ""}},
-			}},
-		}},
 		{"$sort": bson.D{{"widgets.grid_parameters.desktop.y", 1}, {"widgets.grid_parameters.desktop.x", 1}}},
 		{"$group": bson.M{
 			"_id": bson.M{
-				"_id": "$_id._id",
-				"tab": "$_id.tab",
+				"_id": "$_id",
+				"tab": "$tabs._id",
 			},
-			"data":    bson.M{"$first": "$data"},
+			"data":    bson.M{"$first": "$$ROOT"},
 			"tabs":    bson.M{"$first": "$tabs"},
 			"widgets": bson.M{"$push": "$widgets"},
 		}},
@@ -592,7 +553,6 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 	newViews := make([]interface{}, 0, len(r.Items))
 	newTabs := make([]interface{}, 0, len(r.Items))
 	newWidgets := make([]interface{}, 0, len(r.Items))
-	newWidgetFilters := make([]interface{}, 0, len(r.Items))
 	newViewTitles := make(map[string]string, len(r.Items))
 	positionItems := make([]EditPositionItemRequest, 0, len(r.Items))
 	now := types.NewCpsTime()
@@ -688,39 +648,6 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 								}
 
 								widgetId := utils.NewID()
-								mainFilterId := ""
-
-								for fi, filter := range widget.Filters {
-									if filter.Title == "" {
-										return ValidationError{
-											field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.filters.%d.title", gi, vi, ti, wi, fi),
-											error: fmt.Errorf("value is missing"),
-										}
-									}
-									if filter.Query == "" {
-										return ValidationError{
-											field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.filters.%d.query", gi, vi, ti, wi, fi),
-											error: fmt.Errorf("value is missing"),
-										}
-									}
-
-									filterId := utils.NewID()
-									newWidgetFilters = append(newWidgetFilters, view.Filter{
-										ID:      filterId,
-										Title:   filter.Title,
-										Widget:  widgetId,
-										Query:   filter.Query,
-										Author:  userId,
-										Created: &now,
-										Updated: &now,
-									})
-
-									if widget.Parameters.MainFilter != "" && filter.ID == widget.Parameters.MainFilter {
-										mainFilterId = filterId
-									}
-								}
-
-								widget.Parameters.MainFilter = mainFilterId
 								newWidgets = append(newWidgets, view.Widget{
 									ID:             widgetId,
 									Tab:            tabId,
@@ -765,12 +692,6 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 	}
 	if len(newWidgets) > 0 {
 		_, err = s.widgetCollection.InsertMany(ctx, newWidgets)
-		if err != nil {
-			return err
-		}
-	}
-	if len(newWidgetFilters) > 0 {
-		_, err = s.widgetFilterCollection.InsertMany(ctx, newWidgetFilters)
 		if err != nil {
 			return err
 		}
@@ -1048,45 +969,13 @@ func getNestedObjectsPipeline() []bson.M {
 			"as":           "widgets",
 		}},
 		{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
-		{"$lookup": bson.M{
-			"from":         mongo.WidgetFiltersMongoCollection,
-			"localField":   "widgets._id",
-			"foreignField": "widget",
-			"as":           "filters",
-		}},
-		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
-			"filters.user": bson.M{"$cond": bson.M{
-				"if":   "$filters.user",
-				"then": "$filters.user",
-				"else": "",
-			}},
-		}},
-		{"$sort": bson.M{"filters.title": 1}},
-		{"$group": bson.M{
-			"_id": bson.M{
-				"_id":     "$_id",
-				"tab":     "$tabs._id",
-				"widgets": "$widgets._id",
-			},
-			"data":    bson.M{"$first": "$$ROOT"},
-			"tabs":    bson.M{"$first": "$tabs"},
-			"widgets": bson.M{"$first": "$widgets"},
-			"filters": bson.M{"$push": "$filters"},
-		}},
-		{"$addFields": bson.M{
-			"widgets.filters": bson.M{"$filter": bson.M{
-				"input": bson.M{"$filter": bson.M{"input": "$filters", "cond": "$$this._id"}},
-				"cond":  bson.M{"$eq": bson.A{"$$this.user", ""}},
-			}},
-		}},
 		{"$sort": bson.D{{"widgets.grid_parameters.desktop.y", 1}, {"widgets.grid_parameters.desktop.x", 1}}},
 		{"$group": bson.M{
 			"_id": bson.M{
-				"_id": "$_id._id",
-				"tab": "$_id.tab",
+				"_id": "$_id",
+				"tab": "$tabs._id",
 			},
-			"data":    bson.M{"$first": "$data"},
+			"data":    bson.M{"$first": "$$ROOT"},
 			"tabs":    bson.M{"$first": "$tabs"},
 			"widgets": bson.M{"$push": "$widgets"},
 		}},

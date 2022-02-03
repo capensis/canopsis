@@ -438,10 +438,6 @@
         "checksum": 6,
         "crecord_type": "right"
       },
-      "test-view-to-widgetfilter-edit": {
-        "checksum": 6,
-        "crecord_type": "right"
-      },
       "test-view-to-copy-1": {
         "checksum": 4,
         "crecord_type": "right"
@@ -1348,31 +1344,6 @@
     "enable": true
   },
   {
-    "_id": "test-role-to-widgetfiler-edit",
-    "crecord_type": "role",
-    "crecord_name": "test-role-to-widgetfiler-edit",
-    "rights": {
-      "api_view": {
-        "checksum": 6,
-        "crecord_type": "right"
-      },
-      "test-view-to-widgetfilter-edit": {
-        "checksum": 6,
-        "crecord_type": "right"
-      }
-    }
-  },
-  {
-    "_id": "test-user-to-widgetfiler-edit",
-    "crecord_type": "user",
-    "crecord_name": "test-user-to-widgetfiler-edit",
-    "role": "test-role-to-widgetfiler-edit",
-    "mail": "test-user-to-widgetfiler-edit@canopsis.net",
-    "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
-    "authkey": "2be901ee-0qs6-0mdn-9d80-e857e50f5202",
-    "enable": true
-  },
-  {
     "_id": "test-view-to-export-1",
     "crecord_type": "action",
     "crecord_name": "test-view-to-export-1",
@@ -1398,20 +1369,6 @@
     "crecord_type": "action",
     "crecord_name": "test-view-to-import-2-2",
     "desc": "view test-view-to-import-2-2",
-    "type": "RW"
-  },
-  {
-    "_id": "test-view-to-widgetfilter-edit",
-    "crecord_type": "action",
-    "crecord_name": "test-view-to-widgetfilter-edit",
-    "desc": "view test-view-to-widgetfilter-edit",
-    "type": "RW"
-  },
-  {
-    "_id": "test-view-to-widgetfilter-check-access",
-    "crecord_type": "action",
-    "crecord_name": "test-view-to-widgetfilter-check-access",
-    "desc": "view test-view-to-widgetfilter-check-access",
     "type": "RW"
   },
   {

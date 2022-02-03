@@ -284,7 +284,6 @@
       "desktop": {"x": 0, "y": 0}
     },
     "parameters": {
-      "main_filter": "test-widgetfilter-to-export-2",
       "test-widget-to-view-export-1-parameter-1": {
         "test-widget-to-view-export-1-parameter-1-subparameter": "test-widget-to-view-export-1-parameter-1-subvalue"
       },
@@ -317,15 +316,6 @@
     "updated": 1611229670
   },
   {
-    "_id": "test-widget-to-widgetfilter-edit",
-    "title": "test-widget-to-widgetfilter-edit-title",
-    "type": "test-widget-to-widgetfilter-edit-type",
-    "tab": "test-tab-to-widgetfilter-edit",
-    "author": "test-author-to-widgetfilter-edit",
-    "created": 1611229670,
-    "updated": 1611229670
-  },
-  {
     "_id": "test-widget-to-view-copy-1",
     "author": "test-widget-to-view-copy-1-author",
     "created": 1611229670,
@@ -335,7 +325,6 @@
       "desktop": {"x": 0, "y": 0}
     },
     "parameters": {
-      "main_filter": "test-widgetfilter-to-view-copy-1",
       "test-widget-to-view-copy-1-parameter-1": {
         "test-widget-to-view-copy-1-parameter-1-subparameter": "test-widget-to-view-copy-1-parameter-1-subvalue"
       },
@@ -358,7 +347,6 @@
       "desktop": {"x": 0, "y": 0}
     },
     "parameters": {
-      "main_filter": "test-widgetfilter-to-tab-copy-1",
       "test-widget-to-tab-copy-1-parameter-1": {
         "test-widget-to-tab-copy-1-parameter-1-subparameter": "test-widget-to-tab-copy-1-parameter-1-subvalue"
       },
@@ -378,7 +366,6 @@
     "title": "test-widget-to-copy-1-title",
     "updated": 1611229670,
     "parameters": {
-      "main_filter": "test-widgetfilter-to-widget-copy-1"
     },
     "tab": "test-tab-to-widget-copy-1",
     "type": "test-widget-to-copy-1-type"

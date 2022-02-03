@@ -25,24 +25,6 @@ Feature: Get a widget
           }
         ]
       },
-      "filters": [
-        {
-          "_id": "test-widgetfilter-to-widget-get-1",
-          "author": "test-user-to-widget-get",
-          "created": 1611229670,
-          "query": "{\"test\":\"test\"}",
-          "title": "test-widgetfilter-to-widget-get-1-title",
-          "updated": 1611229670
-        },
-        {
-          "_id": "test-widgetfilter-to-widget-get-2",
-          "author": "test-user-to-widget-get",
-          "created": 1611229670,
-          "query": "{\"test\":\"test\"}",
-          "title": "test-widgetfilter-to-widget-get-2-title",
-          "updated": 1611229670
-        }
-      ],
       "author": "test-author-to-widget-edit",
       "created": 1611229670,
       "updated": 1611229670
