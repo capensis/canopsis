@@ -40,9 +40,9 @@ import {
 /**
  * @typedef {Object} ServiceWeatherWidgetParameters
  * @property {DurationWithEnabled} periodic_refresh
- * @property {WidgetFilter[]} filters
- * @property {string | null} main_filter
- * @property {WidgetFilterCondition} main_filter_condition
+ * @property {WidgetFilter[]} viewFilters
+ * @property {string | null} mainFilter
+ * @property {WidgetFilterCondition} mainFilterCondition
  * @property {WidgetSort} sort
  * @property {string} blockTemplate
  * @property {string} modalTemplate
@@ -68,15 +68,12 @@ import {
  * @return {ServiceWeatherWidgetParameters}
  */
 export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
-  // TODO: renamed from periodicRefresh
   periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
-  filters: parameters.filters // TODO: renamed from viewFilters
-    ? cloneDeep(parameters.filters)
+  viewFilters: parameters.viewFilters
+    ? cloneDeep(parameters.viewFilters)
     : [],
-  // TODO: renamed from mainFilter
-  main_filter: parameters.main_filter ?? null,
-  // TODO: renamed from mainFilterCondition
-  main_filter_condition: parameters.main_filter_condition ?? FILTER_DEFAULT_VALUES.condition,
+  mainFilter: parameters.mainFilter ?? null,
+  mainFilterCondition: parameters.mainFilterCondition ?? FILTER_DEFAULT_VALUES.condition,
   sort: parameters.sort ? { ...parameters.sort } : { order: SORT_ORDERS.asc },
   blockTemplate: parameters.blockTemplate ?? DEFAULT_SERVICE_WEATHER_BLOCK_TEMPLATE,
   modalTemplate: parameters.modalTemplate ?? DEFAULT_SERVICE_WEATHER_MODAL_TEMPLATE,
