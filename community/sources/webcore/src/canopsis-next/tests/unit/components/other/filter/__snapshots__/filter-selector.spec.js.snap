@@ -87,95 +87,12 @@ exports[`filter-selector Renders \`filter-selector\` with custom all rights 1`] 
   <div
     class="flex xs12"
   >
-    <div>
-      <div
-        class="v-list theme--light"
-        role="list"
-      >
-        <div
-          class="pa-0 filter-item"
-          role="listitem"
-        >
-          <div
-            class="v-list__tile theme--light"
-          >
-            <div
-              class="layout"
-            >
-              <div
-                class="flex xs12"
-              >
-                <div
-                  class="v-list__tile__content"
-                >
-                  Filter 1
-                </div>
-              </div>
-              <div
-                class="v-list__tile__action"
-              >
-                <div
-                  class="layout"
-                >
-                  <c-action-btn-stub
-                    type="edit"
-                  />
-                  <c-action-btn-stub
-                    type="delete"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          class="pa-0 filter-item"
-          role="listitem"
-        >
-          <div
-            class="v-list__tile theme--light"
-          >
-            <div
-              class="layout"
-            >
-              <div
-                class="flex xs12"
-              >
-                <div
-                  class="v-list__tile__content"
-                >
-                  Filter 2
-                </div>
-              </div>
-              <div
-                class="v-list__tile__action"
-              >
-                <div
-                  class="layout"
-                >
-                  <c-action-btn-stub
-                    type="edit"
-                  />
-                  <c-action-btn-stub
-                    type="delete"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <button
-        class="ml-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
-        type="button"
-      >
-        <div
-          class="v-btn__content"
-        >
-          common.addFilter
-        </div>
-      </button>
-    </div>
+    <filters-form-stub
+      addable="true"
+      editable="true"
+      entitiestype="entity"
+      filters="[object Object],[object Object]"
+    />
   </div>
 </div>
 `;

@@ -5,23 +5,22 @@
       :value="true",
       type="info"
     ) {{ $t('modals.filter.emptyFilters') }}
-    draggable(
+    c-draggable-list-field(
       v-else,
-      :value="filters",
-      :options="draggableOptions",
-      element="v-list",
-      @change="changeFiltersOrdering"
+      v-field="filters",
+      :disabled="!editable",
+      component="v-list"
     )
-      filter-field(
+      filter-tile(
         v-for="(filter, index) in filters",
-        :filter="filters[index]",
+        :filter="filter",
         :key="filter.title",
-        :has-access-to-edit="hasAccessToEditFilter",
+        :editable="editable",
         @edit="showEditFilterModal(index)",
         @delete="showDeleteFilterModal(index)"
       )
     v-btn.ml-0(
-      v-if="hasAccessToAddFilter",
+      v-if="addable",
       color="primary",
       outline,
       @click.prevent="showCreateFilterModal"
@@ -29,18 +28,15 @@
 </template>
 
 <script>
-import Draggable from 'vuedraggable';
-
-import { formArrayMixin } from '@/mixins/form';
-
-import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { MODALS, ENTITIES_TYPES } from '@/constants';
 
-import FilterField from '@/components/other/filter/form/fields/filter-field.vue';
+import { formArrayMixin } from '@/mixins/form';
+
+import FilterTile from './partials/filter-tile.vue';
 
 export default {
-  components: { Draggable, FilterField },
+  components: { FilterTile },
   mixins: [formArrayMixin],
   model: {
     prop: 'filters',
@@ -51,11 +47,11 @@ export default {
       type: Array,
       default: () => [],
     },
-    hasAccessToAddFilter: {
+    addable: {
       type: Boolean,
       default: true,
     },
-    hasAccessToEditFilter: {
+    editable: {
       type: Boolean,
       default: true,
     },
@@ -73,7 +69,7 @@ export default {
     draggableOptions() {
       return {
         animation: VUETIFY_ANIMATION_DELAY,
-        disabled: !this.hasAccessToEditFilter,
+        disabled: !this.editable,
       };
     },
   },
@@ -113,10 +109,6 @@ export default {
           action: () => this.removeItemFromArray(index),
         },
       });
-    },
-
-    changeFiltersOrdering(event) {
-      this.updateModel(dragDropChangePositionHandler(this.filters, event));
     },
   },
 };
