@@ -180,6 +180,11 @@ var doc = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "name": "time_field",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "name": "tstart",
                         "in": "query"
@@ -485,6 +490,11 @@ var doc = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "name": "time_field",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "name": "tstart",
                         "in": "query"
@@ -685,7 +695,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -945,7 +957,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -2116,7 +2130,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -2267,7 +2283,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -2594,7 +2612,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "202": {},
+                    "202": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -2916,7 +2936,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3095,7 +3117,7 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Entity id",
-                        "name": "id",
+                        "name": "_id",
                         "in": "query",
                         "required": true
                     }
@@ -3140,7 +3162,7 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Entity id",
-                        "name": "id",
+                        "name": "_id",
                         "in": "query",
                         "required": true
                     },
@@ -3194,13 +3216,15 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Entity id",
-                        "name": "id",
+                        "name": "_id",
                         "in": "query",
                         "required": true
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -3539,7 +3563,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3848,7 +3874,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3991,7 +4019,9 @@ var doc = `{
                 "summary": "Get file access",
                 "operationId": "auth-get-file-access",
                 "responses": {
-                    "204": {}
+                    "204": {
+                        "description": ""
+                    }
                 }
             }
         },
@@ -4072,7 +4102,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -4338,7 +4370,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -4665,7 +4699,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -4739,7 +4775,9 @@ var doc = `{
                 "summary": "delete user interface",
                 "operationId": "internal-delete-user-interface",
                 "responses": {
-                    "204": {}
+                    "204": {
+                        "description": ""
+                    }
                 }
             }
         },
@@ -4766,7 +4804,9 @@ var doc = `{
                 "summary": "Get logged user count",
                 "operationId": "auth-logged-user-count",
                 "responses": {
-                    "204": {}
+                    "204": {
+                        "description": ""
+                    }
                 }
             }
         },
@@ -4825,7 +4865,9 @@ var doc = `{
                 "summary": "Log out",
                 "operationId": "auth-logout",
                 "responses": {
-                    "204": {}
+                    "204": {
+                        "description": ""
+                    }
                 }
             }
         },
@@ -5085,7 +5127,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -5363,7 +5407,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -5408,7 +5454,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {},
+                    "200": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -5686,7 +5734,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -6014,7 +6064,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -6347,7 +6399,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6863,7 +6917,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -7123,7 +7179,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -7395,7 +7453,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -7745,7 +7805,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -8247,7 +8309,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -8519,7 +8583,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -8572,7 +8638,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -8844,7 +8912,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -9001,6 +9071,12 @@ var doc = `{
                         "type": "string",
                         "description": "sort query",
                         "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "show assigned instructions and execution flags",
+                        "name": "with_instructions",
                         "in": "query"
                     }
                 ],
@@ -9497,6 +9573,9 @@ var doc = `{
                 "separator": {
                     "type": "string"
                 },
+                "time_field": {
+                    "type": "string"
+                },
                 "time_format": {
                     "type": "string"
                 },
@@ -9574,6 +9653,9 @@ var doc = `{
                     "type": "boolean"
                 },
                 "search": {
+                    "type": "string"
+                },
+                "time_field": {
                     "type": "string"
                 },
                 "tstart": {
@@ -9681,6 +9763,9 @@ var doc = `{
                     "type": "string"
                 },
                 "sort_key": {
+                    "type": "string"
+                },
+                "time_field": {
                     "type": "string"
                 },
                 "tstart": {
@@ -12616,10 +12701,6 @@ var doc = `{
                 }
             }
         },
-        "primitive.M": {
-            "type": "object",
-            "additionalProperties": true
-        },
         "resolverule.CreateRequest": {
             "type": "object",
             "required": [
@@ -13223,6 +13304,15 @@ var doc = `{
                 "alarm_display_name": {
                     "type": "string"
                 },
+                "alarm_id": {
+                    "type": "string"
+                },
+                "assigned_instructions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/alarm.InstructionWithAlarms"
+                    }
+                },
                 "category": {
                     "type": "object",
                     "$ref": "#/definitions/entitycategory.Category"
@@ -13254,7 +13344,16 @@ var doc = `{
                         "$ref": "#/definitions/serviceweather.Info"
                     }
                 },
+                "is_all_auto_instructions_completed": {
+                    "type": "boolean"
+                },
+                "is_auto_instruction_running": {
+                    "type": "boolean"
+                },
                 "is_grey": {
+                    "type": "boolean"
+                },
+                "is_manual_instruction_waiting_result": {
                     "type": "boolean"
                 },
                 "last_update_date": {

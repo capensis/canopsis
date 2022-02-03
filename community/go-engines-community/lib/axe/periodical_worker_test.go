@@ -7,7 +7,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
-	mock_alarmstatus "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarmstatus"
 	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
 	mock_idlealarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/idlealarm"
 	"github.com/golang/mock/gomock"
@@ -23,14 +22,12 @@ func TestPeriodicalWorker_Work(t *testing.T) {
 	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	mockIdleAlarmService := mock_idlealarm.NewMockService(ctrl)
 	mockAlarmConfigProvider := mock_config.NewMockAlarmConfigProvider(ctrl)
-	mockAlarmStatusService := mock_alarmstatus.NewMockService(ctrl)
 
 	interval := time.Minute
 	worker := periodicalWorker{
 		PeriodicalInterval:  interval,
 		AlarmService:        mockAlarmService,
 		AlarmAdapter:        mockAlarmAdapter,
-		AlarmStatusService:  mockAlarmStatusService,
 		IdleAlarmService:    mockIdleAlarmService,
 		AlarmConfigProvider: mockAlarmConfigProvider,
 	}
@@ -50,7 +47,6 @@ func TestPeriodicalWorker_Work(t *testing.T) {
 	mockAlarmService.EXPECT().ResolveDone(gomock.Any())
 	mockAlarmService.EXPECT().UpdateFlappingAlarms(gomock.Any())
 	mockIdleAlarmService.EXPECT().Process(gomock.Any())
-	mockAlarmStatusService.EXPECT().Load(gomock.Any())
 
 	worker.Work(ctx)
 }
