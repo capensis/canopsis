@@ -369,7 +369,7 @@ describe('c-entity-category-field', () => {
     const wrapper = snapshotFactory();
 
     const select = wrapper.find('.v-input__slot');
-    const menuContent = wrapper.find('.v-menu__content');
+    const menuContent = wrapper.findMenu();
 
     select.trigger('click');
 
@@ -385,7 +385,7 @@ describe('c-entity-category-field', () => {
     });
 
     const select = wrapper.find('.v-input__slot');
-    const menuContent = wrapper.find('.v-menu__content');
+    const menuContent = wrapper.findMenu();
 
     select.trigger('click');
 
