@@ -16,7 +16,7 @@ import {
   USERS_PERMISSIONS,
 } from '@/constants';
 import ClickOutside from '@/services/click-outside';
-import { generateDefaultAlarmListWidgetForm } from '@/helpers/forms/widgets/common';
+import { generateDefaultAlarmListWidgetForm } from '@/helpers/entities';
 
 import AlarmSettings from '@/components/sidebars/settings/alarm.vue';
 

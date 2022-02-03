@@ -20,7 +20,7 @@ import {
 } from '@/constants';
 
 import AlarmsList from '@/components/widgets/alarm/alarms-list.vue';
-import { generateDefaultAlarmListWidgetForm } from '@/helpers/forms/widgets/common';
+import { generateDefaultAlarmListWidgetForm } from '@/helpers/entities';
 
 jest.mock('file-saver', () => ({
   saveAs: jest.fn(),

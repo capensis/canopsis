@@ -5,17 +5,13 @@ import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
   DATETIME_FORMATS,
+  WIDGET_TYPES,
 } from '@/constants';
 
-import { convertDateToString } from '@/helpers/date/date';
-
 import uid from './uid';
-
-/**
- * @typedef {Object} Interval
- * @property {number} interval
- * @property {string} unit
- */
+import uuid from './uuid';
+import { convertDateToString } from './date/date';
+import { formToWidget, widgetToForm } from './forms/widgets/common';
 
 /**
  * Convert default columns from constants to columns with prepared by i18n label
@@ -85,3 +81,21 @@ export const groupAlarmSteps = (steps) => {
 
   return groupBy(orderedSteps, step => convertDateToString(step.t, DATETIME_FORMATS.short));
 };
+
+/**
+ * Generate alarm list widget form with default parameters.
+ *
+ * @return {WidgetForm}
+ */
+export const generateDefaultAlarmListWidgetForm = () => widgetToForm({ type: WIDGET_TYPES.alarmList });
+
+/**
+ * Generate alarm list widget with default parameters.
+ *
+ * @return {Widget}
+ */
+export const generateDefaultAlarmListWidget = () => ({
+  ...formToWidget(generateDefaultAlarmListWidgetForm()),
+
+  _id: uuid(),
+});

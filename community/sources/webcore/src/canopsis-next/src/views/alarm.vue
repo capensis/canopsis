@@ -13,7 +13,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { ENTITIES_TYPES, WIDGET_TYPES } from '@/constants';
 
-import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/common';
+import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 
 import { authMixin } from '@/mixins/auth';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';

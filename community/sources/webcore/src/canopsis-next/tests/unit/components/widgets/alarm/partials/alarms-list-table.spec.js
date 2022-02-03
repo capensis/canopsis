@@ -6,9 +6,7 @@ import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarm } from '@unit/data/alarm';
 
-import {
-  generateDefaultAlarmListWidget,
-} from '@/helpers/forms/widgets/common';
+import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 
 import AlarmsListTable from '@/components/widgets/alarm/partials/alarms-list-table.vue';
 
