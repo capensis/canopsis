@@ -2382,13 +2382,11 @@ export default {
   },
 
   service: {
-    fields: {
-      category: 'Catégorie',
-      name: 'Nom',
-      outputTemplate: 'Modèle de message',
-      createCategory: 'Ajouter une catégorie',
-      createCategoryHelp: 'Appuyez sur <kbd>enter</kbd> pour enregistrer',
-    },
+    category: 'Catégorie',
+    outputTemplate: 'Modèle de message',
+    createCategory: 'Ajouter une catégorie',
+    createCategoryHelp: 'Appuyez sur <kbd>enter</kbd> pour enregistrer',
+    availabilityState: '@:entity.availabilityState',
   },
 
   users: {
