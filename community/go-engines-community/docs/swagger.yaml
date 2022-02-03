@@ -3523,10 +3523,6 @@ definitions:
       content:
         additionalProperties: true
         type: object
-      filters:
-        items:
-          $ref: '#/definitions/view.Filter'
-        type: array
       widget:
         type: string
     type: object
@@ -3612,21 +3608,6 @@ definitions:
           $ref: '#/definitions/view.Response'
         type: array
     type: object
-  view.Filter:
-    properties:
-      _id:
-        type: string
-      author:
-        type: string
-      created:
-        type: integer
-      query:
-        type: string
-      title:
-        type: string
-      updated:
-        type: integer
-    type: object
   view.ImportItemRequest:
     properties:
       _id:
@@ -3651,8 +3632,6 @@ definitions:
       is_api:
         description: Junit
         type: boolean
-      main_filter:
-        type: string
       report_fileregexp:
         type: string
       screenshot_directories:
@@ -3850,10 +3829,6 @@ definitions:
         type: string
       created:
         type: integer
-      filters:
-        items:
-          $ref: '#/definitions/view.Filter'
-        type: array
       grid_parameters:
         additionalProperties: true
         type: object
@@ -3866,32 +3841,6 @@ definitions:
         type: string
       updated:
         type: integer
-    type: object
-  widgetfilter.CreateRequest:
-    properties:
-      personal:
-        type: boolean
-      query:
-        type: string
-      title:
-        type: string
-      widget:
-        type: string
-    required:
-    - personal
-    - query
-    - title
-    - widget
-    type: object
-  widgetfilter.EditRequest:
-    properties:
-      query:
-        type: string
-      title:
-        type: string
-    required:
-    - query
-    - title
     type: object
 info:
   contact: {}
@@ -9602,122 +9551,6 @@ paths:
       summary: Copy widget
       tags:
       - widgets
-  /widget-filters:
-    post:
-      consumes:
-      - application/json
-      description: Create widget filter
-      operationId: widgetfilters-create
-      parameters:
-      - description: body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/widgetfilter.CreateRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/view.Filter'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/common.ValidationErrorResponse'
-      security:
-      - JWTAuth: []
-      - BasicAuth: []
-      summary: Create widget filter
-      tags:
-      - widgetfilters
-  /widget-filters/{id}:
-    delete:
-      description: Delete widget filter by id
-      operationId: widgetfilters-delete-by-id
-      parameters:
-      - description: filter id
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "204": {}
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/common.ErrorResponse'
-      security:
-      - JWTAuth: []
-      - BasicAuth: []
-      summary: Delete widget filter by id
-      tags:
-      - widgetfilters
-    get:
-      description: Get widget filter by id
-      operationId: widgetfilters-get-by-id
-      parameters:
-      - description: filter id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/view.Filter'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/common.ErrorResponse'
-      security:
-      - JWTAuth: []
-      - BasicAuth: []
-      summary: Get widget filter by id
-      tags:
-      - widgetfilters
-    put:
-      consumes:
-      - application/json
-      description: Update widget filter by id
-      operationId: widgetfilters-update-by-id
-      parameters:
-      - description: filter id
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/widgetfilter.EditRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/view.Filter'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/common.ValidationErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/common.ErrorResponse'
-      security:
-      - JWTAuth: []
-      - BasicAuth: []
-      summary: Update widget filter by id
-      tags:
-      - widgetfilters
   /widget-grid-positions:
     put:
       consumes:

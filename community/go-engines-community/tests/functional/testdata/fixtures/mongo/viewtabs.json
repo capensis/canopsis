@@ -261,24 +261,6 @@
     "updated": 1611229670
   },
   {
-    "_id": "test-tab-to-widgetfilter-edit",
-    "title": "test-tab-to-widgetfilter-edit-title",
-    "view": "test-view-to-widgetfilter-edit",
-    "position": 0,
-    "author": "test-author-to-widgetfilter-edit",
-    "created": 1611229670,
-    "updated": 1611229670
-  },
-  {
-    "_id": "test-tab-to-widgetfilter-check-access",
-    "title": "test-tab-to-widgetfilter-check-access-title",
-    "view": "test-view-to-widgetfilter-check-access",
-    "position": 0,
-    "author": "test-author-to-widgetfilter-check-access",
-    "created": 1611229670,
-    "updated": 1611229670
-  },
-  {
     "_id": "test-tab-to-view-copy-1",
     "title": "test-tab-to-view-copy-1-title",
     "view": "test-view-to-copy-1",

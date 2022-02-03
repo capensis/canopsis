@@ -40,7 +40,6 @@ type Response struct {
 	Type           string                 `bson:"type" json:"type"`
 	GridParameters map[string]interface{} `bson:"grid_parameters" json:"grid_parameters"`
 	Parameters     view.Parameters        `bson:"parameters" json:"parameters"`
-	Filters        []view.Filter          `bson:"filters" json:"filters"`
 	Author         string                 `bson:"author" json:"author,omitempty"`
 	Created        *types.CpsTime         `bson:"created" json:"created,omitempty" swaggertype:"integer"`
 	Updated        *types.CpsTime         `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`

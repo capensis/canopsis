@@ -31,7 +31,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	libdatastorage "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -198,8 +197,6 @@ func RegisterValidators(client mongo.DbClient) {
 	v.RegisterStructValidationCtx(viewGroupUniqueTitleValidator.Validate, viewgroup.EditRequest{})
 
 	v.RegisterStructValidation(widget.ValidateEditRequest, widget.EditRequest{})
-
-	v.RegisterStructValidationCtx(widgetfilter.NewValidator(client).ValidateEditRequest, widgetfilter.EditRequest{})
 
 	playlistUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.PlaylistMongoCollection, "Name")
 	v.RegisterStructValidationCtx(playlistUniqueNameValidator.Validate, playlist.EditRequest{})

@@ -81,40 +81,10 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 			"as":           "widgets",
 		}},
 		{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
-		{"$lookup": bson.M{
-			"from":         mongo.WidgetFiltersMongoCollection,
-			"localField":   "widgets._id",
-			"foreignField": "widget",
-			"as":           "filters",
-		}},
-		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
-			"filters.user": bson.M{"$cond": bson.M{
-				"if":   "$filters.user",
-				"then": "$filters.user",
-				"else": "",
-			}},
-		}},
-		{"$sort": bson.M{"filters.title": 1}},
-		{"$group": bson.M{
-			"_id": bson.M{
-				"_id":     "$_id",
-				"widgets": "$widgets._id",
-			},
-			"data":    bson.M{"$first": "$$ROOT"},
-			"widgets": bson.M{"$first": "$widgets"},
-			"filters": bson.M{"$push": "$filters"},
-		}},
-		{"$addFields": bson.M{
-			"widgets.filters": bson.M{"$filter": bson.M{
-				"input": bson.M{"$filter": bson.M{"input": "$filters", "cond": "$$this._id"}},
-				"cond":  bson.M{"$eq": bson.A{"$$this.user", ""}},
-			}},
-		}},
 		{"$sort": bson.D{{"widgets.grid_parameters.desktop.y", 1}, {"widgets.grid_parameters.desktop.x", 1}}},
 		{"$group": bson.M{
-			"_id":     "$_id._id",
-			"data":    bson.M{"$first": "$data"},
+			"_id":     "$_id",
+			"data":    bson.M{"$first": "$$ROOT"},
 			"widgets": bson.M{"$push": "$widgets"},
 		}},
 		{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{

@@ -19,7 +19,26 @@
     "sort": {
       "order": "ASC"
     },
+    "viewFilters": [
+      {
+        "filter": "{\n    \"$and\": [\n        {\n            \"type\": \"component\"\n        }\n    ]\n}",
+        "title": "Composant"
+      },
+      {
+        "filter": "{\n    \"$and\": [\n        {\n            \"type\": \"connector\"\n        }\n    ]\n}",
+        "title": "Connecteur"
+      },
+      {
+        "filter": "{\n    \"$and\": [\n        {\n            \"type\": \"resource\"\n        }\n    ]\n}",
+        "title": "Ressource"
+      },
+      {
+        "filter": "{\n    \"$and\": [\n        {\n            \"type\": \"service\"\n        }\n    ]\n}",
+        "title": "Service"
+      }
+    ],
     "itemsPerPage": 10,
+    "mainFilter": null,
     "selectedTypes": []
   },
   "grid_parameters": {

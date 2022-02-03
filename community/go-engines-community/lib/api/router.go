@@ -50,7 +50,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -763,33 +762,6 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
 				widgetAPI.Delete,
-			)
-		}
-
-		widgetFilterAPI := widgetfilter.NewApi(widgetfilter.NewStore(dbClient), widget.NewStore(dbClient), enforcer, actionLogger)
-		widgetFilterRouter := protected.Group("/widget-filters")
-		{
-			widgetFilterRouter.POST(
-				"",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
-				middleware.SetAuthor(),
-				widgetFilterAPI.Create,
-			)
-			widgetFilterRouter.GET(
-				"/:id",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
-				widgetFilterAPI.Get,
-			)
-			widgetFilterRouter.PUT(
-				"/:id",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
-				middleware.SetAuthor(),
-				widgetFilterAPI.Update,
-			)
-			widgetFilterRouter.DELETE(
-				"/:id",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
-				widgetFilterAPI.Delete,
 			)
 		}
 
