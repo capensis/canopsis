@@ -38,6 +38,7 @@ type FilterRequest struct {
 type BaseFilterRequest struct {
 	Filter                  string         `form:"filter" json:"filter"`
 	Search                  string         `form:"search" json:"search"`
+	TimeField               string         `form:"time_field" json:"time_field" binding:"oneoforempty=t creation_date resolved last_update_date last_event_date"`
 	StartFrom               *types.CpsTime `form:"tstart" json:"tstart" swaggertype:"integer"`
 	StartTo                 *types.CpsTime `form:"tstop" json:"tstop" swaggertype:"integer"`
 	Opened                  *bool          `form:"opened" json:"opened"`
@@ -201,6 +202,13 @@ type InstructionWithAlarms struct {
 	Execution            *Execution                `bson:"-" json:"execution"`
 	AlarmsWithExecutions []Execution               `bson:"alarms_with_executions" json:"-"`
 	Created              types.CpsTime             `bson:"created,omitempty" json:"-"`
+}
+
+type ExecutionStatus struct {
+	ID               string `bson:"_id"`
+	AutoRunning      *bool  `bson:"auto_running"`
+	ManualRunning    *bool  `bson:"manual_running"`
+	AutoAllCompleted *bool  `bson:"auto_all_completed"`
 }
 
 type Execution struct {

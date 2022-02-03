@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(data-test="tableWidget")
+  div
     v-layout.white(row, wrap, justify-space-between, align-center)
       v-flex
         c-advanced-search-field(
@@ -18,7 +18,6 @@
         )
       v-flex
         filter-selector(
-          data-test="tableFilterSelector",
           :label="$t('settings.selectAFilter')",
           :filters="viewFilters",
           :locked-filters="widgetViewFilters",
@@ -35,13 +34,12 @@
         alarms-list-remediation-instructions-filters(
           :filters.sync="remediationInstructionsFilters",
           :locked-filters.sync="widgetRemediationInstructionsFilters",
-          :has-access-to-edit-filter="hasAccessToEditRemediationInstructionsFilter",
-          :has-access-to-user-filter="hasAccessToUserRemediationInstructionsFilter",
+          :editable="hasAccessToEditRemediationInstructionsFilter",
+          :addable="hasAccessToUserRemediationInstructionsFilter",
           :has-access-to-list-filters="hasAccessToListRemediationInstructionsFilters"
         )
       v-flex
         v-chip.primary.white--text(
-          data-test="resetAlarmsDateInterval",
           v-if="activeRange",
           close,
           label,
@@ -63,7 +61,6 @@
         )
     v-layout(row, wrap, align-center)
       c-pagination(
-        data-test="topPagination",
         v-if="hasColumns",
         :page="query.page",
         :limit="query.limit",
@@ -181,7 +178,8 @@ export default {
     },
 
     isTourEnabled() {
-      return this.checkIsTourEnabled(TOURS.alarmsExpandPanel) && !!this.alarms.length;
+      return this.checkIsTourEnabled(TOURS.alarmsExpandPanel)
+        && !!this.alarms.length;
     },
 
     activeRange() {
@@ -252,7 +250,7 @@ export default {
     },
 
     expandFirstAlarm() {
-      if (this.alarms[0] && !this.firstAlarmExpanded) {
+      if (!this.firstAlarmExpanded) {
         this.$set(this.$refs.alarmsTable.expanded, this.alarms[0]._id, true);
       }
     },
@@ -279,7 +277,7 @@ export default {
       this.$modals.show({
         name: MODALS.editLiveReporting,
         config: {
-          ...pick(this.query, ['tstart', 'tstop']),
+          ...pick(this.query, ['tstart', 'tstop', 'time_field']),
           action: params => this.query = { ...this.query, ...params },
         },
       });
@@ -310,7 +308,7 @@ export default {
         exportCsvSeparator,
         exportCsvDatetimeFormat,
       } = this.widget.parameters;
-      const columns = widgetExportColumns && widgetExportColumns.length
+      const columns = widgetExportColumns?.length
         ? widgetExportColumns
         : widgetColumns;
 
@@ -326,7 +324,9 @@ export default {
           /**
            * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997
            */
-          time_format: isObject(exportCsvDatetimeFormat) ? exportCsvDatetimeFormat.value : exportCsvDatetimeFormat,
+          time_format: isObject(exportCsvDatetimeFormat)
+            ? exportCsvDatetimeFormat.value
+            : exportCsvDatetimeFormat,
         },
       });
     },
