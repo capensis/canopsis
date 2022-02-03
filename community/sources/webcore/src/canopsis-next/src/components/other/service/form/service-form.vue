@@ -19,7 +19,7 @@
             :label="$t('service.availabilityState')",
             required
           )
-        v-flex.pr-3(xs2)
+        v-flex(xs2)
           c-impact-level-field(v-field="form.impact_level", required)
       v-layout(wrap, justify-center)
         v-flex
