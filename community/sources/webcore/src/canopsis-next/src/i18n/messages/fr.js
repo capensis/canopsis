@@ -2382,7 +2382,6 @@ export default {
   },
 
   service: {
-    category: 'Catégorie',
     outputTemplate: 'Modèle de message',
     createCategory: 'Ajouter une catégorie',
     createCategoryHelp: 'Appuyez sur <kbd>enter</kbd> pour enregistrer',
