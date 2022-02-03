@@ -1,11 +1,11 @@
 #!/bin/sh
 set -eu
 
-function fix_permissions {
+fix_permissions() {
         for f in ${@}
         do
                 echo Fixing permissions for ${f}
-                chmod 0755 -R ${f}
+                chmod -R 0755 ${f}
         done
 }
 
