@@ -42,6 +42,11 @@
                         widgetIds[widgetId] = 1;
                     }
 
+                    if (widget.parameters.periodicRefresh) {
+                        widget.parameters.periodic_refresh = widget.parameters.periodicRefresh;
+                        delete widget.parameters.periodicRefresh;
+                    }
+
                     widget._id = widgetId;
                     widget.loader_id = widgetId;
                     widget.tab = tabId;
