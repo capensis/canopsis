@@ -14,6 +14,10 @@ export const widgetFetchQueryMixin = {
       type: Boolean,
       default: false,
     },
+    localWidget: {
+      type: Boolean,
+      default: false,
+    },
   },
   watch: {
     query(value, oldValue) {
@@ -29,7 +33,9 @@ export const widgetFetchQueryMixin = {
   },
   async mounted() {
     if (!this.isEditingMode) {
-      await this.fetchUserPreference({ id: this.widget._id });
+      if (!this.localWidget) {
+        await this.fetchUserPreference({ id: this.widget._id });
+      }
 
       this.query = prepareQuery(this.widget, this.userPreference);
     }

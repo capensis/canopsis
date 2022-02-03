@@ -3,7 +3,7 @@
     template(slot="title")
       span {{ $t('modals.alarmsList.title') }}
     template(slot="text")
-      alarms-list-widget(:widget="config.widget")
+      alarms-list-widget(:widget="config.widget", local-widget)
 </template>
 
 <script>
