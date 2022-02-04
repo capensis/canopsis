@@ -3,6 +3,7 @@ package pattern_test
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"testing"
+	"time"
 )
 
 func TestMatchString(t *testing.T) {
@@ -14,7 +15,7 @@ func TestMatchString(t *testing.T) {
 		expectedResult bool
 	}{
 		{
-			testName: "test equal matched",
+			testName: "test equal is matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionEqual,
 				Value: "test",
@@ -24,7 +25,7 @@ func TestMatchString(t *testing.T) {
 			expectedResult: true,
 		},
 		{
-			testName: "test equal not matched",
+			testName: "test equal is not matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionEqual,
 				Value: "test",
@@ -34,7 +35,7 @@ func TestMatchString(t *testing.T) {
 			expectedResult: false,
 		},
 		{
-			testName: "test not equal matched",
+			testName: "test not equal is matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionNotEqual,
 				Value: "test",
@@ -44,7 +45,7 @@ func TestMatchString(t *testing.T) {
 			expectedResult: true,
 		},
 		{
-			testName: "test not equal not matched",
+			testName: "test not equal is not matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionNotEqual,
 				Value: "test",
@@ -54,7 +55,7 @@ func TestMatchString(t *testing.T) {
 			expectedResult: false,
 		},
 		{
-			testName: "test regexp matched",
+			testName: "test regexp is matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionRegexp,
 				Value: "^test",
@@ -64,7 +65,7 @@ func TestMatchString(t *testing.T) {
 			expectedResult: true,
 		},
 		{
-			testName: "test regexp not matched",
+			testName: "test regexp is not matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionRegexp,
 				Value: "^test",
@@ -107,7 +108,7 @@ func TestMatchString(t *testing.T) {
 
 	for _, dataset := range datasets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			result, _, err := pattern.MatchString(dataset.conf, dataset.value)
+			result, _, err := dataset.conf.MatchString(dataset.value)
 			if result != dataset.expectedResult {
 				t.Errorf("expected %t got %t", dataset.expectedResult, result)
 			}
@@ -132,7 +133,7 @@ func TestMatchInt(t *testing.T) {
 		expectedResult bool
 	}{
 		{
-			testName: "test equal matched",
+			testName: "test equal is matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionEqual,
 				Value: 10,
@@ -142,7 +143,7 @@ func TestMatchInt(t *testing.T) {
 			expectedResult: true,
 		},
 		{
-			testName: "test equal not matched",
+			testName: "test equal is not matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionEqual,
 				Value: 10,
@@ -152,7 +153,7 @@ func TestMatchInt(t *testing.T) {
 			expectedResult: false,
 		},
 		{
-			testName: "test not equal matched",
+			testName: "test not equal is matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionNotEqual,
 				Value: 10,
@@ -162,7 +163,7 @@ func TestMatchInt(t *testing.T) {
 			expectedResult: true,
 		},
 		{
-			testName: "test not equal not matched",
+			testName: "test not equal is not matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionNotEqual,
 				Value: 10,
@@ -172,7 +173,7 @@ func TestMatchInt(t *testing.T) {
 			expectedResult: false,
 		},
 		{
-			testName: "test gt matched",
+			testName: "test gt is matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionGT,
 				Value: 10,
@@ -182,7 +183,7 @@ func TestMatchInt(t *testing.T) {
 			expectedResult: true,
 		},
 		{
-			testName: "test gt not matched",
+			testName: "test gt is not matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionGT,
 				Value: 10,
@@ -192,7 +193,7 @@ func TestMatchInt(t *testing.T) {
 			expectedResult: false,
 		},
 		{
-			testName: "test lt matched",
+			testName: "test lt is matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionLT,
 				Value: 10,
@@ -202,7 +203,7 @@ func TestMatchInt(t *testing.T) {
 			expectedResult: true,
 		},
 		{
-			testName: "test lt not matched",
+			testName: "test lt is not matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionLT,
 				Value: 10,
@@ -235,7 +236,7 @@ func TestMatchInt(t *testing.T) {
 
 	for _, dataset := range datasets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			result, err := pattern.MatchInt(dataset.conf, dataset.value)
+			result, err := dataset.conf.MatchInt(dataset.value)
 			if result != dataset.expectedResult {
 				t.Errorf("expected %t got %t", dataset.expectedResult, result)
 			}
@@ -260,7 +261,7 @@ func TestMatchBool(t *testing.T) {
 		expectedResult bool
 	}{
 		{
-			testName: "test equal matched",
+			testName: "test equal is matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionEqual,
 				Value: true,
@@ -270,7 +271,7 @@ func TestMatchBool(t *testing.T) {
 			expectedResult: true,
 		},
 		{
-			testName: "test equal not matched",
+			testName: "test equal is not matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionEqual,
 				Value: true,
@@ -303,7 +304,7 @@ func TestMatchBool(t *testing.T) {
 
 	for _, dataset := range datasets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			result, err := pattern.MatchBool(dataset.conf, dataset.value)
+			result, err := dataset.conf.MatchBool(dataset.value)
 			if result != dataset.expectedResult {
 				t.Errorf("expected %t got %t", dataset.expectedResult, result)
 			}
@@ -328,7 +329,7 @@ func TestMatchStringArray(t *testing.T) {
 		expectedResult bool
 	}{
 		{
-			testName: "test is empty matched",
+			testName: "test is empty is matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionIsEmpty,
 				Value: true,
@@ -338,7 +339,7 @@ func TestMatchStringArray(t *testing.T) {
 			expectedResult: true,
 		},
 		{
-			testName: "test is empty not matched",
+			testName: "test is empty is not matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionIsEmpty,
 				Value: true,
@@ -348,7 +349,7 @@ func TestMatchStringArray(t *testing.T) {
 			expectedResult: false,
 		},
 		{
-			testName: "test is not empty matched",
+			testName: "test is not empty is matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionIsEmpty,
 				Value: false,
@@ -358,7 +359,7 @@ func TestMatchStringArray(t *testing.T) {
 			expectedResult: true,
 		},
 		{
-			testName: "test is not empty not matched",
+			testName: "test is not empty is not matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionIsEmpty,
 				Value: false,
@@ -368,7 +369,7 @@ func TestMatchStringArray(t *testing.T) {
 			expectedResult: false,
 		},
 		{
-			testName: "test has_not matched",
+			testName: "test has_is not matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionHasNot,
 				Value: []string{"test1", "test2", "test3"},
@@ -378,7 +379,7 @@ func TestMatchStringArray(t *testing.T) {
 			expectedResult: true,
 		},
 		{
-			testName: "test has_not not matched",
+			testName: "test has_not is not matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionHasNot,
 				Value: []string{"test1", "test2", "test3"},
@@ -388,7 +389,7 @@ func TestMatchStringArray(t *testing.T) {
 			expectedResult: false,
 		},
 		{
-			testName: "test has_one_of matched",
+			testName: "test has_one_of is matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionHasOneOf,
 				Value: []string{"test1", "test2", "test3"},
@@ -398,7 +399,7 @@ func TestMatchStringArray(t *testing.T) {
 			expectedResult: true,
 		},
 		{
-			testName: "test has_one_of not matched",
+			testName: "test has_one_of is not matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionHasOneOf,
 				Value: []string{"test1", "test2", "test3"},
@@ -408,7 +409,7 @@ func TestMatchStringArray(t *testing.T) {
 			expectedResult: false,
 		},
 		{
-			testName: "test has_every matched",
+			testName: "test has_every is matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionHasEvery,
 				Value: []string{"test1", "test2", "test3"},
@@ -418,7 +419,7 @@ func TestMatchStringArray(t *testing.T) {
 			expectedResult: true,
 		},
 		{
-			testName: "test has_every not matched",
+			testName: "test has_every is not matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionHasEvery,
 				Value: []string{"test1", "test2", "test3"},
@@ -428,7 +429,7 @@ func TestMatchStringArray(t *testing.T) {
 			expectedResult: false,
 		},
 		{
-			testName: "test is equal matched",
+			testName: "test is equal is matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionEqual,
 				Value: []string{"test1", "test2", "test3"},
@@ -438,7 +439,7 @@ func TestMatchStringArray(t *testing.T) {
 			expectedResult: true,
 		},
 		{
-			testName: "test is equal not matched bigger slice",
+			testName: "test is equal is not matched bigger slice",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionEqual,
 				Value: []string{"test1", "test2", "test3"},
@@ -448,7 +449,7 @@ func TestMatchStringArray(t *testing.T) {
 			expectedResult: false,
 		},
 		{
-			testName: "test is equal not matched smaller slice",
+			testName: "test is equal is not matched smaller slice",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionEqual,
 				Value: []string{"test1", "test2", "test3"},
@@ -494,7 +495,7 @@ func TestMatchStringArray(t *testing.T) {
 
 	for _, dataset := range datasets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			result, err = pattern.MatchStringArray(dataset.conf, dataset.value)
+			result, err = dataset.conf.MatchStringArray(dataset.value)
 			if result != dataset.expectedResult {
 				t.Errorf("expected %t got %t", dataset.expectedResult, result)
 			}
@@ -510,8 +511,6 @@ func TestMatchStringArray(t *testing.T) {
 	}
 }
 
-type refStruct struct{}
-
 func TestMatchRef(t *testing.T) {
 	datasets := []struct {
 		testName       string
@@ -521,7 +520,7 @@ func TestMatchRef(t *testing.T) {
 		expectedResult bool
 	}{
 		{
-			testName: "test is empty matched",
+			testName: "test is empty is matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionIsEmpty,
 				Value: true,
@@ -531,17 +530,17 @@ func TestMatchRef(t *testing.T) {
 			expectedResult: true,
 		},
 		{
-			testName: "test is empty not matched",
+			testName: "test is empty is not matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionIsEmpty,
 				Value: true,
 			},
-			value:          &refStruct{},
+			value:          &struct{}{},
 			expectedErr:    false,
 			expectedResult: false,
 		},
 		{
-			testName: "test is not empty matched",
+			testName: "test is not empty is matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionIsEmpty,
 				Value: false,
@@ -551,12 +550,12 @@ func TestMatchRef(t *testing.T) {
 			expectedResult: false,
 		},
 		{
-			testName: "test is not empty not matched",
+			testName: "test is not empty is not matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionIsEmpty,
 				Value: false,
 			},
-			value:          &refStruct{},
+			value:          &struct{}{},
 			expectedErr:    false,
 			expectedResult: true,
 		},
@@ -566,7 +565,7 @@ func TestMatchRef(t *testing.T) {
 				Type:  pattern.ConditionRegexp,
 				Value: "test",
 			},
-			value:          &refStruct{},
+			value:          &struct{}{},
 			expectedErr:    true,
 			expectedResult: false,
 		},
@@ -576,7 +575,7 @@ func TestMatchRef(t *testing.T) {
 				Type:  "some",
 				Value: 10,
 			},
-			value:          &refStruct{},
+			value:          &struct{}{},
 			expectedErr:    true,
 			expectedResult: false,
 		},
@@ -584,7 +583,306 @@ func TestMatchRef(t *testing.T) {
 
 	for _, dataset := range datasets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			result, err := pattern.MatchRef(dataset.conf, dataset.value)
+			result, err := dataset.conf.MatchRef(dataset.value)
+			if result != dataset.expectedResult {
+				t.Errorf("expected %t got %t", dataset.expectedResult, result)
+			}
+
+			if dataset.expectedErr && err == nil {
+				t.Error("an error is expected")
+			}
+
+			if !dataset.expectedErr && err != nil {
+				t.Errorf("an error is not expected, but got %s", err.Error())
+			}
+		})
+	}
+}
+
+func TestMatchTime(t *testing.T) {
+	datasets := []struct {
+		testName       string
+		conf           pattern.Condition
+		value          time.Time
+		expectedErr    bool
+		expectedResult bool
+	}{
+		{
+			testName: "test relative is matched",
+			conf: pattern.Condition{
+				Type:  pattern.ConditionTimeRelative,
+				Value: 100,
+			},
+			value:          time.Now().Add(-50 * time.Second),
+			expectedErr:    false,
+			expectedResult: true,
+		},
+		{
+			testName: "test relative is not matched",
+			conf: pattern.Condition{
+				Type:  pattern.ConditionTimeRelative,
+				Value: 100,
+			},
+			value:          time.Now().Add(-150 * time.Second),
+			expectedErr:    false,
+			expectedResult: false,
+		},
+		{
+			testName: "test absolute is matched",
+			conf: pattern.Condition{
+				Type: pattern.ConditionTimeAbsolute,
+				Value: map[string]int64{
+					"from": time.Now().Add(-1000 * time.Second).Unix(),
+					"to":   time.Now().Add(1000 * time.Second).Unix(),
+				},
+			},
+			value:          time.Now(),
+			expectedErr:    false,
+			expectedResult: true,
+		},
+		{
+			testName: "test absolute is not matched left",
+			conf: pattern.Condition{
+				Type: pattern.ConditionTimeAbsolute,
+				Value: map[string]int64{
+					"from": time.Now().Add(-1000 * time.Second).Unix(),
+					"to":   time.Now().Add(1000 * time.Second).Unix(),
+				},
+			},
+			value:          time.Now().Add(-2000 * time.Second),
+			expectedErr:    false,
+			expectedResult: false,
+		},
+		{
+			testName: "test absolute is not matched right",
+			conf: pattern.Condition{
+				Type: pattern.ConditionTimeAbsolute,
+				Value: map[string]int64{
+					"from": time.Now().Add(-1000 * time.Second).Unix(),
+					"to":   time.Now().Add(1000 * time.Second).Unix(),
+				},
+			},
+			value:          time.Now().Add(2000 * time.Second),
+			expectedErr:    false,
+			expectedResult: false,
+		},
+		{
+			testName: "test relative wrong condition value type",
+			conf: pattern.Condition{
+				Type:  pattern.ConditionTimeRelative,
+				Value: "qwe",
+			},
+			value:          time.Now().Add(-50 * time.Second),
+			expectedErr:    true,
+			expectedResult: false,
+		},
+		{
+			testName: "test absolute condition value 'from' is absent",
+			conf: pattern.Condition{
+				Type: pattern.ConditionTimeAbsolute,
+				Value: map[string]int64{
+					"to": time.Now().Add(1000 * time.Second).Unix(),
+				},
+			},
+			value:          time.Now(),
+			expectedErr:    true,
+			expectedResult: false,
+		},
+		{
+			testName: "test absolute condition value 'to' is absent",
+			conf: pattern.Condition{
+				Type: pattern.ConditionTimeAbsolute,
+				Value: map[string]int64{
+					"from": time.Now().Add(-1000 * time.Second).Unix(),
+				},
+			},
+			value:          time.Now(),
+			expectedErr:    true,
+			expectedResult: false,
+		},
+		{
+			testName: "test absolute condition value is wrong type",
+			conf: pattern.Condition{
+				Type: pattern.ConditionTimeAbsolute,
+				Value: map[string]string{
+					"from": "abc",
+				},
+			},
+			value:          time.Now(),
+			expectedErr:    true,
+			expectedResult: false,
+		},
+		{
+			testName: "test unexpected type",
+			conf: pattern.Condition{
+				Type: "some",
+				Value: map[string]int64{
+					"from": time.Now().Add(-1000 * time.Second).Unix(),
+					"to":   time.Now().Add(1000 * time.Second).Unix(),
+				},
+			},
+			value:          time.Now(),
+			expectedErr:    true,
+			expectedResult: false,
+		},
+	}
+
+	for _, dataset := range datasets {
+		t.Run(dataset.testName, func(t *testing.T) {
+			result, err := dataset.conf.MatchTime(dataset.value)
+			if result != dataset.expectedResult {
+				t.Errorf("expected %t got %t", dataset.expectedResult, result)
+			}
+
+			if dataset.expectedErr && err == nil {
+				t.Error("an error is expected")
+			}
+
+			if !dataset.expectedErr && err != nil {
+				t.Errorf("an error is not expected, but got %s", err.Error())
+			}
+		})
+	}
+}
+
+func TestMatchDuration(t *testing.T) {
+	datasets := []struct {
+		testName       string
+		conf           pattern.Condition
+		value          int64
+		expectedErr    bool
+		expectedResult bool
+	}{
+		{
+			testName: "test gt is matched",
+			conf: pattern.Condition{
+				Type: pattern.ConditionGT,
+				Value: map[string]interface{}{
+					"unit":  "m",
+					"value": 5,
+				},
+			},
+			value:          350,
+			expectedErr:    false,
+			expectedResult: true,
+		},
+		{
+			testName: "test gt is not matched",
+			conf: pattern.Condition{
+				Type: pattern.ConditionGT,
+				Value: map[string]interface{}{
+					"unit":  "m",
+					"value": 5,
+				},
+			},
+			value:          250,
+			expectedErr:    false,
+			expectedResult: false,
+		},
+		{
+			testName: "test lt is matched",
+			conf: pattern.Condition{
+				Type: pattern.ConditionLT,
+				Value: map[string]interface{}{
+					"unit":  "m",
+					"value": 5,
+				},
+			},
+			value:          250,
+			expectedErr:    false,
+			expectedResult: true,
+		},
+		{
+			testName: "test lt is not matched",
+			conf: pattern.Condition{
+				Type: pattern.ConditionLT,
+				Value: map[string]interface{}{
+					"unit":  "m",
+					"value": 5,
+				},
+			},
+			value:          350,
+			expectedErr:    false,
+			expectedResult: false,
+		},
+		{
+			testName: "test unexpected type",
+			conf: pattern.Condition{
+				Type: "some",
+				Value: map[string]interface{}{
+					"unit":  "m",
+					"value": 5,
+				},
+			},
+			value:          250,
+			expectedErr:    true,
+			expectedResult: false,
+		},
+		{
+			testName: "test value is not a map",
+			conf: pattern.Condition{
+				Type:  "some",
+				Value: "qwe",
+			},
+			value:          250,
+			expectedErr:    true,
+			expectedResult: false,
+		},
+		{
+			testName: "test unit is missed",
+			conf: pattern.Condition{
+				Type: "some",
+				Value: map[string]interface{}{
+					"value": 5,
+				},
+			},
+			value:          250,
+			expectedErr:    true,
+			expectedResult: false,
+		},
+		{
+			testName: "test value is missed",
+			conf: pattern.Condition{
+				Type: "some",
+				Value: map[string]interface{}{
+					"unit": "m",
+				},
+			},
+			value:          250,
+			expectedErr:    true,
+			expectedResult: false,
+		},
+		{
+			testName: "test unit is not a string",
+			conf: pattern.Condition{
+				Type: "some",
+				Value: map[string]interface{}{
+					"unit":  123,
+					"value": 5,
+				},
+			},
+			value:          250,
+			expectedErr:    true,
+			expectedResult: false,
+		},
+		{
+			testName: "test value is not an int",
+			conf: pattern.Condition{
+				Type: "some",
+				Value: map[string]interface{}{
+					"unit":  "m",
+					"value": "qwe",
+				},
+			},
+			value:          250,
+			expectedErr:    true,
+			expectedResult: false,
+		},
+	}
+
+	for _, dataset := range datasets {
+		t.Run(dataset.testName, func(t *testing.T) {
+			result, err := dataset.conf.MatchDuration(dataset.value)
 			if result != dataset.expectedResult {
 				t.Errorf("expected %t got %t", dataset.expectedResult, result)
 			}
