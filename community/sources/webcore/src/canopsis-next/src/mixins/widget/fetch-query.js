@@ -29,9 +29,7 @@ export const widgetFetchQueryMixin = {
   },
   async mounted() {
     if (!this.isEditingMode) {
-      if (!this.localWidget) {
-        await this.fetchUserPreference({ id: this.widget._id });
-      }
+      await this.fetchUserPreference({ id: this.widget._id });
 
       this.query = prepareQuery(this.widget, this.userPreference);
     }
