@@ -2373,13 +2373,10 @@ export default {
   },
 
   service: {
-    fields: {
-      category: 'Category',
-      name: 'Name',
-      outputTemplate: 'Output template',
-      createCategory: 'Add new category',
-      createCategoryHelp: 'Press <kbd>enter</kbd> to save',
-    },
+    outputTemplate: 'Output template',
+    createCategory: 'Add new category',
+    createCategoryHelp: 'Press <kbd>enter</kbd> to save',
+    availabilityState: 'Hi availability state',
   },
 
   users: {
