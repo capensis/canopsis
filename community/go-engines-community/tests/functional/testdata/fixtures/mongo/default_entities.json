@@ -4836,5 +4836,46 @@
     "type": "resource",
     "component": "dynamic-info-update-component",
     "impact_level": 1
+  },
+  {
+    "_id": "test-connector-entity-api-8/test-connector-name-entity-api-8",
+    "depends": ["test-resource-entity-component-8"],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": ["test-resource-entity-api-8/test-resource-entity-component-8"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-connector-name-entity-api-8",
+    "type": "connector",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-component-entity-api-8",
+    "depends": ["test-resource-entity-api-8/test-component-entity-api-8"],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": ["test-connector-entity-api-8/test-connector-name-entity-api-8"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-component-entity-api-8",
+    "type": "component",
+    "component": "test-component-entity-api-8",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-resource-entity-api-8/test-component-entity-api-8",
+    "depends": ["test-connector-entity-api-8/test-connector-name-entity-api-8"],
+    "enable_history": [1597030219],
+    "enabled": true,
+    "impact": ["test-component-entity-api-8"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-resource-entity-api-8",
+    "type": "resource",
+    "component": "test-component-entity-api-8",
+    "impact_level": 1
   }
 ]
