@@ -14,10 +14,6 @@ export const widgetFetchQueryMixin = {
       type: Boolean,
       default: false,
     },
-    localWidget: {
-      type: Boolean,
-      default: false,
-    },
   },
   watch: {
     query(value, oldValue) {

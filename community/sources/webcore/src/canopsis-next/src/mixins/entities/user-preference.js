@@ -3,6 +3,12 @@ import { createNamespacedHelpers } from 'vuex';
 const { mapActions, mapGetters } = createNamespacedHelpers('userPreference');
 
 export const entitiesUserPreferenceMixin = {
+  props: {
+    localWidget: {
+      type: Boolean,
+      default: false,
+    },
+  },
   computed: {
     ...mapGetters({
       getUserPreferenceByWidget: 'getItemByWidget',
@@ -20,6 +26,10 @@ export const entitiesUserPreferenceMixin = {
     }),
 
     updateContentInUserPreference(content = {}) {
+      if (this.localWidget) {
+        return Promise.resolve();
+      }
+
       return this.updateUserPreference({
         data: {
           ...this.userPreference,
@@ -39,6 +49,10 @@ export const entitiesUserPreferenceMixin = {
      * @returns {Promise}
      */
     copyUserPreferencesByWidgetsIdsMappings(widgetsIdsMappings) {
+      if (this.localWidget) {
+        return Promise.resolve();
+      }
+
       return Promise.all(widgetsIdsMappings.map(async ({ oldId, newId }) => {
         const userPreference = await this.fetchUserPreferenceWithoutStore({ id: oldId });
 
