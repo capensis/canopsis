@@ -20,10 +20,18 @@ export const entitiesUserPreferenceMixin = {
   },
   methods: {
     ...mapActions({
-      fetchUserPreference: 'fetchItem',
+      fetchUserPreferenceItem: 'fetchItem',
       fetchUserPreferenceWithoutStore: 'fetchItemWithoutStore',
       updateUserPreference: 'update',
     }),
+
+    fetchUserPreference(data) {
+      if (this.localWidget) {
+        return Promise.resolve();
+      }
+
+      return this.fetchUserPreferenceItem(data);
+    },
 
     updateContentInUserPreference(content = {}) {
       if (this.localWidget) {
