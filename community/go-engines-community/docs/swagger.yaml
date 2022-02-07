@@ -846,10 +846,22 @@ definitions:
       infos:
         $ref: '#/definitions/entity.Infos'
         type: object
+      ko_events:
+        type: integer
+      last_event_date:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
       measurements:
         type: object
       name:
         type: string
+      ok_events:
+        type: integer
+      pbehavior_info:
+        $ref: '#/definitions/types.PbehaviorInfo'
+        type: object
+      state:
+        type: integer
       type:
         type: string
     type: object
@@ -988,11 +1000,23 @@ definitions:
       infos:
         $ref: '#/definitions/entity.Infos'
         type: object
+      ko_events:
+        type: integer
+      last_event_date:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
       measurements:
         type: object
       name:
         type: string
+      ok_events:
+        type: integer
+      pbehavior_info:
+        $ref: '#/definitions/types.PbehaviorInfo'
+        type: object
       sli_avail_state:
+        type: integer
+      state:
         type: integer
       type:
         type: string
@@ -1225,13 +1249,25 @@ definitions:
       infos:
         $ref: '#/definitions/entity.Infos'
         type: object
+      ko_events:
+        type: integer
+      last_event_date:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
       measurements:
         type: object
       name:
         type: string
+      ok_events:
+        type: integer
       output_template:
         type: string
+      pbehavior_info:
+        $ref: '#/definitions/types.PbehaviorInfo'
+        type: object
       sli_avail_state:
+        type: integer
+      state:
         type: integer
       type:
         type: string
@@ -2896,9 +2932,6 @@ definitions:
       state:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
-      stats:
-        $ref: '#/definitions/serviceweather.Stats'
-        type: object
       status:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
@@ -2981,17 +3014,6 @@ definitions:
       status:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
-    type: object
-  serviceweather.Stats:
-    properties:
-      ko:
-        type: integer
-      last_event:
-        type: integer
-      last_ko:
-        type: integer
-      ok:
-        type: integer
     type: object
   serviceweather.WeatherLink:
     properties:
