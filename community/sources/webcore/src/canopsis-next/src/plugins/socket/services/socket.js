@@ -352,18 +352,6 @@ class Socket {
   baseMessageHandler({ data }) {
     const { type, room, msg, error } = JSON.parse(data);
 
-    if (type === RESPONSE_MESSAGES_TYPES.error) {
-      this.connection.dispatchEvent(
-        new ErrorEvent('error', { message: error }),
-      );
-      return;
-    }
-
-    if (type === RESPONSE_MESSAGES_TYPES.pong) {
-      this.lastPongedAt = Date.now();
-      return;
-    }
-
     switch (type) {
       case RESPONSE_MESSAGES_TYPES.pong:
         this.lastPongedAt = Date.now();
