@@ -227,6 +227,7 @@ export default {
       [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
       [EVENT_ENTITY_TYPES.assocTicket]: 'Associer un ticket',
       [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
+      [EVENT_ENTITY_TYPES.executeInstruction]: 'Exécuter l\'instruction',
     },
     times: {
       second: 'seconde | secondes',
@@ -2024,6 +2025,7 @@ export default {
   },
 
   pbehavior: {
+    periodsCalendar: 'Calendrier avec périodes',
     buttons: {
       addFilter: 'Ajouter un filtre',
       editFilter: 'Modifier le filtre',
@@ -2380,13 +2382,10 @@ export default {
   },
 
   service: {
-    fields: {
-      category: 'Catégorie',
-      name: 'Nom',
-      outputTemplate: 'Modèle de message',
-      createCategory: 'Ajouter une catégorie',
-      createCategoryHelp: 'Appuyez sur <kbd>enter</kbd> pour enregistrer',
-    },
+    outputTemplate: 'Modèle de message',
+    createCategory: 'Ajouter une catégorie',
+    createCategoryHelp: 'Appuyez sur <kbd>enter</kbd> pour enregistrer',
+    availabilityState: '@:entity.availabilityState',
   },
 
   users: {
@@ -2440,6 +2439,7 @@ export default {
       [TEST_SUITE_STATUSES.skipped]: 'Ignoré',
       [TEST_SUITE_STATUSES.error]: 'En erreur',
       [TEST_SUITE_STATUSES.failed]: 'Échoué',
+      [TEST_SUITE_STATUSES.total]: 'Temps total pris',
     },
     popups: {
       systemMessageCopied: 'Message système copié dans le presse-papier',
@@ -2522,6 +2522,7 @@ export default {
 
   quickRanges: {
     title: 'Valeurs usuelles',
+    timeField: 'Champ de temps',
     types: {
       [QUICK_RANGES.custom.value]: 'Personnalisé',
       [QUICK_RANGES.last2Days.value]: '2 derniers jours',
@@ -2621,7 +2622,7 @@ export default {
     /**
      * Admin access
      */
-    [USERS_PERMISSIONS.technical.action]: {
+    [USERS_PERMISSIONS.technical.permission]: {
       title: 'Droits',
     },
     [USERS_PERMISSIONS.technical.role]: {

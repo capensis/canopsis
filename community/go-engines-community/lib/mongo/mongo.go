@@ -7,9 +7,11 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -81,6 +83,11 @@ const (
 	FilterMongoCollection = "filter"
 )
 
+const (
+	transactionReplicaSetVersion     = "4.0"
+	transactionShardedClusterVersion = "4.2"
+)
+
 type SingleResultHelper interface {
 	Decode(v interface{}) error
 	DecodeBytes() (bson.Raw, error)
@@ -124,6 +131,7 @@ type DbClient interface {
 	Disconnect(ctx context.Context) error
 	SetRetry(count int, timeout time.Duration)
 	Ping(ctx context.Context, rp *readpref.ReadPref) error
+	WithTransaction(ctx context.Context, f func(context.Context) error) error
 }
 
 type dbClient struct {
@@ -131,6 +139,8 @@ type dbClient struct {
 	Database        *mongo.Database
 	RetryCount      int
 	MinRetryTimeout time.Duration
+
+	TransactionEnabled bool
 }
 
 type dbCollection struct {
@@ -404,7 +414,7 @@ func (c *dbCollection) retry(ctx context.Context, f func(context.Context) error)
 
 // NewClient creates a new connection to the MongoDB database.
 // It uses EnvURL as configuration source.
-func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duration) (DbClient, error) {
+func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duration, logger zerolog.Logger) (DbClient, error) {
 	mongoURL, dbName, err := getURL()
 	if err != nil {
 		return nil, err
@@ -426,12 +436,16 @@ func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duratio
 
 	db := client.Database(dbName)
 
-	return &dbClient{
+	dbClient := &dbClient{
 		Client:          client,
 		Database:        db,
 		RetryCount:      retryCount,
 		MinRetryTimeout: minRetryTimeout,
-	}, nil
+	}
+
+	dbClient.checkTransactionEnabled(ctx, logger)
+
+	return dbClient, nil
 }
 
 func NewClientWithOptions(
@@ -440,6 +454,7 @@ func NewClientWithOptions(
 	minRetryTimeout time.Duration,
 	serverSelectionTimeout time.Duration,
 	socketTimeout time.Duration,
+	logger zerolog.Logger,
 ) (DbClient, error) {
 	mongoURL, dbName, err := getURL()
 	if err != nil {
@@ -464,12 +479,16 @@ func NewClientWithOptions(
 
 	db := client.Database(dbName)
 
-	return &dbClient{
+	dbClient := &dbClient{
 		Client:          client,
 		Database:        db,
 		RetryCount:      retryCount,
 		MinRetryTimeout: minRetryTimeout,
-	}, nil
+	}
+
+	dbClient.checkTransactionEnabled(ctx, logger)
+
+	return dbClient, nil
 }
 
 func (c *dbClient) Collection(name string) DbCollection {
@@ -493,6 +512,76 @@ func (c *dbClient) SetRetry(count int, timeout time.Duration) {
 	c.MinRetryTimeout = timeout
 }
 
+func (c *dbClient) WithTransaction(ctx context.Context, f func(context.Context) error) error {
+	if !c.TransactionEnabled {
+		return f(ctx)
+	}
+
+	session, err := c.Client.StartSession()
+	if err != nil {
+		return err
+	}
+
+	defer session.EndSession(ctx)
+
+	_, err = session.WithTransaction(ctx, func(sessCtx mongo.SessionContext) (interface{}, error) {
+		return nil, f(sessCtx)
+	})
+
+	return err
+}
+
+func (c *dbClient) checkTransactionEnabled(ctx context.Context, logger zerolog.Logger) {
+	res, err := c.Database.RunCommand(ctx, bson.D{{"hello", 1}}).
+		DecodeBytes()
+	if err != nil {
+		logger.Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
+		return
+	}
+
+	helloResult := helloCommandResult{}
+	err = bson.Unmarshal(res, &helloResult)
+	if err != nil {
+		logger.Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
+		return
+	}
+
+	if !helloResult.IsReplicaSet() && !helloResult.IsShardedCluster() {
+		logger.Warn().Msg("MongoDB version does not support transactions, transactions are disabled")
+		return
+	}
+
+	res, err = c.Client.Database("admin").RunCommand(ctx, bson.D{{"getParameter", 1}, {"featureCompatibilityVersion", 1}}).
+		DecodeBytes()
+	if err != nil {
+		logger.Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
+		return
+	}
+
+	fCVResult := struct {
+		FeatureCompatibilityVersion struct {
+			Version string `bson:"version"`
+		} `bson:"featureCompatibilityVersion"`
+	}{}
+
+	err = bson.Unmarshal(res, &fCVResult)
+	if err != nil {
+		logger.Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
+		return
+	}
+
+	version := fCVResult.FeatureCompatibilityVersion.Version
+	if helloResult.IsReplicaSet() && !isVersionGte(version, transactionReplicaSetVersion) ||
+		helloResult.IsShardedCluster() && !isVersionGte(version, transactionShardedClusterVersion) {
+		logger.Warn().Msg("MongoDB version does not support transactions, transactions are disabled")
+
+		return
+	}
+
+	logger.Info().Msg("MongoDB version supports transactions, transactions are enabled")
+	c.TransactionEnabled = true
+}
+
 // getURL parses URL value in EnvURL environment variable
 func getURL() (mongoURL, dbName string, err error) {
 	mongoURL = os.Getenv(EnvURL)
@@ -510,4 +599,48 @@ func getURL() (mongoURL, dbName string, err error) {
 func IsConnectionError(err error) bool {
 	return mongo.IsNetworkError(err) ||
 		strings.Contains(err.Error(), "server selection error")
+}
+
+type helloCommandResult struct {
+	SetName string `bson:"setName"`
+	Msg     string `bson:"msg"`
+}
+
+func (r helloCommandResult) IsReplicaSet() bool {
+	return r.SetName != ""
+}
+
+func (r helloCommandResult) IsShardedCluster() bool {
+	return r.Msg == "isdbgrid"
+}
+
+func isVersionGte(version, expectedVersion string) bool {
+	if version == "" || expectedVersion == "" {
+		return false
+	}
+
+	versionParts := strings.Split(version, ".")
+	expectedVersionParts := strings.Split(expectedVersion, ".")
+
+	for i, ev := range expectedVersionParts {
+		if len(versionParts) <= i {
+			return true
+		}
+
+		v := versionParts[i]
+		vi, err := strconv.Atoi(v)
+		if err != nil {
+			return false
+		}
+		evi, err := strconv.Atoi(ev)
+		if err != nil {
+			return false
+		}
+
+		if vi < evi {
+			return false
+		}
+	}
+
+	return true
 }

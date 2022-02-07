@@ -34,7 +34,7 @@ type DependencyMaker struct {
 func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger) engine.Engine {
 	m := DependencyMaker{}
 
-	mongoClient := m.DepMongoClient(ctx)
+	mongoClient := m.DepMongoClient(ctx, logger)
 	cfg := m.DepConfig(ctx, mongoClient)
 	config.SetDbClientRetry(mongoClient, cfg)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
