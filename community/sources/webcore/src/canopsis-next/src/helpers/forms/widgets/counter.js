@@ -30,7 +30,7 @@ import { DEFAULT_WIDGET_MARGIN } from '@/constants/service-weather';
 
 /**
  * @typedef {Object} CounterWidgetParameters
- * @property {WidgetFilter[]} filters
+ * @property {WidgetFilter[]} viewFilters
  * @property {boolean} opened
  * @property {string} blockTemplate
  * @property {number} columnSM
@@ -50,8 +50,8 @@ import { DEFAULT_WIDGET_MARGIN } from '@/constants/service-weather';
  * @return {CounterWidgetParameters}
  */
 export const counterWidgetParametersToForm = (parameters = {}) => ({
-  filters: parameters.filters // TODO: was renamed from viewFilters
-    ? cloneDeep(parameters.filters)
+  viewFilters: parameters.viewFilters
+    ? cloneDeep(parameters.viewFilters)
     : [],
   opened: parameters.opened ?? true,
   blockTemplate: parameters.blockTemplate ?? DEFAULT_COUNTER_BLOCK_TEMPLATE,
