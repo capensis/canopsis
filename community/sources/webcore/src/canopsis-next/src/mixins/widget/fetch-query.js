@@ -26,12 +26,20 @@ export const widgetFetchQueryMixin = {
         this.fetchList({ isQueryNonceUpdate: true });
       }
     },
+    widget() {
+      this.setQuery();
+    },
   },
   async mounted() {
     if (!this.editing) {
       await this.fetchUserPreference({ id: this.widget._id });
 
-      this.query = prepareQuery(this.widget, this.userPreference);
+      this.setQuery();
     }
+  },
+  methods: {
+    setQuery() {
+      this.query = prepareQuery(this.widget, this.userPreference);
+    },
   },
 };

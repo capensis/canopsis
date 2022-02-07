@@ -71,20 +71,6 @@ export const widgetSettingsMixin = {
 
         await this.fetchActiveView();
 
-        /**
-         * TODO: update query
-         */
-
-        /*        if (newWidget._id) {
-          const oldQuery = this.getQueryById(newWidget._id);
-          const newQuery = prepareQuery(newWidget, userPreference);
-
-          this.updateQuery({
-            id: data._id,
-            query: this.prepareWidgetQuery(newQuery, oldQuery),
-          });
-        } */
-
         this.$sidebar.hide();
       }
     },
