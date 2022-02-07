@@ -19,13 +19,13 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with custom
           class="v-label theme--light"
           style="left: 0px; position: absolute;"
         >
-          service.fields.category
+          Category
         </label>
         <div
           class="v-select__selections"
         >
           <input
-            aria-label="service.fields.category"
+            aria-label="Category"
             aria-readonly="false"
             autocomplete="on"
             name="category"
@@ -295,10 +295,10 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with custom
                 class="v-label theme--light"
                 style="left: 0px; position: absolute;"
               >
-                service.fields.createCategory
+                Add new category
               </label>
               <input
-                aria-label="service.fields.createCategory"
+                aria-label="Add new category"
                 name="category.create"
                 type="text"
               />
@@ -349,13 +349,13 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
           class="v-label theme--light"
           style="left: 0px; position: absolute;"
         >
-          service.fields.category
+          Category
         </label>
         <div
           class="v-select__selections"
         >
           <input
-            aria-label="service.fields.category"
+            aria-label="Category"
             aria-readonly="false"
             autocomplete="on"
             name="category"
@@ -632,13 +632,13 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
           class="v-label theme--light"
           style="left: 0px; position: absolute;"
         >
-          service.fields.category
+          Category
         </label>
         <div
           class="v-select__selections"
         >
           <input
-            aria-label="service.fields.category"
+            aria-label="Category"
             aria-readonly="false"
             autocomplete="on"
             name="category"
@@ -738,13 +738,13 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
           class="v-label theme--light"
           style="left: 0px; position: absolute;"
         >
-          service.fields.category
+          Category
         </label>
         <div
           class="v-select__selections"
         >
           <input
-            aria-label="service.fields.category"
+            aria-label="Category"
             aria-readonly="false"
             autocomplete="on"
             name="category"
@@ -817,13 +817,13 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with valida
           class="v-label theme--light error--text"
           style="left: 0px; position: absolute;"
         >
-          service.fields.category
+          Category
         </label>
         <div
           class="v-select__selections"
         >
           <input
-            aria-label="service.fields.category"
+            aria-label="Category"
             aria-readonly="false"
             autocomplete="on"
             name="category"
@@ -862,7 +862,7 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with valida
           <div
             class="v-messages__message message-transition-enter message-transition-enter-active"
           >
-            validation.custom.category.required:["validation.attributes.category",[],{}]
+            The field is required
           </div>
         </div>
       </div>

@@ -80,7 +80,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
                 </i>
               </th>
               <th
-                aria-label="common.actionsLabel: Not sorted."
+                aria-label="Actions: Not sorted."
                 aria-sort="none"
                 class="column text-xs-left"
                 role="columnheader"
@@ -299,7 +299,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                 />
               </th>
               <th
-                aria-label="common.actionsLabel: Not sorted."
+                aria-label="Actions: Not sorted."
                 aria-sort="none"
                 class="column text-xs-left"
                 role="columnheader"

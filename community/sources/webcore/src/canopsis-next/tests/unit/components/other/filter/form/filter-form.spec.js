@@ -64,7 +64,7 @@ describe('filters-form', () => {
     expect($modals.show).toBeCalledWith({
       name: MODALS.createFilter,
       config: {
-        title: 'modals.filter.create.title',
+        title: 'Create filter',
         entitiesType: ENTITIES_TYPES.entity,
         existingTitles: filtersTitles,
         action: expect.any(Function),
@@ -110,7 +110,7 @@ describe('filters-form', () => {
       name: MODALS.createFilter,
       config: {
         filter: filters[editedIndex],
-        title: 'modals.filter.edit.title',
+        title: 'Edit filter',
         entitiesType: ENTITIES_TYPES.entity,
         existingTitles: filtersTitles,
         action: expect.any(Function),

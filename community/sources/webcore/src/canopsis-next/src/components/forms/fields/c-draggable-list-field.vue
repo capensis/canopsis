@@ -1,9 +1,9 @@
 <template lang="pug">
   draggable(
     :value="value",
-    :options="draggableOptions",
+    :options="options",
     :element="component",
-    @change="changeOrdering"
+    @change="updateOrdering"
   )
     slot
 </template>
@@ -43,7 +43,7 @@ export default {
     },
   },
   computed: {
-    draggableOptions() {
+    options() {
       return {
         animation: this.animation,
         disabled: this.disabled,
@@ -51,7 +51,7 @@ export default {
     },
   },
   methods: {
-    changeOrdering(event) {
+    updateOrdering(event) {
       this.updateModel(dragDropChangePositionHandler(this.value, event));
     },
   },

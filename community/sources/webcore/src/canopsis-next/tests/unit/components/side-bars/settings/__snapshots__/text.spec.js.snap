@@ -7,7 +7,7 @@ exports[`text Renders \`text\` widget settings with core version 1`] = `
     role="list"
   >
     <field-title-stub
-      title="common.title"
+      title="Title"
       value=""
     />
     <hr
@@ -23,7 +23,7 @@ exports[`text Renders \`text\` widget settings with core version 1`] = `
       class="v-divider theme--light"
     />
     <field-text-editor-stub
-      title="settings.templateEditor"
+      title="Template"
       value=""
     />
     <hr
@@ -38,7 +38,7 @@ exports[`text Renders \`text\` widget settings with core version 1`] = `
     <div
       class="v-btn__content"
     >
-      common.save
+      Save
     </div>
   </button>
 </div>
@@ -51,7 +51,7 @@ exports[`text Renders \`text\` widget settings with custom props 1`] = `
     role="list"
   >
     <field-title-stub
-      title="common.title"
+      title="Title"
       value="Text widget"
     />
     <hr
@@ -67,7 +67,7 @@ exports[`text Renders \`text\` widget settings with custom props 1`] = `
       class="v-divider theme--light"
     />
     <field-text-editor-stub
-      title="settings.templateEditor"
+      title="Template"
       value=<p>1</p>
 <p>2</p>
 <p>3<br></p>
@@ -87,11 +87,11 @@ exports[`text Renders \`text\` widget settings with custom props 1`] = `
           <div
             class="v-list__tile theme--light"
           >
-            settings.stats
+            Stats
             <div
               class="font-italic caption ml-1"
             >
-              (common.optional)
+              (optional)
             </div>
           </div>
         </div>
@@ -143,7 +143,7 @@ exports[`text Renders \`text\` widget settings with custom props 1`] = `
     <div
       class="v-btn__content"
     >
-      common.save
+      Save
     </div>
   </button>
 </div>
@@ -156,7 +156,7 @@ exports[`text Renders \`text\` widget settings with default props 1`] = `
     role="list"
   >
     <field-title-stub
-      title="common.title"
+      title="Title"
       value=""
     />
     <hr
@@ -172,7 +172,7 @@ exports[`text Renders \`text\` widget settings with default props 1`] = `
       class="v-divider theme--light"
     />
     <field-text-editor-stub
-      title="settings.templateEditor"
+      title="Template"
       value=""
     />
     <hr
@@ -190,11 +190,11 @@ exports[`text Renders \`text\` widget settings with default props 1`] = `
           <div
             class="v-list__tile theme--light"
           >
-            settings.stats
+            Stats
             <div
               class="font-italic caption ml-1"
             >
-              (common.optional)
+              (optional)
             </div>
           </div>
         </div>
@@ -246,7 +246,7 @@ exports[`text Renders \`text\` widget settings with default props 1`] = `
     <div
       class="v-btn__content"
     >
-      common.save
+      Save
     </div>
   </button>
 </div>

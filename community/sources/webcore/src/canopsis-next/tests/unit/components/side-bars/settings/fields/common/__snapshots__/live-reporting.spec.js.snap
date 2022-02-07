@@ -5,7 +5,7 @@ exports[`live-reporting Renders \`live-reporting\` with custom props 1`] = `
   <div
     class="subheading"
   >
-    settings.liveReporting.title
+    Live reporting
   </div>
 </settings-button-field-stub>
 `;
@@ -17,7 +17,7 @@ exports[`live-reporting Renders \`live-reporting\` with default props 1`] = `
   <div
     class="subheading"
   >
-    settings.liveReporting.title
+    Live reporting
   </div>
 </settings-button-field-stub>
 `;
