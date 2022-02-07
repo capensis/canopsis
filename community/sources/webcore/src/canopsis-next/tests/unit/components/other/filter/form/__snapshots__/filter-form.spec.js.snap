@@ -22,7 +22,7 @@ exports[`filters-form Renders \`filters-form\` with custom props 1`] = `
     <div
       class="v-btn__content"
     >
-      common.addFilter
+      Add filter
     </div>
   </button>
 </div>
@@ -40,7 +40,7 @@ exports[`filters-form Renders \`filters-form\` with default props 1`] = `
       info
     </i>
     <div>
-      modals.filter.emptyFilters
+      No filters added yet
     </div>
   </div>
   <button
@@ -50,7 +50,7 @@ exports[`filters-form Renders \`filters-form\` with default props 1`] = `
     <div
       class="v-btn__content"
     >
-      common.addFilter
+      Add filter
     </div>
   </button>
 </div>

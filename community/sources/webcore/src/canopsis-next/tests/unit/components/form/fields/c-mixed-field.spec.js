@@ -23,9 +23,13 @@ const snapshotStubs = {
 const factory = (options = {}) => shallowMount(CMixedField, {
   localVue,
   stubs,
-  provide: {
-    $validator: new Validator(),
+
+  parentComponent: {
+    $_veeValidate: {
+      validator: 'new',
+    },
   },
+
   ...options,
 });
 
@@ -255,38 +259,6 @@ describe('c-mixed-field', () => {
 
     const [inputEventData] = inputEvents[0];
     expect(inputEventData).toEqual(item.value);
-  });
-
-  it('v-validate works correctly with component', async () => {
-    const name = Faker.datatype.string();
-    const value = Faker.datatype.string();
-    const validator = new Validator();
-
-    mount({
-      inject: ['$validator'],
-      components: {
-        CMixedField,
-      },
-      props: ['name', 'value'],
-      template: `
-        <c-mixed-field v-validate="'required'" :name="name" :value="value" />
-      `,
-    }, {
-      localVue,
-      stubs,
-      mocks: { $t: () => {} },
-      provide: {
-        $validator: validator,
-      },
-      propsData: {
-        value,
-        name,
-      },
-    });
-
-    await validator.validateAll();
-
-    expect(validator.fields.find({ name })).toBeTruthy();
   });
 
   it('Renders `c-mixed-field` with default props correctly', () => {

@@ -33,5 +33,8 @@ export default {
       default: () => ENTITIES_STATES,
     },
   },
+  mounted() {
+
+  },
 };
 </script>

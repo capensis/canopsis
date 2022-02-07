@@ -10,6 +10,7 @@ import TheSidebars from '@/components/side-bars/the-sidebars.vue';
 const localVue = createVueInstance();
 
 const snapshotStubs = {
+  'side-bar-wrapper': true,
   'alarm-settings': true,
   'context-settings': true,
   'service-weather-settings': true,

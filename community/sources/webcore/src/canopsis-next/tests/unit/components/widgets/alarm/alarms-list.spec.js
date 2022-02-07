@@ -1449,7 +1449,7 @@ describe('alarms-list', () => {
     await flushPromises();
 
     expect($popups.error).toHaveBeenCalledWith({
-      text: 'errors.default',
+      text: 'Something went wrong...',
     });
 
     jest.useRealTimers();

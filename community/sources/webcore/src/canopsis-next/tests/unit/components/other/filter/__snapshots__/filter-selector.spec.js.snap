@@ -118,7 +118,7 @@ exports[`filter-selector Renders \`filter-selector\` with custom all rights 2`] 
         >
           <c-enabled-field-stub
             hide-details="hide-details"
-            label="filterSelector.fields.mixFilters"
+            label="Mix filters"
           />
         </div>
         <div
@@ -359,7 +359,7 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 2`] = `
         >
           <c-enabled-field-stub
             hide-details="hide-details"
-            label="filterSelector.fields.mixFilters"
+            label="Mix filters"
           />
         </div>
         <div
@@ -515,7 +515,7 @@ exports[`filter-selector Renders \`filter-selector\` with default props 1`] = `
     <c-action-btn-stub
       icon="filter_list"
       small="small"
-      tooltip="filterSelector.buttons.list"
+      tooltip="Manage filters"
     />
   </div>
 </div>
@@ -541,7 +541,7 @@ exports[`filter-selector Renders \`filter-selector\` with default props 2`] = `
         >
           <c-enabled-field-stub
             hide-details="hide-details"
-            label="filterSelector.fields.mixFilters"
+            label="Mix filters"
           />
         </div>
         <div
@@ -672,7 +672,7 @@ exports[`filter-selector Renders \`filter-selector\` with value as array 1`] = `
     <c-action-btn-stub
       icon="filter_list"
       small="small"
-      tooltip="filterSelector.buttons.list"
+      tooltip="Manage filters"
     />
   </div>
 </div>
@@ -698,7 +698,7 @@ exports[`filter-selector Renders \`filter-selector\` with value as array 2`] = `
         >
           <c-enabled-field-stub
             hide-details="hide-details"
-            label="filterSelector.fields.mixFilters"
+            label="Mix filters"
             value="true"
           />
         </div>

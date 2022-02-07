@@ -27,7 +27,7 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with default slot 1`] = `
               <div
                 class="v-list__tile__title white--text"
               >
-                settings.titles.alarm-settings
+                Alarm list settings
               </div>
             </div>
           </div>
@@ -90,7 +90,7 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with navigation drawer pr
               <div
                 class="v-list__tile__title white--text"
               >
-                settings.titles.alarm-settings
+                Alarm list settings
               </div>
             </div>
           </div>
@@ -208,7 +208,7 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: alarm-settings
               <div
                 class="v-list__tile__title white--text"
               >
-                settings.titles.alarm-settings
+                Alarm list settings
               </div>
             </div>
           </div>
@@ -267,7 +267,7 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: context-settin
               <div
                 class="v-list__tile__title white--text"
               >
-                settings.titles.context-settings
+                Context table settings
               </div>
             </div>
           </div>
@@ -326,7 +326,7 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: counter-settin
               <div
                 class="v-list__tile__title white--text"
               >
-                settings.titles.counter-settings
+                Counter settings
               </div>
             </div>
           </div>
@@ -385,7 +385,7 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: service-weathe
               <div
                 class="v-list__tile__title white--text"
               >
-                settings.titles.service-weather-settings
+                Service weather settings
               </div>
             </div>
           </div>
@@ -444,7 +444,7 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: stats-calendar
               <div
                 class="v-list__tile__title white--text"
               >
-                settings.titles.stats-calendar-settings
+                Stats calendar settings
               </div>
             </div>
           </div>
@@ -503,7 +503,7 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: stats-curves-s
               <div
                 class="v-list__tile__title white--text"
               >
-                settings.titles.stats-curves-settings
+                Curve settings
               </div>
             </div>
           </div>
@@ -562,7 +562,7 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: stats-histogra
               <div
                 class="v-list__tile__title white--text"
               >
-                settings.titles.stats-histogram-settings
+                Histogram settings
               </div>
             </div>
           </div>
@@ -621,7 +621,7 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: stats-number-s
               <div
                 class="v-list__tile__title white--text"
               >
-                settings.titles.stats-number-settings
+                Stats number settings
               </div>
             </div>
           </div>
@@ -680,7 +680,7 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: stats-pareto-s
               <div
                 class="v-list__tile__title white--text"
               >
-                settings.titles.stats-pareto-settings
+                Stats Pareto diagram settings
               </div>
             </div>
           </div>
@@ -739,7 +739,7 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: stats-table-se
               <div
                 class="v-list__tile__title white--text"
               >
-                settings.titles.stats-table-settings
+                Stats table settings
               </div>
             </div>
           </div>
@@ -798,7 +798,7 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: testing-weathe
               <div
                 class="v-list__tile__title white--text"
               >
-                settings.titles.testing-weather-settings
+                Testing weather
               </div>
             </div>
           </div>
@@ -857,7 +857,7 @@ exports[`side-bar-wrapper Renders \`side-bar-wrapper\` with type: text-settings 
               <div
                 class="v-list__tile__title white--text"
               >
-                settings.titles.text-settings
+                Text settings
               </div>
             </div>
           </div>
