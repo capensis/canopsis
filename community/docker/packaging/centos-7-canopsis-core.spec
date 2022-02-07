@@ -8,7 +8,7 @@ License:	AGPLv3 (Canopsis Community)
 URL:		https://git.canopsis.net/canopsis/canopsis-community
 
 BuildRequires: rsync
-Requires: bzip2 canopsis-webui cyrus-sasl curl epel-release libacl libcurl libevent libffi librsync libxml2 libxslt net-snmp openldap openssl postgresql-libs python rsync sudo xmlsec1 xmlsec1-openssl zlib
+Requires: bzip2 canopsis-engines-go canopsis-webui cyrus-sasl curl epel-release libacl libcurl libevent libffi librsync libxml2 libxslt net-snmp openldap openssl postgresql-libs python rsync sudo xmlsec1 xmlsec1-openssl zlib
 
 %description
 Canopsis Community main package.
