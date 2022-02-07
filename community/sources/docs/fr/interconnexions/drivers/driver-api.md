@@ -77,12 +77,14 @@ Le fichier de configuration avec les commentaires explicatifs :
 # Ce bloc permet de spécifier les propriétés de la requête HTTP à envoyer à l'API externe.
 api:
   # Spécifier l'URL de l'API
-  url: http://mon.api/
+  url: http://mon.api/?filtre=filtre1
   # Spécifier le type de requête HTTP (GET, POST, PUT etc)
   method: GET
-  # Sépcifier les en-têtes de la requête
+  # headers contient les champs headers de la requête
   headers:
-    Content-Type: application/json
+  # Le payload contient le body
+  body:
+    key: value
   # Activer (false) ou désactiver (true) la vérification de la chaîne de certification TLS du serveur
   insecure_skip_verify: false
 
@@ -95,13 +97,21 @@ import:
   action: create
   # Définit le type d'action à effectuer sur les entités manquantes de la réponse de l'API
   # Les entités manquantes sont trouvées par source d'import
-  # Valeurs possibles : delete, disable ou vide
+  # Valeurs possibles : delete, disable. Si rien n’est défini, les entités manquantes ne seront pas mises à jour.
   missing_action: disable
 
 # Ce bloc spécifie l'association entre les champs de l'entité et la réponse de l'API
 # Le champ _id est requis, les autres champs sont optionnels
 # Seul le JSON qui contient un tableau d'objets est pris en charge
 mapping:
+  # path spécifie le chemin d’où importer les données
+  # Par exemple, "data.nested" si la réponse est {"data": {"nested": [ {...}, {...} ]}}.
+  # Peut être vide.
+  path:
+  # is_map spécifie le type des données importées.
+  # Devrait être false si la réponse est array [ {...}, {...} ].
+  # Devrait être true si la réponse est map {"key1": {...}, "key2": {...}}.
+  is_map: false
   # Association de l'ID de l'entité
   _id: ci
   # Association de la description
