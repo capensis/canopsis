@@ -14,6 +14,7 @@ then
 fi
 
 sed -i -e "s,{{ CPS_API_URL }},$CPS_API_URL,g" /etc/nginx/conf.d/default.conf
+sed -i -e "s,{{ CPS_OLD_API_URL }},$CPS_OLD_API_URL,g" /etc/nginx/conf.d/default.conf
 sed -i -e "s,{{ CPS_SERVER_NAME }},$CPS_SERVER_NAME,g" /etc/nginx/conf.d/default.conf
 echo "resolver $(awk 'BEGIN{ORS=" "} $1=="nameserver" {print $2}' /etc/resolv.conf) valid=20s;" > /etc/nginx/resolvers.inc
 exec nginx -g 'daemon off;'
