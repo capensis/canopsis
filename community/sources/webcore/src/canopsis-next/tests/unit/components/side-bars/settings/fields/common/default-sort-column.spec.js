@@ -94,7 +94,7 @@ describe('default-sort-column', () => {
   it('Renders `default-sort-column` with default props', () => {
     const wrapper = snapshotFactory();
 
-    const menuContents = wrapper.findAll('.v-menu__content');
+    const menuContents = wrapper.findAllMenus();
 
     expect(wrapper.element).toMatchSnapshot();
 
@@ -118,7 +118,7 @@ describe('default-sort-column', () => {
       },
     });
 
-    const menuContents = wrapper.findAll('.v-menu__content');
+    const menuContents = wrapper.findAllMenus();
 
     expect(wrapper.element).toMatchSnapshot();
 
