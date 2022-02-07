@@ -120,6 +120,13 @@
         "type": "CRUD"
     },
     {
+        "_id": "models_engine",
+        "loader_id": "models_engine",
+        "crecord_name": "models_engine",
+        "crecord_type": "action",
+        "desc": "Engines"
+    },
+    {
         "_id": "models_exploitation_eventFilter",
         "loader_id": "models_exploitation_eventFilter",
         "crecord_name": "models_exploitation_eventFilter",
