@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -14,21 +15,20 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const limitMatch = 100
 
 type Store interface {
-	Insert(ctx context.Context, models []*Response) error
+	Insert(ctx context.Context, model *Response) error
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
 	FindByEntityID(ctx context.Context, entityID string) ([]Response, error)
 	GetOneBy(ctx context.Context, filter bson.M) (*Response, error)
 	FindEntities(ctx context.Context, pbhID string, request EntitiesListRequest) (*AggregationEntitiesResult, error)
-	Update(ctx context.Context, models []*Response) (bool, error)
+	Update(ctx context.Context, model *Response) (bool, error)
 	UpdateByFilter(ctx context.Context, model *Response, filters bson.M) (bool, error)
-	Delete(ctx context.Context, ids []string) (bool, error)
+	Delete(ctx context.Context, id string) (bool, error)
 	Count(context.Context, Filter, int) (*CountFilterResult, error)
 }
 
@@ -65,50 +65,47 @@ func NewStore(
 	}
 }
 
-func (s *store) Insert(ctx context.Context, models []*Response) error {
+func (s *store) Insert(ctx context.Context, model *Response) error {
 	now := libtypes.NewCpsTime(time.Now().Unix())
-	docs := make([]interface{}, len(models))
 
-	for i := range models {
-		if models[i].ID == "" {
-			models[i].ID = utils.NewID()
-		}
+	if model.ID == "" {
+		model.ID = utils.NewID()
+	}
 
-		models[i].Created = &now
-		models[i].Updated = &now
-		models[i].Comments = make([]*pbehavior.Comment, 0)
+	model.Created = &now
+	model.Updated = &now
+	model.Comments = make([]*pbehavior.Comment, 0)
 
-		doc, err := s.transformModelToDocument(*models[i])
+	doc, err := s.transformModelToDocument(*model)
+	if err != nil {
+		return err
+	}
+
+	doc.ID = model.ID
+	doc.Created = now
+	doc.Updated = now
+
+	// If model.Stop is nil, insert to mongo using map so that
+	// tstop field can be cleared
+	if model.Stop == nil {
+		m := make(map[string]interface{})
+		var p []byte
+
+		p, err = bson.Marshal(doc)
 		if err != nil {
 			return err
 		}
 
-		doc.ID = models[i].ID
-		doc.Created = now
-		doc.Updated = now
-
-		// If model.Stop is nil, insert to mongo using map so that
-		// tstop field can be cleared
-		if models[i].Stop == nil {
-			m := make(map[string]interface{})
-			p, err := bson.Marshal(doc)
-			if err != nil {
-				return err
-			}
-
-			err = bson.Unmarshal(p, &m)
-			if err != nil {
-				return err
-			}
-
-			delete(m, "tstop")
-			docs[i] = m
-		} else {
-			docs[i] = doc
+		err = bson.Unmarshal(p, &m)
+		if err != nil {
+			return err
 		}
-	}
 
-	_, err := s.dbCollection.InsertMany(ctx, docs)
+		delete(m, "tstop")
+		_, err = s.dbCollection.InsertOne(ctx, m)
+	} else {
+		_, err = s.dbCollection.InsertOne(ctx, doc)
+	}
 
 	return err
 }
@@ -312,81 +309,60 @@ func (s *store) FindEntities(ctx context.Context, pbhID string, request Entities
 	return &result, nil
 }
 
-func (s *store) Update(ctx context.Context, models []*Response) (bool, error) {
-	if len(models) == 0 {
+func (s *store) Update(ctx context.Context, model *Response) (bool, error) {
+	if model == nil {
 		return true, nil
 	}
 
-	ids := make([]string, len(models))
-	for i := range models {
-		ids[i] = models[i].ID
+	prevDoc := pbehavior.PBehavior{}
+	err := s.dbCollection.FindOne(ctx, bson.M{"_id": model.ID}).Decode(&prevDoc)
+	if err != nil {
+		if err == mongodriver.ErrNoDocuments {
+			return false, nil
+		}
+
+		return false, err
 	}
-	cursor, err := s.dbCollection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}})
+
+	now := libtypes.NewCpsTime(time.Now().Unix())
+	doc, err := s.transformModelToDocument(*model)
 	if err != nil {
 		return false, err
 	}
-	defer cursor.Close(ctx)
-	prevDocsById := make(map[string]pbehavior.PBehavior, len(models))
-	for cursor.Next(ctx) {
-		pbh := pbehavior.PBehavior{}
-		err := cursor.Decode(&pbh)
-		if err != nil {
-			return false, err
-		}
-		prevDocsById[pbh.ID] = pbh
-	}
 
-	if len(prevDocsById) < len(models) {
-		return false, nil
-	}
+	created := prevDoc.Created
+	model.Comments = prevDoc.Comments
+	model.LastAlarmDate = prevDoc.LastAlarmDate
+	model.Created = &created
+	model.Updated = &now
+	doc.Updated = now
 
-	writeModels := make([]mongodriver.WriteModel, len(models))
-	for i := range models {
-		now := libtypes.NewCpsTime(time.Now().Unix())
-		doc, err := s.transformModelToDocument(*models[i])
+	// If model.Stop is nil, insert to mongo using map so that
+	// tstop field can be cleared
+	var update interface{}
+
+	if model.Stop == nil {
+		m := make(map[string]interface{})
+		p, err := bson.Marshal(doc)
 		if err != nil {
 			return false, err
 		}
 
-		prevDoc := prevDocsById[models[i].ID]
-		created := prevDoc.Created
-		models[i].Comments = prevDoc.Comments
-		models[i].LastAlarmDate = prevDoc.LastAlarmDate
-		models[i].Created = &created
-		models[i].Updated = &now
-		doc.Updated = now
-
-		// If model.Stop is nil, insert to mongo using map so that
-		// tstop field can be cleared
-		var update interface{}
-
-		if models[i].Stop == nil {
-			m := make(map[string]interface{})
-			p, err := bson.Marshal(doc)
-			if err != nil {
-				return false, err
-			}
-
-			err = bson.Unmarshal(p, &m)
-			if err != nil {
-				return false, err
-			}
-
-			delete(m, "tstop")
-			update = bson.M{
-				"$set":   m,
-				"$unset": bson.M{"tstop": 1},
-			}
-		} else {
-			update = bson.M{"$set": doc}
+		err = bson.Unmarshal(p, &m)
+		if err != nil {
+			return false, err
 		}
 
-		writeModels[i] = mongodriver.NewUpdateOneModel().
-			SetFilter(bson.M{"_id": models[i].ID}).
-			SetUpdate(update)
+		delete(m, "tstop")
+		update = bson.M{
+			"$set":   m,
+			"$unset": bson.M{"tstop": 1},
+		}
+	} else {
+		update = bson.M{"$set": doc}
 	}
 
-	result, err := s.dbCollection.BulkWrite(ctx, writeModels)
+	result, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": model.ID}, update)
 	if err != nil {
 		return false, err
 	}
@@ -443,21 +419,8 @@ func (s *store) UpdateByFilter(ctx context.Context, model *Response, filters bso
 	return result.MatchedCount > 0, nil
 }
 
-func (s *store) Delete(ctx context.Context, ids []string) (bool, error) {
-	if len(ids) == 0 {
-		return true, nil
-	}
-
-	count, err := s.dbCollection.CountDocuments(ctx, bson.M{"_id": bson.M{"$in": ids}})
-	if err != nil {
-		return false, err
-	}
-
-	if count < int64(len(ids)) {
-		return false, nil
-	}
-
-	deleted, err := s.dbCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
+func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
 	if err != nil {
 		return false, err
 	}

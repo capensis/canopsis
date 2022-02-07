@@ -18,6 +18,7 @@ import (
 	liboperation "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/bsm/redislock"
@@ -28,6 +29,7 @@ import (
 const MaxRedisLockRetries = 10
 
 type eventProcessor struct {
+	dbClient            mongo.DbClient
 	adapter             Adapter
 	entityAdapter       entity.Adapter
 	ruleAdapter         correlation.RulesAdapter
@@ -41,6 +43,7 @@ type eventProcessor struct {
 }
 
 func NewEventProcessor(
+	dbClient mongo.DbClient,
 	adapter Adapter,
 	entityAdapter entity.Adapter,
 	ruleAdapter correlation.RulesAdapter,
@@ -53,6 +56,7 @@ func NewEventProcessor(
 	logger zerolog.Logger,
 ) EventProcessor {
 	return &eventProcessor{
+		dbClient:            dbClient,
 		adapter:             adapter,
 		entityAdapter:       entityAdapter,
 		ruleAdapter:         ruleAdapter,
@@ -283,18 +287,13 @@ func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event) (t
 }
 
 // updateAlarm updates alarm value and crops steps.
-// TODO use mongo transactions after migration to mongo v4 because steps crop can override adding step by engine-webhook and engine-correlation.
 func (s *eventProcessor) updateAlarm(ctx context.Context, event *types.Event) (types.AlarmChangeType, error) {
 	changeType := types.AlarmChangeTypeNone
-	alarm, err := s.adapter.GetOpenedAlarmByAlarmId(ctx, event.Alarm.ID)
-	if err != nil {
-		return changeType, fmt.Errorf("cannot fetch alarm: %w", err)
-	}
-
+	alarm := event.Alarm
 	alarmConfig := s.alarmConfigProvider.Get()
 	previousState := alarm.CurrentState()
 	newState := event.State
-	err = UpdateAlarmState(&alarm, *event.Entity, event.Timestamp, event.State, event.Output, s.alarmStatusService)
+	err := UpdateAlarmState(alarm, *event.Entity, event.Timestamp, event.State, event.Output, s.alarmStatusService)
 	if err != nil {
 		return changeType, err
 	}
@@ -307,19 +306,31 @@ func (s *eventProcessor) updateAlarm(ctx context.Context, event *types.Event) (t
 		alarm.PartialUpdateLastEventDate(event.Timestamp)
 	}
 
-	err = s.adapter.PartialUpdateOpen(ctx, &alarm)
+	err = s.adapter.PartialUpdateOpen(ctx, alarm)
 	if err != nil {
 		return changeType, fmt.Errorf("cannot update alarm: %w", err)
 	}
 
 	// Update cropped steps if needed
-	alarm.PartialUpdateCropSteps()
-	err = s.adapter.PartialUpdateOpen(ctx, &alarm)
-	if err != nil {
-		return changeType, fmt.Errorf("cannot update alarm: %w", err)
-	}
+	err = s.dbClient.WithTransaction(ctx, func(tranCtx context.Context) error {
+		alarm, err := s.adapter.GetOpenedAlarmByAlarmId(tranCtx, event.Alarm.ID)
+		if err != nil {
+			return fmt.Errorf("cannot fetch alarm: %w", err)
+		}
+		if alarm.CropSteps() {
+			alarm.AddUpdate("$set", bson.M{"v.steps": alarm.Value.Steps})
+			err = s.adapter.PartialUpdateOpen(tranCtx, &alarm)
+			if err != nil {
+				return fmt.Errorf("cannot update alarm: %w", err)
+			}
+			event.Alarm = &alarm
+		}
 
-	event.Alarm = &alarm
+		return nil
+	})
+	if err != nil {
+		return changeType, err
+	}
 
 	if newState > previousState {
 		changeType = types.AlarmChangeTypeStateIncrease

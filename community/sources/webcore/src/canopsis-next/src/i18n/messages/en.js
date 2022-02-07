@@ -227,6 +227,7 @@ export default {
       [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
       [EVENT_ENTITY_TYPES.assocTicket]: 'Associate ticket',
       [EVENT_ENTITY_TYPES.comment]: 'Comment',
+      [EVENT_ENTITY_TYPES.executeInstruction]: 'Execute instruction',
     },
     times: {
       second: 'second | seconds',
@@ -2024,6 +2025,7 @@ export default {
   },
 
   pbehavior: {
+    periodsCalendar: 'Calendar with periods',
     buttons: {
       addFilter: 'Add filter',
       editFilter: 'Edit filter',
@@ -2379,13 +2381,10 @@ export default {
   },
 
   service: {
-    fields: {
-      category: 'Category',
-      name: 'Name',
-      outputTemplate: 'Output template',
-      createCategory: 'Add new category',
-      createCategoryHelp: 'Press <kbd>enter</kbd> to save',
-    },
+    outputTemplate: 'Output template',
+    createCategory: 'Add new category',
+    createCategoryHelp: 'Press <kbd>enter</kbd> to save',
+    availabilityState: 'Hi availability state',
   },
 
   users: {
@@ -2439,6 +2438,7 @@ export default {
       [TEST_SUITE_STATUSES.skipped]: 'Skipped',
       [TEST_SUITE_STATUSES.error]: 'Error',
       [TEST_SUITE_STATUSES.failed]: 'Failed',
+      [TEST_SUITE_STATUSES.total]: 'Total time taken',
     },
     popups: {
       systemMessageCopied: 'System message copied to clipboard',
@@ -2521,6 +2521,7 @@ export default {
 
   quickRanges: {
     title: 'Quick ranges',
+    timeField: 'Time field',
     types: {
       [QUICK_RANGES.custom.value]: 'Custom',
       [QUICK_RANGES.last2Days.value]: 'Last 2 days',
@@ -2620,7 +2621,7 @@ export default {
     /**
      * Admin access
      */
-    [USERS_PERMISSIONS.technical.action]: {
+    [USERS_PERMISSIONS.technical.permission]: {
       title: 'Rights',
     },
     [USERS_PERMISSIONS.technical.role]: {

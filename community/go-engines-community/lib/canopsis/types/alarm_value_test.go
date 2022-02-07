@@ -7,6 +7,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"github.com/rs/zerolog"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -77,7 +78,7 @@ func TestAlarmStepCropOldData(t *testing.T) {
 	defer cancel()
 
 	Convey("Setup", t, func() {
-		s, err := mongo.NewClient(ctx, 0, 0)
+		s, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
 		So(err, ShouldBeNil)
 
 		c := s.Collection(mongo.AlarmMongoCollection)

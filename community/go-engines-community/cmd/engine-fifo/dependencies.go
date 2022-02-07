@@ -36,7 +36,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 	defer depmake.Catch(logger)
 
 	m := DependencyMaker{}
-	mongoClient := m.DepMongoClient(ctx)
+	mongoClient := m.DepMongoClient(ctx, logger)
 	cfg := m.DepConfig(ctx, mongoClient)
 	config.SetDbClientRetry(mongoClient, cfg)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)

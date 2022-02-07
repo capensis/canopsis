@@ -34,7 +34,7 @@ type DependencyMaker struct {
 // NewEngine returns the default Service engine with default connections.
 func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engine.Engine {
 	m := DependencyMaker{}
-	mongoClient := m.DepMongoClient(ctx)
+	mongoClient := m.DepMongoClient(ctx, logger)
 	cfg := m.DepConfig(ctx, mongoClient)
 	config.SetDbClientRetry(mongoClient, cfg)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
@@ -55,7 +55,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		entityservice.NewAdapter(mongoClient),
 		entity.NewAdapter(mongoClient),
 		entityservice.NewCountersCache(redisSession, logger),
-		entityservice.NewStorage(redisSession, json.NewEncoder(), json.NewDecoder()),
+		entityservice.NewStorage(entityservice.NewAdapter(mongoClient), redisSession, json.NewEncoder(), json.NewDecoder(), logger),
 		serviceLockClient,
 		redisSession,
 		logger,

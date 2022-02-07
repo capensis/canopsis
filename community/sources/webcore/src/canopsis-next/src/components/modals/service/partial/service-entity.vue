@@ -17,7 +17,8 @@
               :template="template",
               :active="hasActivePbehavior",
               :paused="hasPausedPbehavior",
-              @add:event="$listeners['add:event']"
+              @add:event="$listeners['add:event']",
+              @refresh="$listeners.refresh"
             )
             v-tabs(
               v-else,

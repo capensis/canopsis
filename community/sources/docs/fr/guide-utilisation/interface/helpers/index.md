@@ -438,3 +438,29 @@ Ajouter une majuscule sur la première lettre de chaque mot de la chaîne "mot1 
 ```handlebars
 {{capitalize-all "mot1 mot2 mot3"}}
 ```
+
+
+### Helper `replace`
+
+```handlebars
+{{replace 'Mot1 Mot2 Mot3' '(Mot1) (Mot2) (Mot3)' '$3 $2 $1' flags='g'}}
+```
+
+Ce helper attend :
+
+- en premier paramètre une chaîne de caractères
+- en deuxième paramètre une chaîne de type `capture group` permettant de matcher et d'extraire des patterns de la chaîne initiale avec des patenthèses (`()` )
+- en troisième paramètre la nouvelle chaîne constituée de variables récupérées dans les groupes provenant du `capture group` précédent
+- en dernier paramètre les `flags` comme ceux que l'on peut par exemple trouver dans `sed` ( ici le `g`  permet d'effectuer le traitement plusieurs fois dans une même ligne : sans cela la substitution s'arrêtera à la première occurence trouvée )
+
+
+
+#### Exemple d'utilisation du helper `replace`
+
+Changer l'ordre des mots dans une chaine de caractères :
+
+```handlebars
+{{replace 'Ubuntu Debian Linux Fedora' '(Ubuntu) (Debian) (Linux)' '$3 $2 $1' flags='g'}}
+```
+
+Donnera la chaine finale : `'Linux Debian Ubuntu Fedora'`

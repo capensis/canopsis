@@ -461,6 +461,20 @@ func (mr *MockDbClientMockRecorder) SetRetry(arg0, arg1 interface{}) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetRetry", reflect.TypeOf((*MockDbClient)(nil).SetRetry), arg0, arg1)
 }
 
+// WithTransaction mocks base method.
+func (m *MockDbClient) WithTransaction(arg0 context.Context, arg1 func(context.Context) error) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "WithTransaction", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// WithTransaction indicates an expected call of WithTransaction.
+func (mr *MockDbClientMockRecorder) WithTransaction(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WithTransaction", reflect.TypeOf((*MockDbClient)(nil).WithTransaction), arg0, arg1)
+}
+
 // MockSingleResultHelper is a mock of SingleResultHelper interface.
 type MockSingleResultHelper struct {
 	ctrl     *gomock.Controller

@@ -71,6 +71,7 @@ type TimezoneConfig struct {
 type ApiConfig struct {
 	TokenExpiration    time.Duration
 	TokenSigningMethod jwt.SigningMethod
+	BulkMaxSize        int
 }
 
 type RemediationConfig struct {
@@ -236,6 +237,7 @@ func NewApiConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseApiConfi
 	conf := ApiConfig{
 		TokenExpiration:    parseTimeDurationByStr(cfg.API.TokenExpiration, ApiTokenExpiration, "TokenExpiration", sectionName, logger),
 		TokenSigningMethod: parseJwtSigningMethod(cfg.API.TokenSigningMethod, jwt.GetSigningMethod(ApiTokenSigningMethod), "TokenSigningMethod", sectionName, logger),
+		BulkMaxSize:        parseInt(cfg.API.BulkMaxSize, ApiBulkMaxSize, "BulkMaxSize", sectionName, logger),
 	}
 
 	return &BaseApiConfigProvider{
@@ -264,6 +266,8 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 	if ok {
 		p.conf.TokenSigningMethod = m
 	}
+
+	p.conf.BulkMaxSize = parseInt(cfg.API.BulkMaxSize, p.conf.BulkMaxSize, "BulkMaxSize", sectionName, p.logger)
 }
 
 func (p *BaseApiConfigProvider) Get() ApiConfig {
