@@ -71,14 +71,5 @@ export default {
     widgetSettingsMixin,
     permissionsWidgetsContextFilters,
   ],
-  methods: {
-    prepareWidgetQuery(newQuery, oldQuery) { // TODO: don't forget it
-      return {
-        searchFilter: oldQuery.searchFilter,
-
-        ...newQuery,
-      };
-    },
-  },
 };
 </script>

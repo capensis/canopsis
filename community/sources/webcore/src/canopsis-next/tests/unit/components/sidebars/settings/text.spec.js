@@ -9,7 +9,7 @@ import { createInputStub } from '@unit/stubs/input';
 
 import { CANOPSIS_EDITION, QUICK_RANGES, TIME_UNITS, WIDGET_TYPES } from '@/constants';
 import ClickOutside from '@/services/click-outside';
-import { widgetToForm } from '@/helpers/forms/widgets/common';
+import { widgetToForm, formToWidget } from '@/helpers/forms/widgets/common';
 
 import TextSettings from '@/components/sidebars/settings/text.vue';
 
@@ -36,6 +36,12 @@ const factory = (options = {}) => shallowMount(TextSettings, {
   localVue,
   stubs,
 
+  parentComponent: {
+    provide: {
+      $clickOutside: new ClickOutside(),
+    },
+  },
+
   ...options,
 });
 
@@ -54,8 +60,8 @@ const selectFieldStatsSelector = wrapper => wrapper.find('input.field-stats-sele
 const selectFieldDateInterval = wrapper => wrapper.find('input.field-date-interval');
 
 describe('text', () => {
-  const generateDefaultTextWidgetForm = () => ({
-    ...widgetToForm({ type: WIDGET_TYPES.alarmList }),
+  const generateDefaultTextWidget = () => ({
+    ...formToWidget(widgetToForm({ type: WIDGET_TYPES.text })),
 
     _id: Faker.datatype.string(),
   });
@@ -63,7 +69,11 @@ describe('text', () => {
   const userPreferences = {
     content: Faker.helpers.createTransaction(),
   };
-  const widget = generateDefaultTextWidgetForm();
+  const widget = {
+    ...generateDefaultTextWidget(),
+
+    tab: Faker.datatype.string(),
+  };
   const view = {
     enabled: true,
     title: 'Text widgets',
@@ -127,6 +137,23 @@ describe('text', () => {
     },
   ]);
 
+  const submitWithExpects = async (wrapper, { widgetMethod, expectData }) => {
+    const submitButton = selectSubmitButton(wrapper);
+
+    submitButton.trigger('click');
+
+    await flushPromises();
+
+    expect(widgetMethod).toHaveBeenCalledTimes(1);
+    expect(widgetMethod).toHaveBeenLastCalledWith(
+      expect.any(Object),
+      expectData,
+      undefined,
+    );
+    expect(fetchActiveView).toHaveBeenCalledTimes(1);
+    expect($sidebar.hide).toHaveBeenCalledTimes(1);
+  };
+
   afterEach(() => {
     updateUserPreference.mockReset();
     updateView.mockReset();
@@ -135,19 +162,15 @@ describe('text', () => {
   });
 
   it('Title changed after trigger field title', async () => {
-    const $clickOutside = new ClickOutside();
     const newTitle = Faker.datatype.string();
 
     const wrapper = factory({
       store,
       propsData: {
-        config: {
-          widget,
-        },
-      },
-      parentComponent: {
-        provide: {
-          $clickOutside,
+        sidebar: {
+          config: {
+            widget,
+          },
         },
       },
     });
@@ -160,13 +183,6 @@ describe('text', () => {
     submitButton.trigger('click');
 
     await flushPromises();
-
-    expect(updateUserPreference).toHaveBeenCalledTimes(1);
-    expect(updateUserPreference).toHaveBeenLastCalledWith(
-      expect.any(Object),
-      { data: userPreferences },
-      undefined,
-    );
 
     expect(updateView).toHaveBeenCalledTimes(1);
     expect(updateView).toHaveBeenLastCalledWith(
@@ -628,11 +644,6 @@ describe('text', () => {
           getters: { edition: CANOPSIS_EDITION.cat },
         },
       ]),
-      parentComponent: {
-        provide: {
-          $clickOutside,
-        },
-      },
     });
 
     await flushPromises();

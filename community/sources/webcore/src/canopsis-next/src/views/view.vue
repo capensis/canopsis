@@ -18,6 +18,7 @@ import ViewFabBtns from '@/components/other/view/buttons/view-fab-btns.vue';
 import { authMixin } from '@/mixins/auth';
 import { queryMixin } from '@/mixins/query';
 import { activeViewMixin } from '@/mixins/active-view';
+import { viewRouterMixin } from '@/mixins/view/router';
 
 export default {
   provide() {
@@ -33,6 +34,7 @@ export default {
     authMixin,
     queryMixin,
     activeViewMixin,
+    viewRouterMixin,
   ],
   props: {
     id: {
@@ -74,8 +76,7 @@ export default {
 
   async mounted() {
     await this.fetchActiveView({ id: this.id });
-
-    this.goToFirstTab();
+    await this.redirectToFirstTab();
   },
 
   beforeDestroy() {
@@ -89,14 +90,6 @@ export default {
 
       if (this.activeTab) {
         this.forceUpdateQuery({ id: this.activeTab._id });
-      }
-    },
-
-    goToFirstTab() {
-      const { tabId } = this.$route.query;
-
-      if (!tabId && this.view?.tabs?.length) {
-        this.$router.replace({ query: { tabId: this.view.tabs[0]._id } });
       }
     },
   },

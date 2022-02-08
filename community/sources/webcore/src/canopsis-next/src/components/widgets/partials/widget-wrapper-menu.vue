@@ -20,14 +20,16 @@
 </template>
 
 <script>
-import { MODALS, ROUTES_NAMES, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
+import { MODALS, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 
 import { activeViewMixin } from '@/mixins/active-view';
+import { viewRouterMixin } from '@/mixins/view/router';
 import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 
 export default {
   mixins: [
     activeViewMixin,
+    viewRouterMixin,
     entitiesWidgetMixin,
   ],
   props: {
@@ -47,23 +49,6 @@ export default {
         config: {
           widget: { ...this.widget, tab: this.tab._id },
         },
-      });
-    },
-
-    /**
-     * Redirect to selected view and tab, if it's different then the view/tab we're actually on
-     */
-    redirectToSelectedViewAndTab({ viewId, tabId }) {
-      return new Promise((resolve, reject) => {
-        if (this.tab._id === tabId) {
-          return resolve();
-        }
-
-        return this.$router.push({
-          name: ROUTES_NAMES.view,
-          params: { id: viewId },
-          query: { tabId },
-        }, resolve, reject);
       });
     },
 

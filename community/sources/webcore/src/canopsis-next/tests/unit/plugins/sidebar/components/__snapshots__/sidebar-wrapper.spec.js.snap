@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`the-sidebars Renders \`the-sidebars\` with type: alarm-settings 1`] = `
+exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with default slot 1`] = `
 <aside
   class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
 >
   <div>
     <nav
@@ -53,8 +53,8 @@ exports[`the-sidebars Renders \`the-sidebars\` with type: alarm-settings 1`] = `
       class="v-divider theme--light"
     />
   </div>
-  <alarm-settings-stub
-    config="[object Object]"
+  <div
+    class="default-slot"
   />
   <div
     class="v-navigation-drawer__border"
@@ -62,10 +62,69 @@ exports[`the-sidebars Renders \`the-sidebars\` with type: alarm-settings 1`] = `
 </aside>
 `;
 
-exports[`the-sidebars Renders \`the-sidebars\` with type: context-settings 1`] = `
+exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-settings 1`] = `
 <aside
   class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
+>
+  <div>
+    <nav
+      class="v-toolbar theme--light secondary"
+      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
+    >
+      <div
+        class="v-toolbar__content"
+        style="height: 64px;"
+      >
+        <div
+          class="v-list theme--light"
+          role="list"
+        >
+          <div
+            role="listitem"
+          >
+            <div
+              class="v-list__tile theme--light"
+            >
+              <div
+                class="v-list__tile__title white--text"
+              >
+                settings.titles.alarm-settings
+              </div>
+            </div>
+          </div>
+        </div>
+        <button
+          class="v-btn v-btn--icon theme--light"
+          type="button"
+        >
+          <div
+            class="v-btn__content"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light white--text"
+            >
+              close
+            </i>
+          </div>
+        </button>
+      </div>
+    </nav>
+    <hr
+      class="v-divider theme--light"
+    />
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
+`;
+
+exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: context-settings 1`] = `
+<aside
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
 >
   <div>
     <nav
@@ -115,19 +174,16 @@ exports[`the-sidebars Renders \`the-sidebars\` with type: context-settings 1`] =
       class="v-divider theme--light"
     />
   </div>
-  <context-settings-stub
-    config="[object Object]"
-  />
   <div
     class="v-navigation-drawer__border"
   />
 </aside>
 `;
 
-exports[`the-sidebars Renders \`the-sidebars\` with type: counter-settings 1`] = `
+exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: counter-settings 1`] = `
 <aside
   class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
 >
   <div>
     <nav
@@ -177,19 +233,16 @@ exports[`the-sidebars Renders \`the-sidebars\` with type: counter-settings 1`] =
       class="v-divider theme--light"
     />
   </div>
-  <counter-settings-stub
-    config="[object Object]"
-  />
   <div
     class="v-navigation-drawer__border"
   />
 </aside>
 `;
 
-exports[`the-sidebars Renders \`the-sidebars\` with type: service-weather-settings 1`] = `
+exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: service-weather-settings 1`] = `
 <aside
   class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
 >
   <div>
     <nav
@@ -239,19 +292,16 @@ exports[`the-sidebars Renders \`the-sidebars\` with type: service-weather-settin
       class="v-divider theme--light"
     />
   </div>
-  <service-weather-settings-stub
-    config="[object Object]"
-  />
   <div
     class="v-navigation-drawer__border"
   />
 </aside>
 `;
 
-exports[`the-sidebars Renders \`the-sidebars\` with type: stats-calendar-settings 1`] = `
+exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: stats-calendar-settings 1`] = `
 <aside
   class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
 >
   <div>
     <nav
@@ -301,329 +351,16 @@ exports[`the-sidebars Renders \`the-sidebars\` with type: stats-calendar-setting
       class="v-divider theme--light"
     />
   </div>
-  <stats-calendar-settings-stub
-    config="[object Object]"
-  />
   <div
     class="v-navigation-drawer__border"
   />
 </aside>
 `;
 
-exports[`the-sidebars Renders \`the-sidebars\` with type: stats-curves-settings 1`] = `
+exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: testing-weather-settings 1`] = `
 <aside
   class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
->
-  <div>
-    <nav
-      class="v-toolbar theme--light secondary"
-      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
-    >
-      <div
-        class="v-toolbar__content"
-        style="height: 64px;"
-      >
-        <div
-          class="v-list theme--light"
-          role="list"
-        >
-          <div
-            role="listitem"
-          >
-            <div
-              class="v-list__tile theme--light"
-            >
-              <div
-                class="v-list__tile__title white--text"
-              >
-                settings.titles.stats-curves-settings
-              </div>
-            </div>
-          </div>
-        </div>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-            >
-              close
-            </i>
-          </div>
-        </button>
-      </div>
-    </nav>
-    <hr
-      class="v-divider theme--light"
-    />
-  </div>
-  <stats-curves-settings-stub
-    config="[object Object]"
-  />
-  <div
-    class="v-navigation-drawer__border"
-  />
-</aside>
-`;
-
-exports[`the-sidebars Renders \`the-sidebars\` with type: stats-histogram-settings 1`] = `
-<aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
->
-  <div>
-    <nav
-      class="v-toolbar theme--light secondary"
-      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
-    >
-      <div
-        class="v-toolbar__content"
-        style="height: 64px;"
-      >
-        <div
-          class="v-list theme--light"
-          role="list"
-        >
-          <div
-            role="listitem"
-          >
-            <div
-              class="v-list__tile theme--light"
-            >
-              <div
-                class="v-list__tile__title white--text"
-              >
-                settings.titles.stats-histogram-settings
-              </div>
-            </div>
-          </div>
-        </div>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-            >
-              close
-            </i>
-          </div>
-        </button>
-      </div>
-    </nav>
-    <hr
-      class="v-divider theme--light"
-    />
-  </div>
-  <stats-histogram-settings-stub
-    config="[object Object]"
-  />
-  <div
-    class="v-navigation-drawer__border"
-  />
-</aside>
-`;
-
-exports[`the-sidebars Renders \`the-sidebars\` with type: stats-number-settings 1`] = `
-<aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
->
-  <div>
-    <nav
-      class="v-toolbar theme--light secondary"
-      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
-    >
-      <div
-        class="v-toolbar__content"
-        style="height: 64px;"
-      >
-        <div
-          class="v-list theme--light"
-          role="list"
-        >
-          <div
-            role="listitem"
-          >
-            <div
-              class="v-list__tile theme--light"
-            >
-              <div
-                class="v-list__tile__title white--text"
-              >
-                settings.titles.stats-number-settings
-              </div>
-            </div>
-          </div>
-        </div>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-            >
-              close
-            </i>
-          </div>
-        </button>
-      </div>
-    </nav>
-    <hr
-      class="v-divider theme--light"
-    />
-  </div>
-  <stats-number-settings-stub
-    config="[object Object]"
-  />
-  <div
-    class="v-navigation-drawer__border"
-  />
-</aside>
-`;
-
-exports[`the-sidebars Renders \`the-sidebars\` with type: stats-pareto-settings 1`] = `
-<aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
->
-  <div>
-    <nav
-      class="v-toolbar theme--light secondary"
-      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
-    >
-      <div
-        class="v-toolbar__content"
-        style="height: 64px;"
-      >
-        <div
-          class="v-list theme--light"
-          role="list"
-        >
-          <div
-            role="listitem"
-          >
-            <div
-              class="v-list__tile theme--light"
-            >
-              <div
-                class="v-list__tile__title white--text"
-              >
-                settings.titles.stats-pareto-settings
-              </div>
-            </div>
-          </div>
-        </div>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-            >
-              close
-            </i>
-          </div>
-        </button>
-      </div>
-    </nav>
-    <hr
-      class="v-divider theme--light"
-    />
-  </div>
-  <stats-pareto-settings-stub
-    config="[object Object]"
-  />
-  <div
-    class="v-navigation-drawer__border"
-  />
-</aside>
-`;
-
-exports[`the-sidebars Renders \`the-sidebars\` with type: stats-table-settings 1`] = `
-<aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
->
-  <div>
-    <nav
-      class="v-toolbar theme--light secondary"
-      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
-    >
-      <div
-        class="v-toolbar__content"
-        style="height: 64px;"
-      >
-        <div
-          class="v-list theme--light"
-          role="list"
-        >
-          <div
-            role="listitem"
-          >
-            <div
-              class="v-list__tile theme--light"
-            >
-              <div
-                class="v-list__tile__title white--text"
-              >
-                settings.titles.stats-table-settings
-              </div>
-            </div>
-          </div>
-        </div>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-            >
-              close
-            </i>
-          </div>
-        </button>
-      </div>
-    </nav>
-    <hr
-      class="v-divider theme--light"
-    />
-  </div>
-  <stats-table-settings-stub
-    config="[object Object]"
-  />
-  <div
-    class="v-navigation-drawer__border"
-  />
-</aside>
-`;
-
-exports[`the-sidebars Renders \`the-sidebars\` with type: testing-weather-settings 1`] = `
-<aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
 >
   <div>
     <nav
@@ -673,19 +410,16 @@ exports[`the-sidebars Renders \`the-sidebars\` with type: testing-weather-settin
       class="v-divider theme--light"
     />
   </div>
-  <testing-weather-settings-stub
-    config="[object Object]"
-  />
   <div
     class="v-navigation-drawer__border"
   />
 </aside>
 `;
 
-exports[`the-sidebars Renders \`the-sidebars\` with type: text-settings 1`] = `
+exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: text-settings 1`] = `
 <aside
   class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 400px;"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
 >
   <div>
     <nav
@@ -735,8 +469,20 @@ exports[`the-sidebars Renders \`the-sidebars\` with type: text-settings 1`] = `
       class="v-divider theme--light"
     />
   </div>
-  <text-settings-stub
-    config="[object Object]"
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
+`;
+
+exports[`sidebar-wrapper Renders \`sidebar-wrapper\` without sidebar name 1`] = `
+<aside
+  class="v-navigation-drawer v-navigation-drawer--close v-navigation-drawer--fixed v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; margin-top: 0px; transform: translateX(450px); width: 450px;"
+>
+  <!---->
+  <div
+    class="default-slot"
   />
   <div
     class="v-navigation-drawer__border"
