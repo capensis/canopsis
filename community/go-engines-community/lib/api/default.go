@@ -143,7 +143,7 @@ func Default(
 
 	entityCleanerTaskChan := make(chan entity.CleanTask)
 	disabledEntityCleaner := entity.NewDisabledCleaner(
-		entity.NewStore(dbClient),
+		entity.NewStore(dbClient, timezoneConfigProvider),
 		datastorage.NewAdapter(dbClient),
 		metricsEntityMetaUpdater,
 		logger,
@@ -306,8 +306,12 @@ func newWebsocketHub(enforcer libsecurity.Enforcer, tokenProvider libsecurity.To
 	websocketAuthorizer := websocket.NewAuthorizer(enforcer, tokenProvider)
 	websocketHub := websocket.NewHub(websocketUpgrader, websocketAuthorizer,
 		canopsis.PeriodicalWaitTime, logger)
-	websocketHub.RegisterRoom(websocket.RoomBroadcastMessages)
-	websocketHub.RegisterRoom(websocket.RoomLoggedUserCount)
+	if err := websocketHub.RegisterRoom(websocket.RoomBroadcastMessages); err != nil {
+		logger.Err(err).Msg("Register BroadcastMessages room")
+	}
+	if err := websocketHub.RegisterRoom(websocket.RoomLoggedUserCount); err != nil {
+		logger.Err(err).Msg("Register LoggedUserCount room")
+	}
 	return websocketHub
 }
 
