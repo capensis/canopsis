@@ -98,6 +98,9 @@ func (s *statsStore) SetStats(ctx context.Context, eid string, st Stats, locatio
 		if !(evtYear == prevYear && evtMonth == prevMonth && evtDay == prevDay) {
 			updateFields["ko"] = st.FailEventsCount
 			updateFields["ok"] = st.OKEventsCount
+			if _, exist := updateFields["last_ko"]; !exist {
+				updateFields["last_ko"] = prev.LastFailEvent
+			}
 			res = s.dbCollection.FindOneAndReplace(ctx, filter, updateFields)
 			if err := res.Err(); err != nil && err != mongodriver.ErrNoDocuments {
 				return err
@@ -110,7 +113,9 @@ func (s *statsStore) SetStats(ctx context.Context, eid string, st Stats, locatio
 
 // ResetStats saves empty stats
 func (s *statsStore) ResetStats(ctx context.Context, eid string) error {
-	res := s.dbCollection.FindOneAndReplace(ctx, bson.M{"_id": eid}, Stats{})
+	res := s.dbCollection.FindOneAndUpdate(ctx, bson.M{"_id": eid}, bson.M{
+		"$set": bson.M{"ko": 0, "ok": 0},
+	}, options.FindOneAndUpdate().SetUpsert(true))
 	if err := res.Err(); err != nil && err != mongodriver.ErrNoDocuments {
 		return err
 	}
