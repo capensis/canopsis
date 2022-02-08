@@ -56,10 +56,12 @@ export const mockDateGetTime = (nowTimestamp) => {
 export const mockModals = () => {
   const modals = {
     show: jest.fn(),
+    hide: jest.fn(),
   };
 
   afterEach(() => {
     modals.show.mockReset();
+    modals.hide.mockReset();
   });
 
   return modals;

@@ -5,44 +5,40 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
   class="v-form"
   novalidate="novalidate"
 >
-  <modal-wrapper-stub
-    close="true"
-    titlecolor="#2fab63"
+  <div
+    class="modal-wrapper"
+    close="close"
   >
-    <template>
-      <span>
-        Filters
-      </span>
-    </template>
-    <template>
-      <remediation-instructions-filter-form-stub
-        filters=""
-        form="[object Object]"
-      />
-    </template>
-    <template>
-      <button
-        class="v-btn v-btn--flat theme--light"
-        type="button"
+    <span>
+      Filters
+    </span>
+     
+    <remediation-instructions-filter-form-stub
+      filters=""
+      form="[object Object]"
+    />
+     
+    <button
+      class="v-btn v-btn--flat theme--light"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
       >
-        <div
-          class="v-btn__content"
-        >
-          Cancel
-        </div>
-      </button>
-      <button
-        class="primary v-btn theme--light"
-        type="submit"
+        Cancel
+      </div>
+    </button>
+    <button
+      class="primary v-btn theme--light"
+      type="submit"
+    >
+      <div
+        class="v-btn__content"
       >
-        <div
-          class="v-btn__content"
-        >
-          Submit
-        </div>
-      </button>
-    </template>
-  </modal-wrapper-stub>
+        Submit
+      </div>
+    </button>
+  </div>
 </form>
 `;
 
@@ -51,44 +47,40 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
   class="v-form"
   novalidate="novalidate"
 >
-  <modal-wrapper-stub
-    close="true"
-    titlecolor="#2fab63"
+  <div
+    class="modal-wrapper"
+    close="close"
   >
-    <template>
-      <span>
-        Filters
-      </span>
-    </template>
-    <template>
-      <remediation-instructions-filter-form-stub
-        filters=""
-        form="[object Object]"
-      />
-    </template>
-    <template>
-      <button
-        class="v-btn v-btn--flat theme--light"
-        type="button"
+    <span>
+      Filters
+    </span>
+     
+    <remediation-instructions-filter-form-stub
+      filters=""
+      form="[object Object]"
+    />
+     
+    <button
+      class="v-btn v-btn--flat theme--light"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
       >
-        <div
-          class="v-btn__content"
-        >
-          Cancel
-        </div>
-      </button>
-      <button
-        class="primary v-btn theme--light"
-        type="submit"
+        Cancel
+      </div>
+    </button>
+    <button
+      class="primary v-btn theme--light"
+      type="submit"
+    >
+      <div
+        class="v-btn__content"
       >
-        <div
-          class="v-btn__content"
-        >
-          Submit
-        </div>
-      </button>
-    </template>
-  </modal-wrapper-stub>
+        Submit
+      </div>
+    </button>
+  </div>
 </form>
 `;
 
@@ -97,43 +89,39 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
   class="v-form"
   novalidate="novalidate"
 >
-  <modal-wrapper-stub
-    close="true"
-    titlecolor="#2fab63"
+  <div
+    class="modal-wrapper"
+    close="close"
   >
-    <template>
-      <span>
-        Filters
-      </span>
-    </template>
-    <template>
-      <remediation-instructions-filter-form-stub
-        filters=""
-        form="[object Object]"
-      />
-    </template>
-    <template>
-      <button
-        class="v-btn v-btn--flat theme--light"
-        type="button"
+    <span>
+      Filters
+    </span>
+     
+    <remediation-instructions-filter-form-stub
+      filters=""
+      form="[object Object]"
+    />
+     
+    <button
+      class="v-btn v-btn--flat theme--light"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
       >
-        <div
-          class="v-btn__content"
-        >
-          Cancel
-        </div>
-      </button>
-      <button
-        class="primary v-btn theme--light"
-        type="submit"
+        Cancel
+      </div>
+    </button>
+    <button
+      class="primary v-btn theme--light"
+      type="submit"
+    >
+      <div
+        class="v-btn__content"
       >
-        <div
-          class="v-btn__content"
-        >
-          Submit
-        </div>
-      </button>
-    </template>
-  </modal-wrapper-stub>
+        Submit
+      </div>
+    </button>
+  </div>
 </form>
 `;
