@@ -3,11 +3,11 @@ import Faker from 'faker';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
-import sideBarModule, { types } from '@/store/modules/side-bar';
+import sidebarModule, { types } from '@/plugins/sidebar/store';
 
-const { actions, state: initialState, mutations, getters } = sideBarModule;
+const { actions, state: initialState, mutations, getters } = sidebarModule;
 
-describe('Side bar module', () => {
+describe('Sidebar plugin store module', () => {
   afterEach(() => {
     jest.useRealTimers();
   });
@@ -65,7 +65,7 @@ describe('Side bar module', () => {
     expect(state).toEqual(initialState);
   });
 
-  it('Show side bar. Action: show', () => {
+  it('Show sidebar. Action: show', () => {
     const commit = jest.fn();
     const state = cloneDeep(initialState);
 
@@ -79,20 +79,7 @@ describe('Side bar module', () => {
     expect(commit).toHaveBeenCalledWith(types.SHOW, payload);
   });
 
-  it('Show side bar with opened. Action: show', () => {
-    const commit = jest.fn();
-    const state = { ...initialState, name: 'opened-side-bar' };
-
-    const name = Faker.datatype.string();
-    const config = Faker.helpers.createTransaction();
-    const payload = { name, config };
-
-    actions.show({ commit, state }, payload);
-
-    expect(commit).not.toHaveBeenCalled();
-  });
-
-  it('Hide side bar. Action: hide', () => {
+  it('Hide sidebar. Action: hide', () => {
     jest.useFakeTimers();
     const commit = jest.fn();
     const state = cloneDeep(initialState);
@@ -111,10 +98,11 @@ describe('Side bar module', () => {
 
     jest.runAllTimers();
 
-    expect(commit).not.toHaveBeenCalled();
+    expect(commit).toHaveBeenCalledTimes(1);
+    expect(commit).toHaveBeenCalledWith(types.HIDE_COMPLETED);
   });
 
-  it('Hide side bar with hidden. Action: hide', () => {
+  it('Hide sidebar with hidden. Action: hide', () => {
     jest.useFakeTimers();
     const commit = jest.fn();
     const state = { ...initialState, hidden: true };
@@ -137,30 +125,12 @@ describe('Side bar module', () => {
     expect(commit).toHaveBeenCalledWith(types.HIDE_COMPLETED);
   });
 
-  it('Get side bar name. Getter: name', () => {
-    const state = {
-      ...initialState,
-      name: Faker.datatype.string(),
-    };
-
-    expect(getters.name(state)).toEqual(state.name);
-  });
-
-  it('Get side bar config. Getter: config', () => {
+  it('Get sidebar. Getter: sidebar', () => {
     const state = {
       ...initialState,
       config: Faker.helpers.createTransaction(),
     };
 
-    expect(getters.config(state)).toEqual(state.config);
-  });
-
-  it('Get side bar hidden. Getter: hidden', () => {
-    const state = {
-      ...initialState,
-      hidden: Faker.datatype.boolean(),
-    };
-
-    expect(getters.hidden(state)).toEqual(state.hidden);
+    expect(getters.sidebar(state)).toEqual(state);
   });
 });

@@ -1,10 +1,12 @@
 import { ROUTES_NAMES } from '@/constants';
 
-/**
- * TODO: use it
- */
-export default {
+export const viewRouterMixin = {
   methods: {
+    /**
+     * Redirect to first view tab if exists
+     *
+     * @return {Promise<unknown>}
+     */
     redirectToFirstTab() {
       return new Promise((resolve, reject) => {
         const { tabId } = this.$route.query;
@@ -21,6 +23,13 @@ export default {
       });
     },
 
+    /**
+     * Redirect to selected view and tab, if it's different then the view/tab we're actually on
+     *
+     * @param {string} tabId
+     * @param {string} viewId
+     * @return {Promise<unknown>}
+     */
     redirectToSelectedViewAndTab({ tabId, viewId }) {
       return new Promise((resolve, reject) => {
         if (this.tab._id === tabId) {

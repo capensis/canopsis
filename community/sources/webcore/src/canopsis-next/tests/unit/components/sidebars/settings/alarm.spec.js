@@ -6,17 +6,21 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createButtonStub } from '@unit/stubs/button';
 import { createInputStub } from '@unit/stubs/input';
-import { mockDateNow } from '@unit/utils/mock-hooks';
+import { mockDateNow, mockSidebar } from '@unit/utils/mock-hooks';
 
 import {
   ALARMS_OPENED_VALUES,
-  CANOPSIS_EDITION, EXPORT_CSV_DATETIME_FORMATS, EXPORT_CSV_SEPARATORS,
-  REMEDIATION_INSTRUCTION_TYPES,
+  EXPORT_CSV_DATETIME_FORMATS,
+  EXPORT_CSV_SEPARATORS,
   SORT_ORDERS,
   USERS_PERMISSIONS,
+  SIDE_BARS,
+  COLOR_INDICATOR_TYPES, WIDGET_TYPES,
 } from '@/constants';
 import ClickOutside from '@/services/click-outside';
-import { generateDefaultAlarmListWidgetForm } from '@/helpers/entities';
+import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { widgetToForm, formToWidget, getEmptyWidgetByType } from '@/helpers/forms/widgets/common';
+import { formWidgetColumnsToColumns } from '@/helpers/forms/widgets/alarm';
 
 import AlarmSettings from '@/components/sidebars/settings/alarm.vue';
 
@@ -113,72 +117,40 @@ const selectFieldStickyHeader = wrapper => wrapper.findAll('input.field-switcher
 
 describe('alarm', () => {
   const nowTimestamp = 1386435600000;
+
   mockDateNow(nowTimestamp);
 
-  const userPreferences = {
-    content: {
-      itemsPerPage: 13,
-      category: '_id',
-    },
+  const $sidebar = mockSidebar();
+
+  const widget = {
+    ...generateDefaultAlarmListWidget(),
+
+    tab: Faker.datatype.string(),
   };
-  const widget = generateDefaultAlarmListWidgetForm();
-  const view = {
-    enabled: true,
-    title: 'Alarm widgets',
-    description: 'Alarm widgets',
-    tabs: [
-      {
-        widgets: [widget],
-      },
-    ],
-    tags: ['alarm'],
-    periodic_refresh: {
-      value: 1,
-      unit: 's',
-      enabled: false,
+
+  const sidebar = {
+    name: SIDE_BARS.alarmSettings,
+    config: {
+      widget,
     },
-    author: 'root',
-    group: {
-      _id: 'text-widget-group',
-    },
+    hidden: false,
   };
-  const updateUserPreference = jest.fn();
-  const updateView = jest.fn();
-  const updateQuery = jest.fn();
-  const hideSideBar = jest.fn();
-  const sideBarModule = {
-    name: 'sideBar',
+  const createWidget = jest.fn();
+  const updateWidget = jest.fn();
+  const copyWidget = jest.fn();
+  const fetchActiveView = jest.fn();
+  const activeViewModule = {
+    name: 'activeView',
     actions: {
-      hide: hideSideBar,
+      fetch: fetchActiveView,
     },
   };
-  const infoModule = {
-    name: 'info',
-    getters: { edition: CANOPSIS_EDITION.cat },
-  };
-  const queryModule = {
-    name: 'query',
-    getters: { getQueryById: () => () => ({}) },
+  const widgetModule = {
+    name: 'view/widget',
     actions: {
-      update: updateQuery,
-    },
-  };
-  const viewModule = {
-    name: 'view',
-    getters: {
-      item: view,
-    },
-    actions: {
-      update: updateView,
-    },
-  };
-  const userPreferenceModule = {
-    name: 'userPreference',
-    getters: {
-      getItemByWidget: () => () => userPreferences,
-    },
-    actions: {
-      update: updateUserPreference,
+      create: createWidget,
+      update: updateWidget,
+      copy: copyWidget,
     },
   };
   const authModule = {
@@ -187,103 +159,111 @@ describe('alarm', () => {
       currentUserPermissionsById: {},
     },
   };
-  const defaultQuery = {
-    active_columns: widget.parameters.widgetColumns.map(v => v.value),
-    category: userPreferences.content.category,
-    limit: userPreferences.content.itemsPerPage,
-    opened: widget.parameters.opened,
-    correlation: widget.parameters.isCorrelationEnabled ?? false,
-    multiSortBy: [],
-    page: 1,
-    with_instructions: true,
-  };
 
   const store = createMockedStoreModules([
-    sideBarModule,
-    infoModule,
-    queryModule,
-    viewModule,
-    userPreferenceModule,
+    activeViewModule,
+    widgetModule,
     authModule,
   ]);
 
-  const getViewRequest = () => ({
-    ...omit(view, ['_id']),
-    group: view.group._id,
+  const getWidgetRequestWithNewProperty = (key, value) => ({
+    ...omit(widget, ['_id']),
+
+    [key]: value,
   });
 
-  const getViewRequestWithNewWidgetProperty = (parameter, value) => ({
-    ...getViewRequest(),
-    tabs: [{
-      widgets: [{
-        ...widget,
-        [parameter]: value,
-      }],
-    }],
+  const getWidgetRequestWithNewParameterProperty = (key, value) => ({
+    ...omit(widget, ['_id']),
+
+    parameters: {
+      ...widget.parameters,
+
+      [key]: value,
+    },
   });
 
-  const getViewRequestWithNewWidgetParameter = (parameter, value) => getViewRequestWithNewWidgetProperty('parameters', {
-    ...widget.parameters,
-    [parameter]: value,
-  });
-
-  const submitWithExpects = async (wrapper, { viewData, userPreferencesData, queryData }) => {
+  const submitWithExpects = async (wrapper, { widgetMethod, expectData }) => {
     const submitButton = selectSubmitButton(wrapper);
 
     submitButton.trigger('click');
 
     await flushPromises();
 
-    expect(updateUserPreference).toHaveBeenCalledTimes(1);
-    expect(updateUserPreference).toHaveBeenLastCalledWith(
+    expect(widgetMethod).toHaveBeenCalledTimes(1);
+    expect(widgetMethod).toHaveBeenLastCalledWith(
       expect.any(Object),
-      { data: userPreferencesData },
+      expectData,
       undefined,
     );
-
-    expect(updateView).toHaveBeenCalledTimes(1);
-    expect(updateView).toHaveBeenLastCalledWith(
-      expect.any(Object),
-      {
-        id: view._id,
-        data: viewData,
-      },
-      undefined,
-    );
-
-    expect(updateQuery).toHaveBeenCalledTimes(1);
-    expect(updateQuery).toHaveBeenLastCalledWith(
-      expect.any(Object),
-      {
-        id: widget._id,
-        query: queryData,
-      },
-      undefined,
-    );
-
-    expect(hideSideBar).toHaveBeenCalledTimes(1);
+    expect(fetchActiveView).toHaveBeenCalledTimes(1);
+    expect($sidebar.hide).toHaveBeenCalledTimes(1);
   };
 
   afterEach(() => {
-    updateUserPreference.mockReset();
-    updateView.mockReset();
-    updateQuery.mockReset();
-    hideSideBar.mockReset();
+    createWidget.mockReset();
+    updateWidget.mockReset();
+    copyWidget.mockReset();
+    fetchActiveView.mockReset();
   });
 
-  it('Items per page changed after mount', async () => {
+  it('Create widget with default parameters', async () => {
+    const localWidget = getEmptyWidgetByType(WIDGET_TYPES.alarmList);
+
+    localWidget.tab = Faker.datatype.string();
+
     const wrapper = factory({
       store,
       propsData: {
-        config: {
-          widget,
+        sidebar: {
+          ...sidebar,
+
+          config: {
+            widget: localWidget,
+          },
         },
+      },
+      mocks: {
+        $sidebar,
       },
     });
 
-    expect(wrapper.vm.settings.userPreferenceContent.itemsPerPage).toEqual(
-      userPreferences.content.itemsPerPage,
-    );
+    await submitWithExpects(wrapper, {
+      widgetMethod: createWidget,
+      expectData: {
+        data: {
+          ...formToWidget(widgetToForm(localWidget)),
+
+          tab: localWidget.tab,
+        },
+      },
+    });
+  });
+
+  it('Duplicate widget without changes', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar: {
+          ...sidebar,
+
+          config: {
+            widget,
+            duplicate: true,
+          },
+        },
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    await submitWithExpects(wrapper, {
+      widgetMethod: copyWidget,
+      expectData: {
+        id: widget._id,
+        data: omit(widget, ['_id']),
+      },
+    });
   });
 
   it('Title changed after trigger field title', async () => {
@@ -292,9 +272,10 @@ describe('alarm', () => {
     const wrapper = factory({
       store,
       propsData: {
-        config: {
-          widget,
-        },
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
       },
     });
 
@@ -303,9 +284,11 @@ describe('alarm', () => {
     fieldTitle.setValue(newTitle);
 
     await submitWithExpects(wrapper, {
-      viewData: getViewRequestWithNewWidgetProperty('title', newTitle),
-      userPreferencesData: userPreferences,
-      queryData: defaultQuery,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewProperty('title', newTitle),
+      },
     });
   });
 
@@ -313,9 +296,10 @@ describe('alarm', () => {
     const wrapper = factory({
       store,
       propsData: {
-        config: {
-          widget,
-        },
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
       },
     });
 
@@ -330,9 +314,11 @@ describe('alarm', () => {
     fieldPeriodicRefresh.vm.$emit('input', periodicRefresh);
 
     await submitWithExpects(wrapper, {
-      viewData: getViewRequestWithNewWidgetParameter('periodic_refresh', periodicRefresh),
-      userPreferencesData: userPreferences,
-      queryData: defaultQuery,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParameterProperty('periodic_refresh', periodicRefresh),
+      },
     });
   });
 
@@ -340,9 +326,10 @@ describe('alarm', () => {
     const wrapper = factory({
       store,
       propsData: {
-        config: {
-          widget,
-        },
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
       },
     });
 
@@ -356,14 +343,10 @@ describe('alarm', () => {
     fieldDefaultSortColumn.vm.$emit('input', sort);
 
     await submitWithExpects(wrapper, {
-      viewData: getViewRequestWithNewWidgetParameter('sort', sort),
-      userPreferencesData: userPreferences,
-      queryData: {
-        ...defaultQuery,
-        multiSortBy: [{
-          descending: true,
-          sortBy: sort.column,
-        }],
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParameterProperty('sort', sort),
       },
     });
   });
@@ -372,9 +355,10 @@ describe('alarm', () => {
     const wrapper = factory({
       store,
       propsData: {
-        config: {
-          widget,
-        },
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
       },
     });
 
@@ -388,11 +372,41 @@ describe('alarm', () => {
     fieldColumns.vm.$emit('input', columns);
 
     await submitWithExpects(wrapper, {
-      viewData: getViewRequestWithNewWidgetParameter('widgetColumns', columns),
-      userPreferencesData: userPreferences,
-      queryData: {
-        ...defaultQuery,
-        active_columns: columns.map(v => v.value),
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParameterProperty('widgetColumns', columns),
+      },
+    });
+  });
+
+  it('Widget columns with `alarm.` prefix changed after trigger field columns', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldColumns = selectFieldWidgetColumns(wrapper);
+
+    const columns = [{
+      label: Faker.datatype.string(),
+      value: `alarm.${Faker.datatype.string()}`,
+      isHtml: false,
+      colorIndicator: COLOR_INDICATOR_TYPES.state,
+    }];
+
+    fieldColumns.vm.$emit('input', columns);
+
+    await submitWithExpects(wrapper, {
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParameterProperty('widgetColumns', formWidgetColumnsToColumns(columns)),
       },
     });
   });
@@ -401,9 +415,10 @@ describe('alarm', () => {
     const wrapper = factory({
       store,
       propsData: {
-        config: {
-          widget,
-        },
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
       },
     });
 
@@ -417,9 +432,11 @@ describe('alarm', () => {
     fieldColumns.vm.$emit('input', columns);
 
     await submitWithExpects(wrapper, {
-      viewData: getViewRequestWithNewWidgetParameter('widgetGroupColumns', columns),
-      userPreferencesData: userPreferences,
-      queryData: defaultQuery,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParameterProperty('widgetGroupColumns', columns),
+      },
     });
   });
 
@@ -427,9 +444,10 @@ describe('alarm', () => {
     const wrapper = factory({
       store,
       propsData: {
-        config: {
-          widget,
-        },
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
       },
     });
 
@@ -443,9 +461,11 @@ describe('alarm', () => {
     fieldColumns.vm.$emit('input', columns);
 
     await submitWithExpects(wrapper, {
-      viewData: getViewRequestWithNewWidgetParameter('serviceDependenciesColumns', columns),
-      userPreferencesData: userPreferences,
-      queryData: defaultQuery,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParameterProperty('serviceDependenciesColumns', columns),
+      },
     });
   });
 
@@ -453,9 +473,10 @@ describe('alarm', () => {
     const wrapper = factory({
       store,
       propsData: {
-        config: {
-          widget,
-        },
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
       },
     });
 
@@ -466,17 +487,10 @@ describe('alarm', () => {
     fieldDefaultElementsPerPage.vm.$emit('input', itemsPerPage);
 
     await submitWithExpects(wrapper, {
-      viewData: getViewRequest(),
-      userPreferencesData: {
-        ...userPreferences,
-        content: {
-          ...userPreferences.content,
-          itemsPerPage,
-        },
-      },
-      queryData: {
-        ...defaultQuery,
-        limit: itemsPerPage,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParameterProperty('itemsPerPage', itemsPerPage),
       },
     });
   });
@@ -485,9 +499,10 @@ describe('alarm', () => {
     const wrapper = factory({
       store,
       propsData: {
-        config: {
-          widget,
-        },
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
       },
     });
 
@@ -496,11 +511,10 @@ describe('alarm', () => {
     fieldOpenedResolvedFilter.vm.$emit('input', ALARMS_OPENED_VALUES.all);
 
     await submitWithExpects(wrapper, {
-      viewData: getViewRequestWithNewWidgetParameter('opened', ALARMS_OPENED_VALUES.all),
-      userPreferencesData: userPreferences,
-      queryData: {
-        ...defaultQuery,
-        opened: ALARMS_OPENED_VALUES.all,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParameterProperty('opened', ALARMS_OPENED_VALUES.all),
       },
     });
   });
@@ -508,24 +522,24 @@ describe('alarm', () => {
   it('Filters changed after trigger filters field', async () => {
     const wrapper = factory({
       store: createMockedStoreModules([
-        sideBarModule,
-        infoModule,
-        queryModule,
-        viewModule,
-        userPreferenceModule,
+        activeViewModule,
+        widgetModule,
         {
           ...authModule,
           getters: {
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.listFilters]: { actions: [] },
+              [USERS_PERMISSIONS.business.alarmsList.actions.listFilters]: {
+                actions: [],
+              },
             },
           },
         },
       ]),
       propsData: {
-        config: {
-          widget,
-        },
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
       },
     });
 
@@ -539,15 +553,15 @@ describe('alarm', () => {
     fieldFilters.vm.$emit('input', filter);
 
     await submitWithExpects(wrapper, {
-      viewData: getViewRequestWithNewWidgetProperty('parameters', {
-        ...widget.parameters,
-        mainFilterUpdatedAt: nowTimestamp,
-        mainFilter: filter,
-      }),
-      userPreferencesData: userPreferences,
-      queryData: {
-        ...defaultQuery,
-        filter: filter.filter,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewProperty('parameters', {
+          ...widget.parameters,
+
+          mainFilterUpdatedAt: nowTimestamp,
+          mainFilter: filter,
+        }),
       },
     });
   });
@@ -555,11 +569,8 @@ describe('alarm', () => {
   it('Instruction filters changed after trigger remediation instructions field', async () => {
     const wrapper = factory({
       store: createMockedStoreModules([
-        sideBarModule,
-        infoModule,
-        queryModule,
-        viewModule,
-        userPreferenceModule,
+        activeViewModule,
+        widgetModule,
         {
           ...authModule,
           getters: {
@@ -572,9 +583,10 @@ describe('alarm', () => {
         },
       ]),
       propsData: {
-        config: {
-          widget,
-        },
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
       },
     });
 
@@ -601,15 +613,10 @@ describe('alarm', () => {
     fieldRemediationInstructionsFilters.vm.$emit('input', remediationInstructionsFilters);
 
     await submitWithExpects(wrapper, {
-      viewData: getViewRequestWithNewWidgetParameter(
-        'remediationInstructionsFilters',
-        remediationInstructionsFilters,
-      ),
-      userPreferencesData: userPreferences,
-      queryData: {
-        ...defaultQuery,
-        include_instructions: [remediationInstruction._id],
-        include_types: [REMEDIATION_INSTRUCTION_TYPES.auto],
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParameterProperty('remediationInstructionsFilters', remediationInstructionsFilters),
       },
     });
   });
@@ -618,9 +625,10 @@ describe('alarm', () => {
     const wrapper = factory({
       store,
       propsData: {
-        config: {
-          widget,
-        },
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
       },
     });
 
@@ -634,11 +642,10 @@ describe('alarm', () => {
     fieldLiveReporting.vm.$emit('input', liveReporting);
 
     await submitWithExpects(wrapper, {
-      viewData: getViewRequestWithNewWidgetParameter('liveReporting', liveReporting),
-      userPreferencesData: userPreferences,
-      queryData: {
-        ...defaultQuery,
-        ...liveReporting,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParameterProperty('liveReporting', liveReporting),
       },
     });
   });
@@ -647,9 +654,10 @@ describe('alarm', () => {
     const wrapper = factory({
       store,
       propsData: {
-        config: {
-          widget,
-        },
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
       },
     });
 
@@ -663,9 +671,11 @@ describe('alarm', () => {
     fieldInfoPopups.vm.$emit('input', infoPopups);
 
     await submitWithExpects(wrapper, {
-      viewData: getViewRequestWithNewWidgetParameter('infoPopups', infoPopups),
-      userPreferencesData: userPreferences,
-      queryData: defaultQuery,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParameterProperty('infoPopups', infoPopups),
+      },
     });
   });
 
@@ -673,9 +683,10 @@ describe('alarm', () => {
     const wrapper = factory({
       store,
       propsData: {
-        config: {
-          widget,
-        },
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
       },
     });
 
@@ -686,9 +697,11 @@ describe('alarm', () => {
     fieldTextEditor.vm.$emit('input', moreInfoTemplate);
 
     await submitWithExpects(wrapper, {
-      viewData: getViewRequestWithNewWidgetParameter('moreInfoTemplate', moreInfoTemplate),
-      userPreferencesData: userPreferences,
-      queryData: defaultQuery,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParameterProperty('moreInfoTemplate', moreInfoTemplate),
+      },
     });
   });
 
@@ -696,9 +709,10 @@ describe('alarm', () => {
     const wrapper = factory({
       store,
       propsData: {
-        config: {
-          widget,
-        },
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
       },
     });
 
@@ -709,12 +723,11 @@ describe('alarm', () => {
     fieldGridRangeSize.vm.$emit('input', expandGridRangeSize);
 
     await submitWithExpects(wrapper, {
-      viewData: getViewRequestWithNewWidgetParameter(
-        'expandGridRangeSize',
-        expandGridRangeSize,
-      ),
-      userPreferencesData: userPreferences,
-      queryData: defaultQuery,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParameterProperty('expandGridRangeSize', expandGridRangeSize),
+      },
     });
   });
 
@@ -722,9 +735,10 @@ describe('alarm', () => {
     const wrapper = factory({
       store,
       propsData: {
-        config: {
-          widget,
-        },
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
       },
     });
 
@@ -735,12 +749,11 @@ describe('alarm', () => {
     fieldHtmlEnabledSwitcher.vm.$emit('input', isHtmlEnabledOnTimeLine);
 
     await submitWithExpects(wrapper, {
-      viewData: getViewRequestWithNewWidgetParameter(
-        'isHtmlEnabledOnTimeLine',
-        isHtmlEnabledOnTimeLine,
-      ),
-      userPreferencesData: userPreferences,
-      queryData: defaultQuery,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParameterProperty('isHtmlEnabledOnTimeLine', isHtmlEnabledOnTimeLine),
+      },
     });
   });
 
@@ -748,9 +761,10 @@ describe('alarm', () => {
     const wrapper = factory({
       store,
       propsData: {
-        config: {
-          widget,
-        },
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
       },
     });
 
@@ -761,9 +775,11 @@ describe('alarm', () => {
     fieldAckNoteRequired.vm.$emit('input', isAckNoteRequired);
 
     await submitWithExpects(wrapper, {
-      viewData: getViewRequestWithNewWidgetParameter('isAckNoteRequired', isAckNoteRequired),
-      userPreferencesData: userPreferences,
-      queryData: defaultQuery,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParameterProperty('isAckNoteRequired', isAckNoteRequired),
+      },
     });
   });
 
@@ -771,9 +787,10 @@ describe('alarm', () => {
     const wrapper = factory({
       store,
       propsData: {
-        config: {
-          widget,
-        },
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
       },
     });
 
@@ -784,9 +801,11 @@ describe('alarm', () => {
     fieldAckNoteRequired.vm.$emit('input', isMultiAckEnabled);
 
     await submitWithExpects(wrapper, {
-      viewData: getViewRequestWithNewWidgetParameter('isMultiAckEnabled', isMultiAckEnabled),
-      userPreferencesData: userPreferences,
-      queryData: defaultQuery,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParameterProperty('isMultiAckEnabled', isMultiAckEnabled),
+      },
     });
   });
 
@@ -794,9 +813,10 @@ describe('alarm', () => {
     const wrapper = factory({
       store,
       propsData: {
-        config: {
-          widget,
-        },
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
       },
     });
 
@@ -810,9 +830,11 @@ describe('alarm', () => {
     fieldAckNoteRequired.vm.$emit('input', fastAckOutput);
 
     await submitWithExpects(wrapper, {
-      viewData: getViewRequestWithNewWidgetParameter('fastAckOutput', fastAckOutput),
-      userPreferencesData: userPreferences,
-      queryData: defaultQuery,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParameterProperty('fastAckOutput', fastAckOutput),
+      },
     });
   });
 
@@ -820,9 +842,10 @@ describe('alarm', () => {
     const wrapper = factory({
       store,
       propsData: {
-        config: {
-          widget,
-        },
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
       },
     });
 
@@ -833,19 +856,22 @@ describe('alarm', () => {
     fieldSnoozeNoteRequired.vm.$emit('input', isSnoozeNoteRequired);
 
     await submitWithExpects(wrapper, {
-      viewData: getViewRequestWithNewWidgetParameter('isSnoozeNoteRequired', isSnoozeNoteRequired),
-      userPreferencesData: userPreferences,
-      queryData: defaultQuery,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParameterProperty('isSnoozeNoteRequired', isSnoozeNoteRequired),
+      },
     });
   });
 
-  it('Snooze note required changed after trigger switcher field', async () => {
+  it('Link categories as list required changed after trigger links categories as list field', async () => {
     const wrapper = factory({
       store,
       propsData: {
-        config: {
-          widget,
-        },
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
       },
     });
 
@@ -859,9 +885,11 @@ describe('alarm', () => {
     fieldLinksCategoriesAsList.vm.$emit('input', linksCategoriesAsList);
 
     await submitWithExpects(wrapper, {
-      viewData: getViewRequestWithNewWidgetParameter('linksCategoriesAsList', linksCategoriesAsList),
-      userPreferencesData: userPreferences,
-      queryData: defaultQuery,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParameterProperty('linksCategoriesAsList', linksCategoriesAsList),
+      },
     });
   });
 
@@ -869,9 +897,10 @@ describe('alarm', () => {
     const wrapper = factory({
       store,
       propsData: {
-        config: {
-          widget: { ...widget },
-        },
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
       },
     });
 
@@ -887,12 +916,11 @@ describe('alarm', () => {
     fieldExportCsvForm.vm.$emit('input', exportProperties);
 
     await submitWithExpects(wrapper, {
-      viewData: getViewRequestWithNewWidgetProperty('parameters', {
-        ...widget.parameters,
-        ...exportProperties,
-      }),
-      userPreferencesData: userPreferences,
-      queryData: defaultQuery,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewProperty('parameters', exportProperties),
+      },
     });
   });
 
@@ -900,9 +928,10 @@ describe('alarm', () => {
     const wrapper = factory({
       store,
       propsData: {
-        config: {
-          widget,
-        },
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
       },
     });
 
@@ -913,9 +942,11 @@ describe('alarm', () => {
     fieldStickyHeader.vm.$emit('input', stickyHeader);
 
     await submitWithExpects(wrapper, {
-      viewData: getViewRequestWithNewWidgetParameter('sticky_header', stickyHeader),
-      userPreferencesData: userPreferences,
-      queryData: defaultQuery,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParameterProperty('sticky_header', stickyHeader),
+      },
     });
   });
 
@@ -923,9 +954,7 @@ describe('alarm', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        config: {
-          widget: generateDefaultAlarmListWidgetForm(),
-        },
+        sidebar,
       },
     });
 
@@ -937,11 +966,8 @@ describe('alarm', () => {
   it('Renders `alarm` widget settings with all rights', async () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
-        sideBarModule,
-        infoModule,
-        queryModule,
-        viewModule,
-        userPreferenceModule,
+        activeViewModule,
+        widgetModule,
         {
           ...authModule,
           getters: {
@@ -967,9 +993,7 @@ describe('alarm', () => {
         },
       ]),
       propsData: {
-        config: {
-          widget: generateDefaultAlarmListWidgetForm(),
-        },
+        sidebar,
       },
     });
 
@@ -982,41 +1006,43 @@ describe('alarm', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        config: {
-          widget: {
-            _id: 'widget_AlarmsList_2',
-            type: 'AlarmsList',
-            title: 'Alarms list',
-            parameters: {
-              itemsPerPage: 12,
-              infoPopups: [],
-              moreInfoTemplate: 'More info template',
-              isAckNoteRequired: true,
-              isSnoozeNoteRequired: true,
-              isMultiAckEnabled: true,
-              isHtmlEnabledOnTimeLine: true,
-              sticky_header: true,
-              fastAckOutput: { enabled: true, value: 'output' },
-              widgetColumns: [{ label: 'connector', value: 'v.connector' }],
-              widgetGroupColumns: [{ label: 'connector', value: 'v.connector' }],
-              serviceDependenciesColumns: [{ label: 'connector', value: 'v.connector' }],
-              linksCategoriesAsList: { enabled: true, limit: 3 },
-              periodic_refresh: { value: 30, unit: 's', enabled: true },
-              viewFilters: [],
-              mainFilter: null,
-              mainFilterUpdatedAt: 0,
-              liveReporting: {},
-              sort: { order: SORT_ORDERS.desc, column: 'connector' },
-              opened: true,
-              expandGridRangeSize: [1, 11],
-              exportCsvSeparator: 'comma',
-              exportCsvDatetimeFormat: 'YYYY-DDThh:mm:ssZ',
-              widgetExportColumns: [{ label: 'connector', value: 'v.connector' }],
-            },
-            grid_parameters: {
-              mobile: { x: 1, y: 1, h: 2, w: 11, autoHeight: true },
-              tablet: { x: 1, y: 1, h: 2, w: 11, autoHeight: true },
-              desktop: { x: 1, y: 1, h: 2, w: 11, autoHeight: true },
+        sidebar: {
+          config: {
+            widget: {
+              _id: 'widget_AlarmsList_2',
+              type: 'AlarmsList',
+              title: 'Alarms list',
+              parameters: {
+                itemsPerPage: 12,
+                infoPopups: [],
+                moreInfoTemplate: 'More info template',
+                isAckNoteRequired: true,
+                isSnoozeNoteRequired: true,
+                isMultiAckEnabled: true,
+                isHtmlEnabledOnTimeLine: true,
+                sticky_header: true,
+                fastAckOutput: { enabled: true, value: 'output' },
+                widgetColumns: [{ label: 'connector', value: 'v.connector' }],
+                widgetGroupColumns: [{ label: 'connector', value: 'v.connector' }],
+                serviceDependenciesColumns: [{ label: 'connector', value: 'v.connector' }],
+                linksCategoriesAsList: { enabled: true, limit: 3 },
+                periodic_refresh: { value: 30, unit: 's', enabled: true },
+                viewFilters: [],
+                mainFilter: null,
+                mainFilterUpdatedAt: 0,
+                liveReporting: {},
+                sort: { order: SORT_ORDERS.desc, column: 'connector' },
+                opened: true,
+                expandGridRangeSize: [1, 11],
+                exportCsvSeparator: 'comma',
+                exportCsvDatetimeFormat: 'YYYY-DDThh:mm:ssZ',
+                widgetExportColumns: [{ label: 'connector', value: 'v.connector' }],
+              },
+              grid_parameters: {
+                mobile: { x: 1, y: 1, h: 2, w: 11, autoHeight: true },
+                tablet: { x: 1, y: 1, h: 2, w: 11, autoHeight: true },
+                desktop: { x: 1, y: 1, h: 2, w: 11, autoHeight: true },
+              },
             },
           },
         },

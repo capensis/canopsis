@@ -92,7 +92,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
               class="v-divider theme--light"
             />
             <field-default-elements-per-page-stub
-              value="13"
+              value="10"
             />
             <hr
               class="v-divider theme--light"
@@ -353,7 +353,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
               class="v-divider theme--light"
             />
             <field-default-elements-per-page-stub
-              value="13"
+              value="12"
             />
             <hr
               class="v-divider theme--light"
@@ -603,7 +603,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
               class="v-divider theme--light"
             />
             <field-default-elements-per-page-stub
-              value="13"
+              value="10"
             />
             <hr
               class="v-divider theme--light"

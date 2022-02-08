@@ -8,13 +8,12 @@
     lazy-with-unmount,
     lazy
   )
-    template(#activator="{ on }")
-      div(v-on="on")
-        v-layout(align-center)
-          div(v-if="column.isHtml", v-html="sanitizedValue")
-          div(v-else, v-bind="component.bind", v-on="component.on")
-          v-btn.ma-0(icon, small, @click.stop="showInfoPopup")
-            v-icon(small) info
+    div(slot="activator")
+      v-layout(align-center)
+        div(v-if="column.isHtml", v-html="sanitizedValue")
+        div(v-else, v-bind="component.bind", v-on="component.on")
+        v-btn.ma-0(icon, small, @click.stop="showInfoPopup")
+          v-icon(small) info
     alarm-column-cell-popup-body(
       :alarm="alarm",
       :template="column.popupTemplate",

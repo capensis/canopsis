@@ -28,6 +28,7 @@ export default {
     [types.HIDE_COMPLETED](state) {
       state.name = null;
       state.config = {};
+      state.hidden = true;
     },
   },
   actions: {
