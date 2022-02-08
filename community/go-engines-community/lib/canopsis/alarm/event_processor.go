@@ -6,6 +6,8 @@ import (
 	"runtime/trace"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
@@ -33,6 +35,8 @@ type eventProcessor struct {
 	metricsSender       metrics.Sender
 
 	metaAlarmEventProcessor MetaAlarmEventProcessor
+
+	statisticsSender    statistics.EventStatisticsSender
 }
 
 func NewEventProcessor(
@@ -45,6 +49,7 @@ func NewEventProcessor(
 	alarmStatusService alarmstatus.Service,
 	metricsSender metrics.Sender,
 	metaAlarmEventProcessor MetaAlarmEventProcessor,
+	statisticsSender statistics.EventStatisticsSender,
 	logger zerolog.Logger,
 ) EventProcessor {
 	return &eventProcessor{
@@ -56,6 +61,7 @@ func NewEventProcessor(
 		executor:            executor,
 		alarmStatusService:  alarmStatusService,
 		metricsSender:       metricsSender,
+		statisticsSender:    statisticsSender,
 		logger:              logger,
 
 		metaAlarmEventProcessor: metaAlarmEventProcessor,
@@ -95,6 +101,9 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	switch event.EventType {
 	case types.EventTypeCheck:
 		changeType, err := s.storeAlarm(ctx, event)
+		if err == nil {
+			go s.sendEventStatistics(ctx, *event)
+		}
 
 		go func() {
 			err := s.metaAlarmEventProcessor.Process(context.Background(), *event)
@@ -631,6 +640,25 @@ func (s *eventProcessor) processPbhEventsForEntity(ctx context.Context, event *t
 	}
 
 	return nil
+}
+
+func (s *eventProcessor) sendEventStatistics(ctx context.Context, event types.Event) {
+	if event.Entity == nil {
+		return
+	}
+
+	if event.Entity.PbehaviorInfo.Is(pbehavior.TypeInactive) {
+		return
+	}
+
+	stats := statistics.EventStatistics{Timestamp: &event.Timestamp}
+	if event.State == types.AlarmStateOK {
+		stats.OK = 1
+	} else {
+		stats.KO = 1
+	}
+
+	s.statisticsSender.Send(ctx, event.GetEID(), stats)
 }
 
 func newAlarm(event types.Event, alarmConfig config.AlarmConfig) types.Alarm {
