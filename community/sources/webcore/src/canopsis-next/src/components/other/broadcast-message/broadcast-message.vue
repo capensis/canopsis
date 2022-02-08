@@ -3,9 +3,8 @@
     :style="{ backgroundColor: color }",
     :title="message"
   )
-    span
-      v-icon.mr-1(small) $vuetify.icons.bullhorn
-      | {{ message }}
+    v-icon.broadcast-message__icon.mr-1(small) $vuetify.icons.bullhorn
+    span.broadcast-message__text(v-html="message")
 </template>
 
 <script>
@@ -26,14 +25,26 @@ export default {
 <style lang="scss" scoped>
   .broadcast-message {
     color: white;
-    text-align: center;
+    display: flex;
     width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
 
-    & /deep/ svg {
-      color: inherit;
+    &__text {
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      & /deep/ p {
+        margin: 0 !important;
+      }
+    }
+
+    &__icon {
+      min-width: 16px;
+      color: inherit !important;
     }
   }
 </style>
