@@ -1644,6 +1644,14 @@ export default {
         + '</ul>'
         + '</p>'
         + '<p>Veuillez vérifier la configuration de votre serveur.</p>',
+      shortText: '<p>Les Websockets ne sont pas disponibles, les fonctionnalités suivantes sont donc restreintes:</p>'
+        + '<p>'
+        + '<ul>'
+        + '<li>Messages diffusés actifs</li>'
+        + '<li>Sessions d\'utilisateurs actifs</li>'
+        + '</ul>'
+        + '</p>'
+        + '<p>Veuillez vérifier la configuration de votre serveur.</p>',
     },
     confirmationPhrase: {
       phrase: 'Phrase',
@@ -2123,43 +2131,53 @@ export default {
 
       [HEALTHCHECK_ENGINES_NAMES.webhook]: {
         name: 'Webhook',
+        description: 'Gère les webhooks',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.fifo]: {
         name: 'FIFO',
         edgeLabel: 'État de RabbitMQ\nFlux entrant des KPIs',
+        description: 'Gère la file d\'attente des événements et des alarmes',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.axe]: {
         name: 'AXE',
+        description: 'Crée des alarmes et effectue des actions avec elles',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.che]: {
         name: 'CHE',
+        description: 'Applique les filtres d\'événements et les entités créées',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.pbehavior]: {
         name: 'Pbehavior',
+        description: 'Vérifie si l\'alarme est sous PBehavior',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.action]: {
         name: 'Action',
+        description: 'Déclenche le lancement des actions',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.service]: {
         name: 'Service',
+        description: 'Met à jour les compteurs et génère service-events',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.dynamicInfos]: {
         name: 'Infos dynamiques',
+        description: 'Ajoute des informations dynamiques à l\'alarme',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.correlation]: {
         name: 'Corrélation',
+        description: 'Gère la corrélation',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.remediation]: {
         name: 'Remédiation',
+        description: 'Déclenche les instructions',
       },
     },
   },
@@ -2382,13 +2400,10 @@ export default {
   },
 
   service: {
-    fields: {
-      category: 'Catégorie',
-      name: 'Nom',
-      outputTemplate: 'Modèle de message',
-      createCategory: 'Ajouter une catégorie',
-      createCategoryHelp: 'Appuyez sur <kbd>enter</kbd> pour enregistrer',
-    },
+    outputTemplate: 'Modèle de message',
+    createCategory: 'Ajouter une catégorie',
+    createCategoryHelp: 'Appuyez sur <kbd>enter</kbd> pour enregistrer',
+    availabilityState: '@:entity.availabilityState',
   },
 
   users: {
@@ -2649,6 +2664,10 @@ export default {
     [USERS_PERMISSIONS.technical.healthcheck]: {
       title: 'Bilan de santé',
       message: 'La fonction Healthcheck est le tableau de bord avec des indications d\'états et d\'erreurs de tous les systèmes inclus dans Canopsis.',
+    },
+    [USERS_PERMISSIONS.technical.engine]: {
+      title: 'Engines',
+      message: 'This page contains the information about the sequence and configuration of engines. To work properly, the chain of engines must be continuous.',
     },
     [USERS_PERMISSIONS.technical.kpi]: {
       title: 'KPI',

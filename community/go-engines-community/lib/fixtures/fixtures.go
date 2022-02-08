@@ -60,7 +60,7 @@ func Load(ctx context.Context, client mongo.DbClient, dirs []string) error {
 
 func getConfigs(dirs []string) ([]LoadConfig, error) {
 	configs := make([]LoadConfig, 0)
-	re := regexp.MustCompile("^([a-z_]+)\\.json$")
+	re := regexp.MustCompile(`^([a-z_]+)\.json$`)
 
 	for _, dirPath := range dirs {
 		files, err := ioutil.ReadDir(dirPath)
