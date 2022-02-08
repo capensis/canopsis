@@ -19,7 +19,7 @@ const stubs = {
 };
 
 const snapshotStubs = {
-  'modal-wrapper': true,
+  'modal-wrapper': createModalWrapperStub('modal-wrapper'),
   'remediation-instructions-filter-form': true,
 };
 
