@@ -289,7 +289,7 @@ func RegisterRoutes(
 			)
 		}
 
-		entityAPI := entity.NewApi(entity.NewStore(dbClient), exportExecutor, entityCleanerTaskChan, logger)
+		entityAPI := entity.NewApi(entity.NewStore(dbClient, timezoneConfigProvider), exportExecutor, entityCleanerTaskChan, logger)
 		entityExportRouter := protected.Group("/entity-export")
 		{
 			entityExportRouter.POST(
@@ -423,7 +423,7 @@ func RegisterRoutes(
 		}
 		entityRouter := protected.Group("/entities")
 		{
-			entityAPI := entity.NewApi(entity.NewStore(dbClient), exportExecutor, entityCleanerTaskChan, logger)
+			entityAPI := entity.NewApi(entity.NewStore(dbClient, timezoneConfigProvider), exportExecutor, entityCleanerTaskChan, logger)
 			entityRouter.GET(
 				"",
 				middleware.Authorize(authObjEntity, permRead, enforcer),
@@ -587,11 +587,9 @@ func RegisterRoutes(
 
 		weatherRouter := protected.Group("/weather-services")
 		{
-			statsStore := serviceweather.NewStatsStore(dbClient)
 			weatherAPI := serviceweather.NewApi(serviceweather.NewStore(
 				dbClient,
 				legacyUrl,
-				statsStore,
 				alarmStore,
 				timezoneConfigProvider,
 			))

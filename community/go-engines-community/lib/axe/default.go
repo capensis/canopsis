@@ -20,6 +20,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation/executor"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resolverule"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -133,7 +134,9 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 	}
 
 	engineAxe := libengine.New(
-		nil,
+		func(ctx context.Context) error {
+			return alarmStatusService.Load(ctx)
+		},
 		func(ctx context.Context) {
 			err := dbClient.Disconnect(ctx)
 			if err != nil {
@@ -194,6 +197,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 				alarmStatusService,
 				redis.NewLockClient(corrRedisClient),
 				metricsSender,
+				statistics.NewEventStatisticsSender(dbClient, logger, timezoneConfigProvider),
 				logger,
 			),
 			RemediationRpcClient:   remediationRpcClient,
@@ -233,6 +237,11 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		amqpChannel,
 		logger,
 	))
+	engineAxe.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
+		PeriodicalInterval: options.PeriodicalWaitTime,
+		AlarmStatusService: alarmStatusService,
+		Logger:             logger,
+	})
 	engineAxe.AddPeriodicalWorker("alarms", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),
 		redis.AxePeriodicalLockKey,
@@ -241,7 +250,6 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 			ChannelPub:         amqpChannel,
 			AlarmService:       alarm.NewService(alarm.NewAdapter(dbClient), resolverule.NewAdapter(dbClient), alarmStatusService, logger),
 			AlarmAdapter:       alarm.NewAdapter(dbClient),
-			AlarmStatusService: alarmStatusService,
 			Encoder:            json.NewEncoder(),
 			IdleAlarmService: idlealarm.NewService(
 				idlerule.NewRuleAdapter(dbClient),
