@@ -1,24 +1,21 @@
 <template lang="pug">
   div
     v-layout(row)
-      v-radio-group(
-        v-field="form.with",
-        hide-details
-      )
+      v-radio-group(v-field="form.with", name="with", hide-details)
         v-radio(
-          :label="$t('remediationInstructionsFilters.fields.with')",
+          :label="$t('remediationInstructionsFilters.with')",
           :value="true",
           color="primary"
         )
         v-radio(
-          :label="$t('remediationInstructionsFilters.fields.without')",
+          :label="$t('remediationInstructionsFilters.without')",
           :value="false",
           color="primary"
         )
     v-layout(row)
       v-switch(
         :input-value="form.all",
-        :label="$t('remediationInstructionsFilters.fields.selectAll')",
+        :label="$t('remediationInstructionsFilters.selectAll')",
         :disabled="hasAnyAnotherOppositeFilter",
         color="primary",
         @change="changeSelectedAll"
@@ -46,7 +43,7 @@
         :items="preparedRemediationInstructions",
         :loading="remediationInstructionsPending",
         :disabled="isAll",
-        :label="$t('remediationInstructionsFilters.fields.selectedInstructions')",
+        :label="$t('remediationInstructionsFilters.selectedInstructions')",
         :error-messages="errors.collect('instructions')",
         item-text="name",
         item-value="_id",
@@ -56,9 +53,13 @@
         return-object,
         @change="changeInstructions"
       )
-        v-tooltip(slot="append-outer", left)
-          v-icon(slot="activator") help
-          div {{ $t('remediationInstructionsFilters.fields.selectedInstructionsHelp') }}
+        c-help-icon(
+          slot="append-outer",
+          :text="$t('remediationInstructionsFilters.selectedInstructionsHelp')",
+          color="grey darken-1",
+          icon="help",
+          left
+        )
 </template>
 
 <script>
@@ -106,7 +107,13 @@ export default {
     },
 
     hasAnyAnotherOppositeFilterWithManual() {
-      return this.filters.some(filter => this.form.with !== filter.with && (filter.manual || filter.all));
+      return this.filters.some((filter) => {
+        if (this.form.with !== filter.with) {
+          return (filter.manual || filter.all);
+        }
+
+        return false;
+      });
     },
 
     preparedRemediationInstructions() {
