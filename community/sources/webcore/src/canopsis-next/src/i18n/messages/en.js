@@ -212,6 +212,7 @@ export default {
     exportAsCsv: 'Export as csv',
     criteria: 'Criteria',
     ratingSettings: 'Rating settings',
+    pbehavior: 'Pbehavior | Pbehaviors',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -288,21 +289,12 @@ export default {
     impacts: 'Impacts',
     dependencies: 'Dependencies',
     noEventsFilter: 'No events filter',
-    expandPanel: {
-      infos: 'Informations',
-      type: 'Type',
-      enabled: 'Enabled',
-      disabled: 'Disabled',
-      infosSearchLabel: 'Search infos',
-      tabs: {
-        main: 'Main',
-        pbehaviors: 'Pbehaviors',
-        impactDepends: 'Impact/Depends',
-        infos: 'Infos',
-        treeOfDependencies: 'Tree of dependencies',
-        impactChain: 'Impact chain',
-      },
-    },
+    impactChain: 'Impact chain',
+    impactDepends: 'Impact/Depends',
+    treeOfDependencies: 'Tree of dependencies',
+    infosSearchLabel: 'Search infos',
+    eventStatisticsMessage: '{ok} OK events\n{ko} KO Events',
+    eventStatistics: 'Event statistics',
     actions: {
       titles: {
         editEntity: 'Edit entity',

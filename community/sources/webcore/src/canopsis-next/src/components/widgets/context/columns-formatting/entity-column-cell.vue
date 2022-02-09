@@ -7,7 +7,14 @@ import { get } from 'lodash';
 
 import { widgetColumnsFiltersMixin } from '@/mixins/widget/columns-filters';
 
+import EntityColumnEventStatistics from './entity-column-event-statistics.vue';
+import EntityColumnPbehaviorInfo from './entity-column-pbehavior-info.vue';
+
 export default {
+  components: {
+    EntityColumnEventStatistics,
+    EntityColumnPbehaviorInfo,
+  },
   mixins: [widgetColumnsFiltersMixin],
   props: {
     entity: {
@@ -55,6 +62,24 @@ export default {
             is: 'c-no-events-icon',
             value: Number(this.value),
             top: true,
+          },
+        },
+        ko_events: {
+          bind: {
+            is: 'entity-column-event-statistics',
+            entity: this.entity,
+          },
+        },
+        ok_events: {
+          bind: {
+            is: 'entity-column-event-statistics',
+            entity: this.entity,
+          },
+        },
+        pbehavior_info: {
+          bind: {
+            is: 'entity-column-pbehavior-info',
+            pbehaviorInfo: this.entity.pbehavior_info,
           },
         },
       };
