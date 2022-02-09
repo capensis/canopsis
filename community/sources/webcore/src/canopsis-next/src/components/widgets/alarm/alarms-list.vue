@@ -205,7 +205,7 @@ export default {
   methods: {
     refreshExpanded() {
       if (this.$refs.alarmsTable?.expanded) {
-        Object.entries(this.$refs.alarmsTable?.expanded).forEach(([id, expanded]) => {
+        Object.entries(this.$refs.alarmsTable.expanded).forEach(([id, expanded]) => {
           if (expanded && !this.alarms.some(alarm => alarm._id === id)) {
             this.$set(this.$refs.alarmsTable.expanded, id, false);
           }
