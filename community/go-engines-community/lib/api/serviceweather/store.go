@@ -156,7 +156,7 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 	pbhIDs := make([]string, 0)
 	alarmIds := make([]string, 0, len(res.Data))
 	for _, v := range res.Data {
-		if v.PbehaviorInfo.ID != "" {
+		if v.PbehaviorInfo != nil && v.PbehaviorInfo.ID != "" {
 			pbhIDs = append(pbhIDs, v.PbehaviorInfo.ID)
 		}
 
@@ -194,14 +194,16 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 	}
 
 	for i := range res.Data {
-		if !res.Data[i].PbehaviorInfo.IsActive() || !service.PbehaviorInfo.IsActive() {
+		if res.Data[i].PbehaviorInfo != nil && !res.Data[i].PbehaviorInfo.IsActive() || !service.PbehaviorInfo.IsActive() {
 			res.Data[i].IsGrey = true
 		}
 
-		if v, ok := pbhs[res.Data[i].PbehaviorInfo.ID]; ok {
-			res.Data[i].Pbehaviors = []pbehavior.Response{v}
-		} else {
-			res.Data[i].Pbehaviors = []pbehavior.Response{}
+		res.Data[i].Pbehaviors = make([]pbehavior.Response, 0)
+
+		if res.Data[i].PbehaviorInfo != nil {
+			if v, ok := pbhs[res.Data[i].PbehaviorInfo.ID]; ok {
+				res.Data[i].Pbehaviors = append(res.Data[i].Pbehaviors, v)
+			}
 		}
 	}
 
