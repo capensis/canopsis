@@ -17,9 +17,10 @@ type EventStatisticsSender interface {
 }
 
 type EventStatistics struct {
-	OK        int            `bson:"ok"`
-	KO        int            `bson:"ko"`
-	Timestamp *types.CpsTime `bson:"timestamp,omitempty"`
+	OK        int            `json:"ok" bson:"ok"`
+	KO        int            `json:"ko" bson:"ko"`
+	LastEvent *types.CpsTime `json:"last_event,omitempty" bson:"last_event,omitempty" swaggertype:"integer"`
+	LastKO    *types.CpsTime `json:"last_ko,omitempty" bson:"last_ko,omitempty" swaggertype:"integer"`
 }
 
 type eventStatisticsSender struct {
@@ -37,15 +38,21 @@ func NewEventStatisticsSender(dbClient mongo.DbClient, logger zerolog.Logger, ti
 }
 
 func (s *eventStatisticsSender) Send(ctx context.Context, entityID string, stats EventStatistics) {
-	if stats.Timestamp.IsZero() {
+	if stats.LastEvent.IsZero() {
 		return
+	}
+
+	set := bson.M{"last_event": stats.LastEvent}
+	if stats.KO > 0 {
+		set["last_ko"] = stats.LastEvent
+		stats.LastKO = stats.LastEvent
 	}
 
 	res := s.eventStatisticsCollection.FindOneAndUpdate(
 		ctx,
 		bson.M{"_id": entityID},
 		bson.M{
-			"$set": bson.M{"timestamp": stats.Timestamp},
+			"$set": set,
 			"$inc": bson.M{"ok": stats.OK, "ko": stats.KO},
 		},
 		options.FindOneAndUpdate().SetUpsert(true).SetReturnDocument(options.Before),
@@ -59,21 +66,21 @@ func (s *eventStatisticsSender) Send(ctx context.Context, entityID string, stats
 		s.logger.Err(err).Msg("failed to decode event statistics")
 	}
 
-	if prev.Timestamp == nil {
+	if prev.LastEvent == nil {
 		return
 	}
 
 	location := s.timezoneConfigProvider.Get().Location
 
-	year, month, day := stats.Timestamp.In(location).Date()
+	year, month, day := stats.LastEvent.In(location).Date()
 	truncatedInLocation := time.Date(year, month, day, 0, 0, 0, 0, location)
 
 	//basically if it's the next day then start a new statistics
-	if truncatedInLocation.Unix() > prev.Timestamp.Unix() {
+	if truncatedInLocation.Unix() > prev.LastEvent.Unix() {
 		_, err := s.eventStatisticsCollection.UpdateOne(
 			ctx,
 			bson.M{"_id": entityID},
-			bson.M{"$set": bson.M{"timestamp": stats.Timestamp, "ok": stats.OK, "ko": stats.KO}},
+			bson.M{"$set": bson.M{"last_event": stats.LastEvent, "last_ko": stats.LastKO, "ok": stats.OK, "ko": stats.KO}},
 		)
 		if err != nil {
 			s.logger.Err(err).Msg("failed to send event statistics")
