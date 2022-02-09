@@ -3,7 +3,7 @@
     v-card-text
       v-layout(row, wrap)
         v-flex(xs3)
-          v-text-field(v-model="searchingText", :label="$t('context.expandPanel.infosSearchLabel')", dark)
+          v-text-field(v-model="searchingText", :label="$t('context.infosSearchLabel')", dark)
       v-data-table(
         :items="items",
         :headers="headers",

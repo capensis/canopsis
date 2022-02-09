@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`entity-column-event-statistics Renders \`entity-column-event-statistics\` with default entity 1`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <span
+    class="pre-wrap"
+  >
+    context.eventStatistics:{"ok":15,"ko":25}
+  </span>
+</div>
+`;
+
+exports[`entity-column-event-statistics Renders \`entity-column-event-statistics\` with default entity 2`] = `
+<span
+  class="v-tooltip event-statistics v-tooltip--top"
+>
+  <transition-stub
+    name="slide-y-reverse-transition"
+  />
+  <span>
+    <div
+      class="layout event-statistics__tooltip justify-center"
+    >
+      <span
+        class="mr-1 success--text font-weight-bold"
+      >
+        15
+      </span>
+      <span>
+        /
+      </span>
+      <span
+        class="ml-1 error--text font-weight-bold"
+      >
+        25
+      </span>
+    </div>
+  </span>
+</span>
+`;
+
+exports[`entity-column-event-statistics Renders \`entity-column-event-statistics\` with pbehavior 1`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <span
+    class="pre-wrap"
+  >
+    context.eventStatistics:{"ok":30,"ko":45}
+  </span>
+</div>
+`;
+
+exports[`entity-column-event-statistics Renders \`entity-column-event-statistics\` with pbehavior 2`] = `
+<span
+  class="v-tooltip event-statistics v-tooltip--top"
+>
+  <transition-stub
+    name="slide-y-reverse-transition"
+  />
+  <span>
+    <div
+      class="layout event-statistics__tooltip justify-center event-statistics__tooltip--inactive"
+    >
+      <span
+        class="mr-1 success--text font-weight-bold"
+      >
+        30
+      </span>
+      <span>
+        /
+      </span>
+      <span
+        class="ml-1 error--text font-weight-bold"
+      >
+        45
+      </span>
+    </div>
+  </span>
+</span>
+`;
