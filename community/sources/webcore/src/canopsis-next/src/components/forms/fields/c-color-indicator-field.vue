@@ -10,6 +10,11 @@
       :label="$t('settings.colorIndicator.fields.displayAsPriority')",
       color="primary"
     )
+    v-radio(
+      :value="$constants.COLOR_INDICATOR_TYPES.custom",
+      label="Custom color",
+      color="primary"
+    )
 </template>
 
 <script>
