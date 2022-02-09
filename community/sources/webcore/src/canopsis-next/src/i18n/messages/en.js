@@ -2585,7 +2585,7 @@ export default {
      */
     [USERS_PERMISSIONS.technical.exploitation.eventFilter]: {
       title: 'Event filter',
-      message: 'The event-filter is a feature of the engine engine-cheallowing to define rules handling events.',
+      message: 'The event-filter is a feature of engine-che, allowing to define rules handling events.',
     },
 
     [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: {
