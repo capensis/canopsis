@@ -42,13 +42,14 @@ type Service struct {
 		Name  string      `json:"cat_name" bson:"cat_name"`
 		Links interface{} `json:"links" bson:"links"`
 	} `json:"linklist" bson:"links"`
-	Pbehaviors  []pbehavior.Response     `json:"pbehaviors" bson:"-"`
-	PbehaviorID string                   `json:"-" bson:"pbehavior_id"`
-	ImpactLevel int                      `json:"impact_level" bson:"impact_level"`
-	ImpactState int                      `json:"impact_state" bson:"impact_state"`
-	Category    *entitycategory.Category `json:"category" bson:"category"`
-	IsGrey      bool                     `json:"is_grey" bson:"is_grey"`
-	IdleSince   *types.CpsTime           `json:"idle_since,omitempty" bson:"idle_since,omitempty" swaggertype:"integer"`
+	PbehaviorInfo *types.PbehaviorInfo     `json:"pbehavior_info" bson:"pbehavior_info"`
+	Pbehaviors    []pbehavior.Response     `json:"pbehaviors" bson:"-"`
+	PbehaviorID   string                   `json:"-" bson:"pbehavior_id"`
+	ImpactLevel   int                      `json:"impact_level" bson:"impact_level"`
+	ImpactState   int                      `json:"impact_state" bson:"impact_state"`
+	Category      *entitycategory.Category `json:"category" bson:"category"`
+	IsGrey        bool                     `json:"is_grey" bson:"is_grey"`
+	IdleSince     *types.CpsTime           `json:"idle_since,omitempty" bson:"idle_since,omitempty" swaggertype:"integer"`
 }
 
 type Info struct {
@@ -99,12 +100,12 @@ type Entity struct {
 	DisplayName                      string                           `json:"alarm_display_name" bson:"display_name"`
 	Icon                             string                           `json:"icon" bson:"icon"`
 	Pbehaviors                       []pbehavior.Response             `json:"pbehaviors" bson:"-"`
-	PbehaviorInfo                    types.PbehaviorInfo              `json:"-" bson:"pbehavior_info"`
+	PbehaviorInfo                    *types.PbehaviorInfo             `json:"pbehavior_info" bson:"pbehavior_info"`
 	Links                            []WeatherLink                    `json:"linklist" bson:"-"`
-	IsGrey         bool                     `json:"is_grey"`
-	ImpactLevel    int                      `json:"impact_level" bson:"impact_level"`
-	ImpactState    int                      `json:"impact_state" bson:"impact_state"`
-	IdleSince      *types.CpsTime           `json:"idle_since,omitempty" bson:"idle_since,omitempty" swaggertype:"integer"`
+	IsGrey                           bool                             `json:"is_grey"`
+	ImpactLevel                      int                              `json:"impact_level" bson:"impact_level"`
+	ImpactState                      int                              `json:"impact_state" bson:"impact_state"`
+	IdleSince                        *types.CpsTime                   `json:"idle_since,omitempty" bson:"idle_since,omitempty" swaggertype:"integer"`
 }
 
 type WeatherLink struct {

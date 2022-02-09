@@ -2462,9 +2462,6 @@ definitions:
       updated:
         type: integer
     type: object
-  primitive.M:
-    additionalProperties: true
-    type: object
   resolverule.CreateRequest:
     properties:
       _id:
@@ -2918,6 +2915,9 @@ definitions:
         type: array
       name:
         type: string
+      pbehavior_info:
+        $ref: '#/definitions/types.PbehaviorInfo'
+        type: object
       pbehaviors:
         items:
           $ref: '#/definitions/pbehavior.Response'
@@ -2997,6 +2997,9 @@ definitions:
         type: string
       output:
         type: string
+      pbehavior_info:
+        $ref: '#/definitions/types.PbehaviorInfo'
+        type: object
       pbehaviors:
         items:
           $ref: '#/definitions/pbehavior.Response'
@@ -4121,8 +4124,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -4273,8 +4275,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -4998,8 +4999,7 @@ paths:
         required: true
         type: array
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -5093,8 +5093,7 @@ paths:
         required: true
         type: array
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -5361,8 +5360,7 @@ paths:
       produces:
       - application/json
       responses:
-        "202":
-          description: ""
+        "202": {}
         "400":
           description: Bad Request
           schema:
@@ -5497,8 +5495,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -5674,8 +5671,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "400":
           description: Bad Request
           schema:
@@ -5883,8 +5879,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -6074,8 +6069,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -6227,8 +6221,7 @@ paths:
       produces:
       - application/json
       responses:
-        "204":
-          description: ""
+        "204": {}
       security:
       - JWTAuth: []
       summary: Get file access
@@ -6249,8 +6242,7 @@ paths:
       produces:
       - application/json
       responses:
-        "204":
-          description: ""
+        "204": {}
         "400":
           description: Bad Request
           schema:
@@ -6378,8 +6370,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -6547,8 +6538,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -6662,8 +6652,7 @@ paths:
       description: delete user interface
       operationId: internal-delete-user-interface
       responses:
-        "204":
-          description: ""
+        "204": {}
       security:
       - ApiKeyAuth: []
       - BasicAuth: []
@@ -6708,8 +6697,7 @@ paths:
       produces:
       - application/json
       responses:
-        "204":
-          description: ""
+        "204": {}
       security:
       - ApiKeyAuth: []
       - BasicAuth: []
@@ -6748,8 +6736,7 @@ paths:
       produces:
       - application/json
       responses:
-        "204":
-          description: ""
+        "204": {}
       security:
       - JWTAuth: []
       summary: Log out
@@ -6907,8 +6894,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -7016,8 +7002,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "400":
           description: Bad Request
           schema:
@@ -7109,8 +7094,7 @@ paths:
       produces:
       - application/octet-stream
       responses:
-        "200":
-          description: ""
+        "200": {}
         "404":
           description: Not Found
           schema:
@@ -7218,8 +7202,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "400":
           description: Bad Request
           schema:
@@ -7426,8 +7409,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "400":
           description: Bad Request
           schema:
@@ -7599,8 +7581,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -7953,8 +7934,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -8114,8 +8094,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -8283,8 +8262,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -8452,8 +8430,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -8809,8 +8786,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -8978,8 +8954,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "400":
           description: Bad Request
           schema:
@@ -9076,8 +9051,7 @@ paths:
       produces:
       - application/json
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -9181,8 +9155,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
