@@ -70,7 +70,7 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*Aggrega
 			"pipeline": []bson.M{
 				{"$match": bson.M{"$and": []bson.M{
 					{"$expr": bson.M{"$eq": bson.A{"$_id", "$$id"}}},
-					{"timestamp": bson.M{"$gt": truncatedInLocation.Unix()}},
+					{"last_event": bson.M{"$gt": truncatedInLocation.Unix()}},
 				}}},
 			},
 			"as": "eventStatistics",
