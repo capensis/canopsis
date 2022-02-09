@@ -7,7 +7,8 @@
           v-validate="'required'",
           :label="$t('common.message')",
           :error-messages="errors.collect('message')",
-          name="message"
+          name="message",
+          public
         )
     v-layout(row)
       c-color-picker-field(v-field="form.color")
