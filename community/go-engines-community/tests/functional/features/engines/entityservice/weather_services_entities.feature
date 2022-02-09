@@ -57,6 +57,7 @@ Feature: get service entities
           "snooze": null,
           "ticket": null,
           "infos": {},
+          "pbehavior_info": null,
           "pbehaviors": []
         }
       ],
@@ -155,6 +156,7 @@ Feature: get service entities
           "snooze": null,
           "ticket": null,
           "infos": {},
+          "pbehavior_info": null,
           "pbehaviors": []
         },
         {
@@ -174,6 +176,7 @@ Feature: get service entities
           "snooze": null,
           "ticket": null,
           "infos": {},
+          "pbehavior_info": null,
           "pbehaviors": []
         },
         {
@@ -193,6 +196,7 @@ Feature: get service entities
           "snooze": null,
           "ticket": null,
           "infos": {},
+          "pbehavior_info": null,
           "pbehaviors": []
         }
       ],
@@ -263,6 +267,7 @@ Feature: get service entities
           "snooze": null,
           "ticket": null,
           "infos": {},
+          "pbehavior_info": null,
           "pbehaviors": []
         }
       ],
