@@ -6,6 +6,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviortype"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -105,6 +106,7 @@ type Entity struct {
 	ImpactLevel    int                      `json:"impact_level" bson:"impact_level"`
 	ImpactState    int                      `json:"impact_state" bson:"impact_state"`
 	IdleSince      *types.CpsTime           `json:"idle_since,omitempty" bson:"idle_since,omitempty" swaggertype:"integer"`
+	Stats                            statistics.EventStatistics       `json:"stats" bson:"stats"`
 }
 
 type WeatherLink struct {
