@@ -10,5 +10,12 @@
     "ko": 5,
     "ok": 5,
     "last_event": 1000000000
+  },
+  {
+    "_id": "test-resource-service-weather-entity-6/test-component-service-weather-entity-6",
+    "ko": 5,
+    "ok": 5,
+    "last_event": 1000000000,
+    "last_ko": 1000000000
   }
 ]
