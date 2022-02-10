@@ -4932,7 +4932,51 @@
       {"name": "test-resource-service-weather-entity-5"}
     ],
     "measurements": null,
-    "name": "test-service-weather-entity-5e",
+    "name": "test-service-weather-entity-5",
+    "type": "service"
+  },
+  {
+    "_id": "test-component-service-weather-entity-6",
+    "depends": ["test-resource-service-weather-entity-6/test-component-service-weather-entity-6"],
+    "enable_history": [1597030096],
+    "enabled": true,
+    "impact": ["test-connector-service-weather-entity-6/test-connector_name-service-weather-entity-6"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-component-service-weather-entity-6",
+    "type": "component",
+    "component": "test-component-service-weather-entity-6",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-resource-service-weather-entity-6/test-component-service-weather-entity-6",
+    "depends": ["test-connector-service-weather-entity-6/test-connector_name-service-weather-entity-6"],
+    "enable_history": [1597030219],
+    "enabled": true,
+    "impact": ["test-component-service-weather-entity-6", "test-service-weather-entity-6"],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-resource-service-weather-entity-6",
+    "type": "resource",
+    "component": "test-component-service-weather-entity-6",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-service-weather-entity-6",
+    "category": "",
+    "depends": ["test-resource-service-weather-entity-6/test-component-service-weather-entity-6"],
+    "enable_history": [],
+    "enabled": true,
+    "impact": [],
+    "impact_level": 1,
+    "infos": {},
+    "entity_patterns": [
+      {"name": "test-resource-service-weather-entity-6"}
+    ],
+    "measurements": null,
+    "name": "test-service-weather-entity-6",
     "type": "service"
   }
 ]

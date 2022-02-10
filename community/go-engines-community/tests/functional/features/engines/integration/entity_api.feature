@@ -15,26 +15,10 @@ Feature: test dynamic entity api fields
       "timestamp": {{ now }}
     }
     """
-    When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=test-resource-entity-api-2
     Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "last_event_date": {{ .checkEventTimestamp }}
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "per_page": 10,
-        "page_count": 1,
-        "total_count": 1
-      }
-    }
-    """
+    Then the response key "data.0.last_event_date" should not be "null"
 
   Scenario: should cound ko and ok events
     When I am admin
