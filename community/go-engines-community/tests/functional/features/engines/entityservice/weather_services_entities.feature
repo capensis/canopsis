@@ -388,3 +388,44 @@ Feature: get service entities
       }
     }
     """
+
+  Scenario: given service for one entity, old last_ko shouldn't be updated  
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-service-weather-entity-6",
+      "connector_name" : "test-connector_name-service-weather-entity-6",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" :  "test-component-service-weather-entity-6",
+      "resource" : "test-resource-service-weather-entity-6",
+      "state" : 0,
+      "output" : "noveo alarm"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/weather-services/test-service-weather-entity-6
+    Then the response code should be 200    
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-resource-service-weather-entity-6/test-component-service-weather-entity-6",
+          "name": "test-resource-service-weather-entity-6",
+          "stats": {
+            "ok": 1,
+            "ko": 0,
+            "last_ko": 1000000000
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
