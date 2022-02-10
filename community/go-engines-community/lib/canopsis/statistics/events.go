@@ -77,10 +77,13 @@ func (s *eventStatisticsSender) Send(ctx context.Context, entityID string, stats
 
 	//basically if it's the next day then start a new statistics
 	if truncatedInLocation.Unix() > prev.LastEvent.Unix() {
+		set["ok"] = stats.OK
+		set["ko"] = stats.KO
+
 		_, err := s.eventStatisticsCollection.UpdateOne(
 			ctx,
 			bson.M{"_id": entityID},
-			bson.M{"$set": bson.M{"last_event": stats.LastEvent, "last_ko": stats.LastKO, "ok": stats.OK, "ko": stats.KO}},
+			bson.M{"$set": set},
 		)
 		if err != nil {
 			s.logger.Err(err).Msg("failed to send event statistics")
