@@ -67,7 +67,7 @@ type Entity struct {
 	Category       *entitycategory.Category `bson:"category" json:"category"`
 	Deletable      *bool                    `bson:"deletable,omitempty" json:"deletable,omitempty"`
 	IdleSince      *types.CpsTime           `bson:"idle_since,omitempty" json:"idle_since,omitempty" swaggertype:"integer"`
-	PbehaviorInfo  *types.PbehaviorInfo     `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
+	PbehaviorInfo  *PbehaviorInfo           `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
 	LastEventDate  *types.CpsTime           `bson:"last_event_date,omitempty" json:"last_event_date,omitempty"`
 	OKEvents       int                      `bson:"ok_events" json:"ok_events"`
 	KOEvents       int                      `bson:"ko_events" json:"ko_events"`
@@ -99,6 +99,12 @@ func (i *Infos) UnmarshalBSONValue(_ bsontype.Type, b []byte) error {
 	*i = tmp
 
 	return nil
+}
+
+type PbehaviorInfo struct {
+	types.PbehaviorInfo `bson:",inline"`
+
+	IconName string `bson:"icon_name" json:"icon_name"`
 }
 
 type AggregationResult struct {
