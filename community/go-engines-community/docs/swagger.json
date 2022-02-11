@@ -6024,6 +6024,46 @@
                         }
                     }
                 }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Delete pbehavior by name",
+                "tags": [
+                    "pbehaviors"
+                ],
+                "summary": "Delete pbehavior by name",
+                "operationId": "pbehaviors-delete-by-name",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "pbehavior name",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {},
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
             }
         },
         "/resolve-rules/{id}": {

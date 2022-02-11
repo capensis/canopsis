@@ -19,6 +19,7 @@ import (
 type API interface {
 	common.CrudAPI
 	Patch(c *gin.Context)
+	DeleteByName(c *gin.Context)
 	ListByEntityID(c *gin.Context)
 	ListEntities(c *gin.Context)
 	CountFilter(c *gin.Context)
@@ -458,7 +459,54 @@ func (a *api) Delete(c *gin.Context) {
 	err = a.actionLogger.Action(c, logger.LogEntry{
 		Action:    logger.ActionDelete,
 		ValueType: logger.ValueTypePbehavior,
-		ValueID:   c.Param("id"),
+		ValueID:   id,
+	})
+	if err != nil {
+		a.actionLogger.Err(err, "failed to log action")
+	}
+
+	a.sendComputeTask(pbehavior.ComputeTask{
+		PbehaviorID:   id,
+		OperationType: pbehavior.OperationDelete,
+	})
+	c.JSON(http.StatusNoContent, nil)
+}
+
+// DeleteByName
+// @Summary Delete pbehavior by name
+// @Description Delete pbehavior by name
+// @Tags pbehaviors
+// @ID pbehaviors-delete-by-name
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param name query string true "pbehavior name"
+// @Success 204
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Failure 404 {object} common.ErrorResponse
+// @Router /pbehaviors [delete]
+func (a *api) DeleteByName(c *gin.Context) {
+	request := DeleteByNameRequest{}
+
+	if err := c.ShouldBindQuery(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+
+		return
+	}
+
+	id, err := a.store.DeleteByName(c.Request.Context(), request.Name)
+	if err != nil {
+		panic(err)
+	}
+
+	if id == "" {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	err = a.actionLogger.Action(c, logger.LogEntry{
+		Action:    logger.ActionDelete,
+		ValueType: logger.ValueTypePbehavior,
+		ValueID:   id,
 	})
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
