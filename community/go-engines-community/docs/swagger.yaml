@@ -3568,44 +3568,6 @@ definitions:
       widget:
         type: string
     type: object
-  view.BulkDeleteRequest:
-    properties:
-      ids:
-        items:
-          type: string
-        type: array
-    required:
-    - ids
-    type: object
-  view.BulkUpdateRequestItem:
-    properties:
-      _id:
-        type: string
-      description:
-        type: string
-      enabled:
-        type: boolean
-      group:
-        type: string
-      periodic_refresh:
-        $ref: '#/definitions/types.DurationWithEnabled'
-        type: object
-      tabs:
-        items:
-          $ref: '#/definitions/view.TabRequest'
-        type: array
-      tags:
-        items:
-          type: string
-        type: array
-      title:
-        type: string
-    required:
-    - _id
-    - enabled
-    - group
-    - title
-    type: object
   view.EditPositionItemRequest:
     properties:
       _id:
@@ -3629,10 +3591,6 @@ definitions:
       periodic_refresh:
         $ref: '#/definitions/types.DurationWithEnabled'
         type: object
-      tabs:
-        items:
-          $ref: '#/definitions/view.TabRequest'
-        type: array
       tags:
         items:
           type: string
@@ -3644,90 +3602,94 @@ definitions:
     - group
     - title
     type: object
-  view.Tab:
+  view.ExportRequest:
     properties:
-      _id:
-        type: string
-      title:
-        type: string
-      widgets:
+      groups:
         items:
-          $ref: '#/definitions/view.Widget'
+          properties:
+            _id:
+              required:
+              - _id
+              type: string
+            views:
+              items:
+                type: string
+              type: array
+          type: object
         type: array
-    type: object
-  view.TabRequest:
-    properties:
-      _id:
-        type: string
-      title:
-        type: string
-      widgets:
-        items:
-          $ref: '#/definitions/view.WidgetRequest'
-        type: array
-    required:
-    - _id
-    - title
-    type: object
-  view.Widget:
-    properties:
-      _id:
-        type: string
-      grid_parameters:
-        additionalProperties: true
-        type: object
-      parameters:
-        additionalProperties: true
-        type: object
-      title:
-        type: string
-      type:
-        type: string
-    type: object
-  view.WidgetRequest:
-    properties:
-      _id:
-        type: string
-      grid_parameters:
-        additionalProperties: true
-        type: object
-      parameters:
-        type: object
-      title:
-        type: string
-      type:
-        type: string
-    required:
-    - _id
-    - type
-    type: object
-  viewgroup.BulkDeleteRequest:
-    properties:
-      ids:
+      views:
         items:
           type: string
         type: array
-    required:
-    - ids
     type: object
-  viewgroup.BulkUpdateRequestItem:
+  view.ExportResponse:
+    properties:
+      groups:
+        items:
+          $ref: '#/definitions/view.ExportViewGroupResponse'
+        type: array
+      views:
+        items:
+          $ref: '#/definitions/view.Response'
+        type: array
+    type: object
+  view.ExportViewGroupResponse:
     properties:
       _id:
         type: string
+      author:
+        type: string
+      created:
+        type: integer
       title:
         type: string
-    required:
-    - _id
-    - title
+      updated:
+        type: integer
+      views:
+        items:
+          $ref: '#/definitions/view.Response'
+        type: array
     type: object
-  viewgroup.EditRequest:
+  view.ImportItemRequest:
     properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        type: integer
       title:
         type: string
-    required:
-    - title
+      updated:
+        type: integer
+      views:
+        items:
+          $ref: '#/definitions/view.Response'
+        type: array
     type: object
-  viewgroup.View:
+  view.Parameters:
+    properties:
+      directory:
+        type: string
+      is_api:
+        description: Junit
+        type: boolean
+      report_fileregexp:
+        type: string
+      screenshot_directories:
+        items:
+          type: string
+        type: array
+      screenshot_filemask:
+        type: string
+      video_directories:
+        items:
+          type: string
+        type: array
+      video_filemask:
+        type: string
+    type: object
+  view.Response:
     properties:
       _id:
         type: string
@@ -3740,14 +3702,14 @@ definitions:
       enabled:
         type: boolean
       group:
-        $ref: '#/definitions/viewgroup.ViewGroup'
+        $ref: '#/definitions/view.ViewGroup'
         type: object
       periodic_refresh:
         $ref: '#/definitions/types.DurationWithEnabled'
         type: object
       tabs:
         items:
-          $ref: '#/definitions/view.Tab'
+          $ref: '#/definitions/viewtab.Response'
         type: array
       tags:
         items:
@@ -3757,6 +3719,75 @@ definitions:
         type: string
       updated:
         type: integer
+    type: object
+  view.View:
+    properties:
+      author:
+        type: string
+      created:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+      description:
+        type: string
+      enabled:
+        type: boolean
+      group:
+        type: string
+      id:
+        type: string
+      periodicRefresh:
+        $ref: '#/definitions/types.DurationWithEnabled'
+        type: object
+      position:
+        type: integer
+      tags:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+      updated:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+    type: object
+  view.ViewGroup:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        type: integer
+      title:
+        type: string
+      updated:
+        type: integer
+    type: object
+  viewgroup.EditRequest:
+    properties:
+      title:
+        type: string
+    required:
+    - title
+    type: object
+  viewgroup.ListRequest:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      paginate:
+        type: boolean
+      search:
+        type: string
+      with_flags:
+        type: boolean
+      with_tabs:
+        type: boolean
+      with_views:
+        type: boolean
+      with_widgets:
+        type: boolean
     type: object
   viewgroup.ViewGroup:
     properties:
@@ -3774,8 +3805,84 @@ definitions:
         type: integer
       views:
         items:
-          $ref: '#/definitions/viewgroup.View'
+          $ref: '#/definitions/view.Response'
         type: array
+    type: object
+  viewtab.EditRequest:
+    properties:
+      title:
+        type: string
+      view:
+        type: string
+    required:
+    - title
+    - view
+    type: object
+  viewtab.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+      title:
+        type: string
+      updated:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+      widgets:
+        items:
+          $ref: '#/definitions/widget.Response'
+        type: array
+    type: object
+  widget.EditGridPositionItemRequest:
+    properties:
+      _id:
+        type: string
+      grid_parameters:
+        additionalProperties: true
+        type: object
+    type: object
+  widget.EditRequest:
+    properties:
+      grid_parameters:
+        additionalProperties: true
+        type: object
+      parameters:
+        $ref: '#/definitions/view.Parameters'
+        type: object
+      tab:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+    required:
+    - tab
+    - type
+    type: object
+  widget.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        type: integer
+      grid_parameters:
+        additionalProperties: true
+        type: object
+      parameters:
+        $ref: '#/definitions/view.Parameters'
+        type: object
+      title:
+        type: string
+      type:
+        type: string
+      updated:
+        type: integer
     type: object
 info:
   contact: {}
@@ -5000,194 +5107,6 @@ paths:
       summary: Bulk update users
       tags:
       - users
-  /bulk/view-groups:
-    delete:
-      description: Bulk delete view groups by id
-      operationId: viewgroups-bulk-delete-by-id
-      parameters:
-      - collectionFormat: multi
-        in: query
-        items:
-          type: string
-        name: ids
-        required: true
-        type: array
-      responses:
-        "204": {}
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/common.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Bulk delete view groups by id
-      tags:
-      - viewgroups
-    post:
-      consumes:
-      - application/json
-      description: Bulk create view groups
-      operationId: viewgroups-bulk-create
-      parameters:
-      - description: body
-        in: body
-        name: body
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/viewgroup.EditRequest'
-          type: array
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            items:
-              $ref: '#/definitions/viewgroup.EditRequest'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/common.ValidationErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Bulk create view groups
-      tags:
-      - viewgroups
-    put:
-      consumes:
-      - application/json
-      description: Bulk update view groups by id
-      operationId: viewgroups-bulk-update-by-id
-      parameters:
-      - description: body
-        in: body
-        name: body
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/viewgroup.BulkUpdateRequestItem'
-          type: array
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/viewgroup.ViewGroup'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/common.ValidationErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/common.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Bulk update view groups by id
-      tags:
-      - viewgroups
-  /bulk/views:
-    delete:
-      description: Bulk delete views by id
-      operationId: views-bulk-delete-by-id
-      parameters:
-      - collectionFormat: multi
-        in: query
-        items:
-          type: string
-        name: ids
-        required: true
-        type: array
-      responses:
-        "204": {}
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/common.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Bulk delete views by id
-      tags:
-      - views
-    post:
-      consumes:
-      - application/json
-      description: Bulk create views
-      operationId: views-bulk-create
-      parameters:
-      - description: body
-        in: body
-        name: body
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/view.EditRequest'
-          type: array
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            items:
-              $ref: '#/definitions/viewgroup.View'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/common.ValidationErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Bulk create views
-      tags:
-      - views
-    put:
-      consumes:
-      - application/json
-      description: Bulk update views by id
-      operationId: views-bulk-update-by-id
-      parameters:
-      - description: body
-        in: body
-        name: body
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/view.BulkUpdateRequestItem'
-          type: array
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/viewgroup.View'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/common.ValidationErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/common.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      - BasicAuth: []
-      summary: Bulk update views by id
-      tags:
-      - views
   /contextgraph/import:
     put:
       consumes:
@@ -8875,6 +8794,71 @@ paths:
       summary: Update user by id
       tags:
       - users
+  /view-copy/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Copy view
+      operationId: views-copy
+      parameters:
+      - description: view id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/view.EditRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/view.View'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Copy view
+      tags:
+      - views
+  /view-export:
+    post:
+      consumes:
+      - application/json
+      description: Export views
+      operationId: views-export
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/view.ExportRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/view.ExportResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Export views
+      tags:
+      - views
   /view-groups:
     get:
       consumes:
@@ -8882,28 +8866,30 @@ paths:
       description: Get paginated list of view groups
       operationId: viewgroups-find-all
       parameters:
-      - description: current page
-        in: query
-        name: page
-        required: true
-        type: integer
-      - description: items per page
-        in: query
+      - in: query
         name: limit
-        required: true
         type: integer
-      - description: search query
-        in: query
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: paginate
+        type: boolean
+      - in: query
         name: search
         type: string
-      - description: sort query
-        in: query
-        name: sort
-        type: string
-      - description: sort query
-        in: query
-        name: sort_by
-        type: string
+      - in: query
+        name: with_flags
+        type: boolean
+      - in: query
+        name: with_tabs
+        type: boolean
+      - in: query
+        name: with_views
+        type: boolean
+      - in: query
+        name: with_widgets
+        type: boolean
       produces:
       - application/json
       responses:
@@ -9047,6 +9033,31 @@ paths:
       summary: Update view group by id
       tags:
       - viewgroups
+  /view-import:
+    post:
+      consumes:
+      - application/json
+      description: Import views
+      operationId: views-import
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/view.ImportItemRequest'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "204": {}
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Import views
+      tags:
+      - views
   /view-positions:
     put:
       consumes:
@@ -9071,11 +9082,195 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Update views positions
       tags:
       - views
+  /view-tab-copy/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Copy view tab
+      operationId: viewtabs-copy
+      parameters:
+      - description: tab id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/viewtab.EditRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/viewtab.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Copy view tab
+      tags:
+      - viewtabs
+  /view-tab-positions:
+    put:
+      consumes:
+      - application/json
+      description: Update view tabs positions
+      operationId: viewtabs-update-positions
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      produces:
+      - application/json
+      responses:
+        "204": {}
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Update view tabs positions
+      tags:
+      - viewtabs
+  /view-tabs:
+    post:
+      consumes:
+      - application/json
+      description: Create view tab
+      operationId: viewtabs-create
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/viewtab.EditRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/viewtab.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Create view tab
+      tags:
+      - viewtabs
+  /view-tabs/{id}:
+    delete:
+      description: Delete view tab by id
+      operationId: viewtabs-delete-by-id
+      parameters:
+      - description: tab id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204": {}
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Delete view tab by id
+      tags:
+      - viewtabs
+    get:
+      description: Get view tab by id
+      operationId: viewtabs-get-by-id
+      parameters:
+      - description: tab id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/viewtab.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Get view tab by id
+      tags:
+      - viewtabs
+    put:
+      consumes:
+      - application/json
+      description: Update view tab by id
+      operationId: viewtabs-update-by-id
+      parameters:
+      - description: tab id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/viewtab.EditRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/viewtab.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Update view tab by id
+      tags:
+      - viewtabs
   /views:
     get:
       consumes:
@@ -9116,7 +9311,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/viewgroup.View'
+                    $ref: '#/definitions/view.Response'
                   type: array
               type: object
         "400":
@@ -9124,7 +9319,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ValidationErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Find views
       tags:
@@ -9147,13 +9342,13 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/viewgroup.View'
+            $ref: '#/definitions/view.Response'
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/common.ValidationErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Create view
       tags:
@@ -9175,7 +9370,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Delete view by id
       tags:
@@ -9195,13 +9390,13 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/viewgroup.View'
+            $ref: '#/definitions/view.Response'
         "404":
           description: Not Found
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Get view by id
       tags:
@@ -9229,7 +9424,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/viewgroup.View'
+            $ref: '#/definitions/view.Response'
         "400":
           description: Bad Request
           schema:
@@ -9239,7 +9434,7 @@ paths:
           schema:
             $ref: '#/definitions/common.ErrorResponse'
       security:
-      - ApiKeyAuth: []
+      - JWTAuth: []
       - BasicAuth: []
       summary: Update view by id
       tags:
@@ -9359,6 +9554,190 @@ paths:
       summary: Find all entity by service id
       tags:
       - weather-services
+  /widget-copy/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Copy widget
+      operationId: widgets-copy
+      parameters:
+      - description: widget id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/widget.EditRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/widget.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Copy widget
+      tags:
+      - widgets
+  /widget-grid-positions:
+    put:
+      consumes:
+      - application/json
+      description: Update widgets grid positions
+      operationId: widgets-update-grid-positions
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/widget.EditGridPositionItemRequest'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "204": {}
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Update widgets grid positions
+      tags:
+      - widgets
+  /widgets:
+    post:
+      consumes:
+      - application/json
+      description: Create widget
+      operationId: widgets-create
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/widget.EditRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/widget.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Create widget
+      tags:
+      - widgets
+  /widgets/{id}:
+    delete:
+      description: Delete widget by id
+      operationId: widgets-delete-by-id
+      parameters:
+      - description: widget id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204": {}
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Delete widget by id
+      tags:
+      - widgets
+    get:
+      description: Get widget by id
+      operationId: widgets-get-by-id
+      parameters:
+      - description: widget id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/widget.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Get widget by id
+      tags:
+      - widgets
+    put:
+      consumes:
+      - application/json
+      description: Update widget by id
+      operationId: widgets-update-by-id
+      parameters:
+      - description: widget id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/widget.EditRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/widget.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Update widget by id
+      tags:
+      - widgets
 securityDefinitions:
   ApiKeyAuth:
     in: header
