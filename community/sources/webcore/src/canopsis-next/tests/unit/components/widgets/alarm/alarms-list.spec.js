@@ -184,6 +184,7 @@ describe('alarms-list', () => {
       update: updateView,
     },
   };
+  const fetchUserPreference = jest.fn();
   const userPreferenceModule = {
     name: 'userPreference',
     getters: {
@@ -191,7 +192,7 @@ describe('alarms-list', () => {
     },
     actions: {
       update: updateUserPreference,
-      fetchItem: jest.fn(),
+      fetchItem: fetchUserPreference,
     },
   };
   const authModule = {
@@ -230,6 +231,7 @@ describe('alarms-list', () => {
   ]);
 
   afterEach(() => {
+    fetchUserPreference.mockClear();
     updateUserPreference.mockClear();
     updateView.mockClear();
     updateQuery.mockClear();
@@ -245,6 +247,41 @@ describe('alarms-list', () => {
     });
 
     await flushPromises();
+
+    expect(fetchUserPreference).toBeCalledWith(
+      expect.any(Object),
+      { id: widget._id },
+      undefined,
+    );
+
+    expect(updateQuery).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        id: widget._id,
+        query: {
+          ...omit(defaultQuery, ['search', 'tstart', 'tstop']),
+          multiSortBy: [],
+          page: 1,
+          with_instructions: true,
+          opened: true,
+        },
+      },
+      undefined,
+    );
+  });
+
+  it('User preferences not fetched after mount with local widget prop', async () => {
+    factory({
+      store,
+      propsData: {
+        widget,
+        localWidget: true,
+      },
+    });
+
+    await flushPromises();
+
+    expect(fetchUserPreference).not.toBeCalled();
 
     expect(updateQuery).toHaveBeenCalledWith(
       expect.any(Object),

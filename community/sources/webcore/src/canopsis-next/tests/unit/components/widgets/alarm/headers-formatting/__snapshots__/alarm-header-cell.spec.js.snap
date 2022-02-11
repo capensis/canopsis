@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-header-cell Renders \`alarm-header-cell\` with custom header 1`] = `
+<span>
+  Custom header
+</span>
+`;
+
+exports[`alarm-header-cell Renders \`alarm-header-cell\` with priority header 1`] = `
+<alarm-header-priority-stub>
+  Priority
+</alarm-header-priority-stub>
+`;

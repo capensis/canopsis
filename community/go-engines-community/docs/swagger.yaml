@@ -846,10 +846,22 @@ definitions:
       infos:
         $ref: '#/definitions/entity.Infos'
         type: object
+      ko_events:
+        type: integer
+      last_event_date:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
       measurements:
         type: object
       name:
         type: string
+      ok_events:
+        type: integer
+      pbehavior_info:
+        $ref: '#/definitions/types.PbehaviorInfo'
+        type: object
+      state:
+        type: integer
       type:
         type: string
     type: object
@@ -988,11 +1000,23 @@ definitions:
       infos:
         $ref: '#/definitions/entity.Infos'
         type: object
+      ko_events:
+        type: integer
+      last_event_date:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
       measurements:
         type: object
       name:
         type: string
+      ok_events:
+        type: integer
+      pbehavior_info:
+        $ref: '#/definitions/types.PbehaviorInfo'
+        type: object
       sli_avail_state:
+        type: integer
+      state:
         type: integer
       type:
         type: string
@@ -1225,13 +1249,25 @@ definitions:
       infos:
         $ref: '#/definitions/entity.Infos'
         type: object
+      ko_events:
+        type: integer
+      last_event_date:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
       measurements:
         type: object
       name:
         type: string
+      ok_events:
+        type: integer
       output_template:
         type: string
+      pbehavior_info:
+        $ref: '#/definitions/types.PbehaviorInfo'
+        type: object
       sli_avail_state:
+        type: integer
+      state:
         type: integer
       type:
         type: string
@@ -2839,6 +2875,8 @@ definitions:
         type: integer
       alarm_display_name:
         type: string
+      alarm_id:
+        type: string
       assigned_instructions:
         items:
           $ref: '#/definitions/alarm.InstructionWithAlarms'
@@ -2895,7 +2933,7 @@ definitions:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
       stats:
-        $ref: '#/definitions/serviceweather.Stats'
+        $ref: '#/definitions/statistics.EventStatistics'
         type: object
       status:
         $ref: '#/definitions/alarm.AlarmStep'
@@ -2980,17 +3018,6 @@ definitions:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
     type: object
-  serviceweather.Stats:
-    properties:
-      ko:
-        type: integer
-      last_event:
-        type: integer
-      last_ko:
-        type: integer
-      ok:
-        type: integer
-    type: object
   serviceweather.WeatherLink:
     properties:
       cat_name:
@@ -3054,6 +3081,17 @@ definitions:
     - major
     - minor
     - type
+    type: object
+  statistics.EventStatistics:
+    properties:
+      ko:
+        type: integer
+      last_event:
+        type: integer
+      last_ko:
+        type: integer
+      ok:
+        type: integer
     type: object
   types.Alarm:
     properties:
@@ -4097,7 +4135,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -4248,7 +4287,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -4972,7 +5012,8 @@ paths:
         required: true
         type: array
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -5066,7 +5107,8 @@ paths:
         required: true
         type: array
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -5333,7 +5375,8 @@ paths:
       produces:
       - application/json
       responses:
-        "202": {}
+        "202":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -5468,7 +5511,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -5640,11 +5684,12 @@ paths:
       parameters:
       - description: Entity id
         in: query
-        name: id
+        name: _id
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -5665,7 +5710,7 @@ paths:
       parameters:
       - description: Entity id
         in: query
-        name: id
+        name: _id
         required: true
         type: string
       produces:
@@ -5693,7 +5738,7 @@ paths:
       parameters:
       - description: Entity id
         in: query
-        name: id
+        name: _id
         required: true
         type: string
       - description: body
@@ -5852,7 +5897,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -6042,7 +6088,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -6194,7 +6241,8 @@ paths:
       produces:
       - application/json
       responses:
-        "204": {}
+        "204":
+          description: ""
       security:
       - JWTAuth: []
       summary: Get file access
@@ -6215,7 +6263,8 @@ paths:
       produces:
       - application/json
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -6343,7 +6392,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -6511,7 +6561,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -6625,7 +6676,8 @@ paths:
       description: delete user interface
       operationId: internal-delete-user-interface
       responses:
-        "204": {}
+        "204":
+          description: ""
       security:
       - ApiKeyAuth: []
       - BasicAuth: []
@@ -6670,7 +6722,8 @@ paths:
       produces:
       - application/json
       responses:
-        "204": {}
+        "204":
+          description: ""
       security:
       - ApiKeyAuth: []
       - BasicAuth: []
@@ -6709,7 +6762,8 @@ paths:
       produces:
       - application/json
       responses:
-        "204": {}
+        "204":
+          description: ""
       security:
       - JWTAuth: []
       summary: Log out
@@ -6867,7 +6921,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -6975,7 +7030,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -7067,7 +7123,8 @@ paths:
       produces:
       - application/octet-stream
       responses:
-        "200": {}
+        "200":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -7175,7 +7232,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -7382,7 +7440,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -7554,7 +7613,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -7907,7 +7967,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -8067,7 +8128,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -8235,7 +8297,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -8403,7 +8466,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -8759,7 +8823,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -8927,7 +8992,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: Bad Request
           schema:
@@ -9024,7 +9090,8 @@ paths:
       produces:
       - application/json
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
@@ -9128,7 +9195,8 @@ paths:
         required: true
         type: string
       responses:
-        "204": {}
+        "204":
+          description: ""
         "404":
           description: Not Found
           schema:
