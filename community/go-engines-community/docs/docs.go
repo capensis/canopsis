@@ -13385,6 +13385,10 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/alarm.AlarmStep"
                 },
+                "stats": {
+                    "type": "object",
+                    "$ref": "#/definitions/statistics.EventStatistics"
+                },
                 "status": {
                     "type": "object",
                     "$ref": "#/definitions/alarm.AlarmStep"
@@ -13597,6 +13601,23 @@ var doc = `{
                     "type": "number"
                 },
                 "type": {
+                    "type": "integer"
+                }
+            }
+        },
+        "statistics.EventStatistics": {
+            "type": "object",
+            "properties": {
+                "ko": {
+                    "type": "integer"
+                },
+                "last_event": {
+                    "type": "integer"
+                },
+                "last_ko": {
+                    "type": "integer"
+                },
+                "ok": {
                     "type": "integer"
                 }
             }

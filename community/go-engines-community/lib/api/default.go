@@ -113,6 +113,10 @@ func Default(
 		apiConfigProvider = config.NewApiConfigProvider(cfg, logger)
 	}
 	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, apiConfigProvider, cookieOptions, logger)
+
+	if flags.EnableSameServiceNames {
+		logger.Info().Msg("Non-unique names for services ENABLED")
+	}
 	// Create pbehavior computer.
 	pbhComputeChan := make(chan libpbehavior.ComputeTask, chanBuf)
 	pbhEntityMatcher := libpbehavior.NewComputedEntityMatcher(dbClient, pbhRedisSession, json.NewEncoder(), json.NewDecoder())
@@ -213,7 +217,7 @@ func Default(
 			router.Use(devmiddleware.ReloadEnforcerPolicy(enforcer))
 		}
 
-		RegisterValidators(dbClient)
+		RegisterValidators(dbClient, flags.EnableSameServiceNames)
 		RegisterRoutes(
 			ctx,
 			cfg,
