@@ -2932,6 +2932,9 @@ definitions:
       state:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
+      stats:
+        $ref: '#/definitions/statistics.EventStatistics'
+        type: object
       status:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
@@ -3081,6 +3084,17 @@ definitions:
     - major
     - minor
     - type
+    type: object
+  statistics.EventStatistics:
+    properties:
+      ko:
+        type: integer
+      last_event:
+        type: integer
+      last_ko:
+        type: integer
+      ok:
+        type: integer
     type: object
   types.Alarm:
     properties:
