@@ -19,6 +19,8 @@ db.periodical_alarm.createIndex({"v.creation_date": 1}, {name: "v.creation_date_
 db.periodical_alarm.createIndex({"v.last_event_date": 1}, {name: "v.last_event_date_1"});
 db.periodical_alarm.createIndex({"v.last_update_date": 1}, {name: "v.last_update_date_1"});
 
+db.pbehavior_type.createIndex({priority: 1}, {name: "priority_1", unique: true});
+
 db.junit_test_suite.createIndex({test_suite_id: 1}, {name: "test_suite_id_1"});
 db.junit_test_suite.createIndex({entity_id: 1}, {name: "entity_id_1"});
 db.junit_test_suite.createIndex({filename: 1}, {name: "filename_1"});

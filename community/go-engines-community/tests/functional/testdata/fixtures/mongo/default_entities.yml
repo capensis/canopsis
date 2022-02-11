@@ -4849,3 +4849,153 @@ default_entities:
     measurements: null
     name: dynamic-info-update-resource-1
     type: resource
+  default_entities_295:
+    _id: test-connector-entity-api-8/test-connector-name-entity-api-8
+    depends:
+    - test-resource-entity-component-8
+    enable_history:
+    - 1597030096
+    enabled: true
+    impact:
+    - test-resource-entity-api-8/test-resource-entity-component-8
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-connector-name-entity-api-8
+    type: connector
+  default_entities_296:
+    _id: test-component-entity-api-8
+    component: test-component-entity-api-8
+    depends:
+    - test-resource-entity-api-8/test-component-entity-api-8
+    enable_history:
+    - 1597030096
+    enabled: true
+    impact:
+    - test-connector-entity-api-8/test-connector-name-entity-api-8
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-component-entity-api-8
+    type: component
+  default_entities_297:
+    _id: test-resource-entity-api-8/test-component-entity-api-8
+    component: test-component-entity-api-8
+    depends:
+    - test-connector-entity-api-8/test-connector-name-entity-api-8
+    enable_history:
+    - 1597030219
+    enabled: true
+    impact:
+    - test-component-entity-api-8
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-resource-entity-api-8
+    type: resource
+  default_entities_298:
+    _id: test-connector-service-weather-entity-5/test-connector_name-service-weather-entity-5
+    depends:
+    - test-resource-entity-component-5
+    enable_history:
+    - 1597030096
+    enabled: true
+    impact:
+    - test-resource-service-weather-entity-5/test-resource-entity-component-5
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-connector_name-service-weather-entity-5
+    type: connector
+  default_entities_299:
+    _id: test-component-service-weather-entity-5
+    component: test-component-service-weather-entity-5
+    depends:
+    - test-resource-service-weather-entity-5/test-component-service-weather-entity-5
+    enable_history:
+    - 1597030096
+    enabled: true
+    impact:
+    - test-connector-service-weather-entity-5/test-connector_name-service-weather-entity-5
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-component-service-weather-entity-5
+    type: component
+  default_entities_300:
+    _id: test-resource-service-weather-entity-5/test-component-service-weather-entity-5
+    component: test-component-service-weather-entity-5
+    depends:
+    - test-connector-service-weather-entity-5/test-connector_name-service-weather-entity-5
+    enable_history:
+    - 1597030219
+    enabled: true
+    impact:
+    - test-component-service-weather-entity-5
+    - test-service-weather-entity-5
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-resource-service-weather-entity-5
+    type: resource
+  default_entities_301:
+    _id: test-service-weather-entity-5
+    category: ""
+    depends:
+    - test-resource-service-weather-entity-5/test-component-service-weather-entity-5
+    enable_history: []
+    enabled: true
+    entity_patterns:
+    - name: test-resource-service-weather-entity-5
+    impact: []
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-service-weather-entity-5
+    type: service
+  default_entities_302:
+    _id: test-component-service-weather-entity-6
+    component: test-component-service-weather-entity-6
+    depends:
+    - test-resource-service-weather-entity-6/test-component-service-weather-entity-6
+    enable_history:
+    - 1597030096
+    enabled: true
+    impact:
+    - test-connector-service-weather-entity-6/test-connector_name-service-weather-entity-6
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-component-service-weather-entity-6
+    type: component
+  default_entities_303:
+    _id: test-resource-service-weather-entity-6/test-component-service-weather-entity-6
+    component: test-component-service-weather-entity-6
+    depends:
+    - test-connector-service-weather-entity-6/test-connector_name-service-weather-entity-6
+    enable_history:
+    - 1597030219
+    enabled: true
+    impact:
+    - test-component-service-weather-entity-6
+    - test-service-weather-entity-6
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-resource-service-weather-entity-6
+    type: resource
+  default_entities_304:
+    _id: test-service-weather-entity-6
+    category: ""
+    depends:
+    - test-resource-service-weather-entity-6/test-component-service-weather-entity-6
+    enable_history: []
+    enabled: true
+    entity_patterns:
+    - name: test-resource-service-weather-entity-6
+    impact: []
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-service-weather-entity-6
+    type: service

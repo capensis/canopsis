@@ -1,8 +1,14 @@
 db.default_entities.dropIndex("enabled_1");
 
+db.periodical_alarm.dropIndex("t_1");
 db.periodical_alarm.dropIndex("d_1");
 db.periodical_alarm.dropIndex("v.meta_1_v.creation_date_1");
 db.periodical_alarm.dropIndex("v.resolved_1");
+db.periodical_alarm.dropIndex("v.creation_date_1");
+db.periodical_alarm.dropIndex("v.last_event_date_1");
+db.periodical_alarm.dropIndex("v.last_update_date_1");
+
+db.pbehavior_type.dropIndex("priority_1");
 
 db.junit_test_suite.dropIndex("test_suite_id_1");
 db.junit_test_suite.dropIndex("entity_id_1");
