@@ -102,6 +102,16 @@ COPY pro/go-engines-pro/cmd/engine-webhook/webhook.conf.toml /opt/canopsis/etc/w
 USER canopsis:canopsis
 
 #
+# import-context-graph override
+#
+
+FROM final-container AS import-context-graph
+
+USER root
+COPY pro/go-engines-pro/config/import-context-graph /opt/canopsis/share/config/import-context-graph
+USER canopsis:canopsis
+
+#
 # canopsis-api-* overrides
 #
 
