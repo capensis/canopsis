@@ -68,10 +68,5 @@ export default {
       required: true,
     },
   },
-  computed: {
-    pbehaviorComments() {
-      return this.alarm.pbehavior?.comments;
-    },
-  },
 };
 </script>
