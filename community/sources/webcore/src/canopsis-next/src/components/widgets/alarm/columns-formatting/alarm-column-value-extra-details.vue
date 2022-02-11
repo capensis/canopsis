@@ -38,13 +38,13 @@
           small,
           data-test="extraDetailsOpenButton-pbehaviors",
           slot="activator"
-        ) {{ alarm.pbehavior.type.icon_name }}
-        div(:data-test="`extraDetailsContent-${alarm._id}`")
+        ) {{ alarm.v.pbehavior_info.icon_name }}
+        div
           strong {{ $t('alarmList.actions.iconsTitles.pbehaviors') }}
           div
             div.mt-2.font-weight-bold {{ alarm.pbehavior.name }}
             div {{ $t('common.author') }}: {{ alarm.pbehavior.author }}
-            div(v-if="alarm.pbehavior.type") {{ $t('common.type') }}: {{ alarm.pbehavior.type.name }}
+            div(v-if="alarm.pbehavior.type") {{ $t('common.type') }}: {{ alarm.v.pbehavior_info.type_name }}
             div(v-if="alarm.pbehavior.reason") {{ $t('common.reason') }}: {{ alarm.pbehavior.reason.name }}
             div {{ alarm.pbehavior.tstart | dateWithToday }}
               template(v-if="alarm.pbehavior.tstop")
