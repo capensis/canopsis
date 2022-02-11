@@ -18,19 +18,18 @@
         :select-all="selectable",
         :loading="loading || columnsFiltersPending",
         :expand="expandable",
-        data-test="tableWidget",
         ref="dataTable",
         item-key="_id",
         hide-actions,
         multi-sort,
         @update:pagination="updatePaginationHandler"
       )
-        template(slot="progress")
+        template(#progress="")
           v-fade-transition
-            v-progress-linear(height="2", indeterminate, color="primary")
-        template(slot="headerCell", slot-scope="props")
-          alarm-header-cell(:header="props.header")
-        template(slot="items", slot-scope="props")
+            v-progress-linear(color="primary", height="2", indeterminate)
+        template(#headerCell="{ header }")
+          alarm-header-cell(:header="header")
+        template(#items="props")
           alarms-list-row(
             v-model="props.selected",
             v-on="rowListeners",
@@ -44,15 +43,19 @@
             :parent-alarm="parentAlarm",
             :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)"
           )
-        template(slot="expand", slot-scope="props")
+        template(#expand="{ item, index }")
           alarms-expand-panel(
-            :alarm="props.item",
+            :alarm="item",
             :widget="widget",
             :hide-groups="hideGroups",
-            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)"
+            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)"
           )
     slot
-    component(v-bind="additionalComponent.props", v-on="additionalComponent.on", :is="additionalComponent.is")
+    component(
+      v-bind="additionalComponent.props",
+      v-on="additionalComponent.on",
+      :is="additionalComponent.is"
+    )
 </template>
 
 <script>
@@ -175,14 +178,10 @@ export default {
     },
 
     hasInstructionsAlarms() {
-      return this.alarms.some(alarm => alarm.assigned_instructions.length);
+      return this.alarms.some(alarm => alarm.assigned_instructions?.length);
     },
 
     headers() {
-      if (!this.hasColumns) {
-        return [];
-      }
-
       const headers = [...this.columns, { text: this.$t('common.actionsLabel'), sortable: false }];
 
       if ((this.expandable || this.hasInstructionsAlarms) && !this.selectable) {
@@ -201,7 +200,7 @@ export default {
         lg: { min: 13, max: Number.MAX_VALUE, label: 'lg' },
       };
 
-      const { label = COLUMNS_SIZES_VALUES.sm.label } = Object.values(COLUMNS_SIZES_VALUES)
+      const { label } = Object.values(COLUMNS_SIZES_VALUES)
         .find(({ min, max }) => columnsLength >= min && columnsLength <= max);
 
       return {

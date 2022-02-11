@@ -82,7 +82,7 @@ describe('c-duration-field', () => {
   it('Renders `c-duration-field` with default props', () => {
     const wrapper = snapshotFactory();
 
-    const menuContent = wrapper.find('.v-menu__content');
+    const menuContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
@@ -95,7 +95,7 @@ describe('c-duration-field', () => {
       },
     });
 
-    const menuContent = wrapper.find('.v-menu__content');
+    const menuContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
@@ -125,7 +125,7 @@ describe('c-duration-field', () => {
       },
     });
 
-    const menuContent = wrapper.find('.v-menu__content');
+    const menuContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
@@ -160,7 +160,7 @@ describe('c-duration-field', () => {
 
     await validator.validateAll();
 
-    const menuContent = wrapper.find('.v-menu__content');
+    const menuContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();

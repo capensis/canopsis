@@ -119,7 +119,7 @@ describe('actions-panel', () => {
 
     await flushPromises();
 
-    const dropdownContent = wrapper.find('.v-menu__content');
+    const dropdownContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
@@ -134,7 +134,7 @@ describe('actions-panel', () => {
 
     await flushPromises();
 
-    const dropdownContent = wrapper.find('.v-menu__content');
+    const dropdownContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
@@ -152,7 +152,7 @@ describe('actions-panel', () => {
 
     await flushPromises();
 
-    const dropdownContent = wrapper.find('.v-menu__content');
+    const dropdownContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
@@ -170,7 +170,7 @@ describe('actions-panel', () => {
 
     await flushPromises();
 
-    const dropdownContent = wrapper.find('.v-menu__content');
+    const dropdownContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
@@ -188,7 +188,7 @@ describe('actions-panel', () => {
 
     await flushPromises();
 
-    const dropdownContent = wrapper.find('.v-menu__content');
+    const dropdownContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
@@ -204,7 +204,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const dropdownContent = wrapper.find('.v-menu__content');
+    const dropdownContent = wrapper.findMenu();
 
     await flushPromises();
 
@@ -224,7 +224,7 @@ describe('actions-panel', () => {
 
     await flushPromises();
 
-    const dropdownContent = wrapper.find('.v-menu__content');
+    const dropdownContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
@@ -242,7 +242,7 @@ describe('actions-panel', () => {
 
     await flushPromises();
 
-    const dropdownContent = wrapper.find('.v-menu__content');
+    const dropdownContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();

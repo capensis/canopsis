@@ -12,7 +12,7 @@
       v-layout(align-center)
         div(v-if="column.isHtml", v-html="sanitizedValue")
         div(v-else, v-bind="component.bind", v-on="component.on")
-        v-btn.ma-0(data-test="alarmInfoPopupOpenButton", icon, small, @click.stop="showInfoPopup")
+        v-btn.ma-0(icon, small, @click.stop="showInfoPopup")
           v-icon(small) info
     alarm-column-cell-popup-body(
       :alarm="alarm",
@@ -221,9 +221,7 @@ export default {
   },
   methods: {
     showInfoPopup() {
-      if (this.popupData) {
-        this.isInfoPopupOpen = true;
-      }
+      this.isInfoPopupOpen = true;
     },
     hideInfoPopup() {
       this.isInfoPopupOpen = false;

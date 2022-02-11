@@ -260,7 +260,7 @@ export default {
     },
   },
   methods: {
-    async showExecuteInstructionModal(assignedInstruction) {
+    showExecuteInstructionModal(assignedInstruction) {
       const refreshAlarm = () => this.refreshAlarmById(this.item._id);
 
       this.$modals.show({

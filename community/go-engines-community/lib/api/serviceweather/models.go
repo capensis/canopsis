@@ -6,6 +6,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviortype"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -101,23 +102,16 @@ type Entity struct {
 	Pbehaviors                       []pbehavior.Response             `json:"pbehaviors" bson:"-"`
 	PbehaviorInfo                    types.PbehaviorInfo              `json:"-" bson:"pbehavior_info"`
 	Links                            []WeatherLink                    `json:"linklist" bson:"-"`
-	Stats                            Stats                            `json:"stats" bson:"-"`
-	IsGrey                           bool                             `json:"is_grey"`
-	ImpactLevel                      int                              `json:"impact_level" bson:"impact_level"`
-	ImpactState                      int                              `json:"impact_state" bson:"impact_state"`
-	IdleSince                        *types.CpsTime                   `json:"idle_since,omitempty" bson:"idle_since,omitempty" swaggertype:"integer"`
+	IsGrey         bool                     `json:"is_grey"`
+	ImpactLevel    int                      `json:"impact_level" bson:"impact_level"`
+	ImpactState    int                      `json:"impact_state" bson:"impact_state"`
+	IdleSince      *types.CpsTime           `json:"idle_since,omitempty" bson:"idle_since,omitempty" swaggertype:"integer"`
+	Stats                            statistics.EventStatistics       `json:"stats" bson:"stats"`
 }
 
 type WeatherLink struct {
 	Category string      `json:"cat_name"`
 	Links    interface{} `json:"links"`
-}
-
-type Stats struct {
-	FailEventsCount int            `json:"ko" bson:"ko"`
-	OKEventsCount   int            `json:"ok" bson:"ok"`
-	LastFailEvent   *types.CpsTime `json:"last_ko" bson:"last_ko" swaggertype:"integer"`
-	LastEvent       *types.CpsTime `json:"last_event" bson:"last_event" swaggertype:"integer"`
 }
 
 type EntityAggregationResult struct {

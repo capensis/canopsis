@@ -10,9 +10,9 @@ import (
 
 const timeFormat = "20060102T150405Z"
 const (
-	UndefinedPriority int64 = 0
-	MinPriority             = 1
-	MaxPriority             = 9
+	UndefinedPriority = 0
+	MinPriority       = 1
+	MaxPriority       = 9
 )
 
 // Calendar is used to implement ICS Calendar structure.

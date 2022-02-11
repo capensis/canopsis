@@ -54,6 +54,9 @@ const (
 	MessageRateStatsMinuteCollectionName = "message_rate_statistic_minute"
 	MessageRateStatsHourCollectionName   = "message_rate_statistic_hour"
 
+	// Collection for ok/ko event statistics
+	EventStatistics = "event_statistics"
+
 	// Remediation collections
 	InstructionMongoCollection          = "instruction"
 	InstructionExecutionMongoCollection = "instruction_execution"
@@ -534,8 +537,8 @@ func (c *dbClient) WithTransaction(ctx context.Context, f func(context.Context) 
 }
 
 func (c *dbClient) checkTransactionEnabled(ctx context.Context, logger zerolog.Logger) {
-	res, err := c.Database.RunCommand(ctx, bson.D{{"hello", 1}}).
-		DecodeBytes()
+	res, err := c.Database.RunCommand(ctx, bson.D{{"hello", 1}}). //nolint:govet
+									DecodeBytes()
 	if err != nil {
 		logger.Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
 		return
@@ -553,8 +556,8 @@ func (c *dbClient) checkTransactionEnabled(ctx context.Context, logger zerolog.L
 		return
 	}
 
-	res, err = c.Client.Database("admin").RunCommand(ctx, bson.D{{"getParameter", 1}, {"featureCompatibilityVersion", 1}}).
-		DecodeBytes()
+	res, err = c.Client.Database("admin").RunCommand(ctx, bson.D{{"getParameter", 1}, {"featureCompatibilityVersion", 1}}). //nolint:govet
+																DecodeBytes()
 	if err != nil {
 		logger.Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
 		return
