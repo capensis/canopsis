@@ -41,6 +41,14 @@ describe('alarm-column-value-extra-details', () => {
         alarm: {
           rule: {},
           pbehavior: {
+            name: 'pbehavior-name',
+            author: 'pbehavior-author',
+            tstart: '',
+            tstop: '',
+            rrule: 'rrule',
+            reason: {
+              name: 'pbehavior-reason-name',
+            },
             comments: [
               {
                 _id: 'pbehavior-comment-1-id',
@@ -64,7 +72,10 @@ describe('alarm-column-value-extra-details', () => {
             ticket: {},
             canceled: {},
             snooze: {},
-            pbehavior_info: {},
+            pbehavior_info: {
+              icon_name: 'icon',
+              type_name: 'type',
+            },
           },
         },
       },

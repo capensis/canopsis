@@ -18,9 +18,10 @@
       :snooze="alarm.v.snooze"
     )
     extra-details-pbehavior(
-      v-if="alarm.v.pbehavior_info",
-      :pbehavior="alarm.v.pbehavior_info",
-      :comments="pbehaviorComments"
+      v-if="alarm.pbehavior",
+      :pbehavior="alarm.pbehavior",
+      :icon-name="alarm.v.pbehavior_info.icon_name",
+      :type-name="alarm.v.pbehavior_info.type_name"
     )
     extra-details-causes(
       v-if="alarm.causes",
