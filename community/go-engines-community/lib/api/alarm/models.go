@@ -183,13 +183,14 @@ type AlarmTicket struct {
 }
 
 type Pbehavior struct {
-	ID     string          `bson:"_id" json:"_id"`
-	Author string          `bson:"author" json:"author"`
-	Name   string          `bson:"name" json:"name"`
-	RRule  string          `bson:"rrule" json:"rrule"`
-	Start  *types.CpsTime  `bson:"tstart" json:"tstart" swaggertype:"integer"`
-	Stop   *types.CpsTime  `bson:"tstop" json:"tstop" swaggertype:"integer"`
-	Type   *pbehavior.Type `bson:"type" json:"type"`
+	ID       string             `bson:"_id" json:"_id"`
+	Author   string             `bson:"author" json:"author"`
+	Name     string             `bson:"name" json:"name"`
+	RRule    string             `bson:"rrule" json:"rrule"`
+	Start    *types.CpsTime     `bson:"tstart" json:"tstart" swaggertype:"integer"`
+	Stop     *types.CpsTime     `bson:"tstop" json:"tstop" swaggertype:"integer"`
+	Type     *pbehavior.Type    `bson:"type" json:"type"`
+	Comments pbehavior.Comments `bson:"comments" json:"comments"`
 }
 
 type InstructionWithAlarms struct {
