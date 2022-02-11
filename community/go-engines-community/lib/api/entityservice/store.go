@@ -88,14 +88,23 @@ func (s *store) GetDependencies(ctx context.Context, id string, q pagination.Que
 			"entity": "$$ROOT",
 		}},
 		{"$lookup": bson.M{
-			"from":         mongo.AlarmMongoCollection,
-			"localField":   "entity._id",
-			"foreignField": "d",
-			"as":           "alarm",
+			"from": mongo.AlarmMongoCollection,
+			"let":  bson.M{"eid": "$entity._id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$and": []bson.M{
+					{"$expr": bson.M{"$eq": bson.A{"$d", "$$eid"}}},
+					// Get only open alarm.
+					{"v.resolved": nil},
+				}}},
+				{"$limit": 1},
+			},
+			"as": "alarm",
 		}},
 		{"$unwind": bson.M{"path": "$alarm", "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{
-			"impact_state": bson.M{"$multiply": bson.A{"$alarm.v.state.val", "$entity.impact_level"}},
+			"impact_state": bson.M{"$cond": bson.M{"if": "$alarm.v.state.val", "else": 0,
+				"then": bson.M{"$multiply": bson.A{"$alarm.v.state.val", "$entity.impact_level"}},
+			}},
 		}},
 	}
 	projectPipeline := []bson.M{
@@ -160,14 +169,23 @@ func (s *store) GetImpacts(ctx context.Context, id string, q pagination.Query) (
 			"entity": "$$ROOT",
 		}},
 		{"$lookup": bson.M{
-			"from":         mongo.AlarmMongoCollection,
-			"localField":   "entity._id",
-			"foreignField": "d",
-			"as":           "alarm",
+			"from": mongo.AlarmMongoCollection,
+			"let":  bson.M{"eid": "$entity._id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$and": []bson.M{
+					{"$expr": bson.M{"$eq": bson.A{"$d", "$$eid"}}},
+					// Get only open alarm.
+					{"v.resolved": nil},
+				}}},
+				{"$limit": 1},
+			},
+			"as": "alarm",
 		}},
 		{"$unwind": bson.M{"path": "$alarm", "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{
-			"impact_state": bson.M{"$multiply": bson.A{"$alarm.v.state.val", "$entity.impact_level"}},
+			"impact_state": bson.M{"$cond": bson.M{"if": "$alarm.v.state.val", "else": 0,
+				"then": bson.M{"$multiply": bson.A{"$alarm.v.state.val", "$entity.impact_level"}},
+			}},
 		}},
 	}
 	projectPipeline := []bson.M{
