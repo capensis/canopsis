@@ -1,49 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`text Renders \`text\` widget settings with core version 1`] = `
-<div>
-  <div
-    class="v-list pt-0 theme--light"
-    role="list"
-  >
-    <field-title-stub
-      title="common.title"
-      value=""
-    />
-    <hr
-      class="v-divider theme--light"
-    />
-    <field-filter-editor-stub
-      entities-type="entity"
-      existingtitles=""
-      hiddenfields="title"
-      value="[object Object]"
-    />
-    <hr
-      class="v-divider theme--light"
-    />
-    <field-text-editor-stub
-      title="settings.templateEditor"
-      value=""
-    />
-    <hr
-      class="v-divider theme--light"
-    />
-    <!---->
-  </div>
-  <button
-    class="primary v-btn theme--light"
-    type="button"
-  >
-    <div
-      class="v-btn__content"
-    >
-      common.save
-    </div>
-  </button>
-</div>
-`;
-
 exports[`text Renders \`text\` widget settings with custom props 1`] = `
 <div>
   <div
@@ -57,15 +13,6 @@ exports[`text Renders \`text\` widget settings with custom props 1`] = `
     <hr
       class="v-divider theme--light"
     />
-    <field-filter-editor-stub
-      entities-type="entity"
-      existingtitles=""
-      hiddenfields="title"
-      value="[object Object]"
-    />
-    <hr
-      class="v-divider theme--light"
-    />
     <field-text-editor-stub
       title="settings.templateEditor"
       value=<p>1</p>
@@ -75,66 +22,6 @@ exports[`text Renders \`text\` widget settings with custom props 1`] = `
     <hr
       class="v-divider theme--light"
     />
-    <div
-      class="v-list__group"
-    >
-      <div
-        class="v-list__group__header"
-      >
-        <div
-          role="listitem"
-        >
-          <div
-            class="v-list__tile theme--light"
-          >
-            settings.stats
-            <div
-              class="font-italic caption ml-1"
-            >
-              (common.optional)
-            </div>
-          </div>
-        </div>
-        <div
-          class="v-list__group__header__append-icon"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
-          >
-            keyboard_arrow_down
-          </i>
-        </div>
-      </div>
-      <transition-stub
-        mode="in-out"
-        name="expand-transition"
-      >
-        <div
-          class="v-list__group__items"
-          style="display: none;"
-        >
-          <div
-            class="v-list grey lighten-4 px-2 py-0 theme--light"
-            role="list"
-          >
-            <field-stats-selector-stub
-              stats="[object Object]"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-date-interval-stub
-              hiddenfields=""
-              value="[object Object]"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-          </div>
-        </div>
-      </transition-stub>
-    </div>
   </div>
   <button
     class="primary v-btn theme--light"
@@ -162,15 +49,6 @@ exports[`text Renders \`text\` widget settings with default props 1`] = `
     <hr
       class="v-divider theme--light"
     />
-    <field-filter-editor-stub
-      entities-type="entity"
-      existingtitles=""
-      hiddenfields="title"
-      value="[object Object]"
-    />
-    <hr
-      class="v-divider theme--light"
-    />
     <field-text-editor-stub
       title="settings.templateEditor"
       value=""
@@ -178,66 +56,6 @@ exports[`text Renders \`text\` widget settings with default props 1`] = `
     <hr
       class="v-divider theme--light"
     />
-    <div
-      class="v-list__group"
-    >
-      <div
-        class="v-list__group__header"
-      >
-        <div
-          role="listitem"
-        >
-          <div
-            class="v-list__tile theme--light"
-          >
-            settings.stats
-            <div
-              class="font-italic caption ml-1"
-            >
-              (common.optional)
-            </div>
-          </div>
-        </div>
-        <div
-          class="v-list__group__header__append-icon"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
-          >
-            keyboard_arrow_down
-          </i>
-        </div>
-      </div>
-      <transition-stub
-        mode="in-out"
-        name="expand-transition"
-      >
-        <div
-          class="v-list__group__items"
-          style="display: none;"
-        >
-          <div
-            class="v-list grey lighten-4 px-2 py-0 theme--light"
-            role="list"
-          >
-            <field-stats-selector-stub
-              stats="[object Object]"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <field-date-interval-stub
-              hiddenfields=""
-              value="[object Object]"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-          </div>
-        </div>
-      </transition-stub>
-    </div>
   </div>
   <button
     class="primary v-btn theme--light"
