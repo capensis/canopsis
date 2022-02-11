@@ -456,6 +456,9 @@ definitions:
         type: string
       author:
         type: string
+      comments:
+        $ref: '#/definitions/pbehavior.Comments'
+        type: object
       name:
         type: string
       rrule:
