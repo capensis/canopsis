@@ -1,4 +1,4 @@
-export default {
+export const widgetColumnsMixin = {
   props: {
     widget: {
       type: Object,
