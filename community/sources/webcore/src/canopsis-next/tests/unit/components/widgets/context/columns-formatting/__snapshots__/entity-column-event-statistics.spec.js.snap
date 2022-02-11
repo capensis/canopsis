@@ -8,7 +8,7 @@ exports[`entity-column-event-statistics Renders \`entity-column-event-statistics
   <span
     class="pre-wrap"
   >
-    context.eventStatistics:{"ok":15,"ko":25}
+    context.eventStatisticsMessage:{"ok":15,"ko":25}
   </span>
 </div>
 `;
@@ -50,7 +50,7 @@ exports[`entity-column-event-statistics Renders \`entity-column-event-statistics
   <span
     class="pre-wrap"
   >
-    context.eventStatistics:{"ok":30,"ko":45}
+    context.eventStatisticsMessage:{"ok":30,"ko":45}
   </span>
 </div>
 `;

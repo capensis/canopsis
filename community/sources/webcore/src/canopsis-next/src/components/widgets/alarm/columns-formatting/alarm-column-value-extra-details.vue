@@ -18,8 +18,9 @@
       :snooze="alarm.v.snooze"
     )
     extra-details-pbehavior(
-      v-if="alarm.pbehavior",
-      :pbehavior="alarm.pbehavior"
+      v-if="alarm.v.pbehavior_info",
+      :pbehavior="alarm.v.pbehavior_info",
+      :comments="pbehaviorComments"
     )
     extra-details-causes(
       v-if="alarm.causes",
@@ -64,6 +65,11 @@ export default {
     alarm: {
       type: Object,
       required: true,
+    },
+  },
+  computed: {
+    pbehaviorComments() {
+      return this.alarm.pbehavior?.comments;
     },
   },
 };

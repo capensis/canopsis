@@ -24,26 +24,26 @@ describe('extra-details-pbehavior', () => {
     tstart: prevDateStartTimestamp,
     tstop: prevDateStopTimestamp,
     rrule: 'rrule',
+    type_name: 'type-name',
+    icon_name: 'icon-name',
     type: {
       name: 'pbehavior-type-name',
       icon_name: 'pbehavior-type-icon',
     },
-    reason: {
-      name: 'pbehavior-reason-name',
-    },
-    comments: [
-      {
-        _id: 'pbehavior-comment-1-id',
-        author: 'pbehavior-comment-1-author',
-        message: 'pbehavior-comment-1-message',
-      },
-      {
-        _id: 'pbehavior-comment-2-id',
-        author: 'pbehavior-comment-2-author',
-        message: 'pbehavior-comment-2-message',
-      },
-    ],
+    reason: 'pbehavior-reason-name',
   };
+  const comments = [
+    {
+      _id: 'pbehavior-comment-1-id',
+      author: 'pbehavior-comment-1-author',
+      message: 'pbehavior-comment-1-message',
+    },
+    {
+      _id: 'pbehavior-comment-2-id',
+      author: 'pbehavior-comment-2-author',
+      message: 'pbehavior-comment-2-message',
+    },
+  ];
 
   it('Renders `extra-details-pbehavior` with full pbehavior', () => {
     const wrapper = snapshotFactory({
@@ -97,10 +97,11 @@ describe('extra-details-pbehavior', () => {
     expect(tooltipContent.element).toMatchSnapshot();
   });
 
-  it('Renders `extra-details-pbehavior` without comments', () => {
+  it('Renders `extra-details-pbehavior` with comments', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        pbehavior: omit(pbehavior, ['comments']),
+        pbehavior,
+        comments,
       },
     });
 
