@@ -279,3 +279,158 @@ Feature: get service entities
       }
     }
     """
+
+  Scenario: given service for one entity, weather service entities should return event stats
+    Given I am admin
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "_id": "test-service-weather-entity-4",
+      "name": "test-service-weather-entity-4",
+      "output_template": "Test-service-weather-entity-4",
+      "category": "test-category-service-weather-entities",
+      "enabled": true,
+      "impact_level": 1,
+      "entity_patterns": [
+        {"name": "test-resource-service-weather-entity-4"}
+      ],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-service-weather-entity-4",
+      "connector_name" : "test-connector_name-service-weather-entity-4",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" :  "test-component-service-weather-entity-4",
+      "resource" : "test-resource-service-weather-entity-4",
+      "state" : 0,
+      "output" : "noveo alarm"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-service-weather-entity-4",
+      "connector_name" : "test-connector_name-service-weather-entity-4",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" :  "test-component-service-weather-entity-4",
+      "resource" : "test-resource-service-weather-entity-4",
+      "state" : 1,
+      "output" : "noveo alarm"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I wait 3s
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-service-weather-entity-4",
+      "connector_name" : "test-connector_name-service-weather-entity-4",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" :  "test-component-service-weather-entity-4",
+      "resource" : "test-resource-service-weather-entity-4",
+      "state" : 0,
+      "output" : "noveo alarm"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/weather-services/test-service-weather-entity-4
+    Then the response code should be 200
+    Then the response key "data.0.stats.last_event" should not be "null"
+    Then the response key "data.0.stats.last_ko" should not be "null"
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-resource-service-weather-entity-4/test-component-service-weather-entity-4",
+          "name": "test-resource-service-weather-entity-4",
+          "stats": {
+            "ok": 2,
+            "ko": 1
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given service for one entity, weather service entities shouldn't return old event stats
+    Given I am admin
+    When I do GET /api/v4/weather-services/test-service-weather-entity-5
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-resource-service-weather-entity-5/test-component-service-weather-entity-5",
+          "name": "test-resource-service-weather-entity-5",
+          "stats": {
+            "ok": 0,
+            "ko": 0
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given service for one entity, old last_ko shouldn't be updated  
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-service-weather-entity-6",
+      "connector_name" : "test-connector_name-service-weather-entity-6",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" :  "test-component-service-weather-entity-6",
+      "resource" : "test-resource-service-weather-entity-6",
+      "state" : 0,
+      "output" : "noveo alarm"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/weather-services/test-service-weather-entity-6
+    Then the response code should be 200    
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-resource-service-weather-entity-6/test-component-service-weather-entity-6",
+          "name": "test-resource-service-weather-entity-6",
+          "stats": {
+            "ok": 1,
+            "ko": 0,
+            "last_ko": 1000000000
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """

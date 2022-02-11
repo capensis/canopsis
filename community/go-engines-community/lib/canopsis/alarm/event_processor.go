@@ -1005,7 +1005,7 @@ func (s *eventProcessor) sendEventStatistics(ctx context.Context, event types.Ev
 		return
 	}
 
-	stats := statistics.EventStatistics{Timestamp: &event.Timestamp}
+	stats := statistics.EventStatistics{LastEvent: &event.Timestamp}
 	if event.State == types.AlarmStateOK {
 		stats.OK = 1
 	} else {
