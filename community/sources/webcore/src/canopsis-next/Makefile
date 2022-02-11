@@ -84,8 +84,7 @@ export BUILDKIT_PROGRESS:=plain
 DOCKER_NO_CACHE = 
 DOCKER_TAG = $(VERSION)
 DOCKERFILE_PATH = $(COMMUNITY_ROOT_DIR)/Dockerfile
-#DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
-DOCKER_IMAGE_BASE_PATH = canopsis
+DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
 # The official nginx container is based on Debian unless stated otherwise in the tag.
 DOCKER_NGINX_VERSION = 1.20.2
 
