@@ -2,7 +2,7 @@
   v-select(
     v-validate="rules",
     v-field="category",
-    :label="$t('service.fields.category')",
+    :label="$t('common.category')",
     :loading="entityCategoriesPending || creating",
     :readonly="creating",
     :items="entityCategories",
@@ -19,7 +19,7 @@
         ref="createField",
         v-model.trim="newCategory",
         v-validate="'unique-name'",
-        :label="$t('service.fields.createCategory')",
+        :label="$t('service.createCategory')",
         :error-messages="errors.collect(newCategoryFieldName)",
         :name="newCategoryFieldName",
         hide-details,
@@ -28,7 +28,7 @@
       )
         v-tooltip(slot="append", left)
           v-icon(slot="activator") help
-          div(v-html="$t('service.fields.createCategoryHelp')")
+          div(v-html="$t('service.createCategoryHelp')")
 </template>
 
 <script>

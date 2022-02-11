@@ -252,11 +252,11 @@ func (a *ApiClient) TheResponseKeyShouldNotBe(path, value string) error {
 				return nil
 			}
 		case float32:
-			if f, err := strconv.ParseFloat(value, 0); err != nil || v != float32(f) {
+			if f, err := strconv.ParseFloat(value, 32); err != nil || v != float32(f) {
 				return nil
 			}
 		case float64:
-			if f, err := strconv.ParseFloat(value, 0); err != nil || v != f {
+			if f, err := strconv.ParseFloat(value, 64); err != nil || v != f {
 				return nil
 			}
 		case bool:

@@ -113,6 +113,10 @@ func Default(
 		apiConfigProvider = config.NewApiConfigProvider(cfg, logger)
 	}
 	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, apiConfigProvider, cookieOptions, logger)
+
+	if flags.EnableSameServiceNames {
+		logger.Info().Msg("Non-unique names for services ENABLED")
+	}
 	// Create pbehavior computer.
 	pbhComputeChan := make(chan libpbehavior.ComputeTask, chanBuf)
 	pbhEntityMatcher := libpbehavior.NewComputedEntityMatcher(dbClient, pbhRedisSession, json.NewEncoder(), json.NewDecoder())
@@ -143,7 +147,7 @@ func Default(
 
 	entityCleanerTaskChan := make(chan entity.CleanTask)
 	disabledEntityCleaner := entity.NewDisabledCleaner(
-		entity.NewStore(dbClient),
+		entity.NewStore(dbClient, timezoneConfigProvider),
 		datastorage.NewAdapter(dbClient),
 		metricsEntityMetaUpdater,
 		logger,
@@ -213,7 +217,7 @@ func Default(
 			router.Use(devmiddleware.ReloadEnforcerPolicy(enforcer))
 		}
 
-		RegisterValidators(dbClient)
+		RegisterValidators(dbClient, flags.EnableSameServiceNames)
 		RegisterRoutes(
 			ctx,
 			cfg,
@@ -306,8 +310,12 @@ func newWebsocketHub(enforcer libsecurity.Enforcer, tokenProvider libsecurity.To
 	websocketAuthorizer := websocket.NewAuthorizer(enforcer, tokenProvider)
 	websocketHub := websocket.NewHub(websocketUpgrader, websocketAuthorizer,
 		canopsis.PeriodicalWaitTime, logger)
-	websocketHub.RegisterRoom(websocket.RoomBroadcastMessages)
-	websocketHub.RegisterRoom(websocket.RoomLoggedUserCount)
+	if err := websocketHub.RegisterRoom(websocket.RoomBroadcastMessages); err != nil {
+		logger.Err(err).Msg("Register BroadcastMessages room")
+	}
+	if err := websocketHub.RegisterRoom(websocket.RoomLoggedUserCount); err != nil {
+		logger.Err(err).Msg("Register LoggedUserCount room")
+	}
 	return websocketHub
 }
 
