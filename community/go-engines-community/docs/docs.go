@@ -9733,6 +9733,10 @@ var doc = `{
                 "author": {
                     "type": "string"
                 },
+                "comments": {
+                    "type": "object",
+                    "$ref": "#/definitions/pbehavior.Comments"
+                },
                 "name": {
                     "type": "string"
                 },
