@@ -1,5 +1,78 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with comments 1`] = `
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <span>
+      <i
+        aria-hidden="true"
+        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
+        style="font-size: 16px;"
+      />
+    </span>
+  </span>
+</div>
+`;
+
+exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with comments 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <div>
+    <strong>
+      alarmList.actions.iconsTitles.pbehaviors
+    </strong>
+    <div>
+      <div
+        class="mt-2 font-weight-bold"
+      >
+        pbehavior-name
+      </div>
+      <div>
+        common.author: pbehavior-author
+      </div>
+      <div>
+        common.type: type-name
+      </div>
+      <div>
+        common.reason: pbehavior-reason-name
+      </div>
+      <div>
+        07/12/2013 9:13:20 - 07/12/2013 12:00:00
+      </div>
+      <div>
+        rrule
+      </div>
+      <div>
+        common.comment:2:
+        <div
+          class="ml-2"
+        >
+          - pbehavior-comment-1-author: pbehavior-comment-1-message
+        </div>
+      </div>
+      <div>
+        common.comment:2:
+        <div
+          class="ml-2"
+        >
+          - pbehavior-comment-2-author: pbehavior-comment-2-message
+        </div>
+      </div>
+      <hr
+        class="v-divider theme--light"
+      />
+    </div>
+  </div>
+</div>
+`;
+
 exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with full pbehavior 1`] = `
 <div>
   <span
@@ -11,7 +84,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with full p
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text pbehavior pbehavior-type-icon theme--light"
+        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -38,7 +111,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with full p
         common.author: pbehavior-author
       </div>
       <div>
-        common.type: pbehavior-type-name
+        common.type: type-name
       </div>
       <div>
         common.reason: pbehavior-reason-name
@@ -48,22 +121,6 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with full p
       </div>
       <div>
         rrule
-      </div>
-      <div>
-        common.comment:2:
-        <div
-          class="ml-2"
-        >
-          - pbehavior-comment-1-author: pbehavior-comment-1-message
-        </div>
-      </div>
-      <div>
-        common.comment:2:
-        <div
-          class="ml-2"
-        >
-          - pbehavior-comment-2-author: pbehavior-comment-2-message
-        </div>
       </div>
       <hr
         class="v-divider theme--light"
@@ -84,7 +141,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with pbehav
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text pbehavior pbehavior-type-icon theme--light"
+        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -111,86 +168,13 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with pbehav
         common.author: pbehavior-author
       </div>
       <div>
-        common.type: pbehavior-type-name
+        common.type: type-name
       </div>
       <div>
         common.reason: pbehavior-reason-name
       </div>
       <div>
         07/08/2013 21:13:20 - 08/08/2013 0:00:00
-      </div>
-      <div>
-        rrule
-      </div>
-      <div>
-        common.comment:2:
-        <div
-          class="ml-2"
-        >
-          - pbehavior-comment-1-author: pbehavior-comment-1-message
-        </div>
-      </div>
-      <div>
-        common.comment:2:
-        <div
-          class="ml-2"
-        >
-          - pbehavior-comment-2-author: pbehavior-comment-2-message
-        </div>
-      </div>
-      <hr
-        class="v-divider theme--light"
-      />
-    </div>
-  </div>
-</div>
-`;
-
-exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without comments 1`] = `
-<div>
-  <span
-    class="v-tooltip c-extra-details v-tooltip--top"
-  >
-    <transition-stub
-      name="slide-y-reverse-transition"
-    />
-    <span>
-      <i
-        aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text pbehavior pbehavior-type-icon theme--light"
-        style="font-size: 16px;"
-      />
-    </span>
-  </span>
-</div>
-`;
-
-exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without comments 2`] = `
-<div
-  class="v-tooltip__content"
-  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
->
-  <div>
-    <strong>
-      alarmList.actions.iconsTitles.pbehaviors
-    </strong>
-    <div>
-      <div
-        class="mt-2 font-weight-bold"
-      >
-        pbehavior-name
-      </div>
-      <div>
-        common.author: pbehavior-author
-      </div>
-      <div>
-        common.type: pbehavior-type-name
-      </div>
-      <div>
-        common.reason: pbehavior-reason-name
-      </div>
-      <div>
-        07/12/2013 9:13:20 - 07/12/2013 12:00:00
       </div>
       <div>
         rrule
@@ -214,7 +198,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rea
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text pbehavior pbehavior-type-icon theme--light"
+        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -241,7 +225,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rea
         common.author: pbehavior-author
       </div>
       <div>
-        common.type: pbehavior-type-name
+        common.type: type-name
       </div>
       <!---->
       <div>
@@ -249,22 +233,6 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rea
       </div>
       <div>
         rrule
-      </div>
-      <div>
-        common.comment:2:
-        <div
-          class="ml-2"
-        >
-          - pbehavior-comment-1-author: pbehavior-comment-1-message
-        </div>
-      </div>
-      <div>
-        common.comment:2:
-        <div
-          class="ml-2"
-        >
-          - pbehavior-comment-2-author: pbehavior-comment-2-message
-        </div>
       </div>
       <hr
         class="v-divider theme--light"
@@ -285,7 +253,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rru
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text pbehavior pbehavior-type-icon theme--light"
+        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -312,7 +280,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rru
         common.author: pbehavior-author
       </div>
       <div>
-        common.type: pbehavior-type-name
+        common.type: type-name
       </div>
       <div>
         common.reason: pbehavior-reason-name
@@ -321,22 +289,6 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rru
         07/12/2013 9:13:20 - 07/12/2013 12:00:00
       </div>
       <!---->
-      <div>
-        common.comment:2:
-        <div
-          class="ml-2"
-        >
-          - pbehavior-comment-1-author: pbehavior-comment-1-message
-        </div>
-      </div>
-      <div>
-        common.comment:2:
-        <div
-          class="ml-2"
-        >
-          - pbehavior-comment-2-author: pbehavior-comment-2-message
-        </div>
-      </div>
       <hr
         class="v-divider theme--light"
       />
@@ -356,7 +308,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without tst
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text pbehavior pbehavior-type-icon theme--light"
+        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -383,7 +335,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without tst
         common.author: pbehavior-author
       </div>
       <div>
-        common.type: pbehavior-type-name
+        common.type: type-name
       </div>
       <div>
         common.reason: pbehavior-reason-name
@@ -394,22 +346,6 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without tst
       </div>
       <div>
         rrule
-      </div>
-      <div>
-        common.comment:2:
-        <div
-          class="ml-2"
-        >
-          - pbehavior-comment-1-author: pbehavior-comment-1-message
-        </div>
-      </div>
-      <div>
-        common.comment:2:
-        <div
-          class="ml-2"
-        >
-          - pbehavior-comment-2-author: pbehavior-comment-2-message
-        </div>
       </div>
       <hr
         class="v-divider theme--light"
