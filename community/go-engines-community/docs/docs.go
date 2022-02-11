@@ -695,7 +695,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -955,7 +957,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -2126,7 +2130,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -2277,7 +2283,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -2604,7 +2612,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "202": {},
+                    "202": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -2926,7 +2936,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3105,7 +3117,7 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Entity id",
-                        "name": "id",
+                        "name": "_id",
                         "in": "query",
                         "required": true
                     }
@@ -3150,7 +3162,7 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Entity id",
-                        "name": "id",
+                        "name": "_id",
                         "in": "query",
                         "required": true
                     },
@@ -3204,13 +3216,15 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Entity id",
-                        "name": "id",
+                        "name": "_id",
                         "in": "query",
                         "required": true
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -3549,7 +3563,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3858,7 +3874,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -4001,7 +4019,9 @@ var doc = `{
                 "summary": "Get file access",
                 "operationId": "auth-get-file-access",
                 "responses": {
-                    "204": {}
+                    "204": {
+                        "description": ""
+                    }
                 }
             }
         },
@@ -4082,7 +4102,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -4348,7 +4370,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -4675,7 +4699,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -4749,7 +4775,9 @@ var doc = `{
                 "summary": "delete user interface",
                 "operationId": "internal-delete-user-interface",
                 "responses": {
-                    "204": {}
+                    "204": {
+                        "description": ""
+                    }
                 }
             }
         },
@@ -4776,7 +4804,9 @@ var doc = `{
                 "summary": "Get logged user count",
                 "operationId": "auth-logged-user-count",
                 "responses": {
-                    "204": {}
+                    "204": {
+                        "description": ""
+                    }
                 }
             }
         },
@@ -4835,7 +4865,9 @@ var doc = `{
                 "summary": "Log out",
                 "operationId": "auth-logout",
                 "responses": {
-                    "204": {}
+                    "204": {
+                        "description": ""
+                    }
                 }
             }
         },
@@ -5095,7 +5127,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -5373,7 +5407,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -5418,7 +5454,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {},
+                    "200": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -5696,7 +5734,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -6024,7 +6064,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -6357,7 +6399,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6873,7 +6917,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -7133,7 +7179,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -7405,7 +7453,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -7755,7 +7805,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -8257,7 +8309,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -8529,7 +8583,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -8582,7 +8638,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -8854,7 +8912,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -10317,11 +10377,28 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/entity.Infos"
                 },
+                "ko_events": {
+                    "type": "integer"
+                },
+                "last_event_date": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
                 "measurements": {
                     "type": "object"
                 },
                 "name": {
                     "type": "string"
+                },
+                "ok_events": {
+                    "type": "integer"
+                },
+                "pbehavior_info": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.PbehaviorInfo"
+                },
+                "state": {
+                    "type": "integer"
                 },
                 "type": {
                     "type": "string"
@@ -10530,13 +10607,30 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/entity.Infos"
                 },
+                "ko_events": {
+                    "type": "integer"
+                },
+                "last_event_date": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
                 "measurements": {
                     "type": "object"
                 },
                 "name": {
                     "type": "string"
                 },
+                "ok_events": {
+                    "type": "integer"
+                },
+                "pbehavior_info": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.PbehaviorInfo"
+                },
                 "sli_avail_state": {
+                    "type": "integer"
+                },
+                "state": {
                     "type": "integer"
                 },
                 "type": {
@@ -10879,16 +10973,33 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/entity.Infos"
                 },
+                "ko_events": {
+                    "type": "integer"
+                },
+                "last_event_date": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
                 "measurements": {
                     "type": "object"
                 },
                 "name": {
                     "type": "string"
                 },
+                "ok_events": {
+                    "type": "integer"
+                },
                 "output_template": {
                     "type": "string"
                 },
+                "pbehavior_info": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.PbehaviorInfo"
+                },
                 "sli_avail_state": {
+                    "type": "integer"
+                },
+                "state": {
                     "type": "integer"
                 },
                 "type": {
@@ -12641,10 +12752,6 @@ var doc = `{
                 }
             }
         },
-        "primitive.M": {
-            "type": "object",
-            "additionalProperties": true
-        },
         "resolverule.CreateRequest": {
             "type": "object",
             "required": [
@@ -13248,6 +13355,9 @@ var doc = `{
                 "alarm_display_name": {
                     "type": "string"
                 },
+                "alarm_id": {
+                    "type": "string"
+                },
                 "assigned_instructions": {
                     "type": "array",
                     "items": {
@@ -13331,7 +13441,7 @@ var doc = `{
                 },
                 "stats": {
                     "type": "object",
-                    "$ref": "#/definitions/serviceweather.Stats"
+                    "$ref": "#/definitions/statistics.EventStatistics"
                 },
                 "status": {
                     "type": "object",
@@ -13456,23 +13566,6 @@ var doc = `{
                 }
             }
         },
-        "serviceweather.Stats": {
-            "type": "object",
-            "properties": {
-                "ko": {
-                    "type": "integer"
-                },
-                "last_event": {
-                    "type": "integer"
-                },
-                "last_ko": {
-                    "type": "integer"
-                },
-                "ok": {
-                    "type": "integer"
-                }
-            }
-        },
         "serviceweather.WeatherLink": {
             "type": "object",
             "properties": {
@@ -13562,6 +13655,23 @@ var doc = `{
                     "type": "number"
                 },
                 "type": {
+                    "type": "integer"
+                }
+            }
+        },
+        "statistics.EventStatistics": {
+            "type": "object",
+            "properties": {
+                "ko": {
+                    "type": "integer"
+                },
+                "last_event": {
+                    "type": "integer"
+                },
+                "last_ko": {
+                    "type": "integer"
+                },
+                "ok": {
                     "type": "integer"
                 }
             }

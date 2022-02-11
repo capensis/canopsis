@@ -55,7 +55,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		entityservice.NewAdapter(mongoClient),
 		entity.NewAdapter(mongoClient),
 		entityservice.NewCountersCache(redisSession, logger),
-		entityservice.NewStorage(redisSession, json.NewEncoder(), json.NewDecoder()),
+		entityservice.NewStorage(entityservice.NewAdapter(mongoClient), redisSession, json.NewEncoder(), json.NewDecoder(), logger),
 		serviceLockClient,
 		redisSession,
 		logger,
