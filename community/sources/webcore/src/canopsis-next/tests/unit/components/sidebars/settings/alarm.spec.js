@@ -7,6 +7,12 @@ import { createMockedStoreModules } from '@unit/utils/store';
 import { createButtonStub } from '@unit/stubs/button';
 import { createInputStub } from '@unit/stubs/input';
 import { mockDateNow, mockSidebar } from '@unit/utils/mock-hooks';
+import {
+  createSettingsMocks,
+  getWidgetRequestWithNewProperty,
+  getWidgetRequestWithNewParametersProperty,
+  submitWithExpects,
+} from '@unit/utils/settings';
 
 import {
   ALARMS_OPENED_VALUES,
@@ -17,6 +23,7 @@ import {
   SIDE_BARS,
   COLOR_INDICATOR_TYPES, WIDGET_TYPES,
 } from '@/constants';
+
 import ClickOutside from '@/services/click-outside';
 import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 import { widgetToForm, formToWidget, getEmptyWidgetByType } from '@/helpers/forms/widgets/common';
@@ -65,14 +72,12 @@ const snapshotStubs = {
   'export-csv-form': true,
 };
 
-const $clickOutside = new ClickOutside();
-
 const factory = (options = {}) => shallowMount(AlarmSettings, {
   localVue,
   stubs,
   parentComponent: {
     provide: {
-      $clickOutside,
+      $clickOutside: new ClickOutside(),
     },
   },
 
@@ -84,14 +89,13 @@ const snapshotFactory = (options = {}) => mount(AlarmSettings, {
   stubs: snapshotStubs,
   parentComponent: {
     provide: {
-      $clickOutside,
+      $clickOutside: new ClickOutside(),
     },
   },
 
   ...options,
 });
 
-const selectSubmitButton = wrapper => wrapper.find('button.v-btn');
 const selectFieldTitle = wrapper => wrapper.find('input.field-title');
 const selectFieldPeriodicRefresh = wrapper => wrapper.find('input.field-periodic-refresh');
 const selectFieldDefaultSortColumn = wrapper => wrapper.find('input.field-default-sort-column');
@@ -122,6 +126,16 @@ describe('alarm', () => {
 
   const $sidebar = mockSidebar();
 
+  const {
+    createWidget,
+    updateWidget,
+    copyWidget,
+    fetchActiveView,
+    activeViewModule,
+    widgetModule,
+    authModule,
+  } = createSettingsMocks();
+
   const widget = {
     ...generateDefaultAlarmListWidget(),
 
@@ -135,69 +149,12 @@ describe('alarm', () => {
     },
     hidden: false,
   };
-  const createWidget = jest.fn();
-  const updateWidget = jest.fn();
-  const copyWidget = jest.fn();
-  const fetchActiveView = jest.fn();
-  const activeViewModule = {
-    name: 'activeView',
-    actions: {
-      fetch: fetchActiveView,
-    },
-  };
-  const widgetModule = {
-    name: 'view/widget',
-    actions: {
-      create: createWidget,
-      update: updateWidget,
-      copy: copyWidget,
-    },
-  };
-  const authModule = {
-    name: 'auth',
-    getters: {
-      currentUserPermissionsById: {},
-    },
-  };
 
   const store = createMockedStoreModules([
     activeViewModule,
     widgetModule,
     authModule,
   ]);
-
-  const getWidgetRequestWithNewProperty = (key, value) => ({
-    ...omit(widget, ['_id']),
-
-    [key]: value,
-  });
-
-  const getWidgetRequestWithNewParameterProperty = (key, value) => ({
-    ...omit(widget, ['_id']),
-
-    parameters: {
-      ...widget.parameters,
-
-      [key]: value,
-    },
-  });
-
-  const submitWithExpects = async (wrapper, { widgetMethod, expectData }) => {
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
-
-    await flushPromises();
-
-    expect(widgetMethod).toHaveBeenCalledTimes(1);
-    expect(widgetMethod).toHaveBeenLastCalledWith(
-      expect.any(Object),
-      expectData,
-      undefined,
-    );
-    expect(fetchActiveView).toHaveBeenCalledTimes(1);
-    expect($sidebar.hide).toHaveBeenCalledTimes(1);
-  };
 
   afterEach(() => {
     createWidget.mockReset();
@@ -228,6 +185,8 @@ describe('alarm', () => {
     });
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: createWidget,
       expectData: {
         data: {
@@ -258,6 +217,8 @@ describe('alarm', () => {
     });
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: copyWidget,
       expectData: {
         id: widget._id,
@@ -284,10 +245,12 @@ describe('alarm', () => {
     fieldTitle.setValue(newTitle);
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewProperty('title', newTitle),
+        data: getWidgetRequestWithNewProperty(widget, 'title', newTitle),
       },
     });
   });
@@ -314,10 +277,12 @@ describe('alarm', () => {
     fieldPeriodicRefresh.vm.$emit('input', periodicRefresh);
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParameterProperty('periodic_refresh', periodicRefresh),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'periodic_refresh', periodicRefresh),
       },
     });
   });
@@ -343,10 +308,12 @@ describe('alarm', () => {
     fieldDefaultSortColumn.vm.$emit('input', sort);
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParameterProperty('sort', sort),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'sort', sort),
       },
     });
   });
@@ -372,10 +339,12 @@ describe('alarm', () => {
     fieldColumns.vm.$emit('input', columns);
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParameterProperty('widgetColumns', columns),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetColumns', columns),
       },
     });
   });
@@ -403,10 +372,12 @@ describe('alarm', () => {
     fieldColumns.vm.$emit('input', columns);
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParameterProperty('widgetColumns', formWidgetColumnsToColumns(columns)),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetColumns', formWidgetColumnsToColumns(columns)),
       },
     });
   });
@@ -432,10 +403,12 @@ describe('alarm', () => {
     fieldColumns.vm.$emit('input', columns);
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParameterProperty('widgetGroupColumns', columns),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetGroupColumns', columns),
       },
     });
   });
@@ -461,10 +434,12 @@ describe('alarm', () => {
     fieldColumns.vm.$emit('input', columns);
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParameterProperty('serviceDependenciesColumns', columns),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'serviceDependenciesColumns', columns),
       },
     });
   });
@@ -487,10 +462,12 @@ describe('alarm', () => {
     fieldDefaultElementsPerPage.vm.$emit('input', itemsPerPage);
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParameterProperty('itemsPerPage', itemsPerPage),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'itemsPerPage', itemsPerPage),
       },
     });
   });
@@ -511,10 +488,12 @@ describe('alarm', () => {
     fieldOpenedResolvedFilter.vm.$emit('input', ALARMS_OPENED_VALUES.all);
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParameterProperty('opened', ALARMS_OPENED_VALUES.all),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'opened', ALARMS_OPENED_VALUES.all),
       },
     });
   });
@@ -553,10 +532,12 @@ describe('alarm', () => {
     fieldFilters.vm.$emit('input', filter);
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewProperty('parameters', {
+        data: getWidgetRequestWithNewProperty(widget, 'parameters', {
           ...widget.parameters,
 
           mainFilterUpdatedAt: nowTimestamp,
@@ -613,10 +594,12 @@ describe('alarm', () => {
     fieldRemediationInstructionsFilters.vm.$emit('input', remediationInstructionsFilters);
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParameterProperty('remediationInstructionsFilters', remediationInstructionsFilters),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'remediationInstructionsFilters', remediationInstructionsFilters),
       },
     });
   });
@@ -642,10 +625,12 @@ describe('alarm', () => {
     fieldLiveReporting.vm.$emit('input', liveReporting);
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParameterProperty('liveReporting', liveReporting),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'liveReporting', liveReporting),
       },
     });
   });
@@ -671,10 +656,12 @@ describe('alarm', () => {
     fieldInfoPopups.vm.$emit('input', infoPopups);
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParameterProperty('infoPopups', infoPopups),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'infoPopups', infoPopups),
       },
     });
   });
@@ -697,10 +684,12 @@ describe('alarm', () => {
     fieldTextEditor.vm.$emit('input', moreInfoTemplate);
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParameterProperty('moreInfoTemplate', moreInfoTemplate),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'moreInfoTemplate', moreInfoTemplate),
       },
     });
   });
@@ -723,10 +712,12 @@ describe('alarm', () => {
     fieldGridRangeSize.vm.$emit('input', expandGridRangeSize);
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParameterProperty('expandGridRangeSize', expandGridRangeSize),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'expandGridRangeSize', expandGridRangeSize),
       },
     });
   });
@@ -749,10 +740,12 @@ describe('alarm', () => {
     fieldHtmlEnabledSwitcher.vm.$emit('input', isHtmlEnabledOnTimeLine);
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParameterProperty('isHtmlEnabledOnTimeLine', isHtmlEnabledOnTimeLine),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'isHtmlEnabledOnTimeLine', isHtmlEnabledOnTimeLine),
       },
     });
   });
@@ -775,10 +768,12 @@ describe('alarm', () => {
     fieldAckNoteRequired.vm.$emit('input', isAckNoteRequired);
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParameterProperty('isAckNoteRequired', isAckNoteRequired),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'isAckNoteRequired', isAckNoteRequired),
       },
     });
   });
@@ -801,10 +796,12 @@ describe('alarm', () => {
     fieldAckNoteRequired.vm.$emit('input', isMultiAckEnabled);
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParameterProperty('isMultiAckEnabled', isMultiAckEnabled),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'isMultiAckEnabled', isMultiAckEnabled),
       },
     });
   });
@@ -830,10 +827,12 @@ describe('alarm', () => {
     fieldAckNoteRequired.vm.$emit('input', fastAckOutput);
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParameterProperty('fastAckOutput', fastAckOutput),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'fastAckOutput', fastAckOutput),
       },
     });
   });
@@ -856,10 +855,12 @@ describe('alarm', () => {
     fieldSnoozeNoteRequired.vm.$emit('input', isSnoozeNoteRequired);
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParameterProperty('isSnoozeNoteRequired', isSnoozeNoteRequired),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'isSnoozeNoteRequired', isSnoozeNoteRequired),
       },
     });
   });
@@ -885,10 +886,12 @@ describe('alarm', () => {
     fieldLinksCategoriesAsList.vm.$emit('input', linksCategoriesAsList);
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParameterProperty('linksCategoriesAsList', linksCategoriesAsList),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'linksCategoriesAsList', linksCategoriesAsList),
       },
     });
   });
@@ -916,10 +919,12 @@ describe('alarm', () => {
     fieldExportCsvForm.vm.$emit('input', exportProperties);
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewProperty('parameters', exportProperties),
+        data: getWidgetRequestWithNewProperty(widget, 'parameters', exportProperties),
       },
     });
   });
@@ -942,10 +947,12 @@ describe('alarm', () => {
     fieldStickyHeader.vm.$emit('input', stickyHeader);
 
     await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParameterProperty('sticky_header', stickyHeader),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'sticky_header', stickyHeader),
       },
     });
   });
