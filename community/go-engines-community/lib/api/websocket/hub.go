@@ -177,7 +177,9 @@ func (h *hub) sendAndCheckConn(room string, b interface{}) []string {
 	h.connsMx.RLock()
 	h.roomsMx.Lock(room)
 	defer func() {
-		h.roomsMx.Unlock(room)
+		if err := h.roomsMx.Unlock(room); err != nil {
+			h.logger.Err(err).Msg("roomsMx unlock")
+		}
 		h.connsMx.RUnlock()
 	}()
 
@@ -211,7 +213,9 @@ func (h *hub) CloseRoom(room string) error {
 	h.connsMx.RLock()
 	h.roomsMx.Lock(room)
 	defer func() {
-		h.roomsMx.Unlock(room)
+		if err := h.roomsMx.Unlock(room); err != nil {
+			h.logger.Err(err).Msg("roomsMx unlock")
+		}
 		h.connsMx.RUnlock()
 	}()
 
@@ -239,7 +243,9 @@ func (h *hub) closeRoomAndCheckConn(room string) ([]string, error) {
 	h.connsMx.RLock()
 	h.roomsMx.Lock(room)
 	defer func() {
-		h.roomsMx.Unlock(room)
+		if err := h.roomsMx.Unlock(room); err != nil {
+			h.logger.Err(err).Msg("roomsMx unlock")
+		}
 		h.connsMx.RUnlock()
 	}()
 
@@ -272,7 +278,11 @@ func (h *hub) closeRoomAndCheckConn(room string) ([]string, error) {
 
 func (h *hub) RoomHasConnection(room string) bool {
 	h.roomsMx.Lock(room)
-	defer h.roomsMx.Unlock(room)
+	defer func() {
+		if err := h.roomsMx.Unlock(room); err != nil {
+			h.logger.Err(err).Msg("roomsMx unlock")
+		}
+	}()
 
 	return len(h.rooms[room]) > 0
 }
@@ -281,7 +291,9 @@ func (h *hub) join(connId, room string) (closed bool) {
 	h.connsMx.RLock()
 	h.roomsMx.Lock(room)
 	defer func() {
-		h.roomsMx.Unlock(room)
+		if err := h.roomsMx.Unlock(room); err != nil {
+			h.logger.Err(err).Msg("roomsMx unlock")
+		}
 		h.connsMx.RUnlock()
 	}()
 
@@ -328,7 +340,9 @@ func (h *hub) leave(connId, room string) (closed bool) {
 	h.connsMx.RLock()
 	h.roomsMx.Lock(room)
 	defer func() {
-		h.roomsMx.Unlock(room)
+		if err := h.roomsMx.Unlock(room); err != nil {
+			h.logger.Err(err).Msg("roomsMx unlock")
+		}
 		h.connsMx.RUnlock()
 	}()
 
@@ -371,7 +385,11 @@ func (h *hub) stop() {
 
 func (h *hub) cleanRoom(room string) {
 	h.roomsMx.Lock(room)
-	defer h.roomsMx.Unlock(room)
+	defer func() {
+		if err := h.roomsMx.Unlock(room); err != nil {
+			h.logger.Err(err).Msg("roomsMx unlock")
+		}
+	}()
 	h.rooms[room] = nil
 }
 
@@ -515,7 +533,11 @@ func (h *hub) checkAuth(ctx context.Context) ([]string, []string) {
 
 func (h *hub) checkRoomAuth(room string, checked map[string]bool) []string {
 	h.roomsMx.Lock(room)
-	defer h.roomsMx.Unlock(room)
+	defer func() {
+		if err := h.roomsMx.Unlock(room); err != nil {
+			h.logger.Err(err).Msg("roomsMx unlock")
+		}
+	}()
 
 	roomConns := h.rooms[room]
 	authRoomConns := make([]string, 0, len(roomConns))
@@ -678,7 +700,11 @@ func (h *hub) removeConnsFromRooms(connIds []string) {
 
 func (h *hub) removeConnsFromRoom(room string, connIds []string) {
 	h.roomsMx.Lock(room)
-	defer h.roomsMx.Unlock(room)
+	defer func() {
+		if err := h.roomsMx.Unlock(room); err != nil {
+			h.logger.Err(err).Msg("roomsMx unlock")
+		}
+	}()
 
 	conns := h.rooms[room]
 	filteredConns := make([]string, 0, len(conns))

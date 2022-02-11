@@ -15,17 +15,45 @@
   register: reconfigurecmd
   failed_when: reconfigurecmd.rc != 0
 
-- name: Choose Canopsis API edition (if using Community)
+- name: Choose canopsis-api edition (if using Community)
   file:
     src: /opt/canopsis/bin/canopsis-api-community
     dest: /opt/canopsis/bin/canopsis-api
     state: link
   when: canopsis_edition == "community"
 
-- name: Choose Canopsis API edition (if using Pro)
+- name: Choose canopsis-api edition (if using Pro)
   file:
     src: /opt/canopsis/bin/canopsis-api-pro
     dest: /opt/canopsis/bin/canopsis-api
+    state: link
+  when: canopsis_edition == "pro"
+
+- name: Choose engine-che edition (if using Community)
+  file:
+    src: /opt/canopsis/bin/engine-che-community
+    dest: /opt/canopsis/bin/engine-che
+    state: link
+  when: canopsis_edition == "community"
+
+- name: Choose engine-che edition (if using Pro)
+  file:
+    src: /opt/canopsis/bin/engine-che-pro
+    dest: /opt/canopsis/bin/engine-che
+    state: link
+  when: canopsis_edition == "pro"
+
+- name: Choose engine-axe edition (if using Community)
+  file:
+    src: /opt/canopsis/bin/engine-axe-community
+    dest: /opt/canopsis/bin/engine-axe
+    state: link
+  when: canopsis_edition == "community"
+
+- name: Choose canopsis-axe edition (if using Pro)
+  file:
+    src: /opt/canopsis/bin/engine-axe-pro
+    dest: /opt/canopsis/bin/engine-axe
     state: link
   when: canopsis_edition == "pro"
 

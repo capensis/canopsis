@@ -183,8 +183,6 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 			w.Logger.Err(err).Msg("cannot publish event")
 		}
 	}
-
-	return
 }
 
 func (w *periodicalWorker) publishToEngineFIFO(event types.Event) error {
