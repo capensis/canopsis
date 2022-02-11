@@ -1,11 +1,14 @@
-# Driver API
+# Driver API (`import-context-graph`)
 
 !!! Info
     Disponible uniquement en édition Pro.
 
 Canopsis embarque un petit programme en ligne de commande permettant d'interroger une API externe afin de compléter son référentiel interne. Il peut être exécuté à la main ou via un conteneur Docker.
 
-Ce programme est nommé `import-context-graph` dans le répertoire `/opt/canopsis/bin`.
+Ce programme se situe :
+
+* à l'emplacement `/opt/canopsis/bin/import-context-graph` lors d'une installation par paquets.
+* dans le conteneur `pro/import-context-graph` en Docker.
 
 ## Utilisation
 
@@ -43,7 +46,7 @@ Concernant les types d'actions d'import :
   *  `action` : Action effectuée sur l'entité reçue dans la réponse de l'API
      *  `create` : Création de l'entité en base
      *  `set`: La même chose que `create` mais peut être partielle si l'API ne retourne pas tous les champs
-     *  `update` : Mise à jour de l'entité en base. Si l'entité n'existe pas, aucune modification ne sera appliqué
+     *  `update` : Mise à jour de l'entité en base. Si l'entité n'existe pas, aucune modification ne sera appliquée
      *  `enable` : Active l'entité (passage à `true` du champ `enable` de l'entité en base)
   *  `missing_action` : Action effectuée sur les entités manquantes de la réponse de l'API
      *  `delete` : Suppression de l'entité en base
@@ -80,7 +83,7 @@ api:
   url: http://mon.api/?filtre=filtre1
   # Spécifier le type de requête HTTP (GET, POST, PUT etc)
   method: GET
-  # headers contient les champs headers de la requête
+  # Spécifier les en-têtes de la requête
   headers:
   # Le payload contient le body
   body:
@@ -143,7 +146,7 @@ export EXTERNAL_API_PASSWORD=test
 2021-09-29T10:39:46+02:00 INF git.canopsis.net/canopsis/canopsis-pro/pro/go-engines-pro/cmd/import-context-graph/main.go:65 > import finished deleted=0 exec_time=3.784369ms updated=1
 ```
 
-!!! Info
+!!! attention
     Cet exemple d'exécution ne répond pas aux bonnes pratiques de sécurité. Veillez donc à bien adapter cette exécution selon votre politique de sécurité interne.
     
     Dans le cadre d'un usage via Docker, il est conseillé d'utiliser "[Docker Secrets](https://docs.docker.com/engine/swarm/secrets/)" ou une autre solution de coffre-fort.
@@ -155,4 +158,3 @@ Résultats dans Canopsis :
 ![](./img/linked_alarm.png)
 
 ![](./img/var_alarm.png)
-
