@@ -46,10 +46,6 @@ describe('alarm-column-value-extra-details', () => {
             tstart: '',
             tstop: '',
             rrule: 'rrule',
-            type: {
-              name: 'pbehavior-type-name',
-              icon_name: 'pbehavior-type-icon',
-            },
             reason: {
               name: 'pbehavior-reason-name',
             },
@@ -76,6 +72,10 @@ describe('alarm-column-value-extra-details', () => {
             ticket: {},
             canceled: {},
             snooze: {},
+            pbehavior_info: {
+              icon_name: 'icon',
+              type_name: 'type',
+            },
           },
         },
       },
