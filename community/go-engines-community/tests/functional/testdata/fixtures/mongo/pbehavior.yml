@@ -375,34 +375,6 @@ pbehavior:
     type_: test-type-to-pbh-edit-1
     updated: 1592215337
   pbehavior_17:
-    _id: test-pbehavior-to-get-alarm
-    author: root
-    comments:
-    - _id: test-comment-1
-      author: root
-      message: qwerty
-      ts: 1592215337
-    - _id: test-comment-2
-      author: root
-      message: asdasd
-      ts: 1592215337
-    created: 1592215337
-    enabled: true
-    exceptions:
-    - test-exception-to-pbh-edit
-    exdates:
-    - begin: 1591164001
-      end: 1591167601
-      type: test-type-to-pbh-edit-1
-    filter: '{"$and":[{"name":"ccccc"}]}'
-    name: pbehavior-to-get-alarm
-    reason: test-reason-1
-    rrule: ""
-    tstart: 1591172881
-    tstop: 1591536400
-    type_: test-type-to-pbh-edit-1
-    updated: 1592215337
-  pbehavior_18:
     _id: test-pbehavior-to-get-by-type
     author: root
     comments: []
@@ -418,7 +390,7 @@ pbehavior:
     tstop: 1591536400
     type_: test-type-to-get-pbehavior
     updated: 1592215337
-  pbehavior_19:
+  pbehavior_18:
     _id: test-pbehavior-to-get-by-reason
     author: root
     comments: []
@@ -434,7 +406,7 @@ pbehavior:
     tstop: 1591536400
     type_: test-type-to-pbh-edit-1
     updated: 1592215337
-  pbehavior_20:
+  pbehavior_19:
     _id: test-pbehavior-to-exception-get
     author: test-pbehavior-to-exception-get-author
     comments: []
@@ -451,7 +423,7 @@ pbehavior:
     tstop: 2591536400
     type_: test-type-to-pbh-edit-1
     updated: 1592215337
-  pbehavior_21:
+  pbehavior_20:
     _id: test-pbehavior-to-entities-get
     author: test-pbehavior-to-entities-get-author
     comments: []
@@ -467,7 +439,7 @@ pbehavior:
     tstop: 1591172981
     type_: test-type-to-pbh-edit-1
     updated: 1592215337
-  pbehavior_22:
+  pbehavior_21:
     _id: test-pbehavior-to-patch-1
     author: test-pbehavior-to-patch-1-author
     comments: []
@@ -487,7 +459,7 @@ pbehavior:
     tstop: 1592215338
     type_: test-active-type-to-patch-pbehavior
     updated: 1592215337
-  pbehavior_23:
+  pbehavior_22:
     _id: test-pbehavior-to-patch-2
     author: test-pbehavior-to-patch-2-author
     comments: []
@@ -501,7 +473,7 @@ pbehavior:
     tstop: null
     type_: test-default-pause-type
     updated: 1592215337
-  pbehavior_24:
+  pbehavior_23:
     _id: test-pbehavior-to-bulk-delete-1
     author: root
     created: 1592215337
@@ -513,7 +485,7 @@ pbehavior:
     tstop: 1591536400
     type_: test-type-to-pbh-edit-1
     updated: 1592215337
-  pbehavior_25:
+  pbehavior_24:
     _id: test-pbehavior-to-bulk-delete-2
     author: root
     created: 1592215337
@@ -525,7 +497,7 @@ pbehavior:
     tstop: 1591536400
     type_: test-type-to-pbh-edit-1
     updated: 1592215337
-  pbehavior_26:
+  pbehavior_25:
     _id: test-pbehavior-to-bulk-update-1
     author: root
     created: 1592215337
@@ -537,7 +509,7 @@ pbehavior:
     tstop: 1591536400
     type_: test-type-to-pbh-edit-1
     updated: 1592215337
-  pbehavior_27:
+  pbehavior_26:
     _id: test-pbehavior-to-bulk-update-2
     author: root
     created: 1592215337
@@ -549,7 +521,7 @@ pbehavior:
     tstop: 1591536400
     type_: test-type-to-pbh-edit-1
     updated: 1592215337
-  pbehavior_28:
+  pbehavior_27:
     _id: test-pbehavior-to-check-unique
     author: root
     created: 1592215337
