@@ -1,15 +1,15 @@
 <template lang="pug">
   v-speed-dial.d-inline-block(
     v-model="isVSpeedDialOpen",
-    direction="top",
+    direction="bottom",
     transition="scale-transition"
   )
-    v-tooltip(slot="activator", bottom)
+    v-tooltip(slot="activator", top)
       v-btn.primary(slot="activator", :input-value="isVSpeedDialOpen", dark, fab, small)
         v-icon add
         v-icon close
       span {{ $t('context.fab.common') }}
-    v-tooltip(top)
+    v-tooltip(bottom)
       v-btn(
         slot="activator",
         color="indigo",
