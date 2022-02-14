@@ -1190,60 +1190,6 @@ instruction:
       value: 2
     type: 0
   instruction_40:
-    _id: test-instruction-with-pbh-with-some-active
-    active_on_pbh:
-    - pbh-type-for-instruction-with-pbehavior-1
-    - pbh-type-for-instruction-with-pbehavior-2
-    alarm_patterns:
-    - v:
-        component: test-alarm-instruction-with-pbehavior-component
-    author: test-user-author-1-id
-    created: 1596712203
-    description: test-alarm-with-pbh-with-some-active-description
-    enabled: true
-    last_modified: 1596712203
-    name: test-alarm-with-pbh-with-some-active-name
-    steps: []
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_41:
-    _id: test-instruction-with-pbh-all-active
-    alarm_patterns:
-    - v:
-        component: test-alarm-instruction-with-pbehavior-component
-    author: test-user-author-1-id
-    created: 1596712203
-    description: test-alarm-with-pbh-all-active-description
-    enabled: true
-    last_modified: 1596712203
-    name: test-alarm-with-pbh-all-active-name
-    steps: []
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_42:
-    _id: test-instruction-with-pbh-with-some-disabled
-    alarm_patterns:
-    - v:
-        component: test-alarm-instruction-with-pbehavior-component
-    author: test-user-author-1-id
-    created: 1596712203
-    description: test-alarm-with-pbh-with-some-disabled-description
-    disabled_on_pbh:
-    - pbh-type-for-instruction-with-pbehavior-1
-    - pbh-type-for-instruction-with-pbehavior-2
-    enabled: true
-    last_modified: 1596712203
-    name: test-alarm-with-pbh-with-some-disabled-name
-    steps: []
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_43:
     _id: test-instruction-with-pbh-to-edit
     active_on_pbh:
     - test1
@@ -1262,7 +1208,7 @@ instruction:
       unit: s
       value: 2
     type: 0
-  instruction_44:
+  instruction_41:
     _id: test-instruction-to-run-auto-instruction-1-1
     author: test-user-author-1-id
     created: 1596712203
@@ -1282,7 +1228,7 @@ instruction:
       unit: s
       value: 2
     type: 1
-  instruction_45:
+  instruction_42:
     _id: test-instruction-to-run-auto-instruction-1-2
     author: test-user-author-1-id
     created: 1596712203
@@ -1300,7 +1246,7 @@ instruction:
       unit: s
       value: 2
     type: 1
-  instruction_46:
+  instruction_43:
     _id: test-instruction-to-run-auto-instruction-2-1
     author: test-user-author-1-id
     created: 1596712203
@@ -1318,7 +1264,7 @@ instruction:
       unit: s
       value: 3
     type: 1
-  instruction_47:
+  instruction_44:
     _id: test-instruction-to-run-auto-instruction-2-2
     author: test-user-author-1-id
     created: 1596712203
@@ -1336,7 +1282,7 @@ instruction:
       unit: s
       value: 2
     type: 1
-  instruction_48:
+  instruction_45:
     _id: test-instruction-to-run-auto-instruction-3-1
     author: test-user-author-1-id
     created: 1596712203
@@ -1354,7 +1300,7 @@ instruction:
       unit: s
       value: 10
     type: 1
-  instruction_49:
+  instruction_46:
     _id: test-instruction-to-run-auto-instruction-3-2
     author: test-user-author-1-id
     created: 1596712203
@@ -1372,7 +1318,7 @@ instruction:
       unit: s
       value: 2
     type: 1
-  instruction_50:
+  instruction_47:
     _id: test-instruction-to-run-auto-instruction-4-1
     author: test-user-author-1-id
     created: 1596712203
@@ -1391,7 +1337,7 @@ instruction:
       unit: s
       value: 2
     type: 1
-  instruction_51:
+  instruction_48:
     _id: test-instruction-to-run-auto-instruction-4-2
     author: test-user-author-1-id
     created: 1596712203
@@ -1409,7 +1355,7 @@ instruction:
       unit: s
       value: 2
     type: 1
-  instruction_52:
+  instruction_49:
     _id: test-instruction-to-run-auto-instruction-4-3
     author: test-user-author-1-id
     created: 1596712203
@@ -1427,7 +1373,7 @@ instruction:
       unit: s
       value: 2
     type: 1
-  instruction_53:
+  instruction_50:
     _id: test-instruction-to-run-auto-instruction-5
     author: test-user-author-1-id
     created: 1596712203
@@ -1445,7 +1391,7 @@ instruction:
       unit: s
       value: 2
     type: 1
-  instruction_54:
+  instruction_51:
     _id: test-instruction-to-run-auto-instruction-6-1
     author: test-user-author-1-id
     created: 1596712203
@@ -1464,7 +1410,7 @@ instruction:
       seconds: 2
       unit: s
     type: 1
-  instruction_55:
+  instruction_52:
     _id: test-instruction-to-run-auto-instruction-6-2
     author: test-user-author-1-id
     created: 1596712203
@@ -1482,7 +1428,7 @@ instruction:
       seconds: 2
       unit: s
     type: 1
-  instruction_56:
+  instruction_53:
     _id: test-instruction-to-run-auto-instruction-6-3
     author: test-user-author-1-id
     created: 1596712203
@@ -1500,7 +1446,7 @@ instruction:
       seconds: 2
       unit: s
     type: 1
-  instruction_57:
+  instruction_54:
     _id: test-instruction-to-run-auto-instruction-to-approve-update
     author: test-user-author-1-id
     created: 1596712203
@@ -1518,7 +1464,7 @@ instruction:
       unit: s
       value: 2
     type: 1
-  instruction_58:
+  instruction_55:
     _id: test-instruction-to-stats-get-1
     author: test-user-author-1-id
     avg_complete_time: 316
@@ -1576,7 +1522,7 @@ instruction:
     type: 0
     users:
     - test-user-to-stats-instruction-get
-  instruction_59:
+  instruction_56:
     _id: test-instruction-to-stats-get-2
     author: test-user-author-1-id
     avg_complete_time: 316
@@ -1597,7 +1543,7 @@ instruction:
       unit: s
       value: 2
     type: 1
-  instruction_60:
+  instruction_57:
     _id: test-instruction-to-stats-get-3
     author: test-user-author-1-id
     created: 1617555600
@@ -1616,7 +1562,7 @@ instruction:
       unit: s
       value: 2
     type: 1
-  instruction_61:
+  instruction_58:
     _id: test-instruction-to-stats-summary-get-1
     author: test-user-author-1-id
     avg_complete_time: 316
@@ -1673,7 +1619,7 @@ instruction:
     type: 0
     users:
     - test-user-to-stats-instruction-get
-  instruction_62:
+  instruction_59:
     _id: test-instruction-to-stats-summary-get-2
     author: test-user-author-1-id
     avg_complete_time: 316
@@ -1694,7 +1640,7 @@ instruction:
       unit: s
       value: 2
     type: 1
-  instruction_63:
+  instruction_60:
     _id: test-instruction-to-stats-summary-get-3
     author: test-user-author-1-id
     created: 1596712203
@@ -1713,7 +1659,7 @@ instruction:
       unit: s
       value: 2
     type: 1
-  instruction_64:
+  instruction_61:
     _id: test-instruction-to-stats-changes-get-1
     author: test-user-author-1-id
     created: 1596712203
@@ -1769,7 +1715,7 @@ instruction:
     type: 0
     users:
     - test-user-to-stats-instruction-get
-  instruction_65:
+  instruction_62:
     _id: test-instruction-to-stats-changes-get-2
     author: test-user-author-1-id
     created: 1596712203
@@ -1789,7 +1735,7 @@ instruction:
       unit: s
       value: 2
     type: 1
-  instruction_66:
+  instruction_63:
     _id: test-instruction-to-stats-changes-get-3
     author: test-user-author-1-id
     created: 1596712203
@@ -1808,7 +1754,7 @@ instruction:
       unit: s
       value: 2
     type: 1
-  instruction_67:
+  instruction_64:
     _id: test-instruction-to-comments-get-1
     author: test-user-author-1-id
     created: 1596712203
@@ -1862,7 +1808,7 @@ instruction:
       unit: s
       value: 2
     type: 0
-  instruction_68:
+  instruction_65:
     _id: test-instruction-to-comments-get-2
     author: test-user-author-1-id
     created: 1596712203
@@ -1915,7 +1861,7 @@ instruction:
       unit: s
       value: 2
     type: 0
-  instruction_69:
+  instruction_66:
     _id: test-instruction-to-not-run-auto-instruction-manually
     alarm_patterns:
     - _id: test-alarm-to-not-run-auto-instruction-manually
@@ -1935,7 +1881,7 @@ instruction:
       unit: s
       value: 2
     type: 1
-  instruction_70:
+  instruction_67:
     _id: test-instruction-to-stats-executions-get-1
     author: test-user-author-1-id
     created: 1596712203
@@ -1991,7 +1937,7 @@ instruction:
     type: 0
     users:
     - test-user-to-stats-instruction-get
-  instruction_71:
+  instruction_68:
     _id: test-instruction-to-stats-executions-get-2
     author: test-user-author-1-id
     created: 1596712203
@@ -2045,7 +1991,7 @@ instruction:
       unit: s
       value: 2
     type: 0
-  instruction_72:
+  instruction_69:
     _id: test-instruction-to-stats-executions-get-3
     author: test-user-author-1-id
     created: 1596712203
@@ -2099,7 +2045,7 @@ instruction:
       unit: s
       value: 2
     type: 0
-  instruction_73:
+  instruction_70:
     _id: test-instruction-to-stats-executions-get-4
     author: test-user-author-1-id
     created: 1596712203
@@ -2153,7 +2099,7 @@ instruction:
       unit: s
       value: 2
     type: 0
-  instruction_74:
+  instruction_71:
     _id: test-instruction-to-stats-executions-get-5
     author: test-user-author-1-id
     created: 1596712203
@@ -2207,7 +2153,7 @@ instruction:
       unit: s
       value: 2
     type: 0
-  instruction_75:
+  instruction_72:
     _id: test-instruction-to-stats-executions-get-6
     author: test-user-author-1-id
     created: 1596712203
@@ -2261,7 +2207,7 @@ instruction:
       unit: s
       value: 2
     type: 0
-  instruction_76:
+  instruction_73:
     _id: test-instruction-to-stats-executions-get-7
     author: test-user-author-1-id
     created: 1596712203
@@ -2315,7 +2261,7 @@ instruction:
       unit: s
       value: 2
     type: 0
-  instruction_77:
+  instruction_74:
     _id: test-instruction-to-stats-executions-get-8
     author: test-user-author-1-id
     created: 1596712203
@@ -2369,7 +2315,7 @@ instruction:
       unit: s
       value: 2
     type: 0
-  instruction_78:
+  instruction_75:
     _id: test-instruction-to-stats-executions-get-9
     author: test-user-author-1-id
     created: 1596712203
@@ -2423,7 +2369,7 @@ instruction:
       unit: s
       value: 2
     type: 0
-  instruction_79:
+  instruction_76:
     _id: test-instruction-to-stats-executions-get-10
     author: test-user-author-1-id
     created: 1596712203
@@ -2477,7 +2423,7 @@ instruction:
       unit: s
       value: 2
     type: 0
-  instruction_80:
+  instruction_77:
     _id: test-alarm-meta-children-with-instructions
     alarm_patterns:
     - v:
@@ -2488,7 +2434,7 @@ instruction:
     name: test-alarm-meta-children-with-instructions-name
     steps: []
     type: 0
-  instruction_81:
+  instruction_78:
     _id: test-instruction-to-stats-executions-get-with-resolved-alarms-1
     author: test-user-author-1-id
     created: 1596712203
@@ -2506,7 +2452,7 @@ instruction:
     type: 0
     users:
     - test-user-to-stats-instruction-get
-  instruction_82:
+  instruction_79:
     _id: test-instruction-metrics-axe-2-1
     author: test-author-metrics-axe-2
     created: 1637904803
@@ -2526,7 +2472,7 @@ instruction:
       unit: s
       value: 1
     type: 1
-  instruction_83:
+  instruction_80:
     _id: test-instruction-metrics-axe-2-2
     author: test-author-metrics-axe-2
     created: 1637904803
@@ -2546,7 +2492,7 @@ instruction:
       unit: s
       value: 1
     type: 1
-  instruction_84:
+  instruction_81:
     _id: test-instruction-metrics-axe-10
     author: test-author-metrics-axe-10
     created: 1637904803
@@ -2565,7 +2511,7 @@ instruction:
       unit: s
       value: 1
     type: 1
-  instruction_85:
+  instruction_82:
     _id: test-instruction-metrics-axe-11
     author: test-author-metrics-axe-11
     created: 1637904803

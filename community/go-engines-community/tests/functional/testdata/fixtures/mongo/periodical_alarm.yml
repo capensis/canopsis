@@ -441,94 +441,6 @@ periodical_alarm:
       tags: []
       total_state_changes: 1
   periodical_alarm_9:
-    _id: test-alarm-pbehavior-get
-    d: test-alarm-pbehavior-get-resource/test-alarm-pbehavior-get-component
-    t: 1597030118
-    v:
-      ack:
-        _t: ack
-        a: root
-        initiator: user
-        m: ""
-        role: admin
-        t: 1597030351
-        val: 0
-      canceled:
-        _t: cancel
-        a: root
-        initiator: user
-        m: Test
-        role: admin
-        t: 1597030366
-        val: 4
-      children: []
-      component: test-alarm-pbehavior-get-component
-      connector: test-alarm-pbehavior-get-connector
-      connector_name: test-alarm-pbehavior-get-connectorname
-      creation_date: 1597030118
-      display_name: PK-SL-XK
-      infos: {}
-      infos_rule_version: {}
-      initial_long_output: ""
-      initial_output: test-alarm-pbehavior-get alarm
-      last_event_date: 1597030118
-      last_update_date: 1597030366
-      long_output: ""
-      long_output_history:
-      - ""
-      output: test-alarm-pbehavior-get
-      parents: []
-      pbehavior_info:
-        id: test-pbehavior-to-get-alarm
-      resolved: 1597034023
-      resource: test-alarm-pbehavior-get-resource
-      state:
-        _t: stateinc
-        a: test-alarm-pbehavior-get-connector.test-alarm-pbehavior-get-connectorname
-        m: test-alarm-pbehavior-get alarm
-        t: 1597030118
-        val: 1
-      status:
-        _t: cancel
-        a: root
-        initiator: user
-        m: Test
-        role: admin
-        t: 1597030366
-        val: 4
-      steps:
-      - _t: stateinc
-        a: test-alarm-get-connector.test-alarm-pbehavior-get-connectorname
-        m: test-alarm-pbehavior-get alarm
-        t: 1597030118
-        val: 1
-      - _t: statusinc
-        a: test-alarm-pbehavior-get-connector.test-alarm-pbehavior-get-connectorname
-        m: test-alarm-pbehavior-get alarm
-        t: 1597030118
-        val: 1
-      - _t: ack
-        a: root
-        initiator: user
-        m: ""
-        role: admin
-        t: 1597030351
-        val: 0
-      - _t: cancel
-        a: root
-        initiator: user
-        m: Test
-        role: admin
-        t: 1597030366
-        val: 0
-      - _t: statusinc
-        a: test-alarm-pbehavior-get-connector.test-alarm-pbehavior-get-connectorname
-        m: Test
-        t: 1597030366
-        val: 4
-      tags: []
-      total_state_changes: 1
-  periodical_alarm_10:
     _id: test-alarmcounter-get-1
     d: test-alarmcounter-get-resource-1/test-alarmcounter-get-component
     t: 1596942720
@@ -576,7 +488,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_11:
+  periodical_alarm_10:
     _id: test-alarmcounter-get-2
     d: test-alarmcounter-get-resource-2/test-alarmcounter-get-component
     t: 1597030219
@@ -638,7 +550,7 @@ periodical_alarm:
         val: 500
       tags: []
       total_state_changes: 1
-  periodical_alarm_12:
+  periodical_alarm_11:
     _id: test-alarmcounter-get-meta-1
     d: test-alarmalarmcounter-get-entity-meta-1/metaalarm
     t: 1597030219
@@ -689,7 +601,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_13:
+  periodical_alarm_12:
     _id: test-alarmcounter-get-3
     d: test-alarmcounter-get-resource-3/test-alarmcounter-get-component
     t: 1597030220
@@ -738,7 +650,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_14:
+  periodical_alarm_13:
     _id: test-alarmcounter-get-4
     d: test-alarmcounter-get-resource-4/test-alarmcounter-get-component
     t: 1597030118
@@ -824,7 +736,7 @@ periodical_alarm:
         val: 4
       tags: []
       total_state_changes: 1
-  periodical_alarm_15:
+  periodical_alarm_14:
     _id: test-instruction-execution-start-1
     d: test-instruction-execution-start-resource-1/test-instruction-execution-start-component
     t: 1596942720
@@ -879,7 +791,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_16:
+  periodical_alarm_15:
     _id: test-instruction-execution-start-2
     d: test-instruction-execution-start-resource-2/test-instruction-execution-start-component
     t: 1596942720
@@ -934,7 +846,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_17:
+  periodical_alarm_16:
     _id: test-instruction-execution-next-1
     d: test-instruction-execution-next-resource-1/test-instruction-execution-next-component
     t: 1596942720
@@ -989,7 +901,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_18:
+  periodical_alarm_17:
     _id: test-instruction-execution-next-2
     d: test-instruction-execution-next-resource-2/test-instruction-execution-next-component
     t: 1596942720
@@ -1044,7 +956,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_19:
+  periodical_alarm_18:
     _id: test-instruction-execution-next-step-1
     d: test-instruction-execution-next-step-resource-1/test-instruction-execution-next-step-component
     t: 1596942720
@@ -1099,7 +1011,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_20:
+  periodical_alarm_19:
     _id: test-instruction-execution-next-step-2
     d: test-instruction-execution-next-step-resource-2/test-instruction-execution-next-step-component
     t: 1596942720
@@ -1154,7 +1066,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_21:
+  periodical_alarm_20:
     _id: test-instruction-execution-next-step-3
     d: test-instruction-execution-next-step-resource-3/test-instruction-execution-next-step-component
     t: 1596942720
@@ -1209,7 +1121,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_22:
+  periodical_alarm_21:
     _id: test-instruction-execution-next-step-4
     d: test-instruction-execution-next-step-resource-4/test-instruction-execution-next-step-component
     t: 1596942720
@@ -1264,7 +1176,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_23:
+  periodical_alarm_22:
     _id: test-instruction-execution-next-step-5
     d: test-instruction-execution-next-step-resource-5/test-instruction-execution-next-step-component
     t: 1596942720
@@ -1319,7 +1231,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_24:
+  periodical_alarm_23:
     _id: test-instruction-execution-next-step-6
     d: test-instruction-execution-next-step-resource-6/test-instruction-execution-next-step-component
     t: 1596942720
@@ -1374,7 +1286,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_25:
+  periodical_alarm_24:
     _id: test-instruction-execution-previous-1
     d: test-instruction-execution-previous-resource-1/test-instruction-execution-previous-component
     t: 1596942720
@@ -1429,7 +1341,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_26:
+  periodical_alarm_25:
     _id: test-instruction-execution-previous-2
     d: test-instruction-execution-previous-resource-2/test-instruction-execution-previous-component
     t: 1596942720
@@ -1484,7 +1396,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_27:
+  periodical_alarm_26:
     _id: test-instruction-execution-previous-3
     d: test-instruction-execution-previous-resource-3/test-instruction-execution-previous-component
     t: 1596942720
@@ -1539,7 +1451,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_28:
+  periodical_alarm_27:
     _id: test-instruction-execution-previous-4
     d: test-instruction-execution-previous-resource-4/test-instruction-execution-previous-component
     t: 1596942720
@@ -1594,7 +1506,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_29:
+  periodical_alarm_28:
     _id: test-instruction-execution-cancel-1
     d: test-instruction-execution-cancel-resource-1/test-instruction-execution-cancel-component
     t: 1596942720
@@ -1649,7 +1561,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_30:
+  periodical_alarm_29:
     _id: test-instruction-execution-cancel-2
     d: test-instruction-execution-cancel-resource-2/test-instruction-execution-cancel-component
     t: 1596942720
@@ -1704,7 +1616,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_31:
+  periodical_alarm_30:
     _id: test-instruction-execution-pause-1
     d: test-instruction-execution-pause-resource-1/test-instruction-execution-pause-component
     t: 1596942720
@@ -1752,7 +1664,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_32:
+  periodical_alarm_31:
     _id: test-instruction-execution-pause-2
     d: test-instruction-execution-pause-resource-2/test-instruction-execution-pause-component
     t: 1596942720
@@ -1800,7 +1712,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_33:
+  periodical_alarm_32:
     _id: test-instruction-execution-pause-3
     d: test-instruction-execution-pause-resource-3/test-instruction-execution-pause-component
     t: 1596942720
@@ -1848,7 +1760,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_34:
+  periodical_alarm_33:
     _id: test-instruction-execution-pause-4
     d: test-instruction-execution-pause-resource-4/test-instruction-execution-pause-component
     t: 1596942720
@@ -1896,7 +1808,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_35:
+  periodical_alarm_34:
     _id: test-instruction-execution-resume-1
     d: test-instruction-execution-resume-resource-1/test-instruction-execution-resume-component
     t: 1596942720
@@ -1944,7 +1856,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_36:
+  periodical_alarm_35:
     _id: test-alarm-with-instruction-1
     d: test-alarm-with-instruction-resource-1/test-alarm-with-instruction-component
     t: 1596942720
@@ -1999,7 +1911,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_37:
+  periodical_alarm_36:
     _id: test-alarm-with-instruction-2
     d: test-alarm-with-instruction-resource-2/test-alarm-with-instruction-component
     t: 1596942720
@@ -2054,7 +1966,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_38:
+  periodical_alarm_37:
     _id: test-alarm-with-instruction-3
     d: test-alarm-with-instruction-resource-3/test-alarm-with-instruction-component
     t: 1596942720
@@ -2109,7 +2021,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_39:
+  periodical_alarm_38:
     _id: test-alarm-with-instruction-4
     d: test-alarm-with-instruction-resource-4/test-alarm-with-instruction-component
     t: 1596942720
@@ -2164,7 +2076,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_40:
+  periodical_alarm_39:
     _id: test-instruction-execution-get-1
     d: test-instruction-execution-get-resource-1/test-instruction-execution-get-component
     t: 1596942720
@@ -2219,7 +2131,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_41:
+  periodical_alarm_40:
     _id: test-instruction-execution-get-2
     d: test-instruction-execution-get-resource-2/test-instruction-execution-get-component
     t: 1596942720
@@ -2274,7 +2186,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_42:
+  periodical_alarm_41:
     _id: test-instruction-execution-get-3
     d: test-instruction-execution-get-resource-3/test-instruction-execution-get-component
     t: 1596942720
@@ -2329,7 +2241,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_43:
+  periodical_alarm_42:
     _id: test-instruction-execution-get-4
     d: test-instruction-execution-get-resource-4/test-instruction-execution-get-component
     t: 1596942720
@@ -2384,7 +2296,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_44:
+  periodical_alarm_43:
     _id: test-alarm-with-parents-and-children
     d: test-alarm-with-parents-and-children-resource/test-alarm-with-parents-and-children-component
     t: 1597030219
@@ -2437,88 +2349,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_45:
-    _id: test-alarm-instruction-with-pbehavior-1
-    d: test-alarm-instruction-with-pbehavior-1/test-alarm-instruction-with-pbehavior-component
-    t: 1596942720
-    v:
-      children: []
-      component: test-alarm-instruction-with-pbehavior-component
-      connector: test-alarm-instruction-with-pbehavior-connector
-      connector_name: test-alarm-instruction-with-pbehavior-connectorname
-      creation_date: 1596942720
-      display_name: RC-KC_tW
-      infos: {}
-      infos_rule_version: {}
-      initial_long_output: ""
-      initial_output: test-alarm-instruction-with-pbehavior alarm
-      last_event_date: 1596942720
-      last_update_date: 1596942720
-      long_output: test-alarm-instruction-with-pbehavior
-      long_output_history:
-      - ""
-      output: test-alarm-instruction-with-pbehavior alarm
-      parents: []
-      pbehavior_info:
-        type: pbh-type-for-instruction-with-pbehavior-1
-      resource: test-alarm-instruction-with-pbehavior-1
-      tags: []
-      total_state_changes: 1
-  periodical_alarm_46:
-    _id: test-alarm-instruction-with-pbehavior-2
-    d: test-alarm-instruction-with-pbehavior-2/test-alarm-instruction-with-pbehavior-component
-    t: 1596942720
-    v:
-      children: []
-      component: test-alarm-instruction-with-pbehavior-component
-      connector: test-alarm-instruction-with-pbehavior-connector
-      connector_name: test-alarm-instruction-with-pbehavior-connectorname
-      creation_date: 1596942720
-      display_name: RC-KC_tW
-      infos: {}
-      infos_rule_version: {}
-      initial_long_output: ""
-      initial_output: test-alarm-instruction-with-pbehavior alarm
-      last_event_date: 1596942720
-      last_update_date: 1596942720
-      long_output: test-alarm-instruction-with-pbehavior
-      long_output_history:
-      - ""
-      output: test-alarm-instruction-with-pbehavior alarm
-      parents: []
-      pbehavior_info:
-        type: pbh-type-for-instruction-with-pbehavior-2
-      resource: test-alarm-instruction-with-pbehavior-2
-      tags: []
-      total_state_changes: 1
-  periodical_alarm_47:
-    _id: test-alarm-instruction-with-pbehavior-3
-    d: test-alarm-instruction-with-pbehavior-3/test-alarm-instruction-with-pbehavior-component
-    t: 1596942720
-    v:
-      children: []
-      component: test-alarm-instruction-with-pbehavior-component
-      connector: test-alarm-instruction-with-pbehavior-connector
-      connector_name: test-alarm-instruction-with-pbehavior-connectorname
-      creation_date: 1596942720
-      display_name: RC-KC_tW
-      infos: {}
-      infos_rule_version: {}
-      initial_long_output: ""
-      initial_output: test-alarm-instruction-with-pbehavior alarm
-      last_event_date: 1596942720
-      last_update_date: 1596942720
-      long_output: test-alarm-instruction-with-pbehavior
-      long_output_history:
-      - ""
-      output: test-alarm-instruction-with-pbehavior alarm
-      parents: []
-      pbehavior_info:
-        type: pbh-type-for-instruction-with-pbehavior-3
-      resource: test-alarm-instruction-with-pbehavior-3
-      tags: []
-      total_state_changes: 1
-  periodical_alarm_48:
+  periodical_alarm_44:
     _id: test-alarm-to-check-deletable-entity
     d: test-entity-to-check-deletable-resource/test-entity-to-check-deletable-component
     t: 1596942720
@@ -2540,11 +2371,10 @@ periodical_alarm:
       - ""
       output: test-alarm-to-check-deletable-entity-output
       parents: []
-      pbehavior_info: null
       resource: test-entity-to-check-deletable-resource
       tags: []
       total_state_changes: 1
-  periodical_alarm_49:
+  periodical_alarm_45:
     _id: test-alarm-to-delete-entity-linked-to-alarm
     d: test-entitybasic-to-delete-linked-to-alarm-resource/test-entitybasic-to-delete-linked-to-alarm-component
     t: 1596942720
@@ -2566,11 +2396,10 @@ periodical_alarm:
       - ""
       output: test-alarm-to-delete-entity-linked-to-alarm-output
       parents: []
-      pbehavior_info: null
       resource: test-entitybasic-to-delete-linked-to-alarm-resource
       tags: []
       total_state_changes: 1
-  periodical_alarm_50:
+  periodical_alarm_46:
     _id: test-idle-since-1
     d: test-idle-since-resource-1/test-idle-since-component
     t: 1596942720
@@ -2618,7 +2447,7 @@ periodical_alarm:
         val: 5
       tags: []
       total_state_changes: 1
-  periodical_alarm_51:
+  periodical_alarm_47:
     _id: test-events-count-1
     d: test-events-count-resource-1/test-events-count-component
     t: 1596942720
@@ -2667,7 +2496,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_52:
+  periodical_alarm_48:
     _id: test-alarm-to-export-1
     d: test-entity-to-export-resource-1/test-entity-to-export-component
     t: 1596942720
@@ -2730,7 +2559,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_53:
+  periodical_alarm_49:
     _id: test-alarm-to-export-2
     d: test-entity-to-export-resource-2/test-entity-to-export-component
     t: 1597030219
@@ -2778,7 +2607,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_54:
+  periodical_alarm_50:
     _id: test-idle-rule-count-patterns-alarm-1
     d: test-idle-rule-count-patterns-resource-1/test-idle-rule-count-patterns-component
     t: 1596942720
@@ -2800,11 +2629,10 @@ periodical_alarm:
       - ""
       output: test-idle-rule-count-patterns-output
       parents: []
-      pbehavior_info: null
       resource: test-idle-rule-count-patterns-resource-1
       tags: []
       total_state_changes: 1
-  periodical_alarm_55:
+  periodical_alarm_51:
     _id: test-idle-rule-count-patterns-alarm-2
     d: test-idle-rule-count-patterns-resource-2/test-idle-rule-count-patterns-component
     t: 1596942720
@@ -2826,11 +2654,10 @@ periodical_alarm:
       - ""
       output: test-idle-rule-count-patterns-output
       parents: []
-      pbehavior_info: null
       resource: test-idle-rule-count-patterns-resource-2
       tags: []
       total_state_changes: 1
-  periodical_alarm_56:
+  periodical_alarm_52:
     _id: test-idle-rule-count-patterns-alarm-3
     d: test-idle-rule-count-patterns-resource-3/test-idle-rule-count-patterns-component
     t: 1596942720
@@ -2852,11 +2679,10 @@ periodical_alarm:
       - ""
       output: test-idle-rule-count-patterns-output
       parents: []
-      pbehavior_info: null
       resource: test-idle-rule-count-patterns-resource-3
       tags: []
       total_state_changes: 1
-  periodical_alarm_57:
+  periodical_alarm_53:
     _id: test-idle-rule-count-patterns-alarm-4
     d: test-idle-rule-count-patterns-resource-4/test-idle-rule-count-patterns-component
     t: 1596942720
@@ -2878,11 +2704,10 @@ periodical_alarm:
       - ""
       output: test-idle-rule-count-patterns-output
       parents: []
-      pbehavior_info: null
       resource: test-idle-rule-count-patterns-resource-4
       tags: []
       total_state_changes: 1
-  periodical_alarm_58:
+  periodical_alarm_54:
     _id: test-idle-rule-count-patterns-alarm-5
     d: test-idle-rule-count-patterns-resource-5/test-idle-rule-count-patterns-component
     t: 1596942720
@@ -2904,11 +2729,10 @@ periodical_alarm:
       - ""
       output: test-idle-rule-count-patterns-output
       parents: []
-      pbehavior_info: null
       resource: test-idle-rule-count-patterns-resource-5
       tags: []
       total_state_changes: 1
-  periodical_alarm_59:
+  periodical_alarm_55:
     _id: test-alarm-to-not-run-auto-instruction-manually
     d: test-resource-to-not-run-auto-instruction-manually/test-component-to-not-run-auto-instruction-manually
     t: 1596942720
@@ -2956,7 +2780,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_60:
+  periodical_alarm_56:
     _id: test-alarm-to-stats-executions-get-1
     d: test-resource-to-stats-executions-get-1/test-component-to-stats-executions-get-1
     t: 1596942720
@@ -3014,7 +2838,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_61:
+  periodical_alarm_57:
     _id: test-alarm-to-stats-executions-get-3
     d: test-resource-to-stats-executions-get-3/test-component-to-stats-executions-get-3
     t: 1618279310
@@ -3079,7 +2903,7 @@ periodical_alarm:
         a: ""
         m: ""
         t: 1618280221
-  periodical_alarm_62:
+  periodical_alarm_58:
     _id: test-alarm-to-stats-executions-get-4
     d: test-resource-to-stats-executions-get-4/test-component-to-stats-executions-get-4
     t: 1618279310
@@ -3140,7 +2964,7 @@ periodical_alarm:
         m: ""
         t: 1618280221
         val: 2
-  periodical_alarm_63:
+  periodical_alarm_59:
     _id: test-alarm-to-stats-executions-get-5
     d: test-resource-to-stats-executions-get-5/test-component-to-stats-executions-get-5
     t: 1618279310
@@ -3210,7 +3034,7 @@ periodical_alarm:
         a: ""
         m: ""
         t: 1618280651
-  periodical_alarm_64:
+  periodical_alarm_60:
     _id: test-alarm-to-stats-executions-get-6
     d: test-resource-to-stats-executions-get-6/test-component-to-stats-executions-get-6
     t: 1618279310
@@ -3294,7 +3118,7 @@ periodical_alarm:
         a: ""
         m: ""
         t: 1618280651
-  periodical_alarm_65:
+  periodical_alarm_61:
     _id: test-alarm-to-stats-executions-get-7
     d: test-resource-to-stats-executions-get-7/test-component-to-stats-executions-get-7
     t: 1618279310
@@ -3364,7 +3188,7 @@ periodical_alarm:
         a: ""
         m: ""
         t: 1618280651
-  periodical_alarm_66:
+  periodical_alarm_62:
     _id: test-alarm-to-stats-executions-get-8
     d: test-resource-to-stats-executions-get-8/test-component-to-stats-executions-get-8
     t: 1618279310
@@ -3448,7 +3272,7 @@ periodical_alarm:
         a: ""
         m: ""
         t: 1618280651
-  periodical_alarm_67:
+  periodical_alarm_63:
     _id: test-alarm-meta-children-with-instructions-1
     d: test-alarm-meta-children-with-instructions-1/metaalarm
     t: 1597030219
@@ -3498,7 +3322,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_68:
+  periodical_alarm_64:
     _id: test-alarm-meta-children-with-instructions-2
     d: test-alarm-meta-children-with-instructions-2/metaalarm
     t: 1597030219
@@ -3548,7 +3372,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_69:
+  periodical_alarm_65:
     _id: test-alarm-meta-children-with-instructions-3
     d: test-alarm-meta-children-with-instructions-3/metaalarm
     t: 1597030219
@@ -3599,7 +3423,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_70:
+  periodical_alarm_66:
     _id: test-alarm-meta-children-with-instructions-alarm-1-1
     d: test-alarm-meta-children-with-instructions-resource-1/test-alarm-meta-children-with-instructions-component-1
     t: 1596942720
@@ -3622,11 +3446,10 @@ periodical_alarm:
       output: test-alarm-meta-children-with-instructions-output
       parents:
       - test-alarm-meta-children-with-instructions-1/metaalarm
-      pbehavior_info: null
       resource: test-alarm-meta-children-with-instructions-resource-1
       tags: []
       total_state_changes: 1
-  periodical_alarm_71:
+  periodical_alarm_67:
     _id: test-alarm-meta-children-with-instructions-alarm-2-1
     d: test-alarm-meta-children-with-instructions-resource-1/test-alarm-meta-children-with-instructions-component-2
     t: 1596942720
@@ -3649,11 +3472,10 @@ periodical_alarm:
       output: test-alarm-meta-children-with-instructions-output
       parents:
       - test-alarm-meta-children-with-instructions-2/metaalarm
-      pbehavior_info: null
       resource: test-alarm-meta-children-with-instructions-resource-1
       tags: []
       total_state_changes: 1
-  periodical_alarm_72:
+  periodical_alarm_68:
     _id: test-alarm-meta-children-with-instructions-alarm-1-2
     d: test-alarm-meta-children-with-instructions-resource-2/test-alarm-meta-children-with-instructions-component-1
     t: 1596942720
@@ -3676,11 +3498,10 @@ periodical_alarm:
       output: test-alarm-meta-children-with-instructions-output
       parents:
       - test-alarm-meta-children-with-instructions-3/metaalarm
-      pbehavior_info: null
       resource: test-alarm-meta-children-with-instructions-resource-2
       tags: []
       total_state_changes: 1
-  periodical_alarm_73:
+  periodical_alarm_69:
     _id: test-alarm-meta-children-with-instructions-alarm-2-2
     d: test-alarm-meta-children-with-instructions-resource-2/test-alarm-meta-children-with-instructions-component-2
     t: 1596942720
@@ -3703,11 +3524,10 @@ periodical_alarm:
       output: test-alarm-meta-children-with-instructions-output
       parents:
       - test-alarm-meta-children-with-instructions-3/metaalarm
-      pbehavior_info: null
       resource: test-alarm-meta-children-with-instructions-resource-2
       tags: []
       total_state_changes: 1
-  periodical_alarm_74:
+  periodical_alarm_70:
     _id: test-alarm-to-stats-executions-get-with-resolved-alarms-1
     d: test-resource-to-stats-executions-get-with-resolved-alarms-1/test-component-to-stats-executions-get-with-resolved-alarms-1
     t: 1596942720
@@ -3765,7 +3585,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_75:
+  periodical_alarm_71:
     _id: test-alarm-multi-sort-get-1
     d: test-alarm-multi-sort-get-resource-1/test-alarm-multi-sort-get-component
     t: 1000000000
@@ -3820,7 +3640,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_76:
+  periodical_alarm_72:
     _id: test-alarm-multi-sort-get-2
     d: test-alarm-multi-sort-get-resource-2/test-alarm-multi-sort-get-component
     t: 1000000001
@@ -3875,7 +3695,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_77:
+  periodical_alarm_73:
     _id: test-alarm-multi-sort-get-3
     d: test-alarm-multi-sort-get-resource-3/test-alarm-multi-sort-get-component
     t: 1000000001
@@ -3930,7 +3750,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_78:
+  periodical_alarm_74:
     _id: test-alarm-multi-sort-get-4
     d: test-alarm-multi-sort-get-resource-4/test-alarm-multi-sort-get-component
     t: 1000000002
@@ -3985,7 +3805,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_79:
+  periodical_alarm_75:
     _id: test-alarm-api-correlation-metaalarm-1
     d: test-api-correlation-1/metaalarm
     t: 1597030219
@@ -4037,7 +3857,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_80:
+  periodical_alarm_76:
     _id: test-alarm-api-correlation-metaalarm-2
     d: test-api-correlation-2/metaalarm
     t: 1597030219
@@ -4088,7 +3908,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_81:
+  periodical_alarm_77:
     _id: test-api-correlation-get-1
     d: test-api-correlation-resource-1/test-api-correlation-component
     t: 1000000002
@@ -4138,7 +3958,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_82:
+  periodical_alarm_78:
     _id: test-api-correlation-get-2
     d: test-api-correlation-resource-2/test-api-correlation-component
     t: 1000000002
@@ -4188,7 +4008,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_83:
+  periodical_alarm_79:
     _id: test-api-correlation-get-3
     d: test-api-correlation-resource-1/test-api-correlation-component
     t: 1000000002
@@ -4237,7 +4057,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_84:
+  periodical_alarm_80:
     _id: test-api-correlation-get-4
     d: test-api-correlation-resource-2/test-api-correlation-component
     t: 1000000002
@@ -4286,7 +4106,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_85:
+  periodical_alarm_81:
     _id: dynamic-info-update-1
     d: dynamic-info-update-resource-1/dynamic-info-update-component
     t: 1000000002
@@ -4334,7 +4154,7 @@ periodical_alarm:
         val: 1
       tags: []
       total_state_changes: 1
-  periodical_alarm_86:
+  periodical_alarm_82:
     _id: test-alarm-time-fields-search-get-1
     d: test-alarm-time-fields-search-get-resource-1/test-alarm-time-fields-search-get-component
     t: 2000000000
@@ -4390,7 +4210,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_87:
+  periodical_alarm_83:
     _id: test-alarm-time-fields-search-get-2
     d: test-alarm-time-fields-search-get-resource-1/test-alarm-time-fields-search-get-component
     t: 2000000010
@@ -4446,7 +4266,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_88:
+  periodical_alarm_84:
     _id: test-alarm-time-fields-search-get-3
     d: test-alarm-time-fields-search-get-resource-3/test-alarm-time-fields-search-get-component
     t: 2000000020
@@ -4502,7 +4322,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_89:
+  periodical_alarm_85:
     _id: test-alarm-time-fields-search-get-4
     d: test-alarm-time-fields-search-get-resource-4/test-alarm-time-fields-search-get-component
     t: 2000000120
@@ -4559,7 +4379,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_90:
+  periodical_alarm_86:
     _id: test-alarm-time-fields-search-get-5
     d: test-alarm-time-fields-search-get-resource-5/test-alarm-time-fields-search-get-component
     t: 2000000120
@@ -4616,7 +4436,7 @@ periodical_alarm:
         val: 0
       tags: []
       total_state_changes: 1
-  periodical_alarm_91:
+  periodical_alarm_87:
     _id: test-alarm-time-fields-search-get-6
     d: test-alarm-time-fields-search-get-resource-6/test-alarm-time-fields-search-get-component
     t: 2000000120
