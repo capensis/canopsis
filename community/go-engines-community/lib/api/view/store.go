@@ -344,7 +344,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 		{"$addFields": bson.M{
 			"tabs.widgets": bson.M{"$filter": bson.M{
 				"input": "$widgets",
-				"cond":  "$$this.title",
+				"cond":  "$$this.type",
 			}},
 		}},
 		{"$sort": bson.M{"tabs.position": 1}},
@@ -634,12 +634,6 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 
 						if tab.Widgets != nil {
 							for wi, widget := range *tab.Widgets {
-								if widget.Title == "" {
-									return ValidationError{
-										field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.title", gi, vi, ti, wi),
-										error: fmt.Errorf("value is missing"),
-									}
-								}
 								if widget.Type == "" {
 									return ValidationError{
 										field: fmt.Sprintf("%d.views.%d.tabs.%d.widgets.%d.type", gi, vi, ti, wi),
