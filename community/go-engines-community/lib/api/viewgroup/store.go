@@ -119,7 +119,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds []str
 						"_id": "$_id._id",
 						"tabs.widgets": bson.M{"$filter": bson.M{
 							"input": "$widgets",
-							"cond":  "$$this.title",
+							"cond":  "$$this._id",
 						}},
 					}},
 				)
