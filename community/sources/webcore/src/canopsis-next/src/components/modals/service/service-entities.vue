@@ -41,12 +41,11 @@
 </template>
 
 <script>
-import { MODALS, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPE_TYPES, SORT_ORDERS } from '@/constants';
+import { MODALS, EVENT_ENTITY_TYPES, SORT_ORDERS } from '@/constants';
 import { PAGINATION_LIMIT } from '@/config';
 
 import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 import { addKeyInEntities } from '@/helpers/entities';
-import { getNowTimestamp } from '@/helpers/date/date';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -131,23 +130,6 @@ export default {
       this.events.queue.push(event);
     },
 
-    getPausedPbehaviors(pbehaviors = []) {
-      return pbehaviors.reduce((accSecond, pbehavior) => {
-        if (pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.pause) {
-          accSecond.push(this.updatePbehavior({
-            id: pbehavior._id,
-            data: pbehaviorToRequest({
-              ...pbehavior,
-
-              tstop: getNowTimestamp(),
-            }),
-          }));
-        }
-
-        return accSecond;
-      }, []);
-    },
-
     async submit() {
       const requests = this.events.queue.reduce((acc, event) => {
         if (event.type === EVENT_ENTITY_TYPES.pause) {
@@ -155,7 +137,7 @@ export default {
 
           acc.push(this.createPbehavior({ data: pbehavior }));
         } else if (event.type === EVENT_ENTITY_TYPES.play) {
-          acc.push(...this.getPausedPbehaviors(event.data.pbehaviors));
+          acc.push(this.removePbehavior({ id: event.data.pbehavior_info.id }));
         } else {
           acc.push(this.createEventAction({ data: event.data }));
         }
