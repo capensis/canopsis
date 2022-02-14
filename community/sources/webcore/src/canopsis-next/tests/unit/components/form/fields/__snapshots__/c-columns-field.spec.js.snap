@@ -107,6 +107,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
       </div>
       <!---->
       <!---->
+      <!---->
     </div>
   </div>
   <div
@@ -210,6 +211,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
           value="column.columnWithHtml"
         />
       </div>
+      <!---->
       <!---->
       <!---->
     </div>
@@ -317,6 +319,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
       </div>
       <!---->
       <!---->
+      <!---->
     </div>
   </div>
   <div
@@ -422,6 +425,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
       </div>
       <!---->
       <!---->
+      <!---->
     </div>
   </div>
   <div
@@ -525,6 +529,113 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
           value="column.columnWithColorIndicatorAndHtml"
         />
       </div>
+      <!---->
+      <!---->
+      <!---->
+    </div>
+  </div>
+  <div
+    class="my-2 v-card v-sheet theme--light"
+  >
+    <div
+      class="layout pt-2 justify-space-between"
+    >
+      <div
+        class="flex xs3"
+      >
+        <div
+          class="layout text-xs-center pl-2 justify-space-between"
+        >
+          <div
+            class="flex xs1"
+          >
+            <button
+              class="v-btn v-btn--icon theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </button>
+          </div>
+          <div
+            class="flex xs5"
+          >
+            <button
+              class="v-btn v-btn--icon theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_downward
+                </i>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex d-flex xs3"
+      >
+        <div
+          class="text-xs-right pr-2"
+        >
+          <button
+            class="v-btn v-btn--icon theme--light"
+            type="button"
+          >
+            <div
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light red--text"
+              >
+                close
+              </i>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      class="layout justify-center wrap"
+    >
+      <div
+        class="flex xs11"
+      >
+        <input
+          class="v-text-field"
+          error-messages=""
+          name="label[5]"
+          placeholder="common.label"
+          value="Column with template"
+        />
+      </div>
+      <div
+        class="flex xs11"
+      >
+        <input
+          class="v-text-field"
+          error-messages=""
+          name="value[5]"
+          placeholder="common.value"
+          value="column.columnWithTemplate"
+        />
+      </div>
+      <!---->
       <!---->
       <!---->
     </div>
@@ -647,6 +758,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
           value="column.defaultColumn"
         />
       </div>
+      <!---->
       <div
         class="flex xs11"
       >
@@ -865,6 +977,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
           value="column.columnWithHtml"
         />
       </div>
+      <!---->
       <div
         class="flex xs11"
       >
@@ -1083,6 +1196,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
           value="column.columnWithColorIndicatorState"
         />
       </div>
+      <!---->
       <div
         class="flex xs11"
       >
@@ -1307,6 +1421,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
           value="column.columnWithColorIndicatorImpactState"
         />
       </div>
+      <!---->
       <div
         class="flex xs11"
       >
@@ -1531,6 +1646,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
           value="column.columnWithColorIndicatorAndHtml"
         />
       </div>
+      <!---->
       <div
         class="flex xs11"
       >
@@ -1789,6 +1905,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
           value="column.defaultColumn"
         />
       </div>
+      <!---->
       <div
         class="flex xs11"
       >
@@ -2007,6 +2124,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
           value="column.columnWithHtml"
         />
       </div>
+      <!---->
       <div
         class="flex xs11"
       >
@@ -2225,6 +2343,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
           value="column.columnWithColorIndicatorState"
         />
       </div>
+      <!---->
       <div
         class="flex xs11"
       >
@@ -2449,6 +2568,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
           value="column.columnWithColorIndicatorImpactState"
         />
       </div>
+      <!---->
       <div
         class="flex xs11"
       >
@@ -2673,6 +2793,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
           value="column.columnWithColorIndicatorAndHtml"
         />
       </div>
+      <!---->
       <div
         class="flex xs11"
       >

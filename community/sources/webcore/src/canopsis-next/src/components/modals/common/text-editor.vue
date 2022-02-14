@@ -1,13 +1,18 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper(data-test="textEditorModal", close)
-      template(slot="title")
+    modal-wrapper(close)
+      template(#title="")
         span {{ title }}
-      template(slot="text")
-        text-editor-component(v-model="text", data-test="jodit")
+      template(#text="")
+        text-editor-component(
+          v-model="text",
+          v-validate="config.rules",
+          :label="config.label",
+          :error-messages="errors.collect('text')",
+          name="text"
+        )
       template(slot="actions")
         v-btn(
-          data-test="textEditorCancelButton",
           depressed,
           flat,
           @click="$modals.hide"
@@ -15,8 +20,7 @@
         v-btn.primary(
           :disabled="isDisabled",
           :loading="submitting",
-          type="submit",
-          data-test="textEditorSubmitButton"
+          type="submit"
         ) {{ $t('common.submit') }}
 </template>
 
@@ -33,6 +37,9 @@ import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.textEditor,
+  $_veeValidate: {
+    validator: 'new',
+  },
   components: { TextEditorComponent, ModalWrapper },
   mixins: [
     modalInnerMixin,
@@ -40,7 +47,7 @@ export default {
     confirmableModalMixinCreator({ field: 'text' }),
   ],
   data() {
-    const text = this.modal.config.text || '';
+    const text = this.modal.config.text ?? '';
 
     return {
       text,
@@ -53,11 +60,15 @@ export default {
   },
   methods: {
     async submit() {
-      if (this.config.action) {
-        await this.config.action(this.text);
-      }
+      const isFormValid = await this.$validator.validateAll();
 
-      this.$modals.hide();
+      if (isFormValid) {
+        if (this.config.action) {
+          await this.config.action(this.text);
+        }
+
+        this.$modals.hide();
+      }
     },
   },
 };
