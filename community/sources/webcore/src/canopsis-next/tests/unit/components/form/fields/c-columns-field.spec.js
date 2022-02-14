@@ -20,6 +20,11 @@ const mockData = {
     value: 'column.columnWithHtml',
     isHtml: true,
   },
+  columnWithTemplate: {
+    label: 'Column with template',
+    value: 'column.columnWithTemplate',
+    template: '{{ value }}',
+  },
   columnWithColorIndicatorState: {
     label: 'Column with color indicator state label',
     value: 'column.columnWithColorIndicatorState',
@@ -90,6 +95,20 @@ const snapshotStubs = {
 const factory = (options = {}) => shallowMount(CColumnsField, {
   localVue,
   stubs,
+
+  ...options,
+});
+
+const snapshotFactory = (options = {}) => mount(CColumnsField, {
+  localVue,
+  stubs: snapshotStubs,
+
+  parentComponent: {
+    $_veeValidate: {
+      validator: 'new',
+    },
+  },
+
   ...options,
 });
 
@@ -450,12 +469,7 @@ describe('c-columns-field', () => {
   });
 
   it('Renders `c-columns-field` with all columns type correctly', () => {
-    const wrapper = mount(CColumnsField, {
-      localVue,
-      provide: {
-        $validator: new Validator(),
-      },
-      stubs: snapshotStubs,
+    const wrapper = snapshotFactory({
       propsData: {
         columns: [
           mockData.defaultColumn,
@@ -463,6 +477,7 @@ describe('c-columns-field', () => {
           mockData.columnWithColorIndicatorState,
           mockData.columnWithColorIndicatorImpactState,
           mockData.columnWithColorIndicatorAndHtmlState,
+          mockData.columnWithTemplate,
         ],
       },
     });
@@ -471,12 +486,7 @@ describe('c-columns-field', () => {
   });
 
   it('Renders `c-columns-field` with custom props correctly', () => {
-    const wrapper = mount(CColumnsField, {
-      localVue,
-      provide: {
-        $validator: new Validator(),
-      },
-      stubs: snapshotStubs,
+    const wrapper = snapshotFactory({
       propsData: {
         columns: [
           mockData.defaultColumn,
