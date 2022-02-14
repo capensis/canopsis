@@ -16,3 +16,5 @@ test-fpt.sh
 *~
 exchange
 canopsis.toml
+config/mongo/*
+!config/mongo/000-default.yml
