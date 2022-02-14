@@ -803,6 +803,7 @@ func RegisterRoutes(
 			middleware.AuthorizeByID(model.PermissionRead, enforcer),
 			middleware.SetAuthor(),
 			viewAPI.Copy,
+			middleware.ReloadEnforcerPolicyOnChange(enforcer),
 		)
 
 		protected.PUT(
