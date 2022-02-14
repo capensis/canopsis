@@ -13,27 +13,27 @@ export default {
   },
   actions: {
     create(context, { data } = {}) {
-      return request.post(API_ROUTES.widget, data);
+      return request.post(API_ROUTES.widget.list, data);
     },
 
     clone(context, { data, id } = {}) {
-      return request.post(`${API_ROUTES.widget}/${id}/clone`, data);
+      return request.post(`${API_ROUTES.widget.list}/${id}/clone`, data);
     },
 
     update(context, { data, id } = {}) {
-      return request.put(`${API_ROUTES.widget}/${id}`, data);
+      return request.put(`${API_ROUTES.widget.list}/${id}`, data);
     },
 
     remove(context, { id } = {}) {
-      return request.delete(`${API_ROUTES.widget}/${id}`);
+      return request.delete(`${API_ROUTES.widget.list}/${id}`);
     },
 
     copy(context, { id, data } = {}) {
-      return request.post(`${API_ROUTES.widgetCopy}/${id}`, data);
+      return request.post(`${API_ROUTES.widget.copy}/${id}`, data);
     },
 
     updateGridPositions(context, { data } = {}) {
-      return request.put(API_ROUTES.widgetGridPosition, data);
+      return request.put(API_ROUTES.widget.gridPositions, data);
     },
   },
 };

@@ -21,7 +21,8 @@ import {
   SORT_ORDERS,
   USERS_PERMISSIONS,
   SIDE_BARS,
-  COLOR_INDICATOR_TYPES, WIDGET_TYPES,
+  COLOR_INDICATOR_TYPES,
+  WIDGET_TYPES,
 } from '@/constants';
 
 import ClickOutside from '@/services/click-outside';

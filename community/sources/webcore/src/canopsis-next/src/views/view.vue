@@ -6,7 +6,8 @@
         :editing="editing",
         :updatable="hasUpdateAccess"
       )
-    view-fab-btns(:active-tab="activeTab", :updatable="hasUpdateAccess")
+    v-fade-transition
+      view-fab-btns(v-if="view", :active-tab="activeTab", :updatable="hasUpdateAccess")
 </template>
 
 <script>
@@ -71,17 +72,25 @@ export default {
   },
 
   created() {
+    this.clearActiveView();
+
     this.$periodicRefresh.register(this.refreshView);
   },
 
   async mounted() {
+    const { tabId } = this.$route.query;
+
     await this.fetchActiveView({ id: this.id });
-    await this.redirectToFirstTab();
+
+    if (!tabId) {
+      await this.redirectToFirstTab();
+    } else if (!this.activeTab) {
+      await this.redirectToViewRoot();
+    }
   },
 
   beforeDestroy() {
     this.$periodicRefresh.unregister(this.refreshView);
-    this.clearActiveView();
   },
 
   methods: {

@@ -22,15 +22,20 @@
 <script>
 import { MODALS, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 
+import { getNewWidgetGridParametersY } from '@/helpers/grid-layout';
+import { setSeveralFields } from '@/helpers/immutable';
+
 import { activeViewMixin } from '@/mixins/active-view';
 import { viewRouterMixin } from '@/mixins/view/router';
 import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
+import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
 
 export default {
   mixins: [
     activeViewMixin,
     viewRouterMixin,
     entitiesWidgetMixin,
+    entitiesViewTabMixin,
   ],
   props: {
     widget: {
@@ -56,11 +61,15 @@ export default {
      * Copy a widget's parameters, and open corresponding settings panel
      */
     async cloneWidget({ viewId, tabId }) {
-      const newWidget = {
-        ...this.widget,
+      const tab = await this.fetchViewTab({ id: tabId });
 
+      const { mobile, tablet, desktop } = getNewWidgetGridParametersY(tab.widgets);
+      const newWidget = setSeveralFields(this.widget, {
         tab: tabId,
-      };
+        'grid_parameters.mobile.y': mobile,
+        'grid_parameters.tablet.y': tablet,
+        'grid_parameters.desktop.y': desktop,
+      });
 
       await this.redirectToSelectedViewAndTab({ viewId, tabId });
 

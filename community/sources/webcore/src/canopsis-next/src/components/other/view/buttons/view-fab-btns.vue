@@ -24,10 +24,10 @@
           v-btn(
             slot="activator",
             v-if="updatable",
+            color="indigo",
             fab,
             dark,
             small,
-            color="indigo",
             @click.stop="showCreateWidgetModal"
           )
             v-icon add
@@ -36,10 +36,10 @@
           v-btn(
             slot="activator",
             v-if="updatable",
+            color="green",
             fab,
             dark,
             small,
-            color="green",
             @click.stop="showCreateTabModal"
           )
             v-icon add
@@ -51,12 +51,13 @@
 import { MODALS } from '@/constants';
 
 import { activeViewMixin } from '@/mixins/active-view';
+import { viewRouterMixin } from '@/mixins/view/router';
 import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
 
-import ViewEditingBtn from '@/components/other/view/buttons/view-editing-btn.vue';
-import ViewScrollTopBtn from '@/components/other/view/buttons/view-scroll-top-btn.vue';
-import ViewFullscreenBtn from '@/components/other/view/buttons/view-fullscreen-btn.vue';
-import ViewPeriodicRefreshBtn from '@/components/other/view/buttons/view-periodic-refresh-btn.vue';
+import ViewEditingBtn from './view-editing-btn.vue';
+import ViewScrollTopBtn from './view-scroll-top-btn.vue';
+import ViewFullscreenBtn from './view-fullscreen-btn.vue';
+import ViewPeriodicRefreshBtn from './view-periodic-refresh-btn.vue';
 
 export default {
   components: {
@@ -67,6 +68,7 @@ export default {
   },
   mixins: [
     activeViewMixin,
+    viewRouterMixin,
     entitiesViewTabMixin,
   ],
   props: {
@@ -117,8 +119,11 @@ export default {
             };
 
             await this.createViewTab({ data });
+            await this.fetchActiveView();
 
-            return this.fetchActiveView();
+            if (!this.$route.query.tabId) {
+              await this.redirectToFirstTab();
+            }
           },
         },
       });
