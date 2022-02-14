@@ -9352,7 +9352,7 @@ var doc = `{
                 },
                 "pbehavior_info": {
                     "type": "object",
-                    "$ref": "#/definitions/types.PbehaviorInfo"
+                    "$ref": "#/definitions/entity.PbehaviorInfo"
                 },
                 "pbh_inactive_duration": {
                     "type": "integer"
@@ -9615,18 +9615,6 @@ var doc = `{
                 "_id": {
                     "type": "string"
                 },
-                "active_on_pbh": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "disabled_on_pbh": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "execution": {
                     "type": "object",
                     "$ref": "#/definitions/alarm.Execution"
@@ -9747,6 +9735,10 @@ var doc = `{
                 },
                 "author": {
                     "type": "string"
+                },
+                "comments": {
+                    "type": "object",
+                    "$ref": "#/definitions/pbehavior.Comments"
                 },
                 "name": {
                     "type": "string"
@@ -10338,7 +10330,7 @@ var doc = `{
                 },
                 "pbehavior_info": {
                     "type": "object",
-                    "$ref": "#/definitions/types.PbehaviorInfo"
+                    "$ref": "#/definitions/entity.PbehaviorInfo"
                 },
                 "state": {
                     "type": "integer"
@@ -10438,6 +10430,43 @@ var doc = `{
                 },
                 "with_flags": {
                     "type": "boolean"
+                }
+            }
+        },
+        "entity.PbehaviorInfo": {
+            "type": "object",
+            "properties": {
+                "canonical_type": {
+                    "description": "CanonicalType is Type of pbehavior.Type.",
+                    "type": "string"
+                },
+                "icon_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID is ID of pbehavior.PBehavior.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name is Name of pbehavior.PBehavior.",
+                    "type": "string"
+                },
+                "reason": {
+                    "description": "Reason is Name of pbehavior.Reason.",
+                    "type": "string"
+                },
+                "timestamp": {
+                    "description": "Timestamp is time when entity enters pbehavior.\nUse pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.",
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "type": {
+                    "description": "TypeID is ID of pbehavior.Type.",
+                    "type": "string"
+                },
+                "type_name": {
+                    "description": "TypeName is Name of pbehavior.Type.",
+                    "type": "string"
                 }
             }
         },
@@ -10568,7 +10597,7 @@ var doc = `{
                 },
                 "pbehavior_info": {
                     "type": "object",
-                    "$ref": "#/definitions/types.PbehaviorInfo"
+                    "$ref": "#/definitions/entity.PbehaviorInfo"
                 },
                 "sli_avail_state": {
                     "type": "integer"
@@ -10937,7 +10966,7 @@ var doc = `{
                 },
                 "pbehavior_info": {
                     "type": "object",
-                    "$ref": "#/definitions/types.PbehaviorInfo"
+                    "$ref": "#/definitions/entity.PbehaviorInfo"
                 },
                 "sli_avail_state": {
                     "type": "integer"
@@ -13365,6 +13394,10 @@ var doc = `{
                 "name": {
                     "type": "string"
                 },
+                "pbehavior_info": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.PbehaviorInfo"
+                },
                 "pbehaviors": {
                     "type": "array",
                     "items": {
@@ -13485,6 +13518,10 @@ var doc = `{
                 },
                 "output": {
                     "type": "string"
+                },
+                "pbehavior_info": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.PbehaviorInfo"
                 },
                 "pbehaviors": {
                     "type": "array",
