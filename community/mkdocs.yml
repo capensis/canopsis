@@ -72,8 +72,8 @@ extra:
       link: https://twitter.com/canopsis
     - icon: fontawesome/brands/linkedin
       link: https://fr.linkedin.com/company/capensis
-    - icon: fontawesome/brands/docker
-      link: https://hub.docker.com/u/canopsis/
+    - icon: fontawesome/brands/youtube
+      link: https://www.youtube.com/channel/UCkjGq4pG3jrlTRnMmA8BGbQ
 
 extra_css:
   - mkdocs.css
