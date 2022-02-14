@@ -8,12 +8,12 @@
           v-layout(v-if="pending", justify-center)
             v-progress-circular(color="primary", indeterminate)
           v-layout(v-else)
-            v-container(v-show="duplicate")
-              v-alert(type="info") {{ $t('modals.view.duplicate.infoMessage') }}
-            view-form(
-              v-model="form",
-              :groups="groups"
-            )
+            v-flex(xs12)
+              v-alert(:value="duplicate", type="info") {{ $t('modals.view.duplicate.infoMessage') }}
+              view-form(
+                v-model="form",
+                :groups="groups"
+              )
       template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
@@ -32,16 +32,17 @@
 <script>
 import { find, isString } from 'lodash';
 
-import { MODALS, ROUTES_NAMES } from '@/constants';
+import { MODALS } from '@/constants';
 
 import { viewToForm, viewToRequest } from '@/helpers/forms/view';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { viewRouterMixin } from '@/mixins/view/router';
 import { entitiesViewMixin } from '@/mixins/entities/view';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import ViewForm from '@/components/other/view/view-form.vue';
 
@@ -58,6 +59,7 @@ export default {
   components: { ViewForm, ModalWrapper },
   mixins: [
     modalInnerMixin,
+    viewRouterMixin,
     entitiesViewMixin,
     entitiesViewGroupMixin,
     permissionsTechnicalViewMixin,
@@ -108,27 +110,9 @@ export default {
   },
   methods: {
     /**
-     * Redirect to home page if we are surfing on this view at the moment
-     */
-    redirectToHomeIfCurrentRoute() {
-      const { name, params = {} } = this.$route;
-
-      if (name === ROUTES_NAMES.view && params.id === this.view._id) {
-        this.$router.push({ name: ROUTES_NAMES.home });
-      }
-    },
-
-    /**
      * Remove view
      */
     async remove() {
-      if (this.config.removeAction) {
-        await this.config.removeAction();
-      }
-
-      this.$modals.hide();
-
-      /*
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
@@ -146,7 +130,6 @@ export default {
           },
         },
       });
-      * */
     },
 
     /**
@@ -190,13 +173,13 @@ export default {
         await this.config.action(data);
       }
 
-      /* if (this.duplicate) {
+      if (this.duplicate) {
         await this.copyViewWithPopup({ id: this.view._id, data });
       } else if (this.view?._id) {
         await this.updateViewWithPopup({ id: this.view._id, data });
       } else {
         await this.createViewWithPopup({ data });
-      } */
+      }
 
       await this.fetchAllGroupsListWithViewsWithCurrentUser();
 

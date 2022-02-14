@@ -23,7 +23,6 @@ export const entitiesViewGroupMixin = {
       createGroup: 'create',
       updateGroup: 'update',
       removeGroup: 'remove',
-      bulkCreateGroupsWithoutStore: 'bulkCreateWithoutStore',
     }),
 
     ...mapAuthActions(['fetchCurrentUser']),

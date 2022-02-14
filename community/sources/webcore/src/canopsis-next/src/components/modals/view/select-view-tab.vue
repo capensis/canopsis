@@ -8,11 +8,19 @@
           v-progress-circular(color="primary", indeterminate)
         v-layout(v-else)
           v-expansion-panel(dark)
-            v-expansion-panel-content.secondary(v-for="group in groups", :key="group._id", ripple)
+            v-expansion-panel-content.secondary(
+              v-for="group in groups",
+              :key="group._id",
+              ripple
+            )
               template(#header="")
                 div {{ group.title }}
               v-expansion-panel.px-2(dark)
-                v-expansion-panel-content.secondary.lighten-1(v-for="view in group.views", :key="view._id", ripple)
+                v-expansion-panel-content.secondary.lighten-1(
+                  v-for="view in group.views",
+                  :key="view._id",
+                  ripple
+                )
                   template(#header="")
                     div {{ view.title }}
                   v-list.pa-0

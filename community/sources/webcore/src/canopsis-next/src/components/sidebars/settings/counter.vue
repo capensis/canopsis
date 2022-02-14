@@ -5,7 +5,7 @@
       v-divider
       field-filters(
         :entities-type="$constants.ENTITIES_TYPES.alarm",
-        :filters.sync="form.parameters.filters",
+        :filters.sync="form.parameters.viewFilters",
         hide-select,
         addable,
         editable
