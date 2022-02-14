@@ -154,55 +154,41 @@ pbehavior_type:
     priority: 22
     type: active
   pbehavior_type_23:
-    _id: pbh-type-for-instruction-with-pbehavior-1
-    description: pbh-type-for-instruction-with-pbehavior-1-description
-    icon_name: pbh-type-for-instruction-with-pbehavior-1-icon
-    name: pbh-type-for-instruction-with-pbehavior-1-name
-    priority: 23
-    type: maintenance
-  pbehavior_type_24:
-    _id: pbh-type-for-instruction-with-pbehavior-2
-    description: pbh-type-for-instruction-with-pbehavior-2-description
-    icon_name: pbh-type-for-instruction-with-pbehavior-2-icon
-    name: pbh-type-for-instruction-with-pbehavior-2-name
-    priority: 24
-    type: maintenance
-  pbehavior_type_25:
     _id: test-type-to-get-pbehavior
     description: test-type-to-get-pbehavior-description
     icon_name: test-type-to-get-pbehavior-icon
     name: test-type-to-get-pbehavior-name
     priority: 25
     type: active
-  pbehavior_type_26:
+  pbehavior_type_24:
     _id: test-type-to-edit-scenario
     description: test-type-to-edit-scenario-description
     icon_name: test-type-to-edit-scenario-icon
     name: test-type-to-edit-scenario-name
     priority: 26
     type: maintenance
-  pbehavior_type_27:
+  pbehavior_type_25:
     _id: test-type-to-edit-idle-rule
     description: test-type-to-edit-idle-rule-description
     icon_name: test-type-to-edit-idle-rule-icon
     name: test-type-to-edit-idle-rule-name
     priority: 27
     type: maintenance
-  pbehavior_type_28:
+  pbehavior_type_26:
     _id: test-active-type-to-patch-pbehavior
     description: test-active-type-to-patch-pbehavior-description
     icon_name: test-active-type-to-patch-pbehavior-icon
     name: test-active-type-to-patch-pbehavior-name
     priority: 28
     type: active
-  pbehavior_type_29:
+  pbehavior_type_27:
     _id: test-pause-type-to-patch-pbehavior
     description: test-pause-type-to-patch-pbehavior-description
     icon_name: test-pause-type-to-patch-pbehavior-icon
     name: test-pause-type-to-patch-pbehavior-name
     priority: 29
     type: pause
-  pbehavior_type_30:
+  pbehavior_type_28:
     _id: test-pause-type-to-engine
     description: Engine pause
     icon_name: test-pause-to-engine-icon
