@@ -1,7 +1,8 @@
 import { cloneDeep } from 'lodash';
 
-import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './alarm';
 import { ALARM_LEVELS, ALARM_LEVELS_COLORS } from '@/constants';
+
+import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './alarm';
 
 /**
  * @typedef {Object} StatsCalendarWidgetParameters
@@ -35,7 +36,7 @@ export const statsCalendarWidgetParametersToForm = (parameters = {}) => ({
 });
 
 /**
- * Convert form to service weather widget parameters
+ * Convert form to stats calendar widget parameters
  *
  * @param {StatsCalendarWidgetParameters} form
  * @return {StatsCalendarWidgetParameters}

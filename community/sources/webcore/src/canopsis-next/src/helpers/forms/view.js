@@ -224,7 +224,8 @@ export const prepareImportedGroups = groups => groups.map(({ views, ...group }) 
 export const prepareViewsForImportRequest = views => views.map(view => (
   view.imported
     ? omit(view, ['_id', 'imported'])
-    : view));
+    : view
+));
 
 /**
  * Prepare imported groups

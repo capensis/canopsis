@@ -46,7 +46,9 @@ export default {
   },
   computed: {
     tooltipContent() {
-      return this.isPeriodicRefreshEnabled ? this.periodicRefreshProgressFormatted : this.$t('common.refresh');
+      return this.isPeriodicRefreshEnabled
+        ? this.periodicRefreshProgressFormatted
+        : this.$t('common.refresh');
     },
 
     periodicRefreshProgressFormatted() {

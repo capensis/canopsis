@@ -5,21 +5,13 @@ import {
   ALARM_LEVELS_COLORS,
   AVAILABLE_COUNTERS,
   DEFAULT_COUNTER_BLOCK_TEMPLATE,
+  DEFAULT_WIDGET_MARGIN,
 } from '@/constants';
 
 import {
   alarmListBaseParametersToForm,
   formToAlarmListBaseParameters,
 } from './alarm';
-import { DEFAULT_WIDGET_MARGIN } from '@/constants/service-weather';
-
-/**
- * @typedef {'more-info' | 'alarm-list' | 'both'} ServiceWeatherWidgetModalType
- */
-
-/**
- * @typedef {'impact-state' | 'state'} ServiceWeatherWidgetColorIndicator
- */
 
 /**
  * @typedef {Object} CounterWidgetLevels
@@ -44,7 +36,7 @@ import { DEFAULT_WIDGET_MARGIN } from '@/constants/service-weather';
  */
 
 /**
- * Convert service weather widget parameters to form
+ * Convert counter widget parameters to form
  *
  * @param {CounterWidgetParameters} [parameters = {}]
  * @return {CounterWidgetParameters}
@@ -74,7 +66,7 @@ export const counterWidgetParametersToForm = (parameters = {}) => ({
 });
 
 /**
- * Convert form to service weather widget parameters
+ * Convert form to counter widget parameters
  *
  * @param {CounterWidgetParameters} form
  * @return {CounterWidgetParameters}

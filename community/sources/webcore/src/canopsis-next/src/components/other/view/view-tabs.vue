@@ -50,6 +50,7 @@ import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { MODALS, ROUTES_NAMES } from '@/constants';
 
 import { activeViewMixin } from '@/mixins/active-view';
+import { viewRouterMixin } from '@/mixins/view/router';
 import { vuetifyTabsMixin } from '@/mixins/vuetify/tabs';
 import { entitiesViewMixin } from '@/mixins/entities/view';
 import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
@@ -60,6 +61,7 @@ export default {
   },
   mixins: [
     activeViewMixin,
+    viewRouterMixin,
     vuetifyTabsMixin,
     entitiesViewMixin,
     entitiesViewTabMixin,
@@ -178,8 +180,18 @@ export default {
         config: {
           action: async () => {
             await this.removeViewTab({ id: tab._id });
+            await this.fetchActiveView();
 
-            return this.fetchActiveView();
+            if (tab._id !== this.$route.query.tabId) {
+              return;
+            }
+
+            if (this.view.tabs.length) {
+              await this.redirectToFirstTab();
+              return;
+            }
+
+            await this.redirectToViewRoot();
           },
         },
       });

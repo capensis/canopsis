@@ -4,7 +4,7 @@
       v-for="group in groups",
       :group="group",
       :key="group._id",
-      hideActions
+      hide-actions
     )
       template(#title)
         v-checkbox.group-checkbox.mt-0.pt-0(

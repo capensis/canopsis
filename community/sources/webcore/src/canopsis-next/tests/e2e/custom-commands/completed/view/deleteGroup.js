@@ -39,7 +39,7 @@ module.exports.command = function deleteGroup(groupId, callback = () => {}) {
   confirmation.verifyModalOpened();
 
   this.waitForFirstXHR(
-    `${API_ROUTES.viewGroup}/${groupId}`,
+    `${API_ROUTES.view.group}/${groupId}`,
     WAIT_FOR_FIRST_XHR_TIME,
     () => confirmation.clickSubmitButton(),
     ({ responseData }) => {

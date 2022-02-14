@@ -20,7 +20,6 @@ export const entitiesViewMixin = {
       updateViewWithoutStore: 'updateWithoutStore',
       removeView: 'remove',
       copyView: 'copy',
-      bulkCreateViewsWithoutStore: 'bulkCreateWithoutStore',
       exportViewsWithoutStore: 'exportWithoutStore',
       importViewsWithoutStore: 'importWithoutStore',
     }),
@@ -47,7 +46,7 @@ export const entitiesViewMixin = {
 
     async copyViewWithPopup({ id, data }) {
       try {
-        await this.createView({ id, data });
+        await this.copyView({ id, data });
 
         this.$popups.success({ text: this.$t('modals.view.success.duplicate') });
       } catch (err) {

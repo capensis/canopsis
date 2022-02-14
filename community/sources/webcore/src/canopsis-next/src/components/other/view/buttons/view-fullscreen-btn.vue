@@ -6,7 +6,7 @@
       :small="small",
       fab,
       dark,
-      @click="toggleFullScreenMode"
+      @click.stop="toggleFullScreenMode"
     )
       v-icon fullscreen
       v-icon fullscreen_exit

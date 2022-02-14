@@ -1,7 +1,20 @@
+import { omit } from 'lodash';
+
 import { ROUTES_NAMES } from '@/constants';
 
 export const viewRouterMixin = {
   methods: {
+    /**
+     * Redirect to home page if we are surfing on this view at the moment
+     */
+    redirectToHomeIfCurrentRoute() {
+      const { name, params = {} } = this.$route;
+
+      if (name === ROUTES_NAMES.view && params.id === this.view._id) {
+        this.$router.push({ name: ROUTES_NAMES.home });
+      }
+    },
+
     /**
      * Redirect to first view tab if exists
      *
@@ -9,9 +22,7 @@ export const viewRouterMixin = {
      */
     redirectToFirstTab() {
       return new Promise((resolve, reject) => {
-        const { tabId } = this.$route.query;
-
-        if (tabId || !this.view?.tabs?.length) {
+        if (!this.view?.tabs?.length) {
           return resolve();
         }
 
@@ -21,6 +32,17 @@ export const viewRouterMixin = {
           },
         }, resolve, reject);
       });
+    },
+
+    /**
+     * Redirect to view root route (without tabId)
+     *
+     * @return {Promise<unknown>}
+     */
+    redirectToViewRoot() {
+      return new Promise((resolve, reject) => this.$router.replace({
+        query: omit(this.$route.query, 'tabId'),
+      }, resolve, reject));
     },
 
     /**
