@@ -58,6 +58,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -1264,4 +1265,18 @@ func RegisterRoutes(
 			)
 		}
 	}
+}
+
+func GetProxy(
+	security Security,
+	enforcer libsecurity.Enforcer,
+	accessConfig proxy.AccessConfig,
+) []gin.HandlerFunc {
+	authMiddleware := security.GetAuthMiddleware()
+
+	return append(
+		authMiddleware,
+		middleware.ProxyAuthorize(enforcer, accessConfig),
+		ReverseProxyHandler(),
+	)
 }
