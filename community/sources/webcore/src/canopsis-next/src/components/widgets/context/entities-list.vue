@@ -99,7 +99,7 @@ import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
-import { widgetColumnsMixin } from '@/mixins/widget/columns';
+import { widgetColumnsContextMixin } from '@/mixins/widget/columns';
 import { exportCsvMixinCreator } from '@/mixins/widget/export';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
@@ -127,7 +127,7 @@ export default {
   mixins: [
     authMixin,
     widgetFetchQueryMixin,
-    widgetColumnsMixin,
+    widgetColumnsContextMixin,
     widgetFilterSelectMixin,
     entitiesContextEntityMixin,
     entitiesAlarmColumnsFiltersMixin,

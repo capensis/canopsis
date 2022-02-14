@@ -331,6 +331,10 @@ Feature: get service weather
           "secondary_icon": "",
           "is_grey": true,
           "alarm_counters": [],
+          "pbehavior_info": {
+            "canonical_type": "maintenance",
+            "name": "test-pbehavior-weather-service-4"
+          },
           "pbehaviors": [
             {
               "name": "test-pbehavior-weather-service-4"
@@ -411,6 +415,10 @@ Feature: get service weather
           "secondary_icon": "",
           "is_grey": false,
           "alarm_counters": [],
+          "pbehavior_info": {
+            "canonical_type": "active",
+            "name": "test-pbehavior-weather-service-5"
+          },
           "pbehaviors": [
             {
               "name": "test-pbehavior-weather-service-5"
@@ -524,6 +532,10 @@ Feature: get service weather
               }
             }
           ],
+          "pbehavior_info": {
+            "canonical_type": "maintenance",
+            "name": "test-pbehavior-weather-service-6-1"
+          },
           "pbehaviors": [
             {
               "name": "test-pbehavior-weather-service-6-1"
@@ -653,6 +665,10 @@ Feature: get service weather
               }
             }
           ],
+          "pbehavior_info": {
+            "canonical_type": "maintenance",
+            "name": "test-pbehavior-weather-service-7-1"
+          },
           "pbehaviors": [
             {
               "name": "test-pbehavior-weather-service-7-1"
@@ -1052,6 +1068,10 @@ Feature: get service weather
           "secondary_icon": "",
           "is_grey": true,
           "alarm_counters": [],
+          "pbehavior_info": {
+            "canonical_type": "maintenance",
+            "name": "test-pbehavior-weather-service-16"
+          },
           "pbehaviors": [
             {
               "name": "test-pbehavior-weather-service-16"
