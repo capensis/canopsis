@@ -1829,10 +1829,6 @@ export default {
       noValuePaths: 'Vous devez ajouter au moins un chemin de valeur',
     },
   },
-  snmpRules: {
-    uploadMib: 'Envoyer un fichier MIB',
-    addSnmpRule: 'Ajouter une règle SNMP',
-  },
   layout: {
     sideBar: {
       buttons: {
@@ -2746,6 +2742,8 @@ export default {
     moduleMibObjects: 'Champ d\'association des variables SNMP',
     regex: 'Expression régulière',
     formatter: 'Format (groupe de capture avec \\x)',
+    uploadMib: 'Envoyer un fichier MIB',
+    addSnmpRule: 'Ajouter une règle SNMP',
   },
 
   ...featureService.get('i18n.fr'),
