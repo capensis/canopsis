@@ -11,7 +11,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with full p
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text pbehavior pbehavior-type-icon theme--light"
+        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -38,7 +38,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with full p
         Author: pbehavior-author
       </div>
       <div>
-        Type: pbehavior-type-name
+        Type: type-name
       </div>
       <div>
         Reason: pbehavior-reason-name
@@ -84,7 +84,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with pbehav
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text pbehavior pbehavior-type-icon theme--light"
+        class="v-icon c-extra-details__badge cyan accent-2 white--text material-icons theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -110,9 +110,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with pbehav
       <div>
         Author: pbehavior-author
       </div>
-      <div>
-        Type: pbehavior-type-name
-      </div>
+      <!---->
       <div>
         Reason: pbehavior-reason-name
       </div>
@@ -157,7 +155,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without com
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text pbehavior pbehavior-type-icon theme--light"
+        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -184,7 +182,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without com
         Author: pbehavior-author
       </div>
       <div>
-        Type: pbehavior-type-name
+        Type: type-name
       </div>
       <div>
         Reason: pbehavior-reason-name
@@ -214,7 +212,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rea
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text pbehavior pbehavior-type-icon theme--light"
+        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -241,7 +239,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rea
         Author: pbehavior-author
       </div>
       <div>
-        Type: pbehavior-type-name
+        Type: type-name
       </div>
       <!---->
       <div>
@@ -285,7 +283,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rru
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text pbehavior pbehavior-type-icon theme--light"
+        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -312,7 +310,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rru
         Author: pbehavior-author
       </div>
       <div>
-        Type: pbehavior-type-name
+        Type: type-name
       </div>
       <div>
         Reason: pbehavior-reason-name
@@ -356,7 +354,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without tst
     <span>
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge cyan accent-2 white--text pbehavior pbehavior-type-icon theme--light"
+        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
         style="font-size: 16px;"
       />
     </span>
@@ -383,7 +381,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without tst
         Author: pbehavior-author
       </div>
       <div>
-        Type: pbehavior-type-name
+        Type: type-name
       </div>
       <div>
         Reason: pbehavior-reason-name
