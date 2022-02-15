@@ -2,28 +2,25 @@
   div
     v-layout
       v-flex(xs6)
-        v-layout(align-center)
-          v-flex
-            date-time-picker-text-field(
-              v-field="value.tstart",
-              v-validate="tstartRules",
-              :label="$t('common.startDate')",
-              :date-object-preparer="startDateObjectPreparer",
-              :round-hours="roundHours",
-              name="tstart",
-              @update:objectValue="$emit('update:startObjectValue', $event)"
-            )
-        v-layout(align-center)
-          v-flex
-            date-time-picker-text-field(
-              v-field="value.tstop",
-              v-validate="tstopRules",
-              :label="$t('common.endDate')",
-              :date-object-preparer="stopDateObjectPreparer",
-              :round-hours="roundHours",
-              name="tstop",
-              @update:objectValue="$emit('update:stopObjectValue', $event)"
-            )
+        v-layout(column)
+          date-time-picker-text-field(
+            v-field="value.tstart",
+            v-validate="tstartRules",
+            :label="$t('common.startDate')",
+            :date-object-preparer="startDateObjectPreparer",
+            :round-hours="roundHours",
+            name="tstart",
+            @update:objectValue="$emit('update:startObjectValue', $event)"
+          )
+          date-time-picker-text-field(
+            v-field="value.tstop",
+            v-validate="tstopRules",
+            :label="$t('common.endDate')",
+            :date-object-preparer="stopDateObjectPreparer",
+            :round-hours="roundHours",
+            name="tstop",
+            @update:objectValue="$emit('update:stopObjectValue', $event)"
+          )
       v-flex.pl-1(xs6)
         c-quick-date-interval-type-field(v-model="range")
         v-select(
@@ -64,11 +61,11 @@ export default {
       required: true,
     },
     tstopRules: {
-      type: [String, Array],
+      type: [String, Object],
       default: null,
     },
     tstartRules: {
-      type: [String, Array],
+      type: [String, Object],
       default: null,
     },
   },
