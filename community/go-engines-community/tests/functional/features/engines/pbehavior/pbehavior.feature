@@ -60,7 +60,12 @@ Feature: update alarm on pbehavior
         {
           "v": {
             "pbehavior_info": {
-              "name": "test-pbehavior-1"
+              "name": "test-pbehavior-1",
+              "reason": "Test Engine",
+              "canonical_type": "maintenance",
+              "icon_name": "test-maintenance-to-engine-icon",
+              "type": "test-maintenance-type-to-engine",
+              "type_name": "Engine maintenance"
             },
             "connector" : "test-connector-pbehavior-1",
             "connector_name" : "test-connector-name-pbehavior-1",
@@ -80,6 +85,15 @@ Feature: update alarm on pbehavior
                 "m": "Pbehavior test-pbehavior-1. Type: Engine maintenance. Reason: Test Engine."
               }
             ]
+          },
+          "pbehavior": {
+            "name": "test-pbehavior-1",
+            "type": {
+              "_id": "test-maintenance-type-to-engine",
+              "icon_name": "test-maintenance-to-engine-icon",
+              "name": "Engine maintenance",
+              "type": "maintenance"
+            }
           }
         }
       ],
@@ -87,6 +101,31 @@ Feature: update alarm on pbehavior
         "page": 1,
         "page_count": 1,
         "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/entities?search=test-resource-pbehavior-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "pbehavior_info": {
+            "name": "test-pbehavior-1",
+            "reason": "Test Engine",
+            "canonical_type": "maintenance",
+            "icon_name": "test-maintenance-to-engine-icon",
+            "type": "test-maintenance-type-to-engine",
+            "type_name": "Engine maintenance"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "per_page": 10,
+        "page_count": 1,
         "total_count": 1
       }
     }
@@ -137,7 +176,12 @@ Feature: update alarm on pbehavior
         {
           "v": {
             "pbehavior_info": {
-              "name": "test-pbehavior-2"
+              "name": "test-pbehavior-2",
+              "reason": "Test Engine",
+              "canonical_type": "maintenance",
+              "icon_name": "test-maintenance-to-engine-icon",
+              "type": "test-maintenance-type-to-engine",
+              "type_name": "Engine maintenance"
             },
             "connector" : "test-connector-pbehavior-2",
             "connector_name" : "test-connector-name-pbehavior-2",
@@ -523,7 +567,12 @@ Feature: update alarm on pbehavior
         {
           "v": {
             "pbehavior_info": {
-              "name": "test-pbehavior-8"
+              "name": "test-pbehavior-8",
+              "reason": "Test Engine",
+              "canonical_type": "maintenance",
+              "icon_name": "test-maintenance-to-engine-icon",
+              "type": "test-maintenance-type-to-engine",
+              "type_name": "Engine maintenance"
             },
             "connector" : "test-connector-pbehavior-8",
             "connector_name" : "test-connector-name-pbehavior-8",

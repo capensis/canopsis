@@ -753,7 +753,7 @@ Feature: modify event on event filter
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-event-filters-6
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """
     {
       "data": [
