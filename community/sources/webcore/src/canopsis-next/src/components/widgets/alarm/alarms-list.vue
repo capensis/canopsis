@@ -205,11 +205,13 @@ export default {
   },
   methods: {
     refreshExpanded() {
-      Object.entries(this.$refs.alarmsTable.expanded).forEach(([id, expanded]) => {
-        if (expanded && !this.alarms.some(alarm => alarm._id === id)) {
-          this.$set(this.$refs.alarmsTable.expanded, id, false);
-        }
-      });
+      if (this.$refs.alarmsTable && this.$refs.alarmsTable.expanded) {
+        Object.entries(this.$refs.alarmsTable.expanded).forEach(([id, expanded]) => {
+          if (expanded && !this.alarms.some(alarm => alarm._id === id)) {
+            this.$set(this.$refs.alarmsTable.expanded, id, false);
+          }
+        });
+      }
     },
 
     updateCorrelation(correlation) {
