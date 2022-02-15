@@ -43,6 +43,8 @@
 
 - name: Install TimescaleDB from upstream repositories
   yum:
-    name: "{{ timescaledb_package }}{{ timescaledb_full_version }}"
+    name: 
+      - "{{ timescaledb_package }}{{ timescaledb_full_version }}" 
+      - "{{ timescaledb_loader_package }}{{ timescaledb_full_version }}"
     state: present
     enablerepo: "timescale_timescaledb,pgdg-common,pgdg{{ postgresql_main_version }}"
