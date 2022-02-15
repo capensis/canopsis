@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -227,10 +226,10 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 
 	eventfilterValidator := eventfilter.NewValidator(client)
 	eventfilterExistIdValidator := common.NewUniqueFieldValidator(client, mongo.EventFilterRulesMongoCollection, "ID")
-	v.RegisterStructValidationCtx(eventfilterValidator.Validate, eventfilter.EventFilterPayload{})
+	v.RegisterStructValidation(eventfilterValidator.ValidateEventFilter, eventfilter.EditRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		eventfilterExistIdValidator.Validate(ctx, sl)
-	}, eventfilter.EventFilter{})
+	}, eventfilter.CreateRequest{})
 
 	broadcastmessageValidator := broadcastmessage.NewValidator(client)
 	v.RegisterStructValidationCtx(broadcastmessageValidator.Validate, broadcastmessage.BroadcastMessage{})

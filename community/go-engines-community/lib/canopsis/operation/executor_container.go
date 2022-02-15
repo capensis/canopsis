@@ -1,5 +1,7 @@
 package operation
 
+import "fmt"
+
 // ExecutorContainer interface is used to implement an storage of executors.
 type ExecutorContainer interface {
 	// Get returns executor.
@@ -28,6 +30,10 @@ func (c *mapExecutorContainer) Get(operationType string) (Executor, bool) {
 }
 
 func (c *mapExecutorContainer) Set(operationType string, executor Executor) {
+	if c.Has(operationType) {
+		panic(fmt.Errorf("operation executor %q already exists", operationType))
+	}
+
 	c.executors[operationType] = executor
 }
 

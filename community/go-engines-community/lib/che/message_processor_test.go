@@ -4,7 +4,6 @@ import (
 	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libcontext "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
 	mock_context "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/context"
@@ -32,7 +31,7 @@ func TestMessageProcessor_Process_GivenRecomputeEntityServiceEvent_ShouldPassItT
 	mockAlarmConfigProvider := mock_config.NewMockAlarmConfigProvider(ctrl)
 	mockAlarmConfigProvider.EXPECT().Get().Return(config.AlarmConfig{})
 	mockEventFilterService := mock_eventfilter.NewMockService(ctrl)
-	mockEventFilterService.EXPECT().ProcessEvent(gomock.Any(), gomock.Any()).Return(event, eventfilter.Report{}, nil)
+	mockEventFilterService.EXPECT().ProcessEvent(gomock.Any(), gomock.Any()).Return(event, nil)
 	mockEnrichmentCenter := mock_context.NewMockEnrichmentCenter(ctrl)
 	mockEnrichmentCenter.EXPECT().HandleEntityServiceUpdate(gomock.Any(), gomock.Eq("test-component")).
 		Return(&libcontext.UpdatedEntityServices{}, nil)
@@ -84,7 +83,7 @@ func TestMessageProcessor_Process_GivenRecomputeEntityServiceEvent_ShouldReplace
 	mockAlarmConfigProvider := mock_config.NewMockAlarmConfigProvider(ctrl)
 	mockAlarmConfigProvider.EXPECT().Get().Return(config.AlarmConfig{})
 	mockEventFilterService := mock_eventfilter.NewMockService(ctrl)
-	mockEventFilterService.EXPECT().ProcessEvent(gomock.Any(), gomock.Any()).Return(event, eventfilter.Report{}, nil)
+	mockEventFilterService.EXPECT().ProcessEvent(gomock.Any(), gomock.Any()).Return(event, nil)
 	mockEnrichmentCenter := mock_context.NewMockEnrichmentCenter(ctrl)
 	mockEnrichmentCenter.EXPECT().HandleEntityServiceUpdate(gomock.Any(), gomock.Eq("test-component")).
 		Return(nil, nil)

@@ -698,34 +698,6 @@ Feature: create service entity
       "type": "enrichment",
       "patterns": [{
         "event_type": "check",
-        "resource": "test-resource-che-service-6"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "description": "test-eventfilter-che-service-6-description",
-      "enabled": true,
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """json
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
         "resource": "test-resource-che-service-6",
         "current_entity": {
           "infos": {
@@ -733,19 +705,21 @@ Feature: create service entity
           }
         }
       }],
-      "actions": [
-        {
-          "type": "set_entity_info_from_template",
-          "name": "manager",
-          "description": "Manager",
-          "value": "test-manager-che-service-6"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "manager",
+            "description": "Manager",
+            "value": "test-manager-che-service-6"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "description": "test-eventfilter-che-service-6-description",
       "enabled": true,
-      "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass"
+      "priority": 2
     }
     """
     Then the response code should be 201
@@ -843,34 +817,6 @@ Feature: create service entity
       "type": "enrichment",
       "patterns": [{
         "event_type": "check",
-        "resource": "test-resource-che-service-7"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "description": "test-eventfilter-che-service-7-description",
-      "enabled": true,
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """json
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
         "resource": "test-resource-che-service-7",
         "current_entity": {
           "infos": {
@@ -878,19 +824,21 @@ Feature: create service entity
           }
         }
       }],
-      "actions": [
-        {
-          "type": "set_entity_info_from_template",
-          "name": "manager",
-          "description": "Manager",
-          "value": "test-manager-che-service-7"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "manager",
+            "description": "Manager",
+            "value": "test-manager-che-service-7"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "description": "test-eventfilter-che-service-7-description",
       "enabled": true,
-      "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass"
+      "priority": 2
     }
     """
     Then the response code should be 201
@@ -972,19 +920,21 @@ Feature: create service entity
         "event_type": "check",
         "resource": "test-resource-che-service-7"
       }],
-      "actions": [
-        {
-          "type": "set_entity_info_from_template",
-          "name": "manager",
-          "description": "Manager",
-          "value": "test-another-manager-che-service-7"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "manager",
+            "description": "Manager",
+            "value": "test-another-manager-che-service-7"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "description": "test-eventfilter-che-service-7-description",
       "enabled": true,
-      "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass"
+      "priority": 2
     }
     """
     Then the response code should be 200
@@ -1247,34 +1197,6 @@ Feature: create service entity
       "type": "enrichment",
       "patterns": [{
         "event_type": "check",
-        "resource": "test-resource-che-service-10"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "description": "test-eventfilter-che-service-10-description",
-      "enabled": true,
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """json
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
         "resource": "test-resource-che-service-10",
         "current_entity": {
           "infos": {
@@ -1282,17 +1204,19 @@ Feature: create service entity
           }
         }
       }],
-      "actions": [
-        {
-          "type": "set_entity_info_from_template",
-          "name": "manager",
-          "description": "Manager",
-          "value": "test-manager-che-service-10"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "manager",
+            "description": "Manager",
+            "value": "test-manager-che-service-10"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass",
       "description": "test-eventfilter-che-service-10-description",
       "enabled": true
     }
@@ -1625,34 +1549,6 @@ Feature: create service entity
       "type": "enrichment",
       "patterns": [{
         "event_type": "check",
-        "component": "test-component-che-service-13"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "description": "test-eventfilter-che-service-13-description",
-      "enabled": true,
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """json
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
         "source_type": "component",
         "component": "test-component-che-service-13",
         "current_entity": {
@@ -1661,17 +1557,19 @@ Feature: create service entity
           }
         }
       }],
-      "actions": [
-        {
-          "type": "set_entity_info_from_template",
-          "name": "manager",
-          "description": "Manager",
-          "value": "test-manager-che-service-13"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "manager",
+            "description": "Manager",
+            "value": "test-manager-che-service-13"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass",
       "description": "test-eventfilter-che-service-13-description",
       "enabled": true
     }
@@ -1796,34 +1694,6 @@ Feature: create service entity
       "type": "enrichment",
       "patterns": [{
         "event_type": "check",
-        "component": "test-component-che-service-14"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "description": "test-eventfilter-che-service-14-description",
-      "enabled": true,
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """json
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
         "source_type": "component",
         "component": "test-component-che-service-14",
         "current_entity": {
@@ -1832,19 +1702,21 @@ Feature: create service entity
           }
         }
       }],
-      "actions": [
-        {
-          "type": "set_entity_info_from_template",
-          "name": "manager",
-          "description": "Manager",
-          "value": "test-manager-che-service-14"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "manager",
+            "description": "Manager",
+            "value": "test-manager-che-service-14"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "description": "test-eventfilter-che-service-14-description",
       "enabled": true,
-      "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass"
+      "priority": 2
     }
     """
     Then the response code should be 201

@@ -1,8 +1,9 @@
-package main
+package fifo
 
 import (
 	"context"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -16,6 +17,7 @@ import (
 
 type messageProcessor struct {
 	FeaturePrintEventOnError bool
+	EventFilterService       eventfilter.Service
 	Scheduler                scheduler.Scheduler
 	StatsSender              ratelimit.StatsSender
 	Decoder                  encoding.Decoder
@@ -57,6 +59,12 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	err = event.InjectExtraInfos(msg)
 	if err != nil {
 		p.logError(err, "cannot inject extra infos", msg)
+		return nil, nil
+	}
+
+	event, err = p.EventFilterService.ProcessEvent(ctx, event)
+	if err != nil {
+		p.logError(err, "cannot process event by eventfilter service", msg)
 		return nil, nil
 	}
 

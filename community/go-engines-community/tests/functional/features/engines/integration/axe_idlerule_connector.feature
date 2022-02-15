@@ -31,45 +31,19 @@ Feature: update connector alarm
         "source_type": "connector",
         "connector": "test-connector-axe-idlerule-connector-1"
       }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "client",
+            "description": "Client",
+            "value": "{{ `{{ .Event.ConnectorName }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
       },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "on_success": "pass",
-      "on_failure": "pass",
-      "priority": 1,
-      "enabled": true,
-      "description": "test-eventfilter-axe-idlerule-connector-1-description"
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "source_type": "connector",
-        "connector": "test-connector-axe-idlerule-connector-1"
-      }],
-      "actions": [
-        {
-          "type": "set_entity_info_from_template",
-          "name": "client",
-          "description": "Client",
-          "value": "{{ `{{ .Event.ConnectorName }}` }}"
-        }
-      ],
       "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass",
       "enabled": true,
       "description": "test-eventfilter-axe-idlerule-connector-1-description"
     }

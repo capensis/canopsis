@@ -3,14 +3,14 @@ package main
 import (
 	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/debug"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fifo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"os"
 	"os/signal"
 )
 
 func main() {
-	var opts Options
-	opts.ParseArgs()
+	opts := fifo.ParseOptions()
 	logger := log.NewLogger(opts.ModeDebug)
 	trace := debug.Start(logger)
 	// Graceful shutdown.
