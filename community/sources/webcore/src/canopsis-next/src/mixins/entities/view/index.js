@@ -31,6 +31,8 @@ export const entitiesViewMixin = {
         this.$popups.success({ text: this.$t('modals.view.success.create') });
       } catch (err) {
         this.$popups.error({ text: this.$t('modals.view.fail.create') });
+
+        throw err;
       }
     },
 
@@ -41,6 +43,8 @@ export const entitiesViewMixin = {
         this.$popups.success({ text: this.$t('modals.view.success.edit') });
       } catch (err) {
         this.$popups.error({ text: this.$t('modals.view.fail.edit') });
+
+        throw err;
       }
     },
 
@@ -51,6 +55,8 @@ export const entitiesViewMixin = {
         this.$popups.success({ text: this.$t('modals.view.success.duplicate') });
       } catch (err) {
         this.$popups.error({ text: this.$t('modals.view.fail.duplicate') });
+
+        throw err;
       }
     },
 
@@ -61,6 +67,8 @@ export const entitiesViewMixin = {
         this.$popups.success({ text: this.$t('modals.view.success.delete') });
       } catch (err) {
         this.$popups.error({ text: this.$t('modals.view.fail.delete') });
+
+        throw err;
       }
     },
   },
