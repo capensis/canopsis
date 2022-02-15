@@ -14,6 +14,7 @@ Feature: Get a scenario
           "_id": "test-scenario-to-get-1",
           "actions": [
             {
+              "comment": "",
               "alarm_patterns": [
                 {
                   "_id": "test-scenario-to-get-1-action-1-alarm"
@@ -29,6 +30,7 @@ Feature: Get a scenario
               }
             },
             {
+              "comment": "",
               "alarm_patterns": [
                 {
                   "_id": "test-scenario-to-get-1-action-2-alarm"
@@ -81,6 +83,7 @@ Feature: Get a scenario
           "_id": "test-scenario-to-get-2",
           "actions": [
             {
+              "comment": "",
               "alarm_patterns": [
                 {
                   "_id": "test-scenario-to-get-2-action-1-alarm"
@@ -164,6 +167,7 @@ Feature: Get a scenario
       "_id": "test-scenario-to-get-1",
       "actions": [
         {
+          "comment": "",
           "alarm_patterns": [
             {
               "_id": "test-scenario-to-get-1-action-1-alarm"
@@ -179,6 +183,7 @@ Feature: Get a scenario
           }
         },
         {
+          "comment": "",
           "alarm_patterns": [
             {
               "_id": "test-scenario-to-get-1-action-2-alarm"

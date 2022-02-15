@@ -18,233 +18,248 @@ Feature: Bulk create eventfilters
     [
       {
         "_id": "test-eventfilter-bulk-create-1",
-        "description": "test bulk create 1",
+        "description": "test create 1",
         "type": "enrichment",
         "patterns": [
           {
-            "connector": "test-eventfilter-bulk-create-1-pattern"
+            "connector": "test-eventfilter-create-1-pattern"
           }
         ],
         "priority": 0,
         "enabled": true,
-        "actions": [
-          {
-            "type": "set_field",
-            "name": "connector",
-            "value": "kafka_connector"
-          }
-        ],
-        "external_data": {
-          "clear": "sky",
-          "type": "no",
-          "arr": [
-            1,
-            2,
-            3
-          ]
+        "config": {
+          "actions": [
+            {
+              "type": "set_field",
+              "name": "connector",
+              "value": "kafka_connector"
+            }
+          ],
+          "on_success": "pass",
+          "on_failure": "pass"
         },
-        "on_success": "pass",
-        "on_failure": "pass"
+        "external_data": {
+          "test": {
+            "type": "mongo"
+          }
+        }
       },
       {
         "_id": "test-eventfilter-bulk-create-1",
-        "description": "test bulk create 1",
+        "description": "test create 1",
         "type": "enrichment",
         "patterns": [
           {
-            "connector": "test-eventfilter-bulk-create-1-pattern"
+            "connector": "test-eventfilter-create-1-pattern"
           }
         ],
         "priority": 0,
         "enabled": true,
-        "actions": [
-          {
-            "type": "set_field",
-            "name": "connector",
-            "value": "kafka_connector"
-          }
-        ],
-        "external_data": {
-          "clear": "sky",
-          "type": "no",
-          "arr": [
-            1,
-            2,
-            3
-          ]
+        "config": {
+          "actions": [
+            {
+              "type": "set_field",
+              "name": "connector",
+              "value": "kafka_connector"
+            }
+          ],
+          "on_success": "pass",
+          "on_failure": "pass"
         },
-        "on_success": "pass",
-        "on_failure": "pass"
+        "external_data": {
+          "test": {
+            "type": "mongo"
+          }
+        }
       },
       {
         "type": "unspecified"
       },
       {
         "type": "enrichment",
-        "actions": []
+        "description": "some",
+        "config": {
+          "actions": []
+        }
       },
       {
         "type": "enrichment",
-        "on_failure": "continue",
-        "on_success": "continue"
-      },
-      {
-        "_id": "test-eventfilter-check-id"
-      },
-      {
-        "type": "enrichment",
-        "description": "More entity copy",
-        "patterns": [
-          4
-        ],
-        "priority": 0,
-        "enabled": true,
-        "actions": [
-          {
-            "from": "ExternalData.entity",
-            "to": "Entity",
-            "type": "copy"
-          }
-        ],
-        "external_data": {
-          "entity": {
-            "type": "entity"
-          }
-        },
-        "on_success": "pass",
-        "on_failure": "pass",
-        "author": "root"
-      },
-      {
-        "type": "enrichment",
-        "description": "Invalid pattern with empty document",
-        "patterns": [
-          {},
-          {
-            "connector": "test-eventfilter-bulk-create-1-pattern"
-          }
-        ],
-        "priority": 0,
-        "enabled": true,
-        "actions": [
-          {
-            "from": "ExternalData.entity",
-            "to": "Entity",
-            "type": "copy"
-          }
-        ],
-        "external_data": {
-          "entity": {
-            "type": "entity"
-          }
-        },
-        "on_success": "pass",
-        "on_failure": "pass",
-        "author": "root"
+        "description": "some",
+        "config": {
+          "actions": [
+            {
+              "type":"set_entity_info_from_template",
+              "name":"test",
+              "value":"{{.ExternalData.test}}",
+              "description":"test"
+            }
+          ],
+          "on_failure": "continue",
+          "on_success": "continue"
+        }
       },
       {
         "_id": "test-eventfilter-bulk-create-2",
-        "description": "test bulk create 2",
+        "description": "test create 2",
         "type": "enrichment",
         "patterns": [
           {
-            "connector": "test-eventfilter-bulk-create-2-pattern"
+            "connector": "test-eventfilter-create-2-pattern"
+          }
+        ],
+        "priority": 0,
+        "enabled": true,
+        "config": {
+          "actions": [
+            {
+              "type": "set_field",
+              "name": "connector",
+              "value": "kafka_connector"
+            }
+          ],
+          "on_success": "pass",
+          "on_failure": "pass"
+        },
+        "external_data": {
+          "test": {
+            "type": "mongo"
+          }
+        }
+      },
+      {
+        "_id": "test-eventfilter-bulk-create-3",
+        "description": "test create 3",
+        "type": "enrichment",
+        "patterns": [
+          {
+            "connector": "test-eventfilter-create-3-pattern"
           }
         ],
         "priority": 0,
         "enabled": false,
-        "actions": [
-          {
-            "type": "set_field",
-            "name": "connector",
-            "value": "kafka_connector"
-          }
-        ],
-        "external_data": {
-          "clear": "sky",
-          "type": "no",
-          "arr": [
-            1,
-            2,
-            3
-          ]
+        "config": {
+          "actions": [
+            {
+              "type": "set_field",
+              "name": "connector",
+              "value": "kafka_connector"
+            }
+          ],
+          "on_success": "pass",
+          "on_failure": "pass"
         },
-        "on_success": "pass",
-        "on_failure": "pass"
-      },
-      {
-        "_id": "test-eventfilter-bulk-create-3",
-        "type": "enrichment",
-        "description": "test bulk create 3",
-        "patterns": [
-          null
-        ],
-        "priority": 0,
-        "enabled": true,
-        "actions": [
-          {
-            "from": "ExternalData.entity",
-            "to": "Entity",
-            "type": "copy"
-          }
-        ],
         "external_data": {
-          "entity": {
-            "type": "entity"
+          "test": {
+            "type": "mongo"
           }
-        },
-        "on_success": "pass",
-        "on_failure": "pass",
-        "author": "root"
+        }
       },
       {
         "_id": "test-eventfilter-bulk-create-4",
-        "type": "enrichment",
-        "description": "test bulk create 4",
-        "patterns": [
-          {}
-        ],
-        "priority": 0,
-        "enabled": true,
-        "actions": [
-          {
-            "from": "ExternalData.entity",
-            "to": "Entity",
-            "type": "copy"
-          }
-        ],
-        "external_data": {
-          "entity": {
-            "type": "entity"
-          }
+        "type":"enrichment",
+        "description":"eventfilter create 4",
+        "patterns":[{}],
+        "priority":0,
+        "enabled":true,
+        "config": {
+          "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
+          "on_success":"pass",
+          "on_failure":"pass"
         },
-        "on_success": "pass",
-        "on_failure": "pass",
-        "author": "root"
+        "external_data":{"entity":{"type":"entity"}}
       },
       {
         "_id": "test-eventfilter-bulk-create-5",
-        "type": "enrichment",
-        "description": "test bulk create 5",
-        "patterns": null,
-        "priority": 0,
-        "enabled": true,
-        "actions": [
+        "type":"enrichment",
+        "description":"some description",
+        "patterns":null,
+        "priority":0,
+        "enabled":true,
+        "config": {
+          "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
+          "on_success":"pass",
+          "on_failure":"pass"
+        },
+        "external_data":{"entity":{"type":"entity"}}
+      },
+      {
+        "_id": "test-eventfilter-bulk-create-6",
+        "type":"enrichment",
+        "description":"some description",
+        "patterns":[4],
+        "priority":0,
+        "enabled":true,
+        "config": {
+          "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
+          "on_success":"pass",
+          "on_failure":"pass"
+        },
+        "external_data":{"entity":{"type":"entity"}},
+        "author": "root"
+      },
+      {
+        "_id": "test-eventfilter-bulk-create-7",
+        "type":"enrichment",
+        "description":"Invalid pattern with empty document",
+        "patterns":[{},{"connector": "test-eventfilter-create-1-pattern"}],
+        "priority":0,
+        "enabled":true,
+        "config": {
+          "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
+          "on_success":"pass",
+          "on_failure":"pass"
+        },
+        "external_data":{"entity":{"type":"entity"}}
+      },
+      {
+        "_id": "test-eventfilter-bulk-create-8",
+        "description": "test",
+        "type": "change_entity",
+        "patterns": [
           {
-            "from": "ExternalData.entity",
-            "to": "Entity",
-            "type": "copy"
+            "connector": "test_connector",
+            "customer_tags": {
+              "regex_match": "CMDB:(?P<SI_CMDB>.*?)($|,)"
+            }
           }
         ],
-        "external_data": {
-          "entity": {
-            "type": "entity"
-          }
-        },
-        "on_success": "pass",
-        "on_failure": "pass"
+        "enabled": true
       },
-      []
+      {
+        "_id": "test-eventfilter-bulk-create-9",
+        "description": "test",
+        "type": "change_entity",
+        "patterns": [
+          {
+            "connector": "test_connector",
+            "customer_tags": {
+              "regex_match": "CMDB:(?P<SI_CMDB>.*?)($|,)"
+            }
+          }
+        ],
+        "config": {
+          "component": "",
+          "connector": "",
+          "resource": "",
+          "connector_name": ""
+        },
+        "enabled": true
+      },
+      {
+        "_id": "test-eventfilter-bulk-create-10",
+        "description": "test",
+        "type": "change_entity",
+        "patterns": [
+          {
+            "connector": "test_connector",
+            "customer_tags": {
+              "regex_match": "CMDB:(?P<SI_CMDB>.*?)($|,)"
+            }
+          }
+        ],
+        "config": {},
+        "enabled": true
+      }
     ]
     """
     Then the response code should be 207
@@ -256,66 +271,62 @@ Feature: Bulk create eventfilters
         "status": 200,
         "item": {
           "_id": "test-eventfilter-bulk-create-1",
-          "description": "test bulk create 1",
+          "description": "test create 1",
           "type": "enrichment",
           "patterns": [
             {
-              "connector": "test-eventfilter-bulk-create-1-pattern"
+              "connector": "test-eventfilter-create-1-pattern"
             }
           ],
           "priority": 0,
           "enabled": true,
-          "actions": [
-            {
-              "type": "set_field",
-              "name": "connector",
-              "value": "kafka_connector"
-            }
-          ],
-          "external_data": {
-            "clear": "sky",
-            "type": "no",
-            "arr": [
-              1,
-              2,
-              3
-            ]
+          "config": {
+            "actions": [
+              {
+                "type": "set_field",
+                "name": "connector",
+                "value": "kafka_connector"
+              }
+            ],
+            "on_success": "pass",
+            "on_failure": "pass"
           },
-          "on_success": "pass",
-          "on_failure": "pass"
+          "external_data": {
+            "test": {
+              "type": "mongo"
+            }
+          }
         }
       },
       {
         "status": 400,
         "item": {
           "_id": "test-eventfilter-bulk-create-1",
-          "description": "test bulk create 1",
+          "description": "test create 1",
           "type": "enrichment",
           "patterns": [
             {
-              "connector": "test-eventfilter-bulk-create-1-pattern"
+              "connector": "test-eventfilter-create-1-pattern"
             }
           ],
           "priority": 0,
           "enabled": true,
-          "actions": [
-            {
-              "type": "set_field",
-              "name": "connector",
-              "value": "kafka_connector"
-            }
-          ],
-          "external_data": {
-            "clear": "sky",
-            "type": "no",
-            "arr": [
-              1,
-              2,
-              3
-            ]
+          "config": {
+            "actions": [
+              {
+                "type": "set_field",
+                "name": "connector",
+                "value": "kafka_connector"
+              }
+            ],
+            "on_success": "pass",
+            "on_failure": "pass"
           },
-          "on_success": "pass",
-          "on_failure": "pass"
+          "external_data": {
+            "test": {
+              "type": "mongo"
+            }
+          }
         },
         "errors": {
           "_id": "ID already exists."
@@ -327,14 +338,17 @@ Feature: Bulk create eventfilters
           "type": "unspecified"
         },
         "errors": {
-          "type": "Type must be one of [break drop enrichment]."
+          "type": "Type must be one of [break drop enrichment change_entity]."
         }
       },
       {
         "status": 400,
         "item": {
           "type": "enrichment",
-          "actions": []
+          "description": "some",
+          "config": {
+            "actions": []
+          }
         },
         "errors": {
           "actions": "Actions is missing.",
@@ -346,8 +360,19 @@ Feature: Bulk create eventfilters
         "status": 400,
         "item": {
           "type": "enrichment",
-          "on_failure": "continue",
-          "on_success": "continue"
+          "description": "some",
+          "config": {
+            "actions": [
+              {
+                "type":"set_entity_info_from_template",
+                "name":"test",
+                "value":"{{.ExternalData.test}}",
+                "description":"test"
+              }
+            ],
+            "on_failure": "continue",
+            "on_success": "continue"
+          }
         },
         "errors": {
           "on_failure": "OnFailure must be one of [pass drop break].",
@@ -355,105 +380,35 @@ Feature: Bulk create eventfilters
         }
       },
       {
-        "status": 400,
-        "item": {
-          "_id": "test-eventfilter-check-id"
-        },
-        "errors": {
-          "_id": "ID already exists."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "type": "enrichment",
-          "description": "More entity copy",
-          "patterns": [
-            4
-          ],
-          "priority": 0,
-          "enabled": true,
-          "actions": [
-            {
-              "from": "ExternalData.entity",
-              "to": "Entity",
-              "type": "copy"
-            }
-          ],
-          "external_data": {
-            "entity": {
-              "type": "entity"
-            }
-          },
-          "on_success": "pass",
-          "on_failure": "pass",
-          "author": "root"
-        },
-        "error": "error decoding key list: unable to parse event pattern list element"
-      },
-      {
-        "status": 400,
-        "item": {
-          "type": "enrichment",
-          "description": "Invalid pattern with empty document",
-          "patterns": [
-            {},
-            {
-              "connector": "test-eventfilter-bulk-create-1-pattern"
-            }
-          ],
-          "priority": 0,
-          "enabled": true,
-          "actions": [
-            {
-              "from": "ExternalData.entity",
-              "to": "Entity",
-              "type": "copy"
-            }
-          ],
-          "external_data": {
-            "entity": {
-              "type": "entity"
-            }
-          },
-          "on_success": "pass",
-          "on_failure": "pass",
-          "author": "root"
-        },
-        "error": "error decoding key list: unable to parse event pattern list element"
-      },
-      {
         "id": "test-eventfilter-bulk-create-2",
         "status": 200,
         "item": {
           "_id": "test-eventfilter-bulk-create-2",
-          "description": "test bulk create 2",
+          "description": "test create 2",
           "type": "enrichment",
           "patterns": [
             {
-              "connector": "test-eventfilter-bulk-create-2-pattern"
+              "connector": "test-eventfilter-create-2-pattern"
             }
           ],
           "priority": 0,
-          "enabled": false,
-          "actions": [
-            {
-              "type": "set_field",
-              "name": "connector",
-              "value": "kafka_connector"
-            }
-          ],
-          "external_data": {
-            "clear": "sky",
-            "type": "no",
-            "arr": [
-              1,
-              2,
-              3
-            ]
+          "enabled": true,
+          "config": {
+            "actions": [
+              {
+                "type": "set_field",
+                "name": "connector",
+                "value": "kafka_connector"
+              }
+            ],
+            "on_success": "pass",
+            "on_failure": "pass"
           },
-          "on_success": "pass",
-          "on_failure": "pass"
+          "external_data": {
+            "test": {
+              "type": "mongo"
+            }
+          }
         }
       },
       {
@@ -461,89 +416,170 @@ Feature: Bulk create eventfilters
         "status": 200,
         "item": {
           "_id": "test-eventfilter-bulk-create-3",
+          "description": "test create 3",
           "type": "enrichment",
-          "description": "test bulk create 3",
           "patterns": [
-            null
+            {
+              "connector": "test-eventfilter-create-3-pattern"
+            }
           ],
           "priority": 0,
-          "enabled": true,
-          "actions": [
-            {
-              "from": "ExternalData.entity",
-              "to": "Entity",
-              "type": "copy"
-            }
-          ],
-          "external_data": {
-            "entity": {
-              "type": "entity"
-            }
+          "enabled": false,
+          "config": {
+            "actions": [
+              {
+                "type": "set_field",
+                "name": "connector",
+                "value": "kafka_connector"
+              }
+            ],
+            "on_success": "pass",
+            "on_failure": "pass"
           },
-          "on_success": "pass",
-          "on_failure": "pass",
-          "author": "root"
+          "external_data": {
+            "test": {
+              "type": "mongo"
+            }
+          }
         }
       },
       {
-        "id": "test-eventfilter-bulk-create-4",
         "status": 200,
         "item": {
           "_id": "test-eventfilter-bulk-create-4",
-          "type": "enrichment",
-          "description": "test bulk create 4",
-          "patterns": [
-            {}
-          ],
-          "priority": 0,
-          "enabled": true,
-          "actions": [
-            {
-              "from": "ExternalData.entity",
-              "to": "Entity",
-              "type": "copy"
-            }
-          ],
-          "external_data": {
-            "entity": {
-              "type": "entity"
-            }
+          "type":"enrichment",
+          "description":"eventfilter create 4",
+          "patterns":[{}],
+          "priority":0,
+          "enabled":true,
+          "config": {
+            "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
+            "on_success":"pass",
+            "on_failure":"pass"
           },
-          "on_success": "pass",
-          "on_failure": "pass",
-          "author": "root"
+          "external_data":{"entity":{"type":"entity"}}
         }
       },
       {
-        "id": "test-eventfilter-bulk-create-5",
         "status": 200,
         "item": {
           "_id": "test-eventfilter-bulk-create-5",
-          "type": "enrichment",
-          "description": "test bulk create 5",
-          "patterns": null,
-          "priority": 0,
-          "enabled": true,
-          "actions": [
-            {
-              "from": "ExternalData.entity",
-              "to": "Entity",
-              "type": "copy"
-            }
-          ],
-          "external_data": {
-            "entity": {
-              "type": "entity"
-            }
+          "type":"enrichment",
+          "description":"some description",
+          "patterns":null,
+          "priority":0,
+          "enabled":true,
+          "config": {
+            "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
+            "on_success":"pass",
+            "on_failure":"pass"
           },
-          "on_success": "pass",
-          "on_failure": "pass"
+          "external_data":{"entity":{"type":"entity"}}
         }
       },
       {
         "status": 400,
-        "item": [],
-        "error": "value doesn't contain object; it contains array"
+        "item": {
+          "_id": "test-eventfilter-bulk-create-6",
+          "type":"enrichment",
+          "description":"some description",
+          "patterns":[4],
+          "priority":0,
+          "enabled":true,
+          "config": {
+            "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
+            "on_success":"pass",
+            "on_failure":"pass"
+          },
+          "external_data":{"entity":{"type":"entity"}},
+          "author": "root"
+        },
+        "error": "error decoding key list: unable to parse event pattern list element"
+      },
+      {
+        "status": 400,
+        "item": {
+          "_id": "test-eventfilter-bulk-create-7",
+          "type":"enrichment",
+          "description":"Invalid pattern with empty document",
+          "patterns":[{},{"connector": "test-eventfilter-create-1-pattern"}],
+          "priority":0,
+          "enabled":true,
+          "config": {
+            "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
+            "on_success":"pass",
+            "on_failure":"pass"
+          },
+          "external_data":{"entity":{"type":"entity"}}
+        },
+        "error": "error decoding key list: unable to parse event pattern list element"
+      },
+      {
+        "status": 400,
+        "item": {
+          "_id": "test-eventfilter-bulk-create-8",
+          "description": "test",
+          "type": "change_entity",
+          "patterns": [
+            {
+              "connector": "test_connector",
+              "customer_tags": {
+                "regex_match": "CMDB:(?P<SI_CMDB>.*?)($|,)"
+              }
+            }
+          ],
+          "enabled": true
+        },
+        "errors": {
+          "config": "Config is missing."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "_id": "test-eventfilter-bulk-create-9",
+          "description": "test",
+          "type": "change_entity",
+          "patterns": [
+            {
+              "connector": "test_connector",
+              "customer_tags": {
+                "regex_match": "CMDB:(?P<SI_CMDB>.*?)($|,)"
+              }
+            }
+          ],
+          "config": {
+            "component": "",
+            "connector": "",
+            "resource": "",
+            "connector_name": ""
+          },
+          "enabled": true
+        },
+        "errors": {
+          "config": "Config is missing."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "_id": "test-eventfilter-bulk-create-10",
+          "description": "test",
+          "type": "change_entity",
+          "patterns": [
+            {
+              "connector": "test_connector",
+              "customer_tags": {
+                "regex_match": "CMDB:(?P<SI_CMDB>.*?)($|,)"
+              }
+            }
+          ],
+          "config": {},
+          "enabled": true
+        },
+        "errors": {
+          "config": "Config is missing."
+        }
       }
     ]
     """
@@ -556,135 +592,118 @@ Feature: Bulk create eventfilters
         {
           "_id": "test-eventfilter-bulk-create-1",
           "author": "root",
-          "description": "test bulk create 1",
+          "description": "test create 1",
           "type": "enrichment",
           "patterns": [
             {
-              "connector": "test-eventfilter-bulk-create-1-pattern"
+              "connector": "test-eventfilter-create-1-pattern"
             }
           ],
           "priority": 0,
           "enabled": true,
-          "actions": [
-            {
-              "type": "set_field",
-              "name": "connector",
-              "value": "kafka_connector"
-            }
-          ],
-          "external_data": {
-            "clear": "sky",
-            "type": "no",
-            "arr": [
-              1,
-              2,
-              3
-            ]
+          "config": {
+            "actions": [
+              {
+                "type": "set_field",
+                "name": "connector",
+                "value": "kafka_connector"
+              }
+            ],
+            "on_success": "pass",
+            "on_failure": "pass"
           },
-          "on_success": "pass",
-          "on_failure": "pass"
+          "external_data": {
+            "test": {
+              "type": "mongo"
+            }
+          }
         },
         {
           "_id": "test-eventfilter-bulk-create-2",
-          "description": "test bulk create 2",
+          "author": "root",
+          "description": "test create 2",
           "type": "enrichment",
           "patterns": [
             {
-              "connector": "test-eventfilter-bulk-create-2-pattern"
+              "connector": "test-eventfilter-create-2-pattern"
+            }
+          ],
+          "priority": 0,
+          "enabled": true,
+          "config": {
+            "actions": [
+              {
+                "type": "set_field",
+                "name": "connector",
+                "value": "kafka_connector"
+              }
+            ],
+            "on_success": "pass",
+            "on_failure": "pass"
+          },
+          "external_data": {
+            "test": {
+              "type": "mongo"
+            }
+          }
+        },
+        {
+          "_id": "test-eventfilter-bulk-create-3",
+          "author": "root",
+          "description": "test create 3",
+          "type": "enrichment",
+          "patterns": [
+            {
+              "connector": "test-eventfilter-create-3-pattern"
             }
           ],
           "priority": 0,
           "enabled": false,
-          "actions": [
-            {
-              "type": "set_field",
-              "name": "connector",
-              "value": "kafka_connector"
-            }
-          ],
-          "external_data": {
-            "clear": "sky",
-            "type": "no",
-            "arr": [
-              1,
-              2,
-              3
-            ]
+          "config": {
+            "actions": [
+              {
+                "type": "set_field",
+                "name": "connector",
+                "value": "kafka_connector"
+              }
+            ],
+            "on_success": "pass",
+            "on_failure": "pass"
           },
-          "on_success": "pass",
-          "on_failure": "pass"
-        },
-        {
-          "_id": "test-eventfilter-bulk-create-3",
-          "type": "enrichment",
-          "description": "test bulk create 3",
-          "patterns": [
-            {}
-          ],
-          "priority": 0,
-          "enabled": true,
-          "actions": [
-            {
-              "from": "ExternalData.entity",
-              "to": "Entity",
-              "type": "copy"
-            }
-          ],
           "external_data": {
-            "entity": {
-              "type": "entity"
+            "test": {
+              "type": "mongo"
             }
-          },
-          "on_success": "pass",
-          "on_failure": "pass",
-          "author": "root"
+          }
         },
         {
           "_id": "test-eventfilter-bulk-create-4",
-          "type": "enrichment",
-          "description": "test bulk create 4",
-          "patterns": [
-            {}
-          ],
-          "priority": 0,
-          "enabled": true,
-          "actions": [
-            {
-              "from": "ExternalData.entity",
-              "to": "Entity",
-              "type": "copy"
-            }
-          ],
-          "external_data": {
-            "entity": {
-              "type": "entity"
-            }
+          "type":"enrichment",
+          "description":"eventfilter create 4",
+          "patterns":[{}],
+          "priority":0,
+          "enabled":true,
+          "config": {
+            "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
+            "on_success":"pass",
+            "on_failure":"pass"
           },
-          "on_success": "pass",
-          "on_failure": "pass",
+          "external_data":{"entity":{"type":"entity"}},
           "author": "root"
         },
         {
           "_id": "test-eventfilter-bulk-create-5",
-          "type": "enrichment",
-          "description": "test bulk create 5",
-          "patterns": null,
-          "priority": 0,
-          "enabled": true,
-          "actions": [
-            {
-              "from": "ExternalData.entity",
-              "to": "Entity",
-              "type": "copy"
-            }
-          ],
-          "external_data": {
-            "entity": {
-              "type": "entity"
-            }
+          "type":"enrichment",
+          "description":"some description",
+          "patterns":null,
+          "priority":0,
+          "enabled":true,
+          "config": {
+            "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
+            "on_success":"pass",
+            "on_failure":"pass"
           },
-          "on_success": "pass",
-          "on_failure": "pass",
+          "external_data":{"entity":{"type":"entity"}},
           "author": "root"
         }
       ],
@@ -695,185 +714,4 @@ Feature: Bulk create eventfilters
         "total_count": 5
       }
     }
-    """
-
-  Scenario: given invalid create request should return errors
-    When I am admin
-    When I do POST /api/v4/bulk/eventfilters:
-    """json
-    [
-      {
-        "type": "unspecified"
-      },
-      {
-        "type": "enrichment",
-        "actions": []
-      },
-      {
-        "type": "enrichment",
-        "on_failure": "continue",
-        "on_success": "continue"
-      },
-      {
-        "_id": "test-eventfilter-check-id"
-      },
-      {
-        "type": "enrichment",
-        "description": "More entity copy",
-        "patterns": [
-          4
-        ],
-        "priority": 0,
-        "enabled": true,
-        "actions": [
-          {
-            "from": "ExternalData.entity",
-            "to": "Entity",
-            "type": "copy"
-          }
-        ],
-        "external_data": {
-          "entity": {
-            "type": "entity"
-          }
-        },
-        "on_success": "pass",
-        "on_failure": "pass",
-        "author": "root"
-      },
-      {
-        "type": "enrichment",
-        "description": "Invalid pattern with empty document",
-        "patterns": [
-          {},
-          {
-            "connector": "test-eventfilter-bulk-create-1-pattern"
-          }
-        ],
-        "priority": 0,
-        "enabled": true,
-        "actions": [
-          {
-            "from": "ExternalData.entity",
-            "to": "Entity",
-            "type": "copy"
-          }
-        ],
-        "external_data": {
-          "entity": {
-            "type": "entity"
-          }
-        },
-        "on_success": "pass",
-        "on_failure": "pass",
-        "author": "root"
-      }
-    ]
-    """
-    Then the response code should be 207
-    Then the response body should contain:
-    """json
-    [
-      {
-        "status": 400,
-        "item": {
-          "type": "unspecified"
-        },
-        "errors": {
-          "type": "Type must be one of [break drop enrichment]."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "type": "enrichment",
-          "actions": []
-        },
-        "errors": {
-          "actions": "Actions is missing.",
-          "on_failure": "OnFailure is required when Type enrichment is defined.",
-          "on_success": "OnSuccess is required when Type enrichment is defined."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "type": "enrichment",
-          "on_failure": "continue",
-          "on_success": "continue"
-        },
-        "errors": {
-          "on_failure": "OnFailure must be one of [pass drop break].",
-          "on_success": "OnSuccess must be one of [pass drop break]."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "_id": "test-eventfilter-check-id"
-        },
-        "errors": {
-          "_id": "ID already exists."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "type": "enrichment",
-          "description": "More entity copy",
-          "patterns": [
-            4
-          ],
-          "priority": 0,
-          "enabled": true,
-          "actions": [
-            {
-              "from": "ExternalData.entity",
-              "to": "Entity",
-              "type": "copy"
-            }
-          ],
-          "external_data": {
-            "entity": {
-              "type": "entity"
-            }
-          },
-          "on_success": "pass",
-          "on_failure": "pass",
-          "author": "root"
-        },
-        "error": "error decoding key list: unable to parse event pattern list element"
-      },
-      {
-        "status": 400,
-        "item": {
-          "type": "enrichment",
-          "description": "Invalid pattern with empty document",
-          "patterns": [
-            {},
-            {
-              "connector": "test-eventfilter-bulk-create-1-pattern"
-            }
-          ],
-          "priority": 0,
-          "enabled": true,
-          "actions": [
-            {
-              "from": "ExternalData.entity",
-              "to": "Entity",
-              "type": "copy"
-            }
-          ],
-          "external_data": {
-            "entity": {
-              "type": "entity"
-            }
-          },
-          "on_success": "pass",
-          "on_failure": "pass",
-          "author": "root"
-        },
-        "error": "error decoding key list: unable to parse event pattern list element"
-      }
-    ]
     """
