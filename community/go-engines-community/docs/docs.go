@@ -10069,14 +10069,6 @@ var doc = `{
                 }
             }
         },
-        "config.TimezoneConfig": {
-            "type": "object",
-            "properties": {
-                "location": {
-                    "type": "string"
-                }
-            }
-        },
         "contextgraph.ImportJob": {
             "type": "object",
             "properties": {
@@ -12851,6 +12843,51 @@ var doc = `{
                 },
                 "updated": {
                     "type": "integer"
+                }
+            }
+        },
+        "request.BasicAuth": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.Parameters": {
+            "type": "object",
+            "properties": {
+                "auth": {
+                    "type": "object",
+                    "$ref": "#/definitions/request.BasicAuth"
+                },
+                "headers": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "method": {
+                    "type": "string"
+                },
+                "payload": {
+                    "type": "string"
+                },
+                "retry_count": {
+                    "type": "integer"
+                },
+                "retry_delay": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "skip_verify": {
+                    "type": "boolean"
+                },
+                "url": {
+                    "type": "string"
                 }
             }
         },

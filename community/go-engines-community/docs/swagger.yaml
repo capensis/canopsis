@@ -681,11 +681,6 @@ definitions:
           type: string
         type: object
     type: object
-  config.TimezoneConfig:
-    properties:
-      location:
-        type: string
-    type: object
   contextgraph.ImportJob:
     properties:
       _id:
@@ -2575,6 +2570,36 @@ definitions:
         type: array
       updated:
         type: integer
+    type: object
+  request.BasicAuth:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  request.Parameters:
+    properties:
+      auth:
+        $ref: '#/definitions/request.BasicAuth'
+        type: object
+      headers:
+        additionalProperties:
+          type: string
+        type: object
+      method:
+        type: string
+      payload:
+        type: string
+      retry_count:
+        type: integer
+      retry_delay:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+      skip_verify:
+        type: boolean
+      url:
+        type: string
     type: object
   resolverule.CreateRequest:
     properties:
