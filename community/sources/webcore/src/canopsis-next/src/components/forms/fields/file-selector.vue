@@ -36,6 +36,15 @@
 import { union } from 'lodash';
 
 export default {
+  $_veeValidate: {
+    value() {
+      return this.files;
+    },
+
+    name() {
+      return this.name;
+    },
+  },
   inject: ['$validator'],
   props: {
     name: {

@@ -1829,10 +1829,6 @@ export default {
       noValuePaths: 'You have to add at least 1 value path',
     },
   },
-  snmpRules: {
-    uploadMib: 'Upload MIB',
-    addSnmpRule: 'Add SNMP rule',
-  },
   layout: {
     sideBar: {
       buttons: {
@@ -2746,6 +2742,8 @@ export default {
     moduleMibObjects: 'Snmp vars match field',
     regex: 'Regex',
     formatter: 'Format (capture group with \\x)',
+    uploadMib: 'Upload MIB',
+    addSnmpRule: 'Add SNMP rule',
   },
 
   ...featureService.get('i18n.en'),
