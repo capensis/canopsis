@@ -120,7 +120,10 @@ Feature: Update entity basic
       "measurements": null,
       "name": "test-entitybasic-to-update-connector-name",
       "sli_avail_state": 1,
-      "type": "connector"
+      "type": "connector",
+      "ok_events": 0,
+      "ko_events": 0,
+      "state": 0
     }
     """
     When I do GET /api/v4/entitybasics?_id=test-entitybasic-to-update-component-2
