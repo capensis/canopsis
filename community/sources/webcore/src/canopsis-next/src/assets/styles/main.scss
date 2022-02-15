@@ -140,6 +140,10 @@ $mobileBreakpoint: 450px;
   white-space: pre-wrap;
 }
 
+.pre-line {
+  white-space: pre-line !important;
+}
+
 .v-tooltip__content {
   max-width: 60%;
 
@@ -167,10 +171,6 @@ $mobileBreakpoint: 450px;
       cursor: default !important;
     }
   }
-}
-
-.pre-line {
-  white-space: pre-line !important;
 }
 
 .c-nowrap {

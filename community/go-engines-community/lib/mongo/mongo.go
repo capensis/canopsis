@@ -54,6 +54,9 @@ const (
 	MessageRateStatsMinuteCollectionName = "message_rate_statistic_minute"
 	MessageRateStatsHourCollectionName   = "message_rate_statistic_hour"
 
+	// Collection for ok/ko event statistics
+	EventStatistics = "event_statistics"
+
 	// Remediation collections
 	InstructionMongoCollection          = "instruction"
 	InstructionExecutionMongoCollection = "instruction_execution"
