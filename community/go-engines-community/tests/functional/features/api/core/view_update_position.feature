@@ -5,67 +5,87 @@ Feature: Update view positions
   Scenario: given update request should return ok
     When I am test-role-to-update-view-position
     # Create views
-    When I do POST /api/v4/bulk/view-groups:
-    """
-    [
-      {
-        "title": "test-viewgroup-to-update-position-1-title"
-      },
-      {
-        "title": "test-viewgroup-to-update-position-2-title"
-      }
-    ]
+    When I do POST /api/v4/view-groups:
+    """json
+    {
+      "title": "test-viewgroup-to-update-position-1-title"
+    }
     """
     Then the response code should be 201
-    When I save response group1={{ (index .lastResponse 0)._id }}
-    When I save response group2={{ (index .lastResponse 1)._id }}
-    When I do POST /api/v4/bulk/views:
-    """
-    [
-      {
-        "enabled": true,
-        "title": "test-view-to-update-position-1-title",
-        "group": "{{ .group1 }}"
-      },
-      {
-        "enabled": true,
-        "title": "test-view-to-update-position-2-title",
-        "group": "{{ .group1 }}"
-      },
-      {
-        "enabled": true,
-        "title": "test-view-to-update-position-3-title",
-        "group": "{{ .group1 }}"
-      },
-      {
-        "enabled": true,
-        "title": "test-view-to-update-position-4-title",
-        "group": "{{ .group2 }}"
-      },
-      {
-        "enabled": true,
-        "title": "test-view-to-update-position-5-title",
-        "group": "{{ .group2 }}"
-      },
-      {
-        "enabled": true,
-        "title": "test-view-to-update-position-6-title",
-        "group": "{{ .group2 }}"
-      }
-    ]
+    When I save response group1={{ .lastResponse._id }}
+    When I do POST /api/v4/view-groups:
+    """json
+    {
+      "title": "test-viewgroup-to-update-position-2-title"
+    }
     """
     Then the response code should be 201
-    When I save response view1={{ (index .lastResponse 0)._id }}
-    When I save response view2={{ (index .lastResponse 1)._id }}
-    When I save response view3={{ (index .lastResponse 2)._id }}
-    When I save response view4={{ (index .lastResponse 3)._id }}
-    When I save response view5={{ (index .lastResponse 4)._id }}
-    When I save response view6={{ (index .lastResponse 5)._id }}
+    When I save response group2={{ .lastResponse._id }}
+    When I do POST /api/v4/views:
+    """json
+    {
+      "enabled": true,
+      "title": "test-view-to-update-position-1-title",
+      "group": "{{ .group1 }}"
+    }
+    """
+    Then the response code should be 201
+    When I save response view1={{ .lastResponse._id }}
+    When I do POST /api/v4/views:
+    """json
+    {
+      "enabled": true,
+      "title": "test-view-to-update-position-2-title",
+      "group": "{{ .group1 }}"
+    }
+    """
+    Then the response code should be 201
+    When I save response view2={{ .lastResponse._id }}
+    When I do POST /api/v4/views:
+    """json
+    {
+      "enabled": true,
+      "title": "test-view-to-update-position-3-title",
+      "group": "{{ .group1 }}"
+    }
+    """
+    Then the response code should be 201
+    When I save response view3={{ .lastResponse._id }}
+    When I do POST /api/v4/views:
+    """json
+    {
+      "enabled": true,
+      "title": "test-view-to-update-position-4-title",
+      "group": "{{ .group2 }}"
+    }
+    """
+    Then the response code should be 201
+    When I save response view4={{ .lastResponse._id }}
+    When I do POST /api/v4/views:
+    """json
+    {
+      "enabled": true,
+      "title": "test-view-to-update-position-5-title",
+      "group": "{{ .group2 }}"
+    }
+    """
+    Then the response code should be 201
+    When I save response view5={{ .lastResponse._id }}
+    When I do POST /api/v4/views:
+    """json
+    {
+      "enabled": true,
+      "title": "test-view-to-update-position-6-title",
+      "group": "{{ .group2 }}"
+    }
+    """
+    Then the response code should be 201
+    When I save response view6={{ .lastResponse._id }}
     # Test created positions
     When I do GET /api/v4/view-groups?search=test-viewgroup-to-update-position&with_views=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -95,7 +115,7 @@ Feature: Update view positions
     """
     # Test updated positions
     When I do PUT /api/v4/view-positions:
-    """
+    """json
     [
       {
         "_id": "{{ .group2 }}",
@@ -118,7 +138,7 @@ Feature: Update view positions
     When I do GET /api/v4/view-groups?search=test-viewgroup-to-update-position&with_views=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -148,7 +168,7 @@ Feature: Update view positions
     """
     # Test moved view
     When I do PUT /api/v4/views/{{ .view4 }}:
-    """
+    """json
     {
       "enabled": true,
       "title": "test-view-to-update-position-4-title",
@@ -159,7 +179,7 @@ Feature: Update view positions
     When I do GET /api/v4/view-groups?search=test-viewgroup-to-update-position&with_views=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -189,7 +209,7 @@ Feature: Update view positions
     """
     # Test partially updated positions
     When I do PUT /api/v4/view-positions:
-    """
+    """json
     [
       {
         "_id": "{{ .group1 }}",
@@ -204,7 +224,7 @@ Feature: Update view positions
     When I do GET /api/v4/view-groups?search=test-viewgroup-to-update-position&with_views=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -234,7 +254,7 @@ Feature: Update view positions
     """
     # Test moved view by updated positions
     When I do PUT /api/v4/view-positions:
-    """
+    """json
     [
       {
         "_id": "{{ .group2 }}",
@@ -258,7 +278,7 @@ Feature: Update view positions
     When I do GET /api/v4/view-groups?search=test-viewgroup-to-update-position&with_views=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -288,7 +308,7 @@ Feature: Update view positions
     """
     # Test moved view partially updated positions
     When I do PUT /api/v4/view-positions:
-    """
+    """json
     [
       {
         "_id": "{{ .group2 }}",
@@ -302,7 +322,7 @@ Feature: Update view positions
     When I do GET /api/v4/view-groups?search=test-viewgroup-to-update-position&with_views=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -331,11 +351,11 @@ Feature: Update view positions
     }
     """
 
-  Scenario: given get request and no auth user should not allow access
+  Scenario: given update request and no auth user should not allow access
     When I do PUT /api/v4/view-positions
     Then the response code should be 401
 
-  Scenario: given get request and auth user without view permission should not allow access
+  Scenario: given update request and auth user without view permission should not allow access
     When I am noperms
     When I do PUT /api/v4/view-positions
     Then the response code should be 403
@@ -343,12 +363,12 @@ Feature: Update view positions
   Scenario: given invalid request should return error
     When I am test-role-to-update-view-position
     When I do PUT /api/v4/view-positions:
-    """
+    """json
     []
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "items": "Items should not be blank."
@@ -356,7 +376,7 @@ Feature: Update view positions
     }
     """
     When I do PUT /api/v4/view-positions:
-    """
+    """json
     [
       {
         "_id": "notexist"
@@ -365,7 +385,7 @@ Feature: Update view positions
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "items.0.views": "Views is missing."
@@ -373,7 +393,7 @@ Feature: Update view positions
     }
     """
     When I do PUT /api/v4/view-positions:
-    """
+    """json
     [
       {
         "_id": "notexist",
@@ -387,7 +407,7 @@ Feature: Update view positions
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "items": "Item contains duplicate values."
@@ -395,7 +415,7 @@ Feature: Update view positions
     }
     """
     When I do PUT /api/v4/view-positions:
-    """
+    """json
     [
       {
         "_id": "notexist1",
@@ -409,7 +429,7 @@ Feature: Update view positions
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "items": "Item contains duplicate values."
@@ -420,7 +440,7 @@ Feature: Update view positions
   Scenario: given request with not exist group should return not found error
     When I am test-role-to-update-view-position
     When I do PUT /api/v4/view-positions:
-    """
+    """json
     [
       {
         "_id": "notexist",
@@ -433,14 +453,14 @@ Feature: Update view positions
   Scenario: given request with not exist view should return forbidden error
     When I am test-role-to-update-view-position
     When I do POST /api/v4/view-groups:
-    """
+    """json
     {
       "title": "test-viewgroup-to-check-not-found-err"
     }
     """
     Then the response code should be 201
     When I do PUT /api/v4/view-positions:
-    """
+    """json
     [
       {
         "_id": "{{ .lastResponse._id }}",

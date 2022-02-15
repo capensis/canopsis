@@ -7,6 +7,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,12 +20,21 @@ type API interface {
 
 type api struct {
 	store        Store
+	widgetStore  widget.Store
+	enforcer     security.Enforcer
 	actionLogger logger.ActionLogger
 }
 
-func NewApi(store Store, actionLogger logger.ActionLogger) API {
+func NewApi(
+	store Store,
+	widgetStore widget.Store,
+	enforcer security.Enforcer,
+	actionLogger logger.ActionLogger,
+) API {
 	return &api{
 		store:        store,
+		widgetStore:  widgetStore,
+		enforcer:     enforcer,
 		actionLogger: actionLogger,
 	}
 }
@@ -41,7 +53,18 @@ func NewApi(store Store, actionLogger logger.ActionLogger) API {
 // @Router /user-preferences/{id} [get]
 func (a *api) Get(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
-	response, err := a.store.Find(c.Request.Context(), userId, c.Param("id"))
+	widgetId := c.Param("id")
+
+	ok, err := a.checkAccess(c.Request.Context(), widgetId, userId)
+	if err != nil {
+		panic(err)
+	}
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+		return
+	}
+
+	response, err := a.store.Find(c.Request.Context(), userId, widgetId)
 	if err != nil {
 		panic(err)
 	}
@@ -76,6 +99,15 @@ func (a api) Update(c *gin.Context) {
 		return
 	}
 
+	ok, err := a.checkAccess(c.Request.Context(), request.Widget, userId)
+	if err != nil {
+		panic(err)
+	}
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+		return
+	}
+
 	response, isNew, err := a.store.Update(c.Request.Context(), userId, request)
 	if err != nil {
 		panic(err)
@@ -101,4 +133,20 @@ func (a api) Update(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response)
+}
+
+func (a *api) checkAccess(ctx context.Context, widgetId, userId string) (bool, error) {
+	viewIds, err := a.widgetStore.FindViewIds(ctx, []string{widgetId})
+	if err != nil || len(viewIds) == 0 {
+		return false, err
+	}
+
+	for _, viewId := range viewIds {
+		ok, err := a.enforcer.Enforce(userId, viewId, model.PermissionRead)
+		if err != nil || !ok {
+			return false, err
+		}
+	}
+
+	return true, nil
 }
