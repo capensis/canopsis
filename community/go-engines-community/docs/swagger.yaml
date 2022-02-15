@@ -681,11 +681,6 @@ definitions:
           type: string
         type: object
     type: object
-  config.TimezoneConfig:
-    properties:
-      location:
-        type: string
-    type: object
   contextgraph.ImportJob:
     properties:
       _id:
@@ -1341,8 +1336,14 @@ definitions:
     type: object
   eventfilter.Action:
     properties:
+      description:
+        type: string
+      name:
+        type: string
       type:
         type: string
+      value:
+        type: object
     type: object
   eventfilter.BulkCreateResponseItem:
     properties:
@@ -1355,7 +1356,7 @@ definitions:
       id:
         type: string
       item:
-        $ref: '#/definitions/eventfilter.EventFilter'
+        $ref: '#/definitions/eventfilter.CreateRequest'
         type: object
       status:
         type: integer
@@ -1387,10 +1388,9 @@ definitions:
     properties:
       _id:
         type: string
-      actions:
-        items:
-          $ref: '#/definitions/eventfilter.Action'
-        type: array
+      config:
+        $ref: '#/definitions/eventfilter.RuleConfig'
+        type: object
       created:
         type: integer
       description:
@@ -1398,12 +1398,9 @@ definitions:
       enabled:
         type: boolean
       external_data:
-        additionalProperties: true
+        additionalProperties:
+          $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
-      on_failure:
-        type: string
-      on_success:
-        type: string
       patterns:
         $ref: '#/definitions/pattern.EventPatternList'
         type: object
@@ -1416,7 +1413,6 @@ definitions:
     required:
     - _id
     - description
-    - enabled
     - type
     type: object
   eventfilter.BulkUpdateResponseItem:
@@ -1435,14 +1431,13 @@ definitions:
       status:
         type: integer
     type: object
-  eventfilter.EventFilter:
+  eventfilter.CreateRequest:
     properties:
       _id:
         type: string
-      actions:
-        items:
-          $ref: '#/definitions/eventfilter.Action'
-        type: array
+      config:
+        $ref: '#/definitions/eventfilter.RuleConfig'
+        type: object
       created:
         type: integer
       description:
@@ -1450,12 +1445,9 @@ definitions:
       enabled:
         type: boolean
       external_data:
-        additionalProperties: true
+        additionalProperties:
+          $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
-      on_failure:
-        type: string
-      on_success:
-        type: string
       patterns:
         $ref: '#/definitions/pattern.EventPatternList'
         type: object
@@ -1467,7 +1459,100 @@ definitions:
         type: integer
     required:
     - description
-    - enabled
+    - type
+    type: object
+  eventfilter.ExternalDataParameters:
+    properties:
+      collection:
+        description: are used in mongo external data
+        type: string
+      request:
+        $ref: '#/definitions/request.Parameters'
+        description: are used in api external data
+        type: object
+      select:
+        additionalProperties:
+          type: string
+        type: object
+      type:
+        type: string
+    type: object
+  eventfilter.Rule:
+    properties:
+      _id:
+        type: string
+      config:
+        $ref: '#/definitions/eventfilter.RuleConfig'
+        type: object
+      created:
+        type: integer
+      description:
+        type: string
+      enabled:
+        type: boolean
+      external_data:
+        additionalProperties:
+          $ref: '#/definitions/eventfilter.ExternalDataParameters'
+        type: object
+      patterns:
+        $ref: '#/definitions/pattern.EventPatternList'
+        type: object
+      priority:
+        type: integer
+      type:
+        type: string
+      updated:
+        type: integer
+    required:
+    - description
+    - type
+    type: object
+  eventfilter.RuleConfig:
+    properties:
+      actions:
+        description: enrichment fields
+        items:
+          $ref: '#/definitions/eventfilter.Action'
+        type: array
+      component:
+        type: string
+      connector:
+        type: string
+      connector_name:
+        type: string
+      on_failure:
+        type: string
+      on_success:
+        type: string
+      resource:
+        type: string
+    type: object
+  eventfilter.UpdateRequest:
+    properties:
+      config:
+        $ref: '#/definitions/eventfilter.RuleConfig'
+        type: object
+      created:
+        type: integer
+      description:
+        type: string
+      enabled:
+        type: boolean
+      external_data:
+        additionalProperties:
+          $ref: '#/definitions/eventfilter.ExternalDataParameters'
+        type: object
+      patterns:
+        $ref: '#/definitions/pattern.EventPatternList'
+        type: object
+      priority:
+        type: integer
+      type:
+        type: string
+      updated:
+        type: integer
+    required:
+    - description
     - type
     type: object
   export.Field:
@@ -2485,6 +2570,36 @@ definitions:
         type: array
       updated:
         type: integer
+    type: object
+  request.BasicAuth:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  request.Parameters:
+    properties:
+      auth:
+        $ref: '#/definitions/request.BasicAuth'
+        type: object
+      headers:
+        additionalProperties:
+          type: string
+        type: object
+      method:
+        type: string
+      payload:
+        type: string
+      retry_count:
+        type: integer
+      retry_delay:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+      skip_verify:
+        type: boolean
+      url:
+        type: string
     type: object
   resolverule.CreateRequest:
     properties:
@@ -4542,7 +4657,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/eventfilter.EventFilter'
+            $ref: '#/definitions/eventfilter.CreateRequest'
           type: array
       produces:
       - application/json
@@ -6054,7 +6169,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/eventfilter.EventFilter'
+                    $ref: '#/definitions/eventfilter.Rule'
                   type: array
               type: object
         "400":
@@ -6078,14 +6193,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/eventfilter.EventFilter'
+          $ref: '#/definitions/eventfilter.CreateRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/eventfilter.EventFilter'
+            $ref: '#/definitions/eventfilter.Rule'
         "400":
           description: Bad Request
           schema:
@@ -6133,7 +6248,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/eventfilter.EventFilter'
+            $ref: '#/definitions/eventfilter.Rule'
         "404":
           description: Not Found
           schema:
@@ -6160,14 +6275,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/eventfilter.EventFilter'
+          $ref: '#/definitions/eventfilter.Rule'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/eventfilter.EventFilter'
+            $ref: '#/definitions/eventfilter.UpdateRequest'
         "400":
           description: Bad Request
           schema:

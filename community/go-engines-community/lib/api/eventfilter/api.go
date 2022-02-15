@@ -41,18 +41,18 @@ func NewApi(
 // @Produce json
 // @Security ApiKeyAuth
 // @Security BasicAuth
-// @Param body body EventFilter true "body"
-// @Success 201 {object} EventFilter
+// @Param body body CreateRequest true "body"
+// @Success 201 {object} eventfilter.Rule
 // @Failure 400 {object} common.ErrorResponse
 // @Router /eventfilter/rules [post]
 func (a api) Create(c *gin.Context) {
-	request := EventFilter{}
+	var request CreateRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	err := a.store.Insert(c.Request.Context(), &request)
+	eventfilter, err := a.store.Insert(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
 	}
@@ -60,13 +60,13 @@ func (a api) Create(c *gin.Context) {
 	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeEventFilter,
-		ValueID:   request.ID,
+		ValueID:   eventfilter.ID,
 	})
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	c.JSON(http.StatusCreated, request)
+	c.JSON(http.StatusCreated, eventfilter)
 }
 
 // Find all eventfilter
@@ -81,7 +81,7 @@ func (a api) Create(c *gin.Context) {
 // @Param page query integer true "current page"
 // @Param limit query integer true "items per page"
 // @Param search query string false "search query"
-// @Success 200 {object} common.PaginatedListResponse{data=[]EventFilter}
+// @Success 200 {object} common.PaginatedListResponse{data=[]eventfilter.Rule}
 // @Failure 400 {object} common.ErrorResponse
 // @Router /eventfilter/rules [get]
 func (a api) List(c *gin.Context) {
@@ -116,7 +116,7 @@ func (a api) List(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Security BasicAuth
 // @Param id path string true "eventfilter id"
-// @Success 200 {object} EventFilter
+// @Success 200 {object} eventfilter.Rule
 // @Failure 404 {object} common.ErrorResponse
 // @Router /eventfilter/rules/{id} [get]
 func (a api) Get(c *gin.Context) {
@@ -144,39 +144,40 @@ func (a api) Get(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Security BasicAuth
 // @Param id path string true "eventfilter id"
-// @Param body body EventFilter true "body"
-// @Success 200 {object} EventFilter
+// @Param body body eventfilter.Rule true "body"
+// @Success 200 {object} UpdateRequest
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
 // @Router /eventfilter/rules/{id} [put]
 func (a api) Update(c *gin.Context) {
-	var request EventFilterPayload
+	var request UpdateRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 
 		return
 	}
 
-	var data EventFilter
-	data.EventFilterPayload = request
-	data.ID = c.Param("id")
-	ok, _ := a.store.Update(c.Request.Context(), &data)
+	request.ID = c.Param("id")
+	eventfilter, err := a.store.Update(c.Request.Context(), request)
+	if err != nil {
+		panic(err)
+	}
 
-	if !ok {
+	if eventfilter == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
 
-	err := a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypeEventFilter,
-		ValueID:   data.ID,
+		ValueID:   eventfilter.ID,
 	})
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	c.JSON(http.StatusOK, data)
+	c.JSON(http.StatusOK, eventfilter)
 }
 
 // Delete eventfilter by id
@@ -222,7 +223,7 @@ func (a api) Delete(c *gin.Context) {
 // @Produce json
 // @Security JWTAuth
 // @Security BasicAuth
-// @Param body body []EventFilter true "body"
+// @Param body body []CreateRequest true "body"
 // @Success 207 {array} []BulkCreateResponseItem
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /bulk/eventfilters [post]
@@ -258,7 +259,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
-		var request EventFilter
+		var request CreateRequest
 		err = json.Unmarshal(object.MarshalTo(nil), &request)
 		if err != nil {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
@@ -271,18 +272,18 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
-		err = a.store.Insert(ctx, &request)
+		eventfilter, err := a.store.Insert(ctx, request)
 		if err != nil {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
 			continue
 		}
 
-		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))
+		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, eventfilter.ID, http.StatusOK, rawObject, nil))
 
 		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 			Action:    logger.ActionCreate,
 			ValueType: logger.ValueTypeEventFilter,
-			ValueID:   request.ID,
+			ValueID:   eventfilter.ID,
 		})
 		if err != nil {
 			a.actionLogger.Err(err, "failed to log action")
@@ -350,25 +351,23 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			continue
 		}
 
-		eventFilter := EventFilter(request)
-
-		ok, err := a.store.Update(ctx, &eventFilter)
+		eventfilter, err := a.store.Update(ctx, UpdateRequest(request))
 		if err != nil {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
 			continue
 		}
 
-		if !ok {
+		if eventfilter == nil {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
 			continue
 		}
 
-		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, eventFilter.ID, http.StatusOK, rawObject, nil))
+		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, eventfilter.ID, http.StatusOK, rawObject, nil))
 
 		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 			Action:    logger.ActionUpdate,
 			ValueType: logger.ValueTypeEventFilter,
-			ValueID:   eventFilter.ID,
+			ValueID:   eventfilter.ID,
 		})
 		if err != nil {
 			a.actionLogger.Err(err, "failed to log action")

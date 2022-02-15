@@ -2,6 +2,8 @@ package eventfilter
 
 import (
 	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -16,16 +18,16 @@ import (
 )
 
 type Store interface {
-	Insert(ctx context.Context, model *EventFilter) error
-	GetById(ctx context.Context, id string) (*EventFilter, error)
+	Insert(ctx context.Context, model CreateRequest) (*eventfilter.Rule, error)
+	GetById(ctx context.Context, id string) (*eventfilter.Rule, error)
 	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
-	Update(ctx context.Context, model *EventFilter) (bool, error)
+	Update(ctx context.Context, model UpdateRequest) (*eventfilter.Rule, error)
 	Delete(ctx context.Context, id string) (bool, error)
 }
 
 type AggregationResult struct {
-	Data       []*EventFilter `bson:"data" json:"data"`
-	TotalCount int64          `bson:"total_count" json:"total_count"`
+	Data       []*eventfilter.Rule `bson:"data" json:"data"`
+	TotalCount int64               `bson:"total_count" json:"total_count"`
 }
 
 type store struct {
@@ -44,7 +46,7 @@ func NewStore(
 	}
 }
 
-func (s *store) Insert(ctx context.Context, model *EventFilter) error {
+func (s *store) Insert(ctx context.Context, model CreateRequest) (*eventfilter.Rule, error) {
 	if model.ID == "" {
 		model.ID = utils.NewID()
 	}
@@ -54,22 +56,28 @@ func (s *store) Insert(ctx context.Context, model *EventFilter) error {
 
 	_, err := s.dbCollection.InsertOne(ctx, model)
 	if err != nil {
-		return err
-	}
-
-	return err
-}
-
-func (s *store) GetById(ctx context.Context, id string) (*EventFilter, error) {
-	ef := &EventFilter{}
-	d := s.dbCollection.FindOne(ctx, bson.M{"_id": id})
-	if d.Err() != nil {
-		return nil, d.Err()
-	}
-	if err := d.Decode(&ef); err != nil {
 		return nil, err
 	}
-	return ef, nil
+
+	return s.GetById(ctx, model.ID)
+}
+
+func (s *store) GetById(ctx context.Context, id string) (*eventfilter.Rule, error) {
+	res := s.dbCollection.FindOne(ctx, bson.M{"_id": id})
+	if err := res.Err(); err != nil {
+		if err == mongodriver.ErrNoDocuments {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	rule := &eventfilter.Rule{}
+	err := res.Decode(rule)
+	if err != nil {
+		return nil, err
+	}
+
+	return rule, nil
 }
 
 func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error) {
@@ -105,8 +113,8 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 	return &result, nil
 }
 
-func (s *store) Update(ctx context.Context, model *EventFilter) (bool, error) {
-	var data EventFilter
+func (s *store) Update(ctx context.Context, model UpdateRequest) (*eventfilter.Rule, error) {
+	var data eventfilter.Rule
 	updated := types.NewCpsTime(time.Now().Unix())
 	model.Created = nil
 	model.Updated = &updated
@@ -117,10 +125,14 @@ func (s *store) Update(ctx context.Context, model *EventFilter) (bool, error) {
 	).Decode(&data)
 	model.Created = data.Created
 	if err != nil {
-		return false, err
+		if err == mongodriver.ErrNoDocuments {
+			return nil, nil
+		}
+
+		return nil, err
 	}
 
-	return true, nil
+	return s.GetById(ctx, model.ID)
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {

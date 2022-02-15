@@ -32,7 +32,7 @@ Feature: modify event on event filter
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/entities?search=che-event-filters-1
+    When I do GET /api/v4/alarms?search=che-event-filters-1
     Then the response code should be 200
     Then the response body should be:
     """
@@ -177,34 +177,6 @@ Feature: modify event on event filter
       "type": "enrichment",
       "patterns": [{
         "event_type": "check",
-        "component": "test-component-che-event-filters-3"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "description": "test-event-filter-che-event-filters-3-description",
-      "enabled": true,
-      "on_success": "pass",
-      "on_failure": "pass",
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
         "component": "test-component-che-event-filters-3",
         "current_entity": {
           "infos": {
@@ -213,25 +185,27 @@ Feature: modify event on event filter
           }
         }
       }],
-      "actions": [
-        {
-          "type": "set_entity_info_from_template",
-          "name": "customer",
-          "description": "Client",
-          "value": "{{ `{{ .Event.ExtraInfos.customer }}` }}"
-        },
-        {
-          "type": "set_entity_info_from_template",
-          "name": "manager",
-          "description": "Manager",
-          "value": "{{ `{{ .Event.ExtraInfos.manager }}` }}"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "customer",
+            "description": "Client",
+            "value": "{{ `{{ .Event.ExtraInfos.customer }}` }}"
+          },
+          {
+            "type": "set_entity_info_from_template",
+            "name": "manager",
+            "description": "Manager",
+            "value": "{{ `{{ .Event.ExtraInfos.manager }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "description": "test-event-filter-che-event-filters-3-description",
       "enabled": true,
-      "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass"
+      "priority": 2
     }
     """
     Then the response code should be 201
@@ -243,18 +217,20 @@ Feature: modify event on event filter
         "event_type": "check",
         "component": "test-component-che-event-filters-3"
       }],
-      "actions": [
-        {
-          "type": "set_field_from_template",
-          "name": "Output",
-          "value": "{{ `{{ .Event.Output }}` }} (client: {{ `{{ .Event.Entity.Infos.customer.Value }}` }})"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_field_from_template",
+            "name": "Output",
+            "value": "{{ `{{ .Event.Output }}` }} (client: {{ `{{ .Event.Entity.Infos.customer.Value }}` }})"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "description": "test-event-filter-che-event-filters-3-description",
       "enabled": true,
-      "priority": 3,
-      "on_success": "pass",
-      "on_failure": "pass"
+      "priority": 3
     }
     """
     Then the response code should be 201
@@ -269,19 +245,21 @@ Feature: modify event on event filter
           "infos": {"output": null}
         }
       }],
-      "actions": [
-        {
-          "type": "set_entity_info_from_template",
-          "name": "output",
-          "description": "Output",
-          "value": "{{ `{{ .Event.Output }}` }}"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "output",
+            "description": "Output",
+            "value": "{{ `{{ .Event.Output }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "description": "test-event-filter-che-event-filters-3-description",
       "enabled": true,
-      "priority": 4,
-      "on_success": "pass",
-      "on_failure": "pass"
+      "priority": 4
     }
     """
     Then the response code should be 201
@@ -403,53 +381,26 @@ Feature: modify event on event filter
       "patterns": [{
         "event_type": "check",
         "source_type": "component",
-        "component": "test-component-che-event-filters-4"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "description": "test-event-filter-che-event-filters-4-description",
-      "enabled": true,
-      "on_success": "pass",
-      "on_failure": "pass",
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "source_type": "component",
         "component": "test-component-che-event-filters-4",
         "current_entity": {
           "infos": {"customer": null}
         }
       }],
-      "actions": [
-        {
-          "type": "set_entity_info",
-          "name": "customer",
-          "description": "Client",
-          "value": "test-customer-che-event-filters-4"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info",
+            "name": "customer",
+            "description": "Client",
+            "value": "test-customer-che-event-filters-4"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "description": "test-event-filter-che-event-filters-4-description",
       "enabled": true,
-      "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass"
+      "priority": 2
     }
     """
     Then the response code should be 201
@@ -580,53 +531,26 @@ Feature: modify event on event filter
       "patterns": [{
         "event_type": "check",
         "source_type": "component",
-        "component": "test-component-che-event-filters-5"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "description": "test-event-filter-che-event-filters-5-description",
-      "enabled": true,
-      "on_success": "pass",
-      "on_failure": "pass",
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "source_type": "component",
         "component": "test-component-che-event-filters-5",
         "current_entity": {
           "infos": {"customer": null}
         }
       }],
-      "actions": [
-        {
-          "type": "set_entity_info",
-          "name": "customer",
-          "description": "Client",
-          "value": "test-customer-che-event-filters-5"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info",
+            "name": "customer",
+            "description": "Client",
+            "value": "test-customer-che-event-filters-5"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "description": "test-event-filter-che-event-filters-5-description",
       "enabled": true,
-      "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass"
+      "priority": 2
     }
     """
     Then the response code should be 201
@@ -787,34 +711,6 @@ Feature: modify event on event filter
       "type": "enrichment",
       "patterns": [{
         "event_type": "check",
-        "component": "test-component-che-event-filters-6"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "description": "test-event-filter-che-event-filters-6-description",
-      "enabled": true,
-      "on_success": "pass",
-      "on_failure": "pass",
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
         "component": "test-component-che-event-filters-6",
         "current_entity": {
           "infos": {
@@ -822,19 +718,21 @@ Feature: modify event on event filter
           }
         }
       }],
-      "actions": [
-        {
-          "type": "set_entity_info",
-          "name": "customer",
-          "description": "Client",
-          "value": "test-customer-che-event-filters-6"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info",
+            "name": "customer",
+            "description": "Client",
+            "value": "test-customer-che-event-filters-6"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "description": "test-event-filter-che-event-filters-6-description",
       "enabled": true,
-      "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass"
+      "priority": 2
     }
     """
     Then the response code should be 201
@@ -937,34 +835,6 @@ Feature: modify event on event filter
       "type": "enrichment",
       "patterns": [{
         "event_type": "check",
-        "component": "test-component-che-event-filters-7"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "description": "test-event-filter-che-event-filters-7-1-description",
-      "enabled": true,
-      "on_success": "pass",
-      "on_failure": "pass",
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
         "component": "test-component-che-event-filters-7",
         "current_entity": {
           "infos": {
@@ -972,19 +842,21 @@ Feature: modify event on event filter
           }
         }
       }],
-      "actions": [
-        {
-          "type": "set_entity_info",
-          "name": "testdate",
-          "description": "Date",
-          "value": 1592215337
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info",
+            "name": "testdate",
+            "description": "Date",
+            "value": 1592215337
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "description": "test-event-filter-che-event-filters-7-2-description",
       "enabled": true,
-      "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass"
+      "priority": 2
     }
     """
     Then the response code should be 201
@@ -1094,34 +966,6 @@ Feature: modify event on event filter
       "type": "enrichment",
       "patterns": [{
         "event_type": "check",
-        "component": "test-component-che-event-filters-8"
-      }],
-      "external_data": {
-        "entity": {
-          "type": "entity"
-        }
-      },
-      "actions": [
-        {
-          "type": "copy",
-          "from": "ExternalData.entity",
-          "to": "Entity"
-        }
-      ],
-      "description": "test-event-filter-che-event-filters-8-1-description",
-      "enabled": true,
-      "on_success": "pass",
-      "on_failure": "pass",
-      "priority": 1
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/eventfilter/rules:
-    """
-    {
-      "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
         "component": "test-component-che-event-filters-8",
         "current_entity": {
           "infos": {
@@ -1130,25 +974,27 @@ Feature: modify event on event filter
           }
         }
       }],
-      "actions": [
-        {
-          "type": "copy_to_entity_info",
-          "name": "customer",
-          "description": "Client",
-          "from": "Event.ExtraInfos.customer"
-        },
-        {
-          "type": "copy_to_entity_info",
-          "name": "testdate",
-          "description": "Date",
-          "from": "Event.ExtraInfos.testdate"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "copy_to_entity_info",
+            "name": "customer",
+            "description": "Client",
+            "value": "Event.ExtraInfos.customer"
+          },
+          {
+            "type": "copy_to_entity_info",
+            "name": "testdate",
+            "description": "Date",
+            "value": "Event.ExtraInfos.testdate"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "description": "test-event-filter-che-event-filters-8-2-description",
       "enabled": true,
-      "priority": 2,
-      "on_success": "pass",
-      "on_failure": "pass"
+      "priority": 2
     }
     """
     Then the response code should be 201
@@ -1160,18 +1006,20 @@ Feature: modify event on event filter
         "event_type": "check",
         "component": "test-component-che-event-filters-8"
       }],
-      "actions": [
-        {
-          "type": "set_field_from_template",
-          "name": "Output",
-          "value": "{{ `{{ .Event.Output }}` }} (client: {{ `{{ .Event.Entity.Infos.customer.Value }}` }})"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "set_field_from_template",
+            "name": "Output",
+            "value": "{{ `{{ .Event.Output }}` }} (client: {{ `{{ .Event.Entity.Infos.customer.Value }}` }})"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "description": "test-event-filter-che-event-filters-8-3-description",
       "enabled": true,
-      "priority": 3,
-      "on_success": "pass",
-      "on_failure": "pass"
+      "priority": 3
     }
     """
     Then the response code should be 201
@@ -1186,19 +1034,21 @@ Feature: modify event on event filter
           "infos": {"output": null}
         }
       }],
-      "actions": [
-        {
-          "type": "copy_to_entity_info",
-          "name": "output",
-          "description": "Output",
-          "from": "Event.Output"
-        }
-      ],
+      "config": {
+        "actions": [
+          {
+            "type": "copy_to_entity_info",
+            "name": "output",
+            "description": "Output",
+            "value": "Event.Output"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
       "priority": 4,
       "description": "test-event-filter-che-event-filters-8-4-description",
-      "enabled": true,
-      "on_success": "pass",
-      "on_failure": "pass"
+      "enabled": true
     }
     """
     Then the response code should be 201
@@ -1307,6 +1157,516 @@ Feature: modify event on event filter
         "page_count": 1,
         "per_page": 10,
         "total_count": 3
+      }
+    }
+    """
+
+  Scenario: given check event and enrichment event filter should enrich from external mongo data
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "type": "enrichment",
+      "external_data": {
+        "component": {
+          "type": "mongo",
+          "select": {
+            "component_customer": "{{ `{{.Event.Component}}` }}"
+          },
+          "collection": "assets"
+        }
+      },
+      "patterns": [{
+        "component": "test-eventfilter-assets-customer-1"
+      }],
+      "description": "test-event-filter-che-event-filters-9-description",
+      "priority": 1,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "status",
+            "value": "{{ `{{.ExternalData.component.component_status}}` }}",
+            "description": "status from assets"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """
+    {
+      "connector": "test-connector-che-event-filters-9",
+      "connector_name": "test-connector-name-che-event-filters-9",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-eventfilter-assets-customer-1",
+      "resource": "test-resource-che-event-filters-9",
+      "state": 2,
+      "output": "test-output-che-event-filters-9"
+    }
+    """
+    When I save response createTimestamp={{ now }}
+    When I wait the end of event processing
+    When I do GET /api/v4/entities?search=test-resource-che-event-filters-9
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-resource-che-event-filters-9/test-eventfilter-assets-customer-1",
+          "category": null,
+          "component": "test-eventfilter-assets-customer-1",
+          "depends": [
+            "test-connector-che-event-filters-9/test-connector-name-che-event-filters-9"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-eventfilter-assets-customer-1"
+          ],
+          "enable_history": [
+            {{ .createTimestamp }}
+          ],
+          "impact_level": 1,
+          "infos": {
+            "status": {
+              "name": "status",
+              "description": "status from assets",
+              "value": "test-eventfilter-assets-status-1"
+            }
+          },
+          "measurements": null,
+          "name": "test-resource-che-event-filters-9",
+          "type": "resource"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given check event and enrichment event filter shouldn't drop event if enrich from external mongo data failed
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "type": "enrichment",
+      "external_data": {
+        "component": {
+          "type": "mongo",
+          "select": {
+            "component_customer": "{{ `{{.Event.Component}}` }}"
+          },
+          "collection": "assets"
+        }
+      },
+      "patterns": [{
+        "component": "assets_customer_not_exist"
+      }],
+      "description": "test-event-filter-che-event-filters-10-description",
+      "priority": 1,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "status",
+            "value": "{{ `{{.ExternalData.component.component_status}}` }}",
+            "description": "status from assets"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """
+    {
+      "connector": "test-connector-che-event-filters-10",
+      "connector_name": "test-connector-name-che-event-filters-10",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "assets_customer_not_exist",
+      "resource": "test-resource-che-event-filters-10",
+      "state": 2,
+      "output": "test-output-che-event-filters-10"
+    }
+    """
+    When I save response createTimestamp={{ now }}
+    When I wait the end of event processing
+    When I do GET /api/v4/entities?search=test-resource-che-event-filters-10
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-resource-che-event-filters-10/assets_customer_not_exist",
+          "category": null,
+          "component": "assets_customer_not_exist",
+          "depends": [
+            "test-connector-che-event-filters-10/test-connector-name-che-event-filters-10"
+          ],
+          "enabled": true,
+          "impact": [
+            "assets_customer_not_exist"
+          ],
+          "enable_history": [
+            {{ .createTimestamp }}
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-resource-che-event-filters-10",
+          "type": "resource"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=che-event-filters-10
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "entity": {
+            "_id": "test-resource-che-event-filters-10/assets_customer_not_exist"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given check event and enrichment event filter should drop event if enrich from external mongo data failed
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "type": "enrichment",
+      "external_data": {
+        "component": {
+          "type": "mongo",
+          "select": {
+            "component_customer": "{{ `{{.Event.Component}}` }}"
+          },
+          "collection": "assets"
+        }
+      },
+      "patterns": [{
+        "component": "assets_customer_not_exist_2"
+      }],
+      "description": "test-event-filter-che-event-filters-11-description",
+      "priority": 1,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "status",
+            "value": "{{ `{{.ExternalData.component.component_status}}` }}",
+            "description": "status from assets"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "drop"
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """
+    {
+      "connector": "test-connector-che-event-filters-11",
+      "connector_name": "test-connector-name-che-event-filters-11",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "assets_customer_not_exist_2",
+      "resource": "test-resource-che-event-filters-11",
+      "state": 2,
+      "output": "test-output-che-event-filters-11"
+    }
+    """
+    When I save response createTimestamp={{ now }}
+    When I wait the end of event processing
+    When I do GET /api/v4/entities?search=test-resource-che-event-filters-11
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-resource-che-event-filters-11/assets_customer_not_exist_2",
+          "category": null,
+          "component": "assets_customer_not_exist_2",
+          "depends": [
+            "test-connector-che-event-filters-11/test-connector-name-che-event-filters-11"
+          ],
+          "enabled": true,
+          "impact": [
+            "assets_customer_not_exist_2"
+          ],
+          "enable_history": [
+            {{ .createTimestamp }}
+          ],
+          "impact_level": 1,
+          "infos": {},
+          "measurements": null,
+          "name": "test-resource-che-event-filters-11",
+          "type": "resource"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=che-event-filters-11
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 0
+      }
+    }
+    """
+
+  Scenario: given check event and enrichment event filter should enrich from external api data
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "type": "enrichment",
+      "external_data": {
+        "title": {
+          "type": "api",
+          "request": {
+            "url": "http://localhost:3000/api/external_data",
+            "method": "GET"
+          }
+        }
+      },
+      "patterns": [{
+        "component": "test-component-che-event-filters-12"
+      }],
+      "description": "test-event-filter-che-event-filters-12-description",
+      "priority": 1,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "title",
+            "value": "{{ `{{.ExternalData.title.title}}` }}",
+            "description": "title from external api"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """
+    {
+      "connector": "test-connector-che-event-filters-12",
+      "connector_name": "test-connector-name-che-event-filters-12",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-che-event-filters-12",
+      "resource": "test-resource-che-event-filters-12",
+      "state": 2,
+      "output": "test-output-che-event-filters-12"
+    }
+    """
+    When I save response createTimestamp={{ now }}
+    When I wait the end of event processing
+    When I do GET /api/v4/entities?search=test-resource-che-event-filters-12
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-resource-che-event-filters-12/test-component-che-event-filters-12",
+          "category": null,
+          "component": "test-component-che-event-filters-12",
+          "depends": [
+            "test-connector-che-event-filters-12/test-connector-name-che-event-filters-12"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-component-che-event-filters-12"
+          ],
+          "enable_history": [
+            {{ .createTimestamp }}
+          ],
+          "impact_level": 1,
+          "infos": {
+            "title": {
+              "name": "title",
+              "description": "title from external api",
+              "value": "test title"
+            }
+          },
+          "measurements": null,
+          "name": "test-resource-che-event-filters-12",
+          "type": "resource"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given check event and enrichment event filter should enrich from external api data and mongo
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "type": "enrichment",
+      "external_data": {
+        "title": {
+          "type": "api",
+          "request": {
+            "url": "http://localhost:3000/api/external_data",
+            "method": "GET"
+          }
+        },
+        "component": {
+          "type": "mongo",
+          "select": {
+            "component_customer": "{{ `{{.Event.Component}}` }}"
+          },
+          "collection": "assets"
+        }
+      },
+      "patterns": [{
+        "component": "test-eventfilter-assets-customer-2"
+      }],
+      "description": "test-event-filter-che-event-filters-13-description",
+      "priority": 1,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "title",
+            "value": "{{ `{{.ExternalData.title.title}}` }}",
+            "description": "title from external api"
+          },
+          {
+            "type": "set_entity_info_from_template",
+            "name": "status",
+            "value": "{{ `{{.ExternalData.component.component_status}}` }}",
+            "description": "status from assets"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """
+    {
+      "connector": "test-connector-che-event-filters-13",
+      "connector_name": "test-connector-name-che-event-filters-13",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-eventfilter-assets-customer-2",
+      "resource": "test-resource-che-event-filters-13",
+      "state": 2,
+      "output": "test-output-che-event-filters-13"
+    }
+    """
+    When I save response createTimestamp={{ now }}
+    When I wait the end of event processing
+    When I do GET /api/v4/entities?search=test-resource-che-event-filters-13
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-resource-che-event-filters-13/test-eventfilter-assets-customer-2",
+          "category": null,
+          "component": "test-eventfilter-assets-customer-2",
+          "depends": [
+            "test-connector-che-event-filters-13/test-connector-name-che-event-filters-13"
+          ],
+          "enabled": true,
+          "impact": [
+            "test-eventfilter-assets-customer-2"
+          ],
+          "enable_history": [
+            {{ .createTimestamp }}
+          ],
+          "impact_level": 1,
+          "infos": {
+            "status": {
+              "name": "status",
+              "description": "status from assets",
+              "value": "test-eventfilter-assets-status-2"
+            },
+            "title": {
+              "name": "title",
+              "description": "title from external api",
+              "value": "test title"
+            }
+          },
+          "measurements": null,
+          "name": "test-resource-che-event-filters-13",
+          "type": "resource"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
       }
     }
     """

@@ -69,3 +69,79 @@ Feature: Update an eventfilter
       "error": "Not found"
     }
     """
+    
+  Scenario: given PUT change_entity rule requests should return error, because of empty config
+    Given I am admin
+    When I do PUT /api/v4/eventfilter/rules/test-update-change-entity:
+    """
+    {
+      "description": "update change_entity",
+      "type": "change_entity",
+      "patterns": [
+        {
+          "resource": "never be used change entity update test"
+        }
+      ],
+      "enabled": true
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config": "Config is missing."
+      }
+    }
+    """
+    When I do PUT /api/v4/eventfilter/rules/test-update-change-entity:
+    """
+    {
+      "description": "update change_entity",
+      "type": "change_entity",
+      "patterns": [
+        {
+          "resource": "never be used change entity update test"
+        }
+      ],
+      "config": {
+        "component": "",
+        "connector": "",
+        "resource": "",
+        "connector_name": ""
+      },
+      "enabled": true
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config": "Config is missing."
+      }
+    }
+    """
+    When I do PUT /api/v4/eventfilter/rules/test-update-change-entity:
+    """
+    {
+      "description": "update change_entity",
+      "type": "change_entity",
+      "patterns": [
+        {
+          "resource": "never be used change entity update test"
+        }
+      ],
+      "config": {},
+      "enabled": true
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "config": "Config is missing."
+      }
+    }
+    """

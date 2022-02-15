@@ -11,20 +11,22 @@
     ],
     "priority": 0,
     "enabled": true,
-    "actions": [
-      {
-        "type": "set_field",
-        "name": "connector",
-        "value": "kafka_connector"
-      }
-    ],
+    "config": {
+      "actions": [
+        {
+          "type": "set_field",
+          "name": "connector",
+          "value": "kafka_connector"
+        }
+      ],
+      "on_success": "pass",
+      "on_failure": "pass"
+    },
     "external_data": {
       "entity": {
         "type": "entity"
       }
     },
-    "on_success": "pass",
-    "on_failure": "pass",
     "created": 1608284568,
     "updated": 1608285370
   },
@@ -74,13 +76,13 @@
     "updated": 1608635535
   },
   {
-    "_id": "test-eventfilter-to-bulk-update-1",
+    "_id": "test-eventfilter-bulk-update-1",
     "author": "root",
     "description": "break filter",
     "type": "break",
     "patterns": [
       {
-        "resource": "test-eventfilter-to-bulk-update-1-pattern"
+        "resource": "test-eventfilter-bulk-update-1-pattern"
       }
     ],
     "priority": 3,
@@ -89,13 +91,13 @@
     "updated": 1608635535
   },
   {
-    "_id": "test-eventfilter-to-bulk-update-2",
+    "_id": "test-eventfilter-bulk-update-2",
     "author": "root",
     "description": "break filter",
     "type": "break",
     "patterns": [
       {
-        "resource": "test-eventfilter-to-bulk-update-2-pattern"
+        "resource": "test-eventfilter-bulk-update-2-pattern"
       }
     ],
     "priority": 3,
@@ -104,13 +106,13 @@
     "updated": 1608635535
   },
   {
-    "_id": "test-eventfilter-to-bulk-update-3",
+    "_id": "test-eventfilter-bulk-update-3",
     "author": "root",
     "description": "break filter",
     "type": "break",
     "patterns": [
       {
-        "resource": "test-eventfilter-to-bulk-update-3-pattern"
+        "resource": "test-eventfilter-bulk-update-3-pattern"
       }
     ],
     "priority": 3,
@@ -119,13 +121,13 @@
     "updated": 1608635535
   },
   {
-    "_id": "test-eventfilter-to-bulk-update-4",
+    "_id": "test-eventfilter-bulk-update-4",
     "author": "root",
     "description": "break filter",
     "type": "break",
     "patterns": [
       {
-        "resource": "test-eventfilter-to-bulk-update-4-pattern"
+        "resource": "test-eventfilter-bulk-update-4-pattern"
       }
     ],
     "priority": 3,
@@ -134,13 +136,13 @@
     "updated": 1608635535
   },
   {
-    "_id": "test-eventfilter-to-bulk-update-5",
+    "_id": "test-eventfilter-bulk-update-5",
     "author": "root",
     "description": "break filter",
     "type": "break",
     "patterns": [
       {
-        "resource": "test-eventfilter-to-bulk-update-5-pattern"
+        "resource": "test-eventfilter-bulk-update-5-pattern"
       }
     ],
     "priority": 3,
@@ -203,6 +205,24 @@
         "resource": "test-eventfilter-check-id-pattern"
       }
     ],
+    "priority": 5,
+    "enabled": true,
+    "created": 1608635535,
+    "updated": 1608635535
+  },
+  {
+    "_id": "test-update-change-entity",
+    "author": "root",
+    "description": "update change_entity",
+    "type": "change_entity",
+    "patterns": [
+      {
+        "resource": "never be used change entity update test"
+      }
+    ],
+    "config": {
+      "component": "change_entity"
+    },
     "priority": 5,
     "enabled": true,
     "created": 1608635535,
