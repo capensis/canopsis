@@ -107,13 +107,7 @@ export default {
     },
 
     hasAnyAnotherOppositeFilterWithManual() {
-      return this.filters.some((filter) => {
-        if (this.form.with !== filter.with) {
-          return (filter.manual || filter.all);
-        }
-
-        return false;
-      });
+      return this.filters.some(filter => this.form.with !== filter.with && (filter.manual || filter.all));
     },
 
     preparedRemediationInstructions() {
