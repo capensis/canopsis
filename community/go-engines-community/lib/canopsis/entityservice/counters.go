@@ -49,8 +49,12 @@ func GetAlarmCountersFromEvent(event types.Event) (*AlarmCounters, *AlarmCounter
 		*oldCounters = alarmCounters
 		oldCounters.Acknowledged = 1
 		oldCounters.NotAcknowledged = 0
-	case types.AlarmChangeTypeCreate, types.AlarmChangeTypeCreateAndPbhEnter:
+	case types.AlarmChangeTypeCreate:
 		currentCounters = &AlarmCounters{}
+		*currentCounters = alarmCounters
+	case types.AlarmChangeTypeCreateAndPbhEnter:
+		currentCounters, oldCounters = &AlarmCounters{}, &AlarmCounters{}
+		*oldCounters = getEntityCounters(event.AlarmChange.PreviousPbehaviorCannonicalType, event.AlarmChange.PreviousPbehaviorTypeID)
 		*currentCounters = alarmCounters
 	case types.AlarmChangeTypePbhEnter, types.AlarmChangeTypePbhLeave, types.AlarmChangeTypePbhLeaveAndEnter:
 		currentCounters, oldCounters = &AlarmCounters{}, &AlarmCounters{}
@@ -64,8 +68,9 @@ func GetAlarmCountersFromEvent(event types.Event) (*AlarmCounters, *AlarmCounter
 			isChanged = false
 		}
 	case types.AlarmChangeTypeResolve:
-		oldCounters = &AlarmCounters{}
+		currentCounters, oldCounters = &AlarmCounters{}, &AlarmCounters{}
 		*oldCounters = alarmCounters
+		*currentCounters = getEntityCounters(event.Entity.PbehaviorInfo.CanonicalType, event.Entity.PbehaviorInfo.TypeID)
 	case types.AlarmChangeTypeStateDecrease, types.AlarmChangeTypeStateIncrease, types.AlarmChangeTypeChangeState:
 		currentCounters, oldCounters = &AlarmCounters{}, &AlarmCounters{}
 		*currentCounters = alarmCounters
