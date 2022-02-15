@@ -2,10 +2,6 @@ package view
 
 import (
 	"context"
-	"regexp"
-
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/filemask"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
@@ -39,48 +35,6 @@ func (v *baseValidator) ValidateEditRequest(ctx context.Context, sl validator.St
 			} else {
 				panic(err)
 			}
-		}
-	}
-}
-
-func ValidateWidgetParametersJunitRequest(sl validator.StructLevel) {
-	r := sl.Current().Interface().(WidgetParametersJunitRequest)
-	isAPI := r.IsAPI
-
-	if r.Directory == "" {
-		if !isAPI {
-			sl.ReportError(r.Directory, "Directory", "Directory", "required", "")
-		}
-	} else if isAPI {
-		sl.ReportError(r.Directory, "Directory", "Directory", "must_be_empty", "")
-	}
-
-	if len(r.ScreenshotDirectories) > 0 && isAPI {
-		sl.ReportError(r.ScreenshotDirectories, "ScreenshotDirectories", "ScreenshotDirectories", "must_be_empty", "")
-	}
-
-	if len(r.VideoDirectories) > 0 && isAPI {
-		sl.ReportError(r.VideoDirectories, "VideoDirectories", "VideoDirectories", "must_be_empty", "")
-	}
-
-	if r.ScreenshotFilemask != "" {
-		_, err := filemask.NewFileMask(r.ScreenshotFilemask)
-		if err != nil {
-			sl.ReportError(r.ScreenshotFilemask, "ScreenshotFilemask", "ScreenshotFilemask", "filemask", "")
-		}
-	}
-
-	if r.VideoFilemask != "" {
-		_, err := filemask.NewFileMask(r.VideoFilemask)
-		if err != nil {
-			sl.ReportError(r.VideoFilemask, "VideoFilemask", "VideoFilemask", "filemask", "")
-		}
-	}
-
-	if r.ReportFileRegexp != "" {
-		re, err := regexp.Compile(r.ReportFileRegexp)
-		if err != nil || re.SubexpIndex(view.JunitReportFileRegexpSubexpName) < 0 {
-			sl.ReportError(r.ReportFileRegexp, "ReportFileRegexp", "ReportFileRegexp", "regexp", "")
 		}
 	}
 }

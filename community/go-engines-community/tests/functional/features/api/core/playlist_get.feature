@@ -7,7 +7,7 @@ Feature: Get a playlist
     When I do GET /api/v4/playlists?search=test-playlist-to-get
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -22,7 +22,7 @@ Feature: Get a playlist
           },
           "name": "test-playlist-to-get-1-name",
           "tabs_list": [
-            "test-view-to-edit-playlist-tab-1"
+            "test-tab-to-playlist-edit-1"
           ],
           "updated": 1608285370
         },
@@ -38,7 +38,7 @@ Feature: Get a playlist
           },
           "name": "test-playlist-to-get-2-name",
           "tabs_list": [
-            "test-view-to-edit-playlist-tab-2"
+            "test-tab-to-playlist-edit-2"
           ],
           "updated": 1608285370
         }
@@ -57,7 +57,7 @@ Feature: Get a playlist
     When I do GET /api/v4/playlists/test-playlist-to-get-1
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-playlist-to-get-1",
       "author": "test-playlist-to-get-1-author",
@@ -70,7 +70,7 @@ Feature: Get a playlist
       },
       "name": "test-playlist-to-get-1-name",
       "tabs_list": [
-        "test-view-to-edit-playlist-tab-1"
+        "test-tab-to-playlist-edit-1"
       ],
       "updated": 1608285370
     }
@@ -81,7 +81,7 @@ Feature: Get a playlist
     When I do GET /api/v4/playlists?search=test-playlist-to-get&sort=desc&sort_by=interval
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -105,7 +105,7 @@ Feature: Get a playlist
     When I do GET /api/v4/playlists?search=test-playlist-to-check-access
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [],
       "meta": {

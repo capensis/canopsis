@@ -3,20 +3,20 @@ Feature: get test suites list for widget
   Only admin should be able to get test suites list for widget
 
   Scenario: GET unauthorized
-    When I do GET /api/v4/cat/junit/test-suites-widget/test-view-with-test-suites-widget-tab-1-widget-2
+    When I do GET /api/v4/cat/junit/test-suites-widget/test-widget-to-junit-test-suites-get-2
     Then the response code should be 401
 
   Scenario: GET without permissions
     When I am noperms
-    When I do GET /api/v4/cat/junit/test-suites-widget/test-view-with-test-suites-widget-tab-1-widget-2
+    When I do GET /api/v4/cat/junit/test-suites-widget/test-widget-to-junit-test-suites-get-2
     Then the response code should be 403
 
   Scenario: GET success
     When I am admin
-    When I do GET /api/v4/cat/junit/test-suites-widget/test-view-with-test-suites-widget-tab-1-widget-2
+    When I do GET /api/v4/cat/junit/test-suites-widget/test-widget-to-junit-test-suites-get-2
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -71,10 +71,10 @@ Feature: get test suites list for widget
 
   Scenario: GET when widget doesn't contain test suites
     When I am admin
-    When I do GET /api/v4/cat/junit/test-suites-widget/test-view-with-test-suites-widget-tab-1-widget-1
+    When I do GET /api/v4/cat/junit/test-suites-widget/test-widget-to-junit-test-suites-get-1
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [],
       "meta": {
@@ -93,10 +93,10 @@ Feature: get test suites list for widget
 
   Scenario: given updated widget should clear test suites
     When I am admin
-    When I do GET /api/v4/cat/junit/test-suites-widget/test-view-to-edit-junit-dir-param-tab-1-widget-1
+    When I do GET /api/v4/cat/junit/test-suites-widget/test-widget-to-junit-edit-dir-param
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "meta": {
         "page": 1,
@@ -106,39 +106,23 @@ Feature: get test suites list for widget
       }
     }
     """
-    When I do PUT /api/v4/views/test-view-to-edit-junit-dir-param:
-    """
+    When I do PUT /api/v4/widgets/test-widget-to-junit-edit-dir-param:
+    """json
     {
-      "enabled": true,
-      "name": "test-view-to-edit-junit-dir-param-name",
-      "title": "test-view-to-edit-junit-dir-param-title",
-      "description": "test-view-to-edit-junit-dir-param-description",
-      "group": "test-viewgroup-to-view-edit",
-      "tags": [],
-      "tabs": [
-        {
-          "_id": "test-view-to-edit-junit-dir-param-tab-1",
-          "title": "test-view-to-edit-junit-dir-param-tab-1-title",
-          "widgets": [
-            {
-              "_id": "test-view-to-edit-junit-dir-param-tab-1-widget-1",
-              "title": "test-view-to-edit-junit-dir-param-tab-1-widget-1-title",
-              "type": "Junit",
-              "grid_parameters": {},
-              "parameters": {
-                "directory": "test-view-to-edit-junit-dir-param-tab-1-widget-1-param-dir"
-              }
-            }
-          ]
-        }
-      ]
+      "title": "test-widget-to-junit-edit-dir-param-title",
+      "type": "Junit",
+      "tab": "test-tab-to-junit-edit-dir-param",
+      "grid_parameters": {},
+      "parameters": {
+        "directory": "test-widget-to-junit-edit-dir-param-param-dir"
+      }
     }
     """
     Then the response code should be 200
-    When I do GET /api/v4/cat/junit/test-suites-widget/test-view-to-edit-junit-dir-param-tab-1-widget-1
+    When I do GET /api/v4/cat/junit/test-suites-widget/test-widget-to-junit-edit-dir-param
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "meta": {
         "page": 1,
@@ -148,39 +132,23 @@ Feature: get test suites list for widget
       }
     }
     """
-    When I do PUT /api/v4/views/test-view-to-edit-junit-dir-param:
-    """
+    When I do PUT /api/v4/widgets/test-widget-to-junit-edit-dir-param:
+    """json
     {
-      "enabled": true,
-      "name": "test-view-to-edit-junit-dir-param-name",
-      "title": "test-view-to-edit-junit-dir-param-title",
-      "description": "test-view-to-edit-junit-dir-param-description",
-      "group": "test-viewgroup-to-view-edit",
-      "tags": [],
-      "tabs": [
-        {
-          "_id": "test-view-to-edit-junit-dir-param-tab-1",
-          "title": "test-view-to-edit-junit-dir-param-tab-1-title",
-          "widgets": [
-            {
-              "_id": "test-view-to-edit-junit-dir-param-tab-1-widget-1",
-              "title": "test-view-to-edit-junit-dir-param-tab-1-widget-1-title",
-              "type": "Junit",
-              "grid_parameters": {},
-              "parameters": {
-                "directory": "test-view-to-edit-junit-dir-param-tab-1-widget-1-param-dir-updated"
-              }
-            }
-          ]
-        }
-      ]
+      "title": "test-widget-to-junit-edit-dir-param-title",
+      "type": "Junit",
+      "tab": "test-tab-to-junit-edit-dir-param",
+      "grid_parameters": {},
+      "parameters": {
+        "directory": "test-widget-to-junit-edit-dir-param-param-dir-updated"
+      }
     }
     """
     Then the response code should be 200
-    When I do GET /api/v4/cat/junit/test-suites-widget/test-view-to-edit-junit-dir-param-tab-1-widget-1
+    When I do GET /api/v4/cat/junit/test-suites-widget/test-widget-to-junit-edit-dir-param
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [],
       "meta": {

@@ -21,6 +21,7 @@ Feature: Get a scenario
                 }
               ],
               "entity_patterns": null,
+              "comment": "",
               "drop_scenario_if_not_matched": false,
               "emit_trigger": false,
               "type": "ack",
@@ -37,6 +38,7 @@ Feature: Get a scenario
                 }
               ],
               "entity_patterns": null,
+              "comment": "",
               "drop_scenario_if_not_matched": false,
               "emit_trigger": false,
               "type": "pbehavior",
@@ -90,6 +92,7 @@ Feature: Get a scenario
                 }
               ],
               "entity_patterns": null,
+              "comment": "",
               "drop_scenario_if_not_matched": false,
               "emit_trigger": false,
               "type": "ack",
@@ -174,6 +177,7 @@ Feature: Get a scenario
             }
           ],
           "entity_patterns": null,
+          "comment": "",
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false,
           "type": "ack",
@@ -190,6 +194,7 @@ Feature: Get a scenario
             }
           ],
           "entity_patterns": null,
+          "comment": "",
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false,
           "type": "pbehavior",

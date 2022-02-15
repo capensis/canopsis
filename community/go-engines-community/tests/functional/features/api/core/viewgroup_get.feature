@@ -7,7 +7,7 @@ Feature: Get a view group
     When I do GET /api/v4/view-groups?search=test-viewgroup-to-get
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -39,7 +39,7 @@ Feature: Get a view group
     When I do GET /api/v4/view-groups/test-viewgroup-to-get-1
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-viewgroup-to-get-1",
       "title": "test-viewgroup-to-get-1-title",
@@ -54,7 +54,7 @@ Feature: Get a view group
     When I do GET /api/v4/view-groups?search=test-viewgroup-to-get&with_views=true
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -81,25 +81,6 @@ Feature: Get a view group
                 "value": 1,
                 "unit": "s"
               },
-              "tabs": [
-                {
-                  "_id": "test-view-to-viewgroup-get-2-tab-1",
-                  "title": "test-view-to-viewgroup-get-2-tab-1-title",
-                  "widgets": [
-                    {
-                      "_id": "test-view-to-viewgroup-get-2-tab-1-widget-1",
-                      "grid_parameters": {
-                        "test-view-to-viewgroup-get-2-tab-1-widget-1-gridparameter": "test-view-to-viewgroup-get-2-tab-1-widget-1-gridparameter-value"
-                      },
-                      "parameters": {
-                        "test-view-to-viewgroup-get-2-tab-1-widget-1-parameter": "test-view-to-viewgroup-get-2-tab-1-widget-1-parameter-value"
-                      },
-                      "title": "test-view-to-viewgroup-get-2-tab-1-widget-1-title",
-                      "type": "test-view-to-viewgroup-get-2-tab-1-widget-1-type"
-                    }
-                  ]
-                }
-              ],
               "tags": [
                 "test-view-to-viewgroup-get-2-tag"
               ],
@@ -124,34 +105,238 @@ Feature: Get a view group
                 "value": 1,
                 "unit": "s"
               },
+              "tags": [
+                "test-view-to-viewgroup-get-1-tag"
+              ],
+              "updated": 1611229670
+            }
+          ],
+          "created": 1611229670,
+          "updated": 1611229670
+        },
+        {
+          "_id": "test-viewgroup-to-get-2",
+          "title": "test-viewgroup-to-get-2-title",
+          "author": "test-viewgroup-to-get-2-author",
+          "views": [],
+          "created": 1611229670,
+          "updated": 1611229670
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/view-groups?search=test-viewgroup-to-get&with_views=true&with_tabs=true
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-viewgroup-to-get-1",
+          "title": "test-viewgroup-to-get-1-title",
+          "author": "test-viewgroup-to-get-1-author",
+          "views": [
+            {
+              "_id": "test-view-to-viewgroup-get-2",
+              "author": "test-view-to-viewgroup-get-2-author",
+              "created": 1611229670,
+              "description": "test-view-to-viewgroup-get-2-description",
+              "enabled": true,
+              "group": {
+                "_id": "test-viewgroup-to-get-1",
+                "author": "test-viewgroup-to-get-1-author",
+                "created": 1611229670,
+                "title": "test-viewgroup-to-get-1-title",
+                "updated": 1611229670
+              },
+              "title": "test-view-to-viewgroup-get-2-title",
+              "periodic_refresh": {
+                "enabled": true,
+                "value": 1,
+                "unit": "s"
+              },
+              "tags": [
+                "test-view-to-viewgroup-get-2-tag"
+              ],
+              "tabs": [],
+              "updated": 1611229670
+            },
+            {
+              "_id": "test-view-to-viewgroup-get-1",
+              "author": "test-view-to-viewgroup-get-1-author",
+              "created": 1611229670,
+              "description": "test-view-to-viewgroup-get-1-description",
+              "enabled": true,
+              "group": {
+                "_id": "test-viewgroup-to-get-1",
+                "author": "test-viewgroup-to-get-1-author",
+                "created": 1611229670,
+                "title": "test-viewgroup-to-get-1-title",
+                "updated": 1611229670
+              },
+              "title": "test-view-to-viewgroup-get-1-title",
+              "periodic_refresh": {
+                "enabled": true,
+                "value": 1,
+                "unit": "s"
+              },
+              "tags": [
+                "test-view-to-viewgroup-get-1-tag"
+              ],
               "tabs": [
                 {
-                  "_id": "test-view-to-viewgroup-get-1-tab-1",
-                  "title": "test-view-to-viewgroup-get-1-tab-1-title",
+                  "_id": "test-tab-to-viewgroup-get-1",
+                  "title": "test-tab-to-viewgroup-get-1-title",
+                  "author": "test-user-to-viewgroup-get",
+                  "created": 1611229670,
+                  "updated": 1611229670
+                },
+                {
+                  "_id": "test-tab-to-viewgroup-get-2",
+                  "title": "test-tab-to-viewgroup-get-2-title",
+                  "author": "test-user-to-viewgroup-get",
+                  "created": 1611229670,
+                  "updated": 1611229670
+                }
+              ],
+              "updated": 1611229670
+            }
+          ],
+          "created": 1611229670,
+          "updated": 1611229670
+        },
+        {
+          "_id": "test-viewgroup-to-get-2",
+          "title": "test-viewgroup-to-get-2-title",
+          "author": "test-viewgroup-to-get-2-author",
+          "views": [],
+          "created": 1611229670,
+          "updated": 1611229670
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/view-groups?search=test-viewgroup-to-get&with_views=true&with_tabs=true&with_widgets=true
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-viewgroup-to-get-1",
+          "title": "test-viewgroup-to-get-1-title",
+          "author": "test-viewgroup-to-get-1-author",
+          "views": [
+            {
+              "_id": "test-view-to-viewgroup-get-2",
+              "author": "test-view-to-viewgroup-get-2-author",
+              "created": 1611229670,
+              "description": "test-view-to-viewgroup-get-2-description",
+              "enabled": true,
+              "group": {
+                "_id": "test-viewgroup-to-get-1",
+                "author": "test-viewgroup-to-get-1-author",
+                "created": 1611229670,
+                "title": "test-viewgroup-to-get-1-title",
+                "updated": 1611229670
+              },
+              "title": "test-view-to-viewgroup-get-2-title",
+              "periodic_refresh": {
+                "enabled": true,
+                "value": 1,
+                "unit": "s"
+              },
+              "tags": [
+                "test-view-to-viewgroup-get-2-tag"
+              ],
+              "tabs": [],
+              "updated": 1611229670
+            },
+            {
+              "_id": "test-view-to-viewgroup-get-1",
+              "author": "test-view-to-viewgroup-get-1-author",
+              "created": 1611229670,
+              "description": "test-view-to-viewgroup-get-1-description",
+              "enabled": true,
+              "group": {
+                "_id": "test-viewgroup-to-get-1",
+                "author": "test-viewgroup-to-get-1-author",
+                "created": 1611229670,
+                "title": "test-viewgroup-to-get-1-title",
+                "updated": 1611229670
+              },
+              "title": "test-view-to-viewgroup-get-1-title",
+              "periodic_refresh": {
+                "enabled": true,
+                "value": 1,
+                "unit": "s"
+              },
+              "tags": [
+                "test-view-to-viewgroup-get-1-tag"
+              ],
+              "tabs": [
+                {
+                  "_id": "test-tab-to-viewgroup-get-1",
+                  "title": "test-tab-to-viewgroup-get-1-title",
+                  "author": "test-user-to-viewgroup-get",
                   "widgets": [
                     {
-                      "_id": "test-view-to-viewgroup-get-1-tab-1-widget-1",
+                      "_id": "test-widget-to-viewgroup-get-1",
+                      "author": "test-user-to-viewgroup-get",
+                      "created": 1611229670,
+                      "updated": 1611229670,
                       "grid_parameters": {
-                        "test-view-to-viewgroup-get-1-tab-1-widget-1-gridparameter": "test-view-to-viewgroup-get-1-tab-1-widget-1-gridparameter-value"
+                        "desktop": {"x": 0, "y": 0}
                       },
                       "parameters": {
-                        "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-1": {
-                          "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-1-subparameter": "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-1-subvalue"
+                        "test-widget-to-viewgroup-get-1-parameter-1": {
+                          "test-widget-to-viewgroup-get-1-parameter-1-subparameter": "test-widget-to-viewgroup-get-1-parameter-1-subvalue"
                         },
-                        "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-2": [
+                        "test-widget-to-viewgroup-get-1-parameter-2": [
                           {
-                            "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-2-subparameter": "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-2-subvalue"
+                            "test-widget-to-viewgroup-get-1-parameter-2-subparameter": "test-widget-to-viewgroup-get-1-parameter-2-subvalue"
                           }
                         ]
                       },
-                      "title": "test-view-to-viewgroup-get-1-tab-1-widget-1-title",
-                      "type": "test-view-to-viewgroup-get-1-tab-1-widget-1-type"
+                      "title": "test-widget-to-viewgroup-get-1-title",
+                      "type": "test-widget-to-viewgroup-get-1-type"
+                    },
+                    {
+                      "_id": "test-widget-to-viewgroup-get-2",
+                      "author": "test-user-to-viewgroup-get",
+                      "created": 1611229670,
+                      "updated": 1611229670,
+                      "grid_parameters": {
+                        "desktop": {"x": 0, "y": 1}
+                      },
+                      "parameters": {},
+                      "title": "test-widget-to-viewgroup-get-2-title",
+                      "type": "test-widget-to-viewgroup-get-2-type"
                     }
-                  ]
+                  ],
+                  "created": 1611229670,
+                  "updated": 1611229670
+                },
+                {
+                  "_id": "test-tab-to-viewgroup-get-2",
+                  "title": "test-tab-to-viewgroup-get-2-title",
+                  "author": "test-user-to-viewgroup-get",
+                  "widgets": [],
+                  "created": 1611229670,
+                  "updated": 1611229670
                 }
-              ],
-              "tags": [
-                "test-view-to-viewgroup-get-1-tag"
               ],
               "updated": 1611229670
             }
@@ -182,7 +367,7 @@ Feature: Get a view group
     When I do GET /api/v4/view-groups?search=test-viewgroup-to-get&with_flags=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -205,7 +390,7 @@ Feature: Get a view group
     When I do GET /api/v4/view-groups?search=test-viewgroup-to-get&with_views=true&with_flags=true
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -233,25 +418,6 @@ Feature: Get a view group
                 "value": 1,
                 "unit": "s"
               },
-              "tabs": [
-                {
-                  "_id": "test-view-to-viewgroup-get-2-tab-1",
-                  "title": "test-view-to-viewgroup-get-2-tab-1-title",
-                  "widgets": [
-                    {
-                      "_id": "test-view-to-viewgroup-get-2-tab-1-widget-1",
-                      "grid_parameters": {
-                        "test-view-to-viewgroup-get-2-tab-1-widget-1-gridparameter": "test-view-to-viewgroup-get-2-tab-1-widget-1-gridparameter-value"
-                      },
-                      "parameters": {
-                        "test-view-to-viewgroup-get-2-tab-1-widget-1-parameter": "test-view-to-viewgroup-get-2-tab-1-widget-1-parameter-value"
-                      },
-                      "title": "test-view-to-viewgroup-get-2-tab-1-widget-1-title",
-                      "type": "test-view-to-viewgroup-get-2-tab-1-widget-1-type"
-                    }
-                  ]
-                }
-              ],
               "tags": [
                 "test-view-to-viewgroup-get-2-tag"
               ],
@@ -276,32 +442,6 @@ Feature: Get a view group
                 "value": 1,
                 "unit": "s"
               },
-              "tabs": [
-                {
-                  "_id": "test-view-to-viewgroup-get-1-tab-1",
-                  "title": "test-view-to-viewgroup-get-1-tab-1-title",
-                  "widgets": [
-                    {
-                      "_id": "test-view-to-viewgroup-get-1-tab-1-widget-1",
-                      "grid_parameters": {
-                        "test-view-to-viewgroup-get-1-tab-1-widget-1-gridparameter": "test-view-to-viewgroup-get-1-tab-1-widget-1-gridparameter-value"
-                      },
-                      "parameters": {
-                        "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-1": {
-                          "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-1-subparameter": "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-1-subvalue"
-                        },
-                        "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-2": [
-                          {
-                            "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-2-subparameter": "test-view-to-viewgroup-get-1-tab-1-widget-1-parameter-2-subvalue"
-                          }
-                        ]
-                      },
-                      "title": "test-view-to-viewgroup-get-1-tab-1-widget-1-title",
-                      "type": "test-view-to-viewgroup-get-1-tab-1-widget-1-type"
-                    }
-                  ]
-                }
-              ],
               "tags": [
                 "test-view-to-viewgroup-get-1-tag"
               ],
@@ -353,7 +493,7 @@ Feature: Get a view group
     When I do GET /api/v4/view-groups/test-viewgroup-not-found
     Then the response code should be 404
     Then the response body should be:
-    """
+    """json
     {
       "error": "Not found"
     }

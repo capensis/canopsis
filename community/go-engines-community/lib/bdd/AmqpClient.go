@@ -363,7 +363,7 @@ func (c *AmqpClient) executeRPC(queue string, body []byte) ([]byte, error) {
 }
 
 func (c *AmqpClient) executeTemplate(tpl string) (*bytes.Buffer, error) {
-	t, err := template.New("tpl").Parse(tpl)
+	t, err := template.New("tpl").Option("missingkey=error").Parse(tpl)
 	if err != nil {
 		return nil, err
 	}
