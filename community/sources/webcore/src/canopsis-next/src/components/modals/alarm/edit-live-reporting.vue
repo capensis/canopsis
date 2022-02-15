@@ -1,12 +1,12 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ $t('modals.liveReporting.editLiveReporting') }}
-      template(slot="text")
+      template(#text="")
         h3 {{ $t('modals.liveReporting.dateInterval') }}
         date-interval-selector(v-model="form")
-      template(slot="actions")
+      template(#actions="")
         v-btn(
           flat,
           depressed,
