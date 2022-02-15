@@ -6,38 +6,39 @@ package mock_eventfilter
 
 import (
 	context "context"
+	reflect "reflect"
+
 	config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	pattern "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	types "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	gomock "github.com/golang/mock/gomock"
-	reflect "reflect"
 )
 
-// MockRuleApplicator is a mock of RuleApplicator interface
+// MockRuleApplicator is a mock of RuleApplicator interface.
 type MockRuleApplicator struct {
 	ctrl     *gomock.Controller
 	recorder *MockRuleApplicatorMockRecorder
 }
 
-// MockRuleApplicatorMockRecorder is the mock recorder for MockRuleApplicator
+// MockRuleApplicatorMockRecorder is the mock recorder for MockRuleApplicator.
 type MockRuleApplicatorMockRecorder struct {
 	mock *MockRuleApplicator
 }
 
-// NewMockRuleApplicator creates a new mock instance
+// NewMockRuleApplicator creates a new mock instance.
 func NewMockRuleApplicator(ctrl *gomock.Controller) *MockRuleApplicator {
 	mock := &MockRuleApplicator{ctrl: ctrl}
 	mock.recorder = &MockRuleApplicatorMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockRuleApplicator) EXPECT() *MockRuleApplicatorMockRecorder {
 	return m.recorder
 }
 
-// Apply mocks base method
+// Apply mocks base method.
 func (m *MockRuleApplicator) Apply(arg0 context.Context, arg1 eventfilter.Rule, arg2 types.Event, arg3 pattern.EventRegexMatches, arg4 *config.TimezoneConfig) (string, types.Event, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Apply", arg0, arg1, arg2, arg3, arg4)
@@ -47,36 +48,36 @@ func (m *MockRuleApplicator) Apply(arg0 context.Context, arg1 eventfilter.Rule, 
 	return ret0, ret1, ret2
 }
 
-// Apply indicates an expected call of Apply
+// Apply indicates an expected call of Apply.
 func (mr *MockRuleApplicatorMockRecorder) Apply(arg0, arg1, arg2, arg3, arg4 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Apply", reflect.TypeOf((*MockRuleApplicator)(nil).Apply), arg0, arg1, arg2, arg3, arg4)
 }
 
-// MockRuleAdapter is a mock of RuleAdapter interface
+// MockRuleAdapter is a mock of RuleAdapter interface.
 type MockRuleAdapter struct {
 	ctrl     *gomock.Controller
 	recorder *MockRuleAdapterMockRecorder
 }
 
-// MockRuleAdapterMockRecorder is the mock recorder for MockRuleAdapter
+// MockRuleAdapterMockRecorder is the mock recorder for MockRuleAdapter.
 type MockRuleAdapterMockRecorder struct {
 	mock *MockRuleAdapter
 }
 
-// NewMockRuleAdapter creates a new mock instance
+// NewMockRuleAdapter creates a new mock instance.
 func NewMockRuleAdapter(ctrl *gomock.Controller) *MockRuleAdapter {
 	mock := &MockRuleAdapter{ctrl: ctrl}
 	mock.recorder = &MockRuleAdapterMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockRuleAdapter) EXPECT() *MockRuleAdapterMockRecorder {
 	return m.recorder
 }
 
-// GetAll mocks base method
+// GetAll mocks base method.
 func (m *MockRuleAdapter) GetAll(arg0 context.Context) ([]eventfilter.Rule, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAll", arg0)
@@ -85,13 +86,13 @@ func (m *MockRuleAdapter) GetAll(arg0 context.Context) ([]eventfilter.Rule, erro
 	return ret0, ret1
 }
 
-// GetAll indicates an expected call of GetAll
+// GetAll indicates an expected call of GetAll.
 func (mr *MockRuleAdapterMockRecorder) GetAll(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockRuleAdapter)(nil).GetAll), arg0)
 }
 
-// GetByTypes mocks base method
+// GetByTypes mocks base method.
 func (m *MockRuleAdapter) GetByTypes(arg0 context.Context, arg1 []string) ([]eventfilter.Rule, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByTypes", arg0, arg1)
@@ -100,36 +101,36 @@ func (m *MockRuleAdapter) GetByTypes(arg0 context.Context, arg1 []string) ([]eve
 	return ret0, ret1
 }
 
-// GetByTypes indicates an expected call of GetByTypes
+// GetByTypes indicates an expected call of GetByTypes.
 func (mr *MockRuleAdapterMockRecorder) GetByTypes(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByTypes", reflect.TypeOf((*MockRuleAdapter)(nil).GetByTypes), arg0, arg1)
 }
 
-// MockRuleApplicatorContainer is a mock of RuleApplicatorContainer interface
+// MockRuleApplicatorContainer is a mock of RuleApplicatorContainer interface.
 type MockRuleApplicatorContainer struct {
 	ctrl     *gomock.Controller
 	recorder *MockRuleApplicatorContainerMockRecorder
 }
 
-// MockRuleApplicatorContainerMockRecorder is the mock recorder for MockRuleApplicatorContainer
+// MockRuleApplicatorContainerMockRecorder is the mock recorder for MockRuleApplicatorContainer.
 type MockRuleApplicatorContainerMockRecorder struct {
 	mock *MockRuleApplicatorContainer
 }
 
-// NewMockRuleApplicatorContainer creates a new mock instance
+// NewMockRuleApplicatorContainer creates a new mock instance.
 func NewMockRuleApplicatorContainer(ctrl *gomock.Controller) *MockRuleApplicatorContainer {
 	mock := &MockRuleApplicatorContainer{ctrl: ctrl}
 	mock.recorder = &MockRuleApplicatorContainerMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockRuleApplicatorContainer) EXPECT() *MockRuleApplicatorContainerMockRecorder {
 	return m.recorder
 }
 
-// Get mocks base method
+// Get mocks base method.
 func (m *MockRuleApplicatorContainer) Get(arg0 string) (eventfilter.RuleApplicator, bool) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", arg0)
@@ -138,48 +139,48 @@ func (m *MockRuleApplicatorContainer) Get(arg0 string) (eventfilter.RuleApplicat
 	return ret0, ret1
 }
 
-// Get indicates an expected call of Get
+// Get indicates an expected call of Get.
 func (mr *MockRuleApplicatorContainerMockRecorder) Get(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockRuleApplicatorContainer)(nil).Get), arg0)
 }
 
-// Set mocks base method
+// Set mocks base method.
 func (m *MockRuleApplicatorContainer) Set(arg0 string, arg1 eventfilter.RuleApplicator) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "Set", arg0, arg1)
 }
 
-// Set indicates an expected call of Set
+// Set indicates an expected call of Set.
 func (mr *MockRuleApplicatorContainerMockRecorder) Set(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Set", reflect.TypeOf((*MockRuleApplicatorContainer)(nil).Set), arg0, arg1)
 }
 
-// MockExternalDataGetter is a mock of ExternalDataGetter interface
+// MockExternalDataGetter is a mock of ExternalDataGetter interface.
 type MockExternalDataGetter struct {
 	ctrl     *gomock.Controller
 	recorder *MockExternalDataGetterMockRecorder
 }
 
-// MockExternalDataGetterMockRecorder is the mock recorder for MockExternalDataGetter
+// MockExternalDataGetterMockRecorder is the mock recorder for MockExternalDataGetter.
 type MockExternalDataGetterMockRecorder struct {
 	mock *MockExternalDataGetter
 }
 
-// NewMockExternalDataGetter creates a new mock instance
+// NewMockExternalDataGetter creates a new mock instance.
 func NewMockExternalDataGetter(ctrl *gomock.Controller) *MockExternalDataGetter {
 	mock := &MockExternalDataGetter{ctrl: ctrl}
 	mock.recorder = &MockExternalDataGetterMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockExternalDataGetter) EXPECT() *MockExternalDataGetterMockRecorder {
 	return m.recorder
 }
 
-// Get mocks base method
+// Get mocks base method.
 func (m *MockExternalDataGetter) Get(arg0 context.Context, arg1 eventfilter.ExternalDataParameters, arg2 eventfilter.TemplateParameters, arg3 *config.TimezoneConfig) (interface{}, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", arg0, arg1, arg2, arg3)
@@ -188,36 +189,36 @@ func (m *MockExternalDataGetter) Get(arg0 context.Context, arg1 eventfilter.Exte
 	return ret0, ret1
 }
 
-// Get indicates an expected call of Get
+// Get indicates an expected call of Get.
 func (mr *MockExternalDataGetterMockRecorder) Get(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockExternalDataGetter)(nil).Get), arg0, arg1, arg2, arg3)
 }
 
-// MockService is a mock of Service interface
+// MockService is a mock of Service interface.
 type MockService struct {
 	ctrl     *gomock.Controller
 	recorder *MockServiceMockRecorder
 }
 
-// MockServiceMockRecorder is the mock recorder for MockService
+// MockServiceMockRecorder is the mock recorder for MockService.
 type MockServiceMockRecorder struct {
 	mock *MockService
 }
 
-// NewMockService creates a new mock instance
+// NewMockService creates a new mock instance.
 func NewMockService(ctrl *gomock.Controller) *MockService {
 	mock := &MockService{ctrl: ctrl}
 	mock.recorder = &MockServiceMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockService) EXPECT() *MockServiceMockRecorder {
 	return m.recorder
 }
 
-// LoadRules mocks base method
+// LoadRules mocks base method.
 func (m *MockService) LoadRules(arg0 context.Context, arg1 []string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "LoadRules", arg0, arg1)
@@ -225,13 +226,13 @@ func (m *MockService) LoadRules(arg0 context.Context, arg1 []string) error {
 	return ret0
 }
 
-// LoadRules indicates an expected call of LoadRules
+// LoadRules indicates an expected call of LoadRules.
 func (mr *MockServiceMockRecorder) LoadRules(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoadRules", reflect.TypeOf((*MockService)(nil).LoadRules), arg0, arg1)
 }
 
-// ProcessEvent mocks base method
+// ProcessEvent mocks base method.
 func (m *MockService) ProcessEvent(arg0 context.Context, arg1 types.Event) (types.Event, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ProcessEvent", arg0, arg1)
@@ -240,36 +241,36 @@ func (m *MockService) ProcessEvent(arg0 context.Context, arg1 types.Event) (type
 	return ret0, ret1
 }
 
-// ProcessEvent indicates an expected call of ProcessEvent
+// ProcessEvent indicates an expected call of ProcessEvent.
 func (mr *MockServiceMockRecorder) ProcessEvent(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessEvent", reflect.TypeOf((*MockService)(nil).ProcessEvent), arg0, arg1)
 }
 
-// MockActionProcessor is a mock of ActionProcessor interface
+// MockActionProcessor is a mock of ActionProcessor interface.
 type MockActionProcessor struct {
 	ctrl     *gomock.Controller
 	recorder *MockActionProcessorMockRecorder
 }
 
-// MockActionProcessorMockRecorder is the mock recorder for MockActionProcessor
+// MockActionProcessorMockRecorder is the mock recorder for MockActionProcessor.
 type MockActionProcessorMockRecorder struct {
 	mock *MockActionProcessor
 }
 
-// NewMockActionProcessor creates a new mock instance
+// NewMockActionProcessor creates a new mock instance.
 func NewMockActionProcessor(ctrl *gomock.Controller) *MockActionProcessor {
 	mock := &MockActionProcessor{ctrl: ctrl}
 	mock.recorder = &MockActionProcessorMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockActionProcessor) EXPECT() *MockActionProcessorMockRecorder {
 	return m.recorder
 }
 
-// Process mocks base method
+// Process mocks base method.
 func (m *MockActionProcessor) Process(arg0 eventfilter.Action, arg1 types.Event, arg2 pattern.EventRegexMatches, arg3 map[string]interface{}, arg4 *config.TimezoneConfig) (types.Event, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Process", arg0, arg1, arg2, arg3, arg4)
@@ -278,7 +279,7 @@ func (m *MockActionProcessor) Process(arg0 eventfilter.Action, arg1 types.Event,
 	return ret0, ret1
 }
 
-// Process indicates an expected call of Process
+// Process indicates an expected call of Process.
 func (mr *MockActionProcessorMockRecorder) Process(arg0, arg1, arg2, arg3, arg4 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Process", reflect.TypeOf((*MockActionProcessor)(nil).Process), arg0, arg1, arg2, arg3, arg4)
