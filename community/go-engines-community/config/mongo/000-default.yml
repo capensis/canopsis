@@ -98,6 +98,13 @@ indexes:
       keys:
         eids: 1
 
+  pbehavior_type:
+    priority_1:
+      keys:
+        priority: 1
+      options:
+        unique: true
+
   junit_test_suite:
     test_suite_id_1:
       keys:
