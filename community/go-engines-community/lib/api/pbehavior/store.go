@@ -191,7 +191,7 @@ func (s *store) getMatchedPbhIDs(ctx context.Context, entityID string) ([]string
 
 		filters[pbh.ID] = pbh.Filter
 		if len(filters) == limitMatch {
-			ids, err := s.getMatchedPbhIDsByFilters(ctx, entityID, filters)
+			ids, err := s.entityMatcher.MatchAll(ctx, entityID, filters)
 			if err != nil {
 				return nil, err
 			}
@@ -202,32 +202,12 @@ func (s *store) getMatchedPbhIDs(ctx context.Context, entityID string) ([]string
 	}
 
 	if len(filters) > 0 {
-		ids, err := s.getMatchedPbhIDsByFilters(ctx, entityID, filters)
+		ids, err := s.entityMatcher.MatchAll(ctx, entityID, filters)
 		if err != nil {
 			return nil, err
 		}
 
 		pbhIDs = append(pbhIDs, ids...)
-	}
-
-	return pbhIDs, nil
-}
-
-func (s *store) getMatchedPbhIDsByFilters(
-	ctx context.Context,
-	entityID string,
-	filters map[string]string,
-) ([]string, error) {
-	pbhIDs := make([]string, 0)
-	match, err := s.entityMatcher.MatchAll(ctx, entityID, filters)
-	if err != nil {
-		return nil, err
-	}
-
-	for pbhID, matched := range match {
-		if matched {
-			pbhIDs = append(pbhIDs, pbhID)
-		}
 	}
 
 	return pbhIDs, nil
