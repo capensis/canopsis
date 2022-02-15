@@ -38,7 +38,7 @@ import (
 	"github.com/go-playground/validator/v10/non-standard/validators"
 )
 
-func RegisterValidators(client mongo.DbClient) {
+func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	v, ok := binding.Validator.Engine().(*validator.Validate)
 	if !ok {
 		return
@@ -170,10 +170,14 @@ func RegisterValidators(client mongo.DbClient) {
 	entityserviceUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.EntityMongoCollection, "Name")
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		entityserviceUniqueIDValidator.Validate(ctx, sl)
-		entityserviceUniqueNameValidator.Validate(ctx, sl)
+		if !enableSameServiceNames {
+			entityserviceUniqueNameValidator.Validate(ctx, sl)
+		}
 	}, entityservice.CreateRequest{})
-	v.RegisterStructValidationCtx(entityserviceUniqueNameValidator.Validate, entityservice.UpdateRequest{})
-	v.RegisterStructValidationCtx(entityserviceUniqueNameValidator.Validate, entityservice.BulkUpdateRequestItem{})
+	if !enableSameServiceNames {
+		v.RegisterStructValidationCtx(entityserviceUniqueNameValidator.Validate, entityservice.UpdateRequest{})
+		v.RegisterStructValidationCtx(entityserviceUniqueNameValidator.Validate, entityservice.BulkUpdateRequestItem{})
+	}
 	v.RegisterStructValidationCtx(entityserviceValidator.ValidateEditRequest, entityservice.EditRequest{})
 
 	entityCategoryUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.EntityCategoryMongoCollection, "Name")

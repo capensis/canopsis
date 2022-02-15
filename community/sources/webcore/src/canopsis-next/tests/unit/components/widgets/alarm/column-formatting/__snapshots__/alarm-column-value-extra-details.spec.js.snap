@@ -35,7 +35,9 @@ exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-det
     snooze="[object Object]"
   />
   <extra-details-pbehavior-stub
+    iconname="icon"
     pbehavior="[object Object]"
+    typename="type"
   />
   <extra-details-causes-stub
     causes="[object Object]"

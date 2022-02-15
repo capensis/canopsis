@@ -29,10 +29,13 @@ func TestAlarmStepsCrop(t *testing.T) {
 			Type:  types.AlarmStepStateDecrease,
 			Value: 1,
 		}
-		steps.Add(st)
+		err := steps.Add(st)
+		So(err, ShouldBeNil)
 		for i := 0; i < 10; i++ {
-			steps.Add(s1)
-			steps.Add(s2)
+			err = steps.Add(s1)
+			So(err, ShouldBeNil)
+			err = steps.Add(s2)
+			So(err, ShouldBeNil)
 		}
 		cropNum := 30
 		Convey("Crop does not work for the first 21 steps", func() {
@@ -40,8 +43,10 @@ func TestAlarmStepsCrop(t *testing.T) {
 			So(update, ShouldBeFalse)
 			Convey("Crop does work for the 41 steps", func() {
 				for i := 0; i < 10; i++ {
-					steps.Add(s1)
-					steps.Add(s2)
+					err = steps.Add(s1)
+					So(err, ShouldBeNil)
+					err = steps.Add(s2)
+					So(err, ShouldBeNil)
 				}
 
 				steps, update := steps.Crop(&st, cropNum)
