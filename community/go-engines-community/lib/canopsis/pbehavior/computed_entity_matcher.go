@@ -21,8 +21,6 @@ type ComputedEntityMatcher interface {
 	LoadAll(ctx context.Context, filters map[string]string) error
 	// Match matches entity to filters by precomputed data.
 	Match(ctx context.Context, entityID string) ([]string, error)
-	// MatchAll matches entities to filters by precomputed data.
-	MatchAll(ctx context.Context, entityIDs []string) (map[string][]string, error)
 	GetComputedEntityIDs(ctx context.Context) ([]string, error)
 }
 
@@ -149,42 +147,6 @@ func (m *computedEntityMatcher) Match(ctx context.Context, entityID string) ([]s
 	}
 
 	return matchedKeys, nil
-}
-
-func (m *computedEntityMatcher) MatchAll(ctx context.Context, entityIDs []string) (map[string][]string, error) {
-	if len(entityIDs) == 0 {
-		return nil, nil
-	}
-
-	keys := make([]string, len(entityIDs))
-	for i, entityID := range entityIDs {
-		keys[i] = m.key + entityID
-	}
-
-	res := m.redisClient.MGet(ctx, keys...)
-	if err := res.Err(); err != nil {
-		return nil, fmt.Errorf("cannot get keys: %w", err)
-	}
-
-	matchedKeysByEntityID := make(map[string][]string, len(entityIDs))
-	for i, v := range res.Val() {
-		switch str := v.(type) {
-		case string:
-			var matchedKeys []string
-			err := m.decoder.Decode([]byte(str), &matchedKeys)
-			if err != nil {
-				return nil, fmt.Errorf("cannot decode entity ids: %w", err)
-			}
-
-			matchedKeysByEntityID[entityIDs[i]] = matchedKeys
-		case nil:
-			/*do nothing*/
-		default:
-			return nil, fmt.Errorf("expected string by key %q but got %T %+v", keys[i], v, v)
-		}
-	}
-
-	return matchedKeysByEntityID, nil
 }
 
 func (m *computedEntityMatcher) GetComputedEntityIDs(ctx context.Context) ([]string, error) {
