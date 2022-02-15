@@ -426,6 +426,7 @@ export const CONTEXT_COLUMN_INFOS_PREFIX = 'infos.';
 export const CONTEXT_COLUMNS_WITH_SORTABLE = [ // TODO: We should receive it from backend side in the future
   '_id',
   'name',
+  'type',
   'category',
   'impact_level',
   'category.name',
