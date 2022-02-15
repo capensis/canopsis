@@ -109,13 +109,13 @@ export const API_ROUTES = {
   file: '/api/v4/file',
   fileAccess: '/api/v4/file-access',
   snmpRule: {
-    list: '/snmprule',
-    create: '/snmprule/put',
+    list: '/api/snmprule',
+    create: '/api/snmprule/put',
   },
   snmpMib: {
-    list: '/snmpmib',
-    distinct: '/snmpmibdistinct',
-    upload: '/uploadmib',
+    list: '/api/snmpmib',
+    distinct: '/api/snmpmibdistinct',
+    upload: '/api/uploadmib',
   },
   infos: {
     app: '/api/v4/app-info',
