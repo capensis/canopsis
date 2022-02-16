@@ -19,6 +19,7 @@ then
 fi
 
 sed -i -e "s,{{ CPS_API_URL }},$CPS_API_URL,g" /etc/nginx/conf.d/default.conf
+sed -i -e "s,{{ CPS_OLD_API_URL }},$CPS_OLD_API_URL,g" /etc/nginx/conf.d/default.conf
 sed -i -e "s,{{ CPS_SERVER_NAME }},$CPS_SERVER_NAME,g" /etc/nginx/conf.d/default.conf
 sed -i -e "s,{{ RUNDECK_GRAILS_URL }},$RUNDECK_GRAILS_URL,g" /etc/nginx/rundeck.inc
 sed -i -e "s,{{ NGINX_URL }},$NGINX_URL,g" /etc/nginx/rundeck.inc

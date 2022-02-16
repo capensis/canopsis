@@ -115,7 +115,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		canopsis.FIFOAckQueueName,
 		amqpConnection,
 		&messageProcessor{
-			PbhService:               pbehavior.NewEntityTypeResolver(pbhStore, entityMatcher),
+			PbhService:               pbehavior.NewEntityTypeResolver(pbhStore, pbehavior.NewEntityMatcher(dbClient), entityMatcher),
 			TimezoneConfigProvider:   timezoneConfigProvider,
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			Encoder:                  json.NewEncoder(),
