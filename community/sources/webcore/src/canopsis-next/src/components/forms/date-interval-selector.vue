@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { TIME_UNITS, ALARM_INTERVAL_FIELDS, DATETIME_FORMATS, DATETIME_INTERVAL_TYPES } from '@/constants';
+import { TIME_UNITS, ALARM_INTERVAL_FIELDS, DATETIME_FORMATS, DATETIME_INTERVAL_TYPES, QUICK_RANGES } from '@/constants';
 
 import { convertDateIntervalToDateObject } from '@/helpers/date/date-intervals';
 import { convertDateToStartOfUnitString, subtractUnitFromDate } from '@/helpers/date/date';
@@ -76,33 +76,9 @@ export default {
       },
       set(range) {
         if (range.value !== this.range.value) {
-          let newValue = {
-            tstart: range.start,
-            tstop: range.stop,
-          };
-
-          if (!newValue.tstop || !newValue.tstart) {
-            newValue = {
-              periodUnit: TIME_UNITS.hour,
-              periodValue: 1,
-
-              tstart: convertDateToStartOfUnitString(
-                subtractUnitFromDate(Date.now(), 1, TIME_UNITS.hour),
-                TIME_UNITS.hour,
-                DATETIME_FORMATS.dateTimePicker,
-              ),
-
-              tstop: convertDateToStartOfUnitString(
-                Date.now(),
-                TIME_UNITS.hour,
-                DATETIME_FORMATS.dateTimePicker,
-              ),
-            };
-          }
-
           this.updateModel({
             ...this.value,
-            ...newValue,
+            ...this.getValueFromRange(range),
           });
         }
       },
@@ -116,10 +92,38 @@ export default {
     },
 
     unit() {
-      return this.roundHours ? TIME_UNITS.hour : TIME_UNITS.minute;
+      return this.roundHours
+        ? TIME_UNITS.hour
+        : TIME_UNITS.minute;
     },
   },
   methods: {
+    getValueFromRange({ value, start, stop }) {
+      if (value === QUICK_RANGES.custom.value) {
+        return {
+          periodUnit: TIME_UNITS.hour,
+          periodValue: 1,
+
+          tstart: convertDateToStartOfUnitString(
+            subtractUnitFromDate(Date.now(), 1, TIME_UNITS.hour),
+            TIME_UNITS.hour,
+            DATETIME_FORMATS.dateTimePicker,
+          ),
+
+          tstop: convertDateToStartOfUnitString(
+            Date.now(),
+            TIME_UNITS.hour,
+            DATETIME_FORMATS.dateTimePicker,
+          ),
+        };
+      }
+
+      return {
+        tstart: start,
+        tstop: stop,
+      };
+    },
+
     stopDateObjectPreparer(date) {
       return convertDateIntervalToDateObject(date, DATETIME_INTERVAL_TYPES.stop, this.unit);
     },
