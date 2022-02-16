@@ -55,7 +55,9 @@ markdown_extensions:
           - name: mermaid
             class: mermaid
             format: !!python/name:pymdownx.superfences.fence_div_format
-    - pymdownx.tabbed
+    - pymdownx.tabbed:
+        # (mandatory with mkdocs-material)
+        alternate_style: true
     - toc:
         permalink: true
 
