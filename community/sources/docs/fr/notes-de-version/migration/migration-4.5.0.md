@@ -78,52 +78,74 @@ Pensez aussi à révoquer toute ouverture réseau que vous auriez autorisée à 
 
 ### Ajout de TimescaleDB
 
-Ajout des clés GPG et des dépôts TimescaleDB et PostgreSQL :
+=== "Paquets CentOS 7"
 
-```sh
-yum install https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
-cd /etc/pki/rpm-gpg/ && curl -L -o RPM-GPG-KEY-PKGCLOUD-TIMESCALEDB https://packagecloud.io/timescale/timescaledb/gpgkey
+    Ajout des clés GPG et des dépôts TimescaleDB et PostgreSQL :
 
-# Add TimescaleDB repo
-cat > /etc/yum.repos.d/timescale_timescaledb.repo << EOF
-[timescale_timescaledb]
-name=timescale_timescaledb
-baseurl=https://packagecloud.io/timescale/timescaledb/el/\$releasever/\$basearch
-repo_gpgcheck=1
-# timescaledb doesn't sign all its packages
-gpgcheck=0
-enabled=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PKGCLOUD-TIMESCALEDB
-sslverify=1
-sslcacert=/etc/pki/tls/certs/ca-bundle.crt
-metadata_expire=300
-EOF
-```
+    ```sh
+    yum install https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+    cd /etc/pki/rpm-gpg/ && curl -L -o RPM-GPG-KEY-PKGCLOUD-TIMESCALEDB https://packagecloud.io/timescale/timescaledb/gpgkey
 
-Installation des paquets :
+    # Add TimescaleDB repo
+    cat > /etc/yum.repos.d/timescale_timescaledb.repo << EOF
+    [timescale_timescaledb]
+    name=timescale_timescaledb
+    baseurl=https://packagecloud.io/timescale/timescaledb/el/\$releasever/\$basearch
+    repo_gpgcheck=1
+    # timescaledb doesn't sign all its packages
+    gpgcheck=0
+    enabled=1
+    gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PKGCLOUD-TIMESCALEDB
+    sslverify=1
+    sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+    metadata_expire=300
+    EOF
+    ```
 
-```sh
-yum makecache -y
-yum --disablerepo="*" --enablerepo="timescale_timescaledb,pgdg-common,pgdg13" install timescaledb-2-loader-postgresql-13-2.5.1-0.el7 timescaledb-2-postgresql-13-2.5.1-0.el7
-```
+    Installation des paquets TimescaleDB et des dépendances associées :
 
-Configuration pour le système courant et désactivation de la télémétrie :
+    ```sh
+    yum makecache -y
+    yum --disablerepo="*" --enablerepo="timescale_timescaledb,pgdg-common,pgdg13" install timescaledb-2-loader-postgresql-13-2.5.1-0.el7 timescaledb-2-postgresql-13-2.5.1-0.el7
+    ```
 
-```sh
-postgresql-13-setup initdb
-yes | PATH=/usr/pgsql-13/bin:$PATH timescaledb-tune -pg-config /usr/pgsql-13/bin/pg_config -out-path /var/lib/pgsql/13/data/postgresql.conf -yes
-echo "timescaledb.telemetry_level=off" >> /var/lib/pgsql/13/data/postgresql.conf
-```
+    Configuration pour le système actuel, et désactivation de [la télémétrie](https://docs.timescale.com/timescaledb/latest/how-to-guides/configuration/telemetry/#telemetry-and-version-checking) :
 
-Activation et démarrage du service :
+    ```sh
+    postgresql-13-setup initdb
+    yes | PATH=/usr/pgsql-13/bin:$PATH timescaledb-tune -pg-config /usr/pgsql-13/bin/pg_config -out-path /var/lib/pgsql/13/data/postgresql.conf -yes
+    echo "timescaledb.telemetry_level=off" >> /var/lib/pgsql/13/data/postgresql.conf
+    ```
 
-```sh
-systemctl enable postgresql-13
-systemctl start postgresql-13
-```
+    Activation et démarrage du service :
 
-!!! info "Information"
-    Si vous avez besoin d'accéder à PostgreSQL/TimescaleDB depuis une autre machine, autorisez l'accès au port TCP 5432 (uniquement pour les administrateurs de la plateforme).
+    ```sh
+    systemctl enable postgresql-13.service
+    systemctl start postgresql-13.service
+    ```
+
+    Connexion à la ligne de commande PostgreSQL :
+
+    ```sh
+    sudo -u postgres psql
+    ```
+
+    Création de la base de données `canopsis` et de l'utilisateur associé, et activation de l'extension TimescaleDB sur cette base :
+
+    ```sql
+    postgres=# CREATE database canopsis;
+    postgres=# \c canopsis
+    canopsis=# CREATE EXTENSION IF NOT EXISTS timescaledb;
+    canopsis=# CREATE USER cpspostgres WITH PASSWORD 'canopsis';
+    canopsis=# exit
+    ```
+
+    !!! info "Information"
+        Si vous avez besoin d'accéder à PostgreSQL/TimescaleDB depuis une autre machine, autorisez l'accès au port TCP 5432 (uniquement pour les administrateurs de la plateforme).
+
+=== "Docker Compose"
+
+    TODO
 
 ### Mise à jour de MongoDB
 
@@ -139,8 +161,8 @@ Cette mise à jour doit obligatoirement être réalisée en deux étapes :
     !!! attention
         Si vous utilisez [un Replicat Set MongoDB](https://docs.mongodb.com/manual/replication/), vous devez obligatoirement suivre une procédure différente :
     
-        1. D'abord <https://docs.mongodb.com/manual/release-notes/4.0-upgrade-replica-set/>
-        2. puis <https://docs.mongodb.com/manual/release-notes/4.2-upgrade-replica-set/>.
+        1. D'abord <https://docs.mongodb.com/manual/release-notes/4.0-upgrade-replica-set/> ;
+        2. **puis** <https://docs.mongodb.com/manual/release-notes/4.2-upgrade-replica-set/>.
 
     Exécutez les commandes suivantes pour passer à MongoDB 4.0 :
 
@@ -195,8 +217,8 @@ Cette mise à jour doit obligatoirement être réalisée en deux étapes :
 Assurez-vous que le service MongoDB soit bien lancé et exécutez les commandes suivantes, en adaptant les identifiants MongoDB ci-dessous si nécessaire :
 
 ```sh
-cd /TODO/chemin/vers/les/scripts/de/migration/intégrés
-for file in $(find release4.5 -type f -name "*.js" | sort -n); do
+cd /opt/canopsis/share/migrations/mongodb/release4.5
+for file in $(find . -type f -name "*.js" | sort -n); do
    mongo -u cpsmongo -p canopsis canopsis < "$file"
 done
 ```
@@ -212,6 +234,7 @@ done
 
 Vérifiez que votre fichier `canopsis.toml` soit bien à jour par rapport au fichier de référence, notamment dans le cas où vous auriez apporté des modifications locales à ce fichier :
 
+<!-- ces liens seront fonctionnels lorsque la version 4.5.0 sera publiée -->
 * [`canopsis.toml` pour Canopsis Community 4.5.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/4.5.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-community.toml)
 * [`canopsis.toml` pour Canopsis Pro 4.5.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/4.5.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-pro.toml)
 
@@ -225,19 +248,33 @@ Vérifiez que votre fichier `canopsis.toml` soit bien à jour par rapport au fic
 
     Si vous modifiez ce fichier à l'aide d'un volume surchargeant `canopsis.toml`, c'est ce fichier local qui doit être synchronisé.
 
-### Ajustement des binaireis `engine-che` et `engine-axe` (paquets)
+### Ajustements de la configuration (paquets)
+
+Cette partie s'applique seulement aux installations de paquets RPM.
 
 === "Paquets CentOS 7"
 
-    Cette partie s'applique seulement aux installations de paquets RPM.
+    Les binaires `engine-che` et `engine-axe` sont maintenant différents entre Canopsis Community et Canopsis Pro.
+
+    Dans le cadre d'une mise à jour, ce changement implique la création d'un lien symbolique, à adapter en fonction de l'édition que vous utilisez :
 
     ```sh
-    rm -f /opt/canopsis/bin/TODO
+    rm -f /opt/canopsis/bin/engine-axe /opt/canopsis/bin/engine-che
 
     # si Canopsis Community :
-    ln -sf /opt/canopsis/bin/TODO-community /opt/canopsis/bin/TODO
+    ln -sf /opt/canopsis/bin/engine-axe-community /opt/canopsis/bin/engine-axe
+    ln -sf /opt/canopsis/bin/engine-che-community /opt/canopsis/bin/engine-che
+
     # OU si Canopsis Pro :
-    ln -sf /opt/canopsis/bin/TODO-pro /opt/canopsis/bin/TODO
+    ln -sf /opt/canopsis/bin/engine-axe-pro /opt/canopsis/bin/engine-axe
+    ln -sf /opt/canopsis/bin/engine-che-pro /opt/canopsis/bin/engine-che
+    ```
+
+    Supprimez ensuite toute ligne `CPS_INFLUX_URL` du fichier `go-engines-vars.conf` et ajoutez-y `CPS_POSTGRES_URL` :
+
+    ```sh
+    sed -i '/CPS_INFLUX_URL/d' /opt/canopsis/etc/go-engines-vars.conf
+    grep -q ^CPS_POSTGRES_URL= /opt/canopsis/etc/go-engines-vars.conf || echo 'CPS_POSTGRES_URL="postgresql://cpspostgres:canopsis@localhost:5432/canopsis"' >> /opt/canopsis/etc/go-engines-vars.conf
     ```
 
 === "Docker Compose"
@@ -273,7 +310,7 @@ Plusieurs changements ont été apportés à la configuration de Nginx.
 
 ### Lancement du provisioning et de `canopsis-reconfigure`
 
-Le *provisioning* doit être lancé afin de mettre à jour certaines données en base, tandis que `canopsis-reconfigure` prend en compte les changements apportés au fichier `canopsis.toml`.
+Le provisioning doit être lancé afin de mettre à jour certaines données en base, tandis que `canopsis-reconfigure` prend en compte les changements apportés au fichier `canopsis.toml`.
 
 === "Paquets CentOS 7"
 
@@ -286,14 +323,19 @@ Le *provisioning* doit être lancé afin de mettre à jour certaines données en
     su - canopsis -c "canopsinit --canopsis-edition cat"
     ```
 
-    Puis, lancez `canopsis-reconfigure` :
+    Puis, lancez `canopsis-reconfigure`. Attention, cette fois-ci de nouvelles options doivent lui être données :
 
     ```bash
     set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
-    /opt/canopsis/bin/canopsis-reconfigure TODO nouvelles-options!
+    /opt/canopsis/bin/canopsis-reconfigure -migrate-postgres=true -postgres-migration-mode=up -postgres-migration-directory=/opt/canopsis/share/migrations/postgres
     ```
 
-    TODO: Profitez-en aussi pour enlever la variable CPS_INFLUX inutile dans go-engines-vars.conf.
+    Vous pouvez ensuite migrer vos métriques existantes de MongoDB vers TimescaleDB avec les commandes suivantes :
+
+    ```sh
+    /opt/canopsis/bin/migrate-metrics -onlyMeta
+    /opt/canopsis/bin/migrate-metrics
+    ```
 
 === "Docker Compose"
 
