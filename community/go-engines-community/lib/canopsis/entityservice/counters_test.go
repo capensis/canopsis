@@ -4,7 +4,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"reflect"
+	"github.com/kylelemons/godebug/pretty"
 	"testing"
 )
 
@@ -13,11 +13,11 @@ func TestGetAlarmCountersFromEvent(t *testing.T) {
 	for testName, dataSet := range dataSets {
 		t.Run(testName, func(t *testing.T) {
 			oldCounters, newCounters, isChanged := entityservice.GetAlarmCountersFromEvent(dataSet.event)
-			if !reflect.DeepEqual(oldCounters, dataSet.expectedOldCounters) {
-				t.Errorf("expected %+v but got %+v", dataSet.expectedOldCounters, oldCounters)
+			if diff := pretty.Compare(oldCounters, dataSet.expectedOldCounters); diff != "" {
+				t.Errorf("unexpected old counters %s", diff)
 			}
-			if !reflect.DeepEqual(newCounters, dataSet.expectedNewCounters) {
-				t.Errorf("expected %+v but got %+v", dataSet.expectedNewCounters, newCounters)
+			if diff := pretty.Compare(newCounters, dataSet.expectedNewCounters); diff != "" {
+				t.Errorf("unexpected mew counters %s", diff)
 			}
 			if isChanged != dataSet.expectedIsAlarmChanged {
 				t.Errorf("expected %+v but got %+v", dataSet.expectedIsAlarmChanged, isChanged)
@@ -432,6 +432,32 @@ func getGetAlarmCountersFromEventDataSets() map[string]getAlarmCountersFromEvent
 				Alarms:          1,
 				NotAcknowledged: 1,
 				State:           entityservice.StateCounters{Critical: 1},
+			},
+		},
+		"given stateinc event with pbehavior should return isChanged true": {
+			event: types.Event{
+				EventType: types.EventTypeCheck,
+				Alarm: &types.Alarm{
+					Value: types.AlarmValue{
+						State:         &types.AlarmStep{Value: types.AlarmStateCritical},
+						PbehaviorInfo: maintenancePbhInfo,
+					},
+				},
+				AlarmChange: &types.AlarmChange{
+					Type:          types.AlarmChangeTypeStateIncrease,
+					PreviousState: types.AlarmStateMajor,
+				},
+			},
+			expectedIsAlarmChanged: true,
+			expectedNewCounters: &entityservice.AlarmCounters{
+				All:               1,
+				State:             entityservice.StateCounters{Info: 1},
+				PbehaviorCounters: map[string]int64{maintenancePbhInfo.TypeID: 1},
+			},
+			expectedOldCounters: &entityservice.AlarmCounters{
+				All:               1,
+				State:             entityservice.StateCounters{Info: 1},
+				PbehaviorCounters: map[string]int64{maintenancePbhInfo.TypeID: 1},
 			},
 		},
 	}
