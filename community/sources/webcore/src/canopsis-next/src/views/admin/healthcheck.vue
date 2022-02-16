@@ -11,7 +11,7 @@
       v-tab {{ $tc('common.parameter', 2) }}
     v-tabs-items.white.healthcheck__tabs(v-model="activeTab")
       v-tab-item.healthcheck__graph-tab
-        healthcheck-network-graph(
+        healthcheck-network-graph.healthcheck__graph(
           v-if="!pending && !hasServerError",
           :services="services",
           :engines-graph="enginesGraph",
@@ -37,13 +37,10 @@ import HealthcheckNetworkGraph from '@/components/other/healthcheck/exploitation
 import HealthcheckGraphs from '@/components/other/healthcheck/exploitation/healthcheck-graphs.vue';
 import HealthcheckParameters from '@/components/other/healthcheck/healthcheck-parameters.vue';
 
-import entitiesEngineRunInfoMixin from '@/mixins/entities/engine-run-info';
-
 const { mapActions } = createNamespacedHelpers('healthcheck');
 
 export default {
   components: { HealthcheckParameters, HealthcheckNetworkGraph, HealthcheckGraphs },
-  mixins: [entitiesEngineRunInfoMixin],
   data() {
     return {
       activeTab: 0,
@@ -123,6 +120,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$networkGraphHeight: calc(100vh - 230px); // 230px was calculated by imperative method
+$networkGraphMinHeight: 100px;
+
 .healthcheck {
   display: flex;
   flex-direction: column;
@@ -138,6 +138,11 @@ export default {
 
   &__graph-tab {
     height: 100%;
+  }
+
+  &__graph {
+    height: $networkGraphHeight;
+    min-height: $networkGraphMinHeight;
   }
 }
 </style>

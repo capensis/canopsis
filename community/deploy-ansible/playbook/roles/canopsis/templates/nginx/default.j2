@@ -21,8 +21,6 @@ map $sent_http_content_type $expires_time {
 
 include /etc/nginx/resolvers.inc;
 
-
-
 server {
 	listen 80;
 	listen [::]:80;
@@ -30,6 +28,7 @@ server {
 	root /opt/canopsis/srv/www/;
 
 	set $canopsis_api_url {{ CPS_API_URL }}; # see /etc/nginx/resolvers.inc if you modify this
+	set $canopsis_old_api_url {{ CPS_OLD_API_URL }}; # see /etc/nginx/resolvers.inc if you modify this
 	set $canopsis_server_name {{ CPS_SERVER_NAME }};
 	server_name $canopsis_server_name;
 
@@ -80,7 +79,7 @@ server {
 	}
 
 	# Redirect all API calls to canopsis-api
-	location ~ ^/(?:api|rest)/ {
+	location ~ ^/api/v4/ {
 		include /etc/nginx/cors.inc;
 		proxy_pass $canopsis_api_url;
 		proxy_set_header X-Canopsis-API-Call-Origin 'nginx';
@@ -94,6 +93,35 @@ server {
 
 	# Uncomment the next line to enable rundeck
 	#include /etc/nginx/rundeck.inc;
+
+	# Tag : Python (To remove when removing Python2 from Canopsis)
+	# Proxy all non-v4 api requests to oldapi
+	location ~ ^/api(/.*) {
+		include /etc/nginx/cors.inc;
+		proxy_pass $canopsis_api_url$1;
+		proxy_set_header X-Canopsis-API-Call-Origin 'nginx';
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_pass_request_headers on; # Pass authorization header
+		proxy_read_timeout 90s;
+		proxy_http_version 1.1;
+		# Never cache API calls
+		proxy_no_cache 1;
+		proxy_cache_bypass 1;
+	}
+
+	# Tag : Python (To remove when removing Python2 from Canopsis)
+	location ~ ^/rest/ {
+		include /etc/nginx/cors.inc;
+		proxy_pass $canopsis_old_api_url;
+		proxy_set_header X-Canopsis-API-Call-Origin 'nginx';
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_pass_request_headers on; # Pass authorization header
+		proxy_read_timeout 90s;
+		proxy_http_version 1.1;
+		# Never cache API calls
+		proxy_no_cache 1;
+		proxy_cache_bypass 1;
+	}
 
 	# Serve static files (and the Vue.js router) directly
 	location / {
