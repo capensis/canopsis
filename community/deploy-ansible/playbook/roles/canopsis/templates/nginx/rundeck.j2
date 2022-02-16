@@ -15,8 +15,3 @@ location @rundeck {
        default_type text/html;
        return 502 "<!DOCTYPE html><h1>Error 502</h1><h2>Rundeck is not reachable.</h2><h2>Check that the service is actually started.</h2>\n";
 }
-
-location /backups {
-        autoindex on;
-        alias /exportbackup;
-}
