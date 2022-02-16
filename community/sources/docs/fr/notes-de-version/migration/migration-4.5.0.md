@@ -18,9 +18,7 @@ Exécutez la commande suivante afin de connaître votre version actuelle de Dock
 docker version --format '{{.Server.Version}}'
 ```
 
-Si la valeur que vous obtenez commence par 20.10, ou si elle est supérieure à cette valeur, vous n'avez rien à faire.
-
-En revanche, si votre version est trop ancienne, [suivez la documentation officielle de Docker](https://docs.docker.com/get-docker/) afin d'installer une version plus récente.
+Si la valeur que vous obtenez commence par 20.10 ou une valeur supérieure, vous n'avez rien à faire. Si votre version est trop ancienne, [suivez la documentation officielle de Docker](https://docs.docker.com/get-docker/) afin d'installer une version à jour.
 
 Assurez-vous aussi que Docker Compose [ne soit pas configuré en mode V2](../../guide-administration/installation/installation-conteneurs.md#installation-de-docker-et-docker-compose) avec la commande suivante :
 
@@ -58,7 +56,7 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
 
 ### Suppression d'InfluxDB
 
-InfluxDB a été totalement supprimé de Canopsis. Ce composant tiers peut donc être totalement supprimé.
+InfluxDB a été totalement supprimé de Canopsis. Ce composant tiers peut donc être totalement supprimé, avec son contenu.
 
 === "Paquets CentOS 7"
 
@@ -74,7 +72,7 @@ InfluxDB a été totalement supprimé de Canopsis. Ce composant tiers peut donc 
 
     Supprimez toute variable contenant le terme `INFLUXDB` dans les fichiers `.env` et `compose.env`.
 
-    Puis, enlevez toute référence au volume `influxdbdata` et au conteneur `influxdb` présents dans votre fichier de référence Docker Compose.
+    Puis, enlevez toutes références au volume `influxdbdata` et au conteneur `influxdb` présentes dans votre fichier de référence Docker Compose.
 
 Pensez aussi à révoquer toute ouverture réseau que vous auriez autorisée à destination des ports TCP 8086 et 8088.
 
@@ -106,14 +104,14 @@ Installation des paquets :
 
 ```sh
 yum makecache -y
-yum install timescaledb-2-loader-postgresql-13-2.5.1-0.el7 timescaledb-2-postgresql-13-2.5.1-0.el7
+yum --disablerepo="*" --enablerepo="timescale_timescaledb,pgdg-common,pgdg13" install timescaledb-2-loader-postgresql-13-2.5.1-0.el7 timescaledb-2-postgresql-13-2.5.1-0.el7
 ```
 
 Configuration pour le système courant et désactivation de la télémétrie :
 
 ```sh
 postgresql-13-setup initdb
-yes | PATH=/usr/pgsql-13/bin:$PATH timescaledb-tune -color false -pg-config /usr/pgsql-13/bin/pg_config -out-path /var/lib/pgsql/13/data/postgresql.conf -yes
+yes | PATH=/usr/pgsql-13/bin:$PATH timescaledb-tune -pg-config /usr/pgsql-13/bin/pg_config -out-path /var/lib/pgsql/13/data/postgresql.conf -yes
 echo "timescaledb.telemetry_level=off" >> /var/lib/pgsql/13/data/postgresql.conf
 ```
 
@@ -124,11 +122,55 @@ systemctl enable postgresql-13
 systemctl start postgresql-13
 ```
 
-TODO: port 5432
+!!! info "Information"
+    Si vous avez besoin d'accéder à PostgreSQL/TimescaleDB depuis une autre machine, autorisez l'accès au port TCP 5432 (uniquement pour les administrateurs de la plateforme).
 
 ### Mise à jour de MongoDB
 
-TODO
+Dans cette version de Canopsis, la base de données MongoDB passe de la version 3.6 à 4.2.
+
+Cette mise à jour doit obligatoirement être réalisée en deux étapes :
+
+1. Mise à jour de MongoDB 3.6 à 4.0 ;
+2. **Puis** mise à jour de MongoDB 4.0 à 4.2.
+
+=== "Paquets CentOS 7"
+
+    !!! attention
+        Si vous utilisez [un Replicat Set MongoDB](https://docs.mongodb.com/manual/replication/), vous devez obligatoirement suivre une procédure différente :
+    
+        1. D'abord <https://docs.mongodb.com/manual/release-notes/4.0-upgrade-replica-set/>
+        2. puis <https://docs.mongodb.com/manual/release-notes/4.2-upgrade-replica-set/>.
+
+    Exécutez les commandes suivantes pour passer à MongoDB 4.0 :
+
+    ```sh
+    sed -i 's|3\.6|4.0|g' /etc/yum.repos.d/mongodb.repo
+
+    yum makecache -y
+    yum --disablerepo="*" --enablerepo="mongodb*" update
+
+    mongo -u root -p root
+    > db.adminCommand( { setFeatureCompatibilityVersion: "4.0" } )
+    > exit
+    ```
+
+    Puis, exécutez les commandes suivantes pour passer à MongoDB 4.2 :
+
+    ```sh
+    sed -i 's|4\.0|4.2|g' /etc/yum.repos.d/mongodb.repo
+
+    yum makecache -y
+    yum --disablerepo="*" --enablerepo="mongodb*" update
+
+    mongo -u root -p root
+    > db.adminCommand( { setFeatureCompatibilityVersion: "4.2" } )
+    > exit
+    ```
+
+=== "Docker Compose"
+
+    TODO
 
 ### Mise à jour de Canopsis
 
@@ -139,6 +181,8 @@ TODO
     ```sh
     yum --disablerepo="*" --enablerepo="canopsis*" update
     ```
+
+    Note : cette mise à jour de Canopsis introduit un nouveau paquet `canopsis-webui`, identique entre Canopsis Community et Canopsis Pro.
 
 === "Docker Compose"
 
