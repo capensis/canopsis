@@ -91,6 +91,9 @@ server {
 		proxy_cache_bypass 1;
 	}
 
+	# Uncomment the next line to enable rundeck
+	#include /etc/nginx/rundeck.inc;
+
 	# Tag : Python (To remove when removing Python2 from Canopsis)
 	# Proxy all non-v4 api requests to oldapi
 	location ~ ^/api(/.*) {

@@ -65,6 +65,7 @@ install: $(CURRENT_BUILD_OUTPUT_DIR)/www
 	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/srv/www" "$(DESTDIR)/etc/nginx/conf.d"
 	install -c -m 644 -p -- "$(MONOREPO_ROOT)/community/docker/files/etc/nginx/cors.inc" "$(DESTDIR)/etc/nginx/cors.inc"
 	install -c -m 644 -p -- "$(MONOREPO_ROOT)/community/docker/files/etc/nginx/https.inc" "$(DESTDIR)/etc/nginx/https.inc"
+	install -c -m 644 -p -- "$(MONOREPO_ROOT)/community/docker/files/etc/nginx/rundeck.inc" "$(DESTDIR)/etc/nginx/rundeck.inc"
 	install -c -m 644 -p -- "$(MONOREPO_ROOT)/community/docker/files/etc/nginx/default.conf" "$(DESTDIR)/etc/nginx/conf.d/default.conf"
 	cp -pR -- "$(CURRENT_BUILD_OUTPUT_DIR)/www" "$(DESTDIR)/opt/canopsis/srv/"
 
