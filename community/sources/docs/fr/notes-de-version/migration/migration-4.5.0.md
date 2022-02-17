@@ -248,6 +248,24 @@ Vérifiez que votre fichier `canopsis.toml` soit bien à jour par rapport au fic
 
     Si vous modifiez ce fichier à l'aide d'un volume surchargeant `canopsis.toml`, c'est ce fichier local qui doit être synchronisé.
 
+### Suppression de l'option `-featureStatEvents`
+
+L'option `-featureStatEvents` a été retirée du moteur `engine-axe`.
+
+=== "Paquets CentOS 7"
+
+    Lancez la commande suivante afin de savoir si cette option est utilisée :
+
+    ```sh
+    grep -lr "featureStatEvents" /etc/systemd/system/canopsis-engine-go@engine-axe.service.d/*
+    ```
+
+    Si cette commande affiche un résultat, éditez les fichiers qu'elle mentionne afin d'y retirer cette option.
+
+=== "Docker Compose"
+
+    Supprimez toute éventuelle utilisation de l'option `-featureStatEvents` dans vos fichiers de référence Docker Compose.
+
 ### Ajustements de la configuration (paquets)
 
 Cette partie s'applique seulement aux installations de paquets RPM.
@@ -293,8 +311,8 @@ Plusieurs changements ont été apportés à la configuration de Nginx.
     cp -p /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.orig
     sed \
         -e 's,{{ CPS_API_URL }},http://127.0.0.1:8082,g' \
-	-e 's,{{ CPS_OLD_API_URL }},http://127.0.0.1:8081,g' \
-	-e 's,{{ CPS_SERVER_NAME }},"localhost",g' \
+        -e 's,{{ CPS_OLD_API_URL }},http://127.0.0.1:8081,g' \
+        -e 's,{{ CPS_SERVER_NAME }},"localhost",g' \
         /opt/canopsis/deploy-ansible/playbook/roles/canopsis/templates/nginx/default.j2 > /etc/nginx/conf.d/default.conf
 
     systemctl restart nginx
