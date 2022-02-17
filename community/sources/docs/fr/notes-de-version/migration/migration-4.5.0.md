@@ -108,7 +108,7 @@ Pensez aussi à révoquer toute ouverture réseau que vous auriez autorisée à 
 
     ```sh
     yum makecache -y
-    yum --disablerepo="*" --enablerepo="timescale_timescaledb,pgdg-common,pgdg13" install timescaledb-2-loader-postgresql-13-2.5.1-0.el7 timescaledb-2-postgresql-13-2.5.1-0.el7
+    yum --disablerepo="*" --enablerepo="timescale_timescaledb,pgdg-common,pgdg13,base" install timescaledb-2-loader-postgresql-13-2.5.1-0.el7 timescaledb-2-postgresql-13-2.5.1-0.el7
     ```
 
     Configuration pour le système actuel, et désactivation de [la télémétrie](https://docs.timescale.com/timescaledb/latest/how-to-guides/configuration/telemetry/#telemetry-and-version-checking) :
