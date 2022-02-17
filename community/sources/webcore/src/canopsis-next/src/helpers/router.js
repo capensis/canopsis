@@ -16,15 +16,15 @@ import { checkUserAccess } from '@/helpers/permission';
  * @param {string} key
  * @returns {Promise<unknown>|*}
  */
-export function getAppInfoValuePromiseByKey(key) {
+export const getAppInfoValuePromiseByKey = (key) => {
   const getterKey = `info/${key}`;
 
   if (store.getters[getterKey]) {
     return Promise.resolve(store.getters[getterKey]);
   }
 
-  return store.watchOnce(state => state.info[key], v => !isEmpty(v));
-}
+  return store.watchOnce(state => state.info.appInfo[key], v => !isEmpty(v));
+};
 
 /**
  * Check app info access for route

@@ -238,7 +238,7 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 		"/webhook/ticket": {
 			Code:   http.StatusOK,
 			Method: http.MethodPost,
-			Body:   "{\"ticket_id\":\"testticket\"}",
+			Body:   "{\"ticket_id\":\"testticket\",\"ticket_data\":\"testdata\"}",
 		},
 		"/api/external_data" : {
 			Code:   http.StatusOK,
