@@ -20,7 +20,7 @@ const (
 	AxeRPCQueueServerName           = "Engine_axe_rpc_server"
 	AxeConsumerName                 = "axe"
 	AxeRPCConsumerName              = "axe_rpc"
-	CheExchangeName                 = "canopsis.events"
+	CheExchangeName                 = ""
 	CheEngineName                   = "engine-che"
 	CheQueueName                    = "Engine_che"
 	CheConsumerName                 = "che"

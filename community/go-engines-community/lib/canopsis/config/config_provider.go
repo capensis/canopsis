@@ -613,15 +613,19 @@ func parseUpdatedTimeDurationByStr(
 	logger zerolog.Logger,
 ) (time.Duration, bool) {
 	if v == "" {
-		logger.Error().
-			Str("invalid", v).
-			Msgf("%s of %s config section is not defined, previous value is used", name, sectionName)
+		if oldVal > 0 {
+			logger.Error().
+				Str("previous", oldVal.String()).
+				Str("invalid", v).
+				Msgf("%s of %s config section is not defined, previous value is used", name, sectionName)
+		}
 		return 0, false
 	}
 
 	d, err := time.ParseDuration(v)
 	if err != nil {
 		logger.Err(err).
+			Str("previous", oldVal.String()).
 			Str("invalid", v).
 			Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
 		return 0, false

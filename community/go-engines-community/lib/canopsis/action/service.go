@@ -84,15 +84,11 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 				}
 
 				event := &types.Event{
-					Connector:         alarm.Value.Connector,
-					ConnectorName:     alarm.Value.ConnectorName,
-					Component:         alarm.Value.Component,
-					Resource:          alarm.Value.Resource,
-					Alarm:             &alarm,
-					MetaAlarmParents:  &alarm.Value.Parents,
-					MetaAlarmChildren: &alarm.Value.Children,
-					// need it for fifo metaalarm lock
-					MetaAlarmRelatedParents: result.Alarm.Value.RelatedParents,
+					Connector:     alarm.Value.Connector,
+					ConnectorName: alarm.Value.ConnectorName,
+					Component:     alarm.Value.Component,
+					Resource:      alarm.Value.Resource,
+					Alarm:         &alarm,
 				}
 
 				activationSent := false
@@ -128,9 +124,6 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 
 	alarm := *event.Alarm
 	entity := *event.Entity
-
-	// need it for fifo metaalarm lock
-	alarm.Value.RelatedParents = event.MetaAlarmRelatedParents
 
 	switch event.AlarmChange.Type {
 	case types.AlarmChangeTypePbhEnter, types.AlarmChangeTypePbhLeave,
