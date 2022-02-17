@@ -33,7 +33,7 @@ func GetAlarmCountersFromEvent(event types.Event) (*AlarmCounters, *AlarmCounter
 		return oldCounters, currentCounters, isChanged
 	}
 
-	alarmCounters := getAlarmCounters(*event.Alarm,
+	alarmCounters := getAlarmCounters(event.Alarm.Value.State.Value, event.Alarm.Value.ACK != nil,
 		event.Alarm.Value.PbehaviorInfo.CanonicalType, event.Alarm.Value.PbehaviorInfo.TypeID)
 
 	switch alarmChangeType {
@@ -49,13 +49,17 @@ func GetAlarmCountersFromEvent(event types.Event) (*AlarmCounters, *AlarmCounter
 		*oldCounters = alarmCounters
 		oldCounters.Acknowledged = 1
 		oldCounters.NotAcknowledged = 0
-	case types.AlarmChangeTypeCreate, types.AlarmChangeTypeCreateAndPbhEnter:
+	case types.AlarmChangeTypeCreate:
 		currentCounters = &AlarmCounters{}
+		*currentCounters = alarmCounters
+	case types.AlarmChangeTypeCreateAndPbhEnter:
+		currentCounters, oldCounters = &AlarmCounters{}, &AlarmCounters{}
+		*oldCounters = getEntityCounters(event.AlarmChange.PreviousPbehaviorCannonicalType, event.AlarmChange.PreviousPbehaviorTypeID)
 		*currentCounters = alarmCounters
 	case types.AlarmChangeTypePbhEnter, types.AlarmChangeTypePbhLeave, types.AlarmChangeTypePbhLeaveAndEnter:
 		currentCounters, oldCounters = &AlarmCounters{}, &AlarmCounters{}
 		*currentCounters = alarmCounters
-		*oldCounters = getAlarmCounters(*event.Alarm,
+		*oldCounters = getAlarmCounters(event.Alarm.Value.State.Value, event.Alarm.Value.ACK != nil,
 			event.AlarmChange.PreviousPbehaviorCannonicalType, event.AlarmChange.PreviousPbehaviorTypeID)
 
 		if (event.AlarmChange.PreviousPbehaviorCannonicalType == "" ||
@@ -64,13 +68,14 @@ func GetAlarmCountersFromEvent(event types.Event) (*AlarmCounters, *AlarmCounter
 			isChanged = false
 		}
 	case types.AlarmChangeTypeResolve:
-		oldCounters = &AlarmCounters{}
+		currentCounters, oldCounters = &AlarmCounters{}, &AlarmCounters{}
 		*oldCounters = alarmCounters
+		*currentCounters = getEntityCounters(event.Entity.PbehaviorInfo.CanonicalType, event.Entity.PbehaviorInfo.TypeID)
 	case types.AlarmChangeTypeStateDecrease, types.AlarmChangeTypeStateIncrease, types.AlarmChangeTypeChangeState:
 		currentCounters, oldCounters = &AlarmCounters{}, &AlarmCounters{}
 		*currentCounters = alarmCounters
-		*oldCounters = alarmCounters
-		oldCounters.State = NewStateCounters(event.AlarmChange.PreviousState)
+		*oldCounters = getAlarmCounters(event.AlarmChange.PreviousState, event.Alarm.Value.ACK != nil,
+			event.Alarm.Value.PbehaviorInfo.CanonicalType, event.Alarm.Value.PbehaviorInfo.TypeID)
 	default:
 		isChanged = false
 		oldCounters = &alarmCounters
@@ -82,7 +87,7 @@ func GetAlarmCountersFromEvent(event types.Event) (*AlarmCounters, *AlarmCounter
 
 // GetAlarmCountersFromAlarm returns alarm counters based on alarm.
 func GetAlarmCountersFromAlarm(alarm types.Alarm) AlarmCounters {
-	return getAlarmCounters(alarm, alarm.Value.PbehaviorInfo.CanonicalType,
+	return getAlarmCounters(alarm.Value.State.Value, alarm.Value.ACK != nil, alarm.Value.PbehaviorInfo.CanonicalType,
 		alarm.Value.PbehaviorInfo.TypeID)
 }
 
@@ -92,7 +97,8 @@ func GetAlarmCountersFromEntity(entity types.Entity) AlarmCounters {
 
 // getAlarmCounters returns counters base on alarm.
 func getAlarmCounters(
-	alarm types.Alarm,
+	state types.CpsNumber,
+	acked bool,
 	pbhCanonicalType, pbhType string,
 ) AlarmCounters {
 	counters := AlarmCounters{
@@ -101,15 +107,15 @@ func getAlarmCounters(
 
 	if pbhCanonicalType == "" || pbhCanonicalType == pbehavior.TypeActive {
 		counters.Alarms = 1
-		counters.State = NewStateCounters(alarm.Value.State.Value)
+		counters.State = newStateCounters(state)
 
-		if alarm.Value.ACK == nil {
-			counters.NotAcknowledged = 1
-		} else {
+		if acked {
 			counters.Acknowledged = 1
+		} else {
+			counters.NotAcknowledged = 1
 		}
 	} else {
-		counters.State = NewStateCounters(types.AlarmStateOK)
+		counters.State = newStateCounters(types.AlarmStateOK)
 		counters.PbehaviorCounters = map[string]int64{
 			pbhType: 1,
 		}
@@ -164,8 +170,8 @@ func GetServiceIDsFromEvent(event types.Event, serviceIDs []string) ([]string, [
 	return addedToServices, removedFromServices, unchangedServices
 }
 
-// NewStateCounters create state counters.
-func NewStateCounters(state types.CpsNumber) StateCounters {
+// newStateCounters create state counters.
+func newStateCounters(state types.CpsNumber) StateCounters {
 	stateCounters := StateCounters{}
 	switch state {
 	case types.AlarmStateCritical:

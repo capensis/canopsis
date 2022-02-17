@@ -8,7 +8,7 @@
   when: canopsis_edition == "pro"
 
 - name: Initializing RabbitMQ for Go engines
-  shell: "eval $(sed -e '/^#/d' -e 's/^/export /' /opt/canopsis/etc/go-engines-vars.conf) && {{ canopsis_home }}/bin/canopsis-reconfigure && sleep 2"
+  shell: "eval $(sed -e '/^#/d' -e 's/^/export /' {{ canopsis_home }}/etc/go-engines-vars.conf) && {{ canopsis_home }}/bin/canopsis-reconfigure -postgres-migration-directory={{ canopsis_home }}/share/migrations/postgres -migrate-postgres=true -postgres-migration-mode=up && sleep 2"
   environment:
     CPS_WAIT_FIRST_ATTEMPT: 2
     CPS_MAX_RETRY: 3
