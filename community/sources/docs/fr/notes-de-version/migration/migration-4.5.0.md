@@ -34,9 +34,11 @@ docker-compose disable-v2
 
 ## Procédure de mise à jour
 
-### Réalisation d'une sauvegarde de vos machines virtuelles
+### Réalisation d'une sauvegarde
 
-TODO
+Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lors de modifications importantes.
+
+La restructuration apportée dans les bases de données pour cette version de Canopsis nous amène à insister d'autant plus sur ce point. Il est donc fortement recommandé de réaliser une **sauvegarde complète** des VM hébergeant vos services Canopsis, avant cette mise à jour.
 
 ### Arrêt de l'environnement en cours de lancement
 
@@ -145,21 +147,61 @@ Pensez aussi à révoquer toute ouverture réseau que vous auriez autorisée à 
 
 === "Docker Compose"
 
-    TODO
+    Dans le fichier `.env` lié à votre environnement de référence Docker Compose, ajoutez la ligne suivante :
+
+    ```ini
+    TIMESCALEDB_TAG=2.5.1-pg13
+    ```
+
+    Ajoutez ensuite les lignes suivantes au fichier `compose.env` :
+
+    ```ini
+    CPS_POSTGRES_URL=postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis
+    POSTGRES_USER=cpspostgres
+    POSTGRES_PASSWORD=canopsis
+    POSTGRES_DB=canopsis
+    ```
+
+    Puis, ajoutez les lignes suivantes dans la section `services:`, à la suite des services RabbitMQ, MongoDB, Redis :
+
+    ```yaml
+    timescaledb:
+      image: timescale/timescaledb:${TIMESCALEDB_TAG}
+      ports:
+        - "5432:5432"
+      env_file:
+        - compose.env
+      environment:
+        - TIMESCALEDB_TELEMETRY=off
+      volumes:
+        - timescaledata:/var/lib/postgresql/data
+      restart: unless-stopped
+      shm_size: 1g
+    ```
+
+    Enfin, déclarez un volume `timescaledata` dans la section `volumes:` du même fichier (à la suite des volumes `mongodbdata` et `rabbitmqdata`) :
+
+    ```yaml
+    timescaledata:
+      driver: local
+    ```
+
+    Démarrez ensuite ce nouveau conteneur `timescaledb`.
 
 ### Mise à jour de MongoDB
 
 Dans cette version de Canopsis, la base de données MongoDB passe de la version 3.6 à 4.2.
 
-Cette mise à jour doit obligatoirement être réalisée en deux étapes :
-
-1. Mise à jour de MongoDB 3.6 à 4.0 ;
-2. **Puis** mise à jour de MongoDB 4.0 à 4.2.
+!!! attention
+    Cette mise à jour doit **impérativement** être réalisée en deux étapes :
+    
+    1. Mise à jour de MongoDB 3.6 à 4.0 ;
+    2. **Puis** mise à jour de MongoDB 4.0 à 4.2.
 
 === "Paquets CentOS 7"
 
-    !!! attention
-        Si vous utilisez [un Replicat Set MongoDB](https://docs.mongodb.com/manual/replication/), vous devez obligatoirement suivre une procédure différente :
+    !!! important
+        Si vous utilisez un [Replica Set MongoDB](https://docs.mongodb.com/manual/replication/), vous devez obligatoirement suivre une procédure différente :
     
         1. D'abord <https://docs.mongodb.com/manual/release-notes/4.0-upgrade-replica-set/> ;
         2. **puis** <https://docs.mongodb.com/manual/release-notes/4.2-upgrade-replica-set/>.
@@ -192,7 +234,41 @@ Cette mise à jour doit obligatoirement être réalisée en deux étapes :
 
 === "Docker Compose"
 
-    TODO
+    Modifiez la variable `MONGO_TAG` du fichier `.env` de cette façon :
+
+    ```diff
+    -MONGO_TAG=3.6.17-xenial
+    +MONGO_TAG=4.0.28-xenial
+    ```
+
+    Puis relancez le conteneur `mongodb`.
+
+    Entrez ensuite à l'intérieur de ce conteneur, afin de compléter la mise à jour vers MongoDB 4.0 :
+
+    ```sh
+    docker exec -it identifiant_du_conteneur_mongodb /bin/bash
+    mongo -u root -p root
+    > db.adminCommand( { setFeatureCompatibilityVersion: "4.0" } )
+    exit
+    ```
+
+    Puis, éditez à nouveau la variable `MONGO_TAG` du fichier `.env` comme suit :
+
+    ```diff
+    -MONGO_TAG=4.0.28-xenial
+    +MONGO_TAG=4.2.18-bionic
+    ```
+
+    Relancez à nouveau le conteneur `mongodb`.
+
+    Entrez à nouveau à l'intérieur du conteneur, afin de finaliser la mise à jour vers MongoDB 4.2 :
+
+    ```sh
+    docker exec -it identifiant_du_conteneur_mongodb /bin/bash
+    mongo -u root -p root
+    > db.adminCommand( { setFeatureCompatibilityVersion: "4.2" } )
+    exit
+    ```
 
 ### Mise à jour de Canopsis
 
@@ -208,9 +284,33 @@ Cette mise à jour doit obligatoirement être réalisée en deux étapes :
 
 === "Docker Compose"
 
-    <https://git.canopsis.net/canopsis/canopsis-pro/-/tree/release-4.5/pro/deployment/canopsis/docker>
+    Si et seulement si vous utilisez Canopsis Pro, vous devez maintenant utiliser les moteurs `engine-che` et `engine-axe` propres à Canopsis Pro.
 
-    TODO
+    Pour cela, modifiez les lignes `image:` de ces 2 moteurs de la façon suivante :
+
+    ```diff
+       axe:
+    -    image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}engine-axe:${CANOPSIS_IMAGE_TAG}
+    +    image: ${DOCKER_REPOSITORY}${PRO_BASE_PATH}engine-axe:${CANOPSIS_IMAGE_TAG}
+         env_file:
+           - compose.env
+         restart: unless-stopped
+         command: /engine-axe -publishQueue Engine_correlation -withRemediation=true
+
+       che:
+    -    image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}engine-che:${CANOPSIS_IMAGE_TAG}
+    +    image: ${DOCKER_REPOSITORY}${PRO_BASE_PATH}engine-che:${CANOPSIS_IMAGE_TAG}
+         env_file:
+           - compose.env
+         restart: unless-stopped
+         command: /engine-che -enrichContext
+    ```
+
+    Enfin, mettez à jour la variable `CANOPSIS_IMAGE_TAG` de votre fichier `.env` pour passer à Canopsis 4.5.0 :
+
+    ```ini
+    CANOPSIS_IMAGE_TAG=4.5.0
+    ```
 
 ### Lancement des scripts de migration
 
@@ -322,7 +422,7 @@ Plusieurs changements ont été apportés à la configuration de Nginx.
 
     Si vous n'avez pas surchargé la configuration Nginx à l'aide d'un volume, vous n'avez rien à faire.
 
-    En revanche, si vous mainteniez vos propres versions modifiées de ces fichiers de configuration, vous devez manuellement vous synchroniser avec la totalité des modifications ayant été apportées dans `/etc/nginx/`.
+    En revanche, si vous mainteniez vos propres versions modifiées de ces fichiers de configuration, vous devez manuellement vous synchroniser avec la totalité des modifications ayant été apportées au fichier `/etc/nginx/conf.d/default.conf`.
 
 ### Lancement du provisioning et de `canopsis-reconfigure`
 
