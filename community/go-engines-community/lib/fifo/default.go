@@ -20,16 +20,15 @@ import (
 )
 
 type Options struct {
-	PrintEventOnError         bool
-	ModeDebug                 bool
-	ConsumeFromQueue          string
-	PublishToQueue            string
-	LockTtl                   int
-	EnableMetaAlarmProcessing bool
-	EventsStatsFlushInterval  time.Duration
-	PeriodicalWaitTime        time.Duration
-	DataSourceDirectory       string
-	ExternalDataApiTimeout    time.Duration
+	PrintEventOnError        bool
+	ModeDebug                bool
+	ConsumeFromQueue         string
+	PublishToQueue           string
+	LockTtl                  int
+	EventsStatsFlushInterval time.Duration
+	PeriodicalWaitTime       time.Duration
+	DataSourceDirectory      string
+	ExternalDataApiTimeout   time.Duration
 }
 
 func ParseOptions() Options {
@@ -40,11 +39,11 @@ func ParseOptions() Options {
 	flag.BoolVar(&opts.ModeDebug, "d", false, "debug")
 	flag.BoolVar(&opts.PrintEventOnError, "printEventOnError", false, "Print event on processing error")
 	flag.IntVar(&opts.LockTtl, "lockTtl", 10, "Redis lock ttl time in seconds")
-	flag.BoolVar(&opts.EnableMetaAlarmProcessing, "enableMetaAlarmProcessing", true, "Enable meta-alarm processing")
 	flag.DurationVar(&opts.EventsStatsFlushInterval, "eventsStatsFlushInterval", 60*time.Second, "Interval between saving statistics from redis to mongo")
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
 	flag.StringVar(&opts.DataSourceDirectory, "dataSourceDirectory", ".", "The path of the directory containing the event filter's data source plugins.")
 	flag.DurationVar(&opts.ExternalDataApiTimeout, "externalDataApiTimeout", 30*time.Second, "External API HTTP Request Timeout.")
+	flag.Bool("enableMetaAlarmProcessing", true, "Enable meta-alarm processing - deprecated")
 
 	flagVersion := flag.Bool("version", false, "version infos")
 
@@ -79,7 +78,6 @@ func Default(ctx context.Context, options Options, mongoClient mongo.DbClient, E
 		options.LockTtl,
 		json.NewDecoder(),
 		json.NewEncoder(),
-		options.EnableMetaAlarmProcessing,
 	)
 	statsCh := make(chan statistics.Message)
 	statsSender := ratelimit.NewStatsSender(statsCh, logger)
