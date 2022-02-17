@@ -14466,12 +14466,6 @@ var doc = `{
                 "pbh_inactive_duration": {
                     "type": "integer"
                 },
-                "related_parents": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "resolved": {
                     "type": "object",
                     "$ref": "#/definitions/types.CpsTime"

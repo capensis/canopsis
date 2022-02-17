@@ -21,7 +21,7 @@ type rpcMessageProcessor struct {
 	ServiceRpc               engine.RPCClient
 	RemediationRpc           engine.RPCClient
 	Executor                 operation.Executor
-	AlarmAdapter             libalarm.Adapter
+	MetaAlarmEventProcessor  libalarm.MetaAlarmEventProcessor
 	Decoder                  encoding.Decoder
 	Encoder                  encoding.Encoder
 	Logger                   zerolog.Logger
@@ -107,20 +107,6 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 		return p.getErrRpcEvent(fmt.Errorf("cannot update alarm: %v", err), alarm), nil
 	}
 	alarmChange.Type = alarmChangeType
-	if alarm.IsMetaAlarm() {
-		var childrenAlarms []types.AlarmWithEntity
-		err := p.AlarmAdapter.GetOpenedAlarmsWithEntityByIDs(ctx, event.Alarm.Value.Children, &childrenAlarms)
-		if err != nil {
-			p.logError(err, "RPC Message Processor: error getting meta-alarm children", msg)
-		} else {
-			for _, childAlarm := range childrenAlarms {
-				_, err = p.Executor.Exec(ctx, op, &childAlarm.Alarm, &childAlarm.Entity, types.CpsTime{Time: time.Now()}, "", "", types.InitiatorSystem)
-				if err != nil {
-					p.logError(err, "RPC Message Processor: cannot update child alarm", msg)
-				}
-			}
-		}
-	}
 
 	if alarmChangeType == types.AlarmChangeTypeAck ||
 		alarmChangeType == types.AlarmChangeTypeAckremove ||
@@ -162,10 +148,17 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 		}
 	}
 
-	return p.getRpcEvent(types.RPCAxeResultEvent{
+	res := types.RPCAxeResultEvent{
 		AlarmChangeType: alarmChangeType,
 		Alarm:           alarm,
-	})
+	}
+
+	err = p.MetaAlarmEventProcessor.ProcessAxeRpc(ctx, event, res)
+	if err != nil {
+		p.logError(err, "failed to process meta alarm", msg)
+	}
+
+	return p.getRpcEvent(res)
 }
 
 func (p *rpcMessageProcessor) logError(err error, errMsg string, msg []byte) {

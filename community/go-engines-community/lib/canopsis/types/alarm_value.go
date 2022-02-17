@@ -339,9 +339,8 @@ type AlarmValue struct {
 	Meta              string        `bson:"meta,omitempty" json:"meta,omitempty"`
 	MetaValuePath     string        `bson:"meta_value_path,omitempty" json:"meta_value_path,omitempty"`
 
-	RelatedParents []string `bson:"-" json:"related_parents"`
-	Parents        []string `bson:"parents" json:"parents"`
-	Children       []string `bson:"children" json:"children"`
+	Parents  []string `bson:"parents" json:"parents"`
+	Children []string `bson:"children" json:"children"`
 
 	StateChangesSinceStatusUpdate CpsNumber `bson:"state_changes_since_status_update,omitempty" json:"state_changes_since_status_update,omitempty"`
 	TotalStateChanges             CpsNumber `bson:"total_state_changes,omitempty" json:"total_state_changes,omitempty"`

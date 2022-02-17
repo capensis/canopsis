@@ -33,7 +33,6 @@ Feature: create and update alarm by main event stream
             "_id": "test-resource-axe-1/test-component-axe-1"
           },
           "infos": {},
-          "links": {},
           "t": {{ .createTimestamp }},
           "v": {
             "children": [],
@@ -146,7 +145,6 @@ Feature: create and update alarm by main event stream
             "_id": "test-resource-axe-2/test-component-axe-2"
           },
           "infos": {},
-          "links": {},
           "t": {{ .createTimestamp }},
           "v": {
             "children": [],
@@ -1035,6 +1033,66 @@ Feature: create and update alarm by main event stream
       }
     }
     """
+    When I send an event:
+    """json
+    {
+      "event_type" : "check",
+      "connector" : "test-connector-axe-10",
+      "connector_name" : "test-connector-name-axe-10",
+      "source_type" : "resource",
+      "component" :  "test-component-axe-10",
+      "resource" : "test-resource-axe-10",
+      "state" : 1,
+      "output" : "test-output-axe-10",
+      "long_output" : "test-long-output-axe-10",
+      "author" : "test-author-axe-10"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-10"}]}&with_steps=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "component": "test-component-axe-10",
+            "connector": "test-connector-axe-10",
+            "connector_name": "test-connector-name-axe-10",
+            "resource": "test-resource-axe-10",
+            "state": {
+              "_t": "changestate",
+              "val": 3
+            },
+            "status": {
+              "val": 1
+            },
+            "steps": [
+              {
+                "_t": "stateinc",
+                "val": 2
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "changestate",
+                "val": 3
+              }
+            ]
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
 
   Scenario: given snooze event should update alarm
     Given I am admin
@@ -1690,7 +1748,7 @@ Feature: create and update alarm by main event stream
     }
     """
     When I save response ackEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-17"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:

@@ -163,6 +163,7 @@ type Event struct {
 	AckResources bool                   `json:"ack_resources"`
 	Duration     CpsNumber              `json:"duration"`
 	Ticket       string                 `bson:"ticket" json:"ticket"`
+	TicketData   map[string]string      `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
 	StatName     string                 `bson:"stat_name" json:"stat_name"`
 	Debug        bool                   `bson:"debug" json:"debug"`
 	Role         string                 `bson:"role,omitempty" json:"role,omitempty"`
@@ -172,9 +173,10 @@ type Event struct {
 	MetaAlarmRuleID    string `bson:"metaalarm_rule_id" json:"metaalarm_rule_id"`
 	MetaAlarmValuePath string `bson:"metaalarm_value_path" json:"metaalarm_value_path"`
 
-	MetaAlarmRelatedParents []string  `bson:"ma_related_parents" json:"ma_related_parents"`
-	MetaAlarmParents        *[]string `bson:"ma_parents" json:"ma_parents"`
-	MetaAlarmChildren       *[]string `bson:"ma_children" json:"ma_children"`
+	MetaAlarmParents  *[]string `bson:"ma_parents" json:"ma_parents"`
+	MetaAlarmChildren *[]string `bson:"ma_children" json:"ma_children"`
+	// DisplayName is used for manual meta alarms.
+	DisplayName string `bson:"display_name" json:"display_name"`
 
 	PbehaviorInfo PbehaviorInfo `bson:"pbehavior_info" json:"pbehavior_info"`
 

@@ -2,7 +2,8 @@ package pbehavior
 
 import (
 	"context"
-	"fmt"
+	"reflect"
+	"sort"
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -120,15 +121,10 @@ func TestEntityMatcher_MatchAll(t *testing.T) {
 		"pbh7": "{\"name\": \"resource7\"}",
 		"pbh8": "{\"name\": \"resource8\"}",
 	}
-	expected := map[string]bool{
-		"pbh1": true,
-		"pbh2": false,
-		"pbh3": false,
-		"pbh4": false,
-		"pbh5": false,
-		"pbh6": true,
-		"pbh7": false,
-		"pbh8": true,
+	expected := []string{
+		"pbh1",
+		"pbh6",
+		"pbh8",
 	}
 
 	m := NewEntityMatcher(mockDbClient, 5)
@@ -138,7 +134,9 @@ func TestEntityMatcher_MatchAll(t *testing.T) {
 		t.Errorf("expected not error but got %v", err)
 	}
 
-	if fmt.Sprint(expected) != fmt.Sprint(res) {
+	sort.Strings(res)
+
+	if !reflect.DeepEqual(expected, res) {
 		t.Errorf("expected %v but got %v", expected, res)
 	}
 }

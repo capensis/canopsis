@@ -3373,10 +3373,6 @@ definitions:
         type: object
       pbh_inactive_duration:
         type: integer
-      related_parents:
-        items:
-          type: string
-        type: array
       resolved:
         $ref: '#/definitions/types.CpsTime'
         type: object

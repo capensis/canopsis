@@ -134,10 +134,10 @@ func (m *MockEntityMatcher) EXPECT() *MockEntityMatcherMockRecorder {
 }
 
 // MatchAll mocks base method.
-func (m *MockEntityMatcher) MatchAll(arg0 context.Context, arg1 string, arg2 map[string]string) (map[string]bool, error) {
+func (m *MockEntityMatcher) MatchAll(arg0 context.Context, arg1 string, arg2 map[string]string) ([]string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "MatchAll", arg0, arg1, arg2)
-	ret0, _ := ret[0].(map[string]bool)
+	ret0, _ := ret[0].([]string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -365,21 +365,6 @@ func (mr *MockComputedEntityMatcherMockRecorder) Match(arg0, arg1 interface{}) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Match", reflect.TypeOf((*MockComputedEntityMatcher)(nil).Match), arg0, arg1)
 }
 
-// MatchAll mocks base method.
-func (m *MockComputedEntityMatcher) MatchAll(arg0 context.Context, arg1 []string) (map[string][]string, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "MatchAll", arg0, arg1)
-	ret0, _ := ret[0].(map[string][]string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// MatchAll indicates an expected call of MatchAll.
-func (mr *MockComputedEntityMatcherMockRecorder) MatchAll(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MatchAll", reflect.TypeOf((*MockComputedEntityMatcher)(nil).MatchAll), arg0, arg1)
-}
-
 // MockStore is a mock of Store interface.
 type MockStore struct {
 	ctrl     *gomock.Controller
@@ -543,7 +528,7 @@ func (mr *MockEntityTypeResolverMockRecorder) GetPbehaviors(arg0, arg1, arg2 int
 }
 
 // Resolve mocks base method.
-func (m *MockEntityTypeResolver) Resolve(arg0 context.Context, arg1 string, arg2 time.Time) (pbehavior.ResolveResult, error) {
+func (m *MockEntityTypeResolver) Resolve(arg0 context.Context, arg1 types.Entity, arg2 time.Time) (pbehavior.ResolveResult, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Resolve", arg0, arg1, arg2)
 	ret0, _ := ret[0].(pbehavior.ResolveResult)
@@ -555,19 +540,4 @@ func (m *MockEntityTypeResolver) Resolve(arg0 context.Context, arg1 string, arg2
 func (mr *MockEntityTypeResolverMockRecorder) Resolve(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Resolve", reflect.TypeOf((*MockEntityTypeResolver)(nil).Resolve), arg0, arg1, arg2)
-}
-
-// ResolveAll mocks base method.
-func (m *MockEntityTypeResolver) ResolveAll(arg0 context.Context, arg1 []string, arg2 time.Time) (map[string]pbehavior.ResolveResult, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ResolveAll", arg0, arg1, arg2)
-	ret0, _ := ret[0].(map[string]pbehavior.ResolveResult)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ResolveAll indicates an expected call of ResolveAll.
-func (mr *MockEntityTypeResolverMockRecorder) ResolveAll(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ResolveAll", reflect.TypeOf((*MockEntityTypeResolver)(nil).ResolveAll), arg0, arg1, arg2)
 }

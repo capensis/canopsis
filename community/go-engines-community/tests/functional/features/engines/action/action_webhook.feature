@@ -332,7 +332,7 @@ Feature: execute action on trigger
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
+    When I wait the end of 3 events processing
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-component-action-webhook-3"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:

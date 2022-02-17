@@ -325,63 +325,6 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 		return false
 	}
 
-	ctx := c.Request.Context()
-	if err != mongodriver.ErrNoDocuments {
-		processArray(value, "ma_parents", alarm.Value.Parents)
-		processArray(value, "ma_children", alarm.Value.Children)
-
-		if alarm.IsMetaAlarm() && len(alarm.Value.Children) > 0 {
-			cursor, err := api.alarmCollection.Aggregate(
-				ctx,
-				[]bson.M{
-					{
-						"$match": bson.M{
-							"d": bson.M{
-								"$in": alarm.Value.Children,
-							},
-						},
-					},
-					{
-						"$unwind": "$v.parents",
-					},
-					{
-						"$group": bson.M{
-							"_id": 1,
-							"related_parents": bson.M{
-								"$addToSet": bson.M{
-									"$cond": bson.M{
-										"if": bson.M{"$ne": bson.A{"$v.parents", alarm.EntityID}},
-										"then": "$v.parents",
-										"else": "$$REMOVE",
-									},
-								},
-							},
-						},
-					},
-				},
-			)
-			if err != nil {
-				api.logger.Err(err).Str("event", string(value.MarshalTo(nil))).Msg("Failed to get related parents info from mongo")
-				return false
-			}
-			defer cursor.Close(ctx)
-
-			var relatedParentsInfo struct{
-				RelatedParents []string `bson:"related_parents"`
-			}
-
-			if cursor.Next(ctx) {
-				err = cursor.Decode(&relatedParentsInfo)
-				if err != nil {
-					api.logger.Err(err).Str("event", string(value.MarshalTo(nil))).Msg("Failed to get related parents info from mongo")
-					return false
-				}
-
-				processArray(value, "ma_related_parents", relatedParentsInfo.RelatedParents)
-			}
-		}
-	}
-
 	err = api.publisher.Publish(
 		canopsis.CanopsisEventsExchange,
 		"",
