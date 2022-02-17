@@ -287,20 +287,18 @@ Plusieurs changements ont été apportés à la configuration de Nginx.
 
 === "Paquets CentOS 7"
 
-    TODO : de nouvelles variables ?
-
-    Exécutez les commandes suivantes afin de prendre en compte ces changements :
+    Exécutez les commandes suivantes afin de prendre en compte ces changements (en remplaçant `"localhost"` par le FQDN de votre service Canopsis si nécessaire) :
 
     ```sh
-    cp -f /opt/canopsis/deploy-ansible/playbook/roles/canopsis/templates/nginx/cors.j2 /etc/nginx/cors.inc
-    cp -f /opt/canopsis/deploy-ansible/playbook/roles/canopsis/templates/nginx/https.j2 /etc/nginx/https.inc
-    sed -e 's,{{ CPS_API_URL }},http://127.0.0.1:8082,g' -e 's,{{ CPS_SERVER_NAME }},"localhost",g' /opt/canopsis/deploy-ansible/playbook/roles/canopsis/templates/nginx/default.j2 > /etc/nginx/conf.d/default.conf
+    cp -p /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.orig
+    sed \
+        -e 's,{{ CPS_API_URL }},http://127.0.0.1:8082,g' \
+	-e 's,{{ CPS_OLD_API_URL }},http://127.0.0.1:8081,g' \
+	-e 's,{{ CPS_SERVER_NAME }},"localhost",g' \
+        /opt/canopsis/deploy-ansible/playbook/roles/canopsis/templates/nginx/default.j2 > /etc/nginx/conf.d/default.conf
 
     systemctl restart nginx
     ```
-
-    !!! attention
-        Si vous accédez à l'interface web de Canopsis au travers d'un nom de domaine (par exemple `canopsis.mon-si.fr`), vous devrez **obligatoirement** configurer la ligne `set $canopsis_server_name` du fichier `/etc/nginx/conf.d/default.conf` avec le nom de domaine concerné.
 
 === "Docker Compose"
 
