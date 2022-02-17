@@ -73,7 +73,11 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 
 	alarmChange := types.NewAlarmChange()
 
-	if event.Entity != nil && !event.Entity.Enabled {
+	if event.Entity == nil {
+		return alarmChange, nil
+	}
+
+	if !event.Entity.Enabled {
 		if event.EventType == types.EventTypeEntityToggled ||
 			event.EventType == types.EventTypeRecomputeEntityService {
 			return s.resolveAlarmForDisabledEntity(ctx, event)
@@ -94,7 +98,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		event.Alarm = &alarm
 	}
 
-	if err := s.fillAlarmChange(event.Alarm, &alarmChange); err != nil {
+	if err := s.fillAlarmChange(event.Alarm, *event.Entity, &alarmChange); err != nil {
 		return alarmChange, err
 	}
 
@@ -130,17 +134,9 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	}
 
 	if event.Alarm == nil {
-		if event.Entity == nil {
-			return alarmChange, nil
-		}
-
 		err = s.processPbhEventsForEntity(ctx, event, &alarmChange)
 
 		return alarmChange, err
-	}
-
-	if event.Entity == nil {
-		return alarmChange, nil
 	}
 
 	operation := s.createOperationFromEvent(*event)
@@ -185,8 +181,11 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	return alarmChange, nil
 }
 
-func (s *eventProcessor) fillAlarmChange(alarm *types.Alarm, alarmChange *types.AlarmChange) error {
-	if alarm != nil {
+func (s *eventProcessor) fillAlarmChange(alarm *types.Alarm, entity types.Entity, alarmChange *types.AlarmChange) error {
+	if alarm == nil {
+		alarmChange.PreviousPbehaviorTypeID = entity.PbehaviorInfo.TypeID
+		alarmChange.PreviousPbehaviorCannonicalType = entity.PbehaviorInfo.CanonicalType
+	} else {
 		alarmChange.PreviousState = alarm.Value.State.Value
 		alarmChange.PreviousStateChange = alarm.Value.State.Timestamp
 		alarmChange.PreviousStatus = alarm.Value.Status.Value
@@ -212,10 +211,6 @@ func (s *eventProcessor) storeAlarm(ctx context.Context, event *types.Event) (ty
 
 func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event) (types.AlarmChangeType, error) {
 	changeType := types.AlarmChangeTypeNone
-
-	if event.Entity == nil {
-		return changeType, nil
-	}
 
 	alarmConfig := s.alarmConfigProvider.Get()
 	alarm := newAlarm(*event, alarmConfig)
@@ -518,7 +513,7 @@ func (s *eventProcessor) resolveAlarmForDisabledEntity(ctx context.Context, even
 		return alarmChange, fmt.Errorf("cannot fetch alarm: %w", err)
 	}
 
-	if err := s.fillAlarmChange(event.Alarm, &alarmChange); err != nil {
+	if err := s.fillAlarmChange(event.Alarm, *event.Entity, &alarmChange); err != nil {
 		return alarmChange, err
 	}
 
@@ -651,7 +646,7 @@ func (s *eventProcessor) sendEventStatistics(ctx context.Context, event types.Ev
 		return
 	}
 
-	stats := statistics.EventStatistics{Timestamp: &event.Timestamp}
+	stats := statistics.EventStatistics{LastEvent: &event.Timestamp}
 	if event.State == types.AlarmStateOK {
 		stats.OK = 1
 	} else {

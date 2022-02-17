@@ -70,7 +70,7 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*Aggrega
 			"pipeline": []bson.M{
 				{"$match": bson.M{"$and": []bson.M{
 					{"$expr": bson.M{"$eq": bson.A{"$_id", "$$id"}}},
-					{"timestamp": bson.M{"$gt": truncatedInLocation.Unix()}},
+					{"last_event": bson.M{"$gt": truncatedInLocation.Unix()}},
 				}}},
 			},
 			"as": "eventStatistics",
@@ -94,6 +94,23 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*Aggrega
 		}},
 		{"$unwind": bson.M{"path": "$alarm", "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{"state": "$alarm.v.state.val"}},
+		{"$lookup": bson.M{
+			"from":         mongo.PbehaviorTypeMongoCollection,
+			"foreignField": "_id",
+			"localField":   "pbehavior_info.type",
+			"as":           "pbehavior_type",
+		}},
+		{"$unwind": bson.M{"path": "$pbehavior_type", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"pbehavior_info": bson.M{"$cond": bson.M{
+				"if": "$pbehavior_info",
+				"then": bson.M{"$mergeObjects": bson.A{
+					"$pbehavior_info",
+					bson.M{"icon_name": "$pbehavior_type.icon_name"},
+				}},
+				"else": nil,
+			}},
+		}},
 	}
 	if r.NoEvents {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{"idle_since": bson.M{"$gt": 0}}})
