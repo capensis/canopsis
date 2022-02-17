@@ -126,13 +126,15 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 		return nil, err
 	}
 
+	location := s.timezoneConfigProvider.Get().Location
+
 	pipeline := []bson.M{
 		{"$match": bson.M{"$and": []bson.M{
 			{"$expr": bson.M{"$in": bson.A{"$_id", service.Depends}}},
 			{"$expr": bson.M{"$eq": bson.A{"$enabled", true}}},
 		}}},
 	}
-	pipeline = append(pipeline, getFindEntitiesPipeline()...)
+	pipeline = append(pipeline, getFindEntitiesPipeline(location)...)
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		query.Query,
 		pipeline,
@@ -156,7 +158,7 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 	pbhIDs := make([]string, 0)
 	alarmIds := make([]string, 0, len(res.Data))
 	for _, v := range res.Data {
-		if v.PbehaviorInfo.ID != "" {
+		if v.PbehaviorInfo != nil && v.PbehaviorInfo.ID != "" {
 			pbhIDs = append(pbhIDs, v.PbehaviorInfo.ID)
 		}
 
@@ -194,14 +196,16 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 	}
 
 	for i := range res.Data {
-		if !res.Data[i].PbehaviorInfo.IsActive() || !service.PbehaviorInfo.IsActive() {
+		if res.Data[i].PbehaviorInfo != nil && !res.Data[i].PbehaviorInfo.IsActive() || !service.PbehaviorInfo.IsActive() {
 			res.Data[i].IsGrey = true
 		}
 
-		if v, ok := pbhs[res.Data[i].PbehaviorInfo.ID]; ok {
-			res.Data[i].Pbehaviors = []pbehavior.Response{v}
-		} else {
-			res.Data[i].Pbehaviors = []pbehavior.Response{}
+		res.Data[i].Pbehaviors = make([]pbehavior.Response, 0)
+
+		if res.Data[i].PbehaviorInfo != nil {
+			if v, ok := pbhs[res.Data[i].PbehaviorInfo.ID]; ok {
+				res.Data[i].Pbehaviors = append(res.Data[i].Pbehaviors, v)
+			}
 		}
 	}
 
@@ -518,7 +522,10 @@ func getFindIconPipeline() []bson.M {
 	}
 }
 
-func getFindEntitiesPipeline() []bson.M {
+func getFindEntitiesPipeline(location *time.Location) []bson.M {
+	year, month, day := time.Now().In(location).Date()
+	truncatedInLocation := time.Date(year, month, day, 0, 0, 0, 0, location)
+
 	pipeline := []bson.M{
 		// Find category
 		{"$lookup": bson.M{
@@ -528,6 +535,19 @@ func getFindEntitiesPipeline() []bson.M {
 			"as":           "category",
 		}},
 		{"$unwind": bson.M{"path": "$category", "preserveNullAndEmptyArrays": true}},
+		// Event statistics
+		{"$lookup": bson.M{
+			"from": mongo.EventStatistics,
+			"let":  bson.M{"id": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$and": []bson.M{
+					{"$expr": bson.M{"$eq": bson.A{"$_id", "$$id"}}},
+					{"last_event": bson.M{"$gt": truncatedInLocation.Unix()}},
+				}}},
+			},
+			"as": "stats",
+		}},
+		{"$unwind": bson.M{"path": "$stats", "preserveNullAndEmptyArrays": true}},
 		// Find connected alarm.
 		{"$lookup": bson.M{
 			"from": alarm.AlarmCollectionName,
