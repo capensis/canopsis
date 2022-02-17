@@ -41,6 +41,11 @@
     group: root
     mode: '0644'
 
+- name: Install libicu dependency for TimescaleDB
+  yum:
+    name: libicu
+    state: present
+
 - name: Install TimescaleDB from upstream repositories
   yum:
     name: 
