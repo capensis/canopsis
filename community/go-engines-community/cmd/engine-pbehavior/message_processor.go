@@ -98,7 +98,7 @@ func (p *messageProcessor) processEvent(ctx context.Context, event types.Event, 
 	defer cancel()
 	now := time.Now().In(p.TimezoneConfigProvider.Get().Location)
 
-	resolveResult, err := p.PbhService.Resolve(ctx, event.Entity.ID, now)
+	resolveResult, err := p.PbhService.Resolve(ctx, *event.Entity, now)
 	if err == nil {
 		if !p.resolveDeadlineExceededAt.IsZero() {
 			p.resolveDeadlineExceededAt = time.Time{}

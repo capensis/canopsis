@@ -15,6 +15,12 @@
   register: reconfigurecmd
   failed_when: reconfigurecmd.rc != 0
 
+- name: Initialize metrics metadata
+  shell: "eval $(sed -e '/^#/d' -e 's/^/export /' {{ canopsis_home }}/etc/go-engines-vars.conf) && {{ canopsis_home }}/bin/migrate-metrics -onlyMeta"
+  register: metricsmetacmd
+  failed_when: metricsmetacmd.rc != 0
+  when: canopsis_edition == "pro"
+
 - name: Choose canopsis-api edition (if using Community)
   file:
     src: /opt/canopsis/bin/canopsis-api-community
