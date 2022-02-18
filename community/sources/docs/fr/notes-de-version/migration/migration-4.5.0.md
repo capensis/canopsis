@@ -324,7 +324,7 @@ Assurez-vous que le service MongoDB soit bien lancé et exécutez les commandes 
 
 === "Paquets CentOS 7"
 
-    Sur la machine sur laquelle les packages `canopsis*` sont installés
+    Sur la machine sur laquelle les paquets `canopsis*` sont installés :
     
     ```sh
     cd /opt/canopsis/share/migrations/mongodb/release4.5
@@ -335,17 +335,17 @@ Assurez-vous que le service MongoDB soit bien lancé et exécutez les commandes 
 
 === "Docker Compose"
 
-    Depuis une machine qui a un client mongo d'installé et qui peut joindre le service `mongodb` d'un point de vue réseau
+    Depuis une machine qui a un client `mongo` installé et qui peut joindre le service `mongodb` d'un point de vue réseau :
     
     ```sh
     git clone --depth 1 --single-branch -b release-4.5 https://git.canopsis.net/canopsis/canopsis-community.git
-    cd canopsis-community/community/go-engines- community/database/migrations
+    cd canopsis-community/community/go-engines-community/database/migrations
     for file in $(find release4.5 -type f -name "*.js" | sort -n); do
        mongo -u cpsmongo -p canopsis canopsis < "$file"
     done
     ```
     
-    Il est aussi possible de récupérer le répertoire `migrations` et de le présenter en volume dans le conteneur `mongodb` afin de réaliser le lancement du script depuis le conteneur `mongodb`
+    Il est aussi possible de récupérer le répertoire `migrations` et de le présenter en volume dans le conteneur `mongodb` afin de réaliser le lancement du script depuis le conteneur `mongodb`.
 
 !!! attention
     Ces scripts essaient de gérer le plus de cas d'usage possible, mais la bonne exécution de ces scripts en toute condition ne peut être garantie.
