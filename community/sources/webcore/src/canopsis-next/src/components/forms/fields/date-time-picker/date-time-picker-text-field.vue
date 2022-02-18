@@ -11,7 +11,7 @@
           @blur="blur"
         )
       v-flex
-        date-time-picker-button(
+        date-time-picker-menu(
           :value="objectValue",
           :label="label",
           :round-hours="roundHours",
@@ -28,7 +28,7 @@ import { convertDateToDateObject, convertDateToString } from '@/helpers/date/dat
 
 import { formBaseMixin } from '@/mixins/form';
 
-import DateTimePickerButton from './date-time-picker-button.vue';
+import DateTimePickerMenu from './date-time-picker-menu.vue';
 
 export default {
   $_veeValidate: {
@@ -41,7 +41,7 @@ export default {
     },
   },
   inject: ['$validator'],
-  components: { DateTimePickerButton },
+  components: { DateTimePickerMenu },
   mixins: [formBaseMixin],
   model: {
     prop: 'value',
