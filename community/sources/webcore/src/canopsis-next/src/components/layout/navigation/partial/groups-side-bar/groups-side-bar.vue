@@ -169,7 +169,7 @@ export default {
         const data = groupsWithViewsToPositions(this.mutatedGroups);
 
         await this.updateViewsPositions({ data });
-        await this.fetchAllGroupsListWithViews();
+        await this.fetchAllGroupsListWithWidgets();
 
         this.$popups.success({ text: this.$t('layout.sideBar.ordering.popups.success') });
       } catch (err) {

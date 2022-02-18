@@ -104,7 +104,7 @@ export default {
   async mounted() {
     this.pending = true;
 
-    await this.fetchAllGroupsListWithViewsWithCurrentUser();
+    await this.fetchAllGroupsListWithWidgetsWithCurrentUser();
 
     this.pending = false;
   },
@@ -119,7 +119,7 @@ export default {
           action: async () => {
             try {
               await this.removeViewWithPopup({ id: this.view._id });
-              await this.fetchAllGroupsListWithViewsWithCurrentUser();
+              await this.fetchAllGroupsListWithWidgetsWithCurrentUser();
 
               this.redirectToHomeIfCurrentRoute();
 
@@ -181,7 +181,7 @@ export default {
         await this.createViewWithPopup({ data });
       }
 
-      await this.fetchAllGroupsListWithViewsWithCurrentUser();
+      await this.fetchAllGroupsListWithWidgetsWithCurrentUser();
 
       this.$modals.hide();
     },

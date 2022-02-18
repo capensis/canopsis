@@ -27,29 +27,22 @@ export const entitiesViewGroupMixin = {
 
     ...mapAuthActions(['fetchCurrentUser']),
 
-    fetchAllGroupsListWithViews() {
+    fetchAllGroupsListWithWidgets() {
       return this.fetchGroupsList({
         params: {
           limit: MAX_LIMIT,
           page: 1,
           with_views: true,
+          with_tabs: true,
+          with_widgets: true,
           with_flags: true,
         },
       });
     },
 
-    fetchAllGroupsListWithViewsWithCurrentUser() {
+    fetchAllGroupsListWithWidgetsWithCurrentUser() {
       return Promise.all([
-        this.fetchGroupsList({
-          params: {
-            limit: MAX_LIMIT,
-            page: 1,
-            with_views: true,
-            with_tabs: true,
-            with_widgets: true,
-            with_flags: true,
-          },
-        }),
+        this.fetchAllGroupsListWithWidgets(),
         this.fetchCurrentUser(),
       ]);
     },
