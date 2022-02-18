@@ -25,7 +25,8 @@
       type="file",
       :multiple="multiple",
       :accept="accept",
-      @change="change"
+      @change="change",
+      @click.stop=""
     )
     div.mt-2(v-if="!hideDetails")
       div.error--text(v-for="error in errorMessages", :key="error") {{ error }}
@@ -108,7 +109,9 @@ export default {
     },
   },
   methods: {
-    selectFiles() {
+    selectFiles(event) {
+      event.stopPropagation();
+
       if (!this.fullDisabled) {
         this.$refs.fileInput.click();
       }

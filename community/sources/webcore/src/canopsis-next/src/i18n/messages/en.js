@@ -1162,39 +1162,6 @@ export default {
       edit: {
         title: 'Edit SNMP rule',
       },
-      fields: {
-        oid: {
-          title: 'oid',
-          labels: {
-            module: 'Select a mib module',
-          },
-        },
-        output: {
-          title: 'output',
-        },
-        resource: {
-          title: 'resource',
-        },
-        component: {
-          title: 'component',
-        },
-        connectorName: {
-          title: 'connector_name',
-        },
-        state: {
-          title: 'severity',
-          labels: {
-            toCustom: 'To custom',
-            defineVar: 'Define matching snmp var',
-            writeTemplate: 'Write template',
-          },
-        },
-        moduleMibObjects: {
-          vars: 'Snmp vars match field',
-          regex: 'Regex',
-          formatter: 'Format (capture group with \\x)',
-        },
-      },
     },
     selectView: {
       title: 'Select view',
@@ -1789,10 +1756,6 @@ export default {
     errors: {
       noValuePaths: 'You have to add at least 1 value path',
     },
-  },
-  snmpRules: {
-    uploadMib: 'Upload MIB',
-    addSnmpRule: 'Add SNMP rule',
   },
   layout: {
     sideBar: {
@@ -2691,6 +2654,24 @@ export default {
 
   kpiRatingSettings: {
     helpInformation: 'The list of parameters to use for rating.',
+  },
+
+  snmpRule: {
+    oid: 'oid',
+    module: 'Select a mib module',
+    output: 'output',
+    resource: 'resource',
+    component: 'component',
+    connectorName: 'connector_name',
+    toCustom: 'To custom',
+    defineVar: 'Define matching snmp var',
+    writeTemplate: 'Write template',
+    state: 'severity',
+    moduleMibObjects: 'Snmp vars match field',
+    regex: 'Regex',
+    formatter: 'Format (capture group with \\x)',
+    uploadMib: 'Upload MIB',
+    addSnmpRule: 'Add SNMP rule',
   },
 
   ...featureService.get('i18n.en'),
