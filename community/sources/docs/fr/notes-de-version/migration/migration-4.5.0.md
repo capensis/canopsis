@@ -470,10 +470,16 @@ Le provisioning doit être lancé afin de mettre à jour certaines données en b
     /opt/canopsis/bin/canopsis-reconfigure -migrate-postgres=true -postgres-migration-mode=up -postgres-migration-directory=/opt/canopsis/share/migrations/postgres
     ```
     
-    Vous pouvez ensuite migrer vos métriques existantes de MongoDB vers TimescaleDB avec les commandes suivantes :
+    Initialisez ensuite vos métriques TimescaleDB avec cette commande (Canopsis Pro uniquement) :
     
     ```sh
     /opt/canopsis/bin/migrate-metrics -onlyMeta
+    ```
+
+    Puis, migrez vos métriques existantes de MongoDB à TimescaleDB avec cette commande (Canopsis Pro uniquement) :
+
+    ```sh
+    # Attention : ne doit être exécuté qu'une seule fois !
     /opt/canopsis/bin/migrate-metrics
     ```
 
@@ -489,12 +495,15 @@ Le provisioning doit être lancé afin de mettre à jour certaines données en b
     
     ```sh
     docker-compose up -d provisioning reconfigure
+    # Canopsis Pro uniquement
+    docker-compose up -d migrate-metrics-meta
     ```
     
-    Vous pouvez ensuite migrer vos métriques existantes de MongoDB vers TimescaleDB avec les commandes suivantes :
+    Vous pouvez ensuite migrer vos métriques existantes de MongoDB vers TimescaleDB avec cette commande (Canopsis Pro uniquement) :
     
     ```sh
-    TODO
+    # Note : cette commande ne doit être exécutée qu'une seule fois et ne doit donc pas être ajoutée aux fichiers YAML
+    docker run --env-file compose.env docker.canopsis.net/docker/pro/migrate-metrics:4.5.0
     ```
 
 ### Remise en route des moteurs et des services de Canopsis
