@@ -4,19 +4,12 @@ Cette procédure décrit la mise à jour d'une instance mono-nœud de Canopsis.
 
 Lisez l'ensemble de ce document avant de procéder à toute manipulation.
 
-## Versions concernées par cette procédure
-
-Cette procédure concerne uniquement les mises à jour « régulières » de l'outil, c'est-à-dire celles où le premier chiffre du numéro de version n'a pas changé (3.25.0 vers 3.26.0, 3.26.0 vers 3.26.1…).
-
-Les mises à jour « majeures » de Canopsis (3.48.0 vers 4.0.0) ne peuvent pas et **ne doivent pas** être réalisées à l'aide de ce seul document. Pour ces mises à jour en particulier, le Guide de migration lié à cette nouvelle version majeure doit être suivi.
-
-Consultez le [document des numéros de version de Canopsis](numeros-version-canopsis.md) pour en savoir plus au sujet du *versionnage sémantique* utilisé par Canopsis.
-
-Les environnements n'ayant pas été installés en suivant l'une des [méthodes d'installation officielles de Canopsis](../installation/index.md#methodes-dinstallation-de-canopsis), notamment les environnements de type Docker Swarm ou en paquets multi-nœuds, ne sont pas non plus pris en charge par cette procédure.
+!!! important
+    Les environnements n'ayant pas été installés en suivant l'une des [méthodes d'installation officielles de Canopsis](../installation/index.md#methodes-dinstallation-de-canopsis), notamment les environnements de type Docker Swarm ou en paquets multi-nœuds, ne sont pas pris en charge par cette procédure.
 
 ## Procédure de mise à jour
 
-Vous devez tout d'abord lire **chacune** des [notes de version](../../index.md#notes-de-version) publiée entre votre version actuelle et celle que vous ciblez.
+Vous devez tout d'abord lire **chacune** des [notes de version](../../index.md#notes-de-version) publiée entre votre version actuelle et celle que vous ciblez. [En savoir plus sur les numéros de version de Canopsis](numeros-version-canopsis.md).
 
 Par exemple, si vous effectuez une mise à jour de Canopsis 3.38.0 à 3.40.0, vous devez :
 
@@ -27,14 +20,14 @@ Par exemple, si vous effectuez une mise à jour de Canopsis 3.38.0 à 3.40.0, v
 
 Si vous bénéficiez d'un développement spécifique (modules ou add-ons ayant été spécifiquement développés pour votre installation), assurez-vous de suivre toute procédure complémentaire vous ayant été communiquée.
 
-### Mise à jour en installation par paquets
-
 !!! attention
-    Cette mise à jour causera une **interruption de service** de Canopsis et des composants qui lui sont associés, durant son déroulement.
-    
+    La mise à jour causera une **interruption de service** de Canopsis et des composants qui lui sont associés, durant son déroulement.
+
     Vous pouvez notamment utiliser la fonctionnalité de [diffusion de messages](../../guide-utilisation/interface/broadcast-messages.md) afin de prévenir vos utilisateurs en amont.
 
-L'ensemble des commandes suivantes doivent être réalisées avec l'utilisateur `root`.
+### Mise à jour en installation par paquets
+
+Les commandes suivantes doivent être réalisées avec l'utilisateur `root`.
 
 Appliquez la mise à jour des paquets Canopsis :
 
@@ -60,7 +53,7 @@ Puis, après avoir pris en compte toute éventuelle remarque des notes de versio
 
 ```bash
 set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
-/opt/canopsis/bin/canopsis-reconfigure
+/opt/canopsis/bin/canopsis-reconfigure -migrate-postgres=true -postgres-migration-mode=up -postgres-migration-directory=/opt/canopsis/share/migrations/postgres
 ``` 
 
 Puis, redémarrez l'ensemble des moteurs Canopsis :
@@ -74,7 +67,10 @@ Ne pas oublier d'appliquer toute éventuelle procédure supplémentaire décrite
 
 ### Mise à jour en environnement Docker Compose
 
-Après avoir suivi les notes de version, resynchronisez l'ensemble de vos fichiers Docker Compose avec les fichiers de référence correspondant à la version voulue : <https://git.canopsis.net/canopsis/canopsis-community/-/tree/develop/community/docker-compose>.
+Après avoir suivi les notes de version, resynchronisez l'ensemble de vos fichiers Docker Compose avec les fichiers de référence correspondant à la version voulue :
+
+* Canopsis Community : <https://git.canopsis.net/canopsis/canopsis-community/-/tree/develop/community/docker-compose>
+* Canopsis Pro : <https://git.canopsis.net/canopsis/canopsis-pro/-/tree/develop/pro/deployment/canopsis/docker> (autorisation nécessaire)
 
 Puis, exécutez la commande suivante :
 
