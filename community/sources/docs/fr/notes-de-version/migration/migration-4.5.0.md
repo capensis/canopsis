@@ -53,6 +53,12 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
 === "Docker Compose"
 
     ```sh
+    docker-compose -f 00-data.docker-compose.yml -f 01-prov.docker-compose.yml -f 02-app.docker-compose.yml down
+    ```
+    
+    Ou bien, si vous utilisez encore l'ancien procédé :
+    
+    ```sh
     docker-compose down
     ```
 
@@ -63,7 +69,7 @@ InfluxDB a été totalement supprimé de Canopsis. Ce composant tiers peut donc 
 === "Paquets CentOS 7"
 
     Exécutez les commandes suivantes :
-
+    
     ```sh
     systemctl stop influxdb.service
     yum remove influxdb
@@ -73,7 +79,7 @@ InfluxDB a été totalement supprimé de Canopsis. Ce composant tiers peut donc 
 === "Docker Compose"
 
     Supprimez toute variable contenant le terme `INFLUXDB` dans les fichiers `.env` et `compose.env`.
-
+    
     Puis, enlevez toutes références au volume `influxdbdata` et au conteneur `influxdb` présentes dans votre fichier de référence Docker Compose.
 
 Pensez aussi à révoquer toute ouverture réseau que vous auriez autorisée à destination des ports TCP 8086 et 8088.
@@ -83,11 +89,11 @@ Pensez aussi à révoquer toute ouverture réseau que vous auriez autorisée à 
 === "Paquets CentOS 7"
 
     Ajout des clés GPG et des dépôts TimescaleDB et PostgreSQL :
-
+    
     ```sh
     yum install https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
     cd /etc/pki/rpm-gpg/ && curl -L -o RPM-GPG-KEY-PKGCLOUD-TIMESCALEDB https://packagecloud.io/timescale/timescaledb/gpgkey
-
+    
     # Add TimescaleDB repo
     cat > /etc/yum.repos.d/timescale_timescaledb.repo << EOF
     [timescale_timescaledb]
@@ -103,37 +109,37 @@ Pensez aussi à révoquer toute ouverture réseau que vous auriez autorisée à 
     metadata_expire=300
     EOF
     ```
-
+    
     Installation des paquets TimescaleDB et des dépendances associées :
-
+    
     ```sh
     yum makecache -y
     yum --disablerepo="*" --enablerepo="timescale_timescaledb,pgdg-common,pgdg13,base" install timescaledb-2-loader-postgresql-13-2.5.1-0.el7 timescaledb-2-postgresql-13-2.5.1-0.el7
     ```
-
+    
     Configuration pour le système actuel, et désactivation de [la télémétrie](https://docs.timescale.com/timescaledb/latest/how-to-guides/configuration/telemetry/#telemetry-and-version-checking) :
-
+    
     ```sh
     postgresql-13-setup initdb
     yes | PATH=/usr/pgsql-13/bin:$PATH timescaledb-tune -pg-config /usr/pgsql-13/bin/pg_config -out-path /var/lib/pgsql/13/data/postgresql.conf -yes
     echo "timescaledb.telemetry_level=off" >> /var/lib/pgsql/13/data/postgresql.conf
     ```
-
+    
     Activation et démarrage du service :
-
+    
     ```sh
     systemctl enable postgresql-13.service
     systemctl start postgresql-13.service
     ```
-
+    
     Connexion à la ligne de commande PostgreSQL :
-
+    
     ```sh
     sudo -u postgres psql
     ```
-
+    
     Création de la base de données `canopsis` et de l'utilisateur associé, et activation de l'extension TimescaleDB sur cette base :
-
+    
     ```sql
     postgres=# CREATE database canopsis;
     postgres=# \c canopsis
@@ -141,29 +147,29 @@ Pensez aussi à révoquer toute ouverture réseau que vous auriez autorisée à 
     canopsis=# CREATE USER cpspostgres WITH PASSWORD 'canopsis';
     canopsis=# exit
     ```
-
+    
     !!! info "Information"
         Si vous avez besoin d'accéder à PostgreSQL/TimescaleDB depuis une autre machine, autorisez l'accès au port TCP 5432 (uniquement pour les administrateurs de la plateforme).
 
 === "Docker Compose"
 
     Dans le fichier `.env` lié à votre environnement de référence Docker Compose, ajoutez la ligne suivante :
-
+    
     ```ini
     TIMESCALEDB_TAG=2.5.1-pg13
     ```
-
+    
     Ajoutez ensuite les lignes suivantes au fichier `compose.env` :
-
+    
     ```ini
     CPS_POSTGRES_URL=postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis
     POSTGRES_USER=cpspostgres
     POSTGRES_PASSWORD=canopsis
     POSTGRES_DB=canopsis
     ```
-
+    
     Puis, ajoutez les lignes suivantes dans la section `services:`, à la suite des services RabbitMQ, MongoDB, Redis :
-
+    
     ```yaml
     timescaledb:
       image: timescale/timescaledb:${TIMESCALEDB_TAG}
@@ -178,14 +184,14 @@ Pensez aussi à révoquer toute ouverture réseau que vous auriez autorisée à 
       restart: unless-stopped
       shm_size: 1g
     ```
-
+    
     Enfin, déclarez un volume `timescaledata` dans la section `volumes:` du même fichier (à la suite des volumes `mongodbdata` et `rabbitmqdata`) :
-
+    
     ```yaml
     timescaledata:
       driver: local
     ```
-
+    
     Démarrez ensuite ce nouveau conteneur `timescaledb`.
 
 ### Mise à jour de MongoDB
@@ -205,28 +211,28 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
     
         1. D'abord <https://docs.mongodb.com/manual/release-notes/4.0-upgrade-replica-set/> ;
         2. **puis** <https://docs.mongodb.com/manual/release-notes/4.2-upgrade-replica-set/>.
-
+    
     Exécutez les commandes suivantes pour passer à MongoDB 4.0 :
-
+    
     ```sh
     sed -i 's|3\.6|4.0|g' /etc/yum.repos.d/mongodb.repo
-
+    
     yum makecache -y
     yum --disablerepo="*" --enablerepo="mongodb*" update
-
+    
     mongo -u root -p root
     > db.adminCommand( { setFeatureCompatibilityVersion: "4.0" } )
     > exit
     ```
-
+    
     Puis, exécutez les commandes suivantes pour passer à MongoDB 4.2 :
-
+    
     ```sh
     sed -i 's|4\.0|4.2|g' /etc/yum.repos.d/mongodb.repo
-
+    
     yum makecache -y
     yum --disablerepo="*" --enablerepo="mongodb*" update
-
+    
     mongo -u root -p root
     > db.adminCommand( { setFeatureCompatibilityVersion: "4.2" } )
     > exit
@@ -235,34 +241,34 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
 === "Docker Compose"
 
     Modifiez la variable `MONGO_TAG` du fichier `.env` de cette façon :
-
+    
     ```diff
     -MONGO_TAG=3.6.17-xenial
     +MONGO_TAG=4.0.28-xenial
     ```
-
+    
     Puis relancez le conteneur `mongodb`.
-
+    
     Entrez ensuite à l'intérieur de ce conteneur, afin de compléter la mise à jour vers MongoDB 4.0 :
-
+    
     ```sh
     docker exec -it identifiant_du_conteneur_mongodb /bin/bash
     mongo -u root -p root
     > db.adminCommand( { setFeatureCompatibilityVersion: "4.0" } )
     exit
     ```
-
+    
     Puis, éditez à nouveau la variable `MONGO_TAG` du fichier `.env` comme suit :
-
+    
     ```diff
     -MONGO_TAG=4.0.28-xenial
     +MONGO_TAG=4.2.18-bionic
     ```
-
+    
     Relancez à nouveau le conteneur `mongodb`.
-
+    
     Entrez à nouveau à l'intérieur du conteneur, afin de finaliser la mise à jour vers MongoDB 4.2 :
-
+    
     ```sh
     docker exec -it identifiant_du_conteneur_mongodb /bin/bash
     mongo -u root -p root
@@ -275,19 +281,19 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
 === "Paquets CentOS 7"
 
     Appliquez la mise à jour des paquets Canopsis :
-
+    
     ```sh
     yum --disablerepo="*" --enablerepo="canopsis*" update
     ```
-
+    
     Note : cette mise à jour de Canopsis introduit un nouveau paquet `canopsis-webui`, identique entre Canopsis Community et Canopsis Pro.
 
 === "Docker Compose"
 
     Si et seulement si vous utilisez Canopsis Pro, vous devez maintenant utiliser les moteurs `engine-che` et `engine-axe` propres à Canopsis Pro.
-
+    
     Pour cela, modifiez les lignes `image:` de ces 2 moteurs de la façon suivante :
-
+    
     ```diff
        axe:
     -    image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}engine-axe:${CANOPSIS_IMAGE_TAG}
@@ -296,7 +302,7 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
            - compose.env
          restart: unless-stopped
          command: /engine-axe -publishQueue Engine_correlation -withRemediation=true
-
+    
        che:
     -    image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}engine-che:${CANOPSIS_IMAGE_TAG}
     +    image: ${DOCKER_REPOSITORY}${PRO_BASE_PATH}engine-che:${CANOPSIS_IMAGE_TAG}
@@ -305,9 +311,9 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
          restart: unless-stopped
          command: /engine-che -enrichContext
     ```
-
+    
     Enfin, mettez à jour la variable `CANOPSIS_IMAGE_TAG` de votre fichier `.env` pour passer à Canopsis 4.5.0 :
-
+    
     ```ini
     CANOPSIS_IMAGE_TAG=4.5.0
     ```
@@ -316,18 +322,36 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
 
 Assurez-vous que le service MongoDB soit bien lancé et exécutez les commandes suivantes, en adaptant les identifiants MongoDB ci-dessous si nécessaire :
 
-```sh
-cd /opt/canopsis/share/migrations/mongodb/release4.5
-for file in $(find . -type f -name "*.js" | sort -n); do
-   mongo -u cpsmongo -p canopsis canopsis < "$file"
-done
-```
+=== "Paquets CentOS 7"
+
+    Sur la machine sur laquelle les packages `canopsis*` sont installés
+    
+    ```sh
+    cd /opt/canopsis/share/migrations/mongodb/release4.5
+    for file in $(find . -type f -name "*.js" | sort -n); do
+       mongo -u cpsmongo -p canopsis canopsis < "$file"
+    done
+    ```
+
+=== "Docker Compose"
+
+    Depuis une machine qui a un client mongo d'installé et qui peut joindre le service `mongodb` d'un point de vue réseau
+    
+    ```sh
+    git clone --depth 1 --single-branch -b release-4.5 https://git.canopsis.net/canopsis/canopsis-community.git
+    cd canopsis-community/community/go-engines- community/database/migrations
+    for file in $(find release4.5 -type f -name "*.js" | sort -n); do
+       mongo -u cpsmongo -p canopsis canopsis < "$file"
+    done
+    ```
+    
+    Il est aussi possible de récupérer le répertoire `migrations` et de le présenter en volume dans le conteneur `mongodb` afin de réaliser le lancement du script depuis le conteneur `mongodb`
 
 !!! attention
     Ces scripts essaient de gérer le plus de cas d'usage possible, mais la bonne exécution de ces scripts en toute condition ne peut être garantie.
 
     Ils doivent obligatoirement être lancés **avant** le lancement des scripts de provisioning lors de l'étape suivante.
-
+    
     N'hésitez pas à nous signaler tout problème d'exécution que vous pourriez rencontrer lors de cette étape.
 
 ### Synchronisation du fichier de configuration `canopsis.toml`
@@ -345,7 +369,7 @@ Vérifiez que votre fichier `canopsis.toml` soit bien à jour par rapport au fic
 === "Docker Compose"
 
     Si vous n'avez pas apporté de modification locale, ce fichier est directement intégré et mise à jour dans les conteneurs, et vous n'avez donc pas de modification à apporter.
-
+    
     Si vous modifiez ce fichier à l'aide d'un volume surchargeant `canopsis.toml`, c'est ce fichier local qui doit être synchronisé.
 
 ### Suppression de l'option `-featureStatEvents`
@@ -355,11 +379,11 @@ L'option `-featureStatEvents` a été retirée du moteur `engine-axe`.
 === "Paquets CentOS 7"
 
     Lancez la commande suivante afin de savoir si cette option est utilisée :
-
+    
     ```sh
     grep -lr "featureStatEvents" /etc/systemd/system/canopsis-engine-go@engine-axe.service.d/*
     ```
-
+    
     Si cette commande affiche un résultat, éditez les fichiers qu'elle mentionne afin d'y retirer cette option.
 
 === "Docker Compose"
@@ -373,23 +397,23 @@ Cette partie s'applique seulement aux installations de paquets RPM.
 === "Paquets CentOS 7"
 
     Les binaires `engine-che` et `engine-axe` sont maintenant différents entre Canopsis Community et Canopsis Pro.
-
+    
     Dans le cadre d'une mise à jour, ce changement implique la création d'un lien symbolique, à adapter en fonction de l'édition que vous utilisez :
-
+    
     ```sh
     rm -f /opt/canopsis/bin/engine-axe /opt/canopsis/bin/engine-che
-
+    
     # si Canopsis Community :
     ln -sf /opt/canopsis/bin/engine-axe-community /opt/canopsis/bin/engine-axe
     ln -sf /opt/canopsis/bin/engine-che-community /opt/canopsis/bin/engine-che
-
+    
     # OU si Canopsis Pro :
     ln -sf /opt/canopsis/bin/engine-axe-pro /opt/canopsis/bin/engine-axe
     ln -sf /opt/canopsis/bin/engine-che-pro /opt/canopsis/bin/engine-che
     ```
-
+    
     Supprimez ensuite toute ligne `CPS_INFLUX_URL` du fichier `go-engines-vars.conf` et ajoutez-y `CPS_POSTGRES_URL` :
-
+    
     ```sh
     sed -i '/CPS_INFLUX_URL/d' /opt/canopsis/etc/go-engines-vars.conf
     grep -q ^CPS_POSTGRES_URL= /opt/canopsis/etc/go-engines-vars.conf || echo 'CPS_POSTGRES_URL="postgresql://cpspostgres:canopsis@localhost:5432/canopsis"' >> /opt/canopsis/etc/go-engines-vars.conf
@@ -406,7 +430,7 @@ Plusieurs changements ont été apportés à la configuration de Nginx.
 === "Paquets CentOS 7"
 
     Exécutez les commandes suivantes afin de prendre en compte ces changements (en remplaçant `"localhost"` par le FQDN de votre service Canopsis si nécessaire) :
-
+    
     ```sh
     cp -p /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.orig
     sed \
@@ -414,14 +438,14 @@ Plusieurs changements ont été apportés à la configuration de Nginx.
         -e 's,{{ CPS_OLD_API_URL }},http://127.0.0.1:8081,g' \
         -e 's,{{ CPS_SERVER_NAME }},"localhost",g' \
         /opt/canopsis/deploy-ansible/playbook/roles/canopsis/templates/nginx/default.j2 > /etc/nginx/conf.d/default.conf
-
+    
     systemctl restart nginx
     ```
 
 === "Docker Compose"
 
     Si vous n'avez pas surchargé la configuration Nginx à l'aide d'un volume, vous n'avez rien à faire.
-
+    
     En revanche, si vous mainteniez vos propres versions modifiées de ces fichiers de configuration, vous devez manuellement vous synchroniser avec la totalité des modifications ayant été apportées au fichier `/etc/nginx/conf.d/default.conf`.
 
 ### Lancement du provisioning et de `canopsis-reconfigure`
@@ -431,23 +455,23 @@ Le provisioning doit être lancé afin de mettre à jour certaines données en b
 === "Paquets CentOS 7"
 
     Lancez les scripts de provisioning :
-
+    
     ```sh
     # si vous utilisez Canopsis Community
     su - canopsis -c "canopsinit --canopsis-edition core"
     # OU si vous utilisez Canopsis Pro
     su - canopsis -c "canopsinit --canopsis-edition cat"
     ```
-
+    
     Puis, lancez `canopsis-reconfigure`. Attention, cette fois-ci de nouvelles options doivent lui être données :
-
+    
     ```bash
     set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
     /opt/canopsis/bin/canopsis-reconfigure -migrate-postgres=true -postgres-migration-mode=up -postgres-migration-directory=/opt/canopsis/share/migrations/postgres
     ```
-
+    
     Vous pouvez ensuite migrer vos métriques existantes de MongoDB vers TimescaleDB avec les commandes suivantes :
-
+    
     ```sh
     /opt/canopsis/bin/migrate-metrics -onlyMeta
     /opt/canopsis/bin/migrate-metrics
@@ -456,15 +480,21 @@ Le provisioning doit être lancé afin de mettre à jour certaines données en b
 === "Docker Compose"
 
     Exécutez la commande suivante :
-
+    
     ```sh
     docker-compose -f 01-prov.docker-compose.yml up -d
     ```
-
+    
     Ou bien, si vous utilisez encore l'ancien procédé :
-
+    
     ```sh
     docker-compose up -d provisioning reconfigure
+    ```
+    
+    Vous pouvez ensuite migrer vos métriques existantes de MongoDB vers TimescaleDB avec les commandes suivantes :
+    
+    ```sh
+    TODO
     ```
 
 ### Remise en route des moteurs et des services de Canopsis
@@ -474,7 +504,7 @@ Si et seulement si les commandes précédentes n'ont pas renvoyé d'erreur, vous
 === "Paquets CentOS 7"
 
     Relancez la totalité de l'environnement :
-
+    
     ```sh
     systemctl daemon-reload
     canoctl restart
@@ -483,13 +513,13 @@ Si et seulement si les commandes précédentes n'ont pas renvoyé d'erreur, vous
 === "Docker Compose"
 
     Lancez maintenant la partie `02-app`, afin de bénéficier de l'application Canopsis en elle-même :
-
+    
     ```sh
     docker-compose -f 02-app.docker-compose.yml up -d
     ```
-
+    
     Ou bien, si vous utilisez encore l'ancien procédé :
-
+    
     ```sh
     docker-compose up -d
     ```
