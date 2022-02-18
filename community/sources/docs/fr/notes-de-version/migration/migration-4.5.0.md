@@ -247,12 +247,16 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
     +MONGO_TAG=4.0.28-xenial
     ```
     
-    Puis relancez le conteneur `mongodb`.
+    Puis relancez le conteneur `mongodb` :
+
+    ```sh
+    docker-compose -f 00-data.docker-compose.yml up -d mongodb
+    ```
     
     Entrez ensuite à l'intérieur de ce conteneur, afin de compléter la mise à jour vers MongoDB 4.0 :
     
     ```sh
-    docker exec -it identifiant_du_conteneur_mongodb /bin/bash
+    docker-compose -f 00-data.docker-compose.yml exec mongodb bash
     mongo -u root -p root
     > db.adminCommand( { setFeatureCompatibilityVersion: "4.0" } )
     exit
@@ -265,12 +269,16 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
     +MONGO_TAG=4.2.18-bionic
     ```
     
-    Relancez à nouveau le conteneur `mongodb`.
+    Relancez à nouveau le conteneur `mongodb` :
+
+    ```sh
+    docker-compose -f 00-data.docker-compose.yml up -d mongodb
+    ```
     
     Entrez à nouveau à l'intérieur du conteneur, afin de finaliser la mise à jour vers MongoDB 4.2 :
     
     ```sh
-    docker exec -it identifiant_du_conteneur_mongodb /bin/bash
+    docker-compose -f 00-data.docker-compose.yml exec mongodb bash
     mongo -u root -p root
     > db.adminCommand( { setFeatureCompatibilityVersion: "4.2" } )
     exit
@@ -329,6 +337,24 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
     CANOPSIS_IMAGE_TAG=4.5.0
     ```
 
+### Suppression de l'option `-featureStatEvents`
+
+L'option `-featureStatEvents` a été retirée du moteur `engine-axe`.
+
+=== "Paquets CentOS 7"
+
+    Lancez la commande suivante afin de savoir si cette option est utilisée :
+    
+    ```sh
+    grep -lr "featureStatEvents" /etc/systemd/system/canopsis-engine-go@engine-axe.service.d/*
+    ```
+    
+    Si cette commande affiche un résultat, éditez les fichiers qu'elle mentionne afin d'y retirer cette option.
+
+=== "Docker Compose"
+
+    Supprimez toute éventuelle utilisation de l'option `-featureStatEvents` dans vos fichiers de référence Docker Compose.
+
 ### Lancement des scripts de migration
 
 Assurez-vous que le service MongoDB soit bien lancé et exécutez les commandes suivantes, en adaptant les identifiants MongoDB ci-dessous si nécessaire :
@@ -352,7 +378,7 @@ Assurez-vous que le service MongoDB soit bien lancé et exécutez les commandes 
     git clone --depth 1 --single-branch -b release-4.5 https://git.canopsis.net/canopsis/canopsis-community.git
     cd canopsis-community/community/go-engines-community/database/migrations
     for file in $(find release4.5 -type f -name "*.js" | sort -n); do
-       mongo -u cpsmongo -p canopsis canopsis < "$file"
+       mongo "mongodb://cpsmongo:canopsis@localhost:27017/canopsis" < "$file" # URI à adapter au besoin
     done
     ```
     
@@ -369,7 +395,6 @@ Assurez-vous que le service MongoDB soit bien lancé et exécutez les commandes 
 
 Vérifiez que votre fichier `canopsis.toml` soit bien à jour par rapport au fichier de référence, notamment dans le cas où vous auriez apporté des modifications locales à ce fichier :
 
-<!-- ces liens seront fonctionnels lorsque la version 4.5.0 sera publiée -->
 * [`canopsis.toml` pour Canopsis Community 4.5.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/4.5.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-community.toml)
 * [`canopsis.toml` pour Canopsis Pro 4.5.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/4.5.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-pro.toml)
 
@@ -382,24 +407,6 @@ Vérifiez que votre fichier `canopsis.toml` soit bien à jour par rapport au fic
     Si vous n'avez pas apporté de modification locale, ce fichier est directement intégré et mise à jour dans les conteneurs, et vous n'avez donc pas de modification à apporter.
     
     Si vous modifiez ce fichier à l'aide d'un volume surchargeant `canopsis.toml`, c'est ce fichier local qui doit être synchronisé.
-
-### Suppression de l'option `-featureStatEvents`
-
-L'option `-featureStatEvents` a été retirée du moteur `engine-axe`.
-
-=== "Paquets CentOS 7"
-
-    Lancez la commande suivante afin de savoir si cette option est utilisée :
-    
-    ```sh
-    grep -lr "featureStatEvents" /etc/systemd/system/canopsis-engine-go@engine-axe.service.d/*
-    ```
-    
-    Si cette commande affiche un résultat, éditez les fichiers qu'elle mentionne afin d'y retirer cette option.
-
-=== "Docker Compose"
-
-    Supprimez toute éventuelle utilisation de l'option `-featureStatEvents` dans vos fichiers de référence Docker Compose.
 
 ### Ajustements de la configuration (paquets)
 
@@ -496,6 +503,12 @@ Le provisioning doit être lancé afin de mettre à jour certaines données en b
 
 === "Docker Compose"
 
+    Lancez à nouveau toute la partie `data` (MongoDB, RabbitMQ, Redis, PostgreSQL…) :
+
+    ```sh
+    docker-compose -f 00-data.docker-compose.yml up -d
+    ```
+
     Exécutez la commande suivante :
     
     ```sh
@@ -514,7 +527,8 @@ Le provisioning doit être lancé afin de mettre à jour certaines données en b
     
     ```sh
     # Note : cette commande ne doit être exécutée qu'une seule fois et ne doit donc pas être ajoutée aux fichiers YAML
-    docker run --env-file compose.env docker.canopsis.net/docker/pro/migrate-metrics:4.5.0
+    # option --network à adapter si nécessaire
+    docker run --env-file compose.env --network=canopsis-pro_default docker.canopsis.net/docker/pro/migrate-metrics:4.5.0
     ```
 
 ### Remise en route des moteurs et des services de Canopsis
