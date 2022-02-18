@@ -10,11 +10,11 @@ const localVue = createVueInstance();
 
 const stubs = {
   'v-text-field': createInputStub('v-text-field'),
-  'date-time-picker-button': true,
+  'date-time-picker-menu': true,
 };
 
 const snapshotStubs = {
-  'date-time-picker-button': true,
+  'date-time-picker-menu': true,
 };
 
 const factory = (options = {}) => shallowMount(DateTimePickerTextField, {
@@ -44,7 +44,7 @@ const snapshotFactory = (options = {}) => mount(DateTimePickerTextField, {
 });
 
 const selectTextField = wrapper => wrapper.find('.v-text-field');
-const selectDateTimePickerButton = wrapper => wrapper.find('date-time-picker-button-stub');
+const selectDateTimePickerButton = wrapper => wrapper.find('date-time-picker-menu-stub');
 
 describe('date-time-picker-text-field', () => {
   const nowTimestamp = 1386435600000;
