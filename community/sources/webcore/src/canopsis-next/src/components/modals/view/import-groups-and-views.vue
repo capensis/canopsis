@@ -111,7 +111,7 @@ export default {
       } catch (err) {
         this.$popups.error({ text: err.description || this.$t('errors.default') });
       } finally {
-        await this.fetchAllGroupsListWithViewsWithCurrentUser();
+        await this.fetchAllGroupsListWithWidgetsWithCurrentUser();
         this.$modals.hide();
       }
     },

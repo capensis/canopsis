@@ -57,7 +57,7 @@ export default {
     },
 
     updatePositions(context, { data } = {}) {
-      return request.put(API_ROUTES.view.position, data);
+      return request.put(API_ROUTES.view.positions, data);
     },
 
     remove(context, { id } = {}) {

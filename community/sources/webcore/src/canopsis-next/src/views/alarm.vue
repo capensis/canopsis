@@ -70,7 +70,7 @@ export default {
     this.fetchAlarmItem({ id: this.id });
 
     if (this.widgetId && !this.groupsPending) {
-      this.fetchAllGroupsListWithViews();
+      this.fetchAllGroupsListWithWidgets();
     }
   },
 };

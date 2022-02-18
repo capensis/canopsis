@@ -56,7 +56,7 @@ export default {
   async mounted() {
     this.pending = true;
 
-    await this.fetchAllGroupsListWithViewsWithCurrentUser();
+    await this.fetchAllGroupsListWithWidgetsWithCurrentUser();
 
     this.pending = false;
   },
