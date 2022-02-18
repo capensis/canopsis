@@ -311,8 +311,19 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
          restart: unless-stopped
          command: /engine-che -enrichContext
     ```
+
+    Dans la partie provisioning (en-dessous de l'image `reconfigure`), ajoutez aussi les lignes suivantes (Canopsis Pro uniquement) :
+
+    ```yaml
+    migrate-metrics-meta:
+      image: ${DOCKER_REPOSITORY}${PRO_BASE_PATH}migrate-metrics:${CANOPSIS_IMAGE_TAG}
+      env_file:
+        - compose.env
+      # warning: only -onlyMeta is safe to be run by default
+      command: /migrate-metrics -onlyMeta
+    ```
     
-    Enfin, mettez à jour la variable `CANOPSIS_IMAGE_TAG` de votre fichier `.env` pour passer à Canopsis 4.5.0 :
+    Enfin, dans tous les cas, mettez à jour la variable `CANOPSIS_IMAGE_TAG` de votre fichier `.env` pour passer à Canopsis 4.5.0 :
     
     ```ini
     CANOPSIS_IMAGE_TAG=4.5.0
