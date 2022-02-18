@@ -2,7 +2,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('snmpRule');
 
-export default {
+export const entitiesSnmpRuleMixin = {
   computed: {
     ...mapGetters({
       snmpRules: 'items',
