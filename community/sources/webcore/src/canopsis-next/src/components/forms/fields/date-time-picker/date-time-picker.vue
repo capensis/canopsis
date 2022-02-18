@@ -35,11 +35,11 @@ import { isDate } from 'lodash';
 import { DATETIME_FORMATS } from '@/constants';
 
 import { getDateObjectByDate, getDateObjectByTime } from '@/helpers/date/date-time-picker';
+import { convertDateToString } from '@/helpers/date/date';
 
 import { formBaseMixin } from '@/mixins/form';
 
 import TimePickerField from '../time-picker/time-picker-field.vue';
-import { convertDateToString } from '@/helpers/date/date';
 
 export default {
   components: { TimePickerField },
