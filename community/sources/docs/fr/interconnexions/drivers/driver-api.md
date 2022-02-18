@@ -10,6 +10,14 @@ Ce programme se situe :
 * à l'emplacement `/opt/canopsis/bin/import-context-graph` lors d'une installation par paquets.
 * dans le conteneur `pro/import-context-graph` en Docker.
 
+#### Table des matières
+1. [Options](#options)<br>
+2. [Variables d'environnement](#variables-denvironnement)<br>
+3. [Configuration](#configuration)<br>
+4. [Exemple](#exemple)<br>
+5. [Exécution](#execution)<br>
+6. [Résultats dans Canopsis](#resultats-dans-canopsis)
+
 ## Utilisation
 
 ### Options
@@ -53,7 +61,7 @@ Concernant les types d'actions d'import :
      *  `disable` : Désactive l'entité (action inverse de l'action `enable`)
      *  (chaîne vide) : le paramètre `missing_action` peut ne pas avoir d'action et donc ne rien faire
 
-Pour plus de détails, référez-vous à la documentation d'import de contexte disponible dans Swagger.
+Pour plus de détails, référez-vous à la [documentation d'import de contexte](https://doc.canopsis.net/guide-developpement/swagger/#/contextgraph-import) disponible dans Swagger.
 
 ### Exemple
 
@@ -137,21 +145,51 @@ mapping:
       description: responsable
 ```
 
-Exécution du programme :
+Exemple pour ITop :
+``` yaml
+api:
+  url: http://mon.itop/webservices/rest.php?version=1.3
+  method: POST
+```
+
+### Exécution
+
+!!! attention
+    Ces exemples d'exécution ne répondent pas aux bonnes pratiques de sécurité. Veillez donc à bien adapter cette exécution selon votre politique de sécurité interne.
+    
+    Dans le cadre d'un usage via Docker, il est conseillé d'utiliser "[Docker Secrets](https://docs.docker.com/engine/swarm/secrets/)" ou une autre solution de coffre-fort.
+
+#### Programme installé par packets :
 
 ``` shell
 export EXTERNAL_API_USERNAME=test
 export EXTERNAL_API_PASSWORD=test
 /opt/canopsis/bin/import-context-graph -c import-context-api.yml 
+```
+Retour :
+``` shell
 2021-09-29T10:39:46+02:00 INF git.canopsis.net/canopsis/canopsis-pro/pro/go-engines-pro/cmd/import-context-graph/main.go:65 > import finished deleted=0 exec_time=3.784369ms updated=1
 ```
 
-!!! attention
-    Cet exemple d'exécution ne répond pas aux bonnes pratiques de sécurité. Veillez donc à bien adapter cette exécution selon votre politique de sécurité interne.
-    
-    Dans le cadre d'un usage via Docker, il est conseillé d'utiliser "[Docker Secrets](https://docs.docker.com/engine/swarm/secrets/)" ou une autre solution de coffre-fort.
+#### Programme dans Docker :
 
-Résultats dans Canopsis :
+``` shell
+docker run \
+-e EXTERNAL_API_USERNAME='[testuser]' \
+-e EXTERNAL_API_PASSWORD='[testpassword]' \
+-e CPS_MONGO_URL='mongodb://cpsmongo:canopsis@mongodb/canopsis' \
+-e 'CPS_AMQP_URL=amqp://cpsrabbit:canopsis@rabbitmq/canopsis' \
+-e CPS_POSTGRES_URL='postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis' \
+--network=canopsis-pro_default -it --rm -v \
+"[/chemin/vers]/pro/deployment/canopsis/docker/files/api.yml:/opt/canopsis/share/config/import-context-graph/api.yml" \
+docker.canopsis.net/docker/pro/import-context-graph:'[4.5]'
+```
+Retour :
+``` shell
+2022-02-18T14:10:15Z INF git.canopsis.net/canopsis/canopsis-pro/pro/go-engines-pro/cmd/import-context-graph/main.go:78 > import finished deleted=0 exec_time=16.775252ms updated=3
+```
+
+### Résultats dans Canopsis :
 
 ![](./img/imported_entity.png)
 
