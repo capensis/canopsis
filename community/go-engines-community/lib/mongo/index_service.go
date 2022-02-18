@@ -227,13 +227,22 @@ func (s *baseIndexService) createIndexes(ctx context.Context, config *Config) {
 								Msg("cannot drop index with conflicted specs")
 						}
 						continue
+					} else if isIndexOptionsConflict(err) {
+						s.logger.
+							Info().
+							Str("reason", err.Error()).
+							Str("collection", collectionName).
+							Str("index", indexName).
+							Interface("keys", indexKeys).
+							Msg("skip already existed index")
+					} else {
+						s.logger.
+							Error().
+							Err(err).
+							Str("collection", collectionName).
+							Str("index", indexName).
+							Msg("cannot create index")
 					}
-					s.logger.
-						Error().
-						Err(err).
-						Str("collection", collectionName).
-						Str("index", indexName).
-						Msg("cannot create index")
 				} else {
 					s.logger.
 						Info().
@@ -249,6 +258,10 @@ func (s *baseIndexService) createIndexes(ctx context.Context, config *Config) {
 
 func isIndexKeySpecsConflict(err error) bool {
 	return strings.HasPrefix(err.Error(), "(IndexKeySpecsConflict)")
+}
+
+func isIndexOptionsConflict(err error) bool {
+	return strings.HasPrefix(err.Error(), "(IndexOptionsConflict)")
 }
 
 // transformInterfaceMapKeyToString replaces map[interface{}]interface{} to
