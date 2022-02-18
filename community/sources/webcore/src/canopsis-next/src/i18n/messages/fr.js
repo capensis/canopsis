@@ -1239,39 +1239,6 @@ export default {
       edit: {
         title: 'Modifier la règle SNMP',
       },
-      fields: {
-        oid: {
-          title: 'OID',
-          labels: {
-            module: 'Sélectionnez un module MIB',
-          },
-        },
-        output: {
-          title: 'Message',
-        },
-        resource: {
-          title: 'Ressource',
-        },
-        component: {
-          title: 'Composant',
-        },
-        connectorName: {
-          title: 'Nom du connecteur',
-        },
-        state: {
-          title: 'Criticité',
-          labels: {
-            toCustom: 'Personnaliser',
-            defineVar: 'Définir la variable SNMP correspondante',
-            writeTemplate: 'Écrire un modèle',
-          },
-        },
-        moduleMibObjects: {
-          vars: 'Champ d\'association des variables SNMP',
-          regex: 'Expression régulière',
-          formatter: 'Format (groupe de capture avec \\x)',
-        },
-      },
     },
     selectViewTab: {
       title: 'Sélectionnez l\'onglet',
@@ -1861,10 +1828,6 @@ export default {
     errors: {
       noValuePaths: 'Vous devez ajouter au moins un chemin de valeur',
     },
-  },
-  snmpRules: {
-    uploadMib: 'Envoyer un fichier MIB',
-    addSnmpRule: 'Ajouter une règle SNMP',
   },
   layout: {
     sideBar: {
@@ -2763,6 +2726,24 @@ export default {
 
   kpiRatingSettings: {
     helpInformation: 'La liste des paramètres à utiliser pour la notation.',
+  },
+
+  snmpRule: {
+    oid: 'OID',
+    module: 'Sélectionnez un module MIB',
+    output: 'Message',
+    resource: 'Ressource',
+    component: 'Composant',
+    connectorName: 'Nom du connecteur',
+    state: 'Criticité',
+    toCustom: 'Personnaliser',
+    writeTemplate: 'Écrire un modèle',
+    defineVar: 'Définir la variable SNMP correspondante',
+    moduleMibObjects: 'Champ d\'association des variables SNMP',
+    regex: 'Expression régulière',
+    formatter: 'Format (groupe de capture avec \\x)',
+    uploadMib: 'Envoyer un fichier MIB',
+    addSnmpRule: 'Ajouter une règle SNMP',
   },
 
   ...featureService.get('i18n.fr'),
