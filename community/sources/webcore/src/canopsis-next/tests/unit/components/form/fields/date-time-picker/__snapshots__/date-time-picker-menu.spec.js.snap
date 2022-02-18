@@ -76,7 +76,7 @@ exports[`date-time-picker-menu Renders \`date-time-picker-menu\` with opened men
   style="max-height: auto; min-width: 0px; max-width: 290px; top: 12px; left: 0px; transform-origin: top left; z-index: 8; display: none; z-index: 8;"
 >
   <date-time-picker-stub
-    dateformat="short"
+    dateformat="DD/MM/YYYY"
     label="label"
     roundhours="true"
     value="Sun Dec 08 2013 00:00:00 GMT+0700 (Novosibirsk Standard Time)"
