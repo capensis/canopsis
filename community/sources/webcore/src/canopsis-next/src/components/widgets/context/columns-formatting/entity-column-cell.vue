@@ -5,6 +5,10 @@
 <script>
 import { get } from 'lodash';
 
+import { ENTITY_INFOS_TYPE } from '@/constants';
+
+import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
+
 import { widgetColumnsFiltersMixin } from '@/mixins/widget/columns-filters';
 
 import EntityColumnEventStatistics from './entity-column-event-statistics.vue';
@@ -40,7 +44,13 @@ export default {
     },
 
     columnFilter() {
-      return this.columnsFiltersMap[this.column.value];
+      const PROPERTIES_FILTERS_MAP = {
+        last_event_date: convertDateToStringWithFormatForToday,
+
+        ...this.columnsFiltersMap,
+      };
+
+      return PROPERTIES_FILTERS_MAP[this.column.value];
     },
 
     value() {
@@ -82,10 +92,19 @@ export default {
             pbehaviorInfo: this.entity.pbehavior_info,
           },
         },
+        state: {
+          bind: {
+            is: 'c-alarm-chip',
+            type: ENTITY_INFOS_TYPE.state,
+            value: this.value,
+          },
+        },
       };
 
-      if (PROPERTIES_COMPONENTS_MAP[this.column.value]) {
-        return PROPERTIES_COMPONENTS_MAP[this.column.value];
+      const cell = PROPERTIES_COMPONENTS_MAP[this.column.value];
+
+      if (cell) {
+        return cell;
       }
 
       return {
