@@ -18,6 +18,7 @@ require (
 	github.com/alecthomas/participle v0.7.1
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/beevik/etree v1.1.0
+	github.com/brianvoe/gofakeit/v6 v6.7.0
 	github.com/bsm/redislock v0.7.1
 	github.com/casbin/casbin/v2 v2.36.1
 	github.com/cucumber/godog v0.12.0

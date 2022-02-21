@@ -1,0 +1,256 @@
+idle_rule:
+  idle_rule_1:
+    _id: test-idle-rule-to-check-unique-name
+    alarm_condition: last_event
+    alarm_patterns:
+    - _id: test-idle-rule-to-check-unique-name-alarm
+    author: test-idle-rule-to-check-unique-name-author
+    created: 1616567033
+    description: test-idle-rule-to-check-unique-name-description
+    duration:
+      unit: s
+      value: 3
+    enabled: true
+    entity_patterns:
+    - name: test-idle-rule-to-check-unique-name-resource
+    name: test-idle-rule-to-check-unique-name-name
+    operation:
+      parameters:
+        author: test-idle-rule-to-check-unique-name-operation-author
+        duration:
+          unit: s
+          value: 3
+        output: test-idle-rule-to-check-unique-name-operation-output
+      type: snooze
+    priority: 0
+    type: alarm
+    updated: 1616567033
+  idle_rule_2:
+    _id: test-idle-rule-to-get-1
+    alarm_condition: last_event
+    alarm_patterns:
+    - _id: test-idle-rule-to-get-1-alarm
+    author: test-idle-rule-to-get-1-author
+    created: 1616567033
+    description: test-idle-rule-to-get-1-description
+    disable_during_periods:
+    - pause
+    duration:
+      unit: s
+      value: 3
+    enabled: true
+    entity_patterns:
+    - name: test-idle-rule-to-get-1-resource
+    name: test-idle-rule-to-get-1-name
+    operation:
+      parameters:
+        author: test-idle-rule-to-get-1-operation-author
+        duration:
+          unit: s
+          value: 3
+        output: test-idle-rule-to-get-1-operation-output
+        user: test-idle-rule-to-get-1-operation-user
+      type: snooze
+    priority: 1
+    type: alarm
+    updated: 1616567033
+  idle_rule_3:
+    _id: test-idle-rule-to-get-2
+    author: test-idle-rule-to-get-2-author
+    created: 1616567033
+    description: test-idle-rule-to-get-2-description
+    duration:
+      unit: s
+      value: 5
+    enabled: true
+    entity_patterns:
+    - name: test-idle-rule-to-get-2-resource
+    name: test-idle-rule-to-get-2-name
+    priority: 2
+    type: entity
+    updated: 1616567033
+  idle_rule_4:
+    _id: test-idle-rule-to-delete
+    alarm_condition: last_event
+    alarm_patterns:
+    - _id: test-idle-rule-to-delete-alarm
+    author: test-idle-rule-to-delete-author
+    created: 1616567033
+    duration:
+      unit: s
+      value: 3
+    enabled: true
+    entity_patterns:
+    - name: test-idle-rule-to-delete-resource
+    name: test-idle-rule-to-delete-name
+    operation:
+      parameters:
+        author: test-idle-rule-to-delete-operation-author
+        duration:
+          unit: s
+          value: 3
+        output: test-idle-rule-to-delete-operation-output
+      type: snooze
+    priority: 3
+    type: alarm
+    updated: 1616567033
+  idle_rule_5:
+    _id: test-idle-rule-to-bulk-delete-1
+    alarm_condition: last_event
+    alarm_patterns:
+    - _id: test-idle-rule-to-bulk-delete-1-alarm
+    author: test-idle-rule-to-bulk-delete-1-author
+    created: 1616567033
+    duration:
+      unit: s
+      value: 3
+    enabled: true
+    entity_patterns:
+    - name: test-idle-rule-to-bulk-delete-1-resource
+    name: test-idle-rule-to-bulk-delete-1-name
+    operation:
+      parameters:
+        author: test-idle-rule-to-bulk-delete-1-operation-author
+        duration:
+          unit: s
+          value: 3
+        output: test-idle-rule-to-bulk-delete-1-operation-output
+      type: snooze
+    priority: 3
+    type: alarm
+    updated: 1616567033
+  idle_rule_6:
+    _id: test-idle-rule-to-bulk-delete-2
+    alarm_condition: last_event
+    alarm_patterns:
+    - _id: test-idle-rule-to-bulk-delete-2-alarm
+    author: test-idle-rule-to-bulk-delete-2-author
+    created: 1616567033
+    duration:
+      unit: s
+      value: 3
+    enabled: true
+    entity_patterns:
+    - name: test-idle-rule-to-bulk-delete-2-resource
+    name: test-idle-rule-to-bulk-delete-2-name
+    operation:
+      parameters:
+        author: test-idle-rule-to-bulk-delete-2-operation-author
+        duration:
+          unit: s
+          value: 3
+        output: test-idle-rule-to-bulk-delete-2-operation-output
+      type: snooze
+    priority: 3
+    type: alarm
+    updated: 1616567033
+  idle_rule_7:
+    _id: test-idle-rule-to-update
+    alarm_condition: last_event
+    alarm_patterns:
+    - _id: test-idle-rule-to-update-alarm
+    author: test-idle-rule-to-update-author
+    created: 1616567033
+    description: test-idle-rule-to-update-description
+    disable_during_periods:
+    - pause
+    duration:
+      unit: s
+      value: 3
+    enabled: true
+    entity_patterns:
+    - name: test-idle-rule-to-update-resource
+    name: test-idle-rule-to-update-name
+    operation:
+      parameters:
+        author: test-idle-rule-to-update-operation-author
+        duration:
+          unit: s
+          value: 3
+        output: test-idle-rule-to-update-operation-output
+      type: snooze
+    priority: 4
+    type: alarm
+    updated: 1616567033
+  idle_rule_8:
+    _id: test-idle-rule-to-bulk-update-1
+    alarm_condition: last_event
+    alarm_patterns:
+    - _id: test-idle-rule-to-bulk-update-1-alarm
+    author: test-idle-rule-to-bulk-update-1-author
+    created: 1616567033
+    description: test-idle-rule-to-bulk-update-1-description
+    disable_during_periods:
+    - pause
+    duration:
+      unit: s
+      value: 3
+    enabled: true
+    entity_patterns:
+    - name: test-idle-rule-to-bulk-update-1-resource
+    name: test-idle-rule-to-bulk-update-1-name
+    operation:
+      parameters:
+        author: test-idle-rule-to-bulk-update-1-operation-author
+        duration:
+          unit: s
+          value: 3
+        output: test-idle-rule-to-bulk-update-1-operation-output
+      type: snooze
+    priority: 4
+    type: alarm
+    updated: 1616567033
+  idle_rule_9:
+    _id: test-idle-rule-to-bulk-update-2
+    alarm_condition: last_event
+    alarm_patterns:
+    - _id: test-idle-rule-to-bulk-update-2-alarm
+    author: test-idle-rule-to-bulk-update-2-author
+    created: 1616567033
+    description: test-idle-rule-to-bulk-update-2-description
+    disable_during_periods:
+    - pause
+    duration:
+      unit: s
+      value: 3
+    enabled: true
+    entity_patterns:
+    - name: test-idle-rule-to-bulk-update-2-resource
+    name: test-idle-rule-to-bulk-update-2-name
+    operation:
+      parameters:
+        author: test-idle-rule-to-bulk-update-2-operation-author
+        duration:
+          unit: s
+          value: 3
+        output: test-idle-rule-to-bulk-update-2-operation-output
+      type: snooze
+    priority: 4
+    type: alarm
+    updated: 1616567033
+  idle_rule_10:
+    _id: test-idle-rule-axe-12
+    alarm_condition: last_event
+    alarm_patterns:
+    - v:
+        ticket: null
+    author: test-author-metrics-axe-12
+    created: 1638346696
+    description: test-idle-rule-axe-12-description
+    duration:
+      unit: s
+      value: 1
+    enabled: true
+    entity_patterns:
+    - name: test-resource-metrics-axe-12-4
+    name: test-idle-rule-axe-12-name
+    operation:
+      parameters:
+        author: test-author-metrics-axe-12
+        output: test-scenario-metrics-axe-12-output
+        ticket: test-scenario-metrics-axe-12-ticket
+        user: test-user-metrics-axe-12
+      type: assocticket
+    priority: 5
+    type: alarm
+    updated: 1638346696

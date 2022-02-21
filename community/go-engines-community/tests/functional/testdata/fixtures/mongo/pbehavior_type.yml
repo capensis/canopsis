@@ -1,0 +1,197 @@
+pbehavior_type:
+  pbehavior_type_1:
+    _id: test-default-inactive-type
+    description: Default Type Inactive
+    icon_name: test-inactive-icon
+    name: Default Type Inactive
+    priority: 1
+    type: inactive
+  pbehavior_type_2:
+    _id: test-default-active-type
+    description: Default Type Active
+    icon_name: test-active-icon
+    name: Default Type Active
+    priority: 2
+    type: active
+  pbehavior_type_3:
+    _id: test-default-pause-type
+    description: Default Type Pause
+    icon_name: test-pause-icon
+    name: Default Type Pause
+    priority: 3
+    type: pause
+  pbehavior_type_4:
+    _id: test-default-maintenance-type
+    description: Default Type Maintenance
+    icon_name: test-maintenance-icon
+    name: Default Type Maintenance
+    priority: 4
+    type: maintenance
+  pbehavior_type_5:
+    _id: test-type-to-update
+    description: ToUpdate State type
+    icon_name: test-to-update-icon
+    name: ToUpdate State
+    priority: 5
+    type: active
+  pbehavior_type_6:
+    _id: test-type-to-delete-1
+    description: ToUpdate State type
+    icon_name: test-to-delete-1-icon
+    name: ToDelete 1 State
+    priority: 6
+    type: active
+  pbehavior_type_7:
+    _id: test-type-to-delete-2
+    description: ToUpdate State type
+    icon_name: test-to-delete-2-icon
+    name: ToDelete 2 State
+    priority: 7
+    type: active
+  pbehavior_type_8:
+    _id: test-type-to-get
+    description: Some State type
+    icon_name: test-to-get-icon
+    name: Some State
+    priority: 8
+    type: active
+  pbehavior_type_9:
+    _id: test-type-to-find
+    description: Find State type
+    icon_name: test-to-find-icon
+    name: Find State
+    priority: 9
+    type: active
+  pbehavior_type_10:
+    _id: test-type-to-pbh-edit-1
+    description: Pbh edit 1 State type
+    icon_name: test-to-pbh-edit-1-icon
+    name: Pbh edit 1 State
+    priority: 10
+    type: active
+  pbehavior_type_11:
+    _id: test-type-to-pbh-edit-2
+    description: Pbh edit 2 State type
+    icon_name: test-to-pbh-edit-2-icon
+    name: Pbh edit 2 State
+    priority: 11
+    type: active
+  pbehavior_type_12:
+    _id: test-type-to-exception-edit-1
+    description: Exception edit 1 State type
+    icon_name: test-to-exception-edit-1-icon
+    name: Exception edit 1 State
+    priority: 12
+    type: active
+  pbehavior_type_13:
+    _id: test-type-to-exception-edit-2
+    description: Exception edit 2 State type
+    icon_name: test-to-exception-edit-2-icon
+    name: Exception edit 2 State
+    priority: 13
+    type: active
+  pbehavior_type_14:
+    _id: test-type-to-create-duplicate-priority
+    description: Active state type
+    icon_name: test-to-create-duplicate-priority-icon
+    name: 10-Active State
+    priority: 14
+    type: active
+  pbehavior_type_15:
+    _id: test-type-to-delete-linked-to-pbh-1
+    description: ToDelete Linked
+    icon_name: test-to-delete-linked-to-pbh-1-icon
+    name: ToDelete Linked
+    priority: 15
+    type: active
+  pbehavior_type_16:
+    _id: test-type-to-delete-linked-to-pbh-2
+    description: ToDelete Linked
+    icon_name: test-to-delete-linked-to-pbh-2-icon
+    name: ToDelete Linked
+    priority: 16
+    type: active
+  pbehavior_type_17:
+    _id: test-type-to-delete-linked-to-exception
+    description: ToDelete Linked
+    icon_name: test-to-delete-linked-to-exception-icon
+    name: ToDelete Linked
+    priority: 17
+    type: active
+  pbehavior_type_18:
+    _id: test-maintenance-type-to-engine
+    description: Engine maintenance
+    icon_name: test-maintenance-to-engine-icon
+    name: Engine maintenance
+    priority: 18
+    type: maintenance
+  pbehavior_type_19:
+    _id: test-active-type-to-engine
+    description: Engine active
+    icon_name: test-active-to-engine-icon
+    name: Engine active
+    priority: 19
+    type: active
+  pbehavior_type_20:
+    _id: test-inactive-type-to-engine
+    description: Engine inactive
+    icon_name: test-inactive-to-engine-icon
+    name: Engine inactive
+    priority: 20
+    type: inactive
+  pbehavior_type_21:
+    _id: test-type-to-pbh-edit-3
+    description: Pbh edit 3 State type
+    icon_name: test-to-pbh-edit-3-icon
+    name: Pbh edit 3 State
+    priority: 21
+    type: pause
+  pbehavior_type_22:
+    _id: test-type-to-delete-linked-to-action
+    description: ToDelete Linked
+    icon_name: test-to-delete-linked-icon
+    name: ToDelete Linked
+    priority: 22
+    type: active
+  pbehavior_type_23:
+    _id: test-type-to-get-pbehavior
+    description: test-type-to-get-pbehavior-description
+    icon_name: test-type-to-get-pbehavior-icon
+    name: test-type-to-get-pbehavior-name
+    priority: 25
+    type: active
+  pbehavior_type_24:
+    _id: test-type-to-edit-scenario
+    description: test-type-to-edit-scenario-description
+    icon_name: test-type-to-edit-scenario-icon
+    name: test-type-to-edit-scenario-name
+    priority: 26
+    type: maintenance
+  pbehavior_type_25:
+    _id: test-type-to-edit-idle-rule
+    description: test-type-to-edit-idle-rule-description
+    icon_name: test-type-to-edit-idle-rule-icon
+    name: test-type-to-edit-idle-rule-name
+    priority: 27
+    type: maintenance
+  pbehavior_type_26:
+    _id: test-active-type-to-patch-pbehavior
+    description: test-active-type-to-patch-pbehavior-description
+    icon_name: test-active-type-to-patch-pbehavior-icon
+    name: test-active-type-to-patch-pbehavior-name
+    priority: 28
+    type: active
+  pbehavior_type_27:
+    _id: test-pause-type-to-patch-pbehavior
+    description: test-pause-type-to-patch-pbehavior-description
+    icon_name: test-pause-type-to-patch-pbehavior-icon
+    name: test-pause-type-to-patch-pbehavior-name
+    priority: 29
+    type: pause
+  pbehavior_type_28:
+    _id: test-pause-type-to-engine
+    description: Engine pause
+    icon_name: test-pause-to-engine-icon
+    name: Engine pause
+    priority: 30
+    type: pause

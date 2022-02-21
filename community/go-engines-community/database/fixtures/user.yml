@@ -1,0 +1,1419 @@
+viewgroups:
+  view_group (template):
+    _id: <UUID()>
+    created: <NowUnix()>
+    updated: <Current().created>
+    position: <Index()>
+
+  view_group_1 (extend view_group):
+    title: Alarmes
+    author: root
+
+  view_group_2 (extend view_group):
+    title: Widgets Administratifs
+    author: root
+
+views:
+  view (template):
+    _id: <UUID()>
+    created: <NowUnix()>
+    updated: <Current().created>
+    position: <Index()>
+
+  view_1 (extend view):
+    title: En cours
+    description: Alarmes en cours
+    enabled: true
+    author: root
+    group_id: "@view_group_1"
+    tags:
+      - alarmes
+    tabs:
+      - _id: <UUID()>
+        title: En cours
+        widgets:
+          - _id: <UUID()>
+            title: En cours
+            type: AlarmsList
+            parameters:
+              widgetColumns:
+                - value: v.connector
+                  label: Connector
+                - value: v.connector_name
+                  label: Connector name
+                - value: v.component
+                  label: Component
+                - value: v.resource
+                  label: Resource
+                - value: v.output
+                  label: Output
+                - value: extra_details
+                  label: Extra details
+                - value: v.state.val
+                  label: State
+                - value: v.status.val
+                  label: Status
+              sort:
+                order: ASC
+              viewFilters: [ ]
+              itemsPerPage: 10
+              infoPopups: [ ]
+              alarmsStateFilter:
+                opened: true
+              moreInfoTemplate: ''
+              periodic_refresh:
+                seconds: 60
+                unit: m
+                enabled: false
+            grid_parameters:
+              mobile:
+                x: 0
+                "y": 0
+                w: 3
+                h: 1
+                autoHeight: true
+              tablet:
+                x: 0
+                "y": 0
+                w: 3
+                h: 1
+                autoHeight: true
+              desktop:
+                x: 0
+                "y": 0
+                w: 12
+                h: 1
+                autoHeight: true
+
+  view_2 (extend view):
+    title: Résolues
+    description: Alarmes résolues
+    enabled: true
+    author: root
+    tags:
+      - alarmes
+    group_id: "@view_group_1"
+    tabs:
+      - _id: <UUID()>
+        title: Résolues
+        widgets:
+          - _id: <UUID()>
+            title: Résolues
+            type: AlarmsList
+            parameters:
+              widgetColumns:
+                - value: v.connector
+                  label: Connector
+                - value: v.connector_name
+                  label: Connector name
+                - value: v.component
+                  label: Component
+                - value: v.resource
+                  label: Resource
+                - value: v.output
+                  label: Output
+                - value: extra_details
+                  label: Extra details
+                - value: v.state.val
+                  label: State
+                - value: v.status.val
+                  label: Status
+              sort:
+                order: ASC
+              viewFilters: [ ]
+              itemsPerPage: 10
+              infoPopups: [ ]
+              alarmsStateFilter:
+                resolved: true
+                opened: false
+              moreInfoTemplate: ''
+              periodic_refresh:
+                seconds: 60
+                unit: m
+                enabled: false
+            grid_parameters:
+              mobile:
+                x: 0
+                "y": 0
+                w: 3
+                h: 1
+                autoHeight: true
+              tablet:
+                x: 0
+                "y": 0
+                w: 3
+                h: 1
+                autoHeight: true
+              desktop:
+                x: 0
+                "y": 0
+                w: 12
+                h: 1
+                autoHeight: true
+
+  view_3 (extend view):
+    title: Explorateur de Contexte
+    description: Explorateur de Contexte
+    enabled: true
+    author: root
+    group_id: "@view_group_2"
+    tags:
+      - contexte
+    tabs:
+      - _id: <UUID()>
+        title: Explorateur de contexte
+        widgets:
+          - _id: <UUID()>
+            title: Explorateur de Contexte
+            type: Context
+            parameters:
+              widgetColumns:
+                - value: name
+                  label: Name
+                - value: type
+                  label: Type
+              sort:
+                order: ASC
+              viewFilters:
+                - filter: |-
+                    {
+                        "$and": [
+                            {
+                                "type": "component"
+                            }
+                        ]
+                    }
+                  title: Composant
+                - filter: |-
+                    {
+                        "$and": [
+                            {
+                                "type": "connector"
+                            }
+                        ]
+                    }
+                  title: Connecteur
+                - filter: |-
+                    {
+                        "$and": [
+                            {
+                                "type": "resource"
+                            }
+                        ]
+                    }
+                  title: Ressource
+                - filter: |-
+                    {
+                        "$and": [
+                            {
+                                "type": "watcher"
+                            }
+                        ]
+                    }
+                  title: Observateur
+              itemsPerPage: 10
+              mainFilter:
+              selectedTypes: [ ]
+            grid_parameters:
+              mobile:
+                x: 0
+                "y": 0
+                w: 3
+                h: 1
+                autoHeight: true
+              tablet:
+                x: 0
+                "y": 0
+                w: 3
+                h: 1
+                autoHeight: true
+              desktop:
+                x: 0
+                "y": 0
+                w: 12
+                h: 1
+                autoHeight: true
+
+default_rights:
+  permission_models_userview:
+    _id: models_userview
+    crecord_name: models_userview
+    crecord_type: action
+    desc: Userviews
+    type: CRUD
+  permission_models_role:
+    _id: models_role
+    crecord_name: models_role
+    crecord_type: action
+    desc: Roles
+    type: CRUD
+  permission_models_action:
+    _id: models_action
+    crecord_name: models_action
+    crecord_type: action
+    desc: Actions
+    type: CRUD
+  permission_models_user:
+    _id: models_user
+    crecord_name: models_user
+    crecord_type: action
+    desc: Users
+    type: CRUD
+  permission_models_parameters:
+    _id: models_parameters
+    crecord_name: models_parameters
+    crecord_type: action
+    desc: Parameters
+    type: RW
+  permission_models_broadcastMessage:
+    _id: models_broadcastMessage
+    crecord_name: models_broadcastMessage
+    crecord_type: action
+    desc: Broadcast Messages
+    type: CRUD
+  permission_models_playlist:
+    _id: models_playlist
+    crecord_name: models_playlist
+    crecord_type: action
+    desc: Playlists
+    type: CRUD
+  permission_models_planning:
+    _id: models_planning
+    crecord_name: models_planning
+    crecord_type: action
+    desc: Planning
+    type: CRUD
+  permission_models_planningType:
+    _id: models_planningType
+    crecord_name: models_planningType
+    crecord_type: action
+    desc: Planning type
+    type: CRUD
+  permission_models_planningReason:
+    _id: models_planningReason
+    crecord_name: models_planningReason
+    crecord_type: action
+    desc: Planning reason
+    type: CRUD
+  permission_models_planningExceptions:
+    _id: models_planningExceptions
+    crecord_name: models_planningExceptions
+    crecord_type: action
+    desc: Planning dates of exceptions
+    type: CRUD
+  permission_models_remediation:
+    _id: models_remediation
+    crecord_name: models_remediation
+    crecord_type: action
+    desc: Remediation
+    type: CRUD
+  permission_models_remediationInstruction:
+    _id: models_remediationInstruction
+    crecord_name: models_remediationInstruction
+    crecord_type: action
+    desc: Remediation instruction
+    type: CRUD
+  permission_models_remediationJob:
+    _id: models_remediationJob
+    crecord_name: models_remediationJob
+    crecord_type: action
+    desc: Remediation job
+    type: CRUD
+  permission_models_remediationConfiguration:
+    _id: models_remediationConfiguration
+    crecord_name: models_remediationConfiguration
+    crecord_type: action
+    desc: Remediation configuration
+    type: CRUD
+  permission_models_engine:
+    _id: models_engine
+    crecord_name: models_engine
+    crecord_type: action
+    desc: Engines
+  permission_models_exploitation_eventFilter:
+    _id: models_exploitation_eventFilter
+    crecord_name: models_exploitation_eventFilter
+    crecord_type: action
+    desc: "Exploitation: Event filter"
+    type: CRUD
+  permission_models_exploitation_pbehavior:
+    _id: models_exploitation_pbehavior
+    crecord_name: models_exploitation_pbehavior
+    crecord_type: action
+    desc: "Exploitation: Pbehaviors"
+    type: CRUD
+  permission_models_exploitation_snmpRule:
+    _id: models_exploitation_snmpRule
+    crecord_name: models_exploitation_snmpRule
+    crecord_type: action
+    desc: "Exploitation: Snmp rule"
+    type: CRUD
+  permission_models_exploitation_heartbeat:
+    _id: models_exploitation_heartbeat
+    crecord_name: models_exploitation_heartbeat
+    crecord_type: action
+    desc: "Exploitation: Heartbeat"
+    type: CRUD
+  permission_models_exploitation_dynamicInfo:
+    _id: models_exploitation_dynamicInfo
+    crecord_name: models_exploitation_dynamicInfo
+    crecord_type: action
+    desc: "Exploitation: Dynamic informations"
+    type: CRUD
+  permission_models_exploitation_metaAlarmRule:
+    _id: models_exploitation_metaAlarmRule
+    crecord_name: models_exploitation_metaAlarmRule
+    crecord_type: action
+    desc: "Exploitation: Meta alarm rule"
+    type: CRUD
+  permission_models_exploitation_scenario:
+    _id: models_exploitation_scenario
+    crecord_name: models_exploitation_scenario
+    crecord_type: action
+    desc: "Exploitation: Scenarios"
+    type: CRUD
+  permission_listalarm_ack:
+    _id: listalarm_ack
+    crecord_name: listalarm_ack
+    crecord_type: action
+    desc: "Rights on listalarm: ack"
+  permission_listalarm_fastAck:
+    _id: listalarm_fastAck
+    crecord_name: listalarm_fastAck
+    crecord_type: action
+    desc: "Rights on listalarm: fast ack"
+  permission_listalarm_cancelAck:
+    _id: listalarm_cancelAck
+    crecord_name: listalarm_cancelAck
+    crecord_type: action
+    desc: "Rights on listalarm: cancel ack"
+  permission_listalarm_pbehavior:
+    _id: listalarm_pbehavior
+    crecord_name: listalarm_pbehavior
+    crecord_type: action
+    desc: "Rights on listalarm: pbehavior"
+  permission_listalarm_snoozeAlarm:
+    _id: listalarm_snoozeAlarm
+    crecord_name: listalarm_snoozeAlarm
+    crecord_type: action
+  permission_listalarm_listPbehavior:
+    _id: listalarm_listPbehavior
+    crecord_name: listalarm_listPbehavior
+    crecord_type: action
+    desc: "Rights on listalarm: list pbehavior"
+  permission_listalarm_declareanIncident:
+    _id: listalarm_declareanIncident
+    crecord_name: listalarm_declareanIncident
+    crecord_type: action
+    desc: "Rights on listalarm: declare an incident"
+  permission_listalarm_assignTicketNumber:
+    _id: listalarm_assignTicketNumber
+    crecord_name: listalarm_assignTicketNumber
+    crecord_type: action
+    desc: "Rights on listalarm: assign ticket number"
+  permission_listalarm_removeAlarm:
+    _id: listalarm_removeAlarm
+    crecord_name: listalarm_removeAlarm
+    crecord_type: action
+    desc: "Rights on listalarm: remove alarm"
+  permission_listalarm_changeState:
+    _id: listalarm_changeState
+    crecord_name: listalarm_changeState
+    crecord_type: action
+    desc: "Rights on listalarm: change state"
+  permission_listalarm_history:
+    _id: listalarm_history
+    crecord_name: listalarm_history
+    crecord_type: action
+    desc: "Rights on listalarm: history"
+  permission_listalarm_groupRequest:
+    _id: listalarm_groupRequest
+    crecord_name: listalarm_groupRequest
+    crecord_type: action
+    desc: "Rights on listalarm: group request"
+  permission_listalarm_manualMetaAlarmGroup:
+    _id: listalarm_manualMetaAlarmGroup
+    crecord_name: listalarm_manualMetaAlarmGroup
+    crecord_type: action
+    desc: "Rights on listalarm: Manual meta alarm actions"
+  permission_listalarm_comment:
+    _id: listalarm_comment
+    crecord_name: listalarm_comment
+    crecord_type: action
+    desc: "Rights on listalarm: Access to 'Comment' action"
+  permission_listalarm_listFilters:
+    _id: listalarm_listFilters
+    crecord_name: listalarm_listFilters
+    crecord_type: action
+    desc: "Rights on listalarm: list filters"
+  permission_listalarm_editFilter:
+    _id: listalarm_editFilter
+    crecord_name: listalarm_editFilter
+    crecord_type: action
+    desc: "Rights on listalarm: edit filters"
+  permission_listalarm_addFilter:
+    _id: listalarm_addFilter
+    crecord_name: listalarm_addFilter
+    crecord_type: action
+    desc: "Rights on listalarm: add filter"
+  permission_listalarm_userFilter:
+    _id: listalarm_userFilter
+    crecord_name: listalarm_userFilter
+    crecord_type: action
+    desc: "Rights on listalarm: User filter"
+  permission_listalarm_listRemediationInstructionsFilters:
+    _id: listalarm_listRemediationInstructionsFilters
+    crecord_name: listalarm_listRemediationInstructionsFilters
+    crecord_type: action
+    desc: "Rights on listalarm: Access to 'Remediation instructions filters: list' action"
+  permission_listalarm_editRemediationInstructionsFilter:
+    _id: listalarm_editRemediationInstructionsFilter
+    crecord_name: listalarm_editRemediationInstructionsFilter
+    crecord_type: action
+    desc: "Rights on listalarm: Access to 'Remediation instructions filters: edit' action"
+  permission_listalarm_addRemediationInstructionsFilter:
+    _id: listalarm_addRemediationInstructionsFilter
+    crecord_name: listalarm_addRemediationInstructionsFilter
+    crecord_type: action
+    desc: "Rights on listalarm: Access to 'Remediation instructions filters: add' action"
+  permission_listalarm_userRemediationInstructionsFilter:
+    _id: listalarm_userRemediationInstructionsFilter
+    crecord_name: listalarm_userRemediationInstructionsFilter
+    crecord_type: action
+    desc: "Rights on listalarm: Access to 'Remediation instructions filters: user' action"
+  permission_listalarm_links:
+    _id: listalarm_links
+    crecord_name: listalarm_links
+    crecord_type: action
+    desc: "Rights on listalarm: Access to Links"
+  permission_listalarm_correlation:
+    _id: listalarm_correlation
+    crecord_name: listalarm_correlation
+    crecord_type: action
+    desc: "Rights on listalarm: Access to 'Correlation' action"
+  permission_listalarm_executeInstruction:
+    _id: listalarm_executeInstruction
+    crecord_name: listalarm_executeInstruction
+    crecord_type: action
+    desc: "Rights on listalarm: Access to 'Execute instruction' action"
+  permission_listalarm_category:
+    _id: listalarm_category
+    crecord_name: listalarm_category
+    crecord_type: action
+    desc: "Rights on listalarm: Access to 'Category' action"
+  permission_listalarm_exportAsCsv:
+    _id: listalarm_exportAsCsv
+    crecord_name: listalarm_exportAsCsv
+    crecord_type: action
+    desc: "Rights on listalarm: Access to 'Export as csv' action"
+  permission_serviceweather_entityAck:
+    _id: serviceweather_entityAck
+    crecord_name: serviceweather_entityAck
+    crecord_type: action
+    desc: "Service weather: Access to 'Ack' action"
+  permission_serviceweather_entityAssocTicket:
+    _id: serviceweather_entityAssocTicket
+    crecord_name: serviceweather_entityAssocTicket
+    crecord_type: action
+    desc: "Service weather: Access to 'Assoc Ticket' action"
+  permission_serviceweather_entityComment:
+    _id: serviceweather_entityComment
+    crecord_name: serviceweather_entityComment
+    crecord_type: action
+    desc: "Service weather: Access to 'Comment' action"
+  permission_serviceweather_entityValidate:
+    _id: serviceweather_entityValidate
+    crecord_name: serviceweather_entityValidate
+    crecord_type: action
+    desc: "Service weather: Access to 'Validate' action"
+  permission_serviceweather_entityInvalidate:
+    _id: serviceweather_entityInvalidate
+    crecord_name: serviceweather_entityInvalidate
+    crecord_type: action
+    desc: "Service weather: Access to 'Invalidate' action"
+  permission_serviceweather_entityPause:
+    _id: serviceweather_entityPause
+    crecord_name: serviceweather_entityPause
+    crecord_type: action
+    desc: "Service weather: Access to 'Pause' action"
+  permission_serviceweather_entityPlay:
+    _id: serviceweather_entityPlay
+    crecord_name: serviceweather_entityPlay
+    crecord_type: action
+    desc: "Service weather: Access to 'Play' action"
+  permission_serviceweather_entityCancel:
+    _id: serviceweather_entityCancel
+    crecord_name: serviceweather_entityCancel
+    crecord_type: action
+    desc: "Service weather: Access to 'Cancel' action"
+  permission_serviceweather_entityManagePbehaviors:
+    _id: serviceweather_entityManagePbehaviors
+    crecord_name: serviceweather_entityManagePbehaviors
+    crecord_type: action
+    desc: "Service weather: Access to pbehaviors management"
+  permission_serviceweather_entityLinks:
+    _id: serviceweather_entityLinks
+    crecord_name: serviceweather_entityLinks
+    crecord_type: action
+    desc: "Service weather: Access to Links"
+  permission_serviceweather_moreInfos:
+    _id: serviceweather_moreInfos
+    crecord_name: serviceweather_moreInfos
+    crecord_type: action
+    desc: "Service weather: Access to 'More infos' modal"
+  permission_serviceweather_alarmsList:
+    _id: serviceweather_alarmsList
+    crecord_name: serviceweather_alarmsList
+    crecord_type: action
+    desc: "Service weather: Access to 'Alarms list' modal"
+  permission_serviceweather_pbehaviorList:
+    _id: serviceweather_pbehaviorList
+    crecord_name: serviceweather_pbehaviorList
+    crecord_type: action
+    desc: "Service weather: Access to watcher pbehavior list"
+  permission_serviceweather_listFilters:
+    _id: serviceweather_listFilters
+    crecord_name: serviceweather_listFilters
+    crecord_type: action
+    desc: "Rights on service weather: List filters"
+  permission_serviceweather_editFilter:
+    _id: serviceweather_editFilter
+    crecord_name: serviceweather_editFilter
+    crecord_type: action
+    desc: "Rights on service weather: Edit filters"
+  permission_serviceweather_addFilter:
+    _id: serviceweather_addFilter
+    crecord_name: serviceweather_addFilter
+    crecord_type: action
+    desc: "Rights on service weather: Add filter"
+  permission_serviceweather_userFilter:
+    _id: serviceweather_userFilter
+    crecord_name: serviceweather_userFilter
+    crecord_type: action
+    desc: "Rights on service weather: User filter"
+  permission_serviceweather_category:
+    _id: serviceweather_category
+    crecord_name: serviceweather_category
+    crecord_type: action
+    desc: "Rights on service weather: Access to 'Category' action"
+  permission_crudcontext_createEntity:
+    _id: crudcontext_createEntity
+    crecord_type: action
+    crecord_name: crudcontext_createEntity
+    desc: "Rights on context: create entity"
+  permission_crudcontext_edit:
+    _id: crudcontext_edit
+    crecord_type: action
+    crecord_name: crudcontext_edit
+    desc: "Rights on context: edit entity"
+  permission_crudcontext_duplicate:
+    _id: crudcontext_duplicate
+    crecord_type: action
+    crecord_name: crudcontext_duplicate
+    desc: "Rights on context: duplicate entity"
+  permission_crudcontext_delete:
+    _id: crudcontext_delete
+    crecord_type: action
+    crecord_name: crudcontext_delete
+    desc: "Rights on context: delete entity"
+  permission_crudcontext_pbehavior:
+    _id: crudcontext_pbehavior
+    crecord_type: action
+    crecord_name: crudcontext_pbehavior
+    desc: "Rights on context: pbehavior"
+  permission_crudcontext_listPbehavior:
+    _id: crudcontext_listPbehavior
+    crecord_type: action
+    crecord_name: crudcontext_listPbehavior
+    desc: "Rights on context: List Pbehaviors"
+  permission_crudcontext_deletePbehavior:
+    _id: crudcontext_deletePbehavior
+    crecord_type: action
+    crecord_name: crudcontext_deletePbehavior
+    desc: "Rights on context: Delete Pbehaviors"
+  permission_crudcontext_listFilters:
+    _id: crudcontext_listFilters
+    crecord_type: action
+    crecord_name: crudcontext_listFilters
+    desc: "Rights on context: List filters"
+  permission_crudcontext_editFilter:
+    _id: crudcontext_editFilter
+    crecord_type: action
+    crecord_name: crudcontext_editFilter
+    desc: "Rights on context: Edit filter"
+  permission_crudcontext_addFilter:
+    _id: crudcontext_addFilter
+    crecord_type: action
+    crecord_name: crudcontext_addFilter
+    desc: "Rights on context: Add filter"
+  permission_crudcontext_userFilter:
+    _id: crudcontext_userFilter
+    crecord_type: action
+    crecord_name: crudcontext_userFilter
+    desc: "Rights on context: User filter"
+  permission_crudcontext_category:
+    _id: crudcontext_category
+    crecord_type: action
+    crecord_name: crudcontext_category
+    desc: "Rights on context: Access to 'Category' action"
+  permission_crudcontext_exportAsCsv:
+    _id: crudcontext_exportAsCsv
+    crecord_type: action
+    crecord_name: crudcontext_exportAsCsv
+    desc: "Rights on context: Export as csv"
+  permission_common_variablesHelp:
+    _id: common_variablesHelp
+    crecord_name: common_variablesHelp
+    crecord_type: action
+    desc: Access to available variables list
+  permission_counter_alarmsList:
+    _id: counter_alarmsList
+    crecord_name: counter_alarmsList
+    crecord_type: action
+    desc: "Counter: Access to 'Alarms list' modal"
+  permission_testingweather_alarmsList:
+    _id: testingweather_alarmsList
+    crecord_name: testingweather_alarmsList
+    crecord_type: action
+    desc: "Testing weather: Access to 'Alarms list' modal"
+  permission_api_alarm_read:
+    _id: api_alarm_read
+    crecord_name: api_alarm_read
+    crecord_type: action
+    desc: Read alarms
+  permission_api_alarm_update:
+    _id: api_alarm_update
+    crecord_name: api_alarm_update
+    crecord_type: action
+    desc: Update alarms
+  permission_api_alarm_delete:
+    _id: api_alarm_delete
+    crecord_name: api_alarm_delete
+    crecord_type: action
+    desc: Delete alarms
+  permission_api_alarmfilter:
+    _id: api_alarmfilter
+    crecord_name: api_alarmfilter
+    crecord_type: action
+    desc: Alarm filters
+    type: CRUD
+  permission_api_idlerule:
+    _id: api_idlerule
+    crecord_name: api_idlerule
+    crecord_type: action
+    desc: Idle rules
+    type: CRUD
+  permission_api_eventfilter:
+    _id: api_eventfilter
+    crecord_name: api_eventfilter
+    crecord_type: action
+    desc: Event filters
+    type: CRUD
+  permission_api_action:
+    _id: api_action
+    crecord_name: api_action
+    crecord_type: action
+    desc: Actions
+    type: CRUD
+  permission_api_metaalarmrule:
+    _id: api_metaalarmrule
+    crecord_name: api_metaalarmrule
+    crecord_type: action
+    desc: Meta-alarm rules
+    type: CRUD
+  permission_api_playlist:
+    _id: api_playlist
+    crecord_name: api_playlist
+    crecord_type: action
+    desc: Playlists
+    type: CRUD
+  permission_api_dynamicinfos:
+    _id: api_dynamicinfos
+    crecord_name: api_dynamicinfos
+    crecord_type: action
+    desc: Dynamic infos
+    type: CRUD
+  permission_api_entityservice:
+    _id: api_entityservice
+    crecord_name: api_entityservice
+    crecord_type: action
+    desc: Entity service
+    type: CRUD
+  permission_api_entitycategory:
+    _id: api_entitycategory
+    crecord_name: api_entitycategory
+    crecord_type: action
+    desc: Entity categories
+    type: CRUD
+  permission_api_viewgroup:
+    _id: api_viewgroup
+    crecord_name: api_viewgroup
+    crecord_type: action
+    desc: View groups
+    type: CRUD
+  permission_api_view:
+    _id: api_view
+    crecord_name: api_view
+    crecord_type: action
+    desc: Views
+    type: CRUD
+  permission_api_pbehavior:
+    _id: api_pbehavior
+    crecord_name: api_pbehavior
+    crecord_type: action
+    desc: PBehaviors
+    type: CRUD
+  permission_api_pbehaviortype:
+    _id: api_pbehaviortype
+    crecord_name: api_pbehaviortype
+    crecord_type: action
+    desc: PBehaviorTypes
+    type: CRUD
+  permission_api_pbehaviorreason:
+    _id: api_pbehaviorreason
+    crecord_name: api_pbehaviorreason
+    crecord_type: action
+    desc: PBehaviorReasons
+    type: CRUD
+  permission_api_pbehaviorexception:
+    _id: api_pbehaviorexception
+    crecord_name: api_pbehaviorexception
+    crecord_type: action
+    desc: PBehaviorExceptions
+    type: CRUD
+  permission_api_event:
+    _id: api_event
+    crecord_name: api_event
+    crecord_type: action
+    desc: Event
+  permission_api_engine:
+    _id: api_engine
+    crecord_name: api_engine
+    crecord_type: action
+    desc: Engine Info
+  permission_api_execution:
+    _id: api_execution
+    crecord_name: api_execution
+    crecord_type: action
+    desc: Runs instructions
+  permission_api_job_config:
+    _id: api_job_config
+    crecord_name: api_job_config
+    crecord_type: action
+    desc: Job configs
+    type: CRUD
+  permission_api_job:
+    _id: api_job
+    crecord_name: api_job
+    crecord_type: action
+    desc: Jobs
+    type: CRUD
+  permission_api_instruction:
+    _id: api_instruction
+    crecord_name: api_instruction
+    crecord_type: action
+    desc: Instructions
+    type: CRUD
+  permission_api_file:
+    _id: api_file
+    crecord_name: api_file
+    crecord_type: action
+    desc: File
+    type: CRUD
+  permission_api_entity:
+    _id: api_entity
+    crecord_name: api_entity
+    crecord_type: action
+    desc: Entity
+    type: CRUD
+  permission_api_contextgraph:
+    _id: api_contextgraph
+    crecord_name: api_contextgraph
+    crecord_type: action
+    desc: Context graph import
+    type: CRUD
+  permission_api_acl:
+    _id: api_acl
+    crecord_name: api_acl
+    crecord_type: action
+    desc: Roles, permissions, users
+  permission_api_state_settings:
+    _id: api_state_settings
+    crecord_name: api_state_settings
+    crecord_type: action
+    desc: State settings
+  permission_api_broadcast_message:
+    _id: api_broadcast_message
+    crecord_name: api_broadcast_message
+    crecord_type: action
+    desc: Broadcast Message
+    type: CRUD
+  permission_api_associative_table:
+    _id: api_associative_table
+    crecord_name: api_associative_table
+    crecord_type: action
+    desc: Associative table
+    type: CRUD
+  permission_api_app_info_read:
+    _id: api_app_info_read
+    crecord_name: api_app_info_read
+    crecord_type: action
+    desc: read app info
+  permission_api_user_interface_update:
+    _id: api_user_interface_update
+    crecord_name: api_user_interface_update
+    crecord_type: action
+    desc: update user interface
+  permission_api_user_interface_delete:
+    _id: api_user_interface_delete
+    crecord_name: api_user_interface_delete
+    crecord_type: action
+    desc: delete user interface
+  permission_api_junit:
+    _id: api_junit
+    crecord_name: api_junit
+    crecord_type: action
+    desc: JUnit API
+    type: CRUD
+  permission_api_datastorage_read:
+    _id: api_datastorage_read
+    crecord_name: api_datastorage_read
+    crecord_type: action
+    desc: Data storage settings read
+  permission_api_datastorage_update:
+    _id: api_datastorage_update
+    crecord_name: api_datastorage_update
+    crecord_type: action
+    desc: Data storage settings update
+  permission_view_1:
+    _id: "@view_1"
+    crecord_type: action
+    crecord_name: "@view_1"
+    desc: "Rights on view: alarmes en cours"
+    type: RW
+  permission_view_2:
+    _id: "@view_2"
+    crecord_type: action
+    crecord_name: "@view_2"
+    desc: "Rights on view: alarmes resolues"
+    type: RW
+  permission_view_3:
+    _id: "@view_3"
+    crecord_type: action
+    crecord_name: "@view_3"
+    desc: "Rights on view: Explorateur de Contexte"
+    type: RW
+
+  role_admin:
+    _id: admin
+    crecord_type: role
+    crecord_name: admin
+    defaultview: "@view_1"
+    rights:
+      "@permission_models_userview":
+        checksum: 15
+      "@permission_models_role":
+        checksum: 15
+      "@permission_models_action":
+        checksum: 15
+      "@permission_models_user":
+        checksum: 15
+      "@permission_models_parameters":
+        checksum: 7
+      "@permission_models_broadcastMessage":
+        checksum: 15
+      "@permission_models_playlist":
+        checksum: 15
+      "@permission_models_planning":
+        checksum: 15
+      "@permission_models_planningType":
+        checksum: 15
+      "@permission_models_planningReason":
+        checksum: 15
+      "@permission_models_planningExceptions":
+        checksum: 15
+      "@permission_models_remediation":
+        checksum: 15
+      "@permission_models_remediationInstruction":
+        checksum: 15
+      "@permission_models_remediationJob":
+        checksum: 15
+      "@permission_models_remediationConfiguration":
+        checksum: 15
+      "@permission_models_engine":
+        checksum: 1
+      "@permission_models_exploitation_eventFilter":
+        checksum: 15
+      "@permission_models_exploitation_pbehavior":
+        checksum: 15
+      "@permission_models_exploitation_snmpRule":
+        checksum: 15
+      "@permission_models_exploitation_heartbeat":
+        checksum: 15
+      "@permission_models_exploitation_dynamicInfo":
+        checksum: 15
+      "@permission_models_exploitation_metaAlarmRule":
+        checksum: 15
+      "@permission_models_exploitation_scenario":
+        checksum: 15
+      "@permission_listalarm_ack":
+        checksum: 1
+      "@permission_listalarm_fastAck":
+        checksum: 1
+      "@permission_listalarm_cancelAck":
+        checksum: 1
+      "@permission_listalarm_pbehavior":
+        checksum: 1
+      "@permission_listalarm_snoozeAlarm":
+        checksum: 1
+      "@permission_listalarm_listPbehavior":
+        checksum: 1
+      "@permission_listalarm_declareanIncident":
+        checksum: 1
+      "@permission_listalarm_assignTicketNumber":
+        checksum: 1
+      "@permission_listalarm_removeAlarm":
+        checksum: 1
+      "@permission_listalarm_changeState":
+        checksum: 1
+      "@permission_listalarm_history":
+        checksum: 1
+      "@permission_listalarm_groupRequest":
+        checksum: 1
+      "@permission_listalarm_manualMetaAlarmGroup":
+        checksum: 1
+      "@permission_listalarm_comment":
+        checksum: 1
+      "@permission_listalarm_listFilters":
+        checksum: 1
+      "@permission_listalarm_editFilter":
+        checksum: 1
+      "@permission_listalarm_addFilter":
+        checksum: 1
+      "@permission_listalarm_userFilter":
+        checksum: 1
+      "@permission_listalarm_listRemediationInstructionsFilters":
+        checksum: 1
+      "@permission_listalarm_editRemediationInstructionsFilter":
+        checksum: 1
+      "@permission_listalarm_addRemediationInstructionsFilter":
+        checksum: 1
+      "@permission_listalarm_userRemediationInstructionsFilter":
+        checksum: 1
+      "@permission_listalarm_links":
+        checksum: 1
+      "@permission_listalarm_correlation":
+        checksum: 1
+      "@permission_listalarm_executeInstruction":
+        checksum: 1
+      "@permission_listalarm_category":
+        checksum: 1
+      "@permission_listalarm_exportAsCsv":
+        checksum: 1
+      "@permission_serviceweather_entityAck":
+        checksum: 1
+      "@permission_serviceweather_entityAssocTicket":
+        checksum: 1
+      "@permission_serviceweather_entityValidate":
+        checksum: 1
+      "@permission_serviceweather_entityInvalidate":
+        checksum: 1
+      "@permission_serviceweather_entityPause":
+        checksum: 1
+      "@permission_serviceweather_entityPlay":
+        checksum: 1
+      "@permission_serviceweather_entityCancel":
+        checksum: 1
+      "@permission_serviceweather_entityManagePbehaviors":
+        checksum: 1
+      "@permission_serviceweather_entityLinks":
+        checksum: 1
+      "@permission_serviceweather_entityComment":
+        checksum: 1
+      "@permission_serviceweather_moreInfos":
+        checksum: 1
+      "@permission_serviceweather_alarmsList":
+        checksum: 1
+      "@permission_serviceweather_pbehaviorList":
+        checksum: 1
+      "@permission_serviceweather_listFilters":
+        checksum: 1
+      "@permission_serviceweather_editFilter":
+        checksum: 1
+      "@permission_serviceweather_addFilter":
+        checksum: 1
+      "@permission_serviceweather_userFilter":
+        checksum: 1
+      "@permission_serviceweather_category":
+        checksum: 1
+      "@permission_crudcontext_createEntity":
+        checksum: 1
+      "@permission_crudcontext_edit":
+        checksum: 1
+      "@permission_crudcontext_duplicate":
+        checksum: 1
+      "@permission_crudcontext_delete":
+        checksum: 1
+      "@permission_crudcontext_pbehavior":
+        checksum: 1
+      "@permission_crudcontext_listPbehavior":
+        checksum: 1
+      "@permission_crudcontext_deletePbehavior":
+        checksum: 1
+      "@permission_crudcontext_listFilters":
+        checksum: 1
+      "@permission_crudcontext_editFilter":
+        checksum: 1
+      "@permission_crudcontext_addFilter":
+        checksum: 1
+      "@permission_crudcontext_userFilter":
+        checksum: 1
+      "@permission_crudcontext_category":
+        checksum: 1
+      "@permission_crudcontext_exportAsCsv":
+        checksum: 1
+      "@permission_common_variablesHelp":
+        checksum: 1
+      "@permission_counter_alarmsList":
+        checksum: 1
+      "@permission_testingweather_alarmsList":
+        checksum: 1
+      "@permission_api_alarm_read":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_alarm_update":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_alarm_delete":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_alarmfilter":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_idlerule":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_eventfilter":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_action":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_metaalarmrule":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_playlist":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_dynamicinfos":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_entityservice":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_entitycategory":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_viewgroup":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_view":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_pbehavior":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_pbehaviortype":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_pbehaviorreason":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_pbehaviorexception":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_event":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_engine":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_execution":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_job_config":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_job":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_instruction":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_file":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_entity":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_contextgraph":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_acl":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_state_settings":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_broadcast_message":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_associative_table":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_app_info_read":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_user_interface_update":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_user_interface_delete":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_junit":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_datastorage_read":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_datastorage_update":
+        checksum: 1
+        crecord_type: right
+      "@permission_view_1":
+        checksum: 15
+        crecord_type: right
+      "@permission_view_2":
+        checksum: 15
+        crecord_type: right
+      "@permission_view_3":
+        checksum: 15
+        crecord_type: right
+
+  role_supervision:
+    _id: Supervision
+    crecord_type: role
+    crecord_name: Supervision
+    defaultview: "@view_1"
+    rights:
+      "@permission_models_userview":
+        checksum: 4
+      "@permission_listalarm_ack":
+        checksum: 1
+      "@permission_listalarm_fastAck":
+        checksum: 1
+      "@permission_listalarm_listPbehavior":
+        checksum: 1
+      "@permission_listalarm_listFilters":
+        checksum: 1
+      "@permission_listalarm_editFilter":
+        checksum: 1
+      "@permission_listalarm_addFilter":
+        checksum: 1
+      "@permission_serviceweather_userFilter":
+        checksum: 1
+      "@permission_serviceweather_category":
+        checksum: 1
+      "@permission_api_alarm_read":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_playlist":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_viewgroup":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_acl":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_associative_table":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_app_info_read":
+        checksum: 1
+        crecord_type: right
+      "@permission_view_1":
+        checksum: 4
+        crecord_type: right
+
+  role_support:
+    _id: Support
+    crecord_type: role
+    crecord_name: Support
+    defaultview: "@view_1"
+    rights:
+      "@permission_models_userview":
+        checksum: 4
+      "@permission_listalarm_listFilters":
+        checksum: 1
+      "@permission_api_alarm_read":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_playlist":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_viewgroup":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_acl":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_associative_table":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_app_info_read":
+        checksum: 1
+        crecord_type: right
+      "@permission_view_1":
+        checksum: 4
+        crecord_type: right
+
+  role_manager:
+    _id: Manager
+    crecord_type: role
+    crecord_name: Manager
+    defaultview: "@view_1"
+    rights:
+      "@permission_models_userview":
+        checksum: 4
+      "@permission_listalarm_cancelAck":
+        checksum: 1
+      "@permission_listalarm_listPbehavior":
+        checksum: 1
+      "@permission_listalarm_changeState":
+        checksum: 1
+      "@permission_listalarm_listFilters":
+        checksum: 1
+      "@permission_listalarm_editFilter":
+        checksum: 1
+      "@permission_listalarm_addFilter":
+        checksum: 1
+      "@permission_api_alarm_read":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_playlist":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_viewgroup":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_associative_table":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_app_info_read":
+        checksum: 1
+        crecord_type: right
+      "@permission_view_1":
+        checksum: 4
+        crecord_type: right
+
+  role_visualisation:
+    _id: Visualisation
+    crecord_type: role
+    crecord_name: Visualisation
+    defaultview: "@view_1"
+    rights:
+      "@permission_models_userview":
+        checksum: 4
+      "@permission_listalarm_listFilters":
+        checksum: 1
+      "@permission_api_alarm_read":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_alarmfilter":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_idlerule":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_eventfilter":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_action":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_metaalarmrule":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_playlist":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_dynamicinfos":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_viewgroup":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_view":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_pbehavior":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_pbehaviortype":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_pbehaviorreason":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_pbehaviorexception":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_acl":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_associative_table":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_app_info_read":
+        checksum: 1
+        crecord_type: right
+      "@permission_view_1":
+        checksum: 15
+        crecord_type: right
+
+  role_norights:
+    _id: Norights
+    crecord_type: role
+    crecord_name: Norights
+    rights:
+      "@permission_api_viewgroup":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_playlist":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_acl":
+        checksum: 1
+        crecord_type: right
+
+  user (template):
+    _id: <UUID()>
+    enable: true
+    external: false
+    crecord_type: user
+
+  user_1 (extend user):
+    _id: root
+    crecord_name: root
+    mail: admin@canopsis.org
+    shadowpasswd: "<Password(root)>"
+    role: "@role_admin"
+    contact:
+      name: Administrator
+
+  user_2 (extend user):
+    _id: canopsis
+    crecord_name: canopsis
+    mail: canopsis@canopsis.org
+    shadowpasswd: "<Password(canopsis)>"
+    role: "@role_manager"
