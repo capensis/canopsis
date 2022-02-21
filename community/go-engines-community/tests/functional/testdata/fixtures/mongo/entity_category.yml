@@ -1,0 +1,103 @@
+entity_category:
+  entity_category_1:
+    _id: test-category-to-get-1
+    author: test-category-to-get-1-author
+    created: 1592215337
+    name: test-category-to-get-1-name
+    updated: 1592215337
+  entity_category_2:
+    _id: test-category-to-get-2
+    author: test-category-to-get-2-author
+    created: 1592215337
+    name: test-category-to-get-2-name
+    updated: 1592215337
+  entity_category_3:
+    _id: test-category-to-check-unique-name
+    author: test-category-to-check-unique-name-author
+    created: 1592215337
+    name: test-category-to-check-unique-name
+    updated: 1592215337
+  entity_category_4:
+    _id: test-category-to-update
+    author: test-category-to-update-author
+    created: 1592215337
+    name: test-category-to-update-name
+    updated: 1592215337
+  entity_category_5:
+    _id: test-category-to-delete
+    author: test-category-to-delete-author
+    created: 1592215337
+    name: test-category-to-delete-name
+    updated: 1592215337
+  entity_category_6:
+    _id: test-category-to-delete-linked-to-entity
+    author: test-category-to-delete-linked-to-entity-author
+    created: 1592215337
+    name: test-category-to-delete-linked-to-entity-name
+    updated: 1592215337
+  entity_category_7:
+    _id: test-category-to-entity-get-1
+    author: test-category-to-entity-get-1-author
+    created: 1592215337
+    name: test-category-to-entity-get-1-name
+    updated: 1592215337
+  entity_category_8:
+    _id: test-category-to-entity-get-2
+    author: test-category-to-entity-get-2-author
+    created: 1592215337
+    name: test-category-to-entity-get-2-name
+    updated: 1592215337
+  entity_category_9:
+    _id: test-category-to-entityservice-edit
+    author: test-category-to-entityservice-edit-author
+    created: 1592215337
+    name: test-category-to-entityservice-edit-name
+    updated: 1592215337
+  entity_category_10:
+    _id: test-category-service
+    author: test-category-service-author
+    created: 1592215337
+    name: test-category-service-name
+    updated: 1592215337
+  entity_category_11:
+    _id: test-category-service-weather
+    author: test-category-service-weather-author
+    created: 1592215337
+    name: test-category-service-weather-name
+    updated: 1592215337
+  entity_category_12:
+    _id: test-category-service-weather-entities
+    author: test-category-service-weather-entities-author
+    created: 1592215337
+    name: test-category-service-weather-entities-name
+    updated: 1592215337
+  entity_category_13:
+    _id: test-category-pbehavior-weather-service
+    author: test-category-pbehavior-weather-service-author
+    created: 1592215337
+    name: test-category-pbehavior-weather-service-name
+    updated: 1592215337
+  entity_category_14:
+    _id: test-category-pbehavior-service
+    author: test-category-pbehavior-service-author
+    created: 1592215337
+    name: test-category-pbehavior-service-name
+    updated: 1592215337
+  entity_category_15:
+    _id: test-category-pbehavior-weather-service-entity
+    author: test-category-pbehavior-weather-service-entity-author
+    created: 1592215337
+    name: test-category-pbehavior-weather-service-entity-name
+    updated: 1592215337
+  entity_category_16:
+    _id: test-category-to-alarm-get-1
+    author: test-category-to-alarm-get-1-author
+    created: 1592215337
+    name: test-category-to-alarm-get-1-name
+    updated: 1592215337
+  entity_category_17:
+    _id: test-category-to-entitybasic-edit
+    author: test-category-to-entitybasic-edit-author
+    created: 1592215337
+    name: test-category-to-entitybasic-edit-name
+    updated: 1592215337

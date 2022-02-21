@@ -257,6 +257,8 @@ export const USERS_PERMISSIONS = {
       playlist: `${USER_PERMISSIONS_PREFIXES.api}_playlist`,
       flappingRule: `${USER_PERMISSIONS_PREFIXES.api}_flapping_rule`,
       resolveRule: `${USER_PERMISSIONS_PREFIXES.api}_resolve_rule`,
+      snmpRule: `${USER_PERMISSIONS_PREFIXES.api}_snmprule`,
+      snmpMib: `${USER_PERMISSIONS_PREFIXES.api}_snmpmib`,
     },
     remediation: {
       instruction: `${USER_PERMISSIONS_PREFIXES.api}_instruction`,

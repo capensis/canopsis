@@ -1,0 +1,29 @@
+pbehavior_type:
+  pbehavior_type (template):
+    _id: <UUID()>
+    created: <NowUnix()>
+    updated: <Current().created>
+    priority: <Index()>
+
+  default_inactive (extend pbehavior_type):
+    name: Default inactive
+    description: Default inactive
+    icon_name: brightness_3
+    type: inactive
+
+  default_active (extend pbehavior_type):
+    name: Default active
+    description: Default active
+    type: active
+
+  default_maintenance (extend pbehavior_type):
+    name: Default maintenance
+    description: Default maintenance
+    icon_name: build
+    type: maintenance
+
+  default_pause (extend pbehavior_type):
+    name: Default pause
+    description: Default pause
+    icon_name: pause
+    type: pause

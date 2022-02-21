@@ -20,6 +20,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"github.com/cucumber/godog"
 	redismod "github.com/go-redis/redis/v8"
 	"github.com/go-testfixtures/testfixtures/v3"
@@ -41,6 +42,7 @@ func TestMain(m *testing.M) {
 	var flags Flags
 	flags.ParseArgs()
 
+	logger := liblog.NewLogger(true)
 	var eventLogger zerolog.Logger
 	if flags.eventLogs != "" {
 		f, err := os.OpenFile(flags.eventLogs, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
@@ -69,7 +71,7 @@ func TestMain(m *testing.M) {
 		}
 	}()
 
-	amqpConnection, err := amqp.NewConnection(liblog.NewLogger(false), 0, 0)
+	amqpConnection, err := amqp.NewConnection(logger, 0, 0)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -81,13 +83,15 @@ func TestMain(m *testing.M) {
 	}
 	defer redisClient.Close()
 
+	loader := fixtures.NewLoader(dbClient, flags.mongoFixtures, true,
+		fixtures.NewParser(password.NewSha1Encoder()), logger)
 	opts := godog.Options{
 		StopOnFailure:  true,
 		Format:         "pretty",
 		Paths:          flags.paths,
 		DefaultContext: ctx,
 	}
-	testSuiteInitializer := InitializeTestSuite(ctx, flags, dbClient, redisClient)
+	testSuiteInitializer := InitializeTestSuite(ctx, flags, loader, redisClient)
 	scenarioInitializer, err := InitializeScenario(flags, dbClient, amqpConnection, eventLogger)
 	if err != nil {
 		log.Fatal(err)
@@ -107,17 +111,17 @@ func TestMain(m *testing.M) {
 	os.Exit(status)
 }
 
-func InitializeTestSuite(ctx context.Context, flags Flags, dbClient mongo.DbClient, redisClient redismod.Cmdable) func(*godog.TestSuiteContext) {
+func InitializeTestSuite(ctx context.Context, flags Flags, loader fixtures.Loader, redisClient redismod.Cmdable) func(*godog.TestSuiteContext) {
 	return func(godogCtx *godog.TestSuiteContext) {
 		godogCtx.BeforeSuite(func() {
-			err := clearStores(ctx, flags, dbClient, redisClient)
+			err := clearStores(ctx, flags, loader, redisClient)
 			if err != nil {
 				panic(err)
 			}
 			time.Sleep(flags.periodicalWaitTime)
 		})
 		godogCtx.AfterSuite(func() {
-			err := clearStores(ctx, flags, dbClient, redisClient)
+			err := clearStores(ctx, flags, loader, redisClient)
 			if err != nil {
 				panic(err)
 			}
@@ -204,8 +208,8 @@ func InitializeScenario(flags Flags, dbClient mongo.DbClient, amqpConnection amq
 	}, nil
 }
 
-func clearStores(ctx context.Context, flags Flags, dbClient mongo.DbClient, redisClient redismod.Cmdable) error {
-	err := fixtures.Load(ctx, dbClient, flags.mongoFixtures)
+func clearStores(ctx context.Context, flags Flags, loader fixtures.Loader, redisClient redismod.Cmdable) error {
+	err := loader.Load(ctx)
 	if err != nil {
 		return fmt.Errorf("cannot load mongo fixtures: %w", err)
 	}

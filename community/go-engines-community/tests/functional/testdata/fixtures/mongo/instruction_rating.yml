@@ -1,0 +1,36 @@
+instruction_rating:
+  instruction_rating_1:
+    _id: test-rating-to-comments-get-1
+    comment: test-rating-to-comments-get-1-comment
+    created: 1596550518
+    instruction: test-instruction-to-comments-get-1
+    rating: 4.5
+    user: test-user-author-1-id
+  instruction_rating_2:
+    _id: test-rating-to-comments-get-2
+    comment: test-rating-to-comments-get-2-comment
+    created: 1596550518
+    instruction: test-instruction-to-comments-get-1
+    rating: 2
+    user: test-user-author-1-id
+  instruction_rating_3:
+    _id: test-instruction-to-check-rate-notify-rating-1
+    comment: test-instruction-to-check-rate-notify-rating-1-comment
+    created: 1000000000
+    instruction: test-instruction-to-check-rate-notify
+    rating: 5
+    user: root
+  instruction_rating_4:
+    _id: test-instruction-to-check-rate-notify-rating-2
+    comment: test-instruction-to-check-rate-notify-rating-2-comment
+    created: 2000000000
+    instruction: test-instruction-to-check-rate-notify
+    rating: 5
+    user: manageruser
+  instruction_rating_5:
+    _id: test-rating-to-instruction-stats-get-1
+    comment: test-rating-to-instruction-stats-get-1
+    created: 1618280210
+    instruction: test-instruction-to-stats-get-1
+    rating: 3.2
+    user: root
