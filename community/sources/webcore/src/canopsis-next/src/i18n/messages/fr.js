@@ -1646,6 +1646,7 @@ export default {
     socketConnectionProblem: 'Problème de connexion aux websockets',
     endDateLessOrEqualStartDate: 'La date de fin doit se situer après la date de début',
     unknownWidgetType: 'Type de widget inconnu: {type}',
+    unique: 'Le champ doit être unique',
   },
   calendar: {
     today: 'Aujourd\'hui',
@@ -1701,9 +1702,6 @@ export default {
     buttons: {
       list: 'Gérer les filtres',
     },
-  },
-  validator: {
-    unique: 'Le champ doit être unique',
   },
   stats: {
     types: {

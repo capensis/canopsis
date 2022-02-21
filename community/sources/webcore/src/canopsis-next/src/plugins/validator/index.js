@@ -4,9 +4,11 @@ import VeeValidate, { Validator, Rules } from 'vee-validate';
 
 import { isValidJson } from './helpers/is-valid-json';
 import { isValidUrl } from './helpers/is-valid-url';
+import { isUniqueValue } from './helpers/is-unique-value';
 import { debounce } from './helpers/debounce';
 import { isEvent } from './helpers/is-event';
 import { findField } from './helpers/find-field';
+import { isPickerValid } from '@/plugins/validator/helpers/is-picker-valid';
 
 Validator.prototype.remove = (name) => {
   delete Rules[name];
@@ -14,18 +16,29 @@ Validator.prototype.remove = (name) => {
 
 export default {
   install(Vue, { i18n } = {}) {
-    Validator.extend('json', {
-      getMessage: () => i18n.t('errors.JSONNotValid'),
-      validate: isValidJson,
-    });
-
-    Validator.extend('url', { validate: isValidUrl });
-
     Vue.use(VeeValidate, {
       i18n,
       inject: false,
       silentTranslationWarn: false,
     });
+
+    Validator.extend('json', {
+      getMessage: () => i18n.t('errors.JSONNotValid'),
+      validate: isValidJson,
+    });
+    Validator.extend('unique', {
+      getMessage: () => i18n.t('errors.unique'),
+      validate: isUniqueValue,
+    }, {
+      paramNames: ['values', 'initialValue'],
+    });
+    Validator.extend('picker_format', {
+      getMessage: () => i18n.t('errors.endDateLessOrEqualStartDate'),
+      validate: isPickerValid,
+    }, {
+      paramNames: ['preparer'],
+    });
+    Validator.extend('url', { validate: isValidUrl });
 
     const sourceDirective = Vue.directive('validate');
 

@@ -1,14 +1,13 @@
 <template lang="pug">
-  v-form(data-test="createFilterModal", @submit.prevent="submit")
+  v-form(@submit.prevent="submit")
     modal-wrapper(close)
       template(slot="title")
         span {{ title }}
       template(slot="text")
         v-text-field(
-          data-test="filterTitle",
           v-if="!hiddenFields.includes('title')",
           v-model="form.title",
-          v-validate="'required|unique-title'",
+          v-validate="titleRules",
           :label="$t('modals.filter.fields.title')",
           :error-messages="errors.collect('title')",
           name="title",
@@ -22,7 +21,6 @@
         )
       template(slot="actions")
         v-btn(
-          data-test="createFilterCancelButton",
           depressed,
           flat,
           @click="$modals.hide"
@@ -30,8 +28,7 @@
         v-btn.primary(
           :disabled="isDisabled || advancedJsonWasChanged",
           :loading="submitting",
-          type="submit",
-          data-test="createFilterSubmitButton"
+          type="submit"
         ) {{ $t('common.submit') }}
 </template>
 
@@ -96,13 +93,16 @@ export default {
     advancedJsonWasChanged() {
       return get(this.fields, ['advancedJson', 'changed']);
     },
-  },
-  created() {
-    this.$validator.extend('unique-title', {
-      getMessage: () => this.$t('validator.unique'),
-      validate: value => (this.initialTitle && this.initialTitle === value)
-        || !this.existingTitles.find(title => title === value),
-    });
+
+    titleRules() {
+      return {
+        required: true,
+        unique: {
+          values: this.existingTitles,
+          initialValue: this.initialTitle,
+        },
+      };
+    },
   },
   methods: {
     async submit() {
