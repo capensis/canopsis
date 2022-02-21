@@ -10,7 +10,7 @@ view_playlist:
       value: 10
     name: test-playlist-to-check-unique-name-name
     tabs_list:
-    - test-view-to-edit-playlist-tab-1
+    - test-tab-to-playlist-edit-1
     updated: 1608285370
   view_playlist_2:
     _id: test-playlist-to-check-access
@@ -23,7 +23,7 @@ view_playlist:
       value: 10
     name: test-playlist-to-check-access-name
     tabs_list:
-    - test-view-to-edit-playlist-tab-1
+    - test-tab-to-playlist-edit-1
     updated: 1608285370
   view_playlist_3:
     _id: test-playlist-to-get-1
@@ -36,7 +36,7 @@ view_playlist:
       value: 10
     name: test-playlist-to-get-1-name
     tabs_list:
-    - test-view-to-edit-playlist-tab-1
+    - test-tab-to-playlist-edit-1
     updated: 1608285370
   view_playlist_4:
     _id: test-playlist-to-get-2
@@ -49,7 +49,7 @@ view_playlist:
       value: 20
     name: test-playlist-to-get-2-name
     tabs_list:
-    - test-view-to-edit-playlist-tab-2
+    - test-tab-to-playlist-edit-2
     updated: 1608285370
   view_playlist_5:
     _id: test-playlist-to-update
@@ -62,7 +62,7 @@ view_playlist:
       value: 10
     name: test-playlist-to-update-name
     tabs_list:
-    - test-view-to-edit-playlist-tab-1
+    - test-tab-to-playlist-edit-1
     updated: 1608285370
   view_playlist_6:
     _id: test-playlist-to-delete
@@ -75,5 +75,18 @@ view_playlist:
       value: 10
     name: test-playlist-to-delete-name
     tabs_list:
-    - test-view-to-edit-playlist-tab-1
+    - test-tab-to-playlist-edit-1
+    updated: 1608285370
+  view_playlist_7:
+    _id: test-playlist-to-tab-delete-linked
+    author: test-author-to-tab-delete-linked
+    created: 1608284568
+    enabled: true
+    fullscreen: true
+    interval:
+      unit: s
+      value: 10
+    name: test-playlist-to-tab-delete-linked-name
+    tabs_list:
+    - test-tab-to-delete-linked
     updated: 1608285370

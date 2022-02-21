@@ -27,4 +27,8 @@ db.eventfilter.find({
             on_failure: ""
         }
     });
-})
+});
+
+db.eventfilter.createIndex({
+    priority: 1,
+}, {name: "priority_1"});

@@ -136,3 +136,266 @@ meta_alarm_rules:
     output_template: ""
     type: attribute
     updated: 1637907655
+  meta_alarm_rules_16:
+    _id: test-metaalarmrule-axe-correlation-1
+    author: test-author-metaalarmrule-axe-correlation
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-axe-correlation-1
+    created: 1637907655
+    name: test-metaalarmrule-axe-correlation-1-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
+      }}'
+    type: attribute
+    updated: 1637907655
+  meta_alarm_rules_17:
+    _id: test-metaalarmrule-axe-correlation-2
+    author: test-author-metaalarmrule-axe-correlation
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-axe-correlation-2
+    created: 1637907655
+    name: test-metaalarmrule-axe-correlation-2-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
+      }}'
+    type: attribute
+    updated: 1637907655
+  meta_alarm_rules_18:
+    _id: test-metaalarmrule-axe-correlation-3
+    author: test-author-metaalarmrule-axe-correlation
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-axe-correlation-3
+    created: 1637907655
+    name: test-metaalarmrule-axe-correlation-3-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
+      }}'
+    type: attribute
+    updated: 1637907655
+  meta_alarm_rules_19:
+    _id: test-metaalarmrule-axe-correlation-4
+    author: test-author-metaalarmrule-axe-correlation
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-axe-correlation-4
+    created: 1637907655
+    name: test-metaalarmrule-axe-correlation-4-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
+      }}'
+    type: attribute
+    updated: 1637907655
+  meta_alarm_rules_20:
+    _id: test-metaalarmrule-axe-correlation-5
+    author: test-author-metaalarmrule-axe-correlation
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-axe-correlation-5
+    created: 1637907655
+    name: test-metaalarmrule-axe-correlation-5-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
+      }}'
+    type: attribute
+    updated: 1637907655
+  meta_alarm_rules_21:
+    _id: test-metaalarmrule-axe-correlation-6
+    author: test-author-metaalarmrule-axe-correlation
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-axe-correlation-6
+    created: 1637907655
+    name: test-metaalarmrule-axe-correlation-6-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
+      }}'
+    type: attribute
+    updated: 1637907655
+  meta_alarm_rules_22:
+    _id: test-metaalarmrule-axe-correlation-7
+    author: test-author-metaalarmrule-axe-correlation
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-axe-correlation-7
+    created: 1637907655
+    name: test-metaalarmrule-axe-correlation-7-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
+      }}'
+    type: attribute
+    updated: 1637907655
+  meta_alarm_rules_23:
+    _id: test-metaalarmrule-axe-correlation-8
+    author: test-author-metaalarmrule-axe-correlation
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-axe-correlation-8
+    created: 1637907655
+    name: test-metaalarmrule-axe-correlation-8-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
+      }}'
+    type: attribute
+    updated: 1637907655
+  meta_alarm_rules_24:
+    _id: test-metaalarmrule-axe-correlation-9
+    author: test-author-metaalarmrule-axe-correlation
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-axe-correlation-9
+    created: 1637907655
+    name: test-metaalarmrule-axe-correlation-9-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
+      }}'
+    type: attribute
+    updated: 1637907655
+  meta_alarm_rules_25:
+    _id: test-metaalarmrule-axe-correlation-10
+    author: test-author-metaalarmrule-axe-correlation
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-axe-correlation-10
+    created: 1637907655
+    name: test-metaalarmrule-axe-correlation-10-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
+      }}'
+    type: attribute
+    updated: 1637907655
+  meta_alarm_rules_26:
+    _id: test-metaalarmrule-axe-correlation-11
+    author: test-author-metaalarmrule-axe-correlation
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-axe-correlation-11
+    created: 1637907655
+    name: test-metaalarmrule-axe-correlation-11-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
+      }}'
+    type: attribute
+    updated: 1637907655
+  meta_alarm_rules_27:
+    _id: test-metaalarmrule-axe-correlation-12-1
+    author: test-author-metaalarmrule-axe-correlation
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-axe-correlation-12
+    created: 1637907655
+    name: test-metaalarmrule-axe-correlation-12-1-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
+      }}'
+    type: attribute
+    updated: 1637907655
+  meta_alarm_rules_28:
+    _id: test-metaalarmrule-axe-correlation-12-2
+    author: test-author-metaalarmrule-axe-correlation
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-axe-correlation-12
+    created: 1637907655
+    name: test-metaalarmrule-axe-correlation-12-2-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
+      }}'
+    type: attribute
+    updated: 1637907655
+  meta_alarm_rules_29:
+    _id: test-metaalarmrule-axe-correlation-13-1
+    author: test-author-metaalarmrule-axe-correlation
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-axe-correlation-13
+    created: 1637907655
+    name: test-metaalarmrule-axe-correlation-13-1-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
+      }}'
+    type: attribute
+    updated: 1637907655
+  meta_alarm_rules_30:
+    _id: test-metaalarmrule-axe-correlation-13-2
+    author: test-author-metaalarmrule-axe-correlation
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-axe-correlation-13
+    created: 1637907655
+    name: test-metaalarmrule-axe-correlation-13-2-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
+      }}'
+    type: attribute
+    updated: 1637907655
+  meta_alarm_rules_31:
+    _id: test-metaalarmrule-axe-correlation-14
+    author: test-author-metaalarmrule-axe-correlation
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-axe-correlation-14
+    created: 1637907655
+    name: test-metaalarmrule-axe-correlation-14-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
+      }}'
+    type: attribute
+    updated: 1637907655
+  meta_alarm_rules_32:
+    _id: test-metaalarmrule-action-correlation-1
+    author: test-author-metaalarmrule-action-correlation
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-action-correlation-1
+    created: 1637907655
+    name: test-metaalarmrule-action-correlation-1-name
+    output_template: ""
+    type: attribute
+    updated: 1637907655
+  meta_alarm_rules_33:
+    _id: test-metaalarmrule-action-correlation-2
+    author: test-author-metaalarmrule-action-correlation
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-action-correlation-2
+    created: 1637907655
+    name: test-metaalarmrule-action-correlation-2-name
+    output_template: ""
+    type: attribute
+    updated: 1637907655
+  meta_alarm_rules_34:
+    _id: test-metaalarmrule-action-correlation-3
+    author: test-author-metaalarmrule-action-correlation
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-action-correlation-3
+    created: 1637907655
+    name: test-metaalarmrule-action-correlation-3-name
+    output_template: ""
+    type: attribute
+    updated: 1637907655
