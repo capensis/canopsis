@@ -1,0 +1,329 @@
+widgets:
+  widgets_1:
+    _id: test-widget-to-view-get-1
+    author: test-widget-to-view-get-1-author
+    created: 1611229670
+    grid_parameters:
+      desktop:
+        x: 0
+        "y": 0
+    parameters:
+      test-widget-to-view-get-1-parameter-1:
+        test-widget-to-view-get-1-parameter-1-subparameter: test-widget-to-view-get-1-parameter-1-subvalue
+      test-widget-to-view-get-1-parameter-2:
+      - test-widget-to-view-get-1-parameter-2-subparameter: test-widget-to-view-get-1-parameter-2-subvalue
+    tab: test-tab-to-view-get-1
+    title: test-widget-to-view-get-1-title
+    type: test-widget-to-view-get-1-type
+    updated: 1611229670
+  widgets_2:
+    _id: test-widget-to-view-get-2
+    author: test-widget-to-view-get-2-author
+    created: 1611229670
+    grid_parameters:
+      desktop:
+        x: 0
+        "y": 1
+    parameters:
+      test-widget-to-view-get-2-parameter-1:
+        test-widget-to-view-get-2-parameter-1-subparameter: test-widget-to-view-get-2-parameter-1-subvalue
+      test-widget-to-view-get-2-parameter-2:
+      - test-widget-to-view-get-2-parameter-2-subparameter: test-widget-to-view-get-2-parameter-2-subvalue
+    tab: test-tab-to-view-get-1
+    title: test-widget-to-view-get-2-title
+    type: test-widget-to-view-get-2-type
+    updated: 1611229670
+  widgets_3:
+    _id: test-widget-to-viewgroup-get-1
+    author: test-user-to-viewgroup-get
+    created: 1611229670
+    grid_parameters:
+      desktop:
+        x: 0
+        "y": 0
+    parameters:
+      test-widget-to-viewgroup-get-1-parameter-1:
+        test-widget-to-viewgroup-get-1-parameter-1-subparameter: test-widget-to-viewgroup-get-1-parameter-1-subvalue
+      test-widget-to-viewgroup-get-1-parameter-2:
+      - test-widget-to-viewgroup-get-1-parameter-2-subparameter: test-widget-to-viewgroup-get-1-parameter-2-subvalue
+    tab: test-tab-to-viewgroup-get-1
+    title: test-widget-to-viewgroup-get-1-title
+    type: test-widget-to-viewgroup-get-1-type
+    updated: 1611229670
+  widgets_4:
+    _id: test-widget-to-viewgroup-get-2
+    author: test-user-to-viewgroup-get
+    created: 1611229670
+    grid_parameters:
+      desktop:
+        x: 0
+        "y": 1
+    parameters: {}
+    tab: test-tab-to-viewgroup-get-1
+    title: test-widget-to-viewgroup-get-2-title
+    type: test-widget-to-viewgroup-get-2-type
+    updated: 1611229670
+  widgets_5:
+    _id: test-widget-to-tab-get-1
+    author: test-user-to-tab-get
+    created: 1611229670
+    grid_parameters:
+      desktop:
+        x: 0
+        "y": 0
+    parameters:
+      test-widget-to-tab-get-1-parameter-1:
+        test-widget-to-tab-get-1-parameter-1-subparameter: test-widget-to-tab-get-1-parameter-1-subvalue
+      test-widget-to-tab-get-1-parameter-2:
+      - test-widget-to-tab-get-1-parameter-2-subparameter: test-widget-to-tab-get-1-parameter-2-subvalue
+    tab: test-tab-to-get
+    title: test-widget-to-tab-get-1-title
+    type: test-widget-to-tab-get-1-type
+    updated: 1611229670
+  widgets_6:
+    _id: test-widget-to-tab-get-2
+    author: test-user-to-tab-get
+    created: 1611229670
+    grid_parameters:
+      desktop:
+        x: 0
+        "y": 1
+    parameters:
+      test-widget-to-tab-get-2-parameter-1:
+        test-widget-to-tab-get-2-parameter-1-subparameter: test-widget-to-tab-get-2-parameter-1-subvalue
+      test-widget-to-tab-get-2-parameter-2:
+      - test-widget-to-tab-get-2-parameter-2-subparameter: test-widget-to-tab-get-2-parameter-2-subvalue
+    tab: test-tab-to-get
+    title: test-widget-to-tab-get-2-title
+    type: test-widget-to-tab-get-2-type
+    updated: 1611229670
+  widgets_7:
+    _id: test-widget-to-junit-edit-dir-param
+    author: test-author-to-junit-edit-dir-param
+    created: 1611229670
+    internal_parameters:
+      test_suites:
+      - test-suite-to-edit-widget-junit-dir-param-test-suite-id
+    parameters:
+      directory: test-widget-to-junit-edit-dir-param-param-dir
+    tab: test-tab-to-junit-edit-dir-param
+    title: test-widget-to-junit-edit-dir-param-title
+    type: Junit
+    updated: 1611229670
+  widgets_8:
+    _id: test-widget-to-view-delete
+    author: test-author-to-view-delete
+    created: 1611229670
+    tab: test-tab-to-view-delete
+    title: test-widget-to-view-delete-title
+    type: test-widget-to-view-delete-type
+    updated: 1611229670
+  widgets_9:
+    _id: test-widget-to-user-preferences-update-1
+    author: test-author-to-user-preferences-update
+    created: 1611229670
+    tab: test-tab-to-user-preferences-update-1
+    title: test-widget-to-user-preferences-update-1-title
+    type: test-widget-to-user-preferences-update-1-type
+    updated: 1611229670
+  widgets_10:
+    _id: test-widget-to-user-preferences-update-2
+    author: test-author-to-user-preferences-update
+    created: 1611229670
+    tab: test-tab-to-user-preferences-update-2
+    title: test-widget-to-user-preferences-update-2-title
+    type: test-widget-to-user-preferences-update-2-type
+    updated: 1611229670
+  widgets_11:
+    _id: test-widget-to-junit-test-suites-get-1
+    author: test-author-to-user-preferences-update
+    created: 1611229670
+    tab: test-tab-to-junit-test-suites-get
+    title: test-widget-to-junit-test-suites-get-1-title
+    type: Junit
+    updated: 1611229670
+  widgets_12:
+    _id: test-widget-to-junit-test-suites-get-2
+    author: test-author-to-user-preferences-update
+    created: 1611229670
+    internal_parameters:
+      test_suites:
+      - fdebd370-3178-4c9e-97aa-a26a79dca770
+      - 7e5d2a21-be12-47d1-a286-0b46b6b2b99b
+    tab: test-tab-to-junit-test-suites-get
+    title: test-widget-to-junit-test-suites-get-2-title
+    type: Junit
+    updated: 1611229670
+  widgets_13:
+    _id: test-widget-to-delete
+    author: test-author-to-widget-edit
+    created: 1611229670
+    tab: test-tab-to-widget-edit
+    title: test-widget-to-delete-title
+    type: test-widget-to-delete-type
+    updated: 1611229670
+  widgets_14:
+    _id: test-widget-to-get
+    author: test-author-to-widget-edit
+    created: 1611229670
+    grid_parameters:
+      desktop:
+        x: 0
+        "y": 0
+    parameters:
+      test-widget-to-get-parameter-1:
+        test-widget-to-get-parameter-1-subparameter: test-widget-to-get-parameter-1-subvalue
+      test-widget-to-get-parameter-2:
+      - test-widget-to-get-parameter-2-subparameter: test-widget-to-get-parameter-2-subvalue
+    tab: test-tab-to-widget-edit
+    title: test-widget-to-get-title
+    type: test-widget-to-get-type
+    updated: 1611229670
+  widgets_15:
+    _id: test-widget-to-update
+    author: test-author-to-widget-edit
+    created: 1611229670
+    tab: test-tab-to-widget-edit
+    title: test-widget-to-update-title
+    type: test-widget-to-update-type
+    updated: 1611229670
+  widgets_16:
+    _id: test-widget-to-check-access
+    author: test-author-to-widget-check-access
+    created: 1611229670
+    tab: test-tab-to-widget-check-access
+    title: test-widget-to-check-access-title
+    type: test-widget-to-check-access-type
+    updated: 1611229670
+  widgets_17:
+    _id: test-widget-to-update-grid-position-2
+    author: test-author-to-widget-update-grid-position
+    created: 1611229670
+    tab: test-tab-to-widget-update-grid-position-2
+    title: test-widget-to-update-grid-position-2-title
+    type: test-widget-to-update-grid-position-2-type
+    updated: 1611229670
+  widgets_18:
+    _id: test-widget-to-update-grid-position-3-1
+    author: test-author-to-widget-update-grid-position
+    created: 1611229670
+    tab: test-tab-to-widget-update-grid-position-3
+    title: test-widget-to-update-grid-position-3-1-title
+    type: test-widget-to-update-grid-position-3-1-type
+    updated: 1611229670
+  widgets_19:
+    _id: test-widget-to-update-grid-position-3-2
+    author: test-author-to-widget-update-grid-position
+    created: 1611229670
+    tab: test-tab-to-widget-update-grid-position-3
+    title: test-widget-to-update-grid-position-3-2-title
+    type: test-widget-to-update-grid-position-3-2-type
+    updated: 1611229670
+  widgets_20:
+    _id: test-widget-to-update-grid-position-4
+    author: test-author-to-widget-update-grid-position
+    created: 1611229670
+    tab: test-tab-to-widget-update-grid-position-4
+    title: test-widget-to-update-grid-position-4-title
+    type: test-widget-to-update-grid-position-4-type
+    updated: 1611229670
+  widgets_21:
+    _id: test-widget-to-export-1
+    author: test-author-to-view-export
+    created: 1611229670
+    grid_parameters:
+      desktop:
+        x: 0
+        "y": 0
+    parameters:
+      test-widget-to-view-export-1-parameter-1:
+        test-widget-to-view-export-1-parameter-1-subparameter: test-widget-to-view-export-1-parameter-1-subvalue
+      test-widget-to-view-export-1-parameter-2:
+      - test-widget-to-view-export-1-parameter-2-subparameter: test-widget-to-view-export-1-parameter-2-subvalue
+    tab: test-tab-to-export-1
+    title: test-widget-to-export-1-title
+    type: test-widget-to-export-1-type
+    updated: 1611229670
+  widgets_22:
+    _id: test-widget-to-user-preferences-get-1
+    author: test-author-to-user-preferences-get
+    created: 1611229670
+    tab: test-tab-to-user-preferences-get
+    title: test-widget-to-user-preferences-get-1-title
+    type: test-widget-to-user-preferences-get-1-type
+    updated: 1611229670
+  widgets_23:
+    _id: test-widget-to-user-preferences-get-2
+    author: test-author-to-user-preferences-get
+    created: 1611229670
+    tab: test-tab-to-user-preferences-get
+    title: test-widget-to-user-preferences-get-2-title
+    type: test-widget-to-user-preferences-get-2-type
+    updated: 1611229670
+  widgets_24:
+    _id: test-widget-to-view-copy-1
+    author: test-widget-to-view-copy-1-author
+    created: 1611229670
+    grid_parameters:
+      desktop:
+        x: 0
+        "y": 0
+    parameters:
+      test-widget-to-view-copy-1-parameter-1:
+        test-widget-to-view-copy-1-parameter-1-subparameter: test-widget-to-view-copy-1-parameter-1-subvalue
+      test-widget-to-view-copy-1-parameter-2:
+      - test-widget-to-view-copy-1-parameter-2-subparameter: test-widget-to-view-copy-1-parameter-2-subvalue
+    tab: test-tab-to-view-copy-1
+    title: test-widget-to-view-copy-1-title
+    type: test-widget-to-view-copy-1-type
+    updated: 1611229670
+  widgets_25:
+    _id: test-widget-to-tab-copy-1
+    author: test-widget-to-tab-copy-1-author
+    created: 1611229670
+    grid_parameters:
+      desktop:
+        x: 0
+        "y": 0
+    parameters:
+      test-widget-to-tab-copy-1-parameter-1:
+        test-widget-to-tab-copy-1-parameter-1-subparameter: test-widget-to-tab-copy-1-parameter-1-subvalue
+      test-widget-to-tab-copy-1-parameter-2:
+      - test-widget-to-tab-copy-1-parameter-2-subparameter: test-widget-to-tab-copy-1-parameter-2-subvalue
+    tab: test-tab-to-copy-1
+    title: test-widget-to-tab-copy-1-title
+    type: test-widget-to-tab-copy-1-type
+    updated: 1611229670
+  widgets_26:
+    _id: test-widget-to-copy-1
+    author: test-widget-to-copy-1-author
+    created: 1611229670
+    parameters: {}
+    tab: test-tab-to-widget-copy-1
+    title: test-widget-to-copy-1-title
+    type: test-widget-to-copy-1-type
+    updated: 1611229670
+  widgets_27:
+    _id: test-widget-to-copy-2
+    author: test-widget-to-copy-2-author
+    created: 1611229670
+    grid_parameters:
+      desktop:
+        x: 0
+        "y": 0
+    tab: test-tab-to-widget-copy-2
+    title: test-widget-to-copy-2-title
+    type: test-widget-to-copy-2-type
+    updated: 1611229670
+  widgets_28:
+    _id: test-widget-to-copy-3
+    author: test-widget-to-copy-3-author
+    created: 1611229670
+    grid_parameters:
+      desktop:
+        x: 0
+        "y": 0
+    tab: test-tab-to-widget-copy-3
+    title: test-widget-to-copy-3-title
+    type: test-widget-to-copy-3-type
+    updated: 1611229670

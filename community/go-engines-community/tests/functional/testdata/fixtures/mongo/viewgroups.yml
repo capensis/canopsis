@@ -49,44 +49,37 @@ viewgroups:
     title: test-viewgroup-to-delete-linked-to-view-title
     updated: 1611229670
   viewgroups_8:
-    _id: test-viewgroup-to-bulk-delete-1
-    author: test-viewgroup-to-bulk-delete-author-1
-    created: 1611229670
-    position: 7
-    title: test-viewgroup-to-bulk-delete-title-1
-    updated: 1611229670
-  viewgroups_9:
-    _id: test-viewgroup-to-bulk-delete-2
-    author: test-viewgroup-to-bulk-delete-author-2
-    created: 1611229670
-    position: 8
-    title: test-viewgroup-to-bulk-delete-title-2
-    updated: 1611229670
-  viewgroups_10:
-    _id: test-viewgroup-to-bulk-delete-3
-    author: test-viewgroup-to-bulk-delete-author-3
-    created: 1611229670
-    position: 9
-    title: test-viewgroup-to-bulk-delete-title-3
-    updated: 1611229670
-  viewgroups_11:
-    _id: test-viewgroup-to-bulk-update-1
-    author: test-viewgroup-to-bulk-update-author-1
-    created: 1611229670
-    position: 10
-    title: test-viewgroup-to-bulk-update-title-1
-    updated: 1611229670
-  viewgroups_12:
-    _id: test-viewgroup-to-bulk-update-2
-    author: test-viewgroup-to-bulk-update-author-2
-    created: 1611229670
-    position: 11
-    title: test-viewgroup-to-bulk-update-title-2
-    updated: 1611229670
-  viewgroups_13:
     _id: test-viewgroup-to-user-preferences-delete
     author: test-viewgroup-to-user-preferences-delete
     created: 1611229670
     position: 12
     title: test-viewgroup-to-user-preferences-delete
+    updated: 1611229670
+  viewgroups_9:
+    _id: test-viewgroup-to-export-1
+    author: test-author-to-export
+    created: 1611229670
+    position: 13
+    title: test-viewgroup-to-export-1-title
+    updated: 1611229670
+  viewgroups_10:
+    _id: test-viewgroup-to-export-2
+    author: test-author-to-view-export
+    created: 1611229670
+    position: 14
+    title: test-viewgroup-to-export-2-title
+    updated: 1611229670
+  viewgroups_11:
+    _id: test-viewgroup-to-import-2-1
+    author: test-author-to-view-import
+    created: 1611229670
+    position: 15
+    title: test-viewgroup-to-import-2-1-title
+    updated: 1611229670
+  viewgroups_12:
+    _id: test-viewgroup-to-view-copy
+    author: test-author-to-view-copy
+    created: 1611229670
+    position: 16
+    title: test-viewgroup-to-view-copy-title
     updated: 1611229670

@@ -340,32 +340,50 @@ default_rights:
       test-playlist-to-update:
         checksum: 2
         crecord_type: right
-      test-view-to-bulk-delete-1:
+      test-view-to-copy-1:
+        checksum: 4
+        crecord_type: right
+      test-view-to-copy-2:
+        checksum: 6
+        crecord_type: right
+      test-view-to-delete-1:
         checksum: 1
         crecord_type: right
-      test-view-to-bulk-delete-2:
+      test-view-to-delete-2:
         checksum: 1
         crecord_type: right
-      test-view-to-bulk-delete-3:
-        checksum: 1
+      test-view-to-export-1:
+        checksum: 4
         crecord_type: right
-      test-view-to-bulk-update-1:
-        checksum: 2
-        crecord_type: right
-      test-view-to-bulk-update-2:
-        checksum: 2
-        crecord_type: right
-      test-view-to-delete:
-        checksum: 1
-        crecord_type: right
-      test-view-to-edit-junit-dir-param:
-        checksum: 7
+      test-view-to-export-2:
+        checksum: 4
         crecord_type: right
       test-view-to-get-1:
         checksum: 4
         crecord_type: right
       test-view-to-get-2:
         checksum: 4
+        crecord_type: right
+      test-view-to-import-2-1:
+        checksum: 6
+        crecord_type: right
+      test-view-to-import-2-2:
+        checksum: 6
+        crecord_type: right
+      test-view-to-junit-edit-dir-param:
+        checksum: 7
+        crecord_type: right
+      test-view-to-playlist-edit:
+        checksum: 4
+        crecord_type: right
+      test-view-to-tab-copy-1:
+        checksum: 4
+        crecord_type: right
+      test-view-to-tab-copy-2:
+        checksum: 6
+        crecord_type: right
+      test-view-to-tab-edit:
+        checksum: 6
         crecord_type: right
       test-view-to-update:
         checksum: 2
@@ -378,6 +396,15 @@ default_rights:
         crecord_type: right
       test-view-to-viewgroup-get-3:
         checksum: 0
+        crecord_type: right
+      test-view-to-widget-copy-1:
+        checksum: 4
+        crecord_type: right
+      test-view-to-widget-copy-2:
+        checksum: 6
+        crecord_type: right
+      test-view-to-widget-edit:
+        checksum: 6
         crecord_type: right
   default_rights_43:
     _id: noperms
@@ -751,108 +778,90 @@ default_rights:
     desc: view test-view-to-get-2
     type: RW
   default_rights_81:
-    _id: test-view-to-delete
-    crecord_name: test-view-to-delete
+    _id: test-view-to-delete-1
+    crecord_name: test-view-to-delete-1
     crecord_type: action
-    desc: view test-view-to-delete
+    desc: view test-view-to-delete-1
     type: RW
   default_rights_82:
+    _id: test-view-to-delete-2
+    crecord_name: test-view-to-delete-2
+    crecord_type: action
+    desc: view test-view-to-delete-2
+    type: RW
+  default_rights_83:
     _id: test-view-to-update
     crecord_name: test-view-to-update
     crecord_type: action
     desc: view test-view-to-update
     type: RW
-  default_rights_83:
+  default_rights_84:
     _id: test-view-to-check-access
     crecord_name: test-view-to-check-access
     crecord_type: action
     desc: view test-view-to-check-access
     type: RW
-  default_rights_84:
-    _id: test-view-to-edit-junit-dir-param
-    crecord_name: test-view-to-edit-junit-dir-param
-    crecord_type: action
-    desc: test-view-to-edit-junit-dir-param-name
-    type: RW
   default_rights_85:
+    _id: test-view-to-junit-edit-dir-param
+    crecord_name: test-view-to-junit-edit-dir-param
+    crecord_type: action
+    desc: view test-view-to-junit-edit-dir-param
+    type: RW
+  default_rights_86:
     _id: test-view-to-viewgroup-get-1
     crecord_name: test-view-to-viewgroup-get-1
     crecord_type: action
     desc: test-view-to-viewgroup-get-1-name
     type: RW
-  default_rights_86:
+  default_rights_87:
     _id: test-view-to-viewgroup-get-2
     crecord_name: test-view-to-viewgroup-get-2
     crecord_type: action
     desc: test-view-to-viewgroup-get-2-name
     type: RW
-  default_rights_87:
+  default_rights_88:
     _id: test-view-to-viewgroup-get-3
     crecord_name: test-view-to-viewgroup-get-3
     crecord_type: action
     desc: test-view-to-viewgroup-get-3-name
     type: RW
-  default_rights_88:
-    _id: test-view-to-bulk-delete-1
-    crecord_name: test-view-to-bulk-delete-1
-    crecord_type: action
-    desc: view test-view-to-bulk-delete-1
-    type: RW
   default_rights_89:
-    _id: test-view-to-bulk-delete-2
-    crecord_name: test-view-to-bulk-delete-2
-    crecord_type: action
-    desc: view test-view-to-bulk-delete-2
-    type: RW
-  default_rights_90:
-    _id: test-view-to-bulk-delete-3
-    crecord_name: test-view-to-bulk-delete-3
-    crecord_type: action
-    desc: view test-view-to-bulk-delete-3
-    type: RW
-  default_rights_91:
-    _id: test-view-to-bulk-update-1
-    crecord_name: test-view-to-bulk-update-1
-    crecord_type: action
-    desc: view test-view-to-bulk-update-1
-    type: RW
-  default_rights_92:
-    _id: test-view-to-bulk-update-2
-    crecord_name: test-view-to-bulk-update-2
-    crecord_type: action
-    desc: view test-view-to-bulk-update-2
-    type: RW
-  default_rights_93:
     _id: test-playlist-to-check-access
     crecord_name: test-playlist-to-check-access
     crecord_type: action
     desc: playlist test-playlist-to-check-access
     type: RW
-  default_rights_94:
+  default_rights_90:
     _id: test-playlist-to-get-1
     crecord_name: test-playlist-to-get-1
     crecord_type: action
     desc: playlist test-playlist-to-get-1
     type: RW
-  default_rights_95:
+  default_rights_91:
     _id: test-playlist-to-get-2
     crecord_name: test-playlist-to-get-2
     crecord_type: action
     desc: playlist test-playlist-to-get-2
     type: RW
-  default_rights_96:
+  default_rights_92:
     _id: test-playlist-to-update
     crecord_name: test-playlist-to-update
     crecord_type: action
     desc: playlist test-playlist-to-update
     type: RW
-  default_rights_97:
+  default_rights_93:
     _id: test-playlist-to-delete
     crecord_name: test-playlist-to-delete
     crecord_type: action
     desc: playlist test-playlist-to-delete
     type: RW
-  default_rights_98:
+  default_rights_94:
+    _id: test-view-to-playlist-edit
+    crecord_name: test-view-to-playlist-edit
+    crecord_type: action
+    desc: view test-view-to-playlist-edit
+    type: RW
+  default_rights_95:
     _id: test-role-to-update-view-position
     crecord_name: test-role-to-update-view-position
     crecord_type: role
@@ -864,7 +873,7 @@ default_rights:
       api_viewgroup:
         checksum: 15
         crecord_type: right
-  default_rights_99:
+  default_rights_96:
     _id: test-user-to-update-view-position
     authkey: b1f67e3e-wwww-4140-a801-9a05cb683e2c
     crecord_name: test-user-to-update-view-position
@@ -872,7 +881,7 @@ default_rights:
     enable: true
     role: test-role-to-update-view-position
     shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_100:
+  default_rights_97:
     _id: test-user-author-1-id
     authkey: b31c48c7-3ccc-4ad3-bc1e-0e12bdd64caa
     crecord_name: test-user-author-1-username
@@ -880,7 +889,7 @@ default_rights:
     enable: true
     role: noperms
     shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_101:
+  default_rights_98:
     _id: test-user-alternate-author-1-id
     authkey: b31c48c7-3ccc-4ad3-bc1e-0e12bdd64caa
     crecord_name: test-user-alternate-author-1-username
@@ -888,7 +897,7 @@ default_rights:
     enable: true
     role: noperms
     shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_102:
+  default_rights_99:
     _id: test-role-to-rate-instruction
     crecord_name: test-role-to-rate-instruction
     crecord_type: role
@@ -902,7 +911,7 @@ default_rights:
       api_notification:
         checksum: 1
         crecord_type: right
-  default_rights_103:
+  default_rights_100:
     _id: test-user-to-rate-instruction
     authkey: 2be1d0ee-5e9e-8mdn-9d80-e857e50f4191
     crecord_name: test-user-to-rate-instruction
@@ -911,7 +920,7 @@ default_rights:
     mail: test-user-to-rate-instruction@canopsis.net
     role: test-role-to-rate-instruction
     shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_104:
+  default_rights_101:
     _id: test-role-to-stats-instruction-get
     crecord_name: test-role-to-stats-instruction-get
     crecord_type: role
@@ -925,7 +934,7 @@ default_rights:
       api_notification:
         checksum: 1
         crecord_type: right
-  default_rights_105:
+  default_rights_102:
     _id: test-user-to-stats-instruction-get
     authkey: 2be1d0ee-7fs6-8mdn-9d80-e857e50f4191
     crecord_name: test-user-to-stats-instruction-get
@@ -934,51 +943,207 @@ default_rights:
     mail: test-user-to-stats-instruction-get@canopsis.net
     role: test-role-to-stats-instruction-get
     shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_106:
-    _id: test-role-to-user-preferences-update
-    crecord_name: test-role-to-user-preferences-update
+  default_rights_103:
+    _id: test-role-to-user-preferences-edit
+    crecord_name: test-role-to-user-preferences-edit
     crecord_type: role
-    rights: {}
-  default_rights_107:
-    _id: test-user-to-user-preferences-update
+    rights:
+      api_view:
+        checksum: 15
+        crecord_type: right
+      test-view-to-user-preferences-get:
+        checksum: 4
+        crecord_type: right
+      test-view-to-user-preferences-update-1:
+        checksum: 4
+        crecord_type: right
+  default_rights_104:
+    _id: test-user-to-user-preferences-edit
     authkey: 2be1d0ee-7fs6-8mdn-9d80-e857e50f5202
-    crecord_name: test-user-to-user-preferences-update
+    crecord_name: test-user-to-user-preferences-edit
     crecord_type: user
     enable: true
-    mail: test-user-to-user-preferences-update@canopsis.net
-    role: test-role-to-user-preferences-update
+    mail: test-user-to-user-preferences-edit@canopsis.net
+    role: test-role-to-user-preferences-edit
     shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
+  default_rights_105:
+    _id: test-view-to-tab-edit
+    crecord_name: test-view-to-tab-edit
+    crecord_type: action
+    desc: view test-view-to-tab-edit
+    type: RW
+  default_rights_106:
+    _id: test-view-to-tab-check-access
+    crecord_name: test-view-to-tab-check-access
+    crecord_type: action
+    desc: view test-view-to-tab-check-access
+    type: RW
+  default_rights_107:
+    _id: test-view-to-widget-edit
+    crecord_name: test-view-to-widget-edit
+    crecord_type: action
+    desc: view test-view-to-widget-edit
+    type: RW
   default_rights_108:
-    _id: test-role-to-user-preferences-delete-1
-    crecord_name: test-role-to-user-preferences-delete-1
-    crecord_type: role
-    rights:
-      api_view:
-        checksum: 15
-        crecord_type: right
+    _id: test-view-to-widget-check-access
+    crecord_name: test-view-to-widget-check-access
+    crecord_type: action
+    desc: view test-view-to-widget-check-access
+    type: RW
   default_rights_109:
-    _id: test-user-to-user-preferences-delete-1
-    authkey: 2be1d0ee-7fs6-8mdn-9d80-e857e50f5203
-    crecord_name: test-user-to-user-preferences-delete-1
-    crecord_type: user
-    enable: true
-    mail: test-user-to-user-preferences-delete-1@canopsis.net
-    role: test-role-to-user-preferences-delete-1
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
+    _id: test-view-to-user-preferences-update-1
+    crecord_name: test-view-to-user-preferences-update-1
+    crecord_type: action
+    desc: view test-view-to-user-preferences-update-1
+    type: RW
   default_rights_110:
-    _id: test-role-to-user-preferences-delete-2
-    crecord_name: test-role-to-user-preferences-delete-2
+    _id: test-view-to-user-preferences-update-2
+    crecord_name: test-view-to-user-preferences-update-2
+    crecord_type: action
+    desc: view test-view-to-user-preferences-update-2
+    type: RW
+  default_rights_111:
+    _id: test-view-to-user-preferences-get
+    crecord_name: test-view-to-user-preferences-get
+    crecord_type: action
+    desc: view test-view-to-user-preferences-get
+    type: RW
+  default_rights_112:
+    _id: test-view-to-tab-update-position-1
+    crecord_name: test-view-to-tab-update-position-1
+    crecord_type: action
+    desc: view test-view-to-tab-update-position-1
+    type: RW
+  default_rights_113:
+    _id: test-view-to-tab-update-position-2
+    crecord_name: test-view-to-tab-update-position-2
+    crecord_type: action
+    desc: view test-view-to-tab-update-position-2
+    type: RW
+  default_rights_114:
+    _id: test-view-to-tab-update-position-3
+    crecord_name: test-view-to-tab-update-position-3
+    crecord_type: action
+    desc: view test-view-to-tab-update-position-3
+    type: RW
+  default_rights_115:
+    _id: test-role-to-tab-update-position
+    crecord_name: test-role-to-tab-update-position
     crecord_type: role
     rights:
       api_view:
-        checksum: 15
+        checksum: 6
         crecord_type: right
-  default_rights_111:
-    _id: test-user-to-user-preferences-delete-2
-    authkey: 2be1d0ee-7fs6-8mdn-9d80-e857e50f5204
-    crecord_name: test-user-to-user-preferences-delete-2
+      test-view-to-tab-update-position-1:
+        checksum: 6
+        crecord_type: right
+      test-view-to-tab-update-position-2:
+        checksum: 6
+        crecord_type: right
+      test-view-to-tab-update-position-3:
+        checksum: 6
+        crecord_type: right
+  default_rights_116:
+    _id: test-user-to-tab-update-position
+    authkey: 2be1d0ee-7fs6-0mdn-9d80-e857e50f5202
+    crecord_name: test-user-to-tab-update-position
     crecord_type: user
     enable: true
-    mail: test-user-to-user-preferences-delete-2@canopsis.net
-    role: test-role-to-user-preferences-delete-2
+    mail: test-user-to-tab-update-position@canopsis.net
+    role: test-role-to-tab-update-position
     shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
+  default_rights_117:
+    _id: test-view-to-widget-update-grid-position-1
+    crecord_name: test-view-to-widget-update-grid-position-1
+    crecord_type: action
+    desc: view test-view-to-widget-update-grid-position-1
+    type: RW
+  default_rights_118:
+    _id: test-view-to-widget-update-grid-position-2
+    crecord_name: test-view-to-widget-update-grid-position-2
+    crecord_type: action
+    desc: view test-view-to-widget-update-grid-position-2
+    type: RW
+  default_rights_119:
+    _id: test-role-to-widget-update-grid-position
+    crecord_name: test-role-to-widget-update-grid-position
+    crecord_type: role
+    rights:
+      api_view:
+        checksum: 6
+        crecord_type: right
+      test-view-to-widget-update-grid-position-1:
+        checksum: 6
+        crecord_type: right
+      test-view-to-widget-update-grid-position-2:
+        checksum: 6
+        crecord_type: right
+  default_rights_120:
+    _id: test-user-to-widget-update-grid-position
+    authkey: 2be1d0ee-0qs6-0mdn-9d80-e857e50f5202
+    crecord_name: test-user-to-widget-update-grid-position
+    crecord_type: user
+    enable: true
+    mail: test-user-to-widget-update-grid-position@canopsis.net
+    role: test-role-to-widget-update-grid-position
+    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
+  default_rights_121:
+    _id: test-view-to-export-1
+    crecord_name: test-view-to-export-1
+    crecord_type: action
+    desc: view test-view-to-export-1
+    type: RW
+  default_rights_122:
+    _id: test-view-to-export-2
+    crecord_name: test-view-to-export-2
+    crecord_type: action
+    desc: view test-view-to-export-2
+    type: RW
+  default_rights_123:
+    _id: test-view-to-import-2-1
+    crecord_name: test-view-to-import-2-1
+    crecord_type: action
+    desc: view test-view-to-import-2-1
+    type: RW
+  default_rights_124:
+    _id: test-view-to-import-2-2
+    crecord_name: test-view-to-import-2-2
+    crecord_type: action
+    desc: view test-view-to-import-2-2
+    type: RW
+  default_rights_125:
+    _id: test-view-to-copy-1
+    crecord_name: test-view-to-copy-1
+    crecord_type: action
+    desc: view test-view-to-copy-1
+    type: RW
+  default_rights_126:
+    _id: test-view-to-copy-2
+    crecord_name: test-view-to-copy-2
+    crecord_type: action
+    desc: view test-view-to-copy-2
+    type: RW
+  default_rights_127:
+    _id: test-view-to-tab-copy-1
+    crecord_name: test-view-to-tab-copy-1
+    crecord_type: action
+    desc: view test-view-to-tab-copy-1
+    type: RW
+  default_rights_128:
+    _id: test-view-to-tab-copy-2
+    crecord_name: test-view-to-tab-copy-2
+    crecord_type: action
+    desc: view test-view-to-tab-copy-2
+    type: RW
+  default_rights_129:
+    _id: test-view-to-widget-copy-1
+    crecord_name: test-view-to-widget-copy-1
+    crecord_type: action
+    desc: view test-view-to-widget-copy-1
+    type: RW
+  default_rights_130:
+    _id: test-view-to-widget-copy-2
+    crecord_name: test-view-to-widget-copy-2
+    crecord_type: action
+    desc: view test-view-to-widget-copy-2
+    type: RW
