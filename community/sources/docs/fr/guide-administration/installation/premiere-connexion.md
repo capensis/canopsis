@@ -27,3 +27,9 @@ Le bus AMQP RabbitMQ par défaut est : `amqp://cpsrabbit@canopsis:localhost:567
 En ligne de commande, la base de données MongoDB est accessible avec la commande `mongo -u cpsmongo -p canopsis canopsis`.
 
 Identifiants par défaut : `cpsmongo` / `canopsis`.
+
+### PostgreSQL
+
+La base de données PostgreSQL est accessible avec la commande `psql -U cpspostgres -W -d canopsis -h localhost`.
+
+Identifiants par défaut : `cpspostgres` / `canopsis`.

@@ -1,0 +1,138 @@
+meta_alarm_rules:
+  meta_alarm_rules_1:
+    _id: test-alarm-get-metaalarm-rule-1
+    auto_resolve: false
+    name: Test alarm get
+    patterns: null
+    type: complex
+  meta_alarm_rules_2:
+    _id: test-alarm-get-metaalarm-children-instructions-rule-1
+    auto_resolve: false
+    name: Test alarm get
+    patterns: null
+    type: complex
+  meta_alarm_rules_3:
+    _id: test-alarm-get-metaalarm-rule-2
+    auto_resolve: false
+    config:
+      time_interval:
+        unit: s
+        value: 10
+    name: Test alarm get
+    patterns: null
+    type: complex
+  meta_alarm_rules_4:
+    _id: test-alarmcounter-get-metaalarm-rule-1
+    auto_resolve: false
+    name: Test alarmcounter get
+    patterns: null
+    type: complex
+  meta_alarm_rules_5:
+    _id: test-alarm-get-metaalarm-rule-manual-1
+    auto_resolve: false
+    name: Test manual 1
+    patterns: null
+    type: manualgroup
+  meta_alarm_rules_6:
+    _id: test-metaalarm-to-get-1
+    author: test-metaalarm-to-get-1-author
+    auto_resolve: false
+    name: Test alarm get
+    patterns: null
+    type: complex
+  meta_alarm_rules_7:
+    _id: test-metaalarm-to-update-1
+    author: test-metaalarm-to-update-1-author
+    auto_resolve: false
+    name: test-metaalarm-to-update-1
+    patterns: null
+    type: complex
+  meta_alarm_rules_8:
+    _id: test-metaalarm-to-get-2
+    author: test-metaalarm-to-get-2-author
+    auto_resolve: false
+    config:
+      time_interval:
+        unit: s
+        value: 10
+    name: Test alarm get
+    patterns: null
+    type: complex
+  meta_alarm_rules_9:
+    _id: test-metaalarm-to-get-3
+    author: test-metaalarm-to-get-3-author
+    auto_resolve: false
+    name: Test alarm get
+    patterns: null
+    type: manualgroup
+  meta_alarm_rules_10:
+    _id: test-metaalarm-to-delete
+    auto_resolve: false
+    name: Test alarm get
+    patterns: null
+    type: complex
+  meta_alarm_rules_11:
+    _id: test-metaalarm-metrics-axe-4-1
+    author: test-author-metrics-axe-4-name
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-metrics-axe-4
+    created: 1637907655
+    name: test-metaalarm-metrics-axe-4-1-name
+    output_template: ""
+    type: attribute
+    updated: 1637907655
+  meta_alarm_rules_12:
+    _id: test-metaalarm-metrics-axe-4-2
+    author: test-author-metrics-axe-4-name
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-metrics-axe-4
+    created: 1637907655
+    name: test-metaalarm-metrics-axe-4-2-name
+    output_template: ""
+    type: attribute
+    updated: 1637907655
+  meta_alarm_rules_13:
+    _id: test-metaalarm-metrics-axe-5
+    author: test-author-metrics-axe-5-name
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-metrics-axe-5
+    created: 1637907655
+    name: test-metaalarm-metrics-axe-5-name
+    output_template: ""
+    type: attribute
+    updated: 1637907655
+  meta_alarm_rules_14:
+    _id: test-metaalarm-metrics-axe-10
+    author: test-author-metrics-axe-10-name
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-metrics-axe-10
+    created: 1637907655
+    name: test-metaalarm-metrics-axe-10-name
+    output_template: ""
+    type: attribute
+    updated: 1637907655
+  meta_alarm_rules_15:
+    _id: test-metaalarm-metrics-axe-11
+    author: test-author-metrics-axe-11-name
+    auto_resolve: false
+    config:
+      alarm_patterns:
+      - v:
+          component: test-component-metrics-axe-11
+    created: 1637907655
+    name: test-metaalarm-metrics-axe-11-name
+    output_template: ""
+    type: attribute
+    updated: 1637907655

@@ -61,7 +61,7 @@ export DOCKER_BUILDKIT:=1
 export BUILDKIT_PROGRESS:=plain
 
 # If set to 1, previous build caches will be ignored
-DOCKER_NO_CACHE = 
+DOCKER_NO_CACHE =
 DOCKER_TAG = $(VERSION)
 # Alpine version used in final containers (https://hub.docker.com/_/alpine?tab=tags)
 DOCKER_ALPINE_VERSION = 3.14.3
@@ -203,7 +203,6 @@ install: $(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPSIS_EDIT
 test: $(COMMUNITY_BUILD_OUTPUT_DIR)/cmd/ready $(COMMUNITY_BUILD_OUTPUT_DIR)/cmd/canopsis-reconfigure
 	@echo "==> Running tests"
 	"$(COMMUNITY_BUILD_OUTPUT_DIR)/cmd/ready" -retries 0 -timeout 2m
-	"$(COMMUNITY_BUILD_OUTPUT_DIR)/cmd/canopsis-reconfigure" -conf "$(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPSIS_EDITION).toml" -mongoConf "$(COMMUNITY_ROOT_DIR)/config/mongo"
 	# The options -p 1 -parallel 1 ensure that the tests are not run
 	# concurrently, which is necessary for tests that use MongoDB, or
 	# environment variables.
