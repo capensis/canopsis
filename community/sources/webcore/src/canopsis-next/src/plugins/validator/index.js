@@ -8,7 +8,7 @@ import { isUniqueValue } from './helpers/is-unique-value';
 import { debounce } from './helpers/debounce';
 import { isEvent } from './helpers/is-event';
 import { findField } from './helpers/find-field';
-import { isPickerValid } from '@/plugins/validator/helpers/is-picker-valid';
+import { isValidPicker } from './helpers/is-valid-picker';
 
 Validator.prototype.remove = (name) => {
   delete Rules[name];
@@ -34,7 +34,7 @@ export default {
     });
     Validator.extend('picker_format', {
       getMessage: () => i18n.t('errors.endDateLessOrEqualStartDate'),
-      validate: isPickerValid,
+      validate: isValidPicker,
     }, {
       paramNames: ['preparer'],
     });
