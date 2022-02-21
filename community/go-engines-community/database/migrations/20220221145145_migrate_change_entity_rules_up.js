@@ -13,7 +13,7 @@ db.eventfilter.find({
     doc.actions.forEach(function (action) {
         if (action.type === "set_field" || action.type === "set_field_from_template") {
             if (action.name === "Resource") {
-               config.resource = action.value
+                config.resource = action.value
             }
 
             if (action.name === "Component") {

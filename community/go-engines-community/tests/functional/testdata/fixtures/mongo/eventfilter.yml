@@ -1,19 +1,20 @@
 eventfilter:
   eventfilter_1:
     _id: test-eventfilter-to-get-1
-    actions:
-    - name: connector
-      type: set_field
-      value: kafka_connector
     author: root
+    config:
+      actions:
+      - name: connector
+        type: set_field
+        value: kafka_connector
+      on_failure: pass
+      on_success: pass
     created: 1608284568
     description: how it should have ended.
     enabled: true
     external_data:
       entity:
         type: entity
-    on_failure: pass
-    on_success: pass
     patterns:
     - resource: test-eventfilter-to-get-1-pattern
     priority: 0
@@ -53,57 +54,57 @@ eventfilter:
     type: break
     updated: 1608635535
   eventfilter_5:
-    _id: test-eventfilter-to-bulk-update-1
+    _id: test-eventfilter-bulk-update-1
     author: root
     created: 1608635535
     description: break filter
     enabled: true
     patterns:
-    - resource: test-eventfilter-to-bulk-update-1-pattern
+    - resource: test-eventfilter-bulk-update-1-pattern
     priority: 3
     type: break
     updated: 1608635535
   eventfilter_6:
-    _id: test-eventfilter-to-bulk-update-2
+    _id: test-eventfilter-bulk-update-2
     author: root
     created: 1608635535
     description: break filter
     enabled: true
     patterns:
-    - resource: test-eventfilter-to-bulk-update-2-pattern
+    - resource: test-eventfilter-bulk-update-2-pattern
     priority: 3
     type: break
     updated: 1608635535
   eventfilter_7:
-    _id: test-eventfilter-to-bulk-update-3
+    _id: test-eventfilter-bulk-update-3
     author: root
     created: 1608635535
     description: break filter
     enabled: true
     patterns:
-    - resource: test-eventfilter-to-bulk-update-3-pattern
+    - resource: test-eventfilter-bulk-update-3-pattern
     priority: 3
     type: break
     updated: 1608635535
   eventfilter_8:
-    _id: test-eventfilter-to-bulk-update-4
+    _id: test-eventfilter-bulk-update-4
     author: root
     created: 1608635535
     description: break filter
     enabled: true
     patterns:
-    - resource: test-eventfilter-to-bulk-update-4-pattern
+    - resource: test-eventfilter-bulk-update-4-pattern
     priority: 3
     type: break
     updated: 1608635535
   eventfilter_9:
-    _id: test-eventfilter-to-bulk-update-5
+    _id: test-eventfilter-bulk-update-5
     author: root
     created: 1608635535
     description: break filter
     enabled: true
     patterns:
-    - resource: test-eventfilter-to-bulk-update-5-pattern
+    - resource: test-eventfilter-bulk-update-5-pattern
     priority: 3
     type: break
     updated: 1608635535
@@ -150,4 +151,17 @@ eventfilter:
     - resource: test-eventfilter-check-id-pattern
     priority: 5
     type: break
+    updated: 1608635535
+  eventfilter_14:
+    _id: test-update-change-entity
+    author: root
+    config:
+      component: change_entity
+    created: 1608635535
+    description: update change_entity
+    enabled: true
+    patterns:
+    - resource: never be used change entity update test
+    priority: 5
+    type: change_entity
     updated: 1608635535
