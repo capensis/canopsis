@@ -106,24 +106,13 @@ export default {
   },
   created() {
     if (this.$validator && this.name) {
-      this.$validator.extend(this.ruleName, {
-        getMessage: () => this.$t('errors.endDateLessOrEqualStartDate'),
-        validate: (value) => {
-          try {
-            if (!isEmpty(value)) {
-              return Boolean(this.dateObjectPreparer(value));
-            }
-
-            return true;
-          } catch (err) {
-            return false;
-          }
-        },
-      });
-
       this.$validator.attach({
         name: this.name,
-        rules: this.ruleName,
+        rules: {
+          picker_format: {
+            preparer: this.dateObjectPreparer,
+          },
+        },
         getter: () => this.value,
         context: () => this,
         vm: this,
@@ -132,7 +121,6 @@ export default {
   },
   beforeDestroy() {
     if (this.$validator && this.name) {
-      this.$validator.remove(this.ruleName);
       this.$validator.detach(this.name);
     }
   },
