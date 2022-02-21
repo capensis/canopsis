@@ -1,12 +1,13 @@
 package pattern_test
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"testing"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 )
 
-func TestMatchString(t *testing.T) {
+func TestCondition_MatchString(t *testing.T) {
 	datasets := []struct {
 		testName       string
 		conf           pattern.Condition
@@ -124,7 +125,7 @@ func TestMatchString(t *testing.T) {
 	}
 }
 
-func TestMatchInt(t *testing.T) {
+func TestCondition_MatchInt(t *testing.T) {
 	datasets := []struct {
 		testName       string
 		conf           pattern.Condition
@@ -252,7 +253,7 @@ func TestMatchInt(t *testing.T) {
 	}
 }
 
-func TestMatchBool(t *testing.T) {
+func TestCondition_MatchBool(t *testing.T) {
 	datasets := []struct {
 		testName       string
 		conf           pattern.Condition
@@ -320,7 +321,7 @@ func TestMatchBool(t *testing.T) {
 	}
 }
 
-func TestMatchStringArray(t *testing.T) {
+func TestCondition_MatchStringArray(t *testing.T) {
 	datasets := []struct {
 		testName       string
 		conf           pattern.Condition
@@ -511,7 +512,7 @@ func TestMatchStringArray(t *testing.T) {
 	}
 }
 
-func TestMatchRef(t *testing.T) {
+func TestCondition_MatchRef(t *testing.T) {
 	datasets := []struct {
 		testName       string
 		conf           pattern.Condition
@@ -522,42 +523,42 @@ func TestMatchRef(t *testing.T) {
 		{
 			testName: "test is empty is matched",
 			conf: pattern.Condition{
-				Type:  pattern.ConditionIsEmpty,
+				Type:  pattern.ConditionExist,
 				Value: true,
 			},
 			value:          nil,
 			expectedErr:    false,
-			expectedResult: true,
+			expectedResult: false,
 		},
 		{
 			testName: "test is empty is not matched",
 			conf: pattern.Condition{
-				Type:  pattern.ConditionIsEmpty,
+				Type:  pattern.ConditionExist,
 				Value: true,
 			},
 			value:          &struct{}{},
 			expectedErr:    false,
-			expectedResult: false,
+			expectedResult: true,
 		},
 		{
 			testName: "test is not empty is matched",
 			conf: pattern.Condition{
-				Type:  pattern.ConditionIsEmpty,
+				Type:  pattern.ConditionExist,
 				Value: false,
 			},
 			value:          nil,
 			expectedErr:    false,
-			expectedResult: false,
+			expectedResult: true,
 		},
 		{
 			testName: "test is not empty is not matched",
 			conf: pattern.Condition{
-				Type:  pattern.ConditionIsEmpty,
+				Type:  pattern.ConditionExist,
 				Value: false,
 			},
 			value:          &struct{}{},
 			expectedErr:    false,
-			expectedResult: true,
+			expectedResult: false,
 		},
 		{
 			testName: "test cond value is not a bool",
@@ -599,7 +600,7 @@ func TestMatchRef(t *testing.T) {
 	}
 }
 
-func TestMatchTime(t *testing.T) {
+func TestCondition_MatchTime(t *testing.T) {
 	datasets := []struct {
 		testName       string
 		conf           pattern.Condition
@@ -745,7 +746,7 @@ func TestMatchTime(t *testing.T) {
 	}
 }
 
-func TestMatchDuration(t *testing.T) {
+func TestCondition_MatchDuration(t *testing.T) {
 	datasets := []struct {
 		testName       string
 		conf           pattern.Condition
