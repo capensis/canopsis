@@ -60,11 +60,19 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		redisSession,
 		logger,
 	)
+	runInfoPeriodicalWorker := engine.NewRunInfoPeriodicalWorker(
+		options.PeriodicalWaitTime,
+		engine.NewRunInfoManager(runInfoRedisSession),
+		engine.NewInstanceRunInfo(canopsis.ServiceEngineName, canopsis.ServiceQueueName, options.PublishToQueue),
+		amqpChannel,
+		logger,
+	)
 
 	engineService := engine.New(
 		func(ctx context.Context) error {
 			ctx, task := trace.NewTask(ctx, "service.Initialize")
 			defer task.End()
+			runInfoPeriodicalWorker.Work(ctx)
 
 			// Lock periodical, do not release lock to not allow another instance start periodical.
 			_, err := periodicalLockClient.Obtain(ctx, redis.ServiceIdleSincePeriodicalLockKey,
@@ -182,13 +190,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		},
 		logger,
 	))
-	engineService.AddPeriodicalWorker("run info", engine.NewRunInfoPeriodicalWorker(
-		options.PeriodicalWaitTime,
-		engine.NewRunInfoManager(runInfoRedisSession),
-		engine.NewInstanceRunInfo(canopsis.ServiceEngineName, canopsis.ServiceQueueName, options.PublishToQueue),
-		amqpChannel,
-		logger,
-	))
+	engineService.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	if options.AutoRecomputeAll {
 		engineService.AddPeriodicalWorker("recompute all", engine.NewLockedPeriodicalWorker(
 			periodicalLockClient,

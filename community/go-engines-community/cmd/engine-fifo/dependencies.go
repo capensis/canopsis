@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
@@ -14,7 +16,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 type Options struct {
@@ -71,8 +72,16 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 		logger,
 	)
 
+	runInfoPeriodicalWorker := libengine.NewRunInfoPeriodicalWorker(
+		canopsis.PeriodicalWaitTime,
+		libengine.NewRunInfoManager(runInfoRedisClient),
+		libengine.NewInstanceRunInfo(canopsis.FIFOEngineName, options.ConsumeFromQueue, options.PublishToQueue),
+		amqpChannel,
+		logger,
+	)
 	engine := libengine.New(
 		func(ctx context.Context) error {
+			runInfoPeriodicalWorker.Work(ctx)
 			scheduler.Start(ctx)
 
 			go statsListener.Listen(ctx, statsCh)
@@ -155,13 +164,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 		},
 		logger,
 	))
-	engine.AddPeriodicalWorker("run info", libengine.NewRunInfoPeriodicalWorker(
-		canopsis.PeriodicalWaitTime,
-		libengine.NewRunInfoManager(runInfoRedisClient),
-		libengine.NewInstanceRunInfo(canopsis.FIFOEngineName, options.ConsumeFromQueue, options.PublishToQueue),
-		amqpChannel,
-		logger,
-	))
+	engine.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	engine.AddPeriodicalWorker("outdated rates", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(engineLockRedisClient),
 		redis.FifoDeleteOutdatedRatesLockKey,

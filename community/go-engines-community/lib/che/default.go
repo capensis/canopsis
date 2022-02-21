@@ -69,8 +69,18 @@ func NewEngine(
 	)
 	enrichFields := libcontext.NewEnrichFields(options.EnrichInclude, options.EnrichExclude)
 
+	runInfoPeriodicalWorker := libengine.NewRunInfoPeriodicalWorker(
+		options.PeriodicalWaitTime,
+		libengine.NewRunInfoManager(runInfoRedisSession),
+		libengine.NewInstanceRunInfo(canopsis.CheEngineName, options.ConsumeFromQueue, options.PublishToQueue),
+		amqpChannel,
+		logger,
+	)
+
 	engine := libengine.New(
 		func(ctx context.Context) error {
+			runInfoPeriodicalWorker.Work(ctx)
+
 			err := eventFilterService.LoadDataSourceFactories(
 				enrichmentCenter,
 				enrichFields,
@@ -176,13 +186,7 @@ func NewEngine(
 		PeriodicalInterval: options.PeriodicalWaitTime,
 		Logger:             logger,
 	})
-	engine.AddPeriodicalWorker("run info", libengine.NewRunInfoPeriodicalWorker(
-		options.PeriodicalWaitTime,
-		libengine.NewRunInfoManager(runInfoRedisSession),
-		libengine.NewInstanceRunInfo(canopsis.CheEngineName, options.ConsumeFromQueue, options.PublishToQueue),
-		amqpChannel,
-		logger,
-	))
+	engine.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	engine.AddPeriodicalWorker("alarm config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),
