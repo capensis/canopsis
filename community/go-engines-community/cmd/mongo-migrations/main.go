@@ -50,7 +50,7 @@ func execCmd(ctx context.Context, logger zerolog.Logger) error {
 		flags := upFlags{}
 		err := flags.Parse(args)
 		handleFlagErr(err)
-		client, err := mongo.NewClient(ctx, 0, 0)
+		client, err := mongo.NewClient(ctx, 0, 0, logger)
 		if err != nil {
 			return err
 		}
@@ -59,7 +59,7 @@ func execCmd(ctx context.Context, logger zerolog.Logger) error {
 		flags := downFlags{}
 		err := flags.Parse(args)
 		handleFlagErr(err)
-		client, err := mongo.NewClient(ctx, 0, 0)
+		client, err := mongo.NewClient(ctx, 0, 0, logger)
 		if err != nil {
 			return err
 		}
@@ -68,7 +68,7 @@ func execCmd(ctx context.Context, logger zerolog.Logger) error {
 		flags := statusFlags{}
 		err := flags.Parse(args)
 		handleFlagErr(err)
-		client, err := mongo.NewClient(ctx, 0, 0)
+		client, err := mongo.NewClient(ctx, 0, 0, logger)
 		if err != nil {
 			return err
 		}
@@ -77,7 +77,7 @@ func execCmd(ctx context.Context, logger zerolog.Logger) error {
 		flags := skipFlags{}
 		err := flags.Parse(args)
 		handleFlagErr(err)
-		client, err := mongo.NewClient(ctx, 0, 0)
+		client, err := mongo.NewClient(ctx, 0, 0, logger)
 		if err != nil {
 			return err
 		}
