@@ -7,7 +7,7 @@ import { isEmpty } from 'lodash';
  * @param {Function} [preparer]
  * @return {boolean}
  */
-export const isPickerValid = (value, { preparer }) => {
+export const isValidPicker = (value, { preparer }) => {
   try {
     if (!isEmpty(value)) {
       return Boolean(preparer ? preparer(value) : value);
