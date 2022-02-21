@@ -1,3 +1,5 @@
+// Package pattern.
+// Deprecated: use git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern instead.
 package pattern
 
 import (
@@ -187,6 +189,7 @@ func (p *AlarmPattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte) err
 // AlarmPatterns.
 // The zero value of an AlarmPatternList (i.e. an AlarmPatternList that has
 // not been set) is considered valid, and matches all alarms.
+// Deprecated : community/go-engines-community/lib/canopsis/pattern/Alarm
 type AlarmPatternList struct {
 	Patterns []AlarmPattern `swaggerignore:"true"`
 
