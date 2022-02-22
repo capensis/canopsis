@@ -87,6 +87,63 @@ func (p Alarm) Match(alarm types.Alarm) (bool, error) {
 	return false, nil
 }
 
+func (p Alarm) Validate() bool {
+	emptyAlarm := types.Alarm{}
+
+	for _, group := range p {
+		if len(group) == 0 {
+			return false
+		}
+
+		for _, v := range group {
+			f := v.Field
+			cond := v.Condition
+			var err error
+
+			if infoName := getAlarmInfoName(f); infoName != "" {
+				switch v.FieldType {
+				case FieldTypeString:
+					_, _, err = cond.MatchString("")
+				case FieldTypeInt:
+					_, err = cond.MatchInt(0)
+				case FieldTypeBool:
+					_, err = cond.MatchBool(false)
+				case FieldTypeStringArray:
+					_, err = cond.MatchStringArray([]string{})
+				default:
+					_, err = cond.MatchRef(nil)
+				}
+
+				if err != nil {
+					return false
+				}
+
+				continue
+			}
+
+			if str, ok := getAlarmStringField(emptyAlarm, f); ok {
+				_, _, err = cond.MatchString(str)
+			} else if i, ok := getAlarmIntField(emptyAlarm, f); ok {
+				_, err = cond.MatchInt(i)
+			} else if b, ok := getAlarmBoolField(emptyAlarm, f); ok {
+				_, err = cond.MatchBool(b)
+			} else if t, ok := getAlarmTimeField(emptyAlarm, f); ok {
+				_, err = cond.MatchTime(t)
+			} else if d, ok := getAlarmDurationField(emptyAlarm, f); ok {
+				_, err = cond.MatchDuration(d)
+			} else {
+				err = ErrUnsupportedField
+			}
+
+			if err != nil {
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
 func (p Alarm) ToMongoQuery(prefix string) ([]bson.M, error) {
 	pipeline := make([]bson.M, 0)
 	if len(p) == 0 {
@@ -187,8 +244,14 @@ func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {
 func getAlarmIntField(alarm types.Alarm, f string) (int, bool) {
 	switch f {
 	case "v.state.val":
+		if alarm.Value.State == nil {
+			return 0, true
+		}
 		return int(alarm.Value.State.Value), true
 	case "v.status.val":
+		if alarm.Value.Status == nil {
+			return 0, true
+		}
 		return int(alarm.Value.Status.Value), true
 	default:
 		return 0, false
