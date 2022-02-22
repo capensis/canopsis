@@ -4702,6 +4702,291 @@
                 }
             }
         },
+        "/patterns": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get paginated list of saved patterns",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "saved-patterns"
+                ],
+                "summary": "Find all saved patterns",
+                "operationId": "saved-patterns-find-all",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "paginate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "shared",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "withFlags",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.PaginatedListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/pattern.Response"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Create saved pattern",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "saved-patterns"
+                ],
+                "summary": "Create saved pattern",
+                "operationId": "saved-patterns-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pattern.EditRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/pattern.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/patterns/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get saved pattern by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "saved-patterns"
+                ],
+                "summary": "Get saved pattern by id",
+                "operationId": "saved-patterns-get-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "pattern id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pattern.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update saved pattern by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "saved-patterns"
+                ],
+                "summary": "Update saved pattern by id",
+                "operationId": "saved-patterns-update-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "pattern id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pattern.EditRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pattern.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth`": []
+                    }
+                ],
+                "description": "Delete saved pattern by id",
+                "tags": [
+                    "saved-patterns"
+                ],
+                "summary": "Delete saved pattern by id",
+                "operationId": "saved-patterns-delete-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "pattern id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {},
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/pbehavior-comments": {
             "post": {
                 "security": [
@@ -12497,14 +12782,170 @@
                 }
             }
         },
+        "pattern.Alarm": {
+            "type": "array",
+            "items": {
+                "type": "array",
+                "items": {
+                    "$ref": "#/definitions/pattern.FieldCondition"
+                }
+            }
+        },
         "pattern.AlarmPatternList": {
             "type": "object"
+        },
+        "pattern.Condition": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "object"
+                }
+            }
+        },
+        "pattern.EditRequest": {
+            "type": "object",
+            "required": [
+                "is_shared",
+                "title",
+                "type"
+            ],
+            "properties": {
+                "alarm_pattern": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.Alarm"
+                },
+                "entity_pattern": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.Entity"
+                },
+                "is_shared": {
+                    "type": "boolean"
+                },
+                "pbehavior_pattern": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.Pbehavior"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "pattern.Entity": {
+            "type": "array",
+            "items": {
+                "type": "array",
+                "items": {
+                    "$ref": "#/definitions/pattern.FieldCondition"
+                }
+            }
         },
         "pattern.EntityPatternList": {
             "type": "object"
         },
         "pattern.EventPatternList": {
             "type": "object"
+        },
+        "pattern.FieldCondition": {
+            "type": "object",
+            "properties": {
+                "cond": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.Condition"
+                },
+                "field": {
+                    "type": "string"
+                },
+                "field_type": {
+                    "description": "FieldType is only defined for custom fields, ex: infos.",
+                    "type": "string"
+                }
+            }
+        },
+        "pattern.ListRequest": {
+            "type": "object",
+            "properties": {
+                "filter": {
+                    "type": "string"
+                },
+                "limit": {
+                    "type": "integer"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "paginate": {
+                    "type": "boolean"
+                },
+                "search": {
+                    "type": "string"
+                },
+                "shared": {
+                    "type": "boolean"
+                },
+                "sort": {
+                    "type": "string"
+                },
+                "sort_by": {
+                    "type": "string"
+                },
+                "withFlags": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "pattern.Pbehavior": {
+            "type": "array",
+            "items": {
+                "type": "array",
+                "items": {
+                    "$ref": "#/definitions/pattern.FieldCondition"
+                }
+            }
+        },
+        "pattern.Response": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "alarm_pattern": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.Alarm"
+                },
+                "author": {
+                    "type": "object",
+                    "$ref": "#/definitions/common.User"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "entity_pattern": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.Entity"
+                },
+                "is_shared": {
+                    "type": "boolean"
+                },
+                "pbehavior_pattern": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.Pbehavior"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
         },
         "pbehavior.BulkCreateResponseItem": {
             "type": "object",

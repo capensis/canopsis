@@ -8,6 +8,8 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
@@ -78,35 +80,6 @@ func ValidateOneOfOrEmpty(fl validator.FieldLevel) bool {
 	return false
 }
 
-func ValidateAlarmPatterns(sl validator.FieldLevel) bool {
-	inf := sl.Field().Interface()
-	if inf == nil {
-		return true
-	}
-	patterns, ok := inf.([]interface{})
-
-	if !ok {
-		return false
-	}
-
-	for _, p := range patterns {
-		pattern, ok := p.(map[string]interface{})
-		if !ok {
-			return false
-		}
-		if value, ok := pattern["v"]; ok {
-			if pv, ok := value.(map[string]interface{}); ok {
-				if len(pv) == 0 {
-					return false
-				}
-			} else {
-				return false
-			}
-		}
-	}
-	return true
-}
-
 func ValidateID(fl validator.FieldLevel) bool {
 	v := fl.Field().String()
 	if v == "" {
@@ -120,6 +93,90 @@ func ValidateTimeFormat(fl validator.FieldLevel) bool {
 	v := fl.Field().String()
 
 	return v == "" || timeFormats[v] != ""
+}
+
+func ValidateAlarmPattern(fl validator.FieldLevel) bool {
+	i := fl.Field().Interface()
+	if i == nil {
+		return true
+	}
+	p, ok := i.(pattern.Alarm)
+	if !ok {
+		return false
+	}
+
+	if len(p) == 0 {
+		return true
+	}
+
+	for _, group := range p {
+		if len(group) == 0 {
+			return false
+		}
+	}
+
+	_, err := p.Match(types.Alarm{})
+	if err != nil {
+		return false
+	}
+
+	return true
+}
+
+func ValidateEntityPattern(fl validator.FieldLevel) bool {
+	i := fl.Field().Interface()
+	if i == nil {
+		return true
+	}
+	p, ok := i.(pattern.Entity)
+	if !ok {
+		return false
+	}
+
+	if len(p) == 0 {
+		return true
+	}
+
+	for _, group := range p {
+		if len(group) == 0 {
+			return false
+		}
+	}
+
+	_, err := p.Match(types.Entity{})
+	if err != nil {
+		return false
+	}
+
+	return true
+}
+
+func ValidatePbehaviorPattern(fl validator.FieldLevel) bool {
+	i := fl.Field().Interface()
+	if i == nil {
+		return true
+	}
+	p, ok := i.(pattern.Pbehavior)
+	if !ok {
+		return false
+	}
+
+	if len(p) == 0 {
+		return true
+	}
+
+	for _, group := range p {
+		if len(group) == 0 {
+			return false
+		}
+	}
+
+	_, err := p.Match(pbehavior.PBehavior{})
+	if err != nil {
+		return false
+	}
+
+	return true
 }
 
 func GetRealFormatTime(f string) string {

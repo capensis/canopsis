@@ -15,6 +15,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorexception"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorreason"
@@ -57,15 +58,23 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	if err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("alarmpatterns", common.ValidateAlarmPatterns)
-	if err != nil {
-		panic(err)
-	}
 	err = v.RegisterValidation("id", common.ValidateID)
 	if err != nil {
 		panic(err)
 	}
 	err = v.RegisterValidation("time_format", common.ValidateTimeFormat)
+	if err != nil {
+		panic(err)
+	}
+	err = v.RegisterValidation("alarm_pattern", common.ValidateAlarmPattern)
+	if err != nil {
+		panic(err)
+	}
+	err = v.RegisterValidation("entity_pattern", common.ValidateEntityPattern)
+	if err != nil {
+		panic(err)
+	}
+	err = v.RegisterValidation("pbehavior_pattern", common.ValidatePbehaviorPattern)
 	if err != nil {
 		panic(err)
 	}
@@ -255,4 +264,6 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	}, flappingrule.CreateRequest{})
 	v.RegisterStructValidationCtx(flappingRuleNameUniqueValidator.Validate, flappingrule.UpdateRequest{})
 	v.RegisterStructValidation(flappingrule.ValidateEditRequest, flappingrule.EditRequest{})
+
+	v.RegisterStructValidation(pattern.ValidateEditRequest, pattern.EditRequest{})
 }
