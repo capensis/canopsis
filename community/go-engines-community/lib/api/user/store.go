@@ -31,6 +31,7 @@ func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder) Store {
 	return &store{
 		collection:            dbClient.Collection(mongo.RightsMongoCollection),
 		userPrefCollection:    dbClient.Collection(mongo.UserPreferencesMongoCollection),
+		patternCollection:     dbClient.Collection(mongo.PatternMongoCollection),
 		passwordEncoder:       passwordEncoder,
 		defaultSearchByFields: []string{"_id", "crecord_name", "firstname", "lastname"},
 		defaultSortBy:         "name",
@@ -40,6 +41,7 @@ func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder) Store {
 type store struct {
 	collection            mongo.DbCollection
 	userPrefCollection    mongo.DbCollection
+	patternCollection     mongo.DbCollection
 	passwordEncoder       password.Encoder
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -164,12 +166,26 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		return false, err
 	}
 
+	err = s.deletePatterns(ctx, id)
+	if err != nil {
+		return false, err
+	}
+
 	return true, nil
 }
 
 func (s *store) deleteUserPreferences(ctx context.Context, id string) error {
 	_, err := s.userPrefCollection.DeleteMany(ctx, bson.M{
 		"user": id,
+	})
+
+	return err
+}
+
+func (s *store) deletePatterns(ctx context.Context, id string) error {
+	_, err := s.patternCollection.DeleteMany(ctx, bson.M{
+		"author":    id,
+		"is_shared": false,
 	})
 
 	return err
