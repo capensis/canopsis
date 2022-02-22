@@ -39,7 +39,7 @@ export default {
     alarmStates() {
       return Object.values(ENTITIES_STATUSES).map(value => ({
         value,
-        text: this.$t(`alarm.statuses.${value}`),
+        text: this.$t(`alarms.statuses.${value}`),
       }));
     },
   },

@@ -27,7 +27,7 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with custom props
           <div
             class="v-select__selection v-select__selection--comma v-select__selection--disabled"
           >
-            alarm.statuses.3
+            alarms.statuses.3
           </div>
           <input
             aria-label="Custom label"
@@ -86,7 +86,7 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with custom props
             <div
               class="v-list__tile__title"
             >
-              alarm.statuses.0
+              alarms.statuses.0
             </div>
           </div>
         </a>
@@ -103,7 +103,7 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with custom props
             <div
               class="v-list__tile__title"
             >
-              alarm.statuses.1
+              alarms.statuses.1
             </div>
           </div>
         </a>
@@ -120,7 +120,7 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with custom props
             <div
               class="v-list__tile__title"
             >
-              alarm.statuses.2
+              alarms.statuses.2
             </div>
           </div>
         </a>
@@ -138,7 +138,7 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with custom props
             <div
               class="v-list__tile__title"
             >
-              alarm.statuses.3
+              alarms.statuses.3
             </div>
           </div>
         </a>
@@ -155,7 +155,7 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with custom props
             <div
               class="v-list__tile__title"
             >
-              alarm.statuses.4
+              alarms.statuses.4
             </div>
           </div>
         </a>
@@ -172,7 +172,7 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with custom props
             <div
               class="v-list__tile__title"
             >
-              alarm.statuses.5
+              alarms.statuses.5
             </div>
           </div>
         </a>
@@ -209,7 +209,7 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with default prop
           <div
             class="v-select__selection v-select__selection--comma"
           >
-            alarm.statuses.2
+            alarms.statuses.2
           </div>
           <input
             aria-label="common.status"
@@ -267,7 +267,7 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with default prop
             <div
               class="v-list__tile__title"
             >
-              alarm.statuses.0
+              alarms.statuses.0
             </div>
           </div>
         </a>
@@ -284,7 +284,7 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with default prop
             <div
               class="v-list__tile__title"
             >
-              alarm.statuses.1
+              alarms.statuses.1
             </div>
           </div>
         </a>
@@ -302,7 +302,7 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with default prop
             <div
               class="v-list__tile__title"
             >
-              alarm.statuses.2
+              alarms.statuses.2
             </div>
           </div>
         </a>
@@ -319,7 +319,7 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with default prop
             <div
               class="v-list__tile__title"
             >
-              alarm.statuses.3
+              alarms.statuses.3
             </div>
           </div>
         </a>
@@ -336,7 +336,7 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with default prop
             <div
               class="v-list__tile__title"
             >
-              alarm.statuses.4
+              alarms.statuses.4
             </div>
           </div>
         </a>
@@ -353,7 +353,7 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with default prop
             <div
               class="v-list__tile__title"
             >
-              alarm.statuses.5
+              alarms.statuses.5
             </div>
           </div>
         </a>
