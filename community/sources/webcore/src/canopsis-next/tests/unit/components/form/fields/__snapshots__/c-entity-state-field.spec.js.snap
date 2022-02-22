@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with custom props 1`] = `
+exports[`c-entity-state-field Renders \`c-entity-state-field\` with default custom props 1`] = `
 <div
   class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
   role="combobox"
@@ -27,14 +27,14 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with custom props
           <div
             class="v-select__selection v-select__selection--comma v-select__selection--disabled"
           >
-            alarms.statuses.3
+            common.states.2
           </div>
           <input
             aria-label="Custom label"
             aria-readonly="false"
             autocomplete="on"
             disabled="disabled"
-            name="customAlarmStatusName"
+            name="name"
             readonly="readonly"
             type="text"
           />
@@ -62,7 +62,7 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with custom props
 </div>
 `;
 
-exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with custom props 2`] = `
+exports[`c-entity-state-field Renders \`c-entity-state-field\` with default custom props 2`] = `
 <div
   class="v-menu__content theme--light "
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
@@ -86,7 +86,7 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with custom props
             <div
               class="v-list__tile__title"
             >
-              alarms.statuses.0
+              common.states.0
             </div>
           </div>
         </a>
@@ -103,24 +103,7 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with custom props
             <div
               class="v-list__tile__title"
             >
-              alarms.statuses.1
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              alarms.statuses.2
+              common.states.1
             </div>
           </div>
         </a>
@@ -138,7 +121,7 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with custom props
             <div
               class="v-list__tile__title"
             >
-              alarms.statuses.3
+              common.states.2
             </div>
           </div>
         </a>
@@ -155,24 +138,7 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with custom props
             <div
               class="v-list__tile__title"
             >
-              alarms.statuses.4
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              alarms.statuses.5
+              common.states.3
             </div>
           </div>
         </a>
@@ -182,9 +148,9 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with custom props
 </div>
 `;
 
-exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with default props 1`] = `
+exports[`c-entity-state-field Renders \`c-entity-state-field\` with default props 1`] = `
 <div
-  class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+  class="v-input v-text-field v-select v-input--hide-details theme--light"
   role="combobox"
 >
   <div
@@ -198,24 +164,19 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with default prop
       >
         <label
           aria-hidden="true"
-          class="v-label v-label--active theme--light"
+          class="v-label theme--light"
           style="left: 0px; position: absolute;"
         >
-          common.status
+          common.states
         </label>
         <div
           class="v-select__selections"
         >
-          <div
-            class="v-select__selection v-select__selection--comma"
-          >
-            alarms.statuses.2
-          </div>
           <input
-            aria-label="common.status"
+            aria-label="common.states"
             aria-readonly="false"
             autocomplete="on"
-            name="status"
+            name="state"
             readonly="readonly"
             type="text"
           />
@@ -243,7 +204,7 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with default prop
 </div>
 `;
 
-exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with default props 2`] = `
+exports[`c-entity-state-field Renders \`c-entity-state-field\` with default props 2`] = `
 <div
   class="v-menu__content theme--light "
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
@@ -267,7 +228,7 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with default prop
             <div
               class="v-list__tile__title"
             >
-              alarms.statuses.0
+              common.states.0
             </div>
           </div>
         </a>
@@ -284,25 +245,7 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with default prop
             <div
               class="v-list__tile__title"
             >
-              alarms.statuses.1
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        class="primary--text"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              alarms.statuses.2
+              common.states.1
             </div>
           </div>
         </a>
@@ -319,7 +262,7 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with default prop
             <div
               class="v-list__tile__title"
             >
-              alarms.statuses.3
+              common.states.2
             </div>
           </div>
         </a>
@@ -336,28 +279,67 @@ exports[`c-alarm-status-field Renders \`c-alarm-status-field\` with default prop
             <div
               class="v-list__tile__title"
             >
-              alarms.statuses.4
+              common.states.3
             </div>
           </div>
         </a>
       </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-entity-state-field Renders \`c-entity-state-field\` with validator error 1`] = `
+<div
+  class="v-input v-text-field v-select v-input--has-state v-input--hide-details theme--light error--text"
+  role="combobox"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
       <div
-        role="listitem"
+        class="v-select__slot"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <label
+          aria-hidden="true"
+          class="v-label theme--light error--text"
+          style="left: 0px; position: absolute;"
+        >
+          common.states
+        </label>
+        <div
+          class="v-select__selections"
+        >
+          <input
+            aria-label="common.states"
+            aria-readonly="false"
+            autocomplete="on"
+            name="state"
+            readonly="readonly"
+            type="text"
+          />
+        </div>
+        <div
+          class="v-input__append-inner"
         >
           <div
-            class="v-list__tile__content"
+            class="v-input__icon v-input__icon--append"
           >
-            <div
-              class="v-list__tile__title"
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light error--text"
             >
-              alarms.statuses.5
-            </div>
+              arrow_drop_down
+            </i>
           </div>
-        </a>
+        </div>
       </div>
+      <div
+        class="v-menu"
+      />
     </div>
   </div>
 </div>

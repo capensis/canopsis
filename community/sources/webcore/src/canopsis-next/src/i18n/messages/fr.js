@@ -277,6 +277,14 @@ export default {
       [ENTITIES_STATES.major]: 'Majeur',
       [ENTITIES_STATES.critical]: 'Critique',
     },
+    statusTypes: {
+      [ENTITIES_STATUSES.closed]: 'Fermée',
+      [ENTITIES_STATUSES.ongoing]: 'En cours',
+      [ENTITIES_STATUSES.flapping]: 'Bagot',
+      [ENTITIES_STATUSES.stealthy]: 'Furtive',
+      [ENTITIES_STATUSES.cancelled]: 'Annulée',
+      [ENTITIES_STATUSES.noEvents]: 'Pas d\'événements',
+    },
   },
   variableTypes: {
     string: 'Chaîne de caractères',
@@ -1572,12 +1580,6 @@ export default {
       status: 'Statut',
       extraDetails: 'Détails supplémentaires',
     },
-    alarmStates: {
-      [ENTITIES_STATES.ok]: 'Info',
-      [ENTITIES_STATES.minor]: 'Mineur',
-      [ENTITIES_STATES.major]: 'Majeur',
-      [ENTITIES_STATES.critical]: 'Critique',
-    },
     contextEntities: {
       columns: {
         name: 'Nom',
@@ -2663,17 +2665,6 @@ export default {
     formatter: 'Format (groupe de capture avec \\x)',
     uploadMib: 'Envoyer un fichier MIB',
     addSnmpRule: 'Ajouter une règle SNMP',
-  },
-
-  alarms: {
-    statuses: {
-      [ENTITIES_STATUSES.closed]: 'Fermée',
-      [ENTITIES_STATUSES.ongoing]: 'En cours',
-      [ENTITIES_STATUSES.flapping]: 'Bagot',
-      [ENTITIES_STATUSES.stealthy]: 'Furtive',
-      [ENTITIES_STATUSES.cancelled]: 'Annulée',
-      [ENTITIES_STATUSES.noEvents]: 'Pas d\'événements',
-    },
   },
 
   ...featureService.get('i18n.fr'),
