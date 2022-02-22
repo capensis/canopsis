@@ -85,6 +85,61 @@ func (p Entity) Match(entity types.Entity) (bool, error) {
 	return false, nil
 }
 
+func (p Entity) Validate() bool {
+	emptyEntity := types.Entity{}
+
+	for _, group := range p {
+		if len(group) == 0 {
+			return false
+		}
+
+		for _, v := range group {
+			f := v.Field
+			cond := v.Condition
+			var err error
+
+			if infoName := getEntityInfoName(f); infoName != "" {
+				switch v.FieldType {
+				case FieldTypeString:
+					_, _, err = cond.MatchString("")
+				case FieldTypeInt:
+					_, err = cond.MatchInt(0)
+				case FieldTypeBool:
+					_, err = cond.MatchBool(false)
+				case FieldTypeStringArray:
+					_, err = cond.MatchStringArray([]string{})
+				default:
+					_, err = cond.MatchRef(nil)
+				}
+
+				if err != nil {
+					return false
+				}
+
+				continue
+			}
+
+			if str, ok := getEntityStringField(emptyEntity, f); ok {
+				_, _, err = cond.MatchString(str)
+			} else if i, ok := getEntityIntField(emptyEntity, f); ok {
+				_, err = cond.MatchInt(i)
+			} else if t, ok := getEntityTimeField(emptyEntity, f); ok {
+				_, err = cond.MatchTime(t)
+			} else if a, ok := getEntityStringArrayField(emptyEntity, f); ok {
+				_, err = cond.MatchStringArray(a)
+			} else {
+				err = ErrUnsupportedField
+			}
+
+			if err != nil {
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
 func (p Entity) ToMongoQuery(prefix string) ([]bson.M, error) {
 	pipeline := make([]bson.M, 0)
 	if len(p) == 0 {

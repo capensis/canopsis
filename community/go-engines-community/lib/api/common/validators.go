@@ -9,7 +9,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
@@ -105,22 +104,7 @@ func ValidateAlarmPattern(fl validator.FieldLevel) bool {
 		return false
 	}
 
-	if len(p) == 0 {
-		return true
-	}
-
-	for _, group := range p {
-		if len(group) == 0 {
-			return false
-		}
-	}
-
-	_, err := p.Match(types.Alarm{})
-	if err != nil {
-		return false
-	}
-
-	return true
+	return p.Validate()
 }
 
 func ValidateEntityPattern(fl validator.FieldLevel) bool {
@@ -133,22 +117,7 @@ func ValidateEntityPattern(fl validator.FieldLevel) bool {
 		return false
 	}
 
-	if len(p) == 0 {
-		return true
-	}
-
-	for _, group := range p {
-		if len(group) == 0 {
-			return false
-		}
-	}
-
-	_, err := p.Match(types.Entity{})
-	if err != nil {
-		return false
-	}
-
-	return true
+	return p.Validate()
 }
 
 func ValidatePbehaviorPattern(fl validator.FieldLevel) bool {
@@ -161,22 +130,7 @@ func ValidatePbehaviorPattern(fl validator.FieldLevel) bool {
 		return false
 	}
 
-	if len(p) == 0 {
-		return true
-	}
-
-	for _, group := range p {
-		if len(group) == 0 {
-			return false
-		}
-	}
-
-	_, err := p.Match(pbehavior.PBehavior{})
-	if err != nil {
-		return false
-	}
-
-	return true
+	return p.Validate()
 }
 
 func GetRealFormatTime(f string) string {
@@ -265,58 +219,6 @@ func (v *uniqueFieldValidator) Validate(ctx context.Context, sl validator.Struct
 		}
 	} else if err != mongodriver.ErrNoDocuments {
 		panic(err)
-	}
-}
-
-func NewUniqueBulkFieldValidator(field string) FieldValidator {
-	return &uniqueBulkFieldValidator{
-		field: field,
-	}
-}
-
-type uniqueBulkFieldValidator struct {
-	field string
-}
-
-func (v *uniqueBulkFieldValidator) Validate(_ context.Context, sl validator.StructLevel) {
-	vals := make(map[interface{}][]int)
-
-	var arr *reflect.Value
-	fieldName := ""
-	for i := 0; i < sl.Current().NumField(); i++ {
-		field := sl.Current().Field(i)
-		fieldName = sl.Current().Type().Field(i).Name
-		k := field.Kind()
-		if k == reflect.Array || k == reflect.Slice {
-			arr = &field
-		}
-	}
-
-	if arr == nil || sl.Current().NumField() > 1 {
-		panic("request is not array")
-	}
-
-	for i := 0; i < arr.Len(); i++ {
-		item := arr.Index(i)
-		field := item.FieldByName(v.field)
-		if !field.IsValid() {
-			panic(fmt.Sprintf("request does not have field %s", v.field))
-		}
-		if field.IsZero() {
-			continue
-		}
-		val := field.Interface()
-
-		vals[val] = append(vals[val], i)
-	}
-
-	for val, indexes := range vals {
-		if len(indexes) > 1 {
-			for i := 1; i < len(indexes); i++ {
-				path := fmt.Sprintf("%s[%d].%s", fieldName, i, v.field)
-				sl.ReportError(val, path, v.field, "unique", "")
-			}
-		}
 	}
 }
 

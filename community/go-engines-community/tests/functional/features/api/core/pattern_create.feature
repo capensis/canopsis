@@ -540,3 +540,69 @@ Feature: Create a saved pattern
       }
     }
     """
+    When I do POST /api/v4/patterns:
+    """json
+    {
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-create-6-pattern"
+            }
+          },
+          {
+            "field": "v.connector",
+            "cond": {
+              "type": "eq",
+              "value": 2
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/patterns:
+    """json
+    {
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-create-6-pattern"
+            }
+          }
+        ],
+        [
+          {
+            "field": "v.connector",
+            "cond": {
+              "type": "eq",
+              "value": 2
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern is invalid alarm pattern."
+      }
+    }
+    """
