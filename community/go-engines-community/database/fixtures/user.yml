@@ -27,62 +27,6 @@ views:
     group_id: "@view_group_alarms"
     tags:
       - alarmes
-    tabs:
-      - _id: <UUID()>
-        title: En cours
-        widgets:
-          - _id: <UUID()>
-            title: En cours
-            type: AlarmsList
-            parameters:
-              widgetColumns:
-                - value: v.connector
-                  label: Connector
-                - value: v.connector_name
-                  label: Connector name
-                - value: v.component
-                  label: Component
-                - value: v.resource
-                  label: Resource
-                - value: v.output
-                  label: Output
-                - value: extra_details
-                  label: Extra details
-                - value: v.state.val
-                  label: State
-                - value: v.status.val
-                  label: Status
-              sort:
-                order: ASC
-              viewFilters: [ ]
-              itemsPerPage: 10
-              infoPopups: [ ]
-              alarmsStateFilter:
-                opened: true
-              moreInfoTemplate: ''
-              periodic_refresh:
-                value: 1
-                unit: m
-                enabled: false
-            grid_parameters:
-              mobile:
-                x: 0
-                "y": 0
-                w: 3
-                h: 1
-                autoHeight: true
-              tablet:
-                x: 0
-                "y": 0
-                w: 3
-                h: 1
-                autoHeight: true
-              desktop:
-                x: 0
-                "y": 0
-                w: 12
-                h: 1
-                autoHeight: true
 
   view_resolved_alarms (extend view):
     title: Résolues
@@ -90,63 +34,6 @@ views:
     group_id: "@view_group_alarms"
     tags:
       - alarmes
-    tabs:
-      - _id: <UUID()>
-        title: Résolues
-        widgets:
-          - _id: <UUID()>
-            title: Résolues
-            type: AlarmsList
-            parameters:
-              widgetColumns:
-                - value: v.connector
-                  label: Connector
-                - value: v.connector_name
-                  label: Connector name
-                - value: v.component
-                  label: Component
-                - value: v.resource
-                  label: Resource
-                - value: v.output
-                  label: Output
-                - value: extra_details
-                  label: Extra details
-                - value: v.state.val
-                  label: State
-                - value: v.status.val
-                  label: Status
-              sort:
-                order: ASC
-              viewFilters: [ ]
-              itemsPerPage: 10
-              infoPopups: [ ]
-              alarmsStateFilter:
-                resolved: true
-                opened: false
-              moreInfoTemplate: ''
-              periodic_refresh:
-                value: 1
-                unit: m
-                enabled: false
-            grid_parameters:
-              mobile:
-                x: 0
-                "y": 0
-                w: 3
-                h: 1
-                autoHeight: true
-              tablet:
-                x: 0
-                "y": 0
-                w: 3
-                h: 1
-                autoHeight: true
-              desktop:
-                x: 0
-                "y": 0
-                w: 12
-                h: 1
-                autoHeight: true
 
   view_context_explorer (extend view):
     title: Explorateur de Contexte
@@ -154,80 +41,217 @@ views:
     group_id: "@view_group_admin"
     tags:
       - contexte
-    tabs:
-      - _id: <UUID()>
-        title: Explorateur de contexte
-        widgets:
-          - _id: <UUID()>
-            title: Explorateur de Contexte
-            type: Context
-            parameters:
-              widgetColumns:
-                - value: name
-                  label: Name
-                - value: type
-                  label: Type
-              sort:
-                order: ASC
-              viewFilters:
-                - filter: |-
+
+viewtabs:
+  tab (template):
+    _id: <UUID()>
+    created: <NowUnix()>
+    updated: <Current().created>
+    position: <Index()>
+    author: root
+
+  tab_open_alarms (extend tab):
+    title: En cours
+    view: "@view_open_alarms"
+
+
+  tab_resolved_alarms (extend tab):
+    title: Résolues
+    view: "@view_open_alarms"
+
+  tab_context_explorer (extend tab):
+    title: Explorateur de contexte
+    view: "@view_context_explorer"
+
+widgets:
+  widget (template):
+    _id: <UUID()>
+    created: <NowUnix()>
+    updated: <Current().created>
+    author: root
+
+  widget_open_alarms (extend widget):
+    title: En cours
+    type: AlarmsList
+    tab: "@tab_open_alarms"
+    parameters:
+      widgetColumns:
+        - value: v.connector
+          label: Connector
+        - value: v.connector_name
+          label: Connector name
+        - value: v.component
+          label: Component
+        - value: v.resource
+          label: Resource
+        - value: v.output
+          label: Output
+        - value: extra_details
+          label: Extra details
+        - value: v.state.val
+          label: State
+        - value: v.status.val
+          label: Status
+      sort:
+        order: ASC
+      viewFilters: [ ]
+      itemsPerPage: 10
+      infoPopups: [ ]
+      alarmsStateFilter:
+        opened: true
+      moreInfoTemplate:
+      periodic_refresh:
+        value: 1
+        unit: m
+        enabled: false
+    grid_parameters:
+      mobile:
+        x: 0
+        "y": 0
+        w: 3
+        h: 1
+        autoHeight: true
+      tablet:
+        x: 0
+        "y": 0
+        w: 3
+        h: 1
+        autoHeight: true
+      desktop:
+        x: 0
+        "y": 0
+        w: 12
+        h: 1
+        autoHeight: true
+
+  widget_resolved_alarms (extend widget):
+    _id: <UUID()>
+    title: Résolues
+    type: AlarmsList
+    tab: "@tab_resolved_alarms"
+    parameters:
+      widgetColumns:
+        - value: v.connector
+          label: Connector
+        - value: v.connector_name
+          label: Connector name
+        - value: v.component
+          label: Component
+        - value: v.resource
+          label: Resource
+        - value: v.output
+          label: Output
+        - value: extra_details
+          label: Extra details
+        - value: v.state.val
+          label: State
+        - value: v.status.val
+          label: Status
+      sort:
+        order: ASC
+      viewFilters: [ ]
+      itemsPerPage: 10
+      infoPopups: [ ]
+      alarmsStateFilter:
+        resolved: true
+        opened: false
+      moreInfoTemplate:
+      periodic_refresh:
+        value: 1
+        unit: m
+        enabled: false
+    grid_parameters:
+      mobile:
+        x: 0
+        "y": 0
+        w: 3
+        h: 1
+        autoHeight: true
+      tablet:
+        x: 0
+        "y": 0
+        w: 3
+        h: 1
+        autoHeight: true
+      desktop:
+        x: 0
+        "y": 0
+        w: 12
+        h: 1
+        autoHeight: true
+
+  widget_context_explorer (extend widget):
+    _id: <UUID()>
+    title: Explorateur de Contexte
+    type: Context
+    tab: "@tab_context_explorer"
+    parameters:
+      widgetColumns:
+        - value: name
+          label: Name
+        - value: type
+          label: Type
+      sort:
+        order: ASC
+      viewFilters:
+        - filter: |-
+            {
+                "$and": [
                     {
-                        "$and": [
-                            {
-                                "type": "component"
-                            }
-                        ]
+                        "type": "component"
                     }
-                  title: Composant
-                - filter: |-
+                ]
+            }
+          title: Composant
+        - filter: |-
+            {
+                "$and": [
                     {
-                        "$and": [
-                            {
-                                "type": "connector"
-                            }
-                        ]
+                        "type": "connector"
                     }
-                  title: Connecteur
-                - filter: |-
+                ]
+            }
+          title: Connecteur
+        - filter: |-
+            {
+                "$and": [
                     {
-                        "$and": [
-                            {
-                                "type": "resource"
-                            }
-                        ]
+                        "type": "resource"
                     }
-                  title: Ressource
-                - filter: |-
+                ]
+            }
+          title: Ressource
+        - filter: |-
+            {
+                "$and": [
                     {
-                        "$and": [
-                            {
-                                "type": "watcher"
-                            }
-                        ]
+                        "type": "watcher"
                     }
-                  title: Observateur
-              itemsPerPage: 10
-              mainFilter:
-              selectedTypes: [ ]
-            grid_parameters:
-              mobile:
-                x: 0
-                "y": 0
-                w: 3
-                h: 1
-                autoHeight: true
-              tablet:
-                x: 0
-                "y": 0
-                w: 3
-                h: 1
-                autoHeight: true
-              desktop:
-                x: 0
-                "y": 0
-                w: 12
-                h: 1
-                autoHeight: true
+                ]
+            }
+          title: Observateur
+      itemsPerPage: 10
+      mainFilter:
+      selectedTypes: [ ]
+    grid_parameters:
+      mobile:
+        x: 0
+        "y": 0
+        w: 3
+        h: 1
+        autoHeight: true
+      tablet:
+        x: 0
+        "y": 0
+        w: 3
+        h: 1
+        autoHeight: true
+      desktop:
+        x: 0
+        "y": 0
+        w: 12
+        h: 1
+        autoHeight: true
 
 default_rights:
   permission (template):
