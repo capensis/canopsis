@@ -361,6 +361,7 @@ func (e *EntityPattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte) er
 // EntityPatterns.
 // The zero value of an EntityPatternList (i.e. an EntityPatternList that has
 // not been set) is considered valid, and matches all entities.
+// Deprecated : community/go-engines-community/lib/canopsis/pattern/Entity
 type EntityPatternList struct {
 	Patterns []EntityPattern `swaggerignore:"true"`
 
