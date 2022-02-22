@@ -27,7 +27,7 @@ exports[`c-entity-state-field Renders \`c-entity-state-field\` with default cust
           <div
             class="v-select__selection v-select__selection--comma v-select__selection--disabled"
           >
-            common.states.2
+            common.stateTypes.2
           </div>
           <input
             aria-label="Custom label"
@@ -86,7 +86,7 @@ exports[`c-entity-state-field Renders \`c-entity-state-field\` with default cust
             <div
               class="v-list__tile__title"
             >
-              common.states.0
+              common.stateTypes.0
             </div>
           </div>
         </a>
@@ -103,7 +103,7 @@ exports[`c-entity-state-field Renders \`c-entity-state-field\` with default cust
             <div
               class="v-list__tile__title"
             >
-              common.states.1
+              common.stateTypes.1
             </div>
           </div>
         </a>
@@ -121,7 +121,7 @@ exports[`c-entity-state-field Renders \`c-entity-state-field\` with default cust
             <div
               class="v-list__tile__title"
             >
-              common.states.2
+              common.stateTypes.2
             </div>
           </div>
         </a>
@@ -138,7 +138,7 @@ exports[`c-entity-state-field Renders \`c-entity-state-field\` with default cust
             <div
               class="v-list__tile__title"
             >
-              common.states.3
+              common.stateTypes.3
             </div>
           </div>
         </a>
@@ -228,7 +228,7 @@ exports[`c-entity-state-field Renders \`c-entity-state-field\` with default prop
             <div
               class="v-list__tile__title"
             >
-              common.states.0
+              common.stateTypes.0
             </div>
           </div>
         </a>
@@ -245,7 +245,7 @@ exports[`c-entity-state-field Renders \`c-entity-state-field\` with default prop
             <div
               class="v-list__tile__title"
             >
-              common.states.1
+              common.stateTypes.1
             </div>
           </div>
         </a>
@@ -262,7 +262,7 @@ exports[`c-entity-state-field Renders \`c-entity-state-field\` with default prop
             <div
               class="v-list__tile__title"
             >
-              common.states.2
+              common.stateTypes.2
             </div>
           </div>
         </a>
@@ -279,7 +279,7 @@ exports[`c-entity-state-field Renders \`c-entity-state-field\` with default prop
             <div
               class="v-list__tile__title"
             >
-              common.states.3
+              common.stateTypes.3
             </div>
           </div>
         </a>
