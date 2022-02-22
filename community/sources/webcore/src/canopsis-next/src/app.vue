@@ -3,12 +3,6 @@
     v-layout(v-if="!pending")
       the-navigation#main-navigation(v-if="shownNavigation")
       v-content#main-content
-        c-alarm-status-field(:value="0")
-        c-alarm-status-field(:value="1")
-        c-alarm-status-field(:value="2")
-        c-alarm-status-field(:value="3")
-        c-alarm-status-field(:value="4")
-        c-alarm-status-field(:value="5")
         active-broadcast-message
         router-view(:key="routeViewKey")
     the-sidebar
