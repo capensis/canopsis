@@ -2580,15 +2580,6 @@ export default {
     },
   },
 
-  alarmStatuses: {
-    [ENTITIES_STATUSES.closed]: 'Closed',
-    [ENTITIES_STATUSES.ongoing]: 'Ongoing',
-    [ENTITIES_STATUSES.flapping]: 'Flapping',
-    [ENTITIES_STATUSES.stealthy]: 'Stealth',
-    [ENTITIES_STATUSES.cancelled]: 'Canceled',
-    [ENTITIES_STATUSES.noEvents]: 'No events',
-  },
-
   entitiesCountAlerts: {
     filter: {
       countOverLimit: 'The filter you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
@@ -2672,6 +2663,17 @@ export default {
     formatter: 'Format (capture group with \\x)',
     uploadMib: 'Upload MIB',
     addSnmpRule: 'Add SNMP rule',
+  },
+
+  alarms: {
+    statuses: {
+      [ENTITIES_STATUSES.closed]: 'Closed',
+      [ENTITIES_STATUSES.ongoing]: 'Ongoing',
+      [ENTITIES_STATUSES.flapping]: 'Flapping',
+      [ENTITIES_STATUSES.stealthy]: 'Stealth',
+      [ENTITIES_STATUSES.cancelled]: 'Canceled',
+      [ENTITIES_STATUSES.noEvents]: 'No events',
+    },
   },
 
   ...featureService.get('i18n.en'),

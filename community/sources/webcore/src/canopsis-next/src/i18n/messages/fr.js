@@ -2580,15 +2580,6 @@ export default {
     },
   },
 
-  alarmStatuses: {
-    [ENTITIES_STATUSES.closed]: 'Fermée',
-    [ENTITIES_STATUSES.ongoing]: 'En cours',
-    [ENTITIES_STATUSES.flapping]: 'Bagot',
-    [ENTITIES_STATUSES.stealthy]: 'Furtive',
-    [ENTITIES_STATUSES.cancelled]: 'Annulée',
-    [ENTITIES_STATUSES.noEvents]: 'Pas d\'événements',
-  },
-
   entitiesCountAlerts: {
     filter: {
       countOverLimit: 'Le filtre que vous avez défini cible {count} entités. Cela peut affecter les performances, en êtes-vous sûr ?',
@@ -2672,6 +2663,17 @@ export default {
     formatter: 'Format (groupe de capture avec \\x)',
     uploadMib: 'Envoyer un fichier MIB',
     addSnmpRule: 'Ajouter une règle SNMP',
+  },
+
+  alarms: {
+    statuses: {
+      [ENTITIES_STATUSES.closed]: 'Fermée',
+      [ENTITIES_STATUSES.ongoing]: 'En cours',
+      [ENTITIES_STATUSES.flapping]: 'Bagot',
+      [ENTITIES_STATUSES.stealthy]: 'Furtive',
+      [ENTITIES_STATUSES.cancelled]: 'Annulée',
+      [ENTITIES_STATUSES.noEvents]: 'Pas d\'événements',
+    },
   },
 
   ...featureService.get('i18n.fr'),
