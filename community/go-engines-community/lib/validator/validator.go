@@ -144,30 +144,6 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("oneoforempty", fe.StructField(), fe.Param())
 		return t
 	})
-	_ = v.RegisterTranslation("entitypattern_invalid", trans, func(ut ut.Translator) error {
-		return ut.Add("entitypattern_invalid", "Invalid entity pattern list.", true)
-	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("entitypattern_invalid", fe.StructField())
-		return t
-	})
-	_ = v.RegisterTranslation("entitypattern_contains_empty", trans, func(ut ut.Translator) error {
-		return ut.Add("entitypattern_contains_empty", "entity pattern list contains an empty pattern.", true)
-	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("entitypattern_contains_empty", fe.StructField())
-		return t
-	})
-	_ = v.RegisterTranslation("alarmpattern_invalid", trans, func(ut ut.Translator) error {
-		return ut.Add("alarmpattern_invalid", "Invalid alarm pattern list.", true)
-	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("alarmpattern_invalid", fe.StructField())
-		return t
-	})
-	_ = v.RegisterTranslation("alarmpattern_contains_empty", trans, func(ut ut.Translator) error {
-		return ut.Add("alarmpattern_contains_empty", "alarm pattern list contains an empty pattern.", true)
-	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("alarmpattern_contains_empty", fe.StructField())
-		return t
-	})
 	_ = v.RegisterTranslation("entityfilter", trans, func(ut ut.Translator) error {
 		return ut.Add("entityfilter", "{0} is invalid entity filter.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
@@ -264,19 +240,6 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("metaalarm_config_invalid_with_type", fe.Value().(string), fe.Param())
 		return t
 	})
-
-	_ = v.RegisterTranslation("alarmpatterns", trans, func(ut ut.Translator) error {
-		return ut.Add("alarmpatterns", "Invalid alarm patterns.", true)
-	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("alarmpatterns")
-		return t
-	})
-	_ = v.RegisterTranslation("entitypatterns", trans, func(ut ut.Translator) error {
-		return ut.Add("entitypatterns", "Invalid entity patterns.", true)
-	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("entitypatterns")
-		return t
-	})
 	_ = v.RegisterTranslation("eventpatterns", trans, func(ut ut.Translator) error {
 		return ut.Add("eventpatterns", "Invalid event patterns.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
@@ -299,6 +262,24 @@ func RegisterTranslations(v *validator.Validate) {
 		return ut.Add("regexp", "{0} is invalid regexp.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
 		t, _ := ut.T("regexp", fe.StructField())
+		return t
+	})
+	_ = v.RegisterTranslation("alarm_pattern", trans, func(ut ut.Translator) error {
+		return ut.Add("alarm_pattern", "{0} is invalid alarm pattern.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("alarm_pattern", fe.StructField())
+		return t
+	})
+	_ = v.RegisterTranslation("entity_pattern", trans, func(ut ut.Translator) error {
+		return ut.Add("entity_pattern", "{0} is invalid entity pattern.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("entity_pattern", fe.StructField())
+		return t
+	})
+	_ = v.RegisterTranslation("pbehavior_pattern", trans, func(ut ut.Translator) error {
+		return ut.Add("pbehavior_pattern", "{0} is invalid pbehavior pattern.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("pbehavior_pattern", fe.StructField())
 		return t
 	})
 }
