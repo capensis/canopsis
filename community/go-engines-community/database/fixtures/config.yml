@@ -8,10 +8,10 @@ configuration:
       présenter l'ensemble des événements de votre SI en une console unique.</p>"
     popup_timeout:
       info:
-        interval: 3
+        value: 3
         unit: s
       error:
-        interval: 3
+        value: 3
         unit: s
     max_matched_items: 10000
     check_count_request_timeout: 30
@@ -38,3 +38,12 @@ state_settings:
         major: 20
         critical: 30
         type: 1
+
+notification:
+  instruction:
+    _id: notification
+    instruction:
+      rate: true
+      rate_frequency:
+        value: 1
+        unit: w
