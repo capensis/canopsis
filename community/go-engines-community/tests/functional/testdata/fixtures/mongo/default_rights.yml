@@ -328,6 +328,9 @@ default_rights:
       api_viewgroup:
         checksum: 15
         crecord_type: right
+      api_shared_pattern:
+        checksum: 1
+        crecord_type: right
       test-playlist-to-delete:
         checksum: 1
         crecord_type: right
@@ -1147,3 +1150,8 @@ default_rights:
     crecord_type: action
     desc: view test-view-to-widget-copy-2
     type: RW
+  default_rights_api_shared_pattern:
+    _id: api_shared_pattern
+    crecord_name: api_shared_pattern
+    crecord_type: action
+    desc: api_shared_pattern
