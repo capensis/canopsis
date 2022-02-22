@@ -1,9 +1,9 @@
 import { createVueInstance, mount, shallowMount } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
-
-import CStateTypeField from '@/components/forms/fields/c-state-type-field.vue';
 import { ENTITIES_STATES } from '@/constants';
+
+import CEntityStateField from '@/components/forms/fields/c-entity-state-field.vue';
 
 const localVue = createVueInstance();
 
@@ -11,20 +11,20 @@ const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = (options = {}) => shallowMount(CStateTypeField, {
+const factory = (options = {}) => shallowMount(CEntityStateField, {
   localVue,
   stubs,
 
   ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(CStateTypeField, {
+const snapshotFactory = (options = {}) => mount(CEntityStateField, {
   localVue,
 
   ...options,
 });
 
-describe('c-state-type-field', () => {
+describe('c-entity-state-field', () => {
   it('State type changed after trigger select field', () => {
     const wrapper = factory({
       propsData: {
@@ -44,7 +44,7 @@ describe('c-state-type-field', () => {
     expect(eventData).toBe(ENTITIES_STATES.critical);
   });
 
-  it('Renders `c-state-type-field` with default props', () => {
+  it('Renders `c-entity-state-field` with default props', () => {
     const wrapper = snapshotFactory();
 
     const menuContent = wrapper.findMenu();
@@ -53,7 +53,7 @@ describe('c-state-type-field', () => {
     expect(menuContent.element).toMatchSnapshot();
   });
 
-  it('Renders `c-state-type-field` with default custom props', () => {
+  it('Renders `c-entity-state-field` with default custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: ENTITIES_STATES.major,
@@ -70,7 +70,7 @@ describe('c-state-type-field', () => {
     expect(menuContent.element).toMatchSnapshot();
   });
 
-  it('Renders `c-state-type-field` with validator error', async () => {
+  it('Renders `c-entity-state-field` with validator error', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         required: true,
