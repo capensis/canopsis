@@ -20,9 +20,7 @@ db.eventfilter.find({
             on_failure: doc.config.on_failure,
         },
         $unset: {
-            "config.actions": "",
-            "config.on_success": "",
-            "config.on_failure": ""
+            "config": ""
         }
     });
 });
