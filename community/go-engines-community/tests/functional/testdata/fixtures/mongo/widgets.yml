@@ -1,5 +1,17 @@
 widgets:
-  widgets_1:
+  widget (template):
+    _id: <UUID()>
+    title: <Word()>
+    type: AlarmsList
+    grid_parameters:
+      desktop:
+        x: 0
+        "y": 0
+    author: root
+    created: <NowUnix()>
+    updated: <Current().created>
+
+  widget_to_view_get_1 (extend widget):
     _id: test-widget-to-view-get-1
     author: test-widget-to-view-get-1-author
     created: 1611229670
@@ -16,7 +28,8 @@ widgets:
     title: test-widget-to-view-get-1-title
     type: test-widget-to-view-get-1-type
     updated: 1611229670
-  widgets_2:
+
+  widget_to_view_get_2 (extend widget):
     _id: test-widget-to-view-get-2
     author: test-widget-to-view-get-2-author
     created: 1611229670
@@ -33,7 +46,8 @@ widgets:
     title: test-widget-to-view-get-2-title
     type: test-widget-to-view-get-2-type
     updated: 1611229670
-  widgets_3:
+
+  widget_to_viewgroup_get_1 (extend widget):
     _id: test-widget-to-viewgroup-get-1
     author: test-user-to-viewgroup-get
     created: 1611229670
@@ -50,7 +64,8 @@ widgets:
     title: test-widget-to-viewgroup-get-1-title
     type: test-widget-to-viewgroup-get-1-type
     updated: 1611229670
-  widgets_4:
+
+  widget_to_viewgroup_get_2 (extend widget):
     _id: test-widget-to-viewgroup-get-2
     author: test-user-to-viewgroup-get
     created: 1611229670
@@ -63,7 +78,8 @@ widgets:
     title: test-widget-to-viewgroup-get-2-title
     type: test-widget-to-viewgroup-get-2-type
     updated: 1611229670
-  widgets_5:
+
+  widget_to_tab_get_1 (extend widget):
     _id: test-widget-to-tab-get-1
     author: test-user-to-tab-get
     created: 1611229670
@@ -80,7 +96,8 @@ widgets:
     title: test-widget-to-tab-get-1-title
     type: test-widget-to-tab-get-1-type
     updated: 1611229670
-  widgets_6:
+
+  widget_to_tab_get_2 (extend widget):
     _id: test-widget-to-tab-get-2
     author: test-user-to-tab-get
     created: 1611229670
@@ -97,72 +114,48 @@ widgets:
     title: test-widget-to-tab-get-2-title
     type: test-widget-to-tab-get-2-type
     updated: 1611229670
-  widgets_7:
+
+  widget_to_junit_edit_dir_param (extend widget):
     _id: test-widget-to-junit-edit-dir-param
-    author: test-author-to-junit-edit-dir-param
-    created: 1611229670
     internal_parameters:
       test_suites:
       - test-suite-to-edit-widget-junit-dir-param-test-suite-id
     parameters:
       directory: test-widget-to-junit-edit-dir-param-param-dir
     tab: test-tab-to-junit-edit-dir-param
-    title: test-widget-to-junit-edit-dir-param-title
     type: Junit
-    updated: 1611229670
-  widgets_8:
+
+  widget_to_view_delete (extend widget):
     _id: test-widget-to-view-delete
-    author: test-author-to-view-delete
-    created: 1611229670
     tab: test-tab-to-view-delete
-    title: test-widget-to-view-delete-title
-    type: test-widget-to-view-delete-type
-    updated: 1611229670
-  widgets_9:
+
+  widget_to_user_preferences_update_1 (extend widget):
     _id: test-widget-to-user-preferences-update-1
-    author: test-author-to-user-preferences-update
-    created: 1611229670
     tab: test-tab-to-user-preferences-update-1
-    title: test-widget-to-user-preferences-update-1-title
-    type: test-widget-to-user-preferences-update-1-type
-    updated: 1611229670
-  widgets_10:
+
+  widget_to_user_preferences_update_2 (extend widget):
     _id: test-widget-to-user-preferences-update-2
-    author: test-author-to-user-preferences-update
-    created: 1611229670
     tab: test-tab-to-user-preferences-update-2
-    title: test-widget-to-user-preferences-update-2-title
-    type: test-widget-to-user-preferences-update-2-type
-    updated: 1611229670
-  widgets_11:
+
+  widget_to_junit_test_suites_get_1 (extend widget):
     _id: test-widget-to-junit-test-suites-get-1
-    author: test-author-to-user-preferences-update
-    created: 1611229670
     tab: test-tab-to-junit-test-suites-get
-    title: test-widget-to-junit-test-suites-get-1-title
     type: Junit
-    updated: 1611229670
-  widgets_12:
+
+  widget_to_junit_test_suites_get_2 (extend widget):
     _id: test-widget-to-junit-test-suites-get-2
-    author: test-author-to-user-preferences-update
-    created: 1611229670
     internal_parameters:
       test_suites:
       - fdebd370-3178-4c9e-97aa-a26a79dca770
       - 7e5d2a21-be12-47d1-a286-0b46b6b2b99b
     tab: test-tab-to-junit-test-suites-get
-    title: test-widget-to-junit-test-suites-get-2-title
     type: Junit
-    updated: 1611229670
-  widgets_13:
+
+  widget_to_delete (extend widget):
     _id: test-widget-to-delete
-    author: test-author-to-widget-edit
-    created: 1611229670
     tab: test-tab-to-widget-edit
-    title: test-widget-to-delete-title
-    type: test-widget-to-delete-type
-    updated: 1611229670
-  widgets_14:
+
+  widget_to_get (extend widget):
     _id: test-widget-to-get
     author: test-author-to-widget-edit
     created: 1611229670
@@ -179,55 +172,33 @@ widgets:
     title: test-widget-to-get-title
     type: test-widget-to-get-type
     updated: 1611229670
-  widgets_15:
+
+  widget_to_update (extend widget):
     _id: test-widget-to-update
-    author: test-author-to-widget-edit
     created: 1611229670
     tab: test-tab-to-widget-edit
-    title: test-widget-to-update-title
-    type: test-widget-to-update-type
-    updated: 1611229670
-  widgets_16:
+
+  widget_to_check_access (extend widget):
     _id: test-widget-to-check-access
-    author: test-author-to-widget-check-access
-    created: 1611229670
     tab: test-tab-to-widget-check-access
-    title: test-widget-to-check-access-title
-    type: test-widget-to-check-access-type
-    updated: 1611229670
-  widgets_17:
+
+  widget_to_update_grid_position_2 (extend widget):
     _id: test-widget-to-update-grid-position-2
-    author: test-author-to-widget-update-grid-position
-    created: 1611229670
     tab: test-tab-to-widget-update-grid-position-2
-    title: test-widget-to-update-grid-position-2-title
-    type: test-widget-to-update-grid-position-2-type
-    updated: 1611229670
-  widgets_18:
+
+  widget_to_update_grid_position_3_1 (extend widget):
     _id: test-widget-to-update-grid-position-3-1
-    author: test-author-to-widget-update-grid-position
-    created: 1611229670
     tab: test-tab-to-widget-update-grid-position-3
-    title: test-widget-to-update-grid-position-3-1-title
-    type: test-widget-to-update-grid-position-3-1-type
-    updated: 1611229670
-  widgets_19:
+
+  widget_to_update_grid_position_3_2 (extend widget):
     _id: test-widget-to-update-grid-position-3-2
-    author: test-author-to-widget-update-grid-position
-    created: 1611229670
     tab: test-tab-to-widget-update-grid-position-3
-    title: test-widget-to-update-grid-position-3-2-title
-    type: test-widget-to-update-grid-position-3-2-type
-    updated: 1611229670
-  widgets_20:
+
+  widget_to_update_grid_position_4 (extend widget):
     _id: test-widget-to-update-grid-position-4
-    author: test-author-to-widget-update-grid-position
-    created: 1611229670
     tab: test-tab-to-widget-update-grid-position-4
-    title: test-widget-to-update-grid-position-4-title
-    type: test-widget-to-update-grid-position-4-type
-    updated: 1611229670
-  widgets_21:
+
+  widget_to_export_1 (extend widget):
     _id: test-widget-to-export-1
     author: test-author-to-view-export
     created: 1611229670
@@ -244,23 +215,16 @@ widgets:
     title: test-widget-to-export-1-title
     type: test-widget-to-export-1-type
     updated: 1611229670
-  widgets_22:
+
+  widget_to_user_preferences_get_1 (extend widget):
     _id: test-widget-to-user-preferences-get-1
-    author: test-author-to-user-preferences-get
-    created: 1611229670
     tab: test-tab-to-user-preferences-get
-    title: test-widget-to-user-preferences-get-1-title
-    type: test-widget-to-user-preferences-get-1-type
-    updated: 1611229670
-  widgets_23:
+
+  widget_to_user_preferences_get_2 (extend widget):
     _id: test-widget-to-user-preferences-get-2
-    author: test-author-to-user-preferences-get
-    created: 1611229670
     tab: test-tab-to-user-preferences-get
-    title: test-widget-to-user-preferences-get-2-title
-    type: test-widget-to-user-preferences-get-2-type
-    updated: 1611229670
-  widgets_24:
+
+  widget_to_view_copy_1 (extend widget):
     _id: test-widget-to-view-copy-1
     author: test-widget-to-view-copy-1-author
     created: 1611229670
@@ -277,7 +241,8 @@ widgets:
     title: test-widget-to-view-copy-1-title
     type: test-widget-to-view-copy-1-type
     updated: 1611229670
-  widgets_25:
+
+  widget_to_tab_copy_1 (extend widget):
     _id: test-widget-to-tab-copy-1
     author: test-widget-to-tab-copy-1-author
     created: 1611229670
@@ -294,36 +259,15 @@ widgets:
     title: test-widget-to-tab-copy-1-title
     type: test-widget-to-tab-copy-1-type
     updated: 1611229670
-  widgets_26:
+
+  widget_to_copy_1 (extend widget):
     _id: test-widget-to-copy-1
-    author: test-widget-to-copy-1-author
-    created: 1611229670
-    parameters: {}
     tab: test-tab-to-widget-copy-1
-    title: test-widget-to-copy-1-title
-    type: test-widget-to-copy-1-type
-    updated: 1611229670
-  widgets_27:
+
+  widget_to_copy_2 (extend widget):
     _id: test-widget-to-copy-2
-    author: test-widget-to-copy-2-author
-    created: 1611229670
-    grid_parameters:
-      desktop:
-        x: 0
-        "y": 0
     tab: test-tab-to-widget-copy-2
-    title: test-widget-to-copy-2-title
-    type: test-widget-to-copy-2-type
-    updated: 1611229670
-  widgets_28:
+
+  widget_to_copy_3 (extend widget):
     _id: test-widget-to-copy-3
-    author: test-widget-to-copy-3-author
-    created: 1611229670
-    grid_parameters:
-      desktop:
-        x: 0
-        "y": 0
     tab: test-tab-to-widget-copy-3
-    title: test-widget-to-copy-3-title
-    type: test-widget-to-copy-3-type
-    updated: 1611229670

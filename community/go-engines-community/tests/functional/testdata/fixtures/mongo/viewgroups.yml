@@ -1,85 +1,73 @@
 viewgroups:
-  viewgroups_1:
-    _id: test-viewgroup-to-check-unique-title
-    author: test-viewgroup-to-check-unique-title-author
-    created: 1611229670
-    position: 0
+  group (template):
+    _id: <UUID()>
+    title: <Word()>
+    position: <Index()>
+    author: root
+    created: <NowUnix()>
+    updated: <Current().created>
+
+  viewgroup_to_check_unique_title (extend group):
     title: test-viewgroup-to-check-unique-title-title
-    updated: 1611229670
-  viewgroups_2:
+
+  viewgroup_to_delete (extend group):
     _id: test-viewgroup-to-delete
-    author: test-viewgroup-to-delete-author
-    created: 1611229670
-    position: 1
-    title: test-viewgroup-to-delete-title
-    updated: 1611229670
-  viewgroups_3:
+
+  viewgroup_to_update (extend group):
     _id: test-viewgroup-to-update
-    author: test-viewgroup-to-update-author
     created: 1611229670
-    position: 2
-    title: test-viewgroup-to-update-title
-    updated: 1611229670
-  viewgroups_4:
+
+  viewgroup_to_get_1 (extend group):
     _id: test-viewgroup-to-get-1
     author: test-viewgroup-to-get-1-author
     created: 1611229670
-    position: 3
     title: test-viewgroup-to-get-1-title
     updated: 1611229670
-  viewgroups_5:
+
+  viewgroup_to_get_2 (extend group):
     _id: test-viewgroup-to-get-2
     author: test-viewgroup-to-get-2-author
     created: 1611229670
-    position: 4
     title: test-viewgroup-to-get-2-title
     updated: 1611229670
-  viewgroups_6:
+
+  viewgroup_to_view_edit (extend group):
     _id: test-viewgroup-to-view-edit
     author: test-viewgroup-to-view-edit-author
     created: 1611229670
-    position: 5
     title: test-viewgroup-to-view-edit-title
     updated: 1611229670
-  viewgroups_7:
+
+  viewgroup_to_delete_linked_to_view (extend group):
     _id: test-viewgroup-to-delete-linked-to-view
-    author: test-viewgroup-to-delete-linked-to-view-author
-    created: 1611229670
-    position: 6
-    title: test-viewgroup-to-delete-linked-to-view-title
-    updated: 1611229670
-  viewgroups_8:
+
+  viewgroup_to_user_preferences_delete (extend group):
     _id: test-viewgroup-to-user-preferences-delete
-    author: test-viewgroup-to-user-preferences-delete
-    created: 1611229670
-    position: 12
-    title: test-viewgroup-to-user-preferences-delete
-    updated: 1611229670
-  viewgroups_9:
+
+  viewgroup_to_export_1 (extend group):
     _id: test-viewgroup-to-export-1
     author: test-author-to-export
     created: 1611229670
-    position: 13
     title: test-viewgroup-to-export-1-title
     updated: 1611229670
-  viewgroups_10:
+
+  viewgroup_to_export_2 (extend group):
     _id: test-viewgroup-to-export-2
     author: test-author-to-view-export
     created: 1611229670
-    position: 14
     title: test-viewgroup-to-export-2-title
     updated: 1611229670
-  viewgroups_11:
+
+  viewgroup_to_import_2_1 (extend group):
     _id: test-viewgroup-to-import-2-1
     author: test-author-to-view-import
     created: 1611229670
-    position: 15
     title: test-viewgroup-to-import-2-1-title
     updated: 1611229670
-  viewgroups_12:
+
+  viewgroup_to_view_copy (extend group):
     _id: test-viewgroup-to-view-copy
     author: test-author-to-view-copy
     created: 1611229670
-    position: 16
     title: test-viewgroup-to-view-copy-title
     updated: 1611229670
