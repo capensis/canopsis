@@ -84,6 +84,8 @@ const (
 	UserPreferencesMongoCollection = "userpreferences"
 
 	FilterMongoCollection = "filter"
+
+	PatternMongoCollection = "pattern"
 )
 
 const (
