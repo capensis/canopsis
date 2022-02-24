@@ -229,7 +229,7 @@ func (a *api) Update(c *gin.Context) {
 // @Tags saved-patterns
 // @ID saved-patterns-delete-by-id
 // @Security JWTAuth
-// @Security BasicAuth`
+// @Security BasicAuth
 // @Param id path string true "pattern id"
 // @Success 204
 // @Failure 404 {object} common.ErrorResponse

@@ -7132,7 +7132,7 @@ paths:
             $ref: '#/definitions/common.ErrorResponse'
       security:
       - JWTAuth: []
-      - BasicAuth`: []
+      - BasicAuth: []
       summary: Delete saved pattern by id
       tags:
       - saved-patterns
