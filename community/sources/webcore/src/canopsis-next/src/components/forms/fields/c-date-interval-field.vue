@@ -7,7 +7,7 @@
       :allowed-dates="isAllowedFromDate",
       hide-details
     )
-      template(#append)
+      template(#append="")
         v-icon(color="black") calendar_today
     c-date-picker-field.ml-4(
       v-field="value.to",
@@ -16,7 +16,7 @@
       :allowed-dates="isAllowedToDate",
       hide-details
     )
-      template(#append)
+      template(#append="")
         v-icon(color="black") calendar_today
 </template>
 
