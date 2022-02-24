@@ -1,25 +1,24 @@
 views:
-  views_1:
+  view (template):
+    _id: <UUID()>
+    title: <Word()>
+    description: <Phrase()>
+    enabled: true
+    position: <Index()>
+    author: root
+    created: <NowUnix()>
+    updated: <Current().created>
+    group_id: test-viewgroup-to-view-edit
+  
+  view_to_edit_role (extend view):
     _id: test-view-to-edit-role
-    author: test-view-to-edit-role-author
-    created: 1611229670
-    description: test-view-to-edit-role-description
-    enabled: false
-    group_id: test-viewgroup-to-view-edit
-    position: 0
     title: test-view-to-edit-role-title
-    updated: 1611229670
-  views_2:
+
+  view_to_edit_user (extend view):
     _id: test-view-to-edit-user
-    author: test-view-to-edit-user-author
-    created: 1611229670
-    description: test-view-to-edit-user-description
-    enabled: false
-    group_id: test-viewgroup-to-view-edit
-    position: 1
     title: test-view-to-edit-user-title
-    updated: 1611229670
-  views_3:
+
+  view_to_get_1 (extend view):
     _id: test-view-to-get-1
     author: test-view-to-get-1-author
     created: 1611229670
@@ -30,12 +29,12 @@ views:
       enabled: true
       unit: s
       value: 1
-    position: 2
     tags:
     - test-view-to-get-1-tag
     title: test-view-to-get-1-title
     updated: 1611229670
-  views_4:
+  
+  view_to_get_2 (extend view):
     _id: test-view-to-get-2
     author: test-view-to-get-2-author
     created: 1611229670
@@ -46,113 +45,34 @@ views:
       enabled: true
       unit: s
       value: 1
-    position: 3
     tags:
     - test-view-to-get-2-tag
     title: test-view-to-get-2-title
     updated: 1611229670
-  views_5:
+  
+  view_to_update (extend view):
     _id: test-view-to-update
-    author: test-view-to-update-author
     created: 1611229670
-    description: test-view-to-update-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    periodic_refresh:
-      enabled: true
-      unit: s
-      value: 1
-    position: 4
-    tags:
-    - test-view-to-update-tag
-    title: test-view-to-update-title
-    updated: 1611229670
-  views_6:
+
+  view_to_delete_1 (extend view):
     _id: test-view-to-delete-1
-    author: test-author-to-view-delete
-    created: 1611229670
-    description: test-view-to-delete-1-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 5
-    tags: []
-    title: test-view-to-delete-1-title
-    updated: 1611229670
-  views_7:
+
+  view_to_delete_2 (extend view):
     _id: test-view-to-delete-2
-    author: test-author-to-view-delete
-    created: 1611229670
-    description: test-view-to-delete-2-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 6
-    tags: []
-    title: test-view-to-delete-2-title
-    updated: 1611229670
-  views_8:
+
+  view_to_check_access (extend view):
     _id: test-view-to-check-access
-    author: test-view-to-check-access-author
-    created: 1611229670
-    description: test-view-to-check-access-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 7
-    tags: []
-    title: test-view-to-check-access-title
-    updated: 1611229670
-  views_9:
+
+  view_to_junit_test_suites_get (extend view):
     _id: test-view-to-junit-test-suites-get
-    author: test-author-to-junit-test-suites-get
-    created: 1611229670
-    description: test-view-to-junit-test-suites-get-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    periodic_refresh:
-      enabled: true
-      unit: s
-      value: 1
-    position: 8
-    title: test-view-to-junit-test-suites-get-title
-    updated: 1611229670
-  views_10:
+
+  view_to_junit_edit_dir_param (extend view):
     _id: test-view-to-junit-edit-dir-param
-    author: test-author-to-junit-edit-dir-param
-    created: 1611229670
-    description: test-view-to-junit-edit-dir-param-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 9
-    tags: []
-    title: test-view-to-junit-edit-dir-param-title
-    updated: 1611229670
-  views_11:
+  
+  view_to_playlist_edit (extend view):
     _id: test-view-to-playlist-edit
-    author: test-view-to-playlist-edit-author
-    created: 1611229670
-    description: test-view-to-playlist-edit-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 10
-    tags: []
-    title: test-view-to-playlist-edit-title
-    updated: 1611229670
-  views_12:
-    _id: test-view-to-viewgroup-get-1
-    author: test-view-to-viewgroup-get-1-author
-    created: 1611229670
-    description: test-view-to-viewgroup-get-1-description
-    enabled: true
-    group_id: test-viewgroup-to-get-1
-    periodic_refresh:
-      enabled: true
-      unit: s
-      value: 1
-    position: 12
-    tags:
-    - test-view-to-viewgroup-get-1-tag
-    title: test-view-to-viewgroup-get-1-title
-    updated: 1611229670
-  views_13:
+
+  view_to_viewgroup_get_2 (extend view):
     _id: test-view-to-viewgroup-get-2
     author: test-view-to-viewgroup-get-2-author
     created: 1611229670
@@ -163,12 +83,28 @@ views:
       enabled: true
       unit: s
       value: 1
-    position: 11
     tags:
-    - test-view-to-viewgroup-get-2-tag
+      - test-view-to-viewgroup-get-2-tag
     title: test-view-to-viewgroup-get-2-title
     updated: 1611229670
-  views_14:
+  
+  view_to_viewgroup_get_1 (extend view):
+    _id: test-view-to-viewgroup-get-1
+    author: test-view-to-viewgroup-get-1-author
+    created: 1611229670
+    description: test-view-to-viewgroup-get-1-description
+    enabled: true
+    group_id: test-viewgroup-to-get-1
+    periodic_refresh:
+      enabled: true
+      unit: s
+      value: 1
+    tags:
+    - test-view-to-viewgroup-get-1-tag
+    title: test-view-to-viewgroup-get-1-title
+    updated: 1611229670
+  
+  view_to_viewgroup_get_3 (extend view):
     _id: test-view-to-viewgroup-get-3
     author: test-view-to-viewgroup-get-3-author
     created: 1611229670
@@ -179,152 +115,55 @@ views:
       enabled: true
       unit: s
       value: 1
-    position: 13
     tags:
     - test-view-to-viewgroup-get-3-tag
     title: test-view-to-viewgroup-get-3-title
     updated: 1611229670
-  views_15:
+  
+  view_to_delete_linked_viewgroup (extend view):
     _id: test-view-to-delete-linked-viewgroup
-    author: test-view-to-delete-linked-viewgroup-author
-    created: 1611229670
-    description: test-view-to-delete-linked-viewgroup-description
-    enabled: false
     group_id: test-viewgroup-to-delete-linked-to-view
-    position: 14
-    title: test-view-to-delete-linked-viewgroup-title
-    updated: 1611229670
-  views_16:
+  
+  view_to_user_preferences_update_1 (extend view):
     _id: test-view-to-user-preferences-update-1
-    author: test-view-to-user-preferences-update-author
-    created: 1611229670
-    description: test-view-to-user-preferences-update-1-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 20
-    title: test-view-to-user-preferences-update-1-title
-    updated: 1611229670
-  views_17:
+  
+  view_to_user_preferences_update_2 (extend view):
     _id: test-view-to-user-preferences-update-2
-    author: test-view-to-user-preferences-update-author
-    created: 1611229670
-    description: test-view-to-user-preferences-update-2-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 21
-    title: test-view-to-user-preferences-update-2-title
-    updated: 1611229670
-  views_18:
+  
+  view_to_tab_edit (extend view):
     _id: test-view-to-tab-edit
-    author: test-author-to-tab-edit
-    created: 1611229670
-    description: test-view-to-tab-edit-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 22
-    title: test-view-to-tab-edit-title
-    updated: 1611229670
-  views_19:
+  
+  view_to_tab_check_access (extend view):
     _id: test-view-to-tab-check-access
-    author: test-author-to-tab-check-access
-    created: 1611229670
-    description: test-view-to-tab-check-access-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 23
-    title: test-view-to-tab-check-access-title
-    updated: 1611229670
-  views_20:
+  
+  view_to_tab_update_position_1 (extend view):
     _id: test-view-to-tab-update-position-1
-    author: test-author-to-tab-update-position
-    created: 1611229670
-    description: test-view-to-tab-update-position-1-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 24
-    title: test-view-to-tab-update-position-1-title
-    updated: 1611229670
-  views_21:
+  
+  view_to_tab_update_position_2 (extend view):
     _id: test-view-to-tab-update-position-2
-    author: test-author-to-tab-update-position
-    created: 1611229670
-    description: test-view-to-tab-update-position-2-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 25
-    title: test-view-to-tab-update-position-2-title
-    updated: 1611229670
-  views_22:
+  
+  view_to_tab_update_position_3 (extend view):
     _id: test-view-to-tab-update-position-3
-    author: test-author-to-tab-update-position
-    created: 1611229670
-    description: test-view-to-tab-update-position-3-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 26
-    title: test-view-to-tab-update-position-3-title
-    updated: 1611229670
-  views_23:
+  
+  view_to_tab_update_position_4 (extend view):
     _id: test-view-to-tab-update-position-4
-    author: test-author-to-tab-update-position
-    created: 1611229670
-    description: test-view-to-tab-update-position-4-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 27
-    title: test-view-to-tab-update-position-4-title
-    updated: 1611229670
-  views_24:
+  
+  view_to_widget_edit (extend view):
     _id: test-view-to-widget-edit
-    author: test-author-to-widget-edit
-    created: 1611229670
-    description: test-view-to-widget-edit-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 28
-    title: test-view-to-widget-edit-title
-    updated: 1611229670
-  views_25:
+  
+  view_to_widget_check_access (extend view):
     _id: test-view-to-widget-check-access
-    author: test-author-to-widget-check-access
-    created: 1611229670
-    description: test-view-to-widget-check-access-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 29
-    title: test-view-to-widget-check-access-title
-    updated: 1611229670
-  views_26:
+  
+  view_to_widget_update_grid_position_1 (extend view):
     _id: test-view-to-widget-update-grid-position-1
-    author: test-author-to-widget-update-grid-position
-    created: 1611229670
-    description: test-view-to-widget-update-grid-position-1-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 30
-    title: test-view-to-widget-update-grid-position-1-title
-    updated: 1611229670
-  views_27:
+  
+  view_to_widget_update_grid_position_2 (extend view):
     _id: test-view-to-widget-update-grid-position-2
-    author: test-author-to-widget-update-grid-position
-    created: 1611229670
-    description: test-view-to-widget-update-grid-position-2-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 31
-    title: test-view-to-widget-update-grid-position-2-title
-    updated: 1611229670
-  views_28:
+  
+  view_to_widget_update_grid_position_3 (extend view):
     _id: test-view-to-widget-update-grid-position-3
-    author: test-author-to-widget-update-grid-position
-    created: 1611229670
-    description: test-view-to-widget-update-grid-position-3-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 32
-    title: test-view-to-widget-update-grid-position-3-title
-    updated: 1611229670
-  views_29:
+  
+  view_to_export_1 (extend view):
     _id: test-view-to-export-1
     author: test-author-to-view-export
     created: 1611229670
@@ -335,12 +174,12 @@ views:
       enabled: true
       unit: s
       value: 1
-    position: 33
     tags:
     - test-view-to-export-1-tag
     title: test-view-to-export-1-title
     updated: 1611229670
-  views_30:
+  
+  view_to_export_2 (extend view):
     _id: test-view-to-export-2
     author: test-author-to-view-export
     created: 1611229670
@@ -351,134 +190,46 @@ views:
       enabled: true
       unit: s
       value: 1
-    position: 34
     tags:
     - test-view-to-export-2-tag
     title: test-view-to-export-2-title
     updated: 1611229670
-  views_31:
+  
+  view_to_import_2_1 (extend view):
     _id: test-view-to-import-2-1
-    author: test-author-to-view-import
-    created: 1611229670
-    description: test-view-to-import-2-1-description
-    enabled: true
     group_id: test-viewgroup-to-import-2-1
-    position: 35
-    title: test-view-to-import-2-1-title
-    updated: 1611229670
-  views_32:
+  
+  view_to_import_2_2 (extend view):
     _id: test-view-to-import-2-2
-    author: test-author-to-view-import
-    created: 1611229670
-    description: test-view-to-import-2-2-description
-    enabled: true
     group_id: test-viewgroup-to-import-2-1
-    position: 36
-    title: test-view-to-import-2-2-title
-    updated: 1611229670
-  views_33:
+
+  view_to_user_preferences_get (extend view):
     _id: test-view-to-user-preferences-get
-    author: test-author-to-user-preferences-get
-    created: 1611229670
-    description: test-view-to-user-preferences-get-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 37
-    title: test-view-to-user-preferences-get-title
-    updated: 1611229670
-  views_34:
+  
+  view_to_copy_1 (extend view):
     _id: test-view-to-copy-1
-    author: test-author-to-copy
-    created: 1611229670
-    description: test-view-to-copy-1-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    periodic_refresh:
-      enabled: true
-      unit: m
-      value: 100
-    position: 40
-    tags:
-    - test-view-to-copy-1-tag
-    title: test-view-to-copy-1-title
-    updated: 1611229670
-  views_35:
+  
+  view_to_copy_2 (extend view):
     _id: test-view-to-copy-2
-    author: test-author-to-copy
-    created: 1611229670
-    description: test-view-to-copy-2-description
-    enabled: true
     group_id: test-viewgroup-to-view-copy
-    position: 41
-    title: test-view-to-copy-2-title
-    updated: 1611229670
-  views_36:
+  
+  view_to_copy_3 (extend view):
     _id: test-view-to-copy-3
-    author: test-author-to-copy
-    created: 1611229670
-    description: test-view-to-copy-3-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 42
-    title: test-view-to-copy-3-title
-    updated: 1611229670
-  views_37:
+  
+  view_to_tab_copy_1 (extend view):
     _id: test-view-to-tab-copy-1
-    author: test-author-to-tab-copy
-    created: 1611229670
-    description: test-view-to-tab-copy-1-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 43
-    title: test-view-to-tab-copy-1-title
-    updated: 1611229670
-  views_38:
+  
+  view_to_tab_copy_2 (extend view):
     _id: test-view-to-tab-copy-2
-    author: test-author-to-tab-copy
-    created: 1611229670
-    description: test-view-to-tab-copy-2-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 44
-    title: test-view-to-tab-copy-2-title
-    updated: 1611229670
-  views_39:
+  
+  view_to_tab_copy_3 (extend view):
     _id: test-view-to-tab-copy-3
-    author: test-author-to-tab-copy
-    created: 1611229670
-    description: test-view-to-tab-copy-3-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 45
-    title: test-view-to-tab-copy-3-title
-    updated: 1611229670
-  views_40:
+  
+  view_to_widget_copy_1 (extend view):
     _id: test-view-to-widget-copy-1
-    author: test-author-to-widget-copy
-    created: 1611229670
-    description: test-view-to-widget-copy-1-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 46
-    title: test-view-to-widget-copy-1-title
-    updated: 1611229670
-  views_41:
+  
+  view_to_widget_copy_2 (extend view):
     _id: test-view-to-widget-copy-2
-    author: test-author-to-widget-copy
-    created: 1611229670
-    description: test-view-to-widget-copy-2-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 47
-    title: test-view-to-widget-copy-2-title
-    updated: 1611229670
-  views_42:
+  
+  view_to_widget_copy_3 (extend view):
     _id: test-view-to-widget-copy-3
-    author: test-author-to-widget-copy
-    created: 1611229670
-    description: test-view-to-widget-copy-3-description
-    enabled: true
-    group_id: test-viewgroup-to-view-edit
-    position: 48
-    title: test-view-to-widget-copy-3-title
-    updated: 1611229670
