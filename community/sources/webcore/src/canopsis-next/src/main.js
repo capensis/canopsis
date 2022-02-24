@@ -122,6 +122,7 @@ import CUserPickerField from '@/components/forms/fields/c-user-picker-field.vue'
 import CInstructionTypeField from '@/components/forms/fields/c-instruction-type-field.vue';
 import CPriorityField from '@/components/forms/fields/c-priority-field.vue';
 import CQuickDateIntervalField from '@/components/forms/fields/c-quick-date-interval-field.vue';
+import CDateIntervalField from '@/components/forms/fields/c-date-interval-field.vue';
 import CQuickDateIntervalTypeField from '@/components/forms/fields/c-quick-date-interval-type-field.vue';
 import CEnabledDurationField from '@/components/forms/fields/c-enabled-duration-field.vue';
 import CEnabledLimitField from '@/components/forms/fields/c-enabled-limit-field.vue';
@@ -133,6 +134,7 @@ import CFiltersField from '@/components/forms/fields/c-filters-field.vue';
 import CStateTypeField from '@/components/forms/fields/c-state-type-field.vue';
 import CRecordsPerPageField from '@/components/forms/fields/c-records-per-page-field.vue';
 import COperatorField from '@/components/forms/fields/c-operator-field.vue';
+import CDatePickerField from '@/components/forms/fields/date-picker/c-date-picker-field.vue';
 
 /**
  * Icons
@@ -309,6 +311,8 @@ Vue.component('c-role-picker-field', CRolePickerField);
 Vue.component('c-user-picker-field', CUserPickerField);
 Vue.component('c-instruction-type-field', CInstructionTypeField);
 Vue.component('c-priority-field', CPriorityField);
+Vue.component('c-date-picker-field', CDatePickerField);
+Vue.component('c-date-interval-field', CDateIntervalField);
 Vue.component('c-quick-date-interval-field', CQuickDateIntervalField);
 Vue.component('c-quick-date-interval-type-field', CQuickDateIntervalTypeField);
 Vue.component('c-enabled-duration-field', CEnabledDurationField);
