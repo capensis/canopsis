@@ -1,1157 +1,882 @@
 default_rights:
-  default_rights_1:
-    _id: api_event
-    crecord_name: api_event
+  permission (template):
+    _id: <UUID()>
     crecord_type: action
-  default_rights_2:
-    _id: api_acl
-    crecord_name: api_acl
+    crecord_name: <Current()._id>
+    desc: <Phrase()>
+
+  permission_crud (template):
+    _id: <UUID()>
     crecord_type: action
+    crecord_name: <Current()._id>
+    desc: <Phrase()>
     type: CRUD
-  default_rights_3:
-    _id: api_alarm_read
-    crecord_name: api_alarm_read
+
+  permission_rw (template):
+    _id: <UUID()>
     crecord_type: action
-  default_rights_4:
-    _id: api_entity
-    crecord_name: api_entity
-    crecord_type: action
-    type: CRUD
-  default_rights_5:
-    _id: api_entitycategory
-    crecord_name: api_entitycategory
-    crecord_type: action
-    type: CRUD
-  default_rights_6:
-    _id: api_action
-    crecord_name: api_action
-    crecord_type: action
-    type: CRUD
-  default_rights_7:
-    _id: api_metaalarmrule
-    crecord_name: api_metaalarmrule
-    crecord_type: action
-    type: CRUD
-  default_rights_8:
-    _id: api_idlerule
-    crecord_name: api_idlerule
-    crecord_type: action
-    type: CRUD
-  default_rights_9:
-    _id: api_entityservice
-    crecord_name: api_entityservice
-    crecord_type: action
-    type: CRUD
-  default_rights_10:
-    _id: api_eventfilter
-    crecord_name: api_eventfilter
-    crecord_type: action
-    type: CRUD
-  default_rights_11:
-    _id: api_pbehavior
-    crecord_name: api_pbehavior
-    crecord_type: action
-    type: CRUD
-  default_rights_12:
-    _id: api_pbehaviorreason
-    crecord_name: api_pbehaviorreason
-    crecord_type: action
-    type: CRUD
-  default_rights_13:
-    _id: api_pbehaviorexception
-    crecord_name: api_pbehaviorexception
-    crecord_type: action
-    type: CRUD
-  default_rights_14:
-    _id: api_pbehaviortype
-    crecord_name: api_pbehaviortype
-    crecord_type: action
-    type: CRUD
-  default_rights_15:
-    _id: api_job_config
-    crecord_name: api_job_config
-    crecord_type: action
-    type: CRUD
-  default_rights_16:
-    _id: api_job
-    crecord_name: api_job
-    crecord_type: action
-    type: CRUD
-  default_rights_17:
-    _id: api_instruction
-    crecord_name: api_instruction
-    crecord_type: action
-    type: CRUD
-  default_rights_18:
-    _id: api_execution
-    crecord_name: api_execution
-    crecord_type: action
-  default_rights_19:
-    _id: api_dynamicinfos
-    crecord_name: api_dynamicinfos
-    crecord_type: action
-    type: CRUD
-  default_rights_20:
-    _id: api_contextgraph
-    crecord_name: api_contextgraph
-    crecord_type: action
-    type: CRUD
-  default_rights_21:
-    _id: api_view
-    crecord_name: api_view
-    crecord_type: action
-    type: CRUD
-  default_rights_22:
-    _id: api_viewgroup
-    crecord_name: api_viewgroup
-    crecord_type: action
-    type: CRUD
-  default_rights_23:
-    _id: api_playlist
-    crecord_name: api_playlist
-    crecord_type: action
-    desc: api_playlist
-    type: CRUD
-  default_rights_24:
-    _id: api_junit
-    crecord_name: api_junit
-    crecord_type: action
-    type: CRUD
-  default_rights_25:
-    _id: api_state_settings
-    crecord_name: api_state_settings
-    crecord_type: action
-  default_rights_26:
-    _id: api_datastorage_read
-    crecord_name: api_datastorage_read
-    crecord_type: action
-  default_rights_27:
-    _id: api_datastorage_update
-    crecord_name: api_datastorage_update
-    crecord_type: action
-  default_rights_28:
-    _id: api_app_info_read
-    crecord_name: api_app_info_read
-    crecord_type: action
-    desc: read app info
-  default_rights_29:
-    _id: api_user_interface_update
-    crecord_name: api_user_interface_update
-    crecord_type: action
-    desc: update user interface
-  default_rights_30:
-    _id: api_user_interface_delete
-    crecord_name: api_user_interface_delete
-    crecord_type: action
-    desc: delete user interface
-  default_rights_31:
-    _id: api_broadcast_message
-    crecord_name: api_broadcast_message
-    crecord_type: action
-    desc: Broadcast Message
-    type: CRUD
-  default_rights_32:
-    _id: api_associative_table
-    crecord_name: api_associative_table
-    crecord_type: action
-    desc: Associative table
-    type: CRUD
-  default_rights_33:
-    _id: api_message_rate_stats_read
-    crecord_name: api_message_rate_stats_read
-    crecord_type: action
-  default_rights_34:
-    _id: api_resolve_rule
-    crecord_name: api_resolve_rule
-    crecord_type: action
-    desc: Resolve rule
-    type: CRUD
-  default_rights_35:
-    _id: api_flapping_rule
-    crecord_name: api_flapping_rule
-    crecord_type: action
-    desc: Flapping rule
-    type: CRUD
-  default_rights_36:
-    _id: api_notification
-    crecord_name: api_notification
-    crecord_type: action
-  default_rights_37:
-    _id: api_instruction_approve
-    crecord_name: api_instruction_approve
-    crecord_type: action
-  default_rights_38:
-    _id: api_healthcheck
-    crecord_name: api_healthcheck
-    crecord_type: action
-  default_rights_39:
-    _id: api_filter
-    crecord_name: api_filter
-    crecord_type: action
-    type: CRUD
-  default_rights_40:
-    _id: api_metrics
-    crecord_name: api_metrics
-    crecord_type: action
-    desc: Metrics api
-  default_rights_41:
-    _id: api_rating_settings
-    crecord_name: api_rating_settings
-    crecord_type: action
-    desc: Rating settings api
-    type: CRUD
-  default_rights_42:
-    _id: admin
-    crecord_name: admin
+    crecord_name: <Current()._id>
+    desc: <Phrase()>
+    type: RW
+
+  role (template):
+    _id: <UUID()>
     crecord_type: role
-    rights:
-      api_acl:
-        checksum: 15
-        crecord_type: right
-      api_action:
-        checksum: 15
-        crecord_type: right
-      api_alarm_read:
-        checksum: 1
-        crecord_type: right
-      api_app_info_read:
-        checksum: 1
-        crecord_type: right
-      api_associative_table:
-        checksum: 15
-        crecord_type: right
-      api_broadcast_message:
-        checksum: 15
-        crecord_type: right
-      api_contextgraph:
-        checksum: 15
-        crecord_type: right
-      api_datastorage_read:
-        checksum: 1
-        crecord_type: right
-      api_datastorage_update:
-        checksum: 1
-        crecord_type: right
-      api_dynamicinfos:
-        checksum: 15
-        crecord_type: right
-      api_entity:
-        checksum: 15
-        crecord_type: right
-      api_entitycategory:
-        checksum: 15
-        crecord_type: right
-      api_entityservice:
-        checksum: 15
-        crecord_type: right
-      api_event:
-        checksum: 1
-        crecord_type: right
-      api_eventfilter:
-        checksum: 15
-        crecord_type: right
-      api_execution:
-        checksum: 1
-        crecord_type: right
-      api_filter:
-        checksum: 15
-        crecord_type: right
-      api_flapping_rule:
-        checksum: 15
-        crecord_type: right
-      api_healthcheck:
-        checksum: 1
-        crecord_type: right
-      api_idlerule:
-        checksum: 15
-        crecord_type: right
-      api_instruction:
-        checksum: 15
-        crecord_type: right
-      api_instruction_approve:
-        checksum: 1
-        crecord_type: right
-      api_job:
-        checksum: 15
-        crecord_type: right
-      api_job_config:
-        checksum: 15
-        crecord_type: right
-      api_junit:
-        checksum: 15
-        crecord_type: right
-      api_message_rate_stats_read:
-        checksum: 1
-        crecord_type: right
-      api_metaalarmrule:
-        checksum: 15
-        crecord_type: right
-      api_metrics:
-        checksum: 1
-        crecord_type: right
-      api_notification:
-        checksum: 1
-        crecord_type: right
-      api_pbehavior:
-        checksum: 15
-        crecord_type: right
-      api_pbehaviorexception:
-        checksum: 15
-        crecord_type: right
-      api_pbehaviorreason:
-        checksum: 15
-        crecord_type: right
-      api_pbehaviortype:
-        checksum: 15
-        crecord_type: right
-      api_playlist:
-        checksum: 15
-        crecord_type: right
-      api_rating_settings:
-        checksum: 15
-        crecord_type: right
-      api_resolve_rule:
-        checksum: 15
-        crecord_type: right
-      api_state_settings:
-        checksum: 1
-        crecord_type: right
-      api_user_interface_delete:
-        checksum: 1
-        crecord_type: right
-      api_user_interface_update:
-        checksum: 1
-        crecord_type: right
-      api_view:
-        checksum: 15
-        crecord_type: right
-      api_viewgroup:
-        checksum: 15
-        crecord_type: right
-      api_shared_pattern:
-        checksum: 1
-        crecord_type: right
-      test-playlist-to-delete:
-        checksum: 1
-        crecord_type: right
-      test-playlist-to-get-1:
-        checksum: 4
-        crecord_type: right
-      test-playlist-to-get-2:
-        checksum: 4
-        crecord_type: right
-      test-playlist-to-update:
-        checksum: 2
-        crecord_type: right
-      test-view-to-copy-1:
-        checksum: 4
-        crecord_type: right
-      test-view-to-copy-2:
-        checksum: 6
-        crecord_type: right
-      test-view-to-delete-1:
-        checksum: 1
-        crecord_type: right
-      test-view-to-delete-2:
-        checksum: 1
-        crecord_type: right
-      test-view-to-export-1:
-        checksum: 4
-        crecord_type: right
-      test-view-to-export-2:
-        checksum: 4
-        crecord_type: right
-      test-view-to-get-1:
-        checksum: 4
-        crecord_type: right
-      test-view-to-get-2:
-        checksum: 4
-        crecord_type: right
-      test-view-to-import-2-1:
-        checksum: 6
-        crecord_type: right
-      test-view-to-import-2-2:
-        checksum: 6
-        crecord_type: right
-      test-view-to-junit-edit-dir-param:
-        checksum: 7
-        crecord_type: right
-      test-view-to-playlist-edit:
-        checksum: 4
-        crecord_type: right
-      test-view-to-tab-copy-1:
-        checksum: 4
-        crecord_type: right
-      test-view-to-tab-copy-2:
-        checksum: 6
-        crecord_type: right
-      test-view-to-tab-edit:
-        checksum: 6
-        crecord_type: right
-      test-view-to-update:
-        checksum: 2
-        crecord_type: right
-      test-view-to-viewgroup-get-1:
-        checksum: 7
-        crecord_type: right
-      test-view-to-viewgroup-get-2:
-        checksum: 7
-        crecord_type: right
-      test-view-to-viewgroup-get-3:
-        checksum: 0
-        crecord_type: right
-      test-view-to-widget-copy-1:
-        checksum: 4
-        crecord_type: right
-      test-view-to-widget-copy-2:
-        checksum: 6
-        crecord_type: right
-      test-view-to-widget-edit:
-        checksum: 6
-        crecord_type: right
-  default_rights_43:
-    _id: noperms
-    crecord_name: noperms
-    crecord_type: role
-    rights: {}
-  default_rights_44:
-    _id: approver
-    crecord_name: approver
-    crecord_type: role
-    rights:
-      api_execution:
-        checksum: 1
-        crecord_type: right
-      api_instruction:
-        checksum: 15
-        crecord_type: right
-      api_instruction_approve:
-        checksum: 1
-        crecord_type: right
-  default_rights_45:
-    _id: approver2
-    crecord_name: approver2
-    crecord_type: role
-    rights:
-      api_instruction:
-        checksum: 15
-        crecord_type: right
-      api_instruction_approve:
-        checksum: 1
-        crecord_type: right
-  default_rights_46:
-    _id: manager
-    crecord_name: manager
-    crecord_type: role
-    rights:
-      api_acl:
-        checksum: 15
-        crecord_type: right
-      api_action:
-        checksum: 15
-        crecord_type: right
-      api_alarm_read:
-        checksum: 1
-        crecord_type: right
-      api_app_info_read:
-        checksum: 1
-        crecord_type: right
-      api_entity:
-        checksum: 15
-        crecord_type: right
-      api_entityservice:
-        checksum: 15
-        crecord_type: right
-      api_event:
-        checksum: 1
-        crecord_type: right
-      api_execution:
-        checksum: 1
-        crecord_type: right
-      api_instruction:
-        checksum: 15
-        crecord_type: right
-      api_instruction_approve:
-        checksum: 1
-        crecord_type: right
-      api_job:
-        checksum: 15
-        crecord_type: right
-      api_job_config:
-        checksum: 15
-        crecord_type: right
-      api_pbehavior:
-        checksum: 15
-        crecord_type: right
-      api_pbehaviorexception:
-        checksum: 15
-        crecord_type: right
-      api_pbehaviorreason:
-        checksum: 15
-        crecord_type: right
-      api_pbehaviortype:
-        checksum: 15
-        crecord_type: right
-      api_playlist:
-        checksum: 4
-        crecord_type: right
-      api_viewgroup:
-        checksum: 4
-        crecord_type: right
-  default_rights_47:
-    _id: root
-    authkey: 2be1d0ee-5e9e-4b1f-9d80-e857e50f4191
-    contact:
-      address: 30 Rue du Triez 59290 Wasquehal France
-      name: John Doe
-    crecord_name: root
-    crecord_type: user
+    crecord_name: <Current()._id>
+    description: <Phrase()>
+    rights: { }
+
+  user (template):
+    _id: <UUID()>
+    authkey: <UUID()>
     enable: true
-    mail: admin@canopsis.net
-    role: admin
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_48:
+    external: false
+    shadowpasswd: "<Password(test)>"
+    crecord_type: user
+    crecord_name: <Current()._id>
+
+  permission_api_alarm_read (extend permission):
+    _id: api_alarm_read
+    desc: Read alarms
+  permission_api_idlerule (extend permission_crud):
+    _id: api_idlerule
+    desc: Idle rules
+  permission_api_eventfilter (extend permission_crud):
+    _id: api_eventfilter
+    desc: Event filters
+  permission_api_action (extend permission_crud):
+    _id: api_action
+    desc: Actions
+  permission_api_metaalarmrule (extend permission_crud):
+    _id: api_metaalarmrule
+    desc: Meta-alarm rules
+  permission_api_playlist (extend permission_crud):
+    _id: api_playlist
+    desc: Playlists
+  permission_api_dynamicinfos (extend permission_crud):
+    _id: api_dynamicinfos
+    desc: Dynamic infos
+  permission_api_entityservice (extend permission_crud):
+    _id: api_entityservice
+    desc: Entity service
+  permission_api_entitycategory (extend permission_crud):
+    _id: api_entitycategory
+    desc: Entity categories
+  permission_api_viewgroup (extend permission_crud):
+    _id: api_viewgroup
+    desc: View groups
+  permission_api_view (extend permission_crud):
+    _id: api_view
+    desc: Views
+  permission_api_pbehavior (extend permission_crud):
+    _id: api_pbehavior
+    desc: PBehaviors
+  permission_api_pbehaviortype (extend permission_crud):
+    _id: api_pbehaviortype
+    desc: PBehaviorTypes
+  permission_api_pbehaviorreason (extend permission_crud):
+    _id: api_pbehaviorreason
+    desc: PBehaviorReasons
+  permission_api_pbehaviorexception (extend permission_crud):
+    _id: api_pbehaviorexception
+    desc: PBehaviorExceptions
+  permission_api_event (extend permission):
+    _id: api_event
+    desc: Event
+  permission_api_healthcheck (extend permission):
+    _id: api_healthcheck
+    desc: Healthcheck
+  permission_api_message_rate_stats_read (extend permission):
+    _id: api_message_rate_stats_read
+    desc: Message rate statistics
+  permission_api_execution (extend permission):
+    _id: api_execution
+    desc: Runs instructions
+  permission_api_job_config (extend permission_crud):
+    _id: api_job_config
+    desc: Job configs
+  permission_api_job (extend permission_crud):
+    _id: api_job
+    desc: Jobs
+  permission_api_instruction (extend permission_crud):
+    _id: api_instruction
+    desc: Instructions
+  permission_api_file (extend permission_crud):
+    _id: api_file
+    desc: File
+  permission_api_entity (extend permission_crud):
+    _id: api_entity
+    desc: Entity
+  permission_api_contextgraph (extend permission_crud):
+    _id: api_contextgraph
+    desc: Context graph import
+  permission_api_acl (extend permission_crud):
+    _id: api_acl
+    desc: Roles, permissions, users
+  permission_api_state_settings (extend permission):
+    _id: api_state_settings
+    desc: State settings
+  permission_api_broadcast_message (extend permission_crud):
+    _id: api_broadcast_message
+    desc: Broadcast Message
+  permission_api_associative_table (extend permission_crud):
+    _id: api_associative_table
+    desc: Associative table
+  permission_api_app_info_read (extend permission):
+    _id: api_app_info_read
+    desc: Read app info
+  permission_api_user_interface_update (extend permission):
+    _id: api_user_interface_update
+    desc: Update user interface
+  permission_api_user_interface_delete (extend permission):
+    _id: api_user_interface_delete
+    desc: Delete user interface
+  permission_api_junit (extend permission_crud):
+    _id: api_junit
+    desc: JUnit API
+  permission_api_datastorage_read (extend permission):
+    _id: api_datastorage_read
+    desc: Data storage settings read
+  permission_api_datastorage_update (extend permission):
+    _id: api_datastorage_update
+    desc: Data storage settings update
+  permission_api_notification (extend permission):
+    _id: api_notification
+    desc: Notification settings
+  permission_api_instruction_approve (extend permission):
+    _id: api_instruction_approve
+    desc: Instruction approve
+  permission_api_resolve_rule (extend permission_crud):
+    _id: api_resolve_rule
+    desc: Resolve rule
+  permission_api_flapping_rule (extend permission_crud):
+    _id: api_flapping_rule
+    desc: Flapping rule
+  permission_api_metrics (extend permission):
+    _id: api_metrics
+    desc: Metrics
+  permission_api_rating_settings (extend permission_crud):
+    _id: api_rating_settings
+    desc: Rating settings
+  permission_api_filter (extend permission_crud):
+    _id: api_filter
+    desc: Filters
+  permission_api_snmprule (extend permission_crud):
+    _id: api_snmprule
+    desc: SNMP
+  permission_api_snmpmib (extend permission_crud):
+    _id: api_snmpmib
+    desc: SNMP MIB
+  permission_api_shared_pattern (extend permission):
+    _id: api_shared_pattern
+    desc: Shared patterns
+
+  role_noperms (extend role):
+    _id: noperms
+
+  role_to_instruction_approve_1 (extend role):
+    _id: approver
+    rights:
+      "@permission_api_execution":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_instruction":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_instruction_approve":
+        checksum: 1
+        crecord_type: right
+
+  role_to_instruction_approve_2 (extend role):
+    _id: approver2
+    rights:
+      "@permission_api_instruction":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_instruction_approve":
+        checksum: 1
+        crecord_type: right
+
+  role_manager (extend role):
+    _id: manager
+    rights:
+      "@permission_api_acl":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_action":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_alarm_read":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_app_info_read":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_entity":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_entityservice":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_event":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_execution":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_instruction":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_instruction_approve":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_job":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_job_config":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_pbehavior":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_pbehaviorexception":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_pbehaviorreason":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_pbehaviortype":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_playlist":
+        checksum: 4
+        crecord_type: right
+      "@permission_api_viewgroup":
+        checksum: 4
+        crecord_type: right
+
+  user_manager (extend user):
     _id: manageruser
     authkey: 2be1d0ee-5e9e-4b1f-9d80-e857e50f4191
     contact:
       address: 30 Rue du Triez 59290 Wasquehal France
       name: John Doe
-    crecord_name: manageruser
-    crecord_type: user
-    enable: true
     mail: manager@canopsis.net
-    role: manager
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_49:
+    role: "@role_manager"
+
+  user_noperms (extend user):
     _id: nopermsuser
-    authkey: b31c48c7-3ccc-4ad3-bc1e-0e12bdd64caa
-    crecord_name: nopermsuser
-    crecord_type: user
-    enable: true
-    role: noperms
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_50:
+    role: "@role_noperms"
+
+  user_to_instruction_approve_1 (extend user):
     _id: approveruser
-    authkey: b31c48c7-3ccc-4ad3-bc1e-0e12bdd64caa
-    crecord_name: approveruser
-    crecord_type: user
-    enable: true
-    role: approver
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_51:
+    role: "@role_to_instruction_approve_1"
+
+  user_to_instruction_approve_2 (extend user):
     _id: approveruser2
-    authkey: b31c48c7-3ccc-4ad3-bc1e-0e12bdd64caa
-    crecord_name: approveruser2
-    crecord_type: user
-    enable: true
-    role: approver2
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_52:
+    role: "@role_to_instruction_approve_2"
+
+  user_to_test_paused_executions (extend user):
     _id: test-user-to-test-paused-executions
-    authkey: b1f67e3e-f631-4140-a801-9a05cb683e2c
-    crecord_name: test-user-to-test-paused-executions
-    crecord_type: user
-    enable: true
-    role: manager
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_53:
+    role: "@role_manager"
+
+  permission_to_get_1 (extend permission):
     _id: test-permission-to-get-1
-    crecord_name: test-permission-to-get-1
-    crecord_type: action
     desc: test-permission-to-get-1-description
-  default_rights_54:
+
+  permission_to_get_2 (extend permission):
     _id: test-permission-to-get-2
-    crecord_name: test-permission-to-get-2
-    crecord_type: action
     desc: test-permission-to-get-2-description
-  default_rights_55:
+
+  permission_to_edit_role_1 (extend permission):
     _id: test-permission-to-edit-role-1
-    crecord_name: test-permission-to-edit-role-1
-    crecord_type: action
     desc: test-permission-to-edit-role-1-description
-  default_rights_56:
+
+  permission_to_edit_role_2 (extend permission_crud):
     _id: test-permission-to-edit-role-2
-    crecord_name: test-permission-to-edit-role-2
-    crecord_type: action
     desc: test-permission-to-edit-role-2-description
-    type: CRUD
-  default_rights_57:
+
+  permission_to_edit_role_3 (extend permission_rw):
     _id: test-permission-to-edit-role-3
-    crecord_name: test-permission-to-edit-role-3
-    crecord_type: action
     desc: test-permission-to-edit-role-3-description
-    type: RW
-  default_rights_58:
+
+  role_to_check_unique_name (extend role):
     _id: test-role-to-check-unique-name
-    crecord_name: test-role-to-check-unique-name
-    crecord_type: role
-    description: test-role-to-check-unique-name-description
-    rights: {}
-  default_rights_59:
+
+  role_to_delete (extend role):
     _id: test-role-to-delete
-    crecord_name: test-role-to-delete
-    crecord_type: role
-    description: test-role-to-delete-description
-    rights: {}
-  default_rights_60:
+
+  role_to_delete_linked_to_user (extend role):
     _id: test-role-to-delete-linked-to-user
-    crecord_name: test-role-to-delete-linked-to-user
-    crecord_type: role
-    description: test-role-to-delete-linked-to-user-description
-    rights: {}
-  default_rights_61:
+
+  user_to_delete_role_linked_to_user (extend user):
     _id: test-user-to-delete-role-linked-to-user
-    crecord_name: test-user-to-delete-role-linked-to-user
-    crecord_type: user
-    role: test-role-to-delete-linked-to-user
-  default_rights_62:
+    role: "@role_to_delete_linked_to_user"
+
+  role_to_get_1 (extend role):
     _id: test-role-to-get-1
-    crecord_name: test-role-to-get-1
-    crecord_type: role
     description: test-role-to-get-1-description
     rights:
-      test-permission-to-edit-role-1:
+      "@permission_to_edit_role_1":
         checksum: 1
-      test-permission-to-edit-role-2:
+      "@permission_to_edit_role_2":
         checksum: 15
-      test-permission-to-edit-role-3:
+      "@permission_to_edit_role_3":
         checksum: 7
-  default_rights_63:
+
+  role_to_get_2 (extend role):
     _id: test-role-to-get-2
-    crecord_name: test-role-to-get-2
-    crecord_type: role
     defaultview: test-view-to-edit-role
     description: test-role-to-get-2-description
     rights:
-      test-permission-to-edit-role-2:
+      "@permission_to_edit_role_2":
         checksum: 7
-      test-permission-to-edit-role-3:
+      "@permission_to_edit_role_3":
         checksum: 3
-  default_rights_64:
+
+  role_to_update (extend role):
     _id: test-role-to-update
-    crecord_name: test-role-to-update
-    crecord_type: role
     description: test-role-to-update-description
     rights:
-      test-permission-to-edit-role-1:
+      "@permission_to_edit_role_1":
         checksum: 1
-      test-permission-to-edit-role-2:
+      "@permission_to_edit_role_2":
         checksum: 15
-      test-permission-to-edit-role-3:
+      "@permission_to_edit_role_3":
         checksum: 7
-  default_rights_65:
+
+  permission_to_edit_user_1 (extend permission):
     _id: test-permission-to-edit-user-1
-    crecord_name: test-permission-to-edit-user-1
-    crecord_type: action
     desc: test-permission-to-edit-user-1-description
-  default_rights_66:
+
+  permission_to_edit_user_2 (extend permission_crud):
     _id: test-permission-to-edit-user-2
-    crecord_name: test-permission-to-edit-user-2
-    crecord_type: action
     desc: test-permission-to-edit-user-2-description
-    type: CRUD
-  default_rights_67:
+
+  permission_to_edit_user_3 (extend permission_rw):
     _id: test-permission-to-edit-user-3
-    crecord_name: test-permission-to-edit-user-3
-    crecord_type: action
     desc: test-permission-to-edit-user-3-description
-    type: RW
-  default_rights_68:
+
+  role_to_edit_user (extend role):
     _id: test-role-to-edit-user
-    crecord_name: test-role-to-edit-user
-    crecord_type: role
     defaultview: test-view-to-edit-user
     description: test-role-to-edit-user-description
     rights:
-      test-permission-to-edit-user-1:
+      "@permission_to_edit_user_1":
         checksum: 1
-      test-permission-to-edit-user-2:
+      "@permission_to_edit_user_2":
         checksum: 15
-      test-permission-to-edit-user-3:
+      "@permission_to_edit_user_3":
         checksum: 7
-  default_rights_69:
+
+  user_to_get_1 (extend user):
     _id: test-user-to-get-1
     authkey: 3ct2e1ff-5e9e-4b1f-9d80-d968d61g5202
-    crecord_name: test-user-to-get-1
-    crecord_type: user
     defaultview: test-view-to-edit-user
-    enable: true
     firstname: test-user-to-get-1-firstname
     groupsNavigationType: side-bar
     lastname: test-user-to-get-1-lastname
     mail: test-user-to-get-1-email@canopsis.net
-    role: test-role-to-edit-user
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
+    role: "@role_to_edit_user"
     tours:
       test-tour-to-get-user-1: true
     ui_language: en
-  default_rights_70:
+
+  user_to_get_2 (extend user):
     _id: test-user-to-get-2
     authkey: 4du3d2gg-6d0d-5c2g-0e91-e079f72o6313
-    crecord_name: test-user-to-get-2
-    crecord_type: user
     defaultview: test-view-to-edit-user
-    enable: true
     firstname: test-user-to-get-2-firstname
     groupsNavigationType: side-bar
     lastname: test-user-to-get-2-lastname
     mail: test-user-to-get-2-email@canopsis.net
-    role: test-role-to-edit-user
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
+    role: "@role_to_edit_user"
     ui_language: en
-  default_rights_71:
+
+  user_to_check_unique_name (extend user):
     _id: test-user-to-check-unique-name
     crecord_name: test-user-to-check-unique-name-name
-    crecord_type: user
-    enable: true
-    mail: test-user-to-check-unique-name-email@canopsis.net
-    role: test-role-to-edit-user
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_72:
+    role: "@role_to_edit_user"
+
+  user_to_delete (extend user):
     _id: test-user-to-delete
-    crecord_name: test-user-to-delete
-    crecord_type: user
-    enable: true
-    mail: test-user-to-delete-email@canopsis.net
-    role: test-role-to-edit-user
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_73:
+    role: "@role_to_edit_user"
+
+  user_to_update_1 (extend user):
     _id: test-user-to-update-1
     authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
-    crecord_name: test-user-to-update-1
-    crecord_type: user
-    enable: true
-    mail: test-user-to-update-1-email@canopsis.net
-    role: test-role-to-edit-user
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_74:
+    role: "@role_to_edit_user"
+
+  user_to_update_2 (extend user):
     _id: test-user-to-update-2
-    crecord_name: test-user-to-update-2
-    crecord_type: user
-    enable: true
-    mail: test-user-to-update-2-email@canopsis.net
-    role: test-role-to-edit-user
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_75:
+    role: "@role_to_edit_user"
+
+  user_to_bulk_update_1 (extend user):
     _id: test-user-to-bulk-update-1
     authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
-    crecord_name: test-user-to-bulk-update-1
-    crecord_type: user
-    enable: true
-    mail: test-user-to-bulk-update-1-email@canopsis.net
-    role: test-role-to-edit-user
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_76:
+    role: "@role_to_edit_user"
+
+  user_to_bulk_update_2 (extend user):
     _id: test-user-to-bulk-update-2
     authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
-    crecord_name: test-user-to-bulk-update-2
-    crecord_type: user
-    enable: true
-    mail: test-user-to-bulk-update-2-email@canopsis.net
-    role: test-role-to-edit-user
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_77:
+    role: "@role_to_edit_user"
+
+  user_to_bulk_delete_1 (extend user):
     _id: test-user-to-bulk-delete-1
-    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
-    crecord_name: test-user-to-bulk-delete-1
-    crecord_type: user
-    enable: true
-    mail: test-user-to-bulk-delete-1-email@canopsis.net
-    role: test-role-to-edit-user
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_78:
+    role: "@role_to_edit_user"
+
+  user_to_bulk_delete_2 (extend user):
     _id: test-user-to-bulk-delete-2
-    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
-    crecord_name: test-user-to-bulk-delete-2
-    crecord_type: user
-    enable: true
-    mail: test-user-to-bulk-delete-2-email@canopsis.net
-    role: test-role-to-edit-user
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_79:
+    role: "@role_to_edit_user"
+
+  permission_view_to_get_1 (extend permission_rw):
     _id: test-view-to-get-1
-    crecord_name: test-view-to-get-1
-    crecord_type: action
-    desc: view test-view-to-get-1
-    type: RW
-  default_rights_80:
+
+  permission_view_to_get_2 (extend permission_rw):
     _id: test-view-to-get-2
-    crecord_name: test-view-to-get-2
-    crecord_type: action
-    desc: view test-view-to-get-2
-    type: RW
-  default_rights_81:
+
+  permission_view_to_delete_1 (extend permission_rw):
     _id: test-view-to-delete-1
-    crecord_name: test-view-to-delete-1
-    crecord_type: action
-    desc: view test-view-to-delete-1
-    type: RW
-  default_rights_82:
+
+  permission_view_to_delete_2 (extend permission_rw):
     _id: test-view-to-delete-2
-    crecord_name: test-view-to-delete-2
-    crecord_type: action
-    desc: view test-view-to-delete-2
-    type: RW
-  default_rights_83:
+
+  permission_view_to_update (extend permission_rw):
     _id: test-view-to-update
-    crecord_name: test-view-to-update
-    crecord_type: action
-    desc: view test-view-to-update
-    type: RW
-  default_rights_84:
+
+  permission_view_to_check_access (extend permission_rw):
     _id: test-view-to-check-access
-    crecord_name: test-view-to-check-access
-    crecord_type: action
-    desc: view test-view-to-check-access
-    type: RW
-  default_rights_85:
+
+  permission_view_to_junit_edit_dir_param (extend permission_rw):
     _id: test-view-to-junit-edit-dir-param
-    crecord_name: test-view-to-junit-edit-dir-param
-    crecord_type: action
-    desc: view test-view-to-junit-edit-dir-param
-    type: RW
-  default_rights_86:
+
+  permission_view_to_viewgroup_get_1 (extend permission_rw):
     _id: test-view-to-viewgroup-get-1
-    crecord_name: test-view-to-viewgroup-get-1
-    crecord_type: action
-    desc: test-view-to-viewgroup-get-1-name
-    type: RW
-  default_rights_87:
+
+  permission_view_to_viewgroup_get_2 (extend permission_rw):
     _id: test-view-to-viewgroup-get-2
-    crecord_name: test-view-to-viewgroup-get-2
-    crecord_type: action
-    desc: test-view-to-viewgroup-get-2-name
-    type: RW
-  default_rights_88:
+
+  permission_view_to_viewgroup_get_3 (extend permission_rw):
     _id: test-view-to-viewgroup-get-3
-    crecord_name: test-view-to-viewgroup-get-3
-    crecord_type: action
-    desc: test-view-to-viewgroup-get-3-name
-    type: RW
-  default_rights_89:
+
+  permission_playlist_to_check_acess (extend permission_rw):
     _id: test-playlist-to-check-access
-    crecord_name: test-playlist-to-check-access
-    crecord_type: action
-    desc: playlist test-playlist-to-check-access
-    type: RW
-  default_rights_90:
+
+  permission_playlist_to_get_1 (extend permission_rw):
     _id: test-playlist-to-get-1
-    crecord_name: test-playlist-to-get-1
-    crecord_type: action
-    desc: playlist test-playlist-to-get-1
-    type: RW
-  default_rights_91:
+
+  permission_playlist_to_get_2 (extend permission_rw):
     _id: test-playlist-to-get-2
-    crecord_name: test-playlist-to-get-2
-    crecord_type: action
-    desc: playlist test-playlist-to-get-2
-    type: RW
-  default_rights_92:
+
+  permission_playlist_to_update (extend permission_rw):
     _id: test-playlist-to-update
-    crecord_name: test-playlist-to-update
-    crecord_type: action
-    desc: playlist test-playlist-to-update
-    type: RW
-  default_rights_93:
+
+  permission_playlist_to_delete (extend permission_rw):
     _id: test-playlist-to-delete
-    crecord_name: test-playlist-to-delete
-    crecord_type: action
-    desc: playlist test-playlist-to-delete
-    type: RW
-  default_rights_94:
+
+  permission_playlist_to_edit (extend permission_rw):
     _id: test-view-to-playlist-edit
-    crecord_name: test-view-to-playlist-edit
-    crecord_type: action
-    desc: view test-view-to-playlist-edit
-    type: RW
-  default_rights_95:
+
+  role_to_update_view_position (extend role):
     _id: test-role-to-update-view-position
-    crecord_name: test-role-to-update-view-position
-    crecord_type: role
     description: test-role-to-update-view-position-description
     rights:
-      api_view:
+      "@permission_api_view":
         checksum: 15
         crecord_type: right
-      api_viewgroup:
+      "@permission_api_viewgroup":
         checksum: 15
         crecord_type: right
-  default_rights_96:
+
+  user_to_update_view_position (extend user):
     _id: test-user-to-update-view-position
-    authkey: b1f67e3e-wwww-4140-a801-9a05cb683e2c
-    crecord_name: test-user-to-update-view-position
-    crecord_type: user
-    enable: true
-    role: test-role-to-update-view-position
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_97:
+    role: "@role_to_update_view_position"
+
+  user_to_rule_author_1 (extend user):
     _id: test-user-author-1-id
-    authkey: b31c48c7-3ccc-4ad3-bc1e-0e12bdd64caa
     crecord_name: test-user-author-1-username
-    crecord_type: user
-    enable: true
-    role: noperms
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_98:
+    role: "@role_noperms"
+
+  user_to_rule_author_2 (extend user):
     _id: test-user-alternate-author-1-id
-    authkey: b31c48c7-3ccc-4ad3-bc1e-0e12bdd64caa
-    crecord_name: test-user-alternate-author-1-username
-    crecord_type: user
-    enable: true
-    role: noperms
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_99:
+    role: "@role_noperms"
+
+  role_to_rate_instruction (extend role):
     _id: test-role-to-rate-instruction
-    crecord_name: test-role-to-rate-instruction
-    crecord_type: role
     rights:
-      api_execution:
+      "@permission_api_execution":
         checksum: 1
         crecord_type: right
-      api_instruction:
+      "@permission_api_instruction":
         checksum: 4
         crecord_type: right
-      api_notification:
+      "@permission_api_notification":
         checksum: 1
         crecord_type: right
-  default_rights_100:
+
+  user_to_rate_instruction (extend user):
     _id: test-user-to-rate-instruction
-    authkey: 2be1d0ee-5e9e-8mdn-9d80-e857e50f4191
-    crecord_name: test-user-to-rate-instruction
-    crecord_type: user
-    enable: true
-    mail: test-user-to-rate-instruction@canopsis.net
-    role: test-role-to-rate-instruction
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_101:
+    role: "@role_to_rate_instruction"
+
+  role_to_stats_instruction_get (extend role):
     _id: test-role-to-stats-instruction-get
-    crecord_name: test-role-to-stats-instruction-get
-    crecord_type: role
     rights:
-      api_execution:
+      "@permission_api_execution":
         checksum: 1
         crecord_type: right
-      api_instruction:
+      "@permission_api_instruction":
         checksum: 4
         crecord_type: right
-      api_notification:
+      "@permission_api_notification":
         checksum: 1
         crecord_type: right
-  default_rights_102:
+
+  user_to_stats_instruction_get (extend user):
     _id: test-user-to-stats-instruction-get
-    authkey: 2be1d0ee-7fs6-8mdn-9d80-e857e50f4191
-    crecord_name: test-user-to-stats-instruction-get
-    crecord_type: user
-    enable: true
-    mail: test-user-to-stats-instruction-get@canopsis.net
-    role: test-role-to-stats-instruction-get
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_103:
+    role: "@role_to_stats_instruction_get"
+
+  permission_view_to_tab_edit (extend permission_rw):
+    _id: test-view-to-tab-edit
+
+  permission_view_to_tab_check_access (extend permission_rw):
+    _id: test-view-to-tab-check-access
+
+  permission_view_to_widget_edit (extend permission_rw):
+    _id: test-view-to-widget-edit
+
+  permission_view_to_widget_check_acess (extend permission_rw):
+    _id: test-view-to-widget-check-access
+
+  permission_view_to_user_preferences_update_1 (extend permission_rw):
+    _id: test-view-to-user-preferences-update-1
+
+  permission_view_to_user_preferences_update_2 (extend permission_rw):
+    _id: test-view-to-user-preferences-update-2
+
+  permission_view_to_user_preferences_get (extend permission_rw):
+    _id: test-view-to-user-preferences-get
+
+  role_to_user_preferences_edit (extend role):
     _id: test-role-to-user-preferences-edit
-    crecord_name: test-role-to-user-preferences-edit
-    crecord_type: role
     rights:
-      api_view:
+      "@permission_api_view":
         checksum: 15
         crecord_type: right
-      test-view-to-user-preferences-get:
+      "@permission_view_to_user_preferences_get":
         checksum: 4
         crecord_type: right
-      test-view-to-user-preferences-update-1:
+      "@permission_view_to_user_preferences_update_1":
         checksum: 4
         crecord_type: right
-  default_rights_104:
+
+  user_to_user_preferences_edit (extend user):
     _id: test-user-to-user-preferences-edit
-    authkey: 2be1d0ee-7fs6-8mdn-9d80-e857e50f5202
-    crecord_name: test-user-to-user-preferences-edit
-    crecord_type: user
-    enable: true
-    mail: test-user-to-user-preferences-edit@canopsis.net
-    role: test-role-to-user-preferences-edit
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_105:
-    _id: test-view-to-tab-edit
-    crecord_name: test-view-to-tab-edit
-    crecord_type: action
-    desc: view test-view-to-tab-edit
-    type: RW
-  default_rights_106:
-    _id: test-view-to-tab-check-access
-    crecord_name: test-view-to-tab-check-access
-    crecord_type: action
-    desc: view test-view-to-tab-check-access
-    type: RW
-  default_rights_107:
-    _id: test-view-to-widget-edit
-    crecord_name: test-view-to-widget-edit
-    crecord_type: action
-    desc: view test-view-to-widget-edit
-    type: RW
-  default_rights_108:
-    _id: test-view-to-widget-check-access
-    crecord_name: test-view-to-widget-check-access
-    crecord_type: action
-    desc: view test-view-to-widget-check-access
-    type: RW
-  default_rights_109:
-    _id: test-view-to-user-preferences-update-1
-    crecord_name: test-view-to-user-preferences-update-1
-    crecord_type: action
-    desc: view test-view-to-user-preferences-update-1
-    type: RW
-  default_rights_110:
-    _id: test-view-to-user-preferences-update-2
-    crecord_name: test-view-to-user-preferences-update-2
-    crecord_type: action
-    desc: view test-view-to-user-preferences-update-2
-    type: RW
-  default_rights_111:
-    _id: test-view-to-user-preferences-get
-    crecord_name: test-view-to-user-preferences-get
-    crecord_type: action
-    desc: view test-view-to-user-preferences-get
-    type: RW
-  default_rights_112:
+    role: "@role_to_user_preferences_edit"
+
+  permission_view_to_tab_update_position_1 (extend permission_rw):
     _id: test-view-to-tab-update-position-1
-    crecord_name: test-view-to-tab-update-position-1
-    crecord_type: action
-    desc: view test-view-to-tab-update-position-1
-    type: RW
-  default_rights_113:
+
+  permission_view_to_tab_update_position_2 (extend permission_rw):
     _id: test-view-to-tab-update-position-2
-    crecord_name: test-view-to-tab-update-position-2
-    crecord_type: action
-    desc: view test-view-to-tab-update-position-2
-    type: RW
-  default_rights_114:
+
+  permission_view_to_tab_update_position_3 (extend permission_rw):
     _id: test-view-to-tab-update-position-3
-    crecord_name: test-view-to-tab-update-position-3
-    crecord_type: action
-    desc: view test-view-to-tab-update-position-3
-    type: RW
-  default_rights_115:
+
+  role_to_tab_update_position (extend role):
     _id: test-role-to-tab-update-position
-    crecord_name: test-role-to-tab-update-position
-    crecord_type: role
     rights:
-      api_view:
+      "@permission_api_view":
         checksum: 6
         crecord_type: right
-      test-view-to-tab-update-position-1:
+      "@permission_view_to_tab_update_position_1":
         checksum: 6
         crecord_type: right
-      test-view-to-tab-update-position-2:
+      "@permission_view_to_tab_update_position_2":
         checksum: 6
         crecord_type: right
-      test-view-to-tab-update-position-3:
+      "@permission_view_to_tab_update_position_3":
         checksum: 6
         crecord_type: right
-  default_rights_116:
+
+  user_to_tab_update_position (extend user):
     _id: test-user-to-tab-update-position
-    authkey: 2be1d0ee-7fs6-0mdn-9d80-e857e50f5202
-    crecord_name: test-user-to-tab-update-position
-    crecord_type: user
-    enable: true
-    mail: test-user-to-tab-update-position@canopsis.net
-    role: test-role-to-tab-update-position
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_117:
+    role: "@role_to_tab_update_position"
+
+  permission_view_to_widget_update_grid_position_1 (extend permission_rw):
     _id: test-view-to-widget-update-grid-position-1
-    crecord_name: test-view-to-widget-update-grid-position-1
-    crecord_type: action
-    desc: view test-view-to-widget-update-grid-position-1
-    type: RW
-  default_rights_118:
+
+  permission_view_to_widget_update_grid_position_2 (extend permission_rw):
     _id: test-view-to-widget-update-grid-position-2
-    crecord_name: test-view-to-widget-update-grid-position-2
-    crecord_type: action
-    desc: view test-view-to-widget-update-grid-position-2
-    type: RW
-  default_rights_119:
+
+  role_to_widget_update_grid_position (extend role):
     _id: test-role-to-widget-update-grid-position
-    crecord_name: test-role-to-widget-update-grid-position
-    crecord_type: role
     rights:
-      api_view:
+      "@permission_api_view":
         checksum: 6
         crecord_type: right
-      test-view-to-widget-update-grid-position-1:
+      "@permission_view_to_widget_update_grid_position_1":
         checksum: 6
         crecord_type: right
-      test-view-to-widget-update-grid-position-2:
+      "@permission_view_to_widget_update_grid_position_2":
         checksum: 6
         crecord_type: right
-  default_rights_120:
+
+  user_to_widget_update_grid_position (extend user):
     _id: test-user-to-widget-update-grid-position
-    authkey: 2be1d0ee-0qs6-0mdn-9d80-e857e50f5202
-    crecord_name: test-user-to-widget-update-grid-position
-    crecord_type: user
-    enable: true
-    mail: test-user-to-widget-update-grid-position@canopsis.net
-    role: test-role-to-widget-update-grid-position
-    shadowpasswd: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-  default_rights_121:
+    role: "@role_to_widget_update_grid_position"
+
+  permission_view_to_export_1 (extend permission_rw):
     _id: test-view-to-export-1
-    crecord_name: test-view-to-export-1
-    crecord_type: action
-    desc: view test-view-to-export-1
-    type: RW
-  default_rights_122:
+
+  permission_view_to_export_2 (extend permission_rw):
     _id: test-view-to-export-2
-    crecord_name: test-view-to-export-2
-    crecord_type: action
-    desc: view test-view-to-export-2
-    type: RW
-  default_rights_123:
+
+  permission_view_to_import_2_1 (extend permission_rw):
     _id: test-view-to-import-2-1
-    crecord_name: test-view-to-import-2-1
-    crecord_type: action
-    desc: view test-view-to-import-2-1
-    type: RW
-  default_rights_124:
+
+  permission_view_to_import_2_2 (extend permission_rw):
     _id: test-view-to-import-2-2
-    crecord_name: test-view-to-import-2-2
-    crecord_type: action
-    desc: view test-view-to-import-2-2
-    type: RW
-  default_rights_125:
+
+  permission_view_to_copy_1 (extend permission_rw):
     _id: test-view-to-copy-1
-    crecord_name: test-view-to-copy-1
-    crecord_type: action
-    desc: view test-view-to-copy-1
-    type: RW
-  default_rights_126:
+
+  permission_view_to_copy_2 (extend permission_rw):
     _id: test-view-to-copy-2
-    crecord_name: test-view-to-copy-2
-    crecord_type: action
-    desc: view test-view-to-copy-2
-    type: RW
-  default_rights_127:
+
+  permission_view_to_tab_copy_1 (extend permission_rw):
     _id: test-view-to-tab-copy-1
-    crecord_name: test-view-to-tab-copy-1
-    crecord_type: action
-    desc: view test-view-to-tab-copy-1
-    type: RW
-  default_rights_128:
+
+  permission_view_to_tab_copy_2 (extend permission_rw):
     _id: test-view-to-tab-copy-2
-    crecord_name: test-view-to-tab-copy-2
-    crecord_type: action
-    desc: view test-view-to-tab-copy-2
-    type: RW
-  default_rights_129:
+
+  permission_view_to_widget_copy_1 (extend permission_rw):
     _id: test-view-to-widget-copy-1
-    crecord_name: test-view-to-widget-copy-1
-    crecord_type: action
-    desc: view test-view-to-widget-copy-1
-    type: RW
-  default_rights_130:
+
+  permission_view_to_widget_copy_2 (extend permission_rw):
     _id: test-view-to-widget-copy-2
-    crecord_name: test-view-to-widget-copy-2
-    crecord_type: action
-    desc: view test-view-to-widget-copy-2
-    type: RW
-  default_rights_api_shared_pattern:
-    _id: api_shared_pattern
-    crecord_name: api_shared_pattern
-    crecord_type: action
-    desc: api_shared_pattern
+
+  role_admin (extend role):
+    _id: admin
+    rights:
+      "@permission_api_alarm_read":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_idlerule":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_eventfilter":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_action":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_metaalarmrule":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_playlist":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_dynamicinfos":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_entityservice":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_entitycategory":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_viewgroup":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_view":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_pbehavior":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_pbehaviortype":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_pbehaviorreason":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_pbehaviorexception":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_event":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_healthcheck":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_message_rate_stats_read":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_execution":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_job_config":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_job":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_instruction":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_file":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_entity":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_contextgraph":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_acl":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_state_settings":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_broadcast_message":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_associative_table":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_app_info_read":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_user_interface_update":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_user_interface_delete":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_junit":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_datastorage_read":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_datastorage_update":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_notification":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_instruction_approve":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_resolve_rule":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_flapping_rule":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_metrics":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_rating_settings":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_filter":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_snmprule":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_snmpmib":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_shared_pattern":
+        checksum: 1
+        crecord_type: right
+      "@permission_playlist_to_delete":
+        checksum: 1
+        crecord_type: right
+      "@permission_playlist_to_get_1":
+        checksum: 4
+        crecord_type: right
+      "@permission_playlist_to_get_2":
+        checksum: 4
+        crecord_type: right
+      "@permission_playlist_to_update":
+        checksum: 2
+        crecord_type: right
+      "@permission_view_to_copy_1":
+        checksum: 4
+        crecord_type: right
+      "@permission_view_to_copy_2":
+        checksum: 6
+        crecord_type: right
+      "@permission_view_to_delete_1":
+        checksum: 1
+        crecord_type: right
+      "@permission_view_to_delete_2":
+        checksum: 1
+        crecord_type: right
+      "@permission_view_to_export_1":
+        checksum: 4
+        crecord_type: right
+      "@permission_view_to_export_2":
+        checksum: 4
+        crecord_type: right
+      "@permission_view_to_get_1":
+        checksum: 4
+        crecord_type: right
+      "@permission_view_to_get_2":
+        checksum: 4
+        crecord_type: right
+      test-view-to-import-2-1:
+        checksum: 6
+        crecord_type: right
+      "@permission_view_to_import_2_2":
+        checksum: 6
+        crecord_type: right
+      "@permission_view_to_junit_edit_dir_param":
+        checksum: 7
+        crecord_type: right
+      "@permission_playlist_to_edit":
+        checksum: 4
+        crecord_type: right
+      "@permission_view_to_tab_copy_1":
+        checksum: 4
+        crecord_type: right
+      "@permission_view_to_tab_copy_2":
+        checksum: 6
+        crecord_type: right
+      "@permission_view_to_tab_edit":
+        checksum: 6
+        crecord_type: right
+      "@permission_view_to_update":
+        checksum: 2
+        crecord_type: right
+      "@permission_view_to_viewgroup_get_1":
+        checksum: 7
+        crecord_type: right
+      "@permission_view_to_viewgroup_get_2":
+        checksum: 7
+        crecord_type: right
+      "@permission_view_to_viewgroup_get_3":
+        checksum: 0
+        crecord_type: right
+      "@permission_view_to_widget_copy_1":
+        checksum: 4
+        crecord_type: right
+      "@permission_view_to_widget_copy_2":
+        checksum: 6
+        crecord_type: right
+      "@permission_view_to_widget_edit":
+        checksum: 6
+        crecord_type: right
+
+  user_admin (extend user):
+    _id: root
+    authkey: 2be1d0ee-5e9e-4b1f-9d80-e857e50f4191
+    contact:
+      address: 30 Rue du Triez 59290 Wasquehal France
+      name: John Doe
+    mail: admin@canopsis.net
+    role: "@role_admin"
