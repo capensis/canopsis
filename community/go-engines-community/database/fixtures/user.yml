@@ -682,6 +682,9 @@ default_rights:
   permission_api_snmpmib (extend permission_crud):
     _id: api_snmpmib
     desc: SNMP MIB
+  permission_api_shared_pattern (extend permission):
+    _id: api_shared_pattern
+    desc: Shared patterns
   permission_view_open_alarms (extend permission_rw):
     _id: "@view_open_alarms"
     desc: "Rights on view: alarmes en cours"
@@ -691,7 +694,6 @@ default_rights:
   permission_view_context_explorer (extend permission_rw):
     _id: "@view_context_explorer"
     desc: "Rights on view: Explorateur de Contexte"
-
 
   role (template):
     _id: <UUID()>
@@ -1019,6 +1021,9 @@ default_rights:
         crecord_type: right
       "@permission_api_snmpmib":
         checksum: 15
+        crecord_type: right
+      "@permission_api_shared_pattern":
+        checksum: 1
         crecord_type: right
       "@permission_view_open_alarms":
         checksum: 15
