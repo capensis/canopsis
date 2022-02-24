@@ -4974,7 +4974,7 @@ var doc = `{
                         "JWTAuth": []
                     },
                     {
-                        "BasicAuth` + "`" + `": []
+                        "BasicAuth": []
                     }
                 ],
                 "description": "Delete saved pattern by id",
