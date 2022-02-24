@@ -4,6 +4,7 @@
     :items="quickRanges",
     :label="$t('quickRanges.title')",
     :hide-details="hideDetails",
+    :disabled="disabled",
     return-object,
     @input="updateModel($event)"
   )
@@ -27,29 +28,33 @@ export default {
       type: Object,
       required: true,
     },
-    customFilter: {
-      type: Function,
-      default: () => true,
+    ranges: {
+      type: Array,
+      required: false,
     },
     hideDetails: {
+      type: Boolean,
+      required: false,
+    },
+    disabled: {
       type: Boolean,
       required: false,
     },
   },
   computed: {
     range() {
-      const range = findQuickRangeValue(this.value.start, this.value.stop);
+      const range = findQuickRangeValue(this.value.start, this.value.stop, this.ranges);
 
       return this.quickRanges.find(({ value }) => value === range.value);
     },
 
     quickRanges() {
-      return Object.values(QUICK_RANGES)
-        .filter(this.customFilter)
-        .map(range => ({
-          ...range,
-          text: this.$t(`quickRanges.types.${range.value}`),
-        }));
+      const ranges = this.ranges ?? Object.values(QUICK_RANGES);
+
+      return ranges.map(range => ({
+        ...range,
+        text: this.$t(`quickRanges.types.${range.value}`),
+      }));
     },
   },
 };
