@@ -1,0 +1,118 @@
+pattern:
+  pattern_alarm (template):
+    _id: <UUID()>
+    title: <Word()>
+    is_shared: false
+    type: alarm
+    alarm_pattern:
+      -
+        - field: v.connector
+          cond:
+            type: eq
+            value: <Word()>
+    author: root
+    created: <NowUnix()>
+    updated: <Current().created>
+
+  pattern_entity (template):
+    _id: <UUID()>
+    title: <Word()>
+    is_shared: false
+    type: entity
+    entity_pattern:
+      -
+        - field: name
+          cond:
+            type: eq
+            value: <Word()>
+    author: root
+    created: <NowUnix()>
+    updated: <Current().created>
+
+  pattern_pbehavior (template):
+    _id: <UUID()>
+    title: <Word()>
+    is_shared: false
+    type: pbehavior
+    pbehavior_pattern:
+      -
+        - field: type
+          cond:
+            type: eq
+            value: <Word()>
+    author: root
+    created: <NowUnix()>
+    updated: <Current().created>
+
+  pattern_to_update_1 (extend pattern_alarm):
+    _id: test-pattern-to-update-1
+    author: nopermsuser
+    created: 1605263992
+
+  pattern_to_update_2 (extend pattern_alarm):
+    _id: test-pattern-to-update-2
+    is_shared: true
+    author: nopermsuser
+    created: 1605263992
+
+  pattern_to_delete_1 (extend pattern_alarm):
+    _id: test-pattern-to-delete-1
+    author: nopermsuser
+
+  pattern_to_delete_2 (extend pattern_alarm):
+    _id: test-pattern-to-delete-2
+    author: nopermsuser
+
+  pattern_to_delete_3 (extend pattern_alarm):
+    _id: test-pattern-to-delete-3
+    is_shared: true
+    author: nopermsuser
+
+  pattern_to_delete_4 (extend pattern_alarm):
+    _id: test-pattern-to-delete-4
+    is_shared: true
+
+  pattern_to_get_1 (extend pattern_alarm):
+    _id: test-pattern-to-get-1
+    title: test-pattern-to-get-1-title
+    alarm_pattern:
+      -
+        - field: v.connector
+          cond:
+            type: eq
+            value: test-pattern-to-get-1-pattern
+    author: nopermsuser
+    created: 1605263992
+    updated: 1605263992
+
+  pattern_to_get_2 (extend pattern_alarm):
+    _id: test-pattern-to-get-2
+    author: root
+
+  pattern_to_get_3 (extend pattern_entity):
+    _id: test-pattern-to-get-3
+    title: test-pattern-to-get-3-title
+    is_shared: true
+    entity_pattern:
+      -
+        - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-get-3-pattern
+    author: nopermsuser
+    created: 1605263992
+    updated: 1605263992
+
+  pattern_to_get_4 (extend pattern_pbehavior):
+    _id: test-pattern-to-get-4
+    title: test-pattern-to-get-4-title
+    is_shared: true
+    pbehavior_pattern:
+      -
+        - field: type
+          cond:
+            type: eq
+            value: test-pattern-to-get-4-pattern
+    author: root
+    created: 1605263992
+    updated: 1605263992
