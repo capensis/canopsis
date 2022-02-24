@@ -2046,11 +2046,117 @@ definitions:
         $ref: '#/definitions/notification.InstructionNotification'
         type: object
     type: object
+  pattern.Alarm:
+    items:
+      items:
+        $ref: '#/definitions/pattern.FieldCondition'
+      type: array
+    type: array
   pattern.AlarmPatternList:
     type: object
+  pattern.Condition:
+    properties:
+      type:
+        type: string
+      value:
+        type: object
+    type: object
+  pattern.EditRequest:
+    properties:
+      alarm_pattern:
+        $ref: '#/definitions/pattern.Alarm'
+        type: object
+      entity_pattern:
+        $ref: '#/definitions/pattern.Entity'
+        type: object
+      is_shared:
+        type: boolean
+      pbehavior_pattern:
+        $ref: '#/definitions/pattern.Pbehavior'
+        type: object
+      title:
+        type: string
+      type:
+        type: string
+    required:
+    - is_shared
+    - title
+    - type
+    type: object
+  pattern.Entity:
+    items:
+      items:
+        $ref: '#/definitions/pattern.FieldCondition'
+      type: array
+    type: array
   pattern.EntityPatternList:
     type: object
   pattern.EventPatternList:
+    type: object
+  pattern.FieldCondition:
+    properties:
+      cond:
+        $ref: '#/definitions/pattern.Condition'
+        type: object
+      field:
+        type: string
+      field_type:
+        description: 'FieldType is only defined for custom fields, ex: infos.'
+        type: string
+    type: object
+  pattern.ListRequest:
+    properties:
+      filter:
+        type: string
+      limit:
+        type: integer
+      page:
+        type: integer
+      paginate:
+        type: boolean
+      search:
+        type: string
+      shared:
+        type: boolean
+      sort:
+        type: string
+      sort_by:
+        type: string
+      withFlags:
+        type: boolean
+    type: object
+  pattern.Pbehavior:
+    items:
+      items:
+        $ref: '#/definitions/pattern.FieldCondition'
+      type: array
+    type: array
+  pattern.Response:
+    properties:
+      _id:
+        type: string
+      alarm_pattern:
+        $ref: '#/definitions/pattern.Alarm'
+        type: object
+      author:
+        $ref: '#/definitions/common.User'
+        type: object
+      created:
+        type: integer
+      entity_pattern:
+        $ref: '#/definitions/pattern.Entity'
+        type: object
+      is_shared:
+        type: boolean
+      pbehavior_pattern:
+        $ref: '#/definitions/pattern.Pbehavior'
+        type: object
+      title:
+        type: string
+      type:
+        type: string
+      updated:
+        type: integer
     type: object
   pbehavior.BulkCreateResponseItem:
     properties:
@@ -6921,6 +7027,179 @@ paths:
       summary: Update notification settings
       tags:
       - notification
+  /patterns:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of saved patterns
+      operationId: saved-patterns-find-all
+      parameters:
+      - in: query
+        name: filter
+        type: string
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: paginate
+        type: boolean
+      - in: query
+        name: search
+        type: string
+      - in: query
+        name: shared
+        type: boolean
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: sort_by
+        type: string
+      - in: query
+        name: withFlags
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PaginatedListResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/pattern.Response'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Find all saved patterns
+      tags:
+      - saved-patterns
+    post:
+      consumes:
+      - application/json
+      description: Create saved pattern
+      operationId: saved-patterns-create
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/pattern.EditRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/pattern.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Create saved pattern
+      tags:
+      - saved-patterns
+  /patterns/{id}:
+    delete:
+      description: Delete saved pattern by id
+      operationId: saved-patterns-delete-by-id
+      parameters:
+      - description: pattern id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204": {}
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Delete saved pattern by id
+      tags:
+      - saved-patterns
+    get:
+      description: Get saved pattern by id
+      operationId: saved-patterns-get-by-id
+      parameters:
+      - description: pattern id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pattern.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Get saved pattern by id
+      tags:
+      - saved-patterns
+    put:
+      consumes:
+      - application/json
+      description: Update saved pattern by id
+      operationId: saved-patterns-update-by-id
+      parameters:
+      - description: pattern id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/pattern.EditRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pattern.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Update saved pattern by id
+      tags:
+      - saved-patterns
   /pbehavior-comments:
     post:
       consumes:
