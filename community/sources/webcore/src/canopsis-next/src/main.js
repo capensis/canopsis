@@ -133,6 +133,7 @@ import CFiltersField from '@/components/forms/fields/c-filters-field.vue';
 import CStateTypeField from '@/components/forms/fields/c-state-type-field.vue';
 import CRecordsPerPageField from '@/components/forms/fields/c-records-per-page-field.vue';
 import COperatorField from '@/components/forms/fields/c-operator-field.vue';
+import CFilterOperatorField from '@/components/forms/fields/c-filter-operator-field.vue';
 
 /**
  * Icons
@@ -325,6 +326,7 @@ Vue.component('c-alarm-metric-parameters-field', CAlarmMetricParametersField);
 Vue.component('c-state-type-field', CStateTypeField);
 Vue.component('c-records-per-page-field', CRecordsPerPageField);
 Vue.component('c-operator-field', COperatorField);
+Vue.component('c-filter-operator-field', CFilterOperatorField);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
