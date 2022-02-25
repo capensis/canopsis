@@ -105,7 +105,10 @@ Feature: Update entity service
       "name": "test-entityservice-to-update-name",
       "output_template": "test-entityservice-to-update-output-updated",
       "sli_avail_state": 1,
-      "type": "service"
+      "type": "service",
+      "ok_events": 0,
+      "ko_events": 0,
+      "state": 0
     }
     """
 

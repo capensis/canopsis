@@ -1,5 +1,8 @@
 # Module Healthcheck
 
+!!! info "Information"
+    Pour le moment, le module Healthcheck nécessite une [activation manuelle d'HTTPS](../guide-administration/administration-avancee/configuration-composants/reverse-proxy-nginx-https.md) afin d'être pleinement fonctionnel.
+
 Le module `Healthcheck` inclus dans Canopsis Edition Pro permet de connaitre l'état de chaque composant technique de Canopsis.  
 Les composants éligibles sont : 
 
@@ -27,7 +30,7 @@ Par ailleurs, l'état global ou l'état de chaque composant est mis à dispositi
 
 En parallèle de l'état de santé des composants, vous avez accès à des graphiques montrant le nombre de messages traités dans Canopsis.
 
-## Etat de santé des composants
+## État de santé des composants
 
 ### API Canopsis
 
@@ -84,7 +87,6 @@ Canopsis ne peut alors pas fonctionner correctement.
     ```
 
 Si cela ne permet pas de rétablir le service, une analyse de logs est nécessaire.
-
 
 ### Base de données MongoDB
 
@@ -153,21 +155,20 @@ Dans le cas présent, on constate que le moteur `engine-correlation` n'est alime
 
 Vous devez vous assurer que les options de lancement des moteurs sont correctement positionnées.
 
-
 #### L'empilement de messages dans les files d'attente
 
 Chaque moteur de Canopsis est associé à une file d'attente de messages.  
 Si le nombre de messages dépasse une limite, on peut en déduire que le moteur n'arrive pas à consommer les messages dans les temps.  
 Il peut alors s'agir d'un problème de performance dégradée ou d'un potentiel plantage du moteur qui n'arriverait plus du tout à consommer les messages.  
 
-Le paramètre définissant la limite est un paramètre global à toutes les files d'attentes de moteurs. Il est défini dans l'onglet `Paramètres` de la page de Bilan de santé.
+Le paramètre définissant la limite est un paramètre global à toutes les files d'attente de moteurs. Il est défini dans l'onglet `Paramètres` de la page de Bilan de santé.
 
 ![module-healthcheck-engines3](img/module-healthcheck-engines3.png)
 ![module-healthcheck-engines4](img/module-healthcheck-engines4.png)
 
 **Remédiation associée**
 
-Si le moteur en défaut continue à dépiler des messages dans sa file, ce signifie que la plate-forme n'est pas suffisament dimensionnée pour accepter ce trafic.  
+Si le moteur en défaut continue à dépiler des messages dans sa file, cela signifie que la plate-forme n'est pas suffisamment dimensionnée pour accepter ce trafic.  
 Les pistes à envisager dans ce cas sont : 
 
 * Les requêtes non ou mal indexées dans la base de données MongoDB (Collscan à rechercher dans les logs)

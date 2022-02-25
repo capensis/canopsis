@@ -332,20 +332,6 @@ func (m *MockStorage) EXPECT() *MockStorageMockRecorder {
 	return m.recorder
 }
 
-// Delete mocks base method.
-func (m *MockStorage) Delete(arg0 context.Context, arg1 string) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Delete", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Delete indicates an expected call of Delete.
-func (mr *MockStorageMockRecorder) Delete(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockStorage)(nil).Delete), arg0, arg1)
-}
-
 // Get mocks base method.
 func (m *MockStorage) Get(arg0 context.Context, arg1 string) (*entityservice.ServiceData, error) {
 	m.ctrl.T.Helper()
@@ -361,45 +347,49 @@ func (mr *MockStorageMockRecorder) Get(arg0, arg1 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockStorage)(nil).Get), arg0, arg1)
 }
 
-// Load mocks base method.
-func (m *MockStorage) Load(arg0 context.Context) ([]entityservice.ServiceData, error) {
+// GetAll mocks base method.
+func (m *MockStorage) GetAll(arg0 context.Context) ([]entityservice.ServiceData, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Load", arg0)
+	ret := m.ctrl.Call(m, "GetAll", arg0)
 	ret0, _ := ret[0].([]entityservice.ServiceData)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// Load indicates an expected call of Load.
-func (mr *MockStorageMockRecorder) Load(arg0 interface{}) *gomock.Call {
+// GetAll indicates an expected call of GetAll.
+func (mr *MockStorageMockRecorder) GetAll(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Load", reflect.TypeOf((*MockStorage)(nil).Load), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockStorage)(nil).GetAll), arg0)
 }
 
-// Save mocks base method.
-func (m *MockStorage) Save(arg0 context.Context, arg1 entityservice.ServiceData) error {
+// Reload mocks base method.
+func (m *MockStorage) Reload(arg0 context.Context, arg1 string) (*entityservice.ServiceData, bool, bool, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Save", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "Reload", arg0, arg1)
+	ret0, _ := ret[0].(*entityservice.ServiceData)
+	ret1, _ := ret[1].(bool)
+	ret2, _ := ret[2].(bool)
+	ret3, _ := ret[3].(error)
+	return ret0, ret1, ret2, ret3
 }
 
-// Save indicates an expected call of Save.
-func (mr *MockStorageMockRecorder) Save(arg0, arg1 interface{}) *gomock.Call {
+// Reload indicates an expected call of Reload.
+func (mr *MockStorageMockRecorder) Reload(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockStorage)(nil).Save), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Reload", reflect.TypeOf((*MockStorage)(nil).Reload), arg0, arg1)
 }
 
-// SaveAll mocks base method.
-func (m *MockStorage) SaveAll(arg0 context.Context, arg1 []entityservice.ServiceData) error {
+// ReloadAll mocks base method.
+func (m *MockStorage) ReloadAll(arg0 context.Context) ([]entityservice.ServiceData, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SaveAll", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "ReloadAll", arg0)
+	ret0, _ := ret[0].([]entityservice.ServiceData)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
-// SaveAll indicates an expected call of SaveAll.
-func (mr *MockStorageMockRecorder) SaveAll(arg0, arg1 interface{}) *gomock.Call {
+// ReloadAll indicates an expected call of ReloadAll.
+func (mr *MockStorageMockRecorder) ReloadAll(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveAll", reflect.TypeOf((*MockStorage)(nil).SaveAll), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReloadAll", reflect.TypeOf((*MockStorage)(nil).ReloadAll), arg0)
 }
