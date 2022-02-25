@@ -28,6 +28,7 @@ import featuresService from '@/services/features';
 
 import ModalsPlugin from '@/plugins/modals';
 import PopupsPlugin from '@/plugins/popups';
+import SidebarPlugin from '@/plugins/sidebar';
 import ValidatorPlugin from '@/plugins/validator';
 import SetSeveralPlugin from '@/plugins/set-several';
 import UpdateFieldPlugin from '@/plugins/update-field';
@@ -147,6 +148,7 @@ import MiscellaneousServicesIcon from '@/components/icons/miscellaneous_services
 import PublishedWithChangesIcon from '@/components/icons/published_with_changes.vue';
 
 import * as modalsComponents from '@/components/modals';
+import * as sidebarsComponents from '@/components/sidebars';
 
 /* eslint-enable import/first */
 
@@ -372,6 +374,13 @@ Vue.use(ModalsPlugin, {
 });
 
 Vue.use(PopupsPlugin, { store });
+Vue.use(SidebarPlugin, {
+  store,
+
+  components: {
+    ...sidebarsComponents,
+  },
+});
 Vue.use(SetSeveralPlugin);
 Vue.use(UpdateFieldPlugin);
 Vue.use(ToursPlugin);

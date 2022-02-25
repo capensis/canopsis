@@ -1,5 +1,6 @@
 ---
 timescaledb_package: "timescaledb-2-postgresql"
+timescaledb_loader_package: "timescaledb-2-loader-postgresql"
 postgresql_daemon: "postgresql-{{ postgresql_main_version }}"
 postgresql_unix_user: "postgres"
 
