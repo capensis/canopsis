@@ -28,7 +28,6 @@
 </template>
 
 <script>
-import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { MODALS, ENTITIES_TYPES } from '@/constants';
 
 import { formArrayMixin } from '@/mixins/form';
@@ -64,13 +63,6 @@ export default {
   computed: {
     existingTitles() {
       return this.filters.map(({ title }) => title);
-    },
-
-    draggableOptions() {
-      return {
-        animation: VUETIFY_ANIMATION_DELAY,
-        disabled: !this.editable,
-      };
     },
   },
   methods: {

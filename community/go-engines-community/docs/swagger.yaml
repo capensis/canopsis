@@ -201,7 +201,7 @@ definitions:
           type: string
         type: array
       pbehavior_info:
-        $ref: '#/definitions/types.PbehaviorInfo'
+        $ref: '#/definitions/entity.PbehaviorInfo'
         type: object
       pbh_inactive_duration:
         type: integer
@@ -376,14 +376,6 @@ definitions:
     properties:
       _id:
         type: string
-      active_on_pbh:
-        items:
-          type: string
-        type: array
-      disabled_on_pbh:
-        items:
-          type: string
-        type: array
       execution:
         $ref: '#/definitions/alarm.Execution'
         type: object
@@ -464,6 +456,9 @@ definitions:
         type: string
       author:
         type: string
+      comments:
+        $ref: '#/definitions/pbehavior.Comments'
+        type: object
       name:
         type: string
       rrule:
@@ -846,10 +841,22 @@ definitions:
       infos:
         $ref: '#/definitions/entity.Infos'
         type: object
+      ko_events:
+        type: integer
+      last_event_date:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
       measurements:
         type: object
       name:
         type: string
+      ok_events:
+        type: integer
+      pbehavior_info:
+        $ref: '#/definitions/entity.PbehaviorInfo'
+        type: object
+      state:
+        type: integer
       type:
         type: string
     type: object
@@ -913,6 +920,35 @@ definitions:
         type: string
       with_flags:
         type: boolean
+    type: object
+  entity.PbehaviorInfo:
+    properties:
+      canonical_type:
+        description: CanonicalType is Type of pbehavior.Type.
+        type: string
+      icon_name:
+        type: string
+      id:
+        description: ID is ID of pbehavior.PBehavior.
+        type: string
+      name:
+        description: Name is Name of pbehavior.PBehavior.
+        type: string
+      reason:
+        description: Reason is Name of pbehavior.Reason.
+        type: string
+      timestamp:
+        $ref: '#/definitions/types.CpsTime'
+        description: |-
+          Timestamp is time when entity enters pbehavior.
+          Use pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.
+        type: object
+      type:
+        description: TypeID is ID of pbehavior.Type.
+        type: string
+      type_name:
+        description: TypeName is Name of pbehavior.Type.
+        type: string
     type: object
   entitybasic.EditRequest:
     properties:
@@ -988,11 +1024,23 @@ definitions:
       infos:
         $ref: '#/definitions/entity.Infos'
         type: object
+      ko_events:
+        type: integer
+      last_event_date:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
       measurements:
         type: object
       name:
         type: string
+      ok_events:
+        type: integer
+      pbehavior_info:
+        $ref: '#/definitions/entity.PbehaviorInfo'
+        type: object
       sli_avail_state:
+        type: integer
+      state:
         type: integer
       type:
         type: string
@@ -1225,13 +1273,25 @@ definitions:
       infos:
         $ref: '#/definitions/entity.Infos'
         type: object
+      ko_events:
+        type: integer
+      last_event_date:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
       measurements:
         type: object
       name:
         type: string
+      ok_events:
+        type: integer
       output_template:
         type: string
+      pbehavior_info:
+        $ref: '#/definitions/entity.PbehaviorInfo'
+        type: object
       sli_avail_state:
+        type: integer
+      state:
         type: integer
       type:
         type: string
@@ -2426,9 +2486,6 @@ definitions:
       updated:
         type: integer
     type: object
-  primitive.M:
-    additionalProperties: true
-    type: object
   resolverule.CreateRequest:
     properties:
       _id:
@@ -2882,6 +2939,9 @@ definitions:
         type: array
       name:
         type: string
+      pbehavior_info:
+        $ref: '#/definitions/types.PbehaviorInfo'
+        type: object
       pbehaviors:
         items:
           $ref: '#/definitions/pbehavior.Response'
@@ -2897,7 +2957,7 @@ definitions:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
       stats:
-        $ref: '#/definitions/serviceweather.Stats'
+        $ref: '#/definitions/statistics.EventStatistics'
         type: object
       status:
         $ref: '#/definitions/alarm.AlarmStep'
@@ -2964,6 +3024,9 @@ definitions:
         type: string
       output:
         type: string
+      pbehavior_info:
+        $ref: '#/definitions/types.PbehaviorInfo'
+        type: object
       pbehaviors:
         items:
           $ref: '#/definitions/pbehavior.Response'
@@ -2981,17 +3044,6 @@ definitions:
       status:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
-    type: object
-  serviceweather.Stats:
-    properties:
-      ko:
-        type: integer
-      last_event:
-        type: integer
-      last_ko:
-        type: integer
-      ok:
-        type: integer
     type: object
   serviceweather.WeatherLink:
     properties:
@@ -3056,6 +3108,17 @@ definitions:
     - major
     - minor
     - type
+    type: object
+  statistics.EventStatistics:
+    properties:
+      ko:
+        type: integer
+      last_event:
+        type: integer
+      last_ko:
+        type: integer
+      ok:
+        type: integer
     type: object
   types.Alarm:
     properties:
@@ -4099,8 +4162,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -4251,8 +4313,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -4976,8 +5037,7 @@ paths:
         required: true
         type: array
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -5071,8 +5131,7 @@ paths:
         required: true
         type: array
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -5339,8 +5398,7 @@ paths:
       produces:
       - application/json
       responses:
-        "202":
-          description: ""
+        "202": {}
         "400":
           description: Bad Request
           schema:
@@ -5475,8 +5533,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -5652,8 +5709,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "400":
           description: Bad Request
           schema:
@@ -5861,8 +5917,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -6052,8 +6107,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -6205,8 +6259,7 @@ paths:
       produces:
       - application/json
       responses:
-        "204":
-          description: ""
+        "204": {}
       security:
       - JWTAuth: []
       summary: Get file access
@@ -6227,8 +6280,7 @@ paths:
       produces:
       - application/json
       responses:
-        "204":
-          description: ""
+        "204": {}
         "400":
           description: Bad Request
           schema:
@@ -6356,8 +6408,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -6525,8 +6576,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -6640,8 +6690,7 @@ paths:
       description: delete user interface
       operationId: internal-delete-user-interface
       responses:
-        "204":
-          description: ""
+        "204": {}
       security:
       - ApiKeyAuth: []
       - BasicAuth: []
@@ -6686,8 +6735,7 @@ paths:
       produces:
       - application/json
       responses:
-        "204":
-          description: ""
+        "204": {}
       security:
       - ApiKeyAuth: []
       - BasicAuth: []
@@ -6726,8 +6774,7 @@ paths:
       produces:
       - application/json
       responses:
-        "204":
-          description: ""
+        "204": {}
       security:
       - JWTAuth: []
       summary: Log out
@@ -6885,8 +6932,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -6994,8 +7040,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "400":
           description: Bad Request
           schema:
@@ -7087,8 +7132,7 @@ paths:
       produces:
       - application/octet-stream
       responses:
-        "200":
-          description: ""
+        "200": {}
         "404":
           description: Not Found
           schema:
@@ -7196,8 +7240,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "400":
           description: Bad Request
           schema:
@@ -7404,8 +7447,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "400":
           description: Bad Request
           schema:
@@ -7577,8 +7619,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -7931,8 +7972,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -8092,8 +8132,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -8261,8 +8300,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -8430,8 +8468,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -8787,8 +8824,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -8956,8 +8992,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "400":
           description: Bad Request
           schema:
@@ -9054,8 +9089,7 @@ paths:
       produces:
       - application/json
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -9159,8 +9193,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:

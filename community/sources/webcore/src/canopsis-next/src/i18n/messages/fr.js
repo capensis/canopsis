@@ -212,6 +212,7 @@ export default {
     exportAsCsv: 'Export as csv',
     criteria: 'Critères',
     ratingSettings: 'Paramètres d\'évaluation',
+    pbehavior: 'Comportement périodique | Comportements périodiques',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -288,21 +289,12 @@ export default {
     impacts: 'Impacts',
     dependencies: 'Dépendances',
     noEventsFilter: 'Aucun filtre d\'événements',
-    expandPanel: {
-      infos: 'Les informations',
-      type: 'Type',
-      enabled: 'Activé',
-      disabled: 'Désactivé',
-      infosSearchLabel: 'Rechercher une info',
-      tabs: {
-        main: 'Principal',
-        pbehaviors: 'Comportements périodiques',
-        impactDepends: 'Impacts/Dépendances',
-        infos: 'Infos',
-        treeOfDependencies: 'Arbre des dépendances',
-        impactChain: 'Chaîne d\'impact',
-      },
-    },
+    impactChain: 'Chaîne d\'impact',
+    impactDepends: 'Impacts/Dépendances',
+    treeOfDependencies: 'Arbre des dépendances',
+    infosSearchLabel: 'Rechercher une info',
+    eventStatisticsMessage: '{ok} OK événements\n{ko} KO événements',
+    eventStatistics: 'Statistiques d\'événement',
     actions: {
       titles: {
         editEntity: 'Éditer l\'entité',
@@ -2276,13 +2268,11 @@ export default {
 
   remediationInstructionsFilters: {
     button: 'Créer un filtre de consignes',
-    fields: {
-      with: 'Avec les consignes sélectionnées',
-      without: 'Sans les consignes sélectionnées',
-      selectAll: 'Tout sélectionner',
-      selectedInstructions: 'Consignes sélectionnées',
-      selectedInstructionsHelp: 'Les instructions du type sélectionné sont exclues de la liste',
-    },
+    with: 'Avec les consignes sélectionnées',
+    without: 'Sans les consignes sélectionnées',
+    selectAll: 'Tout sélectionner',
+    selectedInstructions: 'Consignes sélectionnées',
+    selectedInstructionsHelp: 'Les instructions du type sélectionné sont exclues de la liste',
     chip: {
       with: 'AVEC',
       without: 'SANS',
@@ -2300,7 +2290,6 @@ export default {
     executionCount: 'Nombre de\nexécutions',
     alarmStates: 'Alarmes affectées par l\'état',
     okAlarmStates: 'Nombre de résultats\nÉtats OK',
-    rating: 'Évaluation',
     notAvailable: 'Indisponible',
     instructionChanged: 'L\'instruction a été modifiée',
     actions: {
