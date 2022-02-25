@@ -1,20 +1,20 @@
 <template lang="pug">
   div
     template(v-if="step._t !== 'statecounter'")
-      .header
+      div.header
         c-alarm-chip.chips.pr-2(
           v-if="!isStepTypeAction",
           :value="step.val",
           :type="stepType"
         )
         p {{ stepTitle }}
-      .content
+      div.content
         p(v-if="isHtmlEnabled", v-html="step.m")
         p(v-else) {{ step.m }}
     template(v-else)
-      .header
+      div.header
         p {{ $t('alarmList.timeLine.stateCounter.header') }}
-      .content
+      div.content
         table
           tr
             td {{ $t('alarmList.timeLine.stateCounter.stateIncreased') }} :
