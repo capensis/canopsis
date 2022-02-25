@@ -53,8 +53,8 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	if *request.IsShared {
-		ok, err := a.enforcer.Enforce(userId, apisecurity.PermSharedPattern, model.PermissionCan)
+	if *request.IsCorporate {
+		ok, err := a.enforcer.Enforce(userId, apisecurity.PermCorporatePattern, model.PermissionCan)
 		if err != nil {
 			panic(err)
 		}
@@ -184,13 +184,13 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	if pattern.IsShared != *request.IsShared {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{Errors: map[string]string{"is_shared": "IsShared cannot be changed"}})
+	if pattern.IsCorporate != *request.IsCorporate {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{Errors: map[string]string{"is_corporate": "IsCorporate cannot be changed"}})
 		return
 	}
 
-	if pattern.IsShared {
-		ok, err := a.enforcer.Enforce(userId, apisecurity.PermSharedPattern, model.PermissionCan)
+	if pattern.IsCorporate {
+		ok, err := a.enforcer.Enforce(userId, apisecurity.PermCorporatePattern, model.PermissionCan)
 		if err != nil {
 			panic(err)
 		}
@@ -247,8 +247,8 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	if pattern.IsShared {
-		ok, err := a.enforcer.Enforce(userId, apisecurity.PermSharedPattern, model.PermissionCan)
+	if pattern.IsCorporate {
+		ok, err := a.enforcer.Enforce(userId, apisecurity.PermCorporatePattern, model.PermissionCan)
 		if err != nil {
 			panic(err)
 		}

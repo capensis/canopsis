@@ -2,7 +2,7 @@ Feature: Get a saved pattern
   I need to be able to get a saved pattern
   Only admin should be able to get a saved pattern
 
-  Scenario: given search request should return shared and not shared patterns
+  Scenario: given search request should return corporate and not corporate patterns
     When I am noperms
     When I do GET /api/v4/patterns?search=test-pattern-to-get&sort_by=title
     Then the response code should be 200
@@ -14,7 +14,7 @@ Feature: Get a saved pattern
           "_id": "test-pattern-to-get-1",
           "title": "test-pattern-to-get-1-title",
           "type": "alarm",
-          "is_shared": false,
+          "is_corporate": false,
           "alarm_pattern": [
             [
               {
@@ -37,7 +37,7 @@ Feature: Get a saved pattern
           "_id": "test-pattern-to-get-3",
           "title": "test-pattern-to-get-3-title",
           "type": "entity",
-          "is_shared": true,
+          "is_corporate": true,
           "entity_pattern": [
             [
               {
@@ -60,7 +60,7 @@ Feature: Get a saved pattern
           "_id": "test-pattern-to-get-4",
           "title": "test-pattern-to-get-4-title",
           "type": "pbehavior",
-          "is_shared": true,
+          "is_corporate": true,
           "pbehavior_pattern": [
             [
               {
@@ -89,9 +89,9 @@ Feature: Get a saved pattern
     }
     """
 
-  Scenario: given search request should return shared patterns
+  Scenario: given search request should return corporate patterns
     When I am noperms
-    When I do GET /api/v4/patterns?shared=true&search=test-pattern-to-get&sort_by=title
+    When I do GET /api/v4/patterns?corporate=true&search=test-pattern-to-get&sort_by=title
     Then the response code should be 200
     Then the response body should be:
     """json
@@ -101,7 +101,7 @@ Feature: Get a saved pattern
           "_id": "test-pattern-to-get-3",
           "title": "test-pattern-to-get-3-title",
           "type": "entity",
-          "is_shared": true,
+          "is_corporate": true,
           "entity_pattern": [
             [
               {
@@ -124,7 +124,7 @@ Feature: Get a saved pattern
           "_id": "test-pattern-to-get-4",
           "title": "test-pattern-to-get-4-title",
           "type": "pbehavior",
-          "is_shared": true,
+          "is_corporate": true,
           "pbehavior_pattern": [
             [
               {
@@ -153,9 +153,9 @@ Feature: Get a saved pattern
     }
     """
 
-  Scenario: given search request should return not shared patterns
+  Scenario: given search request should return not corporate patterns
     When I am noperms
-    When I do GET /api/v4/patterns?shared=false&search=test-pattern-to-get&sort_by=title
+    When I do GET /api/v4/patterns?corporate=false&search=test-pattern-to-get&sort_by=title
     Then the response code should be 200
     Then the response body should be:
     """json
@@ -165,7 +165,7 @@ Feature: Get a saved pattern
           "_id": "test-pattern-to-get-1",
           "title": "test-pattern-to-get-1-title",
           "type": "alarm",
-          "is_shared": false,
+          "is_corporate": false,
           "alarm_pattern": [
             [
               {
@@ -208,7 +208,7 @@ Feature: Get a saved pattern
       "_id": "test-pattern-to-get-1",
       "title": "test-pattern-to-get-1-title",
       "type": "alarm",
-      "is_shared": false,
+      "is_corporate": false,
       "alarm_pattern": [
         [
           {
@@ -234,7 +234,7 @@ Feature: Get a saved pattern
     When I do GET /api/v4/patterns/test-pattern-to-get-2
     Then the response code should be 404
 
-  Scenario: given get request should return shared pattern
+  Scenario: given get request should return corporate pattern
     When I am admin
     When I do GET /api/v4/patterns/test-pattern-to-get-3
     Then the response code should be 200
@@ -244,7 +244,7 @@ Feature: Get a saved pattern
       "_id": "test-pattern-to-get-3",
       "title": "test-pattern-to-get-3-title",
       "type": "entity",
-      "is_shared": true,
+      "is_corporate": true,
       "entity_pattern": [
         [
           {

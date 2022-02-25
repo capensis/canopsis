@@ -9,7 +9,7 @@ Feature: Create a saved pattern
     {
       "title": "test-pattern-to-create-1-title",
       "type": "alarm",
-      "is_shared": false,
+      "is_corporate": false,
       "alarm_pattern": [
         [
           {
@@ -33,7 +33,7 @@ Feature: Create a saved pattern
       },
       "title": "test-pattern-to-create-1-title",
       "type": "alarm",
-      "is_shared": false,
+      "is_corporate": false,
       "alarm_pattern": [
         [
           {
@@ -58,7 +58,7 @@ Feature: Create a saved pattern
       },
       "title": "test-pattern-to-create-1-title",
       "type": "alarm",
-      "is_shared": false,
+      "is_corporate": false,
       "alarm_pattern": [
         [
           {
@@ -80,7 +80,7 @@ Feature: Create a saved pattern
     {
       "title": "test-pattern-to-create-2-title",
       "type": "entity",
-      "is_shared": false,
+      "is_corporate": false,
       "entity_pattern": [
         [
           {
@@ -104,7 +104,7 @@ Feature: Create a saved pattern
       },
       "title": "test-pattern-to-create-2-title",
       "type": "entity",
-      "is_shared": false,
+      "is_corporate": false,
       "entity_pattern": [
         [
           {
@@ -129,7 +129,7 @@ Feature: Create a saved pattern
       },
       "title": "test-pattern-to-create-2-title",
       "type": "entity",
-      "is_shared": false,
+      "is_corporate": false,
       "entity_pattern": [
         [
           {
@@ -151,7 +151,7 @@ Feature: Create a saved pattern
     {
       "title": "test-pattern-to-create-3-title",
       "type": "pbehavior",
-      "is_shared": false,
+      "is_corporate": false,
       "pbehavior_pattern": [
         [
           {
@@ -175,7 +175,7 @@ Feature: Create a saved pattern
       },
       "title": "test-pattern-to-create-3-title",
       "type": "pbehavior",
-      "is_shared": false,
+      "is_corporate": false,
       "pbehavior_pattern": [
         [
           {
@@ -200,7 +200,7 @@ Feature: Create a saved pattern
       },
       "title": "test-pattern-to-create-3-title",
       "type": "pbehavior",
-      "is_shared": false,
+      "is_corporate": false,
       "pbehavior_pattern": [
         [
           {
@@ -215,14 +215,14 @@ Feature: Create a saved pattern
     }
     """
 
-  Scenario: given create shared pattern request should return ok
+  Scenario: given create corporate pattern request should return ok
     When I am admin
     When I do POST /api/v4/patterns:
     """json
     {
       "title": "test-pattern-to-create-4-title",
       "type": "alarm",
-      "is_shared": true,
+      "is_corporate": true,
       "alarm_pattern": [
         [
           {
@@ -246,7 +246,7 @@ Feature: Create a saved pattern
       },
       "title": "test-pattern-to-create-4-title",
       "type": "alarm",
-      "is_shared": true,
+      "is_corporate": true,
       "alarm_pattern": [
         [
           {
@@ -271,7 +271,7 @@ Feature: Create a saved pattern
       },
       "title": "test-pattern-to-create-4-title",
       "type": "alarm",
-      "is_shared": true,
+      "is_corporate": true,
       "alarm_pattern": [
         [
           {
@@ -290,14 +290,14 @@ Feature: Create a saved pattern
     When I do POST /api/v4/patterns
     Then the response code should be 401
 
-  Scenario: given create shared pattern request and auth user without permissions should not allow access
+  Scenario: given create corporate pattern request and auth user without permissions should not allow access
     When I am noperms
     When I do POST /api/v4/patterns:
     """json
     {
       "title": "test-pattern-to-create-5-title",
       "type": "alarm",
-      "is_shared": true,
+      "is_corporate": true,
       "alarm_pattern": [
         [
           {
@@ -327,7 +327,7 @@ Feature: Create a saved pattern
       "errors": {
         "title": "Title is missing.",
         "type": "Type is missing.",
-        "is_shared": "IsShared is missing."
+        "is_corporate": "IsCorporate is missing."
       }
     }
     """
@@ -359,7 +359,7 @@ Feature: Create a saved pattern
       "errors": {
         "alarm_pattern": "AlarmPattern is missing.",
         "title": "Title is missing.",
-        "is_shared": "IsShared is missing."
+        "is_corporate": "IsCorporate is missing."
       }
     }
     """
@@ -377,7 +377,7 @@ Feature: Create a saved pattern
       "errors": {
         "alarm_pattern": "AlarmPattern is missing.",
         "title": "Title is missing.",
-        "is_shared": "IsShared is missing."
+        "is_corporate": "IsCorporate is missing."
       }
     }
     """
@@ -394,7 +394,7 @@ Feature: Create a saved pattern
       "errors": {
         "entity_pattern": "EntityPattern is missing.",
         "title": "Title is missing.",
-        "is_shared": "IsShared is missing."
+        "is_corporate": "IsCorporate is missing."
       }
     }
     """
@@ -412,7 +412,7 @@ Feature: Create a saved pattern
       "errors": {
         "entity_pattern": "EntityPattern is missing.",
         "title": "Title is missing.",
-        "is_shared": "IsShared is missing."
+        "is_corporate": "IsCorporate is missing."
       }
     }
     """
@@ -429,7 +429,7 @@ Feature: Create a saved pattern
       "errors": {
         "pbehavior_pattern": "PbehaviorPattern is missing.",
         "title": "Title is missing.",
-        "is_shared": "IsShared is missing."
+        "is_corporate": "IsCorporate is missing."
       }
     }
     """
@@ -447,7 +447,7 @@ Feature: Create a saved pattern
       "errors": {
         "pbehavior_pattern": "PbehaviorPattern is missing.",
         "title": "Title is missing.",
-        "is_shared": "IsShared is missing."
+        "is_corporate": "IsCorporate is missing."
       }
     }
     """

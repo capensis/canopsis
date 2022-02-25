@@ -9,7 +9,7 @@ Feature: Update a saved pattern
     {
       "title": "test-pattern-to-update-1-title",
       "type": "alarm",
-      "is_shared": false,
+      "is_corporate": false,
       "alarm_pattern": [
         [
           {
@@ -33,7 +33,7 @@ Feature: Update a saved pattern
       },
       "title": "test-pattern-to-update-1-title",
       "type": "alarm",
-      "is_shared": false,
+      "is_corporate": false,
       "alarm_pattern": [
         [
           {
@@ -56,7 +56,7 @@ Feature: Update a saved pattern
     {
       "title": "test-pattern-to-update-1-title",
       "type": "alarm",
-      "is_shared": true,
+      "is_corporate": true,
       "alarm_pattern": [
         [
           {
@@ -72,14 +72,14 @@ Feature: Update a saved pattern
     """
     Then the response code should be 404
 
-  Scenario: given update shared pattern request and another user should return ok
+  Scenario: given update corporate pattern request and another user should return ok
     When I am admin
     When I do PUT /api/v4/patterns/test-pattern-to-update-2:
     """json
     {
       "title": "test-pattern-to-update-2-title",
       "type": "alarm",
-      "is_shared": true,
+      "is_corporate": true,
       "alarm_pattern": [
         [
           {
@@ -103,7 +103,7 @@ Feature: Update a saved pattern
       },
       "title": "test-pattern-to-update-2-title",
       "type": "alarm",
-      "is_shared": true,
+      "is_corporate": true,
       "alarm_pattern": [
         [
           {
@@ -118,14 +118,14 @@ Feature: Update a saved pattern
     }
     """
 
-  Scenario: given update shared pattern request and auth user without permissions should not allow access
+  Scenario: given update corporate pattern request and auth user without permissions should not allow access
     When I am noperms
     When I do PUT /api/v4/patterns/test-pattern-to-update-2:
     """json
     {
       "title": "test-pattern-to-update-2-title",
       "type": "alarm",
-      "is_shared": true,
+      "is_corporate": true,
       "alarm_pattern": [
         [
           {
@@ -152,7 +152,7 @@ Feature: Update a saved pattern
     {
       "title": "test-pattern-to-update-notexist",
       "type": "alarm",
-      "is_shared": true,
+      "is_corporate": true,
       "alarm_pattern": [
         [
           {
@@ -175,7 +175,7 @@ Feature: Update a saved pattern
     {
       "title": "test-pattern-to-update-1-title",
       "type": "entity",
-      "is_shared": false,
+      "is_corporate": false,
       "entity_pattern": [
         [
           {
@@ -197,14 +197,14 @@ Feature: Update a saved pattern
     }
     """
 
-  Scenario: given update request with another shared status should return bad request error
+  Scenario: given update request with another corporate status should return bad request error
     When I am noperms
     When I do PUT /api/v4/patterns/test-pattern-to-update-2:
     """json
     {
       "title": "test-pattern-to-update-2-title",
       "type": "alarm",
-      "is_shared": false,
+      "is_corporate": false,
       "alarm_pattern": [
         [
           {
@@ -223,7 +223,7 @@ Feature: Update a saved pattern
     """json
     {
       "errors": {
-        "is_shared": "IsShared cannot be changed"
+        "is_corporate": "IsCorporate cannot be changed"
       }
     }
     """
@@ -242,7 +242,7 @@ Feature: Update a saved pattern
       "errors": {
         "title": "Title is missing.",
         "type": "Type is missing.",
-        "is_shared": "IsShared is missing."
+        "is_corporate": "IsCorporate is missing."
       }
     }
     """

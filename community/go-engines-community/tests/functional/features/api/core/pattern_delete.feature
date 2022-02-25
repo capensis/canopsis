@@ -14,12 +14,12 @@ Feature: Delete a saved pattern
     When I do DELETE /api/v4/patterns/test-pattern-to-delete-2
     Then the response code should be 404
 
-  Scenario: given delete shared pattern request and another user should return ok
+  Scenario: given delete corporate pattern request and another user should return ok
     When I am admin
     When I do DELETE /api/v4/patterns/test-pattern-to-delete-3
     Then the response code should be 204
 
-  Scenario: given delete shared pattern request and auth user without permissions should not allow access
+  Scenario: given delete corporate pattern request and auth user without permissions should not allow access
     When I am noperms
     When I do DELETE /api/v4/patterns/test-pattern-to-delete-4
     Then the response code should be 403
