@@ -101,12 +101,16 @@ export default {
 
       if (tooltipInnerHTML) {
         const { tooltip: tooltipEl } = this.$refs;
+
+        tooltipEl.innerHTML = tooltipInnerHTML;
+
+        const { height } = tooltipEl.getBoundingClientRect();
+
         const x = renderedPosition.x - (offsetX * zoom);
         const y = renderedPosition.y - (offsetY * zoom);
 
-        tooltipEl.innerHTML = tooltipInnerHTML;
         tooltipEl.style.left = `${Math.round(x)}px`;
-        tooltipEl.style.top = `${Math.round(y)}px`;
+        tooltipEl.style.top = `${Math.round(y < height ? height : y)}px`;
         tooltipEl.style.opacity = 1;
       }
     },

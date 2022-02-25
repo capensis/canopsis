@@ -44,11 +44,15 @@ describe('extra-details-pbehavior', () => {
       },
     ],
   };
+  const typeName = 'type-name';
+  const iconName = 'icon-name';
 
   it('Renders `extra-details-pbehavior` with full pbehavior', () => {
     const wrapper = snapshotFactory({
       propsData: {
         pbehavior,
+        typeName,
+        iconName,
       },
     });
 
@@ -62,6 +66,8 @@ describe('extra-details-pbehavior', () => {
     const wrapper = snapshotFactory({
       propsData: {
         pbehavior: omit(pbehavior, ['reason']),
+        typeName,
+        iconName,
       },
     });
 
@@ -75,6 +81,8 @@ describe('extra-details-pbehavior', () => {
     const wrapper = snapshotFactory({
       propsData: {
         pbehavior: omit(pbehavior, ['tstop']),
+        typeName,
+        iconName,
       },
     });
 
@@ -88,6 +96,8 @@ describe('extra-details-pbehavior', () => {
     const wrapper = snapshotFactory({
       propsData: {
         pbehavior: omit(pbehavior, ['rrule']),
+        typeName,
+        iconName,
       },
     });
 
@@ -101,6 +111,8 @@ describe('extra-details-pbehavior', () => {
     const wrapper = snapshotFactory({
       propsData: {
         pbehavior: omit(pbehavior, ['comments']),
+        typeName,
+        iconName,
       },
     });
 

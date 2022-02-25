@@ -338,7 +338,7 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 	pipeline := make([]bson.M, 0)
 	pipeline = append(pipeline, bson.M{"$match": bson.M{"$and": []bson.M{
 		{
-			"d": bson.M{"$in": childrenIds},
+			"d":         bson.M{"$in": childrenIds},
 			"v.parents": bson.M{"$in": parentIds},
 		},
 	}}})
@@ -1061,14 +1061,14 @@ func (s *store) addNestedObjects(r FilterRequest, pipeline *[]bson.M) {
 	)
 	s.deferredNestedObjects = []bson.M{
 		{"$lookup": bson.M{
-			"from":         pbehavior.PBehaviorCollectionName,
+			"from":         mongo.PbehaviorMongoCollection,
 			"foreignField": "_id",
 			"localField":   "v.pbehavior_info.id",
 			"as":           "pbehavior",
 		}},
 		{"$unwind": bson.M{"path": "$pbehavior", "preserveNullAndEmptyArrays": true}},
 		{"$lookup": bson.M{
-			"from":         pbehavior.TypeCollectionName,
+			"from":         mongo.PbehaviorTypeMongoCollection,
 			"foreignField": "_id",
 			"localField":   "pbehavior.type_",
 			"as":           "pbehavior.type",
@@ -1185,6 +1185,25 @@ func (s *store) getProject(r ListRequest, entitiesToProject bool) []bson.M {
 			bson.M{"$unwind": bson.M{"path": "$entity.category", "preserveNullAndEmptyArrays": true}},
 		)
 	}
+	pipeline = append(pipeline,
+		bson.M{"$lookup": bson.M{
+			"from":         mongo.PbehaviorTypeMongoCollection,
+			"foreignField": "_id",
+			"localField":   "v.pbehavior_info.type",
+			"as":           "pbehavior_type",
+		}},
+		bson.M{"$unwind": bson.M{"path": "$pbehavior_type", "preserveNullAndEmptyArrays": true}},
+		bson.M{"$addFields": bson.M{
+			"v.pbehavior_info": bson.M{"$cond": bson.M{
+				"if": "$v.pbehavior_info",
+				"then": bson.M{"$mergeObjects": bson.A{
+					"$v.pbehavior_info",
+					bson.M{"icon_name": "$pbehavior_type.icon_name"},
+				}},
+				"else": nil,
+			}},
+		}},
+	)
 	pipeline = append(pipeline, []bson.M{
 		{"$addFields": addFields},
 		lastCommentNilWhenEmpty,
