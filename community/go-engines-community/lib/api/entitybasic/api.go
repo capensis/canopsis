@@ -3,6 +3,8 @@ package entitybasic
 import (
 	"context"
 	"errors"
+	"net/http"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
@@ -10,7 +12,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
-	"net/http"
 )
 
 type API interface {
@@ -51,7 +52,7 @@ func NewApi(
 // @Produce json
 // @Security ApiKeyAuth
 // @Security BasicAuth
-// @Param id query string true "Entity id"
+// @Param _id query string true "Entity id"
 // @Success 200 {object} Entity
 // @Failure 404 {object} common.ErrorResponse
 // @Router /entitybasics [get]
@@ -83,7 +84,7 @@ func (a *api) Get(c *gin.Context) {
 // @Produce json
 // @Security ApiKeyAuth
 // @Security BasicAuth
-// @Param id query string true "Entity id"
+// @Param _id query string true "Entity id"
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Entity
 // @Failure 400 {object} common.ValidationErrorResponse
@@ -142,7 +143,7 @@ func (a *api) Update(c *gin.Context) {
 // @ID entitybasics-delete-by-id
 // @Security ApiKeyAuth
 // @Security BasicAuth
-// @Param id query string true "Entity id"
+// @Param _id query string true "Entity id"
 // @Success 204
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Failure 404 {object} common.ErrorResponse
