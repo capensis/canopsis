@@ -533,6 +533,14 @@
       "api_filter": {
         "checksum": 15,
         "crecord_type": "right"
+      },
+      "api_snmprule": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_snmpmib": {
+        "checksum": 15,
+        "crecord_type": "right"
       }
     },
     "defaultview": "875df4c2-027b-4549-8add-e20ed7ff7d4f"

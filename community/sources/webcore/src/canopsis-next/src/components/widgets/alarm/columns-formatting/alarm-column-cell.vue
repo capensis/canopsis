@@ -1,7 +1,7 @@
 <template lang="pug">
   v-menu(
-    v-if="popupData",
-    v-model="isInfoPopupOpen",
+    v-if="column.popupTemplate",
+    v-model="opened",
     :close-on-content-click="false",
     :open-on-click="false",
     offset-x,
@@ -16,7 +16,7 @@
           v-icon(small) info
     alarm-column-cell-popup-body(
       :alarm="alarm",
-      :template="popupData.template",
+      :template="column.popupTemplate",
       @close="hideInfoPopup"
     )
   div(v-else-if="column.isHtml", v-html="sanitizedValue")
@@ -29,7 +29,6 @@ import sanitizeHTML from 'sanitize-html';
 
 import { ALARM_ENTITY_FIELDS, COLOR_INDICATOR_TYPES } from '@/constants';
 
-import { formToColumnValue } from '@/helpers/forms/widgets/alarm';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 import { convertDurationToString } from '@/helpers/date/duration';
 
@@ -84,7 +83,7 @@ export default {
   },
   data() {
     return {
-      isInfoPopupOpen: false,
+      opened: false,
     };
   },
   computed: {
@@ -112,15 +111,6 @@ export default {
 
         return '';
       }
-    },
-
-    popupData() {
-      const popups = get(this.widget.parameters, 'infoPopups', []);
-
-      /**
-       * TODO: improve on view refactoring
-       */
-      return popups.find(popup => formToColumnValue(popup.column) === this.column.value);
     },
 
     columnFilter() {
@@ -221,10 +211,11 @@ export default {
   },
   methods: {
     showInfoPopup() {
-      this.isInfoPopupOpen = true;
+      this.opened = true;
     },
+
     hideInfoPopup() {
-      this.isInfoPopupOpen = false;
+      this.opened = false;
     },
   },
 };
