@@ -56,6 +56,7 @@ export const mockDateGetTime = (nowTimestamp) => {
 export const mockModals = () => {
   const modals = {
     show: jest.fn(),
+    moduleName: 'modals',
   };
 
   afterEach(() => {
@@ -78,4 +79,22 @@ export const mockPopups = () => {
   });
 
   return popups;
+};
+
+/**
+ * Mock for the sidebar. Clear yourself after all tests.
+ */
+export const mockSidebar = () => {
+  const sidebar = {
+    show: jest.fn(),
+    hide: jest.fn(),
+    moduleName: 'sidebar',
+  };
+
+  afterEach(() => {
+    sidebar.show.mockReset();
+    sidebar.hide.mockReset();
+  });
+
+  return sidebar;
 };

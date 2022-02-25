@@ -8,7 +8,7 @@ import {
   convertStopDateIntervalToTimestamp,
 } from '@/helpers/date/date-intervals';
 
-import queryMixin from '@/mixins/query';
+import { queryMixin } from '@/mixins/query';
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 
 export const queryWidgetMixin = {

@@ -538,12 +538,7 @@ export default {
       [SIDE_BARS.alarmSettings]: 'Paramètres du bac à alarmes',
       [SIDE_BARS.contextSettings]: 'Paramètres de l\'explorateur de contexte',
       [SIDE_BARS.serviceWeatherSettings]: 'Paramètres de la météo des services',
-      [SIDE_BARS.statsHistogramSettings]: 'Paramètres de l\'histogramme',
-      [SIDE_BARS.statsCurvesSettings]: 'Paramètres de courbes de stats',
-      [SIDE_BARS.statsTableSettings]: 'Paramètres du tableau de stats',
       [SIDE_BARS.statsCalendarSettings]: 'Paramètres du calendrier',
-      [SIDE_BARS.statsNumberSettings]: 'Paramètres du compteur de stats',
-      [SIDE_BARS.statsParetoSettings]: 'Paramètres du diagramme de Pareto',
       [SIDE_BARS.textSettings]: 'Paramètres du widget de texte',
       [SIDE_BARS.counterSettings]: 'Paramètres du widget de compteur',
       [SIDE_BARS.testingWeatherSettings]: 'Paramètres du widget scénario des tests',
@@ -583,13 +578,6 @@ export default {
     duration: 'Durée',
     tstop: 'Date de fin',
     periodsNumber: 'Nombre d\'étapes',
-    statName: 'Nom de la statistique',
-    stats: 'Statistiques',
-    statsSelect: {
-      title: 'Sélecteur de statistique',
-      required: 'Veuillez sélectionner au moins une statistique',
-      draggable: 'Essayez de faire glisser un élément',
-    },
     yesNoMode: 'Mode Oui/Non',
     selectAFilter: 'Sélectionner un filtre',
     exportAsCsv: 'Exporter le widget sous forme de fichier csv',
@@ -609,17 +597,6 @@ export default {
         [STATS_CRITICITY.major]: 'majeur',
         [STATS_CRITICITY.critical]: 'critique',
       },
-    },
-    statsDateInterval: {
-      monthPeriodInfo: "Avec une période 'au mois', les dates de début/fin de calcul des statistiques seront arrondies au 1er jour du mois, à 00:00 UTC",
-    },
-    statsNumbers: {
-      title: 'Cellule de stats',
-      yesNoMode: 'Mode Oui/Non',
-      defaultStat: 'Défaut : Alarmes créées',
-      sortOrder: 'Sens de tri',
-      displayMode: 'Mode d\'affichage',
-      selectAColor: 'Sélectionner une couleur',
     },
     infoPopup: {
       title: 'Info popup',
@@ -661,31 +638,6 @@ export default {
         [ENTITY_TYPES.resource]: 'Ressource',
         [ENTITY_TYPES.service]: 'Service',
       },
-    },
-    statSelector: {
-      error: {
-        alreadyExist: 'Une statistique portant ce nom existe déjà.',
-      },
-    },
-    statsGroups: {
-      title: 'Groupes de statistiques',
-      manageGroups: 'Ajouter un groupe',
-      required: 'Veuillez créer au moins un groupe',
-    },
-    statsColor: {
-      title: 'Couleurs des statistiques',
-      pickColor: 'Sélectionner une couleur',
-    },
-    statsAnnotationLine: {
-      title: 'Ligne repère',
-      enabled: 'Activée',
-      value: 'Valeur',
-      label: 'Label',
-      pickLineColor: 'Couleur de la ligne',
-      pickLabelColor: 'Couleur du label',
-    },
-    statsPointsStyles: {
-      title: 'Forme des points',
     },
     considerPbehaviors: {
       title: 'Prendre en compte les comportements périodiques ?',
@@ -811,9 +763,6 @@ export default {
       },
     },
     view: {
-      select: {
-        title: 'Sélectionner une vue',
-      },
       create: {
         title: 'Créer une vue',
       },
@@ -833,11 +782,13 @@ export default {
       success: {
         create: 'Nouvelle vue créée !',
         edit: 'Vue éditée avec succès !',
+        duplicate: 'Afficher dupliqué avec succès !',
         delete: 'Vue supprimée avec succès !',
       },
       fail: {
         create: 'Erreur lors de la création de la vue...',
-        edit: 'Erreur lors de  l\'édition de la vue...',
+        edit: 'Erreur lors de l\'édition de la vue...',
+        duplicate: 'Échec de la duplication de la vue...',
         delete: 'Erreur lors de la suppression de la vue...',
       },
     },
@@ -1036,23 +987,8 @@ export default {
         [WIDGET_TYPES.serviceWeather]: {
           title: 'Météo des services',
         },
-        [WIDGET_TYPES.statsHistogram]: {
-          title: 'Histogramme des statistiques',
-        },
-        [WIDGET_TYPES.statsCurves]: {
-          title: 'Courbes de statistiques',
-        },
-        [WIDGET_TYPES.statsTable]: {
-          title: 'Tableau de statistiques',
-        },
         [WIDGET_TYPES.statsCalendar]: {
           title: 'Calendrier',
-        },
-        [WIDGET_TYPES.statsNumber]: {
-          title: 'Compteur de statistiques',
-        },
-        [WIDGET_TYPES.statsPareto]: {
-          title: 'Diagramme de Pareto',
         },
         [WIDGET_TYPES.text]: {
           title: 'Texte',
@@ -1219,19 +1155,6 @@ export default {
         title: 'Titre',
       },
     },
-    statsDateInterval: {
-      title: 'Stats - Intervalle de dates',
-      fields: {
-        periodValue: 'Période',
-        periodUnit: 'Unité',
-      },
-      errors: {
-        endDateLessOrEqualStartDate: 'La date de fin doit se situer après la date de début',
-      },
-      info: {
-        monthPeriodUnit: 'Les statistiques calculées seront situées entre {start} et {stop}',
-      },
-    },
     createSnmpRule: {
       create: {
         title: 'Créer une règle SNMP',
@@ -1239,39 +1162,9 @@ export default {
       edit: {
         title: 'Modifier la règle SNMP',
       },
-      fields: {
-        oid: {
-          title: 'OID',
-          labels: {
-            module: 'Sélectionnez un module MIB',
-          },
-        },
-        output: {
-          title: 'Message',
-        },
-        resource: {
-          title: 'Ressource',
-        },
-        component: {
-          title: 'Composant',
-        },
-        connectorName: {
-          title: 'Nom du connecteur',
-        },
-        state: {
-          title: 'Criticité',
-          labels: {
-            toCustom: 'Personnaliser',
-            defineVar: 'Définir la variable SNMP correspondante',
-            writeTemplate: 'Écrire un modèle',
-          },
-        },
-        moduleMibObjects: {
-          vars: 'Champ d\'association des variables SNMP',
-          regex: 'Expression régulière',
-          formatter: 'Format (groupe de capture avec \\x)',
-        },
-      },
+    },
+    selectView: {
+      title: 'Sélectionner une vue',
     },
     selectViewTab: {
       title: 'Sélectionnez l\'onglet',
@@ -1751,6 +1644,8 @@ export default {
     statsRequestProblem: 'Erreur dans la récupération des statistiques',
     statsWrongEditionError: "Les widgets de statistiques ne sont pas disponibles dans l'édition 'core' de Canopsis",
     socketConnectionProblem: 'Problème de connexion aux websockets',
+    endDateLessOrEqualStartDate: 'La date de fin doit se situer après la date de début',
+    unknownWidgetType: 'Type de widget inconnu: {type}',
   },
   calendar: {
     today: 'Aujourd\'hui',
@@ -1861,10 +1756,6 @@ export default {
     errors: {
       noValuePaths: 'Vous devez ajouter au moins un chemin de valeur',
     },
-  },
-  snmpRules: {
-    uploadMib: 'Envoyer un fichier MIB',
-    addSnmpRule: 'Ajouter une règle SNMP',
   },
   layout: {
     sideBar: {
@@ -2763,6 +2654,24 @@ export default {
 
   kpiRatingSettings: {
     helpInformation: 'La liste des paramètres à utiliser pour la notation.',
+  },
+
+  snmpRule: {
+    oid: 'OID',
+    module: 'Sélectionnez un module MIB',
+    output: 'Message',
+    resource: 'Ressource',
+    component: 'Composant',
+    connectorName: 'Nom du connecteur',
+    state: 'Criticité',
+    toCustom: 'Personnaliser',
+    writeTemplate: 'Écrire un modèle',
+    defineVar: 'Définir la variable SNMP correspondante',
+    moduleMibObjects: 'Champ d\'association des variables SNMP',
+    regex: 'Expression régulière',
+    formatter: 'Format (groupe de capture avec \\x)',
+    uploadMib: 'Envoyer un fichier MIB',
+    addSnmpRule: 'Ajouter une règle SNMP',
   },
 
   ...featureService.get('i18n.fr'),

@@ -2,38 +2,34 @@
   div
     view-tabs.tabs-absolute(
       v-if="view && isTabsChanged",
-      :view="view",
       :tabs.sync="tabs",
-      :isTabsChanged="isTabsChanged",
-      :isEditingMode="isEditingMode",
-      :hasUpdateAccess="hasUpdateAccess"
+      :changed="isTabsChanged",
+      :updatable="updatable"
     )
     v-fade-transition
-      div
-        .v-overlay.v-overlay--active(v-show="view && isTabsChanged")
-          v-btn(
-            data-test="submitMoveTab",
-            color="primary",
-            @click="submit"
-          ) {{ $t('common.submit') }}
-          v-btn(@click="cancel") {{ $t('common.cancel') }}
+      div.v-overlay.v-overlay--active(v-show="view && isTabsChanged")
+        v-btn(color="primary", @click="submit") {{ $t('common.submit') }}
+        v-btn(@click="cancel") {{ $t('common.cancel') }}
     view-tabs(
       :view="view",
       :tabs.sync="tabs",
-      :isTabsChanged="isTabsChanged",
-      :isEditingMode="isEditingMode",
-      :hasUpdateAccess="hasUpdateAccess",
-      :updateViewMethod="updateViewMethod"
+      :changed="isTabsChanged",
+      :editing="editing",
+      :updatable="updatable"
     )
       view-tab-widgets(
         slot-scope="props",
-        v-bind="props",
-        @update:widgets-fields="$emit('update:widgets-fields', $event)"
+        v-bind="props"
       )
 </template>
 
 <script>
 import { isEqual } from 'lodash';
+
+import { getIdFromEntity } from '@/helpers/entities';
+
+import { activeViewMixin } from '@/mixins/active-view';
+import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
 
 import ViewTabs from './view-tabs.vue';
 import ViewTabWidgets from './view-tab-widgets.vue';
@@ -43,27 +39,19 @@ export default {
     ViewTabs,
     ViewTabWidgets,
   },
+  mixins: [
+    activeViewMixin,
+    entitiesViewTabMixin,
+  ],
   props: {
-    view: {
-      type: Object,
-      required: true,
-    },
-    hasUpdateAccess: {
+    updatable: {
       type: Boolean,
       default: false,
-    },
-    isEditingMode: {
-      type: Boolean,
-      default: false,
-    },
-    updateViewMethod: {
-      type: Function,
-      required: true,
     },
   },
   data() {
     return {
-      tabs: [...this.view.tabs],
+      tabs: [],
     };
   },
   computed: {
@@ -77,6 +65,7 @@ export default {
   },
   watch: {
     'view.tabs': {
+      immediate: true,
       handler(tabs, prevTabs) {
         if (!isEqual(tabs, prevTabs)) {
           this.tabs = [...tabs];
@@ -90,11 +79,11 @@ export default {
     },
 
     async submit() {
-      this.updateViewMethod({
-        ...this.view,
-
-        tabs: this.tabs,
+      await this.updateViewTabPositions({
+        data: this.tabs.map(tab => getIdFromEntity(tab)),
       });
+
+      return this.fetchActiveView();
     },
   },
 };

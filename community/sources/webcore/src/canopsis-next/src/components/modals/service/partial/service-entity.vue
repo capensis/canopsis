@@ -46,7 +46,7 @@ import { ENTITY_TYPES } from '@/constants';
 
 import { getEntityColor } from '@/helpers/color';
 
-import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
+import { vuetifyTabsMixin } from '@/mixins/vuetify/tabs';
 
 import EntityHeader from './service-entity-header.vue';
 import EntityInfoTab from './service-entity-info-tab.vue';

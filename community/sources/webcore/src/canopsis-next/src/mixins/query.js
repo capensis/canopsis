@@ -2,7 +2,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('query');
 
-export default {
+export const queryMixin = {
   computed: {
     ...mapGetters(['getQueryById', 'getQueryNonceById']),
   },

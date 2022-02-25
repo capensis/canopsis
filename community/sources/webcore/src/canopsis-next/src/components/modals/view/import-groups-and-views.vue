@@ -36,26 +36,20 @@
 </template>
 
 <script>
-import { get, cloneDeep, isUndefined } from 'lodash';
-
 import { MODALS } from '@/constants';
 
 import {
-  viewToRequest,
-  groupToRequest,
-  groupsWithViewsToPositions,
   prepareImportedViews,
   prepareImportedGroups,
-  getExportedGroupsWrappers,
-  getExportedViewsWrappersFromGroups,
+  prepareCurrentGroupsForImporting,
+  prepareViewGroupsForImportRequest,
 } from '@/helpers/forms/view';
-import { setSeveralFields } from '@/helpers/immutable';
 
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import entitiesViewMixin from '@/mixins/entities/view';
 import { authMixin } from '@/mixins/auth';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { entitiesViewMixin } from '@/mixins/entities/view';
 import { submittableMixinCreator } from '@/mixins/submittable';
 
 import DraggableGroupViews from '@/components/layout/navigation/partial/groups-side-bar/draggable-group-views.vue';
@@ -71,8 +65,8 @@ export default {
     ModalWrapper,
   },
   mixins: [
-    modalInnerMixin,
     authMixin,
+    modalInnerMixin,
     entitiesViewMixin,
     entitiesViewGroupMixin,
     submittableMixinCreator(),
@@ -106,91 +100,18 @@ export default {
 
       this.importedViews = prepareImportedViews(importedViews);
       this.importedGroups = prepareImportedGroups(importedGroups);
-      this.currentGroups = cloneDeep(this.groups);
-    },
-
-    /**
-     * Create exported groups and return updated array
-     *
-     * @param {ViewGroupWithViews[]} [groups = []]
-     * @returns {Promise<ViewGroupWithViews[]>}
-     */
-    async createGroupsAndGetUpdatedGroups(groups = []) {
-      const exportedGroupsWrappers = getExportedGroupsWrappers(groups);
-
-      if (!exportedGroupsWrappers.length) {
-        return groups;
-      }
-
-      const groupsData = exportedGroupsWrappers
-        .map(({ group }) => groupToRequest(group));
-
-      const createdGroups = await this.bulkCreateGroupsWithoutStore({ data: groupsData });
-
-      const groupsFields = createdGroups.reduce((acc, createdGroup, index) => {
-        const path = get(exportedGroupsWrappers, [index, 'path']);
-
-        if (!isUndefined(path)) {
-          acc[path] = group => ({ ...createdGroup, views: group.views });
-        }
-
-        return acc;
-      }, {});
-
-      return setSeveralFields(groups, groupsFields);
-    },
-
-    /**
-     * Create exported views and return updated array
-     *
-     * @param {ViewGroupWithViews[]} [groups = []]
-     * @returns {Promise<ViewGroupWithViews[]>}
-     */
-    async createViewsAndGetUpdatedGroups(groups) {
-      const exportedViewsWrappers = getExportedViewsWrappersFromGroups(groups);
-
-      if (!exportedViewsWrappers.length) {
-        return groups;
-      }
-
-      const viewData = exportedViewsWrappers
-        .map(({ view }) => viewToRequest(view));
-
-      const createdViews = await this.bulkCreateViewsWithoutStore({ data: viewData });
-
-      const viewsFields = createdViews.reduce((acc, createdView, index) => {
-        const path = get(exportedViewsWrappers, [index, 'path']);
-
-        if (!isUndefined(path)) {
-          acc[path] = createdView;
-        }
-
-        return acc;
-      }, {});
-
-      return setSeveralFields(groups, viewsFields);
-    },
-
-    /**
-     * Create exported groups and views and also update positions of all views and groups
-     *
-     * @returns {Promise}
-     */
-    async createGroupsAndViews() {
-      let groups = await this.createGroupsAndGetUpdatedGroups(this.currentGroups);
-
-      groups = await this.createViewsAndGetUpdatedGroups(groups);
-
-      return this.updateViewsPositions({ data: groupsWithViewsToPositions(groups) });
+      this.currentGroups = prepareCurrentGroupsForImporting(this.groups);
     },
 
     async submit() {
       try {
-        await this.createGroupsAndViews();
+        await this.importViewsWithoutStore({
+          data: prepareViewGroupsForImportRequest(this.currentGroups),
+        });
       } catch (err) {
         this.$popups.error({ text: err.description || this.$t('errors.default') });
       } finally {
-        await this.fetchAllGroupsListWithViewsWithCurrentUser();
+        await this.fetchAllGroupsListWithWidgetsWithCurrentUser();
         this.$modals.hide();
       }
     },
