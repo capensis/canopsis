@@ -184,8 +184,8 @@ func (s *store) deleteUserPreferences(ctx context.Context, id string) error {
 
 func (s *store) deletePatterns(ctx context.Context, id string) error {
 	_, err := s.patternCollection.DeleteMany(ctx, bson.M{
-		"author":    id,
-		"is_shared": false,
+		"author":       id,
+		"is_corporate": false,
 	})
 
 	return err
