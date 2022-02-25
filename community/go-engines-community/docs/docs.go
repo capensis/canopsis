@@ -4742,6 +4742,11 @@ var doc = `{
                 "operationId": "saved-patterns-find-all",
                 "parameters": [
                     {
+                        "type": "boolean",
+                        "name": "corporate",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "filter",
                         "in": "query"
@@ -4764,11 +4769,6 @@ var doc = `{
                     {
                         "type": "string",
                         "name": "search",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "shared",
                         "in": "query"
                     },
                     {
@@ -12824,7 +12824,7 @@ var doc = `{
         "pattern.EditRequest": {
             "type": "object",
             "required": [
-                "is_shared",
+                "is_corporate",
                 "title",
                 "type"
             ],
@@ -12837,7 +12837,7 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/pattern.Entity"
                 },
-                "is_shared": {
+                "is_corporate": {
                     "type": "boolean"
                 },
                 "pbehavior_pattern": {
@@ -12886,6 +12886,9 @@ var doc = `{
         "pattern.ListRequest": {
             "type": "object",
             "properties": {
+                "corporate": {
+                    "type": "boolean"
+                },
                 "filter": {
                     "type": "string"
                 },
@@ -12900,9 +12903,6 @@ var doc = `{
                 },
                 "search": {
                     "type": "string"
-                },
-                "shared": {
-                    "type": "boolean"
                 },
                 "sort": {
                     "type": "string"
@@ -12945,7 +12945,7 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/pattern.Entity"
                 },
-                "is_shared": {
+                "is_corporate": {
                     "type": "boolean"
                 },
                 "pbehavior_pattern": {

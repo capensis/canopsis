@@ -1,1 +1,1 @@
-db.pattern.dropIndex("is_shared_1_author_1");
+db.pattern.dropIndex("is_corporate_1_author_1");

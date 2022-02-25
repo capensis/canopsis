@@ -15,7 +15,7 @@ type SavedPattern struct {
 	ID               string            `bson:"_id"`
 	Title            string            `bson:"title"`
 	Type             string            `bson:"type"`
-	IsShared         bool              `bson:"is_shared"`
+	IsCorporate      bool              `bson:"is_corporate"`
 	AlarmPattern     pattern.Alarm     `bson:"alarm_pattern,omitempty"`
 	EntityPattern    pattern.Entity    `bson:"entity_pattern,omitempty"`
 	PbehaviorPattern pattern.Pbehavior `bson:"pbehavior_pattern,omitempty"`

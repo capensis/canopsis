@@ -60,7 +60,7 @@ func (s *store) GetById(ctx context.Context, id, userId string) (*Response, erro
 		"_id": id,
 		"$or": []bson.M{
 			{"author": userId},
-			{"is_shared": true},
+			{"is_corporate": true},
 		},
 	}}}
 	pipeline = append(pipeline, getAuthorPipeline()...)
@@ -86,15 +86,15 @@ func (s *store) GetById(ctx context.Context, id, userId string) (*Response, erro
 func (s *store) Find(ctx context.Context, request ListRequest, userId string) (*AggregationResult, error) {
 	pipeline := make([]bson.M, 0)
 
-	if request.Shared == nil {
+	if request.Corporate == nil {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{"$or": []bson.M{
 			{"author": userId},
-			{"is_shared": true},
+			{"is_corporate": true},
 		}}})
-	} else if *request.Shared {
-		pipeline = append(pipeline, bson.M{"$match": bson.M{"is_shared": true}})
+	} else if *request.Corporate {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"is_corporate": true}})
 	} else {
-		pipeline = append(pipeline, bson.M{"$match": bson.M{"author": userId, "is_shared": false}})
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"author": userId, "is_corporate": false}})
 	}
 
 	filter := common.GetSearchQuery(request.Search, s.defaultSearchByFields)
@@ -171,10 +171,10 @@ func getAuthorPipeline() []bson.M {
 
 func transformRequestToModel(request EditRequest) savedpattern.SavedPattern {
 	model := savedpattern.SavedPattern{
-		Title:    request.Title,
-		Type:     request.Type,
-		IsShared: *request.IsShared,
-		Author:   request.Author,
+		Title:       request.Title,
+		Type:        request.Type,
+		IsCorporate: *request.IsCorporate,
+		Author:      request.Author,
 	}
 
 	switch request.Type {

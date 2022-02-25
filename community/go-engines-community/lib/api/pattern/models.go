@@ -9,15 +9,15 @@ import (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id title author created updated"`
-	Shared *bool  `json:"shared" form:"shared"`
+	SortBy    string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id title author created updated"`
+	Corporate *bool  `json:"corporate" form:"corporate"`
 }
 
 type EditRequest struct {
 	ID               string            `json:"-"`
 	Title            string            `json:"title" binding:"required,max=255"`
 	Type             string            `json:"type" binding:"required,oneof=alarm entity pbehavior"`
-	IsShared         *bool             `json:"is_shared" binding:"required"`
+	IsCorporate      *bool             `json:"is_corporate" binding:"required"`
 	AlarmPattern     pattern.Alarm     `json:"alarm_pattern" binding:"alarm_pattern"`
 	EntityPattern    pattern.Entity    `json:"entity_pattern" binding:"entity_pattern"`
 	PbehaviorPattern pattern.Pbehavior `json:"pbehavior_pattern" binding:"pbehavior_pattern"`
@@ -28,7 +28,7 @@ type Response struct {
 	ID               string            `bson:"_id" json:"_id"`
 	Title            string            `bson:"title" json:"title"`
 	Type             string            `bson:"type" json:"type"`
-	IsShared         bool              `bson:"is_shared" json:"is_shared"`
+	IsCorporate      bool              `bson:"is_corporate" json:"is_corporate"`
 	AlarmPattern     pattern.Alarm     `bson:"alarm_pattern" json:"alarm_pattern,omitempty"`
 	EntityPattern    pattern.Entity    `bson:"entity_pattern" json:"entity_pattern,omitempty"`
 	PbehaviorPattern pattern.Pbehavior `bson:"pbehavior_pattern" json:"pbehavior_pattern,omitempty"`

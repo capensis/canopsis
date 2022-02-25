@@ -2,7 +2,7 @@ pattern:
   pattern_alarm (template):
     _id: <UUID()>
     title: <Word()>
-    is_shared: false
+    is_corporate: false
     type: alarm
     alarm_pattern:
       -
@@ -17,7 +17,7 @@ pattern:
   pattern_entity (template):
     _id: <UUID()>
     title: <Word()>
-    is_shared: false
+    is_corporate: false
     type: entity
     entity_pattern:
       -
@@ -32,7 +32,7 @@ pattern:
   pattern_pbehavior (template):
     _id: <UUID()>
     title: <Word()>
-    is_shared: false
+    is_corporate: false
     type: pbehavior
     pbehavior_pattern:
       -
@@ -51,7 +51,7 @@ pattern:
 
   pattern_to_update_2 (extend pattern_alarm):
     _id: test-pattern-to-update-2
-    is_shared: true
+    is_corporate: true
     author: nopermsuser
     created: 1605263992
 
@@ -65,12 +65,12 @@ pattern:
 
   pattern_to_delete_3 (extend pattern_alarm):
     _id: test-pattern-to-delete-3
-    is_shared: true
+    is_corporate: true
     author: nopermsuser
 
   pattern_to_delete_4 (extend pattern_alarm):
     _id: test-pattern-to-delete-4
-    is_shared: true
+    is_corporate: true
 
   pattern_to_get_1 (extend pattern_alarm):
     _id: test-pattern-to-get-1
@@ -92,7 +92,7 @@ pattern:
   pattern_to_get_3 (extend pattern_entity):
     _id: test-pattern-to-get-3
     title: test-pattern-to-get-3-title
-    is_shared: true
+    is_corporate: true
     entity_pattern:
       -
         - field: name
@@ -106,7 +106,7 @@ pattern:
   pattern_to_get_4 (extend pattern_pbehavior):
     _id: test-pattern-to-get-4
     title: test-pattern-to-get-4-title
-    is_shared: true
+    is_corporate: true
     pbehavior_pattern:
       -
         - field: type
