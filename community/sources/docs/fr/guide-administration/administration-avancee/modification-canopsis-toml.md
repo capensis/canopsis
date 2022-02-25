@@ -68,3 +68,73 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
     docker-compose down
     docker-compose up -d
     ```
+
+## Description des options
+
+[Canopsis.global]
+PrefetchCount = 10000
+PrefetchSize = 0
+ReconnectTimeoutMilliseconds = 8
+ReconnectRetries = 3
+
+### [Canopsis.file]
+
+| Attribut       | Exemple de valeur                        | Description                          |
+| :------------- | :--------------------------------------- | :----------------------------------- |
+| Upload         | "/opt/canopsis/var/lib/upload-files"     | Emplacement des fichiers uploadés. Utilisé pour le module de [remédiation](../../remediation) et des paramètres de l'interface graphique  |
+| UploadMaxSize  | 314572800 # 300Mb                        | Taille maximale d'un fichier à uploader (en octet) |
+| Junit          | "/opt/canopsis/var/lib/junit-files"      | Emplacement des fichiers traités par le module Junit |
+| JunitApi       | "/tmp/canopsis/junit"                    | Emplacement des fichiers temporaires uploadés par le module Junit (via API) |
+
+
+
+### [Canopsis.alarm]
+
+| Attribut                        | Exemple de valeur     | Description                          |
+| :------------------------------ | :---------------------| :----------------------------------- |
+| StealthyInterval                |                       | Encore utilisé ?          |
+| EnableLastEventDate             | true,false            | Active la mise à jour du champ `last_event_date` d'une alarme à chaque événement        | 
+| CancelAutosolveDelay            | "1h"                  | Délai de résolution effective d'une alarme après annulation depuis l'interface graphiqe |
+| DisplayNameScheme               | "{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3 }}" | Schéma utilisé pour générer le champ `display_name` d'une alarme |
+| OutputLength                    | 255                   | Nombre maximum de caractères du champ `output` avant troncage | 
+| LongOutputLength                | 1024                  | Nombre maximum de caractères du champ `long_output` avant troncage | 
+| DisableActionSnoozeDelayOnPbh   | true,false            | Si `vrai` alors le délai du snooze n'est pas ajouté à un comportement périodique |
+| TimeToKeepResolvedAlarms        | "720h"                | Délai durant lequel les alarmes résolues sont conservées dans la collection principale des alarmes |
+
+
+### [Canopsis.timezone]
+
+| Attribut | Exemple de valeur | Description                           |
+| :------- | :-----------------| :------------------------------------ |
+| Timezone | "Europe/Paris"    | Timezone générale du produit Canopsis |
+
+
+### [Canopsis.data_storage]
+
+| Attribut      | Exemple de valeur | Description                           |
+| :------------ | :-----------------| :------------------------------------ |
+| TimeToExecute | "Sunday,23"       | Jour et heure d'exécution de la politique de rotation des données définie dans le module `Data Storage` | 
+
+
+### [Canopsis.import_ctx]
+
+| Attribut            | Exemple de valeur     | Description                           |
+| :------------------ | :---------------------| :------------------------------------ |
+| ThdWarnMinPerImport | "30m"                 | A compléter |
+| ThdCritMinPerImport | "60m"                 | A compléter |
+| FilePattern         | "/tmp/import_s.json" | A compléter |
+
+### [Canopsis.api]
+
+| Attribut            | Exemple de valeur  | Description                           |
+| :------------------ | :------------------| :------------------------------------ |
+| TokenExpiration     | "24h"              | Durée de validité d'un token d'authentification |
+| TokenSigningMethod  | "HS256"            | ?? |
+| BulkMaxSize         | 1000               | ?? |
+
+[Canopsis.metrics]
+
+| Attribut            | Exemple de valeur  | Description                           |
+| :------------------ | :------------------| :------------------------------------ |
+| SliInterval         | "1h"               | Les longs intervalles de SLI sont découpés en plus petits intervalles définis par cet attribut. <br />Une valeur faible augmente la précision des métriques mais nécessite plus d'espace disque. <br />Une valeur élevée diminue la précision des métriques mais nécessaite moins d'espace disque. <br /> "1h" est la valeur recommandée dans la mesure où l'intervalle le plus petit gérée par l'interface graphique correspond à 1 heure |
+
