@@ -183,9 +183,14 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 				return assignedInstructionsMap[v.AlarmID][i].Name < assignedInstructionsMap[v.AlarmID][j].Name
 			})
 
-			res.Data[idx].AssignedInstructions = assignedInstructionsMap[v.AlarmID]
+			assignedInstructions := assignedInstructionsMap[v.AlarmID]
+			if assignedInstructions == nil {
+				assignedInstructions = make([]alarmapi.InstructionWithAlarms, 0)
+			}
+			res.Data[idx].AssignedInstructions = &assignedInstructions
 			res.Data[idx].IsAutoInstructionRunning = statusesByAlarm[v.AlarmID].AutoRunning
 			res.Data[idx].IsAllAutoInstructionsCompleted = statusesByAlarm[v.AlarmID].AutoAllCompleted
+			res.Data[idx].IsAutoInstructionFailed = statusesByAlarm[v.AlarmID].AutoFailed
 			res.Data[idx].IsManualInstructionWaitingResult = statusesByAlarm[v.AlarmID].ManualRunning
 		}
 	}
