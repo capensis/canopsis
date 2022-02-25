@@ -14,13 +14,12 @@
       v-text-field(
         :label="label",
         :error-messages="errors.collect(name)",
-        :value="value | date('dateTimePicker')",
+        :value="dateTextValue",
         :append-icon="clearable ? 'close' : ''",
         readonly,
         @click:append="clear"
       )
     date-time-picker(
-      data-test="dateTimePickerCalendar",
       :value="value",
       :label="label",
       :round-hours="roundHours",
@@ -30,9 +29,9 @@
 </template>
 
 <script>
-import { TIME_UNITS } from '@/constants';
+import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
 
-import { convertDateToStartOfUnitDateObject } from '@/helpers/date/date';
+import { convertDateToStartOfUnitDateObject, convertDateToString } from '@/helpers/date/date';
 
 import DateTimePicker from './date-time-picker.vue';
 
@@ -91,6 +90,11 @@ export default {
     return {
       opened: false,
     };
+  },
+  computed: {
+    dateTextValue() {
+      return convertDateToString(this.value, DATETIME_FORMATS.dateTimePicker);
+    },
   },
   methods: {
     close() {
