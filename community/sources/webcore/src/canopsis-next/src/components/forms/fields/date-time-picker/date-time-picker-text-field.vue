@@ -107,7 +107,7 @@ export default {
   created() {
     if (this.$validator && this.name) {
       this.$validator.extend(this.ruleName, {
-        getMessage: () => this.$t('modals.statsDateInterval.errors.endDateLessOrEqualStartDate'),
+        getMessage: () => this.$t('errors.endDateLessOrEqualStartDate'),
         validate: (value) => {
           try {
             if (!isEmpty(value)) {

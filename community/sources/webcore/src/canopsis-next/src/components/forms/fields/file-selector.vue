@@ -1,23 +1,23 @@
 <template lang="pug">
   div
     div(v-if="withFilesList")
-      .ml-2.font-italic(v-for="file in files", :key="file.name") {{ file.name }}
+      div.ml-2.font-italic(v-for="file in files", :key="file.name") {{ file.name }}
         v-btn(icon, flat, small, @click="removeFileFromSelections(file.name)")
           v-icon(small) close
-    .file-selector-button-wrapper(
-      :class="{ disabled: fullDisabled }",
-      v-on="wrapperListeners"
+    div.file-selector-button-wrapper(
+      v-on="wrapperListeners",
+      :class="{ disabled: fullDisabled }"
     )
       slot(
-        name="activator",
         :disabled="fullDisabled",
         :loading="loading",
-        :on="scopedActivatorSlotListeners"
+        :on="scopedActivatorSlotListeners",
+        name="activator"
       )
         v-btn(
+          v-on="scopedActivatorSlotListeners",
           :disabled="fullDisabled",
-          :loading="loading",
-          v-on="scopedActivatorSlotListeners"
+          :loading="loading"
         )
           v-icon cloud_upload
     input.hidden(
@@ -25,10 +25,11 @@
       type="file",
       :multiple="multiple",
       :accept="accept",
-      @change="change"
+      @change="change",
+      @click.stop=""
     )
-    .mt-2(v-if="!hideDetails")
-      .error--text(v-for="error in errorMessages", :key="error") {{ error }}
+    div.mt-2(v-if="!hideDetails")
+      div.error--text(v-for="error in errorMessages", :key="error") {{ error }}
 </template>
 
 <script>
@@ -108,7 +109,9 @@ export default {
     },
   },
   methods: {
-    selectFiles() {
+    selectFiles(event) {
+      event.stopPropagation();
+
       if (!this.fullDisabled) {
         this.$refs.fileInput.click();
       }

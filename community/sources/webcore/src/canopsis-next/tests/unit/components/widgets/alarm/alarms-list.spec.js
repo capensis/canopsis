@@ -7,7 +7,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { fakeStaticAlarms } from '@unit/data/alarm';
-import { alarmListWidgetToForm } from '@/helpers/forms/widgets/alarm';
+
 import {
   CANOPSIS_EDITION, EXPORT_CSV_DATETIME_FORMATS,
   EXPORT_STATUSES,
@@ -20,6 +20,7 @@ import {
 } from '@/constants';
 
 import AlarmsList from '@/components/widgets/alarm/alarms-list.vue';
+import { generateDefaultAlarmListWidgetForm } from '@/helpers/entities';
 
 jest.mock('file-saver', () => ({
   saveAs: jest.fn(),
@@ -115,7 +116,7 @@ describe('alarms-list', () => {
     status: EXPORT_STATUSES.failed,
   };
   const exportAlarmFile = 'exportAlarmFile';
-  const widget = alarmListWidgetToForm();
+  const widget = generateDefaultAlarmListWidgetForm();
   const defaultQuery = {
     active_columns: widget.parameters.widgetColumns.map(v => v.value),
     correlation: userPreferences.content.isCorrelationEnabled,
