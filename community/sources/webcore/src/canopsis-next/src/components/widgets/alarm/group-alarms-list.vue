@@ -5,7 +5,7 @@
       :alarms="displayedAlarms",
       :total-items="alarmsMeta.total_count",
       :pagination.sync="pagination",
-      :is-editing-mode="isEditingMode",
+      :editing="editing",
       :has-columns="hasGroupColumns",
       :columns="groupColumns",
       :parent-alarm="alarm",
@@ -49,7 +49,7 @@ export default {
       type: Object,
       required: true,
     },
-    isEditingMode: {
+    editing: {
       type: Boolean,
       default: false,
     },

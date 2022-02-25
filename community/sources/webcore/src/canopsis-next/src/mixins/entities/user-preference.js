@@ -49,33 +49,5 @@ export const entitiesUserPreferenceMixin = {
         },
       });
     },
-
-    /**
-     * Send requests to create userPreference by widgetsIdsMappings
-     *
-     * @param {{oldId: string, newId: string}[]} widgetsIdsMappings
-     * @returns {Promise}
-     */
-    copyUserPreferencesByWidgetsIdsMappings(widgetsIdsMappings) {
-      if (this.localWidget) {
-        return Promise.resolve();
-      }
-
-      return Promise.all(widgetsIdsMappings.map(async ({ oldId, newId }) => {
-        const userPreference = await this.fetchUserPreferenceWithoutStore({ id: oldId });
-
-        if (!userPreference) {
-          return Promise.resolve();
-        }
-
-        return this.updateUserPreference({
-          data: {
-            ...userPreference,
-
-            widget: newId,
-          },
-        });
-      }));
-    },
   },
 };

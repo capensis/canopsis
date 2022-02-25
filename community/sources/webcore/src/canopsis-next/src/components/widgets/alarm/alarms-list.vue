@@ -104,7 +104,8 @@ import FilterSelector from '@/components/other/filter/filter-selector.vue';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
-import { widgetColumnsMixin } from '@/mixins/widget/columns';
+
+import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns';
 import { exportCsvMixinCreator } from '@/mixins/widget/export';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
@@ -139,7 +140,7 @@ export default {
   mixins: [
     authMixin,
     widgetFetchQueryMixin,
-    widgetColumnsMixin,
+    widgetColumnsAlarmMixin,
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
     widgetRemediationInstructionsFilterMixin,
