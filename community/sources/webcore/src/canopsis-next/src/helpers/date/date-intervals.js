@@ -2,7 +2,7 @@ import moment from 'moment-timezone';
 
 import { TIME_UNITS, DATETIME_FORMATS, QUICK_RANGES, DATETIME_INTERVAL_TYPES } from '@/constants';
 
-import { getLocaleTimezone } from '@/helpers/date/date';
+import { convertDateToStartOfUnitString, getLocaleTimezone, subtractUnitFromDate } from '@/helpers/date/date';
 
 /**
  * Convert a date interval string to moment date object
@@ -209,3 +209,37 @@ export const findQuickRangeValue = (
   defaultValue = QUICK_RANGES.custom,
 ) => Object.values(ranges)
   .find(range => start === range.start && stop === range.stop) || defaultValue;
+
+/**
+ * Get value from quick range period
+ *
+ * @param {string} value
+ * @param {string | number} start
+ * @param {string | number} stop
+ * @return {Object}
+ */
+export const getValueFromQuickRange = ({ value, start, stop }) => {
+  if (value === QUICK_RANGES.custom.value) {
+    return {
+      periodUnit: TIME_UNITS.hour,
+      periodValue: 1,
+
+      tstart: convertDateToStartOfUnitString(
+        subtractUnitFromDate(Date.now(), 1, TIME_UNITS.hour),
+        TIME_UNITS.hour,
+        DATETIME_FORMATS.dateTimePicker,
+      ),
+
+      tstop: convertDateToStartOfUnitString(
+        Date.now(),
+        TIME_UNITS.hour,
+        DATETIME_FORMATS.dateTimePicker,
+      ),
+    };
+  }
+
+  return {
+    tstart: start,
+    tstop: stop,
+  };
+};

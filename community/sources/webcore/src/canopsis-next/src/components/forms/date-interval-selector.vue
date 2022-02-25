@@ -32,10 +32,9 @@
 </template>
 
 <script>
-import { TIME_UNITS, ALARM_INTERVAL_FIELDS, DATETIME_FORMATS, DATETIME_INTERVAL_TYPES, QUICK_RANGES } from '@/constants';
+import { TIME_UNITS, ALARM_INTERVAL_FIELDS, DATETIME_INTERVAL_TYPES } from '@/constants';
 
-import { convertDateIntervalToDateObject } from '@/helpers/date/date-intervals';
-import { convertDateToStartOfUnitString, subtractUnitFromDate } from '@/helpers/date/date';
+import { convertDateIntervalToDateObject, getValueFromQuickRange } from '@/helpers/date/date-intervals';
 
 import { formMixin } from '@/mixins/form';
 
@@ -78,7 +77,7 @@ export default {
         if (range.value !== this.range.value) {
           this.updateModel({
             ...this.value,
-            ...this.getValueFromRange(range),
+            ...getValueFromQuickRange(range),
           });
         }
       },
@@ -98,32 +97,6 @@ export default {
     },
   },
   methods: {
-    getValueFromRange({ value, start, stop }) {
-      if (value === QUICK_RANGES.custom.value) {
-        return {
-          periodUnit: TIME_UNITS.hour,
-          periodValue: 1,
-
-          tstart: convertDateToStartOfUnitString(
-            subtractUnitFromDate(Date.now(), 1, TIME_UNITS.hour),
-            TIME_UNITS.hour,
-            DATETIME_FORMATS.dateTimePicker,
-          ),
-
-          tstop: convertDateToStartOfUnitString(
-            Date.now(),
-            TIME_UNITS.hour,
-            DATETIME_FORMATS.dateTimePicker,
-          ),
-        };
-      }
-
-      return {
-        tstart: start,
-        tstop: stop,
-      };
-    },
-
     stopDateObjectPreparer(date) {
       return convertDateIntervalToDateObject(date, DATETIME_INTERVAL_TYPES.stop, this.unit);
     },
