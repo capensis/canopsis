@@ -334,10 +334,10 @@ func getFindPipeline() []bson.M {
 			"as":           "alarm_counters.type",
 		}},
 		{"$unwind": bson.M{"path": "$alarm_counters.type", "preserveNullAndEmptyArrays": true}},
-		{"$group": bson.M{
+		{"$project": bson.M{
 			"_id":            "$_id",
-			"data":           bson.M{"$first": "$$ROOT"},
-			"alarm_counters": bson.M{"$push": "$alarm_counters"},
+			"data":           "$$ROOT",
+			"alarm_counters": bson.A{"$alarm_counters"},
 		}},
 		{"$replaceRoot": bson.M{
 			"newRoot": bson.M{"$mergeObjects": bson.A{
