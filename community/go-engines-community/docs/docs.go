@@ -9157,6 +9157,9 @@ var doc = `{
                 "is_all_auto_instructions_completed": {
                     "type": "boolean"
                 },
+                "is_auto_instruction_failed": {
+                    "type": "boolean"
+                },
                 "is_auto_instruction_running": {
                     "type": "boolean"
                 },
@@ -13365,6 +13368,9 @@ var doc = `{
                     }
                 },
                 "is_all_auto_instructions_completed": {
+                    "type": "boolean"
+                },
+                "is_auto_instruction_failed": {
                     "type": "boolean"
                 },
                 "is_auto_instruction_running": {
