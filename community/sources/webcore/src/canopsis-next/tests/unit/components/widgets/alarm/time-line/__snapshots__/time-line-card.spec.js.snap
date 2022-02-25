@@ -1,0 +1,211 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`time-line-card Renders \`time-line-card\` with html as message 1`] = `
+<div>
+  <div
+    class="header"
+  >
+    <!---->
+    <p>
+      alarmList.timeLine.types.pbhenter alarmList.timeLine.titlePaths.by system
+    </p>
+  </div>
+  <div
+    class="content"
+  >
+    <p>
+      <p>
+        Pbehavior Name pbh. Type: Default pause. Reason: Test reason
+      </p>
+    </p>
+  </div>
+</div>
+`;
+
+exports[`time-line-card Renders \`time-line-card\` with state but without translate 1`] = `
+<div>
+  <div
+    class="header"
+  >
+    <c-alarm-chip-stub
+      class="chips pr-2"
+      type="state"
+      value="3"
+    />
+    <p>
+      state increased alarmList.timeLine.titlePaths.by root
+    </p>
+  </div>
+  <div
+    class="content"
+  >
+    <p>
+      Idle rule Test all resource
+    </p>
+  </div>
+</div>
+`;
+
+exports[`time-line-card Renders \`time-line-card\` with state but without translate 2`] = `
+<div>
+  <div
+    class="header"
+  >
+    <c-alarm-chip-stub
+      class="chips pr-2"
+      type="status"
+      value="3"
+    />
+    <p>
+      status decreased alarmList.timeLine.titlePaths.by system (role)
+    </p>
+  </div>
+  <div
+    class="content"
+  >
+    <p>
+      Status dec
+    </p>
+  </div>
+</div>
+`;
+
+exports[`time-line-card Renders \`time-line-card\` with state counter type 1`] = `
+<div>
+  <div
+    class="header"
+  >
+    <p>
+      alarmList.timeLine.stateCounter.header
+    </p>
+  </div>
+  <div
+    class="content"
+  >
+    <table>
+      <tr>
+        <td>
+          alarmList.timeLine.stateCounter.stateIncreased :
+        </td>
+        <td>
+          
+        </td>
+      </tr>
+      <tr>
+        <td>
+          alarmList.timeLine.stateCounter.stateDecreased :
+        </td>
+        <td>
+          
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+`;
+
+exports[`time-line-card Renders \`time-line-card\` with states 1`] = `
+<div>
+  <div
+    class="header"
+  >
+    <p>
+      alarmList.timeLine.stateCounter.header
+    </p>
+  </div>
+  <div
+    class="content"
+  >
+    <table>
+      <tr>
+        <td>
+          alarmList.timeLine.stateCounter.stateIncreased :
+        </td>
+        <td>
+          
+        </td>
+      </tr>
+      <tr>
+        <td>
+          alarmList.timeLine.stateCounter.stateDecreased :
+        </td>
+        <td>
+          
+        </td>
+      </tr>
+      <tr>
+        <td>
+          common.state critical :
+        </td>
+        <td>
+          critical
+        </td>
+      </tr>
+      <tr>
+        <td>
+          common.state major :
+        </td>
+        <td>
+          major
+        </td>
+      </tr>
+      <tr>
+        <td>
+          common.state minor :
+        </td>
+        <td>
+          minor
+        </td>
+      </tr>
+      <tr>
+        <td>
+          common.state ok :
+        </td>
+        <td>
+          ok
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+`;
+
+exports[`time-line-card Renders \`time-line-card\` without translate 1`] = `
+<div>
+  <div
+    class="header"
+  >
+    <!---->
+    <p>
+      pbhenter alarmList.timeLine.titlePaths.by system
+    </p>
+  </div>
+  <div
+    class="content"
+  >
+    <p>
+      Pbehavior Name pbh. Type: Default pause. Reason: Test reason
+    </p>
+  </div>
+</div>
+`;
+
+exports[`time-line-card Renders \`time-line-card\` without translate 2`] = `
+<div>
+  <div
+    class="header"
+  >
+    <!---->
+    <p>
+      pbhenter alarmList.timeLine.titlePaths.by system
+    </p>
+  </div>
+  <div
+    class="content"
+  >
+    <p>
+      Pbehavior Name pbh. Type: Default pause. Reason: Test reason
+    </p>
+  </div>
+</div>
+`;
