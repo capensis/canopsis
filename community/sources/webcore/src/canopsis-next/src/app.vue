@@ -5,7 +5,7 @@
       v-content#main-content
         active-broadcast-message
         router-view(:key="routeViewKey")
-    the-side-bars
+    the-sidebar
     the-modals
     the-popups
 </template>
@@ -28,7 +28,6 @@ import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { entitiesUserMixin } from '@/mixins/entities/user';
 
 import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
-import TheSideBars from '@/components/side-bars/the-sidebars.vue';
 import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active-broadcast-message.vue';
 
 import '@/assets/styles/main.scss';
@@ -38,7 +37,6 @@ const { mapActions } = createNamespacedHelpers('remediationInstructionExecution'
 export default {
   components: {
     TheNavigation,
-    TheSideBars,
     ActiveBroadcastMessage,
   },
   mixins: [

@@ -17,8 +17,11 @@ import {
   QUICK_RANGES,
   REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
 } from '@/constants';
-import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/alarm';
+
 import featuresService from '@/services/features';
+
+import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+
 import ActionsPanel from '@/components/widgets/alarm/actions/actions-panel.vue';
 
 const localVue = createVueInstance();

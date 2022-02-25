@@ -12,8 +12,8 @@
         v-field="periodicRefresh",
         :disabled="!periodicRefresh.enabled",
         :required="periodicRefresh.enabled",
-        :name="durationFieldName",
-        :min="0"
+        :name="name",
+        :min="1"
       )
 </template>
 
@@ -38,14 +38,9 @@ export default {
       default: 'periodic_refresh',
     },
   },
-  computed: {
-    durationFieldName() {
-      return `${this.name}.duration`;
-    },
-  },
   methods: {
     validateDuration() {
-      this.$nextTick(() => this.$validator.validate(`${this.durationFieldName}.value`));
+      this.$nextTick(() => this.$validator.validate(`${this.name}.value`));
     },
   },
 };

@@ -79,7 +79,7 @@ export default {
     this.pending = true;
 
     if (!this.groupsPending) {
-      await this.fetchAllGroupsListWithViews();
+      await this.fetchAllGroupsListWithWidgets();
     }
 
     this.playlist = await this.fetchPlaylistItemWithoutStore({ id: this.id });

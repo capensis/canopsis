@@ -17,33 +17,13 @@ export default {
         return {
           moduleName,
 
-          add(popup) {
-            return store.dispatch(`${moduleName}/add`, popup);
-          },
-
-          remove({ id }) {
-            return store.dispatch(`${moduleName}/remove`, { id });
-          },
-
-          success(popup) {
-            return store.dispatch(`${moduleName}/success`, popup);
-          },
-
-          info(popup) {
-            return store.dispatch(`${moduleName}/info`, popup);
-          },
-
-          warning(popup) {
-            return store.dispatch(`${moduleName}/warning`, popup);
-          },
-
-          error(popup) {
-            return store.dispatch(`${moduleName}/error`, popup);
-          },
-
-          setDefaultCloseTime(type, time) {
-            return store.dispatch(`${moduleName}/setDefaultCloseTime`, { type, time });
-          },
+          add: popup => store.dispatch(`${moduleName}/add`, popup),
+          remove: popup => store.dispatch(`${moduleName}/remove`, popup),
+          success: popup => store.dispatch(`${moduleName}/success`, popup),
+          info: popup => store.dispatch(`${moduleName}/info`, popup),
+          warning: popup => store.dispatch(`${moduleName}/warning`, popup),
+          error: popup => store.dispatch(`${moduleName}/error`, popup),
+          setDefaultCloseTime: popup => store.dispatch(`${moduleName}/setDefaultCloseTime`, popup),
         };
       },
     });

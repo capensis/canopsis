@@ -25,6 +25,24 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with editing mode 1`] = `
 >
   <div
     class="grid-overview-widget"
+    tab="[object Object]"
+  >
+    <widget-wrapper-stub
+      tab="[object Object]"
+      widget="[object Object]"
+    />
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`view-tab-widgets Renders \`view-tab-widgets\` with editing mode 2`] = `
+<div
+  class="view"
+  id="view-tab-undefined"
+>
+  <div
+    class="grid-overview-widget"
     style="display: none;"
     tab="[object Object]"
   >
@@ -38,7 +56,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with editing mode 1`] = `
     tab="[object Object]"
   >
     <widget-wrapper-stub
-      iseditingmode="true"
+      editing="true"
       tab="[object Object]"
       widget="[object Object]"
     />
@@ -61,5 +79,33 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets 1`] = `
     />
   </div>
   <!---->
+</div>
+`;
+
+exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets with editing mode 1`] = `
+<div
+  class="view"
+  id="view-tab-undefined"
+>
+  <div
+    class="grid-overview-widget"
+    style="display: none;"
+    tab="[object Object]"
+  >
+    <widget-wrapper-stub
+      tab="[object Object]"
+      widget="[object Object]"
+    />
+  </div>
+  <div
+    class="grid-edit-widgets"
+    tab="[object Object]"
+  >
+    <widget-wrapper-stub
+      editing="true"
+      tab="[object Object]"
+      widget="[object Object]"
+    />
+  </div>
 </div>
 `;

@@ -81,7 +81,7 @@ export default {
           action: async () => {
             try {
               await this.removeGroup({ id: this.group._id });
-              await this.fetchAllGroupsListWithViewsWithCurrentUser();
+              await this.fetchAllGroupsListWithWidgetsWithCurrentUser();
 
               this.$modals.hide();
             } catch (err) {
@@ -105,7 +105,7 @@ export default {
         }
 
         await this.fetchCurrentUser();
-        await this.fetchAllGroupsListWithViewsWithCurrentUser();
+        await this.fetchAllGroupsListWithWidgetsWithCurrentUser();
 
         this.$modals.hide();
       }

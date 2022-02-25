@@ -1,9 +1,10 @@
 <template lang="pug">
   v-menu(offset-y)
-    v-btn.ma-0(slot="activator", icon, small)
-      v-icon(small) more_horiz
+    template(#activator="{ on }")
+      v-btn.ma-0(v-on="on", icon, small)
+        v-icon(small) more_horiz
     v-list(dense)
-      v-list-tile(@click="showSettings({ tabId: tab._id, widget })")
+      v-list-tile(@click="showSettings")
         div {{ $t('common.edit') }}
       v-list-tile(@click="showSelectViewTabModal")
         div {{ $t('common.duplicate') }}
@@ -19,15 +20,23 @@
 </template>
 
 <script>
-import { MODALS, ROUTES_NAMES, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
+import { MODALS, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 
-import sideBarMixin from '@/mixins/side-bar/side-bar';
+import { getNewWidgetGridParametersY } from '@/helpers/grid-layout';
+import { setSeveralFields } from '@/helpers/immutable';
 
-import { generateWidgetId } from '@/helpers/entities';
-import { removeFrom } from '@/helpers/immutable';
+import { activeViewMixin } from '@/mixins/active-view';
+import { viewRouterMixin } from '@/mixins/view/router';
+import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
+import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
 
 export default {
-  mixins: [sideBarMixin],
+  mixins: [
+    activeViewMixin,
+    viewRouterMixin,
+    entitiesWidgetMixin,
+    entitiesViewTabMixin,
+  ],
   props: {
     widget: {
       type: Object,
@@ -37,69 +46,38 @@ export default {
       type: Object,
       required: true,
     },
-    updateTabMethod: {
-      type: Function,
-      required: true,
-    },
   },
   methods: {
-    /**
-     * Delete widget from tab
-     *
-     * @param {string} widgetId
-     */
-    deleteWidgetFromTab(widgetId) {
-      const widgetIndex = this.tab.widgets.findIndex(widget => widget._id === widgetId);
-
-      return removeFrom(this.tab, 'widgets', widgetIndex);
-    },
-
-    /**
-     * Redirect to selected view and tab, if it's different then the view/tab we're actually on
-     */
-    async redirectToSelectedViewAndTab({ tabId, viewId }) {
-      await new Promise((resolve, reject) => {
-        if (this.tab._id === tabId) {
-          resolve();
-        } else {
-          this.$router.push({
-            name: ROUTES_NAMES.view,
-            params: { id: viewId },
-            query: { tabId },
-          }, resolve, reject);
-        }
+    showSettings() {
+      this.$sidebar.show({
+        name: SIDE_BARS_BY_WIDGET_TYPES[this.widget.type],
+        config: {
+          widget: { ...this.widget, tab: this.tab._id },
+        },
       });
     },
 
     /**
      * Copy a widget's parameters, and open corresponding settings panel
      */
-    cloneWidget({ viewId, tabId }) {
-      const newWidget = { ...this.widget, _id: generateWidgetId(this.widget.type) };
+    async cloneWidget({ viewId, tabId }) {
+      const tab = await this.fetchViewTab({ id: tabId });
 
-      this.redirectToSelectedViewAndTab({ tabId, viewId });
+      const { mobile, tablet, desktop } = getNewWidgetGridParametersY(tab.widgets);
+      const newWidget = setSeveralFields(this.widget, {
+        tab: tabId,
+        'grid_parameters.mobile.y': mobile,
+        'grid_parameters.tablet.y': tablet,
+        'grid_parameters.desktop.y': desktop,
+      });
 
-      this.showSettings({ viewId, tabId, widget: newWidget });
-    },
+      await this.redirectToSelectedViewAndTab({ viewId, tabId });
 
-    /**
-     * Show widget settings side bar
-     *
-     * @param {string} [viewId]
-     * @param {string} tabId
-     * @param {Object} widget
-     */
-    showSettings({
-      viewId,
-      tabId,
-      widget,
-    }) {
-      this.showSideBar({
-        name: SIDE_BARS_BY_WIDGET_TYPES[widget.type],
+      this.$sidebar.show({
+        name: SIDE_BARS_BY_WIDGET_TYPES[newWidget.type],
         config: {
-          viewId,
-          tabId,
-          widget,
+          duplicate: true,
+          widget: newWidget,
         },
       });
     },
@@ -123,10 +101,10 @@ export default {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () => {
-            const updatedTab = this.deleteWidgetFromTab(this.widget._id);
+          action: async () => {
+            await this.removeWidget({ id: this.widget._id });
 
-            return this.updateTabMethod(updatedTab);
+            return this.fetchActiveView();
           },
         },
       });
