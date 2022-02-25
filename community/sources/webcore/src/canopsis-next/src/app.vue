@@ -3,7 +3,6 @@
     v-layout(v-if="!pending")
       the-navigation#main-navigation(v-if="shownNavigation")
       v-content#main-content
-        c-filter-operator-field
         active-broadcast-message
         router-view(:key="routeViewKey")
     the-sidebar
