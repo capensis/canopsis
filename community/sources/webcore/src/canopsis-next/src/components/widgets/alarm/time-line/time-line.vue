@@ -13,14 +13,14 @@
 <script>
 import { groupAlarmSteps } from '@/helpers/entities';
 
-import widgetExpandPanelAlarmTimeLine from '@/mixins/widget/expand-panel/alarm/expand-panel';
+import { widgetExpandPanelAlarmMixin } from '@/mixins/widget/expand-panel/alarm/expand-panel';
 
 import TimeLineFlag from './time-line-flag.vue';
 import TimeLineCard from './time-line-card.vue';
 
 export default {
   components: { TimeLineFlag, TimeLineCard },
-  mixins: [widgetExpandPanelAlarmTimeLine],
+  mixins: [widgetExpandPanelAlarmMixin],
   props: {
     alarm: {
       type: Object,

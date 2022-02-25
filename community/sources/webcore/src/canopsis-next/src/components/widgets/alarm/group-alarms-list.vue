@@ -4,13 +4,13 @@
       :widget="widget",
       :alarms="displayedAlarms",
       :total-items="alarmsMeta.total_count",
-      :pagination.sync="vDataTablePagination",
+      :pagination.sync="pagination",
       :is-editing-mode="isEditingMode",
       :has-columns="hasGroupColumns",
       :columns="groupColumns",
       :parent-alarm="alarm",
       expandable,
-      hideGroups,
+      hide-groups,
       ref="alarmsTable"
     )
     c-table-pagination(
@@ -23,13 +23,14 @@
 </template>
 
 <script>
+import { get, orderBy } from 'lodash';
+
 import { DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS, ALARM_ENTITY_FIELDS } from '@/constants';
 
 import { defaultColumnsToColumns } from '@/helpers/entities';
+import { convertWidgetToQuery } from '@/helpers/query';
 
-import { widgetColumnsMixin } from '@/mixins/widget/columns';
-import widgetGroupFetchQueryMixin from '@/mixins/widget/group-fetch-query';
-import widgetExpandPanelAlarm from '@/mixins/widget/expand-panel/alarm/expand-panel';
+import { queryWidgetMixin } from '@/mixins/widget/query';
 
 /**
  * Group-alarm-list component
@@ -38,12 +39,12 @@ import widgetExpandPanelAlarm from '@/mixins/widget/expand-panel/alarm/expand-pa
  *
  */
 export default {
-  mixins: [
-    widgetGroupFetchQueryMixin,
-    widgetColumnsMixin,
-    widgetExpandPanelAlarm,
-  ],
+  mixins: [queryWidgetMixin],
   props: {
+    alarm: {
+      type: Object,
+      required: true,
+    },
     widget: {
       type: Object,
       required: true,
@@ -54,6 +55,36 @@ export default {
     },
   },
   computed: {
+    alarms() {
+      return get(this.alarm, 'consequences.data') || get(this.alarm, 'causes.data', []);
+    },
+
+    alarmsMeta() {
+      return {
+        total_count: this.alarms.length,
+      };
+    },
+
+    displayedAlarms() {
+      const {
+        page,
+        limit,
+        multiSortBy = [],
+      } = this.query;
+
+      let { alarms } = this;
+
+      if (multiSortBy.length) {
+        alarms = orderBy(
+          alarms,
+          multiSortBy.map(({ sortBy }) => sortBy),
+          multiSortBy.map(({ descending }) => (descending ? 'desc' : 'asc')),
+        );
+      }
+
+      return alarms.slice((page - 1) * limit, page * limit);
+    },
+
     hasGroupColumns() {
       return this.groupColumns.length > 0;
     },
@@ -70,6 +101,9 @@ export default {
 
       return defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS);
     },
+  },
+  mounted() {
+    this.query = convertWidgetToQuery(this.widget);
   },
 };
 </script>

@@ -9,13 +9,15 @@ import { createMockedStoreModules } from '@unit/utils/store';
 import { fakeStaticAlarms } from '@unit/data/alarm';
 import { alarmListWidgetToForm } from '@/helpers/forms/widgets/alarm';
 import {
-  CANOPSIS_EDITION, EXPORT_CSV_DATETIME_FORMATS,
+  CANOPSIS_EDITION,
+  EXPORT_CSV_DATETIME_FORMATS,
   EXPORT_STATUSES,
   FILTER_DEFAULT_VALUES,
   FILTER_MONGO_OPERATORS,
   MODALS,
   QUICK_RANGES,
-  REMEDIATION_INSTRUCTION_TYPES, TIME_UNITS,
+  REMEDIATION_INSTRUCTION_TYPES,
+  TIME_UNITS,
   USERS_PERMISSIONS,
 } from '@/constants';
 
