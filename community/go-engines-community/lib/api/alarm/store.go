@@ -1077,6 +1077,11 @@ func (s *store) addNestedObjects(r FilterRequest, pipeline *[]bson.M) {
 			"as":           "pbehavior",
 		}},
 		{"$unwind": bson.M{"path": "$pbehavior", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"pbehavior.comments": bson.M{
+				"$slice": bson.A{bson.M{"$reverseArray": "$pbehavior.comments"}, 1},
+			},
+		}},
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorTypeMongoCollection,
 			"foreignField": "_id",
