@@ -26,6 +26,7 @@ import {
   GROUPS_NAVIGATION_TYPES,
   ALARM_METRIC_PARAMETERS,
   USER_METRIC_PARAMETERS,
+  FILTER_OPERATORS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -213,6 +214,7 @@ export default {
     criteria: 'Criteria',
     ratingSettings: 'Rating settings',
     pbehavior: 'Pbehavior | Pbehaviors',
+    condition: 'Condition | Conditions',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -276,6 +278,48 @@ export default {
       [ENTITIES_STATES.minor]: 'Minor',
       [ENTITIES_STATES.major]: 'Major',
       [ENTITIES_STATES.critical]: 'Critical',
+    },
+    operators: {
+      [FILTER_OPERATORS.equal]: 'Equal',
+      [FILTER_OPERATORS.contains]: 'Contains',
+      [FILTER_OPERATORS.notEqual]: 'Not equal',
+      [FILTER_OPERATORS.notContains]: 'Does not contain',
+      [FILTER_OPERATORS.beginsWith]: 'Begins with',
+      [FILTER_OPERATORS.notBeginWith]: 'Does not begin with',
+      [FILTER_OPERATORS.endsWith]: 'Ends with',
+      [FILTER_OPERATORS.notEndWith]: 'Does not end with',
+      [FILTER_OPERATORS.exist]: 'Exist',
+      [FILTER_OPERATORS.notExist]: 'Not exist',
+
+      [FILTER_OPERATORS.hasEvery]: 'Has every',
+      [FILTER_OPERATORS.hasOneOf]: 'Has one of',
+      [FILTER_OPERATORS.hasNot]: 'Has not',
+      [FILTER_OPERATORS.isEmpty]: 'Is empty',
+      [FILTER_OPERATORS.isNotEmpty]: 'Is not empty',
+
+      [FILTER_OPERATORS.isNull]: 'Is null',
+      [FILTER_OPERATORS.isNotNull]: 'Is not null',
+
+      [FILTER_OPERATORS.higher]: 'Higher than',
+      [FILTER_OPERATORS.lower]: 'Lower than',
+
+      [FILTER_OPERATORS.greater]: 'Greater than',
+      [FILTER_OPERATORS.less]: 'Less than',
+
+      [FILTER_OPERATORS.longer]: 'Longer',
+      [FILTER_OPERATORS.shorter]: 'Shorter',
+
+      [FILTER_OPERATORS.ticketAssociated]: 'Ticket is associated',
+      [FILTER_OPERATORS.ticketNotAssociated]: 'Ticket is not associated',
+
+      [FILTER_OPERATORS.canceled]: 'Canceled',
+      [FILTER_OPERATORS.notCanceled]: 'Not canceled',
+
+      [FILTER_OPERATORS.snoozed]: 'Snoozed',
+      [FILTER_OPERATORS.notSnoozed]: 'Not snoozed',
+
+      [FILTER_OPERATORS.acked]: 'Acked',
+      [FILTER_OPERATORS.notAcked]: 'Not acked',
     },
   },
   variableTypes: {

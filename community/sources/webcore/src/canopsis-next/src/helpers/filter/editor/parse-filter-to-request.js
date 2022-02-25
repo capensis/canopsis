@@ -23,13 +23,13 @@ function parseFilterRuleToRequest(rule) {
       };
       break;
     }
-    case FILTER_OPERATORS.in: {
+    case FILTER_OPERATORS.hasOneOf: {
       parsedRule[rule.field] = {
         [FILTER_MONGO_OPERATORS.in]: rule.input.map(({ value }) => value),
       };
       break;
     }
-    case FILTER_OPERATORS.notIn: {
+    case FILTER_OPERATORS.hasNot: {
       parsedRule[rule.field] = {
         [FILTER_MONGO_OPERATORS.notIn]: rule.input.map(({ value }) => value),
       };
@@ -41,7 +41,7 @@ function parseFilterRuleToRequest(rule) {
       };
       break;
     }
-    case FILTER_OPERATORS.doesntBeginWith: {
+    case FILTER_OPERATORS.notBeginWith: {
       parsedRule[rule.field] = {
         [FILTER_MONGO_OPERATORS.regex]: `^(?!${rule.input})`,
       };
@@ -53,7 +53,7 @@ function parseFilterRuleToRequest(rule) {
       };
       break;
     }
-    case FILTER_OPERATORS.doesntContains: {
+    case FILTER_OPERATORS.notContains: {
       parsedRule[rule.field] = {
         [FILTER_MONGO_OPERATORS.regex]: `^((?!${rule.input}).)*$`,
         $options: 's',
@@ -66,7 +66,7 @@ function parseFilterRuleToRequest(rule) {
       };
       break;
     }
-    case FILTER_OPERATORS.doesntEndWith: {
+    case FILTER_OPERATORS.notEndWith: {
       parsedRule[rule.field] = {
         [FILTER_MONGO_OPERATORS.regex]: `(?<!${rule.input})$`,
       };
@@ -74,10 +74,6 @@ function parseFilterRuleToRequest(rule) {
     }
     case FILTER_OPERATORS.isEmpty: {
       parsedRule[rule.field] = '';
-      break;
-    }
-    case FILTER_OPERATORS.isEmptyArray: {
-      parsedRule[rule.field] = [];
       break;
     }
     case FILTER_OPERATORS.isNotEmpty: {
