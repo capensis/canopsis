@@ -5,14 +5,14 @@
  * @param {string} [time = '00:00'];
  * @returns {Date}
  */
-export function updateTime(value, time = '00:00') {
+export const getDateObjectByTime = (value, time = '00:00') => {
   const newValue = value ? new Date(value.getTime()) : new Date();
   const [hours = 0, minutes = 0] = time.split(':');
 
   newValue.setHours(parseInt(hours, 10) || 0, parseInt(minutes, 10) || 0, 0, 0);
 
   return newValue;
-}
+};
 
 /**
  * Immutable update date in the Date value
@@ -21,7 +21,7 @@ export function updateTime(value, time = '00:00') {
  * @param {string} date
  * @returns {Date}
  */
-export function updateDate(value, date) {
+export const getDateObjectByDate = (value, date) => {
   const newValue = value ? new Date(value.getTime()) : new Date();
   const [year, month, day] = date.split('-');
 
@@ -34,4 +34,4 @@ export function updateDate(value, date) {
   }
 
   return newValue;
-}
+};
