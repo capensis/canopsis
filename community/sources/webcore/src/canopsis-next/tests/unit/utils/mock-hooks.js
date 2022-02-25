@@ -57,11 +57,15 @@ export const mockModals = () => {
   const modals = {
     show: jest.fn(),
     hide: jest.fn(),
+    minimize: jest.fn(),
+    maximize: jest.fn(),
   };
 
   afterEach(() => {
     modals.show.mockReset();
     modals.hide.mockReset();
+    modals.minimize.mockReset();
+    modals.maximize.mockReset();
   });
 
   return modals;
