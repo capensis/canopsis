@@ -259,7 +259,7 @@ func (a *api) Delete(c *gin.Context) {
 		}
 	}
 
-	ok, err := a.store.Delete(c.Request.Context(), id)
+	ok, err := a.store.Delete(c.Request.Context(), *pattern)
 	if err != nil {
 		panic(err)
 	}
