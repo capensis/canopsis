@@ -27,7 +27,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom
           <div
             class="v-select__selection v-select__selection--comma v-select__selection--disabled"
           >
-            common.operators.exist
+            Exist
           </div>
           <input
             aria-label="Custom label"
@@ -97,7 +97,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom
             <div
               class="v-list__tile__title"
             >
-              common.operators.equal
+              Equal
             </div>
           </div>
         </a>
@@ -114,7 +114,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom
             <div
               class="v-list__tile__title"
             >
-              common.operators.contains
+              Contains
             </div>
           </div>
         </a>
@@ -131,7 +131,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom
             <div
               class="v-list__tile__title"
             >
-              common.operators.not_equal
+              Not equal
             </div>
           </div>
         </a>
@@ -148,7 +148,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom
             <div
               class="v-list__tile__title"
             >
-              common.operators.not_contains
+              Does not contain
             </div>
           </div>
         </a>
@@ -165,7 +165,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom
             <div
               class="v-list__tile__title"
             >
-              common.operators.begins_with
+              Begins with
             </div>
           </div>
         </a>
@@ -182,7 +182,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom
             <div
               class="v-list__tile__title"
             >
-              common.operators.not_begin_with
+              Does not begin with
             </div>
           </div>
         </a>
@@ -199,7 +199,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom
             <div
               class="v-list__tile__title"
             >
-              common.operators.ends_with
+              Ends with
             </div>
           </div>
         </a>
@@ -216,7 +216,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom
             <div
               class="v-list__tile__title"
             >
-              common.operators.not_end_with
+              Does not end with
             </div>
           </div>
         </a>
@@ -234,7 +234,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom
             <div
               class="v-list__tile__title"
             >
-              common.operators.exist
+              Exist
             </div>
           </div>
         </a>
@@ -251,7 +251,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom
             <div
               class="v-list__tile__title"
             >
-              common.operators.not_exist
+              Not exist
             </div>
           </div>
         </a>
@@ -268,7 +268,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom
             <div
               class="v-list__tile__title"
             >
-              common.operators.has_every
+              Has every
             </div>
           </div>
         </a>
@@ -285,7 +285,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom
             <div
               class="v-list__tile__title"
             >
-              common.operators.has_one_of
+              Has one of
             </div>
           </div>
         </a>
@@ -302,7 +302,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom
             <div
               class="v-list__tile__title"
             >
-              common.operators.has_not
+              Has not
             </div>
           </div>
         </a>
@@ -319,7 +319,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom
             <div
               class="v-list__tile__title"
             >
-              common.operators.is_empty
+              Is empty
             </div>
           </div>
         </a>
@@ -336,7 +336,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom
             <div
               class="v-list__tile__title"
             >
-              common.operators.is_not_empty
+              Is not empty
             </div>
           </div>
         </a>
@@ -353,7 +353,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom
             <div
               class="v-list__tile__title"
             >
-              common.operators.is_null
+              Is null
             </div>
           </div>
         </a>
@@ -370,7 +370,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom
             <div
               class="v-list__tile__title"
             >
-              common.operators.is_not_null
+              Is not null
             </div>
           </div>
         </a>
@@ -387,7 +387,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom
             <div
               class="v-list__tile__title"
             >
-              common.operators.greater
+              Greater than
             </div>
           </div>
         </a>
@@ -404,7 +404,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom
             <div
               class="v-list__tile__title"
             >
-              common.operators.less
+              Less than
             </div>
           </div>
         </a>
@@ -421,7 +421,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom
             <div
               class="v-list__tile__title"
             >
-              common.operators.higher_than
+              Higher than
             </div>
           </div>
         </a>
@@ -450,7 +450,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with defaul
           class="v-label v-label--active theme--light"
           style="left: 0px; position: absolute;"
         >
-          common.condition:undefined
+          Condition
         </label>
         <div
           class="v-select__selections"
@@ -458,10 +458,10 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with defaul
           <div
             class="v-select__selection v-select__selection--comma"
           >
-            common.operators.equal
+            Equal
           </div>
           <input
-            aria-label="common.condition:undefined"
+            aria-label="Condition"
             aria-readonly="false"
             autocomplete="on"
             name="condition"
@@ -528,7 +528,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with defaul
             <div
               class="v-list__tile__title"
             >
-              common.operators.equal
+              Equal
             </div>
           </div>
         </a>
@@ -545,7 +545,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with defaul
             <div
               class="v-list__tile__title"
             >
-              common.operators.contains
+              Contains
             </div>
           </div>
         </a>
@@ -562,7 +562,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with defaul
             <div
               class="v-list__tile__title"
             >
-              common.operators.not_equal
+              Not equal
             </div>
           </div>
         </a>
@@ -579,7 +579,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with defaul
             <div
               class="v-list__tile__title"
             >
-              common.operators.not_contains
+              Does not contain
             </div>
           </div>
         </a>
@@ -596,7 +596,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with defaul
             <div
               class="v-list__tile__title"
             >
-              common.operators.begins_with
+              Begins with
             </div>
           </div>
         </a>
@@ -613,7 +613,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with defaul
             <div
               class="v-list__tile__title"
             >
-              common.operators.not_begin_with
+              Does not begin with
             </div>
           </div>
         </a>
@@ -630,7 +630,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with defaul
             <div
               class="v-list__tile__title"
             >
-              common.operators.ends_with
+              Ends with
             </div>
           </div>
         </a>
@@ -647,7 +647,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with defaul
             <div
               class="v-list__tile__title"
             >
-              common.operators.not_end_with
+              Does not end with
             </div>
           </div>
         </a>
@@ -664,7 +664,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with defaul
             <div
               class="v-list__tile__title"
             >
-              common.operators.exist
+              Exist
             </div>
           </div>
         </a>
@@ -681,7 +681,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with defaul
             <div
               class="v-list__tile__title"
             >
-              common.operators.not_exist
+              Not exist
             </div>
           </div>
         </a>
@@ -698,7 +698,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with defaul
             <div
               class="v-list__tile__title"
             >
-              common.operators.has_every
+              Has every
             </div>
           </div>
         </a>
@@ -715,7 +715,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with defaul
             <div
               class="v-list__tile__title"
             >
-              common.operators.has_one_of
+              Has one of
             </div>
           </div>
         </a>
@@ -732,7 +732,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with defaul
             <div
               class="v-list__tile__title"
             >
-              common.operators.has_not
+              Has not
             </div>
           </div>
         </a>
@@ -749,7 +749,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with defaul
             <div
               class="v-list__tile__title"
             >
-              common.operators.is_empty
+              Is empty
             </div>
           </div>
         </a>
@@ -766,7 +766,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with defaul
             <div
               class="v-list__tile__title"
             >
-              common.operators.is_not_empty
+              Is not empty
             </div>
           </div>
         </a>
@@ -783,7 +783,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with defaul
             <div
               class="v-list__tile__title"
             >
-              common.operators.is_null
+              Is null
             </div>
           </div>
         </a>
@@ -800,7 +800,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with defaul
             <div
               class="v-list__tile__title"
             >
-              common.operators.is_not_null
+              Is not null
             </div>
           </div>
         </a>
@@ -817,7 +817,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with defaul
             <div
               class="v-list__tile__title"
             >
-              common.operators.greater
+              Greater than
             </div>
           </div>
         </a>
@@ -834,7 +834,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with defaul
             <div
               class="v-list__tile__title"
             >
-              common.operators.less
+              Less than
             </div>
           </div>
         </a>
@@ -851,7 +851,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with defaul
             <div
               class="v-list__tile__title"
             >
-              common.operators.higher_than
+              Higher than
             </div>
           </div>
         </a>
