@@ -204,3 +204,18 @@ loop:
 
 	return strings.Join(res, ".")
 }
+
+type ValidationError struct {
+	field string
+	err   error
+}
+
+func (v ValidationError) Error() string {
+	return v.err.Error()
+}
+
+func (v ValidationError) ValidationErrorResponse() ValidationErrorResponse {
+	return ValidationErrorResponse{
+		Errors: map[string]string{v.field: v.Error()},
+	}
+}

@@ -5,8 +5,7 @@ pattern:
     is_corporate: false
     type: alarm
     alarm_pattern:
-      -
-        - field: v.connector
+      - - field: v.connector
           cond:
             type: eq
             value: <Word()>
@@ -20,8 +19,7 @@ pattern:
     is_corporate: false
     type: entity
     entity_pattern:
-      -
-        - field: name
+      - - field: name
           cond:
             type: eq
             value: <Word()>
@@ -35,8 +33,7 @@ pattern:
     is_corporate: false
     type: pbehavior
     pbehavior_pattern:
-      -
-        - field: type
+      - - field: type
           cond:
             type: eq
             value: <Word()>
@@ -76,8 +73,7 @@ pattern:
     _id: test-pattern-to-get-1
     title: test-pattern-to-get-1-title
     alarm_pattern:
-      -
-        - field: v.connector
+      - - field: v.connector
           cond:
             type: eq
             value: test-pattern-to-get-1-pattern
@@ -94,8 +90,7 @@ pattern:
     title: test-pattern-to-get-3-title
     is_corporate: true
     entity_pattern:
-      -
-        - field: name
+      - - field: name
           cond:
             type: eq
             value: test-pattern-to-get-3-pattern
@@ -108,11 +103,67 @@ pattern:
     title: test-pattern-to-get-4-title
     is_corporate: true
     pbehavior_pattern:
-      -
-        - field: type
+      - - field: type
           cond:
             type: eq
             value: test-pattern-to-get-4-pattern
     author: root
     created: 1605263992
     updated: 1605263992
+
+  pattern_to_filter_edit_1 (extend pattern_alarm):
+    _id: test-pattern-to-filter-edit-1
+    title: test-pattern-to-filter-edit-1-title
+    is_corporate: true
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-pattern-to-filter-edit-1-pattern
+    author: root
+    created: 1605263992
+    updated: 1605263992
+
+  pattern_to_filter_edit_2 (extend pattern_entity):
+    _id: test-pattern-to-filter-edit-2
+    title: test-pattern-to-filter-edit-2-title
+    is_corporate: true
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-filter-edit-2-pattern
+    author: root
+    created: 1605263992
+    updated: 1605263992
+
+  pattern_to_filter_edit_3 (extend pattern_pbehavior):
+    _id: test-pattern-to-filter-edit-3
+    title: test-pattern-to-filter-edit-3-title
+    is_corporate: true
+    pbehavior_pattern:
+      - - field: type
+          cond:
+            type: eq
+            value: test-pattern-to-filter-edit-3-pattern
+    author: root
+    created: 1605263992
+    updated: 1605263992
+
+  pattern_to_filter_get_1 (extend pattern_alarm):
+    _id: test-pattern-to-filter-get-1
+    is_corporate: true
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-pattern-to-filter-get-1-pattern
+
+  pattern_to_filter_get_2 (extend pattern_alarm):
+    _id: test-pattern-to-filter-get-2
+    is_corporate: true
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-pattern-to-filter-get-2-pattern

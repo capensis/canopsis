@@ -94,7 +94,6 @@ widgets:
           label: Status
       sort:
         order: ASC
-      viewFilters: [ ]
       itemsPerPage: 10
       infoPopups: [ ]
       alarmsStateFilter:
@@ -149,11 +148,9 @@ widgets:
           label: Status
       sort:
         order: ASC
-      viewFilters: [ ]
       itemsPerPage: 10
       infoPopups: [ ]
       alarmsStateFilter:
-        resolved: true
         opened: false
       moreInfoTemplate:
       periodic_refresh:
@@ -193,45 +190,7 @@ widgets:
           label: Type
       sort:
         order: ASC
-      viewFilters:
-        - filter: |-
-            {
-                "$and": [
-                    {
-                        "type": "component"
-                    }
-                ]
-            }
-          title: Composant
-        - filter: |-
-            {
-                "$and": [
-                    {
-                        "type": "connector"
-                    }
-                ]
-            }
-          title: Connecteur
-        - filter: |-
-            {
-                "$and": [
-                    {
-                        "type": "resource"
-                    }
-                ]
-            }
-          title: Ressource
-        - filter: |-
-            {
-                "$and": [
-                    {
-                        "type": "watcher"
-                    }
-                ]
-            }
-          title: Observateur
       itemsPerPage: 10
-      mainFilter:
       selectedTypes: [ ]
     grid_parameters:
       mobile:
@@ -252,6 +211,54 @@ widgets:
         w: 12
         h: 1
         autoHeight: true
+
+widget_filters:
+  filter (template):
+    _id: <UUID()>
+    is_private: false
+    created: <NowUnix()>
+    updated: <Current().created>
+    author: root
+
+  filter_context_explorer_component (extend filter):
+    title: Composant
+    widget: "@widget_context_explorer"
+    entity_pattern:
+      -
+        - field: type
+          cond:
+            type: eq
+            value: component
+
+  filter_context_explorer_connector (extend filter):
+    title: Connecteur
+    widget: "@widget_context_explorer"
+    entity_pattern:
+      -
+        - field: type
+          cond:
+            type: eq
+            value: connector
+
+  filter_context_explorer_resource (extend filter):
+    title: Ressource
+    widget: "@widget_context_explorer"
+    entity_pattern:
+      -
+        - field: type
+          cond:
+            type: eq
+            value: resource
+
+  filter_context_explorer_service (extend filter):
+    title: Observateur
+    widget: "@widget_context_explorer"
+    entity_pattern:
+      -
+        - field: type
+          cond:
+            type: eq
+            value: service
 
 default_rights:
   permission (template):

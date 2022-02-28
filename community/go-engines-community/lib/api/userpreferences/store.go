@@ -2,6 +2,7 @@ package userpreferences
 
 import (
 	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -31,11 +32,36 @@ func (s *store) Find(ctx context.Context, userId, widgetId string) (*Response, e
 	res := Response{
 		Widget:  widgetId,
 		Content: map[string]interface{}{},
+		Filters: make([]widgetfilter.Response, 0),
 	}
 	cursor, err := s.collection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"user":   userId,
 			"widget": widgetId,
+		}},
+		{"$lookup": bson.M{
+			"from":         mongo.WidgetFiltersMongoCollection,
+			"localField":   "widget",
+			"foreignField": "widget",
+			"as":           "filters",
+		}},
+		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
+		{"$sort": bson.M{"filters.title": 1}},
+		{"$group": bson.M{
+			"_id":     nil,
+			"user":    bson.M{"$first": "$user"},
+			"widget":  bson.M{"$first": "$widget"},
+			"content": bson.M{"$first": "$content"},
+			"filters": bson.M{"$push": "$filters"},
+		}},
+		{"$addFields": bson.M{
+			"filters": bson.M{"$filter": bson.M{
+				"input": "$filters",
+				"cond": bson.M{"$and": []bson.M{
+					{"$eq": bson.A{"$$this.author", "$user"}},
+					{"$eq": bson.A{"$$this.is_private", true}},
+				}},
+			}},
 		}},
 	})
 	if err != nil {
