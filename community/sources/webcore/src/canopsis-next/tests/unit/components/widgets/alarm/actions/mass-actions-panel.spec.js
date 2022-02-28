@@ -393,7 +393,7 @@ describe('mass-actions-panel', () => {
       {
         name: MODALS.createEvent,
         config: {
-          title: 'modals.createAckRemove.title',
+          title: 'Remove ack',
           eventType: EVENT_ENTITY_TYPES.ackRemove,
           itemsIds,
           itemsType: ENTITIES_TYPES.alarm,
@@ -450,7 +450,7 @@ describe('mass-actions-panel', () => {
           itemsIds,
           itemsType: ENTITIES_TYPES.alarm,
           afterSubmit: expect.any(Function),
-          title: 'modals.createCancelEvent.title',
+          title: 'Cancel',
           eventType: EVENT_ENTITY_TYPES.cancel,
         },
       },
@@ -614,7 +614,7 @@ describe('mass-actions-panel', () => {
       {
         name: MODALS.createEvent,
         config: {
-          title: 'modals.createGroupRequestEvent.title',
+          title: 'Suggest group request for meta alarm',
           eventType: EVENT_ENTITY_TYPES.groupRequest,
           itemsIds,
           itemsType: ENTITIES_TYPES.alarm,
@@ -673,7 +673,7 @@ describe('mass-actions-panel', () => {
       {
         name: MODALS.createManualMetaAlarm,
         config: {
-          title: 'modals.createManualMetaAlarm.title',
+          title: 'Manual meta alarm management',
           itemsIds,
           itemsType: ENTITIES_TYPES.alarm,
           afterSubmit: expect.any(Function),

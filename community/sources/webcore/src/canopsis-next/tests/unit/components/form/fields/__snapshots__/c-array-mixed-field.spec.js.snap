@@ -75,7 +75,7 @@ exports[`c-array-mixed-field Renders \`c-array-mixed-field\` with all field type
     <div
       class="v-btn__content"
     >
-      common.add
+      Add
     </div>
   </button>
 </div>
@@ -90,7 +90,7 @@ exports[`c-array-mixed-field Renders \`c-array-mixed-field\` with default props 
     <div
       class="v-btn__content"
     >
-      common.add
+      Add
     </div>
   </button>
 </div>
@@ -132,7 +132,7 @@ exports[`c-array-mixed-field Renders disabled \`c-array-mixed-field\` correctly 
     <div
       class="v-btn__content"
     >
-      common.add
+      Add
     </div>
   </button>
 </div>

@@ -30,7 +30,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
           <a
             class="v-tabs__item v-tabs__item--active"
           >
-            alarmList.tabs.moreInfos
+            More infos
           </a>
         </div>
         <div
@@ -39,7 +39,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
           <a
             class="v-tabs__item"
           >
-            alarmList.tabs.timeLine
+            Timeline
           </a>
         </div>
         <!---->
@@ -152,7 +152,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           <a
             class="v-tabs__item v-tabs__item--active"
           >
-            alarmList.tabs.moreInfos
+            More infos
           </a>
         </div>
         <div
@@ -161,7 +161,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           <a
             class="v-tabs__item"
           >
-            alarmList.tabs.timeLine
+            Timeline
           </a>
         </div>
         <div
@@ -170,7 +170,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           <a
             class="v-tabs__item"
           >
-            alarmList.tabs.alarmsCauses
+            Alarms causes
           </a>
         </div>
         <div
@@ -179,7 +179,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           <a
             class="v-tabs__item"
           >
-            alarmList.tabs.alarmsConsequences
+            Alarms consequences
           </a>
         </div>
         <div
@@ -188,7 +188,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           <a
             class="v-tabs__item"
           >
-            alarmList.tabs.trackSource
+            Track source
           </a>
         </div>
         <div
@@ -197,7 +197,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           <a
             class="v-tabs__item"
           >
-            alarmList.tabs.impactChain
+            Impact chain
           </a>
         </div>
         <!---->
@@ -428,7 +428,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           <a
             class="v-tabs__item v-tabs__item--active"
           >
-            alarmList.tabs.moreInfos
+            More infos
           </a>
         </div>
         <div
@@ -437,7 +437,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           <a
             class="v-tabs__item"
           >
-            alarmList.tabs.timeLine
+            Timeline
           </a>
         </div>
         <!---->
@@ -450,7 +450,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           <a
             class="v-tabs__item"
           >
-            alarmList.tabs.entityGantt
+            Gantt chart
           </a>
         </div>
       </div>
@@ -565,7 +565,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
           <a
             class="v-tabs__item v-tabs__item--active"
           >
-            alarmList.tabs.moreInfos
+            More infos
           </a>
         </div>
         <div
@@ -574,7 +574,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
           <a
             class="v-tabs__item"
           >
-            alarmList.tabs.timeLine
+            Timeline
           </a>
         </div>
         <!---->

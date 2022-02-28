@@ -23,7 +23,7 @@ exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with impact
           >
             <input
               aria-checked="false"
-              aria-label="settings.colorIndicator.fields.displayAsSeverity"
+              aria-label="Display as severity"
               name="colorIndicator"
               role="radio"
               type="radio"
@@ -44,7 +44,7 @@ exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with impact
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
-            settings.colorIndicator.fields.displayAsSeverity
+            Display as severity
           </label>
         </div>
         <div
@@ -55,7 +55,7 @@ exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with impact
           >
             <input
               aria-checked="false"
-              aria-label="settings.colorIndicator.fields.displayAsPriority"
+              aria-label="Display as priority"
               name="colorIndicator"
               role="radio"
               type="radio"
@@ -76,7 +76,7 @@ exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with impact
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
-            settings.colorIndicator.fields.displayAsPriority
+            Display as priority
           </label>
         </div>
       </div>
@@ -117,7 +117,7 @@ exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with state 
           >
             <input
               aria-checked="false"
-              aria-label="settings.colorIndicator.fields.displayAsSeverity"
+              aria-label="Display as severity"
               name="colorIndicator"
               role="radio"
               type="radio"
@@ -138,7 +138,7 @@ exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with state 
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
-            settings.colorIndicator.fields.displayAsSeverity
+            Display as severity
           </label>
         </div>
         <div
@@ -149,7 +149,7 @@ exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with state 
           >
             <input
               aria-checked="false"
-              aria-label="settings.colorIndicator.fields.displayAsPriority"
+              aria-label="Display as priority"
               name="colorIndicator"
               role="radio"
               type="radio"
@@ -170,7 +170,7 @@ exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with state 
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
-            settings.colorIndicator.fields.displayAsPriority
+            Display as priority
           </label>
         </div>
       </div>

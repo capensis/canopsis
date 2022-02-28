@@ -18,7 +18,7 @@ exports[`button-field Renders \`button-field\` with custom props 1`] = `
           class="v-btn__content"
         >
           <span>
-            common.create
+            Create
           </span>
         </div>
       </button>
@@ -45,7 +45,7 @@ exports[`button-field Renders \`button-field\` with default props 1`] = `
           class="v-btn__content"
         >
           <span>
-            common.create
+            Create
           </span>
         </div>
       </button>

@@ -134,6 +134,7 @@ import CFiltersField from '@/components/forms/fields/c-filters-field.vue';
 import CStateTypeField from '@/components/forms/fields/c-state-type-field.vue';
 import CRecordsPerPageField from '@/components/forms/fields/c-records-per-page-field.vue';
 import COperatorField from '@/components/forms/fields/c-operator-field.vue';
+import CDraggableListField from '@/components/forms/fields/c-draggable-list-field.vue';
 import CDatePickerField from '@/components/forms/fields/date-picker/c-date-picker-field.vue';
 
 /**
@@ -329,6 +330,7 @@ Vue.component('c-alarm-metric-parameters-field', CAlarmMetricParametersField);
 Vue.component('c-state-type-field', CStateTypeField);
 Vue.component('c-records-per-page-field', CRecordsPerPageField);
 Vue.component('c-operator-field', COperatorField);
+Vue.component('c-draggable-list-field', CDraggableListField);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,

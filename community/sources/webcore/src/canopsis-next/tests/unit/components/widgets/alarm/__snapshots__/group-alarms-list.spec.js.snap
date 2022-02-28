@@ -1,0 +1,101 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`group-alarms-list Renders \`group-alarms-list\` with causes alarms 1`] = `
+<div>
+  <alarms-list-table-stub
+    alarms=""
+    columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    expandable="expandable"
+    has-columns="true"
+    hide-groups="hide-groups"
+    pagination="[object Object]"
+    parent-alarm="[object Object]"
+    total-items="7"
+    widget="[object Object]"
+  />
+  <c-table-pagination-stub
+    rows-per-page="13"
+    total-items="7"
+  />
+</div>
+`;
+
+exports[`group-alarms-list Renders \`group-alarms-list\` with consequences alarms 1`] = `
+<div>
+  <alarms-list-table-stub
+    alarms=""
+    columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    expandable="expandable"
+    has-columns="true"
+    hide-groups="hide-groups"
+    pagination="[object Object]"
+    parent-alarm="[object Object]"
+    total-items="5"
+    widget="[object Object]"
+  />
+  <c-table-pagination-stub
+    rows-per-page="13"
+    total-items="5"
+  />
+</div>
+`;
+
+exports[`group-alarms-list Renders \`group-alarms-list\` with default props 1`] = `
+<div>
+  <alarms-list-table-stub
+    alarms=""
+    columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    expandable="expandable"
+    has-columns="true"
+    hide-groups="hide-groups"
+    pagination="[object Object]"
+    parent-alarm="[object Object]"
+    total-items="0"
+    widget="[object Object]"
+  />
+  <c-table-pagination-stub
+    rows-per-page="13"
+    total-items="0"
+  />
+</div>
+`;
+
+exports[`group-alarms-list Renders \`group-alarms-list\` with sort key 1`] = `
+<div>
+  <alarms-list-table-stub
+    alarms=""
+    columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    expandable="expandable"
+    has-columns="true"
+    hide-groups="hide-groups"
+    pagination="[object Object]"
+    parent-alarm="[object Object]"
+    total-items="7"
+    widget="[object Object]"
+  />
+  <c-table-pagination-stub
+    rows-per-page="13"
+    total-items="7"
+  />
+</div>
+`;
+
+exports[`group-alarms-list Renders \`group-alarms-list\` without group columns 1`] = `
+<div>
+  <alarms-list-table-stub
+    alarms=""
+    columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    expandable="expandable"
+    has-columns="true"
+    hide-groups="hide-groups"
+    pagination="[object Object]"
+    parent-alarm="[object Object]"
+    total-items="7"
+    widget="[object Object]"
+  />
+  <c-table-pagination-stub
+    rows-per-page="13"
+    total-items="7"
+  />
+</div>
+`;

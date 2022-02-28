@@ -7,7 +7,7 @@ exports[`kpi-filters Renders \`kpi-filters\` with default props 1`] = `
   <span
     class="pl-4 subheading grey--text text--darken-2"
   >
-    kpiFilters.helpInformation
+    Here the filter patterns for additional slices of data for counters and ratings can be added.
   </span>
   <kpi-filters-list-stub
     filters=""
@@ -24,7 +24,7 @@ exports[`kpi-filters Renders \`kpi-filters\` with full permissions 1`] = `
   <span
     class="pl-4 subheading grey--text text--darken-2"
   >
-    kpiFilters.helpInformation
+    Here the filter patterns for additional slices of data for counters and ratings can be added.
   </span>
   <kpi-filters-list-stub
     duplicable="true"
