@@ -213,6 +213,7 @@ export default {
     criteria: 'Criteria',
     ratingSettings: 'Rating settings',
     pbehavior: 'Pbehavior | Pbehaviors',
+    dictionary: 'Dictionary',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
