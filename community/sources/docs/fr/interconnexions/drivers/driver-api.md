@@ -3,7 +3,7 @@
 !!! Info
     Disponible uniquement en édition Pro.
 
-Canopsis embarque un petit programme en ligne de commande permettant d'interroger une API externe afin de compléter son référentiel interne. Il peut être exécuté à la main ou via un conteneur Docker.
+Canopsis embarque un programme permettant d'interroger une API externe afin de compléter son référentiel interne. Il peut être exécuté grâce à une ligne de commande ou via un conteneur Docker.
 
 Ce programme se situe :
 
@@ -30,24 +30,25 @@ Ce programme se situe :
 
 ### Variables d'environnement
 
-L'identifiant et le mot de passe de connexion à l'API sont défini via des variables d'environnement :
+L'identifiant et le mot de passe de connexion à l'API sont définis via des variables d'environnement :
 
  * `EXTERNAL_API_USERNAME` pour l'identifiant
  * `EXTERNAL_API_PASSWORD` pour le mot de passe
 
-Seule l'authentification basique est supportée.
+Seule l'authentification [basique](https://fr.wikipedia.org/wiki/Authentification_HTTP#M%C3%A9thode_%C2%AB_Basic_%C2%BB){target=_blank} est supportée.
 
 ### Configuration
 
 Le format de fichier de configuration est le YAML. Il doit être entièrement rédigé à partir du JSON retourné par l'API externe.
 
-Un exemple de fichier de configuration est disponible sur le dépôt [Canopsis Pro](https://git.canopsis.net/canopsis/canopsis-pro/-/tree/develop/pro/go-engines-pro/config/import-context-graph/api.yml.example). Ou alors consulter l'exemple [ci-après](#exemple).
+Un exemple de fichier de configuration est disponible sur le dépôt [Canopsis Pro](https://git.canopsis.net/canopsis/canopsis-pro/-/tree/develop/pro/go-engines-pro/config/import-context-graph/api.yml.example){target=_blank}.
+Un exemple donné à titre indicatif est également disponible [ci-après](#exemple).
 
 Ce fichier de configuration doit comprendre trois sections :
 
  1. `api` qui permet d'indiquer les propriétés de la requête HTTP à envoyer à l'API.
  2. `import` qui permet de spécifier les paramètres de l'import.
- 3. `mapping` qui permet de spécifier les associations entre les champs de l'entité et la réponse de l'API.
+ 3. `mapping` qui permet de spécifier les associations entre les champs de l'entité dans Canopsis et la réponse de l'API.
 
 Concernant les types d'actions d'import :
 
@@ -61,7 +62,7 @@ Concernant les types d'actions d'import :
      *  `disable` : Désactive l'entité (action inverse de l'action `enable`)
      *  (chaîne vide) : le paramètre `missing_action` peut ne pas avoir d'action et donc ne rien faire
 
-Pour plus de détails, référez-vous à la [documentation d'import de contexte](https://doc.canopsis.net/guide-developpement/swagger/#/contextgraph-import) disponible dans Swagger.
+Pour plus de détails, référez-vous à la [documentation d'import de contexte](https://doc.canopsis.net/guide-developpement/swagger/#/contextgraph-import){target=_blank} disponible dans Swagger.
 
 ### Exemple
 
@@ -157,7 +158,7 @@ api:
 !!! attention
     Ces exemples d'exécution ne répondent pas aux bonnes pratiques de sécurité. Veillez donc à bien adapter cette exécution selon votre politique de sécurité interne.
     
-    Dans le cadre d'un usage via Docker, il est conseillé d'utiliser "[Docker Secrets](https://docs.docker.com/engine/swarm/secrets/)" ou une autre solution de coffre-fort.
+    Dans le cadre d'un usage via Docker, il est conseillé d'utiliser "[Docker Secrets](https://docs.docker.com/engine/swarm/secrets/){target=_blank}" ou une autre solution de coffre-fort.
 
 #### Programme installé par packets :
 
