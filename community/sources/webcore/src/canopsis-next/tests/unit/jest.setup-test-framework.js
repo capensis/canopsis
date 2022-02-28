@@ -1,4 +1,5 @@
 import { kebabCase } from 'lodash';
+import { toMatchSnapshot } from 'jest-snapshot';
 import registerRequireContextHook from 'babel-plugin-require-context-hook/register';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import ResizeObserver from 'resize-observer-polyfill';
@@ -23,5 +24,15 @@ expect.extend({
     };
 
     return toMatchImageSnapshot.call(this, data, newOptions, ...args);
+  },
+  toMatchTooltipSnapshot(wrapper) {
+    const tooltip = wrapper.findTooltip();
+
+    return toMatchSnapshot.call(this, tooltip.element);
+  },
+  toMatchMenuSnapshot(wrapper) {
+    const menu = wrapper.findMenu();
+
+    return toMatchSnapshot.call(this, menu.element);
   },
 });

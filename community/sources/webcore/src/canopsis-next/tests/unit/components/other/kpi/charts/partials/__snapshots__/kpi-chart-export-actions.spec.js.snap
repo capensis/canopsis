@@ -19,7 +19,7 @@ exports[`kpi-chart-export-actions Renders \`kpi-chart-export-actions\` with cust
         file_download
       </i>
       <span>
-        common.exportAsCsv
+        Export as csv
       </span>
     </div>
     <span
@@ -69,7 +69,7 @@ exports[`kpi-chart-export-actions Renders \`kpi-chart-export-actions\` with cust
         file_download
       </i>
       <span>
-        common.downloadAsPng
+        Download as PNG
       </span>
     </div>
   </button>
@@ -97,7 +97,7 @@ exports[`kpi-chart-export-actions Renders \`kpi-chart-export-actions\` without p
         file_download
       </i>
       <span>
-        common.exportAsCsv
+        Export as csv
       </span>
     </div>
   </button>
@@ -116,7 +116,7 @@ exports[`kpi-chart-export-actions Renders \`kpi-chart-export-actions\` without p
         file_download
       </i>
       <span>
-        common.downloadAsPng
+        Download as PNG
       </span>
     </div>
   </button>

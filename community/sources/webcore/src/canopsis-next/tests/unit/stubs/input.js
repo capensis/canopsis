@@ -67,3 +67,15 @@ export const createTextareaInputStub = className => ({
     },
   },
 });
+
+export const createCheckboxInputStub = className => ({
+  props: ['inputValue'],
+  template: `
+    <input
+      :checked="inputValue"
+      type="checkbox"
+      class="${className}"
+      @change="$listeners.change($event.target.checked)"
+    />
+  `,
+});
