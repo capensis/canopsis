@@ -7,53 +7,10 @@ exports[`c-change-state-field Renders \`c-change-state-field\` after validate co
   <div
     class="layout row"
   >
-    <div
-      class="layout row"
-    >
-      <div
-        class="v-item-group theme--light v-btn-toggle v-btn-toggle--only-child v-btn-toggle--selected"
-      >
-        <button
-          class="v-btn v-btn--depressed theme--light"
-          data-test="stateCriticity-1"
-          style="background-color: rgb(252, 220, 0);"
-          type="button"
-          value="1"
-        >
-          <div
-            class="v-btn__content"
-          >
-            modals.createChangeStateEvent.states.minor
-          </div>
-        </button>
-        <button
-          class="v-btn v-btn--active v-btn--depressed theme--light"
-          data-test="stateCriticity-2"
-          style="background-color: rgb(255, 153, 0);"
-          type="button"
-          value="2"
-        >
-          <div
-            class="v-btn__content"
-          >
-            modals.createChangeStateEvent.states.major
-          </div>
-        </button>
-        <button
-          class="v-btn v-btn--depressed theme--light"
-          data-test="stateCriticity-3"
-          style="background-color: rgb(245, 105, 84);"
-          type="button"
-          value="3"
-        >
-          <div
-            class="v-btn__content"
-          >
-            modals.createChangeStateEvent.states.critical
-          </div>
-        </button>
-      </div>
-    </div>
+    <state-criticity-field-stub
+      statevalues="[object Object]"
+      value="2"
+    />
   </div>
   <div
     class="layout mt-4 row"
@@ -75,10 +32,10 @@ exports[`c-change-state-field Renders \`c-change-state-field\` after validate co
               class="v-label theme--light error--text"
               style="left: 0px; position: absolute;"
             >
-              common.output
+              Note
             </label>
             <textarea
-              aria-label="common.output"
+              aria-label="Note"
               name="changeState.output"
               rows="5"
             />
@@ -98,7 +55,7 @@ exports[`c-change-state-field Renders \`c-change-state-field\` after validate co
               <div
                 class="v-messages__message"
               >
-                validation.custom.changeState.output.required:["validation.attributes.changeState.output",[],{}]
+                The field is required
               </div>
             </transition-group-stub>
           </div>
@@ -116,66 +73,10 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with allowed chan
   <div
     class="layout row"
   >
-    <div
-      class="layout row"
-    >
-      <div
-        class="v-item-group theme--light v-btn-toggle"
-      >
-        <button
-          class="v-btn v-btn--active v-btn--depressed theme--light"
-          data-test="stateCriticity-0"
-          style="background-color: rgb(0, 166, 90);"
-          type="button"
-          value="0"
-        >
-          <div
-            class="v-btn__content"
-          >
-            modals.createChangeStateEvent.states.ok
-          </div>
-        </button>
-        <button
-          class="v-btn v-btn--depressed theme--light"
-          data-test="stateCriticity-1"
-          style="background-color: rgb(252, 220, 0);"
-          type="button"
-          value="1"
-        >
-          <div
-            class="v-btn__content"
-          >
-            modals.createChangeStateEvent.states.minor
-          </div>
-        </button>
-        <button
-          class="v-btn v-btn--depressed theme--light"
-          data-test="stateCriticity-2"
-          style="background-color: rgb(255, 153, 0);"
-          type="button"
-          value="2"
-        >
-          <div
-            class="v-btn__content"
-          >
-            modals.createChangeStateEvent.states.major
-          </div>
-        </button>
-        <button
-          class="v-btn v-btn--depressed theme--light"
-          data-test="stateCriticity-3"
-          style="background-color: rgb(245, 105, 84);"
-          type="button"
-          value="3"
-        >
-          <div
-            class="v-btn__content"
-          >
-            modals.createChangeStateEvent.states.critical
-          </div>
-        </button>
-      </div>
-    </div>
+    <state-criticity-field-stub
+      statevalues="[object Object]"
+      value="0"
+    />
   </div>
   <div
     class="layout mt-4 row"
@@ -232,53 +133,10 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with custom label
   <div
     class="layout row"
   >
-    <div
-      class="layout row"
-    >
-      <div
-        class="v-item-group theme--light v-btn-toggle"
-      >
-        <button
-          class="v-btn v-btn--depressed theme--light"
-          data-test="stateCriticity-1"
-          style="background-color: rgb(252, 220, 0);"
-          type="button"
-          value="1"
-        >
-          <div
-            class="v-btn__content"
-          >
-            modals.createChangeStateEvent.states.minor
-          </div>
-        </button>
-        <button
-          class="v-btn v-btn--depressed theme--light"
-          data-test="stateCriticity-2"
-          style="background-color: rgb(255, 153, 0);"
-          type="button"
-          value="2"
-        >
-          <div
-            class="v-btn__content"
-          >
-            modals.createChangeStateEvent.states.major
-          </div>
-        </button>
-        <button
-          class="v-btn v-btn--depressed theme--light"
-          data-test="stateCriticity-3"
-          style="background-color: rgb(245, 105, 84);"
-          type="button"
-          value="3"
-        >
-          <div
-            class="v-btn__content"
-          >
-            modals.createChangeStateEvent.states.critical
-          </div>
-        </button>
-      </div>
-    </div>
+    <state-criticity-field-stub
+      statevalues="[object Object]"
+      value="0"
+    />
   </div>
   <div
     class="layout mt-4 row"
@@ -300,10 +158,10 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with custom label
               class="v-label v-label--active theme--light"
               style="left: 0px; position: absolute;"
             >
-              common.output
+              Note
             </label>
             <textarea
-              aria-label="common.output"
+              aria-label="Note"
               name="customLabelFieldName.output"
               rows="5"
             />
@@ -335,66 +193,10 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with errors corre
   <div
     class="layout row"
   >
-    <div
-      class="layout row"
-    >
-      <div
-        class="v-item-group theme--light v-btn-toggle v-btn-toggle--only-child v-btn-toggle--selected"
-      >
-        <button
-          class="v-btn v-btn--active v-btn--depressed theme--light"
-          data-test="stateCriticity-0"
-          style="background-color: rgb(0, 166, 90);"
-          type="button"
-          value="0"
-        >
-          <div
-            class="v-btn__content"
-          >
-            modals.createChangeStateEvent.states.ok
-          </div>
-        </button>
-        <button
-          class="v-btn v-btn--depressed theme--light"
-          data-test="stateCriticity-1"
-          style="background-color: rgb(252, 220, 0);"
-          type="button"
-          value="1"
-        >
-          <div
-            class="v-btn__content"
-          >
-            modals.createChangeStateEvent.states.minor
-          </div>
-        </button>
-        <button
-          class="v-btn v-btn--depressed theme--light"
-          data-test="stateCriticity-2"
-          style="background-color: rgb(255, 153, 0);"
-          type="button"
-          value="2"
-        >
-          <div
-            class="v-btn__content"
-          >
-            modals.createChangeStateEvent.states.major
-          </div>
-        </button>
-        <button
-          class="v-btn v-btn--depressed theme--light"
-          data-test="stateCriticity-3"
-          style="background-color: rgb(245, 105, 84);"
-          type="button"
-          value="3"
-        >
-          <div
-            class="v-btn__content"
-          >
-            modals.createChangeStateEvent.states.critical
-          </div>
-        </button>
-      </div>
-    </div>
+    <state-criticity-field-stub
+      statevalues="[object Object]"
+      value="0"
+    />
   </div>
   <div
     class="layout mt-4 row"
@@ -416,10 +218,10 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with errors corre
               class="v-label v-label--active theme--light error--text"
               style="left: 0px; position: absolute;"
             >
-              common.output
+              Note
             </label>
             <textarea
-              aria-label="common.output"
+              aria-label="Note"
               name="customName.output"
               rows="5"
             />
@@ -457,53 +259,10 @@ exports[`c-change-state-field Renders \`c-change-state-field\` without allowed c
   <div
     class="layout row"
   >
-    <div
-      class="layout row"
-    >
-      <div
-        class="v-item-group theme--light v-btn-toggle"
-      >
-        <button
-          class="v-btn v-btn--depressed theme--light"
-          data-test="stateCriticity-1"
-          style="background-color: rgb(252, 220, 0);"
-          type="button"
-          value="1"
-        >
-          <div
-            class="v-btn__content"
-          >
-            modals.createChangeStateEvent.states.minor
-          </div>
-        </button>
-        <button
-          class="v-btn v-btn--depressed theme--light"
-          data-test="stateCriticity-2"
-          style="background-color: rgb(255, 153, 0);"
-          type="button"
-          value="2"
-        >
-          <div
-            class="v-btn__content"
-          >
-            modals.createChangeStateEvent.states.major
-          </div>
-        </button>
-        <button
-          class="v-btn v-btn--depressed theme--light"
-          data-test="stateCriticity-3"
-          style="background-color: rgb(245, 105, 84);"
-          type="button"
-          value="3"
-        >
-          <div
-            class="v-btn__content"
-          >
-            modals.createChangeStateEvent.states.critical
-          </div>
-        </button>
-      </div>
-    </div>
+    <state-criticity-field-stub
+      statevalues="[object Object]"
+      value="0"
+    />
   </div>
   <div
     class="layout mt-4 row"

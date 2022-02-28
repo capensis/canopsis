@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`filter-tile Renders \`filter-tile\` with custom props 1`] = `
+<div
+  class="pa-0 cursor-move"
+  role="listitem"
+>
+  <div
+    class="v-list__tile theme--light"
+  >
+    <div
+      class="layout"
+    >
+      <div
+        class="flex xs12"
+      >
+        <div
+          class="v-list__tile__content"
+        >
+          Filter title
+        </div>
+      </div>
+      <div
+        class="v-list__tile__action"
+      >
+        <div
+          class="layout"
+        >
+          <c-action-btn-stub
+            type="edit"
+          />
+          <c-action-btn-stub
+            type="delete"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`filter-tile Renders \`filter-tile\` with default props 1`] = `
+<div
+  class="pa-0"
+  role="listitem"
+>
+  <div
+    class="v-list__tile theme--light"
+  >
+    <div
+      class="layout"
+    >
+      <div
+        class="flex xs12"
+      >
+        <div
+          class="v-list__tile__content"
+        >
+          
+        </div>
+      </div>
+      <!---->
+    </div>
+  </div>
+</div>
+`;
