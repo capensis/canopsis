@@ -1,10 +1,10 @@
 <template lang="pug">
   v-menu(
     v-model="opened",
+    :close-on-content-click="false",
     content-class="date-time-picker",
     transition="slide-y-transition",
-    max-width="290px",
-    :close-on-content-click="false",
+    max-width="290",
     right,
     lazy-with-unmount,
     lazy
@@ -18,22 +18,18 @@
     )
       v-icon calendar_today
     date-time-picker(
-      :value="value",
+      v-field="value",
       :label="label",
       :round-hours="roundHours",
-      @close="close",
-      @input="$listeners.input"
+      @close="close"
     )
 </template>
 
 <script>
-import { formBaseMixin } from '@/mixins/form';
-
 import DateTimePicker from './date-time-picker.vue';
 
 export default {
   components: { DateTimePicker },
-  mixins: [formBaseMixin],
   model: {
     prop: 'value',
     event: 'input',

@@ -40,7 +40,7 @@ exports[`alarm-column-value-categories Renders \`alarm-column-value-categories\`
         <div
           class="v-btn__content"
         >
-          common.links
+          Links
         </div>
       </button>
     </div>
@@ -83,7 +83,7 @@ exports[`alarm-column-value-categories Renders \`alarm-column-value-categories\`
         <div
           class="v-btn__content"
         >
-          common.links
+          Links
         </div>
       </button>
     </div>

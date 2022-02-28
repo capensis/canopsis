@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-draggable-list-field Renders \`c-draggable-list-field\` with custom props 1`] = `
+<draggable-stub
+  clone="[Function]"
+  element="span"
+  options="[object Object]"
+  value="[object Object],[object Object],[object Object]"
+>
+  <div
+    class="custom-class"
+  >
+    Custom slot
+  </div>
+</draggable-stub>
+`;
+
+exports[`c-draggable-list-field Renders \`c-draggable-list-field\` with default props 1`] = `
+<draggable-stub
+  clone="[Function]"
+  element="div"
+  options="[object Object]"
+  value=""
+/>
+`;
