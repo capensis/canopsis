@@ -27,7 +27,7 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with default custom p
           <div
             class="v-select__selection v-select__selection--comma v-select__selection--disabled"
           >
-            common.stateTypes.2
+            Major
           </div>
           <input
             aria-label="Custom label"
@@ -86,7 +86,7 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with default custom p
             <div
               class="v-list__tile__title"
             >
-              common.stateTypes.0
+              Ok
             </div>
           </div>
         </a>
@@ -103,7 +103,7 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with default custom p
             <div
               class="v-list__tile__title"
             >
-              common.stateTypes.1
+              Minor
             </div>
           </div>
         </a>
@@ -121,7 +121,7 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with default custom p
             <div
               class="v-list__tile__title"
             >
-              common.stateTypes.2
+              Major
             </div>
           </div>
         </a>
@@ -138,7 +138,7 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with default custom p
             <div
               class="v-list__tile__title"
             >
-              common.stateTypes.3
+              Critical
             </div>
           </div>
         </a>
@@ -167,13 +167,13 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with default props 1`
           class="v-label theme--light"
           style="left: 0px; position: absolute;"
         >
-          common.states
+          Severities
         </label>
         <div
           class="v-select__selections"
         >
           <input
-            aria-label="common.states"
+            aria-label="Severities"
             aria-readonly="false"
             autocomplete="on"
             name="state"
@@ -228,7 +228,7 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with default props 2`
             <div
               class="v-list__tile__title"
             >
-              common.stateTypes.0
+              Ok
             </div>
           </div>
         </a>
@@ -245,7 +245,7 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with default props 2`
             <div
               class="v-list__tile__title"
             >
-              common.stateTypes.1
+              Minor
             </div>
           </div>
         </a>
@@ -262,7 +262,7 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with default props 2`
             <div
               class="v-list__tile__title"
             >
-              common.stateTypes.2
+              Major
             </div>
           </div>
         </a>
@@ -279,7 +279,7 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with default props 2`
             <div
               class="v-list__tile__title"
             >
-              common.stateTypes.3
+              Critical
             </div>
           </div>
         </a>
@@ -308,13 +308,13 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with validator error 
           class="v-label theme--light error--text"
           style="left: 0px; position: absolute;"
         >
-          common.states
+          Severities
         </label>
         <div
           class="v-select__selections"
         >
           <input
-            aria-label="common.states"
+            aria-label="Severities"
             aria-readonly="false"
             autocomplete="on"
             name="state"

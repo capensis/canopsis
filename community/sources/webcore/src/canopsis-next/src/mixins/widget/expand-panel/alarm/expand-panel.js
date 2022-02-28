@@ -6,7 +6,7 @@ import { queryMixin } from '@/mixins/query';
 
 const { mapActions } = createNamespacedHelpers('alarm');
 
-export default {
+export const widgetExpandPanelAlarmMixin = {
   mixins: [queryMixin],
   props: {
     hideGroups: {
