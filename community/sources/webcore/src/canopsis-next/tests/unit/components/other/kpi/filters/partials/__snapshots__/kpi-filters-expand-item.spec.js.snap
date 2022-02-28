@@ -31,7 +31,7 @@ exports[`kpi-filters-expand-item Renders \`kpi-filters-expand-item\` with filter
             <a
               class="v-tabs__item v-tabs__item--active"
             >
-              common.pattern:2
+              Patterns
             </a>
           </div>
         </div>

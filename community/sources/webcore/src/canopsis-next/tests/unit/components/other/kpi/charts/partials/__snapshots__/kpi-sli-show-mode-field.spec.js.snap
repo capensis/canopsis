@@ -19,7 +19,7 @@ exports[`kpi-sli-show-mode-field Renders \`kpi-sli-show-mode-field\` without pro
           class="v-label v-label--active theme--light"
           style="left: 0px; position: absolute;"
         >
-          common.show
+          Show
         </label>
         <div
           class="v-select__selections"
@@ -27,10 +27,10 @@ exports[`kpi-sli-show-mode-field Renders \`kpi-sli-show-mode-field\` without pro
           <div
             class="v-select__selection v-select__selection--comma"
           >
-            common.time
+            Time
           </div>
           <input
-            aria-label="common.show"
+            aria-label="Show"
             aria-readonly="false"
             autocomplete="on"
             readonly="readonly"
@@ -84,7 +84,7 @@ exports[`kpi-sli-show-mode-field Renders \`kpi-sli-show-mode-field\` without pro
             <div
               class="v-list__tile__title"
             >
-              common.percent:undefined
+              Percent
             </div>
           </div>
         </a>
@@ -102,7 +102,7 @@ exports[`kpi-sli-show-mode-field Renders \`kpi-sli-show-mode-field\` without pro
             <div
               class="v-list__tile__title"
             >
-              common.time
+              Time
             </div>
           </div>
         </a>
