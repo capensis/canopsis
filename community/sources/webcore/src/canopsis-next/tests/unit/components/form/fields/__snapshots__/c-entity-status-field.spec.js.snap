@@ -27,7 +27,7 @@ exports[`c-entity-status-field Renders \`c-entity-status-field\` with custom pro
           <div
             class="v-select__selection v-select__selection--comma v-select__selection--disabled"
           >
-            common.statusTypes.3
+            Flapping
           </div>
           <input
             aria-label="Custom label"
@@ -86,7 +86,7 @@ exports[`c-entity-status-field Renders \`c-entity-status-field\` with custom pro
             <div
               class="v-list__tile__title"
             >
-              common.statusTypes.0
+              Closed
             </div>
           </div>
         </a>
@@ -103,7 +103,7 @@ exports[`c-entity-status-field Renders \`c-entity-status-field\` with custom pro
             <div
               class="v-list__tile__title"
             >
-              common.statusTypes.1
+              Ongoing
             </div>
           </div>
         </a>
@@ -120,7 +120,7 @@ exports[`c-entity-status-field Renders \`c-entity-status-field\` with custom pro
             <div
               class="v-list__tile__title"
             >
-              common.statusTypes.2
+              Stealth
             </div>
           </div>
         </a>
@@ -138,7 +138,7 @@ exports[`c-entity-status-field Renders \`c-entity-status-field\` with custom pro
             <div
               class="v-list__tile__title"
             >
-              common.statusTypes.3
+              Flapping
             </div>
           </div>
         </a>
@@ -155,7 +155,7 @@ exports[`c-entity-status-field Renders \`c-entity-status-field\` with custom pro
             <div
               class="v-list__tile__title"
             >
-              common.statusTypes.4
+              Canceled
             </div>
           </div>
         </a>
@@ -172,7 +172,7 @@ exports[`c-entity-status-field Renders \`c-entity-status-field\` with custom pro
             <div
               class="v-list__tile__title"
             >
-              common.statusTypes.5
+              No events
             </div>
           </div>
         </a>
@@ -201,7 +201,7 @@ exports[`c-entity-status-field Renders \`c-entity-status-field\` with default pr
           class="v-label v-label--active theme--light"
           style="left: 0px; position: absolute;"
         >
-          common.status
+          Status
         </label>
         <div
           class="v-select__selections"
@@ -209,10 +209,10 @@ exports[`c-entity-status-field Renders \`c-entity-status-field\` with default pr
           <div
             class="v-select__selection v-select__selection--comma"
           >
-            common.statusTypes.2
+            Stealth
           </div>
           <input
-            aria-label="common.status"
+            aria-label="Status"
             aria-readonly="false"
             autocomplete="on"
             name="status"
@@ -267,7 +267,7 @@ exports[`c-entity-status-field Renders \`c-entity-status-field\` with default pr
             <div
               class="v-list__tile__title"
             >
-              common.statusTypes.0
+              Closed
             </div>
           </div>
         </a>
@@ -284,7 +284,7 @@ exports[`c-entity-status-field Renders \`c-entity-status-field\` with default pr
             <div
               class="v-list__tile__title"
             >
-              common.statusTypes.1
+              Ongoing
             </div>
           </div>
         </a>
@@ -302,7 +302,7 @@ exports[`c-entity-status-field Renders \`c-entity-status-field\` with default pr
             <div
               class="v-list__tile__title"
             >
-              common.statusTypes.2
+              Stealth
             </div>
           </div>
         </a>
@@ -319,7 +319,7 @@ exports[`c-entity-status-field Renders \`c-entity-status-field\` with default pr
             <div
               class="v-list__tile__title"
             >
-              common.statusTypes.3
+              Flapping
             </div>
           </div>
         </a>
@@ -336,7 +336,7 @@ exports[`c-entity-status-field Renders \`c-entity-status-field\` with default pr
             <div
               class="v-list__tile__title"
             >
-              common.statusTypes.4
+              Canceled
             </div>
           </div>
         </a>
@@ -353,7 +353,7 @@ exports[`c-entity-status-field Renders \`c-entity-status-field\` with default pr
             <div
               class="v-list__tile__title"
             >
-              common.statusTypes.5
+              No events
             </div>
           </div>
         </a>
