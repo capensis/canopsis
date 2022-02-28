@@ -23,7 +23,7 @@ widgets:
       test-widget-to-view-get-1-parameter-1:
         test-widget-to-view-get-1-parameter-1-subparameter: test-widget-to-view-get-1-parameter-1-subvalue
       test-widget-to-view-get-1-parameter-2:
-      - test-widget-to-view-get-1-parameter-2-subparameter: test-widget-to-view-get-1-parameter-2-subvalue
+        - test-widget-to-view-get-1-parameter-2-subparameter: test-widget-to-view-get-1-parameter-2-subvalue
     tab: test-tab-to-view-get-1
     title: test-widget-to-view-get-1-title
     type: test-widget-to-view-get-1-type
@@ -41,7 +41,7 @@ widgets:
       test-widget-to-view-get-2-parameter-1:
         test-widget-to-view-get-2-parameter-1-subparameter: test-widget-to-view-get-2-parameter-1-subvalue
       test-widget-to-view-get-2-parameter-2:
-      - test-widget-to-view-get-2-parameter-2-subparameter: test-widget-to-view-get-2-parameter-2-subvalue
+        - test-widget-to-view-get-2-parameter-2-subparameter: test-widget-to-view-get-2-parameter-2-subvalue
     tab: test-tab-to-view-get-1
     title: test-widget-to-view-get-2-title
     type: test-widget-to-view-get-2-type
@@ -59,7 +59,7 @@ widgets:
       test-widget-to-viewgroup-get-1-parameter-1:
         test-widget-to-viewgroup-get-1-parameter-1-subparameter: test-widget-to-viewgroup-get-1-parameter-1-subvalue
       test-widget-to-viewgroup-get-1-parameter-2:
-      - test-widget-to-viewgroup-get-1-parameter-2-subparameter: test-widget-to-viewgroup-get-1-parameter-2-subvalue
+        - test-widget-to-viewgroup-get-1-parameter-2-subparameter: test-widget-to-viewgroup-get-1-parameter-2-subvalue
     tab: test-tab-to-viewgroup-get-1
     title: test-widget-to-viewgroup-get-1-title
     type: test-widget-to-viewgroup-get-1-type
@@ -73,7 +73,7 @@ widgets:
       desktop:
         x: 0
         "y": 1
-    parameters: {}
+    parameters: { }
     tab: test-tab-to-viewgroup-get-1
     title: test-widget-to-viewgroup-get-2-title
     type: test-widget-to-viewgroup-get-2-type
@@ -91,7 +91,7 @@ widgets:
       test-widget-to-tab-get-1-parameter-1:
         test-widget-to-tab-get-1-parameter-1-subparameter: test-widget-to-tab-get-1-parameter-1-subvalue
       test-widget-to-tab-get-1-parameter-2:
-      - test-widget-to-tab-get-1-parameter-2-subparameter: test-widget-to-tab-get-1-parameter-2-subvalue
+        - test-widget-to-tab-get-1-parameter-2-subparameter: test-widget-to-tab-get-1-parameter-2-subvalue
     tab: test-tab-to-get
     title: test-widget-to-tab-get-1-title
     type: test-widget-to-tab-get-1-type
@@ -109,7 +109,7 @@ widgets:
       test-widget-to-tab-get-2-parameter-1:
         test-widget-to-tab-get-2-parameter-1-subparameter: test-widget-to-tab-get-2-parameter-1-subvalue
       test-widget-to-tab-get-2-parameter-2:
-      - test-widget-to-tab-get-2-parameter-2-subparameter: test-widget-to-tab-get-2-parameter-2-subvalue
+        - test-widget-to-tab-get-2-parameter-2-subparameter: test-widget-to-tab-get-2-parameter-2-subvalue
     tab: test-tab-to-get
     title: test-widget-to-tab-get-2-title
     type: test-widget-to-tab-get-2-type
@@ -119,7 +119,7 @@ widgets:
     _id: test-widget-to-junit-edit-dir-param
     internal_parameters:
       test_suites:
-      - test-suite-to-edit-widget-junit-dir-param-test-suite-id
+        - test-suite-to-edit-widget-junit-dir-param-test-suite-id
     parameters:
       directory: test-widget-to-junit-edit-dir-param-param-dir
     tab: test-tab-to-junit-edit-dir-param
@@ -146,8 +146,8 @@ widgets:
     _id: test-widget-to-junit-test-suites-get-2
     internal_parameters:
       test_suites:
-      - fdebd370-3178-4c9e-97aa-a26a79dca770
-      - 7e5d2a21-be12-47d1-a286-0b46b6b2b99b
+        - fdebd370-3178-4c9e-97aa-a26a79dca770
+        - 7e5d2a21-be12-47d1-a286-0b46b6b2b99b
     tab: test-tab-to-junit-test-suites-get
     type: Junit
 
@@ -167,7 +167,7 @@ widgets:
       test-widget-to-get-parameter-1:
         test-widget-to-get-parameter-1-subparameter: test-widget-to-get-parameter-1-subvalue
       test-widget-to-get-parameter-2:
-      - test-widget-to-get-parameter-2-subparameter: test-widget-to-get-parameter-2-subvalue
+        - test-widget-to-get-parameter-2-subparameter: test-widget-to-get-parameter-2-subvalue
     tab: test-tab-to-widget-edit
     title: test-widget-to-get-title
     type: test-widget-to-get-type
@@ -207,10 +207,11 @@ widgets:
         x: 0
         "y": 0
     parameters:
+      main_filter: test-widgetfilter-to-export-2
       test-widget-to-view-export-1-parameter-1:
         test-widget-to-view-export-1-parameter-1-subparameter: test-widget-to-view-export-1-parameter-1-subvalue
       test-widget-to-view-export-1-parameter-2:
-      - test-widget-to-view-export-1-parameter-2-subparameter: test-widget-to-view-export-1-parameter-2-subvalue
+        - test-widget-to-view-export-1-parameter-2-subparameter: test-widget-to-view-export-1-parameter-2-subvalue
     tab: test-tab-to-export-1
     title: test-widget-to-export-1-title
     type: test-widget-to-export-1-type
@@ -236,7 +237,7 @@ widgets:
       test-widget-to-view-copy-1-parameter-1:
         test-widget-to-view-copy-1-parameter-1-subparameter: test-widget-to-view-copy-1-parameter-1-subvalue
       test-widget-to-view-copy-1-parameter-2:
-      - test-widget-to-view-copy-1-parameter-2-subparameter: test-widget-to-view-copy-1-parameter-2-subvalue
+        - test-widget-to-view-copy-1-parameter-2-subparameter: test-widget-to-view-copy-1-parameter-2-subvalue
     tab: test-tab-to-view-copy-1
     title: test-widget-to-view-copy-1-title
     type: test-widget-to-view-copy-1-type
@@ -251,10 +252,11 @@ widgets:
         x: 0
         "y": 0
     parameters:
+      main_filter: test-widgetfilter-to-tab-copy-1
       test-widget-to-tab-copy-1-parameter-1:
         test-widget-to-tab-copy-1-parameter-1-subparameter: test-widget-to-tab-copy-1-parameter-1-subvalue
       test-widget-to-tab-copy-1-parameter-2:
-      - test-widget-to-tab-copy-1-parameter-2-subparameter: test-widget-to-tab-copy-1-parameter-2-subvalue
+        - test-widget-to-tab-copy-1-parameter-2-subparameter: test-widget-to-tab-copy-1-parameter-2-subvalue
     tab: test-tab-to-copy-1
     title: test-widget-to-tab-copy-1-title
     type: test-widget-to-tab-copy-1-type
@@ -271,3 +273,11 @@ widgets:
   widget_to_copy_3 (extend widget):
     _id: test-widget-to-copy-3
     tab: test-tab-to-widget-copy-3
+
+  widget_to_filter_edit (extend widget):
+    _id: test-widget-to-filter-edit
+    tab: test-tab-to-filter-edit
+
+  widget_to_filter_check_access (extend widget):
+    _id: test-widget-to-filter-check-access
+    tab: test-tab-to-filter-check-access

@@ -44,6 +44,10 @@ func (p Pbehavior) Validate() bool {
 	emptyPbh := pbehavior.PBehavior{}
 
 	for _, group := range p {
+		if len(group) == 0 {
+			return false
+		}
+
 		for _, v := range group {
 			f := v.Field
 			cond := v.Condition

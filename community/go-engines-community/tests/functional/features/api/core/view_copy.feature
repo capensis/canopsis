@@ -91,6 +91,40 @@ Feature: Copy a view
                   }
                 ]
               },
+              "filters": [
+                {
+                  "title": "test-widgetfilter-to-view-copy-1-title",
+                  "is_private": false,
+                  "author": "root",
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-widgetfilter-to-view-copy-1-pattern"
+                        }
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "title": "test-widgetfilter-to-view-copy-2-title",
+                  "is_private": false,
+                  "author": "root",
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test-widgetfilter-to-view-copy-2-pattern"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              ],
               "author": "root"
             }
           ]

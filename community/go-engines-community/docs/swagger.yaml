@@ -2845,6 +2845,34 @@ definitions:
           $ref: '#/definitions/role.Permission'
         type: array
     type: object
+  savedpattern.SavedPattern:
+    properties:
+      alarmPattern:
+        $ref: '#/definitions/pattern.Alarm'
+        type: object
+      author:
+        type: string
+      created:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+      entityPattern:
+        $ref: '#/definitions/pattern.Entity'
+        type: object
+      id:
+        type: string
+      isCorporate:
+        type: boolean
+      pbehaviorPattern:
+        $ref: '#/definitions/pattern.Pbehavior'
+        type: object
+      title:
+        type: string
+      type:
+        type: string
+      updated:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+    type: object
   scenario.Action:
     properties:
       alarm_patterns:
@@ -3806,6 +3834,10 @@ definitions:
       content:
         additionalProperties: true
         type: object
+      filters:
+        items:
+          $ref: '#/definitions/widgetfilter.Response'
+        type: array
       widget:
         type: string
     type: object
@@ -3915,6 +3947,8 @@ definitions:
       is_api:
         description: Junit
         type: boolean
+      main_filter:
+        type: string
       report_fileregexp:
         type: string
       screenshot_directories:
@@ -4112,6 +4146,10 @@ definitions:
         type: string
       created:
         type: integer
+      filters:
+        items:
+          $ref: '#/definitions/widgetfilter.Response'
+        type: array
       grid_parameters:
         additionalProperties: true
         type: object
@@ -4121,6 +4159,73 @@ definitions:
       title:
         type: string
       type:
+        type: string
+      updated:
+        type: integer
+    type: object
+  widgetfilter.EditRequest:
+    properties:
+      alarm_pattern:
+        $ref: '#/definitions/pattern.Alarm'
+        type: object
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      corporate_pbehavior_pattern:
+        type: string
+      entity_pattern:
+        $ref: '#/definitions/pattern.Entity'
+        type: object
+      is_private:
+        type: boolean
+      pbehavior_pattern:
+        $ref: '#/definitions/pattern.Pbehavior'
+        type: object
+      title:
+        type: string
+      widget:
+        type: string
+    required:
+    - is_private
+    - title
+    - widget
+    type: object
+  widgetfilter.Response:
+    properties:
+      _id:
+        type: string
+      alarm_pattern:
+        $ref: '#/definitions/pattern.Alarm'
+        type: object
+      author:
+        type: string
+      corporate_alarm_pattern:
+        type: string
+      corporate_alarm_pattern_title:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
+      corporate_pbehavior_pattern:
+        type: string
+      corporate_pbehavior_pattern_title:
+        type: string
+      created:
+        type: integer
+      entity_pattern:
+        $ref: '#/definitions/pattern.Entity'
+        type: object
+      is_private:
+        type: boolean
+      old_mongo_query:
+        additionalProperties: true
+        type: object
+      pbehavior_pattern:
+        $ref: '#/definitions/pattern.Pbehavior'
+        type: object
+      title:
         type: string
       updated:
         type: integer
@@ -10007,6 +10112,122 @@ paths:
       summary: Copy widget
       tags:
       - widgets
+  /widget-filters:
+    post:
+      consumes:
+      - application/json
+      description: Create widget filter
+      operationId: widgetfilters-create
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/widgetfilter.EditRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/widgetfilter.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Create widget filter
+      tags:
+      - widgetfilters
+  /widget-filters/{id}:
+    delete:
+      description: Delete widget filter by id
+      operationId: widgetfilters-delete-by-id
+      parameters:
+      - description: filter id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204": {}
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Delete widget filter by id
+      tags:
+      - widgetfilters
+    get:
+      description: Get widget filter by id
+      operationId: widgetfilters-get-by-id
+      parameters:
+      - description: filter id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/widgetfilter.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Get widget filter by id
+      tags:
+      - widgetfilters
+    put:
+      consumes:
+      - application/json
+      description: Update widget filter by id
+      operationId: widgetfilters-update-by-id
+      parameters:
+      - description: filter id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/widgetfilter.EditRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/widgetfilter.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Update widget filter by id
+      tags:
+      - widgetfilters
   /widget-grid-positions:
     put:
       consumes:
