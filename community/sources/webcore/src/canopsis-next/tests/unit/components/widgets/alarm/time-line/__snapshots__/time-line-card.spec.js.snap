@@ -7,7 +7,7 @@ exports[`time-line-card Renders \`time-line-card\` with html as message 1`] = `
   >
     <!---->
     <p>
-      alarmList.timeLine.types.pbhenter alarmList.timeLine.titlePaths.by system
+      Periodic behavior enabled by system
     </p>
   </div>
   <div
@@ -33,7 +33,7 @@ exports[`time-line-card Renders \`time-line-card\` with state but without transl
       value="3"
     />
     <p>
-      state increased alarmList.timeLine.titlePaths.by root
+      State increased by root
     </p>
   </div>
   <div
@@ -57,7 +57,7 @@ exports[`time-line-card Renders \`time-line-card\` with state but without transl
       value="3"
     />
     <p>
-      status decreased alarmList.timeLine.titlePaths.by system (role)
+      Status decreased by system (role)
     </p>
   </div>
   <div
@@ -76,7 +76,7 @@ exports[`time-line-card Renders \`time-line-card\` with state counter type 1`] =
     class="header"
   >
     <p>
-      alarmList.timeLine.stateCounter.header
+      Cropped Severity (since last change of status)
     </p>
   </div>
   <div
@@ -85,7 +85,7 @@ exports[`time-line-card Renders \`time-line-card\` with state counter type 1`] =
     <table>
       <tr>
         <td>
-          alarmList.timeLine.stateCounter.stateIncreased :
+          State increased :
         </td>
         <td>
           
@@ -93,7 +93,7 @@ exports[`time-line-card Renders \`time-line-card\` with state counter type 1`] =
       </tr>
       <tr>
         <td>
-          alarmList.timeLine.stateCounter.stateDecreased :
+          State decreases :
         </td>
         <td>
           
@@ -110,7 +110,7 @@ exports[`time-line-card Renders \`time-line-card\` with states 1`] = `
     class="header"
   >
     <p>
-      alarmList.timeLine.stateCounter.header
+      Cropped Severity (since last change of status)
     </p>
   </div>
   <div
@@ -119,7 +119,7 @@ exports[`time-line-card Renders \`time-line-card\` with states 1`] = `
     <table>
       <tr>
         <td>
-          alarmList.timeLine.stateCounter.stateIncreased :
+          State increased :
         </td>
         <td>
           
@@ -127,7 +127,7 @@ exports[`time-line-card Renders \`time-line-card\` with states 1`] = `
       </tr>
       <tr>
         <td>
-          alarmList.timeLine.stateCounter.stateDecreased :
+          State decreases :
         </td>
         <td>
           
@@ -135,7 +135,7 @@ exports[`time-line-card Renders \`time-line-card\` with states 1`] = `
       </tr>
       <tr>
         <td>
-          common.state critical :
+          Severity critical :
         </td>
         <td>
           critical
@@ -143,7 +143,7 @@ exports[`time-line-card Renders \`time-line-card\` with states 1`] = `
       </tr>
       <tr>
         <td>
-          common.state major :
+          Severity major :
         </td>
         <td>
           major
@@ -151,7 +151,7 @@ exports[`time-line-card Renders \`time-line-card\` with states 1`] = `
       </tr>
       <tr>
         <td>
-          common.state minor :
+          Severity minor :
         </td>
         <td>
           minor
@@ -159,7 +159,7 @@ exports[`time-line-card Renders \`time-line-card\` with states 1`] = `
       </tr>
       <tr>
         <td>
-          common.state ok :
+          Severity ok :
         </td>
         <td>
           ok
@@ -177,27 +177,7 @@ exports[`time-line-card Renders \`time-line-card\` without translate 1`] = `
   >
     <!---->
     <p>
-      pbhenter alarmList.timeLine.titlePaths.by system
-    </p>
-  </div>
-  <div
-    class="content"
-  >
-    <p>
-      Pbehavior Name pbh. Type: Default pause. Reason: Test reason
-    </p>
-  </div>
-</div>
-`;
-
-exports[`time-line-card Renders \`time-line-card\` without translate 2`] = `
-<div>
-  <div
-    class="header"
-  >
-    <!---->
-    <p>
-      pbhenter alarmList.timeLine.titlePaths.by system
+      Periodic behavior enabled by system
     </p>
   </div>
   <div
