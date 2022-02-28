@@ -4,7 +4,7 @@ import Faker from 'faker';
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { fakeStaticAlarms } from '@unit/data/alarm';
-import { alarmListWidgetToForm } from '@/helpers/forms/widgets/alarm';
+import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 
 import { ALARMS_OPENED_VALUES, SORT_ORDERS } from '@/constants';
 
@@ -51,7 +51,7 @@ describe('group-alarms-list', () => {
     timestamp: nowTimestamp,
   });
 
-  const widget = alarmListWidgetToForm();
+  const widget = generateDefaultAlarmListWidget();
 
   const defaultQuery = {
     limit: 13,
@@ -246,7 +246,6 @@ describe('group-alarms-list', () => {
             data: consequencesAlarms,
           },
         },
-        isEditingMode: true,
         tabId,
         widget,
       },

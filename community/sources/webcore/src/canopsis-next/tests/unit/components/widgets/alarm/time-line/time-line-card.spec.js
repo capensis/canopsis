@@ -96,9 +96,6 @@ describe('time-line-card', () => {
       propsData: {
         step: pbehaviorEnterStep,
       },
-      mocks: {
-        $te: () => false,
-      },
     });
 
     expect(wrapper.element).toMatchSnapshot();
@@ -109,9 +106,6 @@ describe('time-line-card', () => {
       propsData: {
         step: stateIncStep,
       },
-      mocks: {
-        $te: () => false,
-      },
     });
 
     expect(wrapper.element).toMatchSnapshot();
@@ -121,9 +115,6 @@ describe('time-line-card', () => {
     const wrapper = snapshotFactory({
       propsData: {
         step: statusDecStep,
-      },
-      mocks: {
-        $te: () => false,
       },
     });
 

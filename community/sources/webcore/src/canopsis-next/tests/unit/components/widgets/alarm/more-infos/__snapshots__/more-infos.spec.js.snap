@@ -33,7 +33,7 @@ exports[`more-infos Renders \`more-infos\` without template 1`] = `
     <p
       class="ma-0"
     >
-      alarmList.moreInfos.defineATemplate
+      To define a template for this window, go to the alarms list settings
     </p>
   </div>
 </div>

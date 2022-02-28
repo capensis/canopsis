@@ -28,7 +28,6 @@ exports[`group-alarms-list Renders \`group-alarms-list\` with consequences alarm
     expandable="expandable"
     has-columns="true"
     hide-groups="hide-groups"
-    is-editing-mode="true"
     pagination="[object Object]"
     parent-alarm="[object Object]"
     total-items="5"

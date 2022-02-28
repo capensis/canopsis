@@ -706,22 +706,22 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
                   scope="col"
                 />
                 <th
-                  aria-label="common.name: Not sorted."
+                  aria-label="Name: Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
                   role="columnheader"
                   scope="col"
                 >
-                  common.name
+                  Name
                 </th>
                 <th
-                  aria-label="common.type: Not sorted."
+                  aria-label="Type: Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
                   role="columnheader"
                   scope="col"
                 >
-                  common.type
+                  Type
                 </th>
               </tr>
               <tr

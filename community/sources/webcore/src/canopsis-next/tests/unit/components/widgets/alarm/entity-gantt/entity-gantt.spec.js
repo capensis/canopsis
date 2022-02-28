@@ -171,7 +171,7 @@ describe('entity-gantt', () => {
 
     await flushPromises();
 
-    expect($popups.error).toBeCalledWith({ text: 'errors.default' });
+    expect($popups.error).toBeCalledWith({ text: 'Something went wrong...' });
   });
 
   it('Renders `entity-gantt` with required props', async () => {
