@@ -7,7 +7,7 @@
       :headers="headers",
       :loading="contextEntitiesPending || columnsFiltersPending",
       :total-items="contextEntitiesMeta.total_count",
-      :pagination.sync="vDataTablePagination",
+      :pagination.sync="pagination",
       :toolbar-props="toolbarProps",
       select-all,
       expand,
