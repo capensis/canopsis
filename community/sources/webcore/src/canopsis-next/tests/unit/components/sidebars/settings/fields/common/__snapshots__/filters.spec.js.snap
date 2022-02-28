@@ -13,7 +13,7 @@ exports[`filters Renders \`filters\` with custom props 1`] = `
       <div
         class="v-list__tile theme--light"
       >
-        settings.filters
+        Filters
       </div>
     </div>
     <div
@@ -47,7 +47,7 @@ exports[`filters Renders \`filters\` with custom props 1`] = `
           hideselecticon="true"
           itemtext="title"
           itemvalue="title"
-          label="filterSelector.defaultFilter"
+          label="Default filter"
           lockedfilters=""
           long="true"
           value="[object Object]"
@@ -71,7 +71,7 @@ exports[`filters Renders \`filters\` with default and required props 1`] = `
       <div
         class="v-list__tile theme--light"
       >
-        settings.filters
+        Filters
       </div>
     </div>
     <div
@@ -104,7 +104,7 @@ exports[`filters Renders \`filters\` with default and required props 1`] = `
           hideselecticon="true"
           itemtext="title"
           itemvalue="title"
-          label="filterSelector.defaultFilter"
+          label="Default filter"
           lockedfilters=""
           long="true"
         />

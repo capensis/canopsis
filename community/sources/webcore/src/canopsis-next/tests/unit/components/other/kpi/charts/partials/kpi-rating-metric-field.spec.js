@@ -57,9 +57,6 @@ describe('kpi-rating-metric-field', () => {
           label: KPI_RATING_CRITERIA.user,
         },
       },
-      mocks: {
-        $te: path => path.includes('users'),
-      },
     });
 
     const menuContent = wrapper.findMenu();

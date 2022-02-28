@@ -20,7 +20,7 @@ exports[`enabled-limit Renders \`enabled-limit\` with custom props 1`] = `
           <span
             class="font-italic caption ml-1"
           >
-            (common.optional)
+            (optional)
           </span>
         </div>
       </div>
@@ -132,7 +132,7 @@ exports[`enabled-limit Renders \`enabled-limit\` with errors 1`] = `
           <span
             class="font-italic caption ml-1"
           >
-            (common.optional)
+            (optional)
           </span>
         </div>
       </div>

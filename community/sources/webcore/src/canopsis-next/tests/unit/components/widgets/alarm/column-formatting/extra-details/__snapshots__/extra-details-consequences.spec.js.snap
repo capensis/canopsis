@@ -30,13 +30,13 @@ exports[`extra-details-consequences Renders \`extra-details-consequences\` with 
     class="text-md-center"
   >
     <strong>
-      alarmList.actions.iconsTitles.grouping
+      Meta alarm
     </strong>
     <div>
-      common.title : rule-name
+      Title : rule-name
     </div>
     <div>
-      alarmList.actions.iconsFields.consequences : 3
+      Consequences : 3
     </div>
   </div>
 </div>

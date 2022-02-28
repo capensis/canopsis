@@ -22,7 +22,7 @@ exports[`alarms-expand-panel-tour Renders \`alarms-expand-panel-tour\` with firs
       class="v-step__content"
     >
       <div>
-        tours.alarmsExpandPanel.step1
+        Details
       </div>
     </div>
      
@@ -67,7 +67,7 @@ exports[`alarms-expand-panel-tour Renders \`alarms-expand-panel-tour\` with seco
       class="v-step__content"
     >
       <div>
-        tours.alarmsExpandPanel.step2
+        MoreInfos tab (Displayed only in case of existing confguration)
       </div>
     </div>
      
@@ -116,7 +116,7 @@ exports[`alarms-expand-panel-tour Renders \`alarms-expand-panel-tour\` with thir
       class="v-step__content"
     >
       <div>
-        tours.alarmsExpandPanel.step3
+        Timeline tab
       </div>
     </div>
      

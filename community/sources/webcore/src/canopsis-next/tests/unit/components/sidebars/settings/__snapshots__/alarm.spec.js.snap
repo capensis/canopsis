@@ -7,7 +7,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     role="list"
   >
     <field-title-stub
-      title="common.title"
+      title="Title"
       value=""
     />
     <hr
@@ -31,7 +31,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
           <div
             class="v-list__tile theme--light"
           >
-            settings.advancedSettings
+            Advanced settings
           </div>
         </div>
         <div
@@ -59,7 +59,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
           >
             <field-default-sort-column-stub
               columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-              columnslabel="settings.columnName"
+              columnslabel="Column name"
               value="[object Object]"
             />
             <hr
@@ -67,7 +67,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
             />
             <field-columns-stub
               columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-              label="settings.columnNames"
+              label="Column names"
               withcolorindicator="true"
               withhtml="true"
             />
@@ -76,7 +76,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
             />
             <field-columns-stub
               columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-              label="settings.groupColumnNames"
+              label="Column names for meta alarms"
               withcolorindicator="true"
               withhtml="true"
             />
@@ -85,7 +85,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
             />
             <field-columns-stub
               columns="[object Object],[object Object]"
-              label="settings.trackColumnNames"
+              label="Track alarm source columns"
               withcolorindicator="true"
             />
             <hr
@@ -135,7 +135,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
               class="v-divider theme--light"
             />
             <field-text-editor-stub
-              title="settings.moreInfosModal"
+              title="\\"More Infos\\" Popup"
               value=""
             />
             <hr
@@ -145,14 +145,14 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
               max="12"
               min="0"
               step="1"
-              title="settings.expandGridRangeSize"
+              title="Expand card (more infos / timeline) width"
               value="0,12"
             />
             <hr
               class="v-divider theme--light"
             />
             <field-switcher-stub
-              title="settings.isHtmlEnabledOnTimeLine"
+              title="HTML enabled on timeline?"
             />
             <hr
               class="v-divider theme--light"
@@ -196,13 +196,13 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
                     role="list"
                   />
                   <field-switcher-stub
-                    title="settings.isAckNoteRequired"
+                    title="Note field required when ack?"
                   />
                   <hr
                     class="v-divider theme--light"
                   />
                   <field-switcher-stub
-                    title="settings.isMultiAckEnabled"
+                    title="Multiple ack"
                   />
                   <hr
                     class="v-divider theme--light"
@@ -217,14 +217,14 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
               class="v-divider theme--light"
             />
             <field-switcher-stub
-              title="settings.isSnoozeNoteRequired"
+              title="Note field required when snooze?"
             />
             <hr
               class="v-divider theme--light"
             />
             <field-enabled-limit-stub
-              label="settings.linksCategoriesLimit"
-              title="settings.linksCategoriesAsList"
+              label="Number of category items"
+              title="Display links as a list?"
               value="[object Object]"
             />
             <hr
@@ -238,7 +238,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
               class="v-divider theme--light"
             />
             <field-switcher-stub
-              title="settings.stickyHeader"
+              title="Sticky header"
             />
           </div>
         </div>
@@ -255,7 +255,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <div
       class="v-btn__content"
     >
-      common.save
+      Save
     </div>
   </button>
 </div>
@@ -268,7 +268,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     role="list"
   >
     <field-title-stub
-      title="common.title"
+      title="Title"
       value="Alarms list"
     />
     <hr
@@ -292,7 +292,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
           <div
             class="v-list__tile theme--light"
           >
-            settings.advancedSettings
+            Advanced settings
           </div>
         </div>
         <div
@@ -320,7 +320,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
           >
             <field-default-sort-column-stub
               columns="[object Object]"
-              columnslabel="settings.columnName"
+              columnslabel="Column name"
               value="[object Object]"
             />
             <hr
@@ -328,7 +328,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
             />
             <field-columns-stub
               columns="[object Object]"
-              label="settings.columnNames"
+              label="Column names"
               withcolorindicator="true"
               withhtml="true"
             />
@@ -337,7 +337,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
             />
             <field-columns-stub
               columns="[object Object]"
-              label="settings.groupColumnNames"
+              label="Column names for meta alarms"
               withcolorindicator="true"
               withhtml="true"
             />
@@ -346,7 +346,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
             />
             <field-columns-stub
               columns="[object Object]"
-              label="settings.trackColumnNames"
+              label="Track alarm source columns"
               withcolorindicator="true"
             />
             <hr
@@ -380,7 +380,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
               class="v-divider theme--light"
             />
             <field-text-editor-stub
-              title="settings.moreInfosModal"
+              title="\\"More Infos\\" Popup"
               value="More info template"
             />
             <hr
@@ -390,14 +390,14 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
               max="12"
               min="0"
               step="1"
-              title="settings.expandGridRangeSize"
+              title="Expand card (more infos / timeline) width"
               value="1,11"
             />
             <hr
               class="v-divider theme--light"
             />
             <field-switcher-stub
-              title="settings.isHtmlEnabledOnTimeLine"
+              title="HTML enabled on timeline?"
               value="true"
             />
             <hr
@@ -442,14 +442,14 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
                     role="list"
                   />
                   <field-switcher-stub
-                    title="settings.isAckNoteRequired"
+                    title="Note field required when ack?"
                     value="true"
                   />
                   <hr
                     class="v-divider theme--light"
                   />
                   <field-switcher-stub
-                    title="settings.isMultiAckEnabled"
+                    title="Multiple ack"
                     value="true"
                   />
                   <hr
@@ -465,15 +465,15 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
               class="v-divider theme--light"
             />
             <field-switcher-stub
-              title="settings.isSnoozeNoteRequired"
+              title="Note field required when snooze?"
               value="true"
             />
             <hr
               class="v-divider theme--light"
             />
             <field-enabled-limit-stub
-              label="settings.linksCategoriesLimit"
-              title="settings.linksCategoriesAsList"
+              label="Number of category items"
+              title="Display links as a list?"
               value="[object Object]"
             />
             <hr
@@ -487,7 +487,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
               class="v-divider theme--light"
             />
             <field-switcher-stub
-              title="settings.stickyHeader"
+              title="Sticky header"
               value="true"
             />
           </div>
@@ -505,7 +505,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     <div
       class="v-btn__content"
     >
-      common.save
+      Save
     </div>
   </button>
 </div>
@@ -518,7 +518,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     role="list"
   >
     <field-title-stub
-      title="common.title"
+      title="Title"
       value=""
     />
     <hr
@@ -542,7 +542,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
           <div
             class="v-list__tile theme--light"
           >
-            settings.advancedSettings
+            Advanced settings
           </div>
         </div>
         <div
@@ -570,7 +570,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
           >
             <field-default-sort-column-stub
               columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-              columnslabel="settings.columnName"
+              columnslabel="Column name"
               value="[object Object]"
             />
             <hr
@@ -578,7 +578,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
             />
             <field-columns-stub
               columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-              label="settings.columnNames"
+              label="Column names"
               withcolorindicator="true"
               withhtml="true"
             />
@@ -587,7 +587,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
             />
             <field-columns-stub
               columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-              label="settings.groupColumnNames"
+              label="Column names for meta alarms"
               withcolorindicator="true"
               withhtml="true"
             />
@@ -596,7 +596,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
             />
             <field-columns-stub
               columns="[object Object],[object Object]"
-              label="settings.trackColumnNames"
+              label="Track alarm source columns"
               withcolorindicator="true"
             />
             <hr
@@ -630,7 +630,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
               class="v-divider theme--light"
             />
             <field-text-editor-stub
-              title="settings.moreInfosModal"
+              title="\\"More Infos\\" Popup"
               value=""
             />
             <hr
@@ -640,14 +640,14 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
               max="12"
               min="0"
               step="1"
-              title="settings.expandGridRangeSize"
+              title="Expand card (more infos / timeline) width"
               value="0,12"
             />
             <hr
               class="v-divider theme--light"
             />
             <field-switcher-stub
-              title="settings.isHtmlEnabledOnTimeLine"
+              title="HTML enabled on timeline?"
             />
             <hr
               class="v-divider theme--light"
@@ -691,13 +691,13 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
                     role="list"
                   />
                   <field-switcher-stub
-                    title="settings.isAckNoteRequired"
+                    title="Note field required when ack?"
                   />
                   <hr
                     class="v-divider theme--light"
                   />
                   <field-switcher-stub
-                    title="settings.isMultiAckEnabled"
+                    title="Multiple ack"
                   />
                   <hr
                     class="v-divider theme--light"
@@ -712,14 +712,14 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
               class="v-divider theme--light"
             />
             <field-switcher-stub
-              title="settings.isSnoozeNoteRequired"
+              title="Note field required when snooze?"
             />
             <hr
               class="v-divider theme--light"
             />
             <field-enabled-limit-stub
-              label="settings.linksCategoriesLimit"
-              title="settings.linksCategoriesAsList"
+              label="Number of category items"
+              title="Display links as a list?"
               value="[object Object]"
             />
             <hr
@@ -733,7 +733,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
               class="v-divider theme--light"
             />
             <field-switcher-stub
-              title="settings.stickyHeader"
+              title="Sticky header"
             />
           </div>
         </div>
@@ -750,7 +750,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     <div
       class="v-btn__content"
     >
-      common.save
+      Save
     </div>
   </button>
 </div>
