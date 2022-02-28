@@ -7,105 +7,12 @@ exports[`c-table-pagination Renders \`c-table-pagination\` with custom props 1`]
   <div
     class="flex xs10"
   >
-    <div
-      class="container text-xs-center"
-    >
-      <div
-        class="layout align-center justify-center"
-      >
-        <span
-          class="grey--text text--darken-1"
-        >
-          common.paginationItems:{"first":21,"last":30,"total":100}
-        </span>
-        <ul
-          class="v-pagination theme--light"
-          data-test="vPagination"
-        >
-          <li>
-            <button
-              class="v-pagination__navigation"
-              type="button"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                chevron_left
-              </i>
-            </button>
-          </li>
-          <li>
-            <button
-              class="v-pagination__item"
-              type="button"
-            >
-              1
-            </button>
-          </li>
-          <li>
-            <button
-              class="v-pagination__item"
-              type="button"
-            >
-              2
-            </button>
-          </li>
-          <li>
-            <button
-              class="v-pagination__item v-pagination__item--active primary"
-              type="button"
-            >
-              3
-            </button>
-          </li>
-          <li>
-            <button
-              class="v-pagination__item"
-              type="button"
-            >
-              4
-            </button>
-          </li>
-          <li>
-            <button
-              class="v-pagination__item"
-              type="button"
-            >
-              5
-            </button>
-          </li>
-          <li>
-            <span
-              class="v-pagination__more"
-            >
-              ...
-            </span>
-          </li>
-          <li>
-            <button
-              class="v-pagination__item"
-              type="button"
-            >
-              10
-            </button>
-          </li>
-          <li>
-            <button
-              class="v-pagination__navigation"
-              type="button"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                chevron_right
-              </i>
-            </button>
-          </li>
-        </ul>
-      </div>
-    </div>
+    <c-pagination-stub
+      limit="10"
+      page="3"
+      total="100"
+      type="bottom"
+    />
   </div>
   <div
     class="spacer"

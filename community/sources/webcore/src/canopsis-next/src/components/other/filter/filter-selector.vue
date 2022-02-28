@@ -50,6 +50,8 @@
         v-else,
         :filters="filtersWithSelected",
         :entities-type="entitiesType",
+        addable,
+        editable,
         @input="updateFilters"
       )
 </template>
