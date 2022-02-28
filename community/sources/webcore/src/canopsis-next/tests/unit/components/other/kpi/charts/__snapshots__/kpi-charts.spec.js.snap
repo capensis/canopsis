@@ -16,7 +16,7 @@ exports[`kpi-charts Renders \`kpi-charts\` with default props 1`] = `
         <div
           class="subheading font-weight-bold"
         >
-          kpi.alarmMetrics
+          Alarm metrics
         </div>
         <!---->
       </div>
@@ -32,7 +32,7 @@ exports[`kpi-charts Renders \`kpi-charts\` with default props 1`] = `
         <div
           class="subheading font-weight-bold"
         >
-          common.rating:2
+          Ratings
         </div>
         <!---->
       </div>
@@ -48,7 +48,7 @@ exports[`kpi-charts Renders \`kpi-charts\` with default props 1`] = `
         <div
           class="subheading font-weight-bold"
         >
-          kpi.sli
+          SLI
         </div>
         <!---->
       </div>

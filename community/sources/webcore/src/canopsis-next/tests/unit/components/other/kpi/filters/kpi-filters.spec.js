@@ -197,7 +197,7 @@ describe('kpi-filters', () => {
           entity: true,
           name: true,
           patterns: filter,
-          title: 'modals.filter.edit.title',
+          title: 'Edit filter',
         },
       },
     );
@@ -278,7 +278,7 @@ describe('kpi-filters', () => {
             name: filter.name,
             entity_patterns: filter.entity_patterns,
           },
-          title: 'modals.filter.duplicate.title',
+          title: 'Duplicate filter',
         },
       },
     );

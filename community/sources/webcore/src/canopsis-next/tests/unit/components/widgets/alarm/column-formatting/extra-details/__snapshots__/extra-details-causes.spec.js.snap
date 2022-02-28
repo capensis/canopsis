@@ -30,7 +30,7 @@ exports[`extra-details-causes Renders \`extra-details-causes\` with full causes 
     class="text-md-center"
   >
     <strong>
-      alarmList.actions.iconsTitles.grouping
+      Meta alarm
     </strong>
     <div
       class="layout row"
@@ -39,7 +39,7 @@ exports[`extra-details-causes Renders \`extra-details-causes\` with full causes 
         class="flex"
       >
         <div>
-          alarmList.actions.iconsFields.rule:3 :
+          Rules :
         </div>
       </div>
       <div
@@ -59,7 +59,7 @@ exports[`extra-details-causes Renders \`extra-details-causes\` with full causes 
       </div>
     </div>
     <div>
-      alarmList.actions.iconsFields.causes : 3
+      Causes : 3
     </div>
   </div>
 </div>
@@ -95,7 +95,7 @@ exports[`extra-details-causes Renders \`extra-details-causes\` without rules 2`]
     class="text-md-center"
   >
     <strong>
-      alarmList.actions.iconsTitles.grouping
+      Meta alarm
     </strong>
     <div
       class="layout row"
@@ -104,7 +104,7 @@ exports[`extra-details-causes Renders \`extra-details-causes\` without rules 2`]
         class="flex"
       >
         <div>
-          alarmList.actions.iconsFields.rule:0 :
+          Rules :
         </div>
       </div>
       <div
@@ -112,7 +112,7 @@ exports[`extra-details-causes Renders \`extra-details-causes\` without rules 2`]
       />
     </div>
     <div>
-      alarmList.actions.iconsFields.causes : 3
+      Causes : 3
     </div>
   </div>
 </div>

@@ -24,7 +24,7 @@ exports[`c-no-events-icon Renders \`c-no-events-icon\` with custom props correct
   style="left: 0px; max-width: 1120px; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
   <span>
-    icons.noEvents:{"duration":"2,476 days 0 hrs 2 mins 3 secs"}
+    No events received for 2,476 days 0 hrs 2 mins 3 secs by some of dependencies
   </span>
 </div>
 `;
@@ -57,7 +57,7 @@ exports[`c-no-events-icon Renders \`c-no-events-icon\` with value correctly 2`] 
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
   <span>
-    icons.noEvents:{"duration":"2,476 days 0 hrs 2 mins 3 secs"}
+    No events received for 2,476 days 0 hrs 2 mins 3 secs by some of dependencies
   </span>
 </div>
 `;

@@ -46,13 +46,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
               
             </th>
             <th
-              aria-label="common.criteria: Not sorted."
+              aria-label="Criteria: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
               role="columnheader"
               scope="col"
             >
-              common.criteria
+              Criteria
             </th>
           </tr>
           <tr
@@ -739,13 +739,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
               
             </th>
             <th
-              aria-label="common.criteria: Not sorted."
+              aria-label="Criteria: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
               role="columnheader"
               scope="col"
             >
-              common.criteria
+              Criteria
             </th>
           </tr>
           <tr
@@ -1464,13 +1464,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with defa
               
             </th>
             <th
-              aria-label="common.criteria: Not sorted."
+              aria-label="Criteria: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
               role="columnheader"
               scope="col"
             >
-              common.criteria
+              Criteria
             </th>
           </tr>
           <tr
@@ -1530,7 +1530,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <div
               class="v-btn__content"
             >
-              common.cancel
+              Cancel
             </div>
           </button>
           <button
@@ -1540,7 +1540,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <div
               class="v-btn__content"
             >
-              common.submit
+              Submit
             </div>
           </button>
         </div>
@@ -1568,13 +1568,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               
             </th>
             <th
-              aria-label="common.criteria: Not sorted."
+              aria-label="Criteria: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
               role="columnheader"
               scope="col"
             >
-              common.criteria
+              Criteria
             </th>
           </tr>
           <tr
@@ -2261,13 +2261,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               
             </th>
             <th
-              aria-label="common.criteria: Not sorted."
+              aria-label="Criteria: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
               role="columnheader"
               scope="col"
             >
-              common.criteria
+              Criteria
             </th>
           </tr>
           <tr

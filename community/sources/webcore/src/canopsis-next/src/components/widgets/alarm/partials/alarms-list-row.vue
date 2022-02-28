@@ -45,7 +45,7 @@ import featuresService from '@/services/features';
 import { isResolvedAlarm } from '@/helpers/entities';
 import { getStepClass } from '@/helpers/tour';
 
-import widgetExpandPanelAlarm from '@/mixins/widget/expand-panel/alarm/expand-panel';
+import { widgetExpandPanelAlarmMixin } from '@/mixins/widget/expand-panel/alarm/expand-panel';
 
 import ActionsPanel from '../actions/actions-panel.vue';
 import AlarmColumnValue from '../columns-formatting/alarm-column-value.vue';
@@ -58,7 +58,7 @@ export default {
     AlarmColumnValue,
     AlarmListRowIcon,
   },
-  mixins: [widgetExpandPanelAlarm],
+  mixins: [widgetExpandPanelAlarmMixin],
   model: {
     prop: 'selected',
     event: 'input',

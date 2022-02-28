@@ -8,45 +8,46 @@
     :light="light",
     item-key="key"
   )
-    template(slot="expand", slot-scope="props")
+    template(#expand="{ item }")
       v-btn(
-        v-if="props.item.entity",
-        :color="$config.COLORS.impactState[props.item.impact_state]",
+        v-if="item.entity",
+        :color="$config.COLORS.impactState[item.impact_state]",
         icon,
         dark,
-        @click="showTreeOfDependenciesModal(props.item)"
+        @click="showTreeOfDependenciesModal(item)"
       )
-        v-icon {{ props.item.entity | btnIcon }}
+        v-icon {{ getIconByEntity(item.entity) }}
       v-tooltip(v-else, right)
         v-btn(
           slot="activator",
-          :loading="pendingByIds[props.item.parentId]",
+          :loading="pendingByIds[item.parentId]",
           icon,
-          @click="loadMore(props.item.parentId)"
+          @click="loadMore(item.parentId)"
         )
           v-icon more_horiz
         span {{ $t('common.loadMore') }}
     template(
       slot="expand-append",
-      slot-scope="props",
-      v-if="includeRoot && isInRootIds(props.item._id)"
+      slot-scope="{ item }",
+      v-if="includeRoot && isInRootIds(item._id)"
     )
       div.expand-append
         v-icon arrow_right_alt
         v-chip.ma-0(
-          :color="$config.COLORS.impactState[props.item.impact_state]",
+          :color="$config.COLORS.impactState[item.impact_state]",
           text-color="white"
         )
-          span.px-2.body-2.font-weight-bold {{ props.item.impact_state }}
-    tr(slot="items", slot-scope="props")
-      td(v-for="(header, index) in headers", :key="header.value")
-        c-no-events-icon(v-if="!index", :value="props.item.entity | get('idle_since')", top)
-        color-indicator-wrapper(
-          v-else-if="props.item.entity",
-          :entity="props.item.entity",
-          :alarm="props.item.alarm",
-          :type="header.colorIndicator"
-        ) {{ props.item | get(header.value) }}
+          span.px-2.body-2.font-weight-bold {{ item.impact_state }}
+    template(#items="{ item }")
+      tr
+        td(v-for="(header, index) in headers", :key="header.value")
+          c-no-events-icon(v-if="!index", :value="item.entity | get('idle_since')", top)
+          color-indicator-wrapper(
+            v-else-if="item.entity",
+            :entity="item.entity",
+            :alarm="item.alarm",
+            :type="header.colorIndicator"
+          ) {{ item | get(header.value) }}
 </template>
 
 <script>
@@ -70,11 +71,6 @@ import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wra
 const { mapActions } = createNamespacedHelpers('service');
 
 export default {
-  filters: {
-    btnIcon(entity) {
-      return entity.type === ENTITY_TYPES.service ? '$vuetify.icons.engineering' : 'person';
-    },
-  },
   components: { ColorIndicatorWrapper },
   props: {
     root: {
@@ -179,6 +175,10 @@ export default {
       fetchServiceDependenciesWithoutStore: 'fetchDependenciesWithoutStore',
       fetchServiceImpactsWithoutStore: 'fetchImpactsWithoutStore',
     }),
+
+    getIconByEntity(entity) {
+      return entity.type === ENTITY_TYPES.service ? '$vuetify.icons.engineering' : 'person';
+    },
 
     isInRootIds(id) {
       return this.rootIds.includes(id);

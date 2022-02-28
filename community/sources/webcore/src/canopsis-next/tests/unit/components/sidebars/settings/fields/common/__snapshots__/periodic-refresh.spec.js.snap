@@ -16,11 +16,11 @@ exports[`periodic-refresh Renders \`periodic-refresh\` with custom props 1`] = `
         <div
           class="validation-header"
         >
-          settings.periodicRefresh
+          Periodic refresh
           <span
             class="font-italic caption ml-1"
           >
-            (common.optional)
+            (optional)
           </span>
         </div>
       </div>
@@ -74,11 +74,11 @@ exports[`periodic-refresh Renders \`periodic-refresh\` with default props 1`] = 
         <div
           class="validation-header"
         >
-          settings.periodicRefresh
+          Periodic refresh
           <span
             class="font-italic caption ml-1"
           >
-            (common.optional)
+            (optional)
           </span>
         </div>
       </div>
@@ -132,11 +132,11 @@ exports[`periodic-refresh Renders \`periodic-refresh\` with errors 1`] = `
         <div
           class="validation-header error--text"
         >
-          settings.periodicRefresh
+          Periodic refresh
           <span
             class="font-italic caption ml-1"
           >
-            (common.optional)
+            (optional)
           </span>
         </div>
       </div>

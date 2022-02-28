@@ -2203,13 +2203,11 @@ export default {
 
   remediationInstructionsFilters: {
     button: 'Create instructions filter',
-    fields: {
-      with: 'With selected instructions',
-      without: 'Without selected instructions',
-      selectAll: 'Select all',
-      selectedInstructions: 'Selected instructions',
-      selectedInstructionsHelp: 'Instructions of selected type are excluded from the list',
-    },
+    with: 'With selected instructions',
+    without: 'Without selected instructions',
+    selectAll: 'Select all',
+    selectedInstructions: 'Selected instructions',
+    selectedInstructionsHelp: 'Instructions of selected type are excluded from the list',
     chip: {
       with: 'WITH',
       without: 'WITHOUT',

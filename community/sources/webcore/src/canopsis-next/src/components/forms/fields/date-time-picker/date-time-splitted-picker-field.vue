@@ -40,7 +40,7 @@
 import { TIME_UNITS } from '@/constants';
 
 import { convertDateToStartOfUnitDateObject } from '@/helpers/date/date';
-import { updateTime, updateDate } from '@/helpers/date/date-time-picker';
+import { getDateObjectByTime, getDateObjectByDate } from '@/helpers/date/date-time-picker';
 
 import { formBaseMixin } from '@/mixins/form';
 
@@ -101,11 +101,11 @@ export default {
   },
   methods: {
     updateTime(time) {
-      this.updateModel(updateTime(this.value, time));
+      this.updateModel(getDateObjectByTime(this.value, time));
     },
 
     updateDate(date) {
-      this.updateModel(updateDate(this.value, date));
+      this.updateModel(getDateObjectByDate(this.value, date));
     },
   },
 };
