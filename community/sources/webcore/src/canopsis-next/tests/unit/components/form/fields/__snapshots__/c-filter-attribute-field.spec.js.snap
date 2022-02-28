@@ -110,13 +110,13 @@ exports[`c-filter-attribute-field Renders \`c-filter-attribute-field\` with defa
           class="v-label theme--light"
           style="left: 0px; position: absolute;"
         >
-          common.attribute:undefined
+          Attribute
         </label>
         <div
           class="v-select__selections"
         >
           <input
-            aria-label="common.attribute:undefined"
+            aria-label="Attribute"
             aria-readonly="false"
             autocomplete="on"
             name="attribute"
