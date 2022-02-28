@@ -1,12 +1,16 @@
 import { isObject } from 'lodash';
 
-import VeeValidate, { Validator } from 'vee-validate';
+import VeeValidate, { Validator, Rules } from 'vee-validate';
 
 import { isValidJson } from './helpers/is-valid-json';
 import { isValidUrl } from './helpers/is-valid-url';
 import { debounce } from './helpers/debounce';
 import { isEvent } from './helpers/is-event';
 import { findField } from './helpers/find-field';
+
+Validator.prototype.remove = (name) => {
+  delete Rules[name];
+};
 
 export default {
   install(Vue, { i18n } = {}) {

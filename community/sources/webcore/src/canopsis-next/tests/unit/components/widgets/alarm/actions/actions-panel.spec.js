@@ -304,7 +304,7 @@ describe('actions-panel', () => {
       {
         name: MODALS.createEvent,
         config: {
-          title: 'modals.createAckRemove.title',
+          title: 'Remove ack',
           eventType: EVENT_ENTITY_TYPES.ackRemove,
           itemsIds: [alarm._id],
           itemsType: ENTITIES_TYPES.alarm,
@@ -697,7 +697,7 @@ describe('actions-panel', () => {
           itemsIds: [alarm._id],
           itemsType: ENTITIES_TYPES.alarm,
           afterSubmit: expect.any(Function),
-          title: 'modals.createCancelEvent.title',
+          title: 'Cancel',
           eventType: EVENT_ENTITY_TYPES.cancel,
         },
       },
@@ -984,7 +984,7 @@ describe('actions-panel', () => {
           itemsIds: [alarm._id],
           itemsType: ENTITIES_TYPES.alarm,
           afterSubmit: expect.any(Function),
-          title: 'alarmList.actions.titles.manualMetaAlarmUngroup',
+          title: 'Unlink alarm from manual meta alarm',
           eventType: EVENT_ENTITY_TYPES.manualMetaAlarmUngroup,
           parentsIds: [parentAlarm.d],
         },

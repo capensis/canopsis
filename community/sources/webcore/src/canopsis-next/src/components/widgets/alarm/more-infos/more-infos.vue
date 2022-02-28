@@ -1,10 +1,9 @@
 <template lang="pug">
-  .more-infos(v-if="!template", data-test="moreInfosTemplateContent")
-    v-layout(justify-center)
+  div.more-infos()
+    v-runtime-template(v-if="template", :template="compiledTemplate")
+    v-layout(v-else, justify-center)
       v-icon(color="info") infos
-      p(class="ma-0") {{ $t('alarmList.moreInfos.defineATemplate') }}
-  .more-infos(v-else, data-test="moreInfosContent")
-    v-runtime-template(:template="compiledTemplate")
+      p.ma-0 {{ $t('alarmList.moreInfos.defineATemplate') }}
 </template>
 
 <script>
@@ -31,6 +30,7 @@ export default {
 
         return `<div>${compiledTemplate}</div>`;
       },
+      lazy: true,
       default: '',
     },
   },
