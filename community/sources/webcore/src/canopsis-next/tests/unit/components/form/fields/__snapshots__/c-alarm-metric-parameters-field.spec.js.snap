@@ -18,7 +18,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           class="v-select__selections"
         >
           <span>
-            common.parametersToDisplay:{"count":17}
+            17 parameters to display
           </span>
           <input
             aria-readonly="false"
@@ -118,7 +118,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.active_alarms
+              Number of active alarms
             </div>
           </div>
         </a>
@@ -178,7 +178,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.created_alarms
+              Number of created alarms
             </div>
           </div>
         </a>
@@ -238,7 +238,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.non_displayed_alarms
+              Number of non-displayed alarms
             </div>
           </div>
         </a>
@@ -298,7 +298,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.instruction_alarms
+              Number of alarms under automatic remediation
             </div>
           </div>
         </a>
@@ -358,7 +358,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.pbehavior_alarms
+              Number of alarms with PBehavior
             </div>
           </div>
         </a>
@@ -418,7 +418,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.correlation_alarms
+              Number of alarms with correlation
             </div>
           </div>
         </a>
@@ -478,7 +478,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ack_alarms
+              Total number of acks
             </div>
           </div>
         </a>
@@ -538,7 +538,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.cancel_ack_alarms
+              Number of canceled acks
             </div>
           </div>
         </a>
@@ -598,7 +598,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ack_active_alarms
+              Number of active alarms with acks
             </div>
           </div>
         </a>
@@ -658,7 +658,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ticket_active_alarms
+              Number of active alarms with acks
             </div>
           </div>
         </a>
@@ -718,7 +718,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.without_ticket_active_alarms
+              Number of active alarms without tickets
             </div>
           </div>
         </a>
@@ -778,7 +778,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ratio_correlation
+              % of correlated alarms
             </div>
           </div>
         </a>
@@ -838,7 +838,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ratio_instructions
+              % of alarms with auto remediation
             </div>
           </div>
         </a>
@@ -898,7 +898,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ratio_tickets
+              % of alarms with tickets created
             </div>
           </div>
         </a>
@@ -958,7 +958,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ratio_non_displayed
+              % of non-displayed alarms
             </div>
           </div>
         </a>
@@ -1018,7 +1018,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.average_ack
+              Average time to ack alarms
             </div>
           </div>
         </a>
@@ -1078,7 +1078,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.average_resolve
+              Average time to resolve alarms
             </div>
           </div>
         </a>
@@ -1106,7 +1106,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           class="v-select__selections"
         >
           <span>
-            alarmList.metrics.created_alarms
+            Number of created alarms
           </span>
           <input
             aria-readonly="false"
@@ -1205,7 +1205,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.active_alarms
+              Number of active alarms
             </div>
           </div>
         </a>
@@ -1267,7 +1267,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.created_alarms
+              Number of created alarms
             </div>
           </div>
         </a>
@@ -1326,7 +1326,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.non_displayed_alarms
+              Number of non-displayed alarms
             </div>
           </div>
         </a>
@@ -1385,7 +1385,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.instruction_alarms
+              Number of alarms under automatic remediation
             </div>
           </div>
         </a>
@@ -1444,7 +1444,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.pbehavior_alarms
+              Number of alarms with PBehavior
             </div>
           </div>
         </a>
@@ -1503,7 +1503,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.correlation_alarms
+              Number of alarms with correlation
             </div>
           </div>
         </a>
@@ -1562,7 +1562,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ack_alarms
+              Total number of acks
             </div>
           </div>
         </a>
@@ -1621,7 +1621,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.cancel_ack_alarms
+              Number of canceled acks
             </div>
           </div>
         </a>
@@ -1680,7 +1680,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ack_active_alarms
+              Number of active alarms with acks
             </div>
           </div>
         </a>
@@ -1739,7 +1739,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ticket_active_alarms
+              Number of active alarms with acks
             </div>
           </div>
         </a>
@@ -1798,7 +1798,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.without_ticket_active_alarms
+              Number of active alarms without tickets
             </div>
           </div>
         </a>
@@ -1857,7 +1857,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ratio_correlation
+              % of correlated alarms
             </div>
           </div>
         </a>
@@ -1919,7 +1919,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ratio_instructions
+              % of alarms with auto remediation
             </div>
           </div>
         </a>
@@ -1978,7 +1978,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ratio_tickets
+              % of alarms with tickets created
             </div>
           </div>
         </a>
@@ -2037,7 +2037,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ratio_non_displayed
+              % of non-displayed alarms
             </div>
           </div>
         </a>
@@ -2096,7 +2096,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.average_ack
+              Average time to ack alarms
             </div>
           </div>
         </a>
@@ -2155,7 +2155,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.average_resolve
+              Average time to resolve alarms
             </div>
           </div>
         </a>
@@ -2183,7 +2183,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           class="v-select__selections"
         >
           <span>
-            alarmList.metrics.created_alarms
+            Number of created alarms
           </span>
           <input
             aria-readonly="false"
@@ -2282,7 +2282,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.active_alarms
+              Number of active alarms
             </div>
           </div>
         </a>
@@ -2344,7 +2344,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.created_alarms
+              Number of created alarms
             </div>
           </div>
         </a>
@@ -2403,7 +2403,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.non_displayed_alarms
+              Number of non-displayed alarms
             </div>
           </div>
         </a>
@@ -2462,7 +2462,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.instruction_alarms
+              Number of alarms under automatic remediation
             </div>
           </div>
         </a>
@@ -2521,7 +2521,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.pbehavior_alarms
+              Number of alarms with PBehavior
             </div>
           </div>
         </a>
@@ -2580,7 +2580,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.correlation_alarms
+              Number of alarms with correlation
             </div>
           </div>
         </a>
@@ -2639,7 +2639,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ack_alarms
+              Total number of acks
             </div>
           </div>
         </a>
@@ -2698,7 +2698,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.cancel_ack_alarms
+              Number of canceled acks
             </div>
           </div>
         </a>
@@ -2757,7 +2757,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ack_active_alarms
+              Number of active alarms with acks
             </div>
           </div>
         </a>
@@ -2816,7 +2816,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ticket_active_alarms
+              Number of active alarms with acks
             </div>
           </div>
         </a>
@@ -2875,7 +2875,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.without_ticket_active_alarms
+              Number of active alarms without tickets
             </div>
           </div>
         </a>
@@ -2934,7 +2934,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ratio_correlation
+              % of correlated alarms
             </div>
           </div>
         </a>
@@ -2993,7 +2993,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ratio_instructions
+              % of alarms with auto remediation
             </div>
           </div>
         </a>
@@ -3052,7 +3052,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ratio_tickets
+              % of alarms with tickets created
             </div>
           </div>
         </a>
@@ -3111,7 +3111,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.ratio_non_displayed
+              % of non-displayed alarms
             </div>
           </div>
         </a>
@@ -3170,7 +3170,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.average_ack
+              Average time to ack alarms
             </div>
           </div>
         </a>
@@ -3229,7 +3229,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              alarmList.metrics.average_resolve
+              Average time to resolve alarms
             </div>
           </div>
         </a>

@@ -1,0 +1,279 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`time-line Renders \`time-line\` with steps 1`] = `
+<div
+  class="timeline"
+>
+  <ul>
+    <li>
+      <div
+        class="timeline-item"
+      >
+        <div
+          class="date"
+        >
+          18/10/2021
+        </div>
+      </div>
+      <div
+        class="timeline-item"
+      >
+        <div
+          class="time"
+        >
+          17:35:10
+        </div>
+        <time-line-flag-stub
+          class="flag"
+          step="[object Object]"
+        />
+        <time-line-card-stub
+          step="[object Object]"
+        />
+      </div>
+    </li>
+  </ul>
+  <ul>
+    <li>
+      <div
+        class="timeline-item"
+      >
+        <div
+          class="date"
+        >
+          30/09/2021
+        </div>
+      </div>
+      <div
+        class="timeline-item"
+      >
+        <div
+          class="time"
+        >
+          11:54:10
+        </div>
+        <time-line-flag-stub
+          class="flag"
+          step="[object Object]"
+        />
+        <time-line-card-stub
+          step="[object Object]"
+        />
+      </div>
+    </li>
+  </ul>
+  <ul>
+    <li>
+      <div
+        class="timeline-item"
+      >
+        <div
+          class="date"
+        >
+          27/09/2021
+        </div>
+      </div>
+      <div
+        class="timeline-item"
+      >
+        <div
+          class="time"
+        >
+          13:47:33
+        </div>
+        <time-line-flag-stub
+          class="flag"
+          step="[object Object]"
+        />
+        <time-line-card-stub
+          step="[object Object]"
+        />
+      </div>
+    </li>
+    <li>
+      <div
+        class="timeline-item"
+        style="display: none;"
+      >
+        <div
+          class="date"
+        >
+          27/09/2021
+        </div>
+      </div>
+      <div
+        class="timeline-item"
+      >
+        <div
+          class="time"
+        >
+          13:17:21
+        </div>
+        <time-line-flag-stub
+          class="flag"
+          step="[object Object]"
+        />
+        <time-line-card-stub
+          step="[object Object]"
+        />
+      </div>
+    </li>
+  </ul>
+  <ul>
+    <li>
+      <div
+        class="timeline-item"
+      >
+        <div
+          class="date"
+        >
+          30/07/2021
+        </div>
+      </div>
+      <div
+        class="timeline-item"
+      >
+        <div
+          class="time"
+        >
+          17:46:25
+        </div>
+        <time-line-flag-stub
+          class="flag"
+          step="[object Object]"
+        />
+        <time-line-card-stub
+          step="[object Object]"
+        />
+      </div>
+    </li>
+  </ul>
+  <ul>
+    <li>
+      <div
+        class="timeline-item"
+      >
+        <div
+          class="date"
+        >
+          13/07/2021
+        </div>
+      </div>
+      <div
+        class="timeline-item"
+      >
+        <div
+          class="time"
+        >
+          13:54:22
+        </div>
+        <time-line-flag-stub
+          class="flag"
+          step="[object Object]"
+        />
+        <time-line-card-stub
+          step="[object Object]"
+        />
+      </div>
+    </li>
+    <li>
+      <div
+        class="timeline-item"
+        style="display: none;"
+      >
+        <div
+          class="date"
+        >
+          13/07/2021
+        </div>
+      </div>
+      <div
+        class="timeline-item"
+      >
+        <div
+          class="time"
+        >
+          13:54:22
+        </div>
+        <time-line-flag-stub
+          class="flag"
+          step="[object Object]"
+        />
+        <time-line-card-stub
+          step="[object Object]"
+        />
+      </div>
+    </li>
+  </ul>
+</div>
+`;
+
+exports[`time-line Renders \`time-line\` with updated steps 1`] = `
+<div
+  class="timeline"
+>
+  <ul>
+    <li>
+      <div
+        class="timeline-item"
+      >
+        <div
+          class="date"
+        >
+          13/07/2021
+        </div>
+      </div>
+      <div
+        class="timeline-item"
+      >
+        <div
+          class="time"
+        >
+          13:54:22
+        </div>
+        <time-line-flag-stub
+          class="flag"
+          step="[object Object]"
+        />
+        <time-line-card-stub
+          step="[object Object]"
+        />
+      </div>
+    </li>
+    <li>
+      <div
+        class="timeline-item"
+        style="display: none;"
+      >
+        <div
+          class="date"
+        >
+          13/07/2021
+        </div>
+      </div>
+      <div
+        class="timeline-item"
+      >
+        <div
+          class="time"
+        >
+          13:54:22
+        </div>
+        <time-line-flag-stub
+          class="flag"
+          step="[object Object]"
+        />
+        <time-line-card-stub
+          step="[object Object]"
+        />
+      </div>
+    </li>
+  </ul>
+</div>
+`;
+
+exports[`time-line Renders \`time-line\` without steps 1`] = `
+<div
+  class="timeline"
+/>
+`;

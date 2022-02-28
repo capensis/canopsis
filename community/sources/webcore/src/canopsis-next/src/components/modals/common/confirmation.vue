@@ -1,21 +1,16 @@
 <template lang="pug">
-  modal-wrapper(data-test="confirmationModal", close)
-    template(v-if="!config.hideTitle", slot="title")
+  modal-wrapper(close)
+    template(v-if="!config.hideTitle", #title="")
       span {{ title }}
-    template(v-if="config.text", slot="text")
+    template(v-if="config.text", #text="")
       span.subheading {{ config.text }}
-    template(slot="actions")
+    template(#actions="")
       v-layout(wrap, justify-center)
         v-btn.primary(
           :loading="submitting",
-          :disabled="isDisabled",
-          data-test="submitButton",
           @click.prevent="submit"
         ) {{ $t('common.yes') }}
-        v-btn.error(
-          data-test="cancelButton",
-          @click="cancel"
-        ) {{ $t('common.no') }}
+        v-btn.error(@click="cancel") {{ $t('common.no') }}
 </template>
 
 <script>
