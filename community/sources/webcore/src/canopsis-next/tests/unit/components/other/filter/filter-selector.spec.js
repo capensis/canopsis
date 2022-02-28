@@ -14,12 +14,14 @@ const stubs = {
   'c-operator-field': true,
   'c-enabled-field': true,
   'c-action-btn': true,
+  'filters-form': true,
 };
 
 const snapshotStubs = {
   'c-operator-field': true,
   'c-enabled-field': true,
   'c-action-btn': true,
+  'filters-form': true,
 };
 
 const factory = (options = {}) => shallowMount(FilterSelector, {

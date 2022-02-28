@@ -7,8 +7,8 @@
         filters-form(
           v-model="form.filters",
           :entities-type="config.entitiesType",
-          :has-access-to-add-filter="config.hasAccessToAddFilter",
-          :has-access-to-edit-filter="config.hasAccessToEditFilter"
+          :addable="config.hasAccessToAddFilter",
+          :editable="config.hasAccessToEditFilter"
         )
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}

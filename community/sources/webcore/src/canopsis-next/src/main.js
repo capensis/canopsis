@@ -133,6 +133,7 @@ import CFiltersField from '@/components/forms/fields/c-filters-field.vue';
 import CEntityStateField from '@/components/forms/fields/c-entity-state-field.vue';
 import CRecordsPerPageField from '@/components/forms/fields/c-records-per-page-field.vue';
 import COperatorField from '@/components/forms/fields/c-operator-field.vue';
+import CDraggableListField from '@/components/forms/fields/c-draggable-list-field.vue';
 import CEntityStatusField from '@/components/forms/fields/c-entity-status-field.vue';
 
 /**
@@ -327,6 +328,7 @@ Vue.component('c-entity-state-field', CEntityStateField);
 Vue.component('c-entity-status-field', CEntityStatusField);
 Vue.component('c-records-per-page-field', CRecordsPerPageField);
 Vue.component('c-operator-field', COperatorField);
+Vue.component('c-draggable-list-field', CDraggableListField);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,

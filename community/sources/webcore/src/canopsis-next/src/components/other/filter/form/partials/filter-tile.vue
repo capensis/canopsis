@@ -1,9 +1,9 @@
 <template lang="pug">
-  v-list-tile.pa-0(:class="{ 'filter-item': hasAccessToEdit }")
+  v-list-tile.pa-0(:class="{ 'cursor-move': editable }")
     v-layout
       v-flex(xs12)
         v-list-tile-content {{ filter.title }}
-      v-list-tile-action(v-if="hasAccessToEdit")
+      v-list-tile-action(v-if="editable")
         v-layout
           c-action-btn(type="edit", @click="$emit('edit')")
           c-action-btn(type="delete", @click="$emit('delete')")
@@ -11,25 +11,15 @@
 
 <script>
 export default {
-  model: {
-    prop: 'filter',
-    event: 'input',
-  },
   props: {
     filter: {
       type: Object,
       default: () => ({}),
     },
-    hasAccessToEdit: {
+    editable: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.filter-item {
-  cursor: move;
-}
-</style>

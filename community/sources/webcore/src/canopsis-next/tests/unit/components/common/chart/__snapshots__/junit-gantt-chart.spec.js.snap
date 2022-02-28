@@ -7,10 +7,10 @@ exports[`junit-gantt-chart Renders \`junit-gantt-chart\` historical and tooltip 
 >
   <div>
     <div>
-      common.current: testSuite.statuses.0 0.970s 
+      Current: Passed 0.970s 
     </div>
     <div>
-      common.average: testSuite.statuses.0 0.970s
+      Average: Passed 0.970s
     </div>
   </div>
 </div>
@@ -23,7 +23,7 @@ exports[`junit-gantt-chart Renders \`junit-gantt-chart\` historical tooltip (arr
 >
   <div>
     <div>
-      common.current: testSuite.statuses.0 0.890s 
+      Current: Passed 0.890s 
       <i
         class="v-icon material-icons error--text"
         style="font-size: 16px;"
@@ -32,7 +32,7 @@ exports[`junit-gantt-chart Renders \`junit-gantt-chart\` historical tooltip (arr
       </i>
     </div>
     <div>
-      common.average: testSuite.statuses.0 0.800s
+      Average: Passed 0.800s
     </div>
   </div>
 </div>
@@ -45,7 +45,7 @@ exports[`junit-gantt-chart Renders \`junit-gantt-chart\` historical tooltip (arr
 >
   <div>
     <div>
-      common.current: testSuite.statuses.0 0.900s 
+      Current: Passed 0.900s 
       <i
         class="v-icon material-icons primary--text"
         style="font-size: 16px;"
@@ -54,7 +54,7 @@ exports[`junit-gantt-chart Renders \`junit-gantt-chart\` historical tooltip (arr
       </i>
     </div>
     <div>
-      common.average: testSuite.statuses.0 0.910s
+      Average: Passed 0.910s
     </div>
   </div>
 </div>
@@ -67,7 +67,7 @@ exports[`junit-gantt-chart Renders \`junit-gantt-chart\` historical tooltip (clo
 >
   <div>
     <div>
-      common.current: testSuite.statuses.2 0.870s 
+      Current: Error 0.870s 
       <i
         class="v-icon material-icons error--text"
         style="font-size: 16px;"
@@ -76,7 +76,7 @@ exports[`junit-gantt-chart Renders \`junit-gantt-chart\` historical tooltip (clo
       </i>
     </div>
     <div>
-      common.average: testSuite.statuses.0 0.870s
+      Average: Passed 0.870s
     </div>
   </div>
 </div>
@@ -89,7 +89,7 @@ exports[`junit-gantt-chart Renders \`junit-gantt-chart\` historical tooltip (don
 >
   <div>
     <div>
-      common.current: testSuite.statuses.0 0.220s 
+      Current: Passed 0.220s 
       <i
         class="v-icon material-icons primary--text"
         style="font-size: 16px;"
@@ -98,7 +98,7 @@ exports[`junit-gantt-chart Renders \`junit-gantt-chart\` historical tooltip (don
       </i>
     </div>
     <div>
-      common.average: testSuite.statuses.3 0.220s
+      Average: Failed 0.220s
     </div>
   </div>
 </div>
@@ -111,10 +111,10 @@ exports[`junit-gantt-chart Renders \`junit-gantt-chart\` historical tooltip (no 
 >
   <div>
     <div>
-      common.current: testSuite.statuses.3 0.770s 
+      Current: Failed 0.770s 
     </div>
     <div>
-      common.average: testSuite.statuses.3 0.770s
+      Average: Failed 0.770s
     </div>
   </div>
 </div>
@@ -127,10 +127,10 @@ exports[`junit-gantt-chart Renders \`junit-gantt-chart\` historical tooltip (no 
 >
   <div>
     <div>
-      common.current: testSuite.statuses.1 0.000s 
+      Current: Skipped 0.000s 
     </div>
     <div>
-      common.average: testSuite.statuses.1 0.000s
+      Average: Skipped 0.000s
     </div>
   </div>
 </div>
@@ -191,7 +191,7 @@ exports[`junit-gantt-chart Renders \`junit-gantt-chart\` tooltip without. 1`] = 
           0.000s
         </div>
         <div>
-          testSuite.statuses.1
+          Skipped
         </div>
       </div>
     </div>
@@ -229,7 +229,7 @@ exports[`junit-gantt-chart Renders \`junit-gantt-chart\` tooltip. 1`] = `
           0.700s
         </div>
         <div>
-          testSuite.statuses.2: test_case_msg_9_6_0
+          Error: test_case_msg_9_6_0
         </div>
       </div>
     </div>

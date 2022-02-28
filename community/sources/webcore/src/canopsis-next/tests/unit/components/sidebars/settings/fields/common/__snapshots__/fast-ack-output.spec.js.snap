@@ -13,11 +13,11 @@ exports[`fast-ack-output Renders \`fast-ack-output\` with custom props 1`] = `
       <div
         class="v-list__tile theme--light"
       >
-        settings.fastAckOutput
+        Fast-ack output
         <div
           class="font-italic caption ml-1"
         >
-          (common.optional)
+          (optional)
         </div>
       </div>
     </div>
@@ -63,10 +63,10 @@ exports[`fast-ack-output Renders \`fast-ack-output\` with custom props 1`] = `
                   class="v-label v-label--active theme--light"
                   style="left: 0px; position: absolute;"
                 >
-                  tables.alarmGeneral.output
+                  Output
                 </label>
                 <input
-                  aria-label="tables.alarmGeneral.output"
+                  aria-label="Output"
                   type="text"
                 />
               </div>
@@ -103,11 +103,11 @@ exports[`fast-ack-output Renders \`fast-ack-output\` with default props 1`] = `
       <div
         class="v-list__tile theme--light"
       >
-        settings.fastAckOutput
+        Fast-ack output
         <div
           class="font-italic caption ml-1"
         >
-          (common.optional)
+          (optional)
         </div>
       </div>
     </div>
@@ -151,10 +151,10 @@ exports[`fast-ack-output Renders \`fast-ack-output\` with default props 1`] = `
                   class="v-label v-label--is-disabled theme--light"
                   style="left: 0px; position: absolute;"
                 >
-                  tables.alarmGeneral.output
+                  Output
                 </label>
                 <input
-                  aria-label="tables.alarmGeneral.output"
+                  aria-label="Output"
                   disabled="disabled"
                   type="text"
                 />
