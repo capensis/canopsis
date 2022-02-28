@@ -110,13 +110,13 @@ exports[`c-filter-attribute-field Renders \`c-filter-attribute-field\` with defa
           class="v-label theme--light"
           style="left: 0px; position: absolute;"
         >
-          Attribute
+          Search by
         </label>
         <div
           class="v-select__selections"
         >
           <input
-            aria-label="Attribute"
+            aria-label="Search by"
             aria-readonly="false"
             autocomplete="on"
             name="attribute"
