@@ -213,6 +213,7 @@ export default {
     criteria: 'Critères',
     ratingSettings: 'Paramètres d\'évaluation',
     pbehavior: 'Comportement périodique | Comportements périodiques',
+    attribute: 'Attribut | Les attributs',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
