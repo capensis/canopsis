@@ -73,10 +73,8 @@ describe('c-filter-infos-attribute-field', () => {
       },
     });
 
-    const menuContent = wrapper.findMenu();
-
     expect(wrapper.element).toMatchSnapshot();
-    expect(menuContent.element).toMatchSnapshot();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 
   it('Renders `c-filter-infos-attribute-field` with custom props', () => {
@@ -95,9 +93,7 @@ describe('c-filter-infos-attribute-field', () => {
       },
     });
 
-    const menuContent = wrapper.findMenu();
-
     expect(wrapper.element).toMatchSnapshot();
-    expect(menuContent.element).toMatchSnapshot();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 });

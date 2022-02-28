@@ -2,7 +2,7 @@
   v-layout
     v-flex(xs6)
       v-select(
-        :value="dictionary",
+        :value="valueParts.dictionary",
         v-validate="'required'",
         :items="dictionaries",
         :disabled="disabled",
@@ -13,10 +13,10 @@
       )
     v-flex.ml-2(xs6)
       v-select(
-        :value="field",
+        :value="valueParts.field",
         v-validate="'required'",
         :items="fieldItems",
-        :disabled="disabled || !dictionary",
+        :disabled="disabled || !valueParts.dictionary",
         :label="label || $t('common.field')",
         :name="name",
         hide-details,
@@ -62,15 +62,13 @@ export default {
   },
   computed: {
     valueParts() {
-      return this.value.split(this.divider);
-    },
+      const [infos, dictionary, field] = this.value.split(this.divider);
 
-    dictionary() {
-      return this.valueParts[1];
-    },
-
-    field() {
-      return this.valueParts[2];
+      return {
+        infos,
+        dictionary,
+        field,
+      };
     },
 
     fieldItems() {
@@ -92,17 +90,15 @@ export default {
   },
   methods: {
     updateValue(dictionary, field) {
-      const [infos] = this.valueParts;
-
-      this.updateModel([infos, dictionary, field].join(this.divider));
+      this.updateModel([this.valueParts.infos, dictionary, field].join(this.divider));
     },
 
     updateDictionary(dictionary) {
-      this.updateValue(dictionary, this.field);
+      this.updateValue(dictionary, this.valueParts.field);
     },
 
     updateField(field) {
-      this.updateValue(this.dictionary, field);
+      this.updateValue(this.valueParts.dictionary, field);
     },
   },
 };
