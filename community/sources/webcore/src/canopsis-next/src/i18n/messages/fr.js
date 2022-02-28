@@ -213,7 +213,7 @@ export default {
     criteria: 'Critères',
     ratingSettings: 'Paramètres d\'évaluation',
     pbehavior: 'Comportement périodique | Comportements périodiques',
-    attribute: 'Attribut | Les attributs',
+    searchBy: 'Recherché par',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',

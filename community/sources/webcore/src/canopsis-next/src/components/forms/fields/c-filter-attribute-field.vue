@@ -3,7 +3,7 @@
     v-field="value",
     :items="items",
     :disabled="disabled",
-    :label="label || $tc('common.attribute')",
+    :label="label || $tc('common.searchBy')",
     :name="name",
     hide-details,
     return-object
