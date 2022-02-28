@@ -26,7 +26,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with full p
 >
   <div>
     <strong>
-      alarmList.actions.iconsTitles.pbehaviors
+      Periodic behaviors
     </strong>
     <div>
       <div
@@ -35,13 +35,13 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with full p
         pbehavior-name
       </div>
       <div>
-        common.author: pbehavior-author
+        Author: pbehavior-author
       </div>
       <div>
-        common.type: type-name
+        Type: type-name
       </div>
       <div>
-        common.reason: pbehavior-reason-name
+        Reason: pbehavior-reason-name
       </div>
       <div>
         07/12/2013 9:13:20 - 07/12/2013 12:00:00
@@ -50,7 +50,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with full p
         rrule
       </div>
       <div>
-        common.comment:2:
+        Comments:
         <div
           class="ml-2"
         >
@@ -58,7 +58,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with full p
         </div>
       </div>
       <div>
-        common.comment:2:
+        Comments:
         <div
           class="ml-2"
         >
@@ -99,7 +99,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with pbehav
 >
   <div>
     <strong>
-      alarmList.actions.iconsTitles.pbehaviors
+      Periodic behaviors
     </strong>
     <div>
       <div
@@ -108,11 +108,11 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with pbehav
         pbehavior-name
       </div>
       <div>
-        common.author: pbehavior-author
+        Author: pbehavior-author
       </div>
       <!---->
       <div>
-        common.reason: pbehavior-reason-name
+        Reason: pbehavior-reason-name
       </div>
       <div>
         07/08/2013 21:13:20 - 08/08/2013 0:00:00
@@ -121,7 +121,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with pbehav
         rrule
       </div>
       <div>
-        common.comment:2:
+        Comments:
         <div
           class="ml-2"
         >
@@ -129,7 +129,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with pbehav
         </div>
       </div>
       <div>
-        common.comment:2:
+        Comments:
         <div
           class="ml-2"
         >
@@ -170,7 +170,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without com
 >
   <div>
     <strong>
-      alarmList.actions.iconsTitles.pbehaviors
+      Periodic behaviors
     </strong>
     <div>
       <div
@@ -179,13 +179,13 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without com
         pbehavior-name
       </div>
       <div>
-        common.author: pbehavior-author
+        Author: pbehavior-author
       </div>
       <div>
-        common.type: type-name
+        Type: type-name
       </div>
       <div>
-        common.reason: pbehavior-reason-name
+        Reason: pbehavior-reason-name
       </div>
       <div>
         07/12/2013 9:13:20 - 07/12/2013 12:00:00
@@ -227,7 +227,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rea
 >
   <div>
     <strong>
-      alarmList.actions.iconsTitles.pbehaviors
+      Periodic behaviors
     </strong>
     <div>
       <div
@@ -236,10 +236,10 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rea
         pbehavior-name
       </div>
       <div>
-        common.author: pbehavior-author
+        Author: pbehavior-author
       </div>
       <div>
-        common.type: type-name
+        Type: type-name
       </div>
       <!---->
       <div>
@@ -249,7 +249,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rea
         rrule
       </div>
       <div>
-        common.comment:2:
+        Comments:
         <div
           class="ml-2"
         >
@@ -257,7 +257,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rea
         </div>
       </div>
       <div>
-        common.comment:2:
+        Comments:
         <div
           class="ml-2"
         >
@@ -298,7 +298,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rru
 >
   <div>
     <strong>
-      alarmList.actions.iconsTitles.pbehaviors
+      Periodic behaviors
     </strong>
     <div>
       <div
@@ -307,20 +307,20 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rru
         pbehavior-name
       </div>
       <div>
-        common.author: pbehavior-author
+        Author: pbehavior-author
       </div>
       <div>
-        common.type: type-name
+        Type: type-name
       </div>
       <div>
-        common.reason: pbehavior-reason-name
+        Reason: pbehavior-reason-name
       </div>
       <div>
         07/12/2013 9:13:20 - 07/12/2013 12:00:00
       </div>
       <!---->
       <div>
-        common.comment:2:
+        Comments:
         <div
           class="ml-2"
         >
@@ -328,7 +328,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rru
         </div>
       </div>
       <div>
-        common.comment:2:
+        Comments:
         <div
           class="ml-2"
         >
@@ -369,7 +369,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without tst
 >
   <div>
     <strong>
-      alarmList.actions.iconsTitles.pbehaviors
+      Periodic behaviors
     </strong>
     <div>
       <div
@@ -378,13 +378,13 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without tst
         pbehavior-name
       </div>
       <div>
-        common.author: pbehavior-author
+        Author: pbehavior-author
       </div>
       <div>
-        common.type: type-name
+        Type: type-name
       </div>
       <div>
-        common.reason: pbehavior-reason-name
+        Reason: pbehavior-reason-name
       </div>
       <div>
         07/12/2013 9:13:20
@@ -394,7 +394,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without tst
         rrule
       </div>
       <div>
-        common.comment:2:
+        Comments:
         <div
           class="ml-2"
         >
@@ -402,7 +402,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without tst
         </div>
       </div>
       <div>
-        common.comment:2:
+        Comments:
         <div
           class="ml-2"
         >

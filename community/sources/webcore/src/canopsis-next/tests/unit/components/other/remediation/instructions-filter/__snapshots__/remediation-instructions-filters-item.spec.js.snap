@@ -31,12 +31,12 @@ exports[`remediation-instructions-filters-item Renders \`remediation-instruction
         <strong
           class="pl-2"
         >
-          remediationInstructionsFilters.chip.with:
+          WITH:
         </strong>
         <span
           class="pl-1"
         >
-          remediationInstructions.types.0
+          Manual
         </span>
       </span>
       <div
@@ -79,7 +79,7 @@ exports[`remediation-instructions-filters-item Renders \`remediation-instruction
         <strong
           class="pl-2"
         >
-          remediationInstructionsFilters.chip.without:
+          WITHOUT:
         </strong>
         <span
           class="pl-1"

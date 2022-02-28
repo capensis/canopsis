@@ -2159,13 +2159,11 @@ export default {
 
   remediationInstructionsFilters: {
     button: 'Créer un filtre de consignes',
-    fields: {
-      with: 'Avec les consignes sélectionnées',
-      without: 'Sans les consignes sélectionnées',
-      selectAll: 'Tout sélectionner',
-      selectedInstructions: 'Consignes sélectionnées',
-      selectedInstructionsHelp: 'Les instructions du type sélectionné sont exclues de la liste',
-    },
+    with: 'Avec les consignes sélectionnées',
+    without: 'Sans les consignes sélectionnées',
+    selectAll: 'Tout sélectionner',
+    selectedInstructions: 'Consignes sélectionnées',
+    selectedInstructionsHelp: 'Les instructions du type sélectionné sont exclues de la liste',
     chip: {
       with: 'AVEC',
       without: 'SANS',

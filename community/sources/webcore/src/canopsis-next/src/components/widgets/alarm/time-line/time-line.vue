@@ -1,11 +1,11 @@
 <template lang="pug">
-  div.timeline(:data-test="`alarmTimeLine-${alarm._id}`")
+  div.timeline
     ul(v-for="(steps, day) in groupedSteps", :key="day")
       li(v-for="(step, index) in steps", :key="`step-${index}`")
-        .timeline-item(v-show="index === 0")
-          .date {{ day }}
-        .timeline-item
-          .time {{ step.t | date('time') }}
+        div.timeline-item(v-show="index === 0")
+          div.date {{ day }}
+        div.timeline-item
+          div.time {{ step.t | date('time') }}
           time-line-flag.flag(:step="step")
           time-line-card(:step="step", :is-html-enabled="isHtmlEnabled")
 </template>
@@ -13,14 +13,14 @@
 <script>
 import { groupAlarmSteps } from '@/helpers/entities';
 
-import widgetExpandPanelAlarmTimeLine from '@/mixins/widget/expand-panel/alarm/expand-panel';
+import { widgetExpandPanelAlarmMixin } from '@/mixins/widget/expand-panel/alarm/expand-panel';
 
 import TimeLineFlag from './time-line-flag.vue';
 import TimeLineCard from './time-line-card.vue';
 
 export default {
   components: { TimeLineFlag, TimeLineCard },
-  mixins: [widgetExpandPanelAlarmTimeLine],
+  mixins: [widgetExpandPanelAlarmMixin],
   props: {
     alarm: {
       type: Object,
