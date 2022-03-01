@@ -1,12 +1,13 @@
 <template lang="pug">
   v-layout
     v-flex(xs6)
-      v-select(
+      v-combobox(
         :value="valueParts.dictionary",
         v-validate="'required'",
         :items="dictionaries",
         :disabled="disabled",
         :label="label || $t('common.dictionary')",
+        :return-object="false",
         :name="name",
         hide-details,
         @input="updateDictionary"

@@ -8,6 +8,7 @@ const localVue = createVueInstance();
 
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
+  'v-combobox': createSelectInputStub('v-combobox'),
 };
 
 const factory = (options = {}) => shallowMount(CFilterInfosAttributeField, {
@@ -21,9 +22,8 @@ const snapshotFactory = (options = {}) => mount(CFilterInfosAttributeField, {
   ...options,
 });
 
-const selectSelectFields = wrapper => wrapper.findAll('select.v-select');
-const selectDictionarySelect = wrapper => selectSelectFields(wrapper).at(0);
-const selectFieldSelect = wrapper => selectSelectFields(wrapper).at(1);
+const selectDictionarySelect = wrapper => wrapper.find('select.v-combobox');
+const selectFieldSelect = wrapper => wrapper.find('select.v-select');
 
 describe('c-filter-infos-attribute-field', () => {
   it('Dictionary changed after trigger the dictionary select', () => {
