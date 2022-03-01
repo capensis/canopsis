@@ -8,7 +8,8 @@
         :disabled="disabled",
         :label="label || $t('common.dictionary')",
         :return-object="false",
-        :name="name",
+        :name="dictionaryName",
+        :error-messages="errors.collect(dictionaryName)",
         hide-details,
         @input="updateDictionary"
       )
@@ -19,7 +20,8 @@
         :items="fieldItems",
         :disabled="disabled || !valueParts.dictionary",
         :label="label || $t('common.field')",
-        :name="name",
+        :name="fieldName",
+        :error-messages="errors.collect(fieldName)",
         hide-details,
         @input="updateField"
       )
@@ -62,6 +64,14 @@ export default {
     },
   },
   computed: {
+    dictionaryName() {
+      return `${this.name}.dictionary`;
+    },
+
+    fieldName() {
+      return `${this.name}.field`;
+    },
+
     valueParts() {
       const [infos, dictionary, field] = this.value.split(this.divider);
 

@@ -30,7 +30,7 @@ exports[`c-filter-infos-attribute-field Renders \`c-filter-infos-attribute-field
               aria-label="Custom label"
               autocomplete="off"
               disabled="disabled"
-              name="custom_filter_infos_attribute_name"
+              name="custom_filter_infos_attribute_name.dictionary"
               role="combobox"
               type="text"
             />
@@ -87,7 +87,7 @@ exports[`c-filter-infos-attribute-field Renders \`c-filter-infos-attribute-field
                 aria-readonly="false"
                 autocomplete="on"
                 disabled="disabled"
-                name="custom_filter_infos_attribute_name"
+                name="custom_filter_infos_attribute_name.field"
                 readonly="readonly"
                 type="text"
               />
@@ -181,7 +181,7 @@ exports[`c-filter-infos-attribute-field Renders \`c-filter-infos-attribute-field
             <input
               aria-label="Dictionary"
               autocomplete="off"
-              name="infos"
+              name="infos.dictionary"
               role="combobox"
               type="text"
             />
@@ -238,7 +238,7 @@ exports[`c-filter-infos-attribute-field Renders \`c-filter-infos-attribute-field
                 aria-readonly="false"
                 autocomplete="on"
                 disabled="disabled"
-                name="infos"
+                name="infos.field"
                 readonly="readonly"
                 type="text"
               />
