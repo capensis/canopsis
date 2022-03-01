@@ -316,29 +316,24 @@ func getFindPipeline() []bson.M {
 		}},
 		{"$unwind": bson.M{"path": "$category", "preserveNullAndEmptyArrays": true}},
 		// Find pbehavior types
-		{"$addFields": bson.M{
-			"alarm_counters": bson.M{"$map": bson.M{
-				"input": bson.M{"$objectToArray": "$alarms_cumulative_data.watched_pbehavior_count"},
-				"as":    "each",
-				"in": bson.M{
-					"type":  "$$each.k",
-					"count": "$$each.v",
-				},
-			}},
+		{"$addFields": bson.M{"pbh_types": bson.M{"$ifNull": bson.A{
+			bson.M{"$map": bson.M{"input": bson.M{"$objectToArray": "$alarms_cumulative_data.watched_pbehavior_count"}, "as": "each", "in": "$$each.k"}},
+			[]int{-1}}}}},
+		{"$lookup": bson.M{"as": "alarm_counters", "from": "pbehavior_type",
+			"let": bson.M{"pbh_types": "$pbh_types", "cumulative": bson.M{"$objectToArray": "$alarms_cumulative_data.watched_pbehavior_count"}},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$expr": bson.M{"$in": []string{"$_id", "$$pbh_types"}}}},
+				{"$addFields": bson.M{
+					"count": bson.M{"$mergeObjects": bson.M{
+						"$filter": bson.M{"input": "$$cumulative", "as": "each", "cond": bson.M{"$eq": []string{"$$each.k", "$_id"}}}}}}},
+				{"$project": bson.M{"count": "$count.v", "type": "$$ROOT"}},
+				{"$match": bson.M{"$expr": bson.M{"$gt": bson.A{"$count", 0}}}},
+				{"$project": bson.M{"type.loader_id": 0, "_id": 0, "type.count": 0}},
+			},
 		}},
-		{"$unwind": bson.M{"path": "$alarm_counters", "preserveNullAndEmptyArrays": true}},
-		{"$lookup": bson.M{
-			"from":         pbehaviorlib.TypeCollectionName,
-			"localField":   "alarm_counters.type",
-			"foreignField": "_id",
-			"as":           "alarm_counters.type",
-		}},
-		{"$unwind": bson.M{"path": "$alarm_counters.type", "preserveNullAndEmptyArrays": true}},
-		{"$project": bson.M{
-			"_id":            "$_id",
-			"data":           "$$ROOT",
-			"alarm_counters": bson.A{"$alarm_counters"},
-		}},
+		{"$project": bson.M{"pbh_types": 0}},
+		{"$project": bson.M{"_id": "$_id", "alarm_counters": "$alarm_counters", "data": "$$ROOT"}},
+
 		{"$replaceRoot": bson.M{
 			"newRoot": bson.M{"$mergeObjects": bson.A{
 				"$data",
