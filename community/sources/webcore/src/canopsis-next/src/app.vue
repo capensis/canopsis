@@ -3,8 +3,6 @@
     v-layout(v-if="!pending")
       the-navigation#main-navigation(v-if="shownNavigation")
       v-content#main-content
-        | {{ test }}
-        c-filter-infos-attribute-field(v-model="test", :items="[{ value: 'test', text: 'Test' }]")
         active-broadcast-message
         router-view(:key="routeViewKey")
     the-sidebar
@@ -49,7 +47,6 @@ export default {
   ],
   data() {
     return {
-      test: 'infos.',
       pending: true,
     };
   },
