@@ -22,8 +22,9 @@ map $sent_http_content_type $expires_time {
 include /etc/nginx/resolvers.inc;
 
 server {
-	listen 80;
-	listen [::]:80;
+	listen 8080;
+	listen [::]:8080;
+ 
 
 	root /opt/canopsis/srv/www/;
 
