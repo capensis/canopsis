@@ -3,6 +3,7 @@ package entitybasic
 import (
 	"context"
 	"fmt"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -53,14 +54,11 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Entity, error) {
 			"restrictSearchWithMatch": bson.M{"type": bson.M{"$in": s.basicTypes}},
 			"maxDepth":                0,
 		}},
-		{"$unwind": bson.M{"path": "$changeable_impact", "preserveNullAndEmptyArrays": true}},
-		{"$sort": bson.M{"changeable_impact._id": 1}},
-		{"$group": bson.M{
-			"_id":               "$_id",
-			"data":              bson.M{"$first": "$$ROOT"},
-			"depends":           bson.M{"$first": "$depends"},
-			"changeable_impact": bson.M{"$push": "$changeable_impact"},
+		{"$addFields": bson.M{
+			"changeable_impact": bson.M{"$map": bson.M{"input": "$changeable_impact", "as": "each", "in": "$$each._id"}},
 		}},
+		{"$project": bson.M{"_id": "$_id", "changeable_impact": "$changeable_impact", "data": "$$ROOT", "depends": "$depends"}},
+		{"$project": bson.M{"data.changeable_impact": 0}},
 		{"$graphLookup": bson.M{
 			"from":                    mongo.EntityMongoCollection,
 			"startWith":               "$depends",
@@ -70,14 +68,10 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Entity, error) {
 			"restrictSearchWithMatch": bson.M{"type": bson.M{"$in": s.basicTypes}},
 			"maxDepth":                0,
 		}},
-		{"$unwind": bson.M{"path": "$changeable_depends", "preserveNullAndEmptyArrays": true}},
-		{"$sort": bson.M{"changeable_depends._id": 1}},
-		{"$group": bson.M{
-			"_id":                "$_id",
-			"data":               bson.M{"$first": "$data"},
-			"changeable_impact":  bson.M{"$first": "$changeable_impact"},
-			"changeable_depends": bson.M{"$push": "$changeable_depends"},
+		{"$addFields": bson.M{
+			"changeable_depends": bson.M{"$map": bson.M{"input": "$changeable_depends", "as": "each", "in": "$$each._id"}},
 		}},
+		{"$project": bson.M{"depends": 0}},
 		{"$replaceRoot": bson.M{
 			"newRoot": bson.M{"$mergeObjects": bson.A{
 				"$data",
@@ -85,12 +79,12 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Entity, error) {
 					"changeable_impact": bson.M{"$map": bson.M{
 						"input": "$changeable_impact",
 						"as":    "i",
-						"in":    "$$i._id",
+						"in":    "$$i",
 					}},
 					"changeable_depends": bson.M{"$map": bson.M{
 						"input": "$changeable_depends",
 						"as":    "d",
-						"in":    "$$d._id",
+						"in":    "$$d",
 					}},
 				},
 			}},
