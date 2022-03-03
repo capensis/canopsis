@@ -34,7 +34,7 @@ export default {
   common: {
     ok: 'Ok',
     undefined: 'Non défini',
-    entity: 'Entité',
+    entity: 'Entité | Entités',
     service: 'Service',
     widget: 'Widget',
     addWidget: 'Ajouter un widget',
