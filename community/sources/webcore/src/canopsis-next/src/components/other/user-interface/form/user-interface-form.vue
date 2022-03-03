@@ -22,13 +22,10 @@
         :label="$t('userInterface.language')"
       )
     v-layout(row)
-      v-text-field(
-        v-field.number="form.max_matched_items",
-        v-validate="'numeric|min_value:1'",
+      c-number-field(
+        v-field="form.max_matched_items",
         :label="$t('userInterface.maxMatchedItems')",
-        :error-messages="errors.collect('max_matched_items')",
         :min="1",
-        type="number",
         name="max_matched_items"
       )
         c-help-icon(
@@ -39,13 +36,10 @@
           left
         )
     v-layout(row)
-      v-text-field(
-        v-field.number="form.check_count_request_timeout",
-        v-validate="'numeric|min_value:1'",
+      c-number-field(
+        v-field="form.check_count_request_timeout",
         :label="$t('userInterface.checkCountRequestTimeout')",
-        :error-messages="errors.collect('check_count_request_timeout')",
         :min="1",
-        type="number",
         name="check_count_request_timeout"
       )
         c-help-icon(

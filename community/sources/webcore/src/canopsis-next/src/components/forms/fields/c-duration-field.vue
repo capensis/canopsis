@@ -1,15 +1,13 @@
 <template lang="pug">
   v-layout(row)
     v-flex.pr-3(xs8)
-      v-text-field(
-        v-field.number="duration.value",
-        v-validate="durationValidateRules",
+      c-number-field(
+        v-field="duration.value",
         :label="label || $t('common.duration')",
-        :error-messages="errors.collect(valueFieldName)",
         :disabled="disabled",
         :name="valueFieldName",
-        :min="min",
-        type="number"
+        :required="isRequired",
+        :min="min"
       )
     v-flex(xs4)
       v-select(
@@ -106,14 +104,6 @@ export default {
 
     isRequired() {
       return this.required || isNumber(this.duration.value) || Boolean(this.duration.unit);
-    },
-
-    durationValidateRules() {
-      return {
-        required: this.isRequired,
-        numeric: true,
-        min_value: this.min,
-      };
     },
 
     unitValidateRules() {
