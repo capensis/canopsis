@@ -1,12 +1,12 @@
 <template lang="pug">
   c-number-field(
     v-field="value",
-    v-validate="rules",
     :label="label",
     :name="name",
     :max="max",
     :min="min",
-    prefix="%"
+    prefix="%",
+    required
   )
 </template>
 
@@ -37,16 +37,6 @@ export default {
     min: {
       type: Number,
       default: 0,
-    },
-  },
-  computed: {
-    rules() {
-      return {
-        required: true,
-        numeric: true,
-        min_value: this.min,
-        max_value: this.max,
-      };
     },
   },
 };
