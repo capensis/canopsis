@@ -3,13 +3,6 @@
     v-layout(v-if="!pending")
       the-navigation#main-navigation(v-if="shownNavigation")
       v-content#main-content
-        v-layout
-          v-flex(xs4)
-            c-entities-select-field(
-              :value="['value_1', 'value_2']",
-              :items="[{ _id: 'value_1', name: 'Value 1'}, { _id: 'value_2', name: 'Value 2'}]"
-            )
-            c-entities-select-field(value="asdasd")
         active-broadcast-message
         router-view(:key="routeViewKey")
     the-sidebar
