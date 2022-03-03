@@ -56,6 +56,8 @@ const (
 	ValueTypeUserPreferences = "userpreferences"
 
 	ValueTypeFilter = "filter"
+
+	ValueTypePattern = "pattern"
 )
 
 type ActionLogger interface {

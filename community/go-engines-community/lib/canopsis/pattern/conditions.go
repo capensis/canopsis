@@ -40,13 +40,13 @@ const (
 type FieldCondition struct {
 	Field string `json:"field" bson:"field"`
 	// FieldType is only defined for custom fields, ex: infos.
-	FieldType string    `json:"field_type" bson:"field_type,omitempty"`
+	FieldType string    `json:"field_type,omitempty" bson:"field_type,omitempty"`
 	Condition Condition `json:"cond" bson:"cond"`
 }
 
 // Condition represents an expression to decide if a value fits.
 type Condition struct {
-	Type  string      `json:"cond" bson:"cond"`
+	Type  string      `json:"type" bson:"type"`
 	Value interface{} `json:"value" bson:"value"`
 }
 
