@@ -17,15 +17,12 @@ COPY ./community/docker /app/community/docker
 COPY ./community/deploy-ansible /app/community/deploy-ansible
 RUN make install DESTDIR=/installroot
 
-#FROM nginx:${NGINX_VERSION}
 FROM nginxinc/nginx-unprivileged:${NGINX_VERSION}
 
 # Put the nginx certificates in a volume
 RUN mkdir -m 750 -p /etc/nginx/ssl && \
 	chown -R nginx /etc/nginx/ssl
 VOLUME /etc/nginx/ssl
-
-#RUN mkdir -p -m 0750 /etc/nginx/ssl
 
 COPY --from=build /installroot/ /
 

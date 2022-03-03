@@ -1,5 +1,5 @@
 #!/bin/sh
-set -eux
+set -eu
 
 NGINX_CONFIGURATION_DIRECTORY="/tmp/etc/nginx"
 
