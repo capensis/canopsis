@@ -187,7 +187,7 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 			if assignedInstructions == nil {
 				assignedInstructions = make([]alarmapi.InstructionWithAlarms, 0)
 			}
-			res.Data[idx].AssignedInstructions = &assignedInstructions
+			res.Data[idx].AssignedInstructions = assignedInstructions
 			res.Data[idx].IsAutoInstructionRunning = statusesByAlarm[v.AlarmID].AutoRunning
 			res.Data[idx].IsAllAutoInstructionsCompleted = statusesByAlarm[v.AlarmID].AutoAllCompleted
 			res.Data[idx].IsAutoInstructionFailed = statusesByAlarm[v.AlarmID].AutoFailed
