@@ -7,47 +7,14 @@ exports[`c-duration-field Renders \`c-duration-field\` with custom props 1`] = `
   <div
     class="flex pr-3 xs8"
   >
-    <div
-      class="v-input v-text-field v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
-    >
-      <div
-        class="v-input__control"
-      >
-        <div
-          class="v-input__slot"
-        >
-          <div
-            class="v-text-field__slot"
-          >
-            <label
-              aria-hidden="true"
-              class="v-label v-label--active v-label--is-disabled theme--light"
-              style="left: 0px; position: absolute;"
-            >
-              Custom label
-            </label>
-            <input
-              aria-label="Custom label"
-              disabled="disabled"
-              min="10"
-              name="customName.value"
-              type="number"
-            />
-          </div>
-        </div>
-        <div
-          class="v-text-field__details"
-        >
-          <div
-            class="v-messages theme--light"
-          >
-            <div
-              class="v-messages__wrapper"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
+    <c-number-field-stub
+      disabled="true"
+      label="Custom label"
+      min="10"
+      name="customName.value"
+      required="true"
+      value="12"
+    />
   </div>
   <div
     class="flex xs4"
@@ -199,46 +166,13 @@ exports[`c-duration-field Renders \`c-duration-field\` with default props 1`] = 
   <div
     class="flex pr-3 xs8"
   >
-    <div
-      class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
-    >
-      <div
-        class="v-input__control"
-      >
-        <div
-          class="v-input__slot"
-        >
-          <div
-            class="v-text-field__slot"
-          >
-            <label
-              aria-hidden="true"
-              class="v-label v-label--active theme--light"
-              style="left: 0px; position: absolute;"
-            >
-              Duration
-            </label>
-            <input
-              aria-label="Duration"
-              min="1"
-              name="duration.value"
-              type="number"
-            />
-          </div>
-        </div>
-        <div
-          class="v-text-field__details"
-        >
-          <div
-            class="v-messages theme--light"
-          >
-            <div
-              class="v-messages__wrapper"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
+    <c-number-field-stub
+      label="Duration"
+      min="1"
+      name="duration.value"
+      required="true"
+      value="1"
+    />
   </div>
   <div
     class="flex xs4"
@@ -384,52 +318,13 @@ exports[`c-duration-field Renders \`c-duration-field\` with duration value as st
   <div
     class="flex pr-3 xs8"
   >
-    <div
-      class="v-input v-text-field v-input--has-state v-input--is-label-active v-input--is-dirty theme--light error--text"
-    >
-      <div
-        class="v-input__control"
-      >
-        <div
-          class="v-input__slot"
-        >
-          <div
-            class="v-text-field__slot"
-          >
-            <label
-              aria-hidden="true"
-              class="v-label v-label--active theme--light error--text"
-              style="left: 0px; position: absolute;"
-            >
-              Duration
-            </label>
-            <input
-              aria-label="Duration"
-              min="1"
-              name="duration.value"
-              type="number"
-            />
-          </div>
-        </div>
-        <div
-          class="v-text-field__details"
-        >
-          <div
-            class="v-messages theme--light error--text"
-          >
-            <div
-              class="v-messages__wrapper"
-            >
-              <div
-                class="v-messages__message message-transition-enter message-transition-enter-active"
-              >
-                The field may only contain numeric characters
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <c-number-field-stub
+      label="Duration"
+      min="1"
+      name="duration.value"
+      required="true"
+      value="asd"
+    />
   </div>
   <div
     class="flex xs4"
@@ -506,46 +401,12 @@ exports[`c-duration-field Renders \`c-duration-field\` with duration value as un
   <div
     class="flex pr-3 xs8"
   >
-    <div
-      class="v-input v-text-field theme--light"
-    >
-      <div
-        class="v-input__control"
-      >
-        <div
-          class="v-input__slot"
-        >
-          <div
-            class="v-text-field__slot"
-          >
-            <label
-              aria-hidden="true"
-              class="v-label theme--light"
-              style="left: 0px; position: absolute;"
-            >
-              Duration
-            </label>
-            <input
-              aria-label="Duration"
-              min="1"
-              name="duration.value"
-              type="number"
-            />
-          </div>
-        </div>
-        <div
-          class="v-text-field__details"
-        >
-          <div
-            class="v-messages theme--light"
-          >
-            <div
-              class="v-messages__wrapper"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
+    <c-number-field-stub
+      label="Duration"
+      min="1"
+      name="duration.value"
+      required="true"
+    />
   </div>
   <div
     class="flex xs4"
@@ -623,52 +484,13 @@ exports[`c-duration-field Renders \`c-duration-field\` with errors 1`] = `
   <div
     class="flex pr-3 xs8"
   >
-    <div
-      class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
-    >
-      <div
-        class="v-input__control"
-      >
-        <div
-          class="v-input__slot"
-        >
-          <div
-            class="v-text-field__slot"
-          >
-            <label
-              aria-hidden="true"
-              class="v-label v-label--active theme--light"
-              style="left: 0px; position: absolute;"
-            >
-              Duration
-            </label>
-            <input
-              aria-label="Duration"
-              min="1"
-              name="customName.value"
-              type="number"
-            />
-          </div>
-        </div>
-        <div
-          class="v-text-field__details"
-        >
-          <div
-            class="v-messages theme--light"
-          >
-            <div
-              class="v-messages__wrapper"
-            >
-              <div
-                class="v-messages__message message-transition-leave message-transition-leave-active"
-              >
-                Value error
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <c-number-field-stub
+      label="Duration"
+      min="1"
+      name="customName.value"
+      required="true"
+      value="1"
+    />
   </div>
   <div
     class="flex xs4"
@@ -888,46 +710,13 @@ exports[`c-duration-field Renders \`c-duration-field\` with long time list 1`] =
   <div
     class="flex pr-3 xs8"
   >
-    <div
-      class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
-    >
-      <div
-        class="v-input__control"
-      >
-        <div
-          class="v-input__slot"
-        >
-          <div
-            class="v-text-field__slot"
-          >
-            <label
-              aria-hidden="true"
-              class="v-label v-label--active theme--light"
-              style="left: 0px; position: absolute;"
-            >
-              Duration
-            </label>
-            <input
-              aria-label="Duration"
-              min="1"
-              name="duration.value"
-              type="number"
-            />
-          </div>
-        </div>
-        <div
-          class="v-text-field__details"
-        >
-          <div
-            class="v-messages theme--light"
-          >
-            <div
-              class="v-messages__wrapper"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
+    <c-number-field-stub
+      label="Duration"
+      min="1"
+      name="duration.value"
+      required="true"
+      value="1"
+    />
   </div>
   <div
     class="flex xs4"
@@ -1141,46 +930,13 @@ exports[`c-duration-field Renders \`c-duration-field\` with value is greater tha
   <div
     class="flex pr-3 xs8"
   >
-    <div
-      class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
-    >
-      <div
-        class="v-input__control"
-      >
-        <div
-          class="v-input__slot"
-        >
-          <div
-            class="v-text-field__slot"
-          >
-            <label
-              aria-hidden="true"
-              class="v-label v-label--active theme--light"
-              style="left: 0px; position: absolute;"
-            >
-              Duration
-            </label>
-            <input
-              aria-label="Duration"
-              min="100"
-              name="duration.value"
-              type="number"
-            />
-          </div>
-        </div>
-        <div
-          class="v-text-field__details"
-        >
-          <div
-            class="v-messages theme--light"
-          >
-            <div
-              class="v-messages__wrapper"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
+    <c-number-field-stub
+      label="Duration"
+      min="100"
+      name="duration.value"
+      required="true"
+      value="101"
+    />
   </div>
   <div
     class="flex xs4"
