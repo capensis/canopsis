@@ -2,13 +2,15 @@ package entity
 
 import (
 	"context"
+	"errors"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+var ErrNotFound = errors.New("entity is not found")
 
 // mongoAdapter ...
 type mongoAdapter struct {
@@ -47,7 +49,7 @@ func (a *mongoAdapter) Get(ctx context.Context, id string) (types.Entity, bool) 
 	entity, err := a.GetEntityByID(ctx, id)
 	entity.EnsureInitialized()
 
-	if err == mongodriver.ErrNoDocuments {
+	if err == ErrNotFound {
 		return entity, false
 	} else if err != nil {
 		return entity, false
@@ -63,15 +65,13 @@ func (a *mongoAdapter) GetEntityByID(ctx context.Context, id string) (types.Enti
 	res := a.dbCollection.FindOne(ctx, bson.M{"_id": id})
 	if err := res.Err(); err != nil {
 		if err == mongodriver.ErrNoDocuments {
-			return ent, errt.NewNotFound(err)
+			return ent, ErrNotFound
 		}
 
 		return ent, err
 	}
 
-	err := res.Decode(&ent)
-
-	return ent, err
+	return ent, res.Decode(&ent)
 }
 
 func (a *mongoAdapter) Count(ctx context.Context) (int, error) {

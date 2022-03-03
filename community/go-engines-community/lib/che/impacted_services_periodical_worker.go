@@ -2,13 +2,13 @@ package che
 
 import (
 	"context"
-	libcontext "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
 	"github.com/rs/zerolog"
 	"time"
 )
 
 type impactedServicesPeriodicalWorker struct {
-	EnrichmentCenter   libcontext.EnrichmentCenter
+	Manager            contextgraph.Manager
 	PeriodicalInterval time.Duration
 	Logger             zerolog.Logger
 }
@@ -18,7 +18,7 @@ func (w *impactedServicesPeriodicalWorker) GetInterval() time.Duration {
 }
 
 func (w *impactedServicesPeriodicalWorker) Work(ctx context.Context) {
-	err := w.EnrichmentCenter.UpdateImpactedServices(ctx)
+	err := w.Manager.UpdateImpactedServices(ctx)
 	if err != nil {
 		w.Logger.Warn().Err(err).Msg("error while recomputing impacted services for connectors")
 	}
