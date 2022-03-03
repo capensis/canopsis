@@ -138,6 +138,7 @@ func (p *parser) Parse(content []byte) (map[string][]interface{}, error) {
 
 func (p *parser) processItem(index int, data yaml.MapSlice, references map[string]interface{}) (map[string]interface{}, error) {
 	doc := make(map[string]interface{}, len(data))
+	var err error
 
 	for _, v := range data {
 		key, ok := v.Key.(string)
@@ -152,81 +153,81 @@ func (p *parser) processItem(index int, data yaml.MapSlice, references map[strin
 				if s, ok := refV.(string); ok {
 					key = s
 				} else {
-					return nil, fmt.Errorf("not string freference %q for %q", ref, key)
+					return nil, fmt.Errorf("not string reference %q for %q", ref, key)
 				}
 			} else {
 				return nil, fmt.Errorf("unknown reference %q for %q", ref, key)
 			}
 		}
 
-		switch val := v.Value.(type) {
-		case yaml.MapSlice:
-			var err error
-			doc[key], err = p.processItem(index, val, references)
-			if err != nil {
-				return nil, fmt.Errorf("cannot process %q: %w", key, err)
-			}
-		case []interface{}:
-			var err error
-			newVal := make([]interface{}, len(val))
-			for i := range val {
-				if m, ok := val[i].(yaml.MapSlice); ok {
-					newVal[i], err = p.processItem(index, m, references)
-					if err != nil {
-						return nil, fmt.Errorf("cannot process %q: %w", key, err)
-					}
-				} else {
-					newVal[i] = val[i]
-				}
-			}
-			doc[key] = newVal
-		case string:
-			matches := p.referenceRe.FindStringSubmatch(val)
-			if len(matches) > 0 {
-				ref := matches[p.referenceRe.SubexpIndex("ref")]
-				doc[key], ok = references[ref]
-				if !ok {
-					return nil, fmt.Errorf("unknown reference %q for %q", ref, key)
-				}
-				continue
-			}
-
-			matches = p.methodRe.FindStringSubmatch(val)
-			if len(matches) == 0 {
-				doc[key] = v.Value
-				continue
-			}
-
-			method := matches[p.methodRe.SubexpIndex("method")]
-			args := matches[p.methodRe.SubexpIndex("args")]
-			field := matches[p.methodRe.SubexpIndex("field")]
-
-			switch method {
-			case keyCurrent:
-				if field == "" {
-					return nil, fmt.Errorf("%q field not defined for %q", keyCurrent, key)
-				}
-
-				if fieldV, ok := doc[field]; ok {
-					doc[key] = fieldV
-				} else {
-					return nil, fmt.Errorf("missing %q field for %q", keyCurrent, key)
-				}
-			case keyIndex:
-				doc[key] = index
-			default:
-				var err error
-				doc[key], err = callReflectMethod(p.reflectFaker, method, args)
-				if err != nil {
-					return nil, fmt.Errorf("cannot call faker method for %q: %w", key, err)
-				}
-			}
-		default:
-			doc[key] = v.Value
+		doc[key], err = p.processValue(v.Value, index, doc, references)
+		if err != nil {
+			return nil, fmt.Errorf("cannot process %q: %w", key, err)
 		}
 	}
 
 	return doc, nil
+}
+
+func (p *parser) processValue(fieldVal interface{}, index int, doc map[string]interface{}, references map[string]interface{}) (interface{}, error) {
+	switch val := fieldVal.(type) {
+	case yaml.MapSlice:
+		return p.processItem(index, val, references)
+	case []interface{}:
+		var err error
+		newVal := make([]interface{}, len(val))
+		for i := range val {
+			newVal[i], err = p.processValue(val[i], index, doc, references)
+			if err != nil {
+				return nil, err
+			}
+		}
+		return newVal, nil
+	case string:
+		matches := p.referenceRe.FindStringSubmatch(val)
+		if len(matches) > 0 {
+			ref := matches[p.referenceRe.SubexpIndex("ref")]
+			newVal, ok := references[ref]
+			if !ok {
+				return nil, fmt.Errorf("unknown reference %q", ref)
+			}
+
+			return newVal, nil
+		}
+
+		matches = p.methodRe.FindStringSubmatch(val)
+		if len(matches) == 0 {
+			return fieldVal, nil
+		}
+
+		method := matches[p.methodRe.SubexpIndex("method")]
+		args := matches[p.methodRe.SubexpIndex("args")]
+		field := matches[p.methodRe.SubexpIndex("field")]
+
+		switch method {
+		case keyCurrent:
+			if field == "" {
+				return nil, fmt.Errorf("%q field not defined", keyCurrent)
+			}
+
+			if fieldV, ok := doc[field]; ok {
+				return fieldV, nil
+			}
+
+			return nil, fmt.Errorf("missing %q field", keyCurrent)
+		case keyIndex:
+			return index, nil
+		default:
+			newVal, err := callReflectMethod(p.reflectFaker, method, args)
+			if err != nil {
+				return nil, fmt.Errorf("cannot call faker method: %w", err)
+			}
+
+			return newVal, nil
+		}
+	default:
+		return fieldVal, nil
+	}
 }
 
 func mergeOrderedMaps(l, r yaml.MapSlice) yaml.MapSlice {

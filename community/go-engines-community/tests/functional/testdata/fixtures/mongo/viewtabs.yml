@@ -1,5 +1,13 @@
 viewtabs:
-  viewtabs_1:
+  tab (template):
+    _id: <UUID()>
+    title: <Word()>
+    position: 0
+    author: root
+    created: <NowUnix()>
+    updated: <Current().created>
+
+  tab_to_viewgroup_get_1 (extend tab):
     _id: test-tab-to-viewgroup-get-1
     author: test-user-to-viewgroup-get
     created: 1611229670
@@ -7,7 +15,8 @@ viewtabs:
     title: test-tab-to-viewgroup-get-1-title
     updated: 1611229670
     view: test-view-to-viewgroup-get-1
-  viewtabs_2:
+  
+  tab_to_viewgroup_get_2 (extend tab):
     _id: test-tab-to-viewgroup-get-2
     author: test-user-to-viewgroup-get
     created: 1611229670
@@ -15,7 +24,8 @@ viewtabs:
     title: test-tab-to-viewgroup-get-2-title
     updated: 1611229670
     view: test-view-to-viewgroup-get-1
-  viewtabs_3:
+  
+  tab_to_view_get_1 (extend tab):
     _id: test-tab-to-view-get-1
     author: test-tab-to-view-get-1-author
     created: 1611229670
@@ -23,7 +33,8 @@ viewtabs:
     title: test-tab-to-view-get-1-title
     updated: 1611229670
     view: test-view-to-get-1
-  viewtabs_4:
+  
+  tab_to_view_get_2 (extend tab):
     _id: test-tab-to-view-get-2
     author: test-tab-to-view-get-2-author
     created: 1611229670
@@ -31,15 +42,12 @@ viewtabs:
     title: test-tab-to-view-get-2-title
     updated: 1611229670
     view: test-view-to-get-1
-  viewtabs_5:
+  
+  tab_junit_edit_dir_param (extend tab):
     _id: test-tab-to-junit-edit-dir-param
-    author: test-author-to-junit-edit-dir-param
-    created: 1611229670
-    position: 0
-    title: test-tab-to-junit-edit-dir-param-title
-    updated: 1611229670
     view: test-view-to-junit-edit-dir-param
-  viewtabs_6:
+  
+  tab_to_get (extend tab):
     _id: test-tab-to-get
     author: test-author-to-tab-get
     created: 1611229670
@@ -47,167 +55,97 @@ viewtabs:
     title: test-tab-to-get-title
     updated: 1611229670
     view: test-view-to-tab-edit
-  viewtabs_7:
+  
+  tab_to_update (extend tab):
     _id: test-tab-to-update
-    author: test-author-to-tab-update
     created: 1611229670
-    position: 0
-    title: test-tab-to-update-title
-    updated: 1611229670
     view: test-view-to-tab-edit
-  viewtabs_8:
+  
+  tab_to_delete (extend tab):
     _id: test-tab-to-delete
-    author: test-author-to-tab-delete
-    created: 1611229670
-    position: 1
-    title: test-tab-to-delete-title
-    updated: 1611229670
     view: test-view-to-tab-edit
-  viewtabs_9:
+  
+  tab_to_playlist_edit_2 (extend tab):
     _id: test-tab-to-playlist-edit-2
-    author: test-author-to-playlist-edit
-    created: 1611229670
-    position: 6
-    title: test-tab-to-playlist-edit-2-title
-    updated: 1611229670
     view: test-view-to-playlist-edit
-  viewtabs_10:
+  
+  tab_to_delete_linked (extend tab):
     _id: test-tab-to-delete-linked
-    author: test-author-to-tab-delete-linked
-    created: 1611229670
-    position: 7
-    title: test-tab-to-delete-linked-title
-    updated: 1611229670
     view: test-view-to-tab-edit
-  viewtabs_11:
+  
+  tab_to_check_access (extend tab):
     _id: test-tab-to-check-access
-    author: test-author-to-tab-check-access
-    created: 1611229670
-    position: 0
-    title: test-tab-to-check-access-title
-    updated: 1611229670
     view: test-view-to-tab-check-access
-  viewtabs_12:
+  
+  tab_to_playlist_edit_1 (extend tab):
     _id: test-tab-to-playlist-edit-1
-    author: test-author-to-playlist-edit
-    created: 1611229670
-    position: 0
-    title: test-tab-to-playlist-edit-1-title
-    updated: 1611229670
     view: test-view-to-playlist-edit
-  viewtabs_13:
+  
+  tab_to_view_delete (extend tab):
     _id: test-tab-to-view-delete
-    author: test-author-to-view-delete
-    created: 1611229670
-    position: 0
-    title: test-tab-to-view-delete-title
-    updated: 1611229670
     view: test-view-to-delete-2
-  viewtabs_14:
+  
+  tab_to_user_preferences_update_1 (extend tab):
     _id: test-tab-to-user-preferences-update-1
-    author: test-author-to-user-preferences-update
-    created: 1611229670
-    position: 0
-    title: test-tab-to-user-preferences-update-1-title
-    updated: 1611229670
     view: test-view-to-user-preferences-update-1
-  viewtabs_15:
+
+  tab_to_user_preferences_update_2 (extend tab):
     _id: test-tab-to-user-preferences-update-2
-    author: test-author-to-user-preferences-update
-    created: 1611229670
-    position: 0
-    title: test-tab-to-user-preferences-update-2-title
-    updated: 1611229670
     view: test-view-to-user-preferences-update-2
-  viewtabs_16:
+  
+  tab_to_update_position_2 (extend tab):
     _id: test-tab-to-update-position-2
-    author: test-author-to-tab-update-position
-    created: 1611229670
     position: 0
-    title: test-tab-to-update-position-2-title
-    updated: 1611229670
     view: test-view-to-tab-update-position-2
-  viewtabs_17:
+  
+  tab_to_update_position_3_1 (extend tab):
     _id: test-tab-to-update-position-3-1
-    author: test-author-to-tab-update-position
-    created: 1611229670
     position: 0
-    title: test-tab-to-update-position-3-1-title
-    updated: 1611229670
     view: test-view-to-tab-update-position-3
-  viewtabs_18:
+  
+  tab_to_update_position_3_2 (extend tab):
     _id: test-tab-to-update-position-3-2
-    author: test-author-to-tab-update-position
-    created: 1611229670
     position: 1
-    title: test-tab-to-update-position-3-2-title
-    updated: 1611229670
     view: test-view-to-tab-update-position-3
-  viewtabs_19:
+  
+  tab_to_update_position_4 (extend tab):
     _id: test-tab-to-update-position-4
-    author: test-author-to-tab-update-position
-    created: 1611229670
     position: 0
-    title: test-tab-to-update-position-4-title
-    updated: 1611229670
     view: test-view-to-tab-update-position-4
-  viewtabs_20:
+  
+  tab_to_junit_test_suites_get (extend tab):
     _id: test-tab-to-junit-test-suites-get
-    author: test-author-to-junit-test-suites-get
-    created: 1611229670
-    position: 0
-    title: test-tab-junit-test-suites-get-title
-    updated: 1611229670
     view: test-view-to-junit-test-suites-get
-  viewtabs_21:
+  
+  tab_to_widget_edit (extend tab):
     _id: test-tab-to-widget-edit
-    author: test-author-to-widget-edit
-    created: 1611229670
-    position: 0
-    title: test-tab-to-widget-edit-title
-    updated: 1611229670
     view: test-view-to-widget-edit
-  viewtabs_22:
+  
+  tab_to_widget_check_access (extend tab):
     _id: test-tab-to-widget-check-access
-    author: test-author-to-widget-check-access
-    created: 1611229670
-    position: 0
-    title: test-tab-to-widget-check-access-title
-    updated: 1611229670
     view: test-view-to-widget-check-access
-  viewtabs_23:
+  
+  tab_to_widget_update_grid_position_1 (extend tab):
     _id: test-tab-to-widget-update-grid-position-1
-    author: test-author-to-widget-update-grid-position
-    created: 1611229670
     position: 0
-    title: test-tab-to-widget-update-grid-position-1-title
-    updated: 1611229670
     view: test-view-to-widget-update-grid-position-1
-  viewtabs_24:
+
+  tab_to_widget_update_grid_position_2 (extend tab):
     _id: test-tab-to-widget-update-grid-position-2
-    author: test-author-to-widget-update-grid-position
-    created: 1611229670
     position: 1
-    title: test-tab-to-widget-update-grid-position-2-title
-    updated: 1611229670
     view: test-view-to-widget-update-grid-position-2
-  viewtabs_25:
+
+  tab_to_widget_update_grid_position_3 (extend tab):
     _id: test-tab-to-widget-update-grid-position-3
-    author: test-author-to-widget-update-grid-position
-    created: 1611229670
     position: 0
-    title: test-tab-to-widget-update-grid-position-3-title
-    updated: 1611229670
     view: test-view-to-widget-update-grid-position-2
-  viewtabs_26:
+  
+  tab_to_widget_update_grid_position_4 (extend tab):
     _id: test-tab-to-widget-update-grid-position-4
-    author: test-author-to-widget-update-grid-position
-    created: 1611229670
     position: 0
-    title: test-tab-to-widget-update-grid-position-4-title
-    updated: 1611229670
     view: test-view-to-widget-update-grid-position-3
-  viewtabs_27:
+  
+  tab_to_export_1 (extend tab):
     _id: test-tab-to-export-1
     author: test-author-to-view-export
     created: 1611229670
@@ -215,7 +153,8 @@ viewtabs:
     title: test-tab-to-export-1-title
     updated: 1611229670
     view: test-view-to-export-1
-  viewtabs_28:
+  
+  tab_to_export_2 (extend tab):
     _id: test-tab-to-export-2
     author: test-author-to-view-export
     created: 1611229670
@@ -223,67 +162,36 @@ viewtabs:
     title: test-tab-to-export-2-title
     updated: 1611229670
     view: test-view-to-export-1
-  viewtabs_29:
+  
+  tab_to_user_preferences_get (extend tab):
     _id: test-tab-to-user-preferences-get
-    author: test-author-to-user-preferences-get
-    created: 1611229670
-    position: 0
-    title: test-tab-to-user-preferences-get-title
-    updated: 1611229670
     view: test-view-to-user-preferences-get
-  viewtabs_30:
+  
+  tab_to_view_copy_1 (extend tab):
     _id: test-tab-to-view-copy-1
-    author: test-author-to-view-copy
-    created: 1611229670
-    position: 0
     title: test-tab-to-view-copy-1-title
-    updated: 1611229670
     view: test-view-to-copy-1
-  viewtabs_31:
+  
+  tab_to_copy_1 (extend tab):
     _id: test-tab-to-copy-1
-    author: test-author-to-tab-copy
-    created: 1611229670
-    position: 0
-    title: test-tab-to-copy-1-title
-    updated: 1611229670
     view: test-view-to-tab-copy-1
-  viewtabs_32:
+  
+  tab_to_copy_2 (extend tab):
     _id: test-tab-to-copy-2
-    author: test-author-to-tab-copy
-    created: 1611229670
-    position: 0
-    title: test-tab-to-copy-2-title
-    updated: 1611229670
     view: test-view-to-tab-copy-2
-  viewtabs_33:
+  
+  tab_to_copy_3 (extend tab):
     _id: test-tab-to-copy-3
-    author: test-author-to-tab-copy
-    created: 1611229670
-    position: 0
-    title: test-tab-to-copy-3-title
-    updated: 1611229670
     view: test-view-to-tab-copy-3
-  viewtabs_34:
+  
+  tab_to_widget_copy_1 (extend tab):
     _id: test-tab-to-widget-copy-1
-    author: test-author-to-widget-copy
-    created: 1611229670
-    position: 0
-    title: test-tab-to-widget-copy-1-title
-    updated: 1611229670
     view: test-view-to-widget-copy-1
-  viewtabs_35:
+  
+  tab_to_widget_copy_2 (extend tab):
     _id: test-tab-to-widget-copy-2
-    author: test-author-to-widget-copy
-    created: 1611229670
-    position: 0
-    title: test-tab-to-widget-copy-2-title
-    updated: 1611229670
     view: test-view-to-widget-copy-2
-  viewtabs_36:
+  
+  tab_to_widget_copy_3 (extend tab):
     _id: test-tab-to-widget-copy-3
-    author: test-author-to-widget-copy
-    created: 1611229670
-    position: 0
-    title: test-tab-to-widget-copy-3-title
-    updated: 1611229670
     view: test-view-to-widget-copy-3

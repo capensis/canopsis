@@ -27,6 +27,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/notification"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorcomment"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorexception"
@@ -1322,6 +1323,34 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionDelete, enforcer),
 				flappingRuleAPI.Delete,
+			)
+		}
+
+		patternRouter := protected.Group("/patterns")
+		{
+			patternRouter.Use(middleware.OnlyAuth())
+			patternAPI := pattern.NewApi(pattern.NewStore(dbClient), enforcer, actionLogger)
+			patternRouter.POST(
+				"",
+				middleware.SetAuthor(),
+				patternAPI.Create,
+			)
+			patternRouter.GET(
+				"",
+				patternAPI.List,
+			)
+			patternRouter.GET(
+				"/:id",
+				patternAPI.Get,
+			)
+			patternRouter.PUT(
+				"/:id",
+				middleware.SetAuthor(),
+				patternAPI.Update,
+			)
+			patternRouter.DELETE(
+				"/:id",
+				patternAPI.Delete,
 			)
 		}
 	}

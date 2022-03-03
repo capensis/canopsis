@@ -183,9 +183,14 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 				return assignedInstructionsMap[v.AlarmID][i].Name < assignedInstructionsMap[v.AlarmID][j].Name
 			})
 
-			res.Data[idx].AssignedInstructions = assignedInstructionsMap[v.AlarmID]
+			assignedInstructions := assignedInstructionsMap[v.AlarmID]
+			if assignedInstructions == nil {
+				assignedInstructions = make([]alarmapi.InstructionWithAlarms, 0)
+			}
+			res.Data[idx].AssignedInstructions = &assignedInstructions
 			res.Data[idx].IsAutoInstructionRunning = statusesByAlarm[v.AlarmID].AutoRunning
 			res.Data[idx].IsAllAutoInstructionsCompleted = statusesByAlarm[v.AlarmID].AutoAllCompleted
+			res.Data[idx].IsAutoInstructionFailed = statusesByAlarm[v.AlarmID].AutoFailed
 			res.Data[idx].IsManualInstructionWaitingResult = statusesByAlarm[v.AlarmID].ManualRunning
 		}
 	}
@@ -524,7 +529,7 @@ func getFindIconPipeline() []bson.M {
 
 func getFindEntitiesPipeline(location *time.Location) []bson.M {
 	year, month, day := time.Now().In(location).Date()
-	truncatedInLocation := time.Date(year, month, day, 0, 0, 0, 0, location)
+	truncatedInLocation := time.Date(year, month, day, 0, 0, 0, 0, location).Unix()
 
 	pipeline := []bson.M{
 		// Find category
@@ -537,17 +542,20 @@ func getFindEntitiesPipeline(location *time.Location) []bson.M {
 		{"$unwind": bson.M{"path": "$category", "preserveNullAndEmptyArrays": true}},
 		// Event statistics
 		{"$lookup": bson.M{
-			"from": mongo.EventStatistics,
-			"let":  bson.M{"id": "$_id"},
-			"pipeline": []bson.M{
-				{"$match": bson.M{"$and": []bson.M{
-					{"$expr": bson.M{"$eq": bson.A{"$_id", "$$id"}}},
-					{"last_event": bson.M{"$gt": truncatedInLocation.Unix()}},
-				}}},
-			},
+			"from":       mongo.EventStatistics,
+			"localField": "_id", "foreignField": "_id",
 			"as": "stats",
 		}},
 		{"$unwind": bson.M{"path": "$stats", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			// stats counters with "last_event" prior "truncatedInLocation" represent as 0
+			"stats.ok": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$gt": bson.A{"$stats.last_event", truncatedInLocation}},
+				"then": "$stats.ok", "else": 0}},
+			"stats.ko": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$gt": bson.A{"$stats.last_event", truncatedInLocation}},
+				"then": "$stats.ko", "else": 0}},
+		}},
 		// Find connected alarm.
 		{"$lookup": bson.M{
 			"from": alarm.AlarmCollectionName,

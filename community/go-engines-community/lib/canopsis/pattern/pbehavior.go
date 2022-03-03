@@ -40,6 +40,30 @@ func (p Pbehavior) Match(pbh pbehavior.PBehavior) (bool, error) {
 	return false, nil
 }
 
+func (p Pbehavior) Validate() bool {
+	emptyPbh := pbehavior.PBehavior{}
+
+	for _, group := range p {
+		for _, v := range group {
+			f := v.Field
+			cond := v.Condition
+			var err error
+
+			if str, ok := getPbehaviorStringField(emptyPbh, f); ok {
+				_, _, err = cond.MatchString(str)
+			} else {
+				err = ErrUnsupportedField
+			}
+
+			if err != nil {
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
 func (p Pbehavior) ToMongoQuery(prefix string) ([]bson.M, error) {
 	if len(p) == 0 {
 		return nil, nil

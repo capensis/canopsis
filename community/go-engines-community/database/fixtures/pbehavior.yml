@@ -1,8 +1,6 @@
 pbehavior_type:
   pbehavior_type (template):
     _id: <UUID()>
-    created: <NowUnix()>
-    updated: <Current().created>
     priority: <Index()>
 
   default_inactive (extend pbehavior_type):
@@ -27,3 +25,12 @@ pbehavior_type:
     description: Default pause
     icon_name: pause
     type: pause
+
+pbehavior_reason:
+  pbehavior_reason (template):
+    _id: <UUID()>
+    created: <NowUnix()>
+
+  default_reason (extend pbehavior_reason):
+    name: Default
+    description: Default

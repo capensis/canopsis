@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
@@ -78,35 +79,6 @@ func ValidateOneOfOrEmpty(fl validator.FieldLevel) bool {
 	return false
 }
 
-func ValidateAlarmPatterns(sl validator.FieldLevel) bool {
-	inf := sl.Field().Interface()
-	if inf == nil {
-		return true
-	}
-	patterns, ok := inf.([]interface{})
-
-	if !ok {
-		return false
-	}
-
-	for _, p := range patterns {
-		pattern, ok := p.(map[string]interface{})
-		if !ok {
-			return false
-		}
-		if value, ok := pattern["v"]; ok {
-			if pv, ok := value.(map[string]interface{}); ok {
-				if len(pv) == 0 {
-					return false
-				}
-			} else {
-				return false
-			}
-		}
-	}
-	return true
-}
-
 func ValidateID(fl validator.FieldLevel) bool {
 	v := fl.Field().String()
 	if v == "" {
@@ -120,6 +92,45 @@ func ValidateTimeFormat(fl validator.FieldLevel) bool {
 	v := fl.Field().String()
 
 	return v == "" || timeFormats[v] != ""
+}
+
+func ValidateAlarmPattern(fl validator.FieldLevel) bool {
+	i := fl.Field().Interface()
+	if i == nil {
+		return true
+	}
+	p, ok := i.(pattern.Alarm)
+	if !ok {
+		return false
+	}
+
+	return p.Validate()
+}
+
+func ValidateEntityPattern(fl validator.FieldLevel) bool {
+	i := fl.Field().Interface()
+	if i == nil {
+		return true
+	}
+	p, ok := i.(pattern.Entity)
+	if !ok {
+		return false
+	}
+
+	return p.Validate()
+}
+
+func ValidatePbehaviorPattern(fl validator.FieldLevel) bool {
+	i := fl.Field().Interface()
+	if i == nil {
+		return true
+	}
+	p, ok := i.(pattern.Pbehavior)
+	if !ok {
+		return false
+	}
+
+	return p.Validate()
 }
 
 func GetRealFormatTime(f string) string {
@@ -208,58 +219,6 @@ func (v *uniqueFieldValidator) Validate(ctx context.Context, sl validator.Struct
 		}
 	} else if err != mongodriver.ErrNoDocuments {
 		panic(err)
-	}
-}
-
-func NewUniqueBulkFieldValidator(field string) FieldValidator {
-	return &uniqueBulkFieldValidator{
-		field: field,
-	}
-}
-
-type uniqueBulkFieldValidator struct {
-	field string
-}
-
-func (v *uniqueBulkFieldValidator) Validate(_ context.Context, sl validator.StructLevel) {
-	vals := make(map[interface{}][]int)
-
-	var arr *reflect.Value
-	fieldName := ""
-	for i := 0; i < sl.Current().NumField(); i++ {
-		field := sl.Current().Field(i)
-		fieldName = sl.Current().Type().Field(i).Name
-		k := field.Kind()
-		if k == reflect.Array || k == reflect.Slice {
-			arr = &field
-		}
-	}
-
-	if arr == nil || sl.Current().NumField() > 1 {
-		panic("request is not array")
-	}
-
-	for i := 0; i < arr.Len(); i++ {
-		item := arr.Index(i)
-		field := item.FieldByName(v.field)
-		if !field.IsValid() {
-			panic(fmt.Sprintf("request does not have field %s", v.field))
-		}
-		if field.IsZero() {
-			continue
-		}
-		val := field.Interface()
-
-		vals[val] = append(vals[val], i)
-	}
-
-	for val, indexes := range vals {
-		if len(indexes) > 1 {
-			for i := 1; i < len(indexes); i++ {
-				path := fmt.Sprintf("%s[%d].%s", fieldName, i, v.field)
-				sl.ReportError(val, path, v.field, "unique", "")
-			}
-		}
 	}
 }
 
