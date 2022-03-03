@@ -134,6 +134,7 @@ import CStateTypeField from '@/components/forms/fields/c-state-type-field.vue';
 import CRecordsPerPageField from '@/components/forms/fields/c-records-per-page-field.vue';
 import COperatorField from '@/components/forms/fields/c-operator-field.vue';
 import CDraggableListField from '@/components/forms/fields/c-draggable-list-field.vue';
+import CEntitiesSelectField from '@/components/forms/fields/c-entities-select-field.vue';
 
 /**
  * Icons
@@ -327,6 +328,7 @@ Vue.component('c-state-type-field', CStateTypeField);
 Vue.component('c-records-per-page-field', CRecordsPerPageField);
 Vue.component('c-operator-field', COperatorField);
 Vue.component('c-draggable-list-field', CDraggableListField);
+Vue.component('c-entities-select-field', CEntitiesSelectField);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
