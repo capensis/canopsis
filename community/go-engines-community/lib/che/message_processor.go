@@ -3,10 +3,6 @@ package che
 import (
 	"context"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"runtime/trace"
-	"time"
-
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -16,9 +12,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
+	"runtime/trace"
 )
 
 type messageProcessor struct {
@@ -34,7 +32,6 @@ type messageProcessor struct {
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
-	t := time.Now()
 	ctx, task := trace.NewTask(parentCtx, "che.WorkerProcess")
 	defer task.End()
 
@@ -148,8 +145,6 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		p.logError(err, "cannot encode event", d.Body)
 		return nil, nil
 	}
-
-	fmt.Printf("all = %s\n", time.Since(t))
 
 	return body, nil
 }
