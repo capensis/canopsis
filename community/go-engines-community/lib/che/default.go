@@ -6,13 +6,11 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	libcontext "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
@@ -49,24 +47,12 @@ func NewEngine(
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	entityAdapter := entity.NewAdapter(mongoClient)
-	entityServiceAdapter := entityservice.NewAdapter(mongoClient)
 	redisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	serviceRedisSession := m.DepRedisSession(ctx, redis.EntityServiceStorage, logger, cfg)
 	periodicalLockClient := redis.NewLockClient(redisSession)
 
-	enrichmentCenter := libcontext.NewEnrichmentCenter(
-		entityAdapter,
-		options.FeatureContextEnrich,
-		entityservice.NewManager(
-			entityServiceAdapter,
-			entityAdapter,
-			entityservice.NewStorage(entityServiceAdapter, serviceRedisSession, json.NewEncoder(), json.NewDecoder(), logger),
-			logger,
-		),
-		metricsEntityMetaUpdater,
-	)
-	enrichFields := libcontext.NewEnrichFields(options.EnrichInclude, options.EnrichExclude)
+	enrichmentCenter := contextgraph.NewManager(entityAdapter, mongoClient, contextgraph.NewEntityServiceStorage(mongoClient), metricsEntityMetaUpdater)
 
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer))
@@ -84,11 +70,6 @@ func NewEngine(
 			err := eventfilterService.LoadRules(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
 			if err != nil {
 				return fmt.Errorf("unable to load rules: %w", err)
-			}
-
-			err = enrichmentCenter.LoadServices(ctx)
-			if err != nil {
-				return fmt.Errorf("unable to load services: %w", err)
 			}
 
 			_, err = periodicalLockClient.Obtain(ctx, redis.ChePeriodicalLockKey,
@@ -157,14 +138,11 @@ func NewEngine(
 		amqpConnection,
 		&messageProcessor{
 			FeaturePrintEventOnError: false,
-			FeatureEventProcessing:   options.FeatureEventProcessing,
-			FeatureContextCreation:   options.FeatureContextCreation,
+			DbClient:                 mongoClient,
 			AlarmConfigProvider:      alarmConfigProvider,
 			EventFilterService:       eventfilterService,
-			EnrichmentCenter:         enrichmentCenter,
-			EnrichFields:             enrichFields,
+			ContextGraphManager:      enrichmentCenter,
 			AmqpPublisher:            m.DepAMQPChannelPub(amqpConnection),
-			AlarmAdapter:             alarm.NewAdapter(mongoClient),
 			Encoder:                  json.NewEncoder(),
 			Decoder:                  json.NewDecoder(),
 			Logger:                   logger,
@@ -173,7 +151,7 @@ func NewEngine(
 	))
 	engine.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
 		EventFilterService: eventfilterService,
-		EnrichmentCenter:   enrichmentCenter,
+		//EnrichmentCenter:   enrichmentCenter,
 		PeriodicalInterval: options.PeriodicalWaitTime,
 		Logger:             logger,
 	})
@@ -200,7 +178,7 @@ func NewEngine(
 		periodicalLockClient,
 		redis.ChePeriodicalLockKey,
 		&impactedServicesPeriodicalWorker{
-			EnrichmentCenter:   enrichmentCenter,
+			Manager:            enrichmentCenter,
 			PeriodicalInterval: options.PeriodicalWaitTime,
 			Logger:             logger,
 		},
