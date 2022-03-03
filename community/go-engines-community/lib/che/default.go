@@ -52,7 +52,7 @@ func NewEngine(
 	serviceRedisSession := m.DepRedisSession(ctx, redis.EntityServiceStorage, logger, cfg)
 	periodicalLockClient := redis.NewLockClient(redisSession)
 
-	enrichmentCenter := contextgraph.NewManager(entityAdapter, mongoClient, contextgraph.NewEntityServiceStorage(mongoClient), metricsEntityMetaUpdater)
+	contextGraphManager := contextgraph.NewManager(entityAdapter, mongoClient, contextgraph.NewEntityServiceStorage(mongoClient), metricsEntityMetaUpdater)
 
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer))
@@ -86,7 +86,7 @@ func NewEngine(
 			}
 
 			// Below are actions locked with ChePeriodicalLockKey for multi-instance configuration
-			err = enrichmentCenter.UpdateImpactedServices(ctx)
+			err = contextGraphManager.UpdateImpactedServices(ctx)
 			if err != nil {
 				logger.Warn().Err(err).Msg("error while recomputing impacted services for connectors")
 			}
@@ -141,7 +141,7 @@ func NewEngine(
 			DbClient:                 mongoClient,
 			AlarmConfigProvider:      alarmConfigProvider,
 			EventFilterService:       eventfilterService,
-			ContextGraphManager:      enrichmentCenter,
+			ContextGraphManager:      contextGraphManager,
 			AmqpPublisher:            m.DepAMQPChannelPub(amqpConnection),
 			Encoder:                  json.NewEncoder(),
 			Decoder:                  json.NewDecoder(),
@@ -151,7 +151,6 @@ func NewEngine(
 	))
 	engine.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
 		EventFilterService: eventfilterService,
-		//EnrichmentCenter:   enrichmentCenter,
 		PeriodicalInterval: options.PeriodicalWaitTime,
 		Logger:             logger,
 	})
@@ -178,7 +177,7 @@ func NewEngine(
 		periodicalLockClient,
 		redis.ChePeriodicalLockKey,
 		&impactedServicesPeriodicalWorker{
-			Manager:            enrichmentCenter,
+			Manager:            contextGraphManager,
 			PeriodicalInterval: options.PeriodicalWaitTime,
 			Logger:             logger,
 		},
