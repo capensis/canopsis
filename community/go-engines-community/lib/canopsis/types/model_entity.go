@@ -40,19 +40,20 @@ type Entity struct {
 	Description string   `bson:"description" json:"description"`
 	Impacts     []string `bson:"impact" json:"impact"`
 	// impacted_services field is only for connectors, see entity service RecomputeIdleSince method
-	ImpactedServices     []string        `bson:"impacted_services" json:"-"`
-	Depends              []string        `bson:"depends" json:"depends"`
-	EnableHistory        []CpsTime       `bson:"enable_history" json:"enable_history"`
-	Measurements         interface{}     `bson:"measurements" json:"measurements"` // unused collection ids
-	Enabled              bool            `bson:"enabled" json:"enabled"`
-	Infos                map[string]Info `bson:"infos" json:"infos"`
-	ComponentInfos       map[string]Info `bson:"component_infos,omitempty" json:"component_infos,omitempty"`
-	Type                 string          `bson:"type" json:"type"`
-	Component            string          `bson:"component,omitempty" json:"component,omitempty"`
-	Category             string          `bson:"category" json:"category"`
-	ImpactLevel          int64           `bson:"impact_level" json:"impact_level"`
-	IsNew                bool            `bson:"-" json:"-"`
-	AlarmsCumulativeData struct {
+	ImpactedServices         []string        `bson:"impacted_services,omitempty" json:"impacted_services,omitempty"`
+	ImpactedServicesToAdd    []string        `bson:"impacted_services_to_add,omitempty" json:"-"`
+	ImpactedServicesToRemove []string        `bson:"impacted_services_to_remove,omitempty" json:"-"`
+	Depends                  []string        `bson:"depends,omitempty" json:"depends"`
+	EnableHistory            []CpsTime       `bson:"enable_history" json:"enable_history"`
+	Measurements             interface{}     `bson:"measurements" json:"measurements"` // unused collection ids
+	Enabled                  bool            `bson:"enabled" json:"enabled"`
+	Infos                    map[string]Info `bson:"infos" json:"infos"`
+	ComponentInfos           map[string]Info `bson:"component_infos,omitempty" json:"component_infos,omitempty"`
+	Type                     string          `bson:"type" json:"type"`
+	Component                string          `bson:"component,omitempty" json:"component,omitempty"`
+	Category                 string          `bson:"category" json:"category"`
+	ImpactLevel              int64           `bson:"impact_level" json:"impact_level"`
+	AlarmsCumulativeData     struct {
 		// Only for Service.
 		// WatchedCount is count of unresolved alarms.
 		WatchedCount int64 `bson:"watched_count"`
@@ -63,18 +64,19 @@ type Entity struct {
 	} `bson:"alarms_cumulative_data,omitempty" json:"-"`
 	Created       CpsTime  `bson:"created" json:"created"`
 	LastEventDate *CpsTime `bson:"last_event_date,omitempty" json:"last_event_date,omitempty"`
-
 	// LastIdleRuleApply is used to mark entity if some idle rule was applied.
 	LastIdleRuleApply string `bson:"last_idle_rule_apply,omitempty" json:"last_idle_rule_apply,omitempty"`
+
 	// IdleSince represents since when entity didn't receive any events.
-	IdleSince *CpsTime `bson:"idle_since,omitempty" json:"idle_since,omitempty"`
-
+	IdleSince    *CpsTime `bson:"idle_since,omitempty" json:"idle_since,omitempty"`
 	ImportSource string   `bson:"import_source,omitempty" json:"import_source"`
-	Imported     *CpsTime `bson:"imported,omitempty" json:"imported"`
 
+	Imported      *CpsTime      `bson:"imported,omitempty" json:"imported"`
 	PbehaviorInfo PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
 
 	SliAvailState int64 `bson:"sli_avail_state" json:"sli_avail_state"`
+
+	IsNew bool `bson:"-" json:"-"`
 }
 
 func (e *Entity) GetUpsertMongoBson(newImpacts []string, newDepends []string) bson.M {
