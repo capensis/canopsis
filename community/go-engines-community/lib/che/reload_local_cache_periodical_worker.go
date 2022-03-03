@@ -9,7 +9,6 @@ import (
 
 type reloadLocalCachePeriodicalWorker struct {
 	EventFilterService eventfilter.Service
-	//EnrichmentCenter   libcontext.ContextGraphManager
 	PeriodicalInterval time.Duration
 	Logger             zerolog.Logger
 }
@@ -23,9 +22,4 @@ func (w *reloadLocalCachePeriodicalWorker) Work(ctx context.Context) {
 	if err != nil {
 		w.Logger.Error().Err(err).Msg("unable to load rules")
 	}
-
-	//err = w.EnrichmentCenter.LoadServices(ctx)
-	//if err != nil {
-	//	w.Logger.Error().Err(err).Msg("unable to load services")
-	//}
 }
