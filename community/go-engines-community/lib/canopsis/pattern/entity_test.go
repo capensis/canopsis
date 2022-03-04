@@ -43,6 +43,13 @@ func TestEntity_ToMongoQuery(t *testing.T) {
 
 func getEntityMatchDataSets() map[string]entityDataSet {
 	return map[string]entityDataSet{
+		"given empty pattern should match": {
+			pattern: pattern.Entity{},
+			entity: types.Entity{
+				Name: "test name",
+			},
+			matchResult: true,
+		},
 		"given string field condition should match": {
 			pattern: pattern.Entity{
 				{

@@ -14,27 +14,27 @@ type ListRequest struct {
 }
 
 type EditRequest struct {
-	ID               string            `json:"-"`
-	Title            string            `json:"title" binding:"required,max=255"`
-	Type             string            `json:"type" binding:"required,oneof=alarm entity pbehavior"`
-	IsCorporate      *bool             `json:"is_corporate" binding:"required"`
-	AlarmPattern     pattern.Alarm     `json:"alarm_pattern" binding:"alarm_pattern"`
-	EntityPattern    pattern.Entity    `json:"entity_pattern" binding:"entity_pattern"`
-	PbehaviorPattern pattern.Pbehavior `json:"pbehavior_pattern" binding:"pbehavior_pattern"`
-	Author           string            `json:"author" swaggerignore:"true"`
+	ID               string                `json:"-"`
+	Title            string                `json:"title" binding:"required,max=255"`
+	Type             string                `json:"type" binding:"required,oneof=alarm entity pbehavior"`
+	IsCorporate      *bool                 `json:"is_corporate" binding:"required"`
+	AlarmPattern     pattern.Alarm         `json:"alarm_pattern" binding:"alarm_pattern"`
+	EntityPattern    pattern.Entity        `json:"entity_pattern" binding:"entity_pattern"`
+	PbehaviorPattern pattern.PbehaviorInfo `json:"pbehavior_pattern" binding:"pbehavior_pattern"`
+	Author           string                `json:"author" swaggerignore:"true"`
 }
 
 type Response struct {
-	ID               string            `bson:"_id" json:"_id"`
-	Title            string            `bson:"title" json:"title"`
-	Type             string            `bson:"type" json:"type"`
-	IsCorporate      bool              `bson:"is_corporate" json:"is_corporate"`
-	AlarmPattern     pattern.Alarm     `bson:"alarm_pattern" json:"alarm_pattern,omitempty"`
-	EntityPattern    pattern.Entity    `bson:"entity_pattern" json:"entity_pattern,omitempty"`
-	PbehaviorPattern pattern.Pbehavior `bson:"pbehavior_pattern" json:"pbehavior_pattern,omitempty"`
-	Author           common.User       `bson:"author" json:"author"`
-	Created          types.CpsTime     `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated          types.CpsTime     `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	ID               string                `bson:"_id" json:"_id"`
+	Title            string                `bson:"title" json:"title"`
+	Type             string                `bson:"type" json:"type"`
+	IsCorporate      bool                  `bson:"is_corporate" json:"is_corporate"`
+	AlarmPattern     pattern.Alarm         `bson:"alarm_pattern" json:"alarm_pattern,omitempty"`
+	EntityPattern    pattern.Entity        `bson:"entity_pattern" json:"entity_pattern,omitempty"`
+	PbehaviorPattern pattern.PbehaviorInfo `bson:"pbehavior_pattern" json:"pbehavior_pattern,omitempty"`
+	Author           common.User           `bson:"author" json:"author"`
+	Created          types.CpsTime         `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated          types.CpsTime         `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 }
 
 type AggregationResult struct {

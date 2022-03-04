@@ -27,6 +27,8 @@ const (
 	ConditionExist        = "exist"
 	ConditionTimeRelative = "relative_time"
 	ConditionTimeAbsolute = "absolute_time"
+	ConditionIsOneOf      = "is_one_of"
+	ConditionIsNotOneOf   = "is_not_one_of"
 )
 
 const (
@@ -55,17 +57,53 @@ type Condition struct {
 type RegexMatches map[string]string
 
 func (c Condition) MatchString(value string) (bool, RegexMatches, error) {
-	conditionValue, ok := c.Value.(string)
-	if !ok {
-		return false, nil, ErrWrongConditionValue
-	}
-
 	switch c.Type {
 	case ConditionEqual:
+		conditionValue, err := c.getStringValue()
+		if err != nil {
+			return false, nil, err
+		}
+
 		return value == conditionValue, nil, nil
 	case ConditionNotEqual:
+		conditionValue, err := c.getStringValue()
+		if err != nil {
+			return false, nil, err
+		}
+
 		return value != conditionValue, nil, nil
+	case ConditionIsOneOf:
+		conditionValue, err := c.getStringArrayValue()
+		if err != nil {
+			return false, nil, err
+		}
+
+		for _, item := range conditionValue {
+			if item == value {
+				return true, nil, nil
+			}
+		}
+
+		return false, nil, nil
+	case ConditionIsNotOneOf:
+		conditionValue, err := c.getStringArrayValue()
+		if err != nil {
+			return false, nil, err
+		}
+
+		for _, item := range conditionValue {
+			if item == value {
+				return false, nil, nil
+			}
+		}
+
+		return true, nil, nil
 	case ConditionRegexp:
+		conditionValue, err := c.getStringValue()
+		if err != nil {
+			return false, nil, err
+		}
+
 		r, err := utils.NewRegexExpression(conditionValue)
 		if err != nil {
 			return false, nil, err
@@ -80,9 +118,9 @@ func (c Condition) MatchString(value string) (bool, RegexMatches, error) {
 }
 
 func (c Condition) MatchInt(value int) (bool, error) {
-	conditionValue, ok := c.Value.(int)
-	if !ok {
-		return false, ErrWrongConditionValue
+	conditionValue, err := c.getIntValue()
+	if err != nil {
+		return false, err
 	}
 
 	switch c.Type {
@@ -100,9 +138,9 @@ func (c Condition) MatchInt(value int) (bool, error) {
 }
 
 func (c Condition) MatchBool(value bool) (bool, error) {
-	conditionValue, ok := c.Value.(bool)
-	if !ok {
-		return false, ErrWrongConditionValue
+	conditionValue, err := c.getBoolValue()
+	if err != nil {
+		return false, err
 	}
 
 	switch c.Type {
@@ -114,9 +152,9 @@ func (c Condition) MatchBool(value bool) (bool, error) {
 }
 
 func (c Condition) MatchRef(value interface{}) (bool, error) {
-	conditionValue, ok := c.Value.(bool)
-	if !ok {
-		return false, ErrWrongConditionValue
+	conditionValue, err := c.getBoolValue()
+	if err != nil {
+		return false, err
 	}
 
 	switch c.Type {
@@ -129,17 +167,17 @@ func (c Condition) MatchRef(value interface{}) (bool, error) {
 
 func (c Condition) MatchStringArray(value []string) (bool, error) {
 	if c.Type == ConditionIsEmpty {
-		conditionValue, ok := c.Value.(bool)
-		if !ok {
-			return false, ErrWrongConditionValue
+		conditionValue, err := c.getBoolValue()
+		if err != nil {
+			return false, err
 		}
 
 		return conditionValue == (len(value) == 0), nil
 	}
 
-	conditionValue, ok := c.Value.([]string)
-	if !ok {
-		return false, ErrWrongConditionValue
+	conditionValue, err := c.getStringArrayValue()
+	if err != nil {
+		return false, err
 	}
 
 	valueMap := make(map[string]bool)
@@ -148,16 +186,6 @@ func (c Condition) MatchStringArray(value []string) (bool, error) {
 	}
 
 	switch c.Type {
-	case ConditionEqual:
-		for _, v := range conditionValue {
-			if _, ok := valueMap[v]; !ok {
-				return false, nil
-			}
-
-			delete(valueMap, v)
-		}
-
-		return len(valueMap) == 0, nil
 	case ConditionHasEvery:
 		for _, v := range conditionValue {
 			_, exists := valueMap[v]
@@ -193,26 +221,16 @@ func (c Condition) MatchStringArray(value []string) (bool, error) {
 func (c Condition) MatchTime(value time.Time) (bool, error) {
 	switch c.Type {
 	case ConditionTimeRelative:
-		conditionValue, ok := c.Value.(int)
-		if !ok {
-			return false, ErrWrongConditionValue
+		conditionValue, err := c.getIntValue()
+		if err != nil {
+			return false, err
 		}
 
 		return value.After(time.Now().Add(time.Duration(-conditionValue) * time.Second)), nil
 	case ConditionTimeAbsolute:
-		conditionValue, ok := c.Value.(map[string]int64)
-		if !ok {
-			return false, ErrWrongConditionValue
-		}
-
-		from, ok := conditionValue["from"]
-		if !ok {
-			return false, errors.New("condition value expected 'from' key")
-		}
-
-		to, ok := conditionValue["to"]
-		if !ok {
-			return false, errors.New("condition value expected 'to' key")
+		from, to, err := c.getTimeIntervalValue()
+		if err != nil {
+			return false, err
 		}
 
 		return value.After(time.Unix(from, 0)) && value.Before(time.Unix(to, 0)), nil
@@ -222,41 +240,7 @@ func (c Condition) MatchTime(value time.Time) (bool, error) {
 }
 
 func (c Condition) MatchDuration(value int64) (bool, error) {
-	conditionValue, ok := c.Value.(map[string]interface{})
-	if !ok {
-		return false, ErrWrongConditionValue
-	}
-
-	rawVal, ok := conditionValue["value"]
-	if !ok {
-		return false, errors.New("condition value expected 'value' key")
-	}
-
-	val, ok := rawVal.(int)
-	if !ok {
-		return false, errors.New("value should be an int64")
-	}
-
-	rawUnit, ok := conditionValue["unit"]
-	if !ok {
-		return false, errors.New("condition value expected 'unit' key")
-	}
-
-	unit, ok := rawUnit.(string)
-	if !ok {
-		return false, errors.New("unit should be a string")
-	}
-
-	d := types.DurationWithUnit{
-		Value: int64(val),
-		Unit:  unit,
-	}
-
-	d, err := types.DurationWithUnit{
-		Value: int64(val),
-		Unit:  unit,
-	}.To("s")
-
+	d, err := c.getDurationValue()
 	if err != nil {
 		return false, err
 	}
@@ -278,8 +262,18 @@ func (c Condition) ToMongoQuery(f string) (bson.M, error) {
 	case ConditionNotEqual:
 		return bson.M{f: bson.M{"$ne": c.Value}}, nil
 	case ConditionGT:
+		d, err := c.getDurationValue()
+		if err == nil {
+			return bson.M{f: bson.M{"$gt": d.Value}}, nil
+		}
+
 		return bson.M{f: bson.M{"$gt": c.Value}}, nil
 	case ConditionLT:
+		d, err := c.getDurationValue()
+		if err == nil {
+			return bson.M{f: bson.M{"$lt": d.Value}}, nil
+		}
+
 		return bson.M{f: bson.M{"$lt": c.Value}}, nil
 	case ConditionRegexp:
 		return bson.M{f: bson.M{"$regex": c.Value}}, nil
@@ -290,9 +284,9 @@ func (c Condition) ToMongoQuery(f string) (bson.M, error) {
 	case ConditionHasNot:
 		return bson.M{f: bson.M{"$elemMatch": bson.M{"$nin": c.Value}}}, nil
 	case ConditionIsEmpty:
-		conditionValue, ok := c.Value.(bool)
-		if !ok {
-			return nil, ErrWrongConditionValue
+		conditionValue, err := c.getBoolValue()
+		if err != nil {
+			return nil, err
 		}
 
 		if conditionValue {
@@ -301,9 +295,9 @@ func (c Condition) ToMongoQuery(f string) (bson.M, error) {
 
 		return bson.M{f: bson.M{"$exists": true, "$type": "array", "$ne": bson.A{}}}, nil
 	case ConditionExist:
-		conditionValue, ok := c.Value.(bool)
-		if !ok {
-			return nil, ErrWrongConditionValue
+		conditionValue, err := c.getBoolValue()
+		if err != nil {
+			return nil, err
 		}
 
 		if conditionValue {
@@ -312,35 +306,112 @@ func (c Condition) ToMongoQuery(f string) (bson.M, error) {
 
 		return bson.M{"$or": []bson.M{{f: bson.M{"$exists": false}}, {f: bson.M{"$eq": nil}}}}, nil
 	case ConditionTimeRelative:
-		conditionValue, ok := c.Value.(int)
-		if !ok {
-			return nil, ErrWrongConditionValue
+		conditionValue, err := c.getIntValue()
+		if err != nil {
+			return nil, err
 		}
 
 		t := types.CpsTime{Time: time.Now().Add(time.Duration(-conditionValue) * time.Second)}
 
 		return bson.M{f: bson.M{"$gt": t}}, nil
 	case ConditionTimeAbsolute:
-		conditionValue, ok := c.Value.(map[string]int64)
-		if !ok {
-			return nil, ErrWrongConditionValue
-		}
-
-		from, ok := conditionValue["from"]
-		if !ok {
-			return nil, errors.New("condition value expected 'from' key")
-		}
-
-		to, ok := conditionValue["to"]
-		if !ok {
-			return nil, errors.New("condition value expected 'to' key")
+		from, to, err := c.getTimeIntervalValue()
+		if err != nil {
+			return nil, err
 		}
 
 		ft := types.NewCpsTime(from)
 		tt := types.NewCpsTime(to)
 
 		return bson.M{f: bson.M{"$gt": ft, "$lt": tt}}, nil
+	case ConditionIsOneOf:
+		return bson.M{f: bson.M{"$in": c.Value}}, nil
+	case ConditionIsNotOneOf:
+		return bson.M{f: bson.M{"$nin": c.Value}}, nil
 	default:
 		return nil, ErrUnsupportedConditionType
 	}
+}
+
+func (c Condition) getStringValue() (string, error) {
+	if s, ok := c.Value.(string); ok {
+		return s, nil
+	}
+
+	return "", ErrWrongConditionValue
+}
+
+func (c Condition) getIntValue() (int, error) {
+	if i, ok := c.Value.(int); ok {
+		return i, nil
+	}
+
+	return 0, ErrWrongConditionValue
+}
+
+func (c Condition) getBoolValue() (bool, error) {
+	if b, ok := c.Value.(bool); ok {
+		return b, nil
+	}
+
+	return false, ErrWrongConditionValue
+}
+
+func (c Condition) getStringArrayValue() ([]string, error) {
+	if s, ok := c.Value.([]string); ok {
+		return s, nil
+	}
+
+	return nil, ErrWrongConditionValue
+}
+
+func (c Condition) getTimeIntervalValue() (int64, int64, error) {
+	m, ok := c.Value.(map[string]int64)
+	if !ok {
+		return 0, 0, ErrWrongConditionValue
+	}
+
+	from, ok := m["from"]
+	if !ok {
+		return 0, 0, errors.New("condition value expected 'from' key")
+	}
+
+	to, ok := m["to"]
+	if !ok {
+		return 0, 0, errors.New("condition value expected 'to' key")
+	}
+
+	return from, to, nil
+}
+
+func (c Condition) getDurationValue() (types.DurationWithUnit, error) {
+	m, ok := c.Value.(map[string]interface{})
+	if !ok {
+		return types.DurationWithUnit{}, ErrWrongConditionValue
+	}
+
+	rawVal, ok := m["value"]
+	if !ok {
+		return types.DurationWithUnit{}, errors.New("condition value expected 'value' key")
+	}
+
+	val, ok := rawVal.(int)
+	if !ok {
+		return types.DurationWithUnit{}, errors.New("value should be an int64")
+	}
+
+	rawUnit, ok := m["unit"]
+	if !ok {
+		return types.DurationWithUnit{}, errors.New("condition value expected 'unit' key")
+	}
+
+	unit, ok := rawUnit.(string)
+	if !ok {
+		return types.DurationWithUnit{}, errors.New("unit should be a string")
+	}
+
+	return types.DurationWithUnit{
+		Value: int64(val),
+		Unit:  unit,
+	}.To("s")
 }

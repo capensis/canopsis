@@ -12,6 +12,10 @@ import (
 type Entity [][]FieldCondition
 
 func (p Entity) Match(entity types.Entity) (bool, error) {
+	if len(p) == 0 {
+		return true, nil
+	}
+
 	for _, group := range p {
 		matched := false
 
