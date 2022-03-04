@@ -3,18 +3,18 @@ package pattern_test
 import (
 	"errors"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/kylelemons/godebug/pretty"
 	"go.mongodb.org/mongo-driver/bson"
 	"testing"
 )
 
-func TestPbehavior_Match(t *testing.T) {
-	dataSets := getPbehaviorMatchDataSets()
+func TestPbehaviorInfo_Match(t *testing.T) {
+	dataSets := getPbehaviorInfoMatchDataSets()
 
 	for name, data := range dataSets {
 		t.Run(name, func(t *testing.T) {
-			ok, err := data.pattern.Match(data.pbehavior)
+			ok, err := data.pattern.Match(data.pbehaviorInfo)
 			if !errors.Is(err, data.matchErr) {
 				t.Errorf("expected error %v but got %v", data.matchErr, err)
 			}
@@ -25,12 +25,12 @@ func TestPbehavior_Match(t *testing.T) {
 	}
 }
 
-func TestPbehavior_ToMongoQuery(t *testing.T) {
-	dataSets := getPbehaviorMongoQueryDataSets()
+func TestPbehaviorInfo_ToMongoQuery(t *testing.T) {
+	dataSets := getPbehaviorInfoMongoQueryDataSets()
 
 	for name, data := range dataSets {
 		t.Run(name, func(t *testing.T) {
-			query, err := data.pattern.ToMongoQuery("pbehavior")
+			query, err := data.pattern.ToMongoQuery("alarm")
 			if !errors.Is(err, data.mongoQueryErr) {
 				t.Errorf("expected error %v but got %v", data.mongoQueryErr, err)
 			}
@@ -41,13 +41,20 @@ func TestPbehavior_ToMongoQuery(t *testing.T) {
 	}
 }
 
-func getPbehaviorMatchDataSets() map[string]PbehaviorDataSet {
-	return map[string]PbehaviorDataSet{
+func getPbehaviorInfoMatchDataSets() map[string]PbehaviorInfoDataSet {
+	return map[string]PbehaviorInfoDataSet{
+		"given empty pattern should match": {
+			pattern: pattern.PbehaviorInfo{},
+			pbehaviorInfo: types.PbehaviorInfo{
+				ID: "test id",
+			},
+			matchResult: true,
+		},
 		"given string field condition should match": {
-			pattern: pattern.Pbehavior{
+			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field: "_id",
+						Field: "pbehavior_info._id",
 						Condition: pattern.Condition{
 							Type:  pattern.ConditionEqual,
 							Value: "test id",
@@ -55,16 +62,16 @@ func getPbehaviorMatchDataSets() map[string]PbehaviorDataSet {
 					},
 				},
 			},
-			pbehavior: pbehavior.PBehavior{
+			pbehaviorInfo: types.PbehaviorInfo{
 				ID: "test id",
 			},
 			matchResult: true,
 		},
 		"given string field condition should not match": {
-			pattern: pattern.Pbehavior{
+			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field: "_id",
+						Field: "pbehavior_info._id",
 						Condition: pattern.Condition{
 							Type:  pattern.ConditionEqual,
 							Value: "test id",
@@ -72,13 +79,13 @@ func getPbehaviorMatchDataSets() map[string]PbehaviorDataSet {
 					},
 				},
 			},
-			pbehavior: pbehavior.PBehavior{
+			pbehaviorInfo: types.PbehaviorInfo{
 				ID: "test another id",
 			},
 			matchResult: false,
 		},
 		"given string field condition and unknown field should return error": {
-			pattern: pattern.Pbehavior{
+			pattern: pattern.PbehaviorInfo{
 				{
 					{
 						Field: "created",
@@ -89,19 +96,19 @@ func getPbehaviorMatchDataSets() map[string]PbehaviorDataSet {
 					},
 				},
 			},
-			pbehavior: pbehavior.PBehavior{},
-			matchErr:  pattern.ErrUnsupportedField,
+			pbehaviorInfo: types.PbehaviorInfo{},
+			matchErr:      pattern.ErrUnsupportedField,
 		},
 	}
 }
 
-func getPbehaviorMongoQueryDataSets() map[string]PbehaviorDataSet {
-	return map[string]PbehaviorDataSet{
+func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
+	return map[string]PbehaviorInfoDataSet{
 		"given one condition": {
-			pattern: pattern.Pbehavior{
+			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field: "_id",
+						Field: "pbehavior_info._id",
 						Condition: pattern.Condition{
 							Type:  pattern.ConditionEqual,
 							Value: "test id",
@@ -112,23 +119,23 @@ func getPbehaviorMongoQueryDataSets() map[string]PbehaviorDataSet {
 			mongoQueryResult: []bson.M{
 				{"$match": bson.M{"$or": []bson.M{
 					{"$and": []bson.M{
-						{"pbehavior._id": bson.M{"$eq": "test id"}},
+						{"alarm.pbehavior_info._id": bson.M{"$eq": "test id"}},
 					}},
 				}}},
 			},
 		},
 		"given multiple conditions": {
-			pattern: pattern.Pbehavior{
+			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field: "_id",
+						Field: "pbehavior_info._id",
 						Condition: pattern.Condition{
 							Type:  pattern.ConditionEqual,
 							Value: "test id",
 						},
 					},
 					{
-						Field: "type",
+						Field: "pbehavior_info.type",
 						Condition: pattern.Condition{
 							Type:  pattern.ConditionEqual,
 							Value: "test type",
@@ -139,17 +146,17 @@ func getPbehaviorMongoQueryDataSets() map[string]PbehaviorDataSet {
 			mongoQueryResult: []bson.M{
 				{"$match": bson.M{"$or": []bson.M{
 					{"$and": []bson.M{
-						{"pbehavior._id": bson.M{"$eq": "test id"}},
-						{"pbehavior.type": bson.M{"$eq": "test type"}},
+						{"alarm.pbehavior_info._id": bson.M{"$eq": "test id"}},
+						{"alarm.pbehavior_info.type": bson.M{"$eq": "test type"}},
 					}},
 				}}},
 			},
 		},
 		"given multiple groups": {
-			pattern: pattern.Pbehavior{
+			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field: "_id",
+						Field: "pbehavior_info._id",
 						Condition: pattern.Condition{
 							Type:  pattern.ConditionEqual,
 							Value: "test id",
@@ -158,7 +165,7 @@ func getPbehaviorMongoQueryDataSets() map[string]PbehaviorDataSet {
 				},
 				{
 					{
-						Field: "type",
+						Field: "pbehavior_info.type",
 						Condition: pattern.Condition{
 							Type:  pattern.ConditionEqual,
 							Value: "test type",
@@ -169,19 +176,19 @@ func getPbehaviorMongoQueryDataSets() map[string]PbehaviorDataSet {
 			mongoQueryResult: []bson.M{
 				{"$match": bson.M{"$or": []bson.M{
 					{"$and": []bson.M{
-						{"pbehavior._id": bson.M{"$eq": "test id"}},
+						{"alarm.pbehavior_info._id": bson.M{"$eq": "test id"}},
 					}},
 					{"$and": []bson.M{
-						{"pbehavior.type": bson.M{"$eq": "test type"}},
+						{"alarm.pbehavior_info.type": bson.M{"$eq": "test type"}},
 					}},
 				}}},
 			},
 		},
 		"given invalid condition": {
-			pattern: pattern.Pbehavior{
+			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field: "_id",
+						Field: "pbehavior_info._id",
 						Condition: pattern.Condition{
 							Type:  pattern.ConditionIsEmpty,
 							Value: "test id",
@@ -194,9 +201,9 @@ func getPbehaviorMongoQueryDataSets() map[string]PbehaviorDataSet {
 	}
 }
 
-type PbehaviorDataSet struct {
-	pattern          pattern.Pbehavior
-	pbehavior        pbehavior.PBehavior
+type PbehaviorInfoDataSet struct {
+	pattern          pattern.PbehaviorInfo
+	pbehaviorInfo    types.PbehaviorInfo
 	matchErr         error
 	matchResult      bool
 	mongoQueryErr    error
