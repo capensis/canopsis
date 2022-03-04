@@ -248,6 +248,18 @@ Exemple :
 Cette règle s'applique si 5 alarmes ou plus concernant le même chemin de valeur (`entity.infos.site.value`), ont été créées durant un intervalle de temps de 3600 secondes.
 Plusieurs chemins de valeur peuvent être observés. Dans ce cas, une méta alarme est créée pour chaque combinaison de chemins de valeurs.
 
+### Démonstration vidéo
+
+La démonstration en vidéo suivante permet de constater l'effet obtenu avec la
+règle de corrélation `relation` (relation parent-enfant) :
+
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/Y-OwUIqiu_s" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+D'autres vidéos sont disponibles pour les autres types de règles de corrélation.
+Voir la [playlist « Tutoriels Canopsis » (YouTube)][youtube-pl].
+
+[youtube-pl]: https://www.youtube.com/playlist?list=PLOoYSSN74hIZVLA1oGkZpora2scQvuFNJ
+
 ### Processus de création d'une méta alarme
 
 En reprenant l'exemple d'un groupement par relation parent-enfant, la création d'une méta alarme se déroule de la façon suivante.
