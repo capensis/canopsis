@@ -1,7 +1,7 @@
 export const widgetColumnsFiltersMixin = {
   props: {
     columnsFilters: {
-      type: Object,
+      type: Array,
       default: () => [],
     },
   },
