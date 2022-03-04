@@ -56,6 +56,26 @@ func TestCondition_MatchString(t *testing.T) {
 			expectedResult: false,
 		},
 		{
+			testName: "test is one of is matched",
+			conf: pattern.Condition{
+				Type:  pattern.ConditionIsOneOf,
+				Value: []string{"test2", "test"},
+			},
+			value:          "test",
+			expectedErr:    false,
+			expectedResult: true,
+		},
+		{
+			testName: "test is one of is not matched",
+			conf: pattern.Condition{
+				Type:  pattern.ConditionIsOneOf,
+				Value: []string{"test2", "test3"},
+			},
+			value:          "test",
+			expectedErr:    false,
+			expectedResult: false,
+		},
+		{
 			testName: "test regexp is matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionRegexp,
@@ -423,36 +443,6 @@ func TestCondition_MatchStringArray(t *testing.T) {
 			testName: "test has_every is not matched",
 			conf: pattern.Condition{
 				Type:  pattern.ConditionHasEvery,
-				Value: []string{"test1", "test2", "test3"},
-			},
-			value:          []string{"test1", "test2"},
-			expectedErr:    false,
-			expectedResult: false,
-		},
-		{
-			testName: "test is equal is matched",
-			conf: pattern.Condition{
-				Type:  pattern.ConditionEqual,
-				Value: []string{"test1", "test2", "test3"},
-			},
-			value:          []string{"test1", "test2", "test3"},
-			expectedErr:    false,
-			expectedResult: true,
-		},
-		{
-			testName: "test is equal is not matched bigger slice",
-			conf: pattern.Condition{
-				Type:  pattern.ConditionEqual,
-				Value: []string{"test1", "test2", "test3"},
-			},
-			value:          []string{"test1", "test2", "test3", "test4"},
-			expectedErr:    false,
-			expectedResult: false,
-		},
-		{
-			testName: "test is equal is not matched smaller slice",
-			conf: pattern.Condition{
-				Type:  pattern.ConditionEqual,
 				Value: []string{"test1", "test2", "test3"},
 			},
 			value:          []string{"test1", "test2"},

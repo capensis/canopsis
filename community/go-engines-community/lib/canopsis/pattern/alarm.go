@@ -12,6 +12,10 @@ import (
 type Alarm [][]FieldCondition
 
 func (p Alarm) Match(alarm types.Alarm) (bool, error) {
+	if len(p) == 0 {
+		return true, nil
+	}
+
 	for _, group := range p {
 		matched := false
 

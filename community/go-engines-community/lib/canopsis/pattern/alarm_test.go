@@ -44,6 +44,15 @@ func TestAlarm_ToMongoQuery(t *testing.T) {
 
 func getAlarmMatchDataSets() map[string]alarmDataSet {
 	return map[string]alarmDataSet{
+		"given empty pattern should match": {
+			pattern: pattern.Alarm{},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{
+					DisplayName: "test name",
+				},
+			},
+			matchResult: true,
+		},
 		"given string field condition should match": {
 			pattern: pattern.Alarm{
 				{

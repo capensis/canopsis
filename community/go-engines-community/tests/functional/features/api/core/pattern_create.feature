@@ -155,7 +155,7 @@ Feature: Create a saved pattern
       "pbehavior_pattern": [
         [
           {
-            "field": "type",
+            "field": "pbehavior_info.type",
             "cond": {
               "type": "eq",
               "value": "test-pattern-to-create-3-pattern"
@@ -179,7 +179,7 @@ Feature: Create a saved pattern
       "pbehavior_pattern": [
         [
           {
-            "field": "type",
+            "field": "pbehavior_info.type",
             "cond": {
               "type": "eq",
               "value": "test-pattern-to-create-3-pattern"
@@ -204,7 +204,7 @@ Feature: Create a saved pattern
       "pbehavior_pattern": [
         [
           {
-            "field": "type",
+            "field": "pbehavior_info.type",
             "cond": {
               "type": "eq",
               "value": "test-pattern-to-create-3-pattern"
