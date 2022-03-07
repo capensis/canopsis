@@ -1,14 +1,19 @@
 #!/bin/sh
 set -eu
+NGINX_CONFIGURATION_DIRECTORY="/etc/nginx"
 
-NGINX_CONFIGURATION_DIRECTORY="$(mktemp -d)"
+if [ "$NGINX_OPENSHIFT" = "1" ]
+then
+	echo "NGINX runnning in OpenShift-compatible mode"
+	NGINX_CONFIGURATION_DIRECTORY="$(mktemp -d)"
 
-mkdir -p "${NGINX_CONFIGURATION_DIRECTORY}"
-cp -TR /etc/nginx/ "${NGINX_CONFIGURATION_DIRECTORY}"
-rm -rf "${NGINX_CONFIGURATION_DIRECTORY}/ssl"
+	mkdir -p "${NGINX_CONFIGURATION_DIRECTORY}"
+	cp -TR /etc/nginx/ "${NGINX_CONFIGURATION_DIRECTORY}"
+	rm -rf "${NGINX_CONFIGURATION_DIRECTORY}/ssl"
 
-sed -i -e "s,/etc/nginx,${NGINX_CONFIGURATION_DIRECTORY},g" "${NGINX_CONFIGURATION_DIRECTORY}/nginx.conf"
-sed -i -e "s,/etc/nginx,${NGINX_CONFIGURATION_DIRECTORY},g" "${NGINX_CONFIGURATION_DIRECTORY}/conf.d/default.conf"
+	sed -i -e "s,/etc/nginx,${NGINX_CONFIGURATION_DIRECTORY},g" "${NGINX_CONFIGURATION_DIRECTORY}/nginx.conf"
+	sed -i -e "s,/etc/nginx,${NGINX_CONFIGURATION_DIRECTORY},g" "${NGINX_CONFIGURATION_DIRECTORY}/conf.d/default.conf"
+fi
 
 if [ "$CPS_ENABLE_HTTPS" = "true" ]
 then
