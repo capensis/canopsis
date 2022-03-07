@@ -1,11 +1,11 @@
 #!/bin/sh
 set -eu
 
-NGINX_CONFIGURATION_DIRECTORY="/tmp/etc/nginx"
+NGINX_CONFIGURATION_DIRECTORY="$(mktemp -d)"
 
 mkdir -p "${NGINX_CONFIGURATION_DIRECTORY}"
 cp -TR /etc/nginx/ "${NGINX_CONFIGURATION_DIRECTORY}"
-
+rm -rf "${NGINX_CONFIGURATION_DIRECTORY}/ssl"
 
 sed -i -e "s,/etc/nginx,${NGINX_CONFIGURATION_DIRECTORY},g" "${NGINX_CONFIGURATION_DIRECTORY}/nginx.conf"
 sed -i -e "s,/etc/nginx,${NGINX_CONFIGURATION_DIRECTORY},g" "${NGINX_CONFIGURATION_DIRECTORY}/conf.d/default.conf"
