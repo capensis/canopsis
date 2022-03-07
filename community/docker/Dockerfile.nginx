@@ -17,7 +17,11 @@ COPY ./community/docker /app/community/docker
 COPY ./community/deploy-ansible /app/community/deploy-ansible
 RUN make install DESTDIR=/installroot
 
-FROM nginx:${NGINX_VERSION}
+#
+# OpenShift-compatible NGINX Container
+#
+
+FROM nginxinc/nginx-unprivileged:${NGINX_VERSION} as nginx-openshift
 
 RUN mkdir -p -m 0750 /etc/nginx/ssl
 
@@ -28,4 +32,21 @@ RUN chmod +x /entrypoint.sh
 
 EXPOSE 80
 
+ENV NGINX_OPENSHIFT=1
+ENTRYPOINT /entrypoint.sh
+
+#
+# Default NGINX Container
+#
+
+FROM nginx:${NGINX_VERSION}
+
+RUN mkdir -p -m 0750 /etc/nginx/ssl
+
+COPY --from=build /installroot/ /
+
+COPY community/docker/files/entrypoint-nginx.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENV NGINX_OPENSHIFT=0
 ENTRYPOINT /entrypoint.sh
