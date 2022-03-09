@@ -54,11 +54,8 @@ func getPbehaviorInfoMatchDataSets() map[string]PbehaviorInfoDataSet {
 			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field: "pbehavior_info._id",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test id",
-						},
+						Field:     "pbehavior_info._id",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test id"),
 					},
 				},
 			},
@@ -71,11 +68,8 @@ func getPbehaviorInfoMatchDataSets() map[string]PbehaviorInfoDataSet {
 			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field: "pbehavior_info._id",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test id",
-						},
+						Field:     "pbehavior_info._id",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test id"),
 					},
 				},
 			},
@@ -88,11 +82,8 @@ func getPbehaviorInfoMatchDataSets() map[string]PbehaviorInfoDataSet {
 			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field: "created",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test name",
-						},
+						Field:     "created",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 				},
 			},
@@ -108,11 +99,8 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field: "pbehavior_info._id",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test id",
-						},
+						Field:     "pbehavior_info._id",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test id"),
 					},
 				},
 			},
@@ -128,18 +116,12 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field: "pbehavior_info._id",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test id",
-						},
+						Field:     "pbehavior_info._id",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test id"),
 					},
 					{
-						Field: "pbehavior_info.type",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test type",
-						},
+						Field:     "pbehavior_info.type",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test type"),
 					},
 				},
 			},
@@ -156,20 +138,14 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field: "pbehavior_info._id",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test id",
-						},
+						Field:     "pbehavior_info._id",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test id"),
 					},
 				},
 				{
 					{
-						Field: "pbehavior_info.type",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test type",
-						},
+						Field:     "pbehavior_info.type",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test type"),
 					},
 				},
 			},
@@ -188,11 +164,8 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field: "pbehavior_info._id",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionIsEmpty,
-							Value: "test id",
-						},
+						Field:     "pbehavior_info._id",
+						Condition: pattern.NewStringCondition(pattern.ConditionIsEmpty, "test id"),
 					},
 				},
 			},
