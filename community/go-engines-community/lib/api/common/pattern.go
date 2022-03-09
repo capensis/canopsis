@@ -60,8 +60,8 @@ func (r EntityPatternFieldsRequest) ToModel() savedpattern.EntityPatternFields {
 }
 
 type PbehaviorPatternFieldsRequest struct {
-	PbehaviorPattern          pattern.Pbehavior `json:"pbehavior_pattern" binding:"pbehavior_pattern"`
-	CorporatePbehaviorPattern string            `json:"corporate_pbehavior_pattern"`
+	PbehaviorPattern          pattern.PbehaviorInfo `json:"pbehavior_pattern" binding:"pbehavior_pattern"`
+	CorporatePbehaviorPattern string                `json:"corporate_pbehavior_pattern"`
 
 	CorporatePattern savedpattern.SavedPattern `json:"-"`
 }
@@ -196,7 +196,7 @@ func ValidatePbehaviorPattern(fl validator.FieldLevel) bool {
 	if i == nil {
 		return true
 	}
-	p, ok := i.(pattern.Pbehavior)
+	p, ok := i.(pattern.PbehaviorInfo)
 	if !ok {
 		return false
 	}

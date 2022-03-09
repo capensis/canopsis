@@ -35,7 +35,7 @@ Feature: Create a widget filter
       "pbehavior_pattern": [
         [
           {
-            "field": "type",
+            "field": "pbehavior_info.type",
             "cond": {
               "type": "eq",
               "value": "test-widgetfilter-to-create-1-pattern"
@@ -77,7 +77,7 @@ Feature: Create a widget filter
       "pbehavior_pattern": [
         [
           {
-            "field": "type",
+            "field": "pbehavior_info.type",
             "cond": {
               "type": "eq",
               "value": "test-widgetfilter-to-create-1-pattern"
@@ -120,7 +120,7 @@ Feature: Create a widget filter
       "pbehavior_pattern": [
         [
           {
-            "field": "type",
+            "field": "pbehavior_info.type",
             "cond": {
               "type": "eq",
               "value": "test-widgetfilter-to-create-1-pattern"
@@ -182,7 +182,7 @@ Feature: Create a widget filter
       "pbehavior_pattern": [
         [
           {
-            "field": "type",
+            "field": "pbehavior_info.type",
             "cond": {
               "type": "eq",
               "value": "test-pattern-to-filter-edit-3-pattern"
@@ -231,7 +231,7 @@ Feature: Create a widget filter
       "pbehavior_pattern": [
         [
           {
-            "field": "type",
+            "field": "pbehavior_info.type",
             "cond": {
               "type": "eq",
               "value": "test-pattern-to-filter-edit-3-pattern"

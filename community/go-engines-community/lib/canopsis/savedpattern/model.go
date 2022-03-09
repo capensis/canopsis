@@ -39,7 +39,7 @@ type EntityPatternFields struct {
 }
 
 type PbehaviorPatternFields struct {
-	PbehaviorPattern pattern.Pbehavior `bson:"pbehavior_pattern" json:"pbehavior_pattern,omitempty"`
+	PbehaviorPattern pattern.PbehaviorInfo `bson:"pbehavior_pattern" json:"pbehavior_pattern,omitempty"`
 
 	CorporatePbehaviorPattern      string `bson:"corporate_pbehavior_pattern" json:"corporate_pbehavior_pattern,omitempty"`
 	CorporatePbehaviorPatternTitle string `bson:"corporate_pbehavior_pattern_title" json:"corporate_pbehavior_pattern_title,omitempty"`

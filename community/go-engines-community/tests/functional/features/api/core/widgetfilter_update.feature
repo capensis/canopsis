@@ -35,7 +35,7 @@ Feature: Update a widget filter
       "pbehavior_pattern": [
         [
           {
-            "field": "type",
+            "field": "pbehavior_info.type",
             "cond": {
               "type": "eq",
               "value": "test-widgetfilter-to-update-1-pattern"
@@ -78,7 +78,7 @@ Feature: Update a widget filter
       "pbehavior_pattern": [
         [
           {
-            "field": "type",
+            "field": "pbehavior_info.type",
             "cond": {
               "type": "eq",
               "value": "test-widgetfilter-to-update-1-pattern"
@@ -141,7 +141,7 @@ Feature: Update a widget filter
       "pbehavior_pattern": [
         [
           {
-            "field": "type",
+            "field": "pbehavior_info.type",
             "cond": {
               "type": "eq",
               "value": "test-pattern-to-filter-edit-3-pattern"

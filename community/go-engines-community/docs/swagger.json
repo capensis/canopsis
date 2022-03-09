@@ -13016,7 +13016,7 @@
                 },
                 "pbehavior_pattern": {
                     "type": "object",
-                    "$ref": "#/definitions/pattern.Pbehavior"
+                    "$ref": "#/definitions/pattern.PbehaviorInfo"
                 },
                 "title": {
                     "type": "string"
@@ -13089,7 +13089,7 @@
                 }
             }
         },
-        "pattern.Pbehavior": {
+        "pattern.PbehaviorInfo": {
             "type": "array",
             "items": {
                 "type": "array",
@@ -13124,7 +13124,7 @@
                 },
                 "pbehavior_pattern": {
                     "type": "object",
-                    "$ref": "#/definitions/pattern.Pbehavior"
+                    "$ref": "#/definitions/pattern.PbehaviorInfo"
                 },
                 "title": {
                     "type": "string"
@@ -14180,7 +14180,7 @@
                 },
                 "pbehaviorPattern": {
                     "type": "object",
-                    "$ref": "#/definitions/pattern.Pbehavior"
+                    "$ref": "#/definitions/pattern.PbehaviorInfo"
                 },
                 "title": {
                     "type": "string"
@@ -15612,6 +15612,9 @@
                 }
             }
         },
+        "utils.RegexExpression": {
+            "type": "object"
+        },
         "view.EditPositionItemRequest": {
             "type": "object",
             "required": [
@@ -16125,7 +16128,7 @@
                 },
                 "pbehavior_pattern": {
                     "type": "object",
-                    "$ref": "#/definitions/pattern.Pbehavior"
+                    "$ref": "#/definitions/pattern.PbehaviorInfo"
                 },
                 "title": {
                     "type": "string"
@@ -16182,7 +16185,7 @@
                 },
                 "pbehavior_pattern": {
                     "type": "object",
-                    "$ref": "#/definitions/pattern.Pbehavior"
+                    "$ref": "#/definitions/pattern.PbehaviorInfo"
                 },
                 "title": {
                     "type": "string"

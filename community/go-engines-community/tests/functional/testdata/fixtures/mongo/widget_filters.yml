@@ -17,7 +17,7 @@ widget_filters:
             type: eq
             value: <Word()>
     pbehavior_pattern:
-      - - field: type
+      - - field: pbehavior_info.type
           cond:
             type: eq
             value: <Word()>
@@ -45,7 +45,7 @@ widget_filters:
     corporate_pbehavior_pattern: test-pattern-to-filter-edit-3
     corporate_pbehavior_pattern_title: test-pattern-to-filter-edit-3-title
     pbehavior_pattern:
-      - - field: type
+      - - field: pbehavior_info.type
           cond:
             type: eq
             value: test-pattern-to-filter-edit-3-pattern
@@ -113,7 +113,7 @@ widget_filters:
             type: eq
             value: test-widgetfilter-to-get-1-pattern
     pbehavior_pattern:
-      - - field: type
+      - - field: pbehavior_info.type
           cond:
             type: eq
             value: test-widgetfilter-to-get-1-pattern
@@ -141,7 +141,7 @@ widget_filters:
     corporate_pbehavior_pattern: test-pattern-to-filter-edit-3
     corporate_pbehavior_pattern_title: test-pattern-to-filter-edit-3-title
     pbehavior_pattern:
-      - - field: type
+      - - field: pbehavior_info.type
           cond:
             type: eq
             value: test-pattern-to-filter-edit-3-pattern
@@ -449,7 +449,7 @@ widget_filters:
     corporate_pbehavior_pattern: test-pattern-to-filter-edit-3
     corporate_pbehavior_pattern_title: test-pattern-to-filter-edit-3-title
     pbehavior_pattern:
-      - - field: type
+      - - field: pbehavior_info.type
           cond:
             type: eq
             value: test-pattern-to-filter-edit-3-pattern
