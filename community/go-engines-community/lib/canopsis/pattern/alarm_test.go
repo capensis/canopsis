@@ -42,17 +42,246 @@ func TestAlarm_ToMongoQuery(t *testing.T) {
 	}
 }
 
+func BenchmarkAlarm_Match_Equal(b *testing.B) {
+	cond := pattern.FieldCondition{
+		Field:     "v.display_name",
+		Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name 2"),
+	}
+	alarm := types.Alarm{
+		Value: types.AlarmValue{
+			DisplayName: "test name",
+		},
+	}
+
+	benchmarkAlarmMatch(b, cond, alarm)
+}
+
+func BenchmarkAlarm_Match_Regexp(b *testing.B) {
+	regexpCondition, err := pattern.NewRegexpCondition(pattern.ConditionRegexp, "^test .+name$")
+	if err != nil {
+		b.Fatalf("unexpected error %v", err)
+	}
+	cond := pattern.FieldCondition{
+		Field:     "v.display_name",
+		Condition: regexpCondition,
+	}
+	alarm := types.Alarm{
+		Value: types.AlarmValue{
+			DisplayName: "test name",
+		},
+	}
+
+	benchmarkAlarmMatch(b, cond, alarm)
+}
+
+func BenchmarkAlarm_Match_Infos_Equal(b *testing.B) {
+	cond := pattern.FieldCondition{
+		Field:     "v.infos.test",
+		FieldType: pattern.FieldTypeString,
+		Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test 2"),
+	}
+	alarm := types.Alarm{
+		Value: types.AlarmValue{
+			Infos: map[string]map[string]interface{}{
+				"rule1": {
+					"test": "test",
+				},
+			},
+		},
+	}
+
+	benchmarkAlarmMatch(b, cond, alarm)
+}
+
+func BenchmarkAlarm_Match_Infos_Regexp(b *testing.B) {
+	regexpCondition, err := pattern.NewRegexpCondition(pattern.ConditionRegexp, "^test .+name$")
+	if err != nil {
+		b.Fatalf("unexpected error %v", err)
+	}
+	cond := pattern.FieldCondition{
+		Field:     "v.infos.test",
+		FieldType: pattern.FieldTypeString,
+		Condition: regexpCondition,
+	}
+	alarm := types.Alarm{
+		Value: types.AlarmValue{
+			Infos: map[string]map[string]interface{}{
+				"rule1": {
+					"test": "test",
+				},
+			},
+		},
+	}
+
+	benchmarkAlarmMatch(b, cond, alarm)
+}
+
+func BenchmarkAlarm_UnmarshalBsonAndMatch_Equal(b *testing.B) {
+	cond := pattern.FieldCondition{
+		Field: "v.display_name",
+		Condition: pattern.Condition{
+			Type:  pattern.ConditionEqual,
+			Value: "test name 2",
+		},
+	}
+	alarm := types.Alarm{
+		Value: types.AlarmValue{
+			DisplayName: "test name",
+		},
+	}
+
+	benchmarkAlarmUnmarshalBsonAndMatch(b, cond, []types.Alarm{alarm})
+}
+
+func BenchmarkAlarm_UnmarshalBsonAndMatch_Regexp(b *testing.B) {
+	cond := pattern.FieldCondition{
+		Field: "v.display_name",
+		Condition: pattern.Condition{
+			Type:  pattern.ConditionRegexp,
+			Value: "^test .+name$",
+		},
+	}
+	alarm := types.Alarm{
+		Value: types.AlarmValue{
+			DisplayName: "test name",
+		},
+	}
+
+	benchmarkAlarmUnmarshalBsonAndMatch(b, cond, []types.Alarm{alarm})
+}
+
+func BenchmarkAlarm_UnmarshalBsonAndMatch_Infos_Equal(b *testing.B) {
+	cond := pattern.FieldCondition{
+		Field:     "v.infos.test",
+		FieldType: pattern.FieldTypeString,
+		Condition: pattern.Condition{
+			Type:  pattern.ConditionEqual,
+			Value: "test 2",
+		},
+	}
+	alarm := types.Alarm{
+		Value: types.AlarmValue{
+			Infos: map[string]map[string]interface{}{
+				"rule1": {
+					"test": "test",
+				},
+			},
+		},
+	}
+
+	benchmarkAlarmUnmarshalBsonAndMatch(b, cond, []types.Alarm{alarm})
+}
+
+func BenchmarkAlarm_UnmarshalBsonAndMatch_Infos_Regexp(b *testing.B) {
+	cond := pattern.FieldCondition{
+		Field:     "v.infos.test",
+		FieldType: pattern.FieldTypeString,
+		Condition: pattern.Condition{
+			Type:  pattern.ConditionRegexp,
+			Value: "^test .+name$",
+		},
+	}
+	alarm := types.Alarm{
+		Value: types.AlarmValue{
+			Infos: map[string]map[string]interface{}{
+				"rule1": {
+					"test": "test",
+				},
+			},
+		},
+	}
+
+	benchmarkAlarmUnmarshalBsonAndMatch(b, cond, []types.Alarm{alarm})
+}
+
+func BenchmarkAlarm_ManyAlarms_UnmarshalBsonAndMatch_Regexp(b *testing.B) {
+	cond := pattern.FieldCondition{
+		Field: "v.display_name",
+		Condition: pattern.Condition{
+			Type:  pattern.ConditionRegexp,
+			Value: "^test .+name$",
+		},
+	}
+	const size = 1000
+	alarms := make([]types.Alarm, size)
+	for i := 0; i < size; i++ {
+		alarms[i] = types.Alarm{
+			Value: types.AlarmValue{
+				DisplayName: "test name",
+			},
+		}
+	}
+
+	benchmarkAlarmUnmarshalBsonAndMatch(b, cond, alarms)
+}
+
+func benchmarkAlarmMatch(b *testing.B, fieldCond pattern.FieldCondition, alarm types.Alarm) {
+	const size = 100
+	p := make(pattern.Alarm, size)
+	for i := 0; i < size; i++ {
+		p[i] = []pattern.FieldCondition{fieldCond}
+	}
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_, err := p.Match(alarm)
+		if err != nil {
+			b.Fatalf("unexpected error %v", err)
+		}
+	}
+}
+
+func benchmarkAlarmUnmarshalBsonAndMatch(b *testing.B, fieldCond pattern.FieldCondition, alarms []types.Alarm) {
+	const size = 100
+	p := make(pattern.Alarm, size)
+	for i := 0; i < size; i++ {
+		p[i] = []pattern.FieldCondition{fieldCond}
+	}
+
+	type wrapper struct {
+		Pattern pattern.Alarm `bson:"pattern"`
+	}
+	bytes, err := bson.Marshal(wrapper{Pattern: p})
+	if err != nil {
+		b.Fatalf("unexpected error %v", err)
+	}
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		var w wrapper
+		err := bson.Unmarshal(bytes, &w)
+		if err != nil {
+			b.Fatalf("unexpected error %v", err)
+		}
+
+		for _, alarm := range alarms {
+			_, err = w.Pattern.Match(alarm)
+			if err != nil {
+				b.Fatalf("unexpected error %v", err)
+			}
+		}
+	}
+}
+
 func getAlarmMatchDataSets() map[string]alarmDataSet {
 	return map[string]alarmDataSet{
+		"given empty pattern should match": {
+			pattern: pattern.Alarm{},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{
+					DisplayName: "test name",
+				},
+			},
+			matchResult: true,
+		},
 		"given string field condition should match": {
 			pattern: pattern.Alarm{
 				{
 					{
-						Field: "v.display_name",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test name",
-						},
+						Field:     "v.display_name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 				},
 			},
@@ -67,11 +296,8 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 			pattern: pattern.Alarm{
 				{
 					{
-						Field: "v.display_name",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test name",
-						},
+						Field:     "v.display_name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 				},
 			},
@@ -86,11 +312,8 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 			pattern: pattern.Alarm{
 				{
 					{
-						Field: "v.state.val",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test name",
-						},
+						Field:     "v.state.val",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 				},
 			},
@@ -103,11 +326,8 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 			pattern: pattern.Alarm{
 				{
 					{
-						Field: "v.initial_output",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test name",
-						},
+						Field:     "v.initial_output",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 				},
 			},
@@ -120,10 +340,7 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 					{
 						Field:     "v.infos.info_name",
 						FieldType: pattern.FieldTypeString,
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test name",
-						},
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 				},
 			},
@@ -144,10 +361,7 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 					{
 						Field:     "v.infos.info_name",
 						FieldType: pattern.FieldTypeString,
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test name",
-						},
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 				},
 			},
@@ -168,10 +382,7 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 					{
 						Field:     "v.infos.info_name",
 						FieldType: pattern.FieldTypeString,
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test name",
-						},
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 				},
 			},
@@ -192,10 +403,7 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 					{
 						Field:     "v.infos.info_name",
 						FieldType: pattern.FieldTypeString,
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test name",
-						},
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 				},
 			},
@@ -206,11 +414,8 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 			pattern: pattern.Alarm{
 				{
 					{
-						Field: "v.infos.info_name",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionExist,
-							Value: true,
-						},
+						Field:     "v.infos.info_name",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
 					},
 				},
 			},
@@ -229,11 +434,8 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 			pattern: pattern.Alarm{
 				{
 					{
-						Field: "v.infos.info_name",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionExist,
-							Value: true,
-						},
+						Field:     "v.infos.info_name",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
 					},
 				},
 			},
@@ -252,11 +454,8 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 			pattern: pattern.Alarm{
 				{
 					{
-						Field: "v.infos.info_name",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionExist,
-							Value: false,
-						},
+						Field:     "v.infos.info_name",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
 					},
 				},
 			},
@@ -275,11 +474,8 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 			pattern: pattern.Alarm{
 				{
 					{
-						Field: "v.infos.info_name",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionExist,
-							Value: false,
-						},
+						Field:     "v.infos.info_name",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
 					},
 				},
 			},
@@ -303,11 +499,8 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 			pattern: pattern.Alarm{
 				{
 					{
-						Field: "v.display_name",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test name",
-						},
+						Field:     "v.display_name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 				},
 			},
@@ -323,18 +516,12 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 			pattern: pattern.Alarm{
 				{
 					{
-						Field: "v.display_name",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test name",
-						},
+						Field:     "v.display_name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 					{
-						Field: "v.output",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test output",
-						},
+						Field:     "v.output",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test output"),
 					},
 				},
 			},
@@ -351,20 +538,14 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 			pattern: pattern.Alarm{
 				{
 					{
-						Field: "v.display_name",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test name",
-						},
+						Field:     "v.display_name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 				},
 				{
 					{
-						Field: "v.output",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test output",
-						},
+						Field:     "v.output",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test output"),
 					},
 				},
 			},
@@ -383,11 +564,8 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 			pattern: pattern.Alarm{
 				{
 					{
-						Field: "v.state.val",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionIsEmpty,
-							Value: "test name",
-						},
+						Field:     "v.state.val",
+						Condition: pattern.NewStringCondition(pattern.ConditionIsEmpty, "test name"),
 					},
 				},
 			},
@@ -397,11 +575,8 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 			pattern: pattern.Alarm{
 				{
 					{
-						Field: "v.duration",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: 3,
-						},
+						Field:     "v.duration",
+						Condition: pattern.NewIntCondition(pattern.ConditionEqual, 3),
 					},
 				},
 			},
@@ -429,10 +604,7 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 					{
 						Field:     "v.infos.info_name",
 						FieldType: pattern.FieldTypeInt,
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: 3,
-						},
+						Condition: pattern.NewIntCondition(pattern.ConditionEqual, 3),
 					},
 				},
 			},
