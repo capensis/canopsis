@@ -27,9 +27,13 @@ const selectFieldSelect = wrapper => wrapper.find('select.v-select');
 
 describe('c-filter-infos-attribute-field', () => {
   it('Dictionary changed after trigger the dictionary select', () => {
+    const value = {
+      dictionary: 'test',
+      field: 'name',
+    };
     const wrapper = factory({
       propsData: {
-        value: 'infos.test.name',
+        value,
       },
     });
     const dictionarySelect = selectDictionarySelect(wrapper);
@@ -43,13 +47,20 @@ describe('c-filter-infos-attribute-field', () => {
     expect(inputEvents).toHaveLength(1);
 
     const [eventData] = inputEvents[0];
-    expect(eventData).toBe(`infos.${newDictionary}.name`);
+    expect(eventData).toEqual({
+      dictionary: newDictionary,
+      field: value.field,
+    });
   });
 
   it('Field changed after trigger the field select', () => {
+    const value = {
+      dictionary: 'test',
+      field: 'name',
+    };
     const wrapper = factory({
       propsData: {
-        value: 'infos.test.name',
+        value,
       },
     });
     const fieldSelect = selectFieldSelect(wrapper);
@@ -63,13 +74,19 @@ describe('c-filter-infos-attribute-field', () => {
     expect(inputEvents).toHaveLength(1);
 
     const [eventData] = inputEvents[0];
-    expect(eventData).toBe(`infos.test.${newField}`);
+    expect(eventData).toEqual({
+      dictionary: value.dictionary,
+      field: newField,
+    });
   });
 
   it('Renders `c-filter-infos-attribute-field` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        value: 'infos.',
+        value: {
+          dictionary: '',
+          field: '',
+        },
       },
     });
 
@@ -80,7 +97,10 @@ describe('c-filter-infos-attribute-field', () => {
   it('Renders `c-filter-infos-attribute-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        value: 'infos.test.test',
+        value: {
+          dictionary: 'test',
+          field: 'test',
+        },
         label: 'Custom label',
         items: [
           {

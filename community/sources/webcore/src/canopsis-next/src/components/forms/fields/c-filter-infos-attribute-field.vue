@@ -2,7 +2,7 @@
   v-layout
     v-flex(xs6)
       v-combobox(
-        :value="valueParts.dictionary",
+        v-field="value.dictionary",
         v-validate="'required'",
         :items="dictionaries",
         :disabled="disabled",
@@ -10,36 +10,31 @@
         :return-object="false",
         :name="dictionaryName",
         :error-messages="errors.collect(dictionaryName)",
-        hide-details,
-        @input="updateDictionary"
+        hide-details
       )
     v-flex.ml-2(xs6)
       v-select(
-        :value="valueParts.field",
+        v-field="value.field",
         v-validate="'required'",
         :items="fieldItems",
-        :disabled="disabled || !valueParts.dictionary",
+        :disabled="disabled || !value.dictionary",
         :label="label || $t('common.field')",
         :name="fieldName",
         :error-messages="errors.collect(fieldName)",
-        hide-details,
-        @input="updateField"
+        hide-details
       )
 </template>
 
 <script>
-import { formBaseMixin } from '@/mixins/form';
-
 export default {
   inject: ['$validator'],
-  mixins: [formBaseMixin],
   model: {
     prop: 'value',
     event: 'input',
   },
   props: {
     value: {
-      type: String,
+      type: Object,
       required: true,
     },
     items: {
@@ -72,16 +67,6 @@ export default {
       return `${this.name}.field`;
     },
 
-    valueParts() {
-      const [infos, dictionary, field] = this.value.split(this.divider);
-
-      return {
-        infos,
-        dictionary,
-        field,
-      };
-    },
-
     fieldItems() {
       return [
         {
@@ -97,19 +82,6 @@ export default {
 
     dictionaries() {
       return this.items;
-    },
-  },
-  methods: {
-    updateValue(dictionary, field) {
-      this.updateModel([this.valueParts.infos, dictionary, field].join(this.divider));
-    },
-
-    updateDictionary(dictionary) {
-      this.updateValue(dictionary, this.valueParts.field);
-    },
-
-    updateField(field) {
-      this.updateValue(this.valueParts.dictionary, field);
     },
   },
 };
