@@ -1,6 +1,5 @@
 <template lang="pug">
-  div
-    shared-mass-actions-panel(:actions="filteredActions")
+  shared-mass-actions-panel(:actions="filteredActions")
 </template>
 
 <script>

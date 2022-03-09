@@ -87,7 +87,7 @@ Choisissez un onglet ci-dessous, en fonction de votre environnement (paquets Cen
  
 === "Docker Compose"
 
-    Le registre Docker de Canopsis sera migré de [DockerHub](https://hub.docker.com/u/canopsis/) vers un registre interne en février 2021.
+    Le registre Docker de Canopsis sera migré de [DockerHub](https://hub.docker.com/u/canopsis/) vers un registre interne en décembre 2021.
 
     À la date de publication de ce Guide de migration, les URL et accès aux images Docker restent inchangés pour le moment.
 

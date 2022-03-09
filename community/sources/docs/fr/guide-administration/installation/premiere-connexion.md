@@ -28,8 +28,8 @@ En ligne de commande, la base de données MongoDB est accessible avec la command
 
 Identifiants par défaut : `cpsmongo` / `canopsis`.
 
-### InfluxDB
+### PostgreSQL
 
-En ligne de commande, la base de métriques InfluxDB est accessible avec la commande `influx -username cpsinflux -password canopsis -database canopsis`.
+La base de données PostgreSQL est accessible avec la commande `psql -U cpspostgres -W -d canopsis -h localhost`.
 
-Identifiants par défaut : `cpsinflux` / `canopsis`.
+Identifiants par défaut : `cpspostgres` / `canopsis`.

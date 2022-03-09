@@ -30,7 +30,6 @@ gunicorn==19.7.1
 #gunicorn==19.10.0
 icalendar==4.0.7
 ijson==2.3
-influxdb==5.1.0
 jsonschema==2.6.0
 kombu==4.1.0
 lxml==4.2.6
@@ -41,7 +40,8 @@ pika==0.11.2
 psycopg2==2.8.4
 # patched for CentOS 7 compatibility. See canopsis#1791
 pybars3 @ https://git.canopsis.net/canopsis/pybars3/-/archive/0.9.6-999/pybars3-0.9.6-999.tar.gz#sha1=a537276514d74d0643521324ebf8f6b58c11465e
-pymongo==3.6.1
+# MongoDB supported versions 2.6, 3.0, 3.2, 3.4, 3.6, 4.0, 4.2, and 4.4
+pymongo==3.11.4
 # math_parser.py
 pyparsing==2.2.2
 python-ldap==2.5.2
