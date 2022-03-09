@@ -64,7 +64,7 @@ Feature: Get a saved pattern
           "pbehavior_pattern": [
             [
               {
-                "field": "type",
+                "field": "pbehavior_info.type",
                 "cond": {
                   "type": "eq",
                   "value": "test-pattern-to-get-4-pattern"
@@ -128,7 +128,7 @@ Feature: Get a saved pattern
           "pbehavior_pattern": [
             [
               {
-                "field": "type",
+                "field": "pbehavior_info.type",
                 "cond": {
                   "type": "eq",
                   "value": "test-pattern-to-get-4-pattern"

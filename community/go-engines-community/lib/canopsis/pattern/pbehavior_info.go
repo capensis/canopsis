@@ -1,13 +1,17 @@
 package pattern
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type Pbehavior [][]FieldCondition
+type PbehaviorInfo [][]FieldCondition
 
-func (p Pbehavior) Match(pbh pbehavior.PBehavior) (bool, error) {
+func (p PbehaviorInfo) Match(pbhInfo types.PbehaviorInfo) (bool, error) {
+	if len(p) == 0 {
+		return true, nil
+	}
+
 	for _, group := range p {
 		matched := false
 
@@ -17,7 +21,7 @@ func (p Pbehavior) Match(pbh pbehavior.PBehavior) (bool, error) {
 			var err error
 			matched = false
 
-			if str, ok := getPbehaviorStringField(pbh, f); ok {
+			if str, ok := getPbehaviorInfoStringField(pbhInfo, f); ok {
 				matched, _, err = cond.MatchString(str)
 			} else {
 				err = ErrUnsupportedField
@@ -40,16 +44,20 @@ func (p Pbehavior) Match(pbh pbehavior.PBehavior) (bool, error) {
 	return false, nil
 }
 
-func (p Pbehavior) Validate() bool {
-	emptyPbh := pbehavior.PBehavior{}
+func (p PbehaviorInfo) Validate() bool {
+	emptyPbhInfo := types.PbehaviorInfo{}
 
 	for _, group := range p {
+		if len(group) == 0 {
+			return false
+		}
+
 		for _, v := range group {
 			f := v.Field
 			cond := v.Condition
 			var err error
 
-			if str, ok := getPbehaviorStringField(emptyPbh, f); ok {
+			if str, ok := getPbehaviorInfoStringField(emptyPbhInfo, f); ok {
 				_, _, err = cond.MatchString(str)
 			} else {
 				err = ErrUnsupportedField
@@ -64,7 +72,7 @@ func (p Pbehavior) Validate() bool {
 	return true
 }
 
-func (p Pbehavior) ToMongoQuery(prefix string) ([]bson.M, error) {
+func (p PbehaviorInfo) ToMongoQuery(prefix string) ([]bson.M, error) {
 	if len(p) == 0 {
 		return nil, nil
 	}
@@ -92,14 +100,14 @@ func (p Pbehavior) ToMongoQuery(prefix string) ([]bson.M, error) {
 	return []bson.M{{"$match": bson.M{"$or": groupQueries}}}, nil
 }
 
-func getPbehaviorStringField(pbh pbehavior.PBehavior, f string) (string, bool) {
+func getPbehaviorInfoStringField(pbhInfo types.PbehaviorInfo, f string) (string, bool) {
 	switch f {
-	case "_id":
-		return pbh.ID, true
-	case "type":
-		return pbh.Type, true
-	case "reason":
-		return pbh.Reason, true
+	case "pbehavior_info._id":
+		return pbhInfo.ID, true
+	case "pbehavior_info.type":
+		return pbhInfo.TypeID, true
+	case "pbehavior_info.reason":
+		return pbhInfo.Reason, true
 	default:
 		return "", false
 	}

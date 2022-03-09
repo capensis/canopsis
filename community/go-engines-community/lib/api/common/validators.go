@@ -125,7 +125,7 @@ func ValidatePbehaviorPattern(fl validator.FieldLevel) bool {
 	if i == nil {
 		return true
 	}
-	p, ok := i.(pattern.Pbehavior)
+	p, ok := i.(pattern.PbehaviorInfo)
 	if !ok {
 		return false
 	}
