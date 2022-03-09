@@ -13032,7 +13032,7 @@ var doc = `{
                 },
                 "pbehavior_pattern": {
                     "type": "object",
-                    "$ref": "#/definitions/pattern.Pbehavior"
+                    "$ref": "#/definitions/pattern.PbehaviorInfo"
                 },
                 "title": {
                     "type": "string"
@@ -13105,7 +13105,7 @@ var doc = `{
                 }
             }
         },
-        "pattern.Pbehavior": {
+        "pattern.PbehaviorInfo": {
             "type": "array",
             "items": {
                 "type": "array",
@@ -13140,7 +13140,7 @@ var doc = `{
                 },
                 "pbehavior_pattern": {
                     "type": "object",
-                    "$ref": "#/definitions/pattern.Pbehavior"
+                    "$ref": "#/definitions/pattern.PbehaviorInfo"
                 },
                 "title": {
                     "type": "string"
@@ -14196,7 +14196,7 @@ var doc = `{
                 },
                 "pbehaviorPattern": {
                     "type": "object",
-                    "$ref": "#/definitions/pattern.Pbehavior"
+                    "$ref": "#/definitions/pattern.PbehaviorInfo"
                 },
                 "title": {
                     "type": "string"
@@ -15628,6 +15628,9 @@ var doc = `{
                 }
             }
         },
+        "utils.RegexExpression": {
+            "type": "object"
+        },
         "view.EditPositionItemRequest": {
             "type": "object",
             "required": [
@@ -16141,7 +16144,7 @@ var doc = `{
                 },
                 "pbehavior_pattern": {
                     "type": "object",
-                    "$ref": "#/definitions/pattern.Pbehavior"
+                    "$ref": "#/definitions/pattern.PbehaviorInfo"
                 },
                 "title": {
                     "type": "string"
@@ -16198,7 +16201,7 @@ var doc = `{
                 },
                 "pbehavior_pattern": {
                     "type": "object",
-                    "$ref": "#/definitions/pattern.Pbehavior"
+                    "$ref": "#/definitions/pattern.PbehaviorInfo"
                 },
                 "title": {
                     "type": "string"

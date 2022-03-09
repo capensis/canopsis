@@ -2074,7 +2074,7 @@ definitions:
       is_corporate:
         type: boolean
       pbehavior_pattern:
-        $ref: '#/definitions/pattern.Pbehavior'
+        $ref: '#/definitions/pattern.PbehaviorInfo'
         type: object
       title:
         type: string
@@ -2127,7 +2127,7 @@ definitions:
       withFlags:
         type: boolean
     type: object
-  pattern.Pbehavior:
+  pattern.PbehaviorInfo:
     items:
       items:
         $ref: '#/definitions/pattern.FieldCondition'
@@ -2151,7 +2151,7 @@ definitions:
       is_corporate:
         type: boolean
       pbehavior_pattern:
-        $ref: '#/definitions/pattern.Pbehavior'
+        $ref: '#/definitions/pattern.PbehaviorInfo'
         type: object
       title:
         type: string
@@ -2865,7 +2865,7 @@ definitions:
       isCorporate:
         type: boolean
       pbehaviorPattern:
-        $ref: '#/definitions/pattern.Pbehavior'
+        $ref: '#/definitions/pattern.PbehaviorInfo'
         type: object
       title:
         type: string
@@ -3845,6 +3845,8 @@ definitions:
       widget:
         type: string
     type: object
+  utils.RegexExpression:
+    type: object
   view.EditPositionItemRequest:
     properties:
       _id:
@@ -4184,7 +4186,7 @@ definitions:
       is_private:
         type: boolean
       pbehavior_pattern:
-        $ref: '#/definitions/pattern.Pbehavior'
+        $ref: '#/definitions/pattern.PbehaviorInfo'
         type: object
       title:
         type: string
@@ -4227,7 +4229,7 @@ definitions:
         additionalProperties: true
         type: object
       pbehavior_pattern:
-        $ref: '#/definitions/pattern.Pbehavior'
+        $ref: '#/definitions/pattern.PbehaviorInfo'
         type: object
       title:
         type: string
