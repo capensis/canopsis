@@ -304,6 +304,8 @@ class ContextGraph(object):
             atable = self.at_manager.get(hypertextlink_conf)
             if atable is not None:
                 conf = atable.get_all()
+                if 'val' in conf:
+                    conf = conf['val']
                 self.hlb_manager = HypertextLinkManager(conf, self.logger)
 
         self.filter_ = InfosFilter(logger=self.logger)

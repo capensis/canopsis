@@ -98,6 +98,7 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  * @property {boolean} drop_scenario_if_not_matched
  * @property {boolean} emit_trigger
  * @property {Object} patterns
+ * @property {string} comment
  * @property {Object[]} alarm_patterns
  * @property {Object[]} entity_patterns
  * @property {ActionParameters} parameters
@@ -276,6 +277,7 @@ export const actionToForm = (action = {}, timezone = getLocaleTimezone()) => {
     parameters: actionParametersToForm(action, timezone),
     drop_scenario_if_not_matched: !!action.drop_scenario_if_not_matched,
     emit_trigger: !!action.emit_trigger,
+    comment: action.comment || '',
     patterns: {
       alarm_patterns: action.alarm_patterns ? cloneDeep(action.alarm_patterns) : [],
       entity_patterns: action.entity_patterns ? cloneDeep(action.entity_patterns) : [],

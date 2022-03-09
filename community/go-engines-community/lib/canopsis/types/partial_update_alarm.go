@@ -104,7 +104,7 @@ func (a *Alarm) PartialUpdateUnsnooze(timestamp CpsTime) error {
 }
 
 func (a *Alarm) PartialUpdatePbhEnter(timestamp CpsTime, pbehaviorInfo PbehaviorInfo, author, output, userID, role, initiator string) error {
-	if a.Value.PbehaviorInfo == pbehaviorInfo {
+	if a.Value.PbehaviorInfo.Same(pbehaviorInfo) {
 		return nil
 	}
 
@@ -158,7 +158,7 @@ func (a *Alarm) PartialUpdatePbhLeave(timestamp CpsTime, author, output, userID,
 }
 
 func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo PbehaviorInfo, author, output, userID, role, initiator string) error {
-	if a.Value.PbehaviorInfo == pbehaviorInfo {
+	if a.Value.PbehaviorInfo.Same(pbehaviorInfo) {
 		return nil
 	}
 

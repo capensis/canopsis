@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    snmp-rule-form-field-title(:label="$t('modals.createSnmpRule.fields.oid.title')")
+    snmp-rule-form-field-title(:label="$t('snmpRule.oid')")
     v-layout(row, wrap)
       v-flex.pr-1(xs6)
         v-autocomplete.pt-0(
@@ -8,7 +8,7 @@
           :items="modules",
           :search-input.sync="searchInput",
           :loading="modulesPending",
-          :placeholder="$t('modals.createSnmpRule.fields.oid.labels.module')",
+          :placeholder="$t('snmpRule.module')",
           hide-no-data,
           hide-details,
           @change="selectModule"

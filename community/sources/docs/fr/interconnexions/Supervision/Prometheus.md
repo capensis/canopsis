@@ -43,9 +43,9 @@ Deux méthodes d'installation ou d'exécution sont proposées :
 
 - Installation en tant que service sur un système de production
 - Exécution en tant que conteneur *Docker* avec l'image fournie :  
-[canopsis/canopsis-connector-prometheus2canopsis][dockerhub-image]
+[canopsis/canopsis-connector-prometheus2canopsis][docker-image]
 
-[dockerhub-image]: https://hub.docker.com/r/canopsis/canopsis-connector-prometheus2canopsis
+[docker-image]: https://git.canopsis.net/docker/community/container_registry/179
 
 ### Configuration connecteur
 

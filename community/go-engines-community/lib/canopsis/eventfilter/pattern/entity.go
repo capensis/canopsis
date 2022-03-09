@@ -362,16 +362,16 @@ func (e *EntityPattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte) er
 // The zero value of an EntityPatternList (i.e. an EntityPatternList that has
 // not been set) is considered valid, and matches all entities.
 type EntityPatternList struct {
-	Patterns []EntityPattern
+	Patterns []EntityPattern `swaggerignore:"true"`
 
 	// Set is a boolean indicating whether the EntityPatternList has been set
 	// explicitly or not.
-	Set bool
+	Set bool `swaggerignore:"true"`
 
 	// Valid is a boolean indicating whether the event patterns or valid or
 	// not.
 	// Valid is also false if the EntityPatternList has not been set.
-	Valid bool
+	Valid bool `swaggerignore:"true"`
 }
 
 func (l *EntityPatternList) UnmarshalJSON(b []byte) error {

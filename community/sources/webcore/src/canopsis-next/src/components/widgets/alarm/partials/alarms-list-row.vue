@@ -10,7 +10,6 @@
           )
           v-checkbox-functional(
             v-else,
-            :value="false",
             disabled,
             hide-details
           )

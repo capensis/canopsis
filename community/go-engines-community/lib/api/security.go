@@ -36,7 +36,7 @@ type Security interface {
 	// GetAuthProviders creates providers which are used in auth API request.
 	GetAuthProviders() []libsecurity.Provider
 	// RegisterCallbackRoutes registers callback routes for auth methods.
-	RegisterCallbackRoutes(router gin.IRouter)
+	RegisterCallbackRoutes(router gin.IRouter, client mongo.DbClient)
 	// GetAuthMiddleware returns corresponding config auth middlewares.
 	GetAuthMiddleware() []gin.HandlerFunc
 	// GetFileAuthMiddleware returns auth middlewares for files.
@@ -126,7 +126,7 @@ func (s *security) GetAuthProviders() []libsecurity.Provider {
 	return res
 }
 
-func (s *security) RegisterCallbackRoutes(router gin.IRouter) {
+func (s *security) RegisterCallbackRoutes(router gin.IRouter, client mongo.DbClient) {
 	for _, v := range s.Config.Security.AuthProviders {
 		switch v {
 		case libsecurity.AuthMethodCas:
@@ -140,7 +140,7 @@ func (s *security) RegisterCallbackRoutes(router gin.IRouter) {
 			router.GET("/api/v4/cas/login", s.casLoginHandler())
 			router.GET("/api/v4/cas/loggedin", s.casCallbackHandler(p))
 		case libsecurity.AuthMethodSaml:
-			sp, err := saml.NewServiceProvider(s.newUserProvider(), s.SessionStore,
+			sp, err := saml.NewServiceProvider(s.newUserProvider(), client.Collection(mongo.RightsMongoCollection), s.SessionStore,
 				s.enforcer, s.Config, s.GetTokenService(), s.GetTokenStore(), s.Logger)
 			if err != nil {
 				s.Logger.Err(err).Msg("RegisterCallbackRoutes: NewServiceProvider error")
