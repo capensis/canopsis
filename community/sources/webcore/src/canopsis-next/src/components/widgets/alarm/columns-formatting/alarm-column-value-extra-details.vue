@@ -34,17 +34,13 @@
     extra-details-snooze(v-if="alarm.v.snooze", :snooze="alarm.v.snooze")
     div(v-if="alarm.pbehavior")
       v-tooltip(top)
-        v-icon.badge.cyan.accent-2.white--text(
-          small,
-          data-test="extraDetailsOpenButton-pbehaviors",
-          slot="activator"
-        ) {{ alarm.v.pbehavior_info.icon_name }}
+        v-icon.badge.cyan.accent-2.white--text(slot="activator", small) {{ alarm.v.pbehavior_info | get('icon_name') }}
         div
           strong {{ $t('alarmList.actions.iconsTitles.pbehaviors') }}
           div
             div.mt-2.font-weight-bold {{ alarm.pbehavior.name }}
             div {{ $t('common.author') }}: {{ alarm.pbehavior.author }}
-            div(v-if="alarm.pbehavior.type") {{ $t('common.type') }}: {{ alarm.v.pbehavior_info.type_name }}
+            div(v-if="alarm.pbehavior.type") {{ $t('common.type') }}: {{ alarm.v.pbehavior_info | get('type_name') }}
             div(v-if="alarm.pbehavior.reason") {{ $t('common.reason') }}: {{ alarm.pbehavior.reason.name }}
             div {{ alarm.pbehavior.tstart | dateWithToday }}
               template(v-if="alarm.pbehavior.tstop")
