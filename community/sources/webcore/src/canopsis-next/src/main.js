@@ -135,6 +135,8 @@ import CRecordsPerPageField from '@/components/forms/fields/c-records-per-page-f
 import COperatorField from '@/components/forms/fields/c-operator-field.vue';
 import CDraggableListField from '@/components/forms/fields/c-draggable-list-field.vue';
 import CEntityStatusField from '@/components/forms/fields/c-entity-status-field.vue';
+import CFilterInfosAttributeField from '@/components/forms/fields/c-filter-infos-attribute-field.vue';
+import CFilterExtraInfosAttributeField from '@/components/forms/fields/c-filter-extra-infos-attribute-field.vue';
 
 /**
  * Icons
@@ -329,6 +331,8 @@ Vue.component('c-entity-status-field', CEntityStatusField);
 Vue.component('c-records-per-page-field', CRecordsPerPageField);
 Vue.component('c-operator-field', COperatorField);
 Vue.component('c-draggable-list-field', CDraggableListField);
+Vue.component('c-filter-infos-attribute-field', CFilterInfosAttributeField);
+Vue.component('c-filter-extra-infos-attribute-field', CFilterExtraInfosAttributeField);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
