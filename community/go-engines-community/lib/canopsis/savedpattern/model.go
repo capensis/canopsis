@@ -12,14 +12,14 @@ const (
 )
 
 type SavedPattern struct {
-	ID               string            `bson:"_id"`
-	Title            string            `bson:"title"`
-	Type             string            `bson:"type"`
-	IsCorporate      bool              `bson:"is_corporate"`
-	AlarmPattern     pattern.Alarm     `bson:"alarm_pattern,omitempty"`
-	EntityPattern    pattern.Entity    `bson:"entity_pattern,omitempty"`
-	PbehaviorPattern pattern.Pbehavior `bson:"pbehavior_pattern,omitempty"`
-	Author           string            `bson:"author"`
-	Created          types.CpsTime     `bson:"created,omitempty"`
-	Updated          types.CpsTime     `bson:"updated,omitempty"`
+	ID               string                `bson:"_id"`
+	Title            string                `bson:"title"`
+	Type             string                `bson:"type"`
+	IsCorporate      bool                  `bson:"is_corporate"`
+	AlarmPattern     pattern.Alarm         `bson:"alarm_pattern,omitempty"`
+	EntityPattern    pattern.Entity        `bson:"entity_pattern,omitempty"`
+	PbehaviorPattern pattern.PbehaviorInfo `bson:"pbehavior_pattern,omitempty"`
+	Author           string                `bson:"author"`
+	Created          types.CpsTime         `bson:"created,omitempty"`
+	Updated          types.CpsTime         `bson:"updated,omitempty"`
 }
