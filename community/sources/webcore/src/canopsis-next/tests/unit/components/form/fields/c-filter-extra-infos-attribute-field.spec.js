@@ -29,49 +29,57 @@ describe('c-filter-extra-infos-attribute-field', () => {
   it('Field changed after trigger the text field', () => {
     const wrapper = factory({
       propsData: {
-        value: 'extra_infos.test.name',
+        value: {
+          field: 'test.name',
+        },
       },
     });
     const fieldSelect = selectTextField(wrapper);
 
-    expect(fieldSelect.vm.value).toBe('test.name');
-
     const newField = 'newField';
 
-    fieldSelect.vm.$emit('input', newField);
+    fieldSelect.setValue(newField);
 
     const inputEvents = wrapper.emitted('input');
 
     expect(inputEvents).toHaveLength(1);
 
     const [eventData] = inputEvents[0];
-    expect(eventData).toBe(`extra_infos.${newField}`);
+    expect(eventData).toEqual({
+      field: newField,
+    });
   });
 
   it('Field changed after trigger the text field without initial field', () => {
     const wrapper = factory({
       propsData: {
-        value: 'extra_infos',
+        value: {
+          field: '',
+        },
       },
     });
     const fieldSelect = selectTextField(wrapper);
 
     const newField = 'newField';
 
-    fieldSelect.vm.$emit('input', newField);
+    fieldSelect.setValue(newField);
 
     const inputEvents = wrapper.emitted('input');
 
     expect(inputEvents).toHaveLength(1);
 
     const [eventData] = inputEvents[0];
-    expect(eventData).toBe(`extra_infos.${newField}`);
+    expect(eventData).toEqual({
+      field: newField,
+    });
   });
 
   it('Renders `c-filter-extra-infos-attribute-field` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        value: 'extra_infos',
+        value: {
+          field: '',
+        },
       },
     });
 
@@ -82,7 +90,9 @@ describe('c-filter-extra-infos-attribute-field', () => {
   it('Renders `c-filter-extra-infos-attribute-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        value: 'extra_infos.test.test.test',
+        value: {
+          field: 'test.test.test',
+        },
         label: 'Custom label',
         name: 'custom_filter_extra_infos_attribute_name',
         disabled: true,
