@@ -277,6 +277,14 @@ export default {
       [ENTITIES_STATES.major]: 'Major',
       [ENTITIES_STATES.critical]: 'Critical',
     },
+    statusTypes: {
+      [ENTITIES_STATUSES.closed]: 'Closed',
+      [ENTITIES_STATUSES.ongoing]: 'Ongoing',
+      [ENTITIES_STATUSES.flapping]: 'Flapping',
+      [ENTITIES_STATUSES.stealthy]: 'Stealth',
+      [ENTITIES_STATUSES.cancelled]: 'Canceled',
+      [ENTITIES_STATUSES.noEvents]: 'No events',
+    },
   },
   variableTypes: {
     string: 'String',
@@ -1572,12 +1580,6 @@ export default {
       status: 'Status',
       extraDetails: 'Extra details',
     },
-    alarmStates: {
-      [ENTITIES_STATES.ok]: 'Info',
-      [ENTITIES_STATES.minor]: 'Minor',
-      [ENTITIES_STATES.major]: 'Major',
-      [ENTITIES_STATES.critical]: 'Critical',
-    },
     contextEntities: {
       columns: {
         name: 'Name',
@@ -2576,15 +2578,6 @@ export default {
       title: 'Instruction rating',
       message: 'This page contains the statistics on the instructions execution. Users can rate instructions based on their performance.',
     },
-  },
-
-  alarmStatuses: {
-    [ENTITIES_STATUSES.closed]: 'Closed',
-    [ENTITIES_STATUSES.ongoing]: 'Ongoing',
-    [ENTITIES_STATUSES.flapping]: 'Flapping',
-    [ENTITIES_STATUSES.stealthy]: 'Stealth',
-    [ENTITIES_STATUSES.cancelled]: 'Canceled',
-    [ENTITIES_STATUSES.noEvents]: 'No events',
   },
 
   entitiesCountAlerts: {
