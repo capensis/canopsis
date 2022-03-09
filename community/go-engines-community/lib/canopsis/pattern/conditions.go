@@ -2,12 +2,15 @@
 package pattern
 
 import (
+	"encoding/json"
 	"errors"
+	"math"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/bsontype"
 )
 
 var ErrUnsupportedField = errors.New("unsupported field")
@@ -50,35 +53,111 @@ type FieldCondition struct {
 type Condition struct {
 	Type  string      `json:"type" bson:"type"`
 	Value interface{} `json:"value" bson:"value"`
+
+	valueStr              *string
+	valueRegexp           utils.RegexExpression
+	valueInt              *int64
+	valueBool             *bool
+	valueStrArray         *[]string
+	valueTimeIntervalFrom *int64
+	valueTimeIntervalTo   *int64
+	valueDuration         *int64
 }
 
 // RegexMatches is a type that contains the values of the sub-expressions of a
 // regular expression.
 type RegexMatches map[string]string
 
+func NewStringCondition(t, s string) Condition {
+	return Condition{
+		Type:     t,
+		Value:    s,
+		valueStr: &s,
+	}
+}
+
+func NewRegexpCondition(t, s string) (Condition, error) {
+	r, err := utils.NewRegexExpression(s)
+	if err != nil {
+		return Condition{}, err
+	}
+
+	return Condition{
+		Type:        t,
+		Value:       s,
+		valueRegexp: r,
+	}, nil
+}
+
+func NewIntCondition(t string, i int64) Condition {
+	return Condition{
+		Type:     t,
+		Value:    i,
+		valueInt: &i,
+	}
+}
+
+func NewBoolCondition(t string, b bool) Condition {
+	return Condition{
+		Type:      t,
+		Value:     b,
+		valueBool: &b,
+	}
+}
+
+func NewStringArrayCondition(t string, a []string) Condition {
+	return Condition{
+		Type:          t,
+		Value:         a,
+		valueStrArray: &a,
+	}
+}
+
+func NewTimeIntervalCondition(t string, from, to int64) Condition {
+	return Condition{
+		Type: t,
+		Value: map[string]int64{
+			"from": from,
+			"to":   to,
+		},
+		valueTimeIntervalFrom: &from,
+		valueTimeIntervalTo:   &to,
+	}
+}
+
+func NewDurationCondition(t string, d types.DurationWithUnit) (Condition, error) {
+	var err error
+	d, err = d.To("s")
+	if err != nil {
+		return Condition{}, err
+	}
+
+	return Condition{
+		Type:          t,
+		Value:         d,
+		valueDuration: &d.Value,
+	}, nil
+}
+
 func (c Condition) MatchString(value string) (bool, RegexMatches, error) {
 	switch c.Type {
 	case ConditionEqual:
-		conditionValue, err := c.getStringValue()
-		if err != nil {
-			return false, nil, err
+		if c.valueStr == nil {
+			return false, nil, ErrWrongConditionValue
 		}
 
-		return value == conditionValue, nil, nil
+		return value == *c.valueStr, nil, nil
 	case ConditionNotEqual:
-		conditionValue, err := c.getStringValue()
-		if err != nil {
-			return false, nil, err
+		if c.valueStr == nil {
+			return false, nil, ErrWrongConditionValue
 		}
 
-		return value != conditionValue, nil, nil
+		return value != *c.valueStr, nil, nil
 	case ConditionIsOneOf:
-		conditionValue, err := c.getStringArrayValue()
-		if err != nil {
-			return false, nil, err
+		if c.valueStrArray == nil {
+			return false, nil, ErrWrongConditionValue
 		}
-
-		for _, item := range conditionValue {
+		for _, item := range *c.valueStrArray {
 			if item == value {
 				return true, nil, nil
 			}
@@ -86,12 +165,11 @@ func (c Condition) MatchString(value string) (bool, RegexMatches, error) {
 
 		return false, nil, nil
 	case ConditionIsNotOneOf:
-		conditionValue, err := c.getStringArrayValue()
-		if err != nil {
-			return false, nil, err
+		if c.valueStrArray == nil {
+			return false, nil, ErrWrongConditionValue
 		}
 
-		for _, item := range conditionValue {
+		for _, item := range *c.valueStrArray {
 			if item == value {
 				return false, nil, nil
 			}
@@ -99,17 +177,11 @@ func (c Condition) MatchString(value string) (bool, RegexMatches, error) {
 
 		return true, nil, nil
 	case ConditionRegexp:
-		conditionValue, err := c.getStringValue()
-		if err != nil {
-			return false, nil, err
+		if c.valueRegexp == nil {
+			return false, nil, ErrWrongConditionValue
 		}
 
-		r, err := utils.NewRegexExpression(conditionValue)
-		if err != nil {
-			return false, nil, err
-		}
-
-		regexMatches := utils.FindStringSubmatchMapWithRegexExpression(r, value)
+		regexMatches := utils.FindStringSubmatchMapWithRegexExpression(c.valueRegexp, value)
 
 		return regexMatches != nil, regexMatches, nil
 	}
@@ -117,49 +189,46 @@ func (c Condition) MatchString(value string) (bool, RegexMatches, error) {
 	return false, nil, ErrUnsupportedConditionType
 }
 
-func (c Condition) MatchInt(value int) (bool, error) {
-	conditionValue, err := c.getIntValue()
-	if err != nil {
-		return false, err
+func (c Condition) MatchInt(value int64) (bool, error) {
+	if c.valueInt == nil {
+		return false, ErrWrongConditionValue
 	}
 
 	switch c.Type {
 	case ConditionEqual:
-		return value == conditionValue, nil
+		return value == *c.valueInt, nil
 	case ConditionNotEqual:
-		return value != conditionValue, nil
+		return value != *c.valueInt, nil
 	case ConditionGT:
-		return value > conditionValue, nil
+		return value > *c.valueInt, nil
 	case ConditionLT:
-		return value < conditionValue, nil
+		return value < *c.valueInt, nil
 	}
 
 	return false, ErrUnsupportedConditionType
 }
 
 func (c Condition) MatchBool(value bool) (bool, error) {
-	conditionValue, err := c.getBoolValue()
-	if err != nil {
-		return false, err
+	if c.valueBool == nil {
+		return false, ErrWrongConditionValue
 	}
 
 	switch c.Type {
 	case ConditionEqual:
-		return value == conditionValue, nil
+		return value == *c.valueBool, nil
 	}
 
 	return false, ErrUnsupportedConditionType
 }
 
 func (c Condition) MatchRef(value interface{}) (bool, error) {
-	conditionValue, err := c.getBoolValue()
-	if err != nil {
-		return false, err
+	if c.valueBool == nil {
+		return false, ErrWrongConditionValue
 	}
 
 	switch c.Type {
 	case ConditionExist:
-		return conditionValue == (value != nil), nil
+		return *c.valueBool == (value != nil), nil
 	}
 
 	return false, ErrUnsupportedConditionType
@@ -167,17 +236,15 @@ func (c Condition) MatchRef(value interface{}) (bool, error) {
 
 func (c Condition) MatchStringArray(value []string) (bool, error) {
 	if c.Type == ConditionIsEmpty {
-		conditionValue, err := c.getBoolValue()
-		if err != nil {
-			return false, err
+		if c.valueBool == nil {
+			return false, ErrWrongConditionValue
 		}
 
-		return conditionValue == (len(value) == 0), nil
+		return *c.valueBool == (len(value) == 0), nil
 	}
 
-	conditionValue, err := c.getStringArrayValue()
-	if err != nil {
-		return false, err
+	if c.valueStrArray == nil {
+		return false, ErrWrongConditionValue
 	}
 
 	valueMap := make(map[string]bool)
@@ -187,7 +254,7 @@ func (c Condition) MatchStringArray(value []string) (bool, error) {
 
 	switch c.Type {
 	case ConditionHasEvery:
-		for _, v := range conditionValue {
+		for _, v := range *c.valueStrArray {
 			_, exists := valueMap[v]
 			if !exists {
 				return false, nil
@@ -196,7 +263,7 @@ func (c Condition) MatchStringArray(value []string) (bool, error) {
 
 		return true, nil
 	case ConditionHasOneOf:
-		for _, v := range conditionValue {
+		for _, v := range *c.valueStrArray {
 			_, exists := valueMap[v]
 			if exists {
 				return true, nil
@@ -205,7 +272,7 @@ func (c Condition) MatchStringArray(value []string) (bool, error) {
 
 		return false, nil
 	case ConditionHasNot:
-		for _, v := range conditionValue {
+		for _, v := range *c.valueStrArray {
 			_, exists := valueMap[v]
 			if exists {
 				return false, nil
@@ -221,35 +288,32 @@ func (c Condition) MatchStringArray(value []string) (bool, error) {
 func (c Condition) MatchTime(value time.Time) (bool, error) {
 	switch c.Type {
 	case ConditionTimeRelative:
-		conditionValue, err := c.getIntValue()
-		if err != nil {
-			return false, err
+		if c.valueInt == nil {
+			return false, ErrWrongConditionValue
 		}
 
-		return value.After(time.Now().Add(time.Duration(-conditionValue) * time.Second)), nil
+		return value.After(time.Now().Add(time.Duration(-*c.valueInt) * time.Second)), nil
 	case ConditionTimeAbsolute:
-		from, to, err := c.getTimeIntervalValue()
-		if err != nil {
-			return false, err
+		if c.valueTimeIntervalFrom == nil || c.valueTimeIntervalTo == nil {
+			return false, ErrWrongConditionValue
 		}
 
-		return value.After(time.Unix(from, 0)) && value.Before(time.Unix(to, 0)), nil
+		return value.After(time.Unix(*c.valueTimeIntervalFrom, 0)) && value.Before(time.Unix(*c.valueTimeIntervalTo, 0)), nil
 	}
 
 	return false, ErrUnsupportedConditionType
 }
 
 func (c Condition) MatchDuration(value int64) (bool, error) {
-	d, err := c.getDurationValue()
-	if err != nil {
-		return false, err
+	if c.valueDuration == nil {
+		return false, ErrWrongConditionValue
 	}
 
 	switch c.Type {
 	case ConditionGT:
-		return value > d.Value, nil
+		return value > *c.valueDuration, nil
 	case ConditionLT:
-		return value < d.Value, nil
+		return value < *c.valueDuration, nil
 	}
 
 	return false, ErrUnsupportedConditionType
@@ -262,16 +326,14 @@ func (c Condition) ToMongoQuery(f string) (bson.M, error) {
 	case ConditionNotEqual:
 		return bson.M{f: bson.M{"$ne": c.Value}}, nil
 	case ConditionGT:
-		d, err := c.getDurationValue()
-		if err == nil {
-			return bson.M{f: bson.M{"$gt": d.Value}}, nil
+		if c.valueDuration != nil {
+			return bson.M{f: bson.M{"$gt": c.valueDuration}}, nil
 		}
 
 		return bson.M{f: bson.M{"$gt": c.Value}}, nil
 	case ConditionLT:
-		d, err := c.getDurationValue()
-		if err == nil {
-			return bson.M{f: bson.M{"$lt": d.Value}}, nil
+		if c.valueDuration != nil {
+			return bson.M{f: bson.M{"$lt": c.valueDuration}}, nil
 		}
 
 		return bson.M{f: bson.M{"$lt": c.Value}}, nil
@@ -284,44 +346,40 @@ func (c Condition) ToMongoQuery(f string) (bson.M, error) {
 	case ConditionHasNot:
 		return bson.M{f: bson.M{"$elemMatch": bson.M{"$nin": c.Value}}}, nil
 	case ConditionIsEmpty:
-		conditionValue, err := c.getBoolValue()
-		if err != nil {
-			return nil, err
+		if c.valueBool == nil {
+			return nil, ErrWrongConditionValue
 		}
 
-		if conditionValue {
+		if *c.valueBool {
 			return bson.M{f: bson.M{"$in": bson.A{nil, bson.A{}}}}, nil
 		}
 
 		return bson.M{f: bson.M{"$exists": true, "$type": "array", "$ne": bson.A{}}}, nil
 	case ConditionExist:
-		conditionValue, err := c.getBoolValue()
-		if err != nil {
-			return nil, err
+		if c.valueBool == nil {
+			return nil, ErrWrongConditionValue
 		}
 
-		if conditionValue {
+		if *c.valueBool {
 			return bson.M{f: bson.M{"$exists": true, "$ne": nil}}, nil
 		}
 
 		return bson.M{"$or": []bson.M{{f: bson.M{"$exists": false}}, {f: bson.M{"$eq": nil}}}}, nil
 	case ConditionTimeRelative:
-		conditionValue, err := c.getIntValue()
-		if err != nil {
-			return nil, err
+		if c.valueInt == nil {
+			return nil, ErrWrongConditionValue
 		}
 
-		t := types.CpsTime{Time: time.Now().Add(time.Duration(-conditionValue) * time.Second)}
+		t := types.CpsTime{Time: time.Now().Add(time.Duration(-*c.valueInt) * time.Second)}
 
 		return bson.M{f: bson.M{"$gt": t}}, nil
 	case ConditionTimeAbsolute:
-		from, to, err := c.getTimeIntervalValue()
-		if err != nil {
-			return nil, err
+		if c.valueTimeIntervalFrom == nil || c.valueTimeIntervalTo == nil {
+			return nil, ErrWrongConditionValue
 		}
 
-		ft := types.NewCpsTime(from)
-		tt := types.NewCpsTime(to)
+		ft := types.NewCpsTime(*c.valueTimeIntervalFrom)
+		tt := types.NewCpsTime(*c.valueTimeIntervalTo)
 
 		return bson.M{f: bson.M{"$gt": ft, "$lt": tt}}, nil
 	case ConditionIsOneOf:
@@ -333,85 +391,219 @@ func (c Condition) ToMongoQuery(f string) (bson.M, error) {
 	}
 }
 
-func (c Condition) getStringValue() (string, error) {
-	if s, ok := c.Value.(string); ok {
+func (c *Condition) UnmarshalJSON(b []byte) error {
+	type Alias Condition
+	v := Alias{}
+	err := json.Unmarshal(b, &v)
+	if err != nil {
+		return err
+	}
+
+	*c = Condition(v)
+	c.parseValue()
+
+	return nil
+}
+
+func (c *Condition) UnmarshalBSONValue(_ bsontype.Type, b []byte) error {
+	type Alias Condition
+	v := Alias{}
+	err := bson.Unmarshal(b, &v)
+	if err != nil {
+		return err
+	}
+
+	*c = Condition(v)
+	c.parseValue()
+
+	return nil
+}
+
+func (c *Condition) parseValue() {
+	if s, err := getStringValue(c.Value); err == nil {
+		if c.Type == ConditionRegexp {
+			if r, err := utils.NewRegexExpression(s); err == nil {
+				c.valueRegexp = r
+			}
+
+			return
+		}
+
+		c.valueStr = &s
+		return
+	}
+
+	if i, err := getIntValue(c.Value); err == nil {
+		c.valueInt = &i
+		return
+	}
+
+	if b, err := getBoolValue(c.Value); err == nil {
+		c.valueBool = &b
+		return
+	}
+
+	if a, err := getStringArrayValue(c.Value); err == nil {
+		c.valueStrArray = &a
+		return
+	}
+
+	if from, to, err := getTimeIntervalValue(c.Value); err == nil {
+		c.valueTimeIntervalFrom = &from
+		c.valueTimeIntervalTo = &to
+		return
+	}
+
+	if d, err := getDurationValue(c.Value); err == nil {
+		c.valueDuration = &d
+		return
+	}
+}
+
+func getStringValue(v interface{}) (string, error) {
+	if s, ok := v.(string); ok {
 		return s, nil
 	}
 
 	return "", ErrWrongConditionValue
 }
 
-func (c Condition) getIntValue() (int, error) {
-	if i, ok := c.Value.(int); ok {
+func getIntValue(v interface{}) (int64, error) {
+	switch i := v.(type) {
+	case int:
+		return int64(i), nil
+	case int32:
+		return int64(i), nil
+	case int64:
 		return i, nil
-	}
+	case float32:
+		a, b := math.Modf(float64(i))
+		if b == 0 {
+			return int64(a), nil
+		}
 
-	return 0, ErrWrongConditionValue
+		return 0, ErrWrongConditionValue
+	case float64:
+		a, b := math.Modf(i)
+		if b == 0 {
+			return int64(a), nil
+		}
+
+		return 0, ErrWrongConditionValue
+	default:
+		return 0, ErrWrongConditionValue
+	}
 }
 
-func (c Condition) getBoolValue() (bool, error) {
-	if b, ok := c.Value.(bool); ok {
+func getBoolValue(v interface{}) (bool, error) {
+	if b, ok := v.(bool); ok {
 		return b, nil
 	}
 
 	return false, ErrWrongConditionValue
 }
 
-func (c Condition) getStringArrayValue() ([]string, error) {
-	if s, ok := c.Value.([]string); ok {
-		return s, nil
+func getStringArrayValue(v interface{}) ([]string, error) {
+	var interfaceArr []interface{}
+
+	switch a := v.(type) {
+	case []string:
+		return a, nil
+	case []interface{}:
+		interfaceArr = a
+	case bson.A:
+		interfaceArr = a
+	default:
+		return nil, ErrWrongConditionValue
 	}
 
-	return nil, ErrWrongConditionValue
+	l := len(interfaceArr)
+	strArr := make([]string, l)
+	for i := 0; i < l; i++ {
+		if s, ok := interfaceArr[i].(string); ok {
+			strArr[i] = s
+		} else {
+			return nil, ErrWrongConditionValue
+		}
+	}
+
+	return strArr, nil
 }
 
-func (c Condition) getTimeIntervalValue() (int64, int64, error) {
-	m, ok := c.Value.(map[string]int64)
-	if !ok {
+func getTimeIntervalValue(v interface{}) (int64, int64, error) {
+	var mapVal map[string]interface{}
+	if m, ok := v.(map[string]interface{}); ok {
+		mapVal = m
+	} else if m, ok := v.(bson.D); ok {
+		mapVal = m.Map()
+	} else if m, ok := v.(bson.M); ok {
+		mapVal = m
+	} else {
 		return 0, 0, ErrWrongConditionValue
 	}
 
-	from, ok := m["from"]
+	rawFrom, ok := mapVal["from"]
 	if !ok {
 		return 0, 0, errors.New("condition value expected 'from' key")
 	}
 
-	to, ok := m["to"]
+	from, err := getIntValue(rawFrom)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	rawTo, ok := mapVal["to"]
 	if !ok {
 		return 0, 0, errors.New("condition value expected 'to' key")
+	}
+
+	to, err := getIntValue(rawTo)
+	if err != nil {
+		return 0, 0, err
 	}
 
 	return from, to, nil
 }
 
-func (c Condition) getDurationValue() (types.DurationWithUnit, error) {
-	m, ok := c.Value.(map[string]interface{})
-	if !ok {
-		return types.DurationWithUnit{}, ErrWrongConditionValue
+func getDurationValue(v interface{}) (int64, error) {
+	var mapVal map[string]interface{}
+	if m, ok := v.(map[string]interface{}); ok {
+		mapVal = m
+	} else if m, ok := v.(bson.D); ok {
+		mapVal = m.Map()
+	} else if m, ok := v.(bson.M); ok {
+		mapVal = m
+	} else {
+		return 0, ErrWrongConditionValue
 	}
 
-	rawVal, ok := m["value"]
+	rawVal, ok := mapVal["value"]
 	if !ok {
-		return types.DurationWithUnit{}, errors.New("condition value expected 'value' key")
+		return 0, errors.New("condition value expected 'value' key")
 	}
 
-	val, ok := rawVal.(int)
-	if !ok {
-		return types.DurationWithUnit{}, errors.New("value should be an int64")
+	val, err := getIntValue(rawVal)
+	if err != nil {
+		return 0, err
 	}
 
-	rawUnit, ok := m["unit"]
+	rawUnit, ok := mapVal["unit"]
 	if !ok {
-		return types.DurationWithUnit{}, errors.New("condition value expected 'unit' key")
+		return 0, errors.New("condition value expected 'unit' key")
 	}
 
-	unit, ok := rawUnit.(string)
-	if !ok {
-		return types.DurationWithUnit{}, errors.New("unit should be a string")
+	unit, err := getStringValue(rawUnit)
+	if err != nil {
+		return 0, err
 	}
 
-	return types.DurationWithUnit{
-		Value: int64(val),
+	d, err := types.DurationWithUnit{
+		Value: val,
 		Unit:  unit,
 	}.To("s")
+	if err != nil {
+		return 0, err
+	}
+
+	return d.Value, nil
 }

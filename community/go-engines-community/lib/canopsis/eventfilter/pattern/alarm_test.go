@@ -1,14 +1,13 @@
 package pattern_test
 
 import (
-	"reflect"
-	"testing"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
+	"reflect"
+	"testing"
 )
 
 type alarmPatternWrapper struct {
@@ -817,5 +816,189 @@ func TestAlarmPatternListMarshalBSON(t *testing.T) {
 				t.Errorf("expected unmarshalled value = %v, got %v", dataset.ExpectedUnmarshalled["pattern"], unmarshalled["pattern"])
 			}
 		})
+	}
+}
+
+func BenchmarkAlarmPatternList_Matches_Equal(b *testing.B) {
+	cond := pattern.AlarmValueFields{
+		DisplayName: pattern.StringPattern{
+			StringConditions: pattern.StringConditions{
+				Equal: types.OptionalString{
+					Set:   true,
+					Value: "test name2",
+				},
+			},
+		},
+	}
+	alarm := types.Alarm{
+		Value: types.AlarmValue{
+			DisplayName: "test name",
+		},
+	}
+
+	benchmarkAlarmPatternListMatches(b, cond, alarm)
+}
+
+func BenchmarkAlarmPatternList_Matches_Regexp(b *testing.B) {
+	testRegexp, err := utils.NewRegexExpression("^test .+name$")
+	if err != nil {
+		b.Fatalf("err is not expected: %s", err)
+	}
+	cond := pattern.AlarmValueFields{
+		DisplayName: pattern.StringPattern{
+			StringConditions: pattern.StringConditions{
+				RegexMatch: types.OptionalRegexp{
+					Set:   true,
+					Value: testRegexp,
+				},
+			},
+		},
+	}
+	alarm := types.Alarm{
+		Value: types.AlarmValue{
+			DisplayName: "test name",
+		},
+	}
+
+	benchmarkAlarmPatternListMatches(b, cond, alarm)
+}
+
+func BenchmarkAlarmPatternList_UnmarshalBsonAndMatches_Equal(b *testing.B) {
+	cond := pattern.AlarmValueFields{
+		DisplayName: pattern.StringPattern{
+			StringConditions: pattern.StringConditions{
+				Equal: types.OptionalString{
+					Set:   true,
+					Value: "test name2",
+				},
+			},
+		},
+	}
+	alarm := types.Alarm{
+		Value: types.AlarmValue{
+			DisplayName: "test name",
+		},
+	}
+
+	benchmarkAlarmPatternListUnmarshalBsonAndMatches(b, cond, []types.Alarm{alarm})
+}
+
+func BenchmarkAlarmPatternList_UnmarshalBsonAndMatches_Regexp(b *testing.B) {
+	testRegexp, err := utils.NewRegexExpression("^test .+name$")
+	if err != nil {
+		b.Fatalf("err is not expected: %s", err)
+	}
+	cond := pattern.AlarmValueFields{
+		DisplayName: pattern.StringPattern{
+			StringConditions: pattern.StringConditions{
+				RegexMatch: types.OptionalRegexp{
+					Set:   true,
+					Value: testRegexp,
+				},
+			},
+		},
+	}
+	alarm := types.Alarm{
+		Value: types.AlarmValue{
+			DisplayName: "test name",
+		},
+	}
+
+	benchmarkAlarmPatternListUnmarshalBsonAndMatches(b, cond, []types.Alarm{alarm})
+}
+
+func BenchmarkAlarmPatternList_ManyAlarms_UnmarshalBsonAndMatches_Regexp(b *testing.B) {
+	testRegexp, err := utils.NewRegexExpression("^test .+name$")
+	if err != nil {
+		b.Fatalf("err is not expected: %s", err)
+	}
+	cond := pattern.AlarmValueFields{
+		DisplayName: pattern.StringPattern{
+			StringConditions: pattern.StringConditions{
+				RegexMatch: types.OptionalRegexp{
+					Set:   true,
+					Value: testRegexp,
+				},
+			},
+		},
+	}
+	const size = 1000
+	alarms := make([]types.Alarm, size)
+	for i := 0; i < size; i++ {
+		alarms[i] = types.Alarm{
+			Value: types.AlarmValue{
+				DisplayName: "test name",
+			},
+		}
+	}
+
+	benchmarkAlarmPatternListUnmarshalBsonAndMatches(b, cond, alarms)
+}
+
+func benchmarkAlarmPatternListMatches(b *testing.B, cond pattern.AlarmValueFields, alarm types.Alarm) {
+	size := 100
+	patterns := make([]pattern.AlarmPattern, size)
+	for i := 0; i < size; i++ {
+		patterns[i] = pattern.AlarmPattern{
+			ShouldNotBeNil: true,
+			AlarmFields: pattern.AlarmFields{
+				Value: pattern.AlarmValuePattern{
+					AlarmValueFields: cond,
+				},
+			},
+		}
+	}
+
+	p := pattern.AlarmPatternList{
+		Patterns: patterns,
+		Set:      true,
+		Valid:    true,
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = p.Matches(&alarm)
+	}
+}
+
+func benchmarkAlarmPatternListUnmarshalBsonAndMatches(b *testing.B, cond pattern.AlarmValueFields, alarms []types.Alarm) {
+	size := 100
+	patterns := make([]pattern.AlarmPattern, size)
+	for i := 0; i < size; i++ {
+		patterns[i] = pattern.AlarmPattern{
+			ShouldNotBeNil: true,
+			AlarmFields: pattern.AlarmFields{
+				Value: pattern.AlarmValuePattern{
+					AlarmValueFields: cond,
+				},
+			},
+		}
+	}
+
+	type wrapper struct {
+		Pattern pattern.AlarmPatternList `bson:"pattern"`
+	}
+	p := pattern.AlarmPatternList{
+		Patterns: patterns,
+		Set:      true,
+		Valid:    true,
+	}
+
+	bytes, err := bson.Marshal(wrapper{Pattern: p})
+	if err != nil {
+		b.Fatalf("unexpected error %v", err)
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		var w wrapper
+		err := bson.Unmarshal(bytes, &w)
+		if err != nil {
+			b.Fatalf("unexpected error %v", err)
+		}
+
+		for _, alarm := range alarms {
+			_ = w.Pattern.Matches(&alarm)
+		}
 	}
 }
