@@ -59,7 +59,7 @@ describe('default-elements-per-page', () => {
   it('Renders `default-sort-column` with default props', () => {
     const wrapper = snapshotFactory();
 
-    const menuContent = wrapper.find('.v-menu__content');
+    const menuContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
@@ -72,7 +72,7 @@ describe('default-elements-per-page', () => {
       },
     });
 
-    const menuContent = wrapper.find('.v-menu__content');
+    const menuContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();

@@ -5,9 +5,7 @@
         entity-header(
           slot="header",
           :entity="entity",
-          :entity-name-field="entityNameField",
-          :active="hasActivePbehavior",
-          :paused="hasPausedPbehavior"
+          :entity-name-field="entityNameField"
         )
         v-card(color="white black--text")
           v-card-text
@@ -15,9 +13,8 @@
               v-if="!isService",
               :entity="entity",
               :template="template",
-              :active="hasActivePbehavior",
-              :paused="hasPausedPbehavior",
-              @add:event="$listeners['add:event']"
+              @add:event="$listeners['add:event']",
+              @refresh="$listeners.refresh"
             )
             v-tabs(
               v-else,
@@ -32,8 +29,6 @@
                 entity-info-tab(
                   :entity="entity",
                   :template="template",
-                  :active="hasActivePbehavior",
-                  :paused="hasPausedPbehavior",
                   @add:event="$listeners['add:event']"
                 )
               v-tab {{ $t('modals.service.entity.tabs.treeOfDependencies') }}
@@ -47,7 +42,7 @@
 <script>
 import { isNull } from 'lodash';
 
-import { PBEHAVIOR_TYPE_TYPES, ENTITY_TYPES } from '@/constants';
+import { ENTITY_TYPES } from '@/constants';
 
 import { getEntityColor } from '@/helpers/color';
 
@@ -96,14 +91,6 @@ export default {
 
     colorIndicator() {
       return this.widgetParameters.colorIndicator;
-    },
-
-    hasActivePbehavior() {
-      return this.entity.pbehaviors.some(pbehavior => pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.active);
-    },
-
-    hasPausedPbehavior() {
-      return this.entity.pbehaviors.some(pbehavior => pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.pause);
     },
 
     isService() {

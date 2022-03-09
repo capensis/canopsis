@@ -32,7 +32,8 @@ Feature: Create a scenario
             }
           },
           "drop_scenario_if_not_matched": false,
-          "emit_trigger": false
+          "emit_trigger": false,
+          "comment": "test comment"
         },
         {
           "alarm_patterns": [
@@ -133,7 +134,8 @@ Feature: Create a scenario
             }
           },
           "drop_scenario_if_not_matched": false,
-          "emit_trigger": false
+          "emit_trigger": false,
+          "comment": "test comment"
         },
         {
           "alarm_patterns": [

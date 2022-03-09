@@ -1,5 +1,7 @@
 <template lang="pug">
+  v-runtime-template(v-if="column.template", :template="columnContent")
   color-indicator-wrapper(
+    v-else,
     :type="column.colorIndicator",
     :entity="alarm.entity",
     :alarm="alarm"
@@ -14,6 +16,11 @@
 </template>
 
 <script>
+import { get } from 'lodash';
+import VRuntimeTemplate from 'v-runtime-template';
+
+import { compile } from '@/helpers/handlebars';
+
 import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
 
 import AlarmColumnCell from './alarm-column-cell.vue';
@@ -21,6 +28,7 @@ import AlarmColumnCell from './alarm-column-cell.vue';
 export default {
   components: {
     ColorIndicatorWrapper,
+    VRuntimeTemplate,
     AlarmColumnCell,
   },
   props: {
@@ -39,6 +47,23 @@ export default {
     columnsFilters: {
       type: Array,
       default: () => [],
+    },
+  },
+  asyncComputed: {
+    columnContent: {
+      lazy: true,
+
+      async get() {
+        const context = {
+          value: get(this.alarm, this.column.value, ''),
+          alarm: this.alarm,
+          entity: this.alarm.entity,
+        };
+        const compiledTemplate = await compile(this.column.template, context);
+
+        return `<div>${compiledTemplate}</div>`;
+      },
+      default: '',
     },
   },
 };

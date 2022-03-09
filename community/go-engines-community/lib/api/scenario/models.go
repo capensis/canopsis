@@ -16,7 +16,6 @@ type FilteredQuery struct {
 }
 
 type EditRequest struct {
-	ID                   string                  `json:"-"`
 	Name                 string                  `json:"name" binding:"required,max=255"`
 	Author               string                  `json:"author" binding:"required,max=255"`
 	Enabled              *bool                   `json:"enabled" binding:"required"`
@@ -37,6 +36,42 @@ type UpdateRequest struct {
 	ID string `json:"-"`
 }
 
+type BulkUpdateRequestItem struct {
+	EditRequest
+	ID string `json:"_id" binding:"required"`
+}
+
+type BulkDeleteRequestItem struct {
+	ID string `json:"_id" binding:"required"`
+}
+
+// for swagger
+type BulkCreateResponseItem struct {
+	ID     string            `json:"id,omitempty"`
+	Item   CreateRequest     `json:"item"`
+	Status int               `json:"status"`
+	Error  string            `json:"error,omitempty"`
+	Errors map[string]string `json:"errors,omitempty"`
+}
+
+// for swagger
+type BulkUpdateResponseItem struct {
+	ID     string                `json:"id,omitempty"`
+	Item   BulkUpdateRequestItem `json:"item"`
+	Status int                   `json:"status"`
+	Error  string                `json:"error,omitempty"`
+	Errors map[string]string     `json:"errors,omitempty"`
+}
+
+// for swagger
+type BulkDeleteResponseItem struct {
+	ID     string                `json:"id,omitempty"`
+	Item   BulkDeleteRequestItem `json:"item"`
+	Status int                   `json:"status"`
+	Error  string                `json:"error,omitempty"`
+	Errors map[string]string     `json:"errors,omitempty"`
+}
+
 type GetMinimalPriorityResponse struct {
 	Priority int `json:"priority"`
 }
@@ -53,6 +88,7 @@ type CheckPriorityResponse struct {
 type ActionRequest struct {
 	Type                     string                    `json:"type" binding:"required"`
 	Parameters               interface{}               `json:"parameters,omitempty"`
+	Comment                  string                    `json:"comment"`
 	AlarmPatterns            pattern.AlarmPatternList  `json:"alarm_patterns"`
 	EntityPatterns           pattern.EntityPatternList `json:"entity_patterns"`
 	DropScenarioIfNotMatched *bool                     `json:"drop_scenario_if_not_matched" binding:"required"`
@@ -214,6 +250,7 @@ type Scenario struct {
 
 type Action struct {
 	Type                     string                    `bson:"type" json:"type"`
+	Comment                  string                    `bson:"comment" json:"comment"`
 	Parameters               map[string]interface{}    `bson:"parameters,omitempty" json:"parameters,omitempty"`
 	AlarmPatterns            pattern.AlarmPatternList  `bson:"alarm_patterns" json:"alarm_patterns"`
 	EntityPatterns           pattern.EntityPatternList `bson:"entity_patterns" json:"entity_patterns"`

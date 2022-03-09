@@ -8,6 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/testutils"
+	"github.com/rs/zerolog"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -16,7 +17,7 @@ func TestConfWriteAndRead(t *testing.T) {
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 
-		dbClient, err := mongo.NewClient(ctx, 0, 0)
+		dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
 		if err != nil {
 			panic(err)
 		}
@@ -43,7 +44,7 @@ func TestConfSave(t *testing.T) {
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 
-		dbClient, err := mongo.NewClient(ctx, 0, 0)
+		dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
 		if err != nil {
 			panic(err)
 		}
@@ -69,7 +70,7 @@ func TestGetConfWrongMongo(t *testing.T) {
 		defer cancel()
 		ou := os.Getenv(mongo.EnvURL)
 		os.Setenv(mongo.EnvURL, "howmanytimeshaveitoldyaidontexist?")
-		_, err := mongo.NewClient(ctx, 0, 0)
+		_, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
 		So(err, ShouldNotBeNil)
 		os.Setenv(mongo.EnvURL, ou)
 	})

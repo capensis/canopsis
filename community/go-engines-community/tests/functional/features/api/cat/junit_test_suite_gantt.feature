@@ -16,7 +16,7 @@ Feature: get test suite's gantt intervals
     When I do GET /api/v4/cat/junit/test-suites/test-suite-to-get-gantt-1-3/gantt?page=1&limit=10
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -141,6 +141,8 @@ Feature: get test suite's gantt intervals
         }
       ],
       "meta": {
+        "time": 20,
+        "avg_time": 0,
         "page": 1,
         "per_page": 10,
         "page_count": 2,
@@ -151,7 +153,7 @@ Feature: get test suite's gantt intervals
     When I do GET /api/v4/cat/junit/test-suites/test-suite-to-get-gantt-1-3/gantt?page=2&limit=10
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -216,6 +218,8 @@ Feature: get test suite's gantt intervals
         }
       ],
       "meta": {
+        "time": 20,
+        "avg_time": 0,
         "page": 2,
         "per_page": 10,
         "page_count": 2,
@@ -229,7 +233,7 @@ Feature: get test suite's gantt intervals
     When I do GET /api/v4/cat/junit/test-suites/test-suite-to-get-gantt-1-3/gantt?page=1&limit=10&months=6
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -354,6 +358,8 @@ Feature: get test suite's gantt intervals
         }
       ],
       "meta": {
+        "time": 20,
+        "avg_time": 30.37,
         "page": 1,
         "per_page": 10,
         "page_count": 2,
@@ -364,7 +370,7 @@ Feature: get test suite's gantt intervals
     When I do GET /api/v4/cat/junit/test-suites/test-suite-to-get-gantt-1-3/gantt?page=2&limit=10&months=6
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -429,6 +435,8 @@ Feature: get test suite's gantt intervals
         }
       ],
       "meta": {
+        "time": 20,
+        "avg_time": 30.37,
         "page": 2,
         "per_page": 10,
         "page_count": 2,
@@ -442,7 +450,7 @@ Feature: get test suite's gantt intervals
     When I do GET /api/v4/cat/junit/test-suites/test-suite-to-get-gantt-1-3/gantt?page=1&limit=10&months=3
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -567,6 +575,8 @@ Feature: get test suite's gantt intervals
         }
       ],
       "meta": {
+        "time": 20,
+        "avg_time": 26.5,
         "page": 1,
         "per_page": 10,
         "page_count": 2,
@@ -577,7 +587,7 @@ Feature: get test suite's gantt intervals
     When I do GET /api/v4/cat/junit/test-suites/test-suite-to-get-gantt-1-3/gantt?page=2&limit=10&months=3
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -642,6 +652,8 @@ Feature: get test suite's gantt intervals
         }
       ],
       "meta": {
+        "time": 20,
+        "avg_time": 26.5,
         "page": 2,
         "per_page": 10,
         "page_count": 2,
@@ -655,7 +667,7 @@ Feature: get test suite's gantt intervals
     When I do GET /api/v4/cat/junit/test-suites/test-suite-to-get-gantt-1-2/gantt?page=1&limit=10&months=3
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -667,7 +679,6 @@ Feature: get test suite's gantt intervals
           "name": "test case 1",
           "time": 0,
           "avg_to": 0,
-          "avg_time": 0,
           "avg_time": 0,
           "avg_status": 1
         },
@@ -781,6 +792,8 @@ Feature: get test suite's gantt intervals
         }
       ],
       "meta": {
+        "time": 33,
+        "avg_time": 35.55,
         "page": 1,
         "per_page": 10,
         "page_count": 2,
@@ -791,7 +804,7 @@ Feature: get test suite's gantt intervals
     When I do GET /api/v4/cat/junit/test-suites/test-suite-to-get-gantt-1-2/gantt?page=2&limit=10&months=3
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -856,6 +869,8 @@ Feature: get test suite's gantt intervals
         }
       ],
       "meta": {
+        "time": 33,
+        "avg_time": 35.55,
         "page": 2,
         "per_page": 10,
         "page_count": 2,
@@ -869,7 +884,7 @@ Feature: get test suite's gantt intervals
     When I do GET /api/v4/cat/junit/test-suites/test-suite-to-get-gantt-1-1/gantt?page=1&limit=10&months=3
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -881,7 +896,6 @@ Feature: get test suite's gantt intervals
           "name": "test case 1",
           "time": 0,
           "avg_to": 0,
-          "avg_time": 0,
           "avg_time": 0,
           "avg_status": 1
         },
@@ -995,6 +1009,8 @@ Feature: get test suite's gantt intervals
         }
       ],
       "meta": {
+        "time": 38.1,
+        "avg_time": 38.1,
         "page": 1,
         "per_page": 10,
         "page_count": 2,
@@ -1005,7 +1021,7 @@ Feature: get test suite's gantt intervals
     When I do GET /api/v4/cat/junit/test-suites/test-suite-to-get-gantt-1-1/gantt?page=2&limit=10&months=3
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -1070,6 +1086,8 @@ Feature: get test suite's gantt intervals
         }
       ],
       "meta": {
+        "time": 38.1,
+        "avg_time": 38.1,
         "page": 2,
         "per_page": 10,
         "page_count": 2,
@@ -1083,10 +1101,12 @@ Feature: get test suite's gantt intervals
     When I do GET /api/v4/cat/junit/test-suites/d4a1fb11-9825-40cc-9b17-38bb4ac1e3zz/gantt
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [],
       "meta": {
+        "time": 0,
+        "avg_time": 0,
         "page": 1,
         "per_page": 10,
         "page_count": 1,

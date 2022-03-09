@@ -18,4 +18,3 @@ Puis, redémarrer le système.
 ## Sécurisation réseau
 
 Pour la configuration du filtrage réseau, se référer à la [matrice des flux réseau](../matrice-des-flux-reseau/index.md). Vous y trouverez le détail des flux réseau à autoriser ou restreindre.
-

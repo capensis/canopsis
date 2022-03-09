@@ -6,35 +6,36 @@ package mock_view
 
 import (
 	context "context"
+	reflect "reflect"
+
 	view "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	gomock "github.com/golang/mock/gomock"
-	reflect "reflect"
 )
 
-// MockAdapter is a mock of Adapter interface
+// MockAdapter is a mock of Adapter interface.
 type MockAdapter struct {
 	ctrl     *gomock.Controller
 	recorder *MockAdapterMockRecorder
 }
 
-// MockAdapterMockRecorder is the mock recorder for MockAdapter
+// MockAdapterMockRecorder is the mock recorder for MockAdapter.
 type MockAdapterMockRecorder struct {
 	mock *MockAdapter
 }
 
-// NewMockAdapter creates a new mock instance
+// NewMockAdapter creates a new mock instance.
 func NewMockAdapter(ctrl *gomock.Controller) *MockAdapter {
 	mock := &MockAdapter{ctrl: ctrl}
 	mock.recorder = &MockAdapterMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockAdapter) EXPECT() *MockAdapterMockRecorder {
 	return m.recorder
 }
 
-// AddTestSuitesToJunitWidgets mocks base method
+// AddTestSuitesToJunitWidgets mocks base method.
 func (m *MockAdapter) AddTestSuitesToJunitWidgets(arg0 context.Context, arg1, arg2 []string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddTestSuitesToJunitWidgets", arg0, arg1, arg2)
@@ -42,13 +43,13 @@ func (m *MockAdapter) AddTestSuitesToJunitWidgets(arg0 context.Context, arg1, ar
 	return ret0
 }
 
-// AddTestSuitesToJunitWidgets indicates an expected call of AddTestSuitesToJunitWidgets
+// AddTestSuitesToJunitWidgets indicates an expected call of AddTestSuitesToJunitWidgets.
 func (mr *MockAdapterMockRecorder) AddTestSuitesToJunitWidgets(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddTestSuitesToJunitWidgets", reflect.TypeOf((*MockAdapter)(nil).AddTestSuitesToJunitWidgets), arg0, arg1, arg2)
 }
 
-// FindJunitWidgets mocks base method
+// FindJunitWidgets mocks base method.
 func (m *MockAdapter) FindJunitWidgets(arg0 context.Context) ([]view.Widget, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindJunitWidgets", arg0)
@@ -57,13 +58,13 @@ func (m *MockAdapter) FindJunitWidgets(arg0 context.Context) ([]view.Widget, err
 	return ret0, ret1
 }
 
-// FindJunitWidgets indicates an expected call of FindJunitWidgets
+// FindJunitWidgets indicates an expected call of FindJunitWidgets.
 func (mr *MockAdapterMockRecorder) FindJunitWidgets(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindJunitWidgets", reflect.TypeOf((*MockAdapter)(nil).FindJunitWidgets), arg0)
 }
 
-// FindJunitWidgetsTestSuiteIDs mocks base method
+// FindJunitWidgetsTestSuiteIDs mocks base method.
 func (m *MockAdapter) FindJunitWidgetsTestSuiteIDs(arg0 context.Context, arg1 []string) ([]string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindJunitWidgetsTestSuiteIDs", arg0, arg1)
@@ -72,13 +73,13 @@ func (m *MockAdapter) FindJunitWidgetsTestSuiteIDs(arg0 context.Context, arg1 []
 	return ret0, ret1
 }
 
-// FindJunitWidgetsTestSuiteIDs indicates an expected call of FindJunitWidgetsTestSuiteIDs
+// FindJunitWidgetsTestSuiteIDs indicates an expected call of FindJunitWidgetsTestSuiteIDs.
 func (mr *MockAdapterMockRecorder) FindJunitWidgetsTestSuiteIDs(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindJunitWidgetsTestSuiteIDs", reflect.TypeOf((*MockAdapter)(nil).FindJunitWidgetsTestSuiteIDs), arg0, arg1)
 }
 
-// RemoveTestSuitesFromJunitWidgets mocks base method
+// RemoveTestSuitesFromJunitWidgets mocks base method.
 func (m *MockAdapter) RemoveTestSuitesFromJunitWidgets(arg0 context.Context, arg1 []string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RemoveTestSuitesFromJunitWidgets", arg0, arg1)
@@ -86,7 +87,7 @@ func (m *MockAdapter) RemoveTestSuitesFromJunitWidgets(arg0 context.Context, arg
 	return ret0
 }
 
-// RemoveTestSuitesFromJunitWidgets indicates an expected call of RemoveTestSuitesFromJunitWidgets
+// RemoveTestSuitesFromJunitWidgets indicates an expected call of RemoveTestSuitesFromJunitWidgets.
 func (mr *MockAdapterMockRecorder) RemoveTestSuitesFromJunitWidgets(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveTestSuitesFromJunitWidgets", reflect.TypeOf((*MockAdapter)(nil).RemoveTestSuitesFromJunitWidgets), arg0, arg1)

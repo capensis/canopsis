@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-header-priority Renders \`alarm-header-priority\` with slot 1`] = `
+<span>
+  Default text slot
+  <c-help-icon-stub
+    class="priority-help-icon ml-1"
+    size="16"
+    text="alarmList.tooltips.priority"
+    top="top"
+  />
+</span>
+`;
+
+exports[`alarm-header-priority Renders \`alarm-header-priority\` without slot 1`] = `
+<span>
+  <c-help-icon-stub
+    class="priority-help-icon ml-1"
+    size="16"
+    text="alarmList.tooltips.priority"
+    top="top"
+  />
+</span>
+`;

@@ -18,7 +18,7 @@ func (w *idleSincePeriodicalWorker) GetInterval() time.Duration {
 	return w.PeriodicalInterval
 }
 
-func (w *idleSincePeriodicalWorker) Work(parenCtx context.Context) error {
+func (w *idleSincePeriodicalWorker) Work(parenCtx context.Context) {
 	ctx, task := trace.NewTask(parenCtx, "service.IdleSincePeriodicalWorker")
 	defer task.End()
 
@@ -28,6 +28,4 @@ func (w *idleSincePeriodicalWorker) Work(parenCtx context.Context) error {
 		w.Logger.Warn().Err(err).Msg("error while recomputing idle_since")
 	}
 	w.Logger.Debug().Msg("Recompute idle_since finished")
-
-	return nil
 }

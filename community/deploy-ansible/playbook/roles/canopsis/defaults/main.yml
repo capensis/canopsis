@@ -25,11 +25,11 @@ canopsis_mongo_user: cpsmongo
 canopsis_mongo_password: canopsis
 canopsis_mongo_port: "27017"
 
-canopsis_influxdb_host: localhost
-canopsis_influxdb_port: "8086"
-canopsis_influxdb_user: cpsinflux
-canopsis_influxdb_password: canopsis
-canopsis_influxdb_db: canopsis
+canopsis_postgresql_user: cpspostgres
+canopsis_postgresql_password: password
+canopsis_postgresql_host: localhost
+canopsis_postgresql_port: "5432"
+canopsis_postgresql_db: canopsis
 
 canopsis_redis_host: localhost
 canopsis_redis_port: "6379"

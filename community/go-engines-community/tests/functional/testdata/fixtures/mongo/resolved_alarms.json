@@ -285,5 +285,221 @@
       "infos_rule_version": {
       }
     }
+  },
+  {
+    "_id": "test-alarm-time-fields-search-get-resolved-1",
+    "d": "test-alarm-time-fields-search-get-resolved-resource-1/test-alarm-time-fields-search-get-resolved-component",
+    "t": 2000000120,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1596942720,
+        "a": "test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname",
+        "m": "test-alarm-time-fields-search-get-resolved alarm",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1596942720,
+        "a": "test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname",
+        "m": "test-alarm-time-fields-search-get-resolved alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1596942720,
+          "a": "test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname",
+          "m": "test-alarm-time-fields-search-get-resolved alarm",
+          "val": 3
+        },
+        {
+          "_t": "statusinc",
+          "t": 1596942720,
+          "a": "test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname",
+          "m": "test-alarm-time-fields-search-get-resolved alarm",
+          "val": 1
+        },
+        {
+          "_t": "comment",
+          "t": 1597033041,
+          "a": "system",
+          "m": "comment test-alarm-time-fields-search-get-resolved",
+          "role": "admin",
+          "val": 0,
+          "initiator": "user"
+        }
+      ],
+      "component": "test-alarm-time-fields-search-get-resolved-component",
+      "connector": "test-alarm-time-fields-search-get-resolved-connector",
+      "connector_name": "test-alarm-time-fields-search-get-resolved-connectorname",
+      "creation_date": 1900000020,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-alarm-time-fields-search-get-resolved alarm",
+      "output": "test-alarm-time-fields-search-get-resolved alarm",
+      "initial_long_output": "",
+      "long_output": "test-alarm-time-fields-search-get-resolved-correlation-search",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1800000020,
+      "last_event_date": 1700000020,
+      "resolved": 2200000000,
+      "resource": "test-alarm-time-fields-search-get-resolved-resource-1",
+      "tags": [],
+      "parents": [],
+      "children": [],
+      "total_state_changes": 1,
+      "extra": {
+      },
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
+    "_id": "test-alarm-time-fields-search-get-resolved-2",
+    "d": "test-alarm-time-fields-search-get-resolved-resource-2/test-alarm-time-fields-search-get-resolved-component",
+    "t": 2000000120,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1596942720,
+        "a": "test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname",
+        "m": "test-alarm-time-fields-search-get-resolved alarm",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1596942720,
+        "a": "test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname",
+        "m": "test-alarm-time-fields-search-get-resolved alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1596942720,
+          "a": "test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname",
+          "m": "test-alarm-time-fields-search-get-resolved alarm",
+          "val": 3
+        },
+        {
+          "_t": "statusinc",
+          "t": 1596942720,
+          "a": "test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname",
+          "m": "test-alarm-time-fields-search-get-resolved alarm",
+          "val": 1
+        },
+        {
+          "_t": "comment",
+          "t": 1597033041,
+          "a": "system",
+          "m": "comment test-alarm-time-fields-search-get-resolved",
+          "role": "admin",
+          "val": 0,
+          "initiator": "user"
+        }
+      ],
+      "component": "test-alarm-time-fields-search-get-resolved-component",
+      "connector": "test-alarm-time-fields-search-get-resolved-connector",
+      "connector_name": "test-alarm-time-fields-search-get-resolved-connectorname",
+      "creation_date": 1900000020,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-alarm-time-fields-search-get-resolved alarm",
+      "output": "test-alarm-time-fields-search-get-resolved alarm",
+      "initial_long_output": "",
+      "long_output": "test-alarm-time-fields-search-get-resolved-correlation-search",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1800000020,
+      "last_event_date": 1700000020,
+      "resolved": 2200000010,
+      "resource": "test-alarm-time-fields-search-get-resolved-resource-2",
+      "tags": [],
+      "parents": [],
+      "children": [],
+      "total_state_changes": 1,
+      "extra": {
+      },
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
+    "_id": "test-alarm-time-fields-search-get-resolved-3",
+    "d": "test-alarm-time-fields-search-get-resolved-resource-3/test-alarm-time-fields-search-get-resolved-component",
+    "t": 2000000120,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1596942720,
+        "a": "test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname",
+        "m": "test-alarm-time-fields-search-get-resolved alarm",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1596942720,
+        "a": "test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname",
+        "m": "test-alarm-time-fields-search-get-resolved alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1596942720,
+          "a": "test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname",
+          "m": "test-alarm-time-fields-search-get-resolved alarm",
+          "val": 3
+        },
+        {
+          "_t": "statusinc",
+          "t": 1596942720,
+          "a": "test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname",
+          "m": "test-alarm-time-fields-search-get-resolved alarm",
+          "val": 1
+        },
+        {
+          "_t": "comment",
+          "t": 1597033041,
+          "a": "system",
+          "m": "comment test-alarm-time-fields-search-get-resolved",
+          "role": "admin",
+          "val": 0,
+          "initiator": "user"
+        }
+      ],
+      "component": "test-alarm-time-fields-search-get-resolved-component",
+      "connector": "test-alarm-time-fields-search-get-resolved-connector",
+      "connector_name": "test-alarm-time-fields-search-get-resolved-connectorname",
+      "creation_date": 1900000020,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-alarm-time-fields-search-get-resolved alarm",
+      "output": "test-alarm-time-fields-search-get-resolved alarm",
+      "initial_long_output": "",
+      "long_output": "test-alarm-time-fields-search-get-resolved-correlation-search",
+      "long_output_history": [
+        ""
+      ],
+      "resolved": 2200000020,
+      "last_update_date": 1800000020,
+      "last_event_date": 1700000020,
+      "resource": "test-alarm-time-fields-search-get-resolved-resource-3",
+      "tags": [],
+      "parents": [],
+      "children": [],
+      "total_state_changes": 1,
+      "extra": {
+      },
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
   }
 ]

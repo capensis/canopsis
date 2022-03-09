@@ -191,7 +191,7 @@ func main() {
 
 	}
 
-	client, err := mongo.NewClient(ctx, 0, 0)
+	client, err := mongo.NewClient(ctx, 0, 0, logger)
 	utils.FailOnError(err, "Failed to create mongo session")
 	defer func() {
 		err = client.Disconnect(context.Background())

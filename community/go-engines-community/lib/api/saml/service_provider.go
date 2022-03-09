@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
@@ -20,6 +21,8 @@ import (
 	saml2 "github.com/russellhaering/gosaml2"
 	samltypes "github.com/russellhaering/gosaml2/types"
 	dsig "github.com/russellhaering/goxmldsig"
+	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -32,6 +35,8 @@ const MetadataReqTimeout = time.Second * 15
 const (
 	BindingRedirect = "redirect"
 	BindingPOST     = "post"
+
+	DefaultUserRole = "Norights"
 )
 
 type ServiceProvider interface {
@@ -43,18 +48,20 @@ type ServiceProvider interface {
 }
 
 type serviceProvider struct {
-	samlSP       *saml2.SAMLServiceProvider
-	userProvider security.UserProvider
-	sessionStore libsession.Store
-	enforcer     security.Enforcer
-	config       *security.Config
-	tokenService token.Service
-	tokenStore   token.Store
-	logger       zerolog.Logger
+	samlSP         *saml2.SAMLServiceProvider
+	userProvider   security.UserProvider
+	roleCollection mongo.DbCollection
+	sessionStore   libsession.Store
+	enforcer       security.Enforcer
+	config         *security.Config
+	tokenService   token.Service
+	tokenStore     token.Store
+	logger         zerolog.Logger
 }
 
 func NewServiceProvider(
 	userProvider security.UserProvider,
+	roleCollection mongo.DbCollection,
 	sessionStore libsession.Store,
 	enforcer security.Enforcer,
 	config *security.Config,
@@ -163,13 +170,14 @@ func NewServiceProvider(
 			NameIdFormat:                config.Security.Saml.NameIdFormat,
 			SkipSignatureValidation:     config.Security.Saml.SkipSignatureValidation,
 		},
-		userProvider: userProvider,
-		sessionStore: sessionStore,
-		enforcer:     enforcer,
-		config:       config,
-		tokenService: tokenService,
-		tokenStore:   tokenStore,
-		logger:       logger,
+		userProvider:   userProvider,
+		roleCollection: roleCollection,
+		sessionStore:   sessionStore,
+		enforcer:       enforcer,
+		config:         config,
+		tokenService:   tokenService,
+		tokenStore:     tokenStore,
+		logger:         logger,
 	}, nil
 }
 
@@ -305,31 +313,10 @@ func (sp *serviceProvider) SamlSessionAcsHandler() gin.HandlerFunc {
 		}
 
 		if user == nil {
-			if !sp.config.Security.Saml.AutoUserRegistration {
-				sp.logger.Err(fmt.Errorf("user with external_id = %s is not found", assertionInfo.NameID)).Msg("AutoUserRegistration is disabled")
-
-				query := relayUrl.Query()
-				query.Set("errorMessage", "This user is not allowed to log into Canopsis")
-				relayUrl.RawQuery = query.Encode()
-
-				c.Redirect(http.StatusPermanentRedirect, relayUrl.String())
+			var ok bool
+			user, ok = sp.createUser(c, relayUrl, assertionInfo)
+			if !ok {
 				return
-			}
-
-			user = &security.User{
-				Name:       sp.getAssocAttribute(assertionInfo.Values, "name", assertionInfo.NameID),
-				Role:       sp.config.Security.Saml.DefaultRole,
-				IsEnabled:  true,
-				ExternalID: assertionInfo.NameID,
-				Source:     security.SourceSaml,
-				Firstname:  sp.getAssocAttribute(assertionInfo.Values, "firstname", ""),
-				Lastname:   sp.getAssocAttribute(assertionInfo.Values, "lastname", ""),
-				Email:      sp.getAssocAttribute(assertionInfo.Values, "email", ""),
-			}
-			err = sp.userProvider.Save(c.Request.Context(), user)
-			if err != nil {
-				sp.logger.Err(err).Msg("SamlAcsHandler: userProvider Save error")
-				panic(fmt.Errorf("cannot save user: %v", err))
 			}
 		}
 
@@ -402,31 +389,10 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 		}
 
 		if user == nil {
-			if !sp.config.Security.Saml.AutoUserRegistration {
-				sp.logger.Err(fmt.Errorf("user with external_id = %s is not found", assertionInfo.NameID)).Msg("AutoUserRegistration is disabled")
-
-				query := relayUrl.Query()
-				query.Set("errorMessage", "This user is not allowed to log into Canopsis")
-				relayUrl.RawQuery = query.Encode()
-
-				c.Redirect(http.StatusPermanentRedirect, relayUrl.String())
+			var ok bool
+			user, ok = sp.createUser(c, relayUrl, assertionInfo)
+			if !ok {
 				return
-			}
-
-			user = &security.User{
-				Name:       sp.getAssocAttribute(assertionInfo.Values, "name", assertionInfo.NameID),
-				Role:       sp.config.Security.Saml.DefaultRole,
-				IsEnabled:  true,
-				ExternalID: assertionInfo.NameID,
-				Source:     security.SourceSaml,
-				Firstname:  sp.getAssocAttribute(assertionInfo.Values, "firstname", ""),
-				Lastname:   sp.getAssocAttribute(assertionInfo.Values, "lastname", ""),
-				Email:      sp.getAssocAttribute(assertionInfo.Values, "email", ""),
-			}
-			err = sp.userProvider.Save(c.Request.Context(), user)
-			if err != nil {
-				sp.logger.Err(err).Msg("SamlAcsHandler: userProvider Save error")
-				panic(fmt.Errorf("cannot save user: %v", err))
 			}
 		}
 
@@ -617,4 +583,55 @@ func (sp *serviceProvider) getSession(c *gin.Context) *sessions.Session {
 	}
 
 	return session
+}
+
+func (sp *serviceProvider) createUser(c *gin.Context, relayUrl *url.URL, assertionInfo *saml2.AssertionInfo) (*security.User, bool) {
+	ctx := c.Request.Context()
+
+	if !sp.config.Security.Saml.AutoUserRegistration {
+		sp.logger.Err(fmt.Errorf("user with external_id = %s is not found", assertionInfo.NameID)).Msg("AutoUserRegistration is disabled")
+		sp.errorRedirect(c, relayUrl, "This user is not allowed to log into Canopsis")
+
+		return nil, false
+	}
+
+	role := sp.getAssocAttribute(assertionInfo.Values, "role", DefaultUserRole)
+
+	err := sp.roleCollection.FindOne(ctx, bson.M{"crecord_name": role, "crecord_type": "role"}).Err()
+	if err != nil {
+		if err == mongodriver.ErrNoDocuments {
+			errMessage := fmt.Errorf("role %s doesn't exist", role)
+			sp.logger.Err(errMessage).Msg("User registration failed")
+			sp.errorRedirect(c, relayUrl, errMessage.Error())
+			return nil, false
+		}
+
+		panic(err)
+	}
+
+	user := &security.User{
+		Name:       sp.getAssocAttribute(assertionInfo.Values, "name", assertionInfo.NameID),
+		Role:       role,
+		IsEnabled:  true,
+		ExternalID: assertionInfo.NameID,
+		Source:     security.SourceSaml,
+		Firstname:  sp.getAssocAttribute(assertionInfo.Values, "firstname", ""),
+		Lastname:   sp.getAssocAttribute(assertionInfo.Values, "lastname", ""),
+		Email:      sp.getAssocAttribute(assertionInfo.Values, "email", ""),
+	}
+	err = sp.userProvider.Save(ctx, user)
+	if err != nil {
+		sp.logger.Err(err).Msg("SamlAcsHandler: userProvider Save error")
+		panic(fmt.Errorf("cannot save user: %v", err))
+	}
+
+	return user, true
+}
+
+func (sp *serviceProvider) errorRedirect(c *gin.Context, relayUrl *url.URL, errorMessage string) {
+	query := relayUrl.Query()
+	query.Set("errorMessage", errorMessage)
+	relayUrl.RawQuery = query.Encode()
+
+	c.Redirect(http.StatusPermanentRedirect, relayUrl.String())
 }

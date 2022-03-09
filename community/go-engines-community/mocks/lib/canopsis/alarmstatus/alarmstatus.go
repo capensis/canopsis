@@ -6,35 +6,36 @@ package mock_alarmstatus
 
 import (
 	context "context"
+	reflect "reflect"
+
 	types "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	gomock "github.com/golang/mock/gomock"
-	reflect "reflect"
 )
 
-// MockService is a mock of Service interface
+// MockService is a mock of Service interface.
 type MockService struct {
 	ctrl     *gomock.Controller
 	recorder *MockServiceMockRecorder
 }
 
-// MockServiceMockRecorder is the mock recorder for MockService
+// MockServiceMockRecorder is the mock recorder for MockService.
 type MockServiceMockRecorder struct {
 	mock *MockService
 }
 
-// NewMockService creates a new mock instance
+// NewMockService creates a new mock instance.
 func NewMockService(ctrl *gomock.Controller) *MockService {
 	mock := &MockService{ctrl: ctrl}
 	mock.recorder = &MockServiceMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockService) EXPECT() *MockServiceMockRecorder {
 	return m.recorder
 }
 
-// ComputeStatus mocks base method
+// ComputeStatus mocks base method.
 func (m *MockService) ComputeStatus(arg0 types.Alarm, arg1 types.Entity) types.CpsNumber {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ComputeStatus", arg0, arg1)
@@ -42,13 +43,13 @@ func (m *MockService) ComputeStatus(arg0 types.Alarm, arg1 types.Entity) types.C
 	return ret0
 }
 
-// ComputeStatus indicates an expected call of ComputeStatus
+// ComputeStatus indicates an expected call of ComputeStatus.
 func (mr *MockServiceMockRecorder) ComputeStatus(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ComputeStatus", reflect.TypeOf((*MockService)(nil).ComputeStatus), arg0, arg1)
 }
 
-// Load mocks base method
+// Load mocks base method.
 func (m *MockService) Load(arg0 context.Context) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Load", arg0)
@@ -56,7 +57,7 @@ func (m *MockService) Load(arg0 context.Context) error {
 	return ret0
 }
 
-// Load indicates an expected call of Load
+// Load indicates an expected call of Load.
 func (mr *MockServiceMockRecorder) Load(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Load", reflect.TypeOf((*MockService)(nil).Load), arg0)

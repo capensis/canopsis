@@ -11,7 +11,7 @@ import (
 )
 
 func NewEngine(ctx context.Context, opts che.Options, logger zerolog.Logger) engine.Engine {
-	mongoClient, err := mongo.NewClient(ctx, 0, 0)
+	mongoClient, err := mongo.NewClient(ctx, 0, 0, logger)
 	if err != nil {
 		panic(fmt.Errorf("cannot connect to MongoDb: %w", err))
 	}

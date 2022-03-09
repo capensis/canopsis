@@ -18,9 +18,10 @@ func New(
 	logger zerolog.Logger,
 ) Engine {
 	return &engine{
-		init:      init,
-		deferFunc: deferFunc,
-		logger:    logger,
+		init:              init,
+		deferFunc:         deferFunc,
+		periodicalWorkers: make(map[string]PeriodicalWorker),
+		logger:            logger,
 	}
 }
 
@@ -28,7 +29,7 @@ type engine struct {
 	init              func(ctx context.Context) error
 	deferFunc         func(ctx context.Context)
 	consumers         []Consumer
-	periodicalWorkers []PeriodicalWorker
+	periodicalWorkers map[string]PeriodicalWorker
 	logger            zerolog.Logger
 }
 
@@ -36,8 +37,12 @@ func (e *engine) AddConsumer(consumer Consumer) {
 	e.consumers = append(e.consumers, consumer)
 }
 
-func (e *engine) AddPeriodicalWorker(worker PeriodicalWorker) {
-	e.periodicalWorkers = append(e.periodicalWorkers, worker)
+func (e *engine) AddPeriodicalWorker(name string, worker PeriodicalWorker) {
+	if _, ok := e.periodicalWorkers[name]; ok {
+		panic(fmt.Errorf("%q worker already exists", name))
+	}
+
+	e.periodicalWorkers[name] = worker
 }
 
 func (e *engine) Run(ctx context.Context) error {
@@ -89,10 +94,11 @@ func (e *engine) Run(ctx context.Context) error {
 		})
 	}
 
-	for _, w := range e.periodicalWorkers {
-		worker := w
+	for k, v := range e.periodicalWorkers {
+		name := k
+		worker := v
 		g.Go(func() error {
-			return e.runPeriodicalWorker(ctx, worker)
+			return e.runPeriodicalWorker(ctx, name, worker)
 		})
 	}
 
@@ -101,6 +107,7 @@ func (e *engine) Run(ctx context.Context) error {
 
 func (e *engine) runPeriodicalWorker(
 	ctx context.Context,
+	name string,
 	worker PeriodicalWorker,
 ) (resErr error) {
 	defer func() {
@@ -111,8 +118,8 @@ func (e *engine) runPeriodicalWorker(
 				err = fmt.Errorf("%v", r)
 			}
 
-			e.logger.Err(err).Msgf("periodical worker recovered from panic\n%s\n", debug.Stack())
-			resErr = fmt.Errorf("periodical worker recovered from panic: %w", err)
+			e.logger.Err(err).Str("worker", name).Msgf("periodical worker recovered from panic\n%s\n", debug.Stack())
+			resErr = fmt.Errorf("periodical worker %q recovered from panic: %w", name, err)
 		}
 	}()
 
@@ -120,12 +127,53 @@ func (e *engine) runPeriodicalWorker(
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 
+	var start time.Time
+	done := make(chan time.Duration, 1)
+	defer close(done)
+
+	var skip, prevSkip bool
+
 	for {
 		select {
 		case <-ticker.C:
-			err := worker.Work(ctx)
-			if err != nil {
-				return fmt.Errorf("periodical worker failed: %w", err)
+			prevSkip = skip
+			skip = false
+			var d time.Duration
+
+			if !start.IsZero() {
+				select {
+				case d = <-done:
+				default:
+					skip = true
+					e.logger.Error().
+						Str("worker", name).
+						Time("start", start).
+						Str("spent time", time.Since(start).String()).
+						Msg("previous run still in progress, skip periodical worker")
+				}
+			}
+
+			if !skip {
+				if prevSkip {
+					e.logger.Info().
+						Str("worker", name).
+						Time("start", start).
+						Str("spent time", d.String()).
+						Msg("periodical worker continues to work properly")
+				}
+
+				start = time.Now()
+				go func() {
+					worker.Work(ctx)
+
+					select {
+					case <-ctx.Done():
+						return
+					default:
+					}
+
+					done <- time.Since(start)
+				}()
 			}
 
 			newInterval := worker.GetInterval()

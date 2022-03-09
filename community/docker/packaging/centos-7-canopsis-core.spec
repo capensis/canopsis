@@ -4,14 +4,14 @@ Release:	CANOPSIS_PACKAGE_REL%{?dist}
 Summary:	Canopsis
 
 Group:		Canopsis
-License:	AGPLv3 (Canopsis Core), Capensis, all rights reserved (CAT)
-URL:		https://git.canopsis.net/canopsis/canopsis
+License:	AGPLv3 (Canopsis Community)
+URL:		https://git.canopsis.net/canopsis/canopsis-community
 
 BuildRequires: rsync
-Requires: bzip2 cyrus-sasl curl epel-release libacl libcurl libevent libffi librsync libxml2 libxslt net-snmp openldap openssl postgresql-libs python rsync sudo xmlsec1 xmlsec1-openssl zlib
+Requires: bzip2 canopsis-engines-go canopsis-webui cyrus-sasl curl epel-release libacl libcurl libevent libffi librsync libxml2 libxslt net-snmp openldap openssl postgresql-libs python rsync sudo xmlsec1 xmlsec1-openssl zlib
 
 %description
-Canopsis open-core package.
+Canopsis Community main package.
 
 %install
 mkdir -p %{buildroot}/usr/lib/systemd/system
@@ -38,7 +38,6 @@ rm -rf %{buildroot}/opt/canopsis/.erlang.cookie
 rm -rf %{buildroot}/opt/canopsis/.config
 rm -rf %{buildroot}/opt/canopsis/.cache
 rm -rf %{buildroot}/opt/canopsis/.bash_history
-rm -rf %{buildroot}/opt/canopsis/bin/influx*
 rm -rf %{buildroot}/opt/canopsis/bin/rabbit*
 rm -rf %{buildroot}/opt/canopsis/Linux*
 

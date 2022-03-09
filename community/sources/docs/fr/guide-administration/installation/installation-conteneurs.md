@@ -27,7 +27,7 @@ Si la version affichée est inférieure à 4.4, vous devez soit utiliser une di
 
 ## Installation de Docker et Docker Compose
 
-Vous devez tout d'abord [installer Docker](https://docs.docker.com/get-docker/), version 19.03.5 minimum (versions 20.10 et supérieures recommandées). Veuillez utiliser les dépôts officiels de Docker, et non pas ceux proposés par votre distribution.
+Vous devez tout d'abord [installer Docker](https://docs.docker.com/get-docker/), version 20.10 minimum. Veuillez utiliser les dépôts officiels de Docker, et non pas ceux proposés par votre distribution.
 
 Une fois Docker installé, vous devez ensuite [installer Docker Compose](https://docs.docker.com/compose/install/#install-compose).
 
@@ -40,15 +40,12 @@ Une fois Docker installé, vous devez ensuite [installer Docker Compose](https:/
 
 ## Lancement de Canopsis avec Docker Compose
 
-Les images Docker officielles de Canopsis sont hébergées sur Docker Hub : <https://hub.docker.com/u/canopsis/> et seront prochainement migrées vers notre propre registre Docker.
+Les images Docker officielles de Canopsis sont hébergées sur notre propre registre Docker, `docker.canopsis.net`.
 
 Le [dépôt Git de Canopsis](https://git.canopsis.net/canopsis/canopsis-community/-/tree/develop) contient des fichiers Docker Compose d'exemple :
 ```sh
 git clone -b develop https://git.canopsis.net/canopsis/canopsis-community.git && cd canopsis-community/community/docker-compose
 ```
-
-!!! attention
-    La variable `CANOPSIS_IMAGE_TAG` du fichier `.env` a pour valeur par défaut `nightly`, ce qui correspond à la version la plus récente des images disponibles sur Docker Hub. Notez que cela englobe également les versions intermédiaires destinées **au développement et aux tests**. Aussi, le tag `nightly` ne doit **pas** être utilisé pour un environnement de production.
 
 Récupérez les dernières images disponibles :
 ```sh
@@ -74,9 +71,6 @@ docker-compose_axe_1             /engine-axe                      Up
 docker-compose_che_1             /engine-che -d -publishQue ...   Up
 docker-compose_fifo_1            /engine-fifo                     Up
 docker-compose_heartbeat_1       /engine-heartbeat                Up
-docker-compose_influxdb_1        /entrypoint.sh influxd           Up       0.0.0.0:4444->4444/udp,
-                                                                           0.0.0.0:8083->8083/tcp,
-                                                                           0.0.0.0:8086->8086/tcp
 docker-compose_init_1            /bin/sh -c /${_BINARY_NAME}      Exit 0
 docker-compose_mongodb_1         docker-entrypoint.sh --wir ...   Up       0.0.0.0:27027->27017/tcp
 docker-compose_nginx_1           /bin/sh -c /entrypoint.sh        Up       0.0.0.0:80->80/tcp
@@ -111,7 +105,6 @@ Stopping docker-compose_action_1         ... done
 Stopping docker-compose_axe_1            ... done
 Stopping docker-compose_redis_1          ... done
 Stopping docker-compose_che_1            ... done
-Stopping docker-compose_influxdb_1       ... done
 Stopping docker-compose_heartbeat_1      ... done
 Stopping docker-compose_rabbitmq_1       ... done
 Stopping docker-compose_service_1        ... done
@@ -126,7 +119,6 @@ Removing docker-compose_action_1         ... done
 Removing docker-compose_axe_1            ... done
 Removing docker-compose_redis_1          ... done
 Removing docker-compose_che_1            ... done
-Removing docker-compose_influxdb_1       ... done
 Removing docker-compose_heartbeat_1      ... done
 Removing docker-compose_rabbitmq_1       ... done
 Removing docker-compose_service_1        ... done
