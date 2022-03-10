@@ -97,6 +97,7 @@ type Alarm struct {
 	AssignedInstructions             []InstructionWithAlarms `bson:"assigned_instructions,omitempty" json:"assigned_instructions,omitempty"`
 	IsAutoInstructionRunning         *bool                   `bson:"-" json:"is_auto_instruction_running,omitempty"`
 	IsAllAutoInstructionsCompleted   *bool                   `bson:"-" json:"is_all_auto_instructions_completed,omitempty"`
+	IsAutoInstructionFailed          *bool                   `bson:"-" json:"is_auto_instruction_failed,omitempty"`
 	IsManualInstructionWaitingResult *bool                   `bson:"-" json:"is_manual_instruction_waiting_result,omitempty"`
 	Links                            map[string]interface{}  `bson:"-" json:"links"`
 	ImpactState                      int64                   `bson:"impact_state" json:"impact_state"`
@@ -209,6 +210,7 @@ type ExecutionStatus struct {
 	ID               string `bson:"_id"`
 	AutoRunning      *bool  `bson:"auto_running"`
 	ManualRunning    *bool  `bson:"manual_running"`
+	AutoFailed       *bool  `bson:"auto_failed"`
 	AutoAllCompleted *bool  `bson:"auto_all_completed"`
 }
 
