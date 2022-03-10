@@ -620,7 +620,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
           class="v-text-field"
           error-messages=""
           name="label[5]"
-          placeholder="common.label"
+          placeholder="Label"
           value="Column with template"
         />
       </div>
@@ -631,7 +631,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
           class="v-text-field"
           error-messages=""
           name="value[5]"
-          placeholder="common.value"
+          placeholder="Value"
           value="column.columnWithTemplate"
         />
       </div>
@@ -778,7 +778,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
                 >
                   <input
                     aria-checked="false"
-                    aria-label="settings.columns.withTemplate"
+                    aria-label="Custom template"
                     role="checkbox"
                     type="checkbox"
                     value=""
@@ -803,7 +803,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
                   class="v-label theme--light"
                   style="left: 0px; position: relative;"
                 >
-                  settings.columns.withTemplate
+                  Custom template
                 </label>
               </div>
               <div
@@ -1058,7 +1058,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
                 >
                   <input
                     aria-checked="false"
-                    aria-label="settings.columns.withTemplate"
+                    aria-label="Custom template"
                     role="checkbox"
                     type="checkbox"
                     value=""
@@ -1083,7 +1083,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
                   class="v-label theme--light"
                   style="left: 0px; position: relative;"
                 >
-                  settings.columns.withTemplate
+                  Custom template
                 </label>
               </div>
               <div
@@ -1338,7 +1338,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
                 >
                   <input
                     aria-checked="false"
-                    aria-label="settings.columns.withTemplate"
+                    aria-label="Custom template"
                     role="checkbox"
                     type="checkbox"
                     value=""
@@ -1363,7 +1363,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
                   class="v-label theme--light"
                   style="left: 0px; position: relative;"
                 >
-                  settings.columns.withTemplate
+                  Custom template
                 </label>
               </div>
               <div
@@ -1624,7 +1624,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
                 >
                   <input
                     aria-checked="false"
-                    aria-label="settings.columns.withTemplate"
+                    aria-label="Custom template"
                     role="checkbox"
                     type="checkbox"
                     value=""
@@ -1649,7 +1649,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
                   class="v-label theme--light"
                   style="left: 0px; position: relative;"
                 >
-                  settings.columns.withTemplate
+                  Custom template
                 </label>
               </div>
               <div
@@ -1910,7 +1910,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
                 >
                   <input
                     aria-checked="false"
-                    aria-label="settings.columns.withTemplate"
+                    aria-label="Custom template"
                     role="checkbox"
                     type="checkbox"
                     value=""
@@ -1935,7 +1935,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
                   class="v-label theme--light"
                   style="left: 0px; position: relative;"
                 >
-                  settings.columns.withTemplate
+                  Custom template
                 </label>
               </div>
               <div
@@ -2161,7 +2161,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
           class="v-text-field"
           error-messages=""
           name="label[5]"
-          placeholder="common.label"
+          placeholder="Label"
           value="Column with template"
         />
       </div>
@@ -2172,7 +2172,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
           class="v-text-field"
           error-messages=""
           name="value[5]"
-          placeholder="common.value"
+          placeholder="Value"
           value="column.columnWithTemplate"
         />
       </div>
@@ -2196,7 +2196,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
                 >
                   <input
                     aria-checked="true"
-                    aria-label="settings.columns.withTemplate"
+                    aria-label="Custom template"
                     role="checkbox"
                     type="checkbox"
                     value=""
@@ -2221,7 +2221,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
                   class="v-label theme--light"
                   style="left: 0px; position: relative;"
                 >
-                  settings.columns.withTemplate
+                  Custom template
                 </label>
               </div>
               <div
@@ -2243,7 +2243,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
               class="v-btn__content"
             >
               <span>
-                common.edit
+                Edit
               </span>
             </div>
           </button>
@@ -2266,7 +2266,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
               >
                 <input
                   aria-checked="false"
-                  aria-label="settings.columns.isHtml"
+                  aria-label="Is it HTML?"
                   disabled="disabled"
                   role="checkbox"
                   type="checkbox"
@@ -2292,7 +2292,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
                 class="v-label theme--light"
                 style="left: 0px; position: relative;"
               >
-                settings.columns.isHtml
+                Is it HTML?
               </label>
             </div>
             <div
@@ -2324,7 +2324,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
               >
                 <input
                   aria-checked="false"
-                  aria-label="settings.colorIndicator.title"
+                  aria-label="Color indicator"
                   disabled="disabled"
                   role="checkbox"
                   type="checkbox"
@@ -2350,7 +2350,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
                 class="v-label theme--light"
                 style="left: 0px; position: relative;"
               >
-                settings.colorIndicator.title
+                Color indicator
               </label>
             </div>
             <div
