@@ -213,6 +213,7 @@ export default {
     criteria: 'Critères',
     ratingSettings: 'Paramètres d\'évaluation',
     pbehavior: 'Comportement périodique | Comportements périodiques',
+    dictionary: 'Dictionnaire',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -276,6 +277,14 @@ export default {
       [ENTITIES_STATES.minor]: 'Mineur',
       [ENTITIES_STATES.major]: 'Majeur',
       [ENTITIES_STATES.critical]: 'Critique',
+    },
+    statusTypes: {
+      [ENTITIES_STATUSES.closed]: 'Fermée',
+      [ENTITIES_STATUSES.ongoing]: 'En cours',
+      [ENTITIES_STATUSES.flapping]: 'Bagot',
+      [ENTITIES_STATUSES.stealthy]: 'Furtive',
+      [ENTITIES_STATUSES.cancelled]: 'Annulée',
+      [ENTITIES_STATUSES.noEvents]: 'Pas d\'événements',
     },
   },
   variableTypes: {
@@ -1572,12 +1581,6 @@ export default {
       status: 'Statut',
       extraDetails: 'Détails supplémentaires',
     },
-    alarmStates: {
-      [ENTITIES_STATES.ok]: 'Info',
-      [ENTITIES_STATES.minor]: 'Mineur',
-      [ENTITIES_STATES.major]: 'Majeur',
-      [ENTITIES_STATES.critical]: 'Critique',
-    },
     contextEntities: {
       columns: {
         name: 'Nom',
@@ -2576,15 +2579,6 @@ export default {
       title: 'Évaluation de l\'instruction',
       message: 'Cette page contient les statistiques sur l\'exécution des instructions. Les utilisateurs peuvent noter les instructions en fonction de leurs performances.',
     },
-  },
-
-  alarmStatuses: {
-    [ENTITIES_STATUSES.closed]: 'Fermée',
-    [ENTITIES_STATUSES.ongoing]: 'En cours',
-    [ENTITIES_STATUSES.flapping]: 'Bagot',
-    [ENTITIES_STATUSES.stealthy]: 'Furtive',
-    [ENTITIES_STATUSES.cancelled]: 'Annulée',
-    [ENTITIES_STATUSES.noEvents]: 'Pas d\'événements',
   },
 
   entitiesCountAlerts: {

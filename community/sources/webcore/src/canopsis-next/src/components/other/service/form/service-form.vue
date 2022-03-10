@@ -14,7 +14,7 @@
         v-flex.pr-3(xs6)
           c-entity-category-field(v-field="form.category", addable, required)
         v-flex.pr-3(xs4)
-          c-state-type-field(
+          c-entity-state-field(
             v-field="form.sli_avail_state",
             :label="$t('service.availabilityState')",
             required
