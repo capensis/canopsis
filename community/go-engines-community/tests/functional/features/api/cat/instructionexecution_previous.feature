@@ -5,14 +5,20 @@ Feature: move a instruction execution to previous operation
   Scenario: given running instruction should start previous operation of instruction
     When I am admin
     When I do POST /api/v4/cat/instructions:
-    """
+    """json
     {
       "type": 0,
       "name": "test-instruction-execution-previous-1-name",
-      "alarm_patterns": [
-        {
-          "_id": "test-instruction-execution-previous-1"
-        }
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-execution-previous-resource-1"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-execution-previous-1-description",
       "enabled": true,
@@ -55,7 +61,7 @@ Feature: move a instruction execution to previous operation
     """
     Then the response code should be 201
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "test-instruction-execution-previous-1",
       "instruction": "{{ .lastResponse._id }}"
@@ -67,7 +73,7 @@ Feature: move a instruction execution to previous operation
     When I do PUT /api/v4/cat/executions/{{ .lastResponse._id }}/previous
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "status": 0,
       "name": "test-instruction-execution-previous-1-name",
@@ -121,14 +127,20 @@ Feature: move a instruction execution to previous operation
   Scenario: given running instruction with first operation started should return error
     When I am admin
     When I do POST /api/v4/cat/instructions:
-    """
+    """json
     {
       "type": 0,
       "name": "test-instruction-execution-previous-2-name",
-      "alarm_patterns": [
-        {
-          "_id": "test-instruction-execution-previous-2"
-        }
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-execution-previous-resource-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-execution-previous-2-description",
       "enabled": true,
@@ -171,7 +183,7 @@ Feature: move a instruction execution to previous operation
     """
     Then the response code should be 201
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "test-instruction-execution-previous-2",
       "instruction": "{{ .lastResponse._id }}"
@@ -184,14 +196,20 @@ Feature: move a instruction execution to previous operation
   Scenario: given running instruction should start previous operation of previous step
     When I am admin
     When I do POST /api/v4/cat/instructions:
-    """
+    """json
     {
       "type": 0,
       "name": "test-instruction-execution-previous-3-name",
-      "alarm_patterns": [
-        {
-          "_id": "test-instruction-execution-previous-3"
-        }
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-execution-previous-resource-3"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-execution-previous-3-description",
       "enabled": true,
@@ -234,7 +252,7 @@ Feature: move a instruction execution to previous operation
     """
     Then the response code should be 201
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "test-instruction-execution-previous-3",
       "instruction": "{{ .lastResponse._id }}"
@@ -248,7 +266,7 @@ Feature: move a instruction execution to previous operation
     When I do PUT /api/v4/cat/executions/{{ .lastResponse._id }}/previous
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "status": 0,
       "name": "test-instruction-execution-previous-3-name",
@@ -302,14 +320,20 @@ Feature: move a instruction execution to previous operation
   Scenario: given running instruction should finish execution
     When I am admin
     When I do POST /api/v4/cat/instructions:
-    """
+    """json
     {
       "type": 0,
       "name": "test-instruction-execution-previous-4-name",
-      "alarm_patterns": [
-        {
-          "_id": "test-instruction-execution-previous-4"
-        }
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-execution-previous-resource-4"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-execution-previous-4-description",
       "enabled": true,
@@ -352,7 +376,7 @@ Feature: move a instruction execution to previous operation
     """
     Then the response code should be 201
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "test-instruction-execution-previous-4",
       "instruction": "{{ .lastResponse._id }}"
@@ -378,7 +402,7 @@ Feature: move a instruction execution to previous operation
     When I do PUT /api/v4/cat/executions/{{ .lastResponse._id }}/next-step
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "status": 5,
       "name": "test-instruction-execution-previous-4-name",
