@@ -138,6 +138,7 @@ import CFilterAttributeField from '@/components/forms/fields/c-filter-attribute-
 import CEntityStatusField from '@/components/forms/fields/c-entity-status-field.vue';
 import CFilterInfosAttributeField from '@/components/forms/fields/c-filter-infos-attribute-field.vue';
 import CFilterExtraInfosAttributeField from '@/components/forms/fields/c-filter-extra-infos-attribute-field.vue';
+import CFilterOperatorField from '@/components/forms/fields/c-filter-operator-field.vue';
 
 /**
  * Icons
@@ -335,6 +336,7 @@ Vue.component('c-draggable-list-field', CDraggableListField);
 Vue.component('c-filter-attribute-field', CFilterAttributeField);
 Vue.component('c-filter-infos-attribute-field', CFilterInfosAttributeField);
 Vue.component('c-filter-extra-infos-attribute-field', CFilterExtraInfosAttributeField);
+Vue.component('c-filter-operator-field', CFilterOperatorField);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
