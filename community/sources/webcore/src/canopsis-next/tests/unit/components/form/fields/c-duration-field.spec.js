@@ -3,13 +3,18 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { createNumberInputStub, createSelectInputStub } from '@unit/stubs/input';
 import { TIME_UNITS } from '@/constants';
+
 import CDurationField from '@/components/forms/fields/c-duration-field.vue';
 
 const localVue = createVueInstance();
 
 const stubs = {
-  'v-text-field': createNumberInputStub('v-text-field'),
+  'c-number-field': createNumberInputStub('c-number-field'),
   'v-select': createSelectInputStub('v-select'),
+};
+
+const snapshotStubs = {
+  'c-number-field': true,
 };
 
 const factory = (options = {}) => shallowMount(CDurationField, {
@@ -20,6 +25,7 @@ const factory = (options = {}) => shallowMount(CDurationField, {
 
 const snapshotFactory = (options = {}) => mount(CDurationField, {
   localVue,
+  stubs: snapshotStubs,
   parentComponent: {
     $_veeValidate: {
       validator: 'new',
@@ -27,6 +33,8 @@ const snapshotFactory = (options = {}) => mount(CDurationField, {
   },
   ...options,
 });
+
+const selectNumberField = wrapper => wrapper.find('input.c-number-field');
 
 describe('c-duration-field', () => {
   it('Value changed after trigger text field', () => {
@@ -41,7 +49,7 @@ describe('c-duration-field', () => {
     });
     const newValue = Faker.datatype.number();
 
-    const valueElement = wrapper.find('input.v-text-field');
+    const valueElement = selectNumberField(wrapper);
 
     valueElement.setValue(newValue);
 

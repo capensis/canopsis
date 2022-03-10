@@ -140,13 +140,12 @@ export default {
     },
 
     isOperatorForArray() {
-      return [FILTER_OPERATORS.in, FILTER_OPERATORS.notIn].includes(this.rule.operator);
+      return [FILTER_OPERATORS.hasOneOf, FILTER_OPERATORS.hasNot].includes(this.rule.operator);
     },
 
     isShownInputField() {
       return ![
         FILTER_OPERATORS.isEmpty,
-        FILTER_OPERATORS.isEmptyArray,
         FILTER_OPERATORS.isNotEmpty,
         FILTER_OPERATORS.isNull,
         FILTER_OPERATORS.isNotNull,

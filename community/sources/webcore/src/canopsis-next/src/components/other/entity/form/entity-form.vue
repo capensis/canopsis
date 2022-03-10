@@ -27,7 +27,7 @@
               v-flex.pr-3(xs3)
                 c-impact-level-field(v-field="form.impact_level", required)
               v-flex.pr-3(xs3)
-                c-state-type-field(
+                c-entity-state-field(
                   v-field="form.sli_avail_state",
                   :label="$t('entity.availabilityState')",
                   required
