@@ -2,7 +2,7 @@
   v-select(
     v-field="value",
     v-validate="rules",
-    :items="actionTypes",
+    :items="availableOperators",
     :error-messages="errors.collect(name)",
     :label="label || $tc('common.condition')",
     :disabled="disabled",
@@ -52,7 +52,7 @@ export default {
       };
     },
 
-    actionTypes() {
+    availableOperators() {
       return this.operators.map(condition => ({
         value: condition,
         text: this.$t(`common.operators.${condition}`),

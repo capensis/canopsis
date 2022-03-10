@@ -48,6 +48,7 @@ import CDraggableStepNumber from '@/components/common/drag-drop/c-draggable-step
 import CInformationBlock from '@/components/common/block/c-information-block.vue';
 import CInformationBlockRow from '@/components/common/block/c-information-block-row.vue';
 import CResponsiveList from '@/components/common/responsive-list/c-responsive-list.vue';
+import CFilterOperatorInformation from '@/components/common/block/c-pattern-operator-information.vue';
 
 /**
  * Overlays
@@ -63,6 +64,7 @@ import CStateCountChangesChips from '@/components/common/chips/c-state-count-cha
 import CTestSuiteChip from '@/components/common/chips/c-test-suite-chip.vue';
 import CInstructionJobChip from '@/components/common/chips/c-instruction-job-chip.vue';
 import CEngineChip from '@/components/common/chips/c-engine-chip.vue';
+import CFilterOperatorChip from '@/components/common/chips/c-pattern-operator-chip.vue';
 
 /**
  * Table
@@ -130,17 +132,21 @@ import CTimezoneField from '@/components/forms/fields/c-timezone-field.vue';
 import CLanguageField from '@/components/forms/fields/c-language-field.vue';
 import CSamplingField from '@/components/forms/fields/c-sampling-field.vue';
 import CAlarmMetricParametersField from '@/components/forms/fields/c-alarm-metric-parameters-field.vue';
-import CFiltersField from '@/components/forms/fields/c-filters-field.vue';
+import CFiltersField from '@/components/forms/fields/filter/c-pattern-field.vue';
 import CEntityStateField from '@/components/forms/fields/c-entity-state-field.vue';
 import CRecordsPerPageField from '@/components/forms/fields/c-records-per-page-field.vue';
 import COperatorField from '@/components/forms/fields/c-operator-field.vue';
 import CDraggableListField from '@/components/forms/fields/c-draggable-list-field.vue';
 import CDatePickerField from '@/components/forms/fields/date-picker/c-date-picker-field.vue';
-import CFilterAttributeField from '@/components/forms/fields/c-filter-attribute-field.vue';
+import CFilterAttributeField from '@/components/forms/fields/filter/c-pattern-attribute-field.vue';
 import CEntityStatusField from '@/components/forms/fields/c-entity-status-field.vue';
-import CFilterInfosAttributeField from '@/components/forms/fields/c-filter-infos-attribute-field.vue';
-import CFilterExtraInfosAttributeField from '@/components/forms/fields/c-filter-extra-infos-attribute-field.vue';
-import CFilterOperatorField from '@/components/forms/fields/c-filter-operator-field.vue';
+import CFilterInfosAttributeField from '@/components/forms/fields/filter/c-pattern-infos-attribute-field.vue';
+import CFilterExtraInfosAttributeField from '@/components/forms/fields/filter/c-pattern-extra-infos-attribute-field.vue';
+import CFilterOperatorField from '@/components/forms/fields/filter/c-pattern-operator-field.vue';
+import CFilterRuleField from '@/components/forms/fields/filter/c-pattern-rule-field.vue';
+import CFilterRulesField from '@/components/forms/fields/filter/c-pattern-rules-field.vue';
+import CFilterGroupField from '@/components/forms/fields/filter/c-pattern-group-field.vue';
+import CFilterGroupsField from '@/components/forms/fields/filter/c-pattern-groups-field.vue';
 import CNumberField from '@/components/forms/fields/c-number-field.vue';
 
 /**
@@ -338,11 +344,17 @@ Vue.component('c-entity-status-field', CEntityStatusField);
 Vue.component('c-records-per-page-field', CRecordsPerPageField);
 Vue.component('c-operator-field', COperatorField);
 Vue.component('c-draggable-list-field', CDraggableListField);
-Vue.component('c-filter-attribute-field', CFilterAttributeField);
-Vue.component('c-filter-infos-attribute-field', CFilterInfosAttributeField);
-Vue.component('c-filter-extra-infos-attribute-field', CFilterExtraInfosAttributeField);
-Vue.component('c-filter-operator-field', CFilterOperatorField);
+Vue.component('c-pattern-attribute-field', CFilterAttributeField);
+Vue.component('c-pattern-infos-attribute-field', CFilterInfosAttributeField);
+Vue.component('c-pattern-extra-infos-attribute-field', CFilterExtraInfosAttributeField);
+Vue.component('c-pattern-operator-field', CFilterOperatorField);
 Vue.component('c-number-field', CNumberField);
+Vue.component('c-pattern-rule-field', CFilterRuleField);
+Vue.component('c-pattern-rules-field', CFilterRulesField);
+Vue.component('c-pattern-group-field', CFilterGroupField);
+Vue.component('c-pattern-groups-field', CFilterGroupsField);
+Vue.component('c-pattern-operator-information', CFilterOperatorInformation);
+Vue.component('c-pattern-operator-chip', CFilterOperatorChip);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
