@@ -3,7 +3,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { ALARM_FILTER_FIELDS } from '@/constants';
 
-import CFilterAttributeField from '@/components/forms/fields/c-filter-attribute-field.vue';
+import CFilterAttributeField from '@/components/forms/fields/filter/c-pattern-attribute-field.vue';
 
 const localVue = createVueInstance();
 
@@ -22,7 +22,7 @@ const snapshotFactory = (options = {}) => mount(CFilterAttributeField, {
   ...options,
 });
 
-describe('c-filter-attribute-field', () => {
+describe('c-pattern-attribute-field', () => {
   it('Value changed after trigger the input', () => {
     const value = {
       value: ALARM_FILTER_FIELDS.ack,
@@ -45,7 +45,7 @@ describe('c-filter-attribute-field', () => {
     expect(eventData).toBe(value);
   });
 
-  it('Renders `c-filter-attribute-field` with default props', () => {
+  it('Renders `c-pattern-attribute-field` with default props', () => {
     const value = {
       value: ALARM_FILTER_FIELDS.component,
       text: 'Component',
@@ -62,7 +62,7 @@ describe('c-filter-attribute-field', () => {
     expect(menuContent.element).toMatchSnapshot();
   });
 
-  it('Renders `c-filter-attribute-field` with custom props', () => {
+  it('Renders `c-pattern-attribute-field` with custom props', () => {
     const value = {
       value: ALARM_FILTER_FIELDS.component,
       text: 'Component',

@@ -3,7 +3,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { FILTER_OPERATORS } from '@/constants';
 
-import CFilterOperatorField from '@/components/forms/fields/c-filter-operator-field.vue';
+import CFilterOperatorField from '@/components/forms/fields/filter/c-pattern-operator-field.vue';
 
 const localVue = createVueInstance();
 
@@ -26,7 +26,7 @@ const snapshotFactory = (options = {}) => mount(CFilterOperatorField, {
 
 const selectSelectField = wrapper => wrapper.find('select.v-select');
 
-describe('c-filter-operator-field', () => {
+describe('c-pattern-operator-field', () => {
   test('Value changed after trigger the select', () => {
     const wrapper = factory({
       propsData: {
@@ -45,7 +45,7 @@ describe('c-filter-operator-field', () => {
     expect(eventData).toBe(FILTER_OPERATORS.notExist);
   });
 
-  test('Renders `c-filter-operator-field` with default props', () => {
+  test('Renders `c-pattern-operator-field` with default props', () => {
     const wrapper = snapshotFactory();
 
     const menuContent = wrapper.findMenu();
@@ -54,7 +54,7 @@ describe('c-filter-operator-field', () => {
     expect(menuContent.element).toMatchSnapshot();
   });
 
-  test('Renders `c-filter-operator-field` with custom props', () => {
+  test('Renders `c-pattern-operator-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: FILTER_OPERATORS.exist,
