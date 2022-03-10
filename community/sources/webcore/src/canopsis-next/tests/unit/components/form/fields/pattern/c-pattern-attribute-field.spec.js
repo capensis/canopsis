@@ -3,7 +3,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { ALARM_FILTER_FIELDS } from '@/constants';
 
-import CFilterAttributeField from '@/components/forms/fields/filter/c-pattern-attribute-field.vue';
+import CPatternAttributeField from '@/components/forms/fields/filter/c-pattern-attribute-field.vue';
 
 const localVue = createVueInstance();
 
@@ -11,13 +11,13 @@ const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = (options = {}) => shallowMount(CFilterAttributeField, {
+const factory = (options = {}) => shallowMount(CPatternAttributeField, {
   localVue,
   stubs,
   ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(CFilterAttributeField, {
+const snapshotFactory = (options = {}) => mount(CPatternAttributeField, {
   localVue,
   ...options,
 });
