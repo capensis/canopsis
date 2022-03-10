@@ -15,16 +15,32 @@ Feature: get a instruction
           "type": 0,
           "status": 0,
           "name": "test-instruction-to-get-1-name",
-          "entity_patterns": [
-            {
-              "name": "test filter"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-instruction-to-get-1-pattern"
+                }
+              }
+            ]
           ],
-          "alarm_patterns": null,
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-instruction-to-get-1-pattern"
+                }
+              }
+            ]
+          ],
           "description": "test-instruction-to-get-1-description",
           "author": {
-            "_id": "test-user-author-1-id",
-            "name": "test-user-author-1-username"
+            "_id": "root",
+            "name": "root"
           },
           "enabled": true,
           "timeout_after_execution": {
@@ -44,8 +60,8 @@ Feature: get a instruction
                       "_id": "test-job-to-instruction-edit-1",
                       "name": "test-job-to-instruction-edit-1-name",
                       "author": {
-                        "_id": "test-user-author-1-id",
-                        "name": "test-user-author-1-username"
+                        "_id": "root",
+                        "name": "root"
                       },
                       "config": {
                         "_id": "test-job-config-to-edit-instruction",
@@ -53,8 +69,8 @@ Feature: get a instruction
                         "type": "rundeck",
                         "host": "http://example.com",
                         "author": {
-                          "_id": "test-user-author-1-id",
-                          "name": "test-user-author-1-username"
+                          "_id": "root",
+                          "name": "root"
                         },
                         "auth_username": "",
                         "auth_token": "test-auth-token"
@@ -67,8 +83,8 @@ Feature: get a instruction
                       "_id": "test-job-to-instruction-edit-2",
                       "name": "test-job-to-instruction-edit-2-name",
                       "author": {
-                        "_id": "test-user-author-1-id",
-                        "name": "test-user-author-1-username"
+                        "_id": "root",
+                        "name": "root"
                       },
                       "config": {
                         "_id": "test-job-config-to-edit-instruction",
@@ -76,8 +92,8 @@ Feature: get a instruction
                         "type": "rundeck",
                         "host": "http://example.com",
                         "author": {
-                          "_id": "test-user-author-1-id",
-                          "name": "test-user-author-1-username"
+                          "_id": "root",
+                          "name": "root"
                         },
                         "auth_username": "",
                         "auth_token": "test-auth-token"
@@ -97,8 +113,8 @@ Feature: get a instruction
                       "_id": "test-job-to-instruction-edit-2",
                       "name": "test-job-to-instruction-edit-2-name",
                       "author": {
-                        "_id": "test-user-author-1-id",
-                        "name": "test-user-author-1-username"
+                        "_id": "root",
+                        "name": "root"
                       },
                       "config": {
                         "_id": "test-job-config-to-edit-instruction",
@@ -106,8 +122,8 @@ Feature: get a instruction
                         "type": "rundeck",
                         "host": "http://example.com",
                         "author": {
-                          "_id": "test-user-author-1-id",
-                          "name": "test-user-author-1-username"
+                          "_id": "root",
+                          "name": "root"
                         },
                         "auth_username": "",
                         "auth_token": "test-auth-token"
@@ -134,8 +150,8 @@ Feature: get a instruction
                       "_id": "test-job-to-instruction-edit-2",
                       "name": "test-job-to-instruction-edit-2-name",
                       "author": {
-                        "_id": "test-user-author-1-id",
-                        "name": "test-user-author-1-username"
+                        "_id": "root",
+                        "name": "root"
                       },
                       "config": {
                         "_id": "test-job-config-to-edit-instruction",
@@ -143,8 +159,8 @@ Feature: get a instruction
                         "type": "rundeck",
                         "host": "http://example.com",
                         "author": {
-                          "_id": "test-user-author-1-id",
-                          "name": "test-user-author-1-username"
+                          "_id": "root",
+                          "name": "root"
                         },
                         "auth_username": "",
                         "auth_token": "test-auth-token"
@@ -157,8 +173,8 @@ Feature: get a instruction
                       "_id": "test-job-to-instruction-edit-1",
                       "name": "test-job-to-instruction-edit-1-name",
                       "author": {
-                        "_id": "test-user-author-1-id",
-                        "name": "test-user-author-1-username"
+                        "_id": "root",
+                        "name": "root"
                       },
                       "config": {
                         "_id": "test-job-config-to-edit-instruction",
@@ -166,8 +182,8 @@ Feature: get a instruction
                         "type": "rundeck",
                         "host": "http://example.com",
                         "author": {
-                          "_id": "test-user-author-1-id",
-                          "name": "test-user-author-1-username"
+                          "_id": "root",
+                          "name": "root"
                         },
                         "auth_username": "",
                         "auth_token": "test-auth-token"
@@ -192,16 +208,36 @@ Feature: get a instruction
           "type": 1,
           "status": 0,
           "name": "test-instruction-to-get-2-name",
-          "entity_patterns": [
-            {
-              "name": "test filter"
-            }
+          "corporate_entity_pattern": "test-pattern-to-filter-edit-2",
+          "corporate_entity_pattern_title": "test-pattern-to-filter-edit-2-title",
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-filter-edit-2-pattern"
+                }
+              }
+            ]
           ],
-          "alarm_patterns": null,
+          "corporate_alarm_pattern": "test-pattern-to-filter-edit-1",
+          "corporate_alarm_pattern_title": "test-pattern-to-filter-edit-1-title",
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-filter-edit-1-pattern"
+                }
+              }
+            ]
+          ],
           "description": "test-instruction-to-get-2-description",
           "author": {
-            "_id": "test-user-author-1-id",
-            "name": "test-user-author-1-username"
+            "_id": "root",
+            "name": "root"
           },
           "enabled": true,
           "jobs": [
@@ -210,8 +246,8 @@ Feature: get a instruction
                 "_id": "test-job-to-instruction-edit-1",
                 "name": "test-job-to-instruction-edit-1-name",
                 "author": {
-                  "_id": "test-user-author-1-id",
-                  "name": "test-user-author-1-username"
+                  "_id": "root",
+                  "name": "root"
                 },
                 "config": {
                   "_id": "test-job-config-to-edit-instruction",
@@ -219,8 +255,8 @@ Feature: get a instruction
                   "type": "rundeck",
                   "host": "http://example.com",
                   "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
+                    "_id": "root",
+                    "name": "root"
                   },
                   "auth_username": "",
                   "auth_token": "test-auth-token"
@@ -236,8 +272,8 @@ Feature: get a instruction
                 "_id": "test-job-to-instruction-edit-2",
                 "name": "test-job-to-instruction-edit-2-name",
                 "author": {
-                  "_id": "test-user-author-1-id",
-                  "name": "test-user-author-1-username"
+                  "_id": "root",
+                  "name": "root"
                 },
                 "config": {
                   "_id": "test-job-config-to-edit-instruction",
@@ -245,8 +281,8 @@ Feature: get a instruction
                   "type": "rundeck",
                   "host": "http://example.com",
                   "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
+                    "_id": "root",
+                    "name": "root"
                   },
                   "auth_username": "",
                   "auth_token": "test-auth-token"
@@ -257,7 +293,7 @@ Feature: get a instruction
               }
             }
           ],
-          "priority": 0,
+          "priority": 1,
           "timeout_after_execution": {
             "value": 2,
             "unit": "s"
@@ -384,16 +420,32 @@ Feature: get a instruction
       "type": 0,
       "status": 0,
       "name": "test-instruction-to-get-1-name",
-      "entity_patterns": [
-        {
-          "name": "test filter"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-get-1-pattern"
+            }
+          }
+        ]
       ],
-      "alarm_patterns": null,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-get-1-pattern"
+            }
+          }
+        ]
+      ],
       "description": "test-instruction-to-get-1-description",
       "author": {
-        "_id": "test-user-author-1-id",
-        "name": "test-user-author-1-username"
+        "_id": "root",
+        "name": "root"
       },
       "enabled": true,
       "timeout_after_execution": {
@@ -413,8 +465,8 @@ Feature: get a instruction
                    "_id": "test-job-to-instruction-edit-1",
                    "name": "test-job-to-instruction-edit-1-name",
                    "author": {
-                     "_id": "test-user-author-1-id",
-                     "name": "test-user-author-1-username"
+                     "_id": "root",
+                     "name": "root"
                    },
                    "config": {
                      "_id": "test-job-config-to-edit-instruction",
@@ -422,8 +474,8 @@ Feature: get a instruction
                      "type": "rundeck",
                      "host": "http://example.com",
                      "author": {
-                       "_id": "test-user-author-1-id",
-                       "name": "test-user-author-1-username"
+                       "_id": "root",
+                       "name": "root"
                      },
                      "auth_username": "",
                      "auth_token": "test-auth-token"
@@ -436,8 +488,8 @@ Feature: get a instruction
                    "_id": "test-job-to-instruction-edit-2",
                    "name": "test-job-to-instruction-edit-2-name",
                    "author": {
-                     "_id": "test-user-author-1-id",
-                     "name": "test-user-author-1-username"
+                     "_id": "root",
+                     "name": "root"
                    },
                    "config": {
                      "_id": "test-job-config-to-edit-instruction",
@@ -445,8 +497,8 @@ Feature: get a instruction
                      "type": "rundeck",
                      "host": "http://example.com",
                      "author": {
-                       "_id": "test-user-author-1-id",
-                       "name": "test-user-author-1-username"
+                       "_id": "root",
+                       "name": "root"
                      },
                      "auth_username": "",
                      "auth_token": "test-auth-token"
@@ -466,8 +518,8 @@ Feature: get a instruction
                    "_id": "test-job-to-instruction-edit-2",
                    "name": "test-job-to-instruction-edit-2-name",
                    "author": {
-                     "_id": "test-user-author-1-id",
-                     "name": "test-user-author-1-username"
+                     "_id": "root",
+                     "name": "root"
                    },
                    "config": {
                      "_id": "test-job-config-to-edit-instruction",
@@ -475,8 +527,8 @@ Feature: get a instruction
                      "type": "rundeck",
                      "host": "http://example.com",
                      "author": {
-                       "_id": "test-user-author-1-id",
-                       "name": "test-user-author-1-username"
+                       "_id": "root",
+                       "name": "root"
                      },
                      "auth_username": "",
                      "auth_token": "test-auth-token"
@@ -503,8 +555,8 @@ Feature: get a instruction
                  "_id": "test-job-to-instruction-edit-2",
                  "name": "test-job-to-instruction-edit-2-name",
                  "author": {
-                   "_id": "test-user-author-1-id",
-                   "name": "test-user-author-1-username"
+                   "_id": "root",
+                   "name": "root"
                  },
                  "config": {
                    "_id": "test-job-config-to-edit-instruction",
@@ -512,8 +564,8 @@ Feature: get a instruction
                    "type": "rundeck",
                    "host": "http://example.com",
                    "author": {
-                     "_id": "test-user-author-1-id",
-                     "name": "test-user-author-1-username"
+                     "_id": "root",
+                     "name": "root"
                    },
                    "auth_username": "",
                    "auth_token": "test-auth-token"
@@ -526,8 +578,8 @@ Feature: get a instruction
                  "_id": "test-job-to-instruction-edit-1",
                  "name": "test-job-to-instruction-edit-1-name",
                  "author": {
-                   "_id": "test-user-author-1-id",
-                   "name": "test-user-author-1-username"
+                   "_id": "root",
+                   "name": "root"
                  },
                  "config": {
                    "_id": "test-job-config-to-edit-instruction",
@@ -535,8 +587,8 @@ Feature: get a instruction
                    "type": "rundeck",
                    "host": "http://example.com",
                    "author": {
-                     "_id": "test-user-author-1-id",
-                     "name": "test-user-author-1-username"
+                     "_id": "root",
+                     "name": "root"
                    },
                    "auth_username": "",
                    "auth_token": "test-auth-token"

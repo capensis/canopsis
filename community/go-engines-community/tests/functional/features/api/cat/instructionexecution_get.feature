@@ -5,14 +5,20 @@ Feature: get running instruction
   Scenario: given started instruction should get it
     When I am admin
     When I do POST /api/v4/cat/instructions:
-    """
+    """json
     {
       "type": 0,
       "name": "test-instruction-execution-get-1-name",
-      "alarm_patterns": [
-        {
-          "_id": "test-instruction-execution-get-1"
-        }
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-execution-get-resource-1"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-execution-get-1-description",
       "enabled": true,
@@ -55,7 +61,7 @@ Feature: get running instruction
     """
     Then the response code should be 201
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "test-instruction-execution-get-1",
       "instruction": "{{ .lastResponse._id }}"
@@ -65,7 +71,7 @@ Feature: get running instruction
     When I do GET /api/v4/cat/executions/{{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "status": 0,
       "name": "test-instruction-execution-get-1-name",
@@ -119,14 +125,20 @@ Feature: get running instruction
   Scenario: given moved to next step instruction should get it
     When I am admin
     When I do POST /api/v4/cat/instructions:
-    """
+    """json
     {
       "type": 0,
       "name": "test-instruction-execution-get-2-name",
-      "alarm_patterns": [
-        {
-          "_id": "test-instruction-execution-get-2"
-        }
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-execution-get-resource-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-execution-get-2-description",
       "enabled": true,
@@ -169,7 +181,7 @@ Feature: get running instruction
     """
     Then the response code should be 201
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "test-instruction-execution-get-2",
       "instruction": "{{ .lastResponse._id }}"
@@ -183,7 +195,7 @@ Feature: get running instruction
     When I do GET /api/v4/cat/executions/{{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "status": 0,
       "name": "test-instruction-execution-get-2-name",
@@ -238,14 +250,20 @@ Feature: get running instruction
   Scenario: given moved to previous step instruction should get it
     When I am admin
     When I do POST /api/v4/cat/instructions:
-    """
+    """json
     {
       "type": 0,
       "name": "test-instruction-execution-get-3-name",
-      "alarm_patterns": [
-        {
-          "_id": "test-instruction-execution-get-3"
-        }
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-execution-get-resource-3"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-execution-get-3-description",
       "enabled": true,
@@ -288,7 +306,7 @@ Feature: get running instruction
     """
     Then the response code should be 201
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "test-instruction-execution-get-3",
       "instruction": "{{ .lastResponse._id }}"
@@ -304,7 +322,7 @@ Feature: get running instruction
     When I do GET /api/v4/cat/executions/{{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "status": 0,
       "name": "test-instruction-execution-get-3-name",
@@ -358,14 +376,20 @@ Feature: get running instruction
   Scenario: given not running instruction should not get it
     When I am admin
     When I do POST /api/v4/cat/instructions:
-    """
+    """json
     {
       "type": 0,
       "name": "test-instruction-execution-get-4-name",
-      "alarm_patterns": [
-        {
-          "_id": "test-instruction-execution-get-4"
-        }
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-execution-get-resource-4"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-execution-get-4-description",
       "enabled": true,
@@ -391,7 +415,7 @@ Feature: get running instruction
     """
     Then the response code should be 201
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "test-instruction-execution-get-4",
       "instruction": "{{ .lastResponse._id }}"

@@ -5,14 +5,20 @@ Feature: move a instruction execution to next operation
   Scenario: given running instruction should start next operation of instruction
     When I am admin
     When I do POST /api/v4/cat/instructions:
-    """
+    """json
     {
       "type": 0,
       "name": "test-instruction-execution-next-1-name",
-      "alarm_patterns": [
-        {
-          "_id": "test-instruction-execution-next-1"
-        }
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-execution-next-resource-1"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-execution-next-1-description",
       "enabled": true,
@@ -55,7 +61,7 @@ Feature: move a instruction execution to next operation
     """
     Then the response code should be 201
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "test-instruction-execution-next-1",
       "instruction": "{{ .lastResponse._id }}"
@@ -65,7 +71,7 @@ Feature: move a instruction execution to next operation
     When I do PUT /api/v4/cat/executions/{{ .lastResponse._id }}/next
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "status": 0,
       "name": "test-instruction-execution-next-1-name",
@@ -119,14 +125,20 @@ Feature: move a instruction execution to next operation
   Scenario: given running instruction with last operation started should return error
     When I am admin
     When I do POST /api/v4/cat/instructions:
-    """
+    """json
     {
       "type": 0,
       "name": "test-instruction-execution-next-2-name",
-      "alarm_patterns": [
-        {
-          "_id": "test-instruction-execution-next-2"
-        }
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-execution-next-resource-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-execution-next-2-description",
       "enabled": true,
@@ -169,7 +181,7 @@ Feature: move a instruction execution to next operation
     """
     Then the response code should be 201
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "test-instruction-execution-next-2",
       "instruction": "{{ .lastResponse._id }}"
@@ -181,7 +193,7 @@ Feature: move a instruction execution to next operation
     When I do PUT /api/v4/cat/executions/{{ .lastResponse._id }}/next
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "error": "execution cannot be moved to next operation from last step operation"
     }

@@ -1,18 +1,34 @@
 Feature: instruction approval creation
   I need to be able to create an instruction with approval
 
-  Scenario: given create request with approval request with user or role should return ok
-    When I am authenticated with username "root" and password "test"
+  Scenario: given create request with approval request with user should return ok
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-1-id",
       "type": 0,
       "name": "test-instruction-to-create-with-approval-1-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-1-pattern"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-create-with-approval-1-pattern"
+            }
+          }
+        ]
+      ],
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-create-with-approval-1-pattern"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-create-with-approval-1-description",
       "enabled": true,
@@ -39,7 +55,7 @@ Feature: instruction approval creation
         }
       ],
       "approval": {
-        "user": "approveruser",
+        "user": "user-to-instruction-approve-1",
         "comment": "test comment"
       }
     }
@@ -48,90 +64,47 @@ Feature: instruction approval creation
     Then the response body should contain:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-1-id",
       "status": 1,
       "approval": {
         "comment": "test comment",
         "user": {
-          "_id": "approveruser",
-          "name": "approveruser"
+          "_id": "user-to-instruction-approve-1",
+          "name": "user-to-instruction-approve-1"
         },
         "requested_by": "root"
       }
     }
     """
-    When I do POST /api/v4/cat/instructions:
-    """json
-    {
-      "_id": "test-instruction-to-create-with-approval-4-id",
-      "type": 0,
-      "name": "test-instruction-to-create-with-approval-4-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-4-pattern"
-        }
-      ],
-      "description": "test-instruction-to-create-with-approval-4-description",
-      "enabled": true,
-      "timeout_after_execution": {
-        "value": 10,
-        "unit": "m"
-      },
-      "steps": [
-        {
-          "name": "test-instruction-to-create-with-approval-4-step-1",
-          "operations": [
-            {
-              "name": "test-instruction-to-create-with-approval-4-step-1-operation-1",
-              "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-4-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
-            }
-          ],
-          "stop_on_fail": true,
-          "endpoint": "test-instruction-to-create-with-approval-4-step-1-endpoint"
-        }
-      ],
-      "approval": {
-        "role": "approver",
-        "comment": "test comment"
-      }
-    }
-    """
-    Then the response code should be 201
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-instruction-to-create-with-approval-4-id",
-      "status": 1,
-      "approval": {
-        "comment": "test comment",
-        "role": {
-          "_id": "approver",
-          "name": "approver"
-        },
-        "requested_by": "root"
-      }
-    }
-    """
-    When I do GET /api/v4/cat/instructions?search=test-instruction-to-create-with-approval
+    When I do GET /api/v4/cat/instructions?search=test-instruction-to-create-with-approval-1
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "_id": "test-instruction-to-create-with-approval-1-id",
           "type": 0,
           "status": 1,
-          "alarm_patterns": null,
-          "entity_patterns": [
-            {
-              "name": "test-instruction-to-create-with-approval-1-pattern"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-instruction-to-create-with-approval-1-pattern"
+                }
+              }
+            ]
+          ],
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-instruction-to-create-with-approval-1-pattern"
+                }
+              }
+            ]
           ],
           "name": "test-instruction-to-create-with-approval-1-name",
           "description": "test-instruction-to-create-with-approval-1-description",
@@ -156,8 +129,8 @@ Feature: instruction approval creation
                       "_id": "test-job-to-instruction-edit-1",
                       "name": "test-job-to-instruction-edit-1-name",
                       "author": {
-                        "_id": "test-user-author-1-id",
-                        "name": "test-user-author-1-username"
+                        "_id": "root",
+                        "name": "root"
                       },
                       "config": {
                         "_id": "test-job-config-to-edit-instruction",
@@ -165,8 +138,8 @@ Feature: instruction approval creation
                         "type": "rundeck",
                         "host": "http://example.com",
                         "author": {
-                          "_id": "test-user-author-1-id",
-                          "name": "test-user-author-1-username"
+                          "_id": "root",
+                          "name": "root"
                         },
                         "auth_token": "test-auth-token"
                       },
@@ -177,8 +150,8 @@ Feature: instruction approval creation
                       "_id": "test-job-to-instruction-edit-2",
                       "name": "test-job-to-instruction-edit-2-name",
                       "author": {
-                        "_id": "test-user-author-1-id",
-                        "name": "test-user-author-1-username"
+                        "_id": "root",
+                        "name": "root"
                       },
                       "config": {
                         "_id": "test-job-config-to-edit-instruction",
@@ -186,8 +159,8 @@ Feature: instruction approval creation
                         "type": "rundeck",
                         "host": "http://example.com",
                         "author": {
-                          "_id": "test-user-author-1-id",
-                          "name": "test-user-author-1-username"
+                          "_id": "root",
+                          "name": "root"
                         },
                         "auth_token": "test-auth-token"
                       },
@@ -204,95 +177,8 @@ Feature: instruction approval creation
           "approval": {
             "comment": "test comment",
             "user": {
-              "_id": "approveruser",
-              "name": "approveruser"
-            },
-            "requested_by": "root"
-          }
-        },
-        {
-          "_id": "test-instruction-to-create-with-approval-4-id",
-          "type": 0,
-          "status": 1,
-          "alarm_patterns": null,
-          "entity_patterns": [
-            {
-              "name": "test-instruction-to-create-with-approval-4-pattern"
-            }
-          ],
-          "name": "test-instruction-to-create-with-approval-4-name",
-          "description": "test-instruction-to-create-with-approval-4-description",
-          "author": {
-            "_id": "root",
-            "name": "root"
-          },
-          "enabled": true,
-          "steps": [
-            {
-              "name": "test-instruction-to-create-with-approval-4-step-1",
-              "operations": [
-                {
-                  "name": "test-instruction-to-create-with-approval-4-step-1-operation-1",
-                  "time_to_complete": {
-                      "value": 1,
-                      "unit": "s"
-                  },
-                  "description": "test-instruction-to-create-with-approval-4-step-1-operation-1-description",
-                  "jobs": [
-                    {
-                      "_id": "test-job-to-instruction-edit-1",
-                      "name": "test-job-to-instruction-edit-1-name",
-                      "author": {
-                        "_id": "test-user-author-1-id",
-                        "name": "test-user-author-1-username"
-                      },
-                      "config": {
-                        "_id": "test-job-config-to-edit-instruction",
-                        "name": "test-job-config-to-edit-instruction-name",
-                        "type": "rundeck",
-                        "host": "http://example.com",
-                        "author": {
-                          "_id": "test-user-author-1-id",
-                          "name": "test-user-author-1-username"
-                        },
-                        "auth_token": "test-auth-token"
-                      },
-                      "job_id": "test-job-to-instruction-edit-1-external-id",
-                      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                    },
-                    {
-                      "_id": "test-job-to-instruction-edit-2",
-                      "name": "test-job-to-instruction-edit-2-name",
-                      "author": {
-                        "_id": "test-user-author-1-id",
-                        "name": "test-user-author-1-username"
-                      },
-                      "config": {
-                        "_id": "test-job-config-to-edit-instruction",
-                        "name": "test-job-config-to-edit-instruction-name",
-                        "type": "rundeck",
-                        "host": "http://example.com",
-                        "author": {
-                          "_id": "test-user-author-1-id",
-                          "name": "test-user-author-1-username"
-                        },
-                        "auth_token": "test-auth-token"
-                      },
-                      "job_id": "test-job-to-instruction-edit-2-external-id",
-                      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                    }
-                  ]
-                }
-              ],
-              "stop_on_fail": true,
-              "endpoint": "test-instruction-to-create-with-approval-4-step-1-endpoint"
-            }
-          ],
-          "approval": {
-            "comment": "test comment",
-            "role": {
-              "_id": "approver",
-              "name": "approver"
+              "_id": "user-to-instruction-approve-1",
+              "name": "user-to-instruction-approve-1"
             },
             "requested_by": "root"
           }
@@ -302,23 +188,39 @@ Feature: instruction approval creation
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 1
       }
     }
     """
 
-  Scenario: given create request with approval request with not existed username should return ok
-    When I am authenticated with username "root" and password "test"
+  Scenario: given create request with approval request with user or role should return ok
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-2-id",
       "type": 0,
       "name": "test-instruction-to-create-with-approval-2-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-2-pattern"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-create-with-approval-2-pattern"
+            }
+          }
+        ]
+      ],
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-create-with-approval-2-pattern"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-create-with-approval-2-description",
       "enabled": true,
@@ -345,8 +247,151 @@ Feature: instruction approval creation
         }
       ],
       "approval": {
-        "user": "rootnotexist",
+        "role": "role-to-instruction-approve-1",
         "comment": "test comment"
+      }
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "status": 1,
+      "approval": {
+        "comment": "test comment",
+        "role": {
+          "_id": "role-to-instruction-approve-1",
+          "name": "role-to-instruction-approve-1"
+        },
+        "requested_by": "root"
+      }
+    }
+    """
+    When I do GET /api/v4/cat/instructions?search=test-instruction-to-create-with-approval-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "type": 0,
+          "status": 1,
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-instruction-to-create-with-approval-2-pattern"
+                }
+              }
+            ]
+          ],
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-instruction-to-create-with-approval-2-pattern"
+                }
+              }
+            ]
+          ],
+          "name": "test-instruction-to-create-with-approval-2-name",
+          "description": "test-instruction-to-create-with-approval-2-description",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
+          "enabled": true,
+          "steps": [
+            {
+              "name": "test-instruction-to-create-with-approval-2-step-1",
+              "operations": [
+                {
+                  "name": "test-instruction-to-create-with-approval-2-step-1-operation-1",
+                  "time_to_complete": {
+                      "value": 1,
+                      "unit": "s"
+                  },
+                  "description": "test-instruction-to-create-with-approval-2-step-1-operation-1-description",
+                  "jobs": [
+                    {
+                      "_id": "test-job-to-instruction-edit-1",
+                      "name": "test-job-to-instruction-edit-1-name",
+                      "author": {
+                        "_id": "root",
+                        "name": "root"
+                      },
+                      "config": {
+                        "_id": "test-job-config-to-edit-instruction",
+                        "name": "test-job-config-to-edit-instruction-name",
+                        "type": "rundeck",
+                        "host": "http://example.com",
+                        "author": {
+                          "_id": "root",
+                          "name": "root"
+                        },
+                        "auth_token": "test-auth-token"
+                      },
+                      "job_id": "test-job-to-instruction-edit-1-external-id",
+                      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+                    },
+                    {
+                      "_id": "test-job-to-instruction-edit-2",
+                      "name": "test-job-to-instruction-edit-2-name",
+                      "author": {
+                        "_id": "root",
+                        "name": "root"
+                      },
+                      "config": {
+                        "_id": "test-job-config-to-edit-instruction",
+                        "name": "test-job-config-to-edit-instruction-name",
+                        "type": "rundeck",
+                        "host": "http://example.com",
+                        "author": {
+                          "_id": "root",
+                          "name": "root"
+                        },
+                        "auth_token": "test-auth-token"
+                      },
+                      "job_id": "test-job-to-instruction-edit-2-external-id",
+                      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+                    }
+                  ]
+                }
+              ],
+              "stop_on_fail": true,
+              "endpoint": "test-instruction-to-create-with-approval-2-step-1-endpoint"
+            }
+          ],
+          "approval": {
+            "comment": "test comment",
+            "role": {
+              "_id": "role-to-instruction-approve-1",
+              "name": "role-to-instruction-approve-1"
+            },
+            "requested_by": "root"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given create request with approval request with not existed username should return ok
+    When I am admin
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "approval": {
+        "user": "notexist"
       }
     }
     """
@@ -361,45 +406,12 @@ Feature: instruction approval creation
     """
 
   Scenario: given create request with approval request with a username without approve right should return error
-    When I am authenticated with username "root" and password "test"
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-3-id",
-      "type": 0,
-      "name": "test-instruction-to-create-with-approval-3-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-3-pattern"
-        }
-      ],
-      "description": "test-instruction-to-create-with-approval-3-description",
-      "enabled": true,
-      "timeout_after_execution": {
-        "value": 10,
-        "unit": "m"
-      },
-      "steps": [
-        {
-          "name": "test-instruction-to-create-with-approval-3-step-1",
-          "operations": [
-            {
-              "name": "test-instruction-to-create-with-approval-3-step-1-operation-1",
-              "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-3-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
-            }
-          ],
-          "stop_on_fail": true,
-          "endpoint": "test-instruction-to-create-with-approval-3-step-1-endpoint"
-        }
-      ],
       "approval": {
-        "user": "nopermsuser",
-        "comment": "test comment"
+        "user": "nopermsuser"
       }
     }
     """
@@ -412,47 +424,14 @@ Feature: instruction approval creation
       }
     }
     """
-    
+
   Scenario: given create request with approval request with not existed role should return error
-    When I am authenticated with username "root" and password "test"
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-5-id",
-      "type": 0,
-      "name": "test-instruction-to-create-with-approval-5-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-5-pattern"
-        }
-      ],
-      "description": "test-instruction-to-create-with-approval-5-description",
-      "enabled": true,
-      "timeout_after_execution": {
-        "value": 10,
-        "unit": "m"
-      },
-      "steps": [
-        {
-          "name": "test-instruction-to-create-with-approval-5-step-1",
-          "operations": [
-            {
-              "name": "test-instruction-to-create-with-approval-5-step-1-operation-1",
-              "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-5-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
-            }
-          ],
-          "stop_on_fail": true,
-          "endpoint": "test-instruction-to-create-with-approval-5-step-1-endpoint"
-        }
-      ],
       "approval": {
-        "role": "adminnotexist",
-        "comment": "test comment"
+        "role": "notexist"
       }
     }
     """
@@ -467,45 +446,12 @@ Feature: instruction approval creation
     """
 
   Scenario: given create request with approval request with a role without approve right should return error
-    When I am authenticated with username "root" and password "test"
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-6-id",
-      "type": 0,
-      "name": "test-instruction-to-create-with-approval-6-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-6-pattern"
-        }
-      ],
-      "description": "test-instruction-to-create-with-approval-6-description",
-      "enabled": true,
-      "timeout_after_execution": {
-        "value": 10,
-        "unit": "m"
-      },
-      "steps": [
-        {
-          "name": "test-instruction-to-create-with-approval-6-step-1",
-          "operations": [
-            {
-              "name": "test-instruction-to-create-with-approval-6-step-1-operation-1",
-              "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-6-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
-            }
-          ],
-          "stop_on_fail": true,
-          "endpoint": "test-instruction-to-create-with-approval-6-step-1-endpoint"
-        }
-      ],
       "approval": {
-        "role": "noperms",
-        "comment": "test comment"
+        "role": "noperms"
       }
     }
     """
@@ -520,46 +466,13 @@ Feature: instruction approval creation
     """
 
   Scenario: given create request with approval request with role and username should return error
-    When I am authenticated with username "root" and password "test"
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-7-id",
-      "type": 0,
-      "name": "test-instruction-to-create-with-approval-7-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-7-pattern"
-        }
-      ],
-      "description": "test-instruction-to-create-with-approval-7-description",
-      "enabled": true,
-      "timeout_after_execution": {
-        "value": 10,
-        "unit": "m"
-      },
-      "steps": [
-        {
-          "name": "test-instruction-to-create-with-approval-7-step-1",
-          "operations": [
-            {
-              "name": "test-instruction-to-create-with-approval-7-step-1-operation-1",
-              "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-7-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
-            }
-          ],
-          "stop_on_fail": true,
-          "endpoint": "test-instruction-to-create-with-approval-7-step-1-endpoint"
-        }
-      ],
       "approval": {
         "user": "root",
-        "role": "admin",
-        "comment": "test comment"
+        "role": "admin"
       }
     }
     """
@@ -574,19 +487,13 @@ Feature: instruction approval creation
     """
 
   Scenario: given create request with valid approval request with existed name should return error
-    When I am authenticated with username "root" and password "test"
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-8-id",
       "type": 0,
-      "name": "test-instruction-to-create-with-approval-1-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-8-pattern"
-        }
-      ],
-      "description": "test-instruction-to-create-with-approval-8-description",
+      "name": "test-instruction-to-check-unique-name",
+      "description": "test-instruction-to-create-with-approval-3-description",
       "enabled": true,
       "timeout_after_execution": {
         "value": 10,
@@ -594,24 +501,20 @@ Feature: instruction approval creation
       },
       "steps": [
         {
-          "name": "test-instruction-to-create-with-approval-8-step-1",
+          "name": "test-instruction-to-create-with-approval-3-step-1",
           "operations": [
             {
-              "name": "test-instruction-to-create-with-approval-8-step-1-operation-1",
+              "name": "test-instruction-to-create-with-approval-3-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-8-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
+              "description": "test-instruction-to-create-with-approval-3-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
-          "endpoint": "test-instruction-to-create-with-approval-8-step-1-endpoint"
+          "endpoint": "test-instruction-to-create-with-approval-3-step-1-endpoint"
         }
       ],
       "approval": {
-        "role": "approver",
+        "role": "role-to-instruction-approve-1",
         "comment": "test comment"
       }
     }
@@ -627,19 +530,35 @@ Feature: instruction approval creation
     """
 
   Scenario: the approver should be able to get approval data by username
-    When I am authenticated with username "root" and password "test"
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-9-id",
       "type": 0,
-      "name": "test-instruction-to-create-with-approval-9-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-9-pattern"
-        }
+      "name": "test-instruction-to-create-with-approval-4-name",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-create-with-approval-4-pattern"
+            }
+          }
+        ]
       ],
-      "description": "test-instruction-to-create-with-approval-9-description",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-create-with-approval-4-pattern"
+            }
+          }
+        ]
+      ],
+      "description": "test-instruction-to-create-with-approval-4-description",
       "enabled": true,
       "timeout_after_execution": {
         "value": 10,
@@ -647,62 +566,60 @@ Feature: instruction approval creation
       },
       "steps": [
         {
-          "name": "test-instruction-to-create-with-approval-9-step-1",
+          "name": "test-instruction-to-create-with-approval-4-step-1",
           "operations": [
             {
-              "name": "test-instruction-to-create-with-approval-9-step-1-operation-1",
+              "name": "test-instruction-to-create-with-approval-4-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-9-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
+              "description": "test-instruction-to-create-with-approval-4-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
-          "endpoint": "test-instruction-to-create-with-approval-9-step-1-endpoint"
+          "endpoint": "test-instruction-to-create-with-approval-4-step-1-endpoint"
         }
       ],
       "approval": {
-        "user": "approveruser",
+        "user": "user-to-instruction-approve-1",
         "comment": "test comment"
       }
     }
     """
     Then the response code should be 201
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-instruction-to-create-with-approval-9-id",
-      "status": 1,
-      "approval": {
-        "comment": "test comment",
-        "user": {
-          "_id": "approveruser",
-          "name": "approveruser"
-        },
-        "requested_by": "root"
-      }
-    }
-    """
-    When I am authenticated with username "approveruser" and password "test"
-    When I do GET /api/v4/cat/instructions/test-instruction-to-create-with-approval-9-id/approval
+    When I save response instructionID={{ .lastResponse._id }}
+    When I am role-to-instruction-approve-1
+    When I do GET /api/v4/cat/instructions/{{ .instructionID }}/approval
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "original": {
-        "_id": "test-instruction-to-create-with-approval-9-id",
+        "_id": "{{ .instructionID }}",
         "type": 0,
         "status": 1,
-        "alarm_patterns": null,
-        "entity_patterns": [
-          {
-            "name": "test-instruction-to-create-with-approval-9-pattern"
-          }
+        "entity_pattern": [
+          [
+            {
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-instruction-to-create-with-approval-4-pattern"
+              }
+            }
+          ]
         ],
-        "name": "test-instruction-to-create-with-approval-9-name",
-        "description": "test-instruction-to-create-with-approval-9-description",
+        "alarm_pattern": [
+          [
+            {
+              "field": "v.component",
+              "cond": {
+                "type": "eq",
+                "value": "test-instruction-to-create-with-approval-4-pattern"
+              }
+            }
+          ]
+        ],
+        "name": "test-instruction-to-create-with-approval-4-name",
+        "description": "test-instruction-to-create-with-approval-4-description",
         "author": {
           "_id": "root",
           "name": "root"
@@ -710,71 +627,27 @@ Feature: instruction approval creation
         "enabled": true,
         "steps": [
           {
-            "name": "test-instruction-to-create-with-approval-9-step-1",
+            "name": "test-instruction-to-create-with-approval-4-step-1",
             "operations": [
               {
-                "name": "test-instruction-to-create-with-approval-9-step-1-operation-1",
+                "name": "test-instruction-to-create-with-approval-4-step-1-operation-1",
                 "time_to_complete": {
                     "value": 1,
                     "unit": "s"
                 },
-                "description": "test-instruction-to-create-with-approval-9-step-1-operation-1-description",
-                "jobs": [
-                  {
-                    "_id": "test-job-to-instruction-edit-1",
-                    "name": "test-job-to-instruction-edit-1-name",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "config": {
-                      "_id": "test-job-config-to-edit-instruction",
-                      "name": "test-job-config-to-edit-instruction-name",
-                      "type": "rundeck",
-                      "host": "http://example.com",
-                      "author": {
-                        "_id": "test-user-author-1-id",
-                        "name": "test-user-author-1-username"
-                      },
-                      "auth_token": "test-auth-token"
-                    },
-                    "job_id": "test-job-to-instruction-edit-1-external-id",
-                    "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                  },
-                  {
-                    "_id": "test-job-to-instruction-edit-2",
-                    "name": "test-job-to-instruction-edit-2-name",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "config": {
-                      "_id": "test-job-config-to-edit-instruction",
-                      "name": "test-job-config-to-edit-instruction-name",
-                      "type": "rundeck",
-                      "host": "http://example.com",
-                      "author": {
-                        "_id": "test-user-author-1-id",
-                        "name": "test-user-author-1-username"
-                      },
-                      "auth_token": "test-auth-token"
-                    },
-                    "job_id": "test-job-to-instruction-edit-2-external-id",
-                    "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                  }
-                ]
+                "description": "test-instruction-to-create-with-approval-4-step-1-operation-1-description"
               }
             ],
             "stop_on_fail": true,
-            "endpoint": "test-instruction-to-create-with-approval-9-step-1-endpoint"
+            "endpoint": "test-instruction-to-create-with-approval-4-step-1-endpoint"
           }
         ]
       },
       "approval": {
         "comment": "test comment",
         "user": {
-          "_id": "approveruser",
-          "name": "approveruser"
+          "_id": "user-to-instruction-approve-1",
+          "name": "user-to-instruction-approve-1"
         },
         "requested_by": "root"
       }
@@ -782,17 +655,33 @@ Feature: instruction approval creation
     """
 
   Scenario: the approver should be able to get approval data by role
-    When I am authenticated with username "root" and password "test"
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-10-id",
       "type": 0,
       "name": "test-instruction-to-create-with-approval-10-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-10-pattern"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-create-with-approval-10-pattern"
+            }
+          }
+        ]
+      ],
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-create-with-approval-10-pattern"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-create-with-approval-10-description",
       "enabled": true,
@@ -807,11 +696,7 @@ Feature: instruction approval creation
             {
               "name": "test-instruction-to-create-with-approval-10-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-10-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
+              "description": "test-instruction-to-create-with-approval-10-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
@@ -819,42 +704,44 @@ Feature: instruction approval creation
         }
       ],
       "approval": {
-        "role": "approver",
+        "role": "role-to-instruction-approve-1",
         "comment": "test comment"
       }
     }
     """
     Then the response code should be 201
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-instruction-to-create-with-approval-10-id",
-      "status": 1,
-      "approval": {
-        "comment": "test comment",
-        "role": {
-          "_id": "approver",
-          "name": "approver"
-        },
-        "requested_by": "root"
-      }
-    }
-    """
-    When I am authenticated with username "approveruser" and password "test"
-    When I do GET /api/v4/cat/instructions/test-instruction-to-create-with-approval-10-id/approval
+    When I save response instructionID={{ .lastResponse._id }}
+    When I am role-to-instruction-approve-1
+    When I do GET /api/v4/cat/instructions/{{ .instructionID }}/approval
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "original": {
-        "_id": "test-instruction-to-create-with-approval-10-id",
+        "_id": "{{ .instructionID }}",
         "type": 0,
         "status": 1,
-        "alarm_patterns": null,
-        "entity_patterns": [
-          {
-            "name": "test-instruction-to-create-with-approval-10-pattern"
-          }
+        "entity_pattern": [
+          [
+            {
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-instruction-to-create-with-approval-10-pattern"
+              }
+            }
+          ]
+        ],
+        "alarm_pattern": [
+          [
+            {
+              "field": "v.component",
+              "cond": {
+                "type": "eq",
+                "value": "test-instruction-to-create-with-approval-10-pattern"
+              }
+            }
+          ]
         ],
         "name": "test-instruction-to-create-with-approval-10-name",
         "description": "test-instruction-to-create-with-approval-10-description",
@@ -873,51 +760,7 @@ Feature: instruction approval creation
                     "value": 1,
                     "unit": "s"
                 },
-                "description": "test-instruction-to-create-with-approval-10-step-1-operation-1-description",
-                "jobs": [
-                  {
-                    "_id": "test-job-to-instruction-edit-1",
-                    "name": "test-job-to-instruction-edit-1-name",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "config": {
-                      "_id": "test-job-config-to-edit-instruction",
-                      "name": "test-job-config-to-edit-instruction-name",
-                      "type": "rundeck",
-                      "host": "http://example.com",
-                      "author": {
-                        "_id": "test-user-author-1-id",
-                        "name": "test-user-author-1-username"
-                      },
-                      "auth_token": "test-auth-token"
-                    },
-                    "job_id": "test-job-to-instruction-edit-1-external-id",
-                    "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                  },
-                  {
-                    "_id": "test-job-to-instruction-edit-2",
-                    "name": "test-job-to-instruction-edit-2-name",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "config": {
-                      "_id": "test-job-config-to-edit-instruction",
-                      "name": "test-job-config-to-edit-instruction-name",
-                      "type": "rundeck",
-                      "host": "http://example.com",
-                      "author": {
-                        "_id": "test-user-author-1-id",
-                        "name": "test-user-author-1-username"
-                      },
-                      "auth_token": "test-auth-token"
-                    },
-                    "job_id": "test-job-to-instruction-edit-2-external-id",
-                    "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                  }
-                ]
+                "description": "test-instruction-to-create-with-approval-10-step-1-operation-1-description"
               }
             ],
             "stop_on_fail": true,
@@ -928,8 +771,8 @@ Feature: instruction approval creation
       "approval": {
         "comment": "test comment",
         "role": {
-          "_id": "approver",
-          "name": "approver"
+          "_id": "role-to-instruction-approve-1",
+          "name": "role-to-instruction-approve-1"
         },
         "requested_by": "root"
       }
@@ -937,18 +780,12 @@ Feature: instruction approval creation
     """
 
   Scenario: the user, which is not set in approval should receive 403
-    When I am authenticated with username "root" and password "test"
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-11-id",
       "type": 0,
       "name": "test-instruction-to-create-with-approval-11-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-11-pattern"
-        }
-      ],
       "description": "test-instruction-to-create-with-approval-11-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -962,41 +799,23 @@ Feature: instruction approval creation
             {
               "name": "test-instruction-to-create-with-approval-11-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-11-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
+              "description": "test-instruction-to-create-with-approval-11-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
-          "endpoint": "test-instruction-to-create-with-approval-11-step-1-endpoint"
+          "endpoint": "test-instruction-to-create-with-approval-6-step-1-endpoint"
         }
       ],
       "approval": {
-        "user": "approveruser",
+        "user": "user-to-instruction-approve-1",
         "comment": "test comment"
       }
     }
     """
     Then the response code should be 201
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-instruction-to-create-with-approval-11-id",
-      "status": 1,
-      "approval": {
-        "comment": "test comment",
-        "user": {
-          "_id": "approveruser",
-          "name": "approveruser"
-        },
-        "requested_by": "root"
-      }
-    }
-    """  
-    When I am authenticated with username "manageruser" and password "test"
-    When I do GET /api/v4/cat/instructions/test-instruction-to-create-with-approval-11-id/approval
+    When I save response instructionID={{ .lastResponse._id }}
+    When I am manager
+    When I do GET /api/v4/cat/instructions/{{ .instructionID }}/approval
     Then the response code should be 403
     Then the response body should contain:
     """json
@@ -1006,18 +825,12 @@ Feature: instruction approval creation
     """
 
   Scenario: the user with a role, which is not set in approval should receive 403
-    When I am authenticated with username "root" and password "test"
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-12-id",
       "type": 0,
       "name": "test-instruction-to-create-with-approval-12-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-12-pattern"
-        }
-      ],
       "description": "test-instruction-to-create-with-approval-12-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -1031,11 +844,7 @@ Feature: instruction approval creation
             {
               "name": "test-instruction-to-create-with-approval-12-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-12-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
+              "description": "test-instruction-to-create-with-approval-12-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
@@ -1043,29 +852,15 @@ Feature: instruction approval creation
         }
       ],
       "approval": {
-        "role": "approver",
+        "role": "role-to-instruction-approve-1",
         "comment": "test comment"
       }
     }
     """
     Then the response code should be 201
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-instruction-to-create-with-approval-12-id",
-      "status": 1,
-      "approval": {
-        "comment": "test comment",
-        "role": {
-          "_id": "approver",
-          "name": "approver"
-        },
-        "requested_by": "root"
-      }
-    }
-    """  
-    When I am authenticated with username "manageruser" and password "test"
-    When I do GET /api/v4/cat/instructions/test-instruction-to-create-with-approval-12-id/approval
+    When I save response instructionID={{ .lastResponse._id }}
+    When I am manager
+    When I do GET /api/v4/cat/instructions/{{ .instructionID }}/approval
     Then the response code should be 403
     Then the response body should contain:
     """json
@@ -1075,23 +870,45 @@ Feature: instruction approval creation
     """
 
   Scenario: if no approval return 404
-    When I am authenticated with username "root" and password "test"
-    When I do GET /api/v4/cat/instructions/test-instruction-to-get-1/approval
-    Then the response code should be 404
-
-  Scenario: should be possible for any user to get waiting for approval created instruction
-    When I am authenticated with username "root" and password "test"
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-13-id",
+      "type": 0,
+      "name": "test-instruction-to-create-with-approval-23-name",
+      "description": "test-instruction-to-create-with-approval-23-description",
+      "enabled": true,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "steps": [
+        {
+          "name": "test-instruction-to-create-with-approval-23-step-1",
+          "operations": [
+            {
+              "name": "test-instruction-to-create-with-approval-23-step-1-operation-1",
+              "time_to_complete": {"value": 1, "unit":"s"},
+              "description": "test-instruction-to-create-with-approval-23-step-1-operation-1-description"
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "test-instruction-to-create-with-approval-23-step-1-endpoint"
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/cat/instructions/{{ .lastResponse._id }}/approval
+    Then the response code should be 404
+
+  Scenario: should be possible for any user to get waiting for approval created instruction
+    When I am admin
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
       "type": 0,
       "name": "test-instruction-to-create-with-approval-13-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-13-pattern"
-        }
-      ],
       "description": "test-instruction-to-create-with-approval-13-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -1105,11 +922,7 @@ Feature: instruction approval creation
             {
               "name": "test-instruction-to-create-with-approval-13-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-13-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
+              "description": "test-instruction-to-create-with-approval-13-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
@@ -1117,42 +930,22 @@ Feature: instruction approval creation
         }
       ],
       "approval": {
-        "user": "approveruser",
+        "user": "user-to-instruction-approve-1",
         "comment": "test comment"
       }
     }
     """
     Then the response code should be 201
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-instruction-to-create-with-approval-13-id",
-      "status": 1,
-      "approval": {
-        "comment": "test comment",
-        "user": {
-          "_id": "approveruser",
-          "name": "approveruser"
-        },
-        "requested_by": "root"
-      }
-    }
-    """  
-    When I am authenticated with username "root" and password "test"
-    When I do GET /api/v4/cat/instructions/test-instruction-to-create-with-approval-13-id
+    When I save response instructionID={{ .lastResponse._id }}
+    When I am admin
+    When I do GET /api/v4/cat/instructions/{{ .instructionID }}
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-13-id",
+      "_id": "{{ .instructionID }}",
       "type": 0,
       "status": 1,
-      "alarm_patterns": null,
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-13-pattern"
-        }
-      ],
       "name": "test-instruction-to-create-with-approval-13-name",
       "description": "test-instruction-to-create-with-approval-13-description",
       "author": {
@@ -1170,51 +963,7 @@ Feature: instruction approval creation
                   "value": 1,
                   "unit": "s"
               },
-              "description": "test-instruction-to-create-with-approval-13-step-1-operation-1-description",
-              "jobs": [
-                {
-                  "_id": "test-job-to-instruction-edit-1",
-                  "name": "test-job-to-instruction-edit-1-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-1-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                },
-                {
-                  "_id": "test-job-to-instruction-edit-2",
-                  "name": "test-job-to-instruction-edit-2-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-2-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                }
-              ]
+              "description": "test-instruction-to-create-with-approval-13-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
@@ -1224,28 +973,22 @@ Feature: instruction approval creation
       "approval": {
         "comment": "test comment",
         "user": {
-          "_id": "approveruser",
-          "name": "approveruser"
+          "_id": "user-to-instruction-approve-1",
+          "name": "user-to-instruction-approve-1"
         },
         "requested_by": "root"
       }
     }
     """
-    When I am authenticated with username "manageruser" and password "test"
-    When I do GET /api/v4/cat/instructions/test-instruction-to-create-with-approval-13-id
+    When I am manager
+    When I do GET /api/v4/cat/instructions/{{ .instructionID }}
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-13-id",
+      "_id": "{{ .instructionID }}",
       "type": 0,
       "status": 1,
-      "alarm_patterns": null,
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-13-pattern"
-        }
-      ],
       "name": "test-instruction-to-create-with-approval-13-name",
       "description": "test-instruction-to-create-with-approval-13-description",
       "author": {
@@ -1263,51 +1006,7 @@ Feature: instruction approval creation
                   "value": 1,
                   "unit": "s"
               },
-              "description": "test-instruction-to-create-with-approval-13-step-1-operation-1-description",
-              "jobs": [
-                {
-                  "_id": "test-job-to-instruction-edit-1",
-                  "name": "test-job-to-instruction-edit-1-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-1-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                },
-                {
-                  "_id": "test-job-to-instruction-edit-2",
-                  "name": "test-job-to-instruction-edit-2-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-2-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                }
-              ]
+              "description": "test-instruction-to-create-with-approval-13-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
@@ -1317,28 +1016,22 @@ Feature: instruction approval creation
       "approval": {
         "comment": "test comment",
         "user": {
-          "_id": "approveruser",
-          "name": "approveruser"
+          "_id": "user-to-instruction-approve-1",
+          "name": "user-to-instruction-approve-1"
         },
         "requested_by": "root"
       }
     }
     """
-    When I am authenticated with username "approveruser" and password "test"
-    When I do GET /api/v4/cat/instructions/test-instruction-to-create-with-approval-13-id
+    When I am role-to-instruction-approve-1
+    When I do GET /api/v4/cat/instructions/{{ .instructionID }}
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-13-id",
+      "_id": "{{ .instructionID }}",
       "type": 0,
       "status": 1,
-      "alarm_patterns": null,
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-13-pattern"
-        }
-      ],
       "name": "test-instruction-to-create-with-approval-13-name",
       "description": "test-instruction-to-create-with-approval-13-description",
       "author": {
@@ -1356,51 +1049,7 @@ Feature: instruction approval creation
                   "value": 1,
                   "unit": "s"
               },
-              "description": "test-instruction-to-create-with-approval-13-step-1-operation-1-description",
-              "jobs": [
-                {
-                  "_id": "test-job-to-instruction-edit-1",
-                  "name": "test-job-to-instruction-edit-1-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-1-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                },
-                {
-                  "_id": "test-job-to-instruction-edit-2",
-                  "name": "test-job-to-instruction-edit-2-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-2-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                }
-              ]
+              "description": "test-instruction-to-create-with-approval-13-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
@@ -1410,27 +1059,21 @@ Feature: instruction approval creation
       "approval": {
         "comment": "test comment",
         "user": {
-          "_id": "approveruser",
-          "name": "approveruser"
+          "_id": "user-to-instruction-approve-1",
+          "name": "user-to-instruction-approve-1"
         },
         "requested_by": "root"
       }
     }
     """
 
-  Scenario: The users that didn't request the approval can update only name/description/enabled
-    When I am authenticated with username "root" and password "test"
+  Scenario: the users that didn't request the approval can update only name/description/enabled
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-14-id",
       "type": 0,
       "name": "test-instruction-to-create-with-approval-14-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-14-pattern"
-        }
-      ],
       "description": "test-instruction-to-create-with-approval-14-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -1444,11 +1087,7 @@ Feature: instruction approval creation
             {
               "name": "test-instruction-to-create-with-approval-14-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-14-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
+              "description": "test-instruction-to-create-with-approval-14-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
@@ -1456,40 +1095,58 @@ Feature: instruction approval creation
         }
       ],
       "approval": {
-        "user": "approveruser",
+        "user": "user-to-instruction-approve-1",
         "comment": "test comment"
       }
     }
     """
     Then the response code should be 201
-    Then the response body should contain:
+    When I save response instructionID={{ .lastResponse._id }}
+    When I am manager
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-14-id",
-      "status": 1,
+      "type": 0,
+      "name": "test-instruction-to-create-with-approval-14-name-changed",
+      "description": "test-instruction-to-create-with-approval-14-description-changed",
+      "enabled": false,
+      "timeout_after_execution": {
+        "value": 12,
+        "unit": "m"
+      },
+      "steps": [
+        {
+          "name": "new step",
+          "operations": [
+            {
+              "name": "new operation",
+              "time_to_complete": {"value": 55, "unit":"s"},
+              "description": "new operation"
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "new endpoint"
+        }
+      ],
       "approval": {
         "comment": "test comment",
-        "user": {
-          "_id": "approveruser",
-          "name": "approveruser"
-        },
-        "requested_by": "root"
+        "user": "user-to-instruction-approve-1"
       }
     }
     """
-    When I am authenticated with username "manageruser" and password "test"
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-create-with-approval-14-id:
+    Then the response code should be 200
+    Then the response body should contain:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-14-id",
+      "_id": "{{ .instructionID }}",
       "type": 0,
+      "status": 1,
       "name": "test-instruction-to-create-with-approval-14-name-changed",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-14-pattern"
-        }
-      ],
       "description": "test-instruction-to-create-with-approval-14-description-changed",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "enabled": false,
       "timeout_after_execution": {
         "value": 10,
@@ -1501,99 +1158,11 @@ Feature: instruction approval creation
           "operations": [
             {
               "name": "test-instruction-to-create-with-approval-14-step-1-operation-1",
-              "time_to_complete": {"value": 5, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-14-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
-            }
-          ],
-          "stop_on_fail": false,
-          "endpoint": "new endpoint"
-        }
-      ],
-      "approval": {
-        "comment": "test comment",
-        "user": "approveruser"
-      }
-    }
-    """
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-instruction-to-create-with-approval-14-id",
-      "type": 0,
-      "status": 1,
-      "alarm_patterns": null,
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-14-pattern"
-        }
-      ],
-      "name": "test-instruction-to-create-with-approval-14-name-changed",
-      "description": "test-instruction-to-create-with-approval-14-description-changed",
-      "author": {
-        "_id": "root",
-        "name": "root"
-      },
-      "enabled": false,
-      "steps": [
-        {
-          "name": "test-instruction-to-create-with-approval-14-step-1",
-          "operations": [
-            {
-              "name": "test-instruction-to-create-with-approval-14-step-1-operation-1",
               "time_to_complete": {
                   "value": 1,
                   "unit": "s"
               },
-              "description": "test-instruction-to-create-with-approval-14-step-1-operation-1-description",
-              "jobs": [
-                {
-                  "_id": "test-job-to-instruction-edit-1",
-                  "name": "test-job-to-instruction-edit-1-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-1-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                },
-                {
-                  "_id": "test-job-to-instruction-edit-2",
-                  "name": "test-job-to-instruction-edit-2-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-2-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                }
-              ]
+              "description": "test-instruction-to-create-with-approval-14-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
@@ -1603,19 +1172,13 @@ Feature: instruction approval creation
     }
     """
 
-  Scenario: The user that requested the approval can update any field
-    When I am authenticated with username "root" and password "test"
+  Scenario: the user that requested the approval can update any field
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-15-id",
       "type": 0,
       "name": "test-instruction-to-create-with-approval-15-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-15-pattern"
-        }
-      ],
       "description": "test-instruction-to-create-with-approval-15-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -1629,11 +1192,7 @@ Feature: instruction approval creation
             {
               "name": "test-instruction-to-create-with-approval-15-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-15-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
+              "description": "test-instruction-to-create-with-approval-15-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
@@ -1641,65 +1200,41 @@ Feature: instruction approval creation
         }
       ],
       "approval": {
-        "user": "approveruser",
+        "user": "user-to-instruction-approve-1",
         "comment": "test comment"
       }
     }
     """
     Then the response code should be 201
-    Then the response body should contain:
+    When I save response instructionID={{ .lastResponse._id }}
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-15-id",
-      "status": 1,
-      "approval": {
-        "comment": "test comment",
-        "user": {
-          "_id": "approveruser",
-          "name": "approveruser"
-        },
-        "requested_by": "root"
-      }
-    }
-    """  
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-create-with-approval-15-id:
-    """json
-    {
-      "_id": "test-instruction-to-create-with-approval-15-id",
       "type": 0,
-      "name": "test-instruction-to-create-with-approval-15-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-15-pattern"
-        }
-      ],
-      "description": "test-instruction-to-create-with-approval-15-description",
-      "enabled": true,
+      "name": "test-instruction-to-create-with-approval-15-name-updated",
+      "description": "test-instruction-to-create-with-approval-15-description-updated",
+      "enabled": false,
       "timeout_after_execution": {
-        "value": 10,
+        "value": 11,
         "unit": "m"
       },
       "steps": [
         {
-          "name": "test-instruction-to-create-with-approval-15-step-1",
+          "name": "test-instruction-to-create-with-approval-15-step-1-updated",
           "operations": [
             {
-              "name": "test-instruction-to-create-with-approval-15-step-1-operation-1",
+              "name": "test-instruction-to-create-with-approval-15-step-1-operation-1-updated",
               "time_to_complete": {"value": 5, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-15-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
+              "description": "test-instruction-to-create-with-approval-15-step-1-operation-1-description-updated"
             }
           ],
           "stop_on_fail": false,
-          "endpoint": "new endpoint"
+          "endpoint": "test-instruction-to-create-with-approval-15-step-1-endpoint-updated"
         }
       ],
       "approval": {
         "comment": "test comment",
-        "user": "approveruser"
+        "user": "user-to-instruction-approve-1"
       }
     }
     """
@@ -1707,107 +1242,55 @@ Feature: instruction approval creation
     Then the response body should contain:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-15-id",
+      "_id": "{{ .instructionID }}",
       "type": 0,
       "status": 1,
-      "alarm_patterns": null,
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-15-pattern"
-        }
-      ],
-      "name": "test-instruction-to-create-with-approval-15-name",
-      "description": "test-instruction-to-create-with-approval-15-description",
+      "name": "test-instruction-to-create-with-approval-15-name-updated",
+      "description": "test-instruction-to-create-with-approval-15-description-updated",
       "author": {
         "_id": "root",
         "name": "root"
       },
-      "enabled": true,
+      "enabled": false,
+      "timeout_after_execution": {
+        "value": 11,
+        "unit": "m"
+      },
       "steps": [
         {
-          "name": "test-instruction-to-create-with-approval-15-step-1",
+          "name": "test-instruction-to-create-with-approval-15-step-1-updated",
           "operations": [
             {
-              "name": "test-instruction-to-create-with-approval-15-step-1-operation-1",
+              "name": "test-instruction-to-create-with-approval-15-step-1-operation-1-updated",
               "time_to_complete": {
                   "value": 5,
                   "unit": "s"
               },
-              "description": "test-instruction-to-create-with-approval-15-step-1-operation-1-description",
-              "jobs": [
-                {
-                  "_id": "test-job-to-instruction-edit-1",
-                  "name": "test-job-to-instruction-edit-1-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-1-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                },
-                {
-                  "_id": "test-job-to-instruction-edit-2",
-                  "name": "test-job-to-instruction-edit-2-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-2-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                }
-              ]
+              "description": "test-instruction-to-create-with-approval-15-step-1-operation-1-description-updated"
             }
           ],
           "stop_on_fail": false,
-          "endpoint": "new endpoint"
+          "endpoint": "test-instruction-to-create-with-approval-15-step-1-endpoint-updated"
         }
       ],
       "approval": {
         "comment": "test comment",
         "user": {
-          "_id": "approveruser",
-          "name": "approveruser"
+          "_id": "user-to-instruction-approve-1",
+          "name": "user-to-instruction-approve-1"
         },
         "requested_by": "root"
       }
     }
     """
 
-  Scenario: The users that didn't request the approval can't change approver
-    When I am authenticated with username "root" and password "test"
+  Scenario: the users that didn't request the approval can't change approver
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-17-id",
       "type": 0,
       "name": "test-instruction-to-create-with-approval-17-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-17-pattern"
-        }
-      ],
       "description": "test-instruction-to-create-with-approval-17-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -1821,11 +1304,7 @@ Feature: instruction approval creation
             {
               "name": "test-instruction-to-create-with-approval-17-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-17-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
+              "description": "test-instruction-to-create-with-approval-17-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
@@ -1833,39 +1312,19 @@ Feature: instruction approval creation
         }
       ],
       "approval": {
-        "user": "approveruser",
+        "user": "user-to-instruction-approve-1",
         "comment": "test comment"
       }
     }
     """
     Then the response code should be 201
-    Then the response body should contain:
+    When I save response instructionID={{ .lastResponse._id }}
+    When I am manager
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-17-id",
-      "status": 1,
-      "approval": {
-        "comment": "test comment",
-        "user": {
-          "_id": "approveruser",
-          "name": "approveruser"
-        },
-        "requested_by": "root"
-      }
-    }
-    """
-    When I am authenticated with username "manageruser" and password "test"
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-create-with-approval-17-id:
-    """json
-    {
-      "_id": "test-instruction-to-create-with-approval-17-id",
       "type": 0,
       "name": "test-instruction-to-create-with-approval-17-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-17-pattern"
-        }
-      ],
       "description": "test-instruction-to-create-with-approval-17-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -1879,11 +1338,7 @@ Feature: instruction approval creation
             {
               "name": "test-instruction-to-create-with-approval-17-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-17-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
+              "description": "test-instruction-to-create-with-approval-17-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
@@ -1892,7 +1347,7 @@ Feature: instruction approval creation
       ],
       "approval": {
         "comment": "test comment",
-        "user": "approveruser2"
+        "user": "user-to-instruction-approve-2"
       }
     }
     """
@@ -1900,107 +1355,24 @@ Feature: instruction approval creation
     Then the response body should contain:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-17-id",
-      "type": 0,
-      "status": 1,
-      "alarm_patterns": null,
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-17-pattern"
-        }
-      ],
-      "name": "test-instruction-to-create-with-approval-17-name",
-      "description": "test-instruction-to-create-with-approval-17-description",
-      "author": {
-        "_id": "root",
-        "name": "root"
-      },
-      "enabled": true,
-      "steps": [
-        {
-          "name": "test-instruction-to-create-with-approval-17-step-1",
-          "operations": [
-            {
-              "name": "test-instruction-to-create-with-approval-17-step-1-operation-1",
-              "time_to_complete": {
-                  "value": 1,
-                  "unit": "s"
-              },
-              "description": "test-instruction-to-create-with-approval-17-step-1-operation-1-description",
-              "jobs": [
-                {
-                  "_id": "test-job-to-instruction-edit-1",
-                  "name": "test-job-to-instruction-edit-1-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-1-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                },
-                {
-                  "_id": "test-job-to-instruction-edit-2",
-                  "name": "test-job-to-instruction-edit-2-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-2-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                }
-              ]
-            }
-          ],
-          "stop_on_fail": true,
-          "endpoint": "test-instruction-to-create-with-approval-17-step-1-endpoint"
-        }
-      ],
       "approval": {
         "comment": "test comment",
         "user": {
-          "_id": "approveruser",
-          "name": "approveruser"
+          "_id": "user-to-instruction-approve-1",
+          "name": "user-to-instruction-approve-1"
         },
         "requested_by": "root"
       }
     }
     """
 
-  Scenario: The user that requested the approval can change approver username
-    When I am authenticated with username "root" and password "test"
+  Scenario: the user that requested the approval can change approver username
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-18-id",
       "type": 0,
       "name": "test-instruction-to-create-with-approval-18-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-18-pattern"
-        }
-      ],
       "description": "test-instruction-to-create-with-approval-18-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -2014,11 +1386,7 @@ Feature: instruction approval creation
             {
               "name": "test-instruction-to-create-with-approval-18-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-18-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
+              "description": "test-instruction-to-create-with-approval-18-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
@@ -2026,39 +1394,18 @@ Feature: instruction approval creation
         }
       ],
       "approval": {
-        "user": "approveruser",
+        "user": "user-to-instruction-approve-1",
         "comment": "test comment"
       }
     }
     """
     Then the response code should be 201
-    Then the response body should contain:
+    When I save response instructionID={{ .lastResponse._id }}
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-18-id",
-      "status": 1,
-      "approval": {
-        "comment": "test comment",
-        "user": {
-          "_id": "approveruser",
-          "name": "approveruser"
-        },
-        "requested_by": "root"
-      }
-    }
-    """  
-    When I am authenticated with username "root" and password "test"
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-create-with-approval-18-id:
-    """json
-    {
-      "_id": "test-instruction-to-create-with-approval-18-id",
       "type": 0,
       "name": "test-instruction-to-create-with-approval-18-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-18-pattern"
-        }
-      ],
       "description": "test-instruction-to-create-with-approval-18-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -2072,11 +1419,7 @@ Feature: instruction approval creation
             {
               "name": "test-instruction-to-create-with-approval-18-step-1-operation-1",
               "time_to_complete": {"value": 5, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-18-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
+              "description": "test-instruction-to-create-with-approval-18-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": false,
@@ -2085,7 +1428,7 @@ Feature: instruction approval creation
       ],
       "approval": {
         "comment": "test comment",
-        "user": "approveruser2"
+        "user": "user-to-instruction-approve-2"
       }
     }
     """
@@ -2093,107 +1436,24 @@ Feature: instruction approval creation
     Then the response body should contain:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-18-id",
-      "type": 0,
-      "status": 1,
-      "alarm_patterns": null,
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-18-pattern"
-        }
-      ],
-      "name": "test-instruction-to-create-with-approval-18-name",
-      "description": "test-instruction-to-create-with-approval-18-description",
-      "author": {
-        "_id": "root",
-        "name": "root"
-      },
-      "enabled": true,
-      "steps": [
-        {
-          "name": "test-instruction-to-create-with-approval-18-step-1",
-          "operations": [
-            {
-              "name": "test-instruction-to-create-with-approval-18-step-1-operation-1",
-              "time_to_complete": {
-                  "value": 5,
-                  "unit": "s"
-              },
-              "description": "test-instruction-to-create-with-approval-18-step-1-operation-1-description",
-              "jobs": [
-                {
-                  "_id": "test-job-to-instruction-edit-1",
-                  "name": "test-job-to-instruction-edit-1-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-1-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                },
-                {
-                  "_id": "test-job-to-instruction-edit-2",
-                  "name": "test-job-to-instruction-edit-2-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-2-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                }
-              ]
-            }
-          ],
-          "stop_on_fail": false,
-          "endpoint": "new endpoint"
-        }
-      ],
       "approval": {
         "comment": "test comment",
         "user": {
-          "_id": "approveruser2",
-          "name": "approveruser2"
+          "_id": "user-to-instruction-approve-2",
+          "name": "user-to-instruction-approve-2"
         },
         "requested_by": "root"
       }
     }
     """
 
-  Scenario: The user that requested the approval can change approval from username to role
-    When I am authenticated with username "root" and password "test"
+  Scenario: the user that requested the approval can change approval from username to role
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-19-id",
       "type": 0,
       "name": "test-instruction-to-create-with-approval-19-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-19-pattern"
-        }
-      ],
       "description": "test-instruction-to-create-with-approval-19-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -2207,11 +1467,7 @@ Feature: instruction approval creation
             {
               "name": "test-instruction-to-create-with-approval-19-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-19-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
+              "description": "test-instruction-to-create-with-approval-19-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
@@ -2219,39 +1475,19 @@ Feature: instruction approval creation
         }
       ],
       "approval": {
-        "user": "approveruser",
+        "user": "user-to-instruction-approve-1",
         "comment": "test comment"
       }
     }
     """
     Then the response code should be 201
-    Then the response body should contain:
+    When I save response instructionID={{ .lastResponse._id }}
+    When I am admin
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-19-id",
-      "status": 1,
-      "approval": {
-        "comment": "test comment",
-        "user": {
-          "_id": "approveruser",
-          "name": "approveruser"
-        },
-        "requested_by": "root"
-      }
-    }
-    """  
-    When I am authenticated with username "root" and password "test"
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-create-with-approval-19-id:
-    """json
-    {
-      "_id": "test-instruction-to-create-with-approval-19-id",
       "type": 0,
       "name": "test-instruction-to-create-with-approval-19-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-19-pattern"
-        }
-      ],
       "description": "test-instruction-to-create-with-approval-19-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -2265,11 +1501,7 @@ Feature: instruction approval creation
             {
               "name": "test-instruction-to-create-with-approval-19-step-1-operation-1",
               "time_to_complete": {"value": 5, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-19-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
+              "description": "test-instruction-to-create-with-approval-19-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": false,
@@ -2278,7 +1510,7 @@ Feature: instruction approval creation
       ],
       "approval": {
         "comment": "test comment",
-        "role": "approver2"
+        "role": "role-to-instruction-approve-2"
       }
     }
     """
@@ -2286,107 +1518,24 @@ Feature: instruction approval creation
     Then the response body should contain:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-19-id",
-      "type": 0,
-      "status": 1,
-      "alarm_patterns": null,
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-19-pattern"
-        }
-      ],
-      "name": "test-instruction-to-create-with-approval-19-name",
-      "description": "test-instruction-to-create-with-approval-19-description",
-      "author": {
-        "_id": "root",
-        "name": "root"
-      },
-      "enabled": true,
-      "steps": [
-        {
-          "name": "test-instruction-to-create-with-approval-19-step-1",
-          "operations": [
-            {
-              "name": "test-instruction-to-create-with-approval-19-step-1-operation-1",
-              "time_to_complete": {
-                  "value": 5,
-                  "unit": "s"
-              },
-              "description": "test-instruction-to-create-with-approval-19-step-1-operation-1-description",
-              "jobs": [
-                {
-                  "_id": "test-job-to-instruction-edit-1",
-                  "name": "test-job-to-instruction-edit-1-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-1-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                },
-                {
-                  "_id": "test-job-to-instruction-edit-2",
-                  "name": "test-job-to-instruction-edit-2-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-2-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                }
-              ]
-            }
-          ],
-          "stop_on_fail": false,
-          "endpoint": "new endpoint"
-        }
-      ],
       "approval": {
         "comment": "test comment",
         "role": {
-          "_id": "approver2",
-          "name": "approver2"
+          "_id": "role-to-instruction-approve-2",
+          "name": "role-to-instruction-approve-2"
         },
         "requested_by": "root"
       }
     }
     """
 
-  Scenario: The user that requested the approval can change approval from role to username
-    When I am authenticated with username "root" and password "test"
+  Scenario: the user that requested the approval can change approval from role to username
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-20-id",
       "type": 0,
       "name": "test-instruction-to-create-with-approval-20-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-20-pattern"
-        }
-      ],
       "description": "test-instruction-to-create-with-approval-20-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -2400,11 +1549,7 @@ Feature: instruction approval creation
             {
               "name": "test-instruction-to-create-with-approval-20-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-20-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
+              "description": "test-instruction-to-create-with-approval-20-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
@@ -2413,38 +1558,18 @@ Feature: instruction approval creation
       ],
       "approval": {
         "comment": "test comment",
-        "role": "approver2"
+        "role": "role-to-instruction-approve-2"
       }
     }
     """
     Then the response code should be 201
-    Then the response body should contain:
+    When I save response instructionID={{ .lastResponse._id }}
+    When I am admin
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-20-id",
-      "status": 1,
-      "approval": {
-        "comment": "test comment",
-        "role": {
-          "_id": "approver2",
-          "name": "approver2"
-        },
-        "requested_by": "root"
-      }
-    }
-    """    
-    When I am authenticated with username "root" and password "test"
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-create-with-approval-20-id:
-    """json
-    {
-      "_id": "test-instruction-to-create-with-approval-20-id",
       "type": 0,
       "name": "test-instruction-to-create-with-approval-20-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-20-pattern"
-        }
-      ],
       "description": "test-instruction-to-create-with-approval-20-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -2458,11 +1583,7 @@ Feature: instruction approval creation
             {
               "name": "test-instruction-to-create-with-approval-20-step-1-operation-1",
               "time_to_complete": {"value": 5, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-20-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
+              "description": "test-instruction-to-create-with-approval-20-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": false,
@@ -2471,7 +1592,7 @@ Feature: instruction approval creation
       ],
       "approval": {
         "comment": "test comment",
-        "user": "approveruser2"
+        "user": "user-to-instruction-approve-2"
       }
     }
     """
@@ -2479,300 +1600,103 @@ Feature: instruction approval creation
     Then the response body should contain:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-20-id",
-      "type": 0,
-      "status": 1,
-      "alarm_patterns": null,
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-20-pattern"
-        }
-      ],
-      "name": "test-instruction-to-create-with-approval-20-name",
-      "description": "test-instruction-to-create-with-approval-20-description",
-      "author": {
-        "_id": "root",
-        "name": "root"
-      },
-      "enabled": true,
-      "steps": [
-        {
-          "name": "test-instruction-to-create-with-approval-20-step-1",
-          "operations": [
-            {
-              "name": "test-instruction-to-create-with-approval-20-step-1-operation-1",
-              "time_to_complete": {
-                  "value": 5,
-                  "unit": "s"
-              },
-              "description": "test-instruction-to-create-with-approval-20-step-1-operation-1-description",
-              "jobs": [
-                {
-                  "_id": "test-job-to-instruction-edit-1",
-                  "name": "test-job-to-instruction-edit-1-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-1-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                },
-                {
-                  "_id": "test-job-to-instruction-edit-2",
-                  "name": "test-job-to-instruction-edit-2-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-2-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                }
-              ]
-            }
-          ],
-          "stop_on_fail": false,
-          "endpoint": "new endpoint"
-        }
-      ],
       "approval": {
         "comment": "test comment",
         "user": {
-          "_id": "approveruser2",
-          "name": "approveruser2"
-        },
-        "requested_by": "root"
-      }
-    }
-    """
-    
-  Scenario:  The user that didn't request the approval can't cancel approval
-    When I am authenticated with username "root" and password "test"
-    When I do POST /api/v4/cat/instructions:
-    """json
-    {
-      "_id": "test-instruction-to-create-with-approval-21-id",
-      "type": 0,
-      "name": "test-instruction-to-create-with-approval-21-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-21-pattern"
-        }
-      ],
-      "description": "test-instruction-to-create-with-approval-21-description",
-      "enabled": true,
-      "timeout_after_execution": {
-        "value": 10,
-        "unit": "m"
-      },
-      "steps": [
-        {
-          "name": "test-instruction-to-create-with-approval-21-step-1",
-          "operations": [
-            {
-              "name": "test-instruction-to-create-with-approval-21-step-1-operation-1",
-              "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-21-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
-            }
-          ],
-          "stop_on_fail": true,
-          "endpoint": "test-instruction-to-create-with-approval-21-step-1-endpoint"
-        }
-      ],
-      "approval": {
-        "comment": "test comment",
-        "role": "approver2"
-      }
-    }
-    """
-    Then the response code should be 201
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-instruction-to-create-with-approval-21-id",
-      "status": 1,
-      "approval": {
-        "comment": "test comment",
-        "role": {
-          "_id": "approver2",
-          "name": "approver2"
-        },
-        "requested_by": "root"
-      }
-    }
-    """  
-    When I am authenticated with username "manageruser" and password "test"
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-create-with-approval-21-id:
-    """json
-    {
-      "_id": "test-instruction-to-create-with-approval-21-id",
-      "type": 0,
-      "name": "test-instruction-to-create-with-approval-21-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-21-pattern"
-        }
-      ],
-      "description": "test-instruction-to-create-with-approval-21-description",
-      "enabled": true,
-      "timeout_after_execution": {
-        "value": 10,
-        "unit": "m"
-      },
-      "steps": [
-        {
-          "name": "test-instruction-to-create-with-approval-21-step-1",
-          "operations": [
-            {
-              "name": "test-instruction-to-create-with-approval-21-step-1-operation-1",
-              "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-21-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
-            }
-          ],
-          "stop_on_fail": true,
-          "endpoint": "test-instruction-to-create-with-approval-21-step-1-endpoint"
-        }
-      ],
-      "approval": {
-        "comment": "test comment",
-        "user": "approveruser"
-      }
-    }
-    """
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-instruction-to-create-with-approval-21-id",
-      "type": 0,
-      "status": 1,
-      "alarm_patterns": null,
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-21-pattern"
-        }
-      ],
-      "name": "test-instruction-to-create-with-approval-21-name",
-      "description": "test-instruction-to-create-with-approval-21-description",
-      "author": {
-        "_id": "root",
-        "name": "root"
-      },
-      "enabled": true,
-      "steps": [
-        {
-          "name": "test-instruction-to-create-with-approval-21-step-1",
-          "operations": [
-            {
-              "name": "test-instruction-to-create-with-approval-21-step-1-operation-1",
-              "time_to_complete": {
-                  "value": 1,
-                  "unit": "s"
-              },
-              "description": "test-instruction-to-create-with-approval-21-step-1-operation-1-description",
-              "jobs": [
-                {
-                  "_id": "test-job-to-instruction-edit-1",
-                  "name": "test-job-to-instruction-edit-1-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-1-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                },
-                {
-                  "_id": "test-job-to-instruction-edit-2",
-                  "name": "test-job-to-instruction-edit-2-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-2-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                }
-              ]
-            }
-          ],
-          "stop_on_fail": true,
-          "endpoint": "test-instruction-to-create-with-approval-21-step-1-endpoint"
-        }
-      ],
-      "approval": {
-        "comment": "test comment",
-        "role": {
-          "_id": "approver2",
-          "name": "approver2"
+          "_id": "user-to-instruction-approve-2",
+          "name": "user-to-instruction-approve-2"
         },
         "requested_by": "root"
       }
     }
     """
 
-  Scenario: The user that request the approval can cancel approval
-    When I am authenticated with username "root" and password "test"
+  Scenario: the user that didn't request the approval can't cancel approval
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-22-id",
       "type": 0,
-      "name": "test-instruction-to-create-with-approval-22-name",
-      "entity_patterns": [
+      "name": "test-instruction-to-create-with-approval-21-name",
+      "description": "test-instruction-to-create-with-approval-21-description",
+      "enabled": true,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "steps": [
         {
-          "name": "test-instruction-to-create-with-approval-22-pattern"
+          "name": "test-instruction-to-create-with-approval-21-step-1",
+          "operations": [
+            {
+              "name": "test-instruction-to-create-with-approval-21-step-1-operation-1",
+              "time_to_complete": {"value": 1, "unit":"s"},
+              "description": "test-instruction-to-create-with-approval-21-step-1-operation-1-description"
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "test-instruction-to-create-with-approval-21-step-1-endpoint"
         }
       ],
+      "approval": {
+        "comment": "test comment",
+        "role": "role-to-instruction-approve-2"
+      }
+    }
+    """
+    Then the response code should be 201
+    When I save response instructionID={{ .lastResponse._id }}
+    When I am manager
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}:
+    """json
+    {
+      "type": 0,
+      "name": "test-instruction-to-create-with-approval-21-name",
+      "description": "test-instruction-to-create-with-approval-21-description",
+      "enabled": true,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "steps": [
+        {
+          "name": "test-instruction-to-create-with-approval-21-step-1",
+          "operations": [
+            {
+              "name": "test-instruction-to-create-with-approval-21-step-1-operation-1",
+              "time_to_complete": {"value": 1, "unit":"s"},
+              "description": "test-instruction-to-create-with-approval-21-step-1-operation-1-description"
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "test-instruction-to-create-with-approval-21-step-1-endpoint"
+        }
+      ],
+      "approval": null
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "approval": {
+        "comment": "test comment",
+        "role": {
+          "_id": "role-to-instruction-approve-2",
+          "name": "role-to-instruction-approve-2"
+        },
+        "requested_by": "root"
+      }
+    }
+    """
+
+  Scenario: the user that request the approval can cancel approval
+    When I am admin
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "type": 0,
+      "name": "test-instruction-to-create-with-approval-22-name",
       "description": "test-instruction-to-create-with-approval-22-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -2786,11 +1710,7 @@ Feature: instruction approval creation
             {
               "name": "test-instruction-to-create-with-approval-22-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-22-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
+              "description": "test-instruction-to-create-with-approval-22-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
@@ -2799,38 +1719,18 @@ Feature: instruction approval creation
       ],
       "approval": {
         "comment": "test comment",
-        "role": "approver2"
+        "role": "role-to-instruction-approve-2"
       }
     }
     """
     Then the response code should be 201
-    Then the response body should contain:
+    When I save response instructionID={{ .lastResponse._id }}
+    When I am admin
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-22-id",
-      "status": 1,
-      "approval": {
-        "comment": "test comment",
-        "role": {
-          "_id": "approver2",
-          "name": "approver2"
-        },
-        "requested_by": "root"
-      }
-    }
-    """   
-    When I am authenticated with username "root" and password "test"
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-create-with-approval-22-id:
-    """json
-    {
-      "_id": "test-instruction-to-create-with-approval-22-id",
       "type": 0,
       "name": "test-instruction-to-create-with-approval-22-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-22-pattern"
-        }
-      ],
       "description": "test-instruction-to-create-with-approval-22-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -2844,116 +1744,26 @@ Feature: instruction approval creation
             {
               "name": "test-instruction-to-create-with-approval-22-step-1-operation-1",
               "time_to_complete": {"value": 5, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-22-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
+              "description": "test-instruction-to-create-with-approval-22-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": false,
           "endpoint": "new endpoint"
         }
-      ]
+      ],
+      "approval": null
     }
     """
     Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-instruction-to-create-with-approval-22-id",
-      "type": 0,
-      "status": 0,
-      "alarm_patterns": null,
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-22-pattern"
-        }
-      ],
-      "name": "test-instruction-to-create-with-approval-22-name",
-      "description": "test-instruction-to-create-with-approval-22-description",
-      "author": {
-        "_id": "root",
-        "name": "root"
-      },
-      "enabled": true,
-      "steps": [
-        {
-          "name": "test-instruction-to-create-with-approval-22-step-1",
-          "operations": [
-            {
-              "name": "test-instruction-to-create-with-approval-22-step-1-operation-1",
-              "time_to_complete": {
-                  "value": 5,
-                  "unit": "s"
-              },
-              "description": "test-instruction-to-create-with-approval-22-step-1-operation-1-description",
-              "jobs": [
-                {
-                  "_id": "test-job-to-instruction-edit-1",
-                  "name": "test-job-to-instruction-edit-1-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-1-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                },
-                {
-                  "_id": "test-job-to-instruction-edit-2",
-                  "name": "test-job-to-instruction-edit-2-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-2-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                }
-              ]
-            }
-          ],
-          "stop_on_fail": false,
-          "endpoint": "new endpoint"
-        }
-      ]
-    }
-    """
+    Then the response key "approval" should not exist
 
-  Scenario: Only the user from approval should be able to approve by username
-    When I am authenticated with username "root" and password "test"
+  Scenario: only the user from approval should be able to approve by username
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-5-id",
       "type": 0,
       "name": "test-instruction-to-create-with-approval-5-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-5-pattern"
-        }
-      ],
       "description": "test-instruction-to-create-with-approval-5-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -2967,11 +1777,7 @@ Feature: instruction approval creation
             {
               "name": "test-instruction-to-create-with-approval-5-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-5-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
+              "description": "test-instruction-to-create-with-approval-5-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
@@ -2979,28 +1785,14 @@ Feature: instruction approval creation
         }
       ],
       "approval": {
-        "user": "approveruser",
+        "user": "user-to-instruction-approve-1",
         "comment": "test comment"
       }
     }
     """
     Then the response code should be 201
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-instruction-to-create-with-approval-5-id",
-      "status": 1,
-      "approval": {
-        "comment": "test comment",
-        "user": {
-          "_id": "approveruser",
-          "name": "approveruser"
-        },
-        "requested_by": "root"
-      }
-    }
-    """
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-create-with-approval-5-id/approval:
+    When I save response instructionID={{ .lastResponse._id }}
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}/approval:
     """json
     {
       "approve": true
@@ -3013,8 +1805,8 @@ Feature: instruction approval creation
       "error": "user is not assigned to approval"
     }
     """
-    When I am authenticated with username "approveruser2" and password "test"
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-create-with-approval-5-id/approval:
+    When I am role-to-instruction-approve-2
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}/approval:
     """json
     {
       "approve": true
@@ -3027,28 +1819,22 @@ Feature: instruction approval creation
       "error": "user is not assigned to approval"
     }
     """
-    When I am authenticated with username "approveruser" and password "test"
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-create-with-approval-5-id/approval:
+    When I am role-to-instruction-approve-1
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}/approval:
     """json
     {
       "approve": true
     }
     """
     Then the response code should be 200
-    When I do GET /api/v4/cat/instructions/test-instruction-to-create-with-approval-5-id
+    When I do GET /api/v4/cat/instructions/{{ .instructionID }}
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-5-id",
+      "_id": "{{ .instructionID }}",
       "type": 0,
       "status": 0,
-      "alarm_patterns": null,
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-5-pattern"
-        }
-      ],
       "name": "test-instruction-to-create-with-approval-5-name",
       "description": "test-instruction-to-create-with-approval-5-description",
       "author": {
@@ -3066,51 +1852,7 @@ Feature: instruction approval creation
                   "value": 1,
                   "unit": "s"
               },
-              "description": "test-instruction-to-create-with-approval-5-step-1-operation-1-description",
-              "jobs": [
-                {
-                  "_id": "test-job-to-instruction-edit-1",
-                  "name": "test-job-to-instruction-edit-1-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-1-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                },
-                {
-                  "_id": "test-job-to-instruction-edit-2",
-                  "name": "test-job-to-instruction-edit-2-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-2-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                }
-              ]
+              "description": "test-instruction-to-create-with-approval-5-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
@@ -3119,20 +1861,15 @@ Feature: instruction approval creation
       ]
     }
     """
-    
-  Scenario: Only the user from approval should be able to approve by role
-    When I am authenticated with username "root" and password "test"
+    Then the response key "approval" should not exist
+
+  Scenario: only the user from approval should be able to approve by role
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-6-id",
       "type": 0,
       "name": "test-instruction-to-create-with-approval-6-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-6-pattern"
-        }
-      ],
       "description": "test-instruction-to-create-with-approval-6-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -3146,11 +1883,7 @@ Feature: instruction approval creation
             {
               "name": "test-instruction-to-create-with-approval-6-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-6-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
+              "description": "test-instruction-to-create-with-approval-6-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
@@ -3158,28 +1891,14 @@ Feature: instruction approval creation
         }
       ],
       "approval": {
-        "role": "approver2",
+        "role": "role-to-instruction-approve-2",
         "comment": "test comment"
       }
     }
     """
     Then the response code should be 201
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-instruction-to-create-with-approval-6-id",
-      "status": 1,
-      "approval": {
-        "comment": "test comment",
-        "role": {
-          "_id": "approver2",
-          "name": "approver2"
-        },
-        "requested_by": "root"
-      }
-    }
-    """
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-create-with-approval-6-id/approval:
+    When I save response instructionID={{ .lastResponse._id }}
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}/approval:
     """json
     {
       "approve": true
@@ -3192,8 +1911,8 @@ Feature: instruction approval creation
       "error": "role is not assigned to approval"
     }
     """
-    When I am authenticated with username "approveruser" and password "test"
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-create-with-approval-6-id/approval:
+    When I am role-to-instruction-approve-1
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}/approval:
     """json
     {
       "approve": true
@@ -3206,28 +1925,22 @@ Feature: instruction approval creation
       "error": "role is not assigned to approval"
     }
     """
-    When I am authenticated with username "approveruser2" and password "test"
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-create-with-approval-6-id/approval:
+    When I am role-to-instruction-approve-2
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}/approval:
     """json
     {
       "approve": true
     }
     """
     Then the response code should be 200
-    When I do GET /api/v4/cat/instructions/test-instruction-to-create-with-approval-6-id
+    When I do GET /api/v4/cat/instructions/{{ .instructionID }}
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-6-id",
+      "_id": "{{ .instructionID }}",
       "type": 0,
       "status": 0,
-      "alarm_patterns": null,
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-6-pattern"
-        }
-      ],
       "name": "test-instruction-to-create-with-approval-6-name",
       "description": "test-instruction-to-create-with-approval-6-description",
       "author": {
@@ -3245,51 +1958,7 @@ Feature: instruction approval creation
                   "value": 1,
                   "unit": "s"
               },
-              "description": "test-instruction-to-create-with-approval-6-step-1-operation-1-description",
-              "jobs": [
-                {
-                  "_id": "test-job-to-instruction-edit-1",
-                  "name": "test-job-to-instruction-edit-1-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-1-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                },
-                {
-                  "_id": "test-job-to-instruction-edit-2",
-                  "name": "test-job-to-instruction-edit-2-name",
-                  "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "author": {
-                      "_id": "test-user-author-1-id",
-                      "name": "test-user-author-1-username"
-                    },
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-2-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                }
-              ]
+              "description": "test-instruction-to-create-with-approval-6-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
@@ -3298,20 +1967,15 @@ Feature: instruction approval creation
       ]
     }
     """
-    
-  Scenario: Only the user from approval should be able to dismiss by username
-    When I am authenticated with username "root" and password "test"
+    Then the response key "approval" should not exist
+
+  Scenario: only the user from approval should be able to dismiss by username
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-7-id",
       "type": 0,
       "name": "test-instruction-to-create-with-approval-7-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-7-pattern"
-        }
-      ],
       "description": "test-instruction-to-create-with-approval-7-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -3325,11 +1989,7 @@ Feature: instruction approval creation
             {
               "name": "test-instruction-to-create-with-approval-7-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-7-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
+              "description": "test-instruction-to-create-with-approval-7-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
@@ -3337,28 +1997,14 @@ Feature: instruction approval creation
         }
       ],
       "approval": {
-        "user": "approveruser",
+        "user": "user-to-instruction-approve-1",
         "comment": "test comment"
       }
     }
     """
     Then the response code should be 201
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-instruction-to-create-with-approval-7-id",
-      "status": 1,
-      "approval": {
-        "comment": "test comment",
-        "user": {
-          "_id": "approveruser",
-          "name": "approveruser"
-        },
-        "requested_by": "root"
-      }
-    }
-    """
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-create-with-approval-7-id/approval:
+    When I save response instructionID={{ .lastResponse._id }}
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}/approval:
     """json
     {
       "approve": false
@@ -3371,8 +2017,8 @@ Feature: instruction approval creation
       "error": "user is not assigned to approval"
     }
     """
-    When I am authenticated with username "approveruser2" and password "test"
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-create-with-approval-7-id/approval:
+    When I am role-to-instruction-approve-2
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}/approval:
     """json
     {
       "approve": false
@@ -3385,30 +2031,24 @@ Feature: instruction approval creation
       "error": "user is not assigned to approval"
     }
     """
-    When I am authenticated with username "approveruser" and password "test"
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-create-with-approval-7-id/approval:
+    When I am role-to-instruction-approve-1
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}/approval:
     """json
     {
       "approve": false
     }
     """
     Then the response code should be 200
-    When I do GET /api/v4/cat/instructions/test-instruction-to-create-with-approval-7-id
+    When I do GET /api/v4/cat/instructions/{{ .instructionID }}
     Then the response code should be 404
-    
-  Scenario: Only the user from approval should be able to dismiss by role
-    When I am authenticated with username "root" and password "test"
+
+  Scenario: only the user from approval should be able to dismiss by role
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-8-id",
       "type": 0,
       "name": "test-instruction-to-create-with-approval-8-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-8-pattern"
-        }
-      ],
       "description": "test-instruction-to-create-with-approval-8-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -3422,11 +2062,7 @@ Feature: instruction approval creation
             {
               "name": "test-instruction-to-create-with-approval-8-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-create-with-approval-8-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1",
-                "test-job-to-instruction-edit-2"
-              ]
+              "description": "test-instruction-to-create-with-approval-8-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
@@ -3434,28 +2070,14 @@ Feature: instruction approval creation
         }
       ],
       "approval": {
-        "role": "approver2",
+        "role": "role-to-instruction-approve-2",
         "comment": "test comment"
       }
     }
     """
     Then the response code should be 201
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-instruction-to-create-with-approval-8-id",
-      "status": 1,
-      "approval": {
-        "comment": "test comment",
-        "role": {
-          "_id": "approver2",
-          "name": "approver2"
-        },
-        "requested_by": "root"
-      }
-    }
-    """
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-create-with-approval-8-id/approval:
+    When I save response instructionID={{ .lastResponse._id }}
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}/approval:
     """json
     {
       "approve": false
@@ -3468,8 +2090,8 @@ Feature: instruction approval creation
       "error": "role is not assigned to approval"
     }
     """
-    When I am authenticated with username "approveruser" and password "test"
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-create-with-approval-8-id/approval:
+    When I am role-to-instruction-approve-1
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}/approval:
     """json
     {
       "approve": false
@@ -3482,30 +2104,24 @@ Feature: instruction approval creation
       "error": "role is not assigned to approval"
     }
     """
-    When I am authenticated with username "approveruser2" and password "test"
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-create-with-approval-8-id/approval:
+    When I am role-to-instruction-approve-2
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}/approval:
     """json
     {
       "approve": false
     }
     """
     Then the response code should be 200
-    When I do GET /api/v4/cat/instructions/test-instruction-to-create-with-approval-8-id
+    When I do GET /api/v4/cat/instructions/{{ .instructionID }}
     Then the response code should be 404
-    
+
   Scenario: given create request with approval request for auto instruction with user or role should return ok
-    When I am authenticated with username "root" and password "test"
+    When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-16-id",
       "type": 1,
       "name": "test-instruction-to-create-with-approval-16-name",
-      "entity_patterns": [
-        {
-          "name": "test-instruction-to-create-with-approval-16-pattern"
-        }
-      ],
       "description": "test-instruction-to-create-with-approval-16-description",
       "enabled": true,
       "priority": 100,
@@ -3523,23 +2139,24 @@ Feature: instruction approval creation
         }
       ],
       "approval": {
-        "user": "approveruser",
+        "user": "user-to-instruction-approve-1",
         "comment": "test comment"
       }
     }
     """
     Then the response code should be 201
+    When I save response instructionID={{ .lastResponse._id }}
     Then the response body should contain:
     """json
     {
-      "_id": "test-instruction-to-create-with-approval-16-id",
+      "_id": "{{ .instructionID }}",
       "status": 1,
       "type": 1,
       "approval": {
         "comment": "test comment",
         "user": {
-          "_id": "approveruser",
-          "name": "approveruser"
+          "_id": "user-to-instruction-approve-1",
+          "name": "user-to-instruction-approve-1"
         },
         "requested_by": "root"
       }
@@ -3552,15 +2169,9 @@ Feature: instruction approval creation
     {
       "data": [
         {
-          "_id": "test-instruction-to-create-with-approval-16-id",
+          "_id": "{{ .instructionID }}",
           "type": 1,
           "status": 1,
-          "alarm_patterns": null,
-          "entity_patterns": [
-            {
-              "name": "test-instruction-to-create-with-approval-16-pattern"
-            }
-          ],
           "name": "test-instruction-to-create-with-approval-16-name",
           "description": "test-instruction-to-create-with-approval-16-description",
           "author": {
@@ -3574,15 +2185,15 @@ Feature: instruction approval creation
               "job": {
                 "_id": "test-job-to-instruction-edit-1",
                 "author": {
-                  "_id": "test-user-author-1-id",
-                  "name": "test-user-author-1-username"
+                  "_id": "root",
+                  "name": "root"
                 },
                 "config": {
                   "_id": "test-job-config-to-edit-instruction",
                   "auth_token": "test-auth-token",
                   "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
+                    "_id": "root",
+                    "name": "root"
                   },
                   "host": "http://example.com",
                   "name": "test-job-config-to-edit-instruction-name",
@@ -3597,15 +2208,15 @@ Feature: instruction approval creation
               "job": {
                 "_id": "test-job-to-instruction-edit-2",
                 "author": {
-                  "_id": "test-user-author-1-id",
-                  "name": "test-user-author-1-username"
+                  "_id": "root",
+                  "name": "root"
                 },
                 "config": {
                   "_id": "test-job-config-to-edit-instruction",
                   "auth_token": "test-auth-token",
                   "author": {
-                    "_id": "test-user-author-1-id",
-                    "name": "test-user-author-1-username"
+                    "_id": "root",
+                    "name": "root"
                   },
                   "host": "http://example.com",
                   "name": "test-job-config-to-edit-instruction-name",
@@ -3620,8 +2231,8 @@ Feature: instruction approval creation
           "approval": {
             "comment": "test comment",
             "user": {
-              "_id": "approveruser",
-              "name": "approveruser"
+              "_id": "user-to-instruction-approve-1",
+              "name": "user-to-instruction-approve-1"
             },
             "requested_by": "root"
           }
@@ -3635,22 +2246,16 @@ Feature: instruction approval creation
       }
     }
     """
-    When I am authenticated with username "approveruser" and password "test"
-    When I do GET /api/v4/cat/instructions/test-instruction-to-create-with-approval-16-id/approval
+    When I am role-to-instruction-approve-1
+    When I do GET /api/v4/cat/instructions/{{ .instructionID }}/approval
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "original": {
-        "_id": "test-instruction-to-create-with-approval-16-id",
+        "_id": "{{ .instructionID }}",
         "type": 1,
         "status": 1,
-        "alarm_patterns": null,
-        "entity_patterns": [
-          {
-            "name": "test-instruction-to-create-with-approval-16-pattern"
-          }
-        ],
         "name": "test-instruction-to-create-with-approval-16-name",
         "description": "test-instruction-to-create-with-approval-16-description",
         "author": {
@@ -3664,15 +2269,15 @@ Feature: instruction approval creation
             "job": {
               "_id": "test-job-to-instruction-edit-1",
               "author": {
-                "_id": "test-user-author-1-id",
-                "name": "test-user-author-1-username"
+                "_id": "root",
+                "name": "root"
               },
               "config": {
                 "_id": "test-job-config-to-edit-instruction",
                 "auth_token": "test-auth-token",
                 "author": {
-                  "_id": "test-user-author-1-id",
-                  "name": "test-user-author-1-username"
+                  "_id": "root",
+                  "name": "root"
                 },
                 "host": "http://example.com",
                 "name": "test-job-config-to-edit-instruction-name",
@@ -3687,15 +2292,15 @@ Feature: instruction approval creation
             "job": {
               "_id": "test-job-to-instruction-edit-2",
               "author": {
-                "_id": "test-user-author-1-id",
-                "name": "test-user-author-1-username"
+                "_id": "root",
+                "name": "root"
               },
               "config": {
                 "_id": "test-job-config-to-edit-instruction",
                 "auth_token": "test-auth-token",
                 "author": {
-                  "_id": "test-user-author-1-id",
-                  "name": "test-user-author-1-username"
+                  "_id": "root",
+                  "name": "root"
                 },
                 "host": "http://example.com",
                 "name": "test-job-config-to-edit-instruction-name",
@@ -3710,8 +2315,8 @@ Feature: instruction approval creation
         "approval": {
           "comment": "test comment",
           "user": {
-            "_id": "approveruser",
-            "name": "approveruser"
+            "_id": "user-to-instruction-approve-1",
+            "name": "user-to-instruction-approve-1"
           },
           "requested_by": "root"
         }
@@ -3719,8 +2324,8 @@ Feature: instruction approval creation
       "approval": {
         "comment": "test comment",
         "user": {
-          "_id": "approveruser",
-          "name": "approveruser"
+          "_id": "user-to-instruction-approve-1",
+          "name": "user-to-instruction-approve-1"
         },
         "requested_by": "root"
       }
