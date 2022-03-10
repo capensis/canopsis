@@ -11,20 +11,17 @@
         item-text="label",
         item-value="field"
       )
-    v-flex(xs6)
-      v-text-field(
-        v-if="threshold.threshold_type === $constants.META_ALARMS_THRESHOLD_TYPES.thresholdCount",
-        v-field.number="threshold.threshold_count",
-        v-validate="'required|numeric|min_value:0'",
+    v-flex.ml-3(xs6)
+      c-number-field(
+        v-if="isThresholdCountType",
+        v-field="threshold.threshold_count",
         :label="$t('metaAlarmRule.thresholdCount')",
-        :error-messages="errors.collect('thresholdCount')",
         :min="0",
-        name="thresholdCount",
-        type="number"
+        name="thresholdCount"
       )
       c-percents-field(
         v-else,
-        v-field.number="threshold.threshold_rate",
+        v-field="threshold.threshold_rate",
         :label="$t('metaAlarmRule.thresholdRate')",
         name="thresholdRate"
       )
@@ -46,6 +43,10 @@ export default {
     },
   },
   computed: {
+    isThresholdCountType() {
+      return this.threshold.threshold_type === META_ALARMS_THRESHOLD_TYPES.thresholdCount;
+    },
+
     thresholdTypes() {
       return Object.values(META_ALARMS_THRESHOLD_TYPES).map(field => ({
         label: this.$t(`metaAlarmRule.${field}`),
