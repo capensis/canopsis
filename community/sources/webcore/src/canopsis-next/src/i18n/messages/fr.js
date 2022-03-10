@@ -26,6 +26,7 @@ import {
   GROUPS_NAVIGATION_TYPES,
   ALARM_METRIC_PARAMETERS,
   USER_METRIC_PARAMETERS,
+  FILTER_OPERATORS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -213,6 +214,9 @@ export default {
     criteria: 'Critères',
     ratingSettings: 'Paramètres d\'évaluation',
     pbehavior: 'Comportement périodique | Comportements périodiques',
+    searchBy: 'Recherché par',
+    dictionary: 'Dictionnaire',
+    condition: 'Condition | Conditions',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -276,6 +280,56 @@ export default {
       [ENTITIES_STATES.minor]: 'Mineur',
       [ENTITIES_STATES.major]: 'Majeur',
       [ENTITIES_STATES.critical]: 'Critique',
+    },
+    statusTypes: {
+      [ENTITIES_STATUSES.closed]: 'Fermée',
+      [ENTITIES_STATUSES.ongoing]: 'En cours',
+      [ENTITIES_STATUSES.flapping]: 'Bagot',
+      [ENTITIES_STATUSES.stealthy]: 'Furtive',
+      [ENTITIES_STATUSES.cancelled]: 'Annulée',
+      [ENTITIES_STATUSES.noEvents]: 'Pas d\'événements',
+    },
+    operators: {
+      [FILTER_OPERATORS.equal]: 'Égal',
+      [FILTER_OPERATORS.contains]: 'Contient',
+      [FILTER_OPERATORS.notEqual]: 'Inégal',
+      [FILTER_OPERATORS.notContains]: 'Ne contient pas',
+      [FILTER_OPERATORS.beginsWith]: 'Commence par',
+      [FILTER_OPERATORS.notBeginWith]: 'Ne commence pas par',
+      [FILTER_OPERATORS.endsWith]: 'Se termine par',
+      [FILTER_OPERATORS.notEndWith]: 'Ne se termine pas par',
+      [FILTER_OPERATORS.exist]: 'Exister',
+      [FILTER_OPERATORS.notExist]: 'N\'existe pas',
+
+      [FILTER_OPERATORS.hasEvery]: 'A chaque',
+      [FILTER_OPERATORS.hasOneOf]: 'A l\'un des',
+      [FILTER_OPERATORS.hasNot]: 'N\'a pas',
+      [FILTER_OPERATORS.isEmpty]: 'Est vide',
+      [FILTER_OPERATORS.isNotEmpty]: 'N\'est pas vide',
+
+      [FILTER_OPERATORS.isNull]: 'Est nul',
+      [FILTER_OPERATORS.isNotNull]: 'Est non nulle',
+
+      [FILTER_OPERATORS.higher]: 'Plus haut que',
+      [FILTER_OPERATORS.lower]: 'Plus bas que',
+
+      [FILTER_OPERATORS.greater]: 'Plus grand que',
+      [FILTER_OPERATORS.less]: 'Moins que',
+
+      [FILTER_OPERATORS.longer]: 'Plus long',
+      [FILTER_OPERATORS.shorter]: 'Plus court',
+
+      [FILTER_OPERATORS.ticketAssociated]: 'Le billet est associé',
+      [FILTER_OPERATORS.ticketNotAssociated]: 'Le billet n\'est pas associé',
+
+      [FILTER_OPERATORS.canceled]: 'Annulé',
+      [FILTER_OPERATORS.notCanceled]: 'Non annulé',
+
+      [FILTER_OPERATORS.snoozed]: 'En attente',
+      [FILTER_OPERATORS.notSnoozed]: 'Non mis en attente',
+
+      [FILTER_OPERATORS.acked]: 'Acquis',
+      [FILTER_OPERATORS.notAcked]: 'Non confirmé',
     },
   },
   variableTypes: {
@@ -1572,12 +1626,6 @@ export default {
       status: 'Statut',
       extraDetails: 'Détails supplémentaires',
     },
-    alarmStates: {
-      [ENTITIES_STATES.ok]: 'Info',
-      [ENTITIES_STATES.minor]: 'Mineur',
-      [ENTITIES_STATES.major]: 'Majeur',
-      [ENTITIES_STATES.critical]: 'Critique',
-    },
     contextEntities: {
       columns: {
         name: 'Nom',
@@ -2578,15 +2626,6 @@ export default {
       title: 'Évaluation de l\'instruction',
       message: 'Cette page contient les statistiques sur l\'exécution des instructions. Les utilisateurs peuvent noter les instructions en fonction de leurs performances.',
     },
-  },
-
-  alarmStatuses: {
-    [ENTITIES_STATUSES.closed]: 'Fermée',
-    [ENTITIES_STATUSES.ongoing]: 'En cours',
-    [ENTITIES_STATUSES.flapping]: 'Bagot',
-    [ENTITIES_STATUSES.stealthy]: 'Furtive',
-    [ENTITIES_STATUSES.cancelled]: 'Annulée',
-    [ENTITIES_STATUSES.noEvents]: 'Pas d\'événements',
   },
 
   entitiesCountAlerts: {

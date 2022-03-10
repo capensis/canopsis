@@ -18,24 +18,18 @@
               multiple,
               @change="changeRecurrenceRuleOption"
             )
-            v-text-field(
-              v-model.number="form.recurrenceRuleOptions.count",
-              v-validate="'numeric|min_value:1'",
+            c-number-field(
+              v-model="form.recurrenceRuleOptions.count",
               :label="$t('recurrenceRule.count')",
-              :error-messages="errors.collect('count')",
-              type="number",
+              :min="1",
               name="count",
-              min="1",
               @input="changeRecurrenceRuleOption"
             )
-            v-text-field(
-              v-model.number="form.recurrenceRuleOptions.interval",
-              v-validate="'numeric|min_value:1'",
+            c-number-field(
+              v-model="form.recurrenceRuleOptions.interval",
               :label="$t('recurrenceRule.interval')",
-              :error-messages="errors.collect('interval')",
-              type="number",
+              :min="1",
               name="interval",
-              min="1",
               @input="changeRecurrenceRuleOption"
             )
 
