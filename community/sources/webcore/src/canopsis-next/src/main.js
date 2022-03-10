@@ -134,9 +134,11 @@ import CEntityStateField from '@/components/forms/fields/c-entity-state-field.vu
 import CRecordsPerPageField from '@/components/forms/fields/c-records-per-page-field.vue';
 import COperatorField from '@/components/forms/fields/c-operator-field.vue';
 import CDraggableListField from '@/components/forms/fields/c-draggable-list-field.vue';
+import CFilterAttributeField from '@/components/forms/fields/c-filter-attribute-field.vue';
 import CEntityStatusField from '@/components/forms/fields/c-entity-status-field.vue';
 import CFilterInfosAttributeField from '@/components/forms/fields/c-filter-infos-attribute-field.vue';
 import CFilterExtraInfosAttributeField from '@/components/forms/fields/c-filter-extra-infos-attribute-field.vue';
+import CFilterOperatorField from '@/components/forms/fields/c-filter-operator-field.vue';
 import CNumberField from '@/components/forms/fields/c-number-field.vue';
 
 /**
@@ -332,8 +334,10 @@ Vue.component('c-entity-status-field', CEntityStatusField);
 Vue.component('c-records-per-page-field', CRecordsPerPageField);
 Vue.component('c-operator-field', COperatorField);
 Vue.component('c-draggable-list-field', CDraggableListField);
+Vue.component('c-filter-attribute-field', CFilterAttributeField);
 Vue.component('c-filter-infos-attribute-field', CFilterInfosAttributeField);
 Vue.component('c-filter-extra-infos-attribute-field', CFilterExtraInfosAttributeField);
+Vue.component('c-filter-operator-field', CFilterOperatorField);
 Vue.component('c-number-field', CNumberField);
 
 Vue.use(VueMq, {
