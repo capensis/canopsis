@@ -114,8 +114,40 @@ export const TOURS = {
 };
 
 export const QUICK_RANGES = {
-  custom: {
-    value: 'custom',
+  last15Minutes: {
+    value: 'last15Minutes',
+    start: 'now-15m',
+    stop: 'now',
+  },
+  last30Minutes: {
+    value: 'last30Minutes',
+    start: 'now-30m',
+    stop: 'now',
+  },
+  last1Hour: {
+    value: 'last1Hour',
+    start: 'now-1h',
+    stop: 'now',
+  },
+  last3Hour: {
+    value: 'last3Hour',
+    start: 'now-3h',
+    stop: 'now',
+  },
+  last6Hour: {
+    value: 'last6Hour',
+    start: 'now-6h',
+    stop: 'now',
+  },
+  last12Hour: {
+    value: 'last12Hour',
+    start: 'now-12h',
+    stop: 'now',
+  },
+  last24Hour: {
+    value: 'last24Hour',
+    start: 'now-24h',
+    stop: 'now',
   },
   last2Days: {
     value: 'last2Days',
@@ -149,8 +181,8 @@ export const QUICK_RANGES = {
   },
   previousMonth: {
     value: 'previousMonth',
-    start: 'now-1m/m',
-    stop: 'now-1m/m',
+    start: 'now-1M/M',
+    stop: 'now-1M/M',
   },
   today: {
     value: 'today',
@@ -174,38 +206,16 @@ export const QUICK_RANGES = {
   },
   thisMonth: {
     value: 'thisMonth',
-    start: 'now/m',
-    stop: 'now/m',
+    start: 'now/M',
+    stop: 'now/M',
   },
   thisMonthSoFar: {
     value: 'thisMonthSoFar',
-    start: 'now/m',
+    start: 'now/M',
     stop: 'now',
   },
-  last1Hour: {
-    value: 'last1Hour',
-    start: 'now-1h',
-    stop: 'now',
-  },
-  last3Hour: {
-    value: 'last3Hour',
-    start: 'now-3h',
-    stop: 'now',
-  },
-  last6Hour: {
-    value: 'last6Hour',
-    start: 'now-6h',
-    stop: 'now',
-  },
-  last12Hour: {
-    value: 'last12Hour',
-    start: 'now-12h',
-    stop: 'now',
-  },
-  last24Hour: {
-    value: 'last24Hour',
-    start: 'now-24h',
-    stop: 'now',
+  custom: {
+    value: 'custom',
   },
 };
 

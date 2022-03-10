@@ -1,44 +1,40 @@
 import moment from 'moment-timezone';
 
-import { TIME_UNITS, DATETIME_FORMATS, QUICK_RANGES, DATETIME_INTERVAL_TYPES } from '@/constants';
+import { DATETIME_FORMATS, QUICK_RANGES, DATETIME_INTERVAL_TYPES, TIME_UNITS } from '@/constants';
 
 import { convertDateToStartOfUnitString, getLocaleTimezone, subtractUnitFromDate } from '@/helpers/date/date';
 
 /**
  * Convert a date interval string to moment date object
  *
- * @param {string} dateString
+ * @param {string} string
  * @param {string} type
  * @returns {Moment}
  */
-export const convertStringToDateInterval = (dateString, type) => {
-  const preparedDateString = dateString.toLowerCase().trim();
-  const matches = preparedDateString.match(/^now(([+--])(\d+)([hdwmy]{1}))?(\/([hdwmy]{1}))?$/);
+export const convertStringToDateInterval = (string, type) => {
+  const matches = string.match(/^now(([+--])(\d+)([hdwmMy]{1}))?(\/([hdwmMy]{1}))?$/);
 
   if (matches) {
     const result = moment().utc();
     const operator = matches[2];
     const deltaValue = matches[3];
-    let roundUnit = matches[6];
-    let deltaUnit = matches[4];
-
-    const roundMethod = type === DATETIME_INTERVAL_TYPES.start ? 'startOf' : 'endOf';
-    const deltaMethod = operator === '+' ? 'add' : 'subtract';
+    const deltaUnit = matches[4];
+    const roundUnit = matches[6];
 
     if (roundUnit) {
-      if (roundUnit === TIME_UNITS.month) {
-        roundUnit = roundUnit.toUpperCase();
+      if (type === DATETIME_INTERVAL_TYPES.start) {
+        result.startOf(roundUnit);
+      } else {
+        result.endOf(roundUnit);
       }
-
-      result[roundMethod](roundUnit);
     }
 
     if (deltaValue && deltaUnit) {
-      if (deltaUnit === TIME_UNITS.month) {
-        deltaUnit = deltaUnit.toUpperCase();
+      if (operator === '+') {
+        result.add(deltaValue, deltaUnit);
+      } else {
+        result.subtract(deltaValue, deltaUnit);
       }
-
-      result[deltaMethod](deltaValue, deltaUnit);
     }
 
     return result;
@@ -208,7 +204,7 @@ export const findQuickRangeValue = (
   ranges = QUICK_RANGES,
   defaultValue = QUICK_RANGES.custom,
 ) => Object.values(ranges)
-  .find(range => start === range.start && stop === range.stop) || defaultValue;
+  .find(range => start === range.start && stop === range.stop) ?? defaultValue;
 
 /**
  * Get value from quick range period
