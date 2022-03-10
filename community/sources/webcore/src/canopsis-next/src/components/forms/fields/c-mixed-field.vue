@@ -19,7 +19,7 @@
           v-icon.mixed-field__type-selector-icon(small) {{ getInputTypeIcon(item.value) }}
         v-list-tile-content
           v-list-tile-title {{ item.text }}
-    component(
+    component.ml-2(
       :is="inputComponent.is",
       v-bind="inputComponent.bind",
       v-on="inputComponent.on"
@@ -173,7 +173,7 @@ export default {
           is: 'v-switch',
 
           bind: {
-            class: 'ma-0 ml-3 mixed-field__switch',
+            class: 'ma-0 mixed-field__switch',
             inputValue: this.value,
             label: this.switchLabel,
             disabled: this.disabled,
@@ -191,7 +191,6 @@ export default {
           is: 'c-array-mixed-field',
 
           bind: {
-            class: 'ml-3',
             values: this.value,
             disabled: this.disabled,
             types: this.types.filter(({ value }) => value !== FILTER_INPUT_TYPES.array),

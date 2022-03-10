@@ -2,7 +2,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
 
-import CFilterInfosAttributeField from '@/components/forms/fields/c-filter-infos-attribute-field.vue';
+import CFilterInfosAttributeField from '@/components/forms/fields/filter/c-pattern-infos-attribute-field.vue';
 
 const localVue = createVueInstance();
 
@@ -25,7 +25,7 @@ const snapshotFactory = (options = {}) => mount(CFilterInfosAttributeField, {
 const selectDictionarySelect = wrapper => wrapper.find('select.v-combobox');
 const selectFieldSelect = wrapper => wrapper.find('select.v-select');
 
-describe('c-filter-infos-attribute-field', () => {
+describe('c-pattern-infos-attribute-field', () => {
   it('Dictionary changed after trigger the dictionary select', () => {
     const value = {
       dictionary: 'test',
@@ -80,7 +80,7 @@ describe('c-filter-infos-attribute-field', () => {
     });
   });
 
-  it('Renders `c-filter-infos-attribute-field` with default props', () => {
+  it('Renders `c-pattern-infos-attribute-field` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: {
@@ -94,7 +94,7 @@ describe('c-filter-infos-attribute-field', () => {
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `c-filter-infos-attribute-field` with custom props', () => {
+  it('Renders `c-pattern-infos-attribute-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: {

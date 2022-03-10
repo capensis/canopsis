@@ -2,6 +2,8 @@ import { cloneDeep, isEmpty, isString } from 'lodash';
 
 import { FILTER_DEFAULT_VALUES } from '@/constants';
 
+import uid from '@/helpers/uid';
+
 import { addKeyInEntities, removeKeyFromEntities } from '../entities';
 import parseGroupToFilter from '../filter/editor/parse-group-to-filter';
 import parseFilterToRequest from '../filter/editor/parse-filter-to-request';
@@ -18,6 +20,32 @@ import parseFilterToRequest from '../filter/editor/parse-filter-to-request';
  * @property {string} condition
  * @property {Object<FilterForm>} groups
  * @property {Object<FilterFormRules>} rules
+ */
+
+/**
+ * @typedef {Object} FilterRule
+ */
+
+/**
+ * @typedef {FilterRule} FilterRuleForm
+ * @property {string} attribute
+ * @property {string} field
+ * @property {string} value
+ * @property {number|string} from
+ * @property {number|string} to
+ * @property {string} dictionary
+ * @property {string} key
+ */
+
+/**
+ * @typedef {Object} FilterGroup
+ * @property {[]} rules
+ */
+
+/**
+ * @typedef {FilterGroup} FilterGroupForm
+ * @property {FilterRuleForm[]} rules
+ * @property {string} key
  */
 
 /**
@@ -75,3 +103,40 @@ export const filtersToForm = (filters = []) => cloneDeep(addKeyInEntities(filter
  * @returns {Array}
  */
 export const formToFilters = (filters = []) => removeKeyFromEntities(filters);
+
+/**
+ * Convert filter rule to filter form
+ *
+ * TODO: Should be finished after backend will be connected
+ * @return {FilterRuleForm}
+ */
+export const filterRuleToForm = (rule = {}) => ({
+  key: uid(),
+  attribute: 'connector',
+  field: '',
+  dictionary: '',
+  value: '',
+  from: 0,
+  to: 0,
+  ...rule,
+});
+
+/**
+ * Convert filter group to filter form
+ *
+ * TODO: Should be finished when backend will be connected
+ * @return {FilterRuleForm[]}
+ */
+export const filterGroupRulesToForm = (rules = []) => rules.map(filterRuleToForm);
+
+/**
+ * Convert filter group to filter form
+ *
+ * TODO: Should be finished when backend will be connected
+ * @param {FilterGroup} group
+ * @return {FilterGroupForm}
+ */
+export const filterGroupToForm = (group = {}) => ({
+  key: uid(),
+  rules: filterGroupRulesToForm(group.rules),
+});

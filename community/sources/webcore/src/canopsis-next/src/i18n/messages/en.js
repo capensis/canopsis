@@ -2713,5 +2713,11 @@ export default {
     addSnmpRule: 'Add SNMP rule',
   },
 
+  patterns: {
+    addRule: 'Add rule',
+    addGroup: 'Add group',
+    removeRule: 'Remove rule',
+  },
+
   ...featureService.get('i18n.en'),
 };

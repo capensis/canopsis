@@ -2,7 +2,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { createInputStub } from '@unit/stubs/input';
 
-import CFilterExtraInfosAttributeField from '@/components/forms/fields/c-filter-extra-infos-attribute-field.vue';
+import CFilterExtraInfosAttributeField from '@/components/forms/fields/filter/c-pattern-extra-infos-attribute-field.vue';
 
 const localVue = createVueInstance();
 
@@ -25,7 +25,7 @@ const snapshotFactory = (options = {}) => mount(CFilterExtraInfosAttributeField,
 
 const selectTextField = wrapper => wrapper.find('input.v-text-field');
 
-describe('c-filter-extra-infos-attribute-field', () => {
+describe('c-pattern-extra-infos-attribute-field', () => {
   it('Field changed after trigger the text field', () => {
     const wrapper = factory({
       propsData: {
@@ -74,7 +74,7 @@ describe('c-filter-extra-infos-attribute-field', () => {
     });
   });
 
-  it('Renders `c-filter-extra-infos-attribute-field` with default props', () => {
+  it('Renders `c-pattern-extra-infos-attribute-field` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: {
@@ -87,7 +87,7 @@ describe('c-filter-extra-infos-attribute-field', () => {
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `c-filter-extra-infos-attribute-field` with custom props', () => {
+  it('Renders `c-pattern-extra-infos-attribute-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: {
