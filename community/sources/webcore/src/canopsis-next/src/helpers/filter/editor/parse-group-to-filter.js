@@ -31,7 +31,7 @@ function ruleOperatorAndInput(rule) {
       }
     }
   } else if (isArray(ruleValue) && ruleValue.length === 0) {
-    parsedRule.operator = FILTER_OPERATORS.isEmptyArray;
+    parsedRule.operator = FILTER_OPERATORS.isEmpty;
   } else {
     const operator = Object.keys(ruleValue)[0];
 
@@ -60,13 +60,13 @@ function ruleOperatorAndInput(rule) {
       case FILTER_MONGO_OPERATORS.in: {
         const [inputArray] = Object.values(ruleValue);
         parsedRule.input = (inputArray || []).map(value => ({ value, key: uid() }));
-        parsedRule.operator = FILTER_OPERATORS.in;
+        parsedRule.operator = FILTER_OPERATORS.hasOneOf;
         break;
       }
       case FILTER_MONGO_OPERATORS.notIn: {
         const [inputArray] = Object.values(ruleValue);
         parsedRule.input = (inputArray || []).map(value => ({ value, key: uid() }));
-        parsedRule.operator = FILTER_OPERATORS.notIn;
+        parsedRule.operator = FILTER_OPERATORS.hasNot;
         break;
       }
       case FILTER_MONGO_OPERATORS.regex: {
