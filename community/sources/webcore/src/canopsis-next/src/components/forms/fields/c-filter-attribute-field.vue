@@ -1,25 +1,29 @@
 <template lang="pug">
-  c-number-field(
+  v-select(
     v-field="value",
-    :label="label || $t('common.priority')",
+    :items="items",
     :disabled="disabled",
+    :label="label || $tc('common.searchBy')",
     :name="name",
-    :min="min",
-    :required="required"
+    hide-details,
+    return-object
   )
 </template>
 
 <script>
 export default {
-  inject: ['$validator'],
   model: {
     prop: 'value',
     event: 'input',
   },
   props: {
     value: {
-      type: [Number, String],
-      required: false,
+      type: [String, Object],
+      required: true,
+    },
+    items: {
+      type: Array,
+      default: () => [],
     },
     label: {
       type: String,
@@ -27,15 +31,7 @@ export default {
     },
     name: {
       type: String,
-      default: 'priority',
-    },
-    min: {
-      type: Number,
-      default: 0,
-    },
-    required: {
-      type: Boolean,
-      default: false,
+      default: 'attribute',
     },
     disabled: {
       type: Boolean,

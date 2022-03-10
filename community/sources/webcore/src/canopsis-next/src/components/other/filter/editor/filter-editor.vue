@@ -97,8 +97,8 @@ export default {
           items: [
             FILTER_OPERATORS.equal,
             FILTER_OPERATORS.notEqual,
-            FILTER_OPERATORS.in,
-            FILTER_OPERATORS.notIn,
+            FILTER_OPERATORS.hasOneOf,
+            FILTER_OPERATORS.hasNot,
           ],
         },
         valueProps: {

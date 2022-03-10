@@ -32,3 +32,9 @@ export const PBEHAVIOR_TYPE_TYPES = {
 export const MAX_PBEHAVIOR_DEFAULT_TSTOP = 2147483647;
 
 export const WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE = 'downtime';
+
+export const PBEHAVIOR_FILTER_FIELDS = {
+  name: 'name',
+  reason: 'reason',
+  type: 'type',
+};

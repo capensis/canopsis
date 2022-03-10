@@ -1,11 +1,12 @@
 <template lang="pug">
-  c-number-field(
-    v-field="value",
-    :label="label || $t('common.priority')",
+  v-text-field(
+    v-field="value.field",
+    v-validate="'required'",
     :disabled="disabled",
+    :label="label || $t('common.field')",
+    :error-messages="errors.collect(name)",
     :name="name",
-    :min="min",
-    :required="required"
+    hide-details
   )
 </template>
 
@@ -18,8 +19,8 @@ export default {
   },
   props: {
     value: {
-      type: [Number, String],
-      required: false,
+      type: Object,
+      required: true,
     },
     label: {
       type: String,
@@ -27,15 +28,7 @@ export default {
     },
     name: {
       type: String,
-      default: 'priority',
-    },
-    min: {
-      type: Number,
-      default: 0,
-    },
-    required: {
-      type: Boolean,
-      default: false,
+      default: 'extra_infos',
     },
     disabled: {
       type: Boolean,
