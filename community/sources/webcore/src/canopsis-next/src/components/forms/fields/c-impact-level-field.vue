@@ -1,15 +1,13 @@
 <template lang="pug">
-  v-text-field(
-    v-field.number="value",
-    v-validate="rules",
-    :error-messages="errors.collect(name)",
+  c-number-field(
+    v-field="value",
     :label="label || $t('common.impactLevel')",
     :placeholder="placeholder",
     :single-line="singleLine",
     :name="name",
     :max="max",
     :min="min",
-    type="number"
+    :required="required"
   )
 </template>
 
@@ -53,14 +51,6 @@ export default {
   computed: {
     placeholder() {
       return `${this.min}-${this.max}`;
-    },
-    rules() {
-      return {
-        required: this.required,
-        numeric: true,
-        min_value: this.min,
-        max_value: this.max,
-      };
     },
   },
 };
