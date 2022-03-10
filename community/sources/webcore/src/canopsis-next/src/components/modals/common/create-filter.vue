@@ -1,9 +1,9 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ title }}
-      template(slot="text")
+      template(#text="")
         v-text-field(
           v-if="!hiddenFields.includes('title')",
           v-model="form.title",
@@ -13,13 +13,12 @@
           name="title",
           required
         )
-        filter-editor(
-          v-if="!hiddenFields.includes('filter')",
-          v-model="form.filter",
-          :entities-type="entitiesType",
-          required
-        )
-      template(slot="actions")
+        div.filter-form
+          v-expansion-panel
+            v-expansion-panel-content(lazy)
+              span(slot="header") Add alarm pattern
+              div.pa-3 CONTENT
+      template(#actions="")
         v-btn(
           depressed,
           flat,
@@ -127,3 +126,17 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+// TODO: move to main with test-suites
+.filter-form {
+  & /deep/ .v-expansion-panel__header {
+    background-color: #979797;
+  }
+
+  & /deep/ .v-expansion-panel {
+    border-radius: 5px;
+    overflow: hidden;
+  }
+}
+</style>
