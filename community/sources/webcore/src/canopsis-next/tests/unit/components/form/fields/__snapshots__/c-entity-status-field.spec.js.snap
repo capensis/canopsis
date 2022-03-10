@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-state-type-field Renders \`c-state-type-field\` with default custom props 1`] = `
+exports[`c-entity-status-field Renders \`c-entity-status-field\` with custom props 1`] = `
 <div
   class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
   role="combobox"
@@ -27,14 +27,14 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with default custom p
           <div
             class="v-select__selection v-select__selection--comma v-select__selection--disabled"
           >
-            Major
+            Flapping
           </div>
           <input
             aria-label="Custom label"
             aria-readonly="false"
             autocomplete="on"
             disabled="disabled"
-            name="name"
+            name="customAlarmStatusName"
             readonly="readonly"
             type="text"
           />
@@ -62,7 +62,7 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with default custom p
 </div>
 `;
 
-exports[`c-state-type-field Renders \`c-state-type-field\` with default custom props 2`] = `
+exports[`c-entity-status-field Renders \`c-entity-status-field\` with custom props 2`] = `
 <div
   class="v-menu__content theme--light "
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
@@ -86,7 +86,7 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with default custom p
             <div
               class="v-list__tile__title"
             >
-              Ok
+              Closed
             </div>
           </div>
         </a>
@@ -103,7 +103,24 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with default custom p
             <div
               class="v-list__tile__title"
             >
-              Minor
+              Ongoing
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              Stealth
             </div>
           </div>
         </a>
@@ -121,7 +138,7 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with default custom p
             <div
               class="v-list__tile__title"
             >
-              Major
+              Flapping
             </div>
           </div>
         </a>
@@ -138,7 +155,24 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with default custom p
             <div
               class="v-list__tile__title"
             >
-              Critical
+              Canceled
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              No events
             </div>
           </div>
         </a>
@@ -148,9 +182,9 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with default custom p
 </div>
 `;
 
-exports[`c-state-type-field Renders \`c-state-type-field\` with default props 1`] = `
+exports[`c-entity-status-field Renders \`c-entity-status-field\` with default props 1`] = `
 <div
-  class="v-input v-text-field v-select v-input--hide-details theme--light"
+  class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
   role="combobox"
 >
   <div
@@ -164,19 +198,24 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with default props 1`
       >
         <label
           aria-hidden="true"
-          class="v-label theme--light"
+          class="v-label v-label--active theme--light"
           style="left: 0px; position: absolute;"
         >
-          Severities
+          Status
         </label>
         <div
           class="v-select__selections"
         >
+          <div
+            class="v-select__selection v-select__selection--comma"
+          >
+            Stealth
+          </div>
           <input
-            aria-label="Severities"
+            aria-label="Status"
             aria-readonly="false"
             autocomplete="on"
-            name="state"
+            name="status"
             readonly="readonly"
             type="text"
           />
@@ -204,7 +243,7 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with default props 1`
 </div>
 `;
 
-exports[`c-state-type-field Renders \`c-state-type-field\` with default props 2`] = `
+exports[`c-entity-status-field Renders \`c-entity-status-field\` with default props 2`] = `
 <div
   class="v-menu__content theme--light "
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
@@ -228,7 +267,7 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with default props 2`
             <div
               class="v-list__tile__title"
             >
-              Ok
+              Closed
             </div>
           </div>
         </a>
@@ -245,7 +284,25 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with default props 2`
             <div
               class="v-list__tile__title"
             >
-              Minor
+              Ongoing
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        class="primary--text"
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              Stealth
             </div>
           </div>
         </a>
@@ -262,7 +319,7 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with default props 2`
             <div
               class="v-list__tile__title"
             >
-              Major
+              Flapping
             </div>
           </div>
         </a>
@@ -279,67 +336,28 @@ exports[`c-state-type-field Renders \`c-state-type-field\` with default props 2`
             <div
               class="v-list__tile__title"
             >
-              Critical
+              Canceled
             </div>
           </div>
         </a>
       </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`c-state-type-field Renders \`c-state-type-field\` with validator error 1`] = `
-<div
-  class="v-input v-text-field v-select v-input--has-state v-input--hide-details theme--light error--text"
-  role="combobox"
->
-  <div
-    class="v-input__control"
-  >
-    <div
-      class="v-input__slot"
-    >
       <div
-        class="v-select__slot"
+        role="listitem"
       >
-        <label
-          aria-hidden="true"
-          class="v-label theme--light error--text"
-          style="left: 0px; position: absolute;"
-        >
-          Severities
-        </label>
-        <div
-          class="v-select__selections"
-        >
-          <input
-            aria-label="Severities"
-            aria-readonly="false"
-            autocomplete="on"
-            name="state"
-            readonly="readonly"
-            type="text"
-          />
-        </div>
-        <div
-          class="v-input__append-inner"
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
         >
           <div
-            class="v-input__icon v-input__icon--append"
+            class="v-list__tile__content"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light error--text"
+            <div
+              class="v-list__tile__title"
             >
-              arrow_drop_down
-            </i>
+              No events
+            </div>
           </div>
-        </div>
+        </a>
       </div>
-      <div
-        class="v-menu"
-      />
     </div>
   </div>
 </div>
