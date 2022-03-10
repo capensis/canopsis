@@ -213,6 +213,7 @@ export default {
     criteria: 'Criteria',
     ratingSettings: 'Rating settings',
     pbehavior: 'Pbehavior | Pbehaviors',
+    searchBy: 'Search by',
     dictionary: 'Dictionary',
     actions: {
       close: 'Close',
