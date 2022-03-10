@@ -139,6 +139,7 @@ import CEntityStatusField from '@/components/forms/fields/c-entity-status-field.
 import CFilterInfosAttributeField from '@/components/forms/fields/c-filter-infos-attribute-field.vue';
 import CFilterExtraInfosAttributeField from '@/components/forms/fields/c-filter-extra-infos-attribute-field.vue';
 import CFilterOperatorField from '@/components/forms/fields/c-filter-operator-field.vue';
+import CNumberField from '@/components/forms/fields/c-number-field.vue';
 
 /**
  * Icons
@@ -337,6 +338,7 @@ Vue.component('c-filter-attribute-field', CFilterAttributeField);
 Vue.component('c-filter-infos-attribute-field', CFilterInfosAttributeField);
 Vue.component('c-filter-extra-infos-attribute-field', CFilterExtraInfosAttributeField);
 Vue.component('c-filter-operator-field', CFilterOperatorField);
+Vue.component('c-number-field', CNumberField);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,

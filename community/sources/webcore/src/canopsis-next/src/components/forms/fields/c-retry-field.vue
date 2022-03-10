@@ -1,14 +1,12 @@
 <template lang="pug">
   v-layout
     v-flex.pr-3(xs4)
-      v-text-field(
-        v-field.number="retry.count",
-        v-validate="fieldValidateRules",
+      c-number-field(
+        v-field="retry.count",
         :label="$t('common.retryCount')",
-        :error-messages="errors.collect(countFieldName)",
         :min="1",
         :name="countFieldName",
-        type="number"
+        :required="isRequired"
       )
     v-flex(xs8)
       c-duration-field(
@@ -50,14 +48,6 @@ export default {
 
     isRequired() {
       return this.required || isNumber(this.retry.count) || isNumber(this.retry.value) || Boolean(this.retry.unit);
-    },
-
-    fieldValidateRules() {
-      return {
-        required: this.isRequired,
-        numeric: true,
-        min_value: 1,
-      };
     },
   },
 };
