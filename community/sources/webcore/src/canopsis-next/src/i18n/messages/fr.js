@@ -213,6 +213,7 @@ export default {
     criteria: 'Critères',
     ratingSettings: 'Paramètres d\'évaluation',
     pbehavior: 'Comportement périodique | Comportements périodiques',
+    searchBy: 'Recherché par',
     dictionary: 'Dictionnaire',
     actions: {
       close: 'Fermer',

@@ -212,3 +212,25 @@ export const ALARM_INTERVAL_FIELDS = {
   lastUpdateDate: 'last_update_date',
   lastEventDate: 'last_event_date',
 };
+
+export const ALARM_FILTER_FIELDS = {
+  displayName: 'v.display_name',
+  state: 'v.state.val',
+  status: 'v.status.val',
+  component: 'v.component',
+  resource: 'v.resource',
+  connector: 'v.connector',
+  connectorName: 'v.connector_name',
+  creationDate: 'creation_date',
+  duration: 'v.duration',
+  infos: 'infos',
+  output: 'v.output',
+  lastEventDate: 'last_event_date',
+  lastUpdateDate: 'last_update_date',
+  ack: 'v.ack',
+  ackAt: 'v.ack.t',
+  resolvedAt: 'resolved',
+  ticket: 'v.ticket',
+  canceled: 'v.canceled',
+  snooze: 'v.snooze',
+};
