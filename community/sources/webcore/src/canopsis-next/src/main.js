@@ -130,10 +130,14 @@ import CLanguageField from '@/components/forms/fields/c-language-field.vue';
 import CSamplingField from '@/components/forms/fields/c-sampling-field.vue';
 import CAlarmMetricParametersField from '@/components/forms/fields/c-alarm-metric-parameters-field.vue';
 import CFiltersField from '@/components/forms/fields/c-filters-field.vue';
-import CStateTypeField from '@/components/forms/fields/c-state-type-field.vue';
+import CEntityStateField from '@/components/forms/fields/c-entity-state-field.vue';
 import CRecordsPerPageField from '@/components/forms/fields/c-records-per-page-field.vue';
 import COperatorField from '@/components/forms/fields/c-operator-field.vue';
 import CDraggableListField from '@/components/forms/fields/c-draggable-list-field.vue';
+import CFilterAttributeField from '@/components/forms/fields/c-filter-attribute-field.vue';
+import CEntityStatusField from '@/components/forms/fields/c-entity-status-field.vue';
+import CFilterInfosAttributeField from '@/components/forms/fields/c-filter-infos-attribute-field.vue';
+import CFilterExtraInfosAttributeField from '@/components/forms/fields/c-filter-extra-infos-attribute-field.vue';
 import CFilterOperatorField from '@/components/forms/fields/c-filter-operator-field.vue';
 
 /**
@@ -324,10 +328,14 @@ Vue.component('c-information-block-row', CInformationBlockRow);
 Vue.component('c-responsive-list', CResponsiveList);
 Vue.component('c-sampling-field', CSamplingField);
 Vue.component('c-alarm-metric-parameters-field', CAlarmMetricParametersField);
-Vue.component('c-state-type-field', CStateTypeField);
+Vue.component('c-entity-state-field', CEntityStateField);
+Vue.component('c-entity-status-field', CEntityStatusField);
 Vue.component('c-records-per-page-field', CRecordsPerPageField);
 Vue.component('c-operator-field', COperatorField);
 Vue.component('c-draggable-list-field', CDraggableListField);
+Vue.component('c-filter-attribute-field', CFilterAttributeField);
+Vue.component('c-filter-infos-attribute-field', CFilterInfosAttributeField);
+Vue.component('c-filter-extra-infos-attribute-field', CFilterExtraInfosAttributeField);
 Vue.component('c-filter-operator-field', CFilterOperatorField);
 
 Vue.use(VueMq, {
