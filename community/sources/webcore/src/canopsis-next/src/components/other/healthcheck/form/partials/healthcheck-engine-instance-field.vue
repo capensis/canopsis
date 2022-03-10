@@ -21,7 +21,7 @@
               :label="$t('common.minimal')",
               :disabled="!value.enabled",
               :required="value.enabled",
-              :max="value.optimal",
+              :max="+value.optimal",
               :min="0"
             )
         v-layout(row, align-center)
@@ -34,7 +34,7 @@
               :label="$t('common.optimal')",
               :disabled="!value.enabled",
               :required="value.enabled",
-              :min="value.minimal"
+              :min="+value.minimal"
             )
     v-flex(xs9)
       div.v-messages.theme--light.error--text
