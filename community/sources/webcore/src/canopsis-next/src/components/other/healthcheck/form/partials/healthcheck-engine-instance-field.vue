@@ -14,30 +14,27 @@
         v-layout(row, align-center)
           v-flex(:class="{ 'grey--text': !value.enabled }", xs6) {{ $t('common.minimal') }}
           v-flex(xs6)
-            v-text-field(
-              v-field.number="value.minimal",
-              v-validate="minimalRules",
+            c-number-field(
+              v-field="value.minimal",
               :error-messages="getErrorMessages(minimalFieldName)",
               :name="minimalFieldName",
               :label="$t('common.minimal')",
               :disabled="!value.enabled",
               :required="value.enabled",
-              :min="0",
-              type="number"
+              :max="+value.optimal",
+              :min="0"
             )
         v-layout(row, align-center)
           v-flex(:class="{ 'grey--text': !value.enabled }", xs6) {{ $t('common.optimal') }}
           v-flex(xs6)
-            v-text-field.mt-0(
-              v-field.number="value.optimal",
-              v-validate="optimalRules",
+            c-number-field.mt-0(
+              v-field="value.optimal",
               :error-messages="getErrorMessages(optimalFieldName)",
               :name="optimalFieldName",
               :label="$t('common.optimal')",
               :disabled="!value.enabled",
               :required="value.enabled",
-              :min="0",
-              type="number"
+              :min="+value.minimal"
             )
     v-flex(xs9)
       div.v-messages.theme--light.error--text
@@ -77,20 +74,6 @@ export default {
 
     optimalFieldName() {
       return `${this.name}.optimal`;
-    },
-
-    minimalRules() {
-      return {
-        required: this.value.enabled,
-        max_value: this.value.optimal,
-      };
-    },
-
-    optimalRules() {
-      return {
-        required: this.value.enabled,
-        min_value: this.value.minimal,
-      };
     },
   },
   methods: {

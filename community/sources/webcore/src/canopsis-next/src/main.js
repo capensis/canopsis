@@ -122,6 +122,7 @@ import CUserPickerField from '@/components/forms/fields/c-user-picker-field.vue'
 import CInstructionTypeField from '@/components/forms/fields/c-instruction-type-field.vue';
 import CPriorityField from '@/components/forms/fields/c-priority-field.vue';
 import CQuickDateIntervalField from '@/components/forms/fields/c-quick-date-interval-field.vue';
+import CDateIntervalField from '@/components/forms/fields/c-date-interval-field.vue';
 import CQuickDateIntervalTypeField from '@/components/forms/fields/c-quick-date-interval-type-field.vue';
 import CEnabledDurationField from '@/components/forms/fields/c-enabled-duration-field.vue';
 import CEnabledLimitField from '@/components/forms/fields/c-enabled-limit-field.vue';
@@ -130,10 +131,17 @@ import CLanguageField from '@/components/forms/fields/c-language-field.vue';
 import CSamplingField from '@/components/forms/fields/c-sampling-field.vue';
 import CAlarmMetricParametersField from '@/components/forms/fields/c-alarm-metric-parameters-field.vue';
 import CFiltersField from '@/components/forms/fields/c-filters-field.vue';
-import CStateTypeField from '@/components/forms/fields/c-state-type-field.vue';
+import CEntityStateField from '@/components/forms/fields/c-entity-state-field.vue';
 import CRecordsPerPageField from '@/components/forms/fields/c-records-per-page-field.vue';
 import COperatorField from '@/components/forms/fields/c-operator-field.vue';
 import CDraggableListField from '@/components/forms/fields/c-draggable-list-field.vue';
+import CDatePickerField from '@/components/forms/fields/date-picker/c-date-picker-field.vue';
+import CFilterAttributeField from '@/components/forms/fields/c-filter-attribute-field.vue';
+import CEntityStatusField from '@/components/forms/fields/c-entity-status-field.vue';
+import CFilterInfosAttributeField from '@/components/forms/fields/c-filter-infos-attribute-field.vue';
+import CFilterExtraInfosAttributeField from '@/components/forms/fields/c-filter-extra-infos-attribute-field.vue';
+import CFilterOperatorField from '@/components/forms/fields/c-filter-operator-field.vue';
+import CNumberField from '@/components/forms/fields/c-number-field.vue';
 import CEntitiesSelectField from '@/components/forms/fields/c-entities-select-field.vue';
 
 /**
@@ -311,6 +319,8 @@ Vue.component('c-role-picker-field', CRolePickerField);
 Vue.component('c-user-picker-field', CUserPickerField);
 Vue.component('c-instruction-type-field', CInstructionTypeField);
 Vue.component('c-priority-field', CPriorityField);
+Vue.component('c-date-picker-field', CDatePickerField);
+Vue.component('c-date-interval-field', CDateIntervalField);
 Vue.component('c-quick-date-interval-field', CQuickDateIntervalField);
 Vue.component('c-quick-date-interval-type-field', CQuickDateIntervalTypeField);
 Vue.component('c-enabled-duration-field', CEnabledDurationField);
@@ -324,10 +334,16 @@ Vue.component('c-information-block-row', CInformationBlockRow);
 Vue.component('c-responsive-list', CResponsiveList);
 Vue.component('c-sampling-field', CSamplingField);
 Vue.component('c-alarm-metric-parameters-field', CAlarmMetricParametersField);
-Vue.component('c-state-type-field', CStateTypeField);
+Vue.component('c-entity-state-field', CEntityStateField);
+Vue.component('c-entity-status-field', CEntityStatusField);
 Vue.component('c-records-per-page-field', CRecordsPerPageField);
 Vue.component('c-operator-field', COperatorField);
 Vue.component('c-draggable-list-field', CDraggableListField);
+Vue.component('c-filter-attribute-field', CFilterAttributeField);
+Vue.component('c-filter-infos-attribute-field', CFilterInfosAttributeField);
+Vue.component('c-filter-extra-infos-attribute-field', CFilterExtraInfosAttributeField);
+Vue.component('c-filter-operator-field', CFilterOperatorField);
+Vue.component('c-number-field', CNumberField);
 Vue.component('c-entities-select-field', CEntitiesSelectField);
 
 Vue.use(VueMq, {

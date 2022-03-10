@@ -26,6 +26,7 @@ import {
   GROUPS_NAVIGATION_TYPES,
   ALARM_METRIC_PARAMETERS,
   USER_METRIC_PARAMETERS,
+  FILTER_OPERATORS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -213,6 +214,9 @@ export default {
     criteria: 'Criteria',
     ratingSettings: 'Rating settings',
     pbehavior: 'Pbehavior | Pbehaviors',
+    searchBy: 'Search by',
+    dictionary: 'Dictionary',
+    condition: 'Condition | Conditions',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -276,6 +280,56 @@ export default {
       [ENTITIES_STATES.minor]: 'Minor',
       [ENTITIES_STATES.major]: 'Major',
       [ENTITIES_STATES.critical]: 'Critical',
+    },
+    statusTypes: {
+      [ENTITIES_STATUSES.closed]: 'Closed',
+      [ENTITIES_STATUSES.ongoing]: 'Ongoing',
+      [ENTITIES_STATUSES.flapping]: 'Flapping',
+      [ENTITIES_STATUSES.stealthy]: 'Stealth',
+      [ENTITIES_STATUSES.cancelled]: 'Canceled',
+      [ENTITIES_STATUSES.noEvents]: 'No events',
+    },
+    operators: {
+      [FILTER_OPERATORS.equal]: 'Equal',
+      [FILTER_OPERATORS.contains]: 'Contains',
+      [FILTER_OPERATORS.notEqual]: 'Not equal',
+      [FILTER_OPERATORS.notContains]: 'Does not contain',
+      [FILTER_OPERATORS.beginsWith]: 'Begins with',
+      [FILTER_OPERATORS.notBeginWith]: 'Does not begin with',
+      [FILTER_OPERATORS.endsWith]: 'Ends with',
+      [FILTER_OPERATORS.notEndWith]: 'Does not end with',
+      [FILTER_OPERATORS.exist]: 'Exist',
+      [FILTER_OPERATORS.notExist]: 'Not exist',
+
+      [FILTER_OPERATORS.hasEvery]: 'Has every',
+      [FILTER_OPERATORS.hasOneOf]: 'Has one of',
+      [FILTER_OPERATORS.hasNot]: 'Has not',
+      [FILTER_OPERATORS.isEmpty]: 'Is empty',
+      [FILTER_OPERATORS.isNotEmpty]: 'Is not empty',
+
+      [FILTER_OPERATORS.isNull]: 'Is null',
+      [FILTER_OPERATORS.isNotNull]: 'Is not null',
+
+      [FILTER_OPERATORS.higher]: 'Higher than',
+      [FILTER_OPERATORS.lower]: 'Lower than',
+
+      [FILTER_OPERATORS.greater]: 'Greater than',
+      [FILTER_OPERATORS.less]: 'Less than',
+
+      [FILTER_OPERATORS.longer]: 'Longer',
+      [FILTER_OPERATORS.shorter]: 'Shorter',
+
+      [FILTER_OPERATORS.ticketAssociated]: 'Ticket is associated',
+      [FILTER_OPERATORS.ticketNotAssociated]: 'Ticket is not associated',
+
+      [FILTER_OPERATORS.canceled]: 'Canceled',
+      [FILTER_OPERATORS.notCanceled]: 'Not canceled',
+
+      [FILTER_OPERATORS.snoozed]: 'Snoozed',
+      [FILTER_OPERATORS.notSnoozed]: 'Not snoozed',
+
+      [FILTER_OPERATORS.acked]: 'Acked',
+      [FILTER_OPERATORS.notAcked]: 'Not acked',
     },
   },
   variableTypes: {
@@ -1572,12 +1626,6 @@ export default {
       status: 'Status',
       extraDetails: 'Extra details',
     },
-    alarmStates: {
-      [ENTITIES_STATES.ok]: 'Info',
-      [ENTITIES_STATES.minor]: 'Minor',
-      [ENTITIES_STATES.major]: 'Major',
-      [ENTITIES_STATES.critical]: 'Critical',
-    },
     contextEntities: {
       columns: {
         name: 'Name',
@@ -2423,6 +2471,13 @@ export default {
     timeField: 'Time field',
     types: {
       [QUICK_RANGES.custom.value]: 'Custom',
+      [QUICK_RANGES.last15Minutes.value]: 'Last 15 minutes',
+      [QUICK_RANGES.last30Minutes.value]: 'Last 30 minutes',
+      [QUICK_RANGES.last1Hour.value]: 'Last 1 hour',
+      [QUICK_RANGES.last3Hour.value]: 'Last 3 hour',
+      [QUICK_RANGES.last6Hour.value]: 'Last 6 hour',
+      [QUICK_RANGES.last12Hour.value]: 'Last 12 hour',
+      [QUICK_RANGES.last24Hour.value]: 'Last 24 hour',
       [QUICK_RANGES.last2Days.value]: 'Last 2 days',
       [QUICK_RANGES.last7Days.value]: 'Last 7 days',
       [QUICK_RANGES.last30Days.value]: 'Last 30 days',
@@ -2436,11 +2491,6 @@ export default {
       [QUICK_RANGES.thisWeekSoFar.value]: 'This week so far',
       [QUICK_RANGES.thisMonth.value]: 'This month',
       [QUICK_RANGES.thisMonthSoFar.value]: 'This month so far',
-      [QUICK_RANGES.last1Hour.value]: 'Last 1 hour',
-      [QUICK_RANGES.last3Hour.value]: 'Last 3 hour',
-      [QUICK_RANGES.last6Hour.value]: 'Last 6 hour',
-      [QUICK_RANGES.last12Hour.value]: 'Last 12 hour',
-      [QUICK_RANGES.last24Hour.value]: 'Last 24 hour',
     },
   },
 
@@ -2576,15 +2626,6 @@ export default {
       title: 'Instruction rating',
       message: 'This page contains the statistics on the instructions execution. Users can rate instructions based on their performance.',
     },
-  },
-
-  alarmStatuses: {
-    [ENTITIES_STATUSES.closed]: 'Closed',
-    [ENTITIES_STATUSES.ongoing]: 'Ongoing',
-    [ENTITIES_STATUSES.flapping]: 'Flapping',
-    [ENTITIES_STATUSES.stealthy]: 'Stealth',
-    [ENTITIES_STATUSES.cancelled]: 'Canceled',
-    [ENTITIES_STATUSES.noEvents]: 'No events',
   },
 
   entitiesCountAlerts: {
