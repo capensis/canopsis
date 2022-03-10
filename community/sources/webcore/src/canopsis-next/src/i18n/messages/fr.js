@@ -217,6 +217,7 @@ export default {
     searchBy: 'Recherché par',
     dictionary: 'Dictionnaire',
     condition: 'Condition | Conditions',
+    template: 'Template',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -656,7 +657,6 @@ export default {
       title: 'Info popup',
       fields: {
         column: 'Colonne',
-        template: 'Template',
       },
     },
     rowGridSize: {
@@ -707,6 +707,7 @@ export default {
     templateEditor: 'Modèle',
     columns: {
       isHtml: 'Est-ce du HTML ?',
+      withTemplate: 'Modèle personnalisé',
       isState: 'Affiché comme une criticité ?',
     },
     liveReporting: {
@@ -988,7 +989,6 @@ export default {
       title: 'Info popup',
       add: 'Ajouter',
       column: 'Colonne',
-      template: 'Template',
       addInfoPopup: {
         title: 'Ajouter une popup d\'info',
       },
