@@ -2,7 +2,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { createInputStub } from '@unit/stubs/input';
 
-import CFilterExtraInfosAttributeField from '@/components/forms/fields/filter/c-pattern-extra-infos-attribute-field.vue';
+import CPatternExtraInfosAttributeField from '@/components/forms/fields/filter/c-pattern-extra-infos-attribute-field.vue';
 
 const localVue = createVueInstance();
 
@@ -10,14 +10,14 @@ const stubs = {
   'v-text-field': createInputStub('v-text-field'),
 };
 
-const factory = (options = {}) => shallowMount(CFilterExtraInfosAttributeField, {
+const factory = (options = {}) => shallowMount(CPatternExtraInfosAttributeField, {
   localVue,
   stubs,
 
   ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(CFilterExtraInfosAttributeField, {
+const snapshotFactory = (options = {}) => mount(CPatternExtraInfosAttributeField, {
   localVue,
 
   ...options,

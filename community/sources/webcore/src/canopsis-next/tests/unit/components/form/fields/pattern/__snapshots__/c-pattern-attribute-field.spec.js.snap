@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-filter-attribute-field Renders \`c-filter-attribute-field\` with custom props 1`] = `
+exports[`c-pattern-attribute-field Renders \`c-pattern-attribute-field\` with custom props 1`] = `
 <div
   class="v-input v-text-field v-select v-input--hide-details v-input--is-disabled theme--light"
   role="combobox"
@@ -57,7 +57,7 @@ exports[`c-filter-attribute-field Renders \`c-filter-attribute-field\` with cust
 </div>
 `;
 
-exports[`c-filter-attribute-field Renders \`c-filter-attribute-field\` with custom props 2`] = `
+exports[`c-pattern-attribute-field Renders \`c-pattern-attribute-field\` with custom props 2`] = `
 <div
   class="v-menu__content theme--light "
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
@@ -91,7 +91,7 @@ exports[`c-filter-attribute-field Renders \`c-filter-attribute-field\` with cust
 </div>
 `;
 
-exports[`c-filter-attribute-field Renders \`c-filter-attribute-field\` with default props 1`] = `
+exports[`c-pattern-attribute-field Renders \`c-pattern-attribute-field\` with default props 1`] = `
 <div
   class="v-input v-text-field v-select v-input--hide-details theme--light"
   role="combobox"
@@ -147,7 +147,7 @@ exports[`c-filter-attribute-field Renders \`c-filter-attribute-field\` with defa
 </div>
 `;
 
-exports[`c-filter-attribute-field Renders \`c-filter-attribute-field\` with default props 2`] = `
+exports[`c-pattern-attribute-field Renders \`c-pattern-attribute-field\` with default props 2`] = `
 <div
   class="v-menu__content theme--light "
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"

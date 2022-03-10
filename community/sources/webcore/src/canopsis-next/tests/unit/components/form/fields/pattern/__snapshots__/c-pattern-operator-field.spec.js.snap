@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom props 1`] = `
+exports[`c-pattern-operator-field Renders \`c-pattern-operator-field\` with custom props 1`] = `
 <div
   class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
   role="combobox"
@@ -73,7 +73,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom
 </div>
 `;
 
-exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom props 2`] = `
+exports[`c-pattern-operator-field Renders \`c-pattern-operator-field\` with custom props 2`] = `
 <div
   class="v-menu__content theme--light "
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
@@ -431,7 +431,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with custom
 </div>
 `;
 
-exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with default props 1`] = `
+exports[`c-pattern-operator-field Renders \`c-pattern-operator-field\` with default props 1`] = `
 <div
   class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
   role="combobox"
@@ -503,7 +503,7 @@ exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with defaul
 </div>
 `;
 
-exports[`c-filter-operator-field Renders \`c-filter-operator-field\` with default props 2`] = `
+exports[`c-pattern-operator-field Renders \`c-pattern-operator-field\` with default props 2`] = `
 <div
   class="v-menu__content theme--light "
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"

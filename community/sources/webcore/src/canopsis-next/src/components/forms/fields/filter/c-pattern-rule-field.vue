@@ -46,10 +46,7 @@
 <script>
 import { formMixin } from '@/mixins/form';
 
-import CFilterInfosAttributeField from '@/components/forms/fields/filter/c-pattern-infos-attribute-field.vue';
-
 export default {
-  components: { CFilterInfosAttributeField },
   mixins: [formMixin],
   model: {
     prop: 'value',
