@@ -64,7 +64,7 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with boolean type correctly 1`]
     </div>
   </div>
   <div
-    class="v-input v-input--selection-controls v-input--switch v-input--hide-details theme--light ma-0 ml-3 mixed-field__switch"
+    class="v-input ml-2 v-input--selection-controls v-input--switch v-input--hide-details theme--light ma-0 mixed-field__switch"
   >
     <div
       class="v-input__control"
@@ -351,7 +351,7 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with custom props correctly 1`]
     </div>
   </div>
   <div
-    class="v-input v-text-field v-text-field--single-line v-text-field--solo v-text-field--solo-inverted v-text-field--solo-flat v-text-field--enclosed v-input--has-state v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light error--text mixed-field__text"
+    class="v-input ml-2 v-text-field v-text-field--single-line v-text-field--solo v-text-field--solo-inverted v-text-field--solo-flat v-text-field--enclosed v-input--has-state v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light error--text mixed-field__text"
   >
     <div
       class="v-input__control"
@@ -548,7 +548,7 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with default props correctly 1`
     </div>
   </div>
   <div
-    class="v-input v-text-field v-text-field--single-line theme--light mixed-field__text"
+    class="v-input ml-2 v-text-field v-text-field--single-line theme--light mixed-field__text"
   >
     <div
       class="v-input__control"
@@ -820,7 +820,7 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with errors correctly 1`] = `
     </div>
   </div>
   <div
-    class="v-input v-text-field v-text-field--single-line v-input--has-state theme--light error--text mixed-field__text"
+    class="v-input ml-2 v-text-field v-text-field--single-line v-input--has-state theme--light error--text mixed-field__text"
   >
     <div
       class="v-input__control"
@@ -1106,7 +1106,7 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with null type correctly 1`] = 
     </div>
   </div>
   <div
-    class="v-input v-text-field v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light mixed-field__text"
+    class="v-input ml-2 v-text-field v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light mixed-field__text"
   >
     <div
       class="v-input__control"
@@ -1386,7 +1386,7 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with null type correctly 3`] = 
     </div>
   </div>
   <c-array-mixed-field-stub
-    class="ml-3"
+    class="ml-2"
     types="[object Object],[object Object],[object Object],[object Object]"
     values="0,1,,false,"
   />
@@ -1640,7 +1640,7 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with number type correctly 1`] 
     </div>
   </div>
   <div
-    class="v-input v-text-field v-text-field--single-line v-input--is-label-active v-input--is-dirty theme--light mixed-field__text"
+    class="v-input ml-2 v-text-field v-text-field--single-line v-input--is-label-active v-input--is-dirty theme--light mixed-field__text"
   >
     <div
       class="v-input__control"
@@ -1921,7 +1921,7 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with string type and items corr
     </div>
   </div>
   <div
-    class="v-input v-input--selection-controls v-input--switch v-input--hide-details theme--light ma-0 ml-3 mixed-field__switch"
+    class="v-input ml-2 v-input--selection-controls v-input--switch v-input--hide-details theme--light ma-0 mixed-field__switch"
   >
     <div
       class="v-input__control"

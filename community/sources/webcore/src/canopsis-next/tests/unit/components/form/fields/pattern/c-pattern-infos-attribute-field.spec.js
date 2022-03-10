@@ -2,7 +2,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
 
-import CFilterInfosAttributeField from '@/components/forms/fields/filter/c-pattern-infos-attribute-field.vue';
+import CPatternInfosAttributeField from '@/components/forms/fields/filter/c-pattern-infos-attribute-field.vue';
 
 const localVue = createVueInstance();
 
@@ -11,13 +11,13 @@ const stubs = {
   'v-combobox': createSelectInputStub('v-combobox'),
 };
 
-const factory = (options = {}) => shallowMount(CFilterInfosAttributeField, {
+const factory = (options = {}) => shallowMount(CPatternInfosAttributeField, {
   localVue,
   stubs,
   ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(CFilterInfosAttributeField, {
+const snapshotFactory = (options = {}) => mount(CPatternInfosAttributeField, {
   localVue,
   ...options,
 });

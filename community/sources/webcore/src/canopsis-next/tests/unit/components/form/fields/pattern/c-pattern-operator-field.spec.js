@@ -3,7 +3,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { FILTER_OPERATORS } from '@/constants';
 
-import CFilterOperatorField from '@/components/forms/fields/filter/c-pattern-operator-field.vue';
+import CPatternOperatorField from '@/components/forms/fields/filter/c-pattern-operator-field.vue';
 
 const localVue = createVueInstance();
 
@@ -11,14 +11,14 @@ const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = (options = {}) => shallowMount(CFilterOperatorField, {
+const factory = (options = {}) => shallowMount(CPatternOperatorField, {
   localVue,
   stubs,
 
   ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(CFilterOperatorField, {
+const snapshotFactory = (options = {}) => mount(CPatternOperatorField, {
   localVue,
 
   ...options,

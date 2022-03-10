@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-filter-extra-infos-attribute-field Renders \`c-filter-extra-infos-attribute-field\` with custom props 1`] = `
+exports[`c-pattern-extra-infos-attribute-field Renders \`c-pattern-extra-infos-attribute-field\` with custom props 1`] = `
 <div
   class="v-input v-text-field v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
 >
@@ -32,9 +32,9 @@ exports[`c-filter-extra-infos-attribute-field Renders \`c-filter-extra-infos-att
 </div>
 `;
 
-exports[`c-filter-extra-infos-attribute-field Renders \`c-filter-extra-infos-attribute-field\` with custom props 2`] = `undefined`;
+exports[`c-pattern-extra-infos-attribute-field Renders \`c-pattern-extra-infos-attribute-field\` with custom props 2`] = `undefined`;
 
-exports[`c-filter-extra-infos-attribute-field Renders \`c-filter-extra-infos-attribute-field\` with default props 1`] = `
+exports[`c-pattern-extra-infos-attribute-field Renders \`c-pattern-extra-infos-attribute-field\` with default props 1`] = `
 <div
   class="v-input v-text-field v-input--hide-details theme--light"
 >
@@ -65,4 +65,4 @@ exports[`c-filter-extra-infos-attribute-field Renders \`c-filter-extra-infos-att
 </div>
 `;
 
-exports[`c-filter-extra-infos-attribute-field Renders \`c-filter-extra-infos-attribute-field\` with default props 2`] = `undefined`;
+exports[`c-pattern-extra-infos-attribute-field Renders \`c-pattern-extra-infos-attribute-field\` with default props 2`] = `undefined`;
