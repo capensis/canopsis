@@ -1,6 +1,6 @@
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
-import { createInputStub } from '@unit/stubs/input';
+import { createInputStub, createNumberInputStub } from '@unit/stubs/input';
 
 import EnabledLimitField from '@/components/forms/fields/enabled-limit-field.vue';
 
@@ -8,11 +8,12 @@ const localVue = createVueInstance();
 
 const stubs = {
   'c-enabled-field': createInputStub('c-enabled-field'),
-  'v-text-field': createInputStub('v-text-field'),
+  'c-number-field': createNumberInputStub('c-number-field'),
 };
 
 const snapshotStubs = {
   'c-enabled-field': true,
+  'c-number-field': true,
 };
 
 const factory = (options = {}) => shallowMount(EnabledLimitField, {
@@ -40,7 +41,7 @@ const snapshotFactory = (options = {}) => mount(EnabledLimitField, {
 });
 
 const selectEnabledField = wrapper => wrapper.find('input.c-enabled-field');
-const selectLimitField = wrapper => wrapper.find('input.v-text-field');
+const selectLimitField = wrapper => wrapper.find('input.c-number-field');
 
 describe('enabled-limit-field', () => {
   it('Enabled changed after trigger the enabled field', () => {
