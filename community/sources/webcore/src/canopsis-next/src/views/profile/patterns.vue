@@ -11,7 +11,7 @@
             fixed-tabs
           )
             v-tab {{ $t('pattern.myPatterns') }}
-            v-tab-item(lazy)
+            v-tab-item
               patterns(
                 @edit="showEditPatternModal",
                 @remove="showDeletePatternModal",
@@ -42,7 +42,7 @@
           @click.stop="showCreatePbehaviorPatternModal"
         )
           v-icon pause
-        span Create pbehavior filter
+        span {{ $t('modals.createPbehaviorPattern.create.title') }}
       v-tooltip(top)
         v-btn(
           slot="activator",
@@ -53,7 +53,7 @@
           @click.stop="showCreateEntityPatternModal"
         )
           v-icon perm_identity
-        span Create entity filter
+        span {{ $t('modals.createEntityPattern.create.title') }}
       v-tooltip(top)
         v-btn(
           slot="activator",
@@ -64,7 +64,7 @@
           @click.stop="showCreateAlarmPatternModal"
         )
           v-icon notification_important
-        span Create alarm filter
+        span {{ $t('modals.createAlarmPattern.create.title') }}
 </template>
 
 <script>
@@ -136,7 +136,9 @@ export default {
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await Promise.all(selected.map(({ _id: id }) => this.removePattern({ id })));
+            await this.bulkRemovePatterns({
+              data: selected.map(({ _id: id }) => ({ _id: id })),
+            });
 
             return this.refresh();
           },
