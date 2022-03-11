@@ -2,6 +2,7 @@ package view
 
 import (
 	"encoding/json"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"reflect"
 	"strings"
@@ -57,11 +58,13 @@ type Widget struct {
 	Parameters         Parameters             `bson:"parameters" json:"parameters"`
 	InternalParameters InternalParameters     `bson:"internal_parameters,omitempty" json:"-"`
 	Author             string                 `bson:"author" json:"author,omitempty"`
-	Created            *types.CpsTime         `bson:"created" json:"created,omitempty" swaggertype:"integer"`
-	Updated            *types.CpsTime         `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
+	Created            types.CpsTime          `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated            types.CpsTime          `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 }
 
 type Parameters struct {
+	MainFilter string `bson:"main_filter,omitempty" json:"main_filter,omitempty"`
+
 	// Junit
 	IsAPI                 bool     `bson:"is_api,omitempty" json:"is_api,omitempty"`
 	Directory             string   `bson:"directory,omitempty" json:"directory,omitempty"`
@@ -131,4 +134,21 @@ type InternalParameters struct {
 func (p InternalParameters) IsZero() bool {
 	return len(p.TestSuites) == 0 &&
 		len(p.RemainParameters) == 0
+}
+
+type WidgetFilter struct {
+	ID        string        `bson:"_id"`
+	Title     string        `bson:"title"`
+	Widget    string        `bson:"widget"`
+	IsPrivate bool          `bson:"is_private"`
+	Author    string        `bson:"author"`
+	Created   types.CpsTime `bson:"created,omitempty"`
+	Updated   types.CpsTime `bson:"updated,omitempty"`
+
+	savedpattern.AlarmPatternFields     `bson:",inline"`
+	savedpattern.EntityPatternFields    `bson:",inline"`
+	savedpattern.PbehaviorPatternFields `bson:",inline"`
+
+	// Deprecated : contains old mongo query which cannot be migrated to pattern.
+	OldMongoQuery map[string]interface{} `bson:"old_mongo_query,omitempty"`
 }

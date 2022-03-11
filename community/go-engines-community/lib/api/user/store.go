@@ -3,16 +3,16 @@ package user
 import (
 	"context"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"math"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 type Store interface {
@@ -29,9 +29,11 @@ type Store interface {
 
 func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder) Store {
 	return &store{
-		collection:            dbClient.Collection(mongo.RightsMongoCollection),
-		userPrefCollection:    dbClient.Collection(mongo.UserPreferencesMongoCollection),
-		patternCollection:     dbClient.Collection(mongo.PatternMongoCollection),
+		collection:             dbClient.Collection(mongo.RightsMongoCollection),
+		userPrefCollection:     dbClient.Collection(mongo.UserPreferencesMongoCollection),
+		patternCollection:      dbClient.Collection(mongo.PatternMongoCollection),
+		widgetFilterCollection: dbClient.Collection(mongo.WidgetFiltersMongoCollection),
+
 		passwordEncoder:       passwordEncoder,
 		defaultSearchByFields: []string{"_id", "crecord_name", "firstname", "lastname"},
 		defaultSortBy:         "name",
@@ -39,9 +41,11 @@ func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder) Store {
 }
 
 type store struct {
-	collection            mongo.DbCollection
-	userPrefCollection    mongo.DbCollection
-	patternCollection     mongo.DbCollection
+	collection             mongo.DbCollection
+	userPrefCollection     mongo.DbCollection
+	patternCollection      mongo.DbCollection
+	widgetFilterCollection mongo.DbCollection
+
 	passwordEncoder       password.Encoder
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -171,6 +175,11 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		return false, err
 	}
 
+	err = s.deleteWidgetFilters(ctx, id)
+	if err != nil {
+		return false, err
+	}
+
 	return true, nil
 }
 
@@ -186,6 +195,15 @@ func (s *store) deletePatterns(ctx context.Context, id string) error {
 	_, err := s.patternCollection.DeleteMany(ctx, bson.M{
 		"author":       id,
 		"is_corporate": false,
+	})
+
+	return err
+}
+
+func (s *store) deleteWidgetFilters(ctx context.Context, id string) error {
+	_, err := s.widgetFilterCollection.DeleteMany(ctx, bson.M{
+		"author":     id,
+		"is_private": true,
 	})
 
 	return err

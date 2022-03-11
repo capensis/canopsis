@@ -233,3 +233,9 @@ views:
   
   view_to_widget_copy_3 (extend view):
     _id: test-view-to-widget-copy-3
+
+  view_to_filter_edit (extend view):
+    _id: test-view-to-filter-edit
+
+  view_to_filter_check_access (extend view):
+    _id: test-view-to-filter-check-access
