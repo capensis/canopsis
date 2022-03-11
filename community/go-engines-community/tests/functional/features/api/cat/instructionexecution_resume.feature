@@ -7,7 +7,7 @@ Feature: pause a instruction execution
     When I do PUT /api/v4/cat/executions/test-instruction-execution-resume-1/resume
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "description": "test-instruction-execution-resume-1-description",
       "name": "test-instruction-execution-resume-1-name",

@@ -5,14 +5,20 @@ Feature: run a instruction
   Scenario: given instruction should start first operation of instruction
     When I am admin
     When I do POST /api/v4/cat/instructions:
-    """
+    """json
     {
       "type": 0,
       "name": "test-instruction-execution-start-1-name",
-      "alarm_patterns": [
-        {
-          "_id": "test-instruction-execution-start-1"
-        }
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-execution-start-resource-1"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-execution-start-1-description",
       "enabled": true,
@@ -56,7 +62,7 @@ Feature: run a instruction
     """
     Then the response code should be 201
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "test-instruction-execution-start-1",
       "instruction": "{{ .lastResponse._id }}"
@@ -64,7 +70,7 @@ Feature: run a instruction
     """
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "status": 0,
       "name": "test-instruction-execution-start-1-name",
@@ -130,7 +136,7 @@ Feature: run a instruction
   Scenario: given instruction should not start instruction multiple times
     When I am admin
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "test-instruction-execution-start-2",
       "instruction": "test-instruction-execution-to-start-multiple-times"
@@ -138,7 +144,7 @@ Feature: run a instruction
     """
     Then the response code should be 200
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "test-instruction-execution-start-2",
       "instruction": "test-instruction-execution-to-start-multiple-times"
@@ -151,7 +157,7 @@ Feature: run a instruction
     When I do POST /api/v4/cat/executions
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "alarm": "Alarm is missing.",
@@ -163,7 +169,7 @@ Feature: run a instruction
   Scenario: given auto instruction should return errors
     When I am admin
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "test-alarm-to-not-run-auto-instruction-manually",
       "instruction": "test-instruction-to-not-run-auto-instruction-manually"
@@ -173,7 +179,7 @@ Feature: run a instruction
 
   Scenario: given unauth request should not allow access
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "test-instruction-execution-start-1",
       "instruction": "test-instruction-not-exist"
@@ -184,7 +190,7 @@ Feature: run a instruction
   Scenario: given get request and auth user without permissions should not allow access
     When I am noperms
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "test-instruction-execution-start-1",
       "instruction": "test-instruction-not-exist"
