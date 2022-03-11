@@ -5,11 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
-	"strings"
-	"time"
 )
 
 type ScenarioExecutionStorage interface {
@@ -28,7 +29,7 @@ type redisScenarioExecutionStorage struct {
 	decoder     encoding.Decoder
 	logger      zerolog.Logger
 
-	abandonedInterval time.Duration
+	lastRetryInterval time.Duration
 }
 
 func NewRedisScenarioExecutionStorage(
@@ -36,7 +37,7 @@ func NewRedisScenarioExecutionStorage(
 	redisClient redis.Cmdable,
 	encoder encoding.Encoder,
 	decoder encoding.Decoder,
-	abandonedInterval time.Duration,
+	lastRetryInterval time.Duration,
 	logger zerolog.Logger,
 ) ScenarioExecutionStorage {
 	return &redisScenarioExecutionStorage{
@@ -46,7 +47,7 @@ func NewRedisScenarioExecutionStorage(
 		decoder:     decoder,
 		logger:      logger,
 
-		abandonedInterval: abandonedInterval,
+		lastRetryInterval: lastRetryInterval,
 	}
 }
 
@@ -195,7 +196,7 @@ func (s *redisScenarioExecutionStorage) GetAbandoned(ctx context.Context) ([]Sce
 						return nil, err
 					}
 
-					if execution.LastUpdate > 0 && time.Since(time.Unix(execution.LastUpdate, 0)) > s.abandonedInterval {
+					if execution.LastUpdate > 0 && time.Since(time.Unix(execution.LastUpdate, 0)) > s.lastRetryInterval {
 						execution.Tries++
 						if execution.Tries > MaxRetries {
 							err := s.delWithoutPrefix(ctx, key)
