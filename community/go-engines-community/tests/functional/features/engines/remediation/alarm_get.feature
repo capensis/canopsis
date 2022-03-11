@@ -8,10 +8,16 @@ Feature: update an instruction statistics
     {
       "type": 1,
       "name": "test-instruction-to-alarm-get-auto-instruction-flags-1-1-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-alarm-get-auto-instruction-flags-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-alarm-get-auto-instruction-flags-1"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-alarm-get-auto-instruction-flags-1-1-description",
       "enabled": true,
@@ -33,10 +39,16 @@ Feature: update an instruction statistics
     {
       "type": 1,
       "name": "test-instruction-to-alarm-get-auto-instruction-flags-1-2-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-alarm-get-auto-instruction-flags-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-alarm-get-auto-instruction-flags-1"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-alarm-get-auto-instruction-flags-1-2-description",
       "enabled": true,
@@ -117,10 +129,16 @@ Feature: update an instruction statistics
     {
       "type": 0,
       "name": "test-instruction-to-alarm-get-auto-instruction-flags-2-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-alarm-get-auto-instruction-flags-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-alarm-get-auto-instruction-flags-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-alarm-get-auto-instruction-flags-2-description",
       "enabled": true,
