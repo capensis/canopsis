@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    c-page-header {{ $tc('pattern.patterns', 2) }}
+    c-page-header {{ $t('pattern.patterns') }}
     v-layout(row, wrap)
       v-flex(xs12)
         v-card.ma-2

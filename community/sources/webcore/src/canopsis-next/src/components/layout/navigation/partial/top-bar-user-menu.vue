@@ -9,7 +9,7 @@
       v-list-tile(:to="profilePatternsLink", active-class="")
         v-list-tile-avatar
           v-icon(color="black") filter_list
-        v-list-tile-title.text-uppercase.body-2 Filters
+        v-list-tile-title.text-uppercase.body-2 {{ $t('pattern.patterns') }}
       v-list-tile.logout-btn(@click="logoutHandler")
         v-list-tile-avatar
           v-icon(color="error") exit_to_app

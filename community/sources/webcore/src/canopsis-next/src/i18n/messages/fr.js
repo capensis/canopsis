@@ -2716,7 +2716,7 @@ export default {
   },
 
   pattern: {
-    patterns: 'Filtre | Filtres',
+    patterns: 'Filtres',
     myPatterns: 'Mes filtres',
     corporatePatterns: 'Filtres partagés',
   },
