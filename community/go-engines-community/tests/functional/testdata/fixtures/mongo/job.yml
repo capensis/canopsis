@@ -1,168 +1,154 @@
 job:
-  job_1:
+  job (template):
+    _id: <UUID()>
+    name: <Word()>
+    config: test-job-config-to-edit-job
+    external_id: <UUID()>
+    author: root
+    created: <NowUnix()>
+
+  job_dummy_succeeded (template):
+    _id: <UUID()>
+    name: <Word()>
+    config: test-job-config-to-run-auto-instruction
+    external_id: test-job-succeeded
+    author: root
+    created: <NowUnix()>
+
+  job_dummy_long_succeeded (template):
+    _id: <UUID()>
+    name: <Word()>
+    config: test-job-config-to-run-auto-instruction
+    external_id: test-job-long-succeeded
+    author: root
+    created: <NowUnix()>
+
+  job_dummy_failed (template):
+    _id: <UUID()>
+    name: <Word()>
+    config: test-job-config-to-run-auto-instruction
+    external_id: test-job-failed
+    author: root
+    created: <NowUnix()>
+
+  job_dummy_long_failed (template):
+    _id: <UUID()>
+    name: <Word()>
+    config: test-job-config-to-run-auto-instruction
+    external_id: test-job-long-failed
+    author: root
+    created: <NowUnix()>
+
+  job_dummy_http_error (template):
+    _id: <UUID()>
+    name: <Word()>
+    config: test-job-config-to-run-auto-instruction
+    external_id: test-job-http-error
+    author: root
+    created: <NowUnix()>
+
+  job_to_get (extend job):
     _id: test-job-to-get
-    author: test-user-author-1-id
     config: test-job-config-to-edit-job
     created: 1596712203
     external_id: test-job-id
     name: test-job-name-to-get
     payload: '{"key1": "val1","key2": "val2"}'
-  job_2:
+
+  job_to_update (extend job):
     _id: test-job-to-update
-    author: test-user-author-1-id
-    config: test-job-config-to-edit-job
-    created: 1596712203
-    external_id: test-job-id
-    name: test-job-name-to-update
-    payload: '{"key1": "val1","key2": "val2"}'
-  job_3:
+
+  job_to_delete (extend job):
     _id: test-job-to-delete
-    author: test-user-author-1-id
-    config: test-job-config-to-edit-job
-    created: 1596712203
-    external_id: test-job-id
-    name: test-job-name-to-delete
-    payload: '{"key1": "val1","key2": "val2"}'
-  job_4:
+
+  job_to_check_linked_to_manual_instruction (extend job):
     _id: test-job-to-check-linked-to-manual-instruction
-    author: test-user-author-1-id
-    config: test-job-config-to-edit-job
-    created: 1596712203
-    external_id: test-job-id
-    name: test-job-to-check-linked-to-manual-instruction-name
-    payload: '{"key1": "val1","key2": "val2"}'
-  job_5:
+
+  job_to_check_linked_to_auto_instruction (extend job):
     _id: test-job-to-check-linked-to-auto-instruction
-    author: test-user-author-1-id
-    config: test-job-config-to-edit-job
-    created: 1596712203
-    external_id: test-job-id
-    name: test-job-to-check-linked-to-auto-instruction-name
-    payload: '{"key1": "val1","key2": "val2"}'
-  job_6:
+
+  job_to_instruction_edit_1 (extend job):
     _id: test-job-to-instruction-edit-1
-    author: test-user-author-1-id
     config: test-job-config-to-edit-instruction
     created: 1596712203
     external_id: test-job-to-instruction-edit-1-external-id
     name: test-job-to-instruction-edit-1-name
     payload: '{"key1": "val1","key2": "val2"}'
-  job_7:
+
+  job_to_instruction_edit_2 (extend job):
     _id: test-job-to-instruction-edit-2
-    author: test-user-author-1-id
     config: test-job-config-to-edit-instruction
     created: 1596712203
     external_id: test-job-to-instruction-edit-2-external-id
     name: test-job-to-instruction-edit-2-name
     payload: '{"key1": "val1","key2": "val2"}'
-  job_8:
+
+  job_to_instruction_approve_update (extend job):
+    _id: test-job-to-instruction-approve-update
+    external_id: test-job-to-instruction-approve-update-external-id
+    name: test-job-to-instruction-approve-update-name
+    payload: '{"test-job-to-instruction-approve-update-key": "test-job-to-instruction-approve-update-val"}'
+
+  job_to_instruction_approve_update_2 (extend job):
+    _id: test-job-to-instruction-approve-update-2
+    external_id: test-job-to-instruction-approve-update-external-id-2
+    name: test-job-to-instruction-approve-update-2-name
+    payload: '{"test-job-to-instruction-approve-update-2-key": "test-job-to-instruction-approve-update-2-val"}'
+
+  job_to_instruction_execute_1 (extend job):
     _id: test-instruction-execution-1
-    author: test-user-author-1-id
     config: test-job-config-to-edit-job
     created: 1596712203
     external_id: test-job-id
     name: test-instruction-execution-1-name
     payload: '{"key1": "val1","key2": "val2"}'
-  job_9:
+
+  job_to_job_execution_get_1 (extend job):
     _id: test-job-execution-to-get
-    author: test-user-author-1-id
     config: test-jobconfig-to-execution-get
     created: 1596712203
     external_id: test-job-id
     name: test-job-execution-to-get
     payload: '{"key1": "val1","key2": "val2"}'
-  job_10:
-    _id: test-job-to-config-check-linked
-    author: test-user-author-1-id
+
+  job_to_config_check_linked (extend job):
     config: test-job-config-to-check-linked
-    created: 1596712203
-    external_id: test-job-id
-    name: test-job-to-config-check-linked-name
-    payload: '{"key1": "val1","key2": "val2"}'
-  job_11:
+
+  job_to_run_auto_instruction_1 (extend job_dummy_succeeded):
     _id: test-job-to-run-auto-instruction-1
-    author: test-user-author-1-id
-    config: test-job-config-to-run-auto-instruction
-    created: 1596712203
-    external_id: test-job-succeeded
     name: test-job-to-run-auto-instruction-1-name
     payload: '{"test-job-to-run-auto-instruction-1-key": "test-job-to-run-auto-instruction-1-val"}'
-  job_12:
+
+  job_to_run_auto_instruction_2 (extend job_dummy_succeeded):
     _id: test-job-to-run-auto-instruction-2
-    author: test-user-author-1-id
-    config: test-job-config-to-run-auto-instruction
-    created: 1596712203
-    external_id: test-job-succeeded
     name: test-job-to-run-auto-instruction-2-name
     payload: '{"test-job-to-run-auto-instruction-2-key": "test-job-to-run-auto-instruction-2-val"}'
-  job_13:
+
+  job_to_run_auto_instruction_3 (extend job_dummy_failed):
     _id: test-job-to-run-auto-instruction-3
-    author: test-user-author-1-id
-    config: test-job-config-to-run-auto-instruction
-    created: 1596712203
-    external_id: test-job-failed
     name: test-job-to-run-auto-instruction-3-name
     payload: '{"test-job-to-run-auto-instruction-3-key": "test-job-to-run-auto-instruction-3-val"}'
-  job_14:
+
+  job_to_run_auto_instruction_4 (extend job_dummy_http_error):
     _id: test-job-to-run-auto-instruction-4
-    author: test-user-author-1-id
-    config: test-job-config-to-run-auto-instruction
-    created: 1596712203
-    external_id: test-job-http-error
     name: test-job-to-run-auto-instruction-4-name
     payload: '{"test-job-to-run-auto-instruction-4-key": "test-job-to-run-auto-instruction-4-val"}'
-  job_15:
-    _id: test-job-to-run-auto-instruction-to-approve-update
-    author: test-user-author-1-id
-    config: test-job-config-to-run-auto-instruction
-    created: 1596712203
-    external_id: test-job-http-error
-    name: test-job-to-run-auto-instruction-to-approve-update-name
-    payload: '{"test-job-to-run-auto-instruction-to-approve-update-key": "test-job-to-run-auto-instruction-to-approve-update-val"}'
-  job_16:
-    _id: test-job-to-run-auto-instruction-to-approve-update-2
-    author: test-user-author-1-id
-    config: test-job-config-to-run-auto-instruction
-    created: 1596712203
-    external_id: test-job-http-error
-    name: test-job-to-run-auto-instruction-to-approve-update-2-name
-    payload: '{"test-job-to-run-auto-instruction-to-approve-update-2-key": "test-job-to-run-auto-instruction-to-approve-update-2-val"}'
-  job_17:
+
+  job_to_run_auto_instruction_5 (extend job_dummy_long_succeeded):
     _id: test-job-to-run-auto-instruction-5
-    author: test-user-author-1-id
-    config: test-job-config-to-run-auto-instruction
-    created: 1596712203
-    external_id: test-job-long-succeeded
     name: test-job-to-run-auto-instruction-5-name
     payload: '{"test-job-to-run-auto-instruction-5-key": "test-job-to-run-auto-instruction-5-val"}'
-  job_18:
+
+  job_to_run_auto_instruction_6 (extend job_dummy_long_failed):
     _id: test-job-to-run-auto-instruction-6
-    author: test-user-author-1-id
-    config: test-job-config-to-run-auto-instruction
-    created: 1596712203
-    external_id: test-job-long-failed
     name: test-job-to-run-auto-instruction-6-name
     payload: '{"test-job-to-run-auto-instruction-6-key": "test-job-to-run-auto-instruction-6-val"}'
-  job_19:
+
+  job_to_run_auto_instruction_7 (extend job_dummy_long_succeeded):
     _id: test-job-to-run-auto-instruction-7
-    author: test-user-author-1-id
-    config: test-job-config-to-run-auto-instruction
-    created: 1596712203
-    external_id: test-job-long-succeeded
     name: test-job-to-run-auto-instruction-7-name
     payload: '{"test-job-to-run-auto-instruction-7-key": "test-job-to-run-auto-instruction-7-val"}'
-  job_20:
-    _id: test-job-to-get-running-job
-    author: test-job-to-get-running-job-author
-    config: test-job-config-running
-    created: 1596712203
-    external_id: test-job-id
-    name: test-job-to-get-running-job-name
-    payload: '{"key1": "val1","key2": "val2"}'
-  job_21:
+
+  job_to_metrics_axe (extend job_dummy_long_succeeded):
     _id: test-job-metrics-axe
-    author: test-author-metrics-axe
     config: test-job-config-metrics-axe
-    created: 1596712203
-    external_id: test-job-long-succeeded
-    name: test-job-metrics-axe-name

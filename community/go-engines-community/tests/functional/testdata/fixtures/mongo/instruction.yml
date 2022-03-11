@@ -1,2532 +1,1134 @@
 instruction:
-  instruction_1:
+  instruction_manual (template):
+    _id: <UUID()>
+    type: 0
+    name: <Word()>
+    enabled: true
+    description: <Phrase()>
+    author: root
+    created: <NowUnix()>
+    last_modified: <Current().created>
+    timeout_after_execution:
+      value: 2
+      unit: s
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: <Word()>
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: <Word()>
+    steps:
+      - _id: <UUID()>
+        name: <Word()>
+        endpoint: <Phrase()>
+        operations:
+          - _id: <UUID()>
+            name: <Word()>
+            description: <Phrase()>
+            time_to_complete:
+              value: 1
+              unit: s
+        stop_on_fail: true
+
+  instruction_auto (template):
+    _id: <UUID()>
+    type: 1
+    name: <Word()>
+    enabled: true
+    description: <Phrase()>
+    author: root
+    created: <NowUnix()>
+    last_modified: <Current().created>
+    timeout_after_execution:
+      value: 2
+      unit: s
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: <Word()>
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: <Word()>
+    priority: <Index()>
+    jobs:
+      - job: test-job-to-instruction-edit-1
+        stop_on_fail: true
+      - job: test-job-to-instruction-edit-2
+
+  instruction_to_get_1 (extend instruction_manual):
     _id: test-instruction-to-get-1
-    author: test-user-author-1-id
     created: 1596712203
     description: test-instruction-to-get-1-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-instruction-to-get-1-pattern
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-instruction-to-get-1-pattern
     last_executed_on: 1596712203
     last_modified: 1596712203
     name: test-instruction-to-get-1-name
     steps:
-    - _id: test-instruction-to-get-1-step-1
-      endpoint: test-instruction-to-get-1-step-1-endpoint
-      name: test-instruction-to-get-1-step-1-name
-      operations:
-      - _id: test-instruction-to-get-1-step-1-operation-1
-        description: test-instruction-to-get-1-step-1-operation-1-description
-        jobs:
-        - test-job-to-instruction-edit-1
-        - test-job-to-instruction-edit-2
-        name: test-instruction-to-get-1-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      - _id: test-instruction-to-get-1-step-1-operation-2
-        description: test-instruction-to-get-1-step-1-operation-2-description
-        jobs:
-        - test-job-to-instruction-edit-2
-        name: test-instruction-to-get-1-step-1-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 3
-      stop_on_fail: true
-    - _id: test-instruction-to-get-1-step-2
-      endpoint: test-instruction-to-get-1-step-2-endpoint
-      name: test-instruction-to-get-1-step-2-name
-      operations:
-      - _id: test-instruction-to-get-1-step-2-operation-1
-        description: test-instruction-to-get-1-step-2-operation-1-description
-        jobs:
-        - test-job-to-instruction-edit-2
-        - test-job-to-instruction-edit-1
-        name: test-instruction-to-get-1-step-2-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 6
-      stop_on_fail: true
+      - _id: test-instruction-to-get-1-step-1
+        endpoint: test-instruction-to-get-1-step-1-endpoint
+        name: test-instruction-to-get-1-step-1-name
+        operations:
+          - _id: test-instruction-to-get-1-step-1-operation-1
+            description: test-instruction-to-get-1-step-1-operation-1-description
+            jobs:
+              - test-job-to-instruction-edit-1
+              - test-job-to-instruction-edit-2
+            name: test-instruction-to-get-1-step-1-operation-1-name
+            time_to_complete:
+              unit: s
+              value: 1
+          - _id: test-instruction-to-get-1-step-1-operation-2
+            description: test-instruction-to-get-1-step-1-operation-2-description
+            jobs:
+              - test-job-to-instruction-edit-2
+            name: test-instruction-to-get-1-step-1-operation-2-name
+            time_to_complete:
+              unit: s
+              value: 3
+        stop_on_fail: true
+      - _id: test-instruction-to-get-1-step-2
+        endpoint: test-instruction-to-get-1-step-2-endpoint
+        name: test-instruction-to-get-1-step-2-name
+        operations:
+          - _id: test-instruction-to-get-1-step-2-operation-1
+            description: test-instruction-to-get-1-step-2-operation-1-description
+            jobs:
+              - test-job-to-instruction-edit-2
+              - test-job-to-instruction-edit-1
+            name: test-instruction-to-get-1-step-2-operation-1-name
+            time_to_complete:
+              unit: s
+              value: 6
+        stop_on_fail: true
     timeout_after_execution:
       unit: s
       value: 2
-    type: 0
-  instruction_2:
+
+  instruction_to_get_2 (extend instruction_auto):
     _id: test-instruction-to-get-2
-    author: test-user-author-1-id
     created: 1596712203
     description: test-instruction-to-get-2-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
+    corporate_alarm_pattern: test-pattern-to-filter-edit-1
+    corporate_alarm_pattern_title: test-pattern-to-filter-edit-1-title
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-pattern-to-filter-edit-1-pattern
+    corporate_entity_pattern: test-pattern-to-filter-edit-2
+    corporate_entity_pattern_title: test-pattern-to-filter-edit-2-title
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-filter-edit-2-pattern
     jobs:
-    - job: test-job-to-instruction-edit-1
-      stop_on_fail: true
-    - job: test-job-to-instruction-edit-2
+      - job: test-job-to-instruction-edit-1
+        stop_on_fail: true
+      - job: test-job-to-instruction-edit-2
     last_executed_on: 1596712203
     last_modified: 1596712203
     name: test-instruction-to-get-2-name
-    priority: 0
     timeout_after_execution:
       unit: s
       value: 2
-    type: 1
-  instruction_3:
+
+  instruction_to_delete (extend instruction_manual):
     _id: test-instruction-to-delete
-    author: test-user-author-1-id
-    created: 1000000001
-    description: test-instruction-to-delete-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
+
+  instruction_to_update_1 (extend instruction_manual):
+    _id: test-instruction-to-update-1
     last_executed_on: 1596712203
-    last_modified: 1596712203
-    name: test-instruction-to-delete-name
-    steps:
-    - _id: test-instruction-to-delete-step-1
-      endpoint: test-instruction-to-delete-step-1-endpoint
-      name: test-instruction-to-delete-step-1-name
-      operations:
-      - _id: test-instruction-to-delete-step-1-operation-1
-        description: test-instruction-to-delete-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-delete-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_4:
-    _id: test-instruction-to-update
-    author: test-user-author-1-id
-    created: 1000000002
-    description: test-instruction-to-update-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
+    avg_complete_time: 400
+    rating: 3.5
+
+  instruction_to_update_2 (extend instruction_auto):
+    _id: test-instruction-to-update-2
     last_executed_on: 1596712203
-    last_modified: 1596712203
-    name: test-instruction-to-update-name
-    steps:
-    - _id: test-instruction-to-update-step-1
-      endpoint: test-instruction-to-update-step-1-endpoint
-      name: test-instruction-to-update-step-1-name
-      operations:
-      - _id: test-instruction-to-update-step-1-operation-1
-        description: test-instruction-to-update-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-update-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: m
-      value: 10
-    type: 0
-  instruction_5:
-    _id: test-instruction-to-update-with-approval
-    author: test-user-author-1-id
+    avg_complete_time: 400
+    rating: 3.5
+
+  instruction_to_update_with_approval_1 (extend instruction_manual):
+    _id: test-instruction-to-update-with-approval-1
+    description: test-instruction-to-update-with-approval-1-description
     avg_complete_time: 10
-    created: 1000000002
-    description: test-instruction-to-update-with-approval-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
-    last_executed_by: root
+    created: 1596712203
     last_executed_on: 1596712203
+    rating: 3.5
     last_modified: 1596712203
-    name: test-instruction-to-update-with-approval-name
+    name: test-instruction-to-update-with-approval-1-name
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-instruction-to-update-with-approval-1-pattern
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-instruction-to-update-with-approval-1-pattern
     steps:
-    - _id: test-instruction-to-update-with-approval-step-1
-      endpoint: test-instruction-to-update-with-approval-step-1-endpoint
-      name: test-instruction-to-update-with-approval-step-1-name
-      operations:
-      - _id: test-instruction-to-update-with-approval-step-1-operation-1
-        description: test-instruction-to-update-with-approval-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-update-with-approval-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    type: 0
-  instruction_6:
+      - _id: test-instruction-to-update-with-approval-1-step-1
+        endpoint: test-instruction-to-update-with-approval-1-step-1-endpoint
+        name: test-instruction-to-update-with-approval-1-step-1-name
+        operations:
+          - _id: test-instruction-to-update-with-approval-1-step-1-operation-1
+            description: test-instruction-to-update-with-approval-1-step-1-operation-1-description
+            jobs: [ ]
+            name: test-instruction-to-update-with-approval-1-step-1-operation-1-name
+            time_to_complete:
+              unit: s
+              value: 1
+        stop_on_fail: true
+
+  instruction_to_update_with_approval_2 (extend instruction_manual):
     _id: test-instruction-to-update-with-approval-2
-    author: test-user-author-1-id
-    avg_complete_time: 10
-    created: 1000000002
+    created: 1596712203
     description: test-instruction-to-update-with-approval-2-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
-    last_executed_by: root
     last_executed_on: 1596712203
+    avg_complete_time: 10
     last_modified: 1596712203
+    rating: 3.5
     name: test-instruction-to-update-with-approval-2-name
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-instruction-to-update-with-approval-2-pattern
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-instruction-to-update-with-approval-2-pattern
     steps:
-    - _id: test-instruction-to-update-with-approval-2-step-1
-      endpoint: test-instruction-to-update-with-approval-2-step-1-endpoint
-      name: test-instruction-to-update-with-approval-2-step-1-name
-      operations:
-      - _id: test-instruction-to-update-with-approval-2-step-1-operation-1
-        description: test-instruction-to-update-with-approval-2-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-update-with-approval-2-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
+      - _id: test-instruction-to-update-with-approval-2-step-1
+        endpoint: test-instruction-to-update-with-approval-2-step-1-endpoint
+        name: test-instruction-to-update-with-approval-2-step-1-name
+        operations:
+          - _id: test-instruction-to-update-with-approval-2-step-1-operation-1
+            description: test-instruction-to-update-with-approval-2-step-1-operation-1-description
+            jobs: [ ]
+            name: test-instruction-to-update-with-approval-2-step-1-operation-1-name
+            time_to_complete:
+              unit: s
+              value: 1
+        stop_on_fail: true
     type: 0
-  instruction_7:
+
+  instruction_to_update_with_approval_3 (extend instruction_manual):
     _id: test-instruction-to-update-with-approval-3
-    author: test-user-author-1-id
-    avg_complete_time: 10
-    created: 1000000002
-    description: test-instruction-to-update-with-approval-3-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
-    last_executed_by: root
-    last_executed_on: 1596712203
-    last_modified: 1596712203
-    name: test-instruction-to-update-with-approval-3-name
-    steps:
-    - _id: test-instruction-to-update-with-approval-3-step-1
-      endpoint: test-instruction-to-update-with-approval-3-step-1-endpoint
-      name: test-instruction-to-update-with-approval-3-step-1-name
-      operations:
-      - _id: test-instruction-to-update-with-approval-3-step-1-operation-1
-        description: test-instruction-to-update-with-approval-3-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-update-with-approval-3-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    type: 0
-  instruction_8:
+
+  instruction_to_update_with_approval_4 (extend instruction_manual):
     _id: test-instruction-to-update-with-approval-4
-    author: test-user-author-1-id
-    avg_complete_time: 10
-    created: 1000000002
+    created: 1596712203
     description: test-instruction-to-update-with-approval-4-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
-    last_executed_by: root
-    last_executed_on: 1596712203
     last_modified: 1596712203
     name: test-instruction-to-update-with-approval-4-name
     steps:
-    - _id: test-instruction-to-update-with-approval-4-step-1
-      endpoint: test-instruction-to-update-with-approval-4-step-1-endpoint
-      name: test-instruction-to-update-with-approval-4-step-1-name
-      operations:
-      - _id: test-instruction-to-update-with-approval-4-step-1-operation-1
-        description: test-instruction-to-update-with-approval-4-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-update-with-approval-4-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    type: 0
-  instruction_9:
+      - _id: test-instruction-to-update-with-approval-4-step-1
+        endpoint: test-instruction-to-update-with-approval-4-step-1-endpoint
+        name: test-instruction-to-update-with-approval-4-step-1-name
+        operations:
+          - _id: test-instruction-to-update-with-approval-4-step-1-operation-1
+            description: test-instruction-to-update-with-approval-4-step-1-operation-1-description
+            jobs: [ ]
+            name: test-instruction-to-update-with-approval-4-step-1-operation-1-name
+            time_to_complete:
+              unit: s
+              value: 1
+        stop_on_fail: true
+
+  instruction_to_update_with_approval_5 (extend instruction_manual):
     _id: test-instruction-to-update-with-approval-5
-    author: test-user-author-1-id
-    avg_complete_time: 10
-    created: 1000000002
+    created: 1596712203
     description: test-instruction-to-update-with-approval-5-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
-    last_executed_by: root
     last_executed_on: 1596712203
     last_modified: 1596712203
+    avg_complete_time: 10
+    rating: 3.5
     name: test-instruction-to-update-with-approval-5-name
     steps:
-    - _id: test-instruction-to-update-with-approval-5-step-1
-      endpoint: test-instruction-to-update-with-approval-5-step-1-endpoint
-      name: test-instruction-to-update-with-approval-5-step-1-name
-      operations:
-      - _id: test-instruction-to-update-with-approval-5-step-1-operation-1
-        description: test-instruction-to-update-with-approval-5-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-update-with-approval-5-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    type: 0
-  instruction_10:
+      - _id: test-instruction-to-update-with-approval-5-step-1
+        endpoint: test-instruction-to-update-with-approval-5-step-1-endpoint
+        name: test-instruction-to-update-with-approval-5-step-1-name
+        operations:
+          - _id: test-instruction-to-update-with-approval-5-step-1-operation-1
+            description: test-instruction-to-update-with-approval-5-step-1-operation-1-description
+            jobs: [ ]
+            name: test-instruction-to-update-with-approval-5-step-1-operation-1-name
+            time_to_complete:
+              unit: s
+              value: 1
+        stop_on_fail: true
+
+  instruction_to_update_with_approval_6 (extend instruction_manual):
     _id: test-instruction-to-update-with-approval-6
-    author: test-user-author-1-id
-    avg_complete_time: 10
-    created: 1000000002
+    created: 1596712203
     description: test-instruction-to-update-with-approval-6-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
-    last_executed_by: root
-    last_executed_on: 1596712203
     last_modified: 1596712203
     name: test-instruction-to-update-with-approval-6-name
     steps:
-    - _id: test-instruction-to-update-with-approval-6-step-1
-      endpoint: test-instruction-to-update-with-approval-6-step-1-endpoint
-      name: test-instruction-to-update-with-approval-6-step-1-name
-      operations:
-      - _id: test-instruction-to-update-with-approval-6-step-1-operation-1
-        description: test-instruction-to-update-with-approval-6-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-update-with-approval-6-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    type: 0
-  instruction_11:
+      - _id: test-instruction-to-update-with-approval-6-step-1
+        endpoint: test-instruction-to-update-with-approval-6-step-1-endpoint
+        name: test-instruction-to-update-with-approval-6-step-1-name
+        operations:
+          - _id: test-instruction-to-update-with-approval-6-step-1-operation-1
+            description: test-instruction-to-update-with-approval-6-step-1-operation-1-description
+            jobs: [ ]
+            name: test-instruction-to-update-with-approval-6-step-1-operation-1-name
+            time_to_complete:
+              unit: s
+              value: 1
+        stop_on_fail: true
+
+  instruction_to_update_with_approval_7 (extend instruction_manual):
     _id: test-instruction-to-update-with-approval-7
-    author: test-user-author-1-id
-    avg_complete_time: 10
-    created: 1000000002
-    description: test-instruction-to-update-with-approval-7-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
-    last_executed_by: root
     last_executed_on: 1596712203
-    last_modified: 1596712203
-    name: test-instruction-to-update-with-approval-7-name
-    steps:
-    - _id: test-instruction-to-update-with-approval-7-step-1
-      endpoint: test-instruction-to-update-with-approval-7-step-1-endpoint
-      name: test-instruction-to-update-with-approval-7-step-1-name
-      operations:
-      - _id: test-instruction-to-update-with-approval-7-step-1-operation-1
-        description: test-instruction-to-update-with-approval-7-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-update-with-approval-7-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    type: 0
-  instruction_12:
+    avg_complete_time: 10
+    rating: 3.5
+
+  instruction_to_update_with_approval_8 (extend instruction_manual):
     _id: test-instruction-to-update-with-approval-8
-    author: test-user-author-1-id
-    avg_complete_time: 10
-    created: 1000000002
-    description: test-instruction-to-update-with-approval-8-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
-    last_executed_by: root
     last_executed_on: 1596712203
-    last_modified: 1596712203
-    name: test-instruction-to-update-with-approval-8-name
-    steps:
-    - _id: test-instruction-to-update-with-approval-8-step-1
-      endpoint: test-instruction-to-update-with-approval-8-step-1-endpoint
-      name: test-instruction-to-update-with-approval-8-step-1-name
-      operations:
-      - _id: test-instruction-to-update-with-approval-8-step-1-operation-1
-        description: test-instruction-to-update-with-approval-8-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-update-with-approval-8-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    type: 0
-  instruction_13:
+    avg_complete_time: 10
+    rating: 3.5
+
+  instruction_to_update_with_approval_9 (extend instruction_manual):
     _id: test-instruction-to-update-with-approval-9
-    author: test-user-author-1-id
-    avg_complete_time: 10
-    created: 1000000002
-    description: test-instruction-to-update-with-approval-9-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
-    last_executed_by: root
     last_executed_on: 1596712203
+    avg_complete_time: 10
+    rating: 3.5
+
+  instruction_to_update_with_approval_10 (extend instruction_manual):
+    _id: test-instruction-to-update-with-approval-10
+    created: 1596712203
+    description: test-instruction-to-update-with-approval-10-description
     last_modified: 1596712203
-    name: test-instruction-to-update-with-approval-9-name
+    last_executed_on: 1596712203
+    avg_complete_time: 10
+    rating: 3.5
+    name: test-instruction-to-update-with-approval-10-name
     steps:
-    - _id: test-instruction-to-update-with-approval-9-step-1
-      endpoint: test-instruction-to-update-with-approval-9-step-1-endpoint
-      name: test-instruction-to-update-with-approval-9-step-1-name
-      operations:
-      - _id: test-instruction-to-update-with-approval-9-step-1-operation-1
-        description: test-instruction-to-update-with-approval-9-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-update-with-approval-9-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    type: 0
-  instruction_14:
+      - _id: test-instruction-to-update-with-approval-10-step-1
+        endpoint: test-instruction-to-update-with-approval-10-step-1-endpoint
+        name: test-instruction-to-update-with-approval-10-step-1-name
+        operations:
+          - _id: test-instruction-to-update-with-approval-10-step-1-operation-1
+            description: test-instruction-to-update-with-approval-10-step-1-operation-1-description
+            jobs: [ ]
+            name: test-instruction-to-update-with-approval-10-step-1-operation-1-name
+            time_to_complete:
+              unit: s
+              value: 1
+        stop_on_fail: true
+
+  instruction_to_update_with_approval_11 (extend instruction_auto):
+    _id: test-instruction-to-update-with-approval-11
+    created: 1596712203
+    description: test-instruction-to-update-with-approval-11-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-instruction-to-update-with-approval-11-pattern
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-instruction-edit-1
+        stop_on_fail: false
+    last_modified: 1596712203
+    last_executed_on: 1596712203
+    avg_complete_time: 10
+    rating: 3.5
+    name: test-instruction-to-update-with-approval-11-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
+  instruction_to_check_unique (extend instruction_manual):
+    _id: test-instruction-to-check-unique-id
+    name: test-instruction-to-check-unique-name
+
+  instruction_to_job_check_linked_1 (extend instruction_manual):
+    _id: test-instruction-to-job-check-linked-1
+    steps:
+      - _id: test-instruction-to-job-check-linked-1-step-1
+        endpoint: test-instruction-to-job-check-linked-1-step-1-endpoint
+        name: test-instruction-to-job-check-linked-1-step-1-name
+        operations:
+          - _id: test-instruction-to-job-check-linked-1-step-1-operation-1
+            description: test-instruction-to-job-check-linked-1-step-1-operation-1-description
+            jobs:
+              - test-job-to-check-linked-to-manual-instruction
+            name: test-instruction-to-job-check-linked-1-step-1-operation-1-name
+            time_to_complete:
+              unit: s
+              value: 1
+        stop_on_fail: true
+
+  instruction_to_job_check_linked_2 (extend instruction_auto):
+    _id: test-instruction-to-job-check-linked-2
+    jobs:
+      - job: test-job-to-check-linked-to-auto-instruction
+
+  instruction_to_start_multiple_times (extend instruction_manual):
+    _id: test-instruction-execution-to-start-multiple-times
+    entity_pattern:
+    alarm_pattern:
+      - - field: v.resource
+          cond:
+            type: eq
+            value: test-instruction-execution-start-resource-2
+
+  instruction_execution_running (extend instruction_manual):
+    _id: test-instruction-execution-running
+
+  instruction_to_cancel_execution_running (extend instruction_manual):
+    _id: test-instruction-cancel-execution-running-1
+
+  instruction_to_cancel_execution_running_2_1 (extend instruction_manual):
     _id: test-instruction-to-update-w-approval-should-cancel-execution
-    author: test-user-author-1-id
-    avg_complete_time: 10
-    created: 1000000002
-    description: test-instruction-to-update-w-approval-should-cancel-execution-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
-    last_executed_by: root
-    last_executed_on: 1596712203
-    last_modified: 1596712203
-    name: test-instruction-to-update-w-approval-should-cancel-execution-name
     steps:
-    - _id: test-instruction-to-update-w-approval-should-cancel-execution-step-1
-      endpoint: test-instruction-to-update-w-approval-should-cancel-execution-step-1-endpoint
-      name: test-instruction-to-update-w-approval-should-cancel-execution-step-1-name
-      operations:
-      - _id: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1
-        description: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    type: 0
-  instruction_15:
+      - _id: test-instruction-to-update-w-approval-should-cancel-execution-step-1
+        endpoint: test-instruction-to-update-w-approval-should-cancel-execution-step-1-endpoint
+        name: test-instruction-to-update-w-approval-should-cancel-execution-step-1-name
+        operations:
+          - _id: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1
+            description: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1-description
+            jobs: [ ]
+            name: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1-name
+            time_to_complete:
+              unit: s
+              value: 1
+        stop_on_fail: true
+
+  instruction_to_cancel_execution_running_2_2 (extend instruction_manual):
     _id: test-instruction-to-update-w-approval-should-cancel-execution-updated
     approval:
       comment: test
       requested_by: root
       user: approveruser
-    author: test-user-author-1-id
-    avg_complete_time: 10
-    created: 1000000002
-    description: test-instruction-to-update-w-approval-should-cancel-execution-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
-    last_executed_by: root
-    last_executed_on: 1596712203
-    last_modified: 1596712203
     name: test-instruction-to-update-w-approval-should-cancel-execution-name
     original_id: test-instruction-to-update-w-approval-should-cancel-execution
     status: 2
     steps:
-    - _id: test-instruction-to-update-w-approval-should-cancel-execution-step-1
-      endpoint: new endpoint
-      name: test-instruction-to-update-w-approval-should-cancel-execution-step-1-name
-      operations:
-      - _id: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1
-        description: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    type: 0
-  instruction_16:
-    _id: test-instruction-to-check-unique-id
-    author: test-user-author-1-id
-    created: 1000000001
-    description: test-instruction-to-check-unique-id-description
-    enabled: true
-    entity_patterns:
-    - name: test-instruction-to-check-unique-id-pattern
-    last_executed_on: 1596712203
-    last_modified: 1596712203
-    name: test-instruction-to-check-unique-id-name
-    steps:
-    - _id: test-instruction-to-check-unique-id-step-1
-      endpoint: test-instruction-to-check-unique-id-step-1-endpoint
-      name: test-instruction-to-check-unique-id-step-1-name
-      operations:
-      - _id: test-instruction-to-check-unique-id-step-1-operation-1
-        description: test-instruction-to-check-unique-id-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-check-unique-id-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_17:
-    _id: test-instruction-to-check-unique-name
-    author: test-user-author-1-id
-    created: 1000000001
-    description: test-instruction-to-check-unique-name-description
-    enabled: true
-    entity_patterns:
-    - name: test-instruction-to-check-unique-name-pattern
-    last_executed_on: 1596712203
-    last_modified: 1596712203
-    name: test-instruction-to-check-unique-name-name
-    steps:
-    - _id: test-instruction-to-check-unique-name-step-1
-      endpoint: test-instruction-to-check-unique-name-step-1-endpoint
-      name: test-instruction-to-check-unique-name-step-1-name
-      operations:
-      - _id: test-instruction-to-check-unique-name-step-1-operation-1
-        description: test-instruction-to-check-unique-name-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-check-unique-name-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_18:
-    _id: test-instruction-to-job-check-linked-1
-    author: test-user-author-1-id
-    created: 1000000000
-    description: test-instruction-to-job-check-linked-1-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
-    last_executed_on: 1596712203
-    last_modified: 1596712203
-    name: test-instruction-to-job-check-linked-1-name
-    steps:
-    - _id: test-instruction-to-job-check-linked-1-step-1
-      endpoint: test-instruction-to-job-check-linked-1-step-1-endpoint
-      name: test-instruction-to-job-check-linked-1-step-1-name
-      operations:
-      - _id: test-instruction-to-job-check-linked-1-step-1-operation-1
-        description: test-instruction-to-job-check-linked-1-step-1-operation-1-description
-        jobs:
-        - test-job-to-check-linked-to-manual-instruction
-        name: test-instruction-to-job-check-linked-1-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_19:
-    _id: test-instruction-to-job-check-linked-2
-    author: test-user-author-1-id
-    created: 1000000000
-    description: test-instruction-to-job-check-linked-2-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
-    jobs:
-    - job: test-job-to-check-linked-to-auto-instruction
-    last_executed_on: 1596712203
-    last_modified: 1596712203
-    name: test-instruction-to-job-check-linked-2-name
-    priority: 1
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 1
-  instruction_20:
-    _id: test-instruction-execution-to-start-multiple-times
-    alarm_patterns:
-    - _id: test-instruction-execution-start-2
-    author: test-user-author-1-id
-    created: 1000000003
-    description: test-instruction-execution-to-start-multiple-times-description
-    enabled: true
-    last_executed_on: 1596712203
-    last_modified: 1596712203
-    name: test-instruction-execution-to-start-multiple-times-name
-    steps:
-    - _id: test-instruction-execution-to-start-multiple-times-step-1
-      endpoint: test-instruction-execution-to-start-multiple-times-step-1-endpoint
-      name: test-instruction-execution-to-start-multiple-times-step-1-name
-      operations:
-      - _id: test-instruction-execution-to-start-multiple-times-step-1-operation-1
-        description: test-instruction-execution-to-start-multiple-times-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-execution-to-start-multiple-times-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      - _id: test-instruction-execution-to-start-multiple-times-step-1-operation-2
-        description: test-instruction-execution-to-start-multiple-times-step-1-operation-2-description
-        jobs: []
-        name: test-instruction-execution-to-start-multiple-times-step-1-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 3
-      stop_on_fail: true
-    - _id: test-instruction-execution-to-start-multiple-times-step-2
-      endpoint: test-instruction-execution-to-start-multiple-times-step-2-endpoint
-      name: test-instruction-execution-to-start-multiple-times-step-2-name
-      operations:
-      - _id: test-instruction-execution-to-start-multiple-times-step-2-operation-1
-        description: test-instruction-execution-to-start-multiple-times-step-2-operation-1-description
-        jobs: []
-        name: test-instruction-execution-to-start-multiple-times-step-2-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 6
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_21:
-    _id: test-instruction-execution-running
-    author: test-user-author-1-id
-    created: 1000000004
-    description: test-instruction-execution-running-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
-    last_executed_on: 1596712203
-    last_modified: 1596712203
-    name: test-instruction-execution-running-name
-    steps:
-    - _id: test-instruction-execution-running-step-1
-      endpoint: test-instruction-execution-running-step-1-endpoint
-      name: test-instruction-execution-running-step-1-name
-      operations:
-      - _id: test-instruction-execution-running-step-1-operation-1
-        description: test-instruction-execution-running-step-1-operation-1-description
-        jobs:
-        - test-job-execution-to-get
-        name: test-instruction-execution-running-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      - _id: test-instruction-execution-running-step-1-operation-2
-        description: test-instruction-execution-running-step-1-operation-2-description
-        jobs: []
-        name: test-instruction-execution-running-step-1-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 3
-      stop_on_fail: true
-    - _id: test-instruction-execution-running-step-2
-      endpoint: test-instruction-execution-running-step-2-endpoint
-      name: test-instruction-execution-running-step-2-name
-      operations:
-      - _id: test-instruction-execution-running-step-2-operation-1
-        description: test-instruction-execution-running-step-2-operation-1-description
-        jobs: []
-        name: test-instruction-execution-running-step-2-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 6
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_22:
-    _id: test-instruction-cancel-execution-running-1
-    author: test-user-author-1-id
-    created: 1000000008
-    description: test-instruction-cancel-execution-running-1-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
-    last_executed_on: 1596712203
-    last_modified: 1596712203
-    name: test-instruction-cancel-execution-running-1-name
-    steps:
-    - _id: test-instruction-cancel-execution-running-1-step-1
-      endpoint: test-instruction-cancel-execution-running-1-step-1-endpoint
-      name: test-instruction-cancel-execution-running-1-step-1-name
-      operations:
-      - _id: test-instruction-cancel-execution-running-1-step-1-operation-1
-        description: test-instruction-cancel-execution-running-1-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-cancel-execution-running-1-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      - _id: test-instruction-cancel-execution-running-1-step-1-operation-2
-        description: test-instruction-cancel-execution-running-1-step-1-operation-2-description
-        jobs: []
-        name: test-instruction-cancel-execution-running-1-step-1-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 3
-      stop_on_fail: true
-    - _id: test-instruction-cancel-execution-running-1-step-2
-      endpoint: test-instruction-cancel-execution-running-1-step-2-endpoint
-      name: test-instruction-cancel-execution-running-1-step-2-name
-      operations:
-      - _id: test-instruction-cancel-execution-running-1-step-2-operation-1
-        description: test-instruction-cancel-execution-running-1-step-2-operation-1-description
-        jobs: []
-        name: test-instruction-cancel-execution-running-1-step-2-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 6
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_23:
+      - _id: test-instruction-to-update-w-approval-should-cancel-execution-step-1
+        endpoint: new endpoint
+        name: test-instruction-to-update-w-approval-should-cancel-execution-step-1-name
+        operations:
+          - _id: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1
+            description: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1-description
+            jobs: []
+            name: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1-name
+            time_to_complete:
+              unit: s
+              value: 1
+        stop_on_fail: true
+
+  instruction_to_delete_execution_running (extend instruction_manual):
     _id: test-instruction-delete-execution-running
-    author: test-user-author-1-id
-    created: 1596712203
-    description: test-instruction-delete-execution-running-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
-    last_executed_on: 1596712203
-    last_modified: 1596712203
-    name: test-instruction-delete-execution-running-name
-    steps:
-    - _id: test-instruction-delete-execution-running-step-1
-      endpoint: test-instruction-delete-execution-running-step-1-endpoint
-      name: test-instruction-delete-execution-running-step-1-name
-      operations:
-      - _id: test-instruction-delete-execution-running-step-1-operation-1
-        description: test-instruction-delete-execution-running-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-delete-execution-running-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      - _id: test-instruction-delete-execution-running-step-1-operation-2
-        description: test-instruction-delete-execution-running-step-1-operation-2-description
-        jobs: []
-        name: test-instruction-delete-execution-running-step-1-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 3
-      stop_on_fail: true
-    - _id: test-instruction-delete-execution-running-step-2
-      endpoint: test-instruction-delete-execution-running-step-2-endpoint
-      name: test-instruction-delete-execution-running-step-2-name
-      operations:
-      - _id: test-instruction-delete-execution-running-step-2-operation-1
-        description: test-instruction-delete-execution-running-step-2-operation-1-description
-        jobs: []
-        name: test-instruction-delete-execution-running-step-2-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 6
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_24:
+
+  instruction_to_execution_resume (extend instruction_manual):
     _id: test-instruction-execution-resume-1
-    author: test-user-author-1-id
-    created: 1000000011
     description: test-instruction-execution-resume-1-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
-    last_executed_on: 1596712203
-    last_modified: 1596712203
     name: test-instruction-execution-resume-1-name
     steps:
-    - _id: test-instruction-execution-resume-1-step-1
-      endpoint: test-instruction-execution-resume-1-step-1-endpoint
-      name: test-instruction-execution-resume-1-step-1-name
-      operations:
-      - _id: test-instruction-execution-resume-1-step-1-operation-1
-        description: test-instruction-execution-resume-1-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-execution-resume-1-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      - _id: test-instruction-execution-resume-1-step-1-operation-2
-        description: test-instruction-execution-resume-1-step-1-operation-2-description
-        jobs: []
-        name: test-instruction-execution-resume-1-step-1-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 3
-      stop_on_fail: true
-    - _id: test-instruction-execution-resume-1-step-2
-      endpoint: test-instruction-execution-resume-1-step-2-endpoint
-      name: test-instruction-execution-resume-1-step-2-name
-      operations:
-      - _id: test-instruction-execution-resume-1-step-2-operation-1
-        description: test-instruction-execution-resume-1-step-2-operation-1-description
-        jobs: []
-        name: test-instruction-execution-resume-1-step-2-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 6
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_25:
+      - _id: test-instruction-execution-resume-1-step-1
+        endpoint: test-instruction-execution-resume-1-step-1-endpoint
+        name: test-instruction-execution-resume-1-step-1-name
+        operations:
+          - _id: test-instruction-execution-resume-1-step-1-operation-1
+            description: test-instruction-execution-resume-1-step-1-operation-1-description
+            jobs: [ ]
+            name: test-instruction-execution-resume-1-step-1-operation-1-name
+            time_to_complete:
+              unit: s
+              value: 1
+          - _id: test-instruction-execution-resume-1-step-1-operation-2
+            description: test-instruction-execution-resume-1-step-1-operation-2-description
+            jobs: [ ]
+            name: test-instruction-execution-resume-1-step-1-operation-2-name
+            time_to_complete:
+              unit: s
+              value: 3
+        stop_on_fail: true
+      - _id: test-instruction-execution-resume-1-step-2
+        endpoint: test-instruction-execution-resume-1-step-2-endpoint
+        name: test-instruction-execution-resume-1-step-2-name
+        operations:
+          - _id: test-instruction-execution-resume-1-step-2-operation-1
+            description: test-instruction-execution-resume-1-step-2-operation-1-description
+            jobs: [ ]
+            name: test-instruction-execution-resume-1-step-2-operation-1-name
+            time_to_complete:
+              unit: s
+              value: 6
+        stop_on_fail: true
+
+  instruction_to_assign_1 (extend instruction_manual):
     _id: test-instruction-to-assign
-    alarm_patterns:
-    - _id: test-alarm-with-instruction-1
-    author: test-user-author-1-id
-    created: 1000000012
-    description: test-instruction-to-assign-description
-    enabled: true
-    last_executed_on: 1596712203
-    last_modified: 1596712203
-    name: test-instruction-to-assign-name
-    steps:
-    - _id: test-instruction-to-assign-step-1
-      endpoint: test-instruction-to-assign-step-1-endpoint
-      name: test-instruction-to-assign-step-1-name
-      operations:
-      - _id: test-instruction-to-assign-step-1-operation-1
-        description: test-instruction-to-assign-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-assign-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_26:
+    entity_pattern:
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-alarm-with-instruction-1
+
+  instruction_to_assign_2 (extend instruction_manual):
     _id: test-instruction-should-not-be-assigned
-    alarm_patterns:
-    - _id: test-alarm-with-instruction-1
-    author: test-user-author-1-id
-    avg_complete_time: 10
-    created: 1000000012
-    description: test-instruction-to-assign-description
-    enabled: true
-    last_executed_by: test_author
-    last_executed_on: 1596712203
-    last_modified: 1596712203
-    month_executions: 5
-    name: test-instruction-to-assign-name
-    status: 1
-    steps:
-    - _id: test-instruction-to-assign-step-1
-      endpoint: test-instruction-to-assign-step-1-endpoint
-      name: test-instruction-to-assign-step-1-name
-      operations:
-      - _id: test-instruction-to-assign-step-1-operation-1
-        description: test-instruction-to-assign-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-assign-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    type: 0
-  instruction_27:
+    entity_pattern:
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-alarm-with-instruction-1
+
+  instruction_to_assign_3 (extend instruction_manual):
     _id: test-instruction-to-assign-with-execution
-    alarm_patterns:
-    - _id: test-alarm-with-instruction-2
-    author: test-user-author-1-id
-    created: 1000000013
-    description: test-instruction-to-assign-with-execution-description
-    enabled: true
-    last_executed_on: 1596712203
-    last_modified: 1596712203
-    name: test-instruction-to-assign-with-execution-name
-    steps:
-    - _id: test-instruction-to-assign-with-execution-step-1
-      endpoint: test-instruction-to-assign-with-execution-step-1-endpoint
-      name: test-instruction-to-assign-with-execution-step-1-name
-      operations:
-      - _id: test-instruction-to-assign-with-execution-step-1-operation-1
-        description: test-instruction-to-assign-with-execution-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-assign-with-execution-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_28:
+    entity_pattern:
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-alarm-with-instruction-2
+
+  instruction_to_assign_4 (extend instruction_manual):
     _id: test-instruction-to-assign-with-execution-2
-    alarm_patterns:
-    - _id: test-alarm-with-instruction-3
-    author: test-user-author-1-id
-    created: 1000000014
-    description: test-instruction-to-assign-with-execution-2-description
-    enabled: true
-    last_executed_on: 1596712203
-    last_modified: 1596712203
-    name: test-instruction-to-assign-with-execution-2-name
-    steps:
-    - _id: test-instruction-to-assign-with-execution-2-step-1
-      endpoint: test-instruction-to-assign-with-execution-2-step-1-endpoint
-      name: test-instruction-to-assign-with-execution-2-step-1-name
-      operations:
-      - _id: test-instruction-to-assign-with-execution-2-step-1-operation-1
-        description: test-instruction-to-assign-with-execution-2-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-assign-with-execution-2-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_29:
+    entity_pattern:
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-alarm-with-instruction-3
+
+  instruction_to_assign_5 (extend instruction_manual):
     _id: test-instruction-to-assign-without-execution
-    alarm_patterns:
-    - _id: test-alarm-with-instruction-3
-    author: test-user-author-1-id
-    created: 1000000015
-    description: test-instruction-to-assign-without-execution-description
-    enabled: true
-    last_executed_on: 1596712203
-    last_modified: 1596712203
-    name: test-instruction-to-assign-without-execution-name
-    steps:
-    - _id: test-instruction-to-assign-without-execution-step-1
-      endpoint: test-instruction-to-assign-without-execution-step-1-endpoint
-      name: test-instruction-to-assign-without-execution-step-1-name
-      operations:
-      - _id: test-instruction-to-assign-without-execution-step-1-operation-1
-        description: test-instruction-to-assign-without-execution-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-assign-without-execution-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_30:
+    entity_pattern:
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-alarm-with-instruction-3
+
+  instruction_to_auto_instruction_filter (extend instruction_auto):
     _id: test-instruction-to-auto-instruction-filter
-    alarm_patterns:
-    - _id: test-alarm-with-instruction-4
-    author: test-user-author-1-id
-    created: 1000000015
-    description: test-instruction-to-auto-instruction-filter-description
-    enabled: true
-    jobs:
-    - job: test-job-to-instruction-edit-1
-    last_executed_on: 1596712203
-    last_modified: 1596712203
-    name: test-instruction-to-auto-instruction-filter-name
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 1
-  instruction_31:
+    entity_pattern:
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-alarm-with-instruction-4
+
+  instruction_to_rate_1 (extend instruction_manual):
     _id: test-instruction-to-rate-1
-    alarm_patterns:
-    - _id: test-alarm-it-does-not-matter
-    author: test-user-author-1-id
     created: 1000000016
-    description: test-instruction-to-rate-1-description
-    enabled: true
     last_executed_on: 1596712203
     last_modified: 1596712203
     name: test-instruction-to-rate-1-name
-    steps:
-    - _id: test-instruction-to-rate-1-step-1
-      endpoint: test-instruction-to-rate-1-step-1-endpoint
-      name: test-instruction-to-rate-1-step-1-name
-      operations:
-      - _id: test-instruction-to-rate-1-step-1-operation-1
-        description: test-instruction-to-rate-1-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-rate-1-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_32:
+
+  instruction_to_rate_2 (extend instruction_manual):
     _id: test-instruction-to-rate-2
-    alarm_patterns:
-    - _id: test-alarm-it-does-not-matter
-    author: test-user-author-1-id
     created: 1000000017
-    description: test-instruction-to-rate-2-description
-    enabled: true
     last_executed_on: 1596712203
     last_modified: 1596712203
     name: test-instruction-to-rate-2-name
-    steps:
-    - _id: test-instruction-to-rate-2-step-1
-      endpoint: test-instruction-to-rate-2-step-1-endpoint
-      name: test-instruction-to-rate-2-step-1-name
-      operations:
-      - _id: test-instruction-to-rate-2-step-1-operation-1
-        description: test-instruction-to-rate-2-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-rate-2-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
     users:
-    - test-user-to-rate-instruction
-  instruction_33:
+      - test-user-to-rate-instruction
+
+  instruction_to_rate_3 (extend instruction_manual):
     _id: test-instruction-to-rate-3
-    alarm_patterns:
-    - _id: test-alarm-it-does-not-matter
-    author: test-user-author-1-id
-    created: 1000000018
-    description: test-instruction-to-rate-3-description
-    enabled: true
     last_executed_on: 1596712203
-    last_modified: 1596712203
     name: test-instruction-to-rate-3-name
-    steps:
-    - _id: test-instruction-to-rate-3-step-1
-      endpoint: test-instruction-to-rate-3-step-1-endpoint
-      name: test-instruction-to-rate-3-step-1-name
-      operations:
-      - _id: test-instruction-to-rate-3-step-1-operation-1
-        description: test-instruction-to-rate-3-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-rate-3-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
     users:
-    - test-user-to-rate-instruction
-  instruction_34:
+      - test-user-to-rate-instruction
+
+  instruction_to_rate_4 (extend instruction_manual):
     _id: test-instruction-to-rate-4
-    alarm_patterns:
-    - _id: test-alarm-it-does-not-matter
-    author: test-user-author-1-id
-    created: 1000000019
-    description: test-instruction-to-rate-4-description
-    enabled: true
-    last_modified: 1596712203
     name: test-instruction-to-rate-4-name
-    steps:
-    - _id: test-instruction-to-rate-4-step-1
-      endpoint: test-instruction-to-rate-4-step-1-endpoint
-      name: test-instruction-to-rate-4-step-1-name
-      operations:
-      - _id: test-instruction-to-rate-4-step-1-operation-1
-        description: test-instruction-to-rate-4-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-rate-4-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_35:
+
+  instruction_to_rate_5 (extend instruction_manual):
     _id: test-instruction-to-rate-5
-    alarm_patterns:
-    - _id: test-alarm-it-does-not-matter
-    author: test-user-author-1-id
-    created: 1000000019
-    description: test-instruction-to-rate-5-description
-    enabled: true
     last_executed_on: 1596712203
-    last_modified: 1596712203
     name: test-instruction-to-rate-5-name
-    steps:
-    - _id: test-instruction-to-rate-5-step-1
-      endpoint: test-instruction-to-rate-5-step-1-endpoint
-      name: test-instruction-to-rate-5-step-1-name
-      operations:
-      - _id: test-instruction-to-rate-5-step-1-operation-1
-        description: test-instruction-to-rate-5-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-rate-5-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_36:
+
+  instruction_to_check_rate_notify (extend instruction_manual):
     _id: test-instruction-to-check-rate-notify
-    alarm_patterns:
-    - _id: test-alarm-it-does-not-matter
-    author: test-user-author-1-id
-    created: 1000000019
-    description: test-instruction-to-check-rate-notify-description
-    enabled: true
-    last_executed_on: 1596712203
-    last_modified: 1596712203
-    name: test-instruction-to-check-rate-notify-name
-    rating: 5
-    steps:
-    - _id: test-instruction-to-check-rate-notify-step-1
-      endpoint: test-instruction-to-check-rate-notify-step-1-endpoint
-      name: test-instruction-to-check-rate-notify-step-1-name
-      operations:
-      - _id: test-instruction-to-check-rate-notify-step-1-operation-1
-        description: test-instruction-to-check-rate-notify-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-check-rate-notify-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_37:
+
+  instruction_with_entity_pattern_1 (extend instruction_manual):
     _id: test-instruction-with-entity-pattern-1
-    author: test-user-author-1-id
-    created: 1000000019
-    description: test-instruction-with-entity-pattern-1-description
-    enabled: true
-    entity_patterns:
-    - name:
-        regex_match: test-alarm-get-resource.*
-    last_executed_on: 1596712203
-    last_modified: 1596712203
-    name: test-instruction-with-entity-pattern-1-name
-    steps:
-    - _id: test-instruction-with-entity-pattern-1-step-1
-      endpoint: test-instruction-with-entity-pattern-1-step-1-endpoint
-      name: test-instruction-with-entity-pattern-1-step-1-name
-      operations:
-      - _id: test-instruction-with-entity-pattern-1-step-1-operation-1
-        description: test-instruction-with-entity-pattern-1-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-with-entity-pattern-1-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_38:
+    entity_pattern:
+      - - field: name
+          cond:
+            type: regexp
+            value: test-alarm-get-resource.*
+    alarm_pattern:
+
+  instruction_with_entity_pattern_2 (extend instruction_manual):
     _id: test-instruction-with-entity-pattern-2
-    author: test-user-author-1-id
-    created: 1000000019
-    description: test-instruction-with-entity-pattern-2-description
-    enabled: true
-    entity_patterns:
-    - name:
-        regex_match: test-alarm-get-*
-    last_executed_on: 1596712203
-    last_modified: 1596712203
-    name: test-instruction-with-entity-pattern-2-name
-    steps:
-    - _id: test-instruction-with-entity-pattern-2-step-1
-      endpoint: test-instruction-with-entity-pattern-2-step-1-endpoint
-      name: test-instruction-with-entity-pattern-2-step-1-name
-      operations:
-      - _id: test-instruction-with-entity-pattern-2-step-1-operation-1
-        description: test-instruction-with-entity-pattern-2-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-with-entity-pattern-2-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_39:
+    entity_pattern:
+      - - field: name
+          cond:
+            type: regexp
+            value: test-alarm-get-*
+    alarm_pattern:
+
+  instruction_with_patterns_combined (extend instruction_manual):
     _id: test-instruction-with-patterns-combined
-    alarm_patterns:
-    - v:
-        component: test-alarm-get-component
-    author: test-user-author-1-id
-    created: 1000000019
-    description: test-instruction-with-patterns-combined-description
-    enabled: true
-    entity_patterns:
-    - _id:
-        regex_match: test-alarm-get-*
-    last_executed_on: 1596712203
-    last_modified: 1596712203
-    name: test-instruction-with-patterns-combined-name
-    steps:
-    - _id: test-instruction-with-patterns-combined-step-1
-      endpoint: test-instruction-with-patterns-combined-step-1-endpoint
-      name: test-instruction-with-patterns-combined-step-1-name
-      operations:
-      - _id: test-instruction-with-patterns-combined-step-1-operation-1
-        description: test-instruction-with-patterns-combined-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-with-patterns-combined-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_40:
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-alarm-get-component
+    entity_pattern:
+      - - field: name
+          cond:
+            type: regexp
+            value: test-alarm-get-*
+
+  instruction_with_pbh_to_edit (extend instruction_manual):
     _id: test-instruction-with-pbh-to-edit
     active_on_pbh:
-    - test1
-    - test2
-    alarm_patterns:
-    - v:
-        component: test-alarm-instruction-with-pbehavior-component-no-match
-    author: test-user-author-1-id
-    created: 1596712203
-    description: test-instruction-with-pbh-to-edit-description
-    enabled: true
-    last_modified: 1596712203
-    name: test-instruction-with-pbh-to-edit-name
-    steps: []
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_41:
+      - test1
+      - test2
+    entity_pattern:
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-alarm-instruction-with-pbehavior-component-no-match
+
+  instruction_to_run_auto_instruction_1_1 (extend instruction_auto):
     _id: test-instruction-to-run-auto-instruction-1-1
-    author: test-user-author-1-id
     created: 1596712203
     description: test-instruction-to-run-auto-instruction-1-1-description
-    enabled: true
-    entity_patterns:
-    - name: test-resource-to-run-auto-instruction-1
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-1
+    alarm_pattern:
     jobs:
-    - job: test-job-to-run-auto-instruction-1
-      stop_on_fail: false
-    - job: test-job-to-run-auto-instruction-2
-      stop_on_fail: false
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+      - job: test-job-to-run-auto-instruction-2
+        stop_on_fail: false
     last_modified: 1596712203
     name: test-instruction-to-run-auto-instruction-1-1-name
-    priority: 2
     timeout_after_execution:
       unit: s
       value: 2
-    type: 1
-  instruction_42:
+
+  instruction_to_run_auto_instruction_1_2 (extend instruction_auto):
     _id: test-instruction-to-run-auto-instruction-1-2
-    author: test-user-author-1-id
     created: 1596712203
     description: test-instruction-to-run-auto-instruction-1-2-description
-    enabled: true
-    entity_patterns:
-    - name: test-resource-to-run-auto-instruction-1
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-1
+    alarm_pattern:
     jobs:
-    - job: test-job-to-run-auto-instruction-1
-      stop_on_fail: false
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
     last_modified: 1596712203
     name: test-instruction-to-run-auto-instruction-1-2-name
-    priority: 3
     timeout_after_execution:
       unit: s
       value: 2
-    type: 1
-  instruction_43:
+
+  instruction_to_run_auto_instruction_2_1 (extend instruction_auto):
     _id: test-instruction-to-run-auto-instruction-2-1
-    author: test-user-author-1-id
     created: 1596712203
     description: test-instruction-to-run-auto-instruction-2-1-description
-    enabled: true
-    entity_patterns:
-    - name: test-resource-to-run-auto-instruction-2
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-2
+    alarm_pattern:
     jobs:
-    - job: test-job-to-run-auto-instruction-1
-      stop_on_fail: false
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
     last_modified: 1596712203
     name: test-instruction-to-run-auto-instruction-2-1-name
-    priority: 4
     timeout_after_execution:
       unit: s
       value: 3
-    type: 1
-  instruction_44:
+
+  instruction_to_run_auto_instruction_2_2 (extend instruction_auto):
     _id: test-instruction-to-run-auto-instruction-2-2
-    author: test-user-author-1-id
     created: 1596712203
     description: test-instruction-to-run-auto-instruction-2-2-description
-    enabled: true
-    entity_patterns:
-    - name: test-resource-to-run-auto-instruction-2
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-2
+    alarm_pattern:
     jobs:
-    - job: test-job-to-run-auto-instruction-2
-      stop_on_fail: false
+      - job: test-job-to-run-auto-instruction-2
+        stop_on_fail: false
     last_modified: 1596712203
     name: test-instruction-to-run-auto-instruction-2-2-name
-    priority: 5
     timeout_after_execution:
       unit: s
       value: 2
-    type: 1
-  instruction_45:
+
+  instruction_to_run_auto_instruction_3_1 (extend instruction_auto):
     _id: test-instruction-to-run-auto-instruction-3-1
-    author: test-user-author-1-id
     created: 1596712203
     description: test-instruction-to-run-auto-instruction-3-1-description
-    enabled: true
-    entity_patterns:
-    - name: test-resource-to-run-auto-instruction-3
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-3
+    alarm_pattern:
     jobs:
-    - job: test-job-to-run-auto-instruction-3
-      stop_on_fail: false
+      - job: test-job-to-run-auto-instruction-3
+        stop_on_fail: false
     last_modified: 1596712203
     name: test-instruction-to-run-auto-instruction-3-1-name
-    priority: 6
     timeout_after_execution:
       unit: s
       value: 10
-    type: 1
-  instruction_46:
+
+  instruction_to_run_auto_instruction_3_2 (extend instruction_auto):
     _id: test-instruction-to-run-auto-instruction-3-2
-    author: test-user-author-1-id
     created: 1596712203
     description: test-instruction-to-run-auto-instruction-3-2-description
-    enabled: true
-    entity_patterns:
-    - name: test-resource-to-run-auto-instruction-3
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-3
+    alarm_pattern:
     jobs:
-    - job: test-job-to-run-auto-instruction-1
-      stop_on_fail: false
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
     last_modified: 1596712203
     name: test-instruction-to-run-auto-instruction-3-2-name
-    priority: 7
     timeout_after_execution:
       unit: s
       value: 2
-    type: 1
-  instruction_47:
+
+  instruction_to_run_auto_instruction_4_1 (extend instruction_auto):
     _id: test-instruction-to-run-auto-instruction-4-1
-    author: test-user-author-1-id
     created: 1596712203
     description: test-instruction-to-run-auto-instruction-4-1-description
-    enabled: true
-    entity_patterns:
-    - name: test-resource-to-run-auto-instruction-4-1
-    - name: test-resource-to-run-auto-instruction-4-2
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-4-1
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-4-2
+    alarm_pattern:
     jobs:
-    - job: test-job-to-run-auto-instruction-5
-      stop_on_fail: false
+      - job: test-job-to-run-auto-instruction-5
+        stop_on_fail: false
     last_modified: 1596712203
     name: test-instruction-to-run-auto-instruction-4-1-name
-    priority: 8
     timeout_after_execution:
       unit: s
       value: 2
-    type: 1
-  instruction_48:
+
+  instruction_to_run_auto_instruction_4_2 (extend instruction_auto):
     _id: test-instruction-to-run-auto-instruction-4-2
-    author: test-user-author-1-id
     created: 1596712203
     description: test-instruction-to-run-auto-instruction-4-2-description
-    enabled: true
-    entity_patterns:
-    - name: test-resource-to-run-auto-instruction-4-1
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-4-1
+    alarm_pattern:
     jobs:
-    - job: test-job-to-run-auto-instruction-2
-      stop_on_fail: false
+      - job: test-job-to-run-auto-instruction-2
+        stop_on_fail: false
     last_modified: 1596712203
     name: test-instruction-to-run-auto-instruction-4-2-name
-    priority: 9
     timeout_after_execution:
       unit: s
       value: 2
-    type: 1
-  instruction_49:
+
+  instruction_to_run_auto_instruction_4_3 (extend instruction_auto):
     _id: test-instruction-to-run-auto-instruction-4-3
-    author: test-user-author-1-id
     created: 1596712203
     description: test-instruction-to-run-auto-instruction-4-3-description
-    enabled: true
-    entity_patterns:
-    - name: test-resource-to-run-auto-instruction-4-2
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-4-2
+    alarm_pattern:
     jobs:
-    - job: test-job-to-run-auto-instruction-2
-      stop_on_fail: false
+      - job: test-job-to-run-auto-instruction-2
+        stop_on_fail: false
     last_modified: 1596712203
     name: test-instruction-to-run-auto-instruction-4-3-name
-    priority: 10
     timeout_after_execution:
       unit: s
       value: 2
-    type: 1
-  instruction_50:
+
+  instruction_to_run_auto_instruction_5 (extend instruction_auto):
     _id: test-instruction-to-run-auto-instruction-5
-    author: test-user-author-1-id
     created: 1596712203
     description: test-instruction-to-run-auto-instruction-5-description
-    enabled: true
-    entity_patterns:
-    - name: test-resource-to-run-auto-instruction-5
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-5
+    alarm_pattern:
     jobs:
-    - job: test-job-to-run-auto-instruction-4
-      stop_on_fail: false
+      - job: test-job-to-run-auto-instruction-4
+        stop_on_fail: false
     last_modified: 1596712203
     name: test-instruction-to-run-auto-instruction-5-name
-    priority: 11
     timeout_after_execution:
       unit: s
       value: 2
-    type: 1
-  instruction_51:
+
+  instruction_to_run_auto_instruction_6_1 (extend instruction_auto):
     _id: test-instruction-to-run-auto-instruction-6-1
-    author: test-user-author-1-id
     created: 1596712203
     description: test-instruction-to-run-auto-instruction-6-1-description
-    enabled: true
-    entity_patterns:
-    - name: test-resource-to-run-auto-instruction-6-1
-    - name: test-resource-to-run-auto-instruction-6-2
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-6-1
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-6-2
+    alarm_pattern:
     jobs:
-    - job: test-job-to-run-auto-instruction-6
-      stop_on_fail: false
+      - job: test-job-to-run-auto-instruction-6
+        stop_on_fail: false
     last_modified: 1596712203
     name: test-instruction-to-run-auto-instruction-6-1-name
-    priority: 8
     timeout_after_execution:
       seconds: 2
       unit: s
-    type: 1
-  instruction_52:
+
+  instruction_to_run_auto_instruction_6_2 (extend instruction_auto):
     _id: test-instruction-to-run-auto-instruction-6-2
-    author: test-user-author-1-id
     created: 1596712203
     description: test-instruction-to-run-auto-instruction-6-2-description
-    enabled: true
-    entity_patterns:
-    - name: test-resource-to-run-auto-instruction-6-1
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-6-1
+    alarm_pattern:
     jobs:
-    - job: test-job-to-run-auto-instruction-2
-      stop_on_fail: false
+      - job: test-job-to-run-auto-instruction-2
+        stop_on_fail: false
     last_modified: 1596712203
     name: test-instruction-to-run-auto-instruction-6-2-name
-    priority: 9
     timeout_after_execution:
       seconds: 2
       unit: s
-    type: 1
-  instruction_53:
+
+  instruction_to_run_auto_instruction_6_3 (extend instruction_auto):
     _id: test-instruction-to-run-auto-instruction-6-3
-    author: test-user-author-1-id
     created: 1596712203
     description: test-instruction-to-run-auto-instruction-6-3-description
-    enabled: true
-    entity_patterns:
-    - name: test-resource-to-run-auto-instruction-6-2
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-6-2
+    alarm_pattern:
     jobs:
-    - job: test-job-to-run-auto-instruction-2
-      stop_on_fail: false
+      - job: test-job-to-run-auto-instruction-2
+        stop_on_fail: false
     last_modified: 1596712203
     name: test-instruction-to-run-auto-instruction-6-3-name
-    priority: 10
     timeout_after_execution:
       seconds: 2
       unit: s
-    type: 1
-  instruction_54:
-    _id: test-instruction-to-run-auto-instruction-to-approve-update
-    author: test-user-author-1-id
-    created: 1596712203
-    description: test-instruction-to-run-auto-instruction-to-approve-update-description
-    enabled: true
-    entity_patterns:
-    - name: test-instruction-to-run-auto-instruction-to-approve-update-pattern
-    jobs:
-    - job: test-job-to-run-auto-instruction-to-approve-update
-      stop_on_fail: false
-    last_modified: 1596712203
-    name: est-instruction-to-run-auto-instruction-to-approve-update-name
-    priority: 12
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 1
-  instruction_55:
+
+  instruction_to_stats_get_1 (extend instruction_manual):
     _id: test-instruction-to-stats-get-1
-    author: test-user-author-1-id
     avg_complete_time: 316
     created: 1617555600
-    description: test-instruction-to-stats-get-1-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
     last_executed_on: 1618394399
     last_modified: 1617555600
     name: test-instruction-to-stats-get-1-name
     rating: 3.2
-    steps:
-    - _id: test-instruction-to-stats-get-1-step-1
-      endpoint: test-instruction-to-stats-get-1-step-1-endpoint
-      name: test-instruction-to-stats-get-1-step-1-name
-      operations:
-      - _id: test-instruction-to-stats-get-1-step-1-operation-1
-        description: test-instruction-to-stats-get-1-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-get-1-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      - _id: test-instruction-to-stats-get-1-step-1-operation-2
-        description: test-instruction-to-stats-get-1-step-1-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-get-1-step-1-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 3
-      stop_on_fail: true
-    - _id: test-instruction-to-stats-get-1-step-2
-      endpoint: test-instruction-to-stats-get-1-step-2-endpoint
-      name: test-instruction-to-stats-get-1-step-2-name
-      operations:
-      - _id: test-instruction-to-stats-get-1-step-2-operation-1
-        description: test-instruction-to-stats-get-1-step-2-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-get-1-step-2-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 6
-      - _id: test-instruction-to-stats-get-1-step-2-operation-2
-        description: test-instruction-to-stats-get-1-step-2-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-get-1-step-2-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 6
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
     users:
-    - test-user-to-stats-instruction-get
-  instruction_56:
+      - test-user-to-stats-instruction-get
+
+  instruction_to_stats_get_2 (extend instruction_auto):
     _id: test-instruction-to-stats-get-2
-    author: test-user-author-1-id
     avg_complete_time: 316
     created: 1617555600
-    description: test-instruction-to-stats-get-2-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
-    jobs:
-    - job: test-job-to-instruction-edit-1
-      stop_on_fail: true
-    - job: test-job-to-instruction-edit-2
     last_executed_on: 1618394399
     last_modified: 1617555600
     name: test-instruction-to-stats-get-2-name
-    priority: 13
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 1
-  instruction_57:
+
+  instruction_to_stats_get_3 (extend instruction_auto):
     _id: test-instruction-to-stats-get-3
-    author: test-user-author-1-id
     created: 1617555600
-    description: test-instruction-to-stats-get-3-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
-    jobs:
-    - job: test-job-to-instruction-edit-1
-      stop_on_fail: true
-    - job: test-job-to-instruction-edit-2
     last_modified: 1617555600
     name: test-instruction-to-stats-get-3-name
-    priority: 14
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 1
-  instruction_58:
+
+  instruction_to_stats_summary_get_1 (extend instruction_manual):
     _id: test-instruction-to-stats-summary-get-1
-    author: test-user-author-1-id
     avg_complete_time: 316
     created: 1596712203
-    description: test-instruction-to-stats-summary-get-1-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
     last_executed_on: 1618280210
     last_modified: 1596712303
     name: test-instruction-to-stats-summary-get-1-name
-    steps:
-    - _id: test-instruction-to-stats-summary-get-1-step-1
-      endpoint: test-instruction-to-stats-summary-get-1-step-1-endpoint
-      name: test-instruction-to-stats-summary-get-1-step-1-name
-      operations:
-      - _id: test-instruction-to-stats-summary-get-1-step-1-operation-1
-        description: test-instruction-to-stats-summary-get-1-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-summary-get-1-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      - _id: test-instruction-to-stats-summary-get-1-step-1-operation-2
-        description: test-instruction-to-stats-summary-get-1-step-1-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-summary-get-1-step-1-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 3
-      stop_on_fail: true
-    - _id: test-instruction-to-stats-summary-get-1-step-2
-      endpoint: test-instruction-to-stats-summary-get-1-step-2-endpoint
-      name: test-instruction-to-stats-summary-get-1-step-2-name
-      operations:
-      - _id: test-instruction-to-stats-summary-get-1-step-2-operation-1
-        description: test-instruction-to-stats-summary-get-1-step-2-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-summary-get-1-step-2-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 6
-      - _id: test-instruction-to-stats-summary-get-1-step-2-operation-2
-        description: test-instruction-to-stats-summary-get-1-step-2-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-summary-get-1-step-2-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 6
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
     users:
-    - test-user-to-stats-instruction-get
-  instruction_59:
+      - test-user-to-stats-instruction-get
+
+  instruction_to_stats_summary_get_2 (extend instruction_auto):
     _id: test-instruction-to-stats-summary-get-2
-    author: test-user-author-1-id
     avg_complete_time: 316
     created: 1596712203
-    description: test-instruction-to-stats-summary-get-2-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
-    jobs:
-    - job: test-job-to-instruction-edit-1
-      stop_on_fail: true
-    - job: test-job-to-instruction-edit-2
     last_executed_on: 1618280210
     last_modified: 1596712303
     name: test-instruction-to-stats-summary-get-2-name
-    priority: 15
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 1
-  instruction_60:
+
+  instruction_to_stats_summary_get_3 (extend instruction_auto):
     _id: test-instruction-to-stats-summary-get-3
-    author: test-user-author-1-id
     created: 1596712203
-    description: test-instruction-to-stats-summary-get-3-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
-    jobs:
-    - job: test-job-to-instruction-edit-1
-      stop_on_fail: true
-    - job: test-job-to-instruction-edit-2
     last_modified: 1596712203
     name: test-instruction-to-stats-summary-get-3-name
-    priority: 16
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 1
-  instruction_61:
+
+  instruction_to_stats_changes_get_1 (extend instruction_manual):
     _id: test-instruction-to-stats-changes-get-1
-    author: test-user-author-1-id
     created: 1596712203
-    description: test-instruction-to-stats-changes-get-1-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
     last_executed_on: 1618280210
     last_modified: 1596712203
-    name: test-instruction-to-stats-changes-get-1-name
-    steps:
-    - _id: test-instruction-to-stats-changes-get-1-step-1
-      endpoint: test-instruction-to-stats-changes-get-1-step-1-endpoint
-      name: test-instruction-to-stats-changes-get-1-step-1-name
-      operations:
-      - _id: test-instruction-to-stats-changes-get-1-step-1-operation-1
-        description: test-instruction-to-stats-changes-get-1-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-changes-get-1-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      - _id: test-instruction-to-stats-changes-get-1-step-1-operation-2
-        description: test-instruction-to-stats-changes-get-1-step-1-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-changes-get-1-step-1-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 3
-      stop_on_fail: true
-    - _id: test-instruction-to-stats-changes-get-1-step-2
-      endpoint: test-instruction-to-stats-changes-get-1-step-2-endpoint
-      name: test-instruction-to-stats-changes-get-1-step-2-name
-      operations:
-      - _id: test-instruction-to-stats-changes-get-1-step-2-operation-1
-        description: test-instruction-to-stats-changes-get-1-step-2-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-changes-get-1-step-2-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 6
-      - _id: test-instruction-to-stats-changes-get-1-step-2-operation-2
-        description: test-instruction-to-stats-changes-get-1-step-2-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-changes-get-1-step-2-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 6
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
     users:
-    - test-user-to-stats-instruction-get
-  instruction_62:
+      - test-user-to-stats-instruction-get
+
+  instruction_to_stats_changes_get_2 (extend instruction_auto):
     _id: test-instruction-to-stats-changes-get-2
-    author: test-user-author-1-id
     created: 1596712203
-    description: test-instruction-to-stats-changes-get-2-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
-    jobs:
-    - job: test-job-to-instruction-edit-1
-      stop_on_fail: true
-    - job: test-job-to-instruction-edit-2
     last_executed_on: 1618280210
     last_modified: 1596712203
-    name: test-instruction-to-stats-changes-get-2-name
-    priority: 17
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 1
-  instruction_63:
+
+  instruction_to_stats_changes_get_3 (extend instruction_auto):
     _id: test-instruction-to-stats-changes-get-3
-    author: test-user-author-1-id
     created: 1596712203
-    description: test-instruction-to-stats-changes-get-3-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
-    jobs:
-    - job: test-job-to-instruction-edit-1
-      stop_on_fail: true
-    - job: test-job-to-instruction-edit-2
     last_modified: 1596712203
-    name: test-instruction-to-stats-changes-get-3-name
-    priority: 18
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 1
-  instruction_64:
+
+  instruction_to_comments_get_1 (extend instruction_manual):
     _id: test-instruction-to-comments-get-1
-    author: test-user-author-1-id
     created: 1596712203
-    description: test-instruction-to-comments-get-1-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
     last_executed_on: 1618280210
     last_modified: 1596712203
-    name: test-instruction-to-comments-get-1-name
-    steps:
-    - _id: test-instruction-to-comments-get-1-step-1
-      endpoint: test-instruction-to-comments-get-1-step-1-endpoint
-      name: test-instruction-to-comments-get-1-step-1-name
-      operations:
-      - _id: test-instruction-to-comments-get-1-step-1-operation-1
-        description: test-instruction-to-comments-get-1-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-comments-get-1-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      - _id: test-instruction-to-comments-get-1-step-1-operation-2
-        description: test-instruction-to-comments-get-1-step-1-operation-2-description
-        jobs: []
-        name: test-instruction-to-comments-get-1-step-1-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 3
-      stop_on_fail: true
-    - _id: test-instruction-to-comments-get-1-step-2
-      endpoint: test-instruction-to-comments-get-1-step-2-endpoint
-      name: test-instruction-to-comments-get-1-step-2-name
-      operations:
-      - _id: test-instruction-to-comments-get-1-step-2-operation-1
-        description: test-instruction-to-comments-get-1-step-2-operation-1-description
-        jobs: []
-        name: test-instruction-to-comments-get-1-step-2-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 6
-      - _id: test-instruction-to-comments-get-1-step-2-operation-2
-        description: test-instruction-to-comments-get-1-step-2-operation-2-description
-        jobs: []
-        name: test-instruction-to-comments-get-1-step-2-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 6
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_65:
+
+  instruction_to_comments_get_2 (extend instruction_manual):
     _id: test-instruction-to-comments-get-2
-    author: test-user-author-1-id
     created: 1596712203
-    description: test-instruction-to-comments-get-2-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
     last_modified: 1596712203
-    name: test-instruction-to-comments-get-2-name
-    steps:
-    - _id: test-instruction-to-comments-get-2-step-1
-      endpoint: test-instruction-to-comments-get-2-step-1-endpoint
-      name: test-instruction-to-comments-get-2-step-1-name
-      operations:
-      - _id: test-instruction-to-comments-get-2-step-1-operation-1
-        description: test-instruction-to-comments-get-2-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-comments-get-2-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      - _id: test-instruction-to-comments-get-2-step-1-operation-2
-        description: test-instruction-to-comments-get-2-step-1-operation-2-description
-        jobs: []
-        name: test-instruction-to-comments-get-2-step-1-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 3
-      stop_on_fail: true
-    - _id: test-instruction-to-comments-get-2-step-2
-      endpoint: test-instruction-to-comments-get-2-step-2-endpoint
-      name: test-instruction-to-comments-get-2-step-2-name
-      operations:
-      - _id: test-instruction-to-comments-get-2-step-2-operation-1
-        description: test-instruction-to-comments-get-2-step-2-operation-1-description
-        jobs: []
-        name: test-instruction-to-comments-get-2-step-2-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 6
-      - _id: test-instruction-to-comments-get-2-step-2-operation-2
-        description: test-instruction-to-comments-get-2-step-2-operation-2-description
-        jobs: []
-        name: test-instruction-to-comments-get-2-step-2-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 6
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_66:
+
+  instruction_to_not_run_auto_instruction_manually (extend instruction_auto):
     _id: test-instruction-to-not-run-auto-instruction-manually
-    alarm_patterns:
-    - _id: test-alarm-to-not-run-auto-instruction-manually
-    author: test-user-author-1-id
+    entity_pattern:
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-alarm-to-not-run-auto-instruction-manually
     created: 1596712203
-    description: test-instruction-to-not-run-auto-instruction-manually-description
-    enabled: true
-    jobs:
-    - job: test-job-to-run-auto-instruction-1
-      stop_on_fail: false
-    - job: test-job-to-run-auto-instruction-2
-      stop_on_fail: false
-    last_modified: 1596712203
-    name: test-instruction-to-not-run-auto-instruction-manually-name
-    priority: 19
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 1
-  instruction_67:
+
+  instruction_to_stats_executions_get_1 (extend instruction_manual):
     _id: test-instruction-to-stats-executions-get-1
-    author: test-user-author-1-id
     created: 1596712203
-    description: test-instruction-to-stats-executions-get-1-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
     last_executed_on: 1618280210
     last_modified: 1596712203
-    name: test-instruction-to-stats-executions-get-1-name
-    steps:
-    - _id: test-instruction-to-stats-executions-get-1-step-1
-      endpoint: test-instruction-to-stats-executions-get-1-step-1-endpoint
-      name: test-instruction-to-stats-executions-get-1-step-1-name
-      operations:
-      - _id: test-instruction-to-stats-executions-get-1-step-1-operation-1
-        description: test-instruction-to-stats-executions-get-1-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-1-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      - _id: test-instruction-to-stats-executions-get-1-step-1-operation-2
-        description: test-instruction-to-stats-executions-get-1-step-1-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-1-step-1-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 3
-      stop_on_fail: true
-    - _id: test-instruction-to-stats-executions-get-1-step-2
-      endpoint: test-instruction-to-stats-executions-get-1-step-2-endpoint
-      name: test-instruction-to-stats-executions-get-1-step-2-name
-      operations:
-      - _id: test-instruction-to-stats-executions-get-1-step-2-operation-1
-        description: test-instruction-to-stats-executions-get-1-step-2-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-1-step-2-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 6
-      - _id: test-instruction-to-stats-executions-get-1-step-2-operation-2
-        description: test-instruction-to-stats-executions-get-1-step-2-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-1-step-2-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 6
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
     users:
-    - test-user-to-stats-instruction-get
-  instruction_68:
+      - test-user-to-stats-instruction-get
+
+  instruction_to_stats_executions_get_2 (extend instruction_manual):
     _id: test-instruction-to-stats-executions-get-2
-    author: test-user-author-1-id
     created: 1596712203
-    description: test-instruction-to-stats-executions-get-2-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
     last_executed_on: 1618280210
     last_modified: 1596712203
-    name: test-instruction-to-stats-executions-get-2-name
-    steps:
-    - _id: test-instruction-to-stats-executions-get-2-step-1
-      endpoint: test-instruction-to-stats-executions-get-2-step-1-endpoint
-      name: test-instruction-to-stats-executions-get-2-step-1-name
-      operations:
-      - _id: test-instruction-to-stats-executions-get-2-step-1-operation-1
-        description: test-instruction-to-stats-executions-get-2-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-2-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      - _id: test-instruction-to-stats-executions-get-2-step-1-operation-2
-        description: test-instruction-to-stats-executions-get-2-step-1-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-2-step-1-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 3
-      stop_on_fail: true
-    - _id: test-instruction-to-stats-executions-get-2-step-2
-      endpoint: test-instruction-to-stats-executions-get-2-step-2-endpoint
-      name: test-instruction-to-stats-executions-get-2-step-2-name
-      operations:
-      - _id: test-instruction-to-stats-executions-get-2-step-2-operation-1
-        description: test-instruction-to-stats-executions-get-2-step-2-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-2-step-2-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 6
-      - _id: test-instruction-to-stats-executions-get-2-step-2-operation-2
-        description: test-instruction-to-stats-executions-get-2-step-2-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-2-step-2-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 6
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_69:
+
+  instruction_to_stats_executions_get_3 (extend instruction_manual):
     _id: test-instruction-to-stats-executions-get-3
-    author: test-user-author-1-id
     created: 1596712203
-    description: test-instruction-to-stats-executions-get-3-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
     last_executed_on: 1618280210
     last_modified: 1596712203
-    name: test-instruction-to-stats-executions-get-3-name
-    steps:
-    - _id: test-instruction-to-stats-executions-get-3-step-1
-      endpoint: test-instruction-to-stats-executions-get-3-step-1-endpoint
-      name: test-instruction-to-stats-executions-get-3-step-1-name
-      operations:
-      - _id: test-instruction-to-stats-executions-get-3-step-1-operation-1
-        description: test-instruction-to-stats-executions-get-3-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-3-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      - _id: test-instruction-to-stats-executions-get-3-step-1-operation-2
-        description: test-instruction-to-stats-executions-get-3-step-1-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-3-step-1-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 3
-      stop_on_fail: true
-    - _id: test-instruction-to-stats-executions-get-3-step-2
-      endpoint: test-instruction-to-stats-executions-get-3-step-2-endpoint
-      name: test-instruction-to-stats-executions-get-3-step-2-name
-      operations:
-      - _id: test-instruction-to-stats-executions-get-3-step-2-operation-1
-        description: test-instruction-to-stats-executions-get-3-step-2-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-3-step-2-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 6
-      - _id: test-instruction-to-stats-executions-get-3-step-2-operation-2
-        description: test-instruction-to-stats-executions-get-3-step-2-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-3-step-2-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 6
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_70:
+
+  instruction_to_stats_executions_get_4 (extend instruction_manual):
     _id: test-instruction-to-stats-executions-get-4
-    author: test-user-author-1-id
     created: 1596712203
-    description: test-instruction-to-stats-executions-get-4-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
     last_executed_on: 1618280210
     last_modified: 1596712203
-    name: test-instruction-to-stats-executions-get-4-name
-    steps:
-    - _id: test-instruction-to-stats-executions-get-4-step-1
-      endpoint: test-instruction-to-stats-executions-get-4-step-1-endpoint
-      name: test-instruction-to-stats-executions-get-4-step-1-name
-      operations:
-      - _id: test-instruction-to-stats-executions-get-4-step-1-operation-1
-        description: test-instruction-to-stats-executions-get-4-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-4-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      - _id: test-instruction-to-stats-executions-get-4-step-1-operation-2
-        description: test-instruction-to-stats-executions-get-4-step-1-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-4-step-1-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 3
-      stop_on_fail: true
-    - _id: test-instruction-to-stats-executions-get-4-step-2
-      endpoint: test-instruction-to-stats-executions-get-4-step-2-endpoint
-      name: test-instruction-to-stats-executions-get-4-step-2-name
-      operations:
-      - _id: test-instruction-to-stats-executions-get-4-step-2-operation-1
-        description: test-instruction-to-stats-executions-get-4-step-2-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-4-step-2-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 6
-      - _id: test-instruction-to-stats-executions-get-4-step-2-operation-2
-        description: test-instruction-to-stats-executions-get-4-step-2-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-4-step-2-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 6
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_71:
+
+  instruction_to_stats_executions_get_5 (extend instruction_manual):
     _id: test-instruction-to-stats-executions-get-5
-    author: test-user-author-1-id
     created: 1596712203
-    description: test-instruction-to-stats-executions-get-5-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
     last_executed_on: 1618280210
     last_modified: 1596712203
-    name: test-instruction-to-stats-executions-get-5-name
-    steps:
-    - _id: test-instruction-to-stats-executions-get-5-step-1
-      endpoint: test-instruction-to-stats-executions-get-5-step-1-endpoint
-      name: test-instruction-to-stats-executions-get-5-step-1-name
-      operations:
-      - _id: test-instruction-to-stats-executions-get-5-step-1-operation-1
-        description: test-instruction-to-stats-executions-get-5-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-5-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      - _id: test-instruction-to-stats-executions-get-5-step-1-operation-2
-        description: test-instruction-to-stats-executions-get-5-step-1-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-5-step-1-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 3
-      stop_on_fail: true
-    - _id: test-instruction-to-stats-executions-get-5-step-2
-      endpoint: test-instruction-to-stats-executions-get-5-step-2-endpoint
-      name: test-instruction-to-stats-executions-get-5-step-2-name
-      operations:
-      - _id: test-instruction-to-stats-executions-get-5-step-2-operation-1
-        description: test-instruction-to-stats-executions-get-5-step-2-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-5-step-2-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 6
-      - _id: test-instruction-to-stats-executions-get-5-step-2-operation-2
-        description: test-instruction-to-stats-executions-get-5-step-2-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-5-step-2-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 6
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_72:
+
+  instruction_to_stats_executions_get_6 (extend instruction_manual):
     _id: test-instruction-to-stats-executions-get-6
-    author: test-user-author-1-id
     created: 1596712203
-    description: test-instruction-to-stats-executions-get-6-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
     last_executed_on: 1618280210
     last_modified: 1596712203
-    name: test-instruction-to-stats-executions-get-6-name
-    steps:
-    - _id: test-instruction-to-stats-executions-get-6-step-1
-      endpoint: test-instruction-to-stats-executions-get-6-step-1-endpoint
-      name: test-instruction-to-stats-executions-get-6-step-1-name
-      operations:
-      - _id: test-instruction-to-stats-executions-get-6-step-1-operation-1
-        description: test-instruction-to-stats-executions-get-6-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-6-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      - _id: test-instruction-to-stats-executions-get-6-step-1-operation-2
-        description: test-instruction-to-stats-executions-get-6-step-1-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-6-step-1-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 3
-      stop_on_fail: true
-    - _id: test-instruction-to-stats-executions-get-6-step-2
-      endpoint: test-instruction-to-stats-executions-get-6-step-2-endpoint
-      name: test-instruction-to-stats-executions-get-6-step-2-name
-      operations:
-      - _id: test-instruction-to-stats-executions-get-6-step-2-operation-1
-        description: test-instruction-to-stats-executions-get-6-step-2-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-6-step-2-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 6
-      - _id: test-instruction-to-stats-executions-get-6-step-2-operation-2
-        description: test-instruction-to-stats-executions-get-6-step-2-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-6-step-2-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 6
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_73:
+
+  instruction_to_stats_executions_get_7 (extend instruction_manual):
     _id: test-instruction-to-stats-executions-get-7
-    author: test-user-author-1-id
     created: 1596712203
-    description: test-instruction-to-stats-executions-get-7-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
     last_executed_on: 1618280210
     last_modified: 1596712203
-    name: test-instruction-to-stats-executions-get-7-name
-    steps:
-    - _id: test-instruction-to-stats-executions-get-7-step-1
-      endpoint: test-instruction-to-stats-executions-get-7-step-1-endpoint
-      name: test-instruction-to-stats-executions-get-7-step-1-name
-      operations:
-      - _id: test-instruction-to-stats-executions-get-7-step-1-operation-1
-        description: test-instruction-to-stats-executions-get-7-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-7-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      - _id: test-instruction-to-stats-executions-get-7-step-1-operation-2
-        description: test-instruction-to-stats-executions-get-7-step-1-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-7-step-1-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 3
-      stop_on_fail: true
-    - _id: test-instruction-to-stats-executions-get-7-step-2
-      endpoint: test-instruction-to-stats-executions-get-7-step-2-endpoint
-      name: test-instruction-to-stats-executions-get-7-step-2-name
-      operations:
-      - _id: test-instruction-to-stats-executions-get-7-step-2-operation-1
-        description: test-instruction-to-stats-executions-get-7-step-2-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-7-step-2-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 6
-      - _id: test-instruction-to-stats-executions-get-7-step-2-operation-2
-        description: test-instruction-to-stats-executions-get-7-step-2-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-7-step-2-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 6
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_74:
+
+  instruction_to_stats_executions_get_8 (extend instruction_manual):
     _id: test-instruction-to-stats-executions-get-8
-    author: test-user-author-1-id
     created: 1596712203
-    description: test-instruction-to-stats-executions-get-8-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
     last_executed_on: 1618280210
     last_modified: 1596712203
-    name: test-instruction-to-stats-executions-get-8-name
-    steps:
-    - _id: test-instruction-to-stats-executions-get-8-step-1
-      endpoint: test-instruction-to-stats-executions-get-8-step-1-endpoint
-      name: test-instruction-to-stats-executions-get-8-step-1-name
-      operations:
-      - _id: test-instruction-to-stats-executions-get-8-step-1-operation-1
-        description: test-instruction-to-stats-executions-get-8-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-8-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      - _id: test-instruction-to-stats-executions-get-8-step-1-operation-2
-        description: test-instruction-to-stats-executions-get-8-step-1-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-8-step-1-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 3
-      stop_on_fail: true
-    - _id: test-instruction-to-stats-executions-get-8-step-2
-      endpoint: test-instruction-to-stats-executions-get-8-step-2-endpoint
-      name: test-instruction-to-stats-executions-get-8-step-2-name
-      operations:
-      - _id: test-instruction-to-stats-executions-get-8-step-2-operation-1
-        description: test-instruction-to-stats-executions-get-8-step-2-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-8-step-2-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 6
-      - _id: test-instruction-to-stats-executions-get-8-step-2-operation-2
-        description: test-instruction-to-stats-executions-get-8-step-2-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-8-step-2-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 6
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_75:
+
+  instruction_to_stats_executions_get_9 (extend instruction_manual):
     _id: test-instruction-to-stats-executions-get-9
-    author: test-user-author-1-id
     created: 1596712203
-    description: test-instruction-to-stats-executions-get-9-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
     last_executed_on: 1618280210
     last_modified: 1596712203
-    name: test-instruction-to-stats-executions-get-9-name
-    steps:
-    - _id: test-instruction-to-stats-executions-get-9-step-1
-      endpoint: test-instruction-to-stats-executions-get-9-step-1-endpoint
-      name: test-instruction-to-stats-executions-get-9-step-1-name
-      operations:
-      - _id: test-instruction-to-stats-executions-get-9-step-1-operation-1
-        description: test-instruction-to-stats-executions-get-9-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-9-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      - _id: test-instruction-to-stats-executions-get-9-step-1-operation-2
-        description: test-instruction-to-stats-executions-get-9-step-1-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-9-step-1-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 3
-      stop_on_fail: true
-    - _id: test-instruction-to-stats-executions-get-9-step-2
-      endpoint: test-instruction-to-stats-executions-get-9-step-2-endpoint
-      name: test-instruction-to-stats-executions-get-9-step-2-name
-      operations:
-      - _id: test-instruction-to-stats-executions-get-9-step-2-operation-1
-        description: test-instruction-to-stats-executions-get-9-step-2-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-9-step-2-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 6
-      - _id: test-instruction-to-stats-executions-get-9-step-2-operation-2
-        description: test-instruction-to-stats-executions-get-9-step-2-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-9-step-2-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 6
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_76:
+
+  instruction_to_stats_executions_get_10 (extend instruction_manual):
     _id: test-instruction-to-stats-executions-get-10
-    author: test-user-author-1-id
     created: 1596712203
-    description: test-instruction-to-stats-executions-get-10-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
     last_executed_on: 1618280210
     last_modified: 1596712203
-    name: test-instruction-to-stats-executions-get-10-name
-    steps:
-    - _id: test-instruction-to-stats-executions-get-10-step-1
-      endpoint: test-instruction-to-stats-executions-get-10-step-1-endpoint
-      name: test-instruction-to-stats-executions-get-10-step-1-name
-      operations:
-      - _id: test-instruction-to-stats-executions-get-10-step-1-operation-1
-        description: test-instruction-to-stats-executions-get-10-step-1-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-10-step-1-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 1
-      - _id: test-instruction-to-stats-executions-get-10-step-1-operation-2
-        description: test-instruction-to-stats-executions-get-10-step-1-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-10-step-1-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 3
-      stop_on_fail: true
-    - _id: test-instruction-to-stats-executions-get-10-step-2
-      endpoint: test-instruction-to-stats-executions-get-10-step-2-endpoint
-      name: test-instruction-to-stats-executions-get-10-step-2-name
-      operations:
-      - _id: test-instruction-to-stats-executions-get-10-step-2-operation-1
-        description: test-instruction-to-stats-executions-get-10-step-2-operation-1-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-10-step-2-operation-1-name
-        time_to_complete:
-          unit: s
-          value: 6
-      - _id: test-instruction-to-stats-executions-get-10-step-2-operation-2
-        description: test-instruction-to-stats-executions-get-10-step-2-operation-2-description
-        jobs: []
-        name: test-instruction-to-stats-executions-get-10-step-2-operation-2-name
-        time_to_complete:
-          unit: s
-          value: 6
-      stop_on_fail: true
-    timeout_after_execution:
-      unit: s
-      value: 2
-    type: 0
-  instruction_77:
+
+  instruction_to_get_meta_alarm_with_children_instructions (extend instruction_manual):
     _id: test-alarm-meta-children-with-instructions
-    alarm_patterns:
-    - v:
-        component: test-alarm-meta-children-with-instructions-component-1
-    author: test-alarm-meta-children-with-instructions-author
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-alarm-meta-children-with-instructions-component-1
     description: test-alarm-meta-children-with-instructions-description
-    enabled: true
     name: test-alarm-meta-children-with-instructions-name
-    steps: []
-    type: 0
-  instruction_78:
+
+  instruction_to_stats_executions_get_with_resolved_alarms_1 (extend instruction_manual):
     _id: test-instruction-to-stats-executions-get-with-resolved-alarms-1
-    author: test-user-author-1-id
     created: 1596712203
     description: test-instruction-to-stats-executions-get-with-resolved-alarms-1-description
-    enabled: true
-    entity_patterns:
-    - name: test filter
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test filter
+    alarm_pattern:
     last_executed_on: 1618280210
     last_modified: 1596712203
     name: test-instruction-to-stats-executions-get-with-resolved-alarms-1-name
-    steps: []
     timeout_after_execution:
       unit: s
       value: 2
-    type: 0
     users:
-    - test-user-to-stats-instruction-get
-  instruction_79:
+      - test-user-to-stats-instruction-get
+
+  instruction_metrics_axe_2_1 (extend instruction_auto):
     _id: test-instruction-metrics-axe-2-1
-    author: test-author-metrics-axe-2
     created: 1637904803
     description: test-instruction-metrics-axe-2-1-description
-    enabled: true
-    entity_patterns:
-    - name: test-resource-metrics-axe-2-1
-    - name: test-resource-metrics-axe-2-2
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-metrics-axe-2-1
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-metrics-axe-2-2
+    alarm_pattern:
     jobs:
-    - job: test-job-metrics-axe
-      stop_on_fail: false
+      - job: test-job-metrics-axe
+        stop_on_fail: false
     last_modified: 1637904803
     name: test-instruction-metrics-axe-2-1-name
-    priority: 20
-    status: 0
     timeout_after_execution:
       unit: s
       value: 1
-    type: 1
-  instruction_80:
+
+  instruction_metrics_axe_2_2 (extend instruction_auto):
     _id: test-instruction-metrics-axe-2-2
-    author: test-author-metrics-axe-2
     created: 1637904803
     description: test-instruction-metrics-axe-2-2-description
-    enabled: true
-    entity_patterns:
-    - name: test-resource-metrics-axe-2-1
-    - name: test-resource-metrics-axe-2-2
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-metrics-axe-2-1
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-metrics-axe-2-2
+    alarm_pattern:
     jobs:
-    - job: test-job-metrics-axe
-      stop_on_fail: false
+      - job: test-job-metrics-axe
+        stop_on_fail: false
     last_modified: 1637904803
     name: test-instruction-metrics-axe-2-2-name
-    priority: 21
-    status: 0
     timeout_after_execution:
       unit: s
       value: 1
-    type: 1
-  instruction_81:
+
+  instruction_metrics_axe_10 (extend instruction_auto):
     _id: test-instruction-metrics-axe-10
-    author: test-author-metrics-axe-10
     created: 1637904803
     description: test-instruction-metrics-axe-10-description
-    enabled: true
-    entity_patterns:
-    - name: test-resource-metrics-axe-10
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-metrics-axe-10
+    alarm_pattern:
     jobs:
-    - job: test-job-metrics-axe
-      stop_on_fail: false
+      - job: test-job-metrics-axe
+        stop_on_fail: false
     last_modified: 1637904803
     name: test-instruction-metrics-axe-10-name
-    priority: 22
-    status: 0
     timeout_after_execution:
       unit: s
       value: 1
-    type: 1
-  instruction_82:
+
+  instruction_metrics_axe_11 (extend instruction_auto):
     _id: test-instruction-metrics-axe-11
-    author: test-author-metrics-axe-11
     created: 1637904803
     description: test-instruction-metrics-axe-11-description
-    enabled: true
-    entity_patterns:
-    - name: test-resource-metrics-axe-11-1
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-metrics-axe-11-1
+    alarm_pattern:
     jobs:
-    - job: test-job-metrics-axe
-      stop_on_fail: false
+      - job: test-job-metrics-axe
+        stop_on_fail: false
     last_modified: 1637904803
     name: test-instruction-metrics-axe-11-name
-    priority: 23
-    status: 0
     timeout_after_execution:
       unit: s
       value: 1
-    type: 1
