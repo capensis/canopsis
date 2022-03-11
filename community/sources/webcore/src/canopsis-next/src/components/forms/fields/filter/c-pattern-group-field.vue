@@ -8,6 +8,7 @@
           v-field="group.rules",
           :attributes="attributes",
           :rules-map="rulesMap",
+          :disabled="disabled",
           @remove="$emit('remove')"
         )
 </template>
@@ -34,9 +35,9 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    name: {
-      type: String,
-      default: 'group',
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
 };
