@@ -177,9 +177,7 @@ func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) {
 
 	d, ok = parseUpdatedTimeDurationByStr(cfg.Alarm.TimeToKeepResolvedAlarms, p.conf.TimeToKeepResolvedAlarms, "TimeToKeepResolvedAlarms", sectionName, p.logger)
 	if ok {
-		p.mx.Lock()
 		p.conf.TimeToKeepResolvedAlarms = d
-		p.mx.Unlock()
 	}
 
 	b, ok := parseUpdatedBool(cfg.Alarm.EnableLastEventDate, p.conf.EnableLastEventDate, "EnableLastEventDate", sectionName, p.logger)
