@@ -1610,6 +1610,21 @@ export default {
         phrase: 'archive or delete',
       },
     },
+    createAlarmPattern: {
+      create: {
+        title: 'Create alarm filter',
+      },
+    },
+    createEntityPattern: {
+      create: {
+        title: 'Create entity filter',
+      },
+    },
+    createPbehaviorPattern: {
+      create: {
+        title: 'Create pbehavior filter',
+      },
+    },
   },
   tables: {
     noData: 'No data',

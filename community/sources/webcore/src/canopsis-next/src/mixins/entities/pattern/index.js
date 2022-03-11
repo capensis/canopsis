@@ -16,6 +16,7 @@ export const entitiesPatternsMixin = {
       createPattern: 'create',
       updatePattern: 'update',
       removePattern: 'remove',
+      bulkRemovePatterns: 'bulkRemove',
       fetchPatternsListWithPreviousParams: 'fetchListWithPreviousParams',
     }),
   },
