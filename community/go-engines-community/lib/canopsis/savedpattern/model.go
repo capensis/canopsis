@@ -23,3 +23,24 @@ type SavedPattern struct {
 	Created          types.CpsTime         `bson:"created,omitempty"`
 	Updated          types.CpsTime         `bson:"updated,omitempty"`
 }
+
+type AlarmPatternFields struct {
+	AlarmPattern pattern.Alarm `bson:"alarm_pattern" json:"alarm_pattern,omitempty"`
+
+	CorporateAlarmPattern      string `bson:"corporate_alarm_pattern" json:"corporate_alarm_pattern,omitempty"`
+	CorporateAlarmPatternTitle string `bson:"corporate_alarm_pattern_title" json:"corporate_alarm_pattern_title,omitempty"`
+}
+
+type EntityPatternFields struct {
+	EntityPattern pattern.Entity `bson:"entity_pattern" json:"entity_pattern,omitempty"`
+
+	CorporateEntityPattern      string `bson:"corporate_entity_pattern" json:"corporate_entity_pattern,omitempty"`
+	CorporateEntityPatternTitle string `bson:"corporate_entity_pattern_title" json:"corporate_entity_pattern_title,omitempty"`
+}
+
+type PbehaviorPatternFields struct {
+	PbehaviorPattern pattern.PbehaviorInfo `bson:"pbehavior_pattern" json:"pbehavior_pattern,omitempty"`
+
+	CorporatePbehaviorPattern      string `bson:"corporate_pbehavior_pattern" json:"corporate_pbehavior_pattern,omitempty"`
+	CorporatePbehaviorPatternTitle string `bson:"corporate_pbehavior_pattern_title" json:"corporate_pbehavior_pattern_title,omitempty"`
+}
