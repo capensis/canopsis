@@ -486,44 +486,6 @@
     "exdates": []
   },
   {
-    "_id": "test-pbehavior-to-get-alarm",
-    "author": "root",
-    "comments": [
-      {
-        "_id": "test-comment-1",
-        "author": "root",
-        "ts": 1592215337,
-        "message": "qwerty"
-      },
-      {
-        "_id": "test-comment-2",
-        "author": "root",
-        "ts": 1592215337,
-        "message": "asdasd"
-      }
-    ],
-    "enabled": true,
-    "filter": "{\"$and\":[{\"name\":\"ccccc\"}]}",
-    "name": "pbehavior-to-get-alarm",
-    "reason": "test-reason-1",
-    "rrule": "",
-    "tstart": 1591172881,
-    "tstop": 1591536400,
-    "type_": "test-type-to-pbh-edit-1",
-    "exdates": [
-      {
-        "begin": 1591164001,
-        "end": 1591167601,
-        "type": "test-type-to-pbh-edit-1"
-      }
-    ],
-    "exceptions": [
-      "test-exception-to-pbh-edit"
-    ],
-    "created": 1592215337,
-    "updated": 1592215337
-  },
-  {
     "_id": "test-pbehavior-to-get-by-type",
     "author": "root",
     "comments": [],

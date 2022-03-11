@@ -22,7 +22,7 @@ func NewPbhEnterExecutor(configProvider config.AlarmConfigProvider, metricsSende
 }
 
 func (e *pbhEnterExecutor) Exec(
-	ctx context.Context,
+	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
 	entity *types.Entity,
@@ -39,7 +39,7 @@ func (e *pbhEnterExecutor) Exec(
 		userID = params.User
 	}
 
-	if alarm.Value.PbehaviorInfo == params.PbehaviorInfo {
+	if alarm.Value.PbehaviorInfo.Same(params.PbehaviorInfo) {
 		return "", nil
 	}
 

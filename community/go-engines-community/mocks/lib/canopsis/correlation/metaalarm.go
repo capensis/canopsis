@@ -5,35 +5,36 @@
 package mock_correlation
 
 import (
+	reflect "reflect"
+
 	correlation "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	gomock "github.com/golang/mock/gomock"
-	reflect "reflect"
 )
 
-// MockRulesAdapter is a mock of RulesAdapter interface
+// MockRulesAdapter is a mock of RulesAdapter interface.
 type MockRulesAdapter struct {
 	ctrl     *gomock.Controller
 	recorder *MockRulesAdapterMockRecorder
 }
 
-// MockRulesAdapterMockRecorder is the mock recorder for MockRulesAdapter
+// MockRulesAdapterMockRecorder is the mock recorder for MockRulesAdapter.
 type MockRulesAdapterMockRecorder struct {
 	mock *MockRulesAdapter
 }
 
-// NewMockRulesAdapter creates a new mock instance
+// NewMockRulesAdapter creates a new mock instance.
 func NewMockRulesAdapter(ctrl *gomock.Controller) *MockRulesAdapter {
 	mock := &MockRulesAdapter{ctrl: ctrl}
 	mock.recorder = &MockRulesAdapterMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockRulesAdapter) EXPECT() *MockRulesAdapterMockRecorder {
 	return m.recorder
 }
 
-// Get mocks base method
+// Get mocks base method.
 func (m *MockRulesAdapter) Get() ([]correlation.Rule, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get")
@@ -42,13 +43,13 @@ func (m *MockRulesAdapter) Get() ([]correlation.Rule, error) {
 	return ret0, ret1
 }
 
-// Get indicates an expected call of Get
+// Get indicates an expected call of Get.
 func (mr *MockRulesAdapterMockRecorder) Get() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockRulesAdapter)(nil).Get))
 }
 
-// GetManualRule mocks base method
+// GetManualRule mocks base method.
 func (m *MockRulesAdapter) GetManualRule() (correlation.Rule, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetManualRule")
@@ -57,13 +58,13 @@ func (m *MockRulesAdapter) GetManualRule() (correlation.Rule, error) {
 	return ret0, ret1
 }
 
-// GetManualRule indicates an expected call of GetManualRule
+// GetManualRule indicates an expected call of GetManualRule.
 func (mr *MockRulesAdapterMockRecorder) GetManualRule() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetManualRule", reflect.TypeOf((*MockRulesAdapter)(nil).GetManualRule))
 }
 
-// GetRule mocks base method
+// GetRule mocks base method.
 func (m *MockRulesAdapter) GetRule(arg0 string) (correlation.Rule, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetRule", arg0)
@@ -72,13 +73,13 @@ func (m *MockRulesAdapter) GetRule(arg0 string) (correlation.Rule, error) {
 	return ret0, ret1
 }
 
-// GetRule indicates an expected call of GetRule
+// GetRule indicates an expected call of GetRule.
 func (mr *MockRulesAdapterMockRecorder) GetRule(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRule", reflect.TypeOf((*MockRulesAdapter)(nil).GetRule), arg0)
 }
 
-// Save mocks base method
+// Save mocks base method.
 func (m *MockRulesAdapter) Save(arg0 correlation.Rule) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Save", arg0)
@@ -86,7 +87,7 @@ func (m *MockRulesAdapter) Save(arg0 correlation.Rule) error {
 	return ret0
 }
 
-// Save indicates an expected call of Save
+// Save indicates an expected call of Save.
 func (mr *MockRulesAdapterMockRecorder) Save(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockRulesAdapter)(nil).Save), arg0)

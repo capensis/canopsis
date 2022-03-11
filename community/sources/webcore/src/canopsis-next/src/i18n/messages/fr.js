@@ -212,6 +212,8 @@ export default {
     exportAsCsv: 'Export as csv',
     criteria: 'Critères',
     ratingSettings: 'Paramètres d\'évaluation',
+    pbehavior: 'Comportement périodique | Comportements périodiques',
+    template: 'Template',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -227,6 +229,7 @@ export default {
       [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
       [EVENT_ENTITY_TYPES.assocTicket]: 'Associer un ticket',
       [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
+      [EVENT_ENTITY_TYPES.executeInstruction]: 'Exécuter l\'instruction',
     },
     times: {
       second: 'seconde | secondes',
@@ -287,21 +290,12 @@ export default {
     impacts: 'Impacts',
     dependencies: 'Dépendances',
     noEventsFilter: 'Aucun filtre d\'événements',
-    expandPanel: {
-      infos: 'Les informations',
-      type: 'Type',
-      enabled: 'Activé',
-      disabled: 'Désactivé',
-      infosSearchLabel: 'Rechercher une info',
-      tabs: {
-        main: 'Principal',
-        pbehaviors: 'Comportements périodiques',
-        impactDepends: 'Impacts/Dépendances',
-        infos: 'Infos',
-        treeOfDependencies: 'Arbre des dépendances',
-        impactChain: 'Chaîne d\'impact',
-      },
-    },
+    impactChain: 'Chaîne d\'impact',
+    impactDepends: 'Impacts/Dépendances',
+    treeOfDependencies: 'Arbre des dépendances',
+    infosSearchLabel: 'Rechercher une info',
+    eventStatisticsMessage: '{ok} OK événements\n{ko} KO événements',
+    eventStatistics: 'Statistiques d\'événement',
     actions: {
       titles: {
         editEntity: 'Éditer l\'entité',
@@ -632,7 +626,6 @@ export default {
       title: 'Info popup',
       fields: {
         column: 'Colonne',
-        template: 'Template',
       },
     },
     rowGridSize: {
@@ -708,6 +701,7 @@ export default {
     templateEditor: 'Modèle',
     columns: {
       isHtml: 'Est-ce du HTML ?',
+      withTemplate: 'Modèle personnalisé',
       isState: 'Affiché comme une criticité ?',
     },
     liveReporting: {
@@ -990,7 +984,6 @@ export default {
       title: 'Info popup',
       add: 'Ajouter',
       column: 'Colonne',
-      template: 'Template',
       addInfoPopup: {
         title: 'Ajouter une popup d\'info',
       },
@@ -1245,39 +1238,6 @@ export default {
       },
       edit: {
         title: 'Modifier la règle SNMP',
-      },
-      fields: {
-        oid: {
-          title: 'OID',
-          labels: {
-            module: 'Sélectionnez un module MIB',
-          },
-        },
-        output: {
-          title: 'Message',
-        },
-        resource: {
-          title: 'Ressource',
-        },
-        component: {
-          title: 'Composant',
-        },
-        connectorName: {
-          title: 'Nom du connecteur',
-        },
-        state: {
-          title: 'Criticité',
-          labels: {
-            toCustom: 'Personnaliser',
-            defineVar: 'Définir la variable SNMP correspondante',
-            writeTemplate: 'Écrire un modèle',
-          },
-        },
-        moduleMibObjects: {
-          vars: 'Champ d\'association des variables SNMP',
-          regex: 'Expression régulière',
-          formatter: 'Format (groupe de capture avec \\x)',
-        },
       },
     },
     selectViewTab: {
@@ -1643,6 +1603,14 @@ export default {
         + '</ul>'
         + '</p>'
         + '<p>Veuillez vérifier la configuration de votre serveur.</p>',
+      shortText: '<p>Les Websockets ne sont pas disponibles, les fonctionnalités suivantes sont donc restreintes:</p>'
+        + '<p>'
+        + '<ul>'
+        + '<li>Messages diffusés actifs</li>'
+        + '<li>Sessions d\'utilisateurs actifs</li>'
+        + '</ul>'
+        + '</p>'
+        + '<p>Veuillez vérifier la configuration de votre serveur.</p>',
     },
     confirmationPhrase: {
       phrase: 'Phrase',
@@ -1861,10 +1829,6 @@ export default {
       noValuePaths: 'Vous devez ajouter au moins un chemin de valeur',
     },
   },
-  snmpRules: {
-    uploadMib: 'Envoyer un fichier MIB',
-    addSnmpRule: 'Ajouter une règle SNMP',
-  },
   layout: {
     sideBar: {
       buttons: {
@@ -2024,6 +1988,7 @@ export default {
   },
 
   pbehavior: {
+    periodsCalendar: 'Calendrier avec périodes',
     buttons: {
       addFilter: 'Ajouter un filtre',
       editFilter: 'Modifier le filtre',
@@ -2121,43 +2086,53 @@ export default {
 
       [HEALTHCHECK_ENGINES_NAMES.webhook]: {
         name: 'Webhook',
+        description: 'Gère les webhooks',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.fifo]: {
         name: 'FIFO',
         edgeLabel: 'État de RabbitMQ\nFlux entrant des KPIs',
+        description: 'Gère la file d\'attente des événements et des alarmes',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.axe]: {
         name: 'AXE',
+        description: 'Crée des alarmes et effectue des actions avec elles',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.che]: {
         name: 'CHE',
+        description: 'Applique les filtres d\'événements et les entités créées',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.pbehavior]: {
         name: 'Pbehavior',
+        description: 'Vérifie si l\'alarme est sous PBehavior',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.action]: {
         name: 'Action',
+        description: 'Déclenche le lancement des actions',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.service]: {
         name: 'Service',
+        description: 'Met à jour les compteurs et génère service-events',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.dynamicInfos]: {
         name: 'Infos dynamiques',
+        description: 'Ajoute des informations dynamiques à l\'alarme',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.correlation]: {
         name: 'Corrélation',
+        description: 'Gère la corrélation',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.remediation]: {
         name: 'Remédiation',
+        description: 'Déclenche les instructions',
       },
     },
   },
@@ -2280,7 +2255,6 @@ export default {
     executionCount: 'Nombre de\nexécutions',
     alarmStates: 'Alarmes affectées par l\'état',
     okAlarmStates: 'Nombre de résultats\nÉtats OK',
-    rating: 'Évaluation',
     notAvailable: 'Indisponible',
     instructionChanged: 'L\'instruction a été modifiée',
     actions: {
@@ -2380,13 +2354,10 @@ export default {
   },
 
   service: {
-    fields: {
-      category: 'Catégorie',
-      name: 'Nom',
-      outputTemplate: 'Modèle de message',
-      createCategory: 'Ajouter une catégorie',
-      createCategoryHelp: 'Appuyez sur <kbd>enter</kbd> pour enregistrer',
-    },
+    outputTemplate: 'Modèle de message',
+    createCategory: 'Ajouter une catégorie',
+    createCategoryHelp: 'Appuyez sur <kbd>enter</kbd> pour enregistrer',
+    availabilityState: '@:entity.availabilityState',
   },
 
   users: {
@@ -2440,6 +2411,7 @@ export default {
       [TEST_SUITE_STATUSES.skipped]: 'Ignoré',
       [TEST_SUITE_STATUSES.error]: 'En erreur',
       [TEST_SUITE_STATUSES.failed]: 'Échoué',
+      [TEST_SUITE_STATUSES.total]: 'Temps total pris',
     },
     popups: {
       systemMessageCopied: 'Message système copié dans le presse-papier',
@@ -2522,6 +2494,7 @@ export default {
 
   quickRanges: {
     title: 'Valeurs usuelles',
+    timeField: 'Champ de temps',
     types: {
       [QUICK_RANGES.custom.value]: 'Personnalisé',
       [QUICK_RANGES.last2Days.value]: '2 derniers jours',
@@ -2621,7 +2594,7 @@ export default {
     /**
      * Admin access
      */
-    [USERS_PERMISSIONS.technical.action]: {
+    [USERS_PERMISSIONS.technical.permission]: {
       title: 'Droits',
     },
     [USERS_PERMISSIONS.technical.role]: {
@@ -2645,6 +2618,10 @@ export default {
     [USERS_PERMISSIONS.technical.healthcheck]: {
       title: 'Bilan de santé',
       message: 'La fonction Healthcheck est le tableau de bord avec des indications d\'états et d\'erreurs de tous les systèmes inclus dans Canopsis.',
+    },
+    [USERS_PERMISSIONS.technical.engine]: {
+      title: 'Engines',
+      message: 'This page contains the information about the sequence and configuration of engines. To work properly, the chain of engines must be continuous.',
     },
     [USERS_PERMISSIONS.technical.kpi]: {
       title: 'KPI',
@@ -2749,6 +2726,24 @@ export default {
 
   kpiRatingSettings: {
     helpInformation: 'La liste des paramètres à utiliser pour la notation.',
+  },
+
+  snmpRule: {
+    oid: 'OID',
+    module: 'Sélectionnez un module MIB',
+    output: 'Message',
+    resource: 'Ressource',
+    component: 'Composant',
+    connectorName: 'Nom du connecteur',
+    state: 'Criticité',
+    toCustom: 'Personnaliser',
+    writeTemplate: 'Écrire un modèle',
+    defineVar: 'Définir la variable SNMP correspondante',
+    moduleMibObjects: 'Champ d\'association des variables SNMP',
+    regex: 'Expression régulière',
+    formatter: 'Format (groupe de capture avec \\x)',
+    uploadMib: 'Envoyer un fichier MIB',
+    addSnmpRule: 'Ajouter une règle SNMP',
   },
 
   ...featureService.get('i18n.fr'),

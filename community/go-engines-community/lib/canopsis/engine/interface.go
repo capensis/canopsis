@@ -16,7 +16,7 @@ type Engine interface {
 	// AddConsumer adds AMQP consumer to engine.
 	AddConsumer(Consumer)
 	// AddPeriodicalWorker adds periodical worker to engine.
-	AddPeriodicalWorker(PeriodicalWorker)
+	AddPeriodicalWorker(name string, worker PeriodicalWorker)
 	// Run starts goroutines for all consumers and periodical workers.
 	// Engine stops if one of consumer or periodical worker return error.
 	Run(context.Context) error
@@ -38,7 +38,7 @@ type MessageProcessor interface {
 // If Work returns error engine will be stopped.
 type PeriodicalWorker interface {
 	GetInterval() time.Duration
-	Work(context.Context) error
+	Work(context.Context)
 }
 
 // RPCClient interface is used to implement AMQP RPC client.

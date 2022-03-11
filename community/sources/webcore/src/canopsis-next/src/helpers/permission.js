@@ -16,7 +16,7 @@ import {
  * @param {string} action
  * @returns {boolean}
  */
-export function checkUserAccess(permissionsById, permissionId, action) {
+export const checkUserAccess = (permissionsById, permissionId, action) => {
   const permission = permissionsById[permissionId];
 
   if (permission && permission.actions) {
@@ -28,7 +28,7 @@ export function checkUserAccess(permissionsById, permissionId, action) {
   }
 
   return false;
-}
+};
 
 /**
  * Get actions for permission by type
@@ -36,11 +36,9 @@ export function checkUserAccess(permissionsById, permissionId, action) {
  * @param {Object} permission
  * @returns {*}
  */
-export function getPermissionActions(permission) {
-  return PERMISSIONS_TYPES_TO_ACTIONS[permission.type]
-    ? PERMISSIONS_TYPES_TO_ACTIONS[permission.type]
-    : [CRUD_ACTIONS.can];
-}
+export const getPermissionActions = permission => (PERMISSIONS_TYPES_TO_ACTIONS[permission.type]
+  ? PERMISSIONS_TYPES_TO_ACTIONS[permission.type]
+  : [CRUD_ACTIONS.can]);
 
 /**
  * Get right checkbox value for the form
@@ -73,7 +71,7 @@ export const getCheckboxValue = (
  * @param {Array<Object>} [playlists = []]
  * @returns {*}
  */
-export function getGroupedPermissions(permissions, views = [], playlists = []) {
+export const getGroupedPermissions = (permissions, views = [], playlists = []) => {
   const allBusinessPermissionsIds = Object.values(flatten(USERS_PERMISSIONS.business));
   const generalApiPermissions = Object.values(USERS_PERMISSIONS.api.general);
   const rulesApiPermissions = Object.values(USERS_PERMISSIONS.api.rules);
@@ -181,4 +179,4 @@ export function getGroupedPermissions(permissions, views = [], playlists = []) {
   groupedPermissions.view.push(...groupedPermissions.playlist);
 
   return omit(groupedPermissions, ['playlist']);
-}
+};
