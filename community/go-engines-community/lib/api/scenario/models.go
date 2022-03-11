@@ -159,7 +159,7 @@ func (r *ActionRequest) UnmarshalJSON(b []byte) error {
 type SnoozeParametersRequest struct {
 	Duration *types.DurationWithUnit `json:"duration" binding:"required"`
 	Output   string                  `json:"output" binding:"max=255"`
-	Author   string                  `json:"author" swaggerignore:"true"`
+	Author   string                  `json:"author"`
 	User     string                  `json:"user" swaggerignore:"true"`
 }
 
@@ -179,14 +179,14 @@ type PbehaviorParametersRequest struct {
 type ChangeStateParametersRequest struct {
 	State  *types.CpsNumber `json:"state" binding:"required"`
 	Output string           `json:"output" binding:"required,max=255"`
-	Author string           `json:"author" swaggerignore:"true"`
+	Author string           `json:"author"`
 	User   string           `json:"user" swaggerignore:"true"`
 }
 
 type AssocTicketParametersRequest struct {
 	Ticket string `json:"ticket" binding:"required,max=255"`
 	Output string `json:"output" binding:"max=255"`
-	Author string `json:"author" swaggerignore:"true"`
+	Author string `json:"author"`
 	User   string `json:"user" swaggerignore:"true"`
 }
 
@@ -230,7 +230,7 @@ func (t WebhookDeclareTicket) MarshalJSON() ([]byte, error) {
 
 type ParametersRequest struct {
 	Output string `json:"output" binding:"max=255"`
-	Author string `json:"author" swaggerignore:"true"`
+	Author string `json:"author"`
 	User   string `json:"user" swaggerignore:"true"`
 }
 
