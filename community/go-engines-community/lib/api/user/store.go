@@ -3,22 +3,28 @@ package user
 import (
 	"context"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"math"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 type Store interface {
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
 	GetOneBy(ctx context.Context, id string) (*User, error)
-	Insert(ctx context.Context, r EditRequest) (*User, error)
-	Update(ctx context.Context, r EditRequest) (*User, error)
+	Insert(ctx context.Context, r Request) (*User, error)
+	Update(ctx context.Context, r Request) (*User, error)
 	Delete(ctx context.Context, id string) (bool, error)
+
+	BulkInsert(ctx context.Context, requests []Request) error
+	BulkUpdate(ctx context.Context, requests []BulkUpdateRequestItem) error
+	BulkDelete(ctx context.Context, ids []string) error
 }
 
 func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder) Store {
@@ -115,22 +121,8 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 	return nil, nil
 }
 
-func (s *store) Insert(ctx context.Context, r EditRequest) (*User, error) {
-	_, err := s.dbCollection.InsertOne(ctx, bson.M{
-		"_id":                  r.Name,
-		"crecord_name":         r.Name,
-		"crecord_type":         securitymodel.LineTypeSubject,
-		"lastname":             r.Lastname,
-		"firstname":            r.Firstname,
-		"mail":                 r.Email,
-		"role":                 r.Role,
-		"shadowpasswd":         string(s.passwordEncoder.EncodePassword([]byte(r.Password))),
-		"ui_language":          r.UILanguage,
-		"groupsNavigationType": r.UIGroupsNavigationType,
-		"enable":               r.IsEnabled,
-		"defaultview":          r.DefaultView,
-		"authkey":              utils.NewID(),
-	})
+func (s *store) Insert(ctx context.Context, r Request) (*User, error) {
+	_, err := s.dbCollection.InsertOne(ctx, r.getInsertBson(s.passwordEncoder))
 	if err != nil {
 		return nil, err
 	}
@@ -138,26 +130,10 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*User, error) {
 	return s.GetOneBy(ctx, r.Name)
 }
 
-func (s *store) Update(ctx context.Context, r EditRequest) (*User, error) {
-	update := bson.M{
-		"crecord_name":         r.Name,
-		"lastname":             r.Lastname,
-		"firstname":            r.Firstname,
-		"mail":                 r.Email,
-		"role":                 r.Role,
-		"ui_language":          r.UILanguage,
-		"groupsNavigationType": r.UIGroupsNavigationType,
-		"enable":               r.IsEnabled,
-		"defaultview":          r.DefaultView,
-		"tours":                r.UITours,
-	}
-	if r.Password != "" {
-		update["shadowpasswd"] = string(s.passwordEncoder.EncodePassword([]byte(r.Password)))
-	}
-
+func (s *store) Update(ctx context.Context, r Request) (*User, error) {
 	res, err := s.dbCollection.UpdateOne(ctx,
 		bson.M{"_id": r.ID, "crecord_type": securitymodel.LineTypeSubject},
-		bson.M{"$set": update},
+		bson.M{"$set": r.getUpdateBson(s.passwordEncoder)},
 	)
 	if err != nil {
 		return nil, err
@@ -180,6 +156,69 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	}
 
 	return delCount > 0, nil
+}
+
+func (s *store) BulkInsert(ctx context.Context, requests []Request) error {
+	var err error
+	writeModels := make([]mongodriver.WriteModel, 0, int(math.Min(float64(canopsis.DefaultBulkSize), float64(len(requests)))))
+
+	for _, r := range requests {
+		writeModels = append(
+			writeModels,
+			mongodriver.NewInsertOneModel().SetDocument(r.getInsertBson(s.passwordEncoder)),
+		)
+
+		if len(writeModels) == canopsis.DefaultBulkSize {
+			_, err = s.dbCollection.BulkWrite(ctx, writeModels)
+			if err != nil {
+				return err
+			}
+
+			writeModels = writeModels[:0]
+		}
+	}
+
+	if len(writeModels) > 0 {
+		_, err = s.dbCollection.BulkWrite(ctx, writeModels)
+	}
+
+	return err
+}
+
+func (s *store) BulkUpdate(ctx context.Context, requests []BulkUpdateRequestItem) error {
+	var err error
+	writeModels := make([]mongodriver.WriteModel, 0, int(math.Min(float64(canopsis.DefaultBulkSize), float64(len(requests)))))
+
+	for _, r := range requests {
+		writeModels = append(
+			writeModels,
+			mongodriver.
+				NewUpdateOneModel().
+				SetFilter(bson.M{"_id": r.ID, "crecord_type": securitymodel.LineTypeSubject}).
+				SetUpdate(bson.M{"$set": r.getUpdateBson(s.passwordEncoder)}),
+		)
+
+		if len(writeModels) == canopsis.DefaultBulkSize {
+			_, err = s.dbCollection.BulkWrite(ctx, writeModels)
+			if err != nil {
+				return err
+			}
+
+			writeModels = writeModels[:0]
+		}
+	}
+
+	if len(writeModels) > 0 {
+		_, err = s.dbCollection.BulkWrite(ctx, writeModels)
+	}
+
+	return err
+}
+
+func (s *store) BulkDelete(ctx context.Context, ids []string) error {
+	_, err := s.dbCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
+
+	return err
 }
 
 func getNestedObjectsPipeline() []bson.M {

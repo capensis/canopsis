@@ -5,36 +5,37 @@
 package mock_provider
 
 import (
+	reflect "reflect"
+
 	security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	ldap "github.com/go-ldap/ldap/v3"
 	gomock "github.com/golang/mock/gomock"
-	reflect "reflect"
 )
 
-// MockLdapDialer is a mock of LdapDialer interface
+// MockLdapDialer is a mock of LdapDialer interface.
 type MockLdapDialer struct {
 	ctrl     *gomock.Controller
 	recorder *MockLdapDialerMockRecorder
 }
 
-// MockLdapDialerMockRecorder is the mock recorder for MockLdapDialer
+// MockLdapDialerMockRecorder is the mock recorder for MockLdapDialer.
 type MockLdapDialerMockRecorder struct {
 	mock *MockLdapDialer
 }
 
-// NewMockLdapDialer creates a new mock instance
+// NewMockLdapDialer creates a new mock instance.
 func NewMockLdapDialer(ctrl *gomock.Controller) *MockLdapDialer {
 	mock := &MockLdapDialer{ctrl: ctrl}
 	mock.recorder = &MockLdapDialerMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockLdapDialer) EXPECT() *MockLdapDialerMockRecorder {
 	return m.recorder
 }
 
-// DialURL mocks base method
+// DialURL mocks base method.
 func (m *MockLdapDialer) DialURL(arg0 *security.LdapConfig) (ldap.Client, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DialURL", arg0)
@@ -43,7 +44,7 @@ func (m *MockLdapDialer) DialURL(arg0 *security.LdapConfig) (ldap.Client, error)
 	return ret0, ret1
 }
 
-// DialURL indicates an expected call of DialURL
+// DialURL indicates an expected call of DialURL.
 func (mr *MockLdapDialerMockRecorder) DialURL(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DialURL", reflect.TypeOf((*MockLdapDialer)(nil).DialURL), arg0)

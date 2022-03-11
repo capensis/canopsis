@@ -1,10 +1,8 @@
-import { isBoolean } from 'lodash';
-
 import { FILTER_DEFAULT_VALUES } from '@/constants';
 
 import { prepareMainFilterToQueryFilter, getMainFilterAndCondition } from '@/helpers/filter';
 
-export default {
+export const widgetFilterSelectMixin = {
   computed: {
     mainFilterAndCondition() {
       return getMainFilterAndCondition(this.widget, this.userPreference);
@@ -38,9 +36,7 @@ export default {
   },
   methods: {
     updateFieldsInWidgetPreferences(fields = {}) {
-      const hasAccessToUserFilter = this.hasAccessToUserFilter || !isBoolean(this.hasAccessToUserFilter);
-
-      if (hasAccessToUserFilter) {
+      if (this.hasAccessToUserFilter) {
         return this.updateContentInUserPreference({
           ...fields,
         });

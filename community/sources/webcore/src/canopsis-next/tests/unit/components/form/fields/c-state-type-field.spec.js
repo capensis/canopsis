@@ -47,7 +47,7 @@ describe('c-state-type-field', () => {
   it('Renders `c-state-type-field` with default props', () => {
     const wrapper = snapshotFactory();
 
-    const menuContent = wrapper.find('.v-menu__content');
+    const menuContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
@@ -64,7 +64,7 @@ describe('c-state-type-field', () => {
       },
     });
 
-    const menuContent = wrapper.find('.v-menu__content');
+    const menuContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();

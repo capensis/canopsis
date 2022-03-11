@@ -2,6 +2,7 @@ package idlerule
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -10,11 +11,13 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/scenario"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/valyala/fastjson"
 	"net/http"
 )
 
 type API interface {
-	common.CrudAPI
+	common.BulkCrudAPI
 	CountPatterns(c *gin.Context)
 }
 
@@ -115,21 +118,21 @@ func (a *api) Get(c *gin.Context) {
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /idle-rules [post]
 func (a *api) Create(c *gin.Context) {
-	var request EditRequest
+	var request CreateRequest
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey)
-	author := c.MustGet(auth.Username)
-	setOperationParameterAuthorAndUserID(&request, author.(string), userId.(string))
+	userId := c.MustGet(auth.UserKey).(string)
+	author := c.MustGet(auth.Username).(string)
+	setOperationParameterAuthorAndUserID(&request.EditRequest, author, userId)
 	rule, err := a.store.Insert(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeIdleRule,
 		ValueID:   rule.ID,
@@ -157,7 +160,7 @@ func (a *api) Create(c *gin.Context) {
 // @Failure 404 {object} common.ErrorResponse
 // @Router /idle-rules/{id} [put]
 func (a *api) Update(c *gin.Context) {
-	request := EditRequest{
+	request := UpdateRequest{
 		ID: c.Param("id"),
 	}
 
@@ -166,9 +169,9 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey)
-	author := c.MustGet(auth.Username)
-	setOperationParameterAuthorAndUserID(&request, author.(string), userId.(string))
+	userId := c.MustGet(auth.UserKey).(string)
+	author := c.MustGet(auth.Username).(string)
+	setOperationParameterAuthorAndUserID(&request.EditRequest, author, userId)
 	rule, err := a.store.Update(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
@@ -179,7 +182,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypeIdleRule,
 		ValueID:   c.Param("id"),
@@ -215,7 +218,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionDelete,
 		ValueType: logger.ValueTypeIdleRule,
 		ValueID:   c.Param("id"),
@@ -225,6 +228,257 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// Bulk create idlerules
+// @Summary Bulk create idlerules
+// @Description Bulk create idlerules
+// @Tags idlerules
+// @ID idlerules-bulk-create
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []CreateRequest true "body"
+// @Success 207 {array} []BulkCreateResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/idle-rules [post]
+func (a *api) BulkCreate(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+
+	var ar fastjson.Arena
+
+	raw, err := c.GetRawData()
+	if err != nil {
+		panic(err)
+	}
+
+	jsonValue, err := fastjson.ParseBytes(raw)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	rawObjects, err := jsonValue.Array()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	ctx := c.Request.Context()
+	response := ar.NewArray()
+
+	for idx, rawObject := range rawObjects {
+		object, err := rawObject.Object()
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		var request CreateRequest
+		err = json.Unmarshal(object.MarshalTo(nil), &request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		err = binding.Validator.ValidateStruct(request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
+			continue
+		}
+
+		setOperationParameterAuthorAndUserID(&request.EditRequest, c.MustGet(auth.Username).(string), userId)
+
+		rule, err := a.store.Insert(ctx, request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, rule.ID, http.StatusOK, rawObject, nil))
+
+		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+			Action:    logger.ActionCreate,
+			ValueType: logger.ValueTypeIdleRule,
+			ValueID:   rule.ID,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+	}
+
+	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+}
+
+// Bulk update idlerules
+// @Summary Bulk update idlerules
+// @Description Bulk update idlerules
+// @Tags idlerules
+// @ID idlerules-bulk-update
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []BulkUpdateRequestItem true "body"
+// @Success 207 {array} []BulkUpdateResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/idle-rules [put]
+func (a *api) BulkUpdate(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+
+	var ar fastjson.Arena
+
+	raw, err := c.GetRawData()
+	if err != nil {
+		panic(err)
+	}
+
+	jsonValue, err := fastjson.ParseBytes(raw)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	rawObjects, err := jsonValue.Array()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	ctx := c.Request.Context()
+	response := ar.NewArray()
+
+	for idx, rawObject := range rawObjects {
+		userObject, err := rawObject.Object()
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		var request BulkUpdateRequestItem
+		err = json.Unmarshal(userObject.MarshalTo(nil), &request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		err = binding.Validator.ValidateStruct(request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
+			continue
+		}
+
+		setOperationParameterAuthorAndUserID(&request.EditRequest, c.MustGet(auth.Username).(string), userId)
+
+		rule, err := a.store.Update(ctx, UpdateRequest(request))
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		if rule == nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			continue
+		}
+
+		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, rule.ID, http.StatusOK, rawObject, nil))
+
+		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+			Action:    logger.ActionUpdate,
+			ValueType: logger.ValueTypeIdleRule,
+			ValueID:   rule.ID,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+	}
+
+	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+}
+
+// Bulk delete idlerules
+// @Summary Bulk delete idlerules
+// @Description Bulk delete idlerules
+// @Tags idlerules
+// @ID idlerules-bulk-delete
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []BulkDeleteRequestItem true "body"
+// @Success 207 {array} []BulkDeleteResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/idle-rules [delete]
+func (a *api) BulkDelete(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+
+	var ar fastjson.Arena
+
+	raw, err := c.GetRawData()
+	if err != nil {
+		panic(err)
+	}
+
+	jsonValue, err := fastjson.ParseBytes(raw)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	rawObjects, err := jsonValue.Array()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	ctx := c.Request.Context()
+	response := ar.NewArray()
+
+	for idx, rawObject := range rawObjects {
+		object, err := rawObject.Object()
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		var request BulkDeleteRequestItem
+		err = json.Unmarshal(object.MarshalTo(nil), &request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		err = binding.Validator.ValidateStruct(request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
+			continue
+		}
+
+		ok, err := a.store.Delete(ctx, request.ID)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		if !ok {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			continue
+		}
+
+		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))
+
+		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+			Action:    logger.ActionDelete,
+			ValueType: logger.ValueTypeIdleRule,
+			ValueID:   request.ID,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+	}
+
+	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
 // Count entities and alarm matching patterns

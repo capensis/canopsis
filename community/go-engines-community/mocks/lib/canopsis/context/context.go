@@ -6,36 +6,37 @@ package mock_context
 
 import (
 	context "context"
+	reflect "reflect"
+
 	context0 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context"
 	types "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	gomock "github.com/golang/mock/gomock"
-	reflect "reflect"
 )
 
-// MockEnrichmentCenter is a mock of EnrichmentCenter interface
+// MockEnrichmentCenter is a mock of EnrichmentCenter interface.
 type MockEnrichmentCenter struct {
 	ctrl     *gomock.Controller
 	recorder *MockEnrichmentCenterMockRecorder
 }
 
-// MockEnrichmentCenterMockRecorder is the mock recorder for MockEnrichmentCenter
+// MockEnrichmentCenterMockRecorder is the mock recorder for MockEnrichmentCenter.
 type MockEnrichmentCenterMockRecorder struct {
 	mock *MockEnrichmentCenter
 }
 
-// NewMockEnrichmentCenter creates a new mock instance
+// NewMockEnrichmentCenter creates a new mock instance.
 func NewMockEnrichmentCenter(ctrl *gomock.Controller) *MockEnrichmentCenter {
 	mock := &MockEnrichmentCenter{ctrl: ctrl}
 	mock.recorder = &MockEnrichmentCenterMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockEnrichmentCenter) EXPECT() *MockEnrichmentCenterMockRecorder {
 	return m.recorder
 }
 
-// Get mocks base method
+// Get mocks base method.
 func (m *MockEnrichmentCenter) Get(arg0 context.Context, arg1 types.Event) (*types.Entity, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", arg0, arg1)
@@ -44,13 +45,13 @@ func (m *MockEnrichmentCenter) Get(arg0 context.Context, arg1 types.Event) (*typ
 	return ret0, ret1
 }
 
-// Get indicates an expected call of Get
+// Get indicates an expected call of Get.
 func (mr *MockEnrichmentCenterMockRecorder) Get(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockEnrichmentCenter)(nil).Get), arg0, arg1)
 }
 
-// Handle mocks base method
+// Handle mocks base method.
 func (m *MockEnrichmentCenter) Handle(arg0 context.Context, arg1 types.Event, arg2 context0.EnrichFields) (*types.Entity, context0.UpdatedEntityServices, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Handle", arg0, arg1, arg2)
@@ -60,13 +61,13 @@ func (m *MockEnrichmentCenter) Handle(arg0 context.Context, arg1 types.Event, ar
 	return ret0, ret1, ret2
 }
 
-// Handle indicates an expected call of Handle
+// Handle indicates an expected call of Handle.
 func (mr *MockEnrichmentCenterMockRecorder) Handle(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Handle", reflect.TypeOf((*MockEnrichmentCenter)(nil).Handle), arg0, arg1, arg2)
 }
 
-// HandleEntityServiceUpdate mocks base method
+// HandleEntityServiceUpdate mocks base method.
 func (m *MockEnrichmentCenter) HandleEntityServiceUpdate(arg0 context.Context, arg1 string) (*context0.UpdatedEntityServices, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HandleEntityServiceUpdate", arg0, arg1)
@@ -75,13 +76,13 @@ func (m *MockEnrichmentCenter) HandleEntityServiceUpdate(arg0 context.Context, a
 	return ret0, ret1
 }
 
-// HandleEntityServiceUpdate indicates an expected call of HandleEntityServiceUpdate
+// HandleEntityServiceUpdate indicates an expected call of HandleEntityServiceUpdate.
 func (mr *MockEnrichmentCenterMockRecorder) HandleEntityServiceUpdate(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleEntityServiceUpdate", reflect.TypeOf((*MockEnrichmentCenter)(nil).HandleEntityServiceUpdate), arg0, arg1)
 }
 
-// LoadServices mocks base method
+// LoadServices mocks base method.
 func (m *MockEnrichmentCenter) LoadServices(arg0 context.Context) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "LoadServices", arg0)
@@ -89,13 +90,13 @@ func (m *MockEnrichmentCenter) LoadServices(arg0 context.Context) error {
 	return ret0
 }
 
-// LoadServices indicates an expected call of LoadServices
+// LoadServices indicates an expected call of LoadServices.
 func (mr *MockEnrichmentCenterMockRecorder) LoadServices(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoadServices", reflect.TypeOf((*MockEnrichmentCenter)(nil).LoadServices), arg0)
 }
 
-// ReloadService mocks base method
+// ReloadService mocks base method.
 func (m *MockEnrichmentCenter) ReloadService(arg0 context.Context, arg1 string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ReloadService", arg0, arg1)
@@ -103,13 +104,13 @@ func (m *MockEnrichmentCenter) ReloadService(arg0 context.Context, arg1 string) 
 	return ret0
 }
 
-// ReloadService indicates an expected call of ReloadService
+// ReloadService indicates an expected call of ReloadService.
 func (mr *MockEnrichmentCenterMockRecorder) ReloadService(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReloadService", reflect.TypeOf((*MockEnrichmentCenter)(nil).ReloadService), arg0, arg1)
 }
 
-// UpdateEntityInfos mocks base method
+// UpdateEntityInfos mocks base method.
 func (m *MockEnrichmentCenter) UpdateEntityInfos(arg0 context.Context, arg1 *types.Entity) (context0.UpdatedEntityServices, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateEntityInfos", arg0, arg1)
@@ -118,13 +119,13 @@ func (m *MockEnrichmentCenter) UpdateEntityInfos(arg0 context.Context, arg1 *typ
 	return ret0, ret1
 }
 
-// UpdateEntityInfos indicates an expected call of UpdateEntityInfos
+// UpdateEntityInfos indicates an expected call of UpdateEntityInfos.
 func (mr *MockEnrichmentCenterMockRecorder) UpdateEntityInfos(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateEntityInfos", reflect.TypeOf((*MockEnrichmentCenter)(nil).UpdateEntityInfos), arg0, arg1)
 }
 
-// UpdateImpactedServices mocks base method
+// UpdateImpactedServices mocks base method.
 func (m *MockEnrichmentCenter) UpdateImpactedServices(arg0 context.Context) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateImpactedServices", arg0)
@@ -132,7 +133,7 @@ func (m *MockEnrichmentCenter) UpdateImpactedServices(arg0 context.Context) erro
 	return ret0
 }
 
-// UpdateImpactedServices indicates an expected call of UpdateImpactedServices
+// UpdateImpactedServices indicates an expected call of UpdateImpactedServices.
 func (mr *MockEnrichmentCenterMockRecorder) UpdateImpactedServices(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateImpactedServices", reflect.TypeOf((*MockEnrichmentCenter)(nil).UpdateImpactedServices), arg0)

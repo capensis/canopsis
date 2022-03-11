@@ -29,10 +29,7 @@ func TestLockedPeriodicalWorker_Work_GivenObtainedLock_ShouldRunWorker(t *testin
 	mockWorker.EXPECT().Work(gomock.Any())
 
 	worker := engine.NewLockedPeriodicalWorker(mockLockClient, lockKey, mockWorker, zerolog.Nop())
-	err := worker.Work(ctx)
-	if err != nil {
-		t.Errorf("expected no error but got %v", err)
-	}
+	worker.Work(ctx)
 }
 
 func TestLockedPeriodicalWorker_Work_GivenNotObtainedLock_ShouldNotRunWorker(t *testing.T) {
@@ -51,8 +48,5 @@ func TestLockedPeriodicalWorker_Work_GivenNotObtainedLock_ShouldNotRunWorker(t *
 	mockWorker.EXPECT().Work(gomock.Any()).Times(0)
 
 	worker := engine.NewLockedPeriodicalWorker(mockLockClient, lockKey, mockWorker, zerolog.Nop())
-	err := worker.Work(ctx)
-	if err != nil {
-		t.Errorf("expected no error but got %v", err)
-	}
+	worker.Work(ctx)
 }

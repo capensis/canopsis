@@ -1,0 +1,17 @@
+**
+!community/sources/webcore/src/canopsis-next/.env
+!community/sources/webcore/src/canopsis-next/.postcssrc
+!community/sources/webcore/src/canopsis-next/.babelrc
+!community/sources/webcore/src/canopsis-next/Makefile
+!community/sources/webcore/src/canopsis-next/jest.config.js
+!community/sources/webcore/src/canopsis-next/jsconfig.json
+!community/sources/webcore/src/canopsis-next/package.json
+!community/sources/webcore/src/canopsis-next/public/**
+!community/sources/webcore/src/canopsis-next/src/**
+!community/sources/webcore/src/canopsis-next/tools/**
+!community/sources/webcore/src/canopsis-next/tests/**
+!community/sources/webcore/src/canopsis-next/vue.config.js
+!community/sources/webcore/src/canopsis-next/yarn.lock
+!community/docker/files/etc/nginx/*
+!community/docker/files/entrypoint-nginx.sh
+!community/deploy-ansible/playbook/roles/canopsis/templates/nginx/*.j2

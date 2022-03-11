@@ -5,6 +5,7 @@
         div(:class="validationHeaderClass") {{ label }}
     c-columns-field(
       v-field="columns",
+      :with-template="withTemplate",
       :with-html="withHtml",
       :with-color-indicator="withColorIndicator"
     )
@@ -30,6 +31,10 @@ export default {
     columns: {
       type: [Array, Object],
       default: () => [],
+    },
+    withTemplate: {
+      type: Boolean,
+      default: false,
     },
     withHtml: {
       type: Boolean,

@@ -108,7 +108,7 @@ describe('c-ellipsis', () => {
       propsData: { text },
     });
 
-    const menuContent = wrapper.find('.v-menu__content');
+    const menuContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();

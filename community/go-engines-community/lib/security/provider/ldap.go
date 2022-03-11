@@ -1,6 +1,7 @@
 package provider
 
 //go:generate mockgen -destination=../../../mocks/lib/security/provider/provider.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/provider LdapDialer
+//go:generate mockgen -destination=../../../mocks/github.com/go-ldap/ldap/client.go github.com/go-ldap/ldap/v3 Client
 
 import (
 	"context"

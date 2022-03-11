@@ -62,6 +62,7 @@
         :fluid="fluid",
         :fill-height="fillHeight"
       )
+        c-progress-overlay(:pending="pending")
         ds-gestures(
           @swipeleft="next",
           @swiperight="prev"
@@ -113,6 +114,10 @@ export default {
       default: () => Calendar.months(),
     },
     readOnly: {
+      type: Boolean,
+      default: false,
+    },
+    pending: {
       type: Boolean,
       default: false,
     },

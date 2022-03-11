@@ -302,6 +302,9 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.junitTestCaseUpdate]: {
     icon: 'keyboard_arrow_up',
   },
+  [EVENT_ENTITY_TYPES.executeInstruction]: {
+    icon: 'assignment',
+  },
 };
 
 export const UNKNOWN_VALUE_STYLE = {
@@ -410,9 +413,22 @@ export const WEATHER_ACTIONS_TYPES = {
   alarmsList: 'alarmsList',
   pbehaviorList: 'pbehaviorList',
   variablesHelp: 'variablesHelp',
+  executeInstruction: 'executeInstruction',
 };
 
 export const COUNTER_ACTIONS_TYPES = {
   alarmsList: 'alarmsList',
   variablesHelp: 'variablesHelp',
 };
+
+export const CONTEXT_COLUMN_INFOS_PREFIX = 'infos.';
+
+export const CONTEXT_COLUMNS_WITH_SORTABLE = [ // TODO: We should receive it from backend side in the future
+  '_id',
+  'name',
+  'type',
+  'category',
+  'impact_level',
+  'category.name',
+  'idle_since',
+];

@@ -2,6 +2,7 @@ package alarm_test
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"testing"
 	"time"
@@ -121,7 +122,7 @@ func TestService_ResolveDone(t *testing.T) {
 			doneAlarms, err := service.ResolveDone(context.Background())
 			if err != nil {
 				expectedErr := fmt.Sprintf("done alarms error: %v", dataset.findError.Error())
-				if err.Error() != expectedErr {
+				if errors.Is(err, errors.New(expectedErr)) {
 					t.Errorf("expected err %v but got %v", expectedErr, err)
 				}
 			}
@@ -237,7 +238,7 @@ func TestService_ResolveCancels(t *testing.T) {
 			})
 			if err != nil {
 				expectedErr := fmt.Sprintf("cancel alarms error: %v", dataset.findError.Error())
-				if err.Error() != expectedErr {
+				if errors.Is(err, errors.New(expectedErr)) {
 					t.Errorf("expected err %v but got %v", expectedErr, err)
 				}
 			}
@@ -349,7 +350,7 @@ func TestService_ResolveSnoozes(t *testing.T) {
 			unsnoozedAlarms, err := service.ResolveSnoozes(context.Background(), config.AlarmConfig{})
 			if err != nil {
 				expectedErr := fmt.Sprintf("snooze alarms error: %v", dataset.findError.Error())
-				if err.Error() != expectedErr {
+				if errors.Is(err, errors.New(expectedErr)) {
 					t.Errorf("expected err %v but got %v", expectedErr, err)
 				}
 			}

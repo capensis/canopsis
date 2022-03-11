@@ -1,6 +1,7 @@
 package playlist
 
 import (
+	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
@@ -115,18 +116,14 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	userID, ok := c.Get(auth.UserKey)
-	if !ok {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
-		return
-	}
+	userID := c.MustGet(auth.UserKey).(string)
 
-	playlist, err := a.store.Insert(c.Request.Context(), userID.(string), request)
+	playlist, err := a.store.Insert(c.Request.Context(), userID, request)
 	if err != nil {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), userID, logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypePlayList,
 		ValueID:   playlist.ID,
@@ -173,7 +170,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypePlayList,
 		ValueID:   playlist.ID,
@@ -208,7 +205,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionDelete,
 		ValueType: logger.ValueTypePlayList,
 		ValueID:   id,

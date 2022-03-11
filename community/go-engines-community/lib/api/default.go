@@ -31,6 +31,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session/mongostore"
 	"github.com/gin-gonic/gin"
 	gorillawebsocket "github.com/gorilla/websocket"
@@ -55,7 +56,7 @@ func Default(
 	deferFunc DeferFunc,
 ) (API, error) {
 	// Retrieve config.
-	dbClient, err := mongo.NewClient(ctx, 0, 0)
+	dbClient, err := mongo.NewClient(ctx, 0, 0, logger)
 	if err != nil {
 		logger.Err(err).Msg("cannot connect to mongodb")
 		return nil, err
@@ -113,12 +114,22 @@ func Default(
 		apiConfigProvider = config.NewApiConfigProvider(cfg, logger)
 	}
 	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, apiConfigProvider, cookieOptions, logger)
+
+	if flags.EnableSameServiceNames {
+		logger.Info().Msg("Non-unique names for services ENABLED")
+	}
+
+	proxyAccessConfig, err := proxy.LoadAccessConfig(flags.ConfigDir)
+	if err != nil {
+		logger.Err(err).Msg("cannot load access config")
+		return nil, err
+	}
 	// Create pbehavior computer.
 	pbhComputeChan := make(chan libpbehavior.ComputeTask, chanBuf)
 	pbhEntityMatcher := libpbehavior.NewComputedEntityMatcher(dbClient, pbhRedisSession, json.NewEncoder(), json.NewDecoder())
 	pbhStore := libpbehavior.NewStore(pbhRedisSession, json.NewEncoder(), json.NewDecoder())
 	pbhService := libpbehavior.NewService(libpbehavior.NewModelProvider(dbClient), pbhEntityMatcher, pbhStore, libredis.NewLockClient(pbhRedisSession))
-	pbhEntityTypeResolver := libpbehavior.NewEntityTypeResolver(pbhStore, pbhEntityMatcher)
+	pbhEntityTypeResolver := libpbehavior.NewEntityTypeResolver(pbhStore, libpbehavior.NewEntityMatcher(dbClient), pbhEntityMatcher)
 	// Create entity service event publisher.
 	entityPublChan := make(chan entityservice.ChangeEntityMessage, chanBuf)
 	entityServiceEventPublisher := entityservice.NewEventPublisher(
@@ -143,7 +154,7 @@ func Default(
 
 	entityCleanerTaskChan := make(chan entity.CleanTask)
 	disabledEntityCleaner := entity.NewDisabledCleaner(
-		entity.NewStore(dbClient),
+		entity.NewStore(dbClient, timezoneConfigProvider),
 		datastorage.NewAdapter(dbClient),
 		metricsEntityMetaUpdater,
 		logger,
@@ -213,7 +224,7 @@ func Default(
 			router.Use(devmiddleware.ReloadEnforcerPolicy(enforcer))
 		}
 
-		RegisterValidators(dbClient)
+		RegisterValidators(dbClient, flags.EnableSameServiceNames)
 		RegisterRoutes(
 			ctx,
 			cfg,
@@ -241,9 +252,7 @@ func Default(
 			logger,
 		)
 	})
-	api.AddNoRoute(func(c *gin.Context) {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
-	})
+	api.AddNoRoute(GetProxy(security, enforcer, proxyAccessConfig)...)
 	api.AddNoMethod(func(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusMethodNotAllowed, common.MethodNotAllowedResponse)
 	})
@@ -306,8 +315,12 @@ func newWebsocketHub(enforcer libsecurity.Enforcer, tokenProvider libsecurity.To
 	websocketAuthorizer := websocket.NewAuthorizer(enforcer, tokenProvider)
 	websocketHub := websocket.NewHub(websocketUpgrader, websocketAuthorizer,
 		canopsis.PeriodicalWaitTime, logger)
-	websocketHub.RegisterRoom(websocket.RoomBroadcastMessages)
-	websocketHub.RegisterRoom(websocket.RoomLoggedUserCount)
+	if err := websocketHub.RegisterRoom(websocket.RoomBroadcastMessages); err != nil {
+		logger.Err(err).Msg("Register BroadcastMessages room")
+	}
+	if err := websocketHub.RegisterRoom(websocket.RoomLoggedUserCount); err != nil {
+		logger.Err(err).Msg("Register LoggedUserCount room")
+	}
 	return websocketHub
 }
 
@@ -338,28 +351,15 @@ func updateConfig(
 					continue
 				}
 
-				err = timezoneConfigProvider.Update(cfg)
-				if err != nil {
-					logger.Err(err).Msg("fail to update tz config")
-					continue
-				}
-
-				err = apiConfigProvider.Update(cfg)
-				if err != nil {
-					logger.Err(err).Msg("fail to update api config")
-					continue
-				}
+				timezoneConfigProvider.Update(cfg)
+				apiConfigProvider.Update(cfg)
 
 				userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
 				if err != nil {
 					logger.Err(err).Msg("fail to load user interface config")
 					continue
 				}
-				err = userInterfaceConfigProvider.Update(userInterfaceConfig)
-				if err != nil {
-					logger.Err(err).Msg("fail to update user interface config")
-					continue
-				}
+				userInterfaceConfigProvider.Update(userInterfaceConfig)
 			case <-ctx.Done():
 				return
 			}
