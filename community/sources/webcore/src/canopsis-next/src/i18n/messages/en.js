@@ -210,6 +210,7 @@ export default {
     toTheTop: 'To the top',
     time: 'Time',
     lastModifiedOn: 'Last modified on',
+    lastModifiedBy: 'Last modified by',
     exportAsCsv: 'Export as csv',
     criteria: 'Criteria',
     ratingSettings: 'Rating settings',
@@ -1946,6 +1947,7 @@ export default {
       admin: 'Admin rights',
       exploitation: 'Exploitation rights',
       notification: 'Notification rights',
+      profile: 'Profile rights',
     },
     business: {
       [USER_PERMISSIONS_PREFIXES.business.common]: 'Rights for common',
@@ -2711,6 +2713,12 @@ export default {
     formatter: 'Format (capture group with \\x)',
     uploadMib: 'Upload MIB',
     addSnmpRule: 'Add SNMP rule',
+  },
+
+  pattern: {
+    patterns: 'Filter | Filters',
+    myPatterns: 'My filters',
+    corporatePatterns: 'Shared filters',
   },
 
   ...featureService.get('i18n.en'),
