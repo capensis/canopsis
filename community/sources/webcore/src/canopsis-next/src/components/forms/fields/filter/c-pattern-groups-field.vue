@@ -6,12 +6,18 @@
           v-field="groups[index]",
           :attributes="attributes",
           :rules-map="rulesMap",
+          :disabled="disabled",
           @remove="removeItemFromArray(index)"
         )
       v-layout(v-show="index !== groups.length - 1", justify-center)
         c-pattern-operator-chip {{ $t('common.or') }}
-    v-layout
-      v-btn.mx-0(color="primary", @click="addFilterGroup") {{ $t('patterns.addGroup') }}
+    v-layout(row, align-center)
+      v-btn.ml-0(
+        :color="hasGroupsErrors ? 'error' : 'primary'",
+        :disabled="disabled",
+        @click="addFilterGroup"
+      ) {{ $t('pattern.addGroup') }}
+      span.error--text(v-show="hasGroupsErrors") {{ $t('pattern.errors.groupRequired') }}
 </template>
 
 <script>
@@ -20,6 +26,7 @@ import { filterGroupToForm } from '@/helpers/forms/filter';
 import { formArrayMixin } from '@/mixins/form';
 
 export default {
+  inject: ['$validator'],
   mixins: [formArrayMixin],
   model: {
     prop: 'groups',
@@ -38,12 +45,41 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     name: {
       type: String,
       default: 'groups',
     },
   },
+  computed: {
+    hasGroupsErrors() {
+      return this.errors.has(this.name);
+    },
+  },
+  created() {
+    this.attachMinValueRule();
+  },
+  beforeDestroy() {
+    this.detachMinValueRule();
+  },
   methods: {
+    attachMinValueRule() {
+      this.$validator.attach({
+        name: this.name,
+        rules: 'min_value:1',
+        getter: () => this.groups.length,
+        context: () => this,
+        vm: this,
+      });
+    },
+
+    detachMinValueRule() {
+      this.$validator.detach(this.name);
+    },
+
     addFilterGroup() {
       const [firstAttribute] = this.attributes;
 

@@ -2713,10 +2713,14 @@ export default {
     addSnmpRule: 'Ajouter une règle SNMP',
   },
 
-  filters: {
+  pattern: {
     addRule: 'Ajouter une règle',
     addGroup: 'Ajouter un groupe',
     removeRule: 'Supprimer la règle',
+    errors: {
+      ruleRequired: 'Veuillez ajouter au moins une règle',
+      groupRequired: 'Veuillez ajouter au moins un groupe',
+    },
   },
 
   ...featureService.get('i18n.fr'),

@@ -2,15 +2,26 @@
   v-layout(column)
     v-layout(v-for="(rule, index) in rules", :key="rule.key", row, justify-space-between, align-center)
       v-flex
-        c-pattern-rule-field(v-field="rules[index]", v-bind="getFilterRuleProps(rule)")
+        c-pattern-rule-field(
+          v-field="rules[index]",
+          v-bind="rulesMap[rule.attribute]",
+          :attributes="attributes",
+          :disabled="disabled"
+        )
       c-action-btn(
-        :tooltip="$t('patterns.removeRule')",
+        :tooltip="$t('pattern.removeRule')",
+        :disabled="disabled",
         type="delete",
         color="black",
         @click="removeFilterRule(index)"
       )
-    v-layout
-      v-btn.mx-0(color="primary", outline, @click="addFilterRule") {{ $t('patterns.addRule') }}
+    v-layout(row, align-center)
+      v-btn.mx-0(
+        :disabled="disabled",
+        color="primary",
+        outline,
+        @click="addFilterRule"
+      ) {{ $t('pattern.addRule') }}
 </template>
 
 <script>
@@ -19,6 +30,7 @@ import { filterRuleToForm } from '@/helpers/forms/filter';
 import { formArrayMixin } from '@/mixins/form';
 
 export default {
+  inject: ['$validator'],
   mixins: [formArrayMixin],
   model: {
     prop: 'rules',
@@ -36,6 +48,10 @@ export default {
     rulesMap: {
       type: Object,
       default: () => ({}),
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     name: {
       type: String,
@@ -55,15 +71,6 @@ export default {
       const [firstAttribute] = this.attributes;
 
       this.addItemIntoArray(filterRuleToForm({ attribute: firstAttribute?.value }));
-    },
-
-    getFilterRuleProps(rule) {
-      const props = this.rulesMap[rule.attribute] ?? {};
-
-      return {
-        attributes: this.attributes,
-        ...props,
-      };
     },
   },
 };
