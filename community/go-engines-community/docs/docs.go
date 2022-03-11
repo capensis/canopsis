@@ -9546,6 +9546,193 @@ var doc = `{
                 }
             }
         },
+        "/widget-filters": {
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Create widget filter",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "widgetfilters"
+                ],
+                "summary": "Create widget filter",
+                "operationId": "widgetfilters-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/widgetfilter.EditRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/widgetfilter.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/widget-filters/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get widget filter by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "widgetfilters"
+                ],
+                "summary": "Get widget filter by id",
+                "operationId": "widgetfilters-get-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "filter id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/widgetfilter.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Update widget filter by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "widgetfilters"
+                ],
+                "summary": "Update widget filter by id",
+                "operationId": "widgetfilters-update-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "filter id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/widgetfilter.EditRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/widgetfilter.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Delete widget filter by id",
+                "tags": [
+                    "widgetfilters"
+                ],
+                "summary": "Delete widget filter by id",
+                "operationId": "widgetfilters-delete-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "filter id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {},
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/widget-grid-positions": {
             "put": {
                 "security": [
@@ -12845,7 +13032,7 @@ var doc = `{
                 },
                 "pbehavior_pattern": {
                     "type": "object",
-                    "$ref": "#/definitions/pattern.Pbehavior"
+                    "$ref": "#/definitions/pattern.PbehaviorInfo"
                 },
                 "title": {
                     "type": "string"
@@ -12918,7 +13105,7 @@ var doc = `{
                 }
             }
         },
-        "pattern.Pbehavior": {
+        "pattern.PbehaviorInfo": {
             "type": "array",
             "items": {
                 "type": "array",
@@ -12953,7 +13140,7 @@ var doc = `{
                 },
                 "pbehavior_pattern": {
                     "type": "object",
-                    "$ref": "#/definitions/pattern.Pbehavior"
+                    "$ref": "#/definitions/pattern.PbehaviorInfo"
                 },
                 "title": {
                     "type": "string"
@@ -13980,6 +14167,46 @@ var doc = `{
                     "items": {
                         "$ref": "#/definitions/role.Permission"
                     }
+                }
+            }
+        },
+        "savedpattern.SavedPattern": {
+            "type": "object",
+            "properties": {
+                "alarmPattern": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.Alarm"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "entityPattern": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.Entity"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isCorporate": {
+                    "type": "boolean"
+                },
+                "pbehaviorPattern": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.PbehaviorInfo"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updated": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
                 }
             }
         },
@@ -15390,10 +15617,19 @@ var doc = `{
                     "type": "object",
                     "additionalProperties": true
                 },
+                "filters": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/widgetfilter.Response"
+                    }
+                },
                 "widget": {
                     "type": "string"
                 }
             }
+        },
+        "utils.RegexExpression": {
+            "type": "object"
         },
         "view.EditPositionItemRequest": {
             "type": "object",
@@ -15554,6 +15790,9 @@ var doc = `{
                 "is_api": {
                     "description": "Junit",
                     "type": "boolean"
+                },
+                "main_filter": {
+                    "type": "string"
                 },
                 "report_fileregexp": {
                     "type": "string"
@@ -15850,6 +16089,12 @@ var doc = `{
                 "created": {
                     "type": "integer"
                 },
+                "filters": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/widgetfilter.Response"
+                    }
+                },
                 "grid_parameters": {
                     "type": "object",
                     "additionalProperties": true
@@ -15862,6 +16107,103 @@ var doc = `{
                     "type": "string"
                 },
                 "type": {
+                    "type": "string"
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
+        "widgetfilter.EditRequest": {
+            "type": "object",
+            "required": [
+                "is_private",
+                "title",
+                "widget"
+            ],
+            "properties": {
+                "alarm_pattern": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.Alarm"
+                },
+                "corporate_alarm_pattern": {
+                    "type": "string"
+                },
+                "corporate_entity_pattern": {
+                    "type": "string"
+                },
+                "corporate_pbehavior_pattern": {
+                    "type": "string"
+                },
+                "entity_pattern": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.Entity"
+                },
+                "is_private": {
+                    "type": "boolean"
+                },
+                "pbehavior_pattern": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.PbehaviorInfo"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "widget": {
+                    "type": "string"
+                }
+            }
+        },
+        "widgetfilter.Response": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "alarm_pattern": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.Alarm"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "corporate_alarm_pattern": {
+                    "type": "string"
+                },
+                "corporate_alarm_pattern_title": {
+                    "type": "string"
+                },
+                "corporate_entity_pattern": {
+                    "type": "string"
+                },
+                "corporate_entity_pattern_title": {
+                    "type": "string"
+                },
+                "corporate_pbehavior_pattern": {
+                    "type": "string"
+                },
+                "corporate_pbehavior_pattern_title": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "entity_pattern": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.Entity"
+                },
+                "is_private": {
+                    "type": "boolean"
+                },
+                "old_mongo_query": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "pbehavior_pattern": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.PbehaviorInfo"
+                },
+                "title": {
                     "type": "string"
                 },
                 "updated": {
