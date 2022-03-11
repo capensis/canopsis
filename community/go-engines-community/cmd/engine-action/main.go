@@ -23,7 +23,7 @@ func main() {
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
 	flag.IntVar(&opts.WorkerPoolSize, "workerPoolSize", 10, "Number of workers for scenario executions")
 	flag.BoolVar(&opts.WithWebhook, "withWebhook", false, "Handle webhook actions")
-	flag.DurationVar(&opts.AbandonedInterval, "abandonedInterval", time.Minute, "Retry last step of running scenario execution after interval")
+	flag.DurationVar(&opts.LastRetryInterval, "lastRetryInterval", time.Minute, "Retry last step of running scenario execution after interval")
 
 	flag.Parse()
 
