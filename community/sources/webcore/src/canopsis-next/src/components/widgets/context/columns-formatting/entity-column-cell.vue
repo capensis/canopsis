@@ -5,9 +5,20 @@
 <script>
 import { get } from 'lodash';
 
+import { ENTITY_INFOS_TYPE } from '@/constants';
+
+import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
+
 import { widgetColumnsFiltersMixin } from '@/mixins/widget/columns-filters';
 
+import EntityColumnEventStatistics from './entity-column-event-statistics.vue';
+import EntityColumnPbehaviorInfo from './entity-column-pbehavior-info.vue';
+
 export default {
+  components: {
+    EntityColumnEventStatistics,
+    EntityColumnPbehaviorInfo,
+  },
   mixins: [widgetColumnsFiltersMixin],
   props: {
     entity: {
@@ -33,7 +44,13 @@ export default {
     },
 
     columnFilter() {
-      return this.columnsFiltersMap[this.column.value];
+      const PROPERTIES_FILTERS_MAP = {
+        last_event_date: convertDateToStringWithFormatForToday,
+
+        ...this.columnsFiltersMap,
+      };
+
+      return PROPERTIES_FILTERS_MAP[this.column.value];
     },
 
     value() {
@@ -57,10 +74,37 @@ export default {
             top: true,
           },
         },
+        ko_events: {
+          bind: {
+            is: 'entity-column-event-statistics',
+            entity: this.entity,
+          },
+        },
+        ok_events: {
+          bind: {
+            is: 'entity-column-event-statistics',
+            entity: this.entity,
+          },
+        },
+        pbehavior_info: {
+          bind: {
+            is: 'entity-column-pbehavior-info',
+            pbehaviorInfo: this.entity.pbehavior_info,
+          },
+        },
+        state: {
+          bind: {
+            is: 'c-alarm-chip',
+            type: ENTITY_INFOS_TYPE.state,
+            value: this.value,
+          },
+        },
       };
 
-      if (PROPERTIES_COMPONENTS_MAP[this.column.value]) {
-        return PROPERTIES_COMPONENTS_MAP[this.column.value];
+      const cell = PROPERTIES_COMPONENTS_MAP[this.column.value];
+
+      if (cell) {
+        return cell;
       }
 
       return {

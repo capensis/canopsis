@@ -1,3 +1,5 @@
+//nolint
+// no lint until #4082 has not fixed
 package main
 
 import (
@@ -6,7 +8,6 @@ import (
 	"math"
 	"math/rand"
 	"strconv"
-	"sync"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -32,10 +33,8 @@ type Feeder struct {
 	references References
 	logger     zerolog.Logger
 
-	oldResourcesMap   map[int]int
-	newResourcesMap   map[int]int
-
-	resourcesMapMutex sync.Mutex
+	oldResourcesMap map[int]int
+	newResourcesMap map[int]int
 }
 
 func (f *Feeder) getEvent(state, Ci, ci, ri int64) types.Event {
@@ -134,7 +133,7 @@ func (f *Feeder) sendMessages(eventsPerSecond float64, callback resourceData) er
 		eid := fmt.Sprintf("%d%d", componentId, resourceId)
 		state := stateMap[eid]
 
-		if (componentId * connectorId * resourceId) % changeStateEvery == 0 {
+		if (componentId*connectorId*resourceId)%changeStateEvery == 0 {
 			if state == types.AlarmStateOK {
 				state = types.AlarmStateCritical
 			} else {
@@ -151,14 +150,14 @@ func (f *Feeder) sendMessages(eventsPerSecond float64, callback resourceData) er
 
 		pubcount++
 
-		if pubcount % checkEvery == 0 {
+		if pubcount%checkEvery == 0 {
 			tsent := time.Now().UnixNano() - tstart
 			adj := f.adjust(eventsPerSecond, checkEvery, tsent)
 			nanosecSleep = time.Duration(nanosecSleep.Nanoseconds() + adj)
 			tstart = time.Now().UnixNano()
 		}
 
-		if pubcount % sleepEvery == 0 {
+		if pubcount%sleepEvery == 0 {
 			if nanosecSleep.Nanoseconds() > 0 {
 				time.Sleep(nanosecSleep)
 			}
@@ -167,16 +166,22 @@ func (f *Feeder) sendMessages(eventsPerSecond float64, callback resourceData) er
 }
 
 func (f *Feeder) feed(eventsPerSecond float64, newResourcesPerSec float64) {
-	go f.sendMessages(eventsPerSecond - newResourcesPerSec, func() (int64, int64, int64) {
-		connectorId := 1 + rand.Intn(numberOfConnectors)
-		componentId := rand.Intn(numberOfComponents)
+	go func() {
+		err := f.sendMessages(eventsPerSecond-newResourcesPerSec, func() (int64, int64, int64) {
+			connectorId := 1 + rand.Intn(numberOfConnectors)
+			componentId := rand.Intn(numberOfComponents)
 
-		resourceId := rand.Intn(f.oldResourcesMap[connectorId])
+			resourceId := rand.Intn(f.oldResourcesMap[connectorId])
 
-		return int64(connectorId), int64(componentId), int64(resourceId)
-	})
+			return int64(connectorId), int64(componentId), int64(resourceId)
+		})
 
-	ticker := time.NewTicker(time.Millisecond * time.Duration(1000 / newResourcesPerSec))
+		if err != nil {
+			f.logger.Fatal().Err(err).Msg("failed to send events")
+		}
+	}()
+
+	ticker := time.NewTicker(time.Millisecond * time.Duration(1000/newResourcesPerSec))
 	go func() {
 		for {
 			<-ticker.C
@@ -189,7 +194,11 @@ func (f *Feeder) feed(eventsPerSecond float64, newResourcesPerSec float64) {
 			f.newResourcesMap[connectorId]++
 			resourceId := f.newResourcesMap[connectorId]
 
-			f.send(1, int64(connectorId), int64(componentId), int64(resourceId))
+			err := f.send(1, int64(connectorId), int64(componentId), int64(resourceId))
+			if err != nil {
+				f.logger.Fatal().Err(err).Msg("failed to send event")
+				return
+			}
 		}
 	}()
 }
@@ -236,5 +245,8 @@ func main() {
 		logger.Fatal().Err(err).Msg("feeder init error")
 	}
 
-	feeder.Run()
+	err = feeder.Run()
+	if err != nil {
+		logger.Fatal().Err(err).Msg("feeder run error")
+	}
 }

@@ -13,7 +13,7 @@
               :permissions="permissions",
               :roles="preparedRoles",
               :changed-roles="changedRoles",
-              :disabled="!hasUpdateAnyActionAccess",
+              :disabled="!hasUpdateAnyPermissionAccess",
               @change="changeCheckboxValue"
             )
     v-layout.submit-button.mt-3(v-show="hasChanges")
@@ -36,7 +36,7 @@ import { entitiesRoleMixin } from '@/mixins/entities/role';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 import { entitiesPlaylistMixin } from '@/mixins/entities/playlist';
 import { permissionsTechnicalRoleMixin } from '@/mixins/permissions/technical/role';
-import { permissionsTechnicalActionMixin } from '@/mixins/permissions/technical/action';
+import { permissionsTechnicalPermissionMixin } from '@/mixins/permissions/technical/permission';
 
 import PermissionsTableWrapper from '@/components/other/permission/admin/permissions-table-wrapper.vue';
 import PermissionsFabButtons from '@/components/other/permission/admin/permissions-fab-buttons.vue';
@@ -53,7 +53,7 @@ export default {
     entitiesViewGroupMixin,
     entitiesPlaylistMixin,
     permissionsTechnicalRoleMixin,
-    permissionsTechnicalActionMixin,
+    permissionsTechnicalPermissionMixin,
   ],
   data() {
     return {

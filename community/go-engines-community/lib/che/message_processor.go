@@ -2,6 +2,7 @@ package che
 
 import (
 	"context"
+	"errors"
 	"runtime/trace"
 	"time"
 
@@ -53,7 +54,6 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		return nil, nil
 	}
 
-	p.Logger.Debug().Msgf("valid input event: %v", string(d.Body))
 	trace.Log(ctx, "event.event_type", event.EventType)
 	trace.Log(ctx, "event.timestamp", event.Timestamp.String())
 	trace.Log(ctx, "event.source_type", event.SourceType)
@@ -78,6 +78,11 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		var report eventfilter.Report
 		event, report, err = p.EventFilterService.ProcessEvent(ctx, event)
 		if err != nil {
+			var dropErr eventfilter.DropError
+			if errors.As(err, &dropErr) {
+				return nil, nil
+			}
+
 			if engine.IsConnectionError(err) {
 				return nil, err
 			}
@@ -181,8 +186,6 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		p.logError(err, "cannot encode event", d.Body)
 		return nil, nil
 	}
-
-	p.Logger.Debug().Msgf("output event about to be published: %+v", string(body))
 
 	return body, nil
 }

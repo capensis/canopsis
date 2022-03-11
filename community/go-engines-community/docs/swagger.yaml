@@ -71,6 +71,8 @@ definitions:
         type: object
       is_all_auto_instructions_completed:
         type: boolean
+      is_auto_instruction_failed:
+        type: boolean
       is_auto_instruction_running:
         type: boolean
       is_manual_instruction_waiting_result:
@@ -102,6 +104,9 @@ definitions:
         type: string
       m:
         type: string
+      statecounter:
+        $ref: '#/definitions/types.CropCounter'
+        type: object
       t:
         type: integer
       user_id:
@@ -198,7 +203,7 @@ definitions:
           type: string
         type: array
       pbehavior_info:
-        $ref: '#/definitions/types.PbehaviorInfo'
+        $ref: '#/definitions/entity.PbehaviorInfo'
         type: object
       pbh_inactive_duration:
         type: integer
@@ -308,6 +313,8 @@ definitions:
         type: string
       separator:
         type: string
+      time_field:
+        type: string
       time_format:
         type: string
       tstart:
@@ -360,6 +367,8 @@ definitions:
         type: boolean
       search:
         type: string
+      time_field:
+        type: string
       tstart:
         type: integer
       tstop:
@@ -369,14 +378,6 @@ definitions:
     properties:
       _id:
         type: string
-      active_on_pbh:
-        items:
-          type: string
-        type: array
-      disabled_on_pbh:
-        items:
-          type: string
-        type: array
       execution:
         $ref: '#/definitions/alarm.Execution'
         type: object
@@ -431,6 +432,8 @@ definitions:
         type: string
       sort_key:
         type: string
+      time_field:
+        type: string
       tstart:
         type: integer
       tstop:
@@ -455,6 +458,9 @@ definitions:
         type: string
       author:
         type: string
+      comments:
+        $ref: '#/definitions/pbehavior.Comments'
+        type: object
       name:
         type: string
       rrule:
@@ -638,9 +644,6 @@ definitions:
     - end
     - message
     - start
-    type: object
-  bson.M:
-    additionalProperties: true
     type: object
   common.ErrorResponse:
     properties:
@@ -840,10 +843,22 @@ definitions:
       infos:
         $ref: '#/definitions/entity.Infos'
         type: object
+      ko_events:
+        type: integer
+      last_event_date:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
       measurements:
         type: object
       name:
         type: string
+      ok_events:
+        type: integer
+      pbehavior_info:
+        $ref: '#/definitions/entity.PbehaviorInfo'
+        type: object
+      state:
+        type: integer
       type:
         type: string
     type: object
@@ -907,6 +922,35 @@ definitions:
         type: string
       with_flags:
         type: boolean
+    type: object
+  entity.PbehaviorInfo:
+    properties:
+      canonical_type:
+        description: CanonicalType is Type of pbehavior.Type.
+        type: string
+      icon_name:
+        type: string
+      id:
+        description: ID is ID of pbehavior.PBehavior.
+        type: string
+      name:
+        description: Name is Name of pbehavior.PBehavior.
+        type: string
+      reason:
+        description: Reason is Name of pbehavior.Reason.
+        type: string
+      timestamp:
+        $ref: '#/definitions/types.CpsTime'
+        description: |-
+          Timestamp is time when entity enters pbehavior.
+          Use pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.
+        type: object
+      type:
+        description: TypeID is ID of pbehavior.Type.
+        type: string
+      type_name:
+        description: TypeName is Name of pbehavior.Type.
+        type: string
     type: object
   entitybasic.EditRequest:
     properties:
@@ -982,11 +1026,23 @@ definitions:
       infos:
         $ref: '#/definitions/entity.Infos'
         type: object
+      ko_events:
+        type: integer
+      last_event_date:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
       measurements:
         type: object
       name:
         type: string
+      ok_events:
+        type: integer
+      pbehavior_info:
+        $ref: '#/definitions/entity.PbehaviorInfo'
+        type: object
       sli_avail_state:
+        type: integer
+      state:
         type: integer
       type:
         type: string
@@ -1036,6 +1092,122 @@ definitions:
         type: boolean
       impact_state:
         type: integer
+    type: object
+  entityservice.BulkCreateResponseItem:
+    properties:
+      error:
+        type: string
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      id:
+        type: string
+      item:
+        $ref: '#/definitions/entityservice.CreateRequest'
+        type: object
+      status:
+        type: integer
+    type: object
+  entityservice.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  entityservice.BulkDeleteResponseItem:
+    properties:
+      error:
+        type: string
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      id:
+        type: string
+      item:
+        $ref: '#/definitions/entityservice.BulkDeleteRequestItem'
+        type: object
+      status:
+        type: integer
+    type: object
+  entityservice.BulkUpdateRequestItem:
+    properties:
+      _id:
+        type: string
+      category:
+        type: string
+      enabled:
+        type: boolean
+      entity_patterns:
+        $ref: '#/definitions/pattern.EntityPatternList'
+        type: object
+      impact_level:
+        type: integer
+      infos:
+        items:
+          $ref: '#/definitions/entitybasic.InfoRequest'
+        type: array
+      name:
+        type: string
+      output_template:
+        type: string
+      sli_avail_state:
+        type: integer
+    required:
+    - _id
+    - enabled
+    - impact_level
+    - name
+    - output_template
+    - sli_avail_state
+    type: object
+  entityservice.BulkUpdateResponseItem:
+    properties:
+      error:
+        type: string
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      id:
+        type: string
+      item:
+        $ref: '#/definitions/entityservice.BulkUpdateRequestItem'
+        type: object
+      status:
+        type: integer
+    type: object
+  entityservice.CreateRequest:
+    properties:
+      _id:
+        type: string
+      category:
+        type: string
+      enabled:
+        type: boolean
+      entity_patterns:
+        $ref: '#/definitions/pattern.EntityPatternList'
+        type: object
+      impact_level:
+        type: integer
+      infos:
+        items:
+          $ref: '#/definitions/entitybasic.InfoRequest'
+        type: array
+      name:
+        type: string
+      output_template:
+        type: string
+      sli_avail_state:
+        type: integer
+    required:
+    - enabled
+    - impact_level
+    - name
+    - output_template
+    - sli_avail_state
     type: object
   entityservice.EditRequest:
     properties:
@@ -1103,13 +1275,25 @@ definitions:
       infos:
         $ref: '#/definitions/entity.Infos'
         type: object
+      ko_events:
+        type: integer
+      last_event_date:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
       measurements:
         type: object
       name:
         type: string
+      ok_events:
+        type: integer
       output_template:
         type: string
+      pbehavior_info:
+        $ref: '#/definitions/entity.PbehaviorInfo'
+        type: object
       sli_avail_state:
+        type: integer
+      state:
         type: integer
       type:
         type: string
@@ -1161,6 +1345,97 @@ definitions:
     properties:
       type:
         type: string
+    type: object
+  eventfilter.BulkCreateResponseItem:
+    properties:
+      error:
+        type: string
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      id:
+        type: string
+      item:
+        $ref: '#/definitions/eventfilter.EventFilter'
+        type: object
+      status:
+        type: integer
+    type: object
+  eventfilter.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  eventfilter.BulkDeleteResponseItem:
+    properties:
+      error:
+        type: string
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      id:
+        type: string
+      item:
+        $ref: '#/definitions/eventfilter.BulkDeleteRequestItem'
+        type: object
+      status:
+        type: integer
+    type: object
+  eventfilter.BulkUpdateRequestItem:
+    properties:
+      _id:
+        type: string
+      actions:
+        items:
+          $ref: '#/definitions/eventfilter.Action'
+        type: array
+      created:
+        type: integer
+      description:
+        type: string
+      enabled:
+        type: boolean
+      external_data:
+        additionalProperties: true
+        type: object
+      on_failure:
+        type: string
+      on_success:
+        type: string
+      patterns:
+        $ref: '#/definitions/pattern.EventPatternList'
+        type: object
+      priority:
+        type: integer
+      type:
+        type: string
+      updated:
+        type: integer
+    required:
+    - _id
+    - description
+    - enabled
+    - type
+    type: object
+  eventfilter.BulkUpdateResponseItem:
+    properties:
+      error:
+        type: string
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      id:
+        type: string
+      item:
+        $ref: '#/definitions/eventfilter.BulkUpdateRequestItem'
+        type: object
+      status:
+        type: integer
     type: object
   eventfilter.EventFilter:
     properties:
@@ -1333,6 +1608,101 @@ definitions:
       uncompressed:
         type: boolean
     type: object
+  idlerule.BulkCreateResponseItem:
+    properties:
+      error:
+        type: string
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      id:
+        type: string
+      item:
+        $ref: '#/definitions/idlerule.CreateRequest'
+        type: object
+      status:
+        type: integer
+    type: object
+  idlerule.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  idlerule.BulkDeleteResponseItem:
+    properties:
+      error:
+        type: string
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      id:
+        type: string
+      item:
+        $ref: '#/definitions/idlerule.BulkDeleteRequestItem'
+        type: object
+      status:
+        type: integer
+    type: object
+  idlerule.BulkUpdateRequestItem:
+    properties:
+      _id:
+        type: string
+      alarm_condition:
+        type: string
+      alarm_patterns:
+        $ref: '#/definitions/pattern.AlarmPatternList'
+        type: object
+      description:
+        type: string
+      disable_during_periods:
+        items:
+          type: string
+        type: array
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+      enabled:
+        type: boolean
+      entity_patterns:
+        $ref: '#/definitions/pattern.EntityPatternList'
+        type: object
+      name:
+        type: string
+      operation:
+        $ref: '#/definitions/idlerule.OperationRequest'
+        type: object
+      priority:
+        type: integer
+      type:
+        type: string
+    required:
+    - _id
+    - duration
+    - enabled
+    - name
+    - priority
+    - type
+    type: object
+  idlerule.BulkUpdateResponseItem:
+    properties:
+      error:
+        type: string
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      id:
+        type: string
+      item:
+        $ref: '#/definitions/idlerule.BulkUpdateRequestItem'
+        type: object
+      status:
+        type: integer
+    type: object
   idlerule.CountByPatternRequest:
     properties:
       alarm_patterns:
@@ -1350,6 +1720,45 @@ definitions:
         type: integer
       total_count_entities:
         type: integer
+    type: object
+  idlerule.CreateRequest:
+    properties:
+      _id:
+        type: string
+      alarm_condition:
+        type: string
+      alarm_patterns:
+        $ref: '#/definitions/pattern.AlarmPatternList'
+        type: object
+      description:
+        type: string
+      disable_during_periods:
+        items:
+          type: string
+        type: array
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+      enabled:
+        type: boolean
+      entity_patterns:
+        $ref: '#/definitions/pattern.EntityPatternList'
+        type: object
+      name:
+        type: string
+      operation:
+        $ref: '#/definitions/idlerule.OperationRequest'
+        type: object
+      priority:
+        type: integer
+      type:
+        type: string
+    required:
+    - duration
+    - enabled
+    - name
+    - priority
+    - type
     type: object
   idlerule.EditRequest:
     properties:
@@ -1554,717 +1963,50 @@ definitions:
         $ref: '#/definitions/notification.InstructionNotification'
         type: object
     type: object
-  pattern.AlarmPattern:
-    properties:
-      entityID:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      id:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      shouldBeNil:
-        type: boolean
-      shouldNotBeNil:
-        description: |-
-          ShouldNotBeNil is a boolean indicating that the alarm should not be nil,
-          and ShouldBeNil is a boolean indicating that the alarm should be nil.
-          The two booleans are needed to be able to make the difference between
-          the case where no alarm pattern was defined (in which case the alarm can
-          be nil or not), the case where a nil alarm pattern was defined (in which
-          case the alarm should be nil), and the case where a non-nil alarm
-          pattern was defined (in which case the alarm should not be nil).
-        type: boolean
-      time:
-        $ref: '#/definitions/pattern.TimePattern'
-        type: object
-      unexpectedFields:
-        additionalProperties: true
-        description: |-
-          When unmarshalling a BSON document, the fields of this document that are
-          not defined in this struct are added to UnexpectedFields.
-        type: object
-      value:
-        $ref: '#/definitions/pattern.AlarmValuePattern'
-        type: object
-    type: object
   pattern.AlarmPatternList:
-    properties:
-      patterns:
-        items:
-          $ref: '#/definitions/pattern.AlarmPattern'
-        type: array
-      set:
-        description: |-
-          isSet is a boolean indicating whether the AlarmPatternList has been set
-          explicitly or not.
-        type: boolean
-      valid:
-        description: |-
-          isValid is a boolean indicating whether the event patterns or valid or
-          not.
-          isValid is also false if the AlarmPatternList has not been set.
-        type: boolean
-    type: object
-  pattern.AlarmStepRefPattern:
-    properties:
-      author:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      initiator:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      message:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      shouldBeNil:
-        type: boolean
-      shouldNotBeNil:
-        description: |-
-          ShouldNotBeNil is a boolean indicating that the alarm step should not be
-          nil, and ShouldBeNil is a boolean indicating that the alarm step should
-          be nil.
-          The two booleans are needed to be able to make the difference between
-          the case where no pattern was defined (in which case the alarm step can
-          be nil or not), the case where a nil pattern was defined (in which case
-          the alarm step should be nil), and the case where a non-nil pattern was
-          defined (in which case the alarm step should not be nil).
-        type: boolean
-      timestamp:
-        $ref: '#/definitions/pattern.TimePattern'
-        type: object
-      type:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      unexpectedFields:
-        additionalProperties: true
-        description: |-
-          When unmarshalling a BSON document, the fields of this document that are
-          not defined in this struct are added to UnexpectedFields.
-        type: object
-      value:
-        $ref: '#/definitions/pattern.IntegerPattern'
-        type: object
-    type: object
-  pattern.AlarmTicketRefPattern:
-    properties:
-      author:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      data:
-        additionalProperties:
-          $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      message:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      shouldBeNil:
-        type: boolean
-      shouldNotBeNil:
-        description: |-
-          ShouldNotBeNil is a boolean indicating that the alarm step should not be
-          nil, and ShouldBeNil is a boolean indicating that the alarm step should
-          be nil.
-          The two booleans are needed to be able to make the difference between
-          the case where no pattern was defined (in which case the alarm step can
-          be nil or not), the case where a nil pattern was defined (in which case
-          the alarm step should be nil), and the case where a non-nil pattern was
-          defined (in which case the alarm step should not be nil).
-        type: boolean
-      timestamp:
-        $ref: '#/definitions/pattern.TimePattern'
-        type: object
-      type:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      unexpectedFields:
-        additionalProperties: true
-        description: |-
-          When unmarshalling a BSON document, the fields of this document that are
-          not defined in this struct are added to UnexpectedFields.
-        type: object
-      value:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-    type: object
-  pattern.AlarmValuePattern:
-    properties:
-      ack:
-        $ref: '#/definitions/pattern.AlarmStepRefPattern'
-        type: object
-      activationDate:
-        $ref: '#/definitions/pattern.TimeRefPattern'
-        type: object
-      canceled:
-        $ref: '#/definitions/pattern.AlarmStepRefPattern'
-        type: object
-      children:
-        $ref: '#/definitions/pattern.StringArrayPattern'
-        type: object
-      component:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      connector:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      connectorName:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      creationDate:
-        $ref: '#/definitions/pattern.TimePattern'
-        type: object
-      displayName:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      done:
-        $ref: '#/definitions/pattern.AlarmStepRefPattern'
-        type: object
-      hardLimit:
-        $ref: '#/definitions/pattern.IntegerRefPattern'
-        type: object
-      initialLongOutput:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      initialOutput:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      lastEventDate:
-        $ref: '#/definitions/pattern.TimePattern'
-        type: object
-      lastUpdateDate:
-        $ref: '#/definitions/pattern.TimePattern'
-        type: object
-      longOutput:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      output:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      parents:
-        $ref: '#/definitions/pattern.StringArrayPattern'
-        type: object
-      resolved:
-        $ref: '#/definitions/pattern.TimeRefPattern'
-        type: object
-      resource:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      snooze:
-        $ref: '#/definitions/pattern.AlarmStepRefPattern'
-        type: object
-      state:
-        $ref: '#/definitions/pattern.AlarmStepRefPattern'
-        type: object
-      stateChangesSinceStatusUpdate:
-        $ref: '#/definitions/pattern.IntegerPattern'
-        type: object
-      status:
-        $ref: '#/definitions/pattern.AlarmStepRefPattern'
-        type: object
-      ticket:
-        $ref: '#/definitions/pattern.AlarmTicketRefPattern'
-        type: object
-      totalStateChanges:
-        $ref: '#/definitions/pattern.IntegerPattern'
-        type: object
-      unexpectedFields:
-        additionalProperties: true
-        description: |-
-          When unmarshalling a BSON document, the fields of this document that are
-          not defined in this struct are added to UnexpectedFields.
-        type: object
-    type: object
-  pattern.BoolPattern:
-    properties:
-      set:
-        description: Set is a boolean indicating whether the value was set or not.
-        type: boolean
-      value:
-        description: |-
-          Value contains the value of the bool. It should only be taken into
-          account if Set is true.
-        type: boolean
-    type: object
-  pattern.EntityPattern:
-    properties:
-      category:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      component:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      componentInfos:
-        additionalProperties:
-          $ref: '#/definitions/pattern.InfoPattern'
-        type: object
-      enabled:
-        $ref: '#/definitions/pattern.BoolPattern'
-        type: object
-      id:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      infos:
-        additionalProperties:
-          $ref: '#/definitions/pattern.InfoPattern'
-        type: object
-      name:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      shouldBeNil:
-        type: boolean
-      shouldNotBeNil:
-        description: |-
-          ShouldNotBeNil is a boolean indicating that the entity should not be
-          nil, and ShouldBeNil is a boolean indicating that the entity should be
-          nil.
-          The two booleans are needed to be able to make the difference between
-          the case where no entity pattern was defined (in which case the entity
-          can be nil or not), the case where a nil entity pattern was defined (in
-          which case the entity should be nil), and the case where a non-nil
-          entity pattern was defined (in which case the entity should not be nil).
-        type: boolean
-      type:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      unexpectedFields:
-        additionalProperties: true
-        description: |-
-          When unmarshalling a BSON document, the fields of this document that are
-          not defined in this struct are added to UnexpectedFields.
-        type: object
     type: object
   pattern.EntityPatternList:
-    properties:
-      patterns:
-        items:
-          $ref: '#/definitions/pattern.EntityPattern'
-        type: array
-      set:
-        description: |-
-          Set is a boolean indicating whether the EntityPatternList has been set
-          explicitly or not.
-        type: boolean
-      valid:
-        description: |-
-          Valid is a boolean indicating whether the event patterns or valid or
-          not.
-          Valid is also false if the EntityPatternList has not been set.
-        type: boolean
-    type: object
-  pattern.EventPattern:
-    properties:
-      ackResources:
-        $ref: '#/definitions/pattern.BoolPattern'
-        type: object
-      author:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      component:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      connector:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      connectorName:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      debug:
-        $ref: '#/definitions/pattern.BoolPattern'
-        type: object
-      duration:
-        $ref: '#/definitions/pattern.IntegerRefPattern'
-        type: object
-      entity:
-        $ref: '#/definitions/pattern.EntityPattern'
-        type: object
-      eventType:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      extraInfos:
-        additionalProperties:
-          $ref: '#/definitions/pattern.InterfacePattern'
-        type: object
-      id:
-        $ref: '#/definitions/pattern.StringRefPattern'
-        type: object
-      longOutput:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      output:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      perfData:
-        $ref: '#/definitions/pattern.StringRefPattern'
-        type: object
-      resource:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      rk:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      sourceType:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      statName:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      state:
-        $ref: '#/definitions/pattern.IntegerPattern'
-        type: object
-      stateType:
-        $ref: '#/definitions/pattern.IntegerRefPattern'
-        type: object
-      status:
-        $ref: '#/definitions/pattern.IntegerRefPattern'
-        type: object
-      ticket:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      timestamp:
-        $ref: '#/definitions/pattern.TimePattern'
-        type: object
     type: object
   pattern.EventPatternList:
-    properties:
-      patterns:
-        items:
-          $ref: '#/definitions/pattern.EventPattern'
-        type: array
-      set:
-        description: |-
-          Set is a boolean indicating whether the EventPatternList has been set
-          explicitly or not.
-        type: boolean
-      valid:
-        description: |-
-          Valid is a boolean indicating whether the event patterns or valid or
-          not.
-          Valid is also false if the EventPatternList has not been set.
-        type: boolean
     type: object
-  pattern.InfoPattern:
+  pbehavior.BulkCreateResponseItem:
     properties:
-      description:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      name:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-      shouldNotBeSet:
-        type: boolean
-      unexpectedFields:
-        additionalProperties: true
-        description: |-
-          When unmarshalling a BSON document, the fields of this document that are
-          not defined in this struct are added to UnexpectedFields.
-        type: object
-      value:
-        $ref: '#/definitions/pattern.StringPattern'
-        type: object
-    type: object
-  pattern.IntegerPattern:
-    properties:
-      equal:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Equal is set, the value of a field has to be equal to the value of
-          Equal to be matched by the pattern.
-        type: object
-      gt:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Gt is set, the value of a field has to be greater than the value
-          of Gt to be matched by the pattern.
-        type: object
-      gte:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Gte is set, the value of a field has to be greater than the value
-          of Gte to be matched by the pattern.
-        type: object
-      lt:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Lt is set, the value of a field has to be greater than the value
-          of Lt to be matched by the pattern.
-        type: object
-      lte:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Lte is set, the value of a field has to be greater than the value
-          of Lte to be matched by the pattern.
-        type: object
-      unexpectedFields:
-        additionalProperties: true
-        description: |-
-          When unmarshalling a BSON document, the fields of this document that are
-          not defined in this struct are added to UnexpectedFields.
-          UnexpectedFields should always be empty.
-        type: object
-    type: object
-  pattern.IntegerRefPattern:
-    properties:
-      equal:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Equal is set, the value of a field has to be equal to the value of
-          Equal to be matched by the pattern.
-        type: object
-      equalNil:
-        description: |-
-          If EqualNil is true, the field should be nil or not be set to be matched
-          by the pattern.
-        type: boolean
-      gt:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Gt is set, the value of a field has to be greater than the value
-          of Gt to be matched by the pattern.
-        type: object
-      gte:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Gte is set, the value of a field has to be greater than the value
-          of Gte to be matched by the pattern.
-        type: object
-      lt:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Lt is set, the value of a field has to be greater than the value
-          of Lt to be matched by the pattern.
-        type: object
-      lte:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Lte is set, the value of a field has to be greater than the value
-          of Lte to be matched by the pattern.
-        type: object
-      unexpectedFields:
-        additionalProperties: true
-        description: |-
-          When unmarshalling a BSON document, the fields of this document that are
-          not defined in this struct are added to UnexpectedFields.
-          UnexpectedFields should always be empty.
-        type: object
-    type: object
-  pattern.InterfacePattern:
-    properties:
-      equal:
-        $ref: '#/definitions/types.OptionalString'
-        description: |-
-          If Equal is set, the value of a field has to be equal to the value of
-          Equal to be matched by the pattern.
-        type: object
-      equalNil:
-        description: |-
-          If EqualNil is true, the field should be nil or not be set to be matched
-          by the pattern.
-        type: boolean
-      gt:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Gt is set, the value of a field has to be greater than the value
-          of Gt to be matched by the pattern.
-        type: object
-      gte:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Gte is set, the value of a field has to be greater than the value
-          of Gte to be matched by the pattern.
-        type: object
-      hasEvery:
-        $ref: '#/definitions/types.OptionalStringArray'
-        type: object
-      hasNot:
-        $ref: '#/definitions/types.OptionalStringArray'
-        type: object
-      hasOneOf:
-        $ref: '#/definitions/types.OptionalStringArray'
-        type: object
-      isEmpty:
-        $ref: '#/definitions/types.OptionalBool'
-        type: object
-      lt:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Lt is set, the value of a field has to be greater than the value
-          of Lt to be matched by the pattern.
-        type: object
-      lte:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Lte is set, the value of a field has to be greater than the value
-          of Lte to be matched by the pattern.
-        type: object
-      regexMatch:
-        $ref: '#/definitions/types.OptionalRegexp'
-        description: |-
-          If RegexMatch is set, the value of a field has to be matched by this
-          regular expression to be matched by the pattern.
-        type: object
-      unexpectedFields:
-        additionalProperties: true
-        type: object
-    type: object
-  pattern.StringArrayPattern:
-    properties:
-      hasEvery:
-        $ref: '#/definitions/types.OptionalStringArray'
-        type: object
-      hasNot:
-        $ref: '#/definitions/types.OptionalStringArray'
-        type: object
-      hasOneOf:
-        $ref: '#/definitions/types.OptionalStringArray'
-        type: object
-      isEmpty:
-        $ref: '#/definitions/types.OptionalBool'
-        type: object
-      unexpectedFields:
-        additionalProperties: true
-        type: object
-    type: object
-  pattern.StringPattern:
-    properties:
-      equal:
-        $ref: '#/definitions/types.OptionalString'
-        description: |-
-          If Equal is set, the value of a field has to be equal to the value of
-          Equal to be matched by the pattern.
-        type: object
-      regexMatch:
-        $ref: '#/definitions/types.OptionalRegexp'
-        description: |-
-          If RegexMatch is set, the value of a field has to be matched by this
-          regular expression to be matched by the pattern.
-        type: object
-      unexpectedFields:
-        additionalProperties: true
-        description: |-
-          When unmarshalling a BSON document, the fields of this document that are
-          not defined in this struct are added to UnexpectedFields.
-          UnexpectedFields should always be empty.
-        type: object
-    type: object
-  pattern.StringRefPattern:
-    properties:
-      equal:
-        $ref: '#/definitions/types.OptionalString'
-        description: |-
-          If Equal is set, the value of a field has to be equal to the value of
-          Equal to be matched by the pattern.
-        type: object
-      equalNil:
-        description: |-
-          If EqualNil is true, the field should be nil or not be set to be matched
-          by the pattern.
-        type: boolean
-      regexMatch:
-        $ref: '#/definitions/types.OptionalRegexp'
-        description: |-
-          If RegexMatch is set, the value of a field has to be matched by this
-          regular expression to be matched by the pattern.
-        type: object
-      unexpectedFields:
-        additionalProperties: true
-        description: |-
-          When unmarshalling a BSON document, the fields of this document that are
-          not defined in this struct are added to UnexpectedFields.
-          UnexpectedFields should always be empty.
-        type: object
-    type: object
-  pattern.TimePattern:
-    properties:
-      equal:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Equal is set, the value of a field has to be equal to the value of
-          Equal to be matched by the pattern.
-        type: object
-      gt:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Gt is set, the value of a field has to be greater than the value
-          of Gt to be matched by the pattern.
-        type: object
-      gte:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Gte is set, the value of a field has to be greater than the value
-          of Gte to be matched by the pattern.
-        type: object
-      lt:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Lt is set, the value of a field has to be greater than the value
-          of Lt to be matched by the pattern.
-        type: object
-      lte:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Lte is set, the value of a field has to be greater than the value
-          of Lte to be matched by the pattern.
-        type: object
-      unexpectedFields:
-        additionalProperties: true
-        description: |-
-          When unmarshalling a BSON document, the fields of this document that are
-          not defined in this struct are added to UnexpectedFields.
-          UnexpectedFields should always be empty.
-        type: object
-    type: object
-  pattern.TimeRefPattern:
-    properties:
-      equal:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Equal is set, the value of a field has to be equal to the value of
-          Equal to be matched by the pattern.
-        type: object
-      equalNil:
-        description: |-
-          If EqualNil is true, the field should be nil or not be set to be matched
-          by the pattern.
-        type: boolean
-      gt:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Gt is set, the value of a field has to be greater than the value
-          of Gt to be matched by the pattern.
-        type: object
-      gte:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Gte is set, the value of a field has to be greater than the value
-          of Gte to be matched by the pattern.
-        type: object
-      lt:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Lt is set, the value of a field has to be greater than the value
-          of Lt to be matched by the pattern.
-        type: object
-      lte:
-        $ref: '#/definitions/types.OptionalInt64'
-        description: |-
-          If Lte is set, the value of a field has to be greater than the value
-          of Lte to be matched by the pattern.
-        type: object
-      unexpectedFields:
-        additionalProperties: true
-        description: |-
-          When unmarshalling a BSON document, the fields of this document that are
-          not defined in this struct are added to UnexpectedFields.
-          UnexpectedFields should always be empty.
-        type: object
-    type: object
-  pbehavior.BulkDeleteRequest:
-    properties:
-      ids:
-        items:
+      error:
+        type: string
+      errors:
+        additionalProperties:
           type: string
-        type: array
+        type: object
+      id:
+        type: string
+      item:
+        $ref: '#/definitions/pbehavior.CreateRequest'
+        type: object
+      status:
+        type: integer
+    type: object
+  pbehavior.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
     required:
-    - ids
+    - _id
+    type: object
+  pbehavior.BulkDeleteResponseItem:
+    properties:
+      error:
+        type: string
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      id:
+        type: string
+      item:
+        $ref: '#/definitions/pbehavior.BulkDeleteRequestItem'
+        type: object
+      status:
+        type: integer
     type: object
   pbehavior.BulkUpdateRequestItem:
     properties:
@@ -2302,6 +2044,22 @@ definitions:
     - reason
     - tstart
     - type
+    type: object
+  pbehavior.BulkUpdateResponseItem:
+    properties:
+      error:
+        type: string
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      id:
+        type: string
+      item:
+        $ref: '#/definitions/pbehavior.BulkUpdateRequestItem'
+        type: object
+      status:
+        type: integer
     type: object
   pbehavior.Comment:
     properties:
@@ -2873,6 +2631,8 @@ definitions:
       alarm_patterns:
         $ref: '#/definitions/pattern.AlarmPatternList'
         type: object
+      comment:
+        type: string
       drop_scenario_if_not_matched:
         type: boolean
       emit_trigger:
@@ -2909,6 +2669,97 @@ definitions:
     - emit_trigger
     - type
     type: object
+  scenario.BulkCreateResponseItem:
+    properties:
+      error:
+        type: string
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      id:
+        type: string
+      item:
+        $ref: '#/definitions/scenario.CreateRequest'
+        type: object
+      status:
+        type: integer
+    type: object
+  scenario.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  scenario.BulkDeleteResponseItem:
+    properties:
+      error:
+        type: string
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      id:
+        type: string
+      item:
+        $ref: '#/definitions/scenario.BulkDeleteRequestItem'
+        type: object
+      status:
+        type: integer
+    type: object
+  scenario.BulkUpdateRequestItem:
+    properties:
+      _id:
+        type: string
+      actions:
+        items:
+          $ref: '#/definitions/scenario.ActionRequest'
+        type: array
+      author:
+        type: string
+      delay:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+      disable_during_periods:
+        items:
+          type: string
+        type: array
+      enabled:
+        type: boolean
+      name:
+        type: string
+      priority:
+        type: integer
+      triggers:
+        items:
+          type: string
+        type: array
+    required:
+    - _id
+    - actions
+    - author
+    - enabled
+    - name
+    - priority
+    - triggers
+    type: object
+  scenario.BulkUpdateResponseItem:
+    properties:
+      error:
+        type: string
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      id:
+        type: string
+      item:
+        $ref: '#/definitions/scenario.BulkUpdateRequestItem'
+        type: object
+      status:
+        type: integer
+    type: object
   scenario.CheckPriorityRequest:
     properties:
       priority:
@@ -2922,6 +2773,41 @@ definitions:
         type: integer
       valid:
         type: boolean
+    type: object
+  scenario.CreateRequest:
+    properties:
+      _id:
+        type: string
+      actions:
+        items:
+          $ref: '#/definitions/scenario.ActionRequest'
+        type: array
+      author:
+        type: string
+      delay:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+      disable_during_periods:
+        items:
+          type: string
+        type: array
+      enabled:
+        type: boolean
+      name:
+        type: string
+      priority:
+        type: integer
+      triggers:
+        items:
+          type: string
+        type: array
+    required:
+    - actions
+    - author
+    - enabled
+    - name
+    - priority
+    - triggers
     type: object
   scenario.EditRequest:
     properties:
@@ -3012,6 +2898,12 @@ definitions:
         type: integer
       alarm_display_name:
         type: string
+      alarm_id:
+        type: string
+      assigned_instructions:
+        items:
+          $ref: '#/definitions/alarm.InstructionWithAlarms'
+        type: array
       category:
         $ref: '#/definitions/entitycategory.Category'
         type: object
@@ -3033,7 +2925,15 @@ definitions:
         additionalProperties:
           $ref: '#/definitions/serviceweather.Info'
         type: object
+      is_all_auto_instructions_completed:
+        type: boolean
+      is_auto_instruction_failed:
+        type: boolean
+      is_auto_instruction_running:
+        type: boolean
       is_grey:
+        type: boolean
+      is_manual_instruction_waiting_result:
         type: boolean
       last_update_date:
         type: integer
@@ -3043,6 +2943,9 @@ definitions:
         type: array
       name:
         type: string
+      pbehavior_info:
+        $ref: '#/definitions/types.PbehaviorInfo'
+        type: object
       pbehaviors:
         items:
           $ref: '#/definitions/pbehavior.Response'
@@ -3058,7 +2961,7 @@ definitions:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
       stats:
-        $ref: '#/definitions/serviceweather.Stats'
+        $ref: '#/definitions/statistics.EventStatistics'
         type: object
       status:
         $ref: '#/definitions/alarm.AlarmStep'
@@ -3125,6 +3028,9 @@ definitions:
         type: string
       output:
         type: string
+      pbehavior_info:
+        $ref: '#/definitions/types.PbehaviorInfo'
+        type: object
       pbehaviors:
         items:
           $ref: '#/definitions/pbehavior.Response'
@@ -3142,17 +3048,6 @@ definitions:
       status:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
-    type: object
-  serviceweather.Stats:
-    properties:
-      ko:
-        type: integer
-      last_event:
-        type: integer
-      last_ko:
-        type: integer
-      ok:
-        type: integer
     type: object
   serviceweather.WeatherLink:
     properties:
@@ -3217,6 +3112,17 @@ definitions:
     - major
     - minor
     - type
+    type: object
+  statistics.EventStatistics:
+    properties:
+      ko:
+        type: integer
+      last_event:
+        type: integer
+      last_ko:
+        type: integer
+      ok:
+        type: integer
     type: object
   types.Alarm:
     properties:
@@ -3438,60 +3344,6 @@ definitions:
     - unit
     - value
     type: object
-  types.OptionalBool:
-    properties:
-      set:
-        description: Set is a boolean indicating whether the value was set or not.
-        type: boolean
-      value:
-        description: |-
-          Value contains the value of the bool. It should only be taken into
-          account if Set is true.
-        type: boolean
-    type: object
-  types.OptionalInt64:
-    properties:
-      set:
-        description: Set is a boolean indicating whether the value was set or not.
-        type: boolean
-      value:
-        description: |-
-          Value contains the value of the int64. It should only be taken into
-          account if Set is true.
-        type: integer
-    type: object
-  types.OptionalRegexp:
-    properties:
-      set:
-        description: Set is a boolean indicating whether the value was set or not.
-        type: boolean
-      value:
-        $ref: '#/definitions/utils.RegexExpression'
-        description: |-
-          Value contains the value of the regular expression. It should only be
-          taken into account if Set is true.
-        type: object
-    type: object
-  types.OptionalString:
-    properties:
-      set:
-        description: Set is a boolean indicating whether the value was set or not.
-        type: boolean
-      value:
-        description: |-
-          Value contains the value of the string. It should only be taken into
-          account if Set is true.
-        type: string
-    type: object
-  types.OptionalStringArray:
-    properties:
-      set:
-        type: boolean
-      value:
-        items:
-          type: string
-        type: array
-    type: object
   types.PbehaviorInfo:
     properties:
       canonical_type:
@@ -3519,7 +3371,129 @@ definitions:
         description: TypeName is Name of pbehavior.Type.
         type: string
     type: object
+  user.BulkCreateResponseItem:
+    properties:
+      error:
+        type: string
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      id:
+        type: string
+      item:
+        $ref: '#/definitions/user.Request'
+        type: object
+      status:
+        type: integer
+    type: object
+  user.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  user.BulkDeleteResponseItem:
+    properties:
+      error:
+        type: string
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      id:
+        type: string
+      item:
+        $ref: '#/definitions/user.BulkDeleteRequestItem'
+        type: object
+      status:
+        type: integer
+    type: object
+  user.BulkUpdateRequestItem:
+    properties:
+      _id:
+        type: string
+      defaultview:
+        type: string
+      email:
+        type: string
+      enable:
+        type: boolean
+      firstname:
+        type: string
+      lastname:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      ui_groups_navigation_type:
+        type: string
+      ui_language:
+        type: string
+      ui_tours:
+        additionalProperties:
+          type: boolean
+        type: object
+    required:
+    - _id
+    - email
+    - enable
+    - name
+    - role
+    type: object
+  user.BulkUpdateResponseItem:
+    properties:
+      error:
+        type: string
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      id:
+        type: string
+      item:
+        $ref: '#/definitions/user.BulkUpdateRequestItem'
+        type: object
+      status:
+        type: integer
+    type: object
   user.EditRequest:
+    properties:
+      defaultview:
+        type: string
+      email:
+        type: string
+      enable:
+        type: boolean
+      firstname:
+        type: string
+      lastname:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      ui_groups_navigation_type:
+        type: string
+      ui_language:
+        type: string
+      ui_tours:
+        additionalProperties:
+          type: boolean
+        type: object
+    required:
+    - email
+    - enable
+    - name
+    - role
+    type: object
+  user.Request:
     properties:
       defaultview:
         type: string
@@ -3621,8 +3595,6 @@ definitions:
         type: object
       widget:
         type: string
-    type: object
-  utils.RegexExpression:
     type: object
   view.BulkDeleteRequest:
     properties:
@@ -3931,6 +3903,9 @@ paths:
         name: search
         type: string
       - in: query
+        name: time_field
+        type: string
+      - in: query
         name: tstart
         type: integer
       - in: query
@@ -4122,6 +4097,9 @@ paths:
         name: sort_key
         type: string
       - in: query
+        name: time_field
+        type: string
+      - in: query
         name: tstart
         type: integer
       - in: query
@@ -4188,8 +4166,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -4340,8 +4317,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -4416,7 +4392,360 @@ paths:
       summary: Update broadcast-message by id
       tags:
       - broadcast-messages
+  /bulk/entityservices:
+    delete:
+      consumes:
+      - application/json
+      description: Bulk delete entityservices
+      operationId: entityservices-bulk-delete
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/entityservice.BulkDeleteRequestItem'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "207":
+          description: Multi-Status
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/entityservice.BulkDeleteResponseItem'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Bulk delete entityservices
+      tags:
+      - entityservices
+    post:
+      consumes:
+      - application/json
+      description: Bulk create entityservices
+      operationId: entityservices-bulk-create
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/entityservice.CreateRequest'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "207":
+          description: Multi-Status
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/entityservice.BulkCreateResponseItem'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Bulk create entityservices
+      tags:
+      - entityservices
+    put:
+      consumes:
+      - application/json
+      description: Bulk update entityservices
+      operationId: entityservices-bulk-update
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/entityservice.BulkUpdateRequestItem'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "207":
+          description: Multi-Status
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/entityservice.BulkUpdateResponseItem'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Bulk update entityservices
+      tags:
+      - entityservices
+  /bulk/eventfilters:
+    delete:
+      consumes:
+      - application/json
+      description: Bulk delete eventfilters
+      operationId: eventfilters-bulk-delete
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/eventfilter.BulkDeleteRequestItem'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "207":
+          description: Multi-Status
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/eventfilter.BulkDeleteResponseItem'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Bulk delete eventfilters
+      tags:
+      - eventfilters
+    post:
+      consumes:
+      - application/json
+      description: Bulk create eventfilters
+      operationId: eventfilters-bulk-create
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/eventfilter.EventFilter'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "207":
+          description: Multi-Status
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/eventfilter.BulkCreateResponseItem'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Bulk create eventfilters
+      tags:
+      - eventfilters
+    put:
+      consumes:
+      - application/json
+      description: Bulk update eventfilters
+      operationId: eventfilters-bulk-update
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/eventfilter.BulkUpdateRequestItem'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "207":
+          description: Multi-Status
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/eventfilter.BulkUpdateResponseItem'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Bulk update eventfilters
+      tags:
+      - eventfilters
+  /bulk/idle-rules:
+    delete:
+      consumes:
+      - application/json
+      description: Bulk delete idlerules
+      operationId: idlerules-bulk-delete
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/idlerule.BulkDeleteRequestItem'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "207":
+          description: Multi-Status
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/idlerule.BulkDeleteResponseItem'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Bulk delete idlerules
+      tags:
+      - idlerules
+    post:
+      consumes:
+      - application/json
+      description: Bulk create idlerules
+      operationId: idlerules-bulk-create
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/idlerule.CreateRequest'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "207":
+          description: Multi-Status
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/idlerule.BulkCreateResponseItem'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Bulk create idlerules
+      tags:
+      - idlerules
+    put:
+      consumes:
+      - application/json
+      description: Bulk update idlerules
+      operationId: idlerules-bulk-update
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/idlerule.BulkUpdateRequestItem'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "207":
+          description: Multi-Status
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/idlerule.BulkUpdateResponseItem'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Bulk update idlerules
+      tags:
+      - idlerules
   /bulk/pbehaviors:
+    delete:
+      consumes:
+      - application/json
+      description: Bulk delete pbehaviors
+      operationId: pbehaviors-bulk-delete
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/pbehavior.BulkDeleteRequestItem'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "207":
+          description: Multi-Status
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/pbehavior.BulkDeleteResponseItem'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Bulk delete pbehaviors
+      tags:
+      - pbehaviors
     post:
       consumes:
       - application/json
@@ -4434,11 +4763,13 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "207":
+          description: Multi-Status
           schema:
             items:
-              $ref: '#/definitions/pbehavior.Response'
+              items:
+                $ref: '#/definitions/pbehavior.BulkCreateResponseItem'
+              type: array
             type: array
         "400":
           description: Bad Request
@@ -4450,36 +4781,11 @@ paths:
       summary: Bulk create pbehaviors
       tags:
       - pbehaviors
-  /bulk/pbehaviors/{id}:
-    delete:
-      description: Bulk delete pbehaviors by id
-      operationId: pbehaviors-bulk-delete-by-id
-      parameters:
-      - collectionFormat: multi
-        in: query
-        items:
-          type: string
-        name: ids
-        required: true
-        type: array
-      responses:
-        "204":
-          description: ""
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/common.ErrorResponse'
-      security:
-      - JWTAuth: []
-      - BasicAuth: []
-      summary: Bulk delete pbehaviors by id
-      tags:
-      - pbehaviors
     put:
       consumes:
       - application/json
-      description: Bulk update pbehaviors by id
-      operationId: pbehaviors-bulk-update-by-id
+      description: Bulk update pbehaviors
+      operationId: pbehaviors-bulk-update
       parameters:
       - description: body
         in: body
@@ -4492,26 +4798,236 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "207":
+          description: Multi-Status
           schema:
             items:
-              $ref: '#/definitions/pbehavior.Response'
+              items:
+                $ref: '#/definitions/pbehavior.BulkUpdateResponseItem'
+              type: array
             type: array
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/common.ValidationErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/common.ErrorResponse'
       security:
       - JWTAuth: []
       - BasicAuth: []
-      summary: Bulk update pbehaviors by id
+      summary: Bulk update pbehaviors
       tags:
       - pbehaviors
+  /bulk/scenarios:
+    delete:
+      consumes:
+      - application/json
+      description: Bulk delete scenarios
+      operationId: scenarios-bulk-delete
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/scenario.BulkDeleteRequestItem'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "207":
+          description: Multi-Status
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/scenario.BulkDeleteResponseItem'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Bulk delete scenarios
+      tags:
+      - scenarios
+    post:
+      consumes:
+      - application/json
+      description: Bulk create scenarios
+      operationId: scenarios-bulk-create
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/scenario.CreateRequest'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "207":
+          description: Multi-Status
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/scenario.BulkCreateResponseItem'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Bulk create scenarios
+      tags:
+      - scenarios
+    put:
+      consumes:
+      - application/json
+      description: Bulk update scenarios
+      operationId: scenarios-bulk-update
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/scenario.BulkUpdateRequestItem'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "207":
+          description: Multi-Status
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/scenario.BulkUpdateResponseItem'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Bulk update scenarios
+      tags:
+      - scenarios
+  /bulk/users:
+    delete:
+      consumes:
+      - application/json
+      description: Bulk delete users
+      operationId: users-bulk-delete
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/user.BulkDeleteRequestItem'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "207":
+          description: Multi-Status
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/user.BulkDeleteResponseItem'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Bulk delete users
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Bulk create users
+      operationId: users-bulk-create
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/user.Request'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "207":
+          description: Multi-Status
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/user.BulkCreateResponseItem'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Bulk create users
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Bulk update users
+      operationId: users-bulk-update
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/user.BulkUpdateRequestItem'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "207":
+          description: Multi-Status
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/user.BulkUpdateResponseItem'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Bulk update users
+      tags:
+      - users
   /bulk/view-groups:
     delete:
       description: Bulk delete view groups by id
@@ -4525,8 +5041,7 @@ paths:
         required: true
         type: array
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -4620,8 +5135,7 @@ paths:
         required: true
         type: array
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -4888,8 +5402,7 @@ paths:
       produces:
       - application/json
       responses:
-        "202":
-          description: ""
+        "202": {}
         "400":
           description: Bad Request
           schema:
@@ -5024,8 +5537,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -5197,12 +5709,11 @@ paths:
       parameters:
       - description: Entity id
         in: query
-        name: id
+        name: _id
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "400":
           description: Bad Request
           schema:
@@ -5223,7 +5734,7 @@ paths:
       parameters:
       - description: Entity id
         in: query
-        name: id
+        name: _id
         required: true
         type: string
       produces:
@@ -5251,7 +5762,7 @@ paths:
       parameters:
       - description: Entity id
         in: query
-        name: id
+        name: _id
         required: true
         type: string
       - description: body
@@ -5410,8 +5921,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -5601,8 +6111,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -5754,8 +6263,7 @@ paths:
       produces:
       - application/json
       responses:
-        "204":
-          description: ""
+        "204": {}
       security:
       - JWTAuth: []
       summary: Get file access
@@ -5776,8 +6284,7 @@ paths:
       produces:
       - application/json
       responses:
-        "204":
-          description: ""
+        "204": {}
         "400":
           description: Bad Request
           schema:
@@ -5905,8 +6412,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -6074,8 +6580,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -6189,8 +6694,7 @@ paths:
       description: delete user interface
       operationId: internal-delete-user-interface
       responses:
-        "204":
-          description: ""
+        "204": {}
       security:
       - ApiKeyAuth: []
       - BasicAuth: []
@@ -6235,8 +6739,7 @@ paths:
       produces:
       - application/json
       responses:
-        "204":
-          description: ""
+        "204": {}
       security:
       - ApiKeyAuth: []
       - BasicAuth: []
@@ -6275,8 +6778,7 @@ paths:
       produces:
       - application/json
       responses:
-        "204":
-          description: ""
+        "204": {}
       security:
       - JWTAuth: []
       summary: Log out
@@ -6434,8 +6936,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -6543,8 +7044,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "400":
           description: Bad Request
           schema:
@@ -6636,8 +7136,7 @@ paths:
       produces:
       - application/octet-stream
       responses:
-        "200":
-          description: ""
+        "200": {}
         "404":
           description: Not Found
           schema:
@@ -6745,8 +7244,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "400":
           description: Bad Request
           schema:
@@ -6953,8 +7451,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "400":
           description: Bad Request
           schema:
@@ -7126,8 +7623,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -7480,8 +7976,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -7641,8 +8136,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -7810,8 +8304,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -7979,8 +8472,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -8336,8 +8828,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -8505,8 +8996,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "400":
           description: Bad Request
           schema:
@@ -8603,8 +9093,7 @@ paths:
       produces:
       - application/json
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -8708,8 +9197,7 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: ""
+        "204": {}
         "404":
           description: Not Found
           schema:
@@ -8871,6 +9359,10 @@ paths:
         in: query
         name: sort_by
         type: string
+      - description: show assigned instructions and execution flags
+        in: query
+        name: with_instructions
+        type: boolean
       produces:
       - application/json
       responses:

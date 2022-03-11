@@ -1,6 +1,8 @@
 package broadcastmessage
 
 import (
+	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -45,7 +47,7 @@ func (a api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeBroadcastMessage,
 		ValueID:   request.ID,
@@ -156,7 +158,7 @@ func (a api) Update(c *gin.Context) {
 		return
 	}
 
-	err := a.actionLogger.Action(c, logger.LogEntry{
+	err := a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypeBroadcastMessage,
 		ValueID:   data.ID,
@@ -192,7 +194,7 @@ func (a api) Delete(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionDelete,
 		ValueType: logger.ValueTypeBroadcastMessage,
 		ValueID:   c.Param("id"),

@@ -3,7 +3,9 @@ package scenario
 import (
 	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"math"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -21,6 +23,10 @@ type Store interface {
 	IsPriorityValid(ctx context.Context, priority int) (bool, error)
 	Update(ctx context.Context, r UpdateRequest) (*Scenario, error)
 	Delete(ctx context.Context, id string) (bool, error)
+
+	BulkInsert(ctx context.Context, requests []CreateRequest) error
+	BulkUpdate(ctx context.Context, requests []BulkUpdateRequestItem) error
+	BulkDelete(ctx context.Context, ids []string) error
 }
 
 type store struct {
@@ -158,6 +164,84 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	}
 
 	return deleted > 0, nil
+}
+
+func (s *store) BulkInsert(ctx context.Context, requests []CreateRequest) error {
+	var err error
+	writeModels := make([]mongodriver.WriteModel, 0, int(math.Min(float64(canopsis.DefaultBulkSize), float64(len(requests)))))
+	now := types.CpsTime{Time: time.Now()}
+
+	for _, r := range requests {
+		model := s.transformer.TransformEditRequestToModel(r.EditRequest)
+		if r.ID == "" {
+			r.ID = utils.NewID()
+		}
+
+		model.ID = r.ID
+
+		model.Created = now
+		model.Updated = now
+
+		writeModels = append(
+			writeModels,
+			mongodriver.NewInsertOneModel().SetDocument(model),
+		)
+
+		if len(writeModels) == canopsis.DefaultBulkSize {
+			_, err = s.collection.BulkWrite(ctx, writeModels)
+			if err != nil {
+				return err
+			}
+
+			writeModels = writeModels[:0]
+		}
+	}
+
+	if len(writeModels) > 0 {
+		_, err = s.collection.BulkWrite(ctx, writeModels)
+	}
+
+	return err
+}
+
+func (s *store) BulkUpdate(ctx context.Context, requests []BulkUpdateRequestItem) error {
+	var err error
+	writeModels := make([]mongodriver.WriteModel, 0, int(math.Min(float64(canopsis.DefaultBulkSize), float64(len(requests)))))
+	now := types.CpsTime{Time: time.Now()}
+
+	for _, r := range requests {
+		model := s.transformer.TransformEditRequestToModel(r.EditRequest)
+		model.Updated = now
+
+		writeModels = append(
+			writeModels,
+			mongodriver.
+				NewUpdateOneModel().
+				SetFilter(bson.M{"_id": r.ID}).
+				SetUpdate(bson.M{"$set": model}),
+		)
+
+		if len(writeModels) == canopsis.DefaultBulkSize {
+			_, err = s.collection.BulkWrite(ctx, writeModels)
+			if err != nil {
+				return err
+			}
+
+			writeModels = writeModels[:0]
+		}
+	}
+
+	if len(writeModels) > 0 {
+		_, err = s.collection.BulkWrite(ctx, writeModels)
+	}
+
+	return err
+}
+
+func (s *store) BulkDelete(ctx context.Context, ids []string) error {
+	_, err := s.collection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
+
+	return err
 }
 
 func getNestedObjectsPipeline() []bson.M {

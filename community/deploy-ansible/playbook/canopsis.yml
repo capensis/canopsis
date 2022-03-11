@@ -7,6 +7,8 @@
     -
       role: "ansible-role-mongodb"
     -
+      role: "postgresql-timescaledb"
+    -
       role: "ansible-role-rabbitmq"
     -
       role: "ansible-role-redis"
