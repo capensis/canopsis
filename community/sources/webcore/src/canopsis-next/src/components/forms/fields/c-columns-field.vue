@@ -36,10 +36,21 @@
             :name="`value[${index}]`",
             @input="updateFieldInArrayItem(index, 'value', $event)"
           )
+        v-flex(v-if="withTemplate", xs11)
+          v-layout(row)
+            v-switch(
+              :label="$t('settings.columns.withTemplate')",
+              :input-value="!!column.template",
+              color="primary",
+              @change="enableTemplate(index, $event)"
+            )
+            v-btn.primary(v-if="column.template", small, @click="showEditTemplateModal(index)")
+              span {{ $t('common.edit') }}
         v-flex(v-if="withHtml", xs11)
           v-switch(
             :label="$t('settings.columns.isHtml')",
             :input-value="column.isHtml",
+            :disabled="!!column.template",
             color="primary",
             @change="updateFieldInArrayItem(index, 'isHtml', $event)"
           )
@@ -47,19 +58,21 @@
           v-switch(
             :label="$t('settings.colorIndicator.title')",
             :input-value="!!column.colorIndicator",
+            :disabled="!!column.template",
             color="primary",
             @change="switchChangeColorIndicator(index, $event)"
           )
           v-layout(v-if="column.colorIndicator", row)
             c-color-indicator-field(
               :value="column.colorIndicator",
+              :disabled="!!column.template",
               @input="updateFieldInArrayItem(index, 'colorIndicator', $event)"
             )
     v-btn.ml-0(color="primary", @click.prevent="add") {{ $t('common.add') }}
 </template>
 
 <script>
-import { COLOR_INDICATOR_TYPES } from '@/constants';
+import { COLOR_INDICATOR_TYPES, DEFAULT_COLUMN_TEMPLATE_VALUE, MODALS } from '@/constants';
 
 import { formArrayMixin, formValidationHeaderMixin } from '@/mixins/form';
 
@@ -78,6 +91,10 @@ export default {
       type: [Array, Object],
       default: () => [],
     },
+    withTemplate: {
+      type: Boolean,
+      default: false,
+    },
     withHtml: {
       type: Boolean,
       default: false,
@@ -88,6 +105,31 @@ export default {
     },
   },
   methods: {
+    enableTemplate(index, checked) {
+      const value = checked
+        ? DEFAULT_COLUMN_TEMPLATE_VALUE
+        : null;
+
+      return this.updateFieldInArrayItem(index, 'template', value);
+    },
+
+    showEditTemplateModal(index) {
+      const column = this.columns[index];
+
+      this.$modals.show({
+        name: MODALS.textEditor,
+        config: {
+          text: column.template,
+          title: this.$t('settings.columns.withTemplate'),
+          label: this.$t('common.template'),
+          rules: {
+            required: true,
+          },
+          action: value => this.updateFieldInArrayItem(index, 'template', value),
+        },
+      });
+    },
+
     switchChangeColorIndicator(index, value) {
       return this.updateFieldInArrayItem(index, 'colorIndicator', value ? COLOR_INDICATOR_TYPES.state : null);
     },

@@ -35,7 +35,7 @@ export default {
   common: {
     ok: 'Ok',
     undefined: 'Not defined',
-    entity: 'Entity',
+    entity: 'Entity | Entities',
     service: 'Service',
     widget: 'Widget',
     addWidget: 'Add widget',
@@ -217,6 +217,7 @@ export default {
     searchBy: 'Search by',
     dictionary: 'Dictionary',
     condition: 'Condition | Conditions',
+    template: 'Template',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -656,7 +657,6 @@ export default {
       title: 'Info popup',
       fields: {
         column: 'Column',
-        template: 'Template',
       },
     },
     rowGridSize: {
@@ -707,6 +707,7 @@ export default {
     templateEditor: 'Template',
     columns: {
       isHtml: 'Is it HTML?',
+      withTemplate: 'Custom template',
       isState: 'Displayed as severity?',
     },
     liveReporting: {
@@ -988,7 +989,6 @@ export default {
       title: 'Info popup',
       add: 'Add',
       column: 'Column',
-      template: 'Template',
       addInfoPopup: {
         title: 'Add an info popup',
       },

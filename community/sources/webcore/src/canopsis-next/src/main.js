@@ -148,6 +148,7 @@ import CPatternRulesField from '@/components/forms/fields/pattern/c-pattern-rule
 import CPatternGroupField from '@/components/forms/fields/pattern/c-pattern-group-field.vue';
 import CPatternGroupsField from '@/components/forms/fields/pattern/c-pattern-groups-field.vue';
 import CNumberField from '@/components/forms/fields/c-number-field.vue';
+import CEntitiesSelectField from '@/components/forms/fields/c-entities-select-field.vue';
 
 /**
  * Icons
@@ -349,6 +350,7 @@ Vue.component('c-pattern-infos-attribute-field', CPatternInfosAttributeField);
 Vue.component('c-pattern-extra-infos-attribute-field', CPatternExtraInfosAttributeField);
 Vue.component('c-pattern-operator-field', CPatternOperatorField);
 Vue.component('c-number-field', CNumberField);
+Vue.component('c-entities-select-field', CEntitiesSelectField);
 Vue.component('c-pattern-rule-field', CPatternRuleField);
 Vue.component('c-pattern-rules-field', CPatternRulesField);
 Vue.component('c-pattern-group-field', CPatternGroupField);
