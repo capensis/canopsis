@@ -6,7 +6,7 @@ import { createMockedStoreModules } from '@unit/utils/store';
 
 import { MAX_LIMIT } from '@/constants';
 
-import CFiltersField from '@/components/forms/fields/filter/c-pattern-field.vue';
+import CFiltersField from '@/components/forms/fields/pattern/c-pattern-field.vue';
 
 const localVue = createVueInstance();
 

@@ -2,7 +2,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
 
-import CPatternInfosAttributeField from '@/components/forms/fields/filter/c-pattern-infos-attribute-field.vue';
+import CPatternInfosAttributeField from '@/components/forms/fields/pattern/c-pattern-infos-attribute-field.vue';
 
 const localVue = createVueInstance();
 

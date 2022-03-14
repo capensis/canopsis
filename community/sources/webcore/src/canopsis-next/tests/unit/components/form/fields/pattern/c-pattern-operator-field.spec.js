@@ -3,7 +3,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { FILTER_OPERATORS } from '@/constants';
 
-import CPatternOperatorField from '@/components/forms/fields/filter/c-pattern-operator-field.vue';
+import CPatternOperatorField from '@/components/forms/fields/pattern/c-pattern-operator-field.vue';
 
 const localVue = createVueInstance();
 
