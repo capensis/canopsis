@@ -250,3 +250,5 @@ export const ASSOCIATIVE_TABLES_NAMES = {
   dynamicInfoTemplates: 'dynamic-info-templates',
   filterHints: 'filterhints',
 };
+
+export const DEFAULT_COLUMN_TEMPLATE_VALUE = '{{ value }}';
