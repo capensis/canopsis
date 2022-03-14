@@ -3,7 +3,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { ALARM_FILTER_FIELDS } from '@/constants';
 
-import CPatternAttributeField from '@/components/forms/fields/filter/c-pattern-attribute-field.vue';
+import CPatternAttributeField from '@/components/forms/fields/pattern/c-pattern-attribute-field.vue';
 
 const localVue = createVueInstance();
 

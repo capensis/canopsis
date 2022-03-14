@@ -2,7 +2,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { createInputStub } from '@unit/stubs/input';
 
-import CPatternExtraInfosAttributeField from '@/components/forms/fields/filter/c-pattern-extra-infos-attribute-field.vue';
+import CPatternExtraInfosAttributeField from '@/components/forms/fields/pattern/c-pattern-extra-infos-attribute-field.vue';
 
 const localVue = createVueInstance();
 
