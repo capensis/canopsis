@@ -57,7 +57,7 @@ exports[`c-pattern-infos-attribute-field Renders \`c-pattern-infos-attribute-fie
     </div>
   </div>
   <div
-    class="flex ml-2 xs6"
+    class="flex pl-3 xs6"
   >
     <div
       class="v-input v-text-field v-select v-input--hide-details v-input--is-disabled theme--light"
@@ -208,7 +208,7 @@ exports[`c-pattern-infos-attribute-field Renders \`c-pattern-infos-attribute-fie
     </div>
   </div>
   <div
-    class="flex ml-2 xs6"
+    class="flex pl-3 xs6"
   >
     <div
       class="v-input v-text-field v-select v-input--hide-details v-input--is-disabled theme--light"

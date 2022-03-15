@@ -5,19 +5,18 @@
     v-flex(xs11)
       v-layout(column)
         c-pattern-rules-field(
-          v-field="group.rules",
+          :rules="group.rules",
           :attributes="attributes",
-          :rules-map="rulesMap",
           :disabled="disabled",
-          @remove="$emit('remove')"
+          @input="updateRules"
         )
 </template>
 
 <script>
-import { formArrayMixin } from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 export default {
-  mixins: [formArrayMixin],
+  mixins: [formMixin],
   model: {
     prop: 'group',
     event: 'input',
@@ -31,13 +30,18 @@ export default {
       type: Array,
       required: true,
     },
-    rulesMap: {
-      type: Object,
-      default: () => ({}),
-    },
     disabled: {
       type: Boolean,
       default: false,
+    },
+  },
+  methods: {
+    updateRules(rules) {
+      if (rules.length) {
+        this.updateField('rules', rules);
+      } else {
+        this.$emit('remove');
+      }
     },
   },
 };

@@ -141,9 +141,12 @@ export default {
     clear: 'Clear',
     deleteAll: 'Delete all',
     payload: 'Payload',
-    output: 'Note',
+    note: 'Note',
+    output: 'Output',
+    displayName: 'Display name',
     created: 'Creation date',
     updated: 'Last update date',
+    lastEventDate: 'Last event date',
     pattern: 'Pattern | Patterns',
     correlation: 'Correlation',
     periods: 'Periods',
@@ -218,6 +221,8 @@ export default {
     dictionary: 'Dictionary',
     condition: 'Condition | Conditions',
     template: 'Template',
+    canceled: 'Canceled',
+    snoozed: 'Snoozed',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -1612,20 +1617,6 @@ export default {
   },
   tables: {
     noData: 'No data',
-    alarmGeneral: {
-      author: 'Author',
-      connector: 'Connector Type',
-      connectorName: 'Connector name',
-      component: 'Component',
-      resource: 'Resource',
-      output: 'Output',
-      lastUpdateDate: 'Last update date',
-      creationDate: 'Creation date',
-      duration: 'Duration',
-      state: 'Severity',
-      status: 'Status',
-      extraDetails: 'Extra details',
-    },
     contextEntities: {
       columns: {
         name: 'Name',
@@ -2721,6 +2712,17 @@ export default {
       ruleRequired: 'Please add at least one rule',
       groupRequired: 'Please add at least one group',
     },
+  },
+
+  alarm: {
+    connector: 'Connector Type',
+    connectorName: 'Connector name',
+    component: 'Component',
+    resource: 'Resource',
+    extraDetails: 'Extra details',
+    acked: 'Acked',
+    ackedAt: 'Acked at',
+    resolvedAt: 'Resolved at',
   },
 
   ...featureService.get('i18n.en'),

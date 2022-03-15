@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    v-layout(v-for="(value, index) in values", :key="index")
+    v-layout(v-for="(value, index) in values", :key="index", align-center)
       v-flex
         c-mixed-field(v-field="values[index]", :disabled="disabled", :types="types")
       c-action-btn(v-if="!disabled", type="delete", @click="removeItemFromArray(index)")

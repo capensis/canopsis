@@ -4,7 +4,7 @@
       v-combobox(
         v-field="value.dictionary",
         v-validate="'required'",
-        :items="dictionaries",
+        :items="items",
         :disabled="disabled",
         :label="label || $t('common.dictionary')",
         :return-object="false",
@@ -12,7 +12,7 @@
         :error-messages="errors.collect(dictionaryName)",
         hide-details
       )
-    v-flex.ml-2(xs6)
+    v-flex.pl-3(xs6)
       v-select(
         v-field="value.field",
         v-validate="'required'",
@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import { PATTERN_RULE_INFOS_FIELDS } from '@/constants';
+
 export default {
   inject: ['$validator'],
   model: {
@@ -71,17 +73,13 @@ export default {
       return [
         {
           text: this.$t('common.name'),
-          value: 'name',
+          value: PATTERN_RULE_INFOS_FIELDS.name,
         },
         {
           text: this.$t('common.value'),
-          value: 'value',
+          value: PATTERN_RULE_INFOS_FIELDS.value,
         },
       ];
-    },
-
-    dictionaries() {
-      return this.items;
     },
   },
 };

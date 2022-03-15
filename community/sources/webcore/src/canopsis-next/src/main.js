@@ -103,6 +103,8 @@ import CTextPairField from '@/components/forms/fields/text-pairs/c-text-pair-fie
 import CJsonField from '@/components/forms/fields/c-json-field.vue';
 import CRetryField from '@/components/forms/fields/c-retry-field.vue';
 import CMixedField from '@/components/forms/fields/c-mixed-field.vue';
+import CMixedInputField from '@/components/forms/fields/c-mixed-input-field.vue';
+import CInputTypeField from '@/components/forms/fields/c-input-type-field.vue';
 import CArrayMixedField from '@/components/forms/fields/c-array-mixed-field.vue';
 import CColorPickerField from '@/components/forms/fields/c-color-picker-field.vue';
 import CEntityTypeField from '@/components/forms/fields/c-entity-type-field.vue';
@@ -124,7 +126,8 @@ import CUserPickerField from '@/components/forms/fields/c-user-picker-field.vue'
 import CInstructionTypeField from '@/components/forms/fields/c-instruction-type-field.vue';
 import CPriorityField from '@/components/forms/fields/c-priority-field.vue';
 import CQuickDateIntervalField from '@/components/forms/fields/c-quick-date-interval-field.vue';
-import CDateIntervalField from '@/components/forms/fields/c-date-interval-field.vue';
+import CDateIntervalField from '@/components/forms/fields/date-picker/c-date-interval-field.vue';
+import CDateTimeIntervalField from '@/components/forms/fields/date-time-picker/c-date-time-interval-field.vue';
 import CQuickDateIntervalTypeField from '@/components/forms/fields/c-quick-date-interval-type-field.vue';
 import CEnabledDurationField from '@/components/forms/fields/c-enabled-duration-field.vue';
 import CEnabledLimitField from '@/components/forms/fields/c-enabled-limit-field.vue';
@@ -149,6 +152,7 @@ import CPatternGroupField from '@/components/forms/fields/pattern/c-pattern-grou
 import CPatternGroupsField from '@/components/forms/fields/pattern/c-pattern-groups-field.vue';
 import CNumberField from '@/components/forms/fields/c-number-field.vue';
 import CEntitiesSelectField from '@/components/forms/fields/c-entities-select-field.vue';
+import CAlarmPatternsField from '@/components/forms/fields/c-alarm-patterns-field.vue';
 
 /**
  * Icons
@@ -303,6 +307,8 @@ Vue.component('c-text-pairs-field', CTextPairsField);
 Vue.component('c-json-field', CJsonField);
 Vue.component('c-retry-field', CRetryField);
 Vue.component('c-mixed-field', CMixedField);
+Vue.component('c-mixed-input-field', CMixedInputField);
+Vue.component('c-input-type-field', CInputTypeField);
 Vue.component('c-array-mixed-field', CArrayMixedField);
 Vue.component('c-color-picker-field', CColorPickerField);
 Vue.component('c-entity-type-field', CEntityTypeField);
@@ -327,6 +333,7 @@ Vue.component('c-instruction-type-field', CInstructionTypeField);
 Vue.component('c-priority-field', CPriorityField);
 Vue.component('c-date-picker-field', CDatePickerField);
 Vue.component('c-date-interval-field', CDateIntervalField);
+Vue.component('c-date-time-interval-field', CDateTimeIntervalField);
 Vue.component('c-quick-date-interval-field', CQuickDateIntervalField);
 Vue.component('c-quick-date-interval-type-field', CQuickDateIntervalTypeField);
 Vue.component('c-enabled-duration-field', CEnabledDurationField);
@@ -357,6 +364,7 @@ Vue.component('c-pattern-group-field', CPatternGroupField);
 Vue.component('c-pattern-groups-field', CPatternGroupsField);
 Vue.component('c-pattern-operator-information', CPatternOperatorInformation);
 Vue.component('c-pattern-operator-chip', CPatternOperatorChip);
+Vue.component('c-alarm-patterns-field', CAlarmPatternsField);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
