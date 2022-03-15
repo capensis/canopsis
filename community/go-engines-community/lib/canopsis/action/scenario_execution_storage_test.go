@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	redislib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	"github.com/rs/zerolog"
 	"reflect"
 	"testing"
 	"time"
@@ -45,7 +46,7 @@ func TestRedisScenarioExecutionStorage_GetAbandoned_GivenTooLongNotUpdatedExecut
 	firstExecution := action.ScenarioExecution{
 		AlarmID:    "4",
 		ScenarioID: "4",
-		LastUpdate: timestamp - action.AbandonedDuration - 10,
+		LastUpdate: timestamp - 70,
 		Entity:     types.Entity{Created: zeroTime},
 	}
 	firstExecutionID, err := storage.Create(ctx, firstExecution)
@@ -57,7 +58,7 @@ func TestRedisScenarioExecutionStorage_GetAbandoned_GivenTooLongNotUpdatedExecut
 	secondExecution := action.ScenarioExecution{
 		AlarmID:    "5",
 		ScenarioID: "5",
-		LastUpdate: timestamp - action.AbandonedDuration - 30,
+		LastUpdate: timestamp - 90,
 		Entity:     types.Entity{Created: zeroTime},
 	}
 	secondExecutionID, err := storage.Create(ctx, secondExecution)
@@ -97,7 +98,7 @@ func TestRedisScenarioExecutionStorage_GetAbandoned_GivenExecutionWithMaxRetries
 	executionID, err := storage.Create(ctx, action.ScenarioExecution{
 		AlarmID:    "6",
 		ScenarioID: "6",
-		LastUpdate: timestamp - action.AbandonedDuration - 30,
+		LastUpdate: timestamp - 90,
 		Tries:      action.MaxRetries,
 	})
 	if err != nil {
@@ -132,5 +133,5 @@ func createTestStorage() action.ScenarioExecutionStorage {
 	key := "test-scenario-execution-key"
 
 	return action.NewRedisScenarioExecutionStorage(key, session, json.NewEncoder(),
-		json.NewDecoder(), log.NewLogger(true))
+		json.NewDecoder(), time.Minute, zerolog.Nop())
 }
