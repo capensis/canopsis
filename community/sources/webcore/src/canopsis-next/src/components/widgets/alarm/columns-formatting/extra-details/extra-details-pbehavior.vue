@@ -4,13 +4,13 @@
       v-icon.c-extra-details__badge.cyan.accent-2.white--text(
         small,
         slot="activator"
-      ) {{ iconName }}
+      ) {{ pbehaviorInfo.icon_name }}
       div
         strong {{ $t('alarmList.actions.iconsTitles.pbehaviors') }}
         div
           div.mt-2.font-weight-bold {{ pbehavior.name }}
           div {{ $t('common.author') }}: {{ pbehavior.author }}
-          div(v-if="typeName") {{ $t('common.type') }}: {{ typeName }}
+          div(v-if="pbehaviorInfo.type_name") {{ $t('common.type') }}: {{ pbehaviorInfo.type_name }}
           div(v-if="pbehavior.reason") {{ $t('common.reason') }}: {{ pbehavior.reason.name }}
           div {{ tstart }}
             template(v-if="pbehavior.tstop") &nbsp;- {{ tstop }}
@@ -32,13 +32,9 @@ export default {
       type: Object,
       required: true,
     },
-    iconName: {
-      type: String,
-      required: false,
-    },
-    typeName: {
-      type: String,
-      required: false,
+    pbehaviorInfo: {
+      type: Object,
+      default: () => ({}),
     },
   },
   computed: {

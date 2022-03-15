@@ -85,10 +85,39 @@ indexes:
         v.last_update_date: 1
       options:
         background: true
-  default_pbehavior:
-    eids_1:
+
+  resolved_alarms:
+    t_1:
       keys:
-        eids: 1
+        t: 1
+      options:
+        background: true
+    d_1:
+      keys:
+        d: 1
+    v.meta_1_v.creation_date_1:
+      keys:
+        v.meta: 1
+        v.creation_date: 1
+      options:
+        partialFilterExpression:
+          v.meta:
+            $exists: true
+    v.creation_date_1:
+      keys:
+        v.creation_date: 1
+      options:
+        background: true
+    v.last_event_date_1:
+      keys:
+        v.last_event_date: 1
+      options:
+        background: true
+    v.last_update_date_1:
+      keys:
+        v.last_update_date: 1
+      options:
+        background: true
 
   pbehavior_type:
     priority_1:
@@ -137,3 +166,9 @@ indexes:
       keys:
         instruction: 1
         date: 1
+
+  default_rights:
+    crecord_type_1_role_1:
+      keys:
+        crecord_type: 1
+        role: 1
