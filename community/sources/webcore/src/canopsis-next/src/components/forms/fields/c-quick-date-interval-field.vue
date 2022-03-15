@@ -14,6 +14,7 @@
         :ranges="quickRanges",
         :disabled="disabled",
         hide-details,
+        return-object,
         @input="updateIntervalRange"
       )
 </template>
