@@ -113,7 +113,7 @@ export default {
       this.$modals.show({
         name: MODALS.textFieldEditor,
         config: {
-          title: this.$t('common.output'),
+          title: this.$t('common.note'),
           action: (output) => {
             this.addCancelActionToQueue({ entity: this.entity, output });
           },

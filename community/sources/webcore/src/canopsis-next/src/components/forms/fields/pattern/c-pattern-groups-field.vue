@@ -5,7 +5,6 @@
         c-pattern-group-field(
           v-field="groups[index]",
           :attributes="attributes",
-          :rules-map="rulesMap",
           :disabled="disabled",
           @remove="removeItemFromArray(index)"
         )
@@ -40,10 +39,6 @@ export default {
     attributes: {
       type: Array,
       required: true,
-    },
-    rulesMap: {
-      type: Object,
-      default: () => ({}),
     },
     disabled: {
       type: Boolean,

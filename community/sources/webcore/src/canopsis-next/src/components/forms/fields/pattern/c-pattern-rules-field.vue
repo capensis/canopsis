@@ -3,17 +3,19 @@
     v-layout(v-for="(rule, index) in rules", :key="rule.key", row, justify-space-between, align-center)
       v-flex
         c-pattern-rule-field(
-          v-field="rules[index]",
-          v-bind="rulesMap[rule.attribute]",
+          v-bind="getRuleProps(rule)",
+          :rule="rule",
+          :name="rule.key",
           :attributes="attributes",
-          :disabled="disabled"
+          :disabled="disabled",
+          @input="updateRule(index, $event)"
         )
       c-action-btn(
         :tooltip="$t('pattern.removeRule')",
         :disabled="disabled",
         type="delete",
         color="black",
-        @click="removeFilterRule(index)"
+        @click="removeItemFromArray(index)"
       )
     v-layout(row, align-center)
       v-btn.mx-0(
@@ -26,6 +28,8 @@
 
 <script>
 import { filterRuleToForm } from '@/helpers/forms/filter';
+
+import { convertValueByOperator, getOperatorsByRule } from '@/helpers/pattern';
 
 import { formArrayMixin } from '@/mixins/form';
 
@@ -45,10 +49,6 @@ export default {
       type: Array,
       required: true,
     },
-    rulesMap: {
-      type: Object,
-      default: () => ({}),
-    },
     disabled: {
       type: Boolean,
       default: false,
@@ -58,13 +58,54 @@ export default {
       default: 'rules',
     },
   },
+  computed: {
+    rulesMap() {
+      return this.attributes.reduce((acc, { value, options = {} }) => {
+        acc[value] = options;
+
+        return acc;
+      }, {});
+    },
+  },
   methods: {
-    removeFilterRule(index) {
-      if (this.rules.length !== 1) {
-        this.removeItemFromArray(index);
-      } else {
-        this.$emit('remove');
+    getOptionsByRule(rule) {
+      return this.rulesMap[rule.attribute] ?? {};
+    },
+
+    getRuleProps(rule) {
+      const { operators, type, ...props } = this.getOptionsByRule(rule);
+
+      return {
+        ...props,
+        type,
+        operators: operators ?? getOperatorsByRule(rule, type),
+      };
+    },
+
+    getUpdatedRule(rule, newRule) {
+      const { operators, defaultValue } = this.getRuleProps(newRule);
+
+      const updatedRule = { ...newRule };
+
+      if (!operators.includes(newRule.operator)) {
+        const [firstOperator] = operators;
+
+        updatedRule.operator = firstOperator;
       }
+
+      if (updatedRule.attribute !== rule.attribute) {
+        updatedRule.value = defaultValue ?? convertValueByOperator(updatedRule.value, updatedRule.operator);
+      } else if (updatedRule.operator !== rule.operator) {
+        updatedRule.value = convertValueByOperator(updatedRule.value, updatedRule.operator);
+      }
+
+      return updatedRule;
+    },
+
+    updateRule(index, newRule) {
+      const rule = this.rules[index];
+
+      this.updateItemInArray(index, this.getUpdatedRule(rule, newRule));
     },
 
     addFilterRule() {

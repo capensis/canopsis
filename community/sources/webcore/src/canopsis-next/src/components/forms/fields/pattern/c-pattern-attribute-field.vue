@@ -4,8 +4,7 @@
     :items="items",
     :disabled="disabled",
     :label="label || $tc('common.searchBy')",
-    :name="name",
-    hide-details
+    :name="name"
   )
 </template>
 

@@ -1,6 +1,6 @@
 import { cloneDeep, isEmpty, isString } from 'lodash';
 
-import { FILTER_DEFAULT_VALUES } from '@/constants';
+import { FILTER_DEFAULT_VALUES, QUICK_RANGES, TIME_UNITS } from '@/constants';
 
 import uid from '@/helpers/uid';
 
@@ -116,8 +116,15 @@ export const filterRuleToForm = (rule = {}) => ({
   field: '',
   dictionary: '',
   value: '',
-  from: 0,
-  to: 0,
+  range: {
+    type: QUICK_RANGES.last1Hour.value,
+    from: 0,
+    to: 0,
+  },
+  duration: {
+    value: 1,
+    unit: TIME_UNITS.second,
+  },
   ...rule,
 });
 

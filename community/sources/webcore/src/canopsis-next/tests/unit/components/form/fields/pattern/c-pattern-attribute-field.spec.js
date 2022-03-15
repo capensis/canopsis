@@ -14,11 +14,13 @@ const stubs = {
 const factory = (options = {}) => shallowMount(CPatternAttributeField, {
   localVue,
   stubs,
+
   ...options,
 });
 
 const snapshotFactory = (options = {}) => mount(CPatternAttributeField, {
   localVue,
+
   ...options,
 });
 

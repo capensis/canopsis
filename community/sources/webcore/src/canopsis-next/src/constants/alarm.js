@@ -97,66 +97,66 @@ export const ALARM_ENTITY_FIELDS = {
 
 export const DEFAULT_ALARMS_WIDGET_COLUMNS = [
   {
-    labelKey: 'tables.alarmGeneral.connector',
+    labelKey: 'alarm.connector',
     value: ALARM_ENTITY_FIELDS.connector,
   },
   {
-    labelKey: 'tables.alarmGeneral.connectorName',
+    labelKey: 'alarm.connectorName',
     value: ALARM_ENTITY_FIELDS.connectorName,
   },
   {
-    labelKey: 'tables.alarmGeneral.component',
+    labelKey: 'alarm.component',
     value: ALARM_ENTITY_FIELDS.component,
   },
   {
-    labelKey: 'tables.alarmGeneral.resource',
+    labelKey: 'alarm.resource',
     value: ALARM_ENTITY_FIELDS.resource,
   },
   {
-    labelKey: 'tables.alarmGeneral.output',
+    labelKey: 'common.output',
     value: ALARM_ENTITY_FIELDS.output,
   },
   {
-    labelKey: 'tables.alarmGeneral.extraDetails',
+    labelKey: 'alarm.extraDetails',
     value: ALARM_ENTITY_FIELDS.extraDetails,
   },
   {
-    labelKey: 'tables.alarmGeneral.state',
+    labelKey: 'common.state',
     value: ALARM_ENTITY_FIELDS.state,
   },
   {
-    labelKey: 'tables.alarmGeneral.status',
+    labelKey: 'common.status',
     value: ALARM_ENTITY_FIELDS.status,
   },
 ];
 
 export const DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS = [
   {
-    labelKey: 'tables.alarmGeneral.connector',
+    labelKey: 'alarm.connector',
     value: ALARM_ENTITY_FIELDS.connector,
   },
   {
-    labelKey: 'tables.alarmGeneral.connectorName',
+    labelKey: 'alarm.connectorName',
     value: ALARM_ENTITY_FIELDS.connectorName,
   },
   {
-    labelKey: 'tables.alarmGeneral.resource',
+    labelKey: 'alarm.resource',
     value: ALARM_ENTITY_FIELDS.resource,
   },
   {
-    labelKey: 'tables.alarmGeneral.output',
+    labelKey: 'common.output',
     value: ALARM_ENTITY_FIELDS.output,
   },
   {
-    labelKey: 'tables.alarmGeneral.extraDetails',
+    labelKey: 'alarm.extraDetails',
     value: ALARM_ENTITY_FIELDS.extraDetails,
   },
   {
-    labelKey: 'tables.alarmGeneral.state',
+    labelKey: 'common.state',
     value: ALARM_ENTITY_FIELDS.state,
   },
   {
-    labelKey: 'tables.alarmGeneral.status',
+    labelKey: 'common.status',
     value: ALARM_ENTITY_FIELDS.status,
   },
 ];

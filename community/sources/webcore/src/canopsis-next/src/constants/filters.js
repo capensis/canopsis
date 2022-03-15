@@ -78,7 +78,7 @@ export const FILTER_MONGO_OPERATORS = {
   less: '$lt',
 };
 
-export const FILTER_INPUT_TYPES = {
+export const PATTERN_INPUT_TYPES = {
   string: 'string',
   number: 'number',
   boolean: 'boolean',
@@ -92,7 +92,7 @@ export const FILTER_DEFAULT_VALUES = {
     field: '',
     operator: '',
     input: '',
-    inputType: FILTER_INPUT_TYPES.string,
+    inputType: PATTERN_INPUT_TYPES.string,
   },
   group: {
     condition: FILTER_MONGO_OPERATORS.and,
@@ -100,3 +100,75 @@ export const FILTER_DEFAULT_VALUES = {
     rules: {},
   },
 };
+
+export const PATTERN_OPERATORS_WITHOUT_VALUE = [
+  FILTER_OPERATORS.exist,
+  FILTER_OPERATORS.notExist,
+  FILTER_OPERATORS.isEmpty,
+  FILTER_OPERATORS.isNotEmpty,
+  FILTER_OPERATORS.ticketAssociated,
+  FILTER_OPERATORS.ticketNotAssociated,
+  FILTER_OPERATORS.acked,
+  FILTER_OPERATORS.notAcked,
+  FILTER_OPERATORS.canceled,
+  FILTER_OPERATORS.notCanceled,
+];
+
+export const PATTERN_RULE_TYPES = {
+  infos: 'infos',
+  date: 'date',
+  duration: 'duration',
+  number: 'number',
+  string: 'string',
+};
+
+export const PATTERN_RULE_INFOS_FIELDS = {
+  value: 'value',
+  name: 'name',
+};
+
+export const PATTERN_ARRAY_OPERATORS = [
+  FILTER_OPERATORS.hasEvery,
+  FILTER_OPERATORS.hasOneOf,
+  FILTER_OPERATORS.hasNot,
+  FILTER_OPERATORS.isEmpty,
+  FILTER_OPERATORS.isNotEmpty,
+];
+
+export const PATTERN_DURATION_OPERATORS = [
+  FILTER_OPERATORS.longer,
+  FILTER_OPERATORS.shorter,
+];
+
+export const PATTERN_NUMBER_OPERATORS = [
+  FILTER_OPERATORS.equal,
+  FILTER_OPERATORS.notEqual,
+  FILTER_OPERATORS.higher,
+  FILTER_OPERATORS.longer,
+];
+
+export const PATTERN_STRING_OPERATORS = [
+  FILTER_OPERATORS.equal,
+  FILTER_OPERATORS.contains,
+  FILTER_OPERATORS.notEqual,
+  FILTER_OPERATORS.notContains,
+  FILTER_OPERATORS.beginsWith,
+  FILTER_OPERATORS.notBeginWith,
+  FILTER_OPERATORS.endsWith,
+  FILTER_OPERATORS.notEndWith,
+];
+
+export const PATTERN_BOOLEAN_OPERATORS = [
+  FILTER_OPERATORS.equal,
+  FILTER_OPERATORS.notEqual,
+];
+
+export const PATTERN_NULL_OPERATORS = [
+  FILTER_OPERATORS.equal,
+  FILTER_OPERATORS.notEqual,
+];
+
+export const PATTERN_INFOS_NAME_OPERATORS = [
+  FILTER_OPERATORS.exist,
+  FILTER_OPERATORS.notExist,
+];

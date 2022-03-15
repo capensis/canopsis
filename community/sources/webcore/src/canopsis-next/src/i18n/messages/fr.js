@@ -141,9 +141,12 @@ export default {
     clear: 'Nettoyer',
     deleteAll: 'Tout supprimer',
     payload: 'Payload',
-    output: 'Note',
+    note: 'Note',
+    output: 'Output',
+    displayName: 'Afficher un nom',
     created: 'Date de création',
     updated: 'Date de dernière modification',
+    lastEventDate: 'Date du dernier événement',
     pattern: 'Modèle | Modèles',
     correlation: 'Corrélation',
     periods: 'Périodes',
@@ -218,6 +221,8 @@ export default {
     dictionary: 'Dictionnaire',
     condition: 'Condition | Conditions',
     template: 'Template',
+    canceled: 'Annulé',
+    snoozed: 'En attente',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -1612,20 +1617,6 @@ export default {
   },
   tables: {
     noData: 'Aucune donnée',
-    alarmGeneral: {
-      author: 'Auteur',
-      connector: 'Type de connecteur',
-      connectorName: 'Nom du connecteur',
-      component: 'Composant',
-      resource: 'Ressource',
-      output: 'Message',
-      lastUpdateDate: 'Date de dernière modification',
-      creationDate: 'Date de création',
-      duration: 'Durée',
-      state: 'Criticité',
-      status: 'Statut',
-      extraDetails: 'Détails supplémentaires',
-    },
     contextEntities: {
       columns: {
         name: 'Nom',
@@ -2721,6 +2712,17 @@ export default {
       ruleRequired: 'Veuillez ajouter au moins une règle',
       groupRequired: 'Veuillez ajouter au moins un groupe',
     },
+  },
+
+  alarm: {
+    connector: 'Type de connecteur',
+    connectorName: 'Nom du connecteur',
+    component: 'Composant',
+    resource: 'Ressource',
+    extraDetails: 'Détails supplémentaires',
+    acked: 'Acked',
+    ackedAt: 'Acked at',
+    resolvedAt: 'Resolved at',
   },
 
   ...featureService.get('i18n.fr'),

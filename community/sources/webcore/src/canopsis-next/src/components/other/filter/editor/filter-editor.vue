@@ -29,7 +29,7 @@
 <script>
 import { get } from 'lodash';
 
-import { ENTITIES_TYPES, FILTER_OPERATORS, FILTER_INPUT_TYPES, ENTITY_TYPES, MAX_LIMIT } from '@/constants';
+import { ENTITIES_TYPES, FILTER_OPERATORS, PATTERN_INPUT_TYPES, ENTITY_TYPES, MAX_LIMIT } from '@/constants';
 
 import { filterToForm, formToFilter } from '@/helpers/forms/filter';
 import { checkIfGroupIsEmpty } from '@/helpers/filter/editor/filter-check';
@@ -102,7 +102,7 @@ export default {
           ],
         },
         valueProps: {
-          types: [{ value: FILTER_INPUT_TYPES.string }],
+          types: [{ value: PATTERN_INPUT_TYPES.string }],
           items: this.entityCategories,
           itemText: 'name',
           itemValue: '_id',
@@ -123,7 +123,7 @@ export default {
           ],
         },
         valueProps: {
-          types: [{ value: FILTER_INPUT_TYPES.number }],
+          types: [{ value: PATTERN_INPUT_TYPES.number }],
         },
       };
     },
@@ -141,7 +141,7 @@ export default {
           ],
         },
         valueProps: {
-          types: [{ value: FILTER_INPUT_TYPES.number, defaultValue: 1 }],
+          types: [{ value: PATTERN_INPUT_TYPES.number, defaultValue: 1 }],
         },
         valueValidationRules: { required: true, between: [1, 10] },
       };
@@ -155,7 +155,7 @@ export default {
           items: [FILTER_OPERATORS.equal, FILTER_OPERATORS.notEqual],
         },
         valueProps: {
-          types: [{ value: FILTER_INPUT_TYPES.string }],
+          types: [{ value: PATTERN_INPUT_TYPES.string }],
           items: Object.values(ENTITY_TYPES),
         },
       };
@@ -169,7 +169,7 @@ export default {
           items: ['description', 'value'],
         },
         valueProps: {
-          types: [{ value: FILTER_INPUT_TYPES.string }],
+          types: [{ value: PATTERN_INPUT_TYPES.string }],
         },
       };
     },

@@ -2,7 +2,7 @@
 
 exports[`c-pattern-attribute-field Renders \`c-pattern-attribute-field\` with custom props 1`] = `
 <div
-  class="v-input v-text-field v-select v-input--hide-details v-input--is-disabled theme--light"
+  class="v-input v-text-field v-select v-input--is-disabled theme--light"
   role="combobox"
 >
   <div
@@ -53,6 +53,17 @@ exports[`c-pattern-attribute-field Renders \`c-pattern-attribute-field\` with cu
         class="v-menu"
       />
     </div>
+    <div
+      class="v-text-field__details"
+    >
+      <div
+        class="v-messages theme--light"
+      >
+        <div
+          class="v-messages__wrapper"
+        />
+      </div>
+    </div>
   </div>
 </div>
 `;
@@ -93,7 +104,7 @@ exports[`c-pattern-attribute-field Renders \`c-pattern-attribute-field\` with cu
 
 exports[`c-pattern-attribute-field Renders \`c-pattern-attribute-field\` with default props 1`] = `
 <div
-  class="v-input v-text-field v-select v-input--hide-details theme--light"
+  class="v-input v-text-field v-select theme--light"
   role="combobox"
 >
   <div
@@ -142,6 +153,17 @@ exports[`c-pattern-attribute-field Renders \`c-pattern-attribute-field\` with de
       <div
         class="v-menu"
       />
+    </div>
+    <div
+      class="v-text-field__details"
+    >
+      <div
+        class="v-messages theme--light"
+      >
+        <div
+          class="v-messages__wrapper"
+        />
+      </div>
     </div>
   </div>
 </div>
