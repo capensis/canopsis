@@ -36,7 +36,7 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with date in prev
       By : ticket-author
     </div>
     <div>
-      Date : 08/08/2013 0:00:00
+      Date : 07/08/2013 19:00:00
     </div>
     <div>
       Ticket number : ticket-message
@@ -81,7 +81,7 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with full ticket 
       By : ticket-author
     </div>
     <div>
-      Date : 12:00:00
+      Date : 6:00:00
     </div>
     <div>
       Ticket number : ticket-message
@@ -126,7 +126,7 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` without value 2`]
       By : ticket-author
     </div>
     <div>
-      Date : 12:00:00
+      Date : 6:00:00
     </div>
     <!---->
   </div>
