@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-entities-select-field Renders \`c-entities-select-field\` with array value 1`] = `
+exports[`c-entity-field Renders \`c-entity-field\` with array value 1`] = `
 <div
-  class="v-input c-entities-select-field v-text-field v-select v-select--chips v-select--chips--small v-autocomplete theme--light"
+  class="v-input c-select-field v-text-field v-select v-select--chips v-select--chips--small v-autocomplete theme--light"
 >
   <div
     class="v-input__control"
@@ -67,7 +67,7 @@ exports[`c-entities-select-field Renders \`c-entities-select-field\` with array 
 </div>
 `;
 
-exports[`c-entities-select-field Renders \`c-entities-select-field\` with array value 2`] = `
+exports[`c-entity-field Renders \`c-entity-field\` with array value 2`] = `
 <div
   class="v-menu__content theme--light v-autocomplete__content"
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
@@ -80,7 +80,7 @@ exports[`c-entities-select-field Renders \`c-entities-select-field\` with array 
       role="list"
     >
       <div
-        class="c-entities-select-field--tile"
+        class="c-entity-field--tile"
         role="listitem"
       >
         <a
@@ -94,7 +94,7 @@ exports[`c-entities-select-field Renders \`c-entities-select-field\` with array 
         </a>
       </div>
       <div
-        class="c-entities-select-field--tile"
+        class="c-entity-field--tile"
         role="listitem"
       >
         <a
@@ -108,7 +108,7 @@ exports[`c-entities-select-field Renders \`c-entities-select-field\` with array 
         </a>
       </div>
       <div
-        class="c-entities-select-field--tile"
+        class="c-entity-field--tile"
         role="listitem"
       >
         <a
@@ -126,9 +126,9 @@ exports[`c-entities-select-field Renders \`c-entities-select-field\` with array 
 </div>
 `;
 
-exports[`c-entities-select-field Renders \`c-entities-select-field\` with custom props 1`] = `
+exports[`c-entity-field Renders \`c-entity-field\` with custom props 1`] = `
 <div
-  class="v-input c-entities-select-field v-text-field v-select v-autocomplete v-input--is-label-active v-input--is-dirty v-input--is-loading theme--light"
+  class="v-input c-select-field v-text-field v-select v-autocomplete v-input--is-label-active v-input--is-dirty v-input--is-loading theme--light"
   disabled="disabled"
 >
   <div
@@ -223,7 +223,7 @@ exports[`c-entities-select-field Renders \`c-entities-select-field\` with custom
 </div>
 `;
 
-exports[`c-entities-select-field Renders \`c-entities-select-field\` with custom props 2`] = `
+exports[`c-entity-field Renders \`c-entity-field\` with custom props 2`] = `
 <div
   class="v-menu__content theme--light v-autocomplete__content"
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
@@ -236,7 +236,7 @@ exports[`c-entities-select-field Renders \`c-entities-select-field\` with custom
       role="list"
     >
       <div
-        class="c-entities-select-field--tile"
+        class="c-entity-field--tile"
         role="listitem"
       >
         <a
@@ -254,9 +254,9 @@ exports[`c-entities-select-field Renders \`c-entities-select-field\` with custom
 </div>
 `;
 
-exports[`c-entities-select-field Renders \`c-entities-select-field\` with default props 1`] = `
+exports[`c-entity-field Renders \`c-entity-field\` with default props 1`] = `
 <div
-  class="v-input c-entities-select-field v-text-field v-select v-autocomplete theme--light"
+  class="v-input c-select-field v-text-field v-select v-autocomplete theme--light"
 >
   <div
     class="v-input__control"
@@ -317,7 +317,7 @@ exports[`c-entities-select-field Renders \`c-entities-select-field\` with defaul
 </div>
 `;
 
-exports[`c-entities-select-field Renders \`c-entities-select-field\` with default props 2`] = `
+exports[`c-entity-field Renders \`c-entity-field\` with default props 2`] = `
 <div
   class="v-menu__content theme--light v-autocomplete__content"
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"

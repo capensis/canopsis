@@ -2,7 +2,7 @@
 
 exports[`kpi-rating-metric-field Renders \`kpi-rating-metric-field\` without props 1`] = `
 <div
-  class="v-input kpi-rating-metric-field v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+  class="v-input c-select-field v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
   role="combobox"
 >
   <div
@@ -24,15 +24,16 @@ exports[`kpi-rating-metric-field Renders \`kpi-rating-metric-field\` without pro
         <div
           class="v-select__selections"
         >
-          <span
-            class="ellipsis"
+          <div
+            class="v-select__selection v-select__selection--comma"
           >
             Total number of acks
-          </span>
+          </div>
           <input
             aria-label="Parameter to compare"
             aria-readonly="false"
             autocomplete="on"
+            name="metric"
             readonly="readonly"
             type="text"
           />

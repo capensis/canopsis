@@ -3,9 +3,6 @@
     v-layout(v-if="!pending")
       the-navigation#main-navigation(v-if="shownNavigation")
       v-content#main-content
-        v-layout
-          v-flex(offset-xs2, xs8)
-            c-pbehavior-patterns-field(v-model="patterns")
         active-broadcast-message
         router-view(:key="routeViewKey")
     the-sidebar
@@ -50,7 +47,6 @@ export default {
   ],
   data() {
     return {
-      patterns: [],
       pending: true,
     };
   },
