@@ -164,10 +164,6 @@ export const getOperatorsByRule = (rule, ruleType) => {
     return PATTERN_DURATION_OPERATORS;
   }
 
-  if (ruleType === PATTERN_RULE_TYPES.number) {
-    return PATTERN_NUMBER_OPERATORS;
-  }
-
   if (ruleType === PATTERN_RULE_TYPES.infos && rule.field === PATTERN_RULE_INFOS_FIELDS.name) {
     return PATTERN_INFOS_NAME_OPERATORS;
   }

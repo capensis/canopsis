@@ -103,7 +103,6 @@ export default {
 
     stateOptions() {
       return {
-        type: PATTERN_RULE_TYPES.number,
         defaultValue: ENTITIES_STATES.ok,
         valueField: {
           is: 'c-entity-state-field',

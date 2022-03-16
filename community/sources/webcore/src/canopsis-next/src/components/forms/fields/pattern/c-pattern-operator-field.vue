@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-select(
+  v-select.c-pattern-operator-field(
     v-field="value",
     v-validate="rules",
     :items="availableOperators",
@@ -8,6 +8,8 @@
     :disabled="disabled",
     :name="name"
   )
+    template(#selection="{ item }")
+      span.ellipsis {{ item.text }}
 </template>
 
 <script>
@@ -61,3 +63,14 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+$selectIconWidth: 24px;
+
+.c-pattern-operator-field {
+  .v-select__selections {
+    width: calc(100% - #{$selectIconWidth});
+    flex-wrap: nowrap;
+  }
+}
+</style>
