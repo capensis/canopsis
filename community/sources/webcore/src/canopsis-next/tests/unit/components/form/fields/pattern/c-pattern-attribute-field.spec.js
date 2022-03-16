@@ -8,7 +8,7 @@ import CPatternAttributeField from '@/components/forms/fields/pattern/c-pattern-
 const localVue = createVueInstance();
 
 const stubs = {
-  'v-select': createSelectInputStub('v-select'),
+  'c-select-field': createSelectInputStub('c-select-field'),
 };
 
 const factory = (options = {}) => shallowMount(CPatternAttributeField, {
@@ -24,6 +24,8 @@ const snapshotFactory = (options = {}) => mount(CPatternAttributeField, {
   ...options,
 });
 
+const selectSelectField = wrapper => wrapper.find('.c-select-field');
+
 describe('c-pattern-attribute-field', () => {
   it('Value changed after trigger the input', () => {
     const value = {
@@ -35,7 +37,7 @@ describe('c-pattern-attribute-field', () => {
         value,
       },
     });
-    const selectElement = wrapper.find('select.v-select');
+    const selectElement = selectSelectField(wrapper);
 
     selectElement.vm.$emit('input', value);
 

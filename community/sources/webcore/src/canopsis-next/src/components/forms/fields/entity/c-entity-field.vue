@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-autocomplete.c-entities-select-field(
+  c-select-field(
     v-field="value",
     v-validate="'required'",
     :search-input.sync="searchInput",
@@ -12,11 +12,12 @@
     :multiple="isMultiply",
     :deletable-chips="isMultiply",
     :small-chips="isMultiply",
-    :error-messages="errors.collect(name)"
+    :error-messages="errors.collect(name)",
+    autocomplete
   )
     template(#item="{ item, tile }")
-      v-list-tile.c-entities-select-field--tile(v-bind="tile.props", v-on="tile.on")
-        v-list-tile-content {{ item | get(itemText) }}
+      v-list-tile.c-entity-field--tile(v-bind="tile.props", v-on="tile.on")
+        v-list-tile-content {{ item[itemText] }}
 </template>
 
 <script>
@@ -91,7 +92,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.c-entities-select-field {
+.c-entity-field {
   &--tile {
     & /deep/ .v-list__tile {
       height: 36px;
