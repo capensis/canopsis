@@ -154,6 +154,8 @@ export const filterSchema = new schema.Entity(ENTITIES_TYPES.filter, {}, { idAtt
 
 export const ratingSettingsSchema = new schema.Entity(ENTITIES_TYPES.ratingSettings, {}, { idAttribute: 'id' });
 
+export const patternSchema = new schema.Entity(ENTITIES_TYPES.pattern, {}, { idAttribute: 'id' });
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
@@ -190,4 +192,5 @@ export default {
   [ENTITIES_TYPES.resolveRules]: resolveRulesSchema,
   [ENTITIES_TYPES.filter]: filterSchema,
   [ENTITIES_TYPES.ratingSettings]: ratingSettingsSchema,
+  [ENTITIES_TYPES.pattern]: patternSchema,
 };

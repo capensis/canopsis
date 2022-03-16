@@ -63,6 +63,7 @@ export const USER_PERMISSIONS_PREFIXES = {
     admin: 'models',
     exploitation: 'models_exploitation',
     notification: 'models_notification',
+    profile: 'models_profile',
   },
   business: {
     common: 'common',
@@ -111,6 +112,9 @@ export const USERS_PERMISSIONS = {
     },
     notification: {
       instructionStats: `${USER_PERMISSIONS_PREFIXES.technical.notification}_instructionStats`,
+    },
+    profile: {
+      corporatePattern: `${USER_PERMISSIONS_PREFIXES.technical.profile}_corporatePattern`,
     },
   },
   business: {

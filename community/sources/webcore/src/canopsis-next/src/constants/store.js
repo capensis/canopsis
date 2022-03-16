@@ -37,4 +37,5 @@ export const ENTITIES_TYPES = {
   resolveRules: 'resolveRules',
   filter: 'filter',
   ratingSettings: 'ratingSettings',
+  pattern: 'pattern',
 };

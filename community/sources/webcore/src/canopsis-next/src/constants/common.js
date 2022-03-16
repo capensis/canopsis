@@ -26,6 +26,7 @@ export const ROUTES_NAMES = {
   exploitationFlappingRules: 'exploitation-flapping-rules',
   exploitationResolveRules: 'exploitation-resolve-rules',
   notificationInstructionStats: 'notification-instruction-stats',
+  profilePatterns: 'profile-patterns',
 };
 
 export const ROUTES = {
@@ -56,6 +57,7 @@ export const ROUTES = {
   exploitationFlappingRules: '/exploitation/flapping-rules',
   exploitationResolveRules: '/exploitation/resolve-rules',
   notificationInstructionStats: '/notification/instruction-stats',
+  profilePatterns: '/filters',
 };
 
 export const GROUPS_NAVIGATION_TYPES = {

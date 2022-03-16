@@ -169,6 +169,8 @@ export const API_ROUTES = {
   flappingRules: '/api/v4/flapping-rules',
   resolveRules: '/api/v4/resolve-rules',
   messageRateStats: '/api/v4/message-rate-stats',
+  patterns: '/api/v4/patterns',
+  bulkPatterns: '/api/v4/bulk/patterns',
 
   /**
    * Cat routes
