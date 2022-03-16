@@ -1,9 +1,10 @@
 <template lang="pug">
   v-select(
     v-field="value",
+    v-validate="rules",
     :label="label || $t('common.type')",
-    :loading="pbehaviorTypesPending",
-    :items="types",
+    :loading="pending",
+    :items="items",
     :error-messages="errors.collect(name)",
     :name="name",
     :disabled="disabled",
@@ -21,18 +22,9 @@
 <script>
 import { MAX_LIMIT } from '@/constants';
 
-import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
+import { entitiesPbehaviorTypesMixin } from '@/mixins/entities/pbehavior/types';
 
 export default {
-  $_veeValidate: {
-    value() {
-      return this.value;
-    },
-
-    name() {
-      return this.name;
-    },
-  },
   inject: ['$validator'],
   mixins: [entitiesPbehaviorTypesMixin],
   model: {
@@ -72,10 +64,20 @@ export default {
       type: Boolean,
       default: false,
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
     isItemDisabled: {
       type: Function,
       required: false,
     },
+  },
+  data() {
+    return {
+      items: [],
+      pending: false,
+    };
   },
   computed: {
     types() {
@@ -84,14 +86,24 @@ export default {
 
     rules() {
       return {
-        required: !this.disabled,
+        required: this.required,
       };
     },
   },
   mounted() {
-    this.fetchPbehaviorTypesList({
-      params: { limit: MAX_LIMIT },
-    });
+    this.fetchList();
+  },
+  methods: {
+    async fetchList() {
+      this.pending = true;
+
+      const { data: reasons } = await this.fetchPbehaviorTypesListWithoutStore({
+        params: { limit: MAX_LIMIT },
+      });
+
+      this.items = reasons;
+      this.pending = false;
+    },
   },
 };
 </script>

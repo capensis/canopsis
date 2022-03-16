@@ -4,7 +4,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createNumberInputStub, createSelectInputStub } from '@unit/stubs/input';
 import { TIME_UNITS } from '@/constants';
 
-import CDurationField from '@/components/forms/fields/c-duration-field.vue';
+import CDurationField from '@/components/forms/fields/duration/c-duration-field.vue';
 
 const localVue = createVueInstance();
 

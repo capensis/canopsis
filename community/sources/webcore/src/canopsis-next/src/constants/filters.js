@@ -118,7 +118,6 @@ export const PATTERN_RULE_TYPES = {
   infos: 'infos',
   date: 'date',
   duration: 'duration',
-  number: 'number',
   string: 'string',
 };
 

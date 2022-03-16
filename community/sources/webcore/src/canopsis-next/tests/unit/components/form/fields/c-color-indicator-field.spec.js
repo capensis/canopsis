@@ -1,6 +1,6 @@
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
-import CColorIndicatorField from '@/components/forms/fields/c-color-indicator-field.vue';
+import CColorIndicatorField from '@/components/forms/fields/color/c-color-indicator-field.vue';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
 
 const localVue = createVueInstance();

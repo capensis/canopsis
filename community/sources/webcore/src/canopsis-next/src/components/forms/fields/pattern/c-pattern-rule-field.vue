@@ -147,19 +147,11 @@ export default {
       return this.type === PATTERN_RULE_TYPES.date;
     },
 
-    isNumberRule() {
-      return this.type === PATTERN_RULE_TYPES.number;
-    },
-
     isDurationRule() {
       return this.type === PATTERN_RULE_TYPES.duration;
     },
 
     valueComponent() {
-      if (this.valueField) {
-        return this.valueField;
-      }
-
       const valueProps = {
         value: this.rule.value,
         disabled: this.disabled,
@@ -170,6 +162,17 @@ export default {
       const valueHandlers = {
         input: this.updateValue,
       };
+
+      if (this.valueField) {
+        return {
+          is: this.valueField.is,
+          props: {
+            ...valueProps,
+            ...this.valueField.props,
+          },
+          on: valueHandlers,
+        };
+      }
 
       if (this.isDurationRule) {
         return {
@@ -185,29 +188,13 @@ export default {
         };
       }
 
-      if (this.isInfosRule && this.isInfosValueField) {
-        return {
-          is: 'c-mixed-input-field',
-          props: {
-            inputType: this.inputType,
-            types: this.inputTypes,
-            ...valueProps,
-          },
-          on: valueHandlers,
-        };
-      }
-
-      if (this.isNumberRule) {
-        return {
-          is: 'c-number-field',
-          props: valueProps,
-          on: valueHandlers,
-        };
-      }
-
       return {
-        is: 'v-text-field',
-        props: valueProps,
+        is: 'c-mixed-input-field',
+        props: {
+          inputType: this.inputType,
+          types: this.inputTypes,
+          ...valueProps,
+        },
         on: valueHandlers,
       };
     },

@@ -7,8 +7,8 @@ import {
 
 import { authMixin } from '@/mixins/auth';
 import eventActionsServiceEntityMixin from '@/mixins/event-actions/service-entity';
-import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
+import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
+import { entitiesPbehaviorTypesMixin } from '@/mixins/entities/pbehavior/types';
 
 export default {
   mixins: [

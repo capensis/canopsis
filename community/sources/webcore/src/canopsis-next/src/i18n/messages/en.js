@@ -223,6 +223,9 @@ export default {
     template: 'Template',
     canceled: 'Canceled',
     snoozed: 'Snoozed',
+    impact: 'Impact | Impacts',
+    depend: 'Depend | Depends',
+    componentInfo: 'Component info | Component infos',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',

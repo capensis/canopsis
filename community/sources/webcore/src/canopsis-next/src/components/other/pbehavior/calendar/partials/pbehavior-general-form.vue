@@ -52,16 +52,9 @@
               hide-details
             )
       v-flex(xs12)
-        pbehavior-reasons-field(
-          v-field="form.reason",
-          v-validate="'required'"
-        )
+        c-pbehavior-reason-field(v-field="form.reason", required, return-object)
       v-flex(xs12)
-        pbehavior-type-field(
-          v-field="form.type",
-          v-validate="'required'",
-          return-object
-        )
+        c-pbehavior-type-field(v-field="form.type", required, return-object)
 </template>
 
 <script>
@@ -84,15 +77,11 @@ import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
 import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior/reasons';
 
 import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
-import PbehaviorTypeField from '@/components/other/pbehavior/calendar/partials/pbehavior-type-field.vue';
-import PbehaviorReasonsField from '@/components/other/pbehavior/reasons/partials/pbehavior-reasons-field.vue';
 
 export default {
   inject: ['$validator'],
   components: {
     DateTimeSplittedRangePickerField,
-    PbehaviorReasonsField,
-    PbehaviorTypeField,
   },
   mixins: [
     formMixin,
