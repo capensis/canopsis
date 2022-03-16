@@ -34,7 +34,7 @@ exports[`extra-details-ack Renders \`extra-details-ack\` with date in previous m
       By : ack-author
     </div>
     <div>
-      Date : 08/08/2013 0:00:00
+      Date : 07/08/2013 19:00:00
     </div>
     <div>
       Initiator : ack-initiator
@@ -82,7 +82,7 @@ exports[`extra-details-ack Renders \`extra-details-ack\` with full ack 2`] = `
       By : ack-author
     </div>
     <div>
-      Date : 12:00:00
+      Date : 6:00:00
     </div>
     <div>
       Initiator : ack-initiator
@@ -130,7 +130,7 @@ exports[`extra-details-ack Renders \`extra-details-ack\` without initiator 2`] =
       By : ack-author
     </div>
     <div>
-      Date : 12:00:00
+      Date : 6:00:00
     </div>
     <!---->
     <div
@@ -176,7 +176,7 @@ exports[`extra-details-ack Renders \`extra-details-ack\` without message 2`] = `
       By : ack-author
     </div>
     <div>
-      Date : 12:00:00
+      Date : 6:00:00
     </div>
     <div>
       Initiator : ack-initiator
