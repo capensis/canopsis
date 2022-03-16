@@ -213,7 +213,7 @@ export const ALARM_INTERVAL_FIELDS = {
   lastEventDate: 'last_event_date',
 };
 
-export const ALARM_FILTER_FIELDS = {
+export const ALARM_PATTERN_FIELDS = {
   displayName: 'v.display_name',
   state: 'v.state.val',
   status: 'v.status.val',

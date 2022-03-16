@@ -1,7 +1,7 @@
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
-import { FILTER_OPERATORS } from '@/constants';
+import { PATTERN_OPERATORS } from '@/constants';
 
 import CPatternOperatorField from '@/components/forms/fields/pattern/c-pattern-operator-field.vue';
 
@@ -30,19 +30,19 @@ describe('c-pattern-operator-field', () => {
   test('Value changed after trigger the select', () => {
     const wrapper = factory({
       propsData: {
-        value: FILTER_OPERATORS.notExist,
+        value: PATTERN_OPERATORS.notExist,
       },
     });
     const selectField = selectSelectField(wrapper);
 
-    selectField.setValue(FILTER_OPERATORS.notExist);
+    selectField.setValue(PATTERN_OPERATORS.notExist);
 
     const inputEvents = wrapper.emitted('input');
 
     expect(inputEvents).toHaveLength(1);
 
     const [eventData] = inputEvents[0];
-    expect(eventData).toBe(FILTER_OPERATORS.notExist);
+    expect(eventData).toBe(PATTERN_OPERATORS.notExist);
   });
 
   test('Renders `c-pattern-operator-field` with default props', () => {
@@ -57,7 +57,7 @@ describe('c-pattern-operator-field', () => {
   test('Renders `c-pattern-operator-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        value: FILTER_OPERATORS.exist,
+        value: PATTERN_OPERATORS.exist,
         label: 'Custom label',
         name: 'customName',
         disabled: true,

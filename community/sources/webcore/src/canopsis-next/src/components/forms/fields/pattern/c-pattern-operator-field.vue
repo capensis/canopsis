@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { FILTER_OPERATORS } from '@/constants';
+import { PATTERN_OPERATORS } from '@/constants';
 
 export default {
   inject: ['$validator'],
@@ -22,7 +22,7 @@ export default {
   props: {
     value: {
       type: String,
-      default: FILTER_OPERATORS.equal,
+      default: PATTERN_OPERATORS.equal,
     },
     label: {
       type: String,
@@ -42,7 +42,7 @@ export default {
     },
     operators: {
       type: Array,
-      default: () => Object.values(FILTER_OPERATORS),
+      default: () => Object.values(PATTERN_OPERATORS),
     },
   },
   computed: {

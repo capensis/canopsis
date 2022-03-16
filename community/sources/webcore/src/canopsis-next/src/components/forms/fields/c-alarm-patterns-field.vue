@@ -9,10 +9,10 @@
 
 <script>
 import {
-  ALARM_FILTER_FIELDS,
+  ALARM_PATTERN_FIELDS,
   ENTITIES_STATES,
   ENTITIES_STATUSES,
-  FILTER_OPERATORS,
+  PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
 } from '@/constants';
 
@@ -38,10 +38,10 @@ export default {
   computed: {
     entitiesOperators() {
       return [
-        FILTER_OPERATORS.equal,
-        FILTER_OPERATORS.notEqual,
-        FILTER_OPERATORS.hasOneOf,
-        FILTER_OPERATORS.hasNot,
+        PATTERN_OPERATORS.equal,
+        PATTERN_OPERATORS.notEqual,
+        PATTERN_OPERATORS.hasOneOf,
+        PATTERN_OPERATORS.hasNot,
       ];
     },
 
@@ -91,8 +91,8 @@ export default {
     statusOptions() {
       return {
         operators: [
-          FILTER_OPERATORS.equal,
-          FILTER_OPERATORS.notEqual,
+          PATTERN_OPERATORS.equal,
+          PATTERN_OPERATORS.notEqual,
         ],
         defaultValue: ENTITIES_STATUSES.ongoing,
         valueField: {
@@ -114,8 +114,8 @@ export default {
     ticketOptions() {
       return {
         operators: [
-          FILTER_OPERATORS.ticketAssociated,
-          FILTER_OPERATORS.ticketNotAssociated,
+          PATTERN_OPERATORS.ticketAssociated,
+          PATTERN_OPERATORS.ticketNotAssociated,
         ],
       };
     },
@@ -123,8 +123,8 @@ export default {
     ackOptions() {
       return {
         operators: [
-          FILTER_OPERATORS.acked,
-          FILTER_OPERATORS.notAcked,
+          PATTERN_OPERATORS.acked,
+          PATTERN_OPERATORS.notAcked,
         ],
       };
     },
@@ -132,8 +132,8 @@ export default {
     canceledOptions() {
       return {
         operators: [
-          FILTER_OPERATORS.canceled,
-          FILTER_OPERATORS.notCanceled,
+          PATTERN_OPERATORS.canceled,
+          PATTERN_OPERATORS.notCanceled,
         ],
       };
     },
@@ -141,8 +141,8 @@ export default {
     snoozeOptions() {
       return {
         operators: [
-          FILTER_OPERATORS.snoozed,
-          FILTER_OPERATORS.notSnoozed,
+          PATTERN_OPERATORS.snoozed,
+          PATTERN_OPERATORS.notSnoozed,
         ],
       };
     },
@@ -151,95 +151,95 @@ export default {
       return [
         {
           text: this.$t('common.displayName'),
-          value: ALARM_FILTER_FIELDS.displayName,
+          value: ALARM_PATTERN_FIELDS.displayName,
         },
         {
           text: this.$t('common.state'),
-          value: ALARM_FILTER_FIELDS.state,
+          value: ALARM_PATTERN_FIELDS.state,
           options: this.stateOptions,
         },
         {
           text: this.$t('common.status'),
-          value: ALARM_FILTER_FIELDS.status,
+          value: ALARM_PATTERN_FIELDS.status,
           options: this.statusOptions,
         },
         {
           text: this.$t('alarm.component'),
-          value: ALARM_FILTER_FIELDS.component,
+          value: ALARM_PATTERN_FIELDS.component,
           options: this.entitiesOptions,
         },
         {
           text: this.$t('alarm.resource'),
-          value: ALARM_FILTER_FIELDS.resource,
+          value: ALARM_PATTERN_FIELDS.resource,
           options: this.entitiesOptions,
         },
         {
           text: this.$t('alarm.connector'),
-          value: ALARM_FILTER_FIELDS.connector,
+          value: ALARM_PATTERN_FIELDS.connector,
           options: this.entitiesOptions,
         },
         {
           text: this.$t('alarm.connectorName'),
-          value: ALARM_FILTER_FIELDS.connectorName,
+          value: ALARM_PATTERN_FIELDS.connectorName,
           options: this.entitiesOptions,
         },
         {
           text: this.$t('common.created'),
-          value: ALARM_FILTER_FIELDS.creationDate,
+          value: ALARM_PATTERN_FIELDS.creationDate,
           options: this.dateOptions,
         },
         {
           text: this.$t('common.duration'),
-          value: ALARM_FILTER_FIELDS.duration,
+          value: ALARM_PATTERN_FIELDS.duration,
           options: this.durationOptions,
         },
         {
           text: this.$t('common.infos'),
-          value: ALARM_FILTER_FIELDS.infos,
+          value: ALARM_PATTERN_FIELDS.infos,
           options: this.infosOptions,
         },
         {
           text: this.$t('common.output'),
-          value: ALARM_FILTER_FIELDS.output,
+          value: ALARM_PATTERN_FIELDS.output,
         },
         {
           text: this.$t('common.lastEventDate'),
-          value: ALARM_FILTER_FIELDS.lastEventDate,
+          value: ALARM_PATTERN_FIELDS.lastEventDate,
           options: this.dateOptions,
         },
         {
           text: this.$t('common.updated'),
-          value: ALARM_FILTER_FIELDS.lastUpdateDate,
+          value: ALARM_PATTERN_FIELDS.lastUpdateDate,
           options: this.dateOptions,
         },
         {
           text: this.$t('alarm.acked'),
-          value: ALARM_FILTER_FIELDS.ack,
+          value: ALARM_PATTERN_FIELDS.ack,
           options: this.ackOptions,
         },
         {
           text: this.$t('alarm.ackedAt'),
-          value: ALARM_FILTER_FIELDS.ackAt,
+          value: ALARM_PATTERN_FIELDS.ackAt,
           options: this.dateOptions,
         },
         {
           text: this.$t('alarm.resolvedAt'),
-          value: ALARM_FILTER_FIELDS.resolvedAt,
+          value: ALARM_PATTERN_FIELDS.resolvedAt,
           options: this.dateOptions,
         },
         {
           text: this.$t('common.ticket'),
-          value: ALARM_FILTER_FIELDS.ticket,
+          value: ALARM_PATTERN_FIELDS.ticket,
           options: this.ticketOptions,
         },
         {
           text: this.$t('common.snoozed'),
-          value: ALARM_FILTER_FIELDS.snooze,
+          value: ALARM_PATTERN_FIELDS.snooze,
           options: this.snoozeOptions,
         },
         {
           text: this.$t('common.canceled'),
-          value: ALARM_FILTER_FIELDS.canceled,
+          value: ALARM_PATTERN_FIELDS.canceled,
           options: this.canceledOptions,
         },
       ];
