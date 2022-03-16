@@ -3,7 +3,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { SAMPLINGS } from '@/constants';
 
-import CEntitiesSelectField from '@/components/forms/fields/c-entities-select-field.vue';
+import CEntitiesSelectField from '@/components/forms/fields/entity/c-entities-select-field.vue';
 
 const localVue = createVueInstance();
 

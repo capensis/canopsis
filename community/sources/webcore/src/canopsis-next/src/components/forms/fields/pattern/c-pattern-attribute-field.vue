@@ -1,11 +1,13 @@
 <template lang="pug">
-  v-select(
+  v-select.c-pattern-attribute-field(
     v-field="value",
     :items="items",
     :disabled="disabled",
     :label="label || $tc('common.searchBy')",
     :name="name"
   )
+    template(#selection="{ item }")
+      span.ellipsis {{ item.text }}
 </template>
 
 <script>
@@ -38,3 +40,14 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+$selectIconWidth: 24px;
+
+.c-pattern-attribute-field {
+  .v-select__selections {
+    width: calc(100% - #{$selectIconWidth});
+    flex-wrap: nowrap;
+  }
+}
+</style>

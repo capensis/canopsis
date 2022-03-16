@@ -90,8 +90,8 @@ import CRefreshBtn from '@/components/common/buttons/c-refresh-btn.vue';
  * Fields
  */
 import CEnabledField from '@/components/forms/fields/c-enabled-field.vue';
-import CDurationField from '@/components/forms/fields/c-duration-field.vue';
-import CDisableDuringPeriodsField from '@/components/forms/fields/c-disable-during-periods-field.vue';
+import CDurationField from '@/components/forms/fields/duration/c-duration-field.vue';
+import CDisableDuringPeriodsField from '@/components/forms/fields/pbehavior/c-disable-during-periods-field.vue';
 import CTriggersField from '@/components/forms/fields/c-triggers-field.vue';
 import CActionTypeField from '@/components/forms/fields/c-action-type-field.vue';
 import CPatternsField from '@/components/forms/fields/c-patterns-field.vue';
@@ -106,18 +106,18 @@ import CMixedField from '@/components/forms/fields/c-mixed-field.vue';
 import CMixedInputField from '@/components/forms/fields/c-mixed-input-field.vue';
 import CInputTypeField from '@/components/forms/fields/c-input-type-field.vue';
 import CArrayMixedField from '@/components/forms/fields/c-array-mixed-field.vue';
-import CColorPickerField from '@/components/forms/fields/c-color-picker-field.vue';
-import CEntityTypeField from '@/components/forms/fields/c-entity-type-field.vue';
-import CImpactLevelField from '@/components/forms/fields/c-impact-level-field.vue';
+import CColorPickerField from '@/components/forms/fields/color/c-color-picker-field.vue';
+import CEntityTypeField from '@/components/forms/fields/entity/c-entity-type-field.vue';
+import CImpactLevelField from '@/components/forms/fields/entity/c-impact-level-field.vue';
 import CSearchField from '@/components/forms/fields/c-search-field.vue';
 import CAdvancedSearchField from '@/components/forms/fields/c-advanced-search-field.vue';
-import CEntityCategoryField from '@/components/forms/fields/c-entity-category-field.vue';
+import CEntityCategoryField from '@/components/forms/fields/entity/c-entity-category-field.vue';
 import CStoragesField from '@/components/forms/fields/c-storages-field.vue';
 import CStorageField from '@/components/forms/fields/c-storage-field.vue';
 import CFileNameMaskField from '@/components/forms/fields/c-file-name-mask-field.vue';
 import CPercentsField from '@/components/forms/fields/c-percents-field.vue';
 import CColumnsField from '@/components/forms/fields/c-columns-field.vue';
-import CColorIndicatorField from '@/components/forms/fields/c-color-indicator-field.vue';
+import CColorIndicatorField from '@/components/forms/fields/color/c-color-indicator-field.vue';
 import CMiniBarChart from '@/components/common/chart/c-mini-bar-chart.vue';
 import CImagesViewer from '@/components/common/images-viewer/c-images-viewer.vue';
 import CClickableTooltip from '@/components/common/clickable-tooltip/c-clickable-tooltip.vue';
@@ -129,20 +129,20 @@ import CQuickDateIntervalField from '@/components/forms/fields/c-quick-date-inte
 import CDateIntervalField from '@/components/forms/fields/date-picker/c-date-interval-field.vue';
 import CDateTimeIntervalField from '@/components/forms/fields/date-time-picker/c-date-time-interval-field.vue';
 import CQuickDateIntervalTypeField from '@/components/forms/fields/c-quick-date-interval-type-field.vue';
-import CEnabledDurationField from '@/components/forms/fields/c-enabled-duration-field.vue';
+import CEnabledDurationField from '@/components/forms/fields/duration/c-enabled-duration-field.vue';
 import CEnabledLimitField from '@/components/forms/fields/c-enabled-limit-field.vue';
 import CTimezoneField from '@/components/forms/fields/c-timezone-field.vue';
 import CLanguageField from '@/components/forms/fields/c-language-field.vue';
 import CSamplingField from '@/components/forms/fields/c-sampling-field.vue';
-import CAlarmMetricParametersField from '@/components/forms/fields/c-alarm-metric-parameters-field.vue';
+import CAlarmMetricParametersField from '@/components/forms/fields/alarm/c-alarm-metric-parameters-field.vue';
 import CFiltersField from '@/components/forms/fields/pattern/c-pattern-field.vue';
-import CEntityStateField from '@/components/forms/fields/c-entity-state-field.vue';
+import CEntityStateField from '@/components/forms/fields/entity/c-entity-state-field.vue';
 import CRecordsPerPageField from '@/components/forms/fields/c-records-per-page-field.vue';
 import COperatorField from '@/components/forms/fields/c-operator-field.vue';
 import CDraggableListField from '@/components/forms/fields/c-draggable-list-field.vue';
 import CDatePickerField from '@/components/forms/fields/date-picker/c-date-picker-field.vue';
 import CPatternAttributeField from '@/components/forms/fields/pattern/c-pattern-attribute-field.vue';
-import CEntityStatusField from '@/components/forms/fields/c-entity-status-field.vue';
+import CEntityStatusField from '@/components/forms/fields/entity/c-entity-status-field.vue';
 import CPatternInfosAttributeField from '@/components/forms/fields/pattern/c-pattern-infos-attribute-field.vue';
 import CPatternExtraInfosAttributeField from '@/components/forms/fields/pattern/c-pattern-extra-infos-attribute-field.vue';
 import CPatternOperatorField from '@/components/forms/fields/pattern/c-pattern-operator-field.vue';
@@ -151,8 +151,13 @@ import CPatternRulesField from '@/components/forms/fields/pattern/c-pattern-rule
 import CPatternGroupField from '@/components/forms/fields/pattern/c-pattern-group-field.vue';
 import CPatternGroupsField from '@/components/forms/fields/pattern/c-pattern-groups-field.vue';
 import CNumberField from '@/components/forms/fields/c-number-field.vue';
-import CEntitiesSelectField from '@/components/forms/fields/c-entities-select-field.vue';
-import CAlarmPatternsField from '@/components/forms/fields/c-alarm-patterns-field.vue';
+import CEntitiesSelectField from '@/components/forms/fields/entity/c-entities-select-field.vue';
+import CEntityPatternsField from '@/components/forms/fields/entity/c-entity-patterns-field.vue';
+import CAlarmPatternsField from '@/components/forms/fields/alarm/c-alarm-patterns-field.vue';
+import CPbehaviorPatternsField from '@/components/forms/fields/pbehavior/c-pbehavior-patterns-field.vue';
+import CPbehaviorReasonField from '@/components/forms/fields/pbehavior/c-pbehavior-reason-field.vue';
+import CPbehaviorTypeField from '@/components/forms/fields/pbehavior/c-pbehavior-type-field.vue';
+import CPbehaviorField from '@/components/forms/fields/pbehavior/c-pbehavior-field.vue';
 
 /**
  * Icons
@@ -364,7 +369,12 @@ Vue.component('c-pattern-group-field', CPatternGroupField);
 Vue.component('c-pattern-groups-field', CPatternGroupsField);
 Vue.component('c-pattern-operator-information', CPatternOperatorInformation);
 Vue.component('c-pattern-operator-chip', CPatternOperatorChip);
+Vue.component('c-pbehavior-reason-field', CPbehaviorReasonField);
+Vue.component('c-pbehavior-type-field', CPbehaviorTypeField);
+Vue.component('c-pbehavior-field', CPbehaviorField);
 Vue.component('c-alarm-patterns-field', CAlarmPatternsField);
+Vue.component('c-entity-patterns-field', CEntityPatternsField);
+Vue.component('c-pbehavior-patterns-field', CPbehaviorPatternsField);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,

@@ -5,7 +5,7 @@ import { createMockedStoreModules } from '@unit/utils/store';
 
 import { MAX_LIMIT } from '@/constants';
 
-import CEntityCategoryField from '@/components/forms/fields/c-entity-category-field.vue';
+import CEntityCategoryField from '@/components/forms/fields/entity/c-entity-category-field.vue';
 
 const localVue = createVueInstance();
 
