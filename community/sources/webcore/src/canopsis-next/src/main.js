@@ -151,13 +151,14 @@ import CPatternRulesField from '@/components/forms/fields/pattern/c-pattern-rule
 import CPatternGroupField from '@/components/forms/fields/pattern/c-pattern-group-field.vue';
 import CPatternGroupsField from '@/components/forms/fields/pattern/c-pattern-groups-field.vue';
 import CNumberField from '@/components/forms/fields/c-number-field.vue';
-import CEntitiesSelectField from '@/components/forms/fields/entity/c-entities-select-field.vue';
+import CEntityField from '@/components/forms/fields/entity/c-entity-field.vue';
 import CEntityPatternsField from '@/components/forms/fields/entity/c-entity-patterns-field.vue';
 import CAlarmPatternsField from '@/components/forms/fields/alarm/c-alarm-patterns-field.vue';
 import CPbehaviorPatternsField from '@/components/forms/fields/pbehavior/c-pbehavior-patterns-field.vue';
 import CPbehaviorReasonField from '@/components/forms/fields/pbehavior/c-pbehavior-reason-field.vue';
 import CPbehaviorTypeField from '@/components/forms/fields/pbehavior/c-pbehavior-type-field.vue';
 import CPbehaviorField from '@/components/forms/fields/pbehavior/c-pbehavior-field.vue';
+import CSelectField from '@/components/forms/fields/c-select-field.vue';
 
 /**
  * Icons
@@ -362,7 +363,7 @@ Vue.component('c-pattern-infos-attribute-field', CPatternInfosAttributeField);
 Vue.component('c-pattern-extra-infos-attribute-field', CPatternExtraInfosAttributeField);
 Vue.component('c-pattern-operator-field', CPatternOperatorField);
 Vue.component('c-number-field', CNumberField);
-Vue.component('c-entities-select-field', CEntitiesSelectField);
+Vue.component('c-entity-field', CEntityField);
 Vue.component('c-pattern-rule-field', CPatternRuleField);
 Vue.component('c-pattern-rules-field', CPatternRulesField);
 Vue.component('c-pattern-group-field', CPatternGroupField);
@@ -375,6 +376,7 @@ Vue.component('c-pbehavior-field', CPbehaviorField);
 Vue.component('c-alarm-patterns-field', CAlarmPatternsField);
 Vue.component('c-entity-patterns-field', CEntityPatternsField);
 Vue.component('c-pbehavior-patterns-field', CPbehaviorPatternsField);
+Vue.component('c-select-field', CSelectField);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,

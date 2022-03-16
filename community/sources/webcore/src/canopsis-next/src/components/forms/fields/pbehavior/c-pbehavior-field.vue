@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-select.c-pbehavior-field(
+  c-select-field(
     v-field="value",
     v-validate="rules",
     :label="$tc('common.pbehavior')",
@@ -9,10 +9,9 @@
     :name="name",
     :return-object="returnObject",
     item-text="name",
-    item-value="_id"
+    item-value="_id",
+    autocomplete
   )
-    template(#selection="{ item }")
-      span.ellipsis {{ item.name }}
 </template>
 
 <script>
@@ -70,14 +69,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-$selectIconWidth: 24px;
-
-.c-pbehavior-field {
-  .v-select__selections {
-    width: calc(100% - #{$selectIconWidth});
-    flex-wrap: nowrap;
-  }
-}
-</style>

@@ -47,7 +47,7 @@ export default {
 
     entitiesValueField() {
       return {
-        is: 'c-entities-select-field',
+        is: 'c-entity-field',
         props: {
           // TODO: Should be replaced on API data
           items: [

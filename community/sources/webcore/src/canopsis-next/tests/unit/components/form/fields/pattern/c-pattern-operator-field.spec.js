@@ -4,11 +4,16 @@ import { createSelectInputStub } from '@unit/stubs/input';
 import { PATTERN_OPERATORS } from '@/constants';
 
 import CPatternOperatorField from '@/components/forms/fields/pattern/c-pattern-operator-field.vue';
+import CSelectField from '@/components/forms/fields/c-select-field';
 
 const localVue = createVueInstance();
 
 const stubs = {
-  'v-select': createSelectInputStub('v-select'),
+  'c-select-field': createSelectInputStub('c-select-field'),
+};
+
+const snapshotStubs = {
+  'c-select-field': CSelectField,
 };
 
 const factory = (options = {}) => shallowMount(CPatternOperatorField, {
@@ -20,11 +25,12 @@ const factory = (options = {}) => shallowMount(CPatternOperatorField, {
 
 const snapshotFactory = (options = {}) => mount(CPatternOperatorField, {
   localVue,
+  stubs: snapshotStubs,
 
   ...options,
 });
 
-const selectSelectField = wrapper => wrapper.find('select.v-select');
+const selectSelectField = wrapper => wrapper.find('.c-select-field');
 
 describe('c-pattern-operator-field', () => {
   test('Value changed after trigger the select', () => {

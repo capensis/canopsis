@@ -3,30 +3,36 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { SAMPLINGS } from '@/constants';
 
-import CEntitiesSelectField from '@/components/forms/fields/entity/c-entities-select-field.vue';
+import CEntityField from '@/components/forms/fields/entity/c-entity-field.vue';
+import CSelectField from '@/components/forms/fields/c-select-field';
 
 const localVue = createVueInstance();
 
 const stubs = {
-  'v-autocomplete': createSelectInputStub('v-autocomplete'),
+  'c-select-field': createSelectInputStub('c-select-field'),
 };
 
-const factory = (options = {}) => shallowMount(CEntitiesSelectField, {
+const snapshotStubs = {
+  'c-select-field': CSelectField,
+};
+
+const factory = (options = {}) => shallowMount(CEntityField, {
   localVue,
   stubs,
 
   ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(CEntitiesSelectField, {
+const snapshotFactory = (options = {}) => mount(CEntityField, {
   localVue,
+  stubs: snapshotStubs,
 
   ...options,
 });
 
-const selectAutocomplete = wrapper => wrapper.find('select.v-autocomplete');
+const selectAutocomplete = wrapper => wrapper.find('.c-select-field');
 
-describe('c-entities-select-field', () => {
+describe('c-entity-field', () => {
   const items = [
     {
       value: 'value',
@@ -62,7 +68,7 @@ describe('c-entities-select-field', () => {
     expect(eventData).toBe(items[0].value);
   });
 
-  it('Renders `c-entities-select-field` with default props', () => {
+  it('Renders `c-entity-field` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: SAMPLINGS.day,
@@ -73,7 +79,7 @@ describe('c-entities-select-field', () => {
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `c-entities-select-field` with custom props', () => {
+  it('Renders `c-entity-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: items[2].text,
@@ -92,7 +98,7 @@ describe('c-entities-select-field', () => {
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `c-entities-select-field` with array value', () => {
+  it('Renders `c-entity-field` with array value', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: items.map(({ text }) => text),
