@@ -13,6 +13,11 @@
         :error-messages="errors.collect(outputFieldName)",
         :name="outputFieldName"
       )
+    v-layout(row)
+      v-text-field(
+        v-field="value.author",
+        :label="$t('common.author')"
+      )
 </template>
 
 <script>
