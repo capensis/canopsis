@@ -198,7 +198,7 @@ describe('c-quick-date-interval-field', () => {
     expect(isAllowedToDate(accumulatedBefore)).toBeTruthy();
     expect(isAllowedToDate(accumulatedBefore + 1)).toBeTruthy();
     /** Sunday */
-    expect(isAllowedToDate(1384025400)).toBeTruthy();
+    expect(isAllowedToDate(1385299900)).toBeTruthy();
   });
 
   it('Allowed to date function work correctly with now', () => {

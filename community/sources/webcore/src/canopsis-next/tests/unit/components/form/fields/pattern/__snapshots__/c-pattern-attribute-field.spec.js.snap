@@ -1,23 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`c-pattern-attribute-field Renders \`c-pattern-attribute-field\` with custom props 1`] = `
-<c-select-field
+<c-select-field-stub
   disabled="true"
   ellipsis="ellipsis"
   items="[object Object]"
   label="Custom label"
   name="custom_filter_attribute_name"
+  value="[object Object]"
 />
 `;
 
 exports[`c-pattern-attribute-field Renders \`c-pattern-attribute-field\` with custom props 2`] = `undefined`;
 
 exports[`c-pattern-attribute-field Renders \`c-pattern-attribute-field\` with default props 1`] = `
-<c-select-field
+<c-select-field-stub
   ellipsis="ellipsis"
   items=""
   label="Search by"
   name="attribute"
+  value="[object Object]"
 />
 `;
 

@@ -11,6 +11,10 @@ const stubs = {
   'c-select-field': createSelectInputStub('c-select-field'),
 };
 
+const snapshotStubs = {
+  'c-select-field': true,
+};
+
 const factory = (options = {}) => shallowMount(CPatternAttributeField, {
   localVue,
   stubs,
@@ -20,6 +24,7 @@ const factory = (options = {}) => shallowMount(CPatternAttributeField, {
 
 const snapshotFactory = (options = {}) => mount(CPatternAttributeField, {
   localVue,
+  stubs: snapshotStubs,
 
   ...options,
 });
