@@ -213,6 +213,7 @@ export default {
     toTheTop: 'Jusqu\'au sommet',
     time: 'Temps',
     lastModifiedOn: 'Dernière modification le',
+    lastModifiedBy: 'Dernière modification par',
     exportAsCsv: 'Export as csv',
     criteria: 'Critères',
     ratingSettings: 'Paramètres d\'évaluation',
@@ -1614,6 +1615,21 @@ export default {
         phrase: 'archiver ou supprimer',
       },
     },
+    createAlarmPattern: {
+      create: {
+        title: 'Créer un filtre d\'alarme',
+      },
+    },
+    createEntityPattern: {
+      create: {
+        title: 'Créer un filtre d\'entité',
+      },
+    },
+    createPbehaviorPattern: {
+      create: {
+        title: 'Créer un filtre de comportement',
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1937,6 +1953,7 @@ export default {
       admin: 'Droits d\'administration',
       exploitation: 'Droits d\'exploitation',
       notification: 'Droits de notification',
+      profile: 'Droits de profil',
     },
     business: {
       [USER_PERMISSIONS_PREFIXES.business.common]: 'Droits communs',
@@ -2705,6 +2722,9 @@ export default {
   },
 
   pattern: {
+    patterns: 'Filtres',
+    myPatterns: 'Mes filtres',
+    corporatePatterns: 'Filtres partagés',
     addRule: 'Ajouter une règle',
     addGroup: 'Ajouter un groupe',
     removeRule: 'Supprimer la règle',

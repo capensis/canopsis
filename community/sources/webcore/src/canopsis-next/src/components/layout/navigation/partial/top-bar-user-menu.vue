@@ -6,6 +6,10 @@
         v-list-tile-avatar
           v-icon(color="black") person
         v-list-tile-title.text-uppercase.body-2 {{ $t('users.seeProfile') }}
+      v-list-tile(:to="profilePatternsLink", active-class="")
+        v-list-tile-avatar
+          v-icon(color="black") filter_list
+        v-list-tile-title.text-uppercase.body-2 {{ $t('pattern.patterns') }}
       v-list-tile.logout-btn(@click="logoutHandler")
         v-list-tile-avatar
           v-icon(color="error") exit_to_app
@@ -21,6 +25,10 @@ import { entitiesUserMixin } from '@/mixins/entities/user';
 export default {
   mixins: [authMixin, entitiesUserMixin],
   computed: {
+    profilePatternsLink() {
+      return { name: ROUTES_NAMES.profilePatterns };
+    },
+
     userName() {
       return this.currentUser.name || this.currentUser._id;
     },
