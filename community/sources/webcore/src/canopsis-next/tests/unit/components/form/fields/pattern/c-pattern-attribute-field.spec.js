@@ -1,7 +1,7 @@
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
-import { ALARM_FILTER_FIELDS } from '@/constants';
+import { ALARM_PATTERN_FIELDS } from '@/constants';
 
 import CPatternAttributeField from '@/components/forms/fields/pattern/c-pattern-attribute-field.vue';
 
@@ -27,7 +27,7 @@ const snapshotFactory = (options = {}) => mount(CPatternAttributeField, {
 describe('c-pattern-attribute-field', () => {
   it('Value changed after trigger the input', () => {
     const value = {
-      value: ALARM_FILTER_FIELDS.ack,
+      value: ALARM_PATTERN_FIELDS.ack,
       text: 'Text',
     };
     const wrapper = factory({
@@ -49,7 +49,7 @@ describe('c-pattern-attribute-field', () => {
 
   it('Renders `c-pattern-attribute-field` with default props', () => {
     const value = {
-      value: ALARM_FILTER_FIELDS.component,
+      value: ALARM_PATTERN_FIELDS.component,
       text: 'Component',
     };
     const wrapper = snapshotFactory({
@@ -66,7 +66,7 @@ describe('c-pattern-attribute-field', () => {
 
   it('Renders `c-pattern-attribute-field` with custom props', () => {
     const value = {
-      value: ALARM_FILTER_FIELDS.component,
+      value: ALARM_PATTERN_FIELDS.component,
       text: 'Component',
     };
     const wrapper = snapshotFactory({
@@ -75,7 +75,7 @@ describe('c-pattern-attribute-field', () => {
         label: 'Custom label',
         items: [
           {
-            value: ALARM_FILTER_FIELDS.ackAt,
+            value: ALARM_PATTERN_FIELDS.ackAt,
             text: 'Ack at',
           },
         ],

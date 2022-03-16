@@ -17,71 +17,46 @@
             :disabled="disabled"
           )
 
-    template(v-if="isDateRule")
-      v-flex.pl-3(xs3)
-        c-quick-date-interval-type-field(
-          v-field="rule.range.type",
-          :name="name",
-          :disabled="disabled"
-        )
-      v-flex.pl-3(xs5)
-        c-date-time-interval-field(
-          v-if="isCustomRange",
-          v-field="rule.range",
-          :name="name",
-          :disabled="disabled"
-        )
+    v-flex(xs7, :xs8="!isInfosRule")
+      v-layout(row)
+        template(v-if="isDateRule")
+          v-flex.pl-3(xs5)
+            c-quick-date-interval-type-field(
+              v-field="rule.range.type",
+              :name="name",
+              :disabled="disabled"
+            )
+          v-flex.pl-3(v-if="isCustomRange", xs7)
+            c-date-time-interval-field(
+              v-field="rule.range",
+              :name="name",
+              :disabled="disabled"
+            )
 
-    template(v-else-if="isInfosRule")
-      v-flex.pl-3(v-if="isInfosValueField", xs1)
-        c-input-type-field(
-          :value="inputType",
-          :label="$t('common.type')",
-          :types="inputTypes",
-          :disabled="disabled",
-          :name="name",
-          @input="updateType"
-        )
-      v-flex.pl-3(xs2)
-        c-pattern-operator-field(
-          v-field="rule.operator",
-          :operators="operators",
-          :disabled="disabled",
-          :name="operatorFieldName"
-        )
-      v-flex.pl-3(v-if="isInfosValueField", xs4)
-        c-mixed-input-field(
-          v-field="rule.value",
-          :input-type="inputType",
-          :types="inputTypes",
-          :label="$t('common.value')",
-          :name="valueFieldName"
-        )
+        template(v-else)
+          v-flex.pl-3(v-if="isInfosValueField", xs1)
+            c-input-type-field(
+              :value="inputType",
+              :label="$t('common.type')",
+              :types="inputTypes",
+              :disabled="disabled",
+              :name="name",
+              @input="updateType"
+            )
+          v-flex.pl-3(:xs6="!isInfosRule", xs4)
+            c-pattern-operator-field(
+              v-field="rule.operator",
+              :operators="operators",
+              :disabled="disabled",
+              :name="operatorFieldName"
+            )
 
-    template(v-else)
-      v-flex.pl-3(xs4)
-        c-pattern-operator-field(
-          v-field="rule.operator",
-          :operators="operators",
-          :disabled="disabled",
-          :name="operatorFieldName"
-        )
-
-      v-flex.pl-3(xs4)
-        template(v-if="operatorHasValue")
-          c-duration-field(
-            v-if="isDurationRule",
-            v-field="rule.duration",
-            :name="valueFieldName"
-          )
-          component(
-            v-else,
-            v-field="rule.value",
-            v-bind="valueComponent.props",
-            v-on="valueComponent.on",
-            :is="valueComponent.is",
-            :name="valueFieldName"
-          )
+          v-flex.pl-3(v-if="operatorHasValue", :xs7="isInfosRule", xs6)
+            component(
+              v-bind="valueComponent.props",
+              v-on="valueComponent.on",
+              :is="valueComponent.is"
+            )
 </template>
 
 <script>
@@ -185,44 +160,77 @@ export default {
         return this.valueField;
       }
 
+      const valueProps = {
+        value: this.rule.value,
+        disabled: this.disabled,
+        name: this.valueFieldName,
+        label: this.$t('common.value'),
+      };
+
+      const valueHandlers = {
+        input: this.updateValue,
+      };
+
+      if (this.isDurationRule) {
+        return {
+          is: 'c-duration-field',
+          props: {
+            duration: this.rule.duration,
+            disabled: this.disabled,
+            name: this.valueFieldName,
+          },
+          on: {
+            input: this.updateDuration,
+          },
+        };
+      }
+
       if (this.isInfosRule && this.isInfosValueField) {
         return {
-          is: 'c-mixed-field',
+          is: 'c-mixed-input-field',
           props: {
-            class: 'mt-1',
+            inputType: this.inputType,
+            types: this.inputTypes,
+            ...valueProps,
           },
+          on: valueHandlers,
         };
       }
 
       if (this.isNumberRule) {
         return {
           is: 'c-number-field',
+          props: valueProps,
+          on: valueHandlers,
         };
       }
 
       return {
         is: 'v-text-field',
-        props: {
-          disabled: this.disabled,
-          label: this.$t('common.value'),
-        },
+        props: valueProps,
+        on: valueHandlers,
       };
     },
 
     operatorHasValue() {
+      if (this.isInfosRule) {
+        return this.isInfosValueField;
+      }
+
       return isOperatorHasValue(this.rule.operator);
     },
   },
   methods: {
-    updateType(type) {
-      this.updateField('value', convertValueByType(this.rule.value, type));
+    updateDuration(duration) {
+      this.updateField('duration', duration);
     },
 
-    updateInterval(interval) {
-      this.updateModel({
-        ...this.rule,
-        ...interval,
-      });
+    updateValue(value) {
+      this.updateField('value', value);
+    },
+
+    updateType(type) {
+      this.updateValue(convertValueByType(this.rule.value, type));
     },
   },
 };
