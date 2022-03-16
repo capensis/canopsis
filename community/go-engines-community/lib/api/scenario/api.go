@@ -564,15 +564,21 @@ func setActionParameterAuthorAndUserID(request *EditRequest, author, userID stri
 	for i, action := range request.Actions {
 		switch v := action.Parameters.(type) {
 		case SnoozeParametersRequest:
-			v.Author = author
+			if v.Author == "" {
+				v.Author = author
+			}
 			v.User = userID
 			request.Actions[i].Parameters = v
 		case ChangeStateParametersRequest:
-			v.Author = author
+			if v.Author == "" {
+				v.Author = author
+			}
 			v.User = userID
 			request.Actions[i].Parameters = v
 		case AssocTicketParametersRequest:
-			v.Author = author
+			if v.Author == "" {
+				v.Author = author
+			}
 			v.User = userID
 			request.Actions[i].Parameters = v
 		case PbehaviorParametersRequest:
@@ -580,7 +586,9 @@ func setActionParameterAuthorAndUserID(request *EditRequest, author, userID stri
 			v.User = userID
 			request.Actions[i].Parameters = v
 		case ParametersRequest:
-			v.Author = author
+			if v.Author == "" {
+				v.Author = author
+			}
 			v.User = userID
 			request.Actions[i].Parameters = v
 		}
