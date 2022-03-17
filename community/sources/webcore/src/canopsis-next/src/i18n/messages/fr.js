@@ -224,6 +224,9 @@ export default {
     template: 'Template',
     canceled: 'Annulé',
     snoozed: 'En attente',
+    impact: 'Impact | Impacts',
+    depend: 'Depend | Depends',
+    componentInfo: 'Component info | Component infos',
     connector: 'Type de connecteur',
     connectorName: 'Nom du connecteur',
     component: 'Composant',
@@ -232,6 +235,7 @@ export default {
     acked: 'Acked',
     ackedAt: 'Acked at',
     resolvedAt: 'Resolved at',
+    extraInfo: 'Extra info | Extra infos',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
