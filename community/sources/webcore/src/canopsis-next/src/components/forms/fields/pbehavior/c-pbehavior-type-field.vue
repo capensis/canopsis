@@ -22,11 +22,11 @@
 <script>
 import { MAX_LIMIT } from '@/constants';
 
-import { entitiesPbehaviorTypesMixin } from '@/mixins/entities/pbehavior/types';
+import { entitiesPbehaviorTypeMixin } from '@/mixins/entities/pbehavior/types';
 
 export default {
   inject: ['$validator'],
-  mixins: [entitiesPbehaviorTypesMixin],
+  mixins: [entitiesPbehaviorTypeMixin],
   model: {
     prop: 'value',
     event: 'input',

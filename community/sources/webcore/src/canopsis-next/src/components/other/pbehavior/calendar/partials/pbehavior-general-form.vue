@@ -74,7 +74,7 @@ import {
 } from '@/helpers/date/date';
 
 import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
-import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior/reasons';
+import { entitiesPbehaviorReasonMixin } from '@/mixins/entities/pbehavior/reasons';
 
 import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
 
@@ -86,7 +86,7 @@ export default {
   mixins: [
     formMixin,
     formValidationHeaderMixin,
-    entitiesPbehaviorReasonsMixin,
+    entitiesPbehaviorReasonMixin,
   ],
   model: {
     prop: 'form',

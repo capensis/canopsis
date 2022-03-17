@@ -48,15 +48,6 @@ export default {
     entitiesValueField() {
       return {
         is: 'c-entity-field',
-        props: {
-          // TODO: Should be replaced on API data
-          items: [
-            { name: 'Entity 1', _id: 'entity_1' },
-            { name: 'Entity 2', _id: 'entity_2' },
-            { name: 'Entity 3', _id: 'entity_3' },
-            { name: 'Entity 4', _id: 'entity_4' },
-          ],
-        },
       };
     },
 
@@ -163,22 +154,22 @@ export default {
           options: this.statusOptions,
         },
         {
-          text: this.$t('alarm.component'),
+          text: this.$t('common.component'),
           value: ALARM_PATTERN_FIELDS.component,
           options: this.entitiesOptions,
         },
         {
-          text: this.$t('alarm.resource'),
+          text: this.$t('common.resource'),
           value: ALARM_PATTERN_FIELDS.resource,
           options: this.entitiesOptions,
         },
         {
-          text: this.$t('alarm.connector'),
+          text: this.$t('common.connector'),
           value: ALARM_PATTERN_FIELDS.connector,
           options: this.entitiesOptions,
         },
         {
-          text: this.$t('alarm.connectorName'),
+          text: this.$t('common.connectorName'),
           value: ALARM_PATTERN_FIELDS.connectorName,
           options: this.entitiesOptions,
         },
@@ -212,17 +203,17 @@ export default {
           options: this.dateOptions,
         },
         {
-          text: this.$t('alarm.acked'),
+          text: this.$t('common.acked'),
           value: ALARM_PATTERN_FIELDS.ack,
           options: this.ackOptions,
         },
         {
-          text: this.$t('alarm.ackedAt'),
+          text: this.$t('common.ackedAt'),
           value: ALARM_PATTERN_FIELDS.ackAt,
           options: this.dateOptions,
         },
         {
-          text: this.$t('alarm.resolvedAt'),
+          text: this.$t('common.resolvedAt'),
           value: ALARM_PATTERN_FIELDS.resolvedAt,
           options: this.dateOptions,
         },

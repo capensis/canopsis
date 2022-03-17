@@ -18,5 +18,6 @@ export const EVENT_FILTER_FILTER_FIELDS = {
   connector: 'connector',
   connectorName: 'connector_name',
   resource: 'resource',
+  output: 'output',
   extraInfos: 'extra_infos',
 };
