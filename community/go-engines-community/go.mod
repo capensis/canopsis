@@ -26,8 +26,8 @@ require (
 	github.com/gin-gonic/gin v1.7.4
 	github.com/go-ldap/ldap/v3 v3.4.1
 	github.com/go-openapi/jsonreference v0.19.6 // indirect
-	github.com/go-openapi/spec v0.20.3 // indirect
-	github.com/go-openapi/swag v0.19.15 // indirect
+	github.com/go-openapi/spec v0.20.4 // indirect
+	github.com/go-openapi/swag v0.21.1 // indirect
 	github.com/go-playground/locales v0.14.0
 	github.com/go-playground/universal-translator v0.18.0
 	github.com/go-playground/validator/v10 v10.9.0
@@ -55,12 +55,11 @@ require (
 	github.com/tidwall/pretty v1.1.0 // indirect
 	github.com/valyala/fastjson v1.6.3
 	go.mongodb.org/mongo-driver v1.8.1
-	golang.org/x/net v0.0.0-20211013171255-e13a2654a71e // indirect
+	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
-	golang.org/x/sys v0.0.0-20211013075003-97ac67df715c // indirect
+	golang.org/x/sys v0.0.0-20220317061510-51cd9980dadf // indirect
 	golang.org/x/text v0.3.7
-	golang.org/x/tools v0.1.5 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
+	golang.org/x/tools v0.1.10 // indirect
 )
 
 require github.com/kylelemons/godebug v1.1.0

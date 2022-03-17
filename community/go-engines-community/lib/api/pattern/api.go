@@ -2,6 +2,9 @@ package pattern
 
 import (
 	"context"
+	"encoding/json"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/valyala/fastjson"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
@@ -14,6 +17,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type API interface {
+	common.CrudAPI
+	BulkDelete(c *gin.Context)
+}
+
 type api struct {
 	store        Store
 	enforcer     security.Enforcer
@@ -24,7 +32,7 @@ func NewApi(
 	store Store,
 	enforcer security.Enforcer,
 	actionLogger logger.ActionLogger,
-) common.CrudAPI {
+) API {
 	return &api{
 		store:        store,
 		enforcer:     enforcer,
@@ -279,4 +287,108 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusNoContent, nil)
+}
+
+// Bulk delete patterns
+// @Summary Bulk delete patterns
+// @Description Bulk delete patterns
+// @Tags saved-patterns
+// @ID saved-patterns-bulk-delete
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []BulkDeleteRequestItem true "body"
+// @Success 207 {array} []BulkDeleteResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/patterns [delete]
+func (a *api) BulkDelete(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+
+	var ar fastjson.Arena
+
+	raw, err := c.GetRawData()
+	if err != nil {
+		panic(err)
+	}
+
+	jsonValue, err := fastjson.ParseBytes(raw)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	rawObjects, err := jsonValue.Array()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	ctx := c.Request.Context()
+	response := ar.NewArray()
+
+	canDeleteCorporate, err := a.enforcer.Enforce(userId, apisecurity.PermCorporatePattern, model.PermissionCan)
+	if err != nil {
+		panic(err)
+	}
+
+	for idx, rawObject := range rawObjects {
+		object, err := rawObject.Object()
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		var request BulkDeleteRequestItem
+		err = json.Unmarshal(object.MarshalTo(nil), &request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		err = binding.Validator.ValidateStruct(request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
+			continue
+		}
+
+		pattern, err := a.store.GetById(ctx, request.ID, userId)
+		if err != nil {
+			panic(err)
+		}
+
+		if pattern == nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			continue
+		}
+
+		if pattern.IsCorporate && !canDeleteCorporate {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusForbidden, rawObject, ar.NewString("Forbidden")))
+			continue
+		}
+
+		ok, err := a.store.Delete(ctx, *pattern)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		if !ok {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			continue
+		}
+
+		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))
+
+		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+			Action:    logger.ActionDelete,
+			ValueType: logger.ValueTypePattern,
+			ValueID:   request.ID,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+	}
+
+	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }

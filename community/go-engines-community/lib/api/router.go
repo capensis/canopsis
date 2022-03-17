@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pattern"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
@@ -28,7 +29,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/notification"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorcomment"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorexception"
@@ -1105,8 +1105,45 @@ func RegisterRoutes(
 				idleRuleAPI.CountPatterns)
 		}
 
+		patternAPI := pattern.NewApi(pattern.NewStore(dbClient), enforcer, actionLogger)
+		patternRouter := protected.Group("/patterns")
+		{
+			patternRouter.Use(middleware.OnlyAuth())
+			patternRouter.POST(
+				"",
+				middleware.SetAuthor(),
+				patternAPI.Create,
+			)
+			patternRouter.GET(
+				"",
+				patternAPI.List,
+			)
+			patternRouter.GET(
+				"/:id",
+				patternAPI.Get,
+			)
+			patternRouter.PUT(
+				"/:id",
+				middleware.SetAuthor(),
+				patternAPI.Update,
+			)
+			patternRouter.DELETE(
+				"/:id",
+				patternAPI.Delete,
+			)
+		}
+
 		bulkRouter := protected.Group("/bulk")
 		{
+			patternRouter := bulkRouter.Group("/patterns")
+			{
+				patternRouter.DELETE(
+					"",
+					middleware.PreProcessBulk(conf, true),
+					patternAPI.BulkDelete,
+				)
+			}
+
 			scenarioRouter := bulkRouter.Group("/scenarios")
 			{
 				scenarioRouter.POST(
@@ -1352,34 +1389,6 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionDelete, enforcer),
 				flappingRuleAPI.Delete,
-			)
-		}
-
-		patternRouter := protected.Group("/patterns")
-		{
-			patternRouter.Use(middleware.OnlyAuth())
-			patternAPI := pattern.NewApi(pattern.NewStore(dbClient), enforcer, actionLogger)
-			patternRouter.POST(
-				"",
-				middleware.SetAuthor(),
-				patternAPI.Create,
-			)
-			patternRouter.GET(
-				"",
-				patternAPI.List,
-			)
-			patternRouter.GET(
-				"/:id",
-				patternAPI.Get,
-			)
-			patternRouter.PUT(
-				"/:id",
-				middleware.SetAuthor(),
-				patternAPI.Update,
-			)
-			patternRouter.DELETE(
-				"/:id",
-				patternAPI.Delete,
 			)
 		}
 	}
