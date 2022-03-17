@@ -21,7 +21,7 @@ import { formToWidget, widgetToForm } from './forms/widgets/common';
  */
 export function defaultColumnsToColumns(columns = []) {
   return columns.map(({ labelKey, value }) => ({
-    label: i18n.t(labelKey),
+    label: i18n.tc(labelKey),
     value,
   }));
 }

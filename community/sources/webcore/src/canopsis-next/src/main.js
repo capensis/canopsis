@@ -141,8 +141,17 @@ import CRecordsPerPageField from '@/components/forms/fields/c-records-per-page-f
 import COperatorField from '@/components/forms/fields/c-operator-field.vue';
 import CDraggableListField from '@/components/forms/fields/c-draggable-list-field.vue';
 import CDatePickerField from '@/components/forms/fields/date-picker/c-date-picker-field.vue';
-import CPatternAttributeField from '@/components/forms/fields/pattern/c-pattern-attribute-field.vue';
 import CEntityStatusField from '@/components/forms/fields/entity/c-entity-status-field.vue';
+import CNumberField from '@/components/forms/fields/c-number-field.vue';
+import CEntityField from '@/components/forms/fields/entity/c-entity-field.vue';
+import CPbehaviorReasonField from '@/components/forms/fields/pbehavior/c-pbehavior-reason-field.vue';
+import CPbehaviorTypeField from '@/components/forms/fields/pbehavior/c-pbehavior-type-field.vue';
+import CSelectField from '@/components/forms/fields/c-select-field.vue';
+
+/**
+ * Patterns
+ */
+import CPatternAttributeField from '@/components/forms/fields/pattern/c-pattern-attribute-field.vue';
 import CPatternInfosAttributeField from '@/components/forms/fields/pattern/c-pattern-infos-attribute-field.vue';
 import CPatternExtraInfosAttributeField from '@/components/forms/fields/pattern/c-pattern-extra-infos-attribute-field.vue';
 import CPatternOperatorField from '@/components/forms/fields/pattern/c-pattern-operator-field.vue';
@@ -150,15 +159,10 @@ import CPatternRuleField from '@/components/forms/fields/pattern/c-pattern-rule-
 import CPatternRulesField from '@/components/forms/fields/pattern/c-pattern-rules-field.vue';
 import CPatternGroupField from '@/components/forms/fields/pattern/c-pattern-group-field.vue';
 import CPatternGroupsField from '@/components/forms/fields/pattern/c-pattern-groups-field.vue';
-import CNumberField from '@/components/forms/fields/c-number-field.vue';
-import CEntityField from '@/components/forms/fields/entity/c-entity-field.vue';
 import CEntityPatternsField from '@/components/forms/fields/entity/c-entity-patterns-field.vue';
 import CAlarmPatternsField from '@/components/forms/fields/alarm/c-alarm-patterns-field.vue';
 import CPbehaviorPatternsField from '@/components/forms/fields/pbehavior/c-pbehavior-patterns-field.vue';
-import CPbehaviorReasonField from '@/components/forms/fields/pbehavior/c-pbehavior-reason-field.vue';
-import CPbehaviorTypeField from '@/components/forms/fields/pbehavior/c-pbehavior-type-field.vue';
-import CPbehaviorField from '@/components/forms/fields/pbehavior/c-pbehavior-field.vue';
-import CSelectField from '@/components/forms/fields/c-select-field.vue';
+import CEventFilterPatternsField from '@/components/forms/fields/event-filter/c-event-filter-patterns-field.vue';
 
 /**
  * Icons
@@ -358,25 +362,26 @@ Vue.component('c-entity-status-field', CEntityStatusField);
 Vue.component('c-records-per-page-field', CRecordsPerPageField);
 Vue.component('c-operator-field', COperatorField);
 Vue.component('c-draggable-list-field', CDraggableListField);
+Vue.component('c-number-field', CNumberField);
+Vue.component('c-select-field', CSelectField);
+Vue.component('c-entity-field', CEntityField);
+Vue.component('c-pbehavior-reason-field', CPbehaviorReasonField);
+Vue.component('c-pbehavior-type-field', CPbehaviorTypeField);
+
 Vue.component('c-pattern-attribute-field', CPatternAttributeField);
 Vue.component('c-pattern-infos-attribute-field', CPatternInfosAttributeField);
 Vue.component('c-pattern-extra-infos-attribute-field', CPatternExtraInfosAttributeField);
 Vue.component('c-pattern-operator-field', CPatternOperatorField);
-Vue.component('c-number-field', CNumberField);
-Vue.component('c-entity-field', CEntityField);
 Vue.component('c-pattern-rule-field', CPatternRuleField);
 Vue.component('c-pattern-rules-field', CPatternRulesField);
 Vue.component('c-pattern-group-field', CPatternGroupField);
 Vue.component('c-pattern-groups-field', CPatternGroupsField);
 Vue.component('c-pattern-operator-information', CPatternOperatorInformation);
 Vue.component('c-pattern-operator-chip', CPatternOperatorChip);
-Vue.component('c-pbehavior-reason-field', CPbehaviorReasonField);
-Vue.component('c-pbehavior-type-field', CPbehaviorTypeField);
-Vue.component('c-pbehavior-field', CPbehaviorField);
 Vue.component('c-alarm-patterns-field', CAlarmPatternsField);
 Vue.component('c-entity-patterns-field', CEntityPatternsField);
 Vue.component('c-pbehavior-patterns-field', CPbehaviorPatternsField);
-Vue.component('c-select-field', CSelectField);
+Vue.component('c-event-filter-patterns-field', CEventFilterPatternsField);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,

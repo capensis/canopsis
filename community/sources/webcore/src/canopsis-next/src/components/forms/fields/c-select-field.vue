@@ -2,17 +2,21 @@
   component.c-select-field(
     v-field="value",
     v-bind="$attrs",
+    v-on="$listeners",
     v-validate="rules",
     :class="{ 'c-select-field--ellipsis': ellipsis }",
     :is="component",
     :item-text="itemText",
-    :item-value="itemValue"
+    :item-value="itemValue",
+    ref="select"
   )
     template(v-if="$scopedSlots.selection || ellipsis", #selection="props")
       slot(name="selection", v-bind="props")
         span.ellipsis {{ props.item[itemText] }}
     template(v-if="$scopedSlots.item", #item="props")
       slot(name="item", v-bind="props")
+    template(v-if="$scopedSlots['append-item']", #append-item="")
+      slot(name="append-item")
 </template>
 
 <script>
@@ -58,6 +62,10 @@ export default {
 
     component() {
       return this.autocomplete ? 'v-autocomplete' : 'v-select';
+    },
+
+    content() {
+      return this.$refs.select.content;
     },
 
     rules() {

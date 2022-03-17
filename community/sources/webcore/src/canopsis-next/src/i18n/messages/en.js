@@ -227,6 +227,15 @@ export default {
     impact: 'Impact | Impacts',
     depend: 'Depend | Depends',
     componentInfo: 'Component info | Component infos',
+    connector: 'Connector Type',
+    connectorName: 'Connector name',
+    component: 'Component',
+    resource: 'Resource',
+    extraDetail: 'Extra detail | Extra details',
+    acked: 'Acked',
+    ackedAt: 'Acked at',
+    resolvedAt: 'Resolved at',
+    extraInfo: 'Extra info | Extra infos',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -2735,17 +2744,6 @@ export default {
       ruleRequired: 'Please add at least one rule',
       groupRequired: 'Please add at least one group',
     },
-  },
-
-  alarm: {
-    connector: 'Connector Type',
-    connectorName: 'Connector name',
-    component: 'Component',
-    resource: 'Resource',
-    extraDetails: 'Extra details',
-    acked: 'Acked',
-    ackedAt: 'Acked at',
-    resolvedAt: 'Resolved at',
   },
 
   ...featureService.get('i18n.en'),

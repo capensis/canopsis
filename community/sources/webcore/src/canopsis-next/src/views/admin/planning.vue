@@ -30,8 +30,8 @@ import { MODALS, PLANNING_TABS } from '@/constants';
 import { permissionsTechnicalPbehaviorTypesMixin } from '@/mixins/permissions/technical/pbehavior-types';
 import { permissionsTechnicalPbehaviorReasonsMixin } from '@/mixins/permissions/technical/pbehavior-reasons';
 import { permissionsTechnicalPbehaviorExceptionsMixin } from '@/mixins/permissions/technical/pbehavior-exceptions';
-import { entitiesPbehaviorTypesMixin } from '@/mixins/entities/pbehavior/types';
-import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior/reasons';
+import { entitiesPbehaviorTypeMixin } from '@/mixins/entities/pbehavior/types';
+import { entitiesPbehaviorReasonMixin } from '@/mixins/entities/pbehavior/reasons';
 import entitiesPbehaviorExceptionsMixin from '@/mixins/entities/pbehavior/exceptions';
 
 import PlanningTypes from '@/components/other/pbehavior/types/planning-types.vue';
@@ -48,8 +48,8 @@ export default {
     permissionsTechnicalPbehaviorTypesMixin,
     permissionsTechnicalPbehaviorReasonsMixin,
     permissionsTechnicalPbehaviorExceptionsMixin,
-    entitiesPbehaviorTypesMixin,
-    entitiesPbehaviorReasonsMixin,
+    entitiesPbehaviorTypeMixin,
+    entitiesPbehaviorReasonMixin,
     entitiesPbehaviorExceptionsMixin,
   ],
   data() {

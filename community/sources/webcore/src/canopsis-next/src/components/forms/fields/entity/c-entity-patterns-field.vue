@@ -8,12 +8,15 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import {
-  ENTITY_PATTERN_FIELDS,
+  ENTITY_PATTERN_FIELDS, MAX_LIMIT,
   PATTERN_NUMBER_OPERATORS,
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
 } from '@/constants';
+
+const { mapActions: entityCategoryMapActions } = createNamespacedHelpers('entityCategory');
 
 export default {
   model: {
@@ -34,6 +37,12 @@ export default {
       required: false,
     },
   },
+  data() {
+    return {
+      categories: [],
+      categoriesPending: false,
+    };
+  },
   computed: {
     entitiesOperators() {
       return [
@@ -47,15 +56,6 @@ export default {
     entitiesValueField() {
       return {
         is: 'c-entity-field',
-        props: {
-          // TODO: Should be replaced on API data
-          items: [
-            { name: 'Entity 1', _id: 'entity_1' },
-            { name: 'Entity 2', _id: 'entity_2' },
-            { name: 'Entity 3', _id: 'entity_3' },
-            { name: 'Entity 4', _id: 'entity_4' },
-          ],
-        },
       };
     },
 
@@ -95,8 +95,16 @@ export default {
     categoryOptions() {
       return {
         type: PATTERN_RULE_TYPES.string,
+        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
         valueField: {
-          is: 'c-entity-category-field',
+          is: 'c-select-field',
+          props: {
+            items: this.categories,
+            loading: this.categoriesPending,
+            itemValue: '_id',
+            itemText: 'name',
+            ellipsis: true,
+          },
         },
       };
     },
@@ -148,6 +156,23 @@ export default {
           options: this.dateOptions,
         },
       ];
+    },
+  },
+  mounted() {
+    this.fetchCategories();
+  },
+  methods: {
+    ...entityCategoryMapActions({ fetchCategoriesListWithoutStore: 'fetchListWithoutStore' }),
+
+    async fetchCategories() {
+      this.categoriesPending = true;
+
+      const { data: categories } = await this.fetchCategoriesListWithoutStore({
+        params: { limit: MAX_LIMIT },
+      });
+
+      this.categories = categories;
+      this.categoriesPending = false;
     },
   },
 };
