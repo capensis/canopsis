@@ -1459,6 +1459,64 @@
                 }
             }
         },
+        "/bulk/patterns": {
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk delete patterns",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "saved-patterns"
+                ],
+                "summary": "Bulk delete patterns",
+                "operationId": "saved-patterns-bulk-delete",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/pattern.BulkDeleteRequestItem"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "207": {
+                        "description": "Multi-Status",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/pattern.BulkDeleteResponseItem"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/bulk/pbehaviors": {
             "put": {
                 "security": [
@@ -12983,6 +13041,41 @@
         },
         "pattern.AlarmPatternList": {
             "type": "object"
+        },
+        "pattern.BulkDeleteRequestItem": {
+            "type": "object",
+            "required": [
+                "_id"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "pattern.BulkDeleteResponseItem": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "item": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.BulkDeleteRequestItem"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
         },
         "pattern.Condition": {
             "type": "object",

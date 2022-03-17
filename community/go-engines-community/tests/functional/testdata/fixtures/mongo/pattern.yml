@@ -69,6 +69,32 @@ pattern:
     _id: test-pattern-to-delete-4
     is_corporate: true
 
+  pattern_to_bulk_delete_1 (extend pattern_alarm):
+    _id: test-pattern-to-bulk-delete-1
+    author: nopermsuser
+
+  pattern_to_bulk_delete_2 (extend pattern_alarm):
+    _id: test-pattern-to-bulk-delete-2
+    author: nopermsuser
+
+  pattern_to_bulk_delete_3 (extend pattern_alarm):
+    _id: test-pattern-to-bulk-delete-3
+    author: admin
+
+  pattern_to_bulk_delete_4 (extend pattern_alarm):
+    _id: test-pattern-to-bulk-delete-4
+    author: nopermsuser
+
+  pattern_to_bulk_delete_corporate_1 (extend pattern_alarm):
+    _id: test-pattern-to-bulk-delete-corporate-1
+    is_corporate: true
+    author: nopermsuser
+
+  pattern_to_bulk_delete_corporate_2 (extend pattern_alarm):
+    _id: test-pattern-to-bulk-delete-corporate-2
+    is_corporate: true
+
+
   pattern_to_get_1 (extend pattern_alarm):
     _id: test-pattern-to-get-1
     title: test-pattern-to-get-1-title

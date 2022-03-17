@@ -2056,6 +2056,29 @@ definitions:
     type: array
   pattern.AlarmPatternList:
     type: object
+  pattern.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  pattern.BulkDeleteResponseItem:
+    properties:
+      error:
+        type: string
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      id:
+        type: string
+      item:
+        $ref: '#/definitions/pattern.BulkDeleteRequestItem'
+        type: object
+      status:
+        type: integer
+    type: object
   pattern.Condition:
     properties:
       type:
@@ -5141,6 +5164,42 @@ paths:
       summary: Bulk update idlerules
       tags:
       - idlerules
+  /bulk/patterns:
+    delete:
+      consumes:
+      - application/json
+      description: Bulk delete patterns
+      operationId: saved-patterns-bulk-delete
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/pattern.BulkDeleteRequestItem'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "207":
+          description: Multi-Status
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/pattern.BulkDeleteResponseItem'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Bulk delete patterns
+      tags:
+      - saved-patterns
   /bulk/pbehaviors:
     delete:
       consumes:
