@@ -36,15 +36,15 @@ export default {
           sortable: false,
         },
         {
-          text: this.$t('alarm.connector'),
+          text: this.$t('common.connector'),
           sortable: false,
         },
         {
-          text: this.$t('alarm.component'),
+          text: this.$t('common.component'),
           sortable: false,
         },
         {
-          text: this.$t('alarm.resource'),
+          text: this.$t('common.resource'),
           sortable: false,
         },
       ],

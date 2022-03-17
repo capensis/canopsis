@@ -224,6 +224,14 @@ export default {
     template: 'Template',
     canceled: 'Annulé',
     snoozed: 'En attente',
+    connector: 'Type de connecteur',
+    connectorName: 'Nom du connecteur',
+    component: 'Composant',
+    resource: 'Ressource',
+    extraDetails: 'Détails supplémentaires',
+    acked: 'Acked',
+    ackedAt: 'Acked at',
+    resolvedAt: 'Resolved at',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -2732,17 +2740,6 @@ export default {
       ruleRequired: 'Veuillez ajouter au moins une règle',
       groupRequired: 'Veuillez ajouter au moins un groupe',
     },
-  },
-
-  alarm: {
-    connector: 'Type de connecteur',
-    connectorName: 'Nom du connecteur',
-    component: 'Composant',
-    resource: 'Ressource',
-    extraDetails: 'Détails supplémentaires',
-    acked: 'Acked',
-    ackedAt: 'Acked at',
-    resolvedAt: 'Resolved at',
   },
 
   ...featureService.get('i18n.fr'),
