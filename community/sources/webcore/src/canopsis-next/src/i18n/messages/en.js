@@ -227,7 +227,7 @@ export default {
     impact: 'Impact | Impacts',
     depend: 'Depend | Depends',
     componentInfo: 'Component info | Component infos',
-    connector: 'Connector Type',
+    connector: 'Connector',
     connectorName: 'Connector name',
     component: 'Component',
     resource: 'Resource',

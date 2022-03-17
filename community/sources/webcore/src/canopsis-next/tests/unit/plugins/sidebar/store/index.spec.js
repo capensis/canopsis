@@ -8,10 +8,6 @@ import sidebarModule, { types } from '@/plugins/sidebar/store';
 const { actions, state: initialState, mutations, getters } = sidebarModule;
 
 describe('Sidebar plugin store module', () => {
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
   it('Mutate state after commit SHOW', () => {
     const show = mutations[types.SHOW];
     const state = cloneDeep(initialState);

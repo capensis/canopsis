@@ -17,12 +17,12 @@
     dense,
     autocomplete,
     @focus="onFocus",
-    @update:searchInput="updateSearch"
+    @update:searchInput="debouncedUpdateSearch"
   )
     template(#item="{ item, tile }")
       v-list-tile.c-entity-field--tile(ref="a", v-bind="tile.props", v-on="tile.on")
         v-list-tile-content {{ item[itemText] }}
-        span.ml-4.grey--text {{ item.type }}
+        span.ml-4.grey--text(v-if="shownType") {{ item.type }}
     template(#append-item="")
       div.c-entity-field__append(ref="append")
 </template>
@@ -84,6 +84,10 @@ export default {
     };
   },
   computed: {
+    shownType() {
+      return this.entityTypes.length !== 1;
+    },
+
     isMultiply() {
       return Array.isArray(this.value);
     },
@@ -105,13 +109,13 @@ export default {
       deep: true,
       handler(newQuery, prevQuery) {
         if (!isEqual(newQuery, prevQuery)) {
-          this.debouncedFetchEntities();
+          this.fetchEntities();
         }
       },
     },
   },
   created() {
-    this.debouncedFetchEntities = debounce(this.fetchEntities, 300);
+    this.debouncedUpdateSearch = debounce(this.updateSearch, 300);
   },
   mounted() {
     this.observer = new IntersectionObserver(this.intersectionHandler);
@@ -127,14 +131,19 @@ export default {
     intersectionHandler(entries) {
       const [entry] = entries;
 
-      if (entry.isIntersecting && this.pageCount >= this.query.page) {
-        this.query.page += 1;
+      if (entry.isIntersecting && this.pageCount > this.query.page) {
+        this.query = {
+          ...this.query,
+          page: this.query.page + 1,
+        };
       }
     },
 
     updateSearch(value) {
-      this.query.page = 1;
-      this.query.search = value;
+      this.query = {
+        page: 1,
+        search: value,
+      };
     },
 
     onFocus() {
