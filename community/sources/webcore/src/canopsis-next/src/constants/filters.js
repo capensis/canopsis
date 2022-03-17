@@ -116,6 +116,7 @@ export const PATTERN_OPERATORS_WITHOUT_VALUE = [
 
 export const PATTERN_RULE_TYPES = {
   infos: 'infos',
+  extraInfos: 'extraInfos',
   date: 'date',
   duration: 'duration',
   string: 'string',

@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { EVENT_FILTER_FILTER_FIELDS, PATTERN_OPERATORS } from '@/constants';
+import { BASIC_ENTITY_TYPES, EVENT_FILTER_PATTERN_FIELDS, PATTERN_OPERATORS, PATTERN_RULE_TYPES } from '@/constants';
 
 export default {
   model: {
@@ -39,17 +39,48 @@ export default {
       ];
     },
 
-    entitiesValueField() {
-      return {
-        is: 'c-entity-field',
-      };
-    },
-
-    entitiesOptions() {
+    connectorOptions() {
       return {
         operators: this.entitiesOperators,
         defaultValue: '',
-        valueField: this.entitiesValueField,
+        valueField: {
+          is: 'c-entity-field',
+          props: {
+            entityTypes: [BASIC_ENTITY_TYPES.connector],
+          },
+        },
+      };
+    },
+
+    componentOptions() {
+      return {
+        operators: this.entitiesOperators,
+        defaultValue: '',
+        valueField: {
+          is: 'c-entity-field',
+          props: {
+            entityTypes: [BASIC_ENTITY_TYPES.component],
+          },
+        },
+      };
+    },
+
+    resourceOptions() {
+      return {
+        operators: this.entitiesOperators,
+        defaultValue: '',
+        valueField: {
+          is: 'c-entity-field',
+          props: {
+            entityTypes: [BASIC_ENTITY_TYPES.resource],
+          },
+        },
+      };
+    },
+
+    extraInfosOptions() {
+      return {
+        type: PATTERN_RULE_TYPES.extraInfos,
       };
     },
 
@@ -57,31 +88,32 @@ export default {
       return [
         {
           text: this.$t('common.component'),
-          value: EVENT_FILTER_FILTER_FIELDS.component,
-          options: this.entitiesOptions,
+          value: EVENT_FILTER_PATTERN_FIELDS.component,
+          options: this.componentOptions,
         },
         {
           text: this.$t('common.connector'),
-          value: EVENT_FILTER_FILTER_FIELDS.connector,
-          options: this.entitiesOptions,
+          value: EVENT_FILTER_PATTERN_FIELDS.connector,
+          options: this.connectorOptions,
         },
         {
           text: this.$t('common.connectorName'),
-          value: EVENT_FILTER_FILTER_FIELDS.connectorName,
-          options: this.entitiesOptions,
+          value: EVENT_FILTER_PATTERN_FIELDS.connectorName,
+          options: this.connectorOptions,
         },
         {
           text: this.$t('common.resource'),
-          value: EVENT_FILTER_FILTER_FIELDS.resource,
-          options: this.entitiesOptions,
+          value: EVENT_FILTER_PATTERN_FIELDS.resource,
+          options: this.resourceOptions,
         },
         {
           text: this.$t('common.output'),
-          value: EVENT_FILTER_FILTER_FIELDS.output,
+          value: EVENT_FILTER_PATTERN_FIELDS.output,
         },
         {
           text: this.$tc('common.extraInfo'),
-          value: EVENT_FILTER_FILTER_FIELDS.extraInfos,
+          value: EVENT_FILTER_PATTERN_FIELDS.extraInfos,
+          options: this.extraInfosOptions,
         },
       ];
     },
