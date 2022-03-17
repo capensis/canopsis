@@ -9,7 +9,7 @@
 
 <script>
 import {
-  ALARM_PATTERN_FIELDS,
+  ALARM_PATTERN_FIELDS, BASIC_ENTITY_TYPES,
   ENTITIES_STATES,
   ENTITIES_STATUSES,
   PATTERN_OPERATORS,
@@ -48,6 +48,45 @@ export default {
     entitiesValueField() {
       return {
         is: 'c-entity-field',
+      };
+    },
+
+    connectorOptions() {
+      return {
+        operators: this.entitiesOperators,
+        defaultValue: '',
+        valueField: {
+          is: 'c-entity-field',
+          props: {
+            entityTypes: [BASIC_ENTITY_TYPES.connector],
+          },
+        },
+      };
+    },
+
+    componentOptions() {
+      return {
+        operators: this.entitiesOperators,
+        defaultValue: '',
+        valueField: {
+          is: 'c-entity-field',
+          props: {
+            entityTypes: [BASIC_ENTITY_TYPES.component],
+          },
+        },
+      };
+    },
+
+    resourceOptions() {
+      return {
+        operators: this.entitiesOperators,
+        defaultValue: '',
+        valueField: {
+          is: 'c-entity-field',
+          props: {
+            entityTypes: [BASIC_ENTITY_TYPES.resource],
+          },
+        },
       };
     },
 
@@ -156,22 +195,22 @@ export default {
         {
           text: this.$t('common.component'),
           value: ALARM_PATTERN_FIELDS.component,
-          options: this.entitiesOptions,
+          options: this.componentOptions,
         },
         {
           text: this.$t('common.resource'),
           value: ALARM_PATTERN_FIELDS.resource,
-          options: this.entitiesOptions,
+          options: this.resourceOptions,
         },
         {
           text: this.$t('common.connector'),
           value: ALARM_PATTERN_FIELDS.connector,
-          options: this.entitiesOptions,
+          options: this.connectorOptions,
         },
         {
           text: this.$t('common.connectorName'),
           value: ALARM_PATTERN_FIELDS.connectorName,
-          options: this.entitiesOptions,
+          options: this.connectorOptions,
         },
         {
           text: this.$t('common.created'),
