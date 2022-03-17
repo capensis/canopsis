@@ -735,8 +735,8 @@ describe('alarms-list', () => {
         id: widget._id,
         query: {
           ...defaultQuery,
-          include_types: [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto],
-          exclude_types: [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto],
+          include_instruction_types: [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto],
+          exclude_instruction_types: [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto],
           exclude_instructions: excludeInstructionsIds,
           include_instructions: includeInstructionsIds,
           page: 1,
@@ -807,7 +807,7 @@ describe('alarms-list', () => {
         id: widget._id,
         query: {
           ...defaultQuery,
-          exclude_types: [REMEDIATION_INSTRUCTION_TYPES.manual],
+          exclude_instruction_types: [REMEDIATION_INSTRUCTION_TYPES.manual],
           exclude_instructions: excludeInstructionsIds,
           page: 1,
         },
