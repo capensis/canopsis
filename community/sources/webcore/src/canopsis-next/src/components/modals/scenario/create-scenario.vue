@@ -56,11 +56,30 @@ export default {
       return this.config.title || this.$t('modals.createScenario.create.title');
     },
 
+    scenario() {
+      return this.config?.scenario ?? {};
+    },
+
     originalPriority() {
-      return this.config?.scenario?.priority;
+      return this.scenario.priority;
+    },
+
+    isNew() {
+      return !this.scenario._id;
     },
   },
+  mounted() {
+    if (this.isNew) {
+      this.setMinimalPriority();
+    }
+  },
   methods: {
+    async setMinimalPriority() {
+      const { priority } = await this.fetchMinimalScenarioPriority();
+
+      this.form.priority = priority;
+    },
+
     showConfirmScenarioPriorityChange(priority) {
       return new Promise((resolve) => {
         this.$modals.show({
@@ -85,7 +104,7 @@ export default {
       if (isFormValid) {
         try {
           if (this.config.action) {
-            if (this.form.priority !== this.originalPriority) {
+            if (this.isNew || this.form.priority !== this.originalPriority) {
               const { valid, recommended_priority: recommendedPriority } = await this.checkScenarioPriority({
                 data: { priority: this.form.priority },
               });
