@@ -30,8 +30,10 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 import { debounce, isEqual } from 'lodash';
-import { PAGINATION_LIMIT } from '@/config';
+
 import { BASIC_ENTITY_TYPES } from '@/constants';
+
+import { PAGINATION_LIMIT } from '@/config';
 
 const { mapActions: entityMapActions } = createNamespacedHelpers('entity');
 

@@ -181,7 +181,10 @@ export default {
             ...valueProps,
             ...this.valueField.props,
           },
-          on: valueHandlers,
+          on: {
+            ...valueHandlers,
+            ...this.valueField.on,
+          },
         };
       }
 
