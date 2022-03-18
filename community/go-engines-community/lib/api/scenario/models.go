@@ -19,7 +19,7 @@ type EditRequest struct {
 	Name                 string                  `json:"name" binding:"required,max=255"`
 	Author               string                  `json:"author" binding:"required,max=255"`
 	Enabled              *bool                   `json:"enabled" binding:"required"`
-	Priority             int                     `json:"priority" binding:"required,gt=0"`
+	Priority             *int                    `json:"priority" binding:"gt=0"`
 	Triggers             []string                `json:"triggers" binding:"required,notblank"`
 	DisableDuringPeriods []string                `json:"disable_during_periods"`
 	Delay                *types.DurationWithUnit `json:"delay"`
