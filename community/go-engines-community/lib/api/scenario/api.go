@@ -3,6 +3,7 @@ package scenario
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
@@ -12,12 +13,16 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/valyala/fastjson"
 	"net/http"
+	"sync"
 )
 
 type api struct {
-	store             Store
-	actionLogger      logger.ActionLogger
-	priorityIntervals action.PriorityIntervals
+	store        Store
+	actionLogger logger.ActionLogger
+
+	//todo: priority intervals with new requirements are looks weird now, should think about cleaner solution
+	priorityIntervals   action.PriorityIntervals
+	priorityIntervalsMx sync.Mutex
 }
 
 type API interface {
@@ -32,9 +37,10 @@ func NewApi(
 	intervals action.PriorityIntervals,
 ) API {
 	return &api{
-		store:             store,
-		actionLogger:      actionLogger,
-		priorityIntervals: intervals,
+		store:               store,
+		actionLogger:        actionLogger,
+		priorityIntervals:   intervals,
+		priorityIntervalsMx: sync.Mutex{},
 	}
 }
 
@@ -119,6 +125,9 @@ func (a *api) Get(c *gin.Context) {
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
 
+	priority := a.priorityIntervals.GetMinimal()
+	request.Priority = &priority
+
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
@@ -176,6 +185,11 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
+	priority := a.priorityIntervals.GetMinimal()
+	request.Priority = &priority
+
+	fmt.Printf("set %d\n", *request.Priority)
+
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
@@ -196,6 +210,9 @@ func (a *api) Update(c *gin.Context) {
 
 	a.priorityIntervals.Restore(oldScenario.Priority)
 	a.priorityIntervals.Take(newScenario.Priority)
+
+	fmt.Printf("restored %d\n", oldScenario.Priority)
+	fmt.Printf("taken %d\n", newScenario.Priority)
 
 	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 		Action:    logger.ActionUpdate,
@@ -361,6 +378,11 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
+		if request.Priority == nil {
+			priority := a.priorityIntervals.GetMinimal()
+			request.Priority = &priority
+		}
+
 		err = binding.Validator.ValidateStruct(request)
 		if err != nil {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
@@ -375,6 +397,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
+		a.priorityIntervals.Take(scenario.Priority)
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, scenario.ID, http.StatusOK, rawObject, nil))
 
 		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
@@ -442,9 +465,25 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			continue
 		}
 
+		if request.Priority == nil {
+			priority := a.priorityIntervals.GetMinimal()
+			request.Priority = &priority
+		}
+
 		err = binding.Validator.ValidateStruct(request)
 		if err != nil {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
+			continue
+		}
+
+		oldScenario, err := a.store.GetOneBy(c.Request.Context(), request.ID)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		if oldScenario == nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
 			continue
 		}
 
@@ -461,6 +500,8 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			continue
 		}
 
+		a.priorityIntervals.Restore(oldScenario.Priority)
+		a.priorityIntervals.Take(scenario.Priority)
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, scenario.ID, http.StatusOK, rawObject, nil))
 
 		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
@@ -534,6 +575,17 @@ func (a *api) BulkDelete(c *gin.Context) {
 			continue
 		}
 
+		scenario, err := a.store.GetOneBy(c.Request.Context(), request.ID)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		if scenario == nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			continue
+		}
+
 		ok, err := a.store.Delete(ctx, request.ID)
 		if err != nil {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
@@ -545,6 +597,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 			continue
 		}
 
+		a.priorityIntervals.Restore(scenario.Priority)
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))
 
 		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
