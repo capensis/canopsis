@@ -3,7 +3,6 @@ package scenario
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
@@ -13,7 +12,6 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/valyala/fastjson"
 	"net/http"
-	"sync"
 )
 
 type api struct {
@@ -21,8 +19,7 @@ type api struct {
 	actionLogger logger.ActionLogger
 
 	//todo: priority intervals with new requirements are looks weird now, should think about cleaner solution
-	priorityIntervals   action.PriorityIntervals
-	priorityIntervalsMx sync.Mutex
+	priorityIntervals action.PriorityIntervals
 }
 
 type API interface {
@@ -37,10 +34,9 @@ func NewApi(
 	intervals action.PriorityIntervals,
 ) API {
 	return &api{
-		store:               store,
-		actionLogger:        actionLogger,
-		priorityIntervals:   intervals,
-		priorityIntervalsMx: sync.Mutex{},
+		store:             store,
+		actionLogger:      actionLogger,
+		priorityIntervals: intervals,
 	}
 }
 
@@ -188,8 +184,6 @@ func (a *api) Update(c *gin.Context) {
 	priority := a.priorityIntervals.GetMinimal()
 	request.Priority = &priority
 
-	fmt.Printf("set %d\n", *request.Priority)
-
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
@@ -210,9 +204,6 @@ func (a *api) Update(c *gin.Context) {
 
 	a.priorityIntervals.Restore(oldScenario.Priority)
 	a.priorityIntervals.Take(newScenario.Priority)
-
-	fmt.Printf("restored %d\n", oldScenario.Priority)
-	fmt.Printf("taken %d\n", newScenario.Priority)
 
 	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 		Action:    logger.ActionUpdate,
