@@ -9,8 +9,10 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+
 import {
-  ENTITY_PATTERN_FIELDS, MAX_LIMIT,
+  ENTITY_PATTERN_FIELDS,
+  MAX_LIMIT,
   PATTERN_NUMBER_OPERATORS,
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
