@@ -100,7 +100,7 @@ import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 
-import FilterSelector from '@/components/other/filter/filter-selector.vue';
+import FilterSelector from '@/components/forms/filters/filter-selector.vue';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';

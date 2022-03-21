@@ -5,7 +5,8 @@ import { mockModals } from '@unit/utils/mock-hooks';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { ENTITIES_TYPES, FILTER_MONGO_OPERATORS, MODALS } from '@/constants';
 
-import FilterSelector from '@/components/other/filter/filter-selector.vue';
+import FilterSelector from '@/components/forms/filters/filter-selector.vue';
+import FiltersListForm from '@/components/forms/filters/filters-list-form';
 
 const localVue = createVueInstance();
 
@@ -14,14 +15,14 @@ const stubs = {
   'c-operator-field': true,
   'c-enabled-field': true,
   'c-action-btn': true,
-  'filters-form': true,
+  'filters-list-form': true,
 };
 
 const snapshotStubs = {
   'c-operator-field': true,
   'c-enabled-field': true,
   'c-action-btn': true,
-  'filters-form': true,
+  'filters-list-form': true,
 };
 
 const factory = (options = {}) => shallowMount(FilterSelector, {
@@ -100,7 +101,7 @@ describe('filter-selector', () => {
         filters,
         value: filters[0],
         hasAccessToUserFilter: true,
-        entitiesType: ENTITIES_TYPES.entity,
+        entity: true,
       },
       mocks: {
         $modals,
@@ -124,7 +125,9 @@ describe('filter-selector', () => {
           filters: filtersWithSelected,
           hasAccessToAddFilter: true,
           hasAccessToEditFilter: true,
-          entitiesType: ENTITIES_TYPES.entity,
+          entity: true,
+          alarm: false,
+          pbehavior: false,
           action: expect.any(Function),
         },
       },
@@ -161,7 +164,6 @@ describe('filter-selector', () => {
         filters,
         value: filters,
         hasAccessToUserFilter: true,
-        entitiesType: ENTITIES_TYPES.entity,
       },
       mocks: {
         $modals,
@@ -182,10 +184,12 @@ describe('filter-selector', () => {
       {
         name: MODALS.filtersList,
         config: {
+          alarm: true,
+          pbehavior: false,
+          entity: false,
           filters: filtersWithSelected,
           hasAccessToAddFilter: true,
           hasAccessToEditFilter: true,
-          entitiesType: ENTITIES_TYPES.entity,
           action: expect.any(Function),
         },
       },

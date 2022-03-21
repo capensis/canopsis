@@ -4,7 +4,7 @@
       v-if="!filters.length",
       :value="true",
       type="info"
-    ) {{ $t('modals.filter.emptyFilters') }}
+    ) {{ $t('modals.createFilter.emptyFilters') }}
     c-draggable-list-field(
       v-else,
       v-field="filters",
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { MODALS, ENTITIES_TYPES } from '@/constants';
+import { MODALS } from '@/constants';
 
 import { formArrayMixin } from '@/mixins/form';
 
@@ -54,15 +54,17 @@ export default {
       type: Boolean,
       default: true,
     },
-    entitiesType: {
-      type: String,
-      default: ENTITIES_TYPES.alarm,
-      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity].includes(value),
+    alarm: {
+      type: Boolean,
+      default: false,
     },
-  },
-  computed: {
-    existingTitles() {
-      return this.filters.map(({ title }) => title);
+    entity: {
+      type: Boolean,
+      default: false,
+    },
+    pbehavior: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {
@@ -70,9 +72,11 @@ export default {
       this.$modals.show({
         name: MODALS.createFilter,
         config: {
-          title: this.$t('modals.filter.create.title'),
-          entitiesType: this.entitiesType,
-          existingTitles: this.existingTitles,
+          name: true,
+          alarm: this.alarm,
+          entity: this.entity,
+          pbehavior: this.pbehavior,
+          title: this.$t('modals.createFilter.create.title'),
           action: newFilter => this.addItemIntoArray(newFilter),
         },
       });
@@ -86,9 +90,11 @@ export default {
         config: {
           filter,
 
-          title: this.$t('modals.filter.edit.title'),
-          entitiesType: this.entitiesType,
-          existingTitles: this.existingTitles,
+          name: true,
+          alarm: this.alarm,
+          entity: this.entity,
+          pbehavior: this.pbehavior,
+          title: this.$t('modals.createFilter.edit.title'),
           action: newFilter => this.updateItemInArray(index, { ...filter, ...newFilter }),
         },
       });

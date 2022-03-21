@@ -46,10 +46,9 @@
         small,
         @click="showFiltersListModal"
       )
-      filters-form(
+      filters-list-form(
         v-else,
         :filters="filtersWithSelected",
-        :entities-type="entitiesType",
         addable,
         editable,
         @input="updateFilters"
@@ -59,14 +58,14 @@
 <script>
 import { isEmpty, omit } from 'lodash';
 
-import { ENTITIES_TYPES, MODALS, FILTER_DEFAULT_VALUES } from '@/constants';
+import { MODALS, FILTER_DEFAULT_VALUES } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
-import FiltersForm from '@/components/other/filter/form/filters-form.vue';
+import FiltersListForm from '@/components/forms/filters/filters-list-form.vue';
 
 export default {
-  components: { FiltersForm },
+  components: { FiltersListForm },
   mixins: [formMixin],
   props: {
     long: {
@@ -125,10 +124,19 @@ export default {
       type: Boolean,
       default: true,
     },
-    entitiesType: {
-      type: String,
-      default: ENTITIES_TYPES.alarm,
-      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity].includes(value),
+    entity: {
+      type: Boolean,
+      default: false,
+    },
+    pbehavior: {
+      type: Boolean,
+      default: false,
+    },
+    alarm: {
+      type: Boolean,
+      default() {
+        return !this.entity && !this.pbehavior;
+      },
     },
   },
   computed: {
@@ -203,7 +211,9 @@ export default {
           filters: this.filtersWithSelected,
           hasAccessToAddFilter: this.hasAccessToUserFilter,
           hasAccessToEditFilter: this.hasAccessToUserFilter,
-          entitiesType: this.entitiesType,
+          alarm: this.alarm,
+          entity: this.entity,
+          pbehavior: this.pbehavior,
           action: filters => this.updateFilters(filters),
         },
       });

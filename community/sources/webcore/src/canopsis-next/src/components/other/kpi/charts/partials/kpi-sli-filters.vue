@@ -4,7 +4,7 @@
       c-quick-date-interval-field.mr-4(v-field="query.interval", :min="minDate")
       c-sampling-field.mr-4.kpi-sli-toolbar__sampling(v-field="query.sampling")
       kpi-sli-show-mode-field.mr-4.kpi-sli-toolbar__show-mode(v-field="query.type")
-      c-filters-field.kpi-sli-toolbar__filters(v-field="query.filter")
+      c-filter-field.kpi-sli-toolbar__filters(v-field="query.filter")
 </template>
 
 <script>

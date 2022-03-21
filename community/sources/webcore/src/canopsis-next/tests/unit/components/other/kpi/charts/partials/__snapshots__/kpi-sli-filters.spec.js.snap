@@ -19,7 +19,7 @@ exports[`kpi-sli-filters Renders \`kpi-sli-filters\` with query 1`] = `
       class="mr-4 kpi-sli-toolbar__show-mode"
       value="percent"
     />
-    <c-filters-field-stub
+    <c-filter-field-stub
       class="kpi-sli-toolbar__filters"
     />
   </div>

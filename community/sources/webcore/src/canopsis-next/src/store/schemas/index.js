@@ -152,9 +152,9 @@ export const resolveRulesSchema = new schema.Entity(ENTITIES_TYPES.resolveRules,
 
 export const filterSchema = new schema.Entity(ENTITIES_TYPES.filter, {}, { idAttribute: '_id' });
 
-export const ratingSettingsSchema = new schema.Entity(ENTITIES_TYPES.ratingSettings, {}, { idAttribute: 'id' });
+export const ratingSettingsSchema = new schema.Entity(ENTITIES_TYPES.ratingSettings, {}, { idAttribute: '_id' });
 
-export const patternSchema = new schema.Entity(ENTITIES_TYPES.pattern, {}, { idAttribute: 'id' });
+export const patternSchema = new schema.Entity(ENTITIES_TYPES.pattern, {}, { idAttribute: '_id' });
 
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,

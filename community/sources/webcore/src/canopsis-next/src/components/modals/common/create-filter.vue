@@ -1,52 +1,40 @@
 <template lang="pug">
-  v-form(data-test="createFilterModal", @submit.prevent="submit")
+  v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ title }}
-      template(slot="text")
-        v-text-field(
-          data-test="filterTitle",
-          v-if="!hiddenFields.includes('title')",
-          v-model="form.title",
-          v-validate="'required|unique-title'",
-          :label="$t('modals.filter.fields.title')",
-          :error-messages="errors.collect('title')",
-          name="title",
-          required
+      template(#text="")
+        patterns-form(
+          v-model="form",
+          :name="config.name",
+          :entity="config.entity",
+          :pbehavior="config.pbehavior",
+          :alarm="config.alarm",
+          :event="config.event"
         )
-        filter-editor(
-          v-if="!hiddenFields.includes('filter')",
-          v-model="form.filter",
-          :entities-type="entitiesType",
-          required
-        )
-      template(slot="actions")
+      template(#actions="")
         v-btn(
-          data-test="createFilterCancelButton",
           depressed,
           flat,
           @click="$modals.hide"
         ) {{ $t('common.cancel') }}
         v-btn.primary(
-          :disabled="isDisabled || advancedJsonWasChanged",
+          :disabled="isDisabled",
           :loading="submitting",
-          type="submit",
-          data-test="createFilterSubmitButton"
+          type="submit"
         ) {{ $t('common.submit') }}
 </template>
 
 <script>
-import { get, isString } from 'lodash';
+import { MODALS } from '@/constants';
 
-import { ENTITIES_TYPES, MODALS } from '@/constants';
-
-import { filterToForm, formToFilter, filterToObject } from '@/helpers/forms/filter';
+import { filterToForm, formToFilter } from '@/helpers/forms/filter';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import FilterEditor from '@/components/other/filter/editor/filter-editor.vue';
+import PatternsForm from '@/components/forms/patterns-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -55,54 +43,21 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { FilterEditor, ModalWrapper },
+  components: { PatternsForm, ModalWrapper },
   mixins: [
     modalInnerMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],
   data() {
-    const { title = '', filter = '{}' } = this.modal.config.filter || {};
-    const preparedFilter = filterToObject(filter);
-
     return {
-      form: {
-        title,
-        filter: filterToForm(preparedFilter),
-      },
+      form: filterToForm(this.modal.config.filter),
     };
   },
   computed: {
     title() {
-      return this.config.title || this.$t('modals.filter.create.title');
+      return this.config.name || this.$t('modals.createFilter.create.title');
     },
-
-    entitiesType() {
-      return this.config.entitiesType || ENTITIES_TYPES.alarm;
-    },
-
-    hiddenFields() {
-      return this.config.hiddenFields || [];
-    },
-
-    existingTitles() {
-      return this.config.existingTitles || [];
-    },
-
-    initialTitle() {
-      return this.config.filter && this.config.filter.title;
-    },
-
-    advancedJsonWasChanged() {
-      return get(this.fields, ['advancedJson', 'changed']);
-    },
-  },
-  created() {
-    this.$validator.extend('unique-title', {
-      getMessage: () => this.$t('validator.unique'),
-      validate: value => (this.initialTitle && this.initialTitle === value)
-        || !this.existingTitles.find(title => title === value),
-    });
   },
   methods: {
     async submit() {
@@ -110,15 +65,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          const preparedFilter = formToFilter(this.form.filter);
-          const newFilter = {
-            title: this.form.title,
-            filter: isString(get(this.config.filter, 'filter', '{}'))
-              ? JSON.stringify(preparedFilter)
-              : preparedFilter,
-          };
-
-          await this.config.action(newFilter);
+          await this.config.action(formToFilter(this.form));
         }
 
         this.$modals.hide();
