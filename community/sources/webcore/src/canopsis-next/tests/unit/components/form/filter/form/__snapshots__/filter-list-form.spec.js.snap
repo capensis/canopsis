@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`filters-form Renders \`filters-form\` with custom props 1`] = `
-<div>
+exports[`filters-list-form Renders \`filters-list-form\` with custom props 1`] = `
+<div
+  entitiestype="entity"
+>
   <c-draggable-list-field-stub
     component="v-list"
     value="[object Object],[object Object]"
@@ -28,7 +30,7 @@ exports[`filters-form Renders \`filters-form\` with custom props 1`] = `
 </div>
 `;
 
-exports[`filters-form Renders \`filters-form\` with default props 1`] = `
+exports[`filters-list-form Renders \`filters-list-form\` with default props 1`] = `
 <div>
   <div
     class="v-alert info"

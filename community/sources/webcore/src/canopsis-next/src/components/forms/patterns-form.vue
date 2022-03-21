@@ -4,7 +4,7 @@
       v-if="name",
       v-field="form.name",
       v-validate="nameRules",
-      :label="$t('common.name')",
+      :label="$t('common.title')",
       :error-messages="errors.collect('name')",
       name="name"
     )
@@ -12,8 +12,7 @@
       v-field="form",
       :entity="entity",
       :alarm="alarm",
-      :event="event",
-      :total-entity="totalEntity"
+      :pbehavior="pbehavior"
     )
 </template>
 
@@ -33,15 +32,15 @@ export default {
       type: Boolean,
       default: false,
     },
+    alarm: {
+      type: Boolean,
+      default: false,
+    },
     entity: {
       type: Boolean,
       default: false,
     },
-    event: {
-      type: Boolean,
-      default: false,
-    },
-    alarm: {
+    pbehavior: {
       type: Boolean,
       default: false,
     },

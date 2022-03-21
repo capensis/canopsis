@@ -26,7 +26,7 @@ import { FILTER_DEFAULT_VALUES, ENTITIES_TYPES } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 
-import FilterSelector from '@/components/other/filter/filter-selector.vue';
+import FilterSelector from '@/components/forms/filters/filter-selector.vue';
 
 export default {
   components: { FilterSelector },

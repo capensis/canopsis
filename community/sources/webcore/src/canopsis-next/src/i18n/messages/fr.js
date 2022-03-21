@@ -157,6 +157,7 @@ export default {
     eventPatterns: 'Modèles des événements',
     alarmPatterns: 'Modèles des alarmes',
     entityPatterns: 'Modèles des entités',
+    pbehaviorPatterns: 'Modèles de comportement',
     totalEntityPatterns: 'Total des modèles d\'entité',
     addFilter: 'Ajouter un filtre',
     id: 'Identifiant',
@@ -236,6 +237,7 @@ export default {
     ackedAt: 'Acked at',
     resolvedAt: 'Resolved at',
     extraInfo: 'Extra info | Extra infos',
+    custom: 'Personnalisé',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -2740,6 +2742,8 @@ export default {
     addRule: 'Ajouter une règle',
     addGroup: 'Ajouter un groupe',
     removeRule: 'Supprimer la règle',
+    advancedEditor: 'Éditeur avancé',
+    simpleEditor: 'Éditeur simple',
     errors: {
       ruleRequired: 'Veuillez ajouter au moins une règle',
       groupRequired: 'Veuillez ajouter au moins un groupe',

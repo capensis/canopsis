@@ -1,28 +1,35 @@
 <template lang="pug">
-  v-autocomplete(
+  c-select-field(
     v-field="value",
-    :items="filters",
-    :label="label || $t('common.filters')",
-    :loading="filtersPending",
+    v-validate="rules",
+    :items="itemsWithCustom",
+    :label="label || $tc('common.pattern')",
+    :loading="pending",
     :disabled="disabled",
     :name="name",
-    item-text="name",
+    :return-object="returnObject",
+    item-text="title",
     item-value="_id",
-    hide-details,
-    clearable
+    dense,
+    hide-details
   )
+    template(#item="{ item, tile }")
+      v-list-tile(v-bind="tile.props", v-on="tile.on")
+        v-list-tile-content {{ item.title }}
+        v-icon(v-if="item.is_corporate", size="20") share
 </template>
 
 <script>
-import { MAX_LIMIT } from '@/constants';
+import { MAX_LIMIT, PATTERN_CUSTOM_ITEM_VALUE } from '@/constants';
 
-import { entitiesFilterMixin } from '@/mixins/entities/filter';
+import { entitiesPatternsMixin } from '@/mixins/entities/pattern';
 
 export default {
-  mixins: [entitiesFilterMixin],
+  inject: ['$validator'],
+  mixins: [entitiesPatternsMixin],
   props: {
     value: {
-      type: [Object, String],
+      type: [Object, String, Symbol],
       required: false,
     },
     label: {
@@ -37,15 +44,49 @@ export default {
       type: Boolean,
       default: false,
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    returnObject: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      items: [],
+      pending: false,
+    };
+  },
+  computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
+    },
+
+    itemsWithCustom() {
+      return [
+        ...this.items,
+        {
+          _id: PATTERN_CUSTOM_ITEM_VALUE,
+          title: this.$t('common.custom'),
+        },
+      ];
+    },
   },
   mounted() {
     this.fetchList();
   },
   methods: {
-    fetchList() {
-      if (!this.filtersPending) {
-        this.fetchFiltersList({ params: { limit: MAX_LIMIT } });
-      }
+    async fetchList() {
+      this.pending = true;
+
+      const { data: items } = await this.fetchPatternsListWithoutStore({ params: { limit: MAX_LIMIT } });
+
+      this.items = items;
+      this.pending = false;
     },
   },
 };

@@ -5,7 +5,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { ENTITIES_TYPES, MODALS } from '@/constants';
 
-import FiltersForm from '@/components/other/filter/form/filters-form.vue';
+import FiltersListForm from '@/components/forms/filters/filters-list-form.vue';
 
 const localVue = createVueInstance();
 
@@ -19,14 +19,14 @@ const snapshotStubs = {
   'filter-tile': true,
 };
 
-const factory = (options = {}) => shallowMount(FiltersForm, {
+const factory = (options = {}) => shallowMount(FiltersListForm, {
   localVue,
   stubs,
 
   ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(FiltersForm, {
+const snapshotFactory = (options = {}) => mount(FiltersListForm, {
   localVue,
   stubs: snapshotStubs,
 
@@ -37,20 +37,20 @@ const selectAddButton = wrapper => wrapper.find('v-btn-stub');
 const selectFilterTiles = wrapper => wrapper.findAll('filter-tile-stub');
 const selectDraggableField = wrapper => wrapper.find('c-draggable-list-field-stub');
 
-describe('filters-form', () => {
+describe('filters-list-form', () => {
   const $modals = mockModals();
   const filters = [
     { title: 'Filter 1' },
     { title: 'Filter 2' },
   ];
-  const filtersTitles = filters.map(({ title }) => title);
 
   it('Create filter modal opened after trigger add button', () => {
     const wrapper = factory({
       propsData: {
         filters,
         addable: true,
-        entitiesType: ENTITIES_TYPES.entity,
+        alarm: true,
+        entity: true,
       },
       mocks: {
         $modals,
@@ -65,8 +65,10 @@ describe('filters-form', () => {
       name: MODALS.createFilter,
       config: {
         title: 'Create filter',
-        entitiesType: ENTITIES_TYPES.entity,
-        existingTitles: filtersTitles,
+        name: true,
+        alarm: true,
+        entity: true,
+        pbehavior: false,
         action: expect.any(Function),
       },
     });
@@ -93,7 +95,7 @@ describe('filters-form', () => {
       propsData: {
         filters,
         addable: true,
-        entitiesType: ENTITIES_TYPES.entity,
+        entity: true,
       },
       mocks: {
         $modals,
@@ -111,8 +113,10 @@ describe('filters-form', () => {
       config: {
         filter: filters[editedIndex],
         title: 'Edit filter',
-        entitiesType: ENTITIES_TYPES.entity,
-        existingTitles: filtersTitles,
+        name: true,
+        entity: true,
+        alarm: false,
+        pbehavior: false,
         action: expect.any(Function),
       },
     });
@@ -191,13 +195,13 @@ describe('filters-form', () => {
     expect(eventData).toEqual(updatedFilters);
   });
 
-  it('Renders `filters-form` with default props', () => {
+  it('Renders `filters-list-form` with default props', () => {
     const wrapper = snapshotFactory();
 
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `filters-form` with custom props', () => {
+  it('Renders `filters-list-form` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         filters,

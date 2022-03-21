@@ -1,8 +1,9 @@
 <template lang="pug">
-  c-pattern-groups-field(
-    v-field="groups",
+  c-patterns-editor-field(
+    v-field="patterns",
     :disabled="disabled",
     :name="name",
+    :required="required",
     :attributes="pbehaviorAttributes"
   )
 </template>
@@ -18,12 +19,12 @@ const { mapActions: pbehaviorTypeMapActions } = createNamespacedHelpers('pbehavi
 
 export default {
   model: {
-    prop: 'groups',
+    prop: 'patterns',
     event: 'input',
   },
   props: {
-    groups: {
-      type: Array,
+    patterns: {
+      type: Object,
       required: true,
     },
     disabled: {
@@ -33,6 +34,10 @@ export default {
     name: {
       type: String,
       required: false,
+    },
+    required: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

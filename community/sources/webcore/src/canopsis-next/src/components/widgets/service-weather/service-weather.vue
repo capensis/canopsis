@@ -45,7 +45,7 @@ import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import entitiesServiceMixin from '@/mixins/entities/service';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 
-import FilterSelector from '@/components/other/filter/filter-selector.vue';
+import FilterSelector from '@/components/forms/filters/filter-selector.vue';
 
 import ServiceWeatherItem from './service-weather-item.vue';
 

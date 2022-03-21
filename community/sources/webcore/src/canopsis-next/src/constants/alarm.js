@@ -132,15 +132,15 @@ export const DEFAULT_ALARMS_WIDGET_COLUMNS = [
 
 export const DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS = [
   {
-    labelKey: 'alarm.connector',
+    labelKey: 'common.connector',
     value: ALARM_ENTITY_FIELDS.connector,
   },
   {
-    labelKey: 'alarm.connectorName',
+    labelKey: 'common.connectorName',
     value: ALARM_ENTITY_FIELDS.connectorName,
   },
   {
-    labelKey: 'alarm.resource',
+    labelKey: 'common.resource',
     value: ALARM_ENTITY_FIELDS.resource,
   },
   {
@@ -148,7 +148,7 @@ export const DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS = [
     value: ALARM_ENTITY_FIELDS.output,
   },
   {
-    labelKey: 'alarm.extraDetails',
+    labelKey: 'common.extraDetail',
     value: ALARM_ENTITY_FIELDS.extraDetails,
   },
   {

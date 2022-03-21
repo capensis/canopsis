@@ -18,6 +18,7 @@ export const entitiesPatternsMixin = {
       removePattern: 'remove',
       bulkRemovePatterns: 'bulkRemove',
       fetchPatternsListWithPreviousParams: 'fetchListWithPreviousParams',
+      fetchPatternsListWithoutStore: 'fetchListWithoutStore',
     }),
   },
 };

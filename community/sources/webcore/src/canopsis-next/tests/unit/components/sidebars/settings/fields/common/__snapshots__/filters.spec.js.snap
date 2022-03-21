@@ -39,8 +39,9 @@ exports[`filters Renders \`filters\` with custom props 1`] = `
         class="container"
       >
         <filter-selector-stub
+          alarm="true"
           condition="$and"
-          entitiestype="entity"
+          entities-type="entity"
           filters="[object Object]"
           hasaccesstouserfilter="true"
           hideselect="true"
@@ -97,8 +98,9 @@ exports[`filters Renders \`filters\` with default and required props 1`] = `
         class="container"
       >
         <filter-selector-stub
+          alarm="true"
           condition="$and"
-          entitiestype="alarm"
+          entities-type="alarm"
           filters=""
           hasaccesstouserfilter="true"
           hideselecticon="true"
