@@ -1028,7 +1028,7 @@ export default {
         },
       },
     },
-    filter: {
+    createFilter: {
       create: {
         title: 'Créer un filtre',
       },
