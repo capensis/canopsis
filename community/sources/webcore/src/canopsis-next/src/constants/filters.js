@@ -1,3 +1,9 @@
+export const PATTERN_TYPES = {
+  alarm: 'alarm',
+  entity: 'entity',
+  pbehavior: 'pbehavior',
+};
+
 export const PATTERN_OPERATORS = {
   equal: 'equal',
   contains: 'contains',
@@ -172,3 +178,5 @@ export const PATTERN_INFOS_NAME_OPERATORS = [
   PATTERN_OPERATORS.exist,
   PATTERN_OPERATORS.notExist,
 ];
+
+export const PATTERN_CUSTOM_ITEM_VALUE = Symbol('custom');

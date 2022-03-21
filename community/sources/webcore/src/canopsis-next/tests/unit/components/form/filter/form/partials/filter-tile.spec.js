@@ -1,6 +1,6 @@
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
-import FilterTile from '@/components/other/filter/form/partials/filter-tile.vue';
+import FilterTile from '@/components/forms/filters/partials/filter-tile.vue';
 
 const localVue = createVueInstance();
 

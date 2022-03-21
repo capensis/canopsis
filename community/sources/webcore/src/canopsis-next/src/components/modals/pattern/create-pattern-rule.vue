@@ -17,7 +17,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { patternRuleToForm, formToPatternRule } from '@/helpers/forms/pattern-rule';
+import { patternRuleToForm } from '@/helpers/forms/pattern';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 
@@ -45,7 +45,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(formToPatternRule(this.form));
+          await this.config.action(this.form);
         }
 
         this.$modals.hide();

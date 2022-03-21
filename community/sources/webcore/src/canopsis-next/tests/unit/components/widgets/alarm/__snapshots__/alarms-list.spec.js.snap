@@ -32,8 +32,8 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
       class="flex"
     >
       <filter-selector-stub
+        alarm="true"
         condition="$and"
-        entitiestype="alarm"
         filters=""
         hasaccesstoaddfilter="true"
         itemtext="title"

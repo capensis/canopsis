@@ -4,9 +4,11 @@
       template(slot="title")
         span {{ $t('common.filters') }}
       template(slot="text")
-        filters-form(
+        filters-list-form(
           v-model="form.filters",
-          :entities-type="config.entitiesType",
+          :pbehavior="config.pbehavior",
+          :alarm="config.alarm",
+          :event="config.event",
           :addable="config.hasAccessToAddFilter",
           :editable="config.hasAccessToEditFilter"
         )
@@ -24,7 +26,7 @@ import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import { filtersToForm, formToFilters } from '@/helpers/forms/filter';
 
-import FiltersForm from '@/components/other/filter/form/filters-form.vue';
+import FiltersListForm from '@/components/forms/filters/filters-list-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -33,7 +35,7 @@ import ModalWrapper from '../modal-wrapper.vue';
  */
 export default {
   name: MODALS.filtersList,
-  components: { FiltersForm, ModalWrapper },
+  components: { FiltersListForm, ModalWrapper },
   mixins: [
     modalInnerMixin,
     submittableMixinCreator(),
