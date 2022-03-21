@@ -149,6 +149,9 @@ import CPbehaviorTypeField from '@/components/forms/fields/pbehavior/c-pbehavior
 import CSelectField from '@/components/forms/fields/c-select-field.vue';
 import CCollapsePanel from '@/components/common/block/c-collapse-panel.vue';
 
+/**
+ * Patterns
+ */
 import CPatternField from '@/components/forms/fields/pattern/c-pattern-field.vue';
 import CPatternAttributeField from '@/components/forms/fields/pattern/c-pattern-attribute-field.vue';
 import CPatternInfosAttributeField from '@/components/forms/fields/pattern/c-pattern-infos-attribute-field.vue';
