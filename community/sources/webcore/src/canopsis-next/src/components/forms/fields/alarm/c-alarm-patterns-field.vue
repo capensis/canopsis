@@ -3,6 +3,7 @@
     v-field="patterns",
     :disabled="disabled",
     :name="name",
+    :type="$constants.PATTERN_TYPES.alarm",
     :required="required",
     :attributes="alarmAttributes"
   )

@@ -38,6 +38,19 @@
             :name="entityPbehaviorFieldName",
             @input="errors.remove(entityPbehaviorFieldName)"
           )
+
+    c-collapse-panel.mb-2(v-if="event", color="grey")
+      template(#header="")
+        span.white--text {{ $t('common.eventPatterns') }}
+      v-card
+        v-card-text
+          c-event-filter-patterns-field(
+            v-field="value.event_pattern",
+            :required="isPatternRequired",
+            :disabled="disabled",
+            :name="eventPatternsFieldName",
+            @input="errors.remove(eventPatternsFieldName)"
+          )
 </template>
 
 <script>
@@ -63,6 +76,10 @@ export default {
       default: false,
     },
     alarm: {
+      type: Boolean,
+      default: false,
+    },
+    event: {
       type: Boolean,
       default: false,
     },
@@ -98,13 +115,7 @@ export default {
   },
   computed: {
     hasPatterns() {
-      const {
-        alarm_pattern: alarmPattern,
-        entity_pattern: entityPattern,
-        pbehavior_pattern: pbehaviorPattern,
-      } = this.value;
-
-      return alarmPattern.groups.length || entityPattern.groups.length || pbehaviorPattern.groups.length;
+      return Object.values(this.value).some((patterns = []) => patterns.length);
     },
 
     isPatternRequired() {
@@ -113,6 +124,10 @@ export default {
 
     alarmPatternsFieldName() {
       return this.preparePatternsFieldName('alarm_patterns');
+    },
+
+    eventPatternsFieldName() {
+      return this.preparePatternsFieldName('event_patterns');
     },
 
     entityPatternsFieldName() {
