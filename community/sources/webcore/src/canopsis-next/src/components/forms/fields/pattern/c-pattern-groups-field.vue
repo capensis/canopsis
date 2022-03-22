@@ -91,11 +91,9 @@ export default {
     addFilterGroup() {
       const [firstAttribute] = this.attributes;
 
-      this.addItemIntoArray(patternRulesToGroup({
-        rules: [
-          { attribute: firstAttribute?.value },
-        ],
-      }));
+      this.addItemIntoArray(patternRulesToGroup([
+        { field: firstAttribute?.value },
+      ]));
     },
   },
 };
