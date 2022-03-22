@@ -55,7 +55,7 @@ func NewEngine(
 	serviceRedisSession := m.DepRedisSession(ctx, redis.EntityServiceStorage, logger, cfg)
 	periodicalLockClient := redis.NewLockClient(redisSession)
 
-	eventFilterService := eventfilter.NewService(eventFilterAdapter, timezoneConfigProvider, logger)
+	eventFilterService := eventfilter.NewService(mongoClient, eventFilterAdapter, timezoneConfigProvider, logger)
 	enrichmentCenter := libcontext.NewEnrichmentCenter(
 		entityAdapter,
 		options.FeatureContextEnrich,
