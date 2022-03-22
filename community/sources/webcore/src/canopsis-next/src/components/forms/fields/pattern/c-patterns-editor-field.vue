@@ -1,6 +1,13 @@
 <template lang="pug">
   v-layout(column)
-    c-pattern-field.mb-2(:value="patterns.id", return-object, @input="updatePattern")
+    c-pattern-field.mb-2(
+      v-if="type",
+      :value="patterns.id",
+      :type="type",
+      return-object,
+      required,
+      @input="updatePattern"
+    )
 
     v-tabs(v-if="patterns.id", slider-color="primary", centered)
       v-tab {{ $t('pattern.simpleEditor') }}
@@ -9,6 +16,7 @@
           v-field="patterns.groups",
           :disabled="disabled || !isCustomPattern",
           :name="name",
+          :type="type",
           :required="required",
           :attributes="attributes"
         )
@@ -65,6 +73,10 @@ export default {
     required: {
       type: Boolean,
       default: false,
+    },
+    type: {
+      type: String,
+      required: false,
     },
   },
   computed: {

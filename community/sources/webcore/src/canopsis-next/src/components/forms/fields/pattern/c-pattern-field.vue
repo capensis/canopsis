@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { MAX_LIMIT, PATTERN_CUSTOM_ITEM_VALUE } from '@/constants';
+import { MAX_LIMIT, PATTERN_CUSTOM_ITEM_VALUE, PATTERN_TYPES } from '@/constants';
 
 import { entitiesPatternsMixin } from '@/mixins/entities/pattern';
 
@@ -52,6 +52,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    type: {
+      type: String,
+      default: PATTERN_TYPES.alarm,
+    },
   },
   data() {
     return {
@@ -80,10 +84,22 @@ export default {
     this.fetchList();
   },
   methods: {
+    getParams() {
+      const params = {
+        params: { limit: MAX_LIMIT },
+      };
+
+      if (this.type) {
+        /** TODO: Should be fixed after backend fixes */
+        params.search = `type=${this.type}`;
+      }
+
+      return params;
+    },
     async fetchList() {
       this.pending = true;
 
-      const { data: items } = await this.fetchPatternsListWithoutStore({ params: { limit: MAX_LIMIT } });
+      const { data: items } = await this.fetchPatternsListWithoutStore({ params: this.getParams() });
 
       this.items = items;
       this.pending = false;

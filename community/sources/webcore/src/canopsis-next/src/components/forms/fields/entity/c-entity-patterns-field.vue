@@ -3,6 +3,7 @@
     v-field="patterns",
     :disabled="disabled",
     :name="name",
+    :type="$constants.PATTERN_TYPES.entity",
     :required="required",
     :attributes="entityAttributes"
   )

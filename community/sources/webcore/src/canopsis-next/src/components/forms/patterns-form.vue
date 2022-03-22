@@ -8,11 +8,12 @@
       :error-messages="errors.collect('name')",
       name="name"
     )
-    c-patterns-field(
+    c-patterns-field.mt-2(
       v-field="form",
       :entity="entity",
       :alarm="alarm",
-      :pbehavior="pbehavior"
+      :pbehavior="pbehavior",
+      :event="event"
     )
 </template>
 
@@ -41,6 +42,10 @@ export default {
       default: false,
     },
     pbehavior: {
+      type: Boolean,
+      default: false,
+    },
+    event: {
       type: Boolean,
       default: false,
     },

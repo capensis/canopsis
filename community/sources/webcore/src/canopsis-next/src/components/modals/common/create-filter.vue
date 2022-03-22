@@ -56,7 +56,7 @@ export default {
   },
   computed: {
     title() {
-      return this.config.name || this.$t('modals.createFilter.create.title');
+      return this.config.title || this.$t('modals.createFilter.create.title');
     },
   },
   methods: {
