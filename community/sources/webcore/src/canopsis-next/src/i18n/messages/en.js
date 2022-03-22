@@ -27,6 +27,8 @@ import {
   ALARM_METRIC_PARAMETERS,
   USER_METRIC_PARAMETERS,
   PATTERN_OPERATORS,
+  PATTERN_TYPES,
+  PATTERN_INPUT_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -328,14 +330,8 @@ export default {
       [PATTERN_OPERATORS.isEmpty]: 'Is empty',
       [PATTERN_OPERATORS.isNotEmpty]: 'Is not empty',
 
-      [PATTERN_OPERATORS.isNull]: 'Is null',
-      [PATTERN_OPERATORS.isNotNull]: 'Is not null',
-
       [PATTERN_OPERATORS.higher]: 'Higher than',
       [PATTERN_OPERATORS.lower]: 'Lower than',
-
-      [PATTERN_OPERATORS.greater]: 'Greater than',
-      [PATTERN_OPERATORS.less]: 'Less than',
 
       [PATTERN_OPERATORS.longer]: 'Longer',
       [PATTERN_OPERATORS.shorter]: 'Shorter',
@@ -1633,15 +1629,48 @@ export default {
       create: {
         title: 'Create alarm filter',
       },
+      edit: {
+        title: 'Edit alarm filter',
+      },
+    },
+    createCorporateAlarmPattern: {
+      create: {
+        title: 'Create shared alarm filter',
+      },
+      edit: {
+        title: 'Edit shared alarm filter',
+      },
     },
     createEntityPattern: {
       create: {
         title: 'Create entity filter',
       },
+      edit: {
+        title: 'Edit entity filter',
+      },
+    },
+    createCorporateEntityPattern: {
+      create: {
+        title: 'Create shared entity filter',
+      },
+      edit: {
+        title: 'Edit shared entity filter',
+      },
     },
     createPbehaviorPattern: {
       create: {
         title: 'Create pbehavior filter',
+      },
+      edit: {
+        title: 'Edit pbehavior filter',
+      },
+    },
+    createCorporatePbehaviorPattern: {
+      create: {
+        title: 'Create shared pbehavior filter',
+      },
+      edit: {
+        title: 'Edit shared pbehavior filter',
       },
     },
   },
@@ -2326,11 +2355,11 @@ export default {
 
   mixedField: {
     types: {
-      string: '@:variableTypes.string',
-      number: '@:variableTypes.number',
-      boolean: '@:variableTypes.boolean',
-      null: '@:variableTypes.null',
-      array: '@:variableTypes.array',
+      [PATTERN_INPUT_TYPES.string]: '@:variableTypes.string',
+      [PATTERN_INPUT_TYPES.number]: '@:variableTypes.number',
+      [PATTERN_INPUT_TYPES.boolean]: '@:variableTypes.boolean',
+      [PATTERN_INPUT_TYPES.null]: '@:variableTypes.null',
+      [PATTERN_INPUT_TYPES.array]: '@:variableTypes.array',
     },
   },
 
@@ -2744,6 +2773,11 @@ export default {
     removeRule: 'Remove rule',
     advancedEditor: 'Advanced editor',
     simpleEditor: 'Simple editor',
+    types: {
+      [PATTERN_TYPES.alarm]: 'Alarm pattern',
+      [PATTERN_TYPES.entity]: 'Entity pattern',
+      [PATTERN_TYPES.pbehavior]: 'Pbehavior pattern',
+    },
     errors: {
       ruleRequired: 'Please add at least one rule',
       groupRequired: 'Please add at least one group',

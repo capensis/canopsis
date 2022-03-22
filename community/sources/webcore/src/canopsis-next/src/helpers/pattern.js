@@ -19,7 +19,7 @@ import {
  */
 
 /**
- * @typedef { 'string' | 'number' | 'boolean' | 'null' | 'array' } PatternValueType
+ * @typedef { 'string' | 'int' | 'bool' | 'null' | 'string_array' } PatternValueType
  */
 
 /**

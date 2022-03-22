@@ -1,3 +1,5 @@
+import { QUICK_RANGES } from '@/constants/common';
+
 export const PATTERN_TYPES = {
   alarm: 'alarm',
   entity: 'entity',
@@ -24,12 +26,6 @@ export const PATTERN_OPERATORS = {
   isEmpty: 'is_empty',
   isNotEmpty: 'is_not_empty',
 
-  isNull: 'is_null',
-  isNotNull: 'is_not_null',
-
-  greater: 'greater',
-  less: 'less',
-
   higher: 'higher_than',
   lower: 'lower_than',
 
@@ -49,12 +45,12 @@ export const PATTERN_OPERATORS = {
   notAcked: 'not_acked',
 };
 
-export const FILTER_CONDITIONS = {
+export const PATTERN_CONDITIONS = {
   equal: 'eq',
   notEqual: 'neq',
   greater: 'gt',
   less: 'lt',
-  regex: 'regex',
+  regexp: 'regexp',
   hasEvery: 'has_every',
   hasOneOf: 'has_one_of',
   hasNot: 'has_not',
@@ -63,14 +59,6 @@ export const FILTER_CONDITIONS = {
   relativeTime: 'relative_time',
   absoluteTime: 'absolute_time',
 };
-
-export const FILTER_OPERATORS_FOR_ARRAY = [
-  PATTERN_OPERATORS.hasEvery,
-  PATTERN_OPERATORS.hasOneOf,
-  PATTERN_OPERATORS.hasNot,
-  PATTERN_OPERATORS.isEmpty,
-  PATTERN_OPERATORS.isNotEmpty,
-];
 
 export const FILTER_MONGO_OPERATORS = {
   and: '$and',
@@ -86,10 +74,10 @@ export const FILTER_MONGO_OPERATORS = {
 
 export const PATTERN_INPUT_TYPES = {
   string: 'string',
-  number: 'number',
-  boolean: 'boolean',
+  number: 'int',
+  boolean: 'bool',
   null: 'null',
-  array: 'array',
+  array: 'string_array',
 };
 
 export const FILTER_DEFAULT_VALUES = {
@@ -150,7 +138,7 @@ export const PATTERN_NUMBER_OPERATORS = [
   PATTERN_OPERATORS.equal,
   PATTERN_OPERATORS.notEqual,
   PATTERN_OPERATORS.higher,
-  PATTERN_OPERATORS.longer,
+  PATTERN_OPERATORS.lower,
 ];
 
 export const PATTERN_STRING_OPERATORS = [
@@ -179,4 +167,25 @@ export const PATTERN_INFOS_NAME_OPERATORS = [
   PATTERN_OPERATORS.notExist,
 ];
 
+export const PATTERN_QUICK_RANGES = [
+  QUICK_RANGES.last15Minutes,
+  QUICK_RANGES.last30Minutes,
+  QUICK_RANGES.last1Hour,
+  QUICK_RANGES.last3Hour,
+  QUICK_RANGES.last3Hour,
+  QUICK_RANGES.last6Hour,
+  QUICK_RANGES.last12Hour,
+  QUICK_RANGES.last24Hour,
+  QUICK_RANGES.last2Days,
+  QUICK_RANGES.last7Days,
+  QUICK_RANGES.last30Days,
+  QUICK_RANGES.last1Year,
+  QUICK_RANGES.custom,
+];
+
 export const PATTERN_CUSTOM_ITEM_VALUE = Symbol('custom');
+
+export const PATTERN_TABS = {
+  patterns: 'patterns',
+  corporatePatterns: 'corporatePatterns',
+};

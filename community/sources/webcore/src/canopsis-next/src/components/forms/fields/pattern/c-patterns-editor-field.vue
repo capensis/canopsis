@@ -9,12 +9,12 @@
       @input="updatePattern"
     )
 
-    v-tabs(v-if="patterns.id", slider-color="primary", centered)
+    v-tabs(v-if="!withType || patterns.id", slider-color="primary", centered)
       v-tab {{ $t('pattern.simpleEditor') }}
       v-tab-item
         c-pattern-groups-field.mt-2(
           v-field="patterns.groups",
-          :disabled="disabled || !isCustomPattern",
+          :disabled="formDisabled",
           :name="name",
           :type="type",
           :required="required",
@@ -33,7 +33,7 @@
 
     v-layout(justify-end)
       v-btn.mx-0(
-        v-if="!isCustomPattern",
+        v-if="withType && !isCustomPattern",
         color="primary",
         dark,
         @click="updatePatternToCustom"
@@ -80,10 +80,14 @@ export default {
     },
     withType: {
       type: Boolean,
-      required: false,
+      default: false,
     },
   },
   computed: {
+    formDisabled() {
+      return this.disabled || (this.withType && !this.isCustomPattern);
+    },
+
     isCustomPattern() {
       return this.patterns.id === PATTERN_CUSTOM_ITEM_VALUE;
     },
