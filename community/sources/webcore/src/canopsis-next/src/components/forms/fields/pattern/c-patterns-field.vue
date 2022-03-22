@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    c-collapse-panel.mb-2(v-if="alarm", color="grey")
+    c-collapse-panel.mb-2(v-if="withAlarm", color="grey")
       template(#header="")
         span.white--text {{ $t('common.alarmPatterns') }}
       v-card
@@ -13,7 +13,7 @@
             @input="errors.remove(alarmPatternsFieldName)"
           )
 
-    c-collapse-panel.mb-2(v-if="entity", color="grey")
+    c-collapse-panel.mb-2(v-if="withEntity", color="grey")
       template(#header="")
         span.white--text {{ $t('common.entityPatterns') }}
       v-card
@@ -26,7 +26,7 @@
             @input="errors.remove(entityPatternsFieldName)"
           )
 
-    c-collapse-panel(v-if="pbehavior", color="grey")
+    c-collapse-panel(v-if="withPbehavior", color="grey")
       template(#header="")
         span.white--text {{ $t('common.pbehaviorPatterns') }}
       v-card
@@ -39,7 +39,7 @@
             @input="errors.remove(entityPbehaviorFieldName)"
           )
 
-    c-collapse-panel.mb-2(v-if="event", color="grey")
+    c-collapse-panel.mb-2(v-if="withEvent", color="grey")
       template(#header="")
         span.white--text {{ $t('common.eventPatterns') }}
       v-card
@@ -75,19 +75,19 @@ export default {
       type: Boolean,
       default: false,
     },
-    alarm: {
+    withAlarm: {
       type: Boolean,
       default: false,
     },
-    event: {
+    withEvent: {
       type: Boolean,
       default: false,
     },
-    entity: {
+    withEntity: {
       type: Boolean,
       default: false,
     },
-    pbehavior: {
+    withPbehavior: {
       type: Boolean,
       default: false,
     },

@@ -5,7 +5,8 @@
     :name="name",
     :type="$constants.PATTERN_TYPES.pbehavior",
     :required="required",
-    :attributes="pbehaviorAttributes"
+    :attributes="pbehaviorAttributes",
+    with-type
   )
 </template>
 

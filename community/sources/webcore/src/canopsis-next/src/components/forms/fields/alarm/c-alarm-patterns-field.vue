@@ -5,7 +5,8 @@
     :name="name",
     :type="$constants.PATTERN_TYPES.alarm",
     :required="required",
-    :attributes="alarmAttributes"
+    :attributes="alarmAttributes",
+    with-type
   )
 </template>
 

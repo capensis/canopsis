@@ -6,9 +6,9 @@
       template(slot="text")
         filters-list-form(
           v-model="form.filters",
-          :pbehavior="config.pbehavior",
-          :alarm="config.alarm",
-          :event="config.event",
+          :with-pbehavior="config.withPbehavior",
+          :with-alarm="config.withAlarm",
+          :with-event="config.withEvent",
           :addable="config.hasAccessToAddFilter",
           :editable="config.hasAccessToEditFilter"
         )

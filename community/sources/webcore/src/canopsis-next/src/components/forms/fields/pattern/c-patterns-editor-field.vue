@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout(column)
     c-pattern-field.mb-2(
-      v-if="type",
+      v-if="withType",
       :value="patterns.id",
       :type="type",
       return-object,
@@ -76,6 +76,10 @@ export default {
     },
     type: {
       type: String,
+      required: false,
+    },
+    withType: {
+      type: Boolean,
       required: false,
     },
   },

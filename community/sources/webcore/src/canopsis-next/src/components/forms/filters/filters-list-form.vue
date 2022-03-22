@@ -54,15 +54,15 @@ export default {
       type: Boolean,
       default: true,
     },
-    alarm: {
+    withAlarm: {
       type: Boolean,
       default: false,
     },
-    entity: {
+    withEntity: {
       type: Boolean,
       default: false,
     },
-    pbehavior: {
+    withPbehavior: {
       type: Boolean,
       default: false,
     },
@@ -72,10 +72,10 @@ export default {
       this.$modals.show({
         name: MODALS.createFilter,
         config: {
-          name: true,
-          alarm: this.alarm,
-          entity: this.entity,
-          pbehavior: this.pbehavior,
+          withTitle: true,
+          withAlarm: this.withAlarm,
+          withEntity: this.withEntity,
+          withPbehavior: this.withPbehavior,
           title: this.$t('modals.createFilter.create.title'),
           action: newFilter => this.addItemIntoArray(newFilter),
         },
@@ -90,10 +90,10 @@ export default {
         config: {
           filter,
 
-          name: true,
-          alarm: this.alarm,
-          entity: this.entity,
-          pbehavior: this.pbehavior,
+          withTitle: true,
+          withAlarm: this.withAlarm,
+          withEntity: this.withEntity,
+          withPbehavior: this.withPbehavior,
           title: this.$t('modals.createFilter.edit.title'),
           action: newFilter => this.updateItemInArray(index, { ...filter, ...newFilter }),
         },

@@ -6,11 +6,11 @@
       template(#text="")
         patterns-form(
           v-model="form",
-          :name="config.name",
-          :entity="config.entity",
-          :pbehavior="config.pbehavior",
-          :alarm="config.alarm",
-          :event="config.event"
+          :with-title="config.withTitle",
+          :with-entity="config.withEntity",
+          :with-pbehavior="config.withPbehavior",
+          :with-alarm="config.withAlarm",
+          :with-event="config.withEvent"
         )
       template(#actions="")
         v-btn(

@@ -4,8 +4,8 @@
       v-field="patterns",
       :name="name",
       some-required,
-      alarm,
-      entity
+      with-alarm,
+      with-entity
     )
 </template>
 

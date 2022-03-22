@@ -42,9 +42,9 @@
       v-field="form.config",
       :total-entity="withTotalEntityPatterns",
       name="config",
-      alarm,
-      entity,
-      event
+      with-alarm,
+      with-entity,
+      with-event
     )
 </template>
 

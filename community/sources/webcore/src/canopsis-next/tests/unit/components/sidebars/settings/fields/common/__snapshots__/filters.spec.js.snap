@@ -39,7 +39,6 @@ exports[`filters Renders \`filters\` with custom props 1`] = `
         class="container"
       >
         <filter-selector-stub
-          alarm="true"
           condition="$and"
           entities-type="entity"
           filters="[object Object]"
@@ -52,6 +51,7 @@ exports[`filters Renders \`filters\` with custom props 1`] = `
           lockedfilters=""
           long="true"
           value="[object Object]"
+          withalarm="true"
         />
       </div>
     </div>
@@ -98,7 +98,6 @@ exports[`filters Renders \`filters\` with default and required props 1`] = `
         class="container"
       >
         <filter-selector-stub
-          alarm="true"
           condition="$and"
           entities-type="alarm"
           filters=""
@@ -109,6 +108,7 @@ exports[`filters Renders \`filters\` with default and required props 1`] = `
           label="Default filter"
           lockedfilters=""
           long="true"
+          withalarm="true"
         />
       </div>
     </div>

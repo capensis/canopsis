@@ -6,7 +6,6 @@ import { createSelectInputStub } from '@unit/stubs/input';
 import { ENTITIES_TYPES, FILTER_MONGO_OPERATORS, MODALS } from '@/constants';
 
 import FilterSelector from '@/components/forms/filters/filter-selector.vue';
-import FiltersListForm from '@/components/forms/filters/filters-list-form';
 
 const localVue = createVueInstance();
 
@@ -101,7 +100,7 @@ describe('filter-selector', () => {
         filters,
         value: filters[0],
         hasAccessToUserFilter: true,
-        entity: true,
+        withEntity: true,
       },
       mocks: {
         $modals,
@@ -125,9 +124,9 @@ describe('filter-selector', () => {
           filters: filtersWithSelected,
           hasAccessToAddFilter: true,
           hasAccessToEditFilter: true,
-          entity: true,
-          alarm: false,
-          pbehavior: false,
+          withEntity: true,
+          withAlarm: false,
+          withPbehavior: false,
           action: expect.any(Function),
         },
       },
@@ -184,9 +183,9 @@ describe('filter-selector', () => {
       {
         name: MODALS.filtersList,
         config: {
-          alarm: true,
-          pbehavior: false,
-          entity: false,
+          withAlarm: true,
+          withPbehavior: false,
+          withEntity: false,
           filters: filtersWithSelected,
           hasAccessToAddFilter: true,
           hasAccessToEditFilter: true,
