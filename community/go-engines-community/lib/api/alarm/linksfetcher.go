@@ -30,7 +30,7 @@ func NewLinksFetcher(legacyURL fmt.Stringer, timeout time.Duration) LinksFetcher
 }
 
 func (lf *linksFetcher) Fetch(ctx context.Context, apiKey string, ae []AlarmEntity) (*LinksResponse, error) {
-	if len(ae) == 0 {
+	if lf.LegacyURL == nil || len(ae) == 0 {
 		return nil, nil
 	}
 
