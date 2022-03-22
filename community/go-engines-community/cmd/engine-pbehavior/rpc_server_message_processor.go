@@ -12,8 +12,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"github.com/streadway/amqp"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"time"
@@ -163,7 +163,7 @@ func (p *createPbehaviorMessageProcessor) createPbehavior(
 
 	pbehavior := libpbehavior.PBehavior{
 		ID:      utils.NewID(),
-		Author:  params.UserID,                       // since author now contains username, we should use user_id in author
+		Author:  params.UserID, // since author now contains username, we should use user_id in author
 		Enabled: true,
 		Filter:  fmt.Sprintf(`{"_id": "%s"}`, entity.ID),
 		Name:    params.Name,

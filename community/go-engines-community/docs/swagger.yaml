@@ -2741,7 +2741,6 @@ definitions:
     - author
     - enabled
     - name
-    - priority
     - triggers
     type: object
   scenario.BulkUpdateResponseItem:
@@ -2806,7 +2805,6 @@ definitions:
     - author
     - enabled
     - name
-    - priority
     - triggers
     type: object
   scenario.EditRequest:
@@ -2839,7 +2837,6 @@ definitions:
     - author
     - enabled
     - name
-    - priority
     - triggers
     type: object
   scenario.GetMinimalPriorityResponse:

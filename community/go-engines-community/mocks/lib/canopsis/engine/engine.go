@@ -11,7 +11,7 @@ import (
 
 	engine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	gomock "github.com/golang/mock/gomock"
-	amqp "github.com/streadway/amqp"
+	amqp091 "github.com/rabbitmq/amqp091-go"
 )
 
 // MockEngine is a mock of Engine interface.
@@ -136,7 +136,7 @@ func (m *MockMessageProcessor) EXPECT() *MockMessageProcessorMockRecorder {
 }
 
 // Process mocks base method.
-func (m *MockMessageProcessor) Process(arg0 context.Context, arg1 amqp.Delivery) ([]byte, error) {
+func (m *MockMessageProcessor) Process(arg0 context.Context, arg1 amqp091.Delivery) ([]byte, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Process", arg0, arg1)
 	ret0, _ := ret[0].([]byte)
