@@ -139,6 +139,7 @@ func RegisterRoutes(
 	metricsUserMetaUpdater metrics.MetaUpdater,
 	logger zerolog.Logger,
 ) {
+	legacyUrl := GetLegacyURL(logger)
 	sessionStore := security.GetSessionStore()
 	authMiddleware := security.GetAuthMiddleware()
 	security.RegisterCallbackRoutes(router, dbClient)
@@ -252,7 +253,7 @@ func RegisterRoutes(
 			)
 		}
 
-		alarmStore := alarm.NewStore(dbClient, GetLegacyURL())
+		alarmStore := alarm.NewStore(dbClient, legacyUrl)
 		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, timezoneConfigProvider)
 		alarmRouter := protected.Group("/alarms")
 		{
@@ -589,7 +590,7 @@ func RegisterRoutes(
 		{
 			weatherAPI := serviceweather.NewApi(serviceweather.NewStore(
 				dbClient,
-				GetLegacyURL(),
+				legacyUrl,
 				alarmStore,
 				timezoneConfigProvider,
 			))
