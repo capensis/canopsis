@@ -11,8 +11,8 @@
       v-else,
       v-field="form",
       some-required,
-      alarm,
-      entity
+      with-alarm,
+      with-entity
     )
 </template>
 

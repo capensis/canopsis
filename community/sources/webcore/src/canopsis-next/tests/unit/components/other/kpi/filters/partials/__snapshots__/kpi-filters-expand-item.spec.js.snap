@@ -68,8 +68,8 @@ exports[`kpi-filters-expand-item Renders \`kpi-filters-expand-item\` with filter
                 >
                   <c-patterns-field-stub
                     disabled="disabled"
-                    entity="entity"
                     value="[object Object]"
+                    with-entity="with-entity"
                   />
                 </div>
               </div>

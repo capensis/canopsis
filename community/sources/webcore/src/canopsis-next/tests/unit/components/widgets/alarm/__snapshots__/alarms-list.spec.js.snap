@@ -32,7 +32,6 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
       class="flex"
     >
       <filter-selector-stub
-        alarm="true"
         condition="$and"
         filters=""
         hasaccesstoaddfilter="true"
@@ -40,6 +39,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
         itemvalue="title"
         label="Select a filter"
         lockedfilters=""
+        withalarm="true"
       />
     </div>
     <div

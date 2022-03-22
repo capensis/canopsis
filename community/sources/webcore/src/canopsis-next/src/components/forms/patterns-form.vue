@@ -1,19 +1,19 @@
 <template lang="pug">
   v-layout(column)
     v-text-field(
-      v-if="name",
-      v-field="form.name",
-      v-validate="nameRules",
+      v-if="withTitle",
+      v-field="form.title",
+      v-validate="titleRules",
       :label="$t('common.title')",
-      :error-messages="errors.collect('name')",
-      name="name"
+      :error-messages="errors.collect('title')",
+      name="title"
     )
     c-patterns-field.mt-2(
       v-field="form",
-      :entity="entity",
-      :alarm="alarm",
-      :pbehavior="pbehavior",
-      :event="event"
+      :with-alarm="withAlarm",
+      :with-entity="withEntity",
+      :with-pbehavior="withPbehavior",
+      :with-event="withEvent"
     )
 </template>
 
@@ -29,35 +29,31 @@ export default {
       type: Object,
       required: true,
     },
-    name: {
+    withTitle: {
       type: Boolean,
       default: false,
     },
-    alarm: {
+    withAlarm: {
       type: Boolean,
       default: false,
     },
-    entity: {
+    withEvent: {
       type: Boolean,
       default: false,
     },
-    pbehavior: {
+    withEntity: {
       type: Boolean,
       default: false,
     },
-    event: {
-      type: Boolean,
-      default: false,
-    },
-    totalEntity: {
+    withPbehavior: {
       type: Boolean,
       default: false,
     },
   },
   computed: {
-    nameRules() {
+    titleRules() {
       return {
-        required: this.name,
+        required: this.withTitle,
       };
     },
   },

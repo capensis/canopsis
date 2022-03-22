@@ -5,7 +5,8 @@
     :name="name",
     :type="$constants.PATTERN_TYPES.entity",
     :required="required",
-    :attributes="entityAttributes"
+    :attributes="entityAttributes",
+    with-type
   )
 </template>
 

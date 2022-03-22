@@ -49,8 +49,8 @@ describe('filters-list-form', () => {
       propsData: {
         filters,
         addable: true,
-        alarm: true,
-        entity: true,
+        withAlarm: true,
+        withEntity: true,
       },
       mocks: {
         $modals,
@@ -65,10 +65,10 @@ describe('filters-list-form', () => {
       name: MODALS.createFilter,
       config: {
         title: 'Create filter',
-        name: true,
-        alarm: true,
-        entity: true,
-        pbehavior: false,
+        withTitle: true,
+        withAlarm: true,
+        withEntity: true,
+        withPbehavior: false,
         action: expect.any(Function),
       },
     });
@@ -95,7 +95,7 @@ describe('filters-list-form', () => {
       propsData: {
         filters,
         addable: true,
-        entity: true,
+        withEntity: true,
       },
       mocks: {
         $modals,
@@ -113,10 +113,10 @@ describe('filters-list-form', () => {
       config: {
         filter: filters[editedIndex],
         title: 'Edit filter',
-        name: true,
-        entity: true,
-        alarm: false,
-        pbehavior: false,
+        withTitle: true,
+        withAlarm: false,
+        withEntity: true,
+        withPbehavior: false,
         action: expect.any(Function),
       },
     });

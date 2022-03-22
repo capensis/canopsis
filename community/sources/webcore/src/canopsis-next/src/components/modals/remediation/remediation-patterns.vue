@@ -4,7 +4,12 @@
       template(slot="title")
         span {{ title }}
       template(slot="text")
-        c-patterns-field(v-model="form", alarm, entity, pbehavior)
+        c-patterns-field(
+          v-model="form",
+          with-alarm,
+          with-entity,
+          with-pbehavior
+        )
       template(slot="actions")
         v-btn(
           :disabled="submitting",

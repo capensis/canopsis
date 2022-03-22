@@ -124,18 +124,18 @@ export default {
       type: Boolean,
       default: true,
     },
-    entity: {
+    withEntity: {
       type: Boolean,
       default: false,
     },
-    pbehavior: {
+    withPbehavior: {
       type: Boolean,
       default: false,
     },
-    alarm: {
+    withAlarm: {
       type: Boolean,
       default() {
-        return !this.entity && !this.pbehavior;
+        return !this.withEntity && !this.withPbehavior;
       },
     },
   },
@@ -211,9 +211,9 @@ export default {
           filters: this.filtersWithSelected,
           hasAccessToAddFilter: this.hasAccessToUserFilter,
           hasAccessToEditFilter: this.hasAccessToUserFilter,
-          alarm: this.alarm,
-          entity: this.entity,
-          pbehavior: this.pbehavior,
+          withAlarm: this.withAlarm,
+          withEntity: this.withEntity,
+          withPbehavior: this.withPbehavior,
           action: filters => this.updateFilters(filters),
         },
       });
