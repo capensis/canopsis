@@ -13057,7 +13057,6 @@ var doc = `{
                 "author",
                 "enabled",
                 "name",
-                "priority",
                 "triggers"
             ],
             "properties": {
@@ -13153,7 +13152,6 @@ var doc = `{
                 "author",
                 "enabled",
                 "name",
-                "priority",
                 "triggers"
             ],
             "properties": {
@@ -13203,7 +13201,6 @@ var doc = `{
                 "author",
                 "enabled",
                 "name",
-                "priority",
                 "triggers"
             ],
             "properties": {
