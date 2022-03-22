@@ -6,7 +6,7 @@
     :type="$constants.PATTERN_TYPES.entity",
     :required="required",
     :attributes="entityAttributes",
-    with-type
+    :with-type="withType"
   )
 </template>
 
@@ -42,6 +42,10 @@ export default {
       required: false,
     },
     required: {
+      type: Boolean,
+      default: false,
+    },
+    withType: {
       type: Boolean,
       default: false,
     },

@@ -6,7 +6,7 @@
     :type="$constants.PATTERN_TYPES.alarm",
     :required="required",
     :attributes="alarmAttributes",
-    with-type
+    :with-type="withType"
   )
 </template>
 
@@ -39,6 +39,10 @@ export default {
       required: false,
     },
     required: {
+      type: Boolean,
+      default: false,
+    },
+    withType: {
       type: Boolean,
       default: false,
     },

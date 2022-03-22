@@ -431,6 +431,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.createMetaAlarmRule]: { maxWidth: 920, lazy: true },
     [MODALS.createEventFilterRuleAction]: { maxWidth: 920 },
     [MODALS.testSuite]: { maxWidth: 920 },
+    [MODALS.createPattern]: { maxWidth: 1280 },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },
