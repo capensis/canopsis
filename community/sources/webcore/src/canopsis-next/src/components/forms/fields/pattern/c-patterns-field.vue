@@ -10,6 +10,7 @@
             :required="isPatternRequired",
             :disabled="disabled",
             :name="alarmPatternsFieldName",
+            with-type,
             @input="errors.remove(alarmPatternsFieldName)"
           )
 
@@ -23,6 +24,7 @@
             :required="isPatternRequired",
             :disabled="disabled",
             :name="entityPatternsFieldName",
+            with-type,
             @input="errors.remove(entityPatternsFieldName)"
           )
 
@@ -36,6 +38,7 @@
             :required="isPatternRequired",
             :disabled="disabled",
             :name="entityPbehaviorFieldName",
+            with-type,
             @input="errors.remove(entityPbehaviorFieldName)"
           )
 
@@ -49,6 +52,7 @@
             :required="isPatternRequired",
             :disabled="disabled",
             :name="eventPatternsFieldName",
+            with-type,
             @input="errors.remove(eventPatternsFieldName)"
           )
 </template>

@@ -24,14 +24,15 @@
             :disabled="disabled"
           )
 
-    v-flex(xs7, :xs8="!isInfosRule && !isExtraInfosRule")
+    v-flex(v-if="rule.attribute", xs7, :xs8="!isInfosRule && !isExtraInfosRule")
       v-layout(row)
         template(v-if="isDateRule")
           v-flex.pl-3(xs5)
             c-quick-date-interval-type-field(
               v-field="rule.range.type",
               :name="name",
-              :disabled="disabled"
+              :disabled="disabled",
+              :ranges="intervalRanges"
             )
           v-flex.pl-3(v-if="isCustomRange", xs7)
             c-date-time-interval-field(
@@ -67,7 +68,13 @@
 </template>
 
 <script>
-import { PATTERN_INPUT_TYPES, PATTERN_RULE_INFOS_FIELDS, PATTERN_RULE_TYPES, QUICK_RANGES } from '@/constants';
+import {
+  PATTERN_INPUT_TYPES,
+  PATTERN_QUICK_RANGES,
+  PATTERN_RULE_INFOS_FIELDS,
+  PATTERN_RULE_TYPES,
+  QUICK_RANGES,
+} from '@/constants';
 
 import { convertValueByType, getValueType, isOperatorHasValue } from '@/helpers/pattern';
 
@@ -107,6 +114,10 @@ export default {
         { value: PATTERN_INPUT_TYPES.boolean },
         { value: PATTERN_INPUT_TYPES.array },
       ],
+    },
+    intervalRanges: {
+      type: Array,
+      default: () => PATTERN_QUICK_RANGES,
     },
     valueField: {
       type: Object,
@@ -214,11 +225,13 @@ export default {
     },
 
     operatorHasValue() {
+      const hasValue = isOperatorHasValue(this.rule.operator);
+
       if (this.isInfosRule) {
-        return this.isInfosValueField;
+        return this.isInfosValueField && hasValue;
       }
 
-      return isOperatorHasValue(this.rule.operator);
+      return hasValue;
     },
   },
   methods: {
