@@ -1719,6 +1719,9 @@ export default {
     statsWrongEditionError: "Les widgets de statistiques ne sont pas disponibles dans l'édition 'core' de Canopsis",
     socketConnectionProblem: 'Problème de connexion aux websockets',
   },
+  warnings: {
+    authTokenExpired: 'Le jeton d\'authentification a expiré',
+  },
   calendar: {
     today: 'Aujourd\'hui',
     month: 'Mois',
