@@ -18,6 +18,7 @@
     dense,
     autocomplete,
     @focus="onFocus",
+    @blur="onBlur",
     @update:searchInput="debouncedUpdateSearch"
   )
     template(#item="{ item, tile }")
@@ -119,7 +120,7 @@ export default {
     query: {
       deep: true,
       handler(newQuery, prevQuery) {
-        if (!isEqual(newQuery, prevQuery)) {
+        if (this.isFocused && !isEqual(newQuery, prevQuery)) {
           this.fetchEntities();
         }
       },
@@ -162,9 +163,15 @@ export default {
     },
 
     onFocus() {
+      this.isFocused = true;
+
       if (!this.entities.length) {
         this.fetchEntities();
       }
+    },
+
+    onBlur() {
+      this.isFocused = false;
     },
 
     getParams(ids) {

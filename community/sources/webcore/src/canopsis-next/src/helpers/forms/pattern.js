@@ -1,9 +1,13 @@
+import { isBoolean } from 'lodash';
 import {
   ALARM_PATTERN_FIELDS,
   ENTITY_PATTERN_FIELDS,
-  PATTERN_CONDITIONS, PATTERN_INFOS_NAME_OPERATORS,
+  PATTERN_CONDITIONS,
+  PATTERN_INFOS_NAME_OPERATORS,
   PATTERN_INPUT_TYPES,
-  PATTERN_OPERATORS, PATTERN_QUICK_RANGES, PATTERN_RULE_INFOS_FIELDS,
+  PATTERN_OPERATORS,
+  PATTERN_QUICK_RANGES,
+  PATTERN_RULE_INFOS_FIELDS,
   PATTERN_TYPES,
   QUICK_RANGES,
 } from '@/constants';
@@ -102,6 +106,7 @@ const isDatePatternRule = value => [
   ALARM_PATTERN_FIELDS.lastUpdateDate,
   ALARM_PATTERN_FIELDS.ackAt,
   ALARM_PATTERN_FIELDS.resolvedAt,
+  ENTITY_PATTERN_FIELDS.lastEventDate,
 ].includes(value);
 
 /**
@@ -137,7 +142,7 @@ export const patternRuleToForm = (rule = {}) => {
     duration: durationToForm(),
   };
 
-  if (!rule.field || !rule.cond) {
+  if (!rule.cond) {
     return form;
   }
 
@@ -147,22 +152,48 @@ export const patternRuleToForm = (rule = {}) => {
   const isInfos = isAlarmInfos || isEntityInfos;
 
   switch (rule.cond.type) {
-    case PATTERN_CONDITIONS.equal:
-      form.operator = PATTERN_OPERATORS.equal;
+    case PATTERN_CONDITIONS.equal: {
+      if (isBoolean(rule.cond.value)) {
+        if (rule.cond.value) {
+          form.operator = {
+            [ALARM_PATTERN_FIELDS.snooze]: PATTERN_OPERATORS.snoozed,
+            [ALARM_PATTERN_FIELDS.ack]: PATTERN_OPERATORS.acked,
+            [ALARM_PATTERN_FIELDS.canceled]: PATTERN_OPERATORS.canceled,
+            [ALARM_PATTERN_FIELDS.ticket]: PATTERN_OPERATORS.ticketAssociated,
+          }[rule.field];
+        } else {
+          form.operator = {
+            [ALARM_PATTERN_FIELDS.snooze]: PATTERN_OPERATORS.notSnoozed,
+            [ALARM_PATTERN_FIELDS.ack]: PATTERN_OPERATORS.notAcked,
+            [ALARM_PATTERN_FIELDS.canceled]: PATTERN_OPERATORS.notCanceled,
+            [ALARM_PATTERN_FIELDS.ticket]: PATTERN_OPERATORS.ticketNotAssociated,
+          }[rule.field];
+        }
+      }
+
+      if (!form.operator) {
+        form.operator = PATTERN_OPERATORS.equal;
+        form.value = rule.cond.value;
+      }
       break;
-    case PATTERN_CONDITIONS.notEqual:
+    }
+    case PATTERN_CONDITIONS.notEqual: {
       form.operator = PATTERN_OPERATORS.notEqual;
+      form.value = rule.cond.value;
       break;
+    }
 
     case PATTERN_CONDITIONS.greater:
       form.operator = isDuration
         ? PATTERN_OPERATORS.longer
         : PATTERN_OPERATORS.higher;
+      form.value = rule.cond.value;
       break;
     case PATTERN_CONDITIONS.less:
       form.operator = isDuration
         ? PATTERN_OPERATORS.shorter
         : PATTERN_OPERATORS.longer;
+      form.value = rule.cond.value;
       break;
 
     case PATTERN_CONDITIONS.exist:
@@ -173,12 +204,15 @@ export const patternRuleToForm = (rule = {}) => {
 
     case PATTERN_CONDITIONS.hasEvery:
       form.operator = PATTERN_OPERATORS.hasEvery;
+      form.value = rule.cond.value;
       break;
     case PATTERN_CONDITIONS.hasOneOf:
       form.operator = PATTERN_OPERATORS.hasOneOf;
+      form.value = rule.cond.value;
       break;
     case PATTERN_CONDITIONS.hasNot:
       form.operator = PATTERN_OPERATORS.hasNot;
+      form.value = rule.cond.value;
       break;
     case PATTERN_CONDITIONS.isEmpty:
       form.operator = rule.cond.value === true
@@ -232,7 +266,7 @@ export const patternRuleToForm = (rule = {}) => {
       break;
     }
     case PATTERN_CONDITIONS.relativeTime:
-      form.range.type = getQuickRangeByDiffBetweenStartAndStop(rule.cond.value, PATTERN_QUICK_RANGES);
+      form.range.type = getQuickRangeByDiffBetweenStartAndStop(rule.cond.value, PATTERN_QUICK_RANGES).value;
       break;
     case PATTERN_CONDITIONS.absoluteTime:
       form.range = {
@@ -247,20 +281,16 @@ export const patternRuleToForm = (rule = {}) => {
   }
 
   if (isInfos) {
-    if (isAlarmInfos) {
-      form.attribute = rule.field.slice(0, ALARM_PATTERN_FIELDS.infos.length);
-      form.dictionary = rule.field.slice(ALARM_PATTERN_FIELDS.infos.length + 1);
-    }
+    const infosPrefix = isAlarmInfos ? ALARM_PATTERN_FIELDS.infos : ENTITY_PATTERN_FIELDS.infos;
+
+    form.attribute = rule.field.slice(0, infosPrefix.length);
+    form.dictionary = rule.field.slice(infosPrefix.length + 1);
 
     form.field = PATTERN_INFOS_NAME_OPERATORS.includes(rule.cond.type)
       ? PATTERN_RULE_INFOS_FIELDS.name
       : PATTERN_RULE_INFOS_FIELDS.value;
   } else {
     form.attribute = rule.field;
-  }
-
-  if (!form.field) {
-    form.value = rule.cond.value;
   }
 
   return form;

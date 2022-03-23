@@ -83,17 +83,12 @@ export default {
     },
 
     getUpdatedRule(rule, newRule) {
-      const { operators, defaultValue } = this.getRuleProps(newRule);
+      const { defaultValue } = this.getRuleProps(newRule);
 
       const updatedRule = { ...newRule };
 
-      if (!operators.includes(newRule.operator)) {
-        const [firstOperator] = operators;
-
-        updatedRule.operator = firstOperator;
-      }
-
       if (updatedRule.attribute !== rule.attribute) {
+        updatedRule.operator = '';
         updatedRule.value = defaultValue ?? convertValueByOperator(updatedRule.value, updatedRule.operator);
       } else if (updatedRule.operator !== rule.operator) {
         updatedRule.value = convertValueByOperator(updatedRule.value, updatedRule.operator);

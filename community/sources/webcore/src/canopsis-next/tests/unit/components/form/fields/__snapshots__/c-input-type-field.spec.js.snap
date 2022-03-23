@@ -2,8 +2,8 @@
 
 exports[`c-input-type-field Renders \`c-input-type-field\` with default custom props 1`] = `
 <div
-  class="v-input c-input-type-field v-text-field v-text-field--solo-flat v-select v-input--has-state v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light error--text"
-  name="name"
+  class="v-input c-input-type-field v-text-field v-text-field--solo-flat v-select v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+  errormessages="Message"
   role="combobox"
 >
   <div
@@ -17,7 +17,7 @@ exports[`c-input-type-field Renders \`c-input-type-field\` with default custom p
       >
         <label
           aria-hidden="true"
-          class="v-label v-label--active v-label--is-disabled theme--light error--text"
+          class="v-label v-label--active v-label--is-disabled theme--light"
           style="left: 0px; position: absolute;"
         >
           Custom label
@@ -37,6 +37,7 @@ exports[`c-input-type-field Renders \`c-input-type-field\` with default custom p
             aria-readonly="false"
             autocomplete="on"
             disabled="disabled"
+            name="name"
             readonly="readonly"
             type="text"
           />
@@ -49,7 +50,7 @@ exports[`c-input-type-field Renders \`c-input-type-field\` with default custom p
           >
             <i
               aria-hidden="true"
-              class="v-icon v-icon--disabled material-icons theme--light error--text"
+              class="v-icon v-icon--disabled material-icons theme--light"
             >
               arrow_drop_down
             </i>
@@ -267,6 +268,7 @@ exports[`c-input-type-field Renders \`c-input-type-field\` with default props 1`
           <input
             aria-readonly="false"
             autocomplete="on"
+            name="type"
             readonly="readonly"
             type="text"
           />
