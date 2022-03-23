@@ -62,7 +62,7 @@ type store struct {
 	deferredNestedObjects []bson.M
 }
 
-func NewStore(dbClient mongo.DbClient, legacyURL fmt.Stringer) Store {
+func NewStore(dbClient mongo.DbClient, legacyURL string) Store {
 	s := &store{
 		mainDbCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
 		resolvedDbCollection:             dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
@@ -717,28 +717,57 @@ func (s *store) fillLinks(ctx context.Context, apiKey string, result *Aggregatio
 		maxItems = 100
 	}
 	linksEntities := make([]AlarmEntity, 0, maxItems)
-	alarms := make(map[string]int, maxItems)
-	for i, al := range result.Data {
+	alarmIndexes := make(map[string]int, maxItems)
+	childIndexes := make(map[string][][]int, maxItems)
+
+	for i, item := range result.Data {
 		linksEntities = append(linksEntities, AlarmEntity{
-			AlarmID:  al.ID,
-			EntityID: al.Entity.ID,
+			AlarmID:  item.ID,
+			EntityID: item.Entity.ID,
 		})
-		alarms[al.ID] = i
+		alarmIndexes[item.ID] = i
 		if len(linksEntities) == maxItems {
 			break
+		}
+
+		if item.Children != nil {
+			for j, child := range item.Children.Data {
+				childIndexes[child.ID] = append(childIndexes[child.ID], []int{i, j})
+
+				if len(childIndexes[child.ID]) > 1 {
+					continue
+				}
+
+				linksEntities = append(linksEntities, AlarmEntity{
+					AlarmID:  child.ID,
+					EntityID: child.Entity.ID,
+				})
+
+				if len(linksEntities) == maxItems {
+					break
+				}
+			}
 		}
 	}
 
 	res, err := s.links.Fetch(ctx, apiKey, linksEntities)
-	if err != nil {
+	if err != nil || res == nil {
 		return err
 	}
 
 	for _, rec := range res.Data {
-		if i, ok := alarms[rec.AlarmID]; ok {
+		if i, ok := alarmIndexes[rec.AlarmID]; ok {
 			result.Data[i].Links = make(map[string]interface{}, len(rec.Links))
 			for category, link := range rec.Links {
 				result.Data[i].Links[category] = link
+			}
+		}
+		if indexes, ok := childIndexes[rec.AlarmID]; ok {
+			for _, i := range indexes {
+				result.Data[i[0]].Children.Data[i[1]].Links = make(map[string]interface{}, len(rec.Links))
+				for category, link := range rec.Links {
+					result.Data[i[0]].Children.Data[i[1]].Links[category] = link
+				}
 			}
 		}
 	}
