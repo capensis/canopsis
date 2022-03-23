@@ -2147,6 +2147,8 @@ definitions:
         type: string
       sort_by:
         type: string
+      type:
+        type: string
       withFlags:
         type: boolean
     type: object
@@ -7227,6 +7229,9 @@ paths:
         type: string
       - in: query
         name: sort_by
+        type: string
+      - in: query
+        name: type
         type: string
       - in: query
         name: withFlags

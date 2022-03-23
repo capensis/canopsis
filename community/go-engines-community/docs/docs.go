@@ -4840,6 +4840,11 @@ var doc = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
                         "name": "withFlags",
                         "in": "query"
@@ -13191,6 +13196,9 @@ var doc = `{
                     "type": "string"
                 },
                 "sort_by": {
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 },
                 "withFlags": {

@@ -455,7 +455,11 @@ func (c *Condition) parseValue() {
 	}
 
 	if d, err := getDurationValue(c.Value); err == nil {
-		c.valueDuration = &d
+		dBySec, err := d.To("s")
+		if err == nil {
+			c.Value = d
+			c.valueDuration = &dBySec.Value
+		}
 		return
 	}
 }
@@ -565,7 +569,7 @@ func getTimeIntervalValue(v interface{}) (int64, int64, error) {
 	return from, to, nil
 }
 
-func getDurationValue(v interface{}) (int64, error) {
+func getDurationValue(v interface{}) (types.DurationWithUnit, error) {
 	var mapVal map[string]interface{}
 	if m, ok := v.(map[string]interface{}); ok {
 		mapVal = m
@@ -574,36 +578,31 @@ func getDurationValue(v interface{}) (int64, error) {
 	} else if m, ok := v.(bson.M); ok {
 		mapVal = m
 	} else {
-		return 0, ErrWrongConditionValue
+		return types.DurationWithUnit{}, ErrWrongConditionValue
 	}
 
 	rawVal, ok := mapVal["value"]
 	if !ok {
-		return 0, errors.New("condition value expected 'value' key")
+		return types.DurationWithUnit{}, errors.New("condition value expected 'value' key")
 	}
 
 	val, err := getIntValue(rawVal)
 	if err != nil {
-		return 0, err
+		return types.DurationWithUnit{}, err
 	}
 
 	rawUnit, ok := mapVal["unit"]
 	if !ok {
-		return 0, errors.New("condition value expected 'unit' key")
+		return types.DurationWithUnit{}, errors.New("condition value expected 'unit' key")
 	}
 
 	unit, err := getStringValue(rawUnit)
 	if err != nil {
-		return 0, err
+		return types.DurationWithUnit{}, err
 	}
 
-	d, err := types.DurationWithUnit{
+	return types.DurationWithUnit{
 		Value: val,
 		Unit:  unit,
-	}.To("s")
-	if err != nil {
-		return 0, err
-	}
-
-	return d.Value, nil
+	}, nil
 }
