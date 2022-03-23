@@ -18,6 +18,23 @@ Feature: Create a saved pattern
               "type": "eq",
               "value": "test-pattern-to-create-1-pattern"
             }
+          },
+          {
+            "field": "v.duration",
+            "cond": {
+              "type": "gt",
+              "value": {
+                "value": 3,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.ack",
+            "cond": {
+              "type": "eq",
+              "value": false
+            }
           }
         ]
       ]
@@ -41,6 +58,23 @@ Feature: Create a saved pattern
             "cond": {
               "type": "eq",
               "value": "test-pattern-to-create-1-pattern"
+            }
+          },
+          {
+            "field": "v.duration",
+            "cond": {
+              "type": "gt",
+              "value": {
+                "value": 3,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.ack",
+            "cond": {
+              "type": "eq",
+              "value": false
             }
           }
         ]
@@ -66,6 +100,23 @@ Feature: Create a saved pattern
             "cond": {
               "type": "eq",
               "value": "test-pattern-to-create-1-pattern"
+            }
+          },
+          {
+            "field": "v.duration",
+            "cond": {
+              "type": "gt",
+              "value": {
+                "value": 3,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.ack",
+            "cond": {
+              "type": "eq",
+              "value": false
             }
           }
         ]
