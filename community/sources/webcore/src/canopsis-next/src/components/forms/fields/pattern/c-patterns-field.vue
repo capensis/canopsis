@@ -52,7 +52,6 @@
             :required="isPatternRequired",
             :disabled="disabled",
             :name="eventPatternsFieldName",
-            with-type,
             @input="errors.remove(eventPatternsFieldName)"
           )
 </template>
