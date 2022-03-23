@@ -3,6 +3,7 @@
 exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with boolean type correctly 1`] = `
 <div
   class="v-input c-mixed-input-field v-input--selection-controls v-input--switch v-input--hide-details theme--light ma-0 c-mixed-input-field__switch"
+  name="mixedFieldName"
 >
   <div
     class="v-input__control"
@@ -16,6 +17,7 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with boolean type c
         <input
           aria-checked="false"
           aria-label="false"
+          name="mixedFieldName"
           role="checkbox"
           type="checkbox"
           value=""
@@ -51,7 +53,8 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with boolean type c
 
 exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with custom props correctly 1`] = `
 <div
-  class="v-input c-mixed-input-field v-text-field v-text-field--single-line v-text-field--solo-flat v-input--has-state v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light error--text c-mixed-input-field__text"
+  class="v-input c-mixed-input-field v-text-field v-text-field--single-line v-text-field--solo-flat v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light c-mixed-input-field__text"
+  errormessages="First error message,Second error message"
 >
   <div
     class="v-input__control"
@@ -100,6 +103,7 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with default props 
         <input
           aria-label="string"
           dense="true"
+          name="value"
           type="text"
         />
       </div>
@@ -123,7 +127,8 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with default props 
 
 exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with errors correctly 1`] = `
 <div
-  class="v-input c-mixed-input-field v-text-field v-text-field--single-line v-input--has-state theme--light error--text c-mixed-input-field__text"
+  class="v-input c-mixed-input-field v-text-field v-text-field--single-line theme--light c-mixed-input-field__text"
+  errormessages="First error message,Second error message"
 >
   <div
     class="v-input__control"
@@ -144,6 +149,7 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with errors correct
         <input
           aria-label="string"
           dense="true"
+          name="value"
           type="text"
         />
       </div>
@@ -152,17 +158,11 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with errors correct
       class="v-text-field__details"
     >
       <div
-        class="v-messages theme--light error--text"
+        class="v-messages theme--light"
       >
         <div
           class="v-messages__wrapper"
-        >
-          <div
-            class="v-messages__message"
-          >
-            First error message
-          </div>
-        </div>
+        />
       </div>
     </div>
   </div>
@@ -186,6 +186,7 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with null type corr
       >
         <input
           disabled="disabled"
+          name="mixedFieldName"
           type="text"
         />
       </div>
@@ -210,6 +211,7 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with null type corr
 exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with null type correctly 3`] = `
 <c-array-mixed-field-stub
   class="c-mixed-input-field"
+  name="mixedFieldName"
   types=""
   values="0,1,,false,"
 />
@@ -258,6 +260,7 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with number type co
 exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with string type and items correctly 1`] = `
 <div
   class="v-input c-mixed-input-field v-input--selection-controls v-input--switch v-input--hide-details theme--light ma-0 c-mixed-input-field__switch"
+  name="mixedFieldName"
 >
   <div
     class="v-input__control"
@@ -271,6 +274,7 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with string type an
         <input
           aria-checked="false"
           aria-label="false"
+          name="mixedFieldName"
           role="checkbox"
           type="checkbox"
           value=""

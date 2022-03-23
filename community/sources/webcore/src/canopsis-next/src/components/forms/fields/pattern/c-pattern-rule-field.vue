@@ -7,7 +7,8 @@
             v-field="rule.attribute",
             :items="attributes",
             :name="name",
-            :disabled="disabled"
+            :disabled="disabled",
+            required
           )
         v-flex.pl-3(v-if="isInfosRule", xs8)
           c-pattern-infos-attribute-field(
@@ -56,10 +57,11 @@
               v-field="rule.operator",
               :operators="operators",
               :disabled="disabled",
-              :name="operatorFieldName"
+              :name="operatorFieldName",
+              required
             )
 
-          v-flex.pl-3(v-if="operatorHasValue", :xs7="isInfosRule || isExtraInfosRule", xs6)
+          v-flex.pl-3(v-if="rule.operator && operatorHasValue", :xs7="isInfosRule || isExtraInfosRule", xs6)
             component(
               v-bind="valueComponent.props",
               v-on="valueComponent.on",
@@ -176,6 +178,7 @@ export default {
     valueComponent() {
       const valueProps = {
         value: this.rule.value,
+        required: true,
         disabled: this.disabled,
         name: this.valueFieldName,
         label: this.$t('common.value'),
