@@ -114,7 +114,7 @@ export default {
         await request.post(API_ROUTES.logout);
 
         commit(types.LOGOUT);
-        localStorageService.clear();
+        localStorageService.remove(LOCAL_STORAGE_ACCESS_TOKEN_KEY);
 
         if (redirectTo) {
           await router.replaceAsync(redirectTo);
