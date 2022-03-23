@@ -27,6 +27,9 @@
         span.ml-4.grey--text(v-if="shownType") {{ item.type }}
     template(#append-item="")
       div.c-entity-field__append(ref="append")
+    template(v-if="isMultiply", #selection="{ item, index }")
+      v-chip.c-entity-field__chip(small, close, @input="removeItemFromArray(index)")
+        span.ellipsis {{ item[itemText] }}
 </template>
 
 <script>
@@ -37,10 +40,13 @@ import { BASIC_ENTITY_TYPES } from '@/constants';
 
 import { PAGINATION_LIMIT } from '@/config';
 
+import { formArrayMixin } from '@/mixins/form';
+
 const { mapActions: entityMapActions } = createNamespacedHelpers('entity');
 
 export default {
   inject: ['$validator'],
+  mixins: [formArrayMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -81,6 +87,8 @@ export default {
   },
   data() {
     return {
+      isFocused: false,
+
       entitiesById: {},
       entitiesPending: false,
       pageCount: Infinity,
@@ -134,7 +142,7 @@ export default {
 
     this.observer.observe(this.$refs.append);
 
-    if (this.value) {
+    if (this.value.length) {
       this.fetchEntities(this.value);
     }
   },
@@ -221,6 +229,18 @@ export default {
     bottom: 0;
     left: 0;
     height: 300px;
+  }
+
+  .v-select__selections {
+    max-width: calc(100% - 24px);
+  }
+
+  &__chip {
+    max-width: 100%;
+
+    .v-chip__content {
+      max-width: 100%;
+    }
   }
 }
 </style>
