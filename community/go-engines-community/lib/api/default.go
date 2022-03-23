@@ -217,6 +217,7 @@ func Default(
 		},
 		logger,
 	)
+	legacyUrl := GetLegacyURL(logger)
 	api.AddRouter(func(router gin.IRouter) {
 		router.Use(middleware.Cache())
 
@@ -224,6 +225,10 @@ func Default(
 			router.Use(devmiddleware.ReloadEnforcerPolicy(enforcer))
 		}
 
+		legacyUrlStr := ""
+		if legacyUrl != nil {
+			legacyUrlStr = legacyUrl.String()
+		}
 		RegisterValidators(dbClient, flags.EnableSameServiceNames)
 		RegisterRoutes(
 			ctx,
@@ -231,6 +236,7 @@ func Default(
 			router,
 			security,
 			enforcer,
+			legacyUrlStr,
 			dbClient,
 			timezoneConfigProvider,
 			pbhEntityTypeResolver,
@@ -252,7 +258,13 @@ func Default(
 			logger,
 		)
 	})
-	api.AddNoRoute(GetProxy(security, enforcer, proxyAccessConfig)...)
+	if legacyUrl == nil {
+		api.AddNoRoute(func(c *gin.Context) {
+			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		})
+	} else {
+		api.AddNoRoute(GetProxy(legacyUrl, security, enforcer, proxyAccessConfig)...)
+	}
 	api.AddNoMethod(func(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusMethodNotAllowed, common.MethodNotAllowedResponse)
 	})
