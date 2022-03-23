@@ -91,16 +91,25 @@ func (s *store) GetById(ctx context.Context, id, userId string) (*Response, erro
 
 func (s *store) Find(ctx context.Context, request ListRequest, userId string) (*AggregationResult, error) {
 	pipeline := make([]bson.M, 0)
+	match := make([]bson.M, 0)
 
 	if request.Corporate == nil {
-		pipeline = append(pipeline, bson.M{"$match": bson.M{"$or": []bson.M{
+		match = append(match, bson.M{"$or": []bson.M{
 			{"author": userId},
 			{"is_corporate": true},
-		}}})
+		}})
 	} else if *request.Corporate {
-		pipeline = append(pipeline, bson.M{"$match": bson.M{"is_corporate": true}})
+		match = append(match, bson.M{"is_corporate": true})
 	} else {
-		pipeline = append(pipeline, bson.M{"$match": bson.M{"author": userId, "is_corporate": false}})
+		match = append(match, bson.M{"author": userId, "is_corporate": false})
+	}
+
+	if request.Type != "" {
+		match = append(match, bson.M{"type": request.Type})
+	}
+
+	if len(match) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"$and": match}})
 	}
 
 	filter := common.GetSearchQuery(request.Search, s.defaultSearchByFields)

@@ -4824,6 +4824,11 @@
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
                         "name": "withFlags",
                         "in": "query"
@@ -13175,6 +13180,9 @@
                     "type": "string"
                 },
                 "sort_by": {
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 },
                 "withFlags": {
