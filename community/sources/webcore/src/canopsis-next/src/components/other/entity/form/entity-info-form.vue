@@ -27,7 +27,8 @@
         v-flex
           c-mixed-field(
             v-field="form.value[index].value",
-            :label="index === 0 ? $t('common.value') : ''"
+            :label="index === 0 ? $t('common.value') : ''",
+            required
           )
         v-btn.mx-0(icon, @click="removeListItem(index)")
           v-icon(color="error") delete
@@ -41,7 +42,8 @@
       v-flex
         c-mixed-field(
           v-field="form.value",
-          :label="$t('common.value')"
+          :label="$t('common.value')",
+          required
         )
 </template>
 

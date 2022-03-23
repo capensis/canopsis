@@ -32,7 +32,7 @@ export default {
     },
     name: {
       type: String,
-      default: null,
+      default: 'value',
     },
     disabled: {
       type: Boolean,
@@ -45,10 +45,6 @@ export default {
     hideDetails: {
       type: Boolean,
       default: false,
-    },
-    errorMessages: {
-      type: Array,
-      default: () => [],
     },
     items: {
       type: Array,
@@ -72,6 +68,10 @@ export default {
     },
   },
   computed: {
+    errorMessages() {
+      return this.errors.collect(this.name);
+    },
+
     rules() {
       return {
         required: this.required,
@@ -127,6 +127,7 @@ export default {
 
           bind: {
             class: 'ma-0 c-mixed-input-field__switch',
+            name: this.name,
             inputValue: this.value,
             label: this.switchLabel,
             disabled: this.disabled,
@@ -144,6 +145,7 @@ export default {
           is: 'c-array-mixed-field',
 
           bind: {
+            name: this.name,
             values: this.value,
             disabled: this.disabled,
             types: this.types.filter(({ value }) => value !== PATTERN_INPUT_TYPES.array),
@@ -158,6 +160,7 @@ export default {
         is: 'v-text-field',
 
         bind: {
+          name: this.name,
           errorMessages: this.errorMessages,
           value: 'null',
           disabled: true,

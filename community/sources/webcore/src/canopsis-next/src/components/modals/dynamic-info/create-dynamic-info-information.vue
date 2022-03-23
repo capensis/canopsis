@@ -15,7 +15,6 @@
           c-mixed-field(
             v-model="form.value",
             :label="$t('modals.createDynamicInfoInformation.fields.value')",
-            :error-messages="errors.collect('value')",
             name="value"
           )
       template(slot="actions")
