@@ -180,7 +180,7 @@ export default {
             is: 'alarm-column-value-categories',
             asList: get(this.widget.parameters, 'linksCategoriesAsList.enabled', false),
             limit: get(this.widget.parameters, 'linksCategoriesAsList.limit'),
-            links: this.alarm.links,
+            links: this.alarm.links ?? {},
           },
         },
         [ALARM_ENTITY_FIELDS.extraDetails]: {
