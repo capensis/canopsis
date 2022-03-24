@@ -398,6 +398,10 @@ func RegisterRoutes(
 				middleware.SetAuthor(),
 				pbehaviorApi.Patch)
 			pbehaviorRouter.DELETE(
+				"",
+				middleware.Authorize(authObjPbh, permDelete, enforcer),
+				pbehaviorApi.DeleteByName)
+			pbehaviorRouter.DELETE(
 				"/:id",
 				middleware.Authorize(authObjPbh, permDelete, enforcer),
 				pbehaviorApi.Delete)
