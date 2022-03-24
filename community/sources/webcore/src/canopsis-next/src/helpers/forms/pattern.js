@@ -3,12 +3,14 @@ import {
   ALARM_PATTERN_FIELDS,
   ENTITY_PATTERN_FIELDS,
   PATTERN_CONDITIONS,
+  PATTERN_CUSTOM_ITEM_VALUE,
   PATTERN_INFOS_NAME_OPERATORS,
   PATTERN_INPUT_TYPES,
   PATTERN_OPERATORS,
   PATTERN_QUICK_RANGES,
   PATTERN_RULE_INFOS_FIELDS,
   PATTERN_TYPES,
+  PATTERNS_FIELDS,
   QUICK_RANGES,
 } from '@/constants';
 
@@ -23,6 +25,14 @@ import { durationToForm } from '@/helpers/date/duration';
 
 /**
  * @typedef { 'alarm' | 'entity' | 'pbehavior' } PatternTypes
+ */
+
+/**
+ * @typedef { 'alarm_pattern' | 'entity_pattern' | 'pbehavior_pattern' } PatternsField
+ */
+
+/**
+ * @typedef {PatternsField[]} PatternsFields
  */
 
 /**
@@ -65,6 +75,18 @@ import { durationToForm } from '@/helpers/date/duration';
  */
 
 /**
+ * @typedef {Object} Patterns
+ * @property {PatternGroups} [alarm_pattern]
+ * @property {string} [corporate_alarm_pattern]
+ * @property {PatternGroups} [entity_pattern]
+ * @property {string} [corporate_entity_pattern]
+ * @property {PatternGroups} [pbehavior_pattern]
+ * @property {string} [corporate_pbehavior_pattern]
+ * @property {PatternGroups} [event_pattern]
+ * @property {string} [corporate_event_pattern]
+ */
+
+/**
  * @typedef {Object} PatternRuleRangeForm
  * @property {string} type
  * @property {string | number} [from]
@@ -90,8 +112,19 @@ import { durationToForm } from '@/helpers/date/duration';
  */
 
 /**
+ * @typedef {PatternRuleForm[]} PatternGroupsForm
+ */
+
+/**
  * @typedef {Pattern} PatternForm
- * @property {PatternGroupForm[]} groups
+ * @property {PatternGroupsForm} groups
+ */
+
+/**
+ * @typedef {Pattern} PatternsForm
+ * @property {PatternGroupsForm} [alarm_pattern]
+ * @property {PatternGroupsForm} [entity_pattern]
+ * @property {PatternGroupsForm} [pbehavior_pattern]
  */
 
 /**
@@ -326,7 +359,7 @@ const patternsToGroups = (patterns = [undefined]) => patterns.map(patternRulesTo
 export const patternToForm = (pattern = {}) => ({
   ...pattern,
   title: pattern.title ?? '',
-  id: pattern.id ?? '',
+  id: pattern.id ?? PATTERN_CUSTOM_ITEM_VALUE,
   type: pattern.type ?? PATTERN_TYPES.alarm,
   is_corporate: pattern.is_corporate ?? false,
   groups: patternsToGroups(
@@ -336,6 +369,29 @@ export const patternToForm = (pattern = {}) => ({
     || pattern.event_pattern,
   ),
 });
+
+/**
+ * Convert patterns to form
+ *
+ * @param {Patterns} patterns
+ * @return {PatternsForm}
+ */
+export const patternsToForm = (patterns = {}) => {
+  const {
+    alarm_pattern: alarmPattern,
+    entity_pattern: entityPattern,
+    pbehavior_pattern: pbehaviorPattern,
+    corporate_alarm_pattern: corporateAlarmPattern,
+    corporate_entity_pattern: corporateEntityPattern,
+    corporate_pbehavior_pattern: corporatePbehaviorPattern,
+  } = patterns;
+
+  return ({
+    alarm_pattern: patternToForm({ alarm_pattern: alarmPattern, id: corporateAlarmPattern }),
+    entity_pattern: patternToForm({ entity_pattern: entityPattern, id: corporateEntityPattern }),
+    pbehavior_pattern: patternToForm({ pbehavior_pattern: pbehaviorPattern, id: corporatePbehaviorPattern }),
+  });
+};
 
 /**
  * Convert range to pattern condition
@@ -504,8 +560,8 @@ export const formGroupToPatternRules = group => group.rules.map(formRuleToPatter
 /**
  * Convert form groups to pattern rules
  *
- * @param {PatternGroupForm[]} groups
- * @return {PatternRules[]}
+ * @param {PatternGroupsForm} groups
+ * @return {PatternGroups}
  */
 export const formGroupsToPatternRules = groups => groups.map(formGroupToPatternRules);
 
@@ -532,3 +588,37 @@ export const formToPattern = (form) => {
 
   return pattern;
 };
+
+/**
+ * Convert patterns form to patterns
+ *
+ * @param {PatternsForm} form
+ * @param {PatternsFields} fields
+ * @return {{}}
+ */
+export const formToPatterns = (
+  form,
+  fields = [
+    PATTERNS_FIELDS.alarm,
+    PATTERNS_FIELDS.entity,
+    PATTERNS_FIELDS.pbehavior,
+  ],
+) => fields.reduce((acc, field) => {
+  const patterns = form[field];
+
+  if (!patterns) {
+    return acc;
+  }
+
+  if (patterns.id) {
+    acc[`corporate_${field}`] = patterns.id;
+
+    return acc;
+  }
+
+  if (patterns.groups.length) {
+    acc[field] = patterns;
+  }
+
+  return acc;
+}, {});

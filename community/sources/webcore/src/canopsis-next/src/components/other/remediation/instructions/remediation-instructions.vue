@@ -112,31 +112,33 @@ export default {
       }
     },
 
-    showAssignPatternsModal(remediationInstruction) {
-      const patterns = {
-        alarm_patterns: remediationInstruction.alarm_patterns || [],
-        entity_patterns: remediationInstruction.entity_patterns || [],
-        active_on_pbh: remediationInstruction.active_on_pbh || [],
-        disabled_on_pbh: remediationInstruction.disabled_on_pbh || [],
-      };
-
+    showAssignPatternsModal(instruction) {
       this.$modals.show({
         name: MODALS.remediationPatterns,
         config: {
-          patterns,
+          instruction,
 
-          action: async (newPatterns) => {
-            if (isEqual(patterns, newPatterns)) {
+          action: async (data) => {
+            const isPbehaviorsEqual = isEqual(instruction.active_on_pbh, data.active_on_pbh)
+              && isEqual(instruction.disabled_on_pbh, data.disabled_on_pbh);
+
+            const isAlarmPatternEqual = instruction.corporate_alarm_pattern === data.corporate_alarm_pattern
+              || isEqual(instruction.alarm_pattern, data.alarm_pattern);
+
+            const isEntityPatternEqual = instruction.corporate_entity_pattern === data.corporate_entity_pattern
+              || isEqual(instruction.entity_pattern, data.entity_pattern);
+
+            if (isPbehaviorsEqual && isAlarmPatternEqual && isEntityPatternEqual) {
               return;
             }
 
             const form = {
-              ...remediationInstructionToForm(remediationInstruction),
-              ...newPatterns,
+              ...remediationInstructionToForm(instruction),
+              ...data,
             };
 
             await this.updateRemediationInstructionWithConfirm(
-              remediationInstruction,
+              instruction,
               formToRemediationInstruction(form),
             );
             await this.fetchList();
