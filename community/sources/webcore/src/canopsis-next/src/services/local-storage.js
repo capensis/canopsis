@@ -61,6 +61,20 @@ class LocalStorage {
   }
 
   /**
+   * Get value by key and remove it from storage
+   *
+   * @param {string | number} key
+   * @returns {*}
+   */
+  pop(key) {
+    const value = this.get(key);
+
+    this.remove(key);
+
+    return value;
+  }
+
+  /**
    * Clear storage
    */
   clear() {
