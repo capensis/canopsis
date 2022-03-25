@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { filterRuleToForm } from '@/helpers/forms/filter';
+import { patternRuleToForm } from '@/helpers/forms/pattern';
 
 import { convertValueByOperator, getOperatorsByRule } from '@/helpers/pattern';
 
@@ -111,7 +111,7 @@ export default {
     addFilterRule() {
       const [firstAttribute] = this.attributes;
 
-      this.addItemIntoArray(filterRuleToForm({ attribute: firstAttribute?.value }));
+      this.addItemIntoArray(patternRuleToForm({ attribute: firstAttribute?.value }));
     },
   },
 };
