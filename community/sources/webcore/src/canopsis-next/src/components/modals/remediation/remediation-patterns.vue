@@ -28,7 +28,7 @@
 <script>
 import { MODALS, PATTERNS_FIELDS } from '@/constants';
 
-import { patternsToForm, formToPatterns } from '@/helpers/forms/pattern';
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -58,7 +58,7 @@ export default {
 
     return {
       form: {
-        ...patternsToForm(instruction),
+        ...filterPatternsToForm(instruction),
         active_on_pbh: instruction.active_on_pbh ?? [],
         disabled_on_pbh: instruction.disabled_on_pbh ?? [],
       },
@@ -75,7 +75,11 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(formToPatterns(this.form, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]));
+          await this.config.action({
+            ...formFilterToPatterns(this.form, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
+            active_on_pbh: this.form.active_on_pbh,
+            disabled_on_pbh: this.form.disabled_on_pbh,
+          });
         }
 
         this.$modals.hide();
