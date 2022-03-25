@@ -134,6 +134,9 @@ import CFiltersField from '@/components/forms/fields/c-filters-field.vue';
 import CEntityStateField from '@/components/forms/fields/c-entity-state-field.vue';
 import CRecordsPerPageField from '@/components/forms/fields/c-records-per-page-field.vue';
 import COperatorField from '@/components/forms/fields/c-operator-field.vue';
+import CIdField from '@/components/forms/fields/c-id-field.vue';
+import CDescriptionField from '@/components/forms/fields/c-description-field.vue';
+import CEventFilterTypeField from '@/components/forms/fields/c-event-filter-type-field.vue';
 import CDraggableListField from '@/components/forms/fields/c-draggable-list-field.vue';
 import CDatePickerField from '@/components/forms/fields/date-picker/c-date-picker-field.vue';
 import CFilterAttributeField from '@/components/forms/fields/c-filter-attribute-field.vue';
@@ -338,6 +341,9 @@ Vue.component('c-entity-state-field', CEntityStateField);
 Vue.component('c-entity-status-field', CEntityStatusField);
 Vue.component('c-records-per-page-field', CRecordsPerPageField);
 Vue.component('c-operator-field', COperatorField);
+Vue.component('c-id-field', CIdField);
+Vue.component('c-description-field', CDescriptionField);
+Vue.component('c-event-filter-type-field', CEventFilterTypeField);
 Vue.component('c-draggable-list-field', CDraggableListField);
 Vue.component('c-filter-attribute-field', CFilterAttributeField);
 Vue.component('c-filter-infos-attribute-field', CFilterInfosAttributeField);
@@ -386,7 +392,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.imagesViewer]: { maxWidth: '100%', contentClass: 'v-dialog__images-viewer' },
     [MODALS.rate]: { maxWidth: 500 },
     [MODALS.createMetaAlarmRule]: { maxWidth: 920, lazy: true },
-    [MODALS.createEventFilterRuleAction]: { maxWidth: 920 },
+    [MODALS.createEventFilterAction]: { maxWidth: 920 },
     [MODALS.testSuite]: { maxWidth: 920 },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
