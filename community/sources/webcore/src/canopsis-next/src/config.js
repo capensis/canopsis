@@ -114,7 +114,9 @@ export const API_ROUTES = {
   permissions: '/api/v4/permissions',
   users: '/api/v4/users',
   roles: '/api/v4/roles',
-  eventFilterRules: '/api/v4/eventfilter/rules',
+  eventFilter: {
+    rules: '/api/v4/eventfilter/rules',
+  },
   file: '/api/v4/file',
   fileAccess: '/api/v4/file-access',
   snmpRule: {
