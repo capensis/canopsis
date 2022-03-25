@@ -4,7 +4,10 @@
       template(slot="title")
         span {{ title }}
       template(slot="text")
-        event-filter-rule-action-form(v-model="form")
+        event-filter-form(
+          v-model="form",
+          :is-disabled-id-field="isDisabledIdField"
+        )
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
@@ -17,22 +20,22 @@
 <script>
 import { MODALS } from '@/constants';
 
+import { eventFilterToForm, formToEventFilter } from '@/helpers/forms/event-filter';
+
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import { eventFilterRuleActionToForm, formToEventFilterRuleAction } from '@/helpers/forms/event-filter-rule';
-
-import EventFilterRuleActionForm from '@/components/other/event-filter/form/event-filter-rule-action-form.vue';
+import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.createEventFilterRuleAction,
+  name: MODALS.createEventFilter,
   $_veeValidate: {
     validator: 'new',
   },
-  components: { EventFilterRuleActionForm, ModalWrapper },
+  components: { EventFilterForm, ModalWrapper },
   mixins: [
     modalInnerMixin,
     submittableMixinCreator(),
@@ -40,12 +43,16 @@ export default {
   ],
   data() {
     return {
-      form: eventFilterRuleActionToForm(this.modal.config.ruleAction),
+      form: eventFilterToForm(this.modal.config.rule),
     };
   },
   computed: {
     title() {
-      return this.modal.config.title || this.$t('modals.eventFilterRule.addAction');
+      return this.config.title || this.$t('modals.createEventFilter.create.title');
+    },
+
+    isDisabledIdField() {
+      return this.config.isDisabledIdField;
     },
   },
   methods: {
@@ -54,7 +61,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(formToEventFilterRuleAction(this.form));
+          await this.config.action(formToEventFilter(this.form));
         }
 
         this.$modals.hide();
