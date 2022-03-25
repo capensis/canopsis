@@ -76,7 +76,7 @@ export const filterToForm = (filter = {}) => ({
 /**
  * Convert patterns form to patterns
  *
- * @param {FilterPatternsF} form
+ * @param {FilterPatterns} form
  * @param {PatternsFields} fields
  * @return {{}}
  */
