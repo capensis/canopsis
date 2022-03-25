@@ -51,7 +51,6 @@ const (
 	EventTypeLog               = "log"
 	EventTypeChangestate       = "changestate"
 	EventTypeKeepstate         = "keepstate"
-	EventTypePBehavior         = "pbehavior"
 	EventTypePerf              = "perf"
 	EventTypeSelector          = "selector"
 	EventTypeSLA               = "sla"
@@ -612,8 +611,7 @@ func (e *Event) SetField(name string, value interface{}) (err error) {
 }
 
 func (e *Event) IsPbehaviorEvent() bool {
-	return e.EventType == EventTypePBehavior ||
-		e.EventType == EventTypePbhEnter ||
+	return e.EventType == EventTypePbhEnter ||
 		e.EventType == EventTypePbhLeave ||
 		e.EventType == EventTypePbhLeaveAndEnter
 }
