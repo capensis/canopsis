@@ -91,29 +91,29 @@ export default {
     actionsMap() {
       return {
         addValueRuleField: {
-          tooltip: this.$t('modals.eventFilterRule.tooltips.addValueRuleField'),
+          tooltip: this.$t('eventFilter.tooltips.addValueRuleField'),
           icon: 'add',
           iconColor: 'primary',
           action: this.showAddValueRuleFieldModal,
         },
         editValueRuleField: {
-          tooltip: this.$t('modals.eventFilterRule.tooltips.editValueRuleField'),
+          tooltip: this.$t('eventFilter.tooltips.editValueRuleField'),
           icon: 'edit',
           action: this.showEditValueRuleFieldModal,
         },
         addObjectRuleField: {
-          tooltip: this.$t('modals.eventFilterRule.tooltips.addObjectRuleField'),
+          tooltip: this.$t('eventFilter.tooltips.addObjectRuleField'),
           icon: 'library_add',
           iconColor: 'primary',
           action: this.showAddObjectRuleFieldModal,
         },
         editObjectRuleField: {
-          tooltip: this.$t('modals.eventFilterRule.tooltips.editObjectRuleField'),
+          tooltip: this.$t('eventFilter.tooltips.editObjectRuleField'),
           icon: 'edit',
           action: this.showEditObjectRuleFieldModal,
         },
         removeRuleField: {
-          tooltip: this.$t('modals.eventFilterRule.tooltips.removeRuleField'),
+          tooltip: this.$t('eventFilter.tooltips.removeRuleField'),
           icon: 'remove',
           iconColor: 'error',
           action: this.deleteRule,
@@ -221,9 +221,9 @@ export default {
       this.$modals.show({
         name: MODALS.textFieldEditor,
         config: {
-          title: this.$t('modals.eventFilterRule.tooltips.addObjectRuleField'),
+          title: this.$t('eventFilter.tooltips.addObjectRuleField'),
           field: {
-            label: this.$t('modals.eventFilterRule.field'),
+            label: this.$t('eventFilter.field'),
             validationRules: 'required',
             name: 'field',
           },
@@ -245,10 +245,10 @@ export default {
       this.$modals.show({
         name: MODALS.textFieldEditor,
         config: {
-          title: this.$t('modals.eventFilterRule.tooltips.editObjectRuleField'),
+          title: this.$t('eventFilter.tooltips.editObjectRuleField'),
           field: {
             value: treeViewItem.name,
-            label: this.$t('modals.eventFilterRule.field'),
+            label: this.$t('eventFilter.field'),
             validationRules: 'required',
             name: 'field',
           },

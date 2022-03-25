@@ -1,9 +1,9 @@
 <template lang="pug">
   modal-wrapper(close)
     template(slot="title")
-      span {{ $t('modals.eventFilterRule.editActions') }}
+      span {{ $t('eventFilter.editActions') }}
     template(slot="text")
-      event-filter-rule-actions-form(v-model="form.actions")
+      event-filter-actions-form(v-model="form.actions")
     template(slot="actions")
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
       v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
@@ -18,16 +18,16 @@ import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import EventFilterRuleActionsForm from '@/components/other/event-filter/form/event-filter-rule-actions-form.vue';
+import EventFilterActionsForm from '@/components/other/event-filter/form/event-filter-actions-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.eventFilterRuleActions,
+  name: MODALS.eventFilterActions,
   $_veeValidate: {
     validator: 'new',
   },
-  components: { EventFilterRuleActionsForm, ModalWrapper },
+  components: { EventFilterActionsForm, ModalWrapper },
   mixins: [
     modalInnerMixin,
     submittableMixinCreator(),
