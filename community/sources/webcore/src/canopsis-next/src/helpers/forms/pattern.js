@@ -610,14 +610,14 @@ export const formToPatterns = (
     return acc;
   }
 
-  if (patterns.id) {
+  if (patterns.id !== PATTERN_CUSTOM_ITEM_VALUE) {
     acc[`corporate_${field}`] = patterns.id;
 
     return acc;
   }
 
-  if (patterns.groups.length) {
-    acc[field] = patterns;
+  if (patterns.groups) {
+    acc[field] = formGroupsToPatternRules(patterns.groups);
   }
 
   return acc;
