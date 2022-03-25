@@ -76,4 +76,18 @@ describe('filter-tile', () => {
 
     expect(wrapper.element).toMatchSnapshot();
   });
+
+  it('Renders `filter-tile` with old pattern', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        filter: {
+          title: 'Filter title',
+          old_mongo_query: {},
+        },
+        editable: true,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
 });
