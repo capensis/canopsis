@@ -17,7 +17,7 @@ import viewModule from './view';
 import roleModule from './role';
 import userModule from './user';
 import permissionModule from './permission';
-import eventFilterRuleModule from './event-filter-rule';
+import eventFilterModule from './event-filter';
 import infoModule from './info';
 import snmpRuleModule from './snmp/rule';
 import snmpMibModule from './snmp/mib';
@@ -59,7 +59,7 @@ export default {
   role: roleModule,
   user: userModule,
   permission: permissionModule,
-  eventFilterRule: eventFilterRuleModule,
+  eventFilter: eventFilterModule,
   info: infoModule,
   snmpRule: snmpRuleModule,
   snmpMib: snmpMibModule,

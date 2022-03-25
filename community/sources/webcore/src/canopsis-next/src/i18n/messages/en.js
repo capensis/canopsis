@@ -26,6 +26,7 @@ import {
   GROUPS_NAVIGATION_TYPES,
   ALARM_METRIC_PARAMETERS,
   USER_METRIC_PARAMETERS,
+  EVENT_FILTER_TYPES,
   FILTER_OPERATORS,
 } from '@/constants';
 
@@ -195,7 +196,7 @@ export default {
     summary: 'Summary',
     recurrence: 'Recurrence',
     statistics: 'Statistics',
-    action: 'Action',
+    action: 'Action | Actions',
     minimal: 'Minimal',
     optimal: 'Optimal',
     graph: 'Graph | Graphs',
@@ -1102,7 +1103,7 @@ export default {
         title: 'Edit role',
       },
     },
-    eventFilterRule: {
+    createEventFilter: {
       create: {
         title: 'Create event filter rule',
         success: 'Rule successfully created!',
@@ -1117,64 +1118,6 @@ export default {
       },
       remove: {
         success: 'Rule successfully removed!',
-      },
-      priority: 'Priority',
-      editPattern: 'Edit pattern',
-      advanced: 'Advanced',
-      addAField: 'Add a field',
-      simpleEditor: 'Simple editor',
-      field: 'Field',
-      value: 'Value',
-      advancedEditor: 'Advanced editor',
-      comparisonRules: 'Comparison rules',
-      enrichmentOptions: 'Enrichment options',
-      editActions: 'Edit actions',
-      addAction: 'Add an action',
-      editAction: 'Edit an action',
-      actions: 'Actions',
-      externalData: 'External data',
-      onSuccess: 'On success',
-      onFailure: 'On failure',
-      tooltips: {
-        addValueRuleField: 'Add value rule field',
-        editValueRuleField: 'Edit value rule field',
-        addObjectRuleField: 'Add object rule field',
-        editObjectRuleField: 'Edit object rule field',
-        removeRuleField: 'Remove rule field',
-        copyFromHelp: '<p>The accessible variables are: <strong>Event</strong></p>'
-          + '<i>For example:</i> <span>"Event.ExtraInfos.datecustom"</span>',
-      },
-      actionsTypes: {
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
-          text: 'Copy a value from a field of event to another',
-          message: 'This action is used used to copy the value of a control in an event.',
-          description: 'The parameters of the action are:\n- from: the name of the control whose value must be copied. It can be an event field, a subgroup of a regular expression, or an external data.\n- to: the name of the event field into which the value must be copied.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo]: {
-          text: 'Copy a value from a field of an event to an info of an entity',
-          message: 'This action is used to copy the field value of an event to the field of an entity. Note, that the entity should be added to the event first.',
-          description: 'The parameters of the action are:\n- name: the name of the field of an entity.\n- description (optional): the description.\n- from: the name of the control whose value must be copied. It can be an event field, a subgroup of a regular expression, or an external data.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfo]: {
-          text: 'Set an info of an entity to a constant',
-          message: 'This action is used to set the dynamic information from an entity corresponding to the event. Note, that the entity should be added to the event first.',
-          description: 'The parameters of the action are:\n- name: the name of the field.\n- description (optional): the description.\n- value: the value of a field.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate]: {
-          text: 'Set a string info of an entity using a template',
-          message: 'This action is used to modify the dynamic information from an entity corresponding to the event. Note, that the entity should be added to the event.',
-          description: 'The parameters of the action are:\n- name: the name of the field.\n- description (optional): the description\n- value: the template used to determine the value of the data item.\nTemplates {{.Event.NomDuChamp}}, regular expressions or external data can be used.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField]: {
-          text: 'Set a field of an event to a constant',
-          message: 'This action can be used to modify a field of the event.',
-          description: 'The parameters of the action are:\n- name: the name of the field.\n- value: the new value of the field.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate]: {
-          text: 'Set a string field of an event using a template',
-          message: 'This action allows you to modify an event field from a template.',
-          description: 'The parameters of the action are:\n- name: the name of the field.\n- value: the template used to determine the value of the field.\n Templates {{.Event.NomDuChamp}}, regular expressions or external data can be used.',
-        },
       },
     },
     metaAlarmRule: {
@@ -1244,13 +1187,6 @@ export default {
         invalid: 'Invalid',
       },
       steps: {
-        general: {
-          fields: {
-            id: 'Id',
-            name: 'Name',
-            description: 'Description',
-          },
-        },
         infos: {
           title: 'Informations',
           validationError: 'Every value must be filled',
@@ -1788,9 +1724,76 @@ export default {
     },
   },
   eventFilter: {
-    externalDatas: 'External data',
+    externalData: 'External data',
     actionsRequired: 'Please add at least one action',
+    configRequired: 'No configuration defined. Please add at least one config parameter',
     idHelp: 'If no id is specified, a unique id will be generated automatically on rule creation',
+    editPattern: 'Edit pattern',
+    advanced: 'Advanced',
+    addAField: 'Add a field',
+    simpleEditor: 'Simple editor',
+    field: 'Field',
+    value: 'Value',
+    advancedEditor: 'Advanced editor',
+    comparisonRules: 'Comparison rules',
+    editActions: 'Edit actions',
+    addAction: 'Add an action',
+    editAction: 'Edit an action',
+    actions: 'Actions',
+    onSuccess: 'On success',
+    onFailure: 'On failure',
+    configuration: 'Configuration',
+    resource: 'Resource ID or template',
+    component: 'Component ID or template',
+    connector: 'Connector ID or template',
+    connectorName: 'Connector name or template',
+    types: {
+      [EVENT_FILTER_TYPES.drop]: 'Drop',
+      [EVENT_FILTER_TYPES.break]: 'Break',
+      [EVENT_FILTER_TYPES.enrichment]: 'Enrichment',
+      [EVENT_FILTER_TYPES.changeEntity]: 'Change entity',
+    },
+    tooltips: {
+      addValueRuleField: 'Add value rule field',
+      editValueRuleField: 'Edit value rule field',
+      addObjectRuleField: 'Add object rule field',
+      editObjectRuleField: 'Edit object rule field',
+      removeRuleField: 'Remove rule field',
+      copyFromHelp: '<p>The accessible variables are: <strong>Event</strong></p>'
+        + '<i>For example:</i> <span>"Event.ExtraInfos.datecustom"</span>',
+    },
+    actionsTypes: {
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
+        text: 'Copy a value from a field of event to another',
+        message: 'This action is used used to copy the value of a control in an event.',
+        description: 'The parameters of the action are:\n- value: the name of the control whose value must be copied. It can be an event field, a subgroup of a regular expression, or an external data.\n- description (optional): the description.\n- name: the name of the event field into which the value must be copied.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo]: {
+        text: 'Copy a value from a field of an event to an info of an entity',
+        message: 'This action is used to copy the field value of an event to the field of an entity. Note, that the entity should be added to the event first.',
+        description: 'The parameters of the action are:\n- description (optional): the description.\n- name: the name of the field of an entity.\n- value: the name of the control whose value must be copied. It can be an event field, a subgroup of a regular expression, or an external data.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfo]: {
+        text: 'Set an info of an entity to a constant',
+        message: 'This action is used to set the dynamic information from an entity corresponding to the event. Note, that the entity should be added to the event first.',
+        description: 'The parameters of the action are:\n- description (optional): the description.\n- name: the name of the field.\n- value: the value of a field.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate]: {
+        text: 'Set a string info of an entity using a template',
+        message: 'This action is used to modify the dynamic information from an entity corresponding to the event. Note, that the entity should be added to the event.',
+        description: 'The parameters of the action are:\n- description (optional): the description\n- name: the name of the field.\n- value: the template used to determine the value of the data item.\nTemplates {{.Event.NomDuChamp}}, regular expressions or external data can be used.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField]: {
+        text: 'Set a field of an event to a constant',
+        message: 'This action can be used to modify a field of the event.',
+        description: 'The parameters of the action are:\n- description (optional): the description.\n- name: the name of the field.\n- value: the new value of the field.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate]: {
+        text: 'Set a string field of an event using a template',
+        message: 'This action allows you to modify an event field from a template.',
+        description: 'The parameters of the action are:\n- description (optional): the description.\n- name: the name of the field.\n- value: the template used to determine the value of the field.\n Templates {{.Event.NomDuChamp}}, regular expressions or external data can be used.',
+      },
+    },
   },
   metaAlarmRule: {
     outputTemplate: 'Output template',
