@@ -32,7 +32,7 @@ const AdminEngines = () => import(/* webpackChunkName: "Engines" */ '@/views/adm
 const AdminHealthcheck = () => import(/* webpackChunkName: "Healthcheck" */ '@/views/admin/healthcheck.vue');
 const AdminKPI = () => import(/* webpackChunkName: "KPI" */ '@/views/admin/kpi.vue');
 const ExploitationPbehaviors = () => import(/* webpackChunkName: "Pbehavior" */ '@/views/exploitation/pbehaviors.vue');
-const ExploitationEventFilter = () => import(/* webpackChunkName: "EventFilter" */ '@/views/exploitation/event-filter.vue');
+const ExploitationEventFilters = () => import(/* webpackChunkName: "EventFilters" */ '@/views/exploitation/event-filters.vue');
 const ExploitationSnmpRules = () => import(/* webpackChunkName: "SnmpRule" */ '@/views/exploitation/snmp-rules.vue');
 const ExploitationDynamicInfos = () => import(/* webpackChunkName: "DynamicInfo" */ '@/views/exploitation/dynamic-infos.vue');
 const ExploitationMetaAlarmRules = () => import(/* webpackChunkName: "MetaAlarmRule" */ '@/views/exploitation/meta-alarm-rules.vue');
@@ -223,9 +223,9 @@ const routes = [
     },
   },
   {
-    path: ROUTES.exploitationEventFilter,
-    name: ROUTES_NAMES.exploitationEventFilter,
-    component: ExploitationEventFilter,
+    path: ROUTES.exploitationEventFilters,
+    name: ROUTES_NAMES.exploitationEventFilters,
+    component: ExploitationEventFilters,
     meta: {
       requiresLogin: true,
       requiresPermission: {
