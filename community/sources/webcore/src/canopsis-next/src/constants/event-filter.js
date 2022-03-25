@@ -20,10 +20,11 @@ export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES = {
   copyToEntityInfo: 'copy_to_entity_info',
 };
 
-export const EVENT_FILTER_FILTER_FIELDS = {
+export const EVENT_FILTER_PATTERN_FIELDS = {
   component: 'component',
   connector: 'connector',
   connectorName: 'connector_name',
   resource: 'resource',
+  output: 'output',
   extraInfos: 'extra_infos',
 };

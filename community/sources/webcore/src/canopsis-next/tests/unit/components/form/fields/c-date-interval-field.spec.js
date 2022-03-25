@@ -2,7 +2,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { QUICK_RANGES } from '@/constants';
 
-import CDateIntervalField from '@/components/forms/fields/c-date-interval-field.vue';
+import CDateIntervalField from '@/components/forms/fields/date-picker/c-date-interval-field.vue';
 
 const localVue = createVueInstance();
 

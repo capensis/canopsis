@@ -23,7 +23,7 @@ exports[`date-time-picker Renders \`date-time-picker\` with custom props 1`] = `
         <span
           class="v-date-time-picker__subtitle"
         >
-          08/12/2013 0:00:00
+          07/12/2013 18:00:00
         </span>
       </div>
       <div
@@ -33,7 +33,7 @@ exports[`date-time-picker Renders \`date-time-picker\` with custom props 1`] = `
           class="v-date-time-picker__subtitle"
           roundhours="true"
           stepsinhours="4"
-          value="00:00"
+          value="18:00"
         />
       </div>
     </div>
@@ -154,18 +154,6 @@ exports[`date-time-picker Renders \`date-time-picker\` with custom props 1`] = `
                         </td>
                       </tr>
                       <tr>
-                        <td>
-                          <button
-                            class="v-btn v-btn--flat v-btn--floating theme--light"
-                            type="button"
-                          >
-                            <div
-                              class="v-btn__content"
-                            >
-                              7
-                            </div>
-                          </button>
-                        </td>
                         <td>
                           <button
                             class="v-btn v-btn--flat v-btn--floating theme--light"
@@ -294,7 +282,7 @@ exports[`date-time-picker Renders \`date-time-picker\` with default props 1`] = 
         <span
           class="v-date-time-picker__subtitle"
         >
-          08/12/2013
+          07/12/2013
         </span>
       </div>
       <div
@@ -303,7 +291,7 @@ exports[`date-time-picker Renders \`date-time-picker\` with default props 1`] = 
         <time-picker-field-stub
           class="v-date-time-picker__subtitle"
           stepsinhours="4"
-          value="00:00"
+          value="18:00"
         />
       </div>
     </div>
@@ -424,18 +412,6 @@ exports[`date-time-picker Renders \`date-time-picker\` with default props 1`] = 
                         </td>
                       </tr>
                       <tr>
-                        <td>
-                          <button
-                            class="v-btn v-btn--flat v-btn--floating theme--light"
-                            type="button"
-                          >
-                            <div
-                              class="v-btn__content"
-                            >
-                              7
-                            </div>
-                          </button>
-                        </td>
                         <td>
                           <button
                             class="v-btn v-btn--flat v-btn--floating theme--light"
@@ -693,18 +669,6 @@ exports[`date-time-picker Renders \`date-time-picker\` without value 1`] = `
                         </td>
                       </tr>
                       <tr>
-                        <td>
-                          <button
-                            class="v-btn v-btn--flat v-btn--floating theme--light"
-                            type="button"
-                          >
-                            <div
-                              class="v-btn__content"
-                            >
-                              7
-                            </div>
-                          </button>
-                        </td>
                         <td>
                           <button
                             class="v-btn v-btn--flat v-btn--floating theme--light"

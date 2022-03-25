@@ -21,6 +21,32 @@ import parseFilterToRequest from '../filter/editor/parse-filter-to-request';
  */
 
 /**
+ * @typedef {Object} FilterRule
+ */
+
+/**
+ * @typedef {FilterRule} FilterRuleForm
+ * @property {string} attribute
+ * @property {string} field
+ * @property {string} value
+ * @property {number|string} from
+ * @property {number|string} to
+ * @property {string} dictionary
+ * @property {string} key
+ */
+
+/**
+ * @typedef {Object} FilterGroup
+ * @property {[]} rules
+ */
+
+/**
+ * @typedef {FilterGroup} FilterGroupForm
+ * @property {FilterRuleForm[]} rules
+ * @property {string} key
+ */
+
+/**
  * Convert filter object to filter form
  *
  * @param {Object} [filter = {}]

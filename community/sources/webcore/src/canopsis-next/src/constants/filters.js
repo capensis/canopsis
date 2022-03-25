@@ -1,4 +1,4 @@
-export const FILTER_OPERATORS = {
+export const PATTERN_OPERATORS = {
   equal: 'equal',
   contains: 'contains',
   notEqual: 'not_equal',
@@ -59,11 +59,11 @@ export const FILTER_CONDITIONS = {
 };
 
 export const FILTER_OPERATORS_FOR_ARRAY = [
-  FILTER_OPERATORS.hasEvery,
-  FILTER_OPERATORS.hasOneOf,
-  FILTER_OPERATORS.hasNot,
-  FILTER_OPERATORS.isEmpty,
-  FILTER_OPERATORS.isNotEmpty,
+  PATTERN_OPERATORS.hasEvery,
+  PATTERN_OPERATORS.hasOneOf,
+  PATTERN_OPERATORS.hasNot,
+  PATTERN_OPERATORS.isEmpty,
+  PATTERN_OPERATORS.isNotEmpty,
 ];
 
 export const FILTER_MONGO_OPERATORS = {
@@ -78,7 +78,7 @@ export const FILTER_MONGO_OPERATORS = {
   less: '$lt',
 };
 
-export const FILTER_INPUT_TYPES = {
+export const PATTERN_INPUT_TYPES = {
   string: 'string',
   number: 'number',
   boolean: 'boolean',
@@ -92,7 +92,7 @@ export const FILTER_DEFAULT_VALUES = {
     field: '',
     operator: '',
     input: '',
-    inputType: FILTER_INPUT_TYPES.string,
+    inputType: PATTERN_INPUT_TYPES.string,
   },
   group: {
     condition: FILTER_MONGO_OPERATORS.and,
@@ -100,3 +100,75 @@ export const FILTER_DEFAULT_VALUES = {
     rules: {},
   },
 };
+
+export const PATTERN_OPERATORS_WITHOUT_VALUE = [
+  PATTERN_OPERATORS.exist,
+  PATTERN_OPERATORS.notExist,
+  PATTERN_OPERATORS.isEmpty,
+  PATTERN_OPERATORS.isNotEmpty,
+  PATTERN_OPERATORS.ticketAssociated,
+  PATTERN_OPERATORS.ticketNotAssociated,
+  PATTERN_OPERATORS.acked,
+  PATTERN_OPERATORS.notAcked,
+  PATTERN_OPERATORS.canceled,
+  PATTERN_OPERATORS.notCanceled,
+];
+
+export const PATTERN_RULE_TYPES = {
+  infos: 'infos',
+  extraInfos: 'extraInfos',
+  date: 'date',
+  duration: 'duration',
+  string: 'string',
+};
+
+export const PATTERN_RULE_INFOS_FIELDS = {
+  value: 'value',
+  name: 'name',
+};
+
+export const PATTERN_ARRAY_OPERATORS = [
+  PATTERN_OPERATORS.hasEvery,
+  PATTERN_OPERATORS.hasOneOf,
+  PATTERN_OPERATORS.hasNot,
+  PATTERN_OPERATORS.isEmpty,
+  PATTERN_OPERATORS.isNotEmpty,
+];
+
+export const PATTERN_DURATION_OPERATORS = [
+  PATTERN_OPERATORS.longer,
+  PATTERN_OPERATORS.shorter,
+];
+
+export const PATTERN_NUMBER_OPERATORS = [
+  PATTERN_OPERATORS.equal,
+  PATTERN_OPERATORS.notEqual,
+  PATTERN_OPERATORS.higher,
+  PATTERN_OPERATORS.longer,
+];
+
+export const PATTERN_STRING_OPERATORS = [
+  PATTERN_OPERATORS.equal,
+  PATTERN_OPERATORS.contains,
+  PATTERN_OPERATORS.notEqual,
+  PATTERN_OPERATORS.notContains,
+  PATTERN_OPERATORS.beginsWith,
+  PATTERN_OPERATORS.notBeginWith,
+  PATTERN_OPERATORS.endsWith,
+  PATTERN_OPERATORS.notEndWith,
+];
+
+export const PATTERN_BOOLEAN_OPERATORS = [
+  PATTERN_OPERATORS.equal,
+  PATTERN_OPERATORS.notEqual,
+];
+
+export const PATTERN_NULL_OPERATORS = [
+  PATTERN_OPERATORS.equal,
+  PATTERN_OPERATORS.notEqual,
+];
+
+export const PATTERN_INFOS_NAME_OPERATORS = [
+  PATTERN_OPERATORS.exist,
+  PATTERN_OPERATORS.notExist,
+];

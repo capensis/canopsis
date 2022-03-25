@@ -15,9 +15,9 @@
         @update:end="updateField('end', $event)"
       )
     v-flex.pl-2(:class="disabled ? 'xs6' : 'xs5'")
-      pbehavior-type-field(
+      c-pbehavior-type-field(
         v-field="value.type",
-        v-validate="disabled ? '' : 'required'",
+        :required="!disabled",
         :name="typeName",
         :disabled="disabled",
         return-object
@@ -48,12 +48,11 @@ import {
 
 import { formMixin } from '@/mixins/form';
 
-import PbehaviorTypeField from '@/components/other/pbehavior/calendar/partials/pbehavior-type-field.vue';
 import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { DateTimeSplittedRangePickerField, PbehaviorTypeField },
+  components: { DateTimeSplittedRangePickerField },
   mixins: [formMixin],
   model: {
     prop: 'value',

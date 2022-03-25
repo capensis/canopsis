@@ -155,10 +155,10 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               Filter
             </td>
             <td>
-              04/03/2021 19:44:48
+              04/03/2021 13:44:48
             </td>
             <td>
-              04/03/2021 19:44:48
+              04/03/2021 13:44:48
             </td>
             <td>
               <div
@@ -200,10 +200,10 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               Filter 2
             </td>
             <td>
-              04/03/2021 20:19:50
+              04/03/2021 14:19:50
             </td>
             <td>
-              04/03/2021 20:19:50
+              04/03/2021 14:19:50
             </td>
             <td>
               <div
@@ -245,10 +245,10 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               Filter 3
             </td>
             <td>
-              04/03/2021 20:20:49
+              04/03/2021 14:20:49
             </td>
             <td>
-              04/03/2021 20:20:49
+              04/03/2021 14:20:49
             </td>
             <td>
               <div
@@ -290,10 +290,10 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               Filter 4
             </td>
             <td>
-              04/03/2021 18:23:34
+              04/03/2021 12:23:34
             </td>
             <td>
-              04/03/2021 18:23:34
+              04/03/2021 12:23:34
             </td>
             <td>
               <div
@@ -335,10 +335,10 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               Filter 5
             </td>
             <td>
-              18/02/2021 10:58:51
+              18/02/2021 4:58:51
             </td>
             <td>
-              18/02/2021 10:58:51
+              18/02/2021 4:58:51
             </td>
             <td>
               <div
@@ -380,10 +380,10 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               Filter 6
             </td>
             <td>
-              18/02/2021 10:58:41
+              18/02/2021 4:58:41
             </td>
             <td>
-              18/02/2021 10:58:41
+              18/02/2021 4:58:41
             </td>
             <td>
               <div
@@ -425,10 +425,10 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               Filter 7
             </td>
             <td>
-              04/03/2021 20:24:11
+              04/03/2021 14:24:11
             </td>
             <td>
-              04/03/2021 20:24:11
+              04/03/2021 14:24:11
             </td>
             <td>
               <div
@@ -470,10 +470,10 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               Filter 8
             </td>
             <td>
-              04/06/2021 11:41:37
+              04/06/2021 6:41:37
             </td>
             <td>
-              04/06/2021 11:41:37
+              04/06/2021 6:41:37
             </td>
             <td>
               <div
@@ -515,10 +515,10 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               Filter 9
             </td>
             <td>
-              11/03/2021 11:06:41
+              11/03/2021 5:06:41
             </td>
             <td>
-              11/03/2021 11:06:41
+              11/03/2021 5:06:41
             </td>
             <td>
               <div
@@ -560,10 +560,10 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               Filter 10
             </td>
             <td>
-              11/03/2021 13:02:36
+              11/03/2021 7:02:36
             </td>
             <td>
-              11/03/2021 13:02:36
+              11/03/2021 7:02:36
             </td>
             <td>
               <div
@@ -605,10 +605,10 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               Filter 11
             </td>
             <td>
-              11/03/2021 12:29:20
+              11/03/2021 6:29:20
             </td>
             <td>
-              11/03/2021 12:29:20
+              11/03/2021 6:29:20
             </td>
             <td>
               <div
@@ -889,10 +889,10 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               Filter
             </td>
             <td>
-              04/03/2021 19:44:48
+              04/03/2021 13:44:48
             </td>
             <td>
-              04/03/2021 19:44:48
+              04/03/2021 13:44:48
             </td>
             <td>
               <div
@@ -940,10 +940,10 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               Filter 2
             </td>
             <td>
-              04/03/2021 20:19:50
+              04/03/2021 14:19:50
             </td>
             <td>
-              04/03/2021 20:19:50
+              04/03/2021 14:19:50
             </td>
             <td>
               <div
@@ -979,10 +979,10 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               Filter 3
             </td>
             <td>
-              04/03/2021 20:20:49
+              04/03/2021 14:20:49
             </td>
             <td>
-              04/03/2021 20:20:49
+              04/03/2021 14:20:49
             </td>
             <td>
               <div
@@ -1018,10 +1018,10 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               Filter 4
             </td>
             <td>
-              04/03/2021 18:23:34
+              04/03/2021 12:23:34
             </td>
             <td>
-              04/03/2021 18:23:34
+              04/03/2021 12:23:34
             </td>
             <td>
               <div
@@ -1057,10 +1057,10 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               Filter 5
             </td>
             <td>
-              18/02/2021 10:58:51
+              18/02/2021 4:58:51
             </td>
             <td>
-              18/02/2021 10:58:51
+              18/02/2021 4:58:51
             </td>
             <td>
               <div
@@ -1096,10 +1096,10 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               Filter 6
             </td>
             <td>
-              18/02/2021 10:58:41
+              18/02/2021 4:58:41
             </td>
             <td>
-              18/02/2021 10:58:41
+              18/02/2021 4:58:41
             </td>
             <td>
               <div
@@ -1135,10 +1135,10 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               Filter 7
             </td>
             <td>
-              04/03/2021 20:24:11
+              04/03/2021 14:24:11
             </td>
             <td>
-              04/03/2021 20:24:11
+              04/03/2021 14:24:11
             </td>
             <td>
               <div
@@ -1174,10 +1174,10 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               Filter 8
             </td>
             <td>
-              04/06/2021 11:41:37
+              04/06/2021 6:41:37
             </td>
             <td>
-              04/06/2021 11:41:37
+              04/06/2021 6:41:37
             </td>
             <td>
               <div
@@ -1213,10 +1213,10 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               Filter 9
             </td>
             <td>
-              11/03/2021 11:06:41
+              11/03/2021 5:06:41
             </td>
             <td>
-              11/03/2021 11:06:41
+              11/03/2021 5:06:41
             </td>
             <td>
               <div
@@ -1252,10 +1252,10 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               Filter 10
             </td>
             <td>
-              11/03/2021 13:02:36
+              11/03/2021 7:02:36
             </td>
             <td>
-              11/03/2021 13:02:36
+              11/03/2021 7:02:36
             </td>
             <td>
               <div
@@ -1291,10 +1291,10 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               Filter 11
             </td>
             <td>
-              11/03/2021 12:29:20
+              11/03/2021 6:29:20
             </td>
             <td>
-              11/03/2021 12:29:20
+              11/03/2021 6:29:20
             </td>
             <td>
               <div

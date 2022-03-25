@@ -7,7 +7,7 @@
       c-enabled-field(v-field="value.enabled")
       v-text-field(
         v-field="value.value",
-        :label="$t('tables.alarmGeneral.output')",
+        :label="$t('common.output')",
         :disabled="!value.enabled"
       )
 </template>

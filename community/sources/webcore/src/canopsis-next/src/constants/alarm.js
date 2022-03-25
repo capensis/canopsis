@@ -91,66 +91,66 @@ export const ALARM_ENTITY_FIELDS = {
 
 export const DEFAULT_ALARMS_WIDGET_COLUMNS = [
   {
-    labelKey: 'tables.alarmGeneral.connector',
+    labelKey: 'common.connector',
     value: ALARM_ENTITY_FIELDS.connector,
   },
   {
-    labelKey: 'tables.alarmGeneral.connectorName',
+    labelKey: 'common.connectorName',
     value: ALARM_ENTITY_FIELDS.connectorName,
   },
   {
-    labelKey: 'tables.alarmGeneral.component',
+    labelKey: 'common.component',
     value: ALARM_ENTITY_FIELDS.component,
   },
   {
-    labelKey: 'tables.alarmGeneral.resource',
+    labelKey: 'common.resource',
     value: ALARM_ENTITY_FIELDS.resource,
   },
   {
-    labelKey: 'tables.alarmGeneral.output',
+    labelKey: 'common.output',
     value: ALARM_ENTITY_FIELDS.output,
   },
   {
-    labelKey: 'tables.alarmGeneral.extraDetails',
+    labelKey: 'common.extraDetail',
     value: ALARM_ENTITY_FIELDS.extraDetails,
   },
   {
-    labelKey: 'tables.alarmGeneral.state',
+    labelKey: 'common.state',
     value: ALARM_ENTITY_FIELDS.state,
   },
   {
-    labelKey: 'tables.alarmGeneral.status',
+    labelKey: 'common.status',
     value: ALARM_ENTITY_FIELDS.status,
   },
 ];
 
 export const DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS = [
   {
-    labelKey: 'tables.alarmGeneral.connector',
+    labelKey: 'alarm.connector',
     value: ALARM_ENTITY_FIELDS.connector,
   },
   {
-    labelKey: 'tables.alarmGeneral.connectorName',
+    labelKey: 'alarm.connectorName',
     value: ALARM_ENTITY_FIELDS.connectorName,
   },
   {
-    labelKey: 'tables.alarmGeneral.resource',
+    labelKey: 'alarm.resource',
     value: ALARM_ENTITY_FIELDS.resource,
   },
   {
-    labelKey: 'tables.alarmGeneral.output',
+    labelKey: 'common.output',
     value: ALARM_ENTITY_FIELDS.output,
   },
   {
-    labelKey: 'tables.alarmGeneral.extraDetails',
+    labelKey: 'alarm.extraDetails',
     value: ALARM_ENTITY_FIELDS.extraDetails,
   },
   {
-    labelKey: 'tables.alarmGeneral.state',
+    labelKey: 'common.state',
     value: ALARM_ENTITY_FIELDS.state,
   },
   {
-    labelKey: 'tables.alarmGeneral.status',
+    labelKey: 'common.status',
     value: ALARM_ENTITY_FIELDS.status,
   },
 ];
@@ -207,7 +207,7 @@ export const ALARM_INTERVAL_FIELDS = {
   lastEventDate: 'last_event_date',
 };
 
-export const ALARM_FILTER_FIELDS = {
+export const ALARM_PATTERN_FIELDS = {
   displayName: 'v.display_name',
   state: 'v.state.val',
   status: 'v.status.val',

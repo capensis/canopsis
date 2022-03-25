@@ -5,12 +5,14 @@
     :label="$t('quickRanges.title')",
     :hide-details="hideDetails",
     :disabled="disabled",
-    return-object,
+    :return-object="returnObject",
     @input="updateModel($event)"
   )
 </template>
 
 <script>
+import { isObject } from 'lodash';
+
 import { QUICK_RANGES } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
@@ -25,8 +27,8 @@ export default {
   },
   props: {
     value: {
-      type: Object,
-      required: true,
+      type: [String, Object],
+      required: false,
     },
     ranges: {
       type: Array,
@@ -40,9 +42,17 @@ export default {
       type: Boolean,
       required: false,
     },
+    returnObject: {
+      type: Boolean,
+      required: false,
+    },
   },
   computed: {
     range() {
+      if (!isObject(this.value)) {
+        return this.value;
+      }
+
       const range = findQuickRangeValue(this.value.start, this.value.stop, this.ranges);
 
       return this.quickRanges.find(({ value }) => value === range.value);
