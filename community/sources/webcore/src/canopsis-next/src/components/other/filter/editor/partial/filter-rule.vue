@@ -46,7 +46,7 @@
 <script>
 import { get, omit } from 'lodash';
 
-import { FILTER_INPUT_TYPES, FILTER_OPERATORS, FILTER_OPERATORS_FOR_ARRAY } from '@/constants';
+import { PATTERN_INPUT_TYPES, PATTERN_OPERATORS, FILTER_OPERATORS_FOR_ARRAY } from '@/constants';
 
 import uid from '@/helpers/uid';
 
@@ -81,7 +81,7 @@ export default {
     operators: {
       type: Array,
       default() {
-        return Object.values(FILTER_OPERATORS);
+        return Object.values(PATTERN_OPERATORS);
       },
     },
   },
@@ -140,15 +140,15 @@ export default {
     },
 
     isOperatorForArray() {
-      return [FILTER_OPERATORS.hasOneOf, FILTER_OPERATORS.hasNot].includes(this.rule.operator);
+      return [PATTERN_OPERATORS.hasOneOf, PATTERN_OPERATORS.hasNot].includes(this.rule.operator);
     },
 
     isShownInputField() {
       return ![
-        FILTER_OPERATORS.isEmpty,
-        FILTER_OPERATORS.isNotEmpty,
-        FILTER_OPERATORS.isNull,
-        FILTER_OPERATORS.isNotNull,
+        PATTERN_OPERATORS.isEmpty,
+        PATTERN_OPERATORS.isNotEmpty,
+        PATTERN_OPERATORS.isNull,
+        PATTERN_OPERATORS.isNotNull,
       ].includes(this.rule.operator);
     },
   },
@@ -180,12 +180,12 @@ export default {
         flat: true,
         errorMessages: this.errors.collect(name),
         types: valueProps.types
-          ? valueProps.types.filter(type => type.value !== FILTER_INPUT_TYPES.array)
+          ? valueProps.types.filter(type => type.value !== PATTERN_INPUT_TYPES.array)
           : [
-            { value: FILTER_INPUT_TYPES.string },
-            { value: FILTER_INPUT_TYPES.number },
-            { value: FILTER_INPUT_TYPES.boolean },
-            { value: FILTER_INPUT_TYPES.null },
+            { value: PATTERN_INPUT_TYPES.string },
+            { value: PATTERN_INPUT_TYPES.number },
+            { value: PATTERN_INPUT_TYPES.boolean },
+            { value: PATTERN_INPUT_TYPES.null },
           ],
 
         ...omit(valueProps, ['types']),

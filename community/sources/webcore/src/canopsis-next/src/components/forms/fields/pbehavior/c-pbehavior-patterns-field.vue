@@ -1,0 +1,163 @@
+<template lang="pug">
+  c-pattern-groups-field(
+    v-field="groups",
+    :disabled="disabled",
+    :name="name",
+    :attributes="pbehaviorAttributes"
+  )
+</template>
+
+<script>
+import { createNamespacedHelpers } from 'vuex';
+
+import { MAX_LIMIT, PATTERN_OPERATORS, PBEHAVIOR_PATTERN_FIELDS } from '@/constants';
+
+const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
+const { mapActions: pbehaviorReasonMapActions } = createNamespacedHelpers('pbehaviorReasons');
+const { mapActions: pbehaviorTypeMapActions } = createNamespacedHelpers('pbehaviorTypes');
+
+export default {
+  model: {
+    prop: 'groups',
+    event: 'input',
+  },
+  props: {
+    groups: {
+      type: Array,
+      required: true,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    name: {
+      type: String,
+      required: false,
+    },
+  },
+  data() {
+    return {
+      pbehaviors: [],
+      pbehaviorsPending: false,
+
+      pbehaviorReasons: [],
+      pbehaviorReasonsPending: false,
+
+      pbehaviorTypes: [],
+      pbehaviorTypesPending: false,
+    };
+  },
+  computed: {
+    nameOptions() {
+      return {
+        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        valueField: {
+          is: 'c-select-field',
+          props: {
+            items: this.pbehaviors,
+            loading: this.pbehaviorsPending,
+            itemValue: '_id',
+            itemText: 'name',
+            ellipsis: true,
+          },
+        },
+      };
+    },
+
+    reasonOptions() {
+      return {
+        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        valueField: {
+          is: 'c-select-field',
+          props: {
+            items: this.pbehaviorReasons,
+            loading: this.pbehaviorReasonsPending,
+            itemValue: '_id',
+            itemText: 'name',
+            ellipsis: true,
+          },
+        },
+      };
+    },
+
+    typeOptions() {
+      return {
+        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        valueField: {
+          is: 'c-select-field',
+          props: {
+            items: this.pbehaviorTypes,
+            loading: this.pbehaviorTypesPending,
+            itemValue: '_id',
+            itemText: 'name',
+            ellipsis: true,
+          },
+        },
+      };
+    },
+
+    pbehaviorAttributes() {
+      return [
+        {
+          text: this.$t('common.name'),
+          value: PBEHAVIOR_PATTERN_FIELDS.name,
+          options: this.nameOptions,
+        },
+        {
+          text: this.$t('common.reason'),
+          value: PBEHAVIOR_PATTERN_FIELDS.reason,
+          options: this.reasonOptions,
+        },
+        {
+          text: this.$t('common.type'),
+          value: PBEHAVIOR_PATTERN_FIELDS.type,
+          options: this.typeOptions,
+        },
+      ];
+    },
+  },
+  mounted() {
+    this.fetchPbehaviors();
+    this.fetchPbehaviorReasons();
+    this.fetchPbehaviorTypes();
+  },
+  methods: {
+    ...pbehaviorMapActions({ fetchPbehaviorsListWithoutStore: 'fetchListWithoutStore' }),
+    ...pbehaviorReasonMapActions({ fetchPbehaviorReasonsListWithoutStore: 'fetchListWithoutStore' }),
+    ...pbehaviorTypeMapActions({ fetchPbehaviorTypesListWithoutStore: 'fetchListWithoutStore' }),
+
+    async fetchPbehaviors() {
+      this.pbehaviorsPending = true;
+
+      const { data: pbehaviors } = await this.fetchPbehaviorsListWithoutStore({
+        params: { limit: MAX_LIMIT },
+      });
+
+      this.pbehaviors = pbehaviors;
+      this.pbehaviorsPending = false;
+    },
+
+    async fetchPbehaviorReasons() {
+      this.pbehaviorReasonsPending = true;
+
+      const { data: reasons } = await this.fetchPbehaviorReasonsListWithoutStore({
+        params: { limit: MAX_LIMIT },
+      });
+
+      this.pbehaviorReasons = reasons;
+      this.pbehaviorReasonsPending = false;
+    },
+
+    async fetchPbehaviorTypes() {
+      this.pbehaviorTypesPending = true;
+
+      const { data: types } = await this.fetchPbehaviorTypesListWithoutStore({
+        params: { limit: MAX_LIMIT },
+      });
+
+      this.pbehaviorTypes = types;
+      this.pbehaviorTypesPending = false;
+    },
+  },
+};
+</script>

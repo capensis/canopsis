@@ -7,13 +7,13 @@ import {
 
 import { authMixin } from '@/mixins/auth';
 import eventActionsServiceEntityMixin from '@/mixins/event-actions/service-entity';
-import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
+import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
+import { entitiesPbehaviorTypeMixin } from '@/mixins/entities/pbehavior/types';
 
 export default {
   mixins: [
     authMixin,
-    entitiesPbehaviorTypesMixin,
+    entitiesPbehaviorTypeMixin,
     eventActionsServiceEntityMixin,
     entitiesPbehaviorMixin,
   ],
@@ -113,7 +113,7 @@ export default {
       this.$modals.show({
         name: MODALS.textFieldEditor,
         config: {
-          title: this.$t('common.output'),
+          title: this.$t('common.note'),
           action: (output) => {
             this.addCancelActionToQueue({ entity: this.entity, output });
           },

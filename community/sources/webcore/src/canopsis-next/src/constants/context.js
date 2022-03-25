@@ -444,8 +444,9 @@ export const CONTEXT_COLUMNS_WITH_SORTABLE = [ // TODO: We should receive it fro
   'idle_since',
 ];
 
-export const ENTITY_FILTER_FIELDS = {
+export const ENTITY_PATTERN_FIELDS = {
   id: '_id',
+  name: 'name',
   impact: 'impact',
   depends: 'depends',
   infos: 'infos',
