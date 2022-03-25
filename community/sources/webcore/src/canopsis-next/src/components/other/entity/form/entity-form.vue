@@ -13,12 +13,7 @@
             disabled
           )
         v-layout(row)
-          v-textarea(
-            v-field="form.description",
-            :label="$t('common.description')",
-            :error-messages="errors.collect('description')",
-            name="description"
-          )
+          c-description-field(v-field="form.description")
         v-layout(row, justify-space-between)
           v-flex(xs3)
             c-enabled-field(v-field="form.enabled")
