@@ -7,6 +7,10 @@ import ResizeObserver from 'resize-observer-polyfill';
 registerRequireContextHook();
 
 global.ResizeObserver = ResizeObserver;
+global.IntersectionObserver = jest.fn(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+}));
 
 expect.extend({
   toMatchImageSnapshot,

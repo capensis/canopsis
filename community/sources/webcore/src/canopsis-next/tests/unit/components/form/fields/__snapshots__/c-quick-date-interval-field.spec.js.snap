@@ -18,6 +18,7 @@ exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` wit
       disabled="true"
       hide-details="hide-details"
       ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      return-object="return-object"
       value="[object Object]"
     />
   </div>
@@ -40,6 +41,7 @@ exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` wit
       class="ml-4"
       hide-details="hide-details"
       ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      return-object="return-object"
       value="[object Object]"
     />
   </div>
