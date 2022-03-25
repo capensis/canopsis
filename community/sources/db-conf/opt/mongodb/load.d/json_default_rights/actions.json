@@ -244,6 +244,14 @@
         "type": "CRUD"
     },
     {
+        "_id": "models_profile_corporatePattern",
+        "loader_id": "models_profile_corporatePattern",
+        "crecord_name": "models_profile_corporatePattern",
+        "crecord_type": "action",
+        "desc": "Profile: Shared filters",
+        "type": "CRUD"
+    },
+    {
         "_id": "listalarm_ack",
         "loader_id": "listalarm_ack",
         "crecord_name": "listalarm_ack",

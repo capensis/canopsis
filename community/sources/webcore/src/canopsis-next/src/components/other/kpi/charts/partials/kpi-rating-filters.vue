@@ -2,7 +2,7 @@
   div.kpi-rating-toolbar
     v-layout.ml-4.my-4(wrap)
       c-quick-date-interval-field.mr-4(v-field="query.interval", :min="minDate")
-      c-filters-field.mr-4.kpi-rating-toolbar__filters(v-field="query.filter", :disabled="isUserMetric")
+      c-filter-field.mr-4.kpi-rating-toolbar__filters(v-field="query.filter", :disabled="isUserMetric")
       kpi-rating-criteria-field.mr-4.kpi-rating-toolbar__criteria(
         :value="query.criteria",
         mandatory,

@@ -1,47 +1,41 @@
 <template lang="pug">
-  div.c-quick-interval
-    date-picker-field(
-      :value="intervalFromString",
-      :label="$t('common.from')",
-      :allowed-dates="isAllowedFromDate",
-      hide-details,
-      @input="updateFromDate"
+  div.c-quick-interval(:class="{ 'c-quick-interval--reverse': reverse }")
+    c-date-interval-field(
+      :value="intervalObject",
+      :disabled="disabled",
+      :is-allowed-from-date="isAllowedFromDate",
+      :is-allowed-to-date="isAllowedToDate",
+      @input="updateModel($event)"
     )
-      v-icon(slot="append", color="black") calendar_today
-    date-picker-field.ml-4(
-      :value="intervalToString",
-      :label="$t('common.to')",
-      :allowed-dates="isAllowedToDate",
-      hide-details,
-      @input="updateToDate"
-    )
-      v-icon(slot="append", color="black") calendar_today
     div.c-quick-interval__range
-      c-quick-date-interval-type-field.ml-4(
-        v-model="range",
-        :custom-filter="isAllowedQuickRange",
-        hide-details
+      c-quick-date-interval-type-field(
+        :class="{ 'ml-4': !reverse, 'mr-4': reverse }",
+        :value="range",
+        :ranges="quickRanges",
+        :disabled="disabled",
+        hide-details,
+        return-object,
+        @input="updateIntervalRange"
       )
 </template>
 
 <script>
 import { DATETIME_FORMATS, QUICK_RANGES } from '@/constants';
 
-import { convertDateToString, convertDateToTimestamp, getNowTimestamp, getWeekdayNumber } from '@/helpers/date/date';
 import {
-  findQuickRangeValue,
+  convertDateToString,
+  convertDateToTimestamp,
+  getNowTimestamp,
+  getWeekdayNumber,
+} from '@/helpers/date/date';
+import {
   convertStartDateIntervalToTimestamp,
   convertStopDateIntervalToTimestamp,
 } from '@/helpers/date/date-intervals';
 
 import { formMixin } from '@/mixins/form';
 
-import DatePickerField from '@/components/forms/fields/date-picker/date-picker-field.vue';
-
 export default {
-  components: {
-    DatePickerField,
-  },
   mixins: [formMixin],
   model: {
     event: 'input',
@@ -50,7 +44,10 @@ export default {
   props: {
     interval: {
       type: Object,
-      default: () => ({}),
+      default: () => ({
+        from: 0,
+        to: 0,
+      }),
     },
     accumulatedBefore: {
       type: Number,
@@ -60,15 +57,18 @@ export default {
       type: Number,
       required: false,
     },
+    disabled: {
+      type: Boolean,
+      required: false,
+    },
+    reverse: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     quickRanges() {
-      return Object.values(QUICK_RANGES)
-        .filter(this.isAllowedQuickRange)
-        .map(range => ({
-          ...range,
-          text: this.$t(`quickRanges.types.${range.value}`),
-        }));
+      return Object.values(QUICK_RANGES).filter(this.isAllowedQuickRange);
     },
 
     intervalFromAsTimestamp() {
@@ -87,22 +87,18 @@ export default {
       return convertDateToString(this.intervalToAsTimestamp, DATETIME_FORMATS.datePicker);
     },
 
-    range: {
-      get() {
-        const range = findQuickRangeValue(this.interval.from, this.interval.to);
+    intervalObject() {
+      return {
+        from: this.intervalFromString,
+        to: this.intervalToString,
+      };
+    },
 
-        return this.quickRanges.find(({ value }) => value === range.value);
-      },
-
-      set({ start, stop }) {
-        if (start && stop) {
-          this.updateModel({
-            ...this.interval,
-            from: start,
-            to: stop,
-          });
-        }
-      },
+    range() {
+      return {
+        start: this.interval.from,
+        stop: this.interval.to,
+      };
     },
   },
   methods: {
@@ -176,12 +172,14 @@ export default {
         && this.isAllowedAccumulatedToDate(stopTimestamp);
     },
 
-    updateFromDate(from) {
-      this.updateField('from', from);
-    },
-
-    updateToDate(to) {
-      this.updateField('to', to);
+    updateIntervalRange({ start, stop }) {
+      if (start && stop) {
+        this.updateModel({
+          ...this.interval,
+          from: start,
+          to: stop,
+        });
+      }
     },
   },
 };
@@ -194,6 +192,10 @@ export default {
   &__range {
     display: flex;
     max-width: 180px;
+  }
+
+  &--reverse {
+    flex-direction: row-reverse;
   }
 }
 </style>

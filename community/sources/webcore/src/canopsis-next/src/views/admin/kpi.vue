@@ -29,7 +29,7 @@
         @create="create",
         @refresh="refresh"
       )
-        span {{ $t('modals.filter.create.title') }}
+        span {{ $t('modals.createFilter.create.title') }}
 </template>
 
 <script>
@@ -88,7 +88,7 @@ export default {
       this.$modals.show({
         name: MODALS.patterns,
         config: {
-          title: this.$t('modals.filter.create.title'),
+          title: this.$t('modals.createFilter.create.title'),
           name: true,
           entity: true,
           patterns: {

@@ -4,11 +4,12 @@
       template(slot="title")
         span {{ title }}
       template(slot="text")
-        c-patterns-field(v-model="form", alarm, entity)
-          template(slot="additionalTabs")
-            v-tab {{ $t('remediationPatterns.tabs.pbehaviorTypes.title') }}
-            v-tab-item
-              remediation-patterns-pbehavior-types-form(v-model="form")
+        c-patterns-field(
+          v-model="form",
+          with-alarm,
+          with-entity,
+          with-pbehavior
+        )
       template(slot="actions")
         v-btn(
           :disabled="submitting",

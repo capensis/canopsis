@@ -5,7 +5,7 @@
       v-textarea(
         v-field="form.output",
         v-validate="isNoteRequired ? 'required' : ''",
-        :label="$t('common.output')",
+        :label="$t('common.note')",
         :error-messages="errors.collect('output')",
         name="output"
       )

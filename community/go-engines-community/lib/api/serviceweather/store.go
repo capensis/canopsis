@@ -183,9 +183,14 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 				return assignedInstructionsMap[v.AlarmID][i].Name < assignedInstructionsMap[v.AlarmID][j].Name
 			})
 
-			res.Data[idx].AssignedInstructions = assignedInstructionsMap[v.AlarmID]
+			assignedInstructions := assignedInstructionsMap[v.AlarmID]
+			if assignedInstructions == nil {
+				assignedInstructions = make([]alarmapi.InstructionWithAlarms, 0)
+			}
+			res.Data[idx].AssignedInstructions = assignedInstructions
 			res.Data[idx].IsAutoInstructionRunning = statusesByAlarm[v.AlarmID].AutoRunning
 			res.Data[idx].IsAllAutoInstructionsCompleted = statusesByAlarm[v.AlarmID].AutoAllCompleted
+			res.Data[idx].IsAutoInstructionFailed = statusesByAlarm[v.AlarmID].AutoFailed
 			res.Data[idx].IsManualInstructionWaitingResult = statusesByAlarm[v.AlarmID].ManualRunning
 		}
 	}
@@ -316,29 +321,24 @@ func getFindPipeline() []bson.M {
 		}},
 		{"$unwind": bson.M{"path": "$category", "preserveNullAndEmptyArrays": true}},
 		// Find pbehavior types
-		{"$addFields": bson.M{
-			"alarm_counters": bson.M{"$map": bson.M{
-				"input": bson.M{"$objectToArray": "$alarms_cumulative_data.watched_pbehavior_count"},
-				"as":    "each",
-				"in": bson.M{
-					"type":  "$$each.k",
-					"count": "$$each.v",
-				},
-			}},
+		{"$addFields": bson.M{"pbh_types": bson.M{"$ifNull": bson.A{
+			bson.M{"$map": bson.M{"input": bson.M{"$objectToArray": "$alarms_cumulative_data.watched_pbehavior_count"}, "as": "each", "in": "$$each.k"}},
+			[]int{-1}}}}},
+		{"$lookup": bson.M{"as": "alarm_counters", "from": "pbehavior_type",
+			"let": bson.M{"pbh_types": "$pbh_types", "cumulative": bson.M{"$objectToArray": "$alarms_cumulative_data.watched_pbehavior_count"}},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$expr": bson.M{"$in": []string{"$_id", "$$pbh_types"}}}},
+				{"$addFields": bson.M{
+					"count": bson.M{"$mergeObjects": bson.M{
+						"$filter": bson.M{"input": "$$cumulative", "as": "each", "cond": bson.M{"$eq": []string{"$$each.k", "$_id"}}}}}}},
+				{"$project": bson.M{"count": "$count.v", "type": "$$ROOT"}},
+				{"$match": bson.M{"$expr": bson.M{"$gt": bson.A{"$count", 0}}}},
+				{"$project": bson.M{"type.loader_id": 0, "_id": 0, "type.count": 0}},
+			},
 		}},
-		{"$unwind": bson.M{"path": "$alarm_counters", "preserveNullAndEmptyArrays": true}},
-		{"$lookup": bson.M{
-			"from":         pbehaviorlib.TypeCollectionName,
-			"localField":   "alarm_counters.type",
-			"foreignField": "_id",
-			"as":           "alarm_counters.type",
-		}},
-		{"$unwind": bson.M{"path": "$alarm_counters.type", "preserveNullAndEmptyArrays": true}},
-		{"$group": bson.M{
-			"_id":            "$_id",
-			"data":           bson.M{"$first": "$$ROOT"},
-			"alarm_counters": bson.M{"$push": "$alarm_counters"},
-		}},
+		{"$project": bson.M{"pbh_types": 0}},
+		{"$project": bson.M{"_id": "$_id", "alarm_counters": "$alarm_counters", "data": "$$ROOT"}},
+
 		{"$replaceRoot": bson.M{
 			"newRoot": bson.M{"$mergeObjects": bson.A{
 				"$data",
@@ -524,7 +524,7 @@ func getFindIconPipeline() []bson.M {
 
 func getFindEntitiesPipeline(location *time.Location) []bson.M {
 	year, month, day := time.Now().In(location).Date()
-	truncatedInLocation := time.Date(year, month, day, 0, 0, 0, 0, location)
+	truncatedInLocation := time.Date(year, month, day, 0, 0, 0, 0, location).Unix()
 
 	pipeline := []bson.M{
 		// Find category
@@ -537,17 +537,20 @@ func getFindEntitiesPipeline(location *time.Location) []bson.M {
 		{"$unwind": bson.M{"path": "$category", "preserveNullAndEmptyArrays": true}},
 		// Event statistics
 		{"$lookup": bson.M{
-			"from": mongo.EventStatistics,
-			"let":  bson.M{"id": "$_id"},
-			"pipeline": []bson.M{
-				{"$match": bson.M{"$and": []bson.M{
-					{"$expr": bson.M{"$eq": bson.A{"$_id", "$$id"}}},
-					{"last_event": bson.M{"$gt": truncatedInLocation.Unix()}},
-				}}},
-			},
+			"from":       mongo.EventStatistics,
+			"localField": "_id", "foreignField": "_id",
 			"as": "stats",
 		}},
 		{"$unwind": bson.M{"path": "$stats", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			// stats counters with "last_event" prior "truncatedInLocation" represent as 0
+			"stats.ok": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$gt": bson.A{"$stats.last_event", truncatedInLocation}},
+				"then": "$stats.ok", "else": 0}},
+			"stats.ko": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$gt": bson.A{"$stats.last_event", truncatedInLocation}},
+				"then": "$stats.ko", "else": 0}},
+		}},
 		// Find connected alarm.
 		{"$lookup": bson.M{
 			"from": alarm.AlarmCollectionName,
