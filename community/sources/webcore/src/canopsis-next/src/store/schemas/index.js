@@ -86,7 +86,7 @@ export const userSchema = new schema.Entity(ENTITIES_TYPES.user, {}, { idAttribu
 
 export const roleSchema = new schema.Entity(ENTITIES_TYPES.role, {}, { idAttribute: '_id' });
 
-export const eventFilterRuleSchema = new schema.Entity(ENTITIES_TYPES.eventFilterRule, {}, { idAttribute: '_id' });
+export const eventFilterSchema = new schema.Entity(ENTITIES_TYPES.eventFilter, {}, { idAttribute: '_id' });
 
 export const metaAlarmRuleSchema = new schema.Entity(ENTITIES_TYPES.metaAlarmRule, {}, { idAttribute: '_id' });
 
@@ -169,7 +169,7 @@ export default {
   [ENTITIES_TYPES.widget]: widgetSchema,
   [ENTITIES_TYPES.user]: userSchema,
   [ENTITIES_TYPES.role]: roleSchema,
-  [ENTITIES_TYPES.eventFilterRule]: eventFilterRuleSchema,
+  [ENTITIES_TYPES.eventFilter]: eventFilterSchema,
   [ENTITIES_TYPES.snmpRule]: snmpRuleSchema,
   [ENTITIES_TYPES.dynamicInfo]: dynamicInfoSchema,
   [ENTITIES_TYPES.broadcastMessage]: broadcastMessageSchema,

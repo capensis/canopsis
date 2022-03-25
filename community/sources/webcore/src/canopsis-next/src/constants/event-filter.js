@@ -1,4 +1,11 @@
-export const EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES = {
+export const EVENT_FILTER_TYPES = {
+  drop: 'drop',
+  break: 'break',
+  enrichment: 'enrichment',
+  changeEntity: 'change_entity',
+};
+
+export const EVENT_FILTER_ENRICHMENT_AFTER_TYPES = {
   pass: 'pass',
   break: 'break',
   drop: 'drop',
