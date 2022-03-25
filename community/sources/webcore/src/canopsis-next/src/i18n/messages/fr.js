@@ -2785,5 +2785,9 @@ export default {
     },
   },
 
+  filter: {
+    oldPattern: 'Ancien format de motif',
+  },
+
   ...featureService.get('i18n.fr'),
 };

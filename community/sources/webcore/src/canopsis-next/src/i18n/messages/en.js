@@ -2785,5 +2785,9 @@ export default {
     },
   },
 
+  filter: {
+    oldPattern: 'Old pattern format',
+  },
+
   ...featureService.get('i18n.en'),
 };
