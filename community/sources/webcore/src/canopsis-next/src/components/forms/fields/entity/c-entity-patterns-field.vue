@@ -1,9 +1,12 @@
 <template lang="pug">
-  c-pattern-groups-field(
-    v-field="groups",
+  c-patterns-editor-field(
+    v-field="patterns",
     :disabled="disabled",
     :name="name",
-    :attributes="entityAttributes"
+    :type="$constants.PATTERN_TYPES.entity",
+    :required="required",
+    :attributes="entityAttributes",
+    with-type
   )
 </template>
 
@@ -22,12 +25,12 @@ const { mapActions: entityCategoryMapActions } = createNamespacedHelpers('entity
 
 export default {
   model: {
-    prop: 'groups',
+    prop: 'patterns',
     event: 'input',
   },
   props: {
-    groups: {
-      type: Array,
+    patterns: {
+      type: Object,
       required: true,
     },
     disabled: {
@@ -37,6 +40,10 @@ export default {
     name: {
       type: String,
       required: false,
+    },
+    required: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

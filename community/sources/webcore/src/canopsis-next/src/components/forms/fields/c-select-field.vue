@@ -1,6 +1,6 @@
 <template lang="pug">
   component.c-select-field(
-    v-field="value",
+    :value="value",
     v-bind="$attrs",
     v-on="$listeners",
     v-validate="rules",
@@ -31,7 +31,7 @@ export default {
   },
   props: {
     value: {
-      type: [Array, Object, String],
+      type: [Array, Object, String, Symbol],
       default: '',
     },
     required: {

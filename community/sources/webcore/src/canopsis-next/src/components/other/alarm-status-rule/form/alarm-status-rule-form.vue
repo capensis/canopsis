@@ -20,8 +20,8 @@
     c-patterns-field(
       v-field="form.patterns",
       :some-required="flapping",
-      alarm,
-      entity
+      with-alarm,
+      with-entity
     )
 </template>
 

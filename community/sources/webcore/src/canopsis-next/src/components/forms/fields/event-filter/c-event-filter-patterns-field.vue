@@ -1,8 +1,9 @@
 <template lang="pug">
-  c-pattern-groups-field(
-    v-field="groups",
+  c-patterns-editor-field(
+    v-field="patterns",
     :disabled="disabled",
     :name="name",
+    :required="required",
     :attributes="eventFilterAttributes"
   )
 </template>
@@ -12,12 +13,12 @@ import { BASIC_ENTITY_TYPES, EVENT_FILTER_PATTERN_FIELDS, PATTERN_OPERATORS, PAT
 
 export default {
   model: {
-    prop: 'groups',
+    prop: 'patterns',
     event: 'input',
   },
   props: {
-    groups: {
-      type: Array,
+    patterns: {
+      type: Object,
       required: true,
     },
     disabled: {
@@ -27,6 +28,10 @@ export default {
     name: {
       type: String,
       required: false,
+    },
+    required: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

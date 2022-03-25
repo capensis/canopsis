@@ -45,14 +45,12 @@
 <script>
 import { get } from 'lodash';
 
-import FilterEditor from '@/components/other/filter/editor/filter-editor.vue';
 import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
 import ManageInfos from '@/components/widgets/context/manage-infos.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    FilterEditor,
     PatternsList,
     ManageInfos,
   },

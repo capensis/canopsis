@@ -1,7 +1,7 @@
 <template lang="pug">
   div.d-inline-flex
     date-time-picker-field(
-      v-validate,
+      v-validate="rules",
       v-field="value.from",
       :label="$t('common.from')",
       :disabled="disabled",
@@ -9,7 +9,7 @@
       :hide-details="hideDetails"
     )
     date-time-picker-field.pl-3(
-      v-validate,
+      v-validate="rules",
       v-field="value.to",
       :label="$t('common.to')",
       :disabled="disabled",
@@ -47,8 +47,18 @@ export default {
       type: Boolean,
       required: false,
     },
+    required: {
+      type: Boolean,
+      required: false,
+    },
   },
   computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
+    },
+
     fromFieldName() {
       return `${this.name}.from`;
     },

@@ -13,6 +13,7 @@
     :deletable-chips="isMultiply",
     :small-chips="isMultiply",
     :error-messages="errors.collect(name)",
+    :disabled="disabled",
     :menu-props="{ contentClass: 'c-entity-field__list' }",
     dense,
     autocomplete,
@@ -20,7 +21,7 @@
     @update:searchInput="debouncedUpdateSearch"
   )
     template(#item="{ item, tile }")
-      v-list-tile.c-entity-field--tile(ref="a", v-bind="tile.props", v-on="tile.on")
+      v-list-tile.c-entity-field--tile(v-bind="tile.props", v-on="tile.on")
         v-list-tile-content {{ item[itemText] }}
         span.ml-4.grey--text(v-if="shownType") {{ item.type }}
     template(#append-item="")
@@ -29,7 +30,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { debounce, isEqual } from 'lodash';
+import { debounce, isEqual, keyBy, isArray } from 'lodash';
 
 import { BASIC_ENTITY_TYPES } from '@/constants';
 
@@ -72,10 +73,14 @@ export default {
       type: Array,
       default: () => Object.values(BASIC_ENTITY_TYPES),
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
-      entities: [],
+      entitiesById: {},
       entitiesPending: false,
       pageCount: Infinity,
 
@@ -86,12 +91,16 @@ export default {
     };
   },
   computed: {
+    entities() {
+      return Object.values(this.entitiesById);
+    },
+
     shownType() {
       return this.entityTypes.length !== 1;
     },
 
     isMultiply() {
-      return Array.isArray(this.value);
+      return isArray(this.value);
     },
 
     selectLabel() {
@@ -123,6 +132,10 @@ export default {
     this.observer = new IntersectionObserver(this.intersectionHandler);
 
     this.observer.observe(this.$refs.append);
+
+    if (this.value) {
+      this.fetchEntities(this.value);
+    }
   },
   beforeDestroy() {
     this.observer.unobserve(this.$refs.append);
@@ -154,21 +167,34 @@ export default {
       }
     },
 
-    async fetchEntities() {
+    getParams(ids) {
+      const params = {
+        limit: this.limit,
+        page: this.query.page,
+        search: this.query.search,
+        filter: { type: { $in: this.entityTypes } },
+      };
+
+      if (ids) {
+        params.filter._id = { $in: isArray(ids) ? ids : [ids] };
+      }
+
+      return params;
+    },
+
+    async fetchEntities(ids) {
       this.entitiesPending = true;
 
       const { data: entities, meta } = await this.fetchContextEntitiesListWithoutStore({
-        params: {
-          limit: this.limit,
-          page: this.query.page,
-          search: this.query.search,
-          filter: { type: { $in: this.entityTypes } },
-        },
+        params: this.getParams(ids),
       });
 
       this.pageCount = meta.page_count;
 
-      this.entities.push(...entities);
+      this.entitiesById = {
+        ...this.entitiesById,
+        ...keyBy(entities, this.itemValue),
+      };
       this.entitiesPending = false;
     },
   },

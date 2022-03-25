@@ -94,7 +94,7 @@ import CDurationField from '@/components/forms/fields/duration/c-duration-field.
 import CDisableDuringPeriodsField from '@/components/forms/fields/pbehavior/c-disable-during-periods-field.vue';
 import CTriggersField from '@/components/forms/fields/c-triggers-field.vue';
 import CActionTypeField from '@/components/forms/fields/c-action-type-field.vue';
-import CPatternsField from '@/components/forms/fields/c-patterns-field.vue';
+import CPatternsField from '@/components/forms/fields/pattern/c-patterns-field.vue';
 import CWorkflowField from '@/components/forms/fields/c-workflow-field.vue';
 import CChangeStateField from '@/components/forms/fields/c-change-state-field.vue';
 import CRequestUrlField from '@/components/forms/fields/c-request-url-field.vue';
@@ -135,7 +135,7 @@ import CTimezoneField from '@/components/forms/fields/c-timezone-field.vue';
 import CLanguageField from '@/components/forms/fields/c-language-field.vue';
 import CSamplingField from '@/components/forms/fields/c-sampling-field.vue';
 import CAlarmMetricParametersField from '@/components/forms/fields/alarm/c-alarm-metric-parameters-field.vue';
-import CFiltersField from '@/components/forms/fields/pattern/c-pattern-field.vue';
+import CFilterField from '@/components/forms/fields/pattern/c-filter-field.vue';
 import CEntityStateField from '@/components/forms/fields/entity/c-entity-state-field.vue';
 import CRecordsPerPageField from '@/components/forms/fields/c-records-per-page-field.vue';
 import COperatorField from '@/components/forms/fields/c-operator-field.vue';
@@ -150,10 +150,12 @@ import CEntityField from '@/components/forms/fields/entity/c-entity-field.vue';
 import CPbehaviorReasonField from '@/components/forms/fields/pbehavior/c-pbehavior-reason-field.vue';
 import CPbehaviorTypeField from '@/components/forms/fields/pbehavior/c-pbehavior-type-field.vue';
 import CSelectField from '@/components/forms/fields/c-select-field.vue';
+import CCollapsePanel from '@/components/common/block/c-collapse-panel.vue';
 
 /**
  * Patterns
  */
+import CPatternField from '@/components/forms/fields/pattern/c-pattern-field.vue';
 import CPatternAttributeField from '@/components/forms/fields/pattern/c-pattern-attribute-field.vue';
 import CPatternInfosAttributeField from '@/components/forms/fields/pattern/c-pattern-infos-attribute-field.vue';
 import CPatternExtraInfosAttributeField from '@/components/forms/fields/pattern/c-pattern-extra-infos-attribute-field.vue';
@@ -162,6 +164,7 @@ import CPatternRuleField from '@/components/forms/fields/pattern/c-pattern-rule-
 import CPatternRulesField from '@/components/forms/fields/pattern/c-pattern-rules-field.vue';
 import CPatternGroupField from '@/components/forms/fields/pattern/c-pattern-group-field.vue';
 import CPatternGroupsField from '@/components/forms/fields/pattern/c-pattern-groups-field.vue';
+import CPatternsEditorField from '@/components/forms/fields/pattern/c-patterns-editor-field.vue';
 import CEntityPatternsField from '@/components/forms/fields/entity/c-entity-patterns-field.vue';
 import CAlarmPatternsField from '@/components/forms/fields/alarm/c-alarm-patterns-field.vue';
 import CPbehaviorPatternsField from '@/components/forms/fields/pbehavior/c-pbehavior-patterns-field.vue';
@@ -353,7 +356,7 @@ Vue.component('c-enabled-duration-field', CEnabledDurationField);
 Vue.component('c-enabled-limit-field', CEnabledLimitField);
 Vue.component('c-timezone-field', CTimezoneField);
 Vue.component('c-language-field', CLanguageField);
-Vue.component('c-filters-field', CFiltersField);
+Vue.component('c-filter-field', CFilterField);
 Vue.component('c-state-count-changes-chips', CStateCountChangesChips);
 Vue.component('c-information-block', CInformationBlock);
 Vue.component('c-information-block-row', CInformationBlockRow);
@@ -373,6 +376,7 @@ Vue.component('c-select-field', CSelectField);
 Vue.component('c-entity-field', CEntityField);
 Vue.component('c-pbehavior-reason-field', CPbehaviorReasonField);
 Vue.component('c-pbehavior-type-field', CPbehaviorTypeField);
+Vue.component('c-collapse-panel', CCollapsePanel);
 
 Vue.component('c-pattern-attribute-field', CPatternAttributeField);
 Vue.component('c-pattern-infos-attribute-field', CPatternInfosAttributeField);
@@ -382,6 +386,8 @@ Vue.component('c-pattern-rule-field', CPatternRuleField);
 Vue.component('c-pattern-rules-field', CPatternRulesField);
 Vue.component('c-pattern-group-field', CPatternGroupField);
 Vue.component('c-pattern-groups-field', CPatternGroupsField);
+Vue.component('c-patterns-editor-field', CPatternsEditorField);
+Vue.component('c-pattern-field', CPatternField);
 Vue.component('c-pattern-operator-information', CPatternOperatorInformation);
 Vue.component('c-pattern-operator-chip', CPatternOperatorChip);
 Vue.component('c-alarm-patterns-field', CAlarmPatternsField);

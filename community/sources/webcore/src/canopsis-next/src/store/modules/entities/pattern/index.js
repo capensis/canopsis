@@ -18,6 +18,10 @@ export default createEntityModule({
     corporate: corporatePatternModule,
   },
   actions: {
+    fetchListWithoutStore(context, { params } = {}) {
+      return request.get(API_ROUTES.patterns, { params });
+    },
+
     bulkRemove(context, { data }) {
       return request.delete(API_ROUTES.bulkPatterns, { data });
     },
