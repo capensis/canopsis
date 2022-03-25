@@ -32,19 +32,19 @@ export default {
     return {
       headers: [
         {
-          text: this.$t('tables.alarmGeneral.author'),
+          text: this.$t('common.author'),
           sortable: false,
         },
         {
-          text: this.$t('tables.alarmGeneral.connector'),
+          text: this.$t('common.connector'),
           sortable: false,
         },
         {
-          text: this.$t('tables.alarmGeneral.component'),
+          text: this.$t('common.component'),
           sortable: false,
         },
         {
-          text: this.$t('tables.alarmGeneral.resource'),
+          text: this.$t('common.resource'),
           sortable: false,
         },
       ],

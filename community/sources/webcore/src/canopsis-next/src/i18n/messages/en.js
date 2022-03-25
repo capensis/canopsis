@@ -26,6 +26,10 @@ import {
   GROUPS_NAVIGATION_TYPES,
   ALARM_METRIC_PARAMETERS,
   USER_METRIC_PARAMETERS,
+  EVENT_FILTER_TYPES,
+  PATTERN_OPERATORS,
+  PATTERN_TYPES,
+  PATTERN_INPUT_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -34,7 +38,7 @@ export default {
   common: {
     ok: 'Ok',
     undefined: 'Not defined',
-    entity: 'Entity',
+    entity: 'Entity | Entities',
     service: 'Service',
     widget: 'Widget',
     addWidget: 'Add widget',
@@ -140,9 +144,12 @@ export default {
     clear: 'Clear',
     deleteAll: 'Delete all',
     payload: 'Payload',
-    output: 'Note',
+    note: 'Note',
+    output: 'Output',
+    displayName: 'Display name',
     created: 'Creation date',
     updated: 'Last update date',
+    lastEventDate: 'Last event date',
     pattern: 'Pattern | Patterns',
     correlation: 'Correlation',
     periods: 'Periods',
@@ -153,6 +160,7 @@ export default {
     eventPatterns: 'Event patterns',
     alarmPatterns: 'Alarm patterns',
     entityPatterns: 'Entity patterns',
+    pbehaviorPatterns: 'Pbehavior patterns',
     totalEntityPatterns: 'Total entity patterns',
     addFilter: 'Add filter',
     id: 'Id',
@@ -194,7 +202,7 @@ export default {
     summary: 'Summary',
     recurrence: 'Recurrence',
     statistics: 'Statistics',
-    action: 'Action',
+    action: 'Action | Actions',
     minimal: 'Minimal',
     optimal: 'Optimal',
     graph: 'Graph | Graphs',
@@ -209,10 +217,30 @@ export default {
     toTheTop: 'To the top',
     time: 'Time',
     lastModifiedOn: 'Last modified on',
+    lastModifiedBy: 'Last modified by',
     exportAsCsv: 'Export as csv',
     criteria: 'Criteria',
     ratingSettings: 'Rating settings',
     pbehavior: 'Pbehavior | Pbehaviors',
+    searchBy: 'Search by',
+    dictionary: 'Dictionary',
+    condition: 'Condition | Conditions',
+    template: 'Template',
+    canceled: 'Canceled',
+    snoozed: 'Snoozed',
+    impact: 'Impact | Impacts',
+    depend: 'Depend | Depends',
+    componentInfo: 'Component info | Component infos',
+    connector: 'Connector',
+    connectorName: 'Connector name',
+    component: 'Component',
+    resource: 'Resource',
+    extraDetail: 'Extra detail | Extra details',
+    acked: 'Acked',
+    ackedAt: 'Acked at',
+    resolvedAt: 'Resolved at',
+    extraInfo: 'Extra info | Extra infos',
+    custom: 'Custom',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -276,6 +304,50 @@ export default {
       [ENTITIES_STATES.minor]: 'Minor',
       [ENTITIES_STATES.major]: 'Major',
       [ENTITIES_STATES.critical]: 'Critical',
+    },
+    statusTypes: {
+      [ENTITIES_STATUSES.closed]: 'Closed',
+      [ENTITIES_STATUSES.ongoing]: 'Ongoing',
+      [ENTITIES_STATUSES.flapping]: 'Flapping',
+      [ENTITIES_STATUSES.stealthy]: 'Stealth',
+      [ENTITIES_STATUSES.cancelled]: 'Canceled',
+      [ENTITIES_STATUSES.noEvents]: 'No events',
+    },
+    operators: {
+      [PATTERN_OPERATORS.equal]: 'Equal',
+      [PATTERN_OPERATORS.contains]: 'Contains',
+      [PATTERN_OPERATORS.notEqual]: 'Not equal',
+      [PATTERN_OPERATORS.notContains]: 'Does not contain',
+      [PATTERN_OPERATORS.beginsWith]: 'Begins with',
+      [PATTERN_OPERATORS.notBeginWith]: 'Does not begin with',
+      [PATTERN_OPERATORS.endsWith]: 'Ends with',
+      [PATTERN_OPERATORS.notEndWith]: 'Does not end with',
+      [PATTERN_OPERATORS.exist]: 'Exist',
+      [PATTERN_OPERATORS.notExist]: 'Not exist',
+
+      [PATTERN_OPERATORS.hasEvery]: 'Has every',
+      [PATTERN_OPERATORS.hasOneOf]: 'Has one of',
+      [PATTERN_OPERATORS.hasNot]: 'Has not',
+      [PATTERN_OPERATORS.isEmpty]: 'Is empty',
+      [PATTERN_OPERATORS.isNotEmpty]: 'Is not empty',
+
+      [PATTERN_OPERATORS.higher]: 'Higher than',
+      [PATTERN_OPERATORS.lower]: 'Lower than',
+
+      [PATTERN_OPERATORS.longer]: 'Longer',
+      [PATTERN_OPERATORS.shorter]: 'Shorter',
+
+      [PATTERN_OPERATORS.ticketAssociated]: 'Ticket is associated',
+      [PATTERN_OPERATORS.ticketNotAssociated]: 'Ticket is not associated',
+
+      [PATTERN_OPERATORS.canceled]: 'Canceled',
+      [PATTERN_OPERATORS.notCanceled]: 'Not canceled',
+
+      [PATTERN_OPERATORS.snoozed]: 'Snoozed',
+      [PATTERN_OPERATORS.notSnoozed]: 'Not snoozed',
+
+      [PATTERN_OPERATORS.acked]: 'Acked',
+      [PATTERN_OPERATORS.notAcked]: 'Not acked',
     },
   },
   variableTypes: {
@@ -602,7 +674,6 @@ export default {
       title: 'Info popup',
       fields: {
         column: 'Column',
-        template: 'Template',
       },
     },
     rowGridSize: {
@@ -653,6 +724,7 @@ export default {
     templateEditor: 'Template',
     columns: {
       isHtml: 'Is it HTML?',
+      withTemplate: 'Custom template',
       isState: 'Displayed as severity?',
     },
     liveReporting: {
@@ -934,7 +1006,6 @@ export default {
       title: 'Info popup',
       add: 'Add',
       column: 'Column',
-      template: 'Template',
       addInfoPopup: {
         title: 'Add an info popup',
       },
@@ -954,7 +1025,7 @@ export default {
         },
       },
     },
-    filter: {
+    createFilter: {
       create: {
         title: 'Create filter',
       },
@@ -1047,7 +1118,7 @@ export default {
         title: 'Edit role',
       },
     },
-    eventFilterRule: {
+    createEventFilter: {
       create: {
         title: 'Create event filter rule',
         success: 'Rule successfully created!',
@@ -1062,64 +1133,6 @@ export default {
       },
       remove: {
         success: 'Rule successfully removed!',
-      },
-      priority: 'Priority',
-      editPattern: 'Edit pattern',
-      advanced: 'Advanced',
-      addAField: 'Add a field',
-      simpleEditor: 'Simple editor',
-      field: 'Field',
-      value: 'Value',
-      advancedEditor: 'Advanced editor',
-      comparisonRules: 'Comparison rules',
-      enrichmentOptions: 'Enrichment options',
-      editActions: 'Edit actions',
-      addAction: 'Add an action',
-      editAction: 'Edit an action',
-      actions: 'Actions',
-      externalData: 'External data',
-      onSuccess: 'On success',
-      onFailure: 'On failure',
-      tooltips: {
-        addValueRuleField: 'Add value rule field',
-        editValueRuleField: 'Edit value rule field',
-        addObjectRuleField: 'Add object rule field',
-        editObjectRuleField: 'Edit object rule field',
-        removeRuleField: 'Remove rule field',
-        copyFromHelp: '<p>The accessible variables are: <strong>Event</strong></p>'
-          + '<i>For example:</i> <span>"Event.ExtraInfos.datecustom"</span>',
-      },
-      actionsTypes: {
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
-          text: 'Copy a value from a field of event to another',
-          message: 'This action is used used to copy the value of a control in an event.',
-          description: 'The parameters of the action are:\n- from: the name of the control whose value must be copied. It can be an event field, a subgroup of a regular expression, or an external data.\n- to: the name of the event field into which the value must be copied.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo]: {
-          text: 'Copy a value from a field of an event to an info of an entity',
-          message: 'This action is used to copy the field value of an event to the field of an entity. Note, that the entity should be added to the event first.',
-          description: 'The parameters of the action are:\n- name: the name of the field of an entity.\n- description (optional): the description.\n- from: the name of the control whose value must be copied. It can be an event field, a subgroup of a regular expression, or an external data.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfo]: {
-          text: 'Set an info of an entity to a constant',
-          message: 'This action is used to set the dynamic information from an entity corresponding to the event. Note, that the entity should be added to the event first.',
-          description: 'The parameters of the action are:\n- name: the name of the field.\n- description (optional): the description.\n- value: the value of a field.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate]: {
-          text: 'Set a string info of an entity using a template',
-          message: 'This action is used to modify the dynamic information from an entity corresponding to the event. Note, that the entity should be added to the event.',
-          description: 'The parameters of the action are:\n- name: the name of the field.\n- description (optional): the description\n- value: the template used to determine the value of the data item.\nTemplates {{.Event.NomDuChamp}}, regular expressions or external data can be used.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField]: {
-          text: 'Set a field of an event to a constant',
-          message: 'This action can be used to modify a field of the event.',
-          description: 'The parameters of the action are:\n- name: the name of the field.\n- value: the new value of the field.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate]: {
-          text: 'Set a string field of an event using a template',
-          message: 'This action allows you to modify an event field from a template.',
-          description: 'The parameters of the action are:\n- name: the name of the field.\n- value: the template used to determine the value of the field.\n Templates {{.Event.NomDuChamp}}, regular expressions or external data can be used.',
-        },
       },
     },
     metaAlarmRule: {
@@ -1189,13 +1202,6 @@ export default {
         invalid: 'Invalid',
       },
       steps: {
-        general: {
-          fields: {
-            id: 'Id',
-            name: 'Name',
-            description: 'Description',
-          },
-        },
         infos: {
           title: 'Informations',
           validationError: 'Every value must be filled',
@@ -1555,29 +1561,57 @@ export default {
         phrase: 'archive or delete',
       },
     },
+    createAlarmPattern: {
+      create: {
+        title: 'Create alarm filter',
+      },
+      edit: {
+        title: 'Edit alarm filter',
+      },
+    },
+    createCorporateAlarmPattern: {
+      create: {
+        title: 'Create shared alarm filter',
+      },
+      edit: {
+        title: 'Edit shared alarm filter',
+      },
+    },
+    createEntityPattern: {
+      create: {
+        title: 'Create entity filter',
+      },
+      edit: {
+        title: 'Edit entity filter',
+      },
+    },
+    createCorporateEntityPattern: {
+      create: {
+        title: 'Create shared entity filter',
+      },
+      edit: {
+        title: 'Edit shared entity filter',
+      },
+    },
+    createPbehaviorPattern: {
+      create: {
+        title: 'Create pbehavior filter',
+      },
+      edit: {
+        title: 'Edit pbehavior filter',
+      },
+    },
+    createCorporatePbehaviorPattern: {
+      create: {
+        title: 'Create shared pbehavior filter',
+      },
+      edit: {
+        title: 'Edit shared pbehavior filter',
+      },
+    },
   },
   tables: {
     noData: 'No data',
-    alarmGeneral: {
-      author: 'Author',
-      connector: 'Connector Type',
-      connectorName: 'Connector name',
-      component: 'Component',
-      resource: 'Resource',
-      output: 'Output',
-      lastUpdateDate: 'Last update date',
-      creationDate: 'Creation date',
-      duration: 'Duration',
-      state: 'Severity',
-      status: 'Status',
-      extraDetails: 'Extra details',
-    },
-    alarmStates: {
-      [ENTITIES_STATES.ok]: 'Info',
-      [ENTITIES_STATES.minor]: 'Minor',
-      [ENTITIES_STATES.major]: 'Major',
-      [ENTITIES_STATES.critical]: 'Critical',
-    },
     contextEntities: {
       columns: {
         name: 'Name',
@@ -1722,9 +1756,76 @@ export default {
     },
   },
   eventFilter: {
-    externalDatas: 'External data',
+    externalData: 'External data',
     actionsRequired: 'Please add at least one action',
+    configRequired: 'No configuration defined. Please add at least one config parameter',
     idHelp: 'If no id is specified, a unique id will be generated automatically on rule creation',
+    editPattern: 'Edit pattern',
+    advanced: 'Advanced',
+    addAField: 'Add a field',
+    simpleEditor: 'Simple editor',
+    field: 'Field',
+    value: 'Value',
+    advancedEditor: 'Advanced editor',
+    comparisonRules: 'Comparison rules',
+    editActions: 'Edit actions',
+    addAction: 'Add an action',
+    editAction: 'Edit an action',
+    actions: 'Actions',
+    onSuccess: 'On success',
+    onFailure: 'On failure',
+    configuration: 'Configuration',
+    resource: 'Resource ID or template',
+    component: 'Component ID or template',
+    connector: 'Connector ID or template',
+    connectorName: 'Connector name or template',
+    types: {
+      [EVENT_FILTER_TYPES.drop]: 'Drop',
+      [EVENT_FILTER_TYPES.break]: 'Break',
+      [EVENT_FILTER_TYPES.enrichment]: 'Enrichment',
+      [EVENT_FILTER_TYPES.changeEntity]: 'Change entity',
+    },
+    tooltips: {
+      addValueRuleField: 'Add value rule field',
+      editValueRuleField: 'Edit value rule field',
+      addObjectRuleField: 'Add object rule field',
+      editObjectRuleField: 'Edit object rule field',
+      removeRuleField: 'Remove rule field',
+      copyFromHelp: '<p>The accessible variables are: <strong>Event</strong></p>'
+        + '<i>For example:</i> <span>"Event.ExtraInfos.datecustom"</span>',
+    },
+    actionsTypes: {
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
+        text: 'Copy a value from a field of event to another',
+        message: 'This action is used used to copy the value of a control in an event.',
+        description: 'The parameters of the action are:\n- value: the name of the control whose value must be copied. It can be an event field, a subgroup of a regular expression, or an external data.\n- description (optional): the description.\n- name: the name of the event field into which the value must be copied.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo]: {
+        text: 'Copy a value from a field of an event to an info of an entity',
+        message: 'This action is used to copy the field value of an event to the field of an entity. Note, that the entity should be added to the event first.',
+        description: 'The parameters of the action are:\n- description (optional): the description.\n- name: the name of the field of an entity.\n- value: the name of the control whose value must be copied. It can be an event field, a subgroup of a regular expression, or an external data.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfo]: {
+        text: 'Set an info of an entity to a constant',
+        message: 'This action is used to set the dynamic information from an entity corresponding to the event. Note, that the entity should be added to the event first.',
+        description: 'The parameters of the action are:\n- description (optional): the description.\n- name: the name of the field.\n- value: the value of a field.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate]: {
+        text: 'Set a string info of an entity using a template',
+        message: 'This action is used to modify the dynamic information from an entity corresponding to the event. Note, that the entity should be added to the event.',
+        description: 'The parameters of the action are:\n- description (optional): the description\n- name: the name of the field.\n- value: the template used to determine the value of the data item.\nTemplates {{.Event.NomDuChamp}}, regular expressions or external data can be used.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField]: {
+        text: 'Set a field of an event to a constant',
+        message: 'This action can be used to modify a field of the event.',
+        description: 'The parameters of the action are:\n- description (optional): the description.\n- name: the name of the field.\n- value: the new value of the field.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate]: {
+        text: 'Set a string field of an event using a template',
+        message: 'This action allows you to modify an event field from a template.',
+        description: 'The parameters of the action are:\n- description (optional): the description.\n- name: the name of the field.\n- value: the template used to determine the value of the field.\n Templates {{.Event.NomDuChamp}}, regular expressions or external data can be used.',
+      },
+    },
   },
   metaAlarmRule: {
     outputTemplate: 'Output template',
@@ -1896,6 +1997,7 @@ export default {
       admin: 'Admin rights',
       exploitation: 'Exploitation rights',
       notification: 'Notification rights',
+      profile: 'Profile rights',
     },
     business: {
       [USER_PERMISSIONS_PREFIXES.business.common]: 'Rights for common',
@@ -2254,11 +2356,11 @@ export default {
 
   mixedField: {
     types: {
-      string: '@:variableTypes.string',
-      number: '@:variableTypes.number',
-      boolean: '@:variableTypes.boolean',
-      null: '@:variableTypes.null',
-      array: '@:variableTypes.array',
+      [PATTERN_INPUT_TYPES.string]: '@:variableTypes.string',
+      [PATTERN_INPUT_TYPES.number]: '@:variableTypes.number',
+      [PATTERN_INPUT_TYPES.boolean]: '@:variableTypes.boolean',
+      [PATTERN_INPUT_TYPES.null]: '@:variableTypes.null',
+      [PATTERN_INPUT_TYPES.array]: '@:variableTypes.array',
     },
   },
 
@@ -2421,6 +2523,13 @@ export default {
     timeField: 'Time field',
     types: {
       [QUICK_RANGES.custom.value]: 'Custom',
+      [QUICK_RANGES.last15Minutes.value]: 'Last 15 minutes',
+      [QUICK_RANGES.last30Minutes.value]: 'Last 30 minutes',
+      [QUICK_RANGES.last1Hour.value]: 'Last 1 hour',
+      [QUICK_RANGES.last3Hour.value]: 'Last 3 hour',
+      [QUICK_RANGES.last6Hour.value]: 'Last 6 hour',
+      [QUICK_RANGES.last12Hour.value]: 'Last 12 hour',
+      [QUICK_RANGES.last24Hour.value]: 'Last 24 hour',
       [QUICK_RANGES.last2Days.value]: 'Last 2 days',
       [QUICK_RANGES.last7Days.value]: 'Last 7 days',
       [QUICK_RANGES.last30Days.value]: 'Last 30 days',
@@ -2434,11 +2543,6 @@ export default {
       [QUICK_RANGES.thisWeekSoFar.value]: 'This week so far',
       [QUICK_RANGES.thisMonth.value]: 'This month',
       [QUICK_RANGES.thisMonthSoFar.value]: 'This month so far',
-      [QUICK_RANGES.last1Hour.value]: 'Last 1 hour',
-      [QUICK_RANGES.last3Hour.value]: 'Last 3 hour',
-      [QUICK_RANGES.last6Hour.value]: 'Last 6 hour',
-      [QUICK_RANGES.last12Hour.value]: 'Last 12 hour',
-      [QUICK_RANGES.last24Hour.value]: 'Last 24 hour',
     },
   },
 
@@ -2576,15 +2680,6 @@ export default {
     },
   },
 
-  alarmStatuses: {
-    [ENTITIES_STATUSES.closed]: 'Closed',
-    [ENTITIES_STATUSES.ongoing]: 'Ongoing',
-    [ENTITIES_STATUSES.flapping]: 'Flapping',
-    [ENTITIES_STATUSES.stealthy]: 'Stealth',
-    [ENTITIES_STATUSES.cancelled]: 'Canceled',
-    [ENTITIES_STATUSES.noEvents]: 'No events',
-  },
-
   entitiesCountAlerts: {
     filter: {
       countOverLimit: 'The filter you\'ve defined targets about {count} entities. It can affect performance, are you sure ?',
@@ -2668,6 +2763,26 @@ export default {
     formatter: 'Format (capture group with \\x)',
     uploadMib: 'Upload MIB',
     addSnmpRule: 'Add SNMP rule',
+  },
+
+  pattern: {
+    patterns: 'Filters',
+    myPatterns: 'My filters',
+    corporatePatterns: 'Shared filters',
+    addRule: 'Add rule',
+    addGroup: 'Add group',
+    removeRule: 'Remove rule',
+    advancedEditor: 'Advanced editor',
+    simpleEditor: 'Simple editor',
+    types: {
+      [PATTERN_TYPES.alarm]: 'Alarm pattern',
+      [PATTERN_TYPES.entity]: 'Entity pattern',
+      [PATTERN_TYPES.pbehavior]: 'Pbehavior pattern',
+    },
+    errors: {
+      ruleRequired: 'Please add at least one rule',
+      groupRequired: 'Please add at least one group',
+    },
   },
 
   ...featureService.get('i18n.en'),

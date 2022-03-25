@@ -2,10 +2,11 @@
   v-menu(
     ref="menu",
     v-model="opened",
+    :close-on-content-click="false",
+    :disabled="disabled",
     content-class="date-time-picker",
     transition="slide-y-transition",
     max-width="290px",
-    :close-on-content-click="false",
     right,
     lazy-with-unmount,
     lazy
@@ -16,6 +17,7 @@
         :error-messages="errors.collect(name)",
         :value="dateTextValue",
         :append-icon="clearable ? 'close' : ''",
+        :disabled="disabled",
         readonly,
         @click:append="clear"
       )
@@ -82,6 +84,10 @@ export default {
       default: null,
     },
     roundHours: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },

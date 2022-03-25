@@ -26,6 +26,10 @@ import {
   GROUPS_NAVIGATION_TYPES,
   ALARM_METRIC_PARAMETERS,
   USER_METRIC_PARAMETERS,
+  EVENT_FILTER_TYPES,
+  PATTERN_OPERATORS,
+  PATTERN_TYPES,
+  PATTERN_INPUT_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -34,7 +38,7 @@ export default {
   common: {
     ok: 'Ok',
     undefined: 'Non défini',
-    entity: 'Entité',
+    entity: 'Entité | Entités',
     service: 'Service',
     widget: 'Widget',
     addWidget: 'Ajouter un widget',
@@ -140,9 +144,12 @@ export default {
     clear: 'Nettoyer',
     deleteAll: 'Tout supprimer',
     payload: 'Payload',
-    output: 'Note',
+    note: 'Note',
+    output: 'Output',
+    displayName: 'Afficher un nom',
     created: 'Date de création',
     updated: 'Date de dernière modification',
+    lastEventDate: 'Date du dernier événement',
     pattern: 'Modèle | Modèles',
     correlation: 'Corrélation',
     periods: 'Périodes',
@@ -153,6 +160,7 @@ export default {
     eventPatterns: 'Modèles des événements',
     alarmPatterns: 'Modèles des alarmes',
     entityPatterns: 'Modèles des entités',
+    pbehaviorPatterns: 'Modèles de comportement',
     totalEntityPatterns: 'Total des modèles d\'entité',
     addFilter: 'Ajouter un filtre',
     id: 'Identifiant',
@@ -194,7 +202,7 @@ export default {
     summary: 'Résumé',
     recurrence: 'Récurrence',
     statistics: 'Statistiques',
-    action: 'Action',
+    action: 'Action | Actions',
     minimal: 'Minimal',
     optimal: 'Optimal',
     graph: 'Graphique | Graphiques',
@@ -209,10 +217,30 @@ export default {
     toTheTop: 'Jusqu\'au sommet',
     time: 'Temps',
     lastModifiedOn: 'Dernière modification le',
+    lastModifiedBy: 'Dernière modification par',
     exportAsCsv: 'Export as csv',
     criteria: 'Critères',
     ratingSettings: 'Paramètres d\'évaluation',
     pbehavior: 'Comportement périodique | Comportements périodiques',
+    searchBy: 'Recherché par',
+    dictionary: 'Dictionnaire',
+    condition: 'Condition | Conditions',
+    template: 'Template',
+    canceled: 'Annulé',
+    snoozed: 'En attente',
+    impact: 'Impact | Impacts',
+    depend: 'Depend | Depends',
+    componentInfo: 'Component info | Component infos',
+    connector: 'Type de connecteur',
+    connectorName: 'Nom du connecteur',
+    component: 'Composant',
+    resource: 'Ressource',
+    extraDetails: 'Détails supplémentaires',
+    acked: 'Acked',
+    ackedAt: 'Acked at',
+    resolvedAt: 'Resolved at',
+    extraInfo: 'Extra info | Extra infos',
+    custom: 'Personnalisé',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -276,6 +304,50 @@ export default {
       [ENTITIES_STATES.minor]: 'Mineur',
       [ENTITIES_STATES.major]: 'Majeur',
       [ENTITIES_STATES.critical]: 'Critique',
+    },
+    statusTypes: {
+      [ENTITIES_STATUSES.closed]: 'Fermée',
+      [ENTITIES_STATUSES.ongoing]: 'En cours',
+      [ENTITIES_STATUSES.flapping]: 'Bagot',
+      [ENTITIES_STATUSES.stealthy]: 'Furtive',
+      [ENTITIES_STATUSES.cancelled]: 'Annulée',
+      [ENTITIES_STATUSES.noEvents]: 'Pas d\'événements',
+    },
+    operators: {
+      [PATTERN_OPERATORS.equal]: 'Égal',
+      [PATTERN_OPERATORS.contains]: 'Contient',
+      [PATTERN_OPERATORS.notEqual]: 'Inégal',
+      [PATTERN_OPERATORS.notContains]: 'Ne contient pas',
+      [PATTERN_OPERATORS.beginsWith]: 'Commence par',
+      [PATTERN_OPERATORS.notBeginWith]: 'Ne commence pas par',
+      [PATTERN_OPERATORS.endsWith]: 'Se termine par',
+      [PATTERN_OPERATORS.notEndWith]: 'Ne se termine pas par',
+      [PATTERN_OPERATORS.exist]: 'Exister',
+      [PATTERN_OPERATORS.notExist]: 'N\'existe pas',
+
+      [PATTERN_OPERATORS.hasEvery]: 'A chaque',
+      [PATTERN_OPERATORS.hasOneOf]: 'A l\'un des',
+      [PATTERN_OPERATORS.hasNot]: 'N\'a pas',
+      [PATTERN_OPERATORS.isEmpty]: 'Est vide',
+      [PATTERN_OPERATORS.isNotEmpty]: 'N\'est pas vide',
+
+      [PATTERN_OPERATORS.higher]: 'Plus haut que',
+      [PATTERN_OPERATORS.lower]: 'Plus bas que',
+
+      [PATTERN_OPERATORS.longer]: 'Plus long',
+      [PATTERN_OPERATORS.shorter]: 'Plus court',
+
+      [PATTERN_OPERATORS.ticketAssociated]: 'Le billet est associé',
+      [PATTERN_OPERATORS.ticketNotAssociated]: 'Le billet n\'est pas associé',
+
+      [PATTERN_OPERATORS.canceled]: 'Annulé',
+      [PATTERN_OPERATORS.notCanceled]: 'Non annulé',
+
+      [PATTERN_OPERATORS.snoozed]: 'En attente',
+      [PATTERN_OPERATORS.notSnoozed]: 'Non mis en attente',
+
+      [PATTERN_OPERATORS.acked]: 'Acquis',
+      [PATTERN_OPERATORS.notAcked]: 'Non confirmé',
     },
   },
   variableTypes: {
@@ -602,7 +674,6 @@ export default {
       title: 'Info popup',
       fields: {
         column: 'Colonne',
-        template: 'Template',
       },
     },
     rowGridSize: {
@@ -653,6 +724,7 @@ export default {
     templateEditor: 'Modèle',
     columns: {
       isHtml: 'Est-ce du HTML ?',
+      withTemplate: 'Modèle personnalisé',
       isState: 'Affiché comme une criticité ?',
     },
     liveReporting: {
@@ -934,7 +1006,6 @@ export default {
       title: 'Info popup',
       add: 'Ajouter',
       column: 'Colonne',
-      template: 'Template',
       addInfoPopup: {
         title: 'Ajouter une popup d\'info',
       },
@@ -954,7 +1025,7 @@ export default {
         },
       },
     },
-    filter: {
+    createFilter: {
       create: {
         title: 'Créer un filtre',
       },
@@ -1047,7 +1118,7 @@ export default {
         title: 'Éditer un rôle',
       },
     },
-    eventFilterRule: {
+    createEventFilter: {
       create: {
         title: 'Créer une règle',
         success: 'Règle créée avec succès !',
@@ -1062,64 +1133,6 @@ export default {
       },
       remove: {
         success: 'La règle a bien été supprimée !',
-      },
-      priority: 'Priorité',
-      editPattern: 'Éditer le modèle',
-      advanced: 'Avancée',
-      addAField: 'Ajouter un champ',
-      simpleEditor: 'Éditeur simple',
-      field: 'Champ',
-      value: 'Valeur',
-      advancedEditor: 'Éditeur avancé',
-      comparisonRules: 'Règles de comparaison',
-      enrichmentOptions: 'Options d\'enrichissement',
-      editActions: 'Éditer les actions',
-      addAction: 'Ajouter une action',
-      editAction: 'Éditer une action',
-      actions: 'Actions',
-      externalData: 'Données externes',
-      onSuccess: 'En cas de succès',
-      onFailure: 'En cas d\'échec',
-      tooltips: {
-        addValueRuleField: 'Ajouter une règle',
-        editValueRuleField: 'Éditer la règle',
-        addObjectRuleField: 'Ajouter un groupe de règles',
-        editObjectRuleField: 'Éditer le groupe de règles',
-        removeRuleField: 'Supprimer le groupe/la règle',
-        copyFromHelp: '<p>Les variables accessibles sont: <strong>Event</strong></p>'
-          + '<i>Quelques exemples:</i> <span>"Event.ExtraInfos.datecustom"</span>',
-      },
-      actionsTypes: {
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
-          text: 'Copier une valeur d\'un champ d\'événement à un autre',
-          message: 'Cette action est utilisée pour copier la valeur d\'un contrôle dans un événement.',
-          description: 'Les paramètres de l\'action sont :\n- depuis : le nom du champ dont la valeur doit être copiée. Il peut s\'agir d\'un champ d\'événement, d\'un sous-groupe d\'une expression régulière ou d\'une donnée externe.\n- vers : le nom du champ événement dans lequel la valeur doit être copiée.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo]: {
-          text: 'Copier une valeur d\'un champ d\'un événement vers une information d\'une entité',
-          message: 'Cette action est utilisée pour copier la valeur du champ d\'un événement dans le champ d\'une entité. Notez que l\'entité doit être ajoutée à l\'événement en premier.',
-          description: 'Les paramètres de l\'action sont :\n- nom : le nom du champ d\'une entité.\n- description (optionnel) : la description.\n- depuis : le nom du champ dont la valeur doit être copiée. Il peut s\'agir d\'un champ d\'événement, d\'un sous-groupe d\'une expression régulière ou d\'une donnée externe.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfo]: {
-          text: 'Définir une information d\'une entité sur une constante',
-          message: 'Cette action permet de définir les informations dynamiques d\'une entité correspondant à l\'événement. Notez que l\'entité doit être ajoutée à l\'événement en premier.',
-          description: 'Les paramètres de l\'action sont :\n- nom : le nom du champ.\n- description (optionnel) : la description.\n- valeur : la valeur d\'un champ.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate]: {
-          text: 'Définir une chaîne d\'informations sur une entité à l\'aide d\'un modèle',
-          message: 'Cette action permet de modifier les informations dynamiques d\'une entité correspondant à l\'événement. Notez que l\'entité doit être ajoutée à l\'événement.',
-          description: 'Les paramètres de l\'action sont :\n- nom : le nom du champ.\n- description (optionnel) : la description\n- valeur : le modèle utilisé pour déterminer la valeur de la donnée.\nDes modèles {{.Event.NomDuChamp}}, des expressions régulières ou des données externes peuvent être utilisés.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField]: {
-          text: 'Définir un champ d\'un événement sur une constante',
-          message: 'Cette action peut être utilisée pour modifier un champ de l\'événement.',
-          description: 'Les paramètres de l\'action sont :\n- nom : le nom du champ.\n- valeur : la nouvelle valeur du champ.',
-        },
-        [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate]: {
-          text: 'Définir un champ de chaîne d\'un événement à l\'aide d\'un modèle',
-          message: 'Cette action vous permet de modifier un champ d\'événement à partir d\'un modèle.',
-          description: 'Les paramètres de l\'action sont :\n- nom : le nom du champ.\n- valeur : le modèle utilisé pour déterminer la valeur du champ.\n  Des modèles {{.Event.NomDuChamp}}, des expressions régulières ou des données externes peuvent être utilisés.',
-        },
       },
     },
     metaAlarmRule: {
@@ -1189,13 +1202,6 @@ export default {
         invalid: 'Invalide',
       },
       steps: {
-        general: {
-          fields: {
-            id: 'Identifiant',
-            name: 'Nom',
-            description: 'Description',
-          },
-        },
         infos: {
           title: 'Informations',
           validationError: 'Toutes les valeurs doivent être saisies',
@@ -1555,29 +1561,57 @@ export default {
         phrase: 'archiver ou supprimer',
       },
     },
+    createAlarmPattern: {
+      create: {
+        title: 'Créer un filtre d\'alarme',
+      },
+      edit: {
+        title: 'Modifier le modèle d\'alarme',
+      },
+    },
+    createCorporateAlarmPattern: {
+      create: {
+        title: 'Créer un filtre d\'alarme partagé',
+      },
+      edit: {
+        title: 'Modifier le filtre d\'alarme partagé',
+      },
+    },
+    createEntityPattern: {
+      create: {
+        title: 'Créer un filtre d\'entité',
+      },
+      edit: {
+        title: 'Modifier le modèle d\'entité',
+      },
+    },
+    createCorporateEntityPattern: {
+      create: {
+        title: 'Créer un filtre d\'entité partagée',
+      },
+      edit: {
+        title: 'Modifier le filtre d\'entité partagée',
+      },
+    },
+    createPbehaviorPattern: {
+      create: {
+        title: 'Créer un filtre de comportement',
+      },
+      edit: {
+        title: 'Modifier le modèle de comportement',
+      },
+    },
+    createCorporatePbehaviorPattern: {
+      create: {
+        title: 'Créer un filtre de comportement partagé',
+      },
+      edit: {
+        title: 'Modifier le filtre de comportement partagé',
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
-    alarmGeneral: {
-      author: 'Auteur',
-      connector: 'Type de connecteur',
-      connectorName: 'Nom du connecteur',
-      component: 'Composant',
-      resource: 'Ressource',
-      output: 'Message',
-      lastUpdateDate: 'Date de dernière modification',
-      creationDate: 'Date de création',
-      duration: 'Durée',
-      state: 'Criticité',
-      status: 'Statut',
-      extraDetails: 'Détails supplémentaires',
-    },
-    alarmStates: {
-      [ENTITIES_STATES.ok]: 'Info',
-      [ENTITIES_STATES.minor]: 'Mineur',
-      [ENTITIES_STATES.major]: 'Majeur',
-      [ENTITIES_STATES.critical]: 'Critique',
-    },
     contextEntities: {
       columns: {
         name: 'Nom',
@@ -1722,9 +1756,76 @@ export default {
     },
   },
   eventFilter: {
-    externalDatas: 'Données externes',
+    externalData: 'Données externes',
     actionsRequired: 'Veuillez ajouter au moins une action',
+    configRequired: 'No configuration defined. Please add at least one config parameter',
     idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
+    editPattern: 'Éditer le modèle',
+    advanced: 'Avancée',
+    addAField: 'Ajouter un champ',
+    simpleEditor: 'Éditeur simple',
+    field: 'Champ',
+    value: 'Valeur',
+    advancedEditor: 'Éditeur avancé',
+    comparisonRules: 'Règles de comparaison',
+    editActions: 'Éditer les actions',
+    addAction: 'Ajouter une action',
+    editAction: 'Éditer une action',
+    actions: 'Actions',
+    onSuccess: 'En cas de succès',
+    onFailure: 'En cas d\'échec',
+    configuration: 'Configuration',
+    resource: 'ID de ressource ou modèle',
+    component: 'ID de composant ou modèle',
+    connector: 'ID ou modèle de connecteur',
+    connectorName: 'Nom ou modèle de connecteur',
+    types: {
+      [EVENT_FILTER_TYPES.drop]: 'Drop',
+      [EVENT_FILTER_TYPES.break]: 'Break',
+      [EVENT_FILTER_TYPES.enrichment]: 'Enrichment',
+      [EVENT_FILTER_TYPES.changeEntity]: 'Change entity',
+    },
+    tooltips: {
+      addValueRuleField: 'Ajouter une règle',
+      editValueRuleField: 'Éditer la règle',
+      addObjectRuleField: 'Ajouter un groupe de règles',
+      editObjectRuleField: 'Éditer le groupe de règles',
+      removeRuleField: 'Supprimer le groupe/la règle',
+      copyFromHelp: '<p>Les variables accessibles sont: <strong>Event</strong></p>'
+        + '<i>Quelques exemples:</i> <span>"Event.ExtraInfos.datecustom"</span>',
+    },
+    actionsTypes: {
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
+        text: 'Copier une valeur d\'un champ d\'événement à un autre',
+        message: 'Cette action est utilisée pour copier la valeur d\'un contrôle dans un événement.',
+        description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description.\n- valeur : le nom du champ dont la valeur doit être copiée. Il peut s\'agir d\'un champ d\'événement, d\'un sous-groupe d\'une expression régulière ou d\'une donnée externe.\n- nom : le nom du champ événement dans lequel la valeur doit être copiée.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo]: {
+        text: 'Copier une valeur d\'un champ d\'un événement vers une information d\'une entité',
+        message: 'Cette action est utilisée pour copier la valeur du champ d\'un événement dans le champ d\'une entité. Notez que l\'entité doit être ajoutée à l\'événement en premier.',
+        description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description.\n- nom : le nom du champ d\'une entité.\n- valeur : le nom du champ dont la valeur doit être copiée. Il peut s\'agir d\'un champ d\'événement, d\'un sous-groupe d\'une expression régulière ou d\'une donnée externe.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfo]: {
+        text: 'Définir une information d\'une entité sur une constante',
+        message: 'Cette action permet de définir les informations dynamiques d\'une entité correspondant à l\'événement. Notez que l\'entité doit être ajoutée à l\'événement en premier.',
+        description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description.\n- nom : le nom du champ.\n- valeur : la valeur d\'un champ.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate]: {
+        text: 'Définir une chaîne d\'informations sur une entité à l\'aide d\'un modèle',
+        message: 'Cette action permet de modifier les informations dynamiques d\'une entité correspondant à l\'événement. Notez que l\'entité doit être ajoutée à l\'événement.',
+        description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description\n- nom : le nom du champ.\n- valeur : le modèle utilisé pour déterminer la valeur de la donnée.\nDes modèles {{.Event.NomDuChamp}}, des expressions régulières ou des données externes peuvent être utilisés.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField]: {
+        text: 'Définir un champ d\'un événement sur une constante',
+        message: 'Cette action peut être utilisée pour modifier un champ de l\'événement.',
+        description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description\n- nom : le nom du champ.\n- valeur : la nouvelle valeur du champ.',
+      },
+      [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate]: {
+        text: 'Définir un champ de chaîne d\'un événement à l\'aide d\'un modèle',
+        message: 'Cette action vous permet de modifier un champ d\'événement à partir d\'un modèle.',
+        description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description\n- nom : le nom du champ.\n- valeur : le modèle utilisé pour déterminer la valeur du champ.\n  Des modèles {{.Event.NomDuChamp}}, des expressions régulières ou des données externes peuvent être utilisés.',
+      },
+    },
   },
   metaAlarmRule: {
     outputTemplate: 'Modèle de message',
@@ -1896,6 +1997,7 @@ export default {
       admin: 'Droits d\'administration',
       exploitation: 'Droits d\'exploitation',
       notification: 'Droits de notification',
+      profile: 'Droits de profil',
     },
     business: {
       [USER_PERMISSIONS_PREFIXES.business.common]: 'Droits communs',
@@ -2254,11 +2356,11 @@ export default {
 
   mixedField: {
     types: {
-      string: '@:variableTypes.string',
-      number: '@:variableTypes.number',
-      boolean: '@:variableTypes.boolean',
-      null: '@:variableTypes.null',
-      array: '@:variableTypes.array',
+      [PATTERN_INPUT_TYPES.string]: '@:variableTypes.string',
+      [PATTERN_INPUT_TYPES.number]: '@:variableTypes.number',
+      [PATTERN_INPUT_TYPES.boolean]: '@:variableTypes.boolean',
+      [PATTERN_INPUT_TYPES.null]: '@:variableTypes.null',
+      [PATTERN_INPUT_TYPES.array]: '@:variableTypes.array',
     },
   },
 
@@ -2421,6 +2523,13 @@ export default {
     timeField: 'Champ de temps',
     types: {
       [QUICK_RANGES.custom.value]: 'Personnalisé',
+      [QUICK_RANGES.last15Minutes.value]: '15 dernières minutes',
+      [QUICK_RANGES.last30Minutes.value]: '30 dernières minutes',
+      [QUICK_RANGES.last1Hour.value]: 'Dernière heure',
+      [QUICK_RANGES.last3Hour.value]: '3 dernières heures',
+      [QUICK_RANGES.last6Hour.value]: '6 dernières heures',
+      [QUICK_RANGES.last12Hour.value]: '12 dernières heures',
+      [QUICK_RANGES.last24Hour.value]: '24 dernières heures',
       [QUICK_RANGES.last2Days.value]: '2 derniers jours',
       [QUICK_RANGES.last7Days.value]: '7 derniers jours',
       [QUICK_RANGES.last30Days.value]: '30 derniers jours',
@@ -2434,11 +2543,6 @@ export default {
       [QUICK_RANGES.thisWeekSoFar.value]: 'Cette semaine jusqu\'à maintenant',
       [QUICK_RANGES.thisMonth.value]: 'Ce mois',
       [QUICK_RANGES.thisMonthSoFar.value]: 'Ce mois jusqu\'à maintenant',
-      [QUICK_RANGES.last1Hour.value]: 'Dernière heure',
-      [QUICK_RANGES.last3Hour.value]: '3 dernières heures',
-      [QUICK_RANGES.last6Hour.value]: '6 dernières heures',
-      [QUICK_RANGES.last12Hour.value]: '12 dernières heures',
-      [QUICK_RANGES.last24Hour.value]: '24 dernières heures',
     },
   },
 
@@ -2576,15 +2680,6 @@ export default {
     },
   },
 
-  alarmStatuses: {
-    [ENTITIES_STATUSES.closed]: 'Fermée',
-    [ENTITIES_STATUSES.ongoing]: 'En cours',
-    [ENTITIES_STATUSES.flapping]: 'Bagot',
-    [ENTITIES_STATUSES.stealthy]: 'Furtive',
-    [ENTITIES_STATUSES.cancelled]: 'Annulée',
-    [ENTITIES_STATUSES.noEvents]: 'Pas d\'événements',
-  },
-
   entitiesCountAlerts: {
     filter: {
       countOverLimit: 'Le filtre que vous avez défini cible {count} entités. Cela peut affecter les performances, en êtes-vous sûr ?',
@@ -2668,6 +2763,26 @@ export default {
     formatter: 'Format (groupe de capture avec \\x)',
     uploadMib: 'Envoyer un fichier MIB',
     addSnmpRule: 'Ajouter une règle SNMP',
+  },
+
+  pattern: {
+    patterns: 'Filtres',
+    myPatterns: 'Mes filtres',
+    corporatePatterns: 'Filtres partagés',
+    addRule: 'Ajouter une règle',
+    addGroup: 'Ajouter un groupe',
+    removeRule: 'Supprimer la règle',
+    advancedEditor: 'Éditeur avancé',
+    simpleEditor: 'Éditeur simple',
+    types: {
+      [PATTERN_TYPES.alarm]: 'Modèle d\'alarme',
+      [PATTERN_TYPES.entity]: 'Modèle d\'entité',
+      [PATTERN_TYPES.pbehavior]: 'Modèle de comportement',
+    },
+    errors: {
+      ruleRequired: 'Veuillez ajouter au moins une règle',
+      groupRequired: 'Veuillez ajouter au moins un groupe',
+    },
   },
 
   ...featureService.get('i18n.fr'),

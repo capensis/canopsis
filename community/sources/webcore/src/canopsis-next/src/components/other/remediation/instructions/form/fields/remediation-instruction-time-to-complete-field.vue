@@ -1,15 +1,13 @@
 <template lang="pug">
   v-layout
     v-flex(xs8)
-      v-text-field(
-        v-field.number="duration.value",
-        v-validate="'required|min_value:1'",
+      c-number-field(
+        v-field="duration.value",
         :label="$t('remediationInstructions.timeToComplete')",
-        :error-messages="errors.collect(durationFieldName)",
+        :name="durationFieldName",
         :disabled="disabled",
         :min="min",
-        :name="durationFieldName",
-        type="number",
+        required,
         box
       )
     v-flex.pl-3(xs4)
@@ -47,7 +45,7 @@ export default {
     },
     min: {
       type: Number,
-      default: 0,
+      default: 1,
     },
   },
   computed: {

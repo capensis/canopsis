@@ -40,7 +40,7 @@
                 )
                   v-icon(color="primary") edit
           v-card-text
-            p {{ $t('modals.infoPopupSetting.template') }}:
+            p {{ $t('common.template') }}:
             v-textarea(:value="popup.template", disabled, dark)
     template(slot="actions")
       v-btn(

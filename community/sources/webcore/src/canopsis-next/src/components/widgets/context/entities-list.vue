@@ -107,7 +107,7 @@ import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-
 import { permissionsWidgetsContextFilters } from '@/mixins/permissions/widgets/context/filters';
 import { permissionsWidgetsContextCategory } from '@/mixins/permissions/widgets/context/category';
 
-import FilterSelector from '@/components/other/filter/filter-selector.vue';
+import FilterSelector from '@/components/forms/filters/filter-selector.vue';
 
 import EntityColumnCell from './columns-formatting/entity-column-cell.vue';
 import EntitiesListExpandPanel from './partials/entities-list-expand-panel.vue';

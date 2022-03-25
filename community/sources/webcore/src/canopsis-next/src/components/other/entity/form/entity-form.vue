@@ -13,12 +13,7 @@
             disabled
           )
         v-layout(row)
-          v-textarea(
-            v-field="form.description",
-            :label="$t('common.description')",
-            :error-messages="errors.collect('description')",
-            name="description"
-          )
+          c-description-field(v-field="form.description")
         v-layout(row, justify-space-between)
           v-flex(xs3)
             c-enabled-field(v-field="form.enabled")
@@ -27,7 +22,7 @@
               v-flex.pr-3(xs3)
                 c-impact-level-field(v-field="form.impact_level", required)
               v-flex.pr-3(xs3)
-                c-state-type-field(
+                c-entity-state-field(
                   v-field="form.sli_avail_state",
                   :label="$t('entity.availabilityState')",
                   required

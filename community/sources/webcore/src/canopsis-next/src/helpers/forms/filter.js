@@ -1,9 +1,8 @@
-import { cloneDeep, isEmpty, isString } from 'lodash';
+import { cloneDeep } from 'lodash';
 
-import { FILTER_DEFAULT_VALUES } from '@/constants';
+import { patternToForm } from '@/helpers/forms/pattern';
 
 import { addKeyInEntities, removeKeyFromEntities } from '../entities';
-import parseGroupToFilter from '../filter/editor/parse-group-to-filter';
 import parseFilterToRequest from '../filter/editor/parse-filter-to-request';
 
 /**
@@ -15,9 +14,11 @@ import parseFilterToRequest from '../filter/editor/parse-filter-to-request';
 
 /**
  * @typedef {Object} FilterForm
- * @property {string} condition
- * @property {Object<FilterForm>} groups
- * @property {Object<FilterFormRules>} rules
+ * @property {string} title
+ * @property {Object<FilterForm>} alarm_pattern
+ * @property {Object<FilterFormRules>} entity_pattern
+ * @property {Object<FilterFormRules>} pbehavior_pattern
+ * @property {Object<FilterFormRules>} event_pattern
  */
 
 /**
@@ -26,13 +27,13 @@ import parseFilterToRequest from '../filter/editor/parse-filter-to-request';
  * @param {Object} [filter = {}]
  * @returns {FilterForm}
  */
-export function filterToForm(filter = {}) {
-  if (isEmpty(filter)) {
-    return cloneDeep(FILTER_DEFAULT_VALUES.group);
-  }
-
-  return parseGroupToFilter(filter);
-}
+export const filterToForm = (filter = {}) => ({
+  title: filter.title ?? '',
+  alarm_pattern: patternToForm(filter.alarm_pattern),
+  entity_pattern: patternToForm(filter.entity_pattern),
+  pbehavior_pattern: patternToForm(filter.pbehavior_pattern),
+  event_pattern: patternToForm(filter.event_pattern),
+});
 
 /**
  * Convert filter form to filter
@@ -40,25 +41,7 @@ export function filterToForm(filter = {}) {
  * @param {FilterForm} form
  * @returns {Object}
  */
-export function formToFilter(form) {
-  return parseFilterToRequest(form);
-}
-
-/**
- * Convert filter string to object
- *
- * @param {Object|string} [filter = {}]
- * @returns {Object}
- */
-export function filterToObject(filter = {}) {
-  try {
-    return isString(filter) ? JSON.parse(filter) : filter;
-  } catch (err) {
-    console.error(err);
-
-    return {};
-  }
-}
+export const formToFilter = form => parseFilterToRequest(form);
 
 /**
  * Convert filters to filters form

@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` with custom props 1`] = `
+<div
+  class="c-quick-interval c-quick-interval--reverse"
+>
+  <c-date-interval-field-stub
+    disabled="true"
+    is-allowed-from-date="function () { [native code] }"
+    is-allowed-to-date="function () { [native code] }"
+    value="[object Object]"
+  />
+  <div
+    class="c-quick-interval__range"
+  >
+    <c-quick-date-interval-type-field-stub
+      class="mr-4"
+      disabled="true"
+      hide-details="hide-details"
+      ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      return-object="return-object"
+      value="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` with default props 1`] = `
+<div
+  class="c-quick-interval"
+>
+  <c-date-interval-field-stub
+    is-allowed-from-date="function () { [native code] }"
+    is-allowed-to-date="function () { [native code] }"
+    value="[object Object]"
+  />
+  <div
+    class="c-quick-interval__range"
+  >
+    <c-quick-date-interval-type-field-stub
+      class="ml-4"
+      hide-details="hide-details"
+      ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      return-object="return-object"
+      value="[object Object]"
+    />
+  </div>
+</div>
+`;

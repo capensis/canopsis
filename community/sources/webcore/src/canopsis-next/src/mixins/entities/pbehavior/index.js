@@ -4,10 +4,7 @@ import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('pbehavior');
 
-/**
- * @mixin
- */
-export default {
+export const entitiesPbehaviorMixin = {
   mixins: [entitiesPbehaviorCommentMixin],
   computed: {
     ...mapGetters({

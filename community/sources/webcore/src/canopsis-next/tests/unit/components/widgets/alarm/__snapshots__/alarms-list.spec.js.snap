@@ -33,13 +33,13 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
     >
       <filter-selector-stub
         condition="$and"
-        entitiestype="alarm"
         filters=""
         hasaccesstoaddfilter="true"
         itemtext="title"
         itemvalue="title"
         label="Select a filter"
         lockedfilters=""
+        withalarm="true"
       />
     </div>
     <div

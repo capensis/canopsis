@@ -11,15 +11,12 @@
       )
         c-help-icon(v-if="helpText", slot="append", :text="helpText", max-width="300", top)
     v-flex(xs2)
-      v-text-field(
-        v-field.number="value.limit",
-        v-validate="'required'",
+      c-number-field(
+        v-field="value.limit",
         :label="fieldLabel",
         :name="limitFieldName",
         :disabled="!value.enabled",
-        :required="value.enabled",
-        :error-messages="errors.collect(limitFieldName)",
-        type="number"
+        :required="value.enabled"
       )
     v-flex(xs9)
       div.v-messages.theme--light.error--text

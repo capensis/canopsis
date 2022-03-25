@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash';
 
-import { FILTER_OPERATORS, FILTER_MONGO_OPERATORS } from '@/constants';
+import { PATTERN_OPERATORS, FILTER_MONGO_OPERATORS } from '@/constants';
 
 function parseFilterRuleToRequest(rule) {
   const parsedRule = {};
@@ -13,96 +13,92 @@ function parseFilterRuleToRequest(rule) {
    * Determine the rule syntax based on the rule operator
    */
   switch (rule.operator) {
-    case FILTER_OPERATORS.equal: {
+    case PATTERN_OPERATORS.equal: {
       parsedRule[rule.field] = rule.input;
       break;
     }
-    case FILTER_OPERATORS.notEqual: {
+    case PATTERN_OPERATORS.notEqual: {
       parsedRule[rule.field] = {
         [FILTER_MONGO_OPERATORS.notEqual]: rule.input,
       };
       break;
     }
-    case FILTER_OPERATORS.in: {
+    case PATTERN_OPERATORS.hasOneOf: {
       parsedRule[rule.field] = {
         [FILTER_MONGO_OPERATORS.in]: rule.input.map(({ value }) => value),
       };
       break;
     }
-    case FILTER_OPERATORS.notIn: {
+    case PATTERN_OPERATORS.hasNot: {
       parsedRule[rule.field] = {
         [FILTER_MONGO_OPERATORS.notIn]: rule.input.map(({ value }) => value),
       };
       break;
     }
-    case FILTER_OPERATORS.beginsWith: {
+    case PATTERN_OPERATORS.beginsWith: {
       parsedRule[rule.field] = {
         [FILTER_MONGO_OPERATORS.regex]: `^${rule.input}`,
       };
       break;
     }
-    case FILTER_OPERATORS.doesntBeginWith: {
+    case PATTERN_OPERATORS.notBeginWith: {
       parsedRule[rule.field] = {
         [FILTER_MONGO_OPERATORS.regex]: `^(?!${rule.input})`,
       };
       break;
     }
-    case FILTER_OPERATORS.contains: {
+    case PATTERN_OPERATORS.contains: {
       parsedRule[rule.field] = {
         [FILTER_MONGO_OPERATORS.regex]: rule.input,
       };
       break;
     }
-    case FILTER_OPERATORS.doesntContains: {
+    case PATTERN_OPERATORS.notContains: {
       parsedRule[rule.field] = {
         [FILTER_MONGO_OPERATORS.regex]: `^((?!${rule.input}).)*$`,
         $options: 's',
       };
       break;
     }
-    case FILTER_OPERATORS.endsWith: {
+    case PATTERN_OPERATORS.endsWith: {
       parsedRule[rule.field] = {
         [FILTER_MONGO_OPERATORS.regex]: `${rule.input}$`,
       };
       break;
     }
-    case FILTER_OPERATORS.doesntEndWith: {
+    case PATTERN_OPERATORS.notEndWith: {
       parsedRule[rule.field] = {
         [FILTER_MONGO_OPERATORS.regex]: `(?<!${rule.input})$`,
       };
       break;
     }
-    case FILTER_OPERATORS.isEmpty: {
+    case PATTERN_OPERATORS.isEmpty: {
       parsedRule[rule.field] = '';
       break;
     }
-    case FILTER_OPERATORS.isEmptyArray: {
-      parsedRule[rule.field] = [];
-      break;
-    }
-    case FILTER_OPERATORS.isNotEmpty: {
+    case PATTERN_OPERATORS.isNotEmpty: {
       parsedRule[rule.field] = {
         [FILTER_MONGO_OPERATORS.notEqual]: '',
       };
       break;
     }
-    case FILTER_OPERATORS.isNull: {
+    case PATTERN_OPERATORS.isNull: {
       parsedRule[rule.field] = null;
       break;
     }
-    case FILTER_OPERATORS.isNotNull: {
+    case PATTERN_OPERATORS.isNotNull: {
       parsedRule[rule.field] = {
         [FILTER_MONGO_OPERATORS.notEqual]: null,
       };
       break;
     }
-    case FILTER_OPERATORS.greater: {
+    case PATTERN_OPERATORS.greater: {
       parsedRule[rule.field] = {
         [FILTER_MONGO_OPERATORS.greater]: rule.input,
       };
       break;
     }
-    case FILTER_OPERATORS.less: {
+    case PATTERN_OPERATORS.less: {
       parsedRule[rule.field] = {
         [FILTER_MONGO_OPERATORS.less]: rule.input,
       };

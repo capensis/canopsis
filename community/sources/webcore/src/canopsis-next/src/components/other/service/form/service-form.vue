@@ -14,7 +14,7 @@
         v-flex.pr-3(xs6)
           c-entity-category-field(v-field="form.category", addable, required)
         v-flex.pr-3(xs4)
-          c-state-type-field(
+          c-entity-state-field(
             v-field="form.sli_avail_state",
             :label="$t('service.availabilityState')",
             required
@@ -45,14 +45,12 @@
 <script>
 import { get } from 'lodash';
 
-import FilterEditor from '@/components/other/filter/editor/filter-editor.vue';
 import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
 import ManageInfos from '@/components/widgets/context/manage-infos.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    FilterEditor,
     PatternsList,
     ManageInfos,
   },

@@ -40,7 +40,7 @@ exports[`filters Renders \`filters\` with custom props 1`] = `
       >
         <filter-selector-stub
           condition="$and"
-          entitiestype="entity"
+          entities-type="entity"
           filters="[object Object]"
           hasaccesstouserfilter="true"
           hideselect="true"
@@ -51,6 +51,7 @@ exports[`filters Renders \`filters\` with custom props 1`] = `
           lockedfilters=""
           long="true"
           value="[object Object]"
+          withalarm="true"
         />
       </div>
     </div>
@@ -98,7 +99,7 @@ exports[`filters Renders \`filters\` with default and required props 1`] = `
       >
         <filter-selector-stub
           condition="$and"
-          entitiestype="alarm"
+          entities-type="alarm"
           filters=""
           hasaccesstouserfilter="true"
           hideselecticon="true"
@@ -107,6 +108,7 @@ exports[`filters Renders \`filters\` with default and required props 1`] = `
           label="Default filter"
           lockedfilters=""
           long="true"
+          withalarm="true"
         />
       </div>
     </div>

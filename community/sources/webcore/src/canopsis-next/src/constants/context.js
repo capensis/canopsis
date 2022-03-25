@@ -443,3 +443,15 @@ export const CONTEXT_COLUMNS_WITH_SORTABLE = [ // TODO: We should receive it fro
   'category.name',
   'idle_since',
 ];
+
+export const ENTITY_PATTERN_FIELDS = {
+  id: '_id',
+  name: 'name',
+  impact: 'impact',
+  depends: 'depends',
+  infos: 'infos',
+  componentInfos: 'component_infos',
+  category: 'category',
+  impactLevel: 'impact_level',
+  lastEventDate: 'last_event_date',
+};

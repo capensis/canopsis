@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-date-interval-field Renders \`c-date-interval-field\` with custom props 1`] = `
+<div
+  class="c-date-interval"
+>
+  <c-date-picker-field-stub
+    allowed-dates="() => {}"
+    disabled="true"
+    hide-details="hide-details"
+    label="From"
+    value="now-2d"
+  />
+  <c-date-picker-field-stub
+    allowed-dates="() => {}"
+    class="ml-4"
+    disabled="true"
+    hide-details="hide-details"
+    label="To"
+    value="now"
+  />
+</div>
+`;
+
+exports[`c-date-interval-field Renders \`c-date-interval-field\` with default props 1`] = `
+<div
+  class="c-date-interval"
+>
+  <c-date-picker-field-stub
+    hide-details="hide-details"
+    label="From"
+    value="now-12h"
+  />
+  <c-date-picker-field-stub
+    class="ml-4"
+    hide-details="hide-details"
+    label="To"
+    value="now"
+  />
+</div>
+`;

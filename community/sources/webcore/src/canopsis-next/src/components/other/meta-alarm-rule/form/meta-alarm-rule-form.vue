@@ -1,18 +1,10 @@
 <template lang="pug">
   div
-    v-layout(align-center)
-      v-text-field(
-        v-validate,
-        v-field="form._id",
-        :label="$t('common.id')",
-        :disabled="isDisabledIdField",
-        :readonly="isDisabledIdField",
-        :error-messages="errors.collect('_id')",
-        name="_id"
-      )
-        v-tooltip(v-show="!isDisabledIdField", slot="append", left)
-          v-icon(slot="activator") help
-          span {{ $t('metaAlarmRule.idHelp') }}
+    c-id-field(
+      v-field="form._id",
+      :disabled="isDisabledIdField",
+      :help-text="$t('metaAlarmRule.idHelp')"
+    )
     v-text-field(
       v-validate="'required'",
       v-field="form.name",
@@ -42,9 +34,9 @@
       v-field="form.config",
       :total-entity="withTotalEntityPatterns",
       name="config",
-      alarm,
-      entity,
-      event
+      with-alarm,
+      with-entity,
+      with-event
     )
 </template>
 

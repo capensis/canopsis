@@ -1,6 +1,6 @@
 import { isArray, isEmpty, isObject, cloneDeep, isNull } from 'lodash';
 
-import { FILTER_OPERATORS, FILTER_DEFAULT_VALUES, FILTER_MONGO_OPERATORS } from '@/constants';
+import { PATTERN_OPERATORS, FILTER_DEFAULT_VALUES, FILTER_MONGO_OPERATORS } from '@/constants';
 import uid from '@/helpers/uid';
 
 /**
@@ -20,18 +20,18 @@ function ruleOperatorAndInput(rule) {
    */
   if (!isObject(ruleValue)) {
     if (ruleValue === '') {
-      parsedRule.operator = FILTER_OPERATORS.isEmpty;
+      parsedRule.operator = PATTERN_OPERATORS.isEmpty;
     } else {
       const [input] = Object.values(rule);
       if (isNull(input)) {
-        parsedRule.operator = FILTER_OPERATORS.isNull;
+        parsedRule.operator = PATTERN_OPERATORS.isNull;
       } else {
-        parsedRule.operator = FILTER_OPERATORS.equal;
+        parsedRule.operator = PATTERN_OPERATORS.equal;
         parsedRule.input = input;
       }
     }
   } else if (isArray(ruleValue) && ruleValue.length === 0) {
-    parsedRule.operator = FILTER_OPERATORS.isEmptyArray;
+    parsedRule.operator = PATTERN_OPERATORS.isEmpty;
   } else {
     const operator = Object.keys(ruleValue)[0];
 
@@ -42,49 +42,49 @@ function ruleOperatorAndInput(rule) {
       case FILTER_MONGO_OPERATORS.equal: {
         const [input] = Object.values(rule);
         parsedRule.input = input;
-        parsedRule.operator = FILTER_OPERATORS.equal;
+        parsedRule.operator = PATTERN_OPERATORS.equal;
         break;
       }
       case FILTER_MONGO_OPERATORS.notEqual: {
         if (Object.values(ruleValue)[0] === null) {
-          parsedRule.operator = FILTER_OPERATORS.isNotNull;
+          parsedRule.operator = PATTERN_OPERATORS.isNotNull;
         } else if (Object.values(ruleValue)[0] === '') {
-          parsedRule.operator = FILTER_OPERATORS.isNotEmpty;
+          parsedRule.operator = PATTERN_OPERATORS.isNotEmpty;
         } else {
           const [input] = Object.values(ruleValue);
           parsedRule.input = input;
-          parsedRule.operator = FILTER_OPERATORS.notEqual;
+          parsedRule.operator = PATTERN_OPERATORS.notEqual;
         }
         break;
       }
       case FILTER_MONGO_OPERATORS.in: {
         const [inputArray] = Object.values(ruleValue);
         parsedRule.input = (inputArray || []).map(value => ({ value, key: uid() }));
-        parsedRule.operator = FILTER_OPERATORS.in;
+        parsedRule.operator = PATTERN_OPERATORS.hasOneOf;
         break;
       }
       case FILTER_MONGO_OPERATORS.notIn: {
         const [inputArray] = Object.values(ruleValue);
         parsedRule.input = (inputArray || []).map(value => ({ value, key: uid() }));
-        parsedRule.operator = FILTER_OPERATORS.notIn;
+        parsedRule.operator = PATTERN_OPERATORS.hasNot;
         break;
       }
       case FILTER_MONGO_OPERATORS.regex: {
         const [input] = Object.values(ruleValue);
         parsedRule.input = input;
-        parsedRule.operator = FILTER_OPERATORS.contains;
+        parsedRule.operator = PATTERN_OPERATORS.contains;
         break;
       }
       case FILTER_MONGO_OPERATORS.greater: {
         const [input] = Object.values(ruleValue);
         parsedRule.input = input;
-        parsedRule.operator = FILTER_OPERATORS.greater;
+        parsedRule.operator = PATTERN_OPERATORS.greater;
         break;
       }
       case FILTER_MONGO_OPERATORS.less: {
         const [input] = Object.values(ruleValue);
         parsedRule.input = input;
-        parsedRule.operator = FILTER_OPERATORS.less;
+        parsedRule.operator = PATTERN_OPERATORS.less;
         break;
       }
       default: {
