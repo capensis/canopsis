@@ -8,7 +8,11 @@
           v-tabs-items.pt-2(v-model="activeTab")
             v-tab-item(lazy)
               v-flex(offset-xs2, xs8)
-                c-patterns-field(:value="filter", disabled, entity)
+                c-patterns-field(
+                  :value="filter",
+                  disabled,
+                  with-entity
+                )
 </template>
 
 <script>

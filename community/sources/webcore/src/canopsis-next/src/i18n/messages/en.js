@@ -158,6 +158,7 @@ export default {
     eventPatterns: 'Event patterns',
     alarmPatterns: 'Alarm patterns',
     entityPatterns: 'Entity patterns',
+    pbehaviorPatterns: 'Pbehavior patterns',
     totalEntityPatterns: 'Total entity patterns',
     addFilter: 'Add filter',
     id: 'Id',
@@ -237,6 +238,7 @@ export default {
     ackedAt: 'Acked at',
     resolvedAt: 'Resolved at',
     extraInfo: 'Extra info | Extra infos',
+    custom: 'Custom',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -1027,7 +1029,7 @@ export default {
         },
       },
     },
-    filter: {
+    createFilter: {
       create: {
         title: 'Create filter',
       },
@@ -2743,6 +2745,8 @@ export default {
     addRule: 'Add rule',
     addGroup: 'Add group',
     removeRule: 'Remove rule',
+    advancedEditor: 'Advanced editor',
+    simpleEditor: 'Simple editor',
     errors: {
       ruleRequired: 'Please add at least one rule',
       groupRequired: 'Please add at least one group',

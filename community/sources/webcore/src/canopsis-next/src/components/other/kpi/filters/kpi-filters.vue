@@ -41,7 +41,7 @@ export default {
       this.$modals.show({
         name: MODALS.patterns,
         config: {
-          title: this.$t('modals.filter.edit.title'),
+          title: this.$t('modals.createFilter.edit.title'),
           name: true,
           entity: true,
           patterns: filter,
@@ -58,7 +58,7 @@ export default {
       this.$modals.show({
         name: MODALS.patterns,
         config: {
-          title: this.$t('modals.filter.duplicate.title'),
+          title: this.$t('modals.createFilter.duplicate.title'),
           name: true,
           entity: true,
           patterns: omit(filter, ['_id']),

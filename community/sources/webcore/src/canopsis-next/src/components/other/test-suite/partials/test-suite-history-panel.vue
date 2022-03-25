@@ -1,10 +1,7 @@
 <template lang="pug">
-  div.test-suite-history
-    v-expansion-panel
-      v-expansion-panel-content(:style="{ backgroundColor: color }", lazy)
-        v-icon(slot="actions", color="white") $vuetify.icons.expand
-        span.white--text(slot="header") {{ title }}
-        test-suite-tabs(:test-suite-id="testSuite._id")
+  c-collapse-panel(:color="color", lazy)
+    span.white--text(slot="header") {{ title }}
+    test-suite-tabs(:test-suite-id="testSuite._id")
 </template>
 
 <script>

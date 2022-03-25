@@ -3,6 +3,7 @@
 exports[`filter-selector Renders \`filter-selector\` with custom all rights 1`] = `
 <div
   class="layout align-center row wrap"
+  entitiestype="entity"
 >
   <div
     class="flex xs12"
@@ -87,10 +88,9 @@ exports[`filter-selector Renders \`filter-selector\` with custom all rights 1`] 
   <div
     class="flex xs12"
   >
-    <filters-form-stub
+    <filters-list-form-stub
       addable="true"
       editable="true"
-      entitiestype="entity"
       filters="[object Object],[object Object]"
     />
   </div>
@@ -253,6 +253,7 @@ exports[`filter-selector Renders \`filter-selector\` with custom all rights 2`] 
 exports[`filter-selector Renders \`filter-selector\` with custom props 1`] = `
 <div
   class="layout align-center row wrap"
+  entitiestype="entity"
 >
   <div
     class="flex xs12"

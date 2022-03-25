@@ -11,7 +11,7 @@ exports[`kpi-rating-filters Renders \`kpi-rating-filters\` with query 1`] = `
       class="mr-4"
       value="[object Object]"
     />
-    <c-filters-field-stub
+    <c-filter-field-stub
       class="mr-4 kpi-rating-toolbar__filters"
     />
     <kpi-rating-criteria-field-stub
@@ -40,7 +40,7 @@ exports[`kpi-rating-filters Renders \`kpi-rating-filters\` with total user activ
       class="mr-4"
       value="[object Object]"
     />
-    <c-filters-field-stub
+    <c-filter-field-stub
       class="mr-4 kpi-rating-toolbar__filters"
       disabled="true"
     />

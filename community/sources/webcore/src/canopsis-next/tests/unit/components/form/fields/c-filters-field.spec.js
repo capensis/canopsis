@@ -6,7 +6,7 @@ import { createMockedStoreModules } from '@unit/utils/store';
 
 import { MAX_LIMIT } from '@/constants';
 
-import CFiltersField from '@/components/forms/fields/pattern/c-pattern-field.vue';
+import CFiltersField from '@/components/forms/fields/pattern/c-filter-field.vue';
 
 const localVue = createVueInstance();
 
@@ -71,7 +71,7 @@ const snapshotFactory = (options = {}) => mount(CFiltersField, {
   ...options,
 });
 
-describe('c-filters-field', () => {
+describe('c-filter-field', () => {
   it('Filters fetched after mount if pending is false', async () => {
     const fetchFilters = jest.fn();
     factory({
