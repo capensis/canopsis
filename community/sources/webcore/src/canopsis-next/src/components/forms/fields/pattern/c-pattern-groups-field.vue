@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { filterGroupToForm } from '@/helpers/forms/filter';
+import { patternRulesToGroup } from '@/helpers/forms/pattern';
 
 import { formArrayMixin } from '@/mixins/form';
 
@@ -44,6 +44,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
     name: {
       type: String,
       default: 'groups',
@@ -54,8 +58,17 @@ export default {
       return this.errors.has(this.name);
     },
   },
-  created() {
-    this.attachMinValueRule();
+  watch: {
+    required: {
+      immediate: true,
+      handler(value) {
+        if (value) {
+          this.attachMinValueRule();
+        } else {
+          this.detachMinValueRule();
+        }
+      },
+    },
   },
   beforeDestroy() {
     this.detachMinValueRule();
@@ -78,11 +91,9 @@ export default {
     addFilterGroup() {
       const [firstAttribute] = this.attributes;
 
-      this.addItemIntoArray(filterGroupToForm({
-        rules: [
-          { attribute: firstAttribute?.value },
-        ],
-      }));
+      this.addItemIntoArray(patternRulesToGroup([
+        { field: firstAttribute?.value },
+      ]));
     },
   },
 };
