@@ -1,4 +1,5 @@
 import { isBoolean } from 'lodash';
+
 import {
   ALARM_PATTERN_FIELDS,
   ENTITY_PATTERN_FIELDS,
@@ -10,7 +11,6 @@ import {
   PATTERN_QUICK_RANGES,
   PATTERN_RULE_INFOS_FIELDS,
   PATTERN_TYPES,
-  PATTERNS_FIELDS,
   QUICK_RANGES,
 } from '@/constants';
 
@@ -63,30 +63,6 @@ import { durationToForm } from '@/helpers/date/duration';
  */
 
 /**
- * @typedef {Object} Pattern
- * @property {string} title
- * @property {boolean} is_corporate
- * @property {string | Symbol} id
- * @property {PatternTypes} type
- * @property {PatternGroups} [alarm_pattern]
- * @property {PatternGroups} [entity_pattern]
- * @property {PatternGroups} [pbehavior_pattern]
- * @property {PatternGroups} [event_pattern]
- */
-
-/**
- * @typedef {Object} Patterns
- * @property {PatternGroups} [alarm_pattern]
- * @property {string} [corporate_alarm_pattern]
- * @property {PatternGroups} [entity_pattern]
- * @property {string} [corporate_entity_pattern]
- * @property {PatternGroups} [pbehavior_pattern]
- * @property {string} [corporate_pbehavior_pattern]
- * @property {PatternGroups} [event_pattern]
- * @property {string} [corporate_event_pattern]
- */
-
-/**
  * @typedef {Object} PatternRuleRangeForm
  * @property {string} type
  * @property {string | number} [from]
@@ -118,13 +94,6 @@ import { durationToForm } from '@/helpers/date/duration';
 /**
  * @typedef {Pattern} PatternForm
  * @property {PatternGroupsForm} groups
- */
-
-/**
- * @typedef {Pattern} PatternsForm
- * @property {PatternGroupsForm} [alarm_pattern]
- * @property {PatternGroupsForm} [entity_pattern]
- * @property {PatternGroupsForm} [pbehavior_pattern]
  */
 
 /**
@@ -371,29 +340,6 @@ export const patternToForm = (pattern = {}) => ({
 });
 
 /**
- * Convert patterns to form
- *
- * @param {Patterns} patterns
- * @return {PatternsForm}
- */
-export const patternsToForm = (patterns = {}) => {
-  const {
-    alarm_pattern: alarmPattern,
-    entity_pattern: entityPattern,
-    pbehavior_pattern: pbehaviorPattern,
-    corporate_alarm_pattern: corporateAlarmPattern,
-    corporate_entity_pattern: corporateEntityPattern,
-    corporate_pbehavior_pattern: corporatePbehaviorPattern,
-  } = patterns;
-
-  return ({
-    alarm_pattern: patternToForm({ alarm_pattern: alarmPattern, id: corporateAlarmPattern }),
-    entity_pattern: patternToForm({ entity_pattern: entityPattern, id: corporateEntityPattern }),
-    pbehavior_pattern: patternToForm({ pbehavior_pattern: pbehaviorPattern, id: corporatePbehaviorPattern }),
-  });
-};
-
-/**
  * Convert range to pattern condition
  *
  * @param {PatternRuleRangeForm} range
@@ -588,37 +534,3 @@ export const formToPattern = (form) => {
 
   return pattern;
 };
-
-/**
- * Convert patterns form to patterns
- *
- * @param {PatternsForm} form
- * @param {PatternsFields} fields
- * @return {{}}
- */
-export const formToPatterns = (
-  form,
-  fields = [
-    PATTERNS_FIELDS.alarm,
-    PATTERNS_FIELDS.entity,
-    PATTERNS_FIELDS.pbehavior,
-  ],
-) => fields.reduce((acc, field) => {
-  const patterns = form[field];
-
-  if (!patterns) {
-    return acc;
-  }
-
-  if (patterns.id !== PATTERN_CUSTOM_ITEM_VALUE) {
-    acc[`corporate_${field}`] = patterns.id;
-
-    return acc;
-  }
-
-  if (patterns.groups) {
-    acc[field] = formGroupsToPatternRules(patterns.groups);
-  }
-
-  return acc;
-}, {});
