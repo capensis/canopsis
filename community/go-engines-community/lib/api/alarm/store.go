@@ -711,14 +711,14 @@ func (s *store) fillLinks(ctx context.Context, apiKey string, result *Aggregatio
 	if result == nil || len(result.Data) == 0 {
 		return nil
 	}
-
-	maxItems := len(result.Data)
-	if maxItems > 100 {
-		maxItems = 100
+	// Do not fetch links for long page.
+	if len(result.Data) > 100 {
+		return nil
 	}
-	linksEntities := make([]AlarmEntity, 0, maxItems)
-	alarmIndexes := make(map[string]int, maxItems)
-	childIndexes := make(map[string][][]int, maxItems)
+
+	linksEntities := make([]AlarmEntity, 0, len(result.Data))
+	alarmIndexes := make(map[string]int, len(result.Data))
+	childIndexes := make(map[string][][]int)
 
 	for i, item := range result.Data {
 		linksEntities = append(linksEntities, AlarmEntity{
@@ -726,9 +726,6 @@ func (s *store) fillLinks(ctx context.Context, apiKey string, result *Aggregatio
 			EntityID: item.Entity.ID,
 		})
 		alarmIndexes[item.ID] = i
-		if len(linksEntities) == maxItems {
-			break
-		}
 
 		if item.Children != nil {
 			for j, child := range item.Children.Data {
@@ -742,10 +739,6 @@ func (s *store) fillLinks(ctx context.Context, apiKey string, result *Aggregatio
 					AlarmID:  child.ID,
 					EntityID: child.Entity.ID,
 				})
-
-				if len(linksEntities) == maxItems {
-					break
-				}
 			}
 		}
 	}
