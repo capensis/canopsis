@@ -3,7 +3,7 @@
 exports[`c-array-mixed-field Renders \`c-array-mixed-field\` with all field types correctly 1`] = `
 <div>
   <div
-    class="layout"
+    class="layout align-center"
   >
     <div
       class="flex"
@@ -17,7 +17,7 @@ exports[`c-array-mixed-field Renders \`c-array-mixed-field\` with all field type
     />
   </div>
   <div
-    class="layout"
+    class="layout align-center"
   >
     <div
       class="flex"
@@ -31,7 +31,7 @@ exports[`c-array-mixed-field Renders \`c-array-mixed-field\` with all field type
     />
   </div>
   <div
-    class="layout"
+    class="layout align-center"
   >
     <div
       class="flex"
@@ -43,7 +43,7 @@ exports[`c-array-mixed-field Renders \`c-array-mixed-field\` with all field type
     />
   </div>
   <div
-    class="layout"
+    class="layout align-center"
   >
     <div
       class="flex"
@@ -55,7 +55,7 @@ exports[`c-array-mixed-field Renders \`c-array-mixed-field\` with all field type
     />
   </div>
   <div
-    class="layout"
+    class="layout align-center"
   >
     <div
       class="flex"
@@ -99,7 +99,7 @@ exports[`c-array-mixed-field Renders \`c-array-mixed-field\` with default props 
 exports[`c-array-mixed-field Renders disabled \`c-array-mixed-field\` correctly 1`] = `
 <div>
   <div
-    class="layout"
+    class="layout align-center"
   >
     <div
       class="flex"
@@ -112,7 +112,7 @@ exports[`c-array-mixed-field Renders disabled \`c-array-mixed-field\` correctly 
     <!---->
   </div>
   <div
-    class="layout"
+    class="layout align-center"
   >
     <div
       class="flex"

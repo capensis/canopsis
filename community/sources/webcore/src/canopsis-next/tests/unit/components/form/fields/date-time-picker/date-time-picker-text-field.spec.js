@@ -84,7 +84,7 @@ describe('date-time-picker-text-field', () => {
       value: '11/12/2022 21:00',
     });
 
-    expect(dateTimePickerButton.vm.value.getTime()).toBe(1639231200000);
+    expect(dateTimePickerButton.vm.value.getTime()).toBe(1639252800000);
   });
 
   test('Date object updated if text field is blurred', async () => {
@@ -108,7 +108,7 @@ describe('date-time-picker-text-field', () => {
 
     await flushPromises();
 
-    expect(dateTimePickerButton.vm.value.getTime()).toBe(1670767200000);
+    expect(dateTimePickerButton.vm.value.getTime()).toBe(1670788800000);
   });
 
   test('Errors added after validate date time text field', async () => {
@@ -170,7 +170,7 @@ describe('date-time-picker-text-field', () => {
     expect(inputEvents).toHaveLength(1);
 
     const [eventData] = inputEvents[0];
-    expect(eventData).toBe('08/12/2013 00:00');
+    expect(eventData).toBe('07/12/2013 18:00');
   });
 
   test('Renders `date-time-picker-text-field` with default props', () => {

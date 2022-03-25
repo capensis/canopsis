@@ -30,7 +30,13 @@
       v-stepper-content.pa-0(:step="steps.INFOS")
         dynamic-info-infos-form.pa-4(v-field="form.infos", ref="infosForm")
       v-stepper-content.pa-0(:step="steps.PATTERNS")
-        c-patterns-field.pa-4(v-field="form.patterns", ref="patternsForm", alarm, entity, some-required)
+        c-patterns-field.pa-4(
+          v-field="form.patterns",
+          ref="patternsForm",
+          with-alarm,
+          with-entity,
+          some-required
+        )
 </template>
 
 <script>

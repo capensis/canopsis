@@ -85,6 +85,10 @@ export default {
       }
     },
 
+    fetchListWithoutStore(context, { params }) {
+      return request.get(API_ROUTES.pbehavior.pbehaviors, { params });
+    },
+
     async fetchListByEntityId({ commit, dispatch }, { id }) {
       try {
         const { normalizedData } = await dispatch('entities/fetch', {

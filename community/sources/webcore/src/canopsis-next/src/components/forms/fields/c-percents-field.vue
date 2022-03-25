@@ -1,14 +1,12 @@
 <template lang="pug">
-  v-text-field(
-    v-field.number="value",
-    v-validate="'required|numeric|min_value:0|max_value:100'",
+  c-number-field(
+    v-field="value",
     :label="label",
-    :error-messages="errors.collect(name)",
     :name="name",
     :max="max",
     :min="min",
-    type="number",
-    prefix="%"
+    prefix="%",
+    required
   )
 </template>
 

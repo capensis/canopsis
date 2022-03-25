@@ -170,8 +170,8 @@ describe('date-interval-selector', () => {
       ...value,
       periodUnit: TIME_UNITS.hour,
       periodValue: 1,
-      tstart: '07/12/2013 23:00',
-      tstop: '08/12/2013 00:00',
+      tstart: '07/12/2013 17:00',
+      tstop: '07/12/2013 18:00',
     });
   });
 
