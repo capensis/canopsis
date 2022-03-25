@@ -1,4 +1,5 @@
 import { isBoolean } from 'lodash';
+
 import {
   ALARM_PATTERN_FIELDS,
   ENTITY_PATTERN_FIELDS,
@@ -93,10 +94,6 @@ import { durationToForm } from '@/helpers/date/duration';
 /**
  * @typedef {Pattern} PatternForm
  * @property {PatternGroupsForm} groups
- */
-
-/**
- * @typedef {Pattern} PatternsForm
  */
 
 /**
