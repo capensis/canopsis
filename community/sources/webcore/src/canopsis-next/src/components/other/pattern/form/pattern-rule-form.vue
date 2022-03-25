@@ -3,31 +3,31 @@
     v-switch(
       v-if="!onlySimple",
       v-field="form.advancedMode",
-      :label="$t('modals.eventFilterRule.advanced')",
+      :label="$t('eventFilter.advanced')",
       color="primary",
       hide-details
     )
     v-text-field(
       v-model="form.field",
       v-validate="'required'",
-      :label="$t('modals.eventFilterRule.field')",
+      :label="$t('eventFilter.field')",
       :error-messages="errors.collect('field')",
       name="field"
     )
     v-text-field(
       v-if="onlySimple",
       v-model="form.value",
-      :label="$t('modals.eventFilterRule.value')"
+      :label="$t('eventFilter.value')"
     )
     template(v-else)
       c-mixed-field(
         v-if="!form.advancedMode",
         v-model="form.value",
-        :label="$t('modals.eventFilterRule.value')"
+        :label="$t('eventFilter.value')"
       )
       template(v-else)
         v-layout(align-center, justify-center)
-          h2 {{ $t('modals.eventFilterRule.comparisonRules') }}
+          h2 {{ $t('eventFilter.comparisonRules') }}
           v-btn(
             :disabled="!availableOperators.length",
             icon,

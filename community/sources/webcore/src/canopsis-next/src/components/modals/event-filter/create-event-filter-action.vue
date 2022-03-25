@@ -2,64 +2,50 @@
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
       template(slot="title")
-        span {{ $t('eventFilter.editPattern') }}
+        span {{ title }}
       template(slot="text")
-        pattern-form(
-          v-model="form",
-          :operators="operators",
-          :only-simple-rule="config.onlySimpleRule"
-        )
+        event-filter-action-form(v-model="form")
       template(slot="actions")
-        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
-          :disabled="isDisabled || patternWasChanged",
+          :disabled="isDisabled",
           :loading="submitting",
           type="submit"
         ) {{ $t('common.submit') }}
 </template>
 
 <script>
-import { cloneDeep, get } from 'lodash';
-
-import { MODALS, EVENT_FILTER_OPERATORS } from '@/constants';
+import { MODALS } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import PatternForm from '@/components/other/pattern/form/pattern-form.vue';
+import { eventFilterActionToForm } from '@/helpers/forms/event-filter';
+
+import EventFilterActionForm from '@/components/other/event-filter/form/event-filter-action-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.createPattern,
+  name: MODALS.createEventFilterAction,
   $_veeValidate: {
     validator: 'new',
   },
-  components: {
-    PatternForm,
-    ModalWrapper,
-  },
+  components: { EventFilterActionForm, ModalWrapper },
   mixins: [
     modalInnerMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],
   data() {
-    const { pattern = {} } = this.modal.config;
-
     return {
-      form: cloneDeep(pattern),
-      activeTab: 0,
+      form: eventFilterActionToForm(this.modal.config.ruleAction),
     };
   },
   computed: {
-    operators() {
-      return this.config.operators || EVENT_FILTER_OPERATORS;
-    },
-
-    patternWasChanged() {
-      return get(this.fields, ['pattern', 'changed']);
+    title() {
+      return this.modal.config.title || this.$t('eventFilter.addAction');
     },
   },
   methods: {
