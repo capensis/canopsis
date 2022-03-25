@@ -51,7 +51,7 @@
 <script>
 import { Validator } from 'vee-validate';
 
-import { MODALS, EVENT_FILTER_RULE_OPERATORS } from '@/constants';
+import { MODALS, EVENT_FILTER_OPERATORS } from '@/constants';
 
 import { formArrayMixin } from '@/mixins/form';
 
@@ -94,7 +94,7 @@ export default {
     },
     operators: {
       type: Array,
-      default: () => EVENT_FILTER_RULE_OPERATORS,
+      default: () => EVENT_FILTER_OPERATORS,
     },
     disabled: {
       type: Boolean,

@@ -205,20 +205,16 @@ export const CreateBroadcastMessage = () => ({
   component: import(/* webpackChunkName: "BroadcastMessage" */ './admin/create-broadcast-message.vue'),
   loading: LoaderOverlay,
 });
-export const CreateEventFilterRule = () => ({
-  component: import(/* webpackChunkName: "EventFilter" */ './event-filter/create-event-filter-rule.vue'),
+export const CreateEventFilter = () => ({
+  component: import(/* webpackChunkName: "EventFilters" */ './event-filter/create-event-filter.vue'),
   loading: LoaderOverlay,
 });
-export const EventFilterRuleActions = () => ({
-  component: import(/* webpackChunkName: "EventFilter" */ './event-filter/event-filter-rule-actions.vue'),
+export const EventFilterActions = () => ({
+  component: import(/* webpackChunkName: "EventFilters" */ './event-filter/event-filter-actions.vue'),
   loading: LoaderOverlay,
 });
-export const EventFilterRuleExternalData = () => ({
-  component: import(/* webpackChunkName: "EventFilter" */ './event-filter/event-filter-rule-external-data.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateEventFilterRuleAction = () => ({
-  component: import(/* webpackChunkName: "EventFilter" */ './event-filter/create-event-filter-rule-action.vue'),
+export const CreateEventFilterAction = () => ({
+  component: import(/* webpackChunkName: "EventFilters" */ './event-filter/create-event-filter-action.vue'),
   loading: LoaderOverlay,
 });
 export const CreatePattern = () => ({
