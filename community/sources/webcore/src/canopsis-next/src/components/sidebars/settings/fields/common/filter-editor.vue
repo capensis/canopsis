@@ -47,7 +47,7 @@ export default {
       this.$modals.show({
         name: MODALS.createFilter,
         config: {
-          title: this.$t('modals.filter.create.title'),
+          title: this.$t('modals.createFilter.create.title'),
           filter: this.value,
           hiddenFields: this.hiddenFields,
           existingTitles: this.existingTitles,

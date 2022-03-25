@@ -60,13 +60,13 @@ export default {
   computed: {
     headers() {
       const headers = [
-        { text: this.$t('common.title'), value: 'name' },
+        { text: this.$t('common.title'), value: 'title' },
         { text: this.$t('common.type'), value: 'type', sortable: false },
         { text: this.$t('common.lastModifiedOn'), value: 'updated' },
       ];
 
       if (this.corporate) {
-        headers.push({ text: this.$t('common.lastModifiedBy'), value: 'author' });
+        headers.push({ text: this.$t('common.lastModifiedBy'), value: 'author.name' });
       }
 
       headers.push({

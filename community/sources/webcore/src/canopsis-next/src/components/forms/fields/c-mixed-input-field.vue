@@ -1,6 +1,7 @@
 <template lang="pug">
   component.c-mixed-input-field(
     :is="inputComponent.is",
+    v-validate="rules",
     v-bind="inputComponent.bind",
     v-on="inputComponent.on"
   )
@@ -65,8 +66,18 @@ export default {
       type: Array,
       default: () => [],
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
+    },
+
     switchLabel() {
       return String(this.value);
     },

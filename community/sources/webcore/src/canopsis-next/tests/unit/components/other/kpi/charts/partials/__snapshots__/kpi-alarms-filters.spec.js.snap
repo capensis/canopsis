@@ -16,7 +16,7 @@ exports[`kpi-alarms-filters Renders \`kpi-alarms-filters\` with hour sampling 1`
       class="mr-4 kpi-alarms-toolbar__sampling"
       value="hour"
     />
-    <c-filters-field-stub
+    <c-filter-field-stub
       class="mr-4 kpi-alarms-toolbar__filters"
     />
     <c-alarm-metric-parameters-field-stub
@@ -43,7 +43,7 @@ exports[`kpi-alarms-filters Renders \`kpi-alarms-filters\` with hour sampling an
       class="mr-4 kpi-alarms-toolbar__sampling"
       value="hour"
     />
-    <c-filters-field-stub
+    <c-filter-field-stub
       class="mr-4 kpi-alarms-toolbar__filters"
     />
     <c-alarm-metric-parameters-field-stub
@@ -69,7 +69,7 @@ exports[`kpi-alarms-filters Renders \`kpi-alarms-filters\` with query 1`] = `
       class="mr-4 kpi-alarms-toolbar__sampling"
       value="day"
     />
-    <c-filters-field-stub
+    <c-filter-field-stub
       class="mr-4 kpi-alarms-toolbar__filters"
     />
     <c-alarm-metric-parameters-field-stub
