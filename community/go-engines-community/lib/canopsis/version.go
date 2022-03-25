@@ -7,10 +7,13 @@ import (
 	"time"
 )
 
-// BuildDate is a Unix timestamp (as a string)
+// Version is a version of service.
+var Version string
+
+// BuildDate is a Unix timestamp (as a string).
 var BuildDate string
 
-// BuildGitCommit is the short version of Git commit
+// BuildGitCommit is the short version of Git commit.
 var BuildGitCommit string
 
 // PrintVersion outputs version information
@@ -28,4 +31,20 @@ func PrintVersion() {
 func PrintVersionExit() {
 	PrintVersion()
 	os.Exit(0)
+}
+
+func PrintVersionInfo(name string) {
+	unitTs, err := strconv.ParseInt(BuildDate, 10, 64)
+	if err == nil {
+		BuildDate = time.Unix(unitTs, 0).UTC().Format(time.RFC3339)
+	}
+
+	if Version == "" {
+		Version = "development"
+	}
+	if BuildGitCommit == "" {
+		BuildGitCommit = "unknown"
+	}
+
+	fmt.Printf("%s version %s, build %s %s\n", name, Version, BuildGitCommit, BuildDate)
 }
