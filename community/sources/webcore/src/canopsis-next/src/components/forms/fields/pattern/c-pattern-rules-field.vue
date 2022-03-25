@@ -17,8 +17,9 @@
         color="black",
         @click="removeItemFromArray(index)"
       )
-    v-layout(v-if="!disabled", row, align-center)
+    v-layout(row, align-center)
       v-btn.mx-0(
+        :disabled="disabled",
         color="primary",
         outline,
         @click="addFilterRule"
