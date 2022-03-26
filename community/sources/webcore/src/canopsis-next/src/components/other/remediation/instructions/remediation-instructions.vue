@@ -19,6 +19,7 @@ import { isEqual } from 'lodash';
 import { MODALS } from '@/constants';
 
 import { remediationInstructionToForm, formToRemediationInstruction } from '@/helpers/forms/remediation-instruction';
+import { isSeveralEqual } from '@/helpers/equal';
 
 import { authMixin } from '@/mixins/auth';
 import { localQueryMixin } from '@/mixins/query-local/query';
@@ -119,8 +120,10 @@ export default {
           instruction,
 
           action: async (data) => {
-            const isPbehaviorsEqual = isEqual(instruction.active_on_pbh, data.active_on_pbh)
-              && isEqual(instruction.disabled_on_pbh, data.disabled_on_pbh);
+            const isPbehaviorsEqual = isSeveralEqual(instruction, data, [
+              'active_on_pbh',
+              'disabled_on_pbh',
+            ]);
 
             const isAlarmPatternEqual = instruction.corporate_alarm_pattern === data.corporate_alarm_pattern
               || isEqual(instruction.alarm_pattern, data.alarm_pattern);
