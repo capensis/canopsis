@@ -13,7 +13,7 @@ const (
 
 type ActionPBehaviorParameters struct {
 	Author         string            `bson:"author" json:"author"`
-	UserID         string            `bson:"user" json:"user"`
+	UserID         string            `bson:"user" json:"user" mapstructure:"user"`
 	Name           string            `bson:"name" json:"name"`
 	Reason         string            `bson:"reason" json:"reason"`
 	Type           string            `bson:"type" json:"type"`

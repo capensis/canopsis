@@ -213,6 +213,7 @@ export default {
     criteria: 'Criteria',
     ratingSettings: 'Rating settings',
     pbehavior: 'Pbehavior | Pbehaviors',
+    template: 'Template',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -602,7 +603,6 @@ export default {
       title: 'Info popup',
       fields: {
         column: 'Column',
-        template: 'Template',
       },
     },
     rowGridSize: {
@@ -653,6 +653,7 @@ export default {
     templateEditor: 'Template',
     columns: {
       isHtml: 'Is it HTML?',
+      withTemplate: 'Custom template',
       isState: 'Displayed as severity?',
     },
     liveReporting: {
@@ -934,7 +935,6 @@ export default {
       title: 'Info popup',
       add: 'Add',
       column: 'Column',
-      template: 'Template',
       addInfoPopup: {
         title: 'Add an info popup',
       },
@@ -1646,6 +1646,9 @@ export default {
     socketConnectionProblem: 'Problem with connection to socket server',
     endDateLessOrEqualStartDate: 'End date should be after start date',
     unknownWidgetType: 'Unknown widget type: {type}',
+  },
+  warnings: {
+    authTokenExpired: 'Authentication token was expired',
   },
   calendar: {
     today: 'Today',

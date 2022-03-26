@@ -82,6 +82,7 @@ type Entity struct {
 	AssignedInstructions             []alarmapi.InstructionWithAlarms `bson:"-" json:"assigned_instructions,omitempty"`
 	IsAutoInstructionRunning         *bool                            `bson:"-" json:"is_auto_instruction_running,omitempty"`
 	IsAllAutoInstructionsCompleted   *bool                            `bson:"-" json:"is_all_auto_instructions_completed,omitempty"`
+	IsAutoInstructionFailed          *bool                            `bson:"-" json:"is_auto_instruction_failed,omitempty"`
 	IsManualInstructionWaitingResult *bool                            `bson:"-" json:"is_manual_instruction_waiting_result,omitempty"`
 	Name                             string                           `json:"name" bson:"name"`
 	Infos                            map[string]Info                  `json:"infos" bson:"infos"`
