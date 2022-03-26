@@ -1652,6 +1652,9 @@ export default {
     endDateLessOrEqualStartDate: 'End date should be after start date',
     unknownWidgetType: 'Unknown widget type: {type}',
   },
+  warnings: {
+    authTokenExpired: 'Authentication token was expired',
+  },
   calendar: {
     today: 'Today',
     month: 'Month',
