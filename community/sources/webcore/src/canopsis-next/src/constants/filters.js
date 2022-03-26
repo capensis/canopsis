@@ -191,3 +191,10 @@ export const PATTERN_TABS = {
   patterns: 'patterns',
   corporatePatterns: 'corporatePatterns',
 };
+
+export const PATTERNS_FIELDS = {
+  alarm: 'alarm_pattern',
+  entity: 'entity_pattern',
+  pbehavior: 'pbehavior_pattern',
+  event: 'event_pattern',
+};
