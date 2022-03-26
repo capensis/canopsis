@@ -159,6 +159,7 @@ export const API_ROUTES = {
   scenario: {
     scenarios: '/api/v4/scenarios',
     checkPriority: '/api/v4/scenarios/check-priority',
+    minimalPriority: '/api/v4/scenarios/minimal-priority',
   },
   entityCategories: '/api/v4/entity-categories',
   stateSetting: '/api/v4/state-settings',

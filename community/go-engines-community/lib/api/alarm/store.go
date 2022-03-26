@@ -27,6 +27,8 @@ import (
 const (
 	InstructionExecutionStatusRunning    = 0
 	InstructionExecutionStatusPaused     = 1
+	InstructionExecutionStatusAborted    = 4
+	InstructionExecutionStatusFailed     = 4
 	InstructionExecutionStatusWaitResult = 5
 	InstructionTypeManual                = 0
 	InstructionTypeAuto                  = 1
@@ -62,7 +64,7 @@ type store struct {
 	deferredNestedObjects []bson.M
 }
 
-func NewStore(dbClient mongo.DbClient, legacyURL fmt.Stringer) Store {
+func NewStore(dbClient mongo.DbClient, legacyURL string) Store {
 	s := &store{
 		mainDbCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
 		resolvedDbCollection:             dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
@@ -610,6 +612,13 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 				}}},
 				0,
 			}},
+			"auto_failed": bson.M{"$gt": bson.A{
+				bson.M{"$size": bson.M{"$filter": bson.M{
+					"input": "$auto_statuses",
+					"cond":  bson.M{"$in": bson.A{"$$this", []int{InstructionExecutionStatusAborted, InstructionExecutionStatusFailed}}},
+				}}},
+				0,
+			}},
 			"manual_running": bson.M{"$gt": bson.A{
 				bson.M{"$size": bson.M{"$filter": bson.M{
 					"input": "$manual_statuses",
@@ -682,6 +691,7 @@ func (s *store) fillInstructionFlags(ctx context.Context, result *AggregationRes
 	for i, v := range result.Data {
 		result.Data[i].IsAutoInstructionRunning = statusesByAlarm[v.ID].AutoRunning
 		result.Data[i].IsAllAutoInstructionsCompleted = statusesByAlarm[v.ID].AutoAllCompleted
+		result.Data[i].IsAutoInstructionFailed = statusesByAlarm[v.ID].AutoFailed
 		result.Data[i].IsManualInstructionWaitingResult = statusesByAlarm[v.ID].ManualRunning
 	}
 
@@ -717,28 +727,57 @@ func (s *store) fillLinks(ctx context.Context, apiKey string, result *Aggregatio
 		maxItems = 100
 	}
 	linksEntities := make([]AlarmEntity, 0, maxItems)
-	alarms := make(map[string]int, maxItems)
-	for i, al := range result.Data {
+	alarmIndexes := make(map[string]int, maxItems)
+	childIndexes := make(map[string][][]int, maxItems)
+
+	for i, item := range result.Data {
 		linksEntities = append(linksEntities, AlarmEntity{
-			AlarmID:  al.ID,
-			EntityID: al.Entity.ID,
+			AlarmID:  item.ID,
+			EntityID: item.Entity.ID,
 		})
-		alarms[al.ID] = i
+		alarmIndexes[item.ID] = i
 		if len(linksEntities) == maxItems {
 			break
+		}
+
+		if item.Children != nil {
+			for j, child := range item.Children.Data {
+				childIndexes[child.ID] = append(childIndexes[child.ID], []int{i, j})
+
+				if len(childIndexes[child.ID]) > 1 {
+					continue
+				}
+
+				linksEntities = append(linksEntities, AlarmEntity{
+					AlarmID:  child.ID,
+					EntityID: child.Entity.ID,
+				})
+
+				if len(linksEntities) == maxItems {
+					break
+				}
+			}
 		}
 	}
 
 	res, err := s.links.Fetch(ctx, apiKey, linksEntities)
-	if err != nil {
+	if err != nil || res == nil {
 		return err
 	}
 
 	for _, rec := range res.Data {
-		if i, ok := alarms[rec.AlarmID]; ok {
+		if i, ok := alarmIndexes[rec.AlarmID]; ok {
 			result.Data[i].Links = make(map[string]interface{}, len(rec.Links))
 			for category, link := range rec.Links {
 				result.Data[i].Links[category] = link
+			}
+		}
+		if indexes, ok := childIndexes[rec.AlarmID]; ok {
+			for _, i := range indexes {
+				result.Data[i[0]].Children.Data[i[1]].Links = make(map[string]interface{}, len(rec.Links))
+				for category, link := range rec.Links {
+					result.Data[i[0]].Children.Data[i[1]].Links[category] = link
+				}
 			}
 		}
 	}
@@ -1067,6 +1106,20 @@ func (s *store) addNestedObjects(r FilterRequest, pipeline *[]bson.M) {
 			"as":           "pbehavior",
 		}},
 		{"$unwind": bson.M{"path": "$pbehavior", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"pbehavior.comments": bson.M{
+				"$slice": bson.A{bson.M{"$reverseArray": "$pbehavior.comments"}, 1},
+			},
+		}},
+		{"$addFields": bson.M{
+			"pbehavior": bson.M{
+				"$cond": bson.M{
+					"if":   "$pbehavior._id",
+					"then": "$pbehavior",
+					"else": nil,
+				},
+			},
+		}},
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorTypeMongoCollection,
 			"foreignField": "_id",
