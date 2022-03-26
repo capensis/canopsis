@@ -1,8 +1,10 @@
 import { isBoolean } from 'lodash';
+
 import {
   ALARM_PATTERN_FIELDS,
   ENTITY_PATTERN_FIELDS,
   PATTERN_CONDITIONS,
+  PATTERN_CUSTOM_ITEM_VALUE,
   PATTERN_INFOS_NAME_OPERATORS,
   PATTERN_INPUT_TYPES,
   PATTERN_OPERATORS,
@@ -23,6 +25,14 @@ import { durationToForm } from '@/helpers/date/duration';
 
 /**
  * @typedef { 'alarm' | 'entity' | 'pbehavior' } PatternTypes
+ */
+
+/**
+ * @typedef { 'alarm_pattern' | 'entity_pattern' | 'pbehavior_pattern' } PatternsField
+ */
+
+/**
+ * @typedef {PatternsField[]} PatternsFields
  */
 
 /**
@@ -53,18 +63,6 @@ import { durationToForm } from '@/helpers/date/duration';
  */
 
 /**
- * @typedef {Object} Pattern
- * @property {string} title
- * @property {boolean} is_corporate
- * @property {string | Symbol} id
- * @property {PatternTypes} type
- * @property {PatternGroups} [alarm_pattern]
- * @property {PatternGroups} [entity_pattern]
- * @property {PatternGroups} [pbehavior_pattern]
- * @property {PatternGroups} [event_pattern]
- */
-
-/**
  * @typedef {Object} PatternRuleRangeForm
  * @property {string} type
  * @property {string | number} [from]
@@ -90,8 +88,12 @@ import { durationToForm } from '@/helpers/date/duration';
  */
 
 /**
+ * @typedef {PatternRuleForm[]} PatternGroupsForm
+ */
+
+/**
  * @typedef {Pattern} PatternForm
- * @property {PatternGroupForm[]} groups
+ * @property {PatternGroupsForm} groups
  */
 
 /**
@@ -326,7 +328,7 @@ const patternsToGroups = (patterns = [undefined]) => patterns.map(patternRulesTo
 export const patternToForm = (pattern = {}) => ({
   ...pattern,
   title: pattern.title ?? '',
-  id: pattern.id ?? '',
+  id: pattern.id ?? PATTERN_CUSTOM_ITEM_VALUE,
   type: pattern.type ?? PATTERN_TYPES.alarm,
   is_corporate: pattern.is_corporate ?? false,
   groups: patternsToGroups(
@@ -504,8 +506,8 @@ export const formGroupToPatternRules = group => group.rules.map(formRuleToPatter
 /**
  * Convert form groups to pattern rules
  *
- * @param {PatternGroupForm[]} groups
- * @return {PatternRules[]}
+ * @param {PatternGroupsForm} groups
+ * @return {PatternGroups}
  */
 export const formGroupsToPatternRules = groups => groups.map(formGroupToPatternRules);
 
