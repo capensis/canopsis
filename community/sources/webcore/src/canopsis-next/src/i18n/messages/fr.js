@@ -1652,6 +1652,9 @@ export default {
     endDateLessOrEqualStartDate: 'La date de fin doit se situer après la date de début',
     unknownWidgetType: 'Type de widget inconnu: {type}',
   },
+  warnings: {
+    authTokenExpired: 'Le jeton d\'authentification a expiré',
+  },
   calendar: {
     today: 'Aujourd\'hui',
     month: 'Mois',
