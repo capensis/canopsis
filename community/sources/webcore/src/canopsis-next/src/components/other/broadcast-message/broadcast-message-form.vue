@@ -1,13 +1,15 @@
 <template lang="pug">
-  div.mt-4
+  div
     v-layout(row)
-      v-textarea(
-        v-field="form.message",
-        v-validate="'required'",
-        :label="$t('common.message')",
-        :error-messages="errors.collect('message')",
-        name="message"
-      )
+      v-flex(xs12)
+        text-editor(
+          v-field="form.message",
+          v-validate="'required'",
+          :label="$t('common.message')",
+          :error-messages="errors.collect('message')",
+          name="message",
+          public
+        )
     v-layout(row)
       c-color-picker-field(v-field="form.color")
     v-layout(row)
@@ -38,10 +40,11 @@ import { convertDateToString } from '@/helpers/date/date';
 import { formMixin } from '@/mixins/form';
 
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
+import TextEditor from '@/components/common/text-editor/text-editor.vue';
 
 export default {
   inject: ['$validator'],
-  components: { DateTimePickerField },
+  components: { TextEditor, DateTimePickerField },
   mixins: [formMixin],
   model: {
     prop: 'form',
