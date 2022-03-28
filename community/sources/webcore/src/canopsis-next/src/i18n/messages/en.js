@@ -1680,6 +1680,7 @@ export default {
     socketConnectionProblem: 'Problem with connection to socket server',
     endDateLessOrEqualStartDate: 'End date should be after start date',
     unknownWidgetType: 'Unknown widget type: {type}',
+    unique: 'Field must be unique',
   },
   calendar: {
     today: 'Today',
@@ -1735,9 +1736,6 @@ export default {
     buttons: {
       list: 'Manage filters',
     },
-  },
-  validator: {
-    unique: 'Field must be unique',
   },
   stats: {
     types: {
@@ -2785,6 +2783,10 @@ export default {
       ruleRequired: 'Please add at least one rule',
       groupRequired: 'Please add at least one group',
     },
+  },
+
+  filter: {
+    oldPattern: 'Old pattern format',
   },
 
   ...featureService.get('i18n.en'),

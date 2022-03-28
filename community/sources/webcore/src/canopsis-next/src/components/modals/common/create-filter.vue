@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, PATTERNS_FIELDS } from '@/constants';
 
 import { filterToForm, formToFilter } from '@/helpers/forms/filter';
 
@@ -55,6 +55,17 @@ export default {
     };
   },
   computed: {
+    fields() {
+      const { withAlarm, withEntity, withPbehavior, withEvent } = this.config;
+
+      return [
+        withAlarm && PATTERNS_FIELDS.alarm,
+        withEntity && PATTERNS_FIELDS.entity,
+        withPbehavior && PATTERNS_FIELDS.pbehavior,
+        withEvent && PATTERNS_FIELDS.event,
+      ].filter(Boolean);
+    },
+
     title() {
       return this.config.title || this.$t('modals.createFilter.create.title');
     },
@@ -65,7 +76,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(formToFilter(this.form));
+          await this.config.action(formToFilter(this.form, this.fields));
         }
 
         this.$modals.hide();
