@@ -5,12 +5,14 @@
     :name="name",
     :type="$constants.PATTERN_TYPES.alarm",
     :required="required",
-    :attributes="alarmAttributes",
+    :attributes="availableAlarmAttributes",
     :with-type="withType"
   )
 </template>
 
 <script>
+import { keyBy, merge, omit } from 'lodash';
+
 import {
   ALARM_PATTERN_FIELDS,
   BASIC_ENTITY_TYPES,
@@ -29,6 +31,14 @@ export default {
     patterns: {
       type: Object,
       required: true,
+    },
+    excluded: {
+      type: Array,
+      default: () => [],
+    },
+    attributes: {
+      type: Array,
+      default: () => [],
     },
     disabled: {
       type: Boolean,
@@ -284,6 +294,23 @@ export default {
           options: this.canceledOptions,
         },
       ];
+    },
+
+    availableAttributesByValue() {
+      return keyBy(this.alarmAttributes, 'value');
+    },
+
+    externalAttributesByValue() {
+      return keyBy(this.attributes, 'value');
+    },
+
+    availableAlarmAttributes() {
+      const mergedAttributes = merge(
+        omit(this.availableAttributesByValue, this.excluded),
+        this.externalAttributesByValue,
+      );
+
+      return Object.values(mergedAttributes);
     },
   },
 };
