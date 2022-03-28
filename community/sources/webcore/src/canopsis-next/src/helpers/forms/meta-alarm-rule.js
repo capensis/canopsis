@@ -1,11 +1,10 @@
-import { cloneDeep, omit, pick, isNumber } from 'lodash';
+import { omit, pick, isNumber } from 'lodash';
 
-import { DEFAULT_TIME_INTERVAL, META_ALARMS_RULE_TYPES, META_ALARMS_THRESHOLD_TYPES } from '@/constants';
+import { DEFAULT_TIME_INTERVAL, META_ALARMS_RULE_TYPES, META_ALARMS_THRESHOLD_TYPES, PATTERNS_FIELDS } from '@/constants';
 
 import { durationToForm } from '@/helpers/date/duration';
-import { unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 
-import { getConditionsForRemovingEmptyPatterns } from './shared/patterns';
 import { formToPrimitiveArray, primitiveArrayToForm } from './shared/common';
 
 /**
@@ -20,14 +19,12 @@ import { formToPrimitiveArray, primitiveArrayToForm } from './shared/common';
  */
 
 /**
- * @typedef {Object} MetaAlarmRuleAttributeConfig
- * @property {Object} alarm_patterns
- * @property {Object} entity_patterns
- * @property {Object} event_patterns
+ * @typedef {FilterPatterns} MetaAlarmRuleAttributeConfig
  */
 
 /**
- * @typedef {MetaAlarmRuleAttributeConfig} MetaAlarmRuleAttributeConfigForm
+ * @typedef {Object} MetaAlarmRuleAttributeConfigForm
+ * @property {FilterPatternsForm} patterns
  */
 
 /**
@@ -44,7 +41,6 @@ import { formToPrimitiveArray, primitiveArrayToForm } from './shared/common';
  * @typedef {MetaAlarmRuleTimeBasedConfig & MetaAlarmRuleAttributeConfig} MetaAlarmRuleComplexConfig
  * @property {number} [threshold_rate]
  * @property {number} [threshold_count]
- * @property {Object} total_entity_patterns
  */
 
 /**
@@ -120,26 +116,24 @@ import { formToPrimitiveArray, primitiveArrayToForm } from './shared/common';
  * @returns {MetaAlarmRuleForm}
  */
 export const metaAlarmRuleToForm = (rule = {}) => {
-  const config = rule.config || {};
+  const config = rule.config ?? {};
 
   return {
-    _id: rule._id || '',
-    type: rule.type || META_ALARMS_RULE_TYPES.attribute,
-    name: rule.name || '',
+    _id: rule._id ?? '',
+    type: rule.type ?? META_ALARMS_RULE_TYPES.attribute,
+    name: rule.name ?? '',
     auto_resolve: !!rule.auto_resolve,
-    output_template: rule.output_template || '{{ .Children.Alarm.Value.State.Message }}',
+    output_template: rule.output_template ?? '{{ .Children.Alarm.Value.State.Message }}',
     config: {
+      /** TODO: Do we need to use total entity pattern and event pattern ? */
+      patterns: filterPatternsToForm(config, [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.event]),
       value_paths: config.value_paths ? primitiveArrayToForm(config.value_paths) : [],
-      alarm_patterns: config.alarm_patterns ? cloneDeep(config.alarm_patterns) : [],
-      entity_patterns: config.entity_patterns ? cloneDeep(config.entity_patterns) : [],
-      event_patterns: config.event_patterns ? cloneDeep(config.event_patterns) : [],
-      total_entity_patterns: config.total_entity_patterns ? cloneDeep(config.total_entity_patterns) : [],
       threshold_rate: config.threshold_rate ? config.threshold_rate * 100 : 100,
-      threshold_count: config.threshold_count || 1,
-      corel_id: config.corel_id || '',
-      corel_status: config.corel_status || '',
-      corel_parent: config.corel_parent || '',
-      corel_child: config.corel_child || '',
+      threshold_count: config.threshold_count ?? 1,
+      corel_id: config.corel_id ?? '',
+      corel_status: config.corel_status ?? '',
+      corel_parent: config.corel_parent ?? '',
+      corel_child: config.corel_child ?? '',
       threshold_type: isNumber(config.threshold_count)
         ? META_ALARMS_THRESHOLD_TYPES.thresholdCount
         : META_ALARMS_THRESHOLD_TYPES.thresholdRate,
@@ -159,11 +153,9 @@ export const formToMetaAlarmRule = (form = {}) => {
 
   switch (form.type) {
     case META_ALARMS_RULE_TYPES.attribute: {
-      const config = pick(form.config, ['alarm_patterns', 'entity_patterns', 'event_patterns']);
-
-      metaAlarmRule.config = unsetSeveralFieldsWithConditions(
-        config,
-        getConditionsForRemovingEmptyPatterns(),
+      metaAlarmRule.config = formFilterToPatterns(
+        form.config.patterns,
+        [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.event, PATTERNS_FIELDS.entity],
       );
       break;
     }
@@ -179,7 +171,6 @@ export const formToMetaAlarmRule = (form = {}) => {
         : 'threshold_count';
 
       const fields = ['threshold_type', thresholdField];
-      const patternsKeys = ['alarm_patterns', 'entity_patterns', 'event_patterns', 'total_entity_patterns'];
 
       if (isComplex || isCorel) {
         fields.push('value_paths');
@@ -195,10 +186,10 @@ export const formToMetaAlarmRule = (form = {}) => {
         config.threshold_rate /= 100;
       }
 
-      metaAlarmRule.config = unsetSeveralFieldsWithConditions(
-        config,
-        getConditionsForRemovingEmptyPatterns(patternsKeys),
-      );
+      metaAlarmRule.config = {
+        ...metaAlarmRule.config,
+        ...formFilterToPatterns(config.patterns),
+      };
       break;
     }
     case META_ALARMS_RULE_TYPES.timebased:
