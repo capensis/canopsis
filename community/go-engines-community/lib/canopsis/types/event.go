@@ -30,7 +30,8 @@ const (
 	SourceTypeMetaAlarm = "metaalarm"
 )
 
-//Event types
+// Event types.
+// Add each new event type to isValidEventType func.
 const (
 	EventTypeAck         = "ack"
 	EventTypeAckremove   = "ackremove"
@@ -348,6 +349,10 @@ func (e Event) IsValid() error {
 		return errt.NewUnknownError(fmt.Errorf("wrong source type: %v", e.SourceType))
 	}
 
+	if !isValidEventType(e.EventType) {
+		return errt.NewUnknownError(fmt.Errorf("wrong event type: %v", e.EventType))
+	}
+
 	switch e.EventType {
 	case EventTypePerf:
 		if e.PerfData == nil || e.PerfDataArray == nil {
@@ -577,4 +582,67 @@ func (e *Event) IsPbehaviorEvent() bool {
 	return e.EventType == EventTypePbhEnter ||
 		e.EventType == EventTypePbhLeave ||
 		e.EventType == EventTypePbhLeaveAndEnter
+}
+
+func isValidEventType(t string) bool {
+	switch t {
+	case EventTypeCheck,
+		EventTypeActivate,
+		EventTypeAck,
+		EventTypeAckremove,
+		EventTypeAssocTicket,
+		EventTypeCancel,
+		EventTypeComment,
+		EventTypeDeclareTicket,
+		EventTypeDeclareTicketWebhook,
+		EventTypeDone,
+		EventTypeChangestate,
+		EventTypeSnooze,
+		EventTypeUnsnooze,
+		EventTypeUncancel,
+		EventTypeResolveDone,
+		EventTypeResolveCancel,
+		EventTypeResolveClose,
+		EventTypePbhEnter,
+		EventTypePbhLeaveAndEnter,
+		EventTypePbhLeave,
+		EventTypePbhCreate,
+		EventTypeUpdateStatus,
+		EventTypeMetaAlarm,
+		EventTypeMetaAlarmUpdated,
+		EventManualMetaAlarmGroup,
+		EventManualMetaAlarmUngroup,
+		EventManualMetaAlarmUpdate,
+		EventTypeRecomputeEntityService,
+		EventTypeUpdateEntityService,
+		EventTypeEntityUpdated,
+		EventTypeEntityToggled,
+		EventTypeNoEvents,
+		EventTypeRunDelayedScenario,
+		EventTypeInstructionStarted,
+		EventTypeInstructionPaused,
+		EventTypeInstructionResumed,
+		EventTypeInstructionCompleted,
+		EventTypeInstructionFailed,
+		EventTypeInstructionAborted,
+		EventTypeAutoInstructionStarted,
+		EventTypeAutoInstructionCompleted,
+		EventTypeAutoInstructionFailed,
+		EventTypeInstructionJobStarted,
+		EventTypeInstructionJobCompleted,
+		EventTypeInstructionJobAborted,
+		EventTypeInstructionJobFailed,
+		EventTypeAlarmSkipped,
+		EventTypeJunitTestSuiteUpdated,
+		EventTypeJunitTestCaseUpdated,
+		EventTypeKeepstate,
+		EventTypePerf,
+		EventTypeStateIncrease,
+		EventTypeStateDecrease,
+		EventTypeStatusIncrease,
+		EventTypeStatusDecrease:
+		return true
+	}
+
+	return false
 }
