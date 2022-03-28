@@ -52,12 +52,14 @@ export const filterPatternsToForm = (filter = {}) => {
     corporate_alarm_pattern: corporateAlarmPattern,
     corporate_entity_pattern: corporateEntityPattern,
     corporate_pbehavior_pattern: corporatePbehaviorPattern,
+    event_pattern: eventPattern,
   } = filter;
 
   return ({
     alarm_pattern: patternToForm({ alarm_pattern: alarmPattern, id: corporateAlarmPattern }),
     entity_pattern: patternToForm({ entity_pattern: entityPattern, id: corporateEntityPattern }),
     pbehavior_pattern: patternToForm({ pbehavior_pattern: pbehaviorPattern, id: corporatePbehaviorPattern }),
+    event_pattern: patternToForm({ event_pattern: eventPattern }),
   });
 };
 
