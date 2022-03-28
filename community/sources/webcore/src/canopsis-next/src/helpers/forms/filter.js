@@ -32,34 +32,33 @@ import { addKeyInEntities, removeKeyFromEntities } from '../entities';
  */
 
 /**
- * @typedef {Filter} FilterForm
+ * @typedef {Object} FilterPatternsForm
  * @property {PatternGroupsForm} [alarm_pattern]
  * @property {PatternGroupsForm} [entity_pattern]
  * @property {PatternGroupsForm} [pbehavior_pattern]
  */
 
 /**
+ * @typedef {Filter & FilterPatternsForm} FilterForm
+ */
+
+/**
  * Convert filter patterns to form
  *
  * @param {Filter} filter
+ * @param {PatternsFields} [fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.pbehavior, PATTERNS_FIELDS.entity]]
  * @return {FilterPatterns}
  */
-export const filterPatternsToForm = (filter = {}) => {
-  const {
-    alarm_pattern: alarmPattern,
-    entity_pattern: entityPattern,
-    pbehavior_pattern: pbehaviorPattern,
-    corporate_alarm_pattern: corporateAlarmPattern,
-    corporate_entity_pattern: corporateEntityPattern,
-    corporate_pbehavior_pattern: corporatePbehaviorPattern,
-  } = filter;
+export const filterPatternsToForm = (
+  filter = {},
+  fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.pbehavior, PATTERNS_FIELDS.entity],
+) => fields.reduce((acc, field) => {
+  const { [`corporate_${field}`]: id, [field]: pattern } = filter;
 
-  return ({
-    alarm_pattern: patternToForm({ alarm_pattern: alarmPattern, id: corporateAlarmPattern }),
-    entity_pattern: patternToForm({ entity_pattern: entityPattern, id: corporateEntityPattern }),
-    pbehavior_pattern: patternToForm({ pbehavior_pattern: pbehaviorPattern, id: corporatePbehaviorPattern }),
-  });
-};
+  acc[field] = patternToForm({ [field]: pattern, id });
+
+  return acc;
+}, {});
 
 /**
  * Convert filter object to filter form
@@ -76,8 +75,8 @@ export const filterToForm = (filter = {}) => ({
 /**
  * Convert patterns form to patterns
  *
- * @param {FilterPatterns} form
- * @param {PatternsFields} fields
+ * @param {FilterPatternsForm} form
+ * @param {PatternsFields} [fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.pbehavior, PATTERNS_FIELDS.entity]]
  * @return {{}}
  */
 export const formFilterToPatterns = (

@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    c-collapse-panel.mb-2(v-if="withAlarm", color="grey")
+    c-collapse-panel.mb-2(v-if="withAlarm", :error="errors.has(alarmPatternsFieldName)", color="grey")
       template(#header="")
         span.white--text {{ $t('common.alarmPatterns') }}
       v-card
@@ -14,7 +14,7 @@
             @input="errors.remove(alarmPatternsFieldName)"
           )
 
-    c-collapse-panel.mb-2(v-if="withEntity", color="grey")
+    c-collapse-panel.mb-2(v-if="withEntity", :error="errors.has(entityPatternsFieldName)", color="grey")
       template(#header="")
         span.white--text {{ $t('common.entityPatterns') }}
       v-card
@@ -28,7 +28,7 @@
             @input="errors.remove(entityPatternsFieldName)"
           )
 
-    c-collapse-panel(v-if="withPbehavior", color="grey")
+    c-collapse-panel(v-if="withPbehavior", :error="errors.has(entityPbehaviorFieldName)", color="grey")
       template(#header="")
         span.white--text {{ $t('common.pbehaviorPatterns') }}
       v-card
@@ -42,7 +42,7 @@
             @input="errors.remove(entityPbehaviorFieldName)"
           )
 
-    c-collapse-panel.mb-2(v-if="withEvent", color="grey")
+    c-collapse-panel.mb-2(v-if="withEvent", :error="errors.has(eventPatternsFieldName)", color="grey")
       template(#header="")
         span.white--text {{ $t('common.eventPatterns') }}
       v-card
@@ -118,7 +118,17 @@ export default {
   },
   computed: {
     hasPatterns() {
-      return Object.values(this.value).some((patterns = []) => patterns.length);
+      const {
+        alarm_pattern: alarmPattern,
+        entity_pattern: entityPattern,
+        pbehavior_pattern: pbehaviorPattern,
+        event_pattern: eventPattern,
+      } = this.value;
+
+      return alarmPattern?.groups?.length
+        || entityPattern?.groups?.length
+        || pbehaviorPattern?.groups?.length
+        || eventPattern?.groups?.length;
     },
 
     isPatternRequired() {

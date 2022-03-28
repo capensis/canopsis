@@ -439,6 +439,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.testSuite]: { maxWidth: 920 },
     [MODALS.createPattern]: { maxWidth: 1280 },
     [MODALS.remediationPatterns]: { maxWidth: 1280 },
+    [MODALS.createIdleRule]: { maxWidth: 1280 },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },

@@ -1,19 +1,10 @@
 <template lang="pug">
-  div
-    patterns-list(
-      v-if="isEntityType",
-      v-field="form.entity_patterns",
-      v-validate="'required'",
-      :type="$constants.PATTERNS_TYPES.entity",
-      name="entity_patterns"
-    )
-    c-patterns-field(
-      v-else,
-      v-field="form",
-      some-required,
-      with-alarm,
-      with-entity
-    )
+  c-patterns-field.mt-2(
+    v-field="form",
+    :with-alarm="!isEntityType",
+    some-required,
+    with-entity
+  )
 </template>
 
 <script>
@@ -22,8 +13,6 @@ import { createNamespacedHelpers } from 'vuex';
 import { PATTERNS_TYPES } from '@/constants';
 
 import { formValidationHeaderMixin, validationErrorsMixinCreator } from '@/mixins/form';
-
-import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
 
 const { mapActions } = createNamespacedHelpers('idleRules');
 
@@ -34,7 +23,6 @@ export default {
     };
   },
   inject: ['$validator'],
-  components: { PatternsList },
   mixins: [
     formValidationHeaderMixin,
     validationErrorsMixinCreator(),
