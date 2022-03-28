@@ -85,13 +85,10 @@ export default {
   },
   methods: {
     getParams() {
-      const params = {
-        params: { limit: MAX_LIMIT },
-      };
+      const params = { limit: MAX_LIMIT };
 
       if (this.type) {
-        /** TODO: Should be fixed after backend fixes */
-        params.search = `type=${this.type}`;
+        params.type = this.type;
       }
 
       return params;

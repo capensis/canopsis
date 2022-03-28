@@ -28,6 +28,8 @@ import {
   USER_METRIC_PARAMETERS,
   EVENT_FILTER_TYPES,
   PATTERN_OPERATORS,
+  PATTERN_TYPES,
+  PATTERN_INPUT_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -329,14 +331,8 @@ export default {
       [PATTERN_OPERATORS.isEmpty]: 'Est vide',
       [PATTERN_OPERATORS.isNotEmpty]: 'N\'est pas vide',
 
-      [PATTERN_OPERATORS.isNull]: 'Est nul',
-      [PATTERN_OPERATORS.isNotNull]: 'Est non nulle',
-
       [PATTERN_OPERATORS.higher]: 'Plus haut que',
       [PATTERN_OPERATORS.lower]: 'Plus bas que',
-
-      [PATTERN_OPERATORS.greater]: 'Plus grand que',
-      [PATTERN_OPERATORS.less]: 'Moins que',
 
       [PATTERN_OPERATORS.longer]: 'Plus long',
       [PATTERN_OPERATORS.shorter]: 'Plus court',
@@ -1569,15 +1565,48 @@ export default {
       create: {
         title: 'Créer un filtre d\'alarme',
       },
+      edit: {
+        title: 'Modifier le modèle d\'alarme',
+      },
+    },
+    createCorporateAlarmPattern: {
+      create: {
+        title: 'Créer un filtre d\'alarme partagé',
+      },
+      edit: {
+        title: 'Modifier le filtre d\'alarme partagé',
+      },
     },
     createEntityPattern: {
       create: {
         title: 'Créer un filtre d\'entité',
       },
+      edit: {
+        title: 'Modifier le modèle d\'entité',
+      },
+    },
+    createCorporateEntityPattern: {
+      create: {
+        title: 'Créer un filtre d\'entité partagée',
+      },
+      edit: {
+        title: 'Modifier le filtre d\'entité partagée',
+      },
     },
     createPbehaviorPattern: {
       create: {
         title: 'Créer un filtre de comportement',
+      },
+      edit: {
+        title: 'Modifier le modèle de comportement',
+      },
+    },
+    createCorporatePbehaviorPattern: {
+      create: {
+        title: 'Créer un filtre de comportement partagé',
+      },
+      edit: {
+        title: 'Modifier le filtre de comportement partagé',
       },
     },
   },
@@ -1651,6 +1680,7 @@ export default {
     socketConnectionProblem: 'Problème de connexion aux websockets',
     endDateLessOrEqualStartDate: 'La date de fin doit se situer après la date de début',
     unknownWidgetType: 'Type de widget inconnu: {type}',
+    unique: 'Le champ doit être unique',
   },
   warnings: {
     authTokenExpired: 'Le jeton d\'authentification a expiré',
@@ -1709,9 +1739,6 @@ export default {
     buttons: {
       list: 'Gérer les filtres',
     },
-  },
-  validator: {
-    unique: 'Le champ doit être unique',
   },
   stats: {
     types: {
@@ -2332,11 +2359,11 @@ export default {
 
   mixedField: {
     types: {
-      string: '@:variableTypes.string',
-      number: '@:variableTypes.number',
-      boolean: '@:variableTypes.boolean',
-      null: '@:variableTypes.null',
-      array: '@:variableTypes.array',
+      [PATTERN_INPUT_TYPES.string]: '@:variableTypes.string',
+      [PATTERN_INPUT_TYPES.number]: '@:variableTypes.number',
+      [PATTERN_INPUT_TYPES.boolean]: '@:variableTypes.boolean',
+      [PATTERN_INPUT_TYPES.null]: '@:variableTypes.null',
+      [PATTERN_INPUT_TYPES.array]: '@:variableTypes.array',
     },
   },
 
@@ -2750,10 +2777,19 @@ export default {
     removeRule: 'Supprimer la règle',
     advancedEditor: 'Éditeur avancé',
     simpleEditor: 'Éditeur simple',
+    types: {
+      [PATTERN_TYPES.alarm]: 'Modèle d\'alarme',
+      [PATTERN_TYPES.entity]: 'Modèle d\'entité',
+      [PATTERN_TYPES.pbehavior]: 'Modèle de comportement',
+    },
     errors: {
       ruleRequired: 'Veuillez ajouter au moins une règle',
       groupRequired: 'Veuillez ajouter au moins un groupe',
     },
+  },
+
+  filter: {
+    oldPattern: 'Ancien format de motif',
   },
 
   ...featureService.get('i18n.fr'),

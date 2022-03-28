@@ -6,7 +6,8 @@
       :label="label",
       :disabled="disabled",
       :flat="flat",
-      :error-messages="errorMessages",
+      :name="name",
+      :required="required",
       @input="updateType"
     )
     c-mixed-input-field.ml-2.c-mixed-field__value(
@@ -16,10 +17,10 @@
       :disabled="disabled",
       :flat="flat",
       :hide-details="hideDetails",
-      :error-messages="errorMessages",
       :items="items",
       :item-text="itemText",
       :item-value="itemValue",
+      :required="required",
       :types="types"
     )
 </template>
@@ -50,7 +51,7 @@ export default {
     },
     name: {
       type: String,
-      default: null,
+      default: 'value',
     },
     label: {
       type: String,
@@ -65,6 +66,10 @@ export default {
       default: false,
     },
     hideDetails: {
+      type: Boolean,
+      default: false,
+    },
+    required: {
       type: Boolean,
       default: false,
     },

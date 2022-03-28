@@ -7,19 +7,18 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with custom props 1`] = `
   <c-input-type-field-stub
     class="c-mixed-field__selector"
     disabled="true"
-    error-messages="Message"
     flat="true"
     label="Custom label"
+    name="customName"
     types="[object Object],[object Object],[object Object]"
-    value="number"
+    value="int"
   />
   <c-mixed-input-field-stub
     class="ml-2 c-mixed-field__value"
     disabled="true"
-    error-messages="Message"
     flat="true"
     hide-details="true"
-    input-type="number"
+    input-type="int"
     item-text="text2"
     item-value="value2"
     items="[object Object]"
@@ -36,17 +35,17 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with default props 1`] = `
 >
   <c-input-type-field-stub
     class="c-mixed-field__selector"
-    error-messages=""
+    name="value"
     types="[object Object],[object Object],[object Object],[object Object],[object Object]"
     value="string"
   />
   <c-mixed-input-field-stub
     class="ml-2 c-mixed-field__value"
-    error-messages=""
     input-type="string"
     item-text="text"
     item-value="value"
     items=""
+    name="value"
     types="[object Object],[object Object],[object Object],[object Object],[object Object]"
     value=""
   />
