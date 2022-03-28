@@ -3,7 +3,7 @@
     v-layout(row)
       v-text-field(
         v-field="form.name",
-        v-validate="'required|unique-name'",
+        v-validate="nameRules",
         :label="$t('common.name')",
         :error-messages="errors.collect('name')",
         name="name"
@@ -11,7 +11,7 @@
     v-layout(row)
       v-text-field(
         v-field="form.description",
-        v-validate="'required'",
+        v-validate="descriptionRules",
         :label="$t('common.description')",
         :error-messages="errors.collect('description')",
         name="description"
@@ -92,9 +92,22 @@ export default {
     infosNames() {
       return this.infos.map(({ name }) => name);
     },
-  },
-  created() {
-    this.createUniqueValidationRule();
+
+    descriptionRules() {
+      return {
+        required: true,
+      };
+    },
+
+    nameRules() {
+      return {
+        required: true,
+        unique: {
+          values: this.infosNames,
+          initialValue: this.entityInfo?.name,
+        },
+      };
+    },
   },
   methods: {
     removeListItem(index) {
@@ -107,19 +120,6 @@ export default {
       const newValue = [...this.form.value, { key: uid(), value: '' }];
 
       this.updateField('value', newValue);
-    },
-
-    createUniqueValidationRule() {
-      this.$validator.extend('unique-name', {
-        getMessage: () => this.$t('validator.unique'),
-        validate: (value) => {
-          if (this.entityInfo && this.entityInfo.name === value) {
-            return true;
-          }
-
-          return !this.infosNames.includes(value);
-        },
-      });
     },
   },
 };
