@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import { isOmitEqual } from '@/helpers/validators/is-omit-equal';
+import { isOmitEqual } from '@/helpers/equal';
 
 import { remediationInstructionStepOperationToForm } from '@/helpers/forms/remediation-instruction';
 

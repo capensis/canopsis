@@ -95,7 +95,7 @@ export default {
           withEntity: this.withEntity,
           withPbehavior: this.withPbehavior,
           title: this.$t('modals.createFilter.edit.title'),
-          action: newFilter => this.updateItemInArray(index, { ...filter, ...newFilter }),
+          action: newFilter => this.updateItemInArray(index, newFilter),
         },
       });
     },

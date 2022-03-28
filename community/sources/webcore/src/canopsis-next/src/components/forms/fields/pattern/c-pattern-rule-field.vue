@@ -7,7 +7,8 @@
             v-field="rule.attribute",
             :items="attributes",
             :name="name",
-            :disabled="disabled"
+            :disabled="disabled",
+            required
           )
         v-flex.pl-3(v-if="isInfosRule", xs8)
           c-pattern-infos-attribute-field(
@@ -24,14 +25,15 @@
             :disabled="disabled"
           )
 
-    v-flex(:xs8="!isInfosRule && !isExtraInfosRule", xs7)
+    v-flex(v-if="rule.attribute", :xs8="!isInfosRule && !isExtraInfosRule", xs7)
       v-layout(row)
         template(v-if="isDateRule")
           v-flex.pl-3(xs5)
             c-quick-date-interval-type-field(
               v-field="rule.range.type",
               :name="name",
-              :disabled="disabled"
+              :disabled="disabled",
+              :ranges="intervalRanges"
             )
           v-flex.pl-3(v-if="isCustomRange", xs7)
             c-date-time-interval-field(
@@ -55,10 +57,11 @@
               v-field="rule.operator",
               :operators="operators",
               :disabled="disabled",
-              :name="operatorFieldName"
+              :name="operatorFieldName",
+              required
             )
 
-          v-flex.pl-3(v-if="operatorHasValue", :xs7="isInfosRule || isExtraInfosRule", xs6)
+          v-flex.pl-3(v-if="rule.operator && operatorHasValue", :xs7="isInfosRule || isExtraInfosRule", xs6)
             component(
               v-bind="valueComponent.props",
               v-on="valueComponent.on",
@@ -67,7 +70,13 @@
 </template>
 
 <script>
-import { PATTERN_INPUT_TYPES, PATTERN_RULE_INFOS_FIELDS, PATTERN_RULE_TYPES, QUICK_RANGES } from '@/constants';
+import {
+  PATTERN_INPUT_TYPES,
+  PATTERN_QUICK_RANGES,
+  PATTERN_RULE_INFOS_FIELDS,
+  PATTERN_RULE_TYPES,
+  QUICK_RANGES,
+} from '@/constants';
 
 import { convertValueByType, getValueType, isOperatorHasValue } from '@/helpers/pattern';
 
@@ -107,6 +116,10 @@ export default {
         { value: PATTERN_INPUT_TYPES.boolean },
         { value: PATTERN_INPUT_TYPES.array },
       ],
+    },
+    intervalRanges: {
+      type: Array,
+      default: () => PATTERN_QUICK_RANGES,
     },
     valueField: {
       type: Object,
@@ -165,6 +178,7 @@ export default {
     valueComponent() {
       const valueProps = {
         value: this.rule.value,
+        required: true,
         disabled: this.disabled,
         name: this.valueFieldName,
         label: this.$t('common.value'),
@@ -214,11 +228,13 @@ export default {
     },
 
     operatorHasValue() {
+      const hasValue = isOperatorHasValue(this.rule.operator);
+
       if (this.isInfosRule) {
-        return this.isInfosValueField;
+        return this.isInfosValueField && hasValue;
       }
 
-      return isOperatorHasValue(this.rule.operator);
+      return hasValue;
     },
   },
   methods: {

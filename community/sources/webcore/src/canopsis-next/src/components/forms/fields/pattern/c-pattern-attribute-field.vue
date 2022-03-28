@@ -1,8 +1,10 @@
 <template lang="pug">
   c-select-field(
     v-field="value",
+    v-validate="rules",
     :items="items",
     :disabled="disabled",
+    :error-messages="errors.collect(name)",
     :label="label || $tc('common.searchBy')",
     :name="name",
     ellipsis
@@ -11,6 +13,7 @@
 
 <script>
 export default {
+  inject: ['$validator'],
   props: {
     value: {
       type: [String, Object],
@@ -31,6 +34,17 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
     },
   },
 };

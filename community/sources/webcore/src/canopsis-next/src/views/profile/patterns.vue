@@ -10,15 +10,15 @@
             slider-color="primary",
             fixed-tabs
           )
-            v-tab {{ $t('pattern.myPatterns') }}
-            v-tab-item
+            v-tab(:href="`#${$constants.PATTERN_TABS.patterns}`") {{ $t('pattern.myPatterns') }}
+            v-tab-item(:value="$constants.PATTERN_TABS.patterns")
               patterns(
                 @edit="showEditPatternModal",
                 @remove="showDeletePatternModal",
                 @remove-selected="showDeleteSelectedPatternsModal"
               )
-            v-tab {{ $t('pattern.corporatePatterns') }}
-            v-tab-item(lazy)
+            v-tab(:href="`#${$constants.PATTERN_TABS.corporatePatterns}`") {{ $t('pattern.corporatePatterns') }}
+            v-tab-item(:value="$constants.PATTERN_TABS.corporatePatterns", lazy)
               corporate-patterns(
                 @edit="showEditPatternModal",
                 @remove="showDeletePatternModal",
@@ -42,7 +42,7 @@
           @click.stop="showCreatePbehaviorPatternModal"
         )
           v-icon pause
-        span {{ $t('modals.createPbehaviorPattern.create.title') }}
+        span {{ createPbehaviorTitle }}
       v-tooltip(top)
         v-btn(
           slot="activator",
@@ -53,7 +53,7 @@
           @click.stop="showCreateEntityPatternModal"
         )
           v-icon perm_identity
-        span {{ $t('modals.createEntityPattern.create.title') }}
+        span {{ createEntityTitle }}
       v-tooltip(top)
         v-btn(
           slot="activator",
@@ -64,11 +64,11 @@
           @click.stop="showCreateAlarmPatternModal"
         )
           v-icon notification_important
-        span {{ $t('modals.createAlarmPattern.create.title') }}
+        span {{ createAlarmTitle }}
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, PATTERN_TABS, PATTERN_TYPES } from '@/constants';
 
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { entitiesPatternsMixin } from '@/mixins/entities/pattern';
@@ -93,30 +93,124 @@ export default {
   ],
   data() {
     return {
-      activeTab: 0,
+      activeTab: PATTERN_TABS.patterns,
     };
   },
   computed: {
+    isCorporatePatternsTab() {
+      return this.activeTab === PATTERN_TABS.corporatePatterns;
+    },
+
     hasAccessToCreatePattern() {
-      return !this.activeTab || (this.activeTab && this.hasCreateAnyCorporatePatternAccess);
+      return !this.isCorporatePatternsTab || this.hasCreateAnyCorporatePatternAccess;
+    },
+
+    createAlarmTitle() {
+      return this.isCorporatePatternsTab
+        ? this.$t('modals.createCorporateAlarmPattern.create.title')
+        : this.$t('modals.createAlarmPattern.create.title');
+    },
+
+    createEntityTitle() {
+      return this.isCorporatePatternsTab
+        ? this.$t('modals.createCorporateEntityPattern.create.title')
+        : this.$t('modals.createEntityPattern.create.title');
+    },
+
+    createPbehaviorTitle() {
+      return this.isCorporatePatternsTab
+        ? this.$t('modals.createCorporatePbehaviorPattern.create.title')
+        : this.$t('modals.createPbehaviorPattern.create.title');
     },
   },
   methods: {
     refresh() {
-      if (this.activeTab) { // TODO: change to keys
+      if (this.isCorporatePatternsTab) {
         return this.fetchCorporatePatternsListWithPreviousParams();
       }
 
       return this.fetchPatternsListWithPreviousParams();
     },
 
-    showCreateAlarmPatternModal() {},
+    showCreateAlarmPatternModal() {
+      this.$modals.show({
+        name: MODALS.createPattern,
+        config: {
+          pattern: { is_corporate: this.isCorporatePatternsTab },
+          title: this.createAlarmTitle,
+          type: PATTERN_TYPES.alarm,
+          action: async (pattern) => {
+            await this.createPattern({ data: pattern });
 
-    showCreateEntityPatternModal() {},
+            return this.refresh();
+          },
+        },
+      });
+    },
 
-    showCreatePbehaviorPatternModal() {},
+    showCreateEntityPatternModal() {
+      this.$modals.show({
+        name: MODALS.createPattern,
+        config: {
+          pattern: { is_corporate: this.isCorporatePatternsTab },
+          title: this.createEntityTitle,
+          type: PATTERN_TYPES.entity,
+          action: async (pattern) => {
+            await this.createPattern({ data: pattern });
 
-    showEditPatternModal() {},
+            return this.refresh();
+          },
+        },
+      });
+    },
+
+    showCreatePbehaviorPatternModal() {
+      this.$modals.show({
+        name: MODALS.createPattern,
+        config: {
+          pattern: { is_corporate: this.isCorporatePatternsTab },
+          title: this.createPbehaviorTitle,
+          type: PATTERN_TYPES.pbehavior,
+          action: async (pattern) => {
+            await this.createPattern({ data: pattern });
+
+            return this.refresh();
+          },
+        },
+      });
+    },
+
+    getEditPatternModalTitle(pattern) {
+      if (pattern.is_corporate) {
+        return {
+          [PATTERN_TYPES.alarm]: this.$t('modals.createCorporateAlarmPattern.edit.title'),
+          [PATTERN_TYPES.entity]: this.$t('modals.createCorporateEntityPattern.edit.title'),
+          [PATTERN_TYPES.pbehavior]: this.$t('modals.createCorporatePbehaviorPattern.edit.title'),
+        }[pattern.type];
+      }
+
+      return {
+        [PATTERN_TYPES.alarm]: this.$t('modals.createAlarmPattern.edit.title'),
+        [PATTERN_TYPES.entity]: this.$t('modals.createEntityPattern.edit.title'),
+        [PATTERN_TYPES.pbehavior]: this.$t('modals.createPbehaviorPattern.edit.title'),
+      }[pattern.type];
+    },
+
+    showEditPatternModal(editablePattern) {
+      this.$modals.show({
+        name: MODALS.createPattern,
+        config: {
+          pattern: editablePattern,
+          type: editablePattern.type,
+          title: this.getEditPatternModalTitle(editablePattern.type),
+          action: async (pattern) => {
+            await this.updatePattern({ id: editablePattern._id, data: pattern });
+
+            return this.refresh();
+          },
+        },
+      });
+    },
 
     showDeletePatternModal(id) {
       this.$modals.show({

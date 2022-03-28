@@ -110,6 +110,7 @@ export const API_ROUTES = {
     list: '/api/v4/widgets',
     copy: '/api/v4/widget-copy',
     gridPositions: '/api/v4/widget-grid-positions',
+    filters: '/api/v4/widget-filters',
   },
   permissions: '/api/v4/permissions',
   users: '/api/v4/users',

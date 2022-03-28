@@ -6,7 +6,7 @@
     :type="$constants.PATTERN_TYPES.entity",
     :required="required",
     :attributes="entityAttributes",
-    with-type
+    :with-type="withType"
   )
 </template>
 
@@ -16,6 +16,7 @@ import { createNamespacedHelpers } from 'vuex';
 import {
   ENTITY_PATTERN_FIELDS,
   MAX_LIMIT,
+  PATTERN_ARRAY_OPERATORS,
   PATTERN_NUMBER_OPERATORS,
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
@@ -42,6 +43,10 @@ export default {
       required: false,
     },
     required: {
+      type: Boolean,
+      default: false,
+    },
+    withType: {
       type: Boolean,
       default: false,
     },
@@ -72,6 +77,22 @@ export default {
       return {
         operators: this.entitiesOperators,
         defaultValue: '',
+        valueField: this.entitiesValueField,
+      };
+    },
+
+    impactOptions() {
+      return {
+        operators: PATTERN_ARRAY_OPERATORS,
+        defaultValue: [],
+        valueField: this.entitiesValueField,
+      };
+    },
+
+    dependsOptions() {
+      return {
+        operators: PATTERN_ARRAY_OPERATORS,
+        defaultValue: [],
         valueField: this.entitiesValueField,
       };
     },
@@ -132,12 +153,12 @@ export default {
         {
           text: this.$tc('common.impact', 2),
           value: ENTITY_PATTERN_FIELDS.impact,
-          options: this.entitiesOptions,
+          options: this.impactOptions,
         },
         {
           text: this.$tc('common.depend', 2),
           value: ENTITY_PATTERN_FIELDS.depends,
-          options: this.entitiesOptions,
+          options: this.dependsOptions,
         },
         {
           text: this.$t('common.infos'),

@@ -1,16 +1,17 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ title }}
-      template(slot="text")
-        c-patterns-field(
-          v-model="form",
-          with-alarm,
-          with-entity,
-          with-pbehavior
-        )
-      template(slot="actions")
+      template(#text="")
+        c-patterns-field(v-model="form", with-alarm, with-entity)
+        c-collapse-panel(color="grey")
+          template(#header="")
+            span.white--text {{ $t('remediationPatterns.tabs.pbehaviorTypes.title') }}
+          v-card
+            v-card-text
+              remediation-patterns-pbehavior-types-form(v-model="form")
+      template(#actions="")
         v-btn(
           :disabled="submitting",
           depressed,
@@ -25,9 +26,9 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
+import { MODALS, PATTERNS_FIELDS } from '@/constants';
 
-import { MODALS } from '@/constants';
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -53,13 +54,19 @@ export default {
     confirmableModalMixinCreator(),
   ],
   data() {
+    const { instruction } = this.modal.config;
+
     return {
-      form: this.modal.config.patterns ? cloneDeep(this.modal.config.patterns) : {},
+      form: {
+        ...filterPatternsToForm(instruction),
+        active_on_pbh: instruction.active_on_pbh ?? [],
+        disabled_on_pbh: instruction.disabled_on_pbh ?? [],
+      },
     };
   },
   computed: {
     title() {
-      return this.config.title || this.$t('modals.patterns.title');
+      return this.config.title ?? this.$t('modals.patterns.title');
     },
   },
   methods: {
@@ -68,7 +75,11 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(this.form);
+          await this.config.action({
+            ...formFilterToPatterns(this.form, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
+            active_on_pbh: this.form.active_on_pbh,
+            disabled_on_pbh: this.form.disabled_on_pbh,
+          });
         }
 
         this.$modals.hide();

@@ -55,8 +55,7 @@ export default {
       this.$validator.attach({
         name: this.name,
         rules: 'required:true',
-        getter: () => this.isChangeEntityType
-          || this.form.resource
+        getter: () => this.form.resource
           || this.form.component
           || this.form.connector
           || this.form.connector_name,
