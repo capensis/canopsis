@@ -2009,7 +2009,7 @@ export default {
   },
 
   pbehaviorTypes: {
-    usingType: 'Le type ne peut être supprimé car il est en cours d\'utilisation/',
+    usingType: 'Le type ne peut être supprimé car il est en cours d\'utilisation.',
     defaultType: 'Le type par défaut ne peut pas être modifié.',
   },
 
@@ -2254,8 +2254,8 @@ export default {
     executedOn: 'Exécuté sur',
     lastExecutedOn: 'Dernière exécution le',
     modifiedOn: 'Dernière modification le',
-    averageCompletionTime: 'Temps moyen\n\'achèvement',
-    executionCount: 'Nombre de\nexécutions',
+    averageCompletionTime: 'Temps moyen\nd\'achèvement',
+    executionCount: 'Nombre\nd\'exécutions',
     alarmStates: 'Alarmes affectées par l\'état',
     okAlarmStates: 'Nombre de résultats\nÉtats OK',
     notAvailable: 'Indisponible',
