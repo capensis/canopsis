@@ -1,11 +1,13 @@
 <template lang="pug">
   v-select.c-input-type-field(
     v-field="value",
+    v-validate="rules",
     :items="preparedTypes",
     :label="label",
     :disabled="disabled",
     :flat="flat",
-    :error-messages="errorMessages",
+    :error="hasError",
+    :name="name",
     hide-details,
     dense
   )
@@ -32,7 +34,15 @@ export default {
       type: String,
       default: null,
     },
+    name: {
+      type: String,
+      default: 'type',
+    },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    required: {
       type: Boolean,
       default: false,
     },
@@ -40,16 +50,22 @@ export default {
       type: Boolean,
       default: false,
     },
-    errorMessages: {
-      type: Array,
-      default: () => [],
-    },
     types: {
       type: Array,
       default: () => [],
     },
   },
   computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
+    },
+
+    hasError() {
+      return this.errors.has(this.name);
+    },
+
     preparedTypes() {
       return this.types.map(
         type => (type.text ? type : ({ ...type, text: this.$t(`mixedField.types.${type.value}`) })),
