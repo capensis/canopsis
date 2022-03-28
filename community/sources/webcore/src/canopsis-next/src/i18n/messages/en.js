@@ -1896,10 +1896,6 @@ export default {
     copyWidgetId: 'Copy widget ID',
     autoHeightButton: 'If this button is selected, height will be automatically calculated.',
   },
-  patternsList: {
-    noData: 'No pattern set. Click \'Add\' button to start adding fields to the pattern',
-    noDataDisabled: 'No pattern set.',
-  },
   validation: {
     messages: {
       _default: 'The value is not valid',
@@ -2776,6 +2772,8 @@ export default {
     removeRule: 'Remove rule',
     advancedEditor: 'Advanced editor',
     simpleEditor: 'Simple editor',
+    noData: 'No pattern set. Click \'@:pattern.addGroup\' button to start adding fields to the pattern',
+    noDataDisabled: 'No pattern set.',
     types: {
       [PATTERN_TYPES.alarm]: 'Alarm pattern',
       [PATTERN_TYPES.entity]: 'Entity pattern',
