@@ -41,8 +41,11 @@
 </template>
 
 <script>
+import { formValidationHeaderMixin } from '@/mixins/form';
+
 export default {
   inject: ['$validator'],
+  mixins: [formValidationHeaderMixin],
   model: {
     prop: 'value',
     event: 'input',
