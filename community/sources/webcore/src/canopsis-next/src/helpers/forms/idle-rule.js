@@ -31,8 +31,9 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filt
  */
 
 /**
- * @typedef {IdleRule & FilterPatternsForm} IdleRuleForm
+ * @typedef {IdleRule} IdleRuleForm
  * @property {ActionForm} operation
+ * @property {FilterPatternsForm} patterns
  */
 
 /**
@@ -53,8 +54,7 @@ export const idleRuleToForm = (idleRule = {}) => ({
   disable_during_periods: idleRule.disable_during_periods ?? [],
   alarm_condition: idleRule.alarm_condition ?? IDLE_RULE_ALARM_CONDITIONS.lastEvent,
   operation: pick(actionToForm(idleRule.operation), ['type', 'parameters']),
-
-  ...filterPatternsToForm(idleRule, [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.alarm]),
+  patterns: filterPatternsToForm(idleRule, [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.alarm]),
 });
 
 /**
@@ -65,12 +65,7 @@ export const idleRuleToForm = (idleRule = {}) => ({
  */
 export const formToIdleRule = (form) => {
   const isEntityType = form.type === IDLE_RULE_TYPES.entity;
-  const idleRule = omit(form, [
-    'alarm_condition',
-    'operation',
-    PATTERNS_FIELDS.entity,
-    PATTERNS_FIELDS.alarm,
-  ]);
+  const idleRule = omit(form, ['alarm_condition', 'operation', 'patterns']);
 
   if (!isEntityType) {
     idleRule.alarm_condition = form.alarm_condition;
@@ -80,7 +75,7 @@ export const formToIdleRule = (form) => {
   return {
     ...idleRule,
     ...formFilterToPatterns(
-      form,
+      form.patterns,
       isEntityType ? [PATTERNS_FIELDS.entity] : [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.alarm],
     ),
   };
