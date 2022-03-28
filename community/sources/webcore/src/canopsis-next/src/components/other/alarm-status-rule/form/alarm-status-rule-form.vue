@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS, QUICK_RANGES } from '@/constants';
+
 export default {
   inject: ['$validator'],
   model: {
@@ -40,6 +42,40 @@ export default {
     flapping: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    intervalOptions() {
+      return {
+        intervalRanges: [QUICK_RANGES.custom],
+      };
+    },
+
+    alarmAttributes() {
+      return [
+        {
+          value: ALARM_PATTERN_FIELDS.creationDate,
+          options: this.intervalOptions,
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.ackAt,
+          options: this.intervalOptions,
+        },
+      ];
+    },
+
+    alarmExcludedAttributes() {
+      return [
+        ALARM_PATTERN_FIELDS.lastUpdateDate,
+        ALARM_PATTERN_FIELDS.lastEventDate,
+        ALARM_PATTERN_FIELDS.resolvedAt,
+      ];
+    },
+
+    entityExcludedItems() {
+      return [
+        ENTITY_PATTERN_FIELDS.lastEventDate,
+      ];
     },
   },
 };
