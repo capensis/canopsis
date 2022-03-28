@@ -2,6 +2,9 @@
   c-patterns-field.mt-2(
     v-field="form",
     :with-alarm="!isEntityType",
+    :alarm-attributes="alarmAttributes",
+    :alarm-excluded-attributes="alarmExcludedAttributes",
+    :entity-excluded-items="entityExcludedItems",
     some-required,
     with-entity
   )
@@ -10,7 +13,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { PATTERNS_TYPES } from '@/constants';
+import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS, PATTERNS_TYPES, QUICK_RANGES } from '@/constants';
 
 import { formValidationHeaderMixin, validationErrorsMixinCreator } from '@/mixins/form';
 
@@ -39,6 +42,32 @@ export default {
     isEntityType: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    alarmAttributes() {
+      return [
+        {
+          value: ALARM_PATTERN_FIELDS.creationDate,
+          options: {
+            intervalRanges: [QUICK_RANGES.custom],
+          },
+        },
+      ];
+    },
+
+    alarmExcludedAttributes() {
+      return [
+        ALARM_PATTERN_FIELDS.lastUpdateDate,
+        ALARM_PATTERN_FIELDS.lastEventDate,
+        ALARM_PATTERN_FIELDS.resolvedAt,
+      ];
+    },
+
+    entityExcludedItems() {
+      return [
+        ENTITY_PATTERN_FIELDS.lastEventDate,
+      ];
     },
   },
   methods: {
