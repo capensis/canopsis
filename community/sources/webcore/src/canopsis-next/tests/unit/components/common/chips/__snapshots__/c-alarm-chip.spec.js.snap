@@ -20,7 +20,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with custom props 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           3
         </span>
@@ -51,7 +51,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with default props 1`] = `
         style="display: none;"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           0
         </span>
@@ -81,7 +81,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: ack 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           ack20
         </span>
@@ -111,7 +111,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: ackRemove 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           ackremove20
         </span>
@@ -141,7 +141,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: assocTicket 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           assocticket20
         </span>
@@ -171,7 +171,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: autoInstructionAlread
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           autoinstructionalreadyrunning20
         </span>
@@ -201,7 +201,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: autoInstructionComple
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           autoinstructioncomplete20
         </span>
@@ -231,7 +231,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: autoInstructionFail 1
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           autoinstructionfail20
         </span>
@@ -261,7 +261,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: autoInstructionStart 
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           autoinstructionstart20
         </span>
@@ -291,7 +291,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: cancel 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           cancel20
         </span>
@@ -321,7 +321,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: changeState 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           changestate20
         </span>
@@ -351,7 +351,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: comment 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           comment20
         </span>
@@ -381,7 +381,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: declareTicket 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           declareticket20
         </span>
@@ -411,7 +411,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: delete 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           delete20
         </span>
@@ -441,7 +441,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: done 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           done20
         </span>
@@ -471,7 +471,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: executeInstruction 1`
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           executeInstruction20
         </span>
@@ -501,7 +501,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: fastAck 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           fastAck20
         </span>
@@ -531,7 +531,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: group 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           group20
         </span>
@@ -561,7 +561,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: groupRequest 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           groupRequest20
         </span>
@@ -591,7 +591,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionAbort 1`] 
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           instructionabort20
         </span>
@@ -621,7 +621,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionComplete 1
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           instructioncomplete20
         </span>
@@ -651,7 +651,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionFail 1`] =
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           instructionfail20
         </span>
@@ -681,7 +681,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionJobAbort 1
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           instructionjobabort20
         </span>
@@ -711,7 +711,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionJobComplet
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           instructionjobcomplete20
         </span>
@@ -741,7 +741,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionJobFail 1`
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           instructionjobfail20
         </span>
@@ -771,7 +771,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionJobStart 1
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           instructionjobstart20
         </span>
@@ -801,7 +801,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionPause 1`] 
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           instructionpause20
         </span>
@@ -831,7 +831,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionResume 1`]
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           instructionresume20
         </span>
@@ -861,7 +861,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionStart 1`] 
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           instructionstart20
         </span>
@@ -891,7 +891,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: invalidate 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           invalidate20
         </span>
@@ -921,7 +921,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: junitTestCaseUpdate 1
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           junittestcaseupdate20
         </span>
@@ -951,7 +951,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: junitTestSuiteUpdate 
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           junittestsuiteupdate20
         </span>
@@ -981,7 +981,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: manualMetaAlarmGroup 
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           manual_metaalarm_group20
         </span>
@@ -1011,7 +1011,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: manualMetaAlarmUngrou
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           manual_metaalarm_ungroup20
         </span>
@@ -1041,7 +1041,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: manualMetaAlarmUpdate
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           manual_metaalarm_update20
         </span>
@@ -1071,7 +1071,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: metaalarmattach 1`] =
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           metaalarmattach20
         </span>
@@ -1101,7 +1101,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pause 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           pause20
         </span>
@@ -1131,7 +1131,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pbehaviorAdd 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           pbehaviorAdd20
         </span>
@@ -1161,7 +1161,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pbehaviorList 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           pbehaviorList20
         </span>
@@ -1191,7 +1191,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pbhenter 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           pbhenter20
         </span>
@@ -1221,7 +1221,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pbhleave 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           pbhleave20
         </span>
@@ -1251,7 +1251,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: play 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           play20
         </span>
@@ -1281,7 +1281,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: snooze 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           snooze20
         </span>
@@ -1311,7 +1311,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: statedec 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           statedec20
         </span>
@@ -1341,7 +1341,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: stateinc 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           stateinc20
         </span>
@@ -1371,7 +1371,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: statusdec 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           statusdec20
         </span>
@@ -1401,7 +1401,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: statusinc 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           statusinc20
         </span>
@@ -1431,7 +1431,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: unsooze 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           unsooze20
         </span>
@@ -1461,7 +1461,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: validate 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           validate20
         </span>
@@ -1491,7 +1491,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: cancelled 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           14
         </span>
@@ -1521,7 +1521,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: closed 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           10
         </span>
@@ -1551,7 +1551,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: flapping 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           13
         </span>
@@ -1581,7 +1581,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: noEvents 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           15
         </span>
@@ -1611,7 +1611,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: ongoing 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           11
         </span>
@@ -1641,7 +1641,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: stealthy 1`] = `
         class="v-badge__badge secondary"
       >
         <span
-          class="caption"
+          class="px-1"
         >
           12
         </span>
