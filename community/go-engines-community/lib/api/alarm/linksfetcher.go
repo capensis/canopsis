@@ -19,10 +19,10 @@ type LinksFetcher interface {
 
 type linksFetcher struct {
 	Timeout   time.Duration
-	LegacyURL fmt.Stringer
+	LegacyURL string
 }
 
-func NewLinksFetcher(legacyURL fmt.Stringer, timeout time.Duration) LinksFetcher {
+func NewLinksFetcher(legacyURL string, timeout time.Duration) LinksFetcher {
 	return &linksFetcher{
 		LegacyURL: legacyURL,
 		Timeout:   timeout,
@@ -30,7 +30,7 @@ func NewLinksFetcher(legacyURL fmt.Stringer, timeout time.Duration) LinksFetcher
 }
 
 func (lf *linksFetcher) Fetch(ctx context.Context, apiKey string, ae []AlarmEntity) (*LinksResponse, error) {
-	if len(ae) == 0 {
+	if lf.LegacyURL == "" || len(ae) == 0 {
 		return nil, nil
 	}
 

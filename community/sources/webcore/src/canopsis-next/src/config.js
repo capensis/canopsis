@@ -110,6 +110,7 @@ export const API_ROUTES = {
     list: '/api/v4/widgets',
     copy: '/api/v4/widget-copy',
     gridPositions: '/api/v4/widget-grid-positions',
+    filters: '/api/v4/widget-filters',
   },
   permissions: '/api/v4/permissions',
   users: '/api/v4/users',
@@ -161,6 +162,7 @@ export const API_ROUTES = {
   scenario: {
     scenarios: '/api/v4/scenarios',
     checkPriority: '/api/v4/scenarios/check-priority',
+    minimalPriority: '/api/v4/scenarios/minimal-priority',
   },
   entityCategories: '/api/v4/entity-categories',
   stateSetting: '/api/v4/state-settings',
