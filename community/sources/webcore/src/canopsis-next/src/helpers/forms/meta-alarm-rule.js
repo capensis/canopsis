@@ -1,6 +1,11 @@
 import { omit, pick, isNumber } from 'lodash';
 
-import { DEFAULT_TIME_INTERVAL, META_ALARMS_RULE_TYPES, META_ALARMS_THRESHOLD_TYPES, PATTERNS_FIELDS } from '@/constants';
+import {
+  DEFAULT_TIME_INTERVAL,
+  META_ALARMS_RULE_TYPES,
+  META_ALARMS_THRESHOLD_TYPES,
+  PATTERNS_FIELDS,
+} from '@/constants';
 
 import { durationToForm } from '@/helpers/date/duration';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
