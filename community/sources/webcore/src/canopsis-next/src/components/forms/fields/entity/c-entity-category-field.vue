@@ -18,7 +18,7 @@
       v-text-field.pb-3.pt-1.px-3(
         ref="createField",
         v-model.trim="newCategory",
-        v-validate="'unique-name'",
+        v-validate="newCategoryRules",
         :label="$t('service.createCategory')",
         :error-messages="errors.collect(newCategoryFieldName)",
         :name="newCategoryFieldName",
@@ -82,12 +82,14 @@ export default {
         required: this.required,
       };
     },
-  },
-  created() {
-    this.$validator.extend('unique-name', {
-      getMessage: () => this.$t('validator.unique'),
-      validate: () => this.newCategory && !this.categoriesNames.includes(this.newCategory.toLowerCase()),
-    });
+
+    newCategoryRules() {
+      return {
+        unique: {
+          values: this.categoriesNames,
+        },
+      };
+    },
   },
   mounted() {
     this.fetchList();
@@ -96,7 +98,7 @@ export default {
     async createCategory() {
       const isValid = await this.$validator.validate(this.newCategoryFieldName);
 
-      if (!isValid) {
+      if (!isValid || !this.newCategory) {
         return;
       }
 

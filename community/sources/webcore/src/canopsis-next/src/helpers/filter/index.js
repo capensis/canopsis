@@ -3,16 +3,6 @@ import { isEmpty, isString } from 'lodash';
 import { FILTER_DEFAULT_VALUES, FILTER_MONGO_OPERATORS } from '@/constants';
 
 /**
- * @typedef {Object} FilterWithTitle
- * @property {string} title
- * @property {Object} filter
- */
-
-/**
- * @typedef {FilterWithTitle | Object} Filter
- */
-
-/**
  * Prepare user main filter to query filter
  *
  * @param {Object|Array} [filterObject = {}]

@@ -437,6 +437,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.imagesViewer]: { maxWidth: '100%', contentClass: 'v-dialog__images-viewer' },
     [MODALS.rate]: { maxWidth: 500 },
     [MODALS.createMetaAlarmRule]: { maxWidth: 1280, lazy: true },
+    [MODALS.createEventFilter]: { maxWidth: 1280 },
     [MODALS.createEventFilterAction]: { maxWidth: 920 },
     [MODALS.testSuite]: { maxWidth: 920 },
     [MODALS.createPattern]: { maxWidth: 1280 },

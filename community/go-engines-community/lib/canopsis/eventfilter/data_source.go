@@ -4,6 +4,7 @@ import (
 	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/bsontype"
 )
@@ -11,7 +12,7 @@ import (
 // DataSourceFactory is an interface for plugins that provide a DataSource.
 type DataSourceFactory interface {
 	// Create returns a new empty DataSourceGetter.
-	Create(parameters map[string]interface{}) (DataSourceGetter, error)
+	Create(dbClient mongo.DbClient, parameters map[string]interface{}) (DataSourceGetter, error)
 }
 
 // DataSourceGetterParameters is a type containing the parameters that can be
