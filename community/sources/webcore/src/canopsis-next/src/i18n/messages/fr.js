@@ -1680,6 +1680,10 @@ export default {
     socketConnectionProblem: 'Problème de connexion aux websockets',
     endDateLessOrEqualStartDate: 'La date de fin doit se situer après la date de début',
     unknownWidgetType: 'Type de widget inconnu: {type}',
+    unique: 'Le champ doit être unique',
+  },
+  warnings: {
+    authTokenExpired: 'Le jeton d\'authentification a expiré',
   },
   calendar: {
     today: 'Aujourd\'hui',
@@ -1735,9 +1739,6 @@ export default {
     buttons: {
       list: 'Gérer les filtres',
     },
-  },
-  validator: {
-    unique: 'Le champ doit être unique',
   },
   stats: {
     types: {
@@ -2783,6 +2784,10 @@ export default {
       ruleRequired: 'Veuillez ajouter au moins une règle',
       groupRequired: 'Veuillez ajouter au moins un groupe',
     },
+  },
+
+  filter: {
+    oldPattern: 'Ancien format de motif',
   },
 
   ...featureService.get('i18n.fr'),
