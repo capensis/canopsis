@@ -25,7 +25,7 @@ import {
 
 import { MODALS } from '@/constants';
 
-import { isOmitEqual } from '@/helpers/validators/is-omit-equal';
+import { isOmitEqual } from '@/helpers/equal';
 import { getMenuClassByCalendarEvent } from '@/helpers/calendar/dayspan';
 
 import PbehaviorForm from '@/components/other/pbehavior/calendar/partials/pbehavior-form.vue';
