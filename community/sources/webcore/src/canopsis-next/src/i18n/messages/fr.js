@@ -1682,6 +1682,9 @@ export default {
     unknownWidgetType: 'Type de widget inconnu: {type}',
     unique: 'Le champ doit être unique',
   },
+  warnings: {
+    authTokenExpired: 'Le jeton d\'authentification a expiré',
+  },
   calendar: {
     today: 'Aujourd\'hui',
     month: 'Mois',

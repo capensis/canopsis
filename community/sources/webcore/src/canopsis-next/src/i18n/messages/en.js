@@ -1682,6 +1682,9 @@ export default {
     unknownWidgetType: 'Unknown widget type: {type}',
     unique: 'Field must be unique',
   },
+  warnings: {
+    authTokenExpired: 'Authentication token was expired',
+  },
   calendar: {
     today: 'Today',
     month: 'Month',

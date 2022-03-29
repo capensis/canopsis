@@ -812,7 +812,6 @@ Feature: Bulk create scenarios
           "actions": "Actions is missing.",
           "enabled": "Enabled is missing.",
           "name": "Name is missing.",
-          "priority": "Priority is missing.",
           "triggers": "Triggers is missing."
         },
         "item": {}
