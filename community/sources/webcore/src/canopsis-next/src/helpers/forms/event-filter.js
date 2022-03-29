@@ -4,7 +4,10 @@ import {
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
   EVENT_FILTER_ENRICHMENT_AFTER_TYPES,
   EVENT_FILTER_TYPES,
+  PATTERNS_FIELDS,
 } from '@/constants';
+
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 
 /**
  * @typedef { 'enrichment' | 'drop' | 'break' | 'change_entity' } EventFilterType
@@ -53,7 +56,7 @@ import {
  */
 
 /**
- * @typedef {Object} EventFilter
+ * @typedef {Patterns} EventFilter
  * @property {string} _id
  * @property {EventFilterType} type
  * @property {string} description
@@ -64,7 +67,7 @@ import {
  */
 
 /**
- * @typedef {EventFilter} EventFilterForm
+ * @typedef {PatternsForm & EventFilter} EventFilterForm
  */
 
 /**
@@ -97,7 +100,7 @@ export const eventFilterToForm = eventFilter => ({
   _id: eventFilter?._id ?? '',
   type: eventFilter?.type ?? EVENT_FILTER_TYPES.drop,
   description: eventFilter?.description ?? '',
-  patterns: eventFilter?.patterns ? cloneDeep(eventFilter?.patterns) : [],
+  patterns: filterPatternsToForm(eventFilter),
   priority: eventFilter?.priority ?? 0,
   enabled: eventFilter?.enabled ?? true,
   config: eventFilterConfigToForm(eventFilter?.config),
@@ -123,7 +126,7 @@ export const eventFilterActionToForm = eventFilterAction => ({
  * @returns {EventFilter}
  */
 export const formToEventFilter = (eventFilterForm) => {
-  const { config, ...eventFilter } = eventFilterForm;
+  const { config, patterns, ...eventFilter } = eventFilterForm;
 
   switch (eventFilterForm.type) {
     case EVENT_FILTER_TYPES.changeEntity:
@@ -134,5 +137,8 @@ export const formToEventFilter = (eventFilterForm) => {
       break;
   }
 
-  return eventFilter;
+  return {
+    ...eventFilter,
+    ...formFilterToPatterns(patterns, [PATTERNS_FIELDS.event, PATTERNS_FIELDS.entity]),
+  };
 };
