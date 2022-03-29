@@ -12,7 +12,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-const AbandonedDuration = 60
 const MaxRetries = 5
 
 type service struct {
