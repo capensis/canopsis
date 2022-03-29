@@ -55,7 +55,11 @@ export default {
     };
   },
   computed: {
-    fields() {
+    title() {
+      return this.config.title || this.$t('modals.createFilter.create.title');
+    },
+
+    patternsFields() {
       const { withAlarm, withEntity, withPbehavior, withEvent } = this.config;
 
       return [
@@ -65,10 +69,6 @@ export default {
         withEvent && PATTERNS_FIELDS.event,
       ].filter(Boolean);
     },
-
-    title() {
-      return this.config.title || this.$t('modals.createFilter.create.title');
-    },
   },
   methods: {
     async submit() {
@@ -76,7 +76,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(formToFilter(this.form, this.fields));
+          await this.config.action(formToFilter(this.form, this.patternsFields));
         }
 
         this.$modals.hide();
