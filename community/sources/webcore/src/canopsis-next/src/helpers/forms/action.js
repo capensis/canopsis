@@ -1,6 +1,8 @@
-import { cloneDeep, omit, isEmpty } from 'lodash';
+import { omit, isEmpty } from 'lodash';
 
-import { ENTITIES_STATES, ACTION_TYPES } from '@/constants';
+import { ENTITIES_STATES, ACTION_TYPES, PATTERNS_FIELDS } from '@/constants';
+
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 
 import { objectToTextPairs, textPairsToObject } from '../text-pairs';
 import uid from '../uid';
@@ -93,14 +95,11 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  */
 
 /**
- * @typedef {Object} Action
+ * @typedef {FilterPatterns} Action
  * @property {ActionType} type
  * @property {boolean} drop_scenario_if_not_matched
  * @property {boolean} emit_trigger
- * @property {Object} patterns
  * @property {string} comment
- * @property {Object[]} alarm_patterns
- * @property {Object[]} entity_patterns
  * @property {ActionParameters} parameters
  */
 
@@ -117,8 +116,7 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
 
 /**
  * @typedef {Action} ActionForm
- * @property {Object[]} patterns.alarm_patterns
- * @property {Object[]} patterns.entity_patterns
+ * @property {FilterPatternsForm} patterns
  * @property {Object.<ActionType, ActionFormParameters>} parameters
  */
 
@@ -129,7 +127,7 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  * @returns {ActionDefaultParameters}
  */
 const defaultActionParametersToForm = (parameters = {}) => ({
-  output: parameters.output || '',
+  output: parameters.output ?? '',
 });
 
 /**
@@ -139,11 +137,11 @@ const defaultActionParametersToForm = (parameters = {}) => ({
  * @return {ActionWebhookRequestFormParameter}
  */
 const webhookActionRequestParametersToForm = (request = {}) => ({
-  method: request.method || '',
-  url: request.url || '',
+  method: request.method ?? '',
+  url: request.url ?? '',
   auth: request.auth,
   headers: request.headers ? objectToTextPairs(request.headers) : [],
-  payload: request.payload || '{}',
+  payload: request.payload ?? '{}',
   skip_verify: !!request.skip_verify,
 });
 
@@ -154,7 +152,7 @@ const webhookActionRequestParametersToForm = (request = {}) => ({
  * @returns {ActionWebhookFormParameters}
  */
 const webhookActionParametersToForm = (parameters = {}) => {
-  const { empty_response: emptyResponse, is_regexp: isRegexp, ...variables } = parameters.declare_ticket || {};
+  const { empty_response: emptyResponse, is_regexp: isRegexp, ...variables } = parameters.declare_ticket ?? {};
 
   return {
     declare_ticket: objectToTextPairs(variables),
@@ -186,7 +184,7 @@ const snoozeActionParametersToForm = (parameters = {}) => ({
  */
 const changeStateActionParametersToForm = (parameters = {}) => ({
   ...defaultActionParametersToForm(parameters),
-  state: parameters.state || ENTITIES_STATES.minor,
+  state: parameters.state ?? ENTITIES_STATES.minor,
 });
 
 /**
@@ -197,7 +195,7 @@ const changeStateActionParametersToForm = (parameters = {}) => ({
  */
 const assocTicketActionParametersToForm = (parameters = {}) => ({
   ...defaultActionParametersToForm(parameters),
-  ticket: parameters.ticket || '',
+  ticket: parameters.ticket ?? '',
 });
 
 /**
@@ -268,22 +266,15 @@ export const actionParametersToForm = (action, timezone) => {
  * @param {string} [timezone = getLocaleTimezone()]
  * @returns {ActionForm}
  */
-export const actionToForm = (action = {}, timezone = getLocaleTimezone()) => {
-  const type = action.type || ACTION_TYPES.snooze;
-
-  return {
-    type,
-    key: uid(),
-    parameters: actionParametersToForm(action, timezone),
-    drop_scenario_if_not_matched: !!action.drop_scenario_if_not_matched,
-    emit_trigger: !!action.emit_trigger,
-    comment: action.comment || '',
-    patterns: {
-      alarm_patterns: action.alarm_patterns ? cloneDeep(action.alarm_patterns) : [],
-      entity_patterns: action.entity_patterns ? cloneDeep(action.entity_patterns) : [],
-    },
-  };
-};
+export const actionToForm = (action = {}, timezone = getLocaleTimezone()) => ({
+  type: action.type ?? ACTION_TYPES.snooze,
+  key: uid(),
+  parameters: actionParametersToForm(action, timezone),
+  drop_scenario_if_not_matched: !!action.drop_scenario_if_not_matched,
+  emit_trigger: !!action.emit_trigger,
+  comment: action.comment ?? '',
+  patterns: filterPatternsToForm(action, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
+});
 
 /**
  * Convert pbehavior parameters to action
@@ -367,7 +358,7 @@ export const formToAction = (form, timezone) => {
 
   return {
     ...omit(form, ['key', 'patterns']),
-    ...form.patterns,
+    ...formFilterToPatterns(form.patterns, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
     parameters,
   };
 };
