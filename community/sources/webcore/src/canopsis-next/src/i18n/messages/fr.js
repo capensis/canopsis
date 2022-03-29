@@ -1894,10 +1894,6 @@ export default {
     copyWidgetId: 'Copier l\'identifiant du widget',
     autoHeightButton: 'Si ce bouton est sélectionné, la hauteur sera calculée automatiquement.',
   },
-  patternsList: {
-    noData: 'Aucun modèle. Cliquez sur \'Ajouter\' pour ajouter des champs au modèle',
-    noDataDisabled: 'Aucun modèle.',
-  },
   validation: {
     messages: {
       _default: "Le champ n'est pas valide",
@@ -2774,6 +2770,8 @@ export default {
     removeRule: 'Supprimer la règle',
     advancedEditor: 'Éditeur avancé',
     simpleEditor: 'Éditeur simple',
+    noData: 'Aucun modèle. Cliquez sur \'@:pattern.addGroup\' pour ajouter des champs au modèle',
+    noDataDisabled: 'Aucun modèle.',
     types: {
       [PATTERN_TYPES.alarm]: 'Modèle d\'alarme',
       [PATTERN_TYPES.entity]: 'Modèle d\'entité',

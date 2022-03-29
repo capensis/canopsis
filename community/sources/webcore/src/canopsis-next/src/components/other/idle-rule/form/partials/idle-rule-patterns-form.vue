@@ -1,29 +1,21 @@
 <template lang="pug">
-  div
-    patterns-list(
-      v-if="isEntityType",
-      v-field="form.entity_patterns",
-      v-validate="'required'",
-      :type="$constants.PATTERNS_TYPES.entity",
-      name="entity_patterns"
-    )
-    c-patterns-field(
-      v-else,
-      v-field="form",
-      some-required,
-      with-alarm,
-      with-entity
-    )
+  c-patterns-field.mt-2(
+    v-field="form",
+    :with-alarm="!isEntityType",
+    :alarm-attributes="alarmAttributes",
+    :alarm-excluded-attributes="alarmExcludedAttributes",
+    :entity-excluded-items="entityExcludedItems",
+    some-required,
+    with-entity
+  )
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { PATTERNS_TYPES } from '@/constants';
+import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS, PATTERNS_TYPES, QUICK_RANGES } from '@/constants';
 
 import { formValidationHeaderMixin, validationErrorsMixinCreator } from '@/mixins/form';
-
-import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
 
 const { mapActions } = createNamespacedHelpers('idleRules');
 
@@ -34,7 +26,6 @@ export default {
     };
   },
   inject: ['$validator'],
-  components: { PatternsList },
   mixins: [
     formValidationHeaderMixin,
     validationErrorsMixinCreator(),
@@ -51,6 +42,32 @@ export default {
     isEntityType: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    alarmAttributes() {
+      return [
+        {
+          value: ALARM_PATTERN_FIELDS.creationDate,
+          options: {
+            intervalRanges: [QUICK_RANGES.custom],
+          },
+        },
+      ];
+    },
+
+    alarmExcludedAttributes() {
+      return [
+        ALARM_PATTERN_FIELDS.lastUpdateDate,
+        ALARM_PATTERN_FIELDS.lastEventDate,
+        ALARM_PATTERN_FIELDS.resolvedAt,
+      ];
+    },
+
+    entityExcludedItems() {
+      return [
+        ENTITY_PATTERN_FIELDS.lastEventDate,
+      ];
     },
   },
   methods: {

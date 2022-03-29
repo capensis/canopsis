@@ -25,7 +25,7 @@
             :disabled="disabled"
           )
 
-    v-flex(v-if="rule.attribute", xs7, :xs8="!isInfosRule && !isExtraInfosRule")
+    v-flex(v-if="rule.attribute", :xs8="!isInfosRule && !isExtraInfosRule", xs7)
       v-layout(row)
         template(v-if="isDateRule")
           v-flex.pl-3(xs5)

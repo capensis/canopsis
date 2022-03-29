@@ -89,7 +89,7 @@ export default {
 
       if (updatedRule.attribute !== rule.attribute) {
         updatedRule.operator = '';
-        updatedRule.value = defaultValue ?? convertValueByOperator(updatedRule.value, updatedRule.operator);
+        updatedRule.value = defaultValue ?? '';
       } else if (updatedRule.operator !== rule.operator) {
         updatedRule.value = convertValueByOperator(updatedRule.value, updatedRule.operator);
       }
