@@ -5,10 +5,10 @@
         v-field="value",
         :items="preparedFilters",
         :label="label",
-        :item-text="itemText",
-        :item-value="itemValue",
         :multiple="isMultiple",
         :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
+        item-text="title",
+        item-value="_id",
         return-object,
         clearable
       )
@@ -68,6 +68,10 @@ export default {
   components: { FiltersListForm },
   mixins: [formMixin],
   props: {
+    widgetId: {
+      type: String,
+      required: true,
+    },
     long: {
       type: Boolean,
       default: false,
@@ -87,14 +91,6 @@ export default {
     label: {
       type: String,
       default: '',
-    },
-    itemText: {
-      type: String,
-      default: 'title',
-    },
-    itemValue: {
-      type: String,
-      default: 'title',
     },
     condition: {
       type: String,
@@ -184,6 +180,7 @@ export default {
       this.$emit('update:condition', newCondition);
     },
 
+    // TODO: remove
     updateFilters(filters) {
       const removeSelectedProperty = filter => omit(filter, 'selected');
 
@@ -200,6 +197,7 @@ export default {
       this.$emit('update:filters', filters.map(removeSelectedProperty), newValue);
     },
 
+    // TODO: remove
     isFilterEqual(firstFilter, secondFilter) {
       return firstFilter.title === secondFilter.title && firstFilter.filter === secondFilter.filter;
     },
@@ -208,13 +206,12 @@ export default {
       this.$modals.show({
         name: MODALS.filtersList,
         config: {
-          filters: this.filtersWithSelected,
+          widgetId: this.widgetId,
           hasAccessToAddFilter: this.hasAccessToUserFilter,
           hasAccessToEditFilter: this.hasAccessToUserFilter,
           withAlarm: this.withAlarm,
           withEntity: this.withEntity,
           withPbehavior: this.withPbehavior,
-          action: filters => this.updateFilters(filters),
         },
       });
     },
