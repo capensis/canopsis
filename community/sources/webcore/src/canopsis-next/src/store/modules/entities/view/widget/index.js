@@ -35,5 +35,21 @@ export default {
     updateGridPositions(context, { data } = {}) {
       return request.put(API_ROUTES.widget.gridPositions, data);
     },
+
+    createWidgetFilter(context, { data } = {}) {
+      return request.post(API_ROUTES.widget.filters, data);
+    },
+
+    updateWidgetFilter(context, { id, data } = {}) {
+      return request.put(`${API_ROUTES.widget.filters}/${id}`, data);
+    },
+
+    removeWidgetFilter(context, { id, data } = {}) {
+      return request.delete(`${API_ROUTES.widget.filters}/${id}`, data);
+    },
+
+    fetchWidgetFilter(context, { id, data } = {}) {
+      return request.delete(`${API_ROUTES.widget.filters}/${id}`, data);
+    },
   },
 };

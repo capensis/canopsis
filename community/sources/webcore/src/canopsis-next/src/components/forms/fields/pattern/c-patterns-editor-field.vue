@@ -32,9 +32,8 @@
           readonly
         )
 
-    v-layout(justify-end)
+    v-layout(v-if="withType && !isCustomPattern", justify-end)
       v-btn.mx-0(
-        v-if="withType && !isCustomPattern",
         color="primary",
         dark,
         @click="updatePatternToCustom"
