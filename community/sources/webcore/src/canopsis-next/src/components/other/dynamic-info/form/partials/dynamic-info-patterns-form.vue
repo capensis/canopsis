@@ -1,6 +1,7 @@
 <template lang="pug">
   c-patterns-field(
     v-field="form",
+    :disabled="disabled",
     :alarm-attributes="alarmAttributes",
     :alarm-excluded-attributes="alarmExcludedAttributes",
     :entity-excluded-items="entityExcludedItems",
@@ -13,11 +14,11 @@
 <script>
 import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS, QUICK_RANGES } from '@/constants';
 
-import { formArrayMixin, formValidationHeaderMixin } from '@/mixins/form';
+import { formValidationHeaderMixin } from '@/mixins/form';
 
 export default {
   inject: ['$validator'],
-  mixins: [formArrayMixin, formValidationHeaderMixin],
+  mixins: [formValidationHeaderMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -26,6 +27,10 @@ export default {
     form: {
       type: Object,
       required: true,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
