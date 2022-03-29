@@ -28,7 +28,7 @@ export default {
     },
     label: {
       type: String,
-      default: PATTERN_INPUT_TYPES.string,
+      default: '',
     },
     name: {
       type: String,
