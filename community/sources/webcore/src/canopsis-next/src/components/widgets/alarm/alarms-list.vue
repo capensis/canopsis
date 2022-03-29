@@ -19,7 +19,7 @@
       v-flex
         filter-selector(
           :label="$t('settings.selectAFilter')",
-          :filters="viewFilters",
+          :filters="widget.filters",
           :locked-filters="widgetViewFilters",
           :value="mainFilter",
           :condition="mainFilterCondition",

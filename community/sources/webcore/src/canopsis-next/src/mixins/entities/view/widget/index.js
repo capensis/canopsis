@@ -2,9 +2,6 @@ import { createNamespacedHelpers } from 'vuex';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('view/widget');
 
-/**
- * @mixin Helpers for the widget entity
- */
 export const entitiesWidgetMixin = {
   computed: {
     ...mapGetters({
@@ -18,6 +15,10 @@ export const entitiesWidgetMixin = {
       copyWidget: 'copy',
       removeWidget: 'remove',
       updateWidgetGridPositions: 'updateGridPositions',
+      createWidgetFilter: 'createWidgetFilter',
+      updateWidgetFilter: 'updateWidgetFilter',
+      removeWidgetFilter: 'removeWidgetFilter',
+      fetchWidgetFilter: 'fetchWidgetFilter',
     }),
   },
 };

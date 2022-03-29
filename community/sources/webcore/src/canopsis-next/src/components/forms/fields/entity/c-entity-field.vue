@@ -88,7 +88,6 @@ export default {
   data() {
     return {
       isFocused: false,
-
       entitiesById: {},
       entitiesPending: false,
       pageCount: Infinity,
