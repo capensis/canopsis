@@ -7,7 +7,7 @@
         :widget-id="config.widgetId",
         :with-pbehavior="config.withPbehavior",
         :with-alarm="config.withAlarm",
-        :with-event="config.withEvent",
+        :with-entity="config.withEntity",
         :private="config.private",
         :addable="config.hasAccessToAddFilter",
         :editable="config.hasAccessToEditFilter"

@@ -79,7 +79,18 @@ export default {
           withAlarm: this.withAlarm,
           withEntity: this.withEntity,
           withPbehavior: this.withPbehavior,
-          action: () => {},
+          action: async (newFilter) => {
+            await this.createWidgetFilter({
+              data: {
+                ...newFilter,
+
+                widget: this.widgetId,
+                is_private: this.private,
+              },
+            });
+
+            // fetch widget filters
+          },
         },
       });
     },
@@ -95,16 +106,29 @@ export default {
           withAlarm: this.withAlarm,
           withEntity: this.withEntity,
           withPbehavior: this.withPbehavior,
-          action: () => {},
+          action: async (newFilter) => {
+            await this.updateWidgetFilter({
+              id: filter._id,
+              data: newFilter,
+            });
+
+            // fetch widget filters
+          },
         },
       });
     },
 
-    showDeleteFilterModal() {
+    showDeleteFilterModal(filter) {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () => {},
+          action: async () => {
+            await this.removeWidgetFilter({
+              id: filter._id,
+            });
+
+            // fetch widget filters
+          },
         },
       });
     },
