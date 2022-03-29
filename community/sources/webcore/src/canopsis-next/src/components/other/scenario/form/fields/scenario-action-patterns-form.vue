@@ -12,8 +12,9 @@
 </template>
 
 <script>
-import { formValidationHeaderMixin } from '@/mixins/form';
 import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS, QUICK_RANGES } from '@/constants';
+
+import { formValidationHeaderMixin } from '@/mixins/form';
 
 export default {
   inject: ['$validator'],
