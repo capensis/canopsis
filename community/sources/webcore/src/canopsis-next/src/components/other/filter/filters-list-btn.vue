@@ -39,8 +39,9 @@ export default {
           addable: this.addable,
           editable: this.editable,
           withAlarm: true,
-          withEntity: true,
-          withPbehavior: true,
+          // TODO: uncomment
+          // withEntity: true,
+          // withPbehavior: true,
         },
       });
     },
