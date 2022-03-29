@@ -1,6 +1,7 @@
 <template lang="pug">
   c-patterns-field(
     v-field="form",
+    :disabled="disabled",
     :alarm-attributes="alarmAttributes",
     :alarm-excluded-attributes="alarmExcludedAttributes",
     name="config",
@@ -23,6 +24,10 @@ export default {
     form: {
       type: Object,
       default: () => ({}),
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
