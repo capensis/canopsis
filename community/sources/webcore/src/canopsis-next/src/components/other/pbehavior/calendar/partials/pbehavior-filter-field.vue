@@ -26,7 +26,7 @@
 import { isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
-import { ENTITIES_TYPES, MODALS } from '@/constants';
+import { MODALS } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
@@ -82,10 +82,9 @@ export default {
           zIndex: 300,
         },
         config: {
-          filter: { filter: this.form.filter },
-          hiddenFields: ['title'],
-          entitiesType: ENTITIES_TYPES.entity,
-          action: ({ filter }) => {
+          filter: this.form.filter,
+          withEntity: true,
+          action: (filter) => {
             this.updateField('filter', filter);
             this.fetchCountForFilter(filter);
             this.$nextTick(() => this.$validator.validate('filter'));

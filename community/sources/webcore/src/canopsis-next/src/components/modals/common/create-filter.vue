@@ -55,7 +55,7 @@ export default {
     };
   },
   computed: {
-    fields() {
+    patternFields() {
       const { withAlarm, withEntity, withPbehavior, withEvent } = this.config;
 
       return [
@@ -76,7 +76,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(formToFilter(this.form, this.fields));
+          await this.config.action(formToFilter(this.form, this.patternFields));
         }
 
         this.$modals.hide();
