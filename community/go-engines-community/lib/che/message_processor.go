@@ -2,6 +2,7 @@ package che
 
 import (
 	"context"
+	"errors"
 	"runtime/trace"
 	"time"
 
@@ -77,6 +78,11 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		var report eventfilter.Report
 		event, report, err = p.EventFilterService.ProcessEvent(ctx, event)
 		if err != nil {
+			var dropErr eventfilter.DropError
+			if errors.As(err, &dropErr) {
+				return nil, nil
+			}
+
 			if engine.IsConnectionError(err) {
 				return nil, err
 			}

@@ -32,6 +32,7 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
 /**
  * @typedef {Object} ActionDefaultParameters
  * @property {string} output
+ * @property {string} author
  */
 
 /**
@@ -42,6 +43,11 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
 /**
  * @typedef {ActionDefaultParameters} ActionChangeStateParameters
  * @property {number} state
+ */
+
+/**
+ * @typedef {ActionDefaultParameters} ActionAssocTicketParameters
+ * @property {string} ticket
  */
 
 /**
@@ -76,11 +82,6 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  * @property {boolean} empty_response
  * @property {boolean} is_regexp
  * @property {TextPairObject[]} declare_ticket
- */
-
-/**
- * @typedef {ActionDefaultParameters} ActionAssocTicketParameters
- * @property {string} ticket
  */
 
 /**
@@ -128,6 +129,7 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  */
 const defaultActionParametersToForm = (parameters = {}) => ({
   output: parameters.output ?? '',
+  author: parameters.author ?? '',
 });
 
 /**
@@ -310,14 +312,6 @@ export const formToWebhookActionParameters = (parameters = {}) => {
 };
 
 /**
- * Convert snooze parameters to action
- *
- * @param {ActionSnoozeParameters | {}} parameters
- * @return {ActionSnoozeParameters}
- */
-export const formToSnoozeActionParameters = (parameters = {}) => parameters;
-
-/**
  * Convert pbehavior parameters to action
  *
  * @param {PbehaviorForm | {}} [parameters = {}]
@@ -346,7 +340,6 @@ export const formToAction = (form, timezone) => {
   const parametersByCurrentType = form.parameters[form.type];
 
   const parametersPreparers = {
-    [ACTION_TYPES.snooze]: formToSnoozeActionParameters,
     [ACTION_TYPES.webhook]: formToWebhookActionParameters,
     [ACTION_TYPES.pbehavior]: formToPbehaviorActionParameters,
   };
