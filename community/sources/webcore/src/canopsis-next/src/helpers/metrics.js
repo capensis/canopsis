@@ -9,7 +9,7 @@ import {
   USER_METRIC_PARAMETERS,
 } from '@/constants';
 import { addUnitToDate, convertDateToString } from '@/helpers/date/date';
-import { isOmitEqual } from '@/helpers/validators/is-omit-equal';
+import { isOmitEqual } from '@/helpers/equal';
 
 /**
  * @typedef { 'hour' | 'day' | 'week' | 'month' } Sampling

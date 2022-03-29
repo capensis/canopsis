@@ -5,12 +5,13 @@
     :name="name",
     :type="$constants.PATTERN_TYPES.entity",
     :required="required",
-    :attributes="entityAttributes",
+    :attributes="availableEntityAttributes",
     :with-type="withType"
   )
 </template>
 
 <script>
+import { keyBy, merge, omit } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
@@ -33,6 +34,14 @@ export default {
     patterns: {
       type: Object,
       required: true,
+    },
+    excluded: {
+      type: Array,
+      default: () => [],
+    },
+    attributes: {
+      type: Array,
+      default: () => [],
     },
     disabled: {
       type: Boolean,
@@ -186,6 +195,23 @@ export default {
           options: this.dateOptions,
         },
       ];
+    },
+
+    availableAttributesByValue() {
+      return keyBy(this.entityAttributes, 'value');
+    },
+
+    externalAttributesByValue() {
+      return keyBy(this.attributes, 'value');
+    },
+
+    availableEntityAttributes() {
+      const mergedAttributes = merge(
+        omit(this.availableAttributesByValue, this.excluded),
+        this.externalAttributesByValue,
+      );
+
+      return Object.values(mergedAttributes);
     },
   },
   mounted() {
