@@ -17,19 +17,23 @@
           @change="updateCorrelation"
         )
       v-flex
-        filter-selector(
-          :label="$t('settings.selectAFilter')",
-          :filters="widget.filters",
-          :locked-filters="widgetViewFilters",
-          :value="mainFilter",
-          :condition="mainFilterCondition",
-          :has-access-to-edit-filter="hasAccessToEditFilter",
-          :has-access-to-user-filter="hasAccessToUserFilter",
-          :has-access-to-list-filters="hasAccessToListFilters",
-          @input="updateSelectedFilter",
-          @update:condition="updateSelectedCondition",
-          @update:filters="updateFilters"
-        )
+        v-layout(row, wrap, align-center)
+          filter-selector(
+            :label="$t('settings.selectAFilter')",
+            :filters="widget.filters",
+            :value="mainFilter",
+            :condition="mainFilterCondition",
+            :has-access-to-user-filter="hasAccessToUserFilter",
+            :has-access-to-list-filters="hasAccessToListFilters",
+            @update:condition="updateSelectedCondition",
+            @update:filters="updateFilters"
+          )
+          filters-list-btn(
+            :widget-id="widget._id",
+            :addable="hasAccessToAddFilter",
+            :editable="hasAccessToEditFilter",
+            private
+          )
       v-flex
         alarms-list-remediation-instructions-filters(
           :filters.sync="remediationInstructionsFilters",
@@ -100,7 +104,8 @@ import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 
-import FilterSelector from '@/components/forms/filters/filter-selector.vue';
+import FilterSelector from '@/components/other/filter/filter-selector.vue';
+import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
@@ -133,6 +138,7 @@ import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-rem
 export default {
   components: {
     FilterSelector,
+    FiltersListBtn,
     AlarmsListTable,
     AlarmsExpandPanelTour,
     AlarmsListRemediationInstructionsFilters,

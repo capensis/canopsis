@@ -1,8 +1,7 @@
 <template lang="pug">
   div
     v-alert(
-      v-if="!filters.length",
-      :value="true",
+      :value="!filters.length",
       type="info"
     ) {{ $t('modals.createFilter.emptyFilters') }}
     filter-tile(
@@ -24,22 +23,21 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { formArrayMixin } from '@/mixins/form';
+import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 
 import FilterTile from './partials/filter-tile.vue';
 
-// TODO: rename
 export default {
   components: { FilterTile },
-  mixins: [formArrayMixin],
-  model: {
-    prop: 'filters',
-    event: 'input',
-  },
+  mixins: [entitiesWidgetMixin],
   props: {
-    filters: {
-      type: Array,
-      default: () => [],
+    widgetId: {
+      type: String,
+      required: true,
+    },
+    private: {
+      type: Boolean,
+      default: false,
     },
     addable: {
       type: Boolean,
@@ -60,6 +58,15 @@ export default {
     withPbehavior: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    widget() {
+      return this.getWidgetById(this.widgetId);
+    },
+
+    filters() {
+      return (this.widget?.filters ?? []).filter(filter => filter.is_private === this.private);
     },
   },
   methods: {

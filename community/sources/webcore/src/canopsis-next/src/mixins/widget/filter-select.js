@@ -2,7 +2,10 @@ import { FILTER_DEFAULT_VALUES } from '@/constants';
 
 import { prepareMainFilterToQueryFilter, getMainFilterAndCondition } from '@/helpers/filter';
 
+import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
+
 export const widgetFilterSelectMixin = {
+  mixins: [entitiesWidgetMixin],
   computed: {
     mainFilterAndCondition() {
       return getMainFilterAndCondition(this.widget, this.userPreference);
@@ -24,6 +27,7 @@ export const widgetFilterSelectMixin = {
       return this.userPreference.content.viewFilters || [];
     },
 
+    // TODO: remove
     widgetViewFilters() {
       const { mainFilter, viewFilters } = this.widget.parameters;
 
@@ -55,6 +59,7 @@ export const widgetFilterSelectMixin = {
       this.updateQueryBySelectedFilterAndCondition(this.mainFilter, condition);
     },
 
+    // TODO: remove
     async updateSelectedFilter(filterObject) {
       await this.updateFieldsInWidgetPreferences({ mainFilter: filterObject || {}, mainFilterUpdatedAt: Date.now() });
       this.updateQueryBySelectedFilterAndCondition(filterObject || {}, this.mainFilterCondition);
