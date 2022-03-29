@@ -4,7 +4,7 @@ Feature: execute action on trigger
   Scenario: given scenario and check event should update alarm
     Given I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-action-1-name",
       "enabled": true,
@@ -26,8 +26,8 @@ Feature: execute action on trigger
           ],
           "type": "assocticket",
           "parameters": {
-            "output": "test-output-action-1-{{ `{{ .Alarm.Value.Connector }}` }}",
-            "ticket": "test-ticket-action-1"
+            "output": "test-scenario-action-1-action-1-output {{ `{{ .Alarm.Value.Connector }}` }}",
+            "ticket": "test-scenario-action-1-action-1-ticket"
           },
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false
@@ -47,7 +47,8 @@ Feature: execute action on trigger
           ],
           "type": "ack",
           "parameters": {
-            "output": "test-output-action-1-{{ `{{ .Alarm.Value.Connector }}` }}"
+            "output": "test-scenario-action-1-action-2-output {{ `{{ .Alarm.Value.Connector }}` }}",
+            "author": "test-scenario-action-1-action-2-author"
           },
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false
@@ -58,7 +59,7 @@ Feature: execute action on trigger
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-action-1",
       "connector_name" : "test-connector-name-action-1",
@@ -74,7 +75,7 @@ Feature: execute action on trigger
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-action-1"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -83,14 +84,14 @@ Feature: execute action on trigger
               "_t": "assocticket",
               "a": "root",
               "user_id": "root",
-              "m": "test-ticket-action-1",
-              "val": "test-ticket-action-1"
+              "m": "test-scenario-action-1-action-1-ticket",
+              "val": "test-scenario-action-1-action-1-ticket"
             },
             "ack": {
               "_t": "ack",
-              "a": "root",
+              "a": "test-scenario-action-1-action-2-author",
               "user_id": "root",
-              "m": "test-output-action-1-test-connector-action-1"
+              "m": "test-scenario-action-1-action-2-output test-connector-action-1"
             },
             "steps": [
               {
@@ -103,13 +104,13 @@ Feature: execute action on trigger
                 "_t": "assocticket",
                 "a": "root",
                 "user_id": "root",
-                "m": "test-ticket-action-1"
+                "m": "test-scenario-action-1-action-1-ticket"
               },
               {
                 "_t": "ack",
-                "a": "root",
+                "a": "test-scenario-action-1-action-2-author",
                 "user_id": "root",
-                "m": "test-output-action-1-test-connector-action-1"
+                "m": "test-scenario-action-1-action-2-output test-connector-action-1"
               }
             ],
             "connector": "test-connector-action-1",
@@ -131,7 +132,7 @@ Feature: execute action on trigger
   Scenario: given delayed scenario and check event should update alarm
     Given I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-action-2-name",
       "enabled": true,
@@ -184,7 +185,7 @@ Feature: execute action on trigger
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-action-2",
       "connector_name" : "test-connector-name-action-2",
@@ -202,7 +203,7 @@ Feature: execute action on trigger
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-action-2"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -259,7 +260,7 @@ Feature: execute action on trigger
   Scenario: given scenario with emit trigger and check event should update alarm
     Given I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-action-3-name-1",
       "enabled": true,
@@ -287,7 +288,7 @@ Feature: execute action on trigger
     """
     Then the response code should be 201
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-action-3-name-2",
       "enabled": true,
@@ -320,7 +321,7 @@ Feature: execute action on trigger
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-action-3",
       "connector_name" : "test-connector-name-action-3",
@@ -336,7 +337,7 @@ Feature: execute action on trigger
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-action-3"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
