@@ -1719,6 +1719,9 @@ export default {
     statsWrongEditionError: "Stats widgets are not available with 'core' edition",
     socketConnectionProblem: 'Problem with connection to socket server',
   },
+  warnings: {
+    authTokenExpired: 'Authentication token was expired',
+  },
   calendar: {
     today: 'Today',
     month: 'Month',
