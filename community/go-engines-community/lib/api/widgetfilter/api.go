@@ -8,17 +8,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
 )
-
-type API interface {
-	Create(c *gin.Context)
-	Get(c *gin.Context)
-	Update(c *gin.Context)
-	Delete(c *gin.Context)
-}
 
 type api struct {
 	store        Store
@@ -32,13 +26,60 @@ func NewApi(
 	enforcer security.Enforcer,
 	transformer common.PatternFieldsTransformer,
 	actionLogger logger.ActionLogger,
-) API {
+) common.CrudAPI {
 	return &api{
 		store:        store,
 		enforcer:     enforcer,
 		transformer:  transformer,
 		actionLogger: actionLogger,
 	}
+}
+
+// List finds all widget filters
+// @Summary Find widget filters
+// @Description Get paginated list of widget filters
+// @Tags widgetfilters
+// @ID widgetfilters-find-all
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param request query ListRequest true "request"
+// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /widget-filters [get]
+func (a *api) List(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+	var r ListRequest
+	r.Query = pagination.GetDefaultQuery()
+
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+		return
+	}
+
+	ok, err := a.checkAccessByWidget(c.Request.Context(), r.Widget, userId, model.PermissionRead)
+	if err != nil {
+		panic(err)
+	}
+
+	if !ok {
+		c.JSON(http.StatusForbidden, common.ForbiddenResponse)
+		return
+	}
+
+	users, err := a.store.Find(c.Request.Context(), r, userId)
+	if err != nil {
+		panic(err)
+	}
+
+	res, err := common.NewPaginatedResponse(r.Query, users)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
 }
 
 // Get widget filter by id

@@ -772,6 +772,11 @@ func RegisterRoutes(
 		widgetFilterAPI := widgetfilter.NewApi(widgetfilter.NewStore(dbClient), enforcer, common.NewPatternFieldsTransformer(dbClient), actionLogger)
 		widgetFilterRouter := protected.Group("/widget-filters")
 		{
+			widgetFilterRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+				widgetFilterAPI.List,
+			)
 			widgetFilterRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),

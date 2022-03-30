@@ -9610,6 +9610,85 @@ var doc = `{
             }
         },
         "/widget-filters": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get paginated list of widget filters",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "widgetfilters"
+                ],
+                "summary": "Find widget filters",
+                "operationId": "widgetfilters-find-all",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "paginate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "private",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "widget",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.PaginatedListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/widgetfilter.Response"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -16246,6 +16325,29 @@ var doc = `{
                 },
                 "title": {
                     "type": "string"
+                },
+                "widget": {
+                    "type": "string"
+                }
+            }
+        },
+        "widgetfilter.ListRequest": {
+            "type": "object",
+            "required": [
+                "widget"
+            ],
+            "properties": {
+                "limit": {
+                    "type": "integer"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "paginate": {
+                    "type": "boolean"
+                },
+                "private": {
+                    "type": "boolean"
                 },
                 "widget": {
                     "type": "string"
