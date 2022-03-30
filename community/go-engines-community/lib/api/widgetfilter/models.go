@@ -2,9 +2,16 @@ package widgetfilter
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
+
+type ListRequest struct {
+	pagination.Query
+	Widget  string `form:"widget" json:"widget" binding:"required"`
+	Private *bool  `form:"private" json:"private"`
+}
 
 type EditRequest struct {
 	ID        string `json:"-"`
@@ -32,4 +39,17 @@ type Response struct {
 	savedpattern.AlarmPatternFields     `bson:",inline"`
 	savedpattern.EntityPatternFields    `bson:",inline"`
 	savedpattern.PbehaviorPatternFields `bson:",inline"`
+}
+
+type AggregationResult struct {
+	Data       []Response `bson:"data" json:"data"`
+	TotalCount int64      `bson:"total_count" json:"total_count"`
+}
+
+func (r *AggregationResult) GetData() interface{} {
+	return r.Data
+}
+
+func (r *AggregationResult) GetTotal() int64 {
+	return r.TotalCount
 }

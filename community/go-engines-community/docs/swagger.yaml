@@ -4219,6 +4219,21 @@ definitions:
     - title
     - widget
     type: object
+  widgetfilter.ListRequest:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      paginate:
+        type: boolean
+      private:
+        type: boolean
+      widget:
+        type: string
+    required:
+    - widget
+    type: object
   widgetfilter.Response:
     properties:
       _id:
@@ -10180,6 +10195,52 @@ paths:
       tags:
       - widgets
   /widget-filters:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of widget filters
+      operationId: widgetfilters-find-all
+      parameters:
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: paginate
+        type: boolean
+      - in: query
+        name: private
+        type: boolean
+      - in: query
+        name: widget
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PaginatedListResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/widgetfilter.Response'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Find widget filters
+      tags:
+      - widgetfilters
     post:
       consumes:
       - application/json
