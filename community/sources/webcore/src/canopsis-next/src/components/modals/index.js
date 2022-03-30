@@ -281,10 +281,6 @@ export const Rate = () => ({
   component: import(/* webpackChunkName: "Remediation" */ './common/rate.vue'),
   loading: LoaderOverlay,
 });
-export const Patterns = () => ({
-  component: import(/* webpackChunkName: "Common" */ './common/patterns.vue'),
-  loading: LoaderOverlay,
-});
 export const CreateRemediationInstructionsFilter = () => ({
   component: import(/* webpackChunkName: "Remediation" */ './remediation/create-remediation-instructions-filter.vue'),
   loading: LoaderOverlay,
