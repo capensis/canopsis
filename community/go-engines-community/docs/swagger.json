@@ -14424,7 +14424,6 @@
                 "author",
                 "enabled",
                 "name",
-                "priority",
                 "triggers"
             ],
             "properties": {
@@ -14520,7 +14519,6 @@
                 "author",
                 "enabled",
                 "name",
-                "priority",
                 "triggers"
             ],
             "properties": {
@@ -14570,7 +14568,6 @@
                 "author",
                 "enabled",
                 "name",
-                "priority",
                 "triggers"
             ],
             "properties": {
