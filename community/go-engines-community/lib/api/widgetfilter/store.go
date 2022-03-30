@@ -2,7 +2,8 @@ package widgetfilter
 
 import (
 	"context"
-
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -11,6 +12,7 @@ import (
 )
 
 type Store interface {
+	Find(ctx context.Context, r ListRequest, userId string) (*AggregationResult, error)
 	FindViewId(ctx context.Context, id string) (string, error)
 	FindViewIdByWidget(ctx context.Context, widgetId string) (string, error)
 	GetOneBy(ctx context.Context, id, userId string) (*Response, error)
@@ -106,6 +108,49 @@ func (s *store) FindViewIdByWidget(ctx context.Context, widgetId string) (string
 	}
 
 	return "", nil
+}
+
+func (s *store) Find(ctx context.Context, r ListRequest, userId string) (*AggregationResult, error) {
+	match := bson.M{"widget": r.Widget}
+
+	if r.Private == nil {
+		match["$or"] = []bson.M{
+			{"author": userId},
+			{"is_private": false},
+		}
+	} else if *r.Private {
+		match["author"] = userId
+		match["is_private"] = true
+	} else {
+		match["is_private"] = false
+	}
+
+	pipeline := []bson.M{
+		{"$match": match},
+	}
+
+	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
+		r.Query,
+		pipeline,
+		common.GetSortQuery("title", common.SortAsc),
+	))
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursor.Close(ctx)
+
+	res := AggregationResult{}
+
+	if cursor.Next(ctx) {
+		err := cursor.Decode(&res)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &res, nil
 }
 
 func (s *store) GetOneBy(ctx context.Context, id, userId string) (*Response, error) {
