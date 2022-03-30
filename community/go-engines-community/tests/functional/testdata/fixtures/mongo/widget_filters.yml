@@ -98,7 +98,7 @@ widget_filters:
   filter_to_get_1 (extend filter):
     _id: test-widgetfilter-to-get-1
     title: test-widgetfilter-to-get-1-title
-    widget: test-widget-to-filter-edit
+    widget: test-widget-to-filter-get
     is_private: false
     created: 1605263992
     author: nopermsuser
@@ -121,7 +121,7 @@ widget_filters:
   filter_to_get_2 (extend filter):
     _id: test-widgetfilter-to-get-2
     title: test-widgetfilter-to-get-2-title
-    widget: test-widget-to-filter-edit
+    widget: test-widget-to-filter-get
     is_private: true
     created: 1605263992
     corporate_alarm_pattern: test-pattern-to-filter-edit-1
@@ -153,14 +153,14 @@ widget_filters:
 
   filter_to_get_4 (extend filter):
     _id: test-widgetfilter-to-get-4
-    widget: test-widget-to-filter-edit
+    widget: test-widget-to-filter-get
     is_private: true
     author: nopermsuser
 
   filter_to_get_5 (extend filter):
     _id: test-widgetfilter-to-get-5
     title: test-widgetfilter-to-get-5-title
-    widget: test-widget-to-filter-edit
+    widget: test-widget-to-filter-get
     is_private: false
     created: 1605263992
     author: root

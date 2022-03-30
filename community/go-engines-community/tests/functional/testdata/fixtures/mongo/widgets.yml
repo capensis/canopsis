@@ -278,6 +278,10 @@ widgets:
     _id: test-widget-to-filter-edit
     tab: test-tab-to-filter-edit
 
+  widget_to_filter_get (extend widget):
+    _id: test-widget-to-filter-get
+    tab: test-tab-to-filter-edit
+
   widget_to_filter_check_access (extend widget):
     _id: test-widget-to-filter-check-access
     tab: test-tab-to-filter-check-access
