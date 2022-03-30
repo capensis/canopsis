@@ -3,7 +3,6 @@ package serviceweather
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log"
 	"sort"
 	"time"
@@ -30,7 +29,7 @@ type Store interface {
 
 func NewStore(
 	dbClient mongo.DbClient,
-	legacyURL fmt.Stringer,
+	legacyURL string,
 	alarmStore alarmapi.Store,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 ) Store {
@@ -264,11 +263,8 @@ func (s *store) fillLinks(ctx context.Context, apiKey string, result *EntityAggr
 		entities[entity.ID] = append(entities[entity.ID], i)
 	}
 	res, err := s.links.Fetch(ctx, apiKey, linksEntities)
-	if err != nil {
+	if err != nil || res == nil {
 		return err
-	}
-	if res == nil {
-		return nil
 	}
 
 	for _, rec := range res.Data {
