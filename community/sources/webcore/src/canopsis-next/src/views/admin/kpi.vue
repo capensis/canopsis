@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { KPI_TABS, MODALS } from '@/constants';
+import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS, KPI_TABS, MODALS } from '@/constants';
 
 import { entitiesFilterMixin } from '@/mixins/entities/filter';
 import { entitiesRatingSettingsMixin } from '@/mixins/entities/rating-settings';
@@ -65,6 +65,22 @@ export default {
     hasAccessToCreate() {
       return this.activeTab === KPI_TABS.filters && this.hasCreateAnyKpiFiltersAccess;
     },
+
+    alarmExcludedAttributes() {
+      return [
+        ALARM_PATTERN_FIELDS.lastUpdateDate,
+        ALARM_PATTERN_FIELDS.lastEventDate,
+        ALARM_PATTERN_FIELDS.resolvedAt,
+        ALARM_PATTERN_FIELDS.ackAt,
+        ALARM_PATTERN_FIELDS.creationDate,
+      ];
+    },
+
+    entityExcludedItems() {
+      return [
+        ENTITY_PATTERN_FIELDS.lastEventDate,
+      ];
+    },
   },
   methods: {
     refresh() {
@@ -86,15 +102,13 @@ export default {
 
     showCreateFilterModal() {
       this.$modals.show({
-        name: MODALS.patterns,
+        name: MODALS.createFilter,
         config: {
-          title: this.$t('modals.createFilter.create.title'),
-          name: true,
-          entity: true,
-          patterns: {
-            name: '',
-            entity_patterns: [],
-          },
+          withTitle: true,
+          withEntity: true,
+          withAlarm: true,
+          entityExcludedItems: this.entityExcludedItems,
+          alarmExcludedAttributes: this.alarmExcludedAttributes,
           action: async (data) => {
             await this.createFilter({ data });
 
