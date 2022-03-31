@@ -44,7 +44,7 @@ import { durationToForm } from '@/helpers/date/duration';
 /**
  * @typedef {Object} PatternRuleCondition
  * @property {string} type
- * @property {PatternRuleRangeCondition | Duration | string | number} value
+ * @property {PatternRuleRangeCondition | Duration | string | number | boolean | []} value
  */
 
 /**
@@ -189,13 +189,13 @@ export const patternRuleToForm = (rule = {}) => {
       form.operator = isDuration
         ? PATTERN_OPERATORS.longer
         : PATTERN_OPERATORS.higher;
-      form.value = rule.cond.value;
+      form.value = isDuration ? '' : rule.cond.value;
       break;
     case PATTERN_CONDITIONS.less:
       form.operator = isDuration
         ? PATTERN_OPERATORS.shorter
-        : PATTERN_OPERATORS.longer;
-      form.value = rule.cond.value;
+        : PATTERN_OPERATORS.lower;
+      form.value = isDuration ? '' : rule.cond.value;
       break;
 
     case PATTERN_CONDITIONS.exist:
