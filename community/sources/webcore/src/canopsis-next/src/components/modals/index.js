@@ -221,10 +221,6 @@ export const CreatePattern = () => ({
   component: import(/* webpackChunkName: "Pattern" */ './pattern/create-pattern.vue'),
   loading: LoaderOverlay,
 });
-export const CreatePatternRule = () => ({
-  component: import(/* webpackChunkName: "Pattern" */ './pattern/create-pattern-rule.vue'),
-  loading: LoaderOverlay,
-});
 export const CreateSnmpRule = () => ({
   component: import(/* webpackChunkName: "SnmpRule" */ './snmp-rule/create-snmp-rule.vue'),
   loading: LoaderOverlay,
