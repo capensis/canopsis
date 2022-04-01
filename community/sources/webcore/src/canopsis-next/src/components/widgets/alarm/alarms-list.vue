@@ -23,8 +23,8 @@
             :filters="widget.filters",
             :value="mainFilter",
             :condition="mainFilterCondition",
-            :has-access-to-user-filter="hasAccessToUserFilter",
-            :has-access-to-list-filters="hasAccessToListFilters",
+            :has-access-to-user-filter="false",
+            :has-access-to-list-filters="false",
             @update:condition="updateSelectedCondition",
             @update:filters="updateFilters"
           )

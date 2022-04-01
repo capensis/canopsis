@@ -40,8 +40,8 @@ export default {
           editable: this.editable,
           withAlarm: true,
           // TODO: uncomment
-          // withEntity: true,
-          // withPbehavior: true,
+          withEntity: true,
+          withPbehavior: true,
         },
       });
     },

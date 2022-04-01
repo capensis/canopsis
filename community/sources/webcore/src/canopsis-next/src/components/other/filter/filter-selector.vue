@@ -12,15 +12,14 @@
   )
     template(#prepend-item="")
       v-layout.pl-3
-        v-flex(v-show="!hideSelect", :xs6="long")
+        v-flex(v-show="!hideSelect")
           c-enabled-field(
             :value="isMultiple",
             :label="$t('filterSelector.fields.mixFilters')",
-            :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
             hide-details,
             @input="updateIsMultipleFlag"
           )
-        v-flex(v-show="!hideSelect && isMultiple", :xs6="long")
+        v-flex(v-show="!hideSelect && isMultiple")
           c-operator-field(:value="condition", @input="updateCondition")
       v-divider.mt-3
 
@@ -30,11 +29,6 @@
       v-list-tile-content
         v-list-tile-title
           span {{ item.title }}
-          v-icon.ml-2(
-            v-show="!hideSelectIcon",
-            :color="tile.props.value ? parent.color : ''",
-            small
-          ) {{ item.is_private ? 'person' : 'lock' }}
 </template>
 
 <script>
@@ -50,10 +44,6 @@ export default {
   components: { FiltersListForm },
   mixins: [formMixin],
   props: {
-    long: {
-      type: Boolean,
-      default: false,
-    },
     value: {
       type: [Object, Array],
       default: () => null,
@@ -75,10 +65,6 @@ export default {
       default: FILTER_DEFAULT_VALUES.condition,
     },
     hideSelect: { // TODO: remove it
-      type: Boolean,
-      default: false,
-    },
-    hideSelectIcon: {
       type: Boolean,
       default: false,
     },

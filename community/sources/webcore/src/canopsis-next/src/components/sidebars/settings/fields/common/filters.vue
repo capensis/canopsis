@@ -6,14 +6,9 @@
       filter-selector(
         v-field="value",
         :label="$t('filterSelector.defaultFilter')",
-        :entities-type="entitiesType",
         :filters="filters",
         :condition="condition",
         :hide-select="hideSelect",
-        :has-access-to-add-filter="addable",
-        :has-access-to-edit-filter="editable",
-        hide-select-icon,
-        long,
         @update:condition="$emit('update:condition', $event)",
         @update:filters="updateFilters"
       )
@@ -22,11 +17,11 @@
 <script>
 import { isUndefined } from 'lodash';
 
-import { FILTER_DEFAULT_VALUES, ENTITIES_TYPES } from '@/constants';
+import { FILTER_DEFAULT_VALUES } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 
-import FilterSelector from '@/components/forms/filters/filter-selector.vue';
+import FilterSelector from '@/components/other/filter/filter-selector.vue';
 
 export default {
   components: { FilterSelector },
@@ -55,11 +50,6 @@ export default {
     editable: {
       type: Boolean,
       default: false,
-    },
-    entitiesType: {
-      type: String,
-      default: ENTITIES_TYPES.alarm,
-      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity, ENTITIES_TYPES.pbehavior].includes(value),
     },
   },
   methods: {
