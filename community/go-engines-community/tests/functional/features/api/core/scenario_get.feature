@@ -20,6 +20,7 @@ Feature: Get a scenario
                   "_id": "test-scenario-to-get-1-action-1-alarm"
                 }
               ],
+              "comment": "",
               "entity_patterns": null,
               "comment": "",
               "drop_scenario_if_not_matched": false,
@@ -37,6 +38,7 @@ Feature: Get a scenario
                   "_id": "test-scenario-to-get-1-action-2-alarm"
                 }
               ],
+              "comment": "",
               "entity_patterns": null,
               "comment": "",
               "drop_scenario_if_not_matched": false,
@@ -91,6 +93,7 @@ Feature: Get a scenario
                   "_id": "test-scenario-to-get-2-action-1-alarm"
                 }
               ],
+              "comment": "",
               "entity_patterns": null,
               "comment": "",
               "drop_scenario_if_not_matched": false,
@@ -176,6 +179,7 @@ Feature: Get a scenario
               "_id": "test-scenario-to-get-1-action-1-alarm"
             }
           ],
+          "comment": "",
           "entity_patterns": null,
           "comment": "",
           "drop_scenario_if_not_matched": false,
@@ -193,6 +197,7 @@ Feature: Get a scenario
               "_id": "test-scenario-to-get-1-action-2-alarm"
             }
           ],
+          "comment": "",
           "entity_patterns": null,
           "comment": "",
           "drop_scenario_if_not_matched": false,

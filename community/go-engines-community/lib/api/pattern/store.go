@@ -2,7 +2,7 @@ package pattern
 
 import (
 	"context"
-
+	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -17,12 +17,14 @@ type Store interface {
 	GetById(ctx context.Context, id, userId string) (*Response, error)
 	Find(ctx context.Context, r ListRequest, userId string) (*AggregationResult, error)
 	Update(ctx context.Context, r EditRequest) (*Response, error)
-	Delete(ctx context.Context, id string) (bool, error)
+	Delete(ctx context.Context, pattern Response) (bool, error)
 }
 
 type store struct {
-	dbClient     mongo.DbClient
-	dbCollection mongo.DbCollection
+	client     mongo.DbClient
+	collection mongo.DbCollection
+
+	linkedCollections []string
 
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -32,11 +34,15 @@ func NewStore(
 	dbClient mongo.DbClient,
 ) Store {
 	return &store{
-		dbClient:     dbClient,
-		dbCollection: dbClient.Collection(mongo.PatternMongoCollection),
+		client:     dbClient,
+		collection: dbClient.Collection(mongo.PatternMongoCollection),
 
 		defaultSearchByFields: []string{"_id", "author", "title"},
 		defaultSortBy:         "created",
+
+		linkedCollections: []string{
+			mongo.WidgetFiltersMongoCollection,
+		},
 	}
 }
 
@@ -47,7 +53,7 @@ func (s *store) Insert(ctx context.Context, request EditRequest) (*Response, err
 	model.Created = now
 	model.Updated = now
 
-	_, err := s.dbCollection.InsertOne(ctx, model)
+	_, err := s.collection.InsertOne(ctx, model)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +70,7 @@ func (s *store) GetById(ctx context.Context, id, userId string) (*Response, erro
 		},
 	}}}
 	pipeline = append(pipeline, getAuthorPipeline()...)
-	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
+	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -85,16 +91,25 @@ func (s *store) GetById(ctx context.Context, id, userId string) (*Response, erro
 
 func (s *store) Find(ctx context.Context, request ListRequest, userId string) (*AggregationResult, error) {
 	pipeline := make([]bson.M, 0)
+	match := make([]bson.M, 0)
 
 	if request.Corporate == nil {
-		pipeline = append(pipeline, bson.M{"$match": bson.M{"$or": []bson.M{
+		match = append(match, bson.M{"$or": []bson.M{
 			{"author": userId},
 			{"is_corporate": true},
-		}}})
+		}})
 	} else if *request.Corporate {
-		pipeline = append(pipeline, bson.M{"$match": bson.M{"is_corporate": true}})
+		match = append(match, bson.M{"is_corporate": true})
 	} else {
-		pipeline = append(pipeline, bson.M{"$match": bson.M{"author": userId, "is_corporate": false}})
+		match = append(match, bson.M{"author": userId, "is_corporate": false})
+	}
+
+	if request.Type != "" {
+		match = append(match, bson.M{"type": request.Type})
+	}
+
+	if len(match) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"$and": match}})
 	}
 
 	filter := common.GetSearchQuery(request.Search, s.defaultSearchByFields)
@@ -107,7 +122,7 @@ func (s *store) Find(ctx context.Context, request ListRequest, userId string) (*
 		sortBy = request.SortBy
 	}
 
-	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
+	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		request.Query,
 		pipeline,
 		common.GetSortQuery(sortBy, request.Sort),
@@ -136,7 +151,7 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 	model.ID = request.ID
 	model.Updated = now
 
-	res, err := s.dbCollection.UpdateOne(
+	res, err := s.collection.UpdateOne(
 		ctx,
 		bson.M{"_id": request.ID},
 		bson.M{"$set": model},
@@ -145,16 +160,105 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 		return nil, err
 	}
 
-	return s.GetById(ctx, model.ID, model.Author)
+	pattern, err := s.GetById(ctx, model.ID, model.Author)
+	if err != nil || pattern == nil {
+		return nil, err
+	}
+
+	err = s.updateLinkedModels(ctx, *pattern)
+	if err != nil {
+		return nil, err
+	}
+
+	return pattern, nil
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+func (s *store) Delete(ctx context.Context, pattern Response) (bool, error) {
+	deleted, err := s.collection.DeleteOne(ctx, bson.M{"_id": pattern.ID})
+	if err != nil || deleted == 0 {
+		return false, err
+	}
+
+	err = s.cleanLinkedModels(ctx, pattern)
 	if err != nil {
 		return false, err
 	}
 
-	return deleted > 0, nil
+	return true, nil
+}
+
+func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error {
+	if !pattern.IsCorporate {
+		return nil
+	}
+
+	filter := bson.M{}
+	set := bson.M{}
+	switch pattern.Type {
+	case savedpattern.TypeAlarm:
+		filter = bson.M{"corporate_alarm_pattern": pattern.ID}
+		set = bson.M{
+			"alarm_pattern":                 pattern.AlarmPattern,
+			"corporate_alarm_pattern_title": pattern.Title,
+		}
+	case savedpattern.TypeEntity:
+		filter = bson.M{"corporate_entity_pattern": pattern.ID}
+		set = bson.M{
+			"entity_pattern":                 pattern.AlarmPattern,
+			"corporate_entity_pattern_title": pattern.Title,
+		}
+	case savedpattern.TypePbehavior:
+		filter = bson.M{"corporate_pbehavior_pattern": pattern.ID}
+		set = bson.M{
+			"pbehavior_pattern":               pattern.AlarmPattern,
+			"pbehavior_pattern_pattern_title": pattern.Title,
+		}
+	default:
+		return fmt.Errorf("unknown pattern type id=%s: %q", pattern.ID, pattern.Type)
+	}
+
+	for _, collection := range s.linkedCollections {
+		_, err := s.client.Collection(collection).UpdateMany(ctx, filter, bson.M{
+			"$set": set,
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *store) cleanLinkedModels(ctx context.Context, pattern Response) error {
+	if !pattern.IsCorporate {
+		return nil
+	}
+
+	f := ""
+	switch pattern.Type {
+	case savedpattern.TypeAlarm:
+		f = "corporate_alarm_pattern"
+	case savedpattern.TypeEntity:
+		f = "corporate_entity_pattern"
+	case savedpattern.TypePbehavior:
+		f = "corporate_pbehavior_pattern"
+	default:
+		return fmt.Errorf("unknown pattern type for deleted pattern id=%s: %q", pattern.ID, pattern.Type)
+	}
+
+	for _, collection := range s.linkedCollections {
+		_, err := s.client.Collection(collection).UpdateMany(ctx, bson.M{f: pattern.ID}, bson.M{
+			"$unset": bson.M{
+				f:            "",
+				f + "_title": "",
+			},
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func getAuthorPipeline() []bson.M {

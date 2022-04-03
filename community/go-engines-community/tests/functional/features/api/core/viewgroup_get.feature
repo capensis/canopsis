@@ -310,6 +310,46 @@ Feature: Get a view group
                           }
                         ]
                       },
+                      "filters": [
+                        {
+                          "_id": "test-widgetfilter-to-viewgroup-get-1",
+                          "title": "test-widgetfilter-to-viewgroup-get-1-title",
+                          "is_private": false,
+                          "author": "nopermsuser",
+                          "created": 1611229670,
+                          "updated": 1611229670,
+                          "alarm_pattern": [
+                            [
+                              {
+                                "field": "v.component",
+                                "cond": {
+                                  "type": "eq",
+                                  "value": "test-widgetfilter-to-viewgroup-get-1-pattern"
+                                }
+                              }
+                            ]
+                          ]
+                        },
+                        {
+                          "_id": "test-widgetfilter-to-viewgroup-get-2",
+                          "title": "test-widgetfilter-to-viewgroup-get-2-title",
+                          "is_private": false,
+                          "author": "root",
+                          "created": 1611229670,
+                          "updated": 1611229670,
+                          "alarm_pattern": [
+                            [
+                              {
+                                "field": "v.component",
+                                "cond": {
+                                  "type": "eq",
+                                  "value": "test-widgetfilter-to-viewgroup-get-2-pattern"
+                                }
+                              }
+                            ]
+                          ]
+                        }
+                      ],
                       "title": "test-widget-to-viewgroup-get-1-title",
                       "type": "test-widget-to-viewgroup-get-1-type"
                     },
@@ -321,6 +361,7 @@ Feature: Get a view group
                       "grid_parameters": {
                         "desktop": {"x": 0, "y": 1}
                       },
+                      "filters": [],
                       "parameters": {},
                       "title": "test-widget-to-viewgroup-get-2-title",
                       "type": "test-widget-to-viewgroup-get-2-type"

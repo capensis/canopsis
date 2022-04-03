@@ -48,10 +48,11 @@ const (
 	AssociativeTableCollection        = "default_associativetable"
 	NotificationMongoCollection       = "notification"
 
-	ViewMongoCollection      = "views"
-	ViewTabMongoCollection   = "viewtabs"
-	WidgetMongoCollection    = "widgets"
-	ViewGroupMongoCollection = "viewgroups"
+	ViewMongoCollection          = "views"
+	ViewTabMongoCollection       = "viewtabs"
+	WidgetMongoCollection        = "widgets"
+	WidgetFiltersMongoCollection = "widget_filters"
+	ViewGroupMongoCollection     = "viewgroups"
 
 	// Following collections are used for event statistics.
 	MessageRateStatsMinuteCollectionName = "message_rate_statistic_minute"

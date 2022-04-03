@@ -2,6 +2,7 @@ package pattern_test
 
 import (
 	"errors"
+	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/kylelemons/godebug/pretty"
@@ -41,17 +42,258 @@ func TestEntity_ToMongoQuery(t *testing.T) {
 	}
 }
 
+func BenchmarkEntity_Match_Equal(b *testing.B) {
+	cond := pattern.FieldCondition{
+		Field:     "name",
+		Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name 2"),
+	}
+	entity := types.Entity{
+		Name: "test name",
+	}
+
+	benchmarkEntityMatch(b, cond, entity)
+}
+
+func BenchmarkEntity_Match_Regexp(b *testing.B) {
+	regexpCondition, err := pattern.NewRegexpCondition(pattern.ConditionRegexp, "^test .+name$")
+	if err != nil {
+		b.Fatalf("unexpected error %v", err)
+	}
+	cond := pattern.FieldCondition{
+		Field:     "name",
+		Condition: regexpCondition,
+	}
+	entity := types.Entity{
+		Name: "test name",
+	}
+
+	benchmarkEntityMatch(b, cond, entity)
+}
+
+func BenchmarkEntity_Match_HasOneOf(b *testing.B) {
+	const valueSize = 100
+	const dependsSize = 1000
+	condValue := make([]string, valueSize)
+	for i := 0; i < valueSize; i++ {
+		condValue[i] = fmt.Sprintf("test-val-%d", i)
+	}
+	depends := make([]string, dependsSize)
+	for i := 0; i < valueSize; i++ {
+		depends[i] = fmt.Sprintf("depends-%d", i)
+	}
+
+	cond := pattern.FieldCondition{
+		Field:     "depends",
+		Condition: pattern.NewStringArrayCondition(pattern.ConditionHasOneOf, condValue),
+	}
+	entity := types.Entity{
+		Depends: depends,
+	}
+
+	benchmarkEntityMatch(b, cond, entity)
+}
+
+func BenchmarkEntity_Match_Infos_Equal(b *testing.B) {
+	cond := pattern.FieldCondition{
+		Field:     "infos.test",
+		FieldType: pattern.FieldTypeString,
+		Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test 2"),
+	}
+	entity := types.Entity{
+		Infos: map[string]types.Info{
+			"test": {
+				Name:  "test",
+				Value: "test",
+			},
+		},
+	}
+
+	benchmarkEntityMatch(b, cond, entity)
+}
+
+func BenchmarkEntity_Match_Infos_Regexp(b *testing.B) {
+	regexpCondition, err := pattern.NewRegexpCondition(pattern.ConditionRegexp, "^test .+name$")
+	if err != nil {
+		b.Fatalf("unexpected error %v", err)
+	}
+	cond := pattern.FieldCondition{
+		Field:     "infos.test",
+		FieldType: pattern.FieldTypeString,
+		Condition: regexpCondition,
+	}
+	entity := types.Entity{
+		Infos: map[string]types.Info{
+			"test": {
+				Name:  "test",
+				Value: "test",
+			},
+		},
+	}
+
+	benchmarkEntityMatch(b, cond, entity)
+}
+
+func BenchmarkEntity_UnmarshalBsonAndMatch_Equal(b *testing.B) {
+	cond := pattern.FieldCondition{
+		Field: "name",
+		Condition: pattern.Condition{
+			Type:  pattern.ConditionEqual,
+			Value: "test name 2",
+		},
+	}
+	entity := types.Entity{
+		Name: "test name",
+	}
+
+	benchmarkEntityUnmarshalBsonAndMatch(b, cond, entity)
+}
+
+func BenchmarkEntity_UnmarshalBsonAndMatch_Regexp(b *testing.B) {
+	cond := pattern.FieldCondition{
+		Field: "name",
+		Condition: pattern.Condition{
+			Type:  pattern.ConditionRegexp,
+			Value: "^test .+name$",
+		},
+	}
+	entity := types.Entity{
+		Name: "test name",
+	}
+
+	benchmarkEntityUnmarshalBsonAndMatch(b, cond, entity)
+}
+
+func BenchmarkEntity_UnmarshalBsonAndMatch_HasOneOf(b *testing.B) {
+	const valueSize = 100
+	const dependsSize = 1000
+	condValue := make([]string, valueSize)
+	for i := 0; i < valueSize; i++ {
+		condValue[i] = fmt.Sprintf("test-val-%d", i)
+	}
+	depends := make([]string, dependsSize)
+	for i := 0; i < valueSize; i++ {
+		depends[i] = fmt.Sprintf("depends-%d", i)
+	}
+
+	cond := pattern.FieldCondition{
+		Field: "depends",
+		Condition: pattern.Condition{
+			Type:  pattern.ConditionHasOneOf,
+			Value: condValue,
+		},
+	}
+	entity := types.Entity{
+		Depends: depends,
+	}
+
+	benchmarkEntityUnmarshalBsonAndMatch(b, cond, entity)
+}
+
+func BenchmarkEntity_UnmarshalBsonAndMatch_Infos_Equal(b *testing.B) {
+	cond := pattern.FieldCondition{
+		Field:     "infos.test",
+		FieldType: pattern.FieldTypeString,
+		Condition: pattern.Condition{
+			Type:  pattern.ConditionEqual,
+			Value: "test 2",
+		},
+	}
+	entity := types.Entity{
+		Infos: map[string]types.Info{
+			"test": {
+				Name:  "test",
+				Value: "test",
+			},
+		},
+	}
+
+	benchmarkEntityUnmarshalBsonAndMatch(b, cond, entity)
+}
+
+func BenchmarkEntity_UnmarshalBsonAndMatch_Infos_Regexp(b *testing.B) {
+	cond := pattern.FieldCondition{
+		Field:     "infos.test",
+		FieldType: pattern.FieldTypeString,
+		Condition: pattern.Condition{
+			Type:  pattern.ConditionRegexp,
+			Value: "^test .+name$",
+		},
+	}
+	entity := types.Entity{
+		Infos: map[string]types.Info{
+			"test": {
+				Name:  "test",
+				Value: "test",
+			},
+		},
+	}
+
+	benchmarkEntityUnmarshalBsonAndMatch(b, cond, entity)
+}
+
+func benchmarkEntityMatch(b *testing.B, fieldCond pattern.FieldCondition, entity types.Entity) {
+	const size = 100
+	p := make(pattern.Entity, size)
+	for i := 0; i < size; i++ {
+		p[i] = []pattern.FieldCondition{fieldCond}
+	}
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_, err := p.Match(entity)
+		if err != nil {
+			b.Fatalf("unexpected error %v", err)
+		}
+	}
+}
+
+func benchmarkEntityUnmarshalBsonAndMatch(b *testing.B, fieldCond pattern.FieldCondition, entity types.Entity) {
+	const size = 100
+	p := make(pattern.Entity, size)
+	for i := 0; i < size; i++ {
+		p[i] = []pattern.FieldCondition{fieldCond}
+	}
+
+	type wrapper struct {
+		Pattern pattern.Entity `bson:"pattern"`
+	}
+	bytes, err := bson.Marshal(wrapper{Pattern: p})
+	if err != nil {
+		b.Fatalf("unexpected error %v", err)
+	}
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		var w wrapper
+		err := bson.Unmarshal(bytes, &w)
+		if err != nil {
+			b.Fatalf("unexpected error %v", err)
+		}
+
+		_, err = w.Pattern.Match(entity)
+		if err != nil {
+			b.Fatalf("unexpected error %v", err)
+		}
+	}
+}
+
 func getEntityMatchDataSets() map[string]entityDataSet {
 	return map[string]entityDataSet{
+		"given empty pattern should match": {
+			pattern: pattern.Entity{},
+			entity: types.Entity{
+				Name: "test name",
+			},
+			matchResult: true,
+		},
 		"given string field condition should match": {
 			pattern: pattern.Entity{
 				{
 					{
-						Field: "name",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test name",
-						},
+						Field:     "name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 				},
 			},
@@ -64,11 +306,8 @@ func getEntityMatchDataSets() map[string]entityDataSet {
 			pattern: pattern.Entity{
 				{
 					{
-						Field: "name",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test name",
-						},
+						Field:     "name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 				},
 			},
@@ -81,11 +320,8 @@ func getEntityMatchDataSets() map[string]entityDataSet {
 			pattern: pattern.Entity{
 				{
 					{
-						Field: "impact_level",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test name",
-						},
+						Field:     "impact_level",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 				},
 			},
@@ -96,11 +332,8 @@ func getEntityMatchDataSets() map[string]entityDataSet {
 			pattern: pattern.Entity{
 				{
 					{
-						Field: "created",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test name",
-						},
+						Field:     "created",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 				},
 			},
@@ -113,10 +346,7 @@ func getEntityMatchDataSets() map[string]entityDataSet {
 					{
 						Field:     "infos.info_name",
 						FieldType: pattern.FieldTypeString,
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test name",
-						},
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 				},
 			},
@@ -137,10 +367,7 @@ func getEntityMatchDataSets() map[string]entityDataSet {
 					{
 						Field:     "infos.info_name",
 						FieldType: pattern.FieldTypeString,
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test name",
-						},
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 				},
 			},
@@ -161,10 +388,7 @@ func getEntityMatchDataSets() map[string]entityDataSet {
 					{
 						Field:     "infos.info_name",
 						FieldType: pattern.FieldTypeString,
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test name",
-						},
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 				},
 			},
@@ -185,10 +409,7 @@ func getEntityMatchDataSets() map[string]entityDataSet {
 					{
 						Field:     "infos.info_name",
 						FieldType: pattern.FieldTypeString,
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test name",
-						},
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 				},
 			},
@@ -199,11 +420,8 @@ func getEntityMatchDataSets() map[string]entityDataSet {
 			pattern: pattern.Entity{
 				{
 					{
-						Field: "infos.info_name",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionExist,
-							Value: true,
-						},
+						Field:     "infos.info_name",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
 					},
 				},
 			},
@@ -222,11 +440,8 @@ func getEntityMatchDataSets() map[string]entityDataSet {
 			pattern: pattern.Entity{
 				{
 					{
-						Field: "infos.info_name",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionExist,
-							Value: true,
-						},
+						Field:     "infos.info_name",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
 					},
 				},
 			},
@@ -245,11 +460,8 @@ func getEntityMatchDataSets() map[string]entityDataSet {
 			pattern: pattern.Entity{
 				{
 					{
-						Field: "infos.info_name",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionExist,
-							Value: false,
-						},
+						Field:     "infos.info_name",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
 					},
 				},
 			},
@@ -268,11 +480,8 @@ func getEntityMatchDataSets() map[string]entityDataSet {
 			pattern: pattern.Entity{
 				{
 					{
-						Field: "infos.info_name",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionExist,
-							Value: false,
-						},
+						Field:     "infos.info_name",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
 					},
 				},
 			},
@@ -296,11 +505,8 @@ func getEntityMongoQueryDataSets() map[string]entityDataSet {
 			pattern: pattern.Entity{
 				{
 					{
-						Field: "name",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test name",
-						},
+						Field:     "name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 				},
 			},
@@ -316,18 +522,12 @@ func getEntityMongoQueryDataSets() map[string]entityDataSet {
 			pattern: pattern.Entity{
 				{
 					{
-						Field: "name",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test name",
-						},
+						Field:     "name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 					{
-						Field: "category",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test category",
-						},
+						Field:     "category",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test category"),
 					},
 				},
 			},
@@ -344,20 +544,14 @@ func getEntityMongoQueryDataSets() map[string]entityDataSet {
 			pattern: pattern.Entity{
 				{
 					{
-						Field: "name",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test name",
-						},
+						Field:     "name",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 				},
 				{
 					{
-						Field: "category",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: "test category",
-						},
+						Field:     "category",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test category"),
 					},
 				},
 			},
@@ -376,11 +570,8 @@ func getEntityMongoQueryDataSets() map[string]entityDataSet {
 			pattern: pattern.Entity{
 				{
 					{
-						Field: "name",
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionIsEmpty,
-							Value: "test name",
-						},
+						Field:     "name",
+						Condition: pattern.NewStringCondition(pattern.ConditionIsEmpty, "test name"),
 					},
 				},
 			},
@@ -392,10 +583,7 @@ func getEntityMongoQueryDataSets() map[string]entityDataSet {
 					{
 						Field:     "infos.info_name",
 						FieldType: pattern.FieldTypeInt,
-						Condition: pattern.Condition{
-							Type:  pattern.ConditionEqual,
-							Value: 3,
-						},
+						Condition: pattern.NewIntCondition(pattern.ConditionEqual, 3),
 					},
 				},
 			},

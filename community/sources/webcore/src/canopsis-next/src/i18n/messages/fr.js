@@ -213,6 +213,7 @@ export default {
     criteria: 'Critères',
     ratingSettings: 'Paramètres d\'évaluation',
     pbehavior: 'Comportement périodique | Comportements périodiques',
+    template: 'Template',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -625,7 +626,6 @@ export default {
       title: 'Info popup',
       fields: {
         column: 'Colonne',
-        template: 'Template',
       },
     },
     rowGridSize: {
@@ -701,6 +701,7 @@ export default {
     templateEditor: 'Modèle',
     columns: {
       isHtml: 'Est-ce du HTML ?',
+      withTemplate: 'Modèle personnalisé',
       isState: 'Affiché comme une criticité ?',
     },
     liveReporting: {
@@ -983,7 +984,6 @@ export default {
       title: 'Info popup',
       add: 'Ajouter',
       column: 'Colonne',
-      template: 'Template',
       addInfoPopup: {
         title: 'Ajouter une popup d\'info',
       },
@@ -1718,6 +1718,9 @@ export default {
     statsRequestProblem: 'Erreur dans la récupération des statistiques',
     statsWrongEditionError: "Les widgets de statistiques ne sont pas disponibles dans l'édition 'core' de Canopsis",
     socketConnectionProblem: 'Problème de connexion aux websockets',
+  },
+  warnings: {
+    authTokenExpired: 'Le jeton d\'authentification a expiré',
   },
   calendar: {
     today: 'Aujourd\'hui',

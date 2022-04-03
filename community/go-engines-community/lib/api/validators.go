@@ -31,6 +31,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	libdatastorage "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -82,6 +83,9 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 
 	// Request validators
 	v.RegisterStructValidation(common.ValidateFilteredQuery, pagination.FilteredQuery{})
+	v.RegisterStructValidation(common.ValidateAlarmPatternFieldsRequest, common.AlarmPatternFieldsRequest{})
+	v.RegisterStructValidation(common.ValidateEntityPatternFieldsRequest, common.EntityPatternFieldsRequest{})
+	v.RegisterStructValidation(common.ValidatePbehaviorPatternFieldsRequest, common.PbehaviorPatternFieldsRequest{})
 
 	pbhValidator := pbehavior.NewValidator(client)
 	pbhUniqueIDValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorMongoCollection, "ID")
@@ -209,6 +213,8 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	v.RegisterStructValidationCtx(viewGroupUniqueTitleValidator.Validate, viewgroup.EditRequest{})
 
 	v.RegisterStructValidation(widget.ValidateEditRequest, widget.EditRequest{})
+
+	v.RegisterStructValidation(widgetfilter.ValidateEditRequest, widgetfilter.EditRequest{})
 
 	playlistUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.PlaylistMongoCollection, "Name")
 	v.RegisterStructValidationCtx(playlistUniqueNameValidator.Validate, playlist.EditRequest{})

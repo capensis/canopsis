@@ -175,7 +175,7 @@ default_rights:
     _id: noperms
 
   role_to_instruction_approve_1 (extend role):
-    _id: approver
+    _id: role-to-instruction-approve-1
     rights:
       "@permission_api_execution":
         checksum: 1
@@ -188,7 +188,7 @@ default_rights:
         crecord_type: right
 
   role_to_instruction_approve_2 (extend role):
-    _id: approver2
+    _id: role-to-instruction-approve-2
     rights:
       "@permission_api_instruction":
         checksum: 15
@@ -269,11 +269,11 @@ default_rights:
     role: "@role_noperms"
 
   user_to_instruction_approve_1 (extend user):
-    _id: approveruser
+    _id: user-to-instruction-approve-1
     role: "@role_to_instruction_approve_1"
 
   user_to_instruction_approve_2 (extend user):
-    _id: approveruser2
+    _id: user-to-instruction-approve-2
     role: "@role_to_instruction_approve_2"
 
   user_to_test_paused_executions (extend user):
@@ -655,6 +655,9 @@ default_rights:
   permission_view_to_widget_copy_2 (extend permission_rw):
     _id: test-view-to-widget-copy-2
 
+  permission_view_to_filter_edit (extend permission_rw):
+    _id: test-view-to-filter-edit
+
   role_admin (extend role):
     _id: admin
     rights:
@@ -869,6 +872,9 @@ default_rights:
         checksum: 6
         crecord_type: right
       "@permission_view_to_widget_edit":
+        checksum: 6
+        crecord_type: right
+      "@permission_view_to_filter_edit":
         checksum: 6
         crecord_type: right
 

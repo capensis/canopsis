@@ -9,10 +9,16 @@ Feature: abort a instruction execution
     {
       "type": 0,
       "name": "test-remediation-instruction-execution-abort-1-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-remediation-instruction-execution-abort-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-remediation-instruction-execution-abort-1"
+            }
+          }
+        ]
       ],
       "description": "test-remediation-instruction-execution-abort-1-description",
       "enabled": true,
@@ -113,10 +119,16 @@ Feature: abort a instruction execution
     {
       "type": 0,
       "name": "test-remediation-instruction-execution-abort-3-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-remediation-instruction-execution-abort-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-remediation-instruction-execution-abort-3"
+            }
+          }
+        ]
       ],
       "description": "test-remediation-instruction-execution-abort-3-description",
       "enabled": true,
@@ -255,10 +267,16 @@ Feature: abort a instruction execution
     {
       "type": 0,
       "name": "test-remediation-instruction-execution-abort-4-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-remediation-instruction-execution-abort-4"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-remediation-instruction-execution-abort-4"
+            }
+          }
+        ]
       ],
       "description": "test-remediation-instruction-execution-abort-4-description",
       "enabled": true,
@@ -403,10 +421,16 @@ Feature: abort a instruction execution
     {
       "type": 0,
       "name": "test-remediation-instruction-execution-abort-5-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-remediation-instruction-execution-abort-5"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-remediation-instruction-execution-abort-5"
+            }
+          }
+        ]
       ],
       "description": "test-remediation-instruction-execution-abort-5-description",
       "enabled": true,

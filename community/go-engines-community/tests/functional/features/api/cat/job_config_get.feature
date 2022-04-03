@@ -18,8 +18,8 @@ Feature: get a job's config
           "name": "test-job-config-name-to-get",
           "type": "rundeck",
           "author": {
-            "_id": "test-user-author-1-id",
-            "name": "test-user-author-1-username"
+            "_id": "root",
+            "name": "root"
           }
         }
       ],
@@ -78,8 +78,8 @@ Feature: get a job's config
       "name": "test-job-config-name-to-get",
       "type": "rundeck",
       "author": {
-        "_id": "test-user-author-1-id",
-        "name": "test-user-author-1-username"
+        "_id": "root",
+        "name": "root"
       }
     }
     """

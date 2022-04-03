@@ -12,6 +12,10 @@ import (
 type Entity [][]FieldCondition
 
 func (p Entity) Match(entity types.Entity) (bool, error) {
+	if len(p) == 0 {
+		return true, nil
+	}
+
 	for _, group := range p {
 		matched := false
 
@@ -26,19 +30,19 @@ func (p Entity) Match(entity types.Entity) (bool, error) {
 
 				switch v.FieldType {
 				case FieldTypeString:
-					if s, ok := infoVal.(string); ok {
+					if s, err := getStringValue(infoVal); err == nil {
 						matched, _, err = cond.MatchString(s)
 					}
 				case FieldTypeInt:
-					if i, ok := infoVal.(int); ok {
+					if i, err := getIntValue(infoVal); err == nil {
 						matched, err = cond.MatchInt(i)
 					}
 				case FieldTypeBool:
-					if b, ok := infoVal.(bool); ok {
+					if b, err := getBoolValue(infoVal); err == nil {
 						matched, err = cond.MatchBool(b)
 					}
 				case FieldTypeStringArray:
-					if a, ok := infoVal.([]string); ok {
+					if a, err := getStringArrayValue(infoVal); err == nil {
 						matched, err = cond.MatchStringArray(a)
 					}
 				default:
@@ -204,10 +208,10 @@ func getEntityStringField(entity types.Entity, f string) (string, bool) {
 	}
 }
 
-func getEntityIntField(entity types.Entity, f string) (int, bool) {
+func getEntityIntField(entity types.Entity, f string) (int64, bool) {
 	switch f {
 	case "impact_level":
-		return int(entity.ImpactLevel), true
+		return entity.ImpactLevel, true
 	default:
 		return 0, false
 	}
