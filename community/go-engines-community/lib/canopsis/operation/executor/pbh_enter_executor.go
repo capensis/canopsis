@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -12,13 +11,11 @@ import (
 
 type pbhEnterExecutor struct {
 	configProvider config.AlarmConfigProvider
-
-	metricsSender metrics.Sender
 }
 
 // NewAckExecutor creates new executor.
-func NewPbhEnterExecutor(configProvider config.AlarmConfigProvider, metricsSender metrics.Sender) operationlib.Executor {
-	return &pbhEnterExecutor{configProvider: configProvider, metricsSender: metricsSender}
+func NewPbhEnterExecutor(configProvider config.AlarmConfigProvider) operationlib.Executor {
+	return &pbhEnterExecutor{configProvider: configProvider}
 }
 
 func (e *pbhEnterExecutor) Exec(
@@ -57,8 +54,6 @@ func (e *pbhEnterExecutor) Exec(
 	}
 
 	entity.PbehaviorInfo = alarm.Value.PbehaviorInfo
-
-	go e.metricsSender.SendPbhEnter(context.Background(), alarm, *entity)
 
 	return types.AlarmChangeTypePbhEnter, nil
 }

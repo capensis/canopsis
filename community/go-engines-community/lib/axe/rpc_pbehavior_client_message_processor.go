@@ -5,13 +5,17 @@ import (
 	"errors"
 	"fmt"
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
 	"strings"
@@ -19,15 +23,18 @@ import (
 )
 
 type rpcPBehaviorClientMessageProcessor struct {
-	FeaturePrintEventOnError bool
+	DbClient                 mongo.DbClient
+	MetricsSender            metrics.Sender
 	PublishCh                libamqp.Channel
-	ServiceRpc               engine.RPCClient
 	Executor                 operation.Executor
 	EntityAdapter            libentity.Adapter
+	AlarmAdapter             alarm.Adapter
 	PbehaviorAdapter         pbehavior.Adapter
+	StateCountersService     statecounters.StateCountersService
 	Decoder                  encoding.Decoder
 	Encoder                  encoding.Encoder
 	Logger                   zerolog.Logger
+	FeaturePrintEventOnError bool
 }
 
 func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg engine.RPCMessage) error {
@@ -49,32 +56,70 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 	}
 
 	if event.PbhEvent.EventType != "" {
-		alarmChange := types.AlarmChange{
-			Type:                            types.AlarmChangeTypeNone,
-			PreviousState:                   event.Alarm.Value.State.Value,
-			PreviousStateChange:             event.Alarm.Value.State.Timestamp,
-			PreviousStatus:                  event.Alarm.Value.Status.Value,
-			PreviousStatusChange:            event.Alarm.Value.Status.Timestamp,
-			PreviousPbehaviorTypeID:         event.Alarm.Value.PbehaviorInfo.TypeID,
-			PreviousPbehaviorCannonicalType: event.Alarm.Value.PbehaviorInfo.CanonicalType,
-		}
-		alarmChangeType, err := p.Executor.Exec(
-			ctx,
-			types.Operation{
-				Type: event.PbhEvent.EventType,
-				Parameters: types.OperationPbhParameters{
-					PbehaviorInfo: event.PbhEvent.PbehaviorInfo,
-					Author:        event.PbhEvent.Author,
-					Output:        event.PbhEvent.Output,
+		var updatedServiceStates map[string]int
+		firstTimeTran := true
+		var alarmChange types.AlarmChange
+
+		err = p.DbClient.WithTransaction(ctx, func(tCtx context.Context) error {
+			if !firstTimeTran {
+				ent, exist := p.EntityAdapter.Get(tCtx, event.Entity.ID)
+				if !exist {
+					return fmt.Errorf("entity with id = %s is not found after transaction rollback", event.Entity.ID)
+				}
+
+				event.Entity = &ent
+
+				al, err := p.AlarmAdapter.GetOpenedAlarmByAlarmId(tCtx, event.Alarm.ID)
+				if _, ok := err.(errt.NotFound); ok {
+					return fmt.Errorf("alarm with id = %s is not found after transaction rollback", event.Alarm.ID)
+				} else if err != nil {
+					return err
+				}
+
+				event.Alarm = &al
+			}
+
+			firstTimeTran = false
+
+			alarmChange = types.AlarmChange{
+				Type:                            types.AlarmChangeTypeNone,
+				PreviousState:                   event.Alarm.Value.State.Value,
+				PreviousStateChange:             event.Alarm.Value.State.Timestamp,
+				PreviousStatus:                  event.Alarm.Value.Status.Value,
+				PreviousStatusChange:            event.Alarm.Value.Status.Timestamp,
+				PreviousPbehaviorTypeID:         event.Alarm.Value.PbehaviorInfo.TypeID,
+				PreviousPbehaviorCannonicalType: event.Alarm.Value.PbehaviorInfo.CanonicalType,
+			}
+
+			alarmChange.Type, err = p.Executor.Exec(
+				ctx,
+				types.Operation{
+					Type: event.PbhEvent.EventType,
+					Parameters: types.OperationPbhParameters{
+						PbehaviorInfo: event.PbhEvent.PbehaviorInfo,
+						Author:        event.PbhEvent.Author,
+						Output:        event.PbhEvent.Output,
+					},
 				},
-			},
-			event.Alarm,
-			event.Entity,
-			event.PbhEvent.Timestamp,
-			"",
-			"",
-			types.InitiatorSystem,
-		)
+				event.Alarm,
+				event.Entity,
+				event.PbhEvent.Timestamp,
+				"",
+				"",
+				types.InitiatorSystem,
+			)
+
+			if err != nil {
+				return err
+			}
+
+			p.updateEntity(ctx, event.PbhEvent.Entity, *event.Alarm, alarmChange.Type)
+			p.updatePbhLastAlarmDate(ctx, alarmChange.Type, event.Alarm.Value.PbehaviorInfo)
+
+			updatedServiceStates, err = p.StateCountersService.UpdateServiceCounters(tCtx, *event.Entity, event.Alarm, alarmChange)
+			return err
+		})
+
 		if err != nil {
 			if engine.IsConnectionError(err) {
 				return err
@@ -84,30 +129,28 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 			return p.publishResult(routingKey, correlationId, p.getErrRpcEvent(fmt.Errorf("cannot update alarm: %v", err)))
 		}
 
-		p.updateEntity(ctx, event.PbhEvent.Entity, *event.Alarm, alarmChangeType)
-		go p.updatePbhLastAlarmDate(ctx, alarmChangeType, event.Alarm.Value.PbehaviorInfo)
-
-		alarmChange.Type = alarmChangeType
-		body, err := p.Encoder.Encode(types.RPCServiceEvent{
-			Alarm:       event.Alarm,
-			Entity:      event.PbhEvent.Entity,
-			AlarmChange: &alarmChange,
-		})
-		if err != nil {
-			p.logError(err, "RPC PBehavior Client: failed to encode rpc call to engine-service", msg.Body)
-		} else {
-			err = p.ServiceRpc.Call(engine.RPCMessage{
-				CorrelationID: utils.NewID(),
-				Body:          body,
-			})
-			if err != nil {
-				if engine.IsConnectionError(err) {
-					return err
+		// services alarms
+		go func() {
+			for servID, servState := range updatedServiceStates {
+				err := p.StateCountersService.UpdateServiceState(servID, servState)
+				if err != nil {
+					p.Logger.Err(err).Msg("failed to update service state")
 				}
-
-				p.logError(err, "RPC PBehavior Client: failed to send rpc call to engine-service", msg.Body)
 			}
-		}
+		}()
+
+		// send metrics
+		go func() {
+			p.MetricsSender.SendEventMetrics(
+				context.Background(),
+				*event.Alarm,
+				*event.Entity,
+				alarmChange,
+				event.PbhEvent.Timestamp.Time,
+				types.InitiatorSystem,
+				"",
+			)
+		}()
 	}
 
 	replyEvent, err = p.getRpcEvent(types.RPCAxeResultEvent{

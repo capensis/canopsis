@@ -7,24 +7,32 @@ import (
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
 	"time"
 )
 
 type rpcMessageProcessor struct {
-	FeaturePrintEventOnError bool
+	DbClient                 mongo.DbClient
+	MetricsSender            metrics.Sender
+	EntityAdapter            entity.Adapter
+	AlarmAdapter             libalarm.Adapter
 	PbhRpc                   engine.RPCClient
-	ServiceRpc               engine.RPCClient
 	RemediationRpc           engine.RPCClient
 	Executor                 operation.Executor
 	MetaAlarmEventProcessor  libalarm.MetaAlarmEventProcessor
+	StateCountersService     statecounters.StateCountersService
 	Decoder                  encoding.Decoder
 	Encoder                  encoding.Encoder
 	Logger                   zerolog.Logger
+	FeaturePrintEventOnError bool
 }
 
 func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte, error) {
@@ -95,9 +103,45 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 		PreviousStatusChange:            alarm.Value.Status.Timestamp,
 		PreviousPbehaviorTypeID:         alarm.Value.PbehaviorInfo.TypeID,
 		PreviousPbehaviorCannonicalType: alarm.Value.PbehaviorInfo.CanonicalType,
+		PreviousPbehaviorTime:           alarm.Value.PbehaviorInfo.Timestamp,
 	}
-	alarmChangeType, err := p.Executor.Exec(ctx, op, alarm, event.Entity,
-		types.CpsTime{Time: time.Now()}, "", "", types.InitiatorSystem)
+
+	now := time.Now()
+
+	var updatedServiceStates map[string]int
+	firstTimeTran := true
+
+	err = p.DbClient.WithTransaction(ctx, func(tCtx context.Context) error {
+		if !firstTimeTran {
+			ent, exist := p.EntityAdapter.Get(tCtx, event.Entity.ID)
+			if !exist {
+				return fmt.Errorf("entity with id = %s is not found after transaction rollback", event.Entity.ID)
+			}
+
+			event.Entity = &ent
+
+			al, err := p.AlarmAdapter.GetOpenedAlarmByAlarmId(tCtx, alarm.ID)
+			if _, ok := err.(errt.NotFound); ok {
+				return fmt.Errorf("alarm with id = %s is not found after transaction rollback", alarm.ID)
+			} else if err != nil {
+				return err
+			}
+
+			alarm = &al
+		}
+
+		firstTimeTran = false
+
+		alarmChange.Type, err = p.Executor.Exec(tCtx, op, alarm, event.Entity,
+			types.CpsTime{Time: now}, "", "", types.InitiatorSystem)
+		if err != nil {
+			return err
+		}
+
+		updatedServiceStates, err = p.StateCountersService.UpdateServiceCounters(tCtx, *event.Entity, event.Alarm, alarmChange)
+		return err
+	})
+
 	if err != nil {
 		if engine.IsConnectionError(err) {
 			return nil, err
@@ -106,30 +150,31 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 		p.logError(err, "RPC Message Processor: cannot update alarm", msg)
 		return p.getErrRpcEvent(fmt.Errorf("cannot update alarm: %v", err), alarm), nil
 	}
-	alarmChange.Type = alarmChangeType
 
-	if alarmChangeType == types.AlarmChangeTypeAck ||
-		alarmChangeType == types.AlarmChangeTypeAckremove ||
-		alarmChangeType == types.AlarmChangeTypeChangeState {
-		body, err := p.Encoder.Encode(types.RPCServiceEvent{
-			Alarm:       alarm,
-			Entity:      event.Entity,
-			AlarmChange: &alarmChange,
-		})
-		if err != nil {
-			p.logError(err, "RPC Message Processor: failed to encode rpc call to engine-service", msg)
-		} else {
-			err = p.ServiceRpc.Call(engine.RPCMessage{
-				CorrelationID: utils.NewID(),
-				Body:          body,
-			})
+	// services alarms
+	go func() {
+		for servID, servState := range updatedServiceStates {
+			err := p.StateCountersService.UpdateServiceState(servID, servState)
 			if err != nil {
-				p.logError(err, "RPC Message Processor: failed to send rpc call to engine-service", msg)
+				p.Logger.Err(err).Msg("failed to update service state")
 			}
 		}
-	}
+	}()
 
-	if p.RemediationRpc != nil && alarmChangeType == types.AlarmChangeTypeChangeState {
+	// send metrics
+	go func() {
+		p.MetricsSender.SendEventMetrics(
+			context.Background(),
+			*alarm,
+			*event.Entity,
+			alarmChange,
+			now,
+			types.InitiatorSystem,
+			"",
+		)
+	}()
+
+	if p.RemediationRpc != nil && alarmChange.Type == types.AlarmChangeTypeChangeState {
 		body, err := p.Encoder.Encode(types.RPCRemediationEvent{
 			Alarm:       alarm,
 			Entity:      event.Entity,
@@ -149,7 +194,7 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 	}
 
 	res := types.RPCAxeResultEvent{
-		AlarmChangeType: alarmChangeType,
+		AlarmChangeType: alarmChange.Type,
 		Alarm:           alarm,
 	}
 

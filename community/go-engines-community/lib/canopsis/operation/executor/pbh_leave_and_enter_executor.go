@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -12,13 +11,11 @@ import (
 
 type pbhLeaveAndEnterExecutor struct {
 	configProvider config.AlarmConfigProvider
-
-	metricsSender metrics.Sender
 }
 
 // NewAckExecutor creates new executor.
-func NewPbhLeaveAndEnterExecutor(configProvider config.AlarmConfigProvider, metricsSender metrics.Sender) operationlib.Executor {
-	return &pbhLeaveAndEnterExecutor{configProvider: configProvider, metricsSender: metricsSender}
+func NewPbhLeaveAndEnterExecutor(configProvider config.AlarmConfigProvider) operationlib.Executor {
+	return &pbhLeaveAndEnterExecutor{configProvider: configProvider}
 }
 
 func (e *pbhLeaveAndEnterExecutor) Exec(
@@ -59,8 +56,6 @@ func (e *pbhLeaveAndEnterExecutor) Exec(
 	}
 
 	entity.PbehaviorInfo = alarm.Value.PbehaviorInfo
-
-	go e.metricsSender.SendPbhLeaveAndEnter(context.Background(), alarm, *entity, currPbehaviorInfo.CanonicalType, currPbehaviorInfo.Timestamp.Time)
 
 	return types.AlarmChangeTypePbhLeaveAndEnter, nil
 }

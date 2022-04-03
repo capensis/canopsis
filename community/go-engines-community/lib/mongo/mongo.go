@@ -86,6 +86,8 @@ const (
 	FilterMongoCollection = "filter"
 
 	PatternMongoCollection = "pattern"
+
+	EntityServiceCountersMongoCollection = "entity_service_counters"
 )
 
 const (

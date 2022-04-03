@@ -69,12 +69,14 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 	err = p.DbClient.WithTransaction(ctx, func(tCtx context.Context) error {
 		if event.EventType == types.EventTypeRecomputeEntityService {
-			updatedEntities, err := p.ContextGraphManager.RecomputeService(ctx, event.GetEID())
+			eventEntity, updatedEntities, err := p.ContextGraphManager.RecomputeService(ctx, event.GetEID())
 			if err != nil {
 				return fmt.Errorf("cannot recompute service: %w", err)
 			}
 
-			err = p.ContextGraphManager.UpdateEntities(ctx, updatedEntities)
+			event.Entity = &eventEntity
+
+			_, err = p.ContextGraphManager.UpdateEntities(ctx, updatedEntities)
 			if err != nil {
 				return fmt.Errorf("cannot update entities: %w", err)
 			}
@@ -87,11 +89,10 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 			return fmt.Errorf("cannot update context graph: %w", err)
 		}
 
+		event.Entity = &eventEntity
 		if !eventEntity.Enabled {
 			return nil
 		}
-
-		event.Entity = &eventEntity
 
 		// Process event by event filters.
 		event, err = p.EventFilterService.ProcessEvent(ctx, event)
@@ -116,15 +117,30 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		}
 
 		if len(updatedEntities) > 0 {
+			// if it's a new resource add a component info to check if component is matched by the service
+			if event.Entity.IsNew && event.SourceType == types.SourceTypeResource {
+				updatedEntities = append(updatedEntities, types.Entity{
+					ID:        event.Component,
+					Name:      event.Component,
+					Impacts:   []string{event.Connector + "/" + event.ConnectorName},
+					Depends:   []string{event.Entity.ID},
+					Enabled:   true,
+					Type:      types.EntityTypeComponent,
+					Component: event.Component,
+				})
+			}
+
 			updatedEntities, err = p.ContextGraphManager.CheckServices(ctx, updatedEntities)
 			if err != nil {
 				return fmt.Errorf("cannot check services: %w", err)
 			}
 
-			err = p.ContextGraphManager.UpdateEntities(ctx, updatedEntities)
+			eventEntity, err = p.ContextGraphManager.UpdateEntities(ctx, updatedEntities)
 			if err != nil {
 				return fmt.Errorf("cannot update entities: %w", err)
 			}
+
+			event.Entity = &eventEntity
 		}
 
 		return nil

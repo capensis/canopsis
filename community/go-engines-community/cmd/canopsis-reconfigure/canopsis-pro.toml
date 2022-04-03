@@ -105,14 +105,6 @@ noWait = false
 # args =
 
 [[RabbitMQ.queues]]
-name = "Engine_axe_service_rpc_client"
-durable = true
-autoDelete = false
-exclusive = false
-noWait = false
-# args =
-
-[[RabbitMQ.queues]]
 name = "Engine_axe_pbehavior_rpc_client"
 durable = true
 autoDelete = false
