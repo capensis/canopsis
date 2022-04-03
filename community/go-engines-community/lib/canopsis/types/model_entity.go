@@ -41,8 +41,8 @@ type Entity struct {
 	Impacts     []string `bson:"impact" json:"impact"`
 	// impacted_services field is only for connectors, see entity service RecomputeIdleSince method
 	ImpactedServices         []string        `bson:"impacted_services,omitempty" json:"impacted_services,omitempty"`
-	ImpactedServicesToAdd    []string        `bson:"impacted_services_to_add,omitempty" json:"-"`
-	ImpactedServicesToRemove []string        `bson:"impacted_services_to_remove,omitempty" json:"-"`
+	ImpactedServicesToAdd    []string        `bson:"impacted_services_to_add,omitempty" json:"impacted_services_to_add"`
+	ImpactedServicesToRemove []string        `bson:"impacted_services_to_remove,omitempty" json:"impacted_services_to_remove"`
 	Depends                  []string        `bson:"depends,omitempty" json:"depends"`
 	EnableHistory            []CpsTime       `bson:"enable_history" json:"enable_history"`
 	Measurements             interface{}     `bson:"measurements" json:"measurements"` // unused collection ids

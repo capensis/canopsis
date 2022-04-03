@@ -42,8 +42,10 @@ type manager struct {
 	metricMetaUpdater metrics.MetaUpdater
 }
 
-func (m *manager) UpdateEntities(ctx context.Context, entities []types.Entity) error {
+func (m *manager) UpdateEntities(ctx context.Context, entities []types.Entity) (types.Entity, error) {
 	writeModels := make([]mongo.WriteModel, 0, bulkMaxSize)
+
+	var eventEntity types.Entity
 
 	for _, ent := range entities {
 		if ent.IsNew {
@@ -51,6 +53,8 @@ func (m *manager) UpdateEntities(ctx context.Context, entities []types.Entity) e
 				writeModels,
 				mongo.NewInsertOneModel().SetDocument(ent),
 			)
+
+			eventEntity = ent
 
 			continue
 		}
@@ -94,7 +98,7 @@ func (m *manager) UpdateEntities(ctx context.Context, entities []types.Entity) e
 		if len(writeModels) == bulkMaxSize {
 			_, err := m.collection.BulkWrite(ctx, writeModels)
 			if err != nil {
-				return err
+				return types.Entity{}, err
 			}
 
 			writeModels = writeModels[:0]
@@ -104,11 +108,15 @@ func (m *manager) UpdateEntities(ctx context.Context, entities []types.Entity) e
 	if len(writeModels) != 0 {
 		_, err := m.collection.BulkWrite(ctx, writeModels)
 		if err != nil {
-			return err
+			return types.Entity{}, err
 		}
 	}
 
-	return nil
+	return eventEntity, nil
+}
+
+func (m *manager) processEvent() {
+
 }
 
 func (m *manager) CheckServices(ctx context.Context, entities []types.Entity) ([]types.Entity, error) {
@@ -256,26 +264,26 @@ func (m *manager) CheckServices(ctx context.Context, entities []types.Entity) ([
 	return updatedEntities, nil
 }
 
-func (m *manager) RecomputeService(ctx context.Context, serviceID string) ([]types.Entity, error) {
+func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types.Entity, []types.Entity, error) {
 	if serviceID == "" {
-		return nil, nil
+		return types.Entity{}, nil, nil
 	}
 
 	service, err := m.storage.Get(ctx, serviceID)
 	if err != nil {
-		return nil, err
+		return types.Entity{}, nil, err
 	}
 
 	if !service.Enabled {
 		var dependedEntities []types.Entity
 		cursor, err := m.collection.Find(ctx, bson.M{"impacted_services": serviceID})
 		if err != nil {
-			return nil, err
+			return types.Entity{}, nil, err
 		}
 
 		err = cursor.All(ctx, &dependedEntities)
 		if err != nil {
-			return nil, err
+			return types.Entity{}, nil, err
 		}
 
 		for idx, ent := range dependedEntities {
@@ -303,7 +311,7 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) ([]typ
 			dependedEntities[idx] = ent
 		}
 
-		return dependedEntities, nil
+		return service.Entity, dependedEntities, nil
 	}
 
 	var updatedEntities []types.Entity
@@ -318,12 +326,12 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) ([]typ
 			}},
 		)
 		if err != nil {
-			return nil, err
+			return types.Entity{}, nil, err
 		}
 
 		err = cursor.All(ctx, &entitiesToRemove)
 		if err != nil {
-			return nil, err
+			return types.Entity{}, nil, err
 		}
 
 		entitiesToRemoveMap := make(map[string]bool, len(entitiesToRemove))
@@ -344,18 +352,18 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) ([]typ
 				}
 			}
 
-			wasInToAdd := false
+			//wasInToAdd := false
 			for idx, impServ := range ent.ImpactedServicesToAdd {
 				if impServ == serviceID {
-					wasInToAdd = true
+					//wasInToAdd = true
 					ent.ImpactedServicesToAdd = append(ent.ImpactedServicesToAdd[:idx], ent.ImpactedServicesToAdd[idx+1:]...)
 					break
 				}
 			}
 
-			if !wasInToAdd {
-				ent.ImpactedServicesToRemove = append(ent.ImpactedServicesToRemove, serviceID)
-			}
+			//if !wasInToAdd {
+			//	ent.ImpactedServicesToRemove = append(ent.ImpactedServicesToRemove, serviceID)
+			//}
 
 			updatedEntities = append(updatedEntities, ent)
 		}
@@ -379,21 +387,21 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) ([]typ
 	var entitiesToAdd []types.Entity
 	cursor, err := m.collection.Find(ctx, query)
 	if err != nil {
-		return nil, err
+		return types.Entity{}, nil, err
 	}
 
 	err = cursor.All(ctx, &entitiesToAdd)
 	if err != nil {
-		return nil, err
+		return types.Entity{}, nil, err
 	}
 
 	for _, ent := range entitiesToAdd {
 		service.Depends = append(service.Depends, ent.ID)
 
-		wasInToRemove := false
+		//wasInToRemove := false
 		for idx, impServ := range ent.ImpactedServicesToRemove {
 			if impServ == serviceID {
-				wasInToRemove = true
+				//wasInToRemove = true
 				ent.ImpactedServicesToRemove = append(ent.ImpactedServicesToRemove[:idx], ent.ImpactedServicesToRemove[idx+1:]...)
 				break
 			}
@@ -402,14 +410,14 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) ([]typ
 		ent.Impacts = append(ent.Impacts, serviceID)
 		ent.ImpactedServices = append(ent.ImpactedServices, serviceID)
 
-		if !wasInToRemove {
-			ent.ImpactedServicesToAdd = append(ent.ImpactedServicesToAdd, serviceID)
-		}
+		//if !wasInToRemove {
+		//	ent.ImpactedServicesToAdd = append(ent.ImpactedServicesToAdd, serviceID)
+		//}
 
 		updatedEntities = append(updatedEntities, ent)
 	}
 
-	return append(updatedEntities, types.Entity{
+	return service.Entity, append(updatedEntities, types.Entity{
 		ID:      service.ID,
 		Depends: service.Depends,
 	}), nil
@@ -427,6 +435,10 @@ func (m *manager) Handle(ctx context.Context, event types.Event) (types.Entity, 
 			return types.Entity{}, fmt.Errorf("entity %s doesn't exist", event.GetEID())
 		}
 
+		return eventEntity, nil
+	}
+
+	if event.SourceType == types.SourceTypeService {
 		return eventEntity, nil
 	}
 
