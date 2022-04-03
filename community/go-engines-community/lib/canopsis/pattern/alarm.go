@@ -12,6 +12,10 @@ import (
 type Alarm [][]FieldCondition
 
 func (p Alarm) Match(alarm types.Alarm) (bool, error) {
+	if len(p) == 0 {
+		return true, nil
+	}
+
 	for _, group := range p {
 		matched := false
 
@@ -26,19 +30,19 @@ func (p Alarm) Match(alarm types.Alarm) (bool, error) {
 
 				switch v.FieldType {
 				case FieldTypeString:
-					if s, ok := infoVal.(string); ok {
+					if s, err := getStringValue(infoVal); err == nil {
 						matched, _, err = cond.MatchString(s)
 					}
 				case FieldTypeInt:
-					if i, ok := infoVal.(int); ok {
+					if i, err := getIntValue(infoVal); err == nil {
 						matched, err = cond.MatchInt(i)
 					}
 				case FieldTypeBool:
-					if b, ok := infoVal.(bool); ok {
+					if b, err := getBoolValue(infoVal); err == nil {
 						matched, err = cond.MatchBool(b)
 					}
 				case FieldTypeStringArray:
-					if a, ok := infoVal.([]string); ok {
+					if a, err := getStringArrayValue(infoVal); err == nil {
 						matched, err = cond.MatchStringArray(a)
 					}
 				default:
@@ -241,18 +245,18 @@ func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {
 	}
 }
 
-func getAlarmIntField(alarm types.Alarm, f string) (int, bool) {
+func getAlarmIntField(alarm types.Alarm, f string) (int64, bool) {
 	switch f {
 	case "v.state.val":
 		if alarm.Value.State == nil {
 			return 0, true
 		}
-		return int(alarm.Value.State.Value), true
+		return int64(alarm.Value.State.Value), true
 	case "v.status.val":
 		if alarm.Value.Status == nil {
 			return 0, true
 		}
-		return int(alarm.Value.Status.Value), true
+		return int64(alarm.Value.Status.Value), true
 	default:
 		return 0, false
 	}

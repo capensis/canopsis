@@ -506,3 +506,265 @@ func TestEntityListPatternMarshalBSON(t *testing.T) {
 		})
 	}
 }
+
+func BenchmarkEntityPatternList_Matches_Equal(b *testing.B) {
+	cond := pattern.EntityFields{
+		Name: pattern.StringPattern{
+			StringConditions: pattern.StringConditions{
+				Equal: types.OptionalString{
+					Set:   true,
+					Value: "test name2",
+				},
+			},
+		},
+	}
+	entity := types.Entity{
+		Name: "test name",
+	}
+
+	benchmarkEntityPatternListMatches(b, cond, entity)
+}
+
+func BenchmarkEntityPatternList_Matches_Regexp(b *testing.B) {
+	testRegexp, err := utils.NewRegexExpression("^test .+name$")
+	if err != nil {
+		b.Fatalf("err is not expected: %s", err)
+	}
+	cond := pattern.EntityFields{
+		Name: pattern.StringPattern{
+			StringConditions: pattern.StringConditions{
+				RegexMatch: types.OptionalRegexp{
+					Set:   true,
+					Value: testRegexp,
+				},
+			},
+		},
+	}
+	entity := types.Entity{
+		Name: "test name",
+	}
+
+	benchmarkEntityPatternListMatches(b, cond, entity)
+}
+
+func BenchmarkEntityPatternList_Matches_Infos_Equal(b *testing.B) {
+	cond := pattern.EntityFields{
+		Infos: map[string]pattern.InfoPattern{
+			"test": {
+				InfoFields: pattern.InfoFields{
+					Value: pattern.StringPattern{
+						StringConditions: pattern.StringConditions{
+							Equal: types.OptionalString{
+								Set:   true,
+								Value: "test 2",
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	entity := types.Entity{
+		Infos: map[string]types.Info{
+			"test": {
+				Name:  "test",
+				Value: "test",
+			},
+		},
+	}
+
+	benchmarkEntityPatternListMatches(b, cond, entity)
+}
+
+func BenchmarkEntityPatternList_Matches_Infos_Regexp(b *testing.B) {
+	testRegexp, err := utils.NewRegexExpression("^test .+val")
+	if err != nil {
+		b.Fatalf("err is not expected: %s", err)
+	}
+	cond := pattern.EntityFields{
+		Infos: map[string]pattern.InfoPattern{
+			"test": {
+				InfoFields: pattern.InfoFields{
+					Value: pattern.StringPattern{
+						StringConditions: pattern.StringConditions{
+							RegexMatch: types.OptionalRegexp{
+								Set:   true,
+								Value: testRegexp,
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	entity := types.Entity{
+		Infos: map[string]types.Info{
+			"test": {
+				Name:  "test",
+				Value: "test val",
+			},
+		},
+	}
+
+	benchmarkEntityPatternListMatches(b, cond, entity)
+}
+
+func BenchmarkEntityPatternList_UnmarshalBsonAndMatches_Equal(b *testing.B) {
+	cond := pattern.EntityFields{
+		Name: pattern.StringPattern{
+			StringConditions: pattern.StringConditions{
+				Equal: types.OptionalString{
+					Set:   true,
+					Value: "test name2",
+				},
+			},
+		},
+	}
+	entity := types.Entity{
+		Name: "test name",
+	}
+
+	benchmarkEntityPatternListUnmarshalBsonAndMatches(b, cond, entity)
+}
+
+func BenchmarkEntityPatternList_UnmarshalBsonAndMatches_Regexp(b *testing.B) {
+	testRegexp, err := utils.NewRegexExpression("^test .+name$")
+	if err != nil {
+		b.Fatalf("err is not expected: %s", err)
+	}
+	cond := pattern.EntityFields{
+		Name: pattern.StringPattern{
+			StringConditions: pattern.StringConditions{
+				RegexMatch: types.OptionalRegexp{
+					Set:   true,
+					Value: testRegexp,
+				},
+			},
+		},
+	}
+	entity := types.Entity{
+		Name: "test name",
+	}
+
+	benchmarkEntityPatternListUnmarshalBsonAndMatches(b, cond, entity)
+}
+
+func BenchmarkEntityPatternList_UnmarshalBsonAndMatches_Infos_Equal(b *testing.B) {
+	cond := pattern.EntityFields{
+		Infos: map[string]pattern.InfoPattern{
+			"test": {
+				InfoFields: pattern.InfoFields{
+					Value: pattern.StringPattern{
+						StringConditions: pattern.StringConditions{
+							Equal: types.OptionalString{
+								Set:   true,
+								Value: "test 2",
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	entity := types.Entity{
+		Infos: map[string]types.Info{
+			"test": {
+				Name:  "test",
+				Value: "test",
+			},
+		},
+	}
+
+	benchmarkEntityPatternListUnmarshalBsonAndMatches(b, cond, entity)
+}
+
+func BenchmarkEntityPatternList_UnmarshalBsonAndMatches_Infos_Regexp(b *testing.B) {
+	testRegexp, err := utils.NewRegexExpression("^test .+val")
+	if err != nil {
+		b.Fatalf("err is not expected: %s", err)
+	}
+	cond := pattern.EntityFields{
+		Infos: map[string]pattern.InfoPattern{
+			"test": {
+				InfoFields: pattern.InfoFields{
+					Value: pattern.StringPattern{
+						StringConditions: pattern.StringConditions{
+							RegexMatch: types.OptionalRegexp{
+								Set:   true,
+								Value: testRegexp,
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	entity := types.Entity{
+		Infos: map[string]types.Info{
+			"test": {
+				Name:  "test",
+				Value: "test val",
+			},
+		},
+	}
+
+	benchmarkEntityPatternListUnmarshalBsonAndMatches(b, cond, entity)
+}
+
+func benchmarkEntityPatternListMatches(b *testing.B, cond pattern.EntityFields, entity types.Entity) {
+	size := 100
+	patterns := make([]pattern.EntityPattern, size)
+	for i := 0; i < size; i++ {
+		patterns[i] = pattern.EntityPattern{
+			ShouldNotBeNil: true,
+			EntityFields:   cond,
+		}
+	}
+
+	p := pattern.EntityPatternList{
+		Patterns: patterns,
+		Set:      true,
+		Valid:    true,
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = p.Matches(&entity)
+	}
+}
+
+func benchmarkEntityPatternListUnmarshalBsonAndMatches(b *testing.B, cond pattern.EntityFields, entity types.Entity) {
+	size := 100
+	patterns := make([]pattern.EntityPattern, size)
+	for i := 0; i < size; i++ {
+		patterns[i] = pattern.EntityPattern{
+			ShouldNotBeNil: true,
+			EntityFields:   cond,
+		}
+	}
+
+	type wrapper struct {
+		Pattern pattern.EntityPatternList `bson:"pattern"`
+	}
+	p := pattern.EntityPatternList{
+		Patterns: patterns,
+		Set:      true,
+		Valid:    true,
+	}
+
+	bytes, err := bson.Marshal(wrapper{Pattern: p})
+	if err != nil {
+		b.Fatalf("unexpected error %v", err)
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		var w wrapper
+		err := bson.Unmarshal(bytes, &w)
+		if err != nil {
+			b.Fatalf("unexpected error %v", err)
+		}
+
+		_ = w.Pattern.Matches(&entity)
+	}
+}

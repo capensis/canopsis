@@ -31,10 +31,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-1-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-1"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-1-description",
       "enabled": true,
@@ -280,10 +286,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-2-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-2-description",
       "enabled": true,
@@ -406,10 +418,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-3-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-3"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-3-description",
       "enabled": true,
@@ -510,10 +528,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-4-1-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-4-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-4-1"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-4-1-description",
       "enabled": true,
@@ -545,10 +569,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-4-2-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-4-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-4-2"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-4-2-description",
       "enabled": true,
@@ -672,10 +702,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-5-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-5"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-5"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-5-description",
       "enabled": true,
@@ -767,10 +803,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-6-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-6"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-6"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-6-description",
       "enabled": true,
@@ -856,10 +898,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-7-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-7"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-7"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-7-description",
       "enabled": true,
@@ -949,10 +997,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-8-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-8"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-8"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-8-description",
       "enabled": true,
@@ -1080,10 +1134,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-9-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-9"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-9"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-9-description",
       "enabled": true,
@@ -1214,10 +1274,16 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-10-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-10"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-10"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-10-description",
       "enabled": true,

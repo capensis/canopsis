@@ -5,14 +5,20 @@ Feature: pause a instruction execution
   Scenario: given running instruction should pause execution
     When I am admin
     When I do POST /api/v4/cat/instructions:
-    """
+    """json
     {
       "type": 0,
       "name": "test-instruction-execution-pause-1-name",
-      "alarm_patterns": [
-        {
-          "_id": "test-instruction-execution-pause-1"
-        }
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-execution-pause-resource-1"
+            }
+          }
+        ]
       ],
       "description": "test-instruction-execution-pause-1-description",
       "enabled": true,
@@ -55,7 +61,7 @@ Feature: pause a instruction execution
     """
     Then the response code should be 201
     When I do POST /api/v4/cat/executions:
-    """
+    """json
     {
       "alarm": "test-instruction-execution-pause-1",
       "instruction": "{{ .lastResponse._id }}"

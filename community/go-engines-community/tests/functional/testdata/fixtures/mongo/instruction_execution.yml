@@ -1,9 +1,24 @@
 instruction_execution:
-  instruction_execution_1:
+  execution_running (template):
+    _id: <UUID()>
+    status: 0
+
+  execution_paused (template):
+    _id: <UUID()>
+    status: 1
+
+  execution_completed (template):
+    _id: <UUID()>
+    status: 2
+
+  execution_failed (template):
+    _id: <UUID()>
+    status: 4
+
+  instruction_execution_running (extend execution_running):
     _id: test-instruction-execution-running
     instruction: test-instruction-execution-running
     instruction_modified_on: 1596712203
-    status: 0
     step_history:
     - operation_history:
       - job_history:
@@ -11,11 +26,11 @@ instruction_execution:
         operation: test-instruction-execution-running-step-1-operation-1
         started_at: 1597905434
       step: test-instruction-execution-running-step-1
-  instruction_execution_2:
+
+  instruction_execution_to_cancel_running (extend execution_running):
     _id: test-instruction-cancel-execution-running-1
     instruction: test-instruction-cancel-execution-running-1
     instruction_modified_on: 1596712203
-    status: 0
     step_history:
     - operation_history:
       - job_history: []
@@ -23,10 +38,10 @@ instruction_execution:
         started_at: 1597905434
       step: test-instruction-cancel-execution-running-1-step-1
     user: root
-  instruction_execution_3:
+
+  instruction_execution_to_instruction_update (extend execution_running):
     _id: test-instruction-to-update-w-approval-should-cancel-execution-running-1
     instruction: test-instruction-to-update-w-approval-should-cancel-execution
-    status: 0
     step_history:
     - operation_history:
       - job_history: []
@@ -34,22 +49,22 @@ instruction_execution:
         started_at: 1597905434
       step: test-instruction-to-update-w-approval-should-cancel-execution-running-1-step-1
     user: root
-  instruction_execution_4:
+
+  instruction_execution_to_instruction_delete (extend execution_running):
     _id: test-instruction-delete-execution-running
     instruction: test-instruction-delete-execution-running
     instruction_modified_on: 1596712203
-    status: 0
     step_history:
     - operation_history:
       - job_history: []
         operation: test-instruction-delete-execution-running-step-1-operation-1
         started_at: 1597905434
       step: test-instruction-delete-execution-running-step-1
-  instruction_execution_5:
+
+  instruction_execution_resume_1 (extend execution_paused):
     _id: test-instruction-execution-resume-1
     instruction: test-instruction-execution-resume-1
     instruction_modified_on: 1596712203
-    status: 1
     step_history:
     - operation_history:
       - completed_at: 1597905437
@@ -62,19 +77,20 @@ instruction_execution:
         operation: test-instruction-execution-resume-1-step-1-operation-2
         started_at: 1597905437
       step: test-instruction-execution-resume-1-step-1
-  instruction_execution_6:
+
+  instruction_execution_to_alam_get_1 (extend execution_running):
     _id: execution-for-test-alarm-with-instruction-resource-2
     alarm: test-alarm-with-instruction-2
     instruction: test-instruction-to-assign-with-execution
     instruction_modified_on: 1596712203
-    status: 0
-  instruction_execution_7:
+
+  instruction_execution_to_alam_get_2 (extend execution_running):
     _id: execution-for-test-alarm-with-instruction-resource-3
     alarm: test-alarm-with-instruction-3
     instruction: test-instruction-to-assign-with-execution-2
     instruction_modified_on: 1596712203
-    status: 0
-  instruction_execution_8:
+
+  instruction_execution_to_get_stats_1 (extend execution_completed):
     _id: test-instruction-execution-to-get-stats-1
     alarm_state: 3
     complete_time: 400
@@ -83,8 +99,8 @@ instruction_execution:
     instruction_modified_on: 1617555600
     result_alarm_state: 3
     started_at: 1618221199
-    status: 2
-  instruction_execution_9:
+
+  instruction_execution_to_get_stats_2 (extend execution_completed):
     _id: test-instruction-execution-to-get-stats-2
     alarm_state: 2
     complete_time: 350
@@ -93,8 +109,8 @@ instruction_execution:
     instruction_modified_on: 1617555600
     result_alarm_state: 3
     started_at: 1618307649
-    status: 2
-  instruction_execution_10:
+
+  instruction_execution_to_get_stats_3 (extend execution_completed):
     _id: test-instruction-execution-to-get-stats-3
     alarm_state: 2
     complete_time: 200
@@ -103,16 +119,16 @@ instruction_execution:
     instruction_modified_on: 1617555600
     result_alarm_state: 0
     started_at: 1618394199
-    status: 2
-  instruction_execution_11:
+
+  instruction_execution_to_get_stats_4 (extend execution_failed):
     _id: test-instruction-execution-to-get-stats-4
     alarm_state: 3
     completed_at: 1618221599
     instruction: test-instruction-to-stats-get-1
     instruction_modified_on: 1617555600
     started_at: 1618221599
-    status: 4
-  instruction_execution_12:
+
+  instruction_execution_to_auto_instruction_get_stats_1 (extend execution_completed):
     _id: test-auto-instruction-execution-to-get-stats-1
     alarm_state: 3
     complete_time: 400
@@ -121,8 +137,8 @@ instruction_execution:
     instruction_modified_on: 1617555600
     result_alarm_state: 3
     started_at: 1618221199
-    status: 2
-  instruction_execution_13:
+
+  instruction_execution_to_auto_instruction_get_stats_2 (extend execution_completed):
     _id: test-auto-instruction-execution-to-get-stats-2
     alarm_state: 2
     complete_time: 350
@@ -131,8 +147,8 @@ instruction_execution:
     instruction_modified_on: 1617555600
     result_alarm_state: 3
     started_at: 1618307649
-    status: 2
-  instruction_execution_14:
+
+  instruction_execution_to_auto_instruction_get_stats_3 (extend execution_completed):
     _id: test-auto-instruction-execution-to-get-stats-3
     alarm_state: 2
     complete_time: 200
@@ -141,23 +157,23 @@ instruction_execution:
     instruction_modified_on: 1617555600
     result_alarm_state: 0
     started_at: 1618394199
-    status: 2
-  instruction_execution_15:
+
+  instruction_execution_to_auto_instruction_get_stats_4 (extend execution_failed):
     _id: test-auto-instruction-execution-to-get-stats-4
     alarm_state: 3
     completed_at: 1618221599
     instruction: test-instruction-to-stats-get-2
     instruction_modified_on: 1617555600
     started_at: 1618221599
-    status: 4
-  instruction_execution_16:
+
+  instruction_execution_to_instruction_rate_1 (extend execution_completed):
     _id: test-execution-to-instruction-rate-1
     alarm: it-does-not-matter
     completed_at: 1100000000
     instruction: test-instruction-to-rate-2
-    status: 2
     user: test-user-to-rate-instruction
-  instruction_execution_17:
+
+  instruction_execution_to_stats_executions_get_1 (extend execution_completed):
     _id: test-auto-instruction-execution-to-stats-executions-get-1
     alarm: test-alarm-to-stats-executions-get-1
     alarm_state: 3
@@ -167,8 +183,8 @@ instruction_execution:
     instruction_modified_on: 1596712203
     result_alarm_state: 3
     started_at: 1618279610
-    status: 2
-  instruction_execution_18:
+
+  instruction_execution_to_stats_executions_get_3 (extend execution_completed):
     _id: test-instruction-execution-to-stats-executions-get-3
     alarm: test-alarm-to-stats-executions-get-3
     alarm_state: 3
@@ -179,8 +195,8 @@ instruction_execution:
     instruction_modified_on: 1596712203
     result_alarm_state: 1
     started_at: 1618279610
-    status: 2
-  instruction_execution_19:
+
+  instruction_execution_to_stats_executions_get_4 (extend execution_completed):
     _id: test-instruction-execution-to-stats-executions-get-4
     alarm: test-alarm-to-stats-executions-get-4
     alarm_state: 3
@@ -191,8 +207,8 @@ instruction_execution:
     instruction_modified_on: 1596712203
     result_alarm_state: 3
     started_at: 1618279610
-    status: 2
-  instruction_execution_20:
+
+  instruction_execution_to_stats_executions_get_5_1 (extend execution_completed):
     _id: test-instruction-execution-to-stats-executions-get-5-1
     alarm: test-alarm-to-stats-executions-get-5
     alarm_state: 3
@@ -203,8 +219,8 @@ instruction_execution:
     instruction_modified_on: 1596712203
     result_alarm_state: 3
     started_at: 1618279610
-    status: 2
-  instruction_execution_21:
+
+  instruction_execution_to_stats_executions_get_5_2 (extend execution_completed):
     _id: test-instruction-execution-to-stats-executions-get-5-2
     alarm: test-alarm-to-stats-executions-get-5
     alarm_state: 3
@@ -215,8 +231,8 @@ instruction_execution:
     instruction_modified_on: 1596712203
     result_alarm_state: 3
     started_at: 1618280230
-    status: 2
-  instruction_execution_22:
+
+  instruction_execution_to_stats_executions_get_6_1 (extend execution_completed):
     _id: test-instruction-execution-to-stats-executions-get-6-1
     alarm: test-alarm-to-stats-executions-get-6
     alarm_state: 3
@@ -227,8 +243,8 @@ instruction_execution:
     instruction_modified_on: 1596712203
     result_alarm_state: 2
     started_at: 1618279610
-    status: 2
-  instruction_execution_23:
+
+  instruction_execution_to_stats_executions_get_6_2 (extend execution_completed):
     _id: test-instruction-execution-to-stats-executions-get-6-2
     alarm: test-alarm-to-stats-executions-get-6
     alarm_state: 2
@@ -239,8 +255,8 @@ instruction_execution:
     instruction_modified_on: 1596712203
     result_alarm_state: 1
     started_at: 1618280230
-    status: 2
-  instruction_execution_24:
+
+  instruction_execution_to_stats_executions_get_7_1 (extend execution_completed):
     _id: test-instruction-execution-to-stats-executions-get-7-1
     alarm: test-alarm-to-stats-executions-get-7
     alarm_state: 3
@@ -251,8 +267,8 @@ instruction_execution:
     instruction_modified_on: 1596712203
     result_alarm_state: 3
     started_at: 1618279610
-    status: 2
-  instruction_execution_25:
+
+  instruction_execution_to_stats_executions_get_7_2 (extend execution_completed):
     _id: test-instruction-execution-to-stats-executions-get-7-2
     alarm: test-alarm-to-stats-executions-get-7
     alarm_state: 3
@@ -263,8 +279,8 @@ instruction_execution:
     instruction_modified_on: 1596712203
     result_alarm_state: 3
     started_at: 1618280230
-    status: 2
-  instruction_execution_26:
+
+  instruction_execution_to_stats_executions_get_8_1 (extend execution_completed):
     _id: test-instruction-execution-to-stats-executions-get-8-1
     alarm: test-alarm-to-stats-executions-get-8
     alarm_state: 3
@@ -275,8 +291,8 @@ instruction_execution:
     instruction_modified_on: 1596712203
     result_alarm_state: 2
     started_at: 1618279610
-    status: 2
-  instruction_execution_27:
+
+  instruction_execution_to_stats_executions_get_8_2 (extend execution_completed):
     _id: test-instruction-execution-to-stats-executions-get-8-2
     alarm: test-alarm-to-stats-executions-get-8
     alarm_state: 2
@@ -287,8 +303,8 @@ instruction_execution:
     instruction_modified_on: 1596712203
     result_alarm_state: 1
     started_at: 1618280230
-    status: 2
-  instruction_execution_28:
+
+  instruction_execution_to_stats_executions_get_with_resolved_alarms_1 (extend execution_completed):
     _id: test-auto-instruction-execution-to-stats-executions-get-with-resolved-alarms-1
     alarm: test-alarm-to-stats-executions-get-with-resolved-alarms-1
     alarm_state: 3
@@ -298,8 +314,8 @@ instruction_execution:
     instruction_modified_on: 1596712203
     result_alarm_state: 3
     started_at: 1618279610
-    status: 2
-  instruction_execution_29:
+
+  instruction_execution_to_stats_executions_get_with_resolved_alarms_2 (extend execution_completed):
     _id: test-auto-instruction-execution-to-stats-executions-get-with-resolved-alarms-2
     alarm: test-alarm-to-stats-executions-get-with-resolved-alarms-resolved
     alarm_state: 3
@@ -309,4 +325,3 @@ instruction_execution:
     instruction_modified_on: 1596712203
     result_alarm_state: 3
     started_at: 1618279610
-    status: 2

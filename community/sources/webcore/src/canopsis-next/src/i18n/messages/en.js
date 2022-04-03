@@ -213,6 +213,7 @@ export default {
     criteria: 'Criteria',
     ratingSettings: 'Rating settings',
     pbehavior: 'Pbehavior | Pbehaviors',
+    template: 'Template',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -625,7 +626,6 @@ export default {
       title: 'Info popup',
       fields: {
         column: 'Column',
-        template: 'Template',
       },
     },
     rowGridSize: {
@@ -701,6 +701,7 @@ export default {
     templateEditor: 'Template',
     columns: {
       isHtml: 'Is it HTML?',
+      withTemplate: 'Custom template',
       isState: 'Displayed as severity?',
     },
     liveReporting: {
@@ -983,7 +984,6 @@ export default {
       title: 'Info popup',
       add: 'Add',
       column: 'Column',
-      template: 'Template',
       addInfoPopup: {
         title: 'Add an info popup',
       },
@@ -1718,6 +1718,9 @@ export default {
     statsRequestProblem: 'An error occurred while retrieving stats data',
     statsWrongEditionError: "Stats widgets are not available with 'core' edition",
     socketConnectionProblem: 'Problem with connection to socket server',
+  },
+  warnings: {
+    authTokenExpired: 'Authentication token was expired',
   },
   calendar: {
     today: 'Today',

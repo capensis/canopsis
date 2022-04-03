@@ -2,6 +2,7 @@ package che
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -147,11 +148,15 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	})
 
 	if err != nil {
+		if errors.Is(err, eventfilter.ErrDropOutcome) {
+			return nil, nil
+		}
+
 		if engine.IsConnectionError(err) {
 			return nil, err
 		}
 
-		p.logError(err, "cannot process event", d.Body)
+		p.logError(err, "cannot apply event filters on event", d.Body)
 		return nil, nil
 	}
 
