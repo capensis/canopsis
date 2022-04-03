@@ -22,6 +22,15 @@ type Sender interface {
 	SendPbhLeave(ctx context.Context, entity types.Entity, timestamp time.Time, prevCanonicalType string, prevTimestamp time.Time)
 	SendPbhLeaveAndEnter(ctx context.Context, alarm *types.Alarm, entity types.Entity, prevCanonicalType string, prevTimestamp time.Time)
 	SendUpdateState(ctx context.Context, alarm types.Alarm, entity types.Entity, previousState types.CpsNumber)
+	SendEventMetrics(
+		ctx context.Context,
+		alarm types.Alarm,
+		entity types.Entity,
+		alarmChange types.AlarmChange,
+		timestamp time.Time,
+		initiator string,
+		userID string,
+	)
 }
 
 type nullSender struct{}
@@ -70,5 +79,17 @@ func (s *nullSender) SendPbhLeaveAndEnter(_ context.Context, _ *types.Alarm, _ t
 }
 
 func (s *nullSender) SendUpdateState(_ context.Context, _ types.Alarm, _ types.Entity, _ types.CpsNumber) {
+
+}
+
+func (s *nullSender) SendEventMetrics(
+	_ context.Context,
+	_ types.Alarm,
+	_ types.Entity,
+	_ types.AlarmChange,
+	_ time.Time,
+	_ string,
+	_ string,
+) {
 
 }

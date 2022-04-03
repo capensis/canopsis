@@ -20,9 +20,9 @@ type Manager interface {
 
 	UpdateImpactedServices(ctx context.Context) error
 
-	RecomputeService(ctx context.Context, serviceID string) ([]types.Entity, error)
+	RecomputeService(ctx context.Context, serviceID string) (types.Entity, []types.Entity, error)
 
-	UpdateEntities(ctx context.Context, entities []types.Entity) error
+	UpdateEntities(ctx context.Context, entities []types.Entity) (types.Entity, error)
 
 	FillResourcesWithInfos(ctx context.Context, component types.Entity) ([]types.Entity, error)
 }
