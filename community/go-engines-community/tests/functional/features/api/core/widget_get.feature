@@ -25,6 +25,46 @@ Feature: Get a widget
           }
         ]
       },
+      "filters": [
+        {
+          "_id": "test-widgetfilter-to-widget-get-1",
+          "title": "test-widgetfilter-to-widget-get-1-title",
+          "is_private": false,
+          "author": "nopermsuser",
+          "created": 1611229670,
+          "updated": 1611229670,
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-widgetfilter-to-widget-get-1-pattern"
+                }
+              }
+            ]
+          ]
+        },
+        {
+          "_id": "test-widgetfilter-to-widget-get-2",
+          "title": "test-widgetfilter-to-widget-get-2-title",
+          "is_private": false,
+          "author": "root",
+          "created": 1611229670,
+          "updated": 1611229670,
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-widgetfilter-to-widget-get-2-pattern"
+                }
+              }
+            ]
+          ]
+        }
+      ],
       "author": "test-author-to-widget-edit",
       "created": 1611229670,
       "updated": 1611229670

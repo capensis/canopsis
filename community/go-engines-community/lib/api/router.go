@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"net/url"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
@@ -10,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/associativetable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/engineinfo"
@@ -51,6 +53,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -120,6 +123,7 @@ func RegisterRoutes(
 	router gin.IRouter,
 	security Security,
 	enforcer libsecurity.Enforcer,
+	legacyUrl string,
 	dbClient mongo.DbClient,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	pbhEntityTypeResolver libpbehavior.EntityTypeResolver,
@@ -253,7 +257,7 @@ func RegisterRoutes(
 			)
 		}
 
-		alarmStore := alarm.NewStore(dbClient, GetLegacyURL())
+		alarmStore := alarm.NewStore(dbClient, legacyUrl)
 		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, timezoneConfigProvider)
 		alarmRouter := protected.Group("/alarms")
 		{
@@ -590,7 +594,7 @@ func RegisterRoutes(
 		{
 			weatherAPI := serviceweather.NewApi(serviceweather.NewStore(
 				dbClient,
-				GetLegacyURL(),
+				legacyUrl,
 				alarmStore,
 				timezoneConfigProvider,
 			))
@@ -762,6 +766,38 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
 				widgetAPI.Delete,
+			)
+		}
+
+		widgetFilterAPI := widgetfilter.NewApi(widgetfilter.NewStore(dbClient), enforcer, common.NewPatternFieldsTransformer(dbClient), actionLogger)
+		widgetFilterRouter := protected.Group("/widget-filters")
+		{
+			widgetFilterRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+				widgetFilterAPI.List,
+			)
+			widgetFilterRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				widgetFilterAPI.Create,
+			)
+			widgetFilterRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+				widgetFilterAPI.Get,
+			)
+			widgetFilterRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				widgetFilterAPI.Update,
+			)
+			widgetFilterRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				widgetFilterAPI.Delete,
 			)
 		}
 
@@ -1076,8 +1112,45 @@ func RegisterRoutes(
 				idleRuleAPI.CountPatterns)
 		}
 
+		patternAPI := pattern.NewApi(pattern.NewStore(dbClient), enforcer, actionLogger)
+		patternRouter := protected.Group("/patterns")
+		{
+			patternRouter.Use(middleware.OnlyAuth())
+			patternRouter.POST(
+				"",
+				middleware.SetAuthor(),
+				patternAPI.Create,
+			)
+			patternRouter.GET(
+				"",
+				patternAPI.List,
+			)
+			patternRouter.GET(
+				"/:id",
+				patternAPI.Get,
+			)
+			patternRouter.PUT(
+				"/:id",
+				middleware.SetAuthor(),
+				patternAPI.Update,
+			)
+			patternRouter.DELETE(
+				"/:id",
+				patternAPI.Delete,
+			)
+		}
+
 		bulkRouter := protected.Group("/bulk")
 		{
+			patternRouter := bulkRouter.Group("/patterns")
+			{
+				patternRouter.DELETE(
+					"",
+					middleware.PreProcessBulk(conf, true),
+					patternAPI.BulkDelete,
+				)
+			}
+
 			scenarioRouter := bulkRouter.Group("/scenarios")
 			{
 				scenarioRouter.POST(
@@ -1325,38 +1398,11 @@ func RegisterRoutes(
 				flappingRuleAPI.Delete,
 			)
 		}
-
-		patternRouter := protected.Group("/patterns")
-		{
-			patternRouter.Use(middleware.OnlyAuth())
-			patternAPI := pattern.NewApi(pattern.NewStore(dbClient), enforcer, actionLogger)
-			patternRouter.POST(
-				"",
-				middleware.SetAuthor(),
-				patternAPI.Create,
-			)
-			patternRouter.GET(
-				"",
-				patternAPI.List,
-			)
-			patternRouter.GET(
-				"/:id",
-				patternAPI.Get,
-			)
-			patternRouter.PUT(
-				"/:id",
-				middleware.SetAuthor(),
-				patternAPI.Update,
-			)
-			patternRouter.DELETE(
-				"/:id",
-				patternAPI.Delete,
-			)
-		}
 	}
 }
 
 func GetProxy(
+	legacyUrl *url.URL,
 	security Security,
 	enforcer libsecurity.Enforcer,
 	accessConfig proxy.AccessConfig,
@@ -1366,6 +1412,6 @@ func GetProxy(
 	return append(
 		authMiddleware,
 		middleware.ProxyAuthorize(enforcer, accessConfig),
-		ReverseProxyHandler(),
+		ReverseProxyHandler(legacyUrl),
 	)
 }

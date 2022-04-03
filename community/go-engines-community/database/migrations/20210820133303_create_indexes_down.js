@@ -8,6 +8,13 @@ db.periodical_alarm.dropIndex("v.creation_date_1");
 db.periodical_alarm.dropIndex("v.last_event_date_1");
 db.periodical_alarm.dropIndex("v.last_update_date_1");
 
+db.resolved_alarms.dropIndex("t_1");
+db.resolved_alarms.dropIndex("d_1");
+db.resolved_alarms.dropIndex("v.meta_1_v.creation_date_1");
+db.resolved_alarms.dropIndex("v.creation_date_1");
+db.resolved_alarms.dropIndex("v.last_event_date_1");
+db.resolved_alarms.dropIndex("v.last_update_date_1");
+
 db.pbehavior_type.dropIndex("priority_1");
 
 db.junit_test_suite.dropIndex("test_suite_id_1");
@@ -23,3 +30,5 @@ db.instruction_execution.dropIndex("alarm_1");
 db.instruction_week_stats.dropIndex("instruction_1_date_1");
 
 db.instruction_mod_stats.dropIndex("instruction_1_date_1");
+
+db.default_rights.dropIndex("crecord_type_1_role_1");

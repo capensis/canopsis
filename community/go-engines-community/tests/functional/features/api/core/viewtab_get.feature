@@ -30,6 +30,27 @@ Feature: Get a view tab
               }
             ]
           },
+          "filters": [
+            {
+              "_id": "test-widgetfilter-to-tab-get-1",
+              "title": "test-widgetfilter-to-tab-get-1-title",
+              "is_private": false,
+              "author": "nopermsuser",
+              "created": 1611229670,
+              "updated": 1611229670,
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-widgetfilter-to-tab-get-1-pattern"
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
           "title": "test-widget-to-tab-get-1-title",
           "type": "test-widget-to-tab-get-1-type",
           "updated": 1611229670
@@ -51,6 +72,27 @@ Feature: Get a view tab
               }
             ]
           },
+          "filters": [
+            {
+              "_id": "test-widgetfilter-to-tab-get-2",
+              "title": "test-widgetfilter-to-tab-get-2-title",
+              "is_private": false,
+              "author": "root",
+              "created": 1611229670,
+              "updated": 1611229670,
+              "alarm_pattern": [
+                [
+                  {
+                    "field": "v.component",
+                    "cond": {
+                      "type": "eq",
+                      "value": "test-widgetfilter-to-tab-get-2-pattern"
+                    }
+                  }
+                ]
+              ]
+            }
+          ],
           "title": "test-widget-to-tab-get-2-title",
           "type": "test-widget-to-tab-get-2-type",
           "updated": 1611229670

@@ -2,11 +2,12 @@ package fifo
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/ratelimit"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -64,6 +65,10 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 	event, err = p.EventFilterService.ProcessEvent(ctx, event)
 	if err != nil {
+		if errors.Is(err, eventfilter.ErrDropOutcome) {
+			return nil, nil
+		}
+
 		p.logError(err, "cannot process event by eventfilter service", msg)
 		return nil, nil
 	}

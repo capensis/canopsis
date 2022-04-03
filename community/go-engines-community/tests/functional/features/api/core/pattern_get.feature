@@ -64,7 +64,7 @@ Feature: Get a saved pattern
           "pbehavior_pattern": [
             [
               {
-                "field": "type",
+                "field": "pbehavior_info.type",
                 "cond": {
                   "type": "eq",
                   "value": "test-pattern-to-get-4-pattern"
@@ -128,7 +128,7 @@ Feature: Get a saved pattern
           "pbehavior_pattern": [
             [
               {
-                "field": "type",
+                "field": "pbehavior_info.type",
                 "cond": {
                   "type": "eq",
                   "value": "test-pattern-to-get-4-pattern"
@@ -156,6 +156,47 @@ Feature: Get a saved pattern
   Scenario: given search request should return not corporate patterns
     When I am noperms
     When I do GET /api/v4/patterns?corporate=false&search=test-pattern-to-get&sort_by=title
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-pattern-to-get-1",
+          "title": "test-pattern-to-get-1-title",
+          "type": "alarm",
+          "is_corporate": false,
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.connector",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-get-1-pattern"
+                }
+              }
+            ]
+          ],
+          "author": {
+            "_id": "nopermsuser",
+            "name": "nopermsuser"
+          },
+          "created": 1605263992,
+          "updated": 1605263992
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given filter request should return patterns by type
+    When I am noperms
+    When I do GET /api/v4/patterns?search=test-pattern-to-get&sort_by=title&type=alarm
     Then the response code should be 200
     Then the response body should be:
     """json
