@@ -41,6 +41,7 @@ export const isActionTypeAvailableForEntity = (actionType, entity) => {
     status,
     pbehaviors,
     alarm_display_name: alarmDisplayName,
+    assigned_instructions: assignedInstructions,
   } = entity;
 
   const paused = hasPausedPbehavior(pbehaviors);
@@ -63,6 +64,9 @@ export const isActionTypeAvailableForEntity = (actionType, entity) => {
     case WEATHER_ACTIONS_TYPES.entityPause:
       return !paused;
 
+    case WEATHER_ACTIONS_TYPES.executeInstruction:
+      return !!assignedInstructions?.length;
+
     case WEATHER_ACTIONS_TYPES.entityAssocTicket:
     default:
       return true;
@@ -73,18 +77,23 @@ export const isActionTypeAvailableForEntity = (actionType, entity) => {
  * Get all available action types for entity
  *
  * @param {Entity} entity
+ * @param {string[]} actionTypes
  * @returns {string[]}
  */
-export const getAvailableEntityActionsTypes = entity => [
-  WEATHER_ACTIONS_TYPES.entityComment,
-  WEATHER_ACTIONS_TYPES.entityAck,
-  WEATHER_ACTIONS_TYPES.entityAssocTicket,
-  WEATHER_ACTIONS_TYPES.entityValidate,
-  WEATHER_ACTIONS_TYPES.entityInvalidate,
-  WEATHER_ACTIONS_TYPES.entityPlay,
-  WEATHER_ACTIONS_TYPES.entityPause,
-  WEATHER_ACTIONS_TYPES.entityCancel,
-].filter(actionType => isActionTypeAvailableForEntity(actionType, entity));
+export const getAvailableEntityActionsTypes = (
+  entity,
+  actionTypes = [
+    WEATHER_ACTIONS_TYPES.entityComment,
+    WEATHER_ACTIONS_TYPES.executeInstruction,
+    WEATHER_ACTIONS_TYPES.entityAck,
+    WEATHER_ACTIONS_TYPES.entityAssocTicket,
+    WEATHER_ACTIONS_TYPES.entityValidate,
+    WEATHER_ACTIONS_TYPES.entityInvalidate,
+    WEATHER_ACTIONS_TYPES.entityPlay,
+    WEATHER_ACTIONS_TYPES.entityPause,
+    WEATHER_ACTIONS_TYPES.entityCancel,
+  ],
+) => actionTypes.filter(actionType => isActionTypeAvailableForEntity(actionType, entity));
 
 /**
  * Convert entity action type to action object
@@ -115,11 +124,24 @@ export const getAvailableActionsByEntity = entity => getAvailableEntityActionsTy
  * Get all available actions for entities
  *
  * @param {Entity[]} entities
+ * @param {string[]} actionTypes
  * @returns {Object[]}
  */
-export const getAvailableActionsByEntities = (entities = []) => {
+export const getAvailableActionsByEntities = (
+  entities = [],
+  actionTypes = [
+    WEATHER_ACTIONS_TYPES.entityComment,
+    WEATHER_ACTIONS_TYPES.entityAck,
+    WEATHER_ACTIONS_TYPES.entityAssocTicket,
+    WEATHER_ACTIONS_TYPES.entityValidate,
+    WEATHER_ACTIONS_TYPES.entityInvalidate,
+    WEATHER_ACTIONS_TYPES.entityPlay,
+    WEATHER_ACTIONS_TYPES.entityPause,
+    WEATHER_ACTIONS_TYPES.entityCancel,
+  ],
+) => {
   const types = entities.reduce(
-    (acc, entity) => acc.concat(getAvailableEntityActionsTypes(entity)),
+    (acc, entity) => acc.concat(getAvailableEntityActionsTypes(entity, actionTypes)),
     [],
   );
 

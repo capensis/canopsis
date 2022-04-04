@@ -391,6 +391,7 @@ export const ENTITY_EVENT_BY_ACTION_TYPE = {
   [WEATHER_ACTIONS_TYPES.entityCancel]: EVENT_ENTITY_TYPES.cancel,
   [WEATHER_ACTIONS_TYPES.entityComment]: EVENT_ENTITY_TYPES.comment,
   [WEATHER_ACTIONS_TYPES.pbehaviorList]: EVENT_ENTITY_TYPES.pbehaviorList,
+  [WEATHER_ACTIONS_TYPES.executeInstruction]: EVENT_ENTITY_TYPES.executeInstruction,
 };
 
 export const UNKNOWN_VALUE_STYLE = {
