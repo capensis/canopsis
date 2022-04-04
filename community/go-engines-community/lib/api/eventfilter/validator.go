@@ -5,8 +5,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"strings"
 )
 
@@ -15,7 +13,7 @@ type eventfilterValidator struct {
 }
 
 func (v *eventfilterValidator) Validate(ctx context.Context, sl validator.StructLevel) {
-	r := sl.Current().Interface().(EventFilter)
+	r := sl.Current().Interface().(EventFilterPayload)
 	if r.Patterns != nil && !r.Patterns.IsValid() {
 		sl.ReportError(r.Patterns, "patterns", "Patterns", "eventfilter_patterns_invalid", "")
 	}
@@ -43,16 +41,6 @@ func (v *eventfilterValidator) Validate(ctx context.Context, sl validator.Struct
 			}
 		}
 	}
-
-	if r.ID != "" {
-		err := v.dbClient.Collection(mongo.EventFilterRulesMongoCollection).FindOne(ctx, bson.M{"_id": r.ID}).Err()
-		if err == nil {
-			sl.ReportError("_id", "ID", "ID", "unique", "")
-		} else if err != mongodriver.ErrNoDocuments {
-			panic(err)
-		}
-	}
-
 }
 
 func NewValidator(dbClient mongo.DbClient) *eventfilterValidator {

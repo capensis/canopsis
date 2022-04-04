@@ -180,6 +180,11 @@ var doc = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "name": "time_field",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "name": "tstart",
                         "in": "query"
@@ -485,6 +490,11 @@ var doc = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "name": "time_field",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "name": "tstart",
                         "in": "query"
@@ -685,9 +695,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -947,9 +955,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -959,7 +965,573 @@ var doc = `{
                 }
             }
         },
+        "/bulk/entityservices": {
+            "put": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk update entityservices",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "entityservices"
+                ],
+                "summary": "Bulk update entityservices",
+                "operationId": "entityservices-bulk-update",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entityservice.BulkUpdateRequestItem"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "207": {
+                        "description": "Multi-Status",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/entityservice.BulkUpdateResponseItem"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk create entityservices",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "entityservices"
+                ],
+                "summary": "Bulk create entityservices",
+                "operationId": "entityservices-bulk-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entityservice.CreateRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "207": {
+                        "description": "Multi-Status",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/entityservice.BulkCreateResponseItem"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk delete entityservices",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "entityservices"
+                ],
+                "summary": "Bulk delete entityservices",
+                "operationId": "entityservices-bulk-delete",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entityservice.BulkDeleteRequestItem"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "207": {
+                        "description": "Multi-Status",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/entityservice.BulkDeleteResponseItem"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/bulk/eventfilters": {
+            "put": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk update eventfilters",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "eventfilters"
+                ],
+                "summary": "Bulk update eventfilters",
+                "operationId": "eventfilters-bulk-update",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/eventfilter.BulkUpdateRequestItem"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "207": {
+                        "description": "Multi-Status",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/eventfilter.BulkUpdateResponseItem"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk create eventfilters",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "eventfilters"
+                ],
+                "summary": "Bulk create eventfilters",
+                "operationId": "eventfilters-bulk-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/eventfilter.EventFilter"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "207": {
+                        "description": "Multi-Status",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/eventfilter.BulkCreateResponseItem"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk delete eventfilters",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "eventfilters"
+                ],
+                "summary": "Bulk delete eventfilters",
+                "operationId": "eventfilters-bulk-delete",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/eventfilter.BulkDeleteRequestItem"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "207": {
+                        "description": "Multi-Status",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/eventfilter.BulkDeleteResponseItem"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/bulk/idle-rules": {
+            "put": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk update idlerules",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "idlerules"
+                ],
+                "summary": "Bulk update idlerules",
+                "operationId": "idlerules-bulk-update",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/idlerule.BulkUpdateRequestItem"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "207": {
+                        "description": "Multi-Status",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/idlerule.BulkUpdateResponseItem"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk create idlerules",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "idlerules"
+                ],
+                "summary": "Bulk create idlerules",
+                "operationId": "idlerules-bulk-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/idlerule.CreateRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "207": {
+                        "description": "Multi-Status",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/idlerule.BulkCreateResponseItem"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk delete idlerules",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "idlerules"
+                ],
+                "summary": "Bulk delete idlerules",
+                "operationId": "idlerules-bulk-delete",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/idlerule.BulkDeleteRequestItem"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "207": {
+                        "description": "Multi-Status",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/idlerule.BulkDeleteResponseItem"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/bulk/pbehaviors": {
+            "put": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk update pbehaviors",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehaviors"
+                ],
+                "summary": "Bulk update pbehaviors",
+                "operationId": "pbehaviors-bulk-update",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/pbehavior.BulkUpdateRequestItem"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "207": {
+                        "description": "Multi-Status",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/pbehavior.BulkUpdateResponseItem"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -996,12 +1568,15 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "207": {
+                        "description": "Multi-Status",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/pbehavior.Response"
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/pbehavior.BulkCreateResponseItem"
+                                }
                             }
                         }
                     },
@@ -1009,67 +1584,6 @@ var doc = `{
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/common.ValidationErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/bulk/pbehaviors/{id}": {
-            "put": {
-                "security": [
-                    {
-                        "JWTAuth": []
-                    },
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Bulk update pbehaviors by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "pbehaviors"
-                ],
-                "summary": "Bulk update pbehaviors by id",
-                "operationId": "pbehaviors-bulk-update-by-id",
-                "parameters": [
-                    {
-                        "description": "body",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/pbehavior.BulkUpdateRequestItem"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/pbehavior.Response"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.ValidationErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/common.ErrorResponse"
                         }
                     }
                 }
@@ -1083,32 +1597,389 @@ var doc = `{
                         "BasicAuth": []
                     }
                 ],
-                "description": "Bulk delete pbehaviors by id",
+                "description": "Bulk delete pbehaviors",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "pbehaviors"
                 ],
-                "summary": "Bulk delete pbehaviors by id",
-                "operationId": "pbehaviors-bulk-delete-by-id",
+                "summary": "Bulk delete pbehaviors",
+                "operationId": "pbehaviors-bulk-delete",
                 "parameters": [
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "name": "ids",
-                        "in": "query",
-                        "required": true
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/pbehavior.BulkDeleteRequestItem"
+                            }
+                        }
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
-                    "404": {
-                        "description": "Not Found",
+                    "207": {
+                        "description": "Multi-Status",
                         "schema": {
-                            "$ref": "#/definitions/common.ErrorResponse"
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/pbehavior.BulkDeleteResponseItem"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/bulk/scenarios": {
+            "put": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk update scenarios",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "scenarios"
+                ],
+                "summary": "Bulk update scenarios",
+                "operationId": "scenarios-bulk-update",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/scenario.BulkUpdateRequestItem"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "207": {
+                        "description": "Multi-Status",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/scenario.BulkUpdateResponseItem"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk create scenarios",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "scenarios"
+                ],
+                "summary": "Bulk create scenarios",
+                "operationId": "scenarios-bulk-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/scenario.CreateRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "207": {
+                        "description": "Multi-Status",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/scenario.BulkCreateResponseItem"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk delete scenarios",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "scenarios"
+                ],
+                "summary": "Bulk delete scenarios",
+                "operationId": "scenarios-bulk-delete",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/scenario.BulkDeleteRequestItem"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "207": {
+                        "description": "Multi-Status",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/scenario.BulkDeleteResponseItem"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/bulk/users": {
+            "put": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk update users",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Bulk update users",
+                "operationId": "users-bulk-update",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/user.BulkUpdateRequestItem"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "207": {
+                        "description": "Multi-Status",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/user.BulkUpdateResponseItem"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk create users",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Bulk create users",
+                "operationId": "users-bulk-create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/user.Request"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "207": {
+                        "description": "Multi-Status",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/user.BulkCreateResponseItem"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Bulk delete users",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Bulk delete users",
+                "operationId": "users-bulk-delete",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/user.BulkDeleteRequestItem"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "207": {
+                        "description": "Multi-Status",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/user.BulkDeleteResponseItem"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
                         }
                     }
                 }
@@ -1255,9 +2126,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -1408,9 +2277,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -1737,9 +2604,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "202": {
-                        "description": ""
-                    },
+                    "202": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -2061,9 +2926,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -2242,7 +3105,7 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Entity id",
-                        "name": "id",
+                        "name": "_id",
                         "in": "query",
                         "required": true
                     }
@@ -2287,7 +3150,7 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Entity id",
-                        "name": "id",
+                        "name": "_id",
                         "in": "query",
                         "required": true
                     },
@@ -2341,15 +3204,13 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Entity id",
-                        "name": "id",
+                        "name": "_id",
                         "in": "query",
                         "required": true
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -2688,9 +3549,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -2999,9 +3858,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3144,9 +4001,7 @@ var doc = `{
                 "summary": "Get file access",
                 "operationId": "auth-get-file-access",
                 "responses": {
-                    "204": {
-                        "description": ""
-                    }
+                    "204": {}
                 }
             }
         },
@@ -3227,9 +4082,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -3495,9 +4348,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3824,9 +4675,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -3900,9 +4749,7 @@ var doc = `{
                 "summary": "delete user interface",
                 "operationId": "internal-delete-user-interface",
                 "responses": {
-                    "204": {
-                        "description": ""
-                    }
+                    "204": {}
                 }
             }
         },
@@ -3929,9 +4776,7 @@ var doc = `{
                 "summary": "Get logged user count",
                 "operationId": "auth-logged-user-count",
                 "responses": {
-                    "204": {
-                        "description": ""
-                    }
+                    "204": {}
                 }
             }
         },
@@ -3990,9 +4835,7 @@ var doc = `{
                 "summary": "Log out",
                 "operationId": "auth-logout",
                 "responses": {
-                    "204": {
-                        "description": ""
-                    }
+                    "204": {}
                 }
             }
         },
@@ -4252,9 +5095,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -4532,9 +5373,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -4579,9 +5418,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": ""
-                    },
+                    "200": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -4859,9 +5696,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -5189,9 +6024,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -5524,9 +6357,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6042,9 +6873,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6304,9 +7133,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6578,9 +7405,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -6930,9 +7755,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -7434,9 +8257,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -7708,9 +8529,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -7763,9 +8582,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -8037,9 +8854,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": ""
-                    },
+                    "204": {},
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -8197,6 +9012,12 @@ var doc = `{
                         "description": "sort query",
                         "name": "sort_by",
                         "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "show assigned instructions and execution flags",
+                        "name": "with_instructions",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -8336,6 +9157,9 @@ var doc = `{
                 "is_all_auto_instructions_completed": {
                     "type": "boolean"
                 },
+                "is_auto_instruction_failed": {
+                    "type": "boolean"
+                },
                 "is_auto_instruction_running": {
                     "type": "boolean"
                 },
@@ -8380,6 +9204,10 @@ var doc = `{
                 },
                 "m": {
                     "type": "string"
+                },
+                "statecounter": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CropCounter"
                 },
                 "t": {
                     "type": "integer"
@@ -8524,7 +9352,7 @@ var doc = `{
                 },
                 "pbehavior_info": {
                     "type": "object",
-                    "$ref": "#/definitions/types.PbehaviorInfo"
+                    "$ref": "#/definitions/entity.PbehaviorInfo"
                 },
                 "pbh_inactive_duration": {
                     "type": "integer"
@@ -8688,6 +9516,9 @@ var doc = `{
                 "separator": {
                     "type": "string"
                 },
+                "time_field": {
+                    "type": "string"
+                },
                 "time_format": {
                     "type": "string"
                 },
@@ -8767,6 +9598,9 @@ var doc = `{
                 "search": {
                     "type": "string"
                 },
+                "time_field": {
+                    "type": "string"
+                },
                 "tstart": {
                     "type": "integer"
                 },
@@ -8780,18 +9614,6 @@ var doc = `{
             "properties": {
                 "_id": {
                     "type": "string"
-                },
-                "active_on_pbh": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "disabled_on_pbh": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 },
                 "execution": {
                     "type": "object",
@@ -8874,6 +9696,9 @@ var doc = `{
                 "sort_key": {
                     "type": "string"
                 },
+                "time_field": {
+                    "type": "string"
+                },
                 "tstart": {
                     "type": "integer"
                 },
@@ -8910,6 +9735,10 @@ var doc = `{
                 },
                 "author": {
                     "type": "string"
+                },
+                "comments": {
+                    "type": "object",
+                    "$ref": "#/definitions/pbehavior.Comments"
                 },
                 "name": {
                     "type": "string"
@@ -9183,10 +10012,6 @@ var doc = `{
                     "type": "integer"
                 }
             }
-        },
-        "bson.M": {
-            "type": "object",
-            "additionalProperties": true
         },
         "common.ErrorResponse": {
             "type": "object",
@@ -9487,11 +10312,28 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/entity.Infos"
                 },
+                "ko_events": {
+                    "type": "integer"
+                },
+                "last_event_date": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
                 "measurements": {
                     "type": "object"
                 },
                 "name": {
                     "type": "string"
+                },
+                "ok_events": {
+                    "type": "integer"
+                },
+                "pbehavior_info": {
+                    "type": "object",
+                    "$ref": "#/definitions/entity.PbehaviorInfo"
+                },
+                "state": {
+                    "type": "integer"
                 },
                 "type": {
                     "type": "string"
@@ -9588,6 +10430,43 @@ var doc = `{
                 },
                 "with_flags": {
                     "type": "boolean"
+                }
+            }
+        },
+        "entity.PbehaviorInfo": {
+            "type": "object",
+            "properties": {
+                "canonical_type": {
+                    "description": "CanonicalType is Type of pbehavior.Type.",
+                    "type": "string"
+                },
+                "icon_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID is ID of pbehavior.PBehavior.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name is Name of pbehavior.PBehavior.",
+                    "type": "string"
+                },
+                "reason": {
+                    "description": "Reason is Name of pbehavior.Reason.",
+                    "type": "string"
+                },
+                "timestamp": {
+                    "description": "Timestamp is time when entity enters pbehavior.\nUse pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.",
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "type": {
+                    "description": "TypeID is ID of pbehavior.Type.",
+                    "type": "string"
+                },
+                "type_name": {
+                    "description": "TypeName is Name of pbehavior.Type.",
+                    "type": "string"
                 }
             }
         },
@@ -9700,13 +10579,30 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/entity.Infos"
                 },
+                "ko_events": {
+                    "type": "integer"
+                },
+                "last_event_date": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
                 "measurements": {
                     "type": "object"
                 },
                 "name": {
                     "type": "string"
                 },
+                "ok_events": {
+                    "type": "integer"
+                },
+                "pbehavior_info": {
+                    "type": "object",
+                    "$ref": "#/definitions/entity.PbehaviorInfo"
+                },
                 "sli_avail_state": {
+                    "type": "integer"
+                },
+                "state": {
                     "type": "integer"
                 },
                 "type": {
@@ -9780,6 +10676,176 @@ var doc = `{
                     "type": "boolean"
                 },
                 "impact_state": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entityservice.BulkCreateResponseItem": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "item": {
+                    "type": "object",
+                    "$ref": "#/definitions/entityservice.CreateRequest"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entityservice.BulkDeleteRequestItem": {
+            "type": "object",
+            "required": [
+                "_id"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "entityservice.BulkDeleteResponseItem": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "item": {
+                    "type": "object",
+                    "$ref": "#/definitions/entityservice.BulkDeleteRequestItem"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entityservice.BulkUpdateRequestItem": {
+            "type": "object",
+            "required": [
+                "_id",
+                "enabled",
+                "impact_level",
+                "name",
+                "output_template",
+                "sli_avail_state"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "impact_level": {
+                    "type": "integer"
+                },
+                "infos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entitybasic.InfoRequest"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "output_template": {
+                    "type": "string"
+                },
+                "sli_avail_state": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entityservice.BulkUpdateResponseItem": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "item": {
+                    "type": "object",
+                    "$ref": "#/definitions/entityservice.BulkUpdateRequestItem"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entityservice.CreateRequest": {
+            "type": "object",
+            "required": [
+                "enabled",
+                "impact_level",
+                "name",
+                "output_template",
+                "sli_avail_state"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "impact_level": {
+                    "type": "integer"
+                },
+                "infos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entitybasic.InfoRequest"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "output_template": {
+                    "type": "string"
+                },
+                "sli_avail_state": {
                     "type": "integer"
                 }
             }
@@ -9879,16 +10945,33 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/entity.Infos"
                 },
+                "ko_events": {
+                    "type": "integer"
+                },
+                "last_event_date": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
                 "measurements": {
                     "type": "object"
                 },
                 "name": {
                     "type": "string"
                 },
+                "ok_events": {
+                    "type": "integer"
+                },
                 "output_template": {
                     "type": "string"
                 },
+                "pbehavior_info": {
+                    "type": "object",
+                    "$ref": "#/definitions/entity.PbehaviorInfo"
+                },
                 "sli_avail_state": {
+                    "type": "integer"
+                },
+                "state": {
                     "type": "integer"
                 },
                 "type": {
@@ -9959,6 +11042,141 @@ var doc = `{
             "properties": {
                 "type": {
                     "type": "string"
+                }
+            }
+        },
+        "eventfilter.BulkCreateResponseItem": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "item": {
+                    "type": "object",
+                    "$ref": "#/definitions/eventfilter.EventFilter"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "eventfilter.BulkDeleteRequestItem": {
+            "type": "object",
+            "required": [
+                "_id"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "eventfilter.BulkDeleteResponseItem": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "item": {
+                    "type": "object",
+                    "$ref": "#/definitions/eventfilter.BulkDeleteRequestItem"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "eventfilter.BulkUpdateRequestItem": {
+            "type": "object",
+            "required": [
+                "_id",
+                "description",
+                "enabled",
+                "type"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "actions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/eventfilter.Action"
+                    }
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "external_data": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "on_failure": {
+                    "type": "string"
+                },
+                "on_success": {
+                    "type": "string"
+                },
+                "patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EventPatternList"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updated": {
+                    "type": "integer"
+                }
+            }
+        },
+        "eventfilter.BulkUpdateResponseItem": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "item": {
+                    "type": "object",
+                    "$ref": "#/definitions/eventfilter.BulkUpdateRequestItem"
+                },
+                "status": {
+                    "type": "integer"
                 }
             }
         },
@@ -10212,6 +11430,145 @@ var doc = `{
                 }
             }
         },
+        "idlerule.BulkCreateResponseItem": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "item": {
+                    "type": "object",
+                    "$ref": "#/definitions/idlerule.CreateRequest"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "idlerule.BulkDeleteRequestItem": {
+            "type": "object",
+            "required": [
+                "_id"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "idlerule.BulkDeleteResponseItem": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "item": {
+                    "type": "object",
+                    "$ref": "#/definitions/idlerule.BulkDeleteRequestItem"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "idlerule.BulkUpdateRequestItem": {
+            "type": "object",
+            "required": [
+                "_id",
+                "duration",
+                "enabled",
+                "name",
+                "priority",
+                "type"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "alarm_condition": {
+                    "type": "string"
+                },
+                "alarm_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmPatternList"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "disable_during_periods": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "duration": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "operation": {
+                    "type": "object",
+                    "$ref": "#/definitions/idlerule.OperationRequest"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "idlerule.BulkUpdateResponseItem": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "item": {
+                    "type": "object",
+                    "$ref": "#/definitions/idlerule.BulkUpdateRequestItem"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
         "idlerule.CountByPatternRequest": {
             "type": "object",
             "properties": {
@@ -10236,6 +11593,61 @@ var doc = `{
                 },
                 "total_count_entities": {
                     "type": "integer"
+                }
+            }
+        },
+        "idlerule.CreateRequest": {
+            "type": "object",
+            "required": [
+                "duration",
+                "enabled",
+                "name",
+                "priority",
+                "type"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "alarm_condition": {
+                    "type": "string"
+                },
+                "alarm_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.AlarmPatternList"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "disable_during_periods": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "duration": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "entity_patterns": {
+                    "type": "object",
+                    "$ref": "#/definitions/pattern.EntityPatternList"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "operation": {
+                    "type": "object",
+                    "$ref": "#/definitions/idlerule.OperationRequest"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
                 }
             }
         },
@@ -10535,771 +11947,71 @@ var doc = `{
                 }
             }
         },
-        "pattern.AlarmPattern": {
-            "type": "object",
-            "properties": {
-                "entityID": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "id": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "shouldBeNil": {
-                    "type": "boolean"
-                },
-                "shouldNotBeNil": {
-                    "description": "ShouldNotBeNil is a boolean indicating that the alarm should not be nil,\nand ShouldBeNil is a boolean indicating that the alarm should be nil.\nThe two booleans are needed to be able to make the difference between\nthe case where no alarm pattern was defined (in which case the alarm can\nbe nil or not), the case where a nil alarm pattern was defined (in which\ncase the alarm should be nil), and the case where a non-nil alarm\npattern was defined (in which case the alarm should not be nil).",
-                    "type": "boolean"
-                },
-                "time": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.TimePattern"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.",
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "value": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.AlarmValuePattern"
-                }
-            }
-        },
         "pattern.AlarmPatternList": {
-            "type": "object",
-            "properties": {
-                "patterns": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/pattern.AlarmPattern"
-                    }
-                },
-                "set": {
-                    "description": "isSet is a boolean indicating whether the AlarmPatternList has been set\nexplicitly or not.",
-                    "type": "boolean"
-                },
-                "valid": {
-                    "description": "isValid is a boolean indicating whether the event patterns or valid or\nnot.\nisValid is also false if the AlarmPatternList has not been set.",
-                    "type": "boolean"
-                }
-            }
-        },
-        "pattern.AlarmStepRefPattern": {
-            "type": "object",
-            "properties": {
-                "author": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "initiator": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "message": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "shouldBeNil": {
-                    "type": "boolean"
-                },
-                "shouldNotBeNil": {
-                    "description": "ShouldNotBeNil is a boolean indicating that the alarm step should not be\nnil, and ShouldBeNil is a boolean indicating that the alarm step should\nbe nil.\nThe two booleans are needed to be able to make the difference between\nthe case where no pattern was defined (in which case the alarm step can\nbe nil or not), the case where a nil pattern was defined (in which case\nthe alarm step should be nil), and the case where a non-nil pattern was\ndefined (in which case the alarm step should not be nil).",
-                    "type": "boolean"
-                },
-                "timestamp": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.TimePattern"
-                },
-                "type": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.",
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "value": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.IntegerPattern"
-                }
-            }
-        },
-        "pattern.AlarmTicketRefPattern": {
-            "type": "object",
-            "properties": {
-                "author": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "data": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/pattern.StringPattern"
-                    }
-                },
-                "message": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "shouldBeNil": {
-                    "type": "boolean"
-                },
-                "shouldNotBeNil": {
-                    "description": "ShouldNotBeNil is a boolean indicating that the alarm step should not be\nnil, and ShouldBeNil is a boolean indicating that the alarm step should\nbe nil.\nThe two booleans are needed to be able to make the difference between\nthe case where no pattern was defined (in which case the alarm step can\nbe nil or not), the case where a nil pattern was defined (in which case\nthe alarm step should be nil), and the case where a non-nil pattern was\ndefined (in which case the alarm step should not be nil).",
-                    "type": "boolean"
-                },
-                "timestamp": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.TimePattern"
-                },
-                "type": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.",
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "value": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                }
-            }
-        },
-        "pattern.AlarmValuePattern": {
-            "type": "object",
-            "properties": {
-                "ack": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.AlarmStepRefPattern"
-                },
-                "activationDate": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.TimeRefPattern"
-                },
-                "canceled": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.AlarmStepRefPattern"
-                },
-                "children": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringArrayPattern"
-                },
-                "component": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "connector": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "connectorName": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "creationDate": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.TimePattern"
-                },
-                "displayName": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "done": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.AlarmStepRefPattern"
-                },
-                "hardLimit": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.IntegerRefPattern"
-                },
-                "initialLongOutput": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "initialOutput": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "lastEventDate": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.TimePattern"
-                },
-                "lastUpdateDate": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.TimePattern"
-                },
-                "longOutput": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "output": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "parents": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringArrayPattern"
-                },
-                "resolved": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.TimeRefPattern"
-                },
-                "resource": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "snooze": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.AlarmStepRefPattern"
-                },
-                "state": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.AlarmStepRefPattern"
-                },
-                "stateChangesSinceStatusUpdate": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.IntegerPattern"
-                },
-                "status": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.AlarmStepRefPattern"
-                },
-                "ticket": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.AlarmTicketRefPattern"
-                },
-                "totalStateChanges": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.IntegerPattern"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.",
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
-        },
-        "pattern.BoolPattern": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "description": "Set is a boolean indicating whether the value was set or not.",
-                    "type": "boolean"
-                },
-                "value": {
-                    "description": "Value contains the value of the bool. It should only be taken into\naccount if Set is true.",
-                    "type": "boolean"
-                }
-            }
-        },
-        "pattern.EntityPattern": {
-            "type": "object",
-            "properties": {
-                "category": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "component": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "componentInfos": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/pattern.InfoPattern"
-                    }
-                },
-                "enabled": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.BoolPattern"
-                },
-                "id": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "infos": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/pattern.InfoPattern"
-                    }
-                },
-                "name": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "shouldBeNil": {
-                    "type": "boolean"
-                },
-                "shouldNotBeNil": {
-                    "description": "ShouldNotBeNil is a boolean indicating that the entity should not be\nnil, and ShouldBeNil is a boolean indicating that the entity should be\nnil.\nThe two booleans are needed to be able to make the difference between\nthe case where no entity pattern was defined (in which case the entity\ncan be nil or not), the case where a nil entity pattern was defined (in\nwhich case the entity should be nil), and the case where a non-nil\nentity pattern was defined (in which case the entity should not be nil).",
-                    "type": "boolean"
-                },
-                "type": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.",
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
+            "type": "object"
         },
         "pattern.EntityPatternList": {
-            "type": "object",
-            "properties": {
-                "patterns": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/pattern.EntityPattern"
-                    }
-                },
-                "set": {
-                    "description": "Set is a boolean indicating whether the EntityPatternList has been set\nexplicitly or not.",
-                    "type": "boolean"
-                },
-                "valid": {
-                    "description": "Valid is a boolean indicating whether the event patterns or valid or\nnot.\nValid is also false if the EntityPatternList has not been set.",
-                    "type": "boolean"
-                }
-            }
+            "type": "object"
         },
-        "pattern.EventPattern": {
+        "pattern.EventPatternList": {
+            "type": "object"
+        },
+        "pbehavior.BulkCreateResponseItem": {
             "type": "object",
             "properties": {
-                "ackResources": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.BoolPattern"
+                "error": {
+                    "type": "string"
                 },
-                "author": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "component": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "connector": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "connectorName": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "debug": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.BoolPattern"
-                },
-                "duration": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.IntegerRefPattern"
-                },
-                "entity": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.EntityPattern"
-                },
-                "eventType": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "extraInfos": {
+                "errors": {
                     "type": "object",
                     "additionalProperties": {
-                        "$ref": "#/definitions/pattern.InterfacePattern"
+                        "type": "string"
                     }
                 },
                 "id": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringRefPattern"
+                    "type": "string"
                 },
-                "longOutput": {
+                "item": {
                     "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "output": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "perfData": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringRefPattern"
-                },
-                "resource": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "rk": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "sourceType": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "statName": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "state": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.IntegerPattern"
-                },
-                "stateType": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.IntegerRefPattern"
+                    "$ref": "#/definitions/pbehavior.CreateRequest"
                 },
                 "status": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.IntegerRefPattern"
-                },
-                "ticket": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "timestamp": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.TimePattern"
+                    "type": "integer"
                 }
             }
         },
-        "pattern.EventPatternList": {
-            "type": "object",
-            "properties": {
-                "patterns": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/pattern.EventPattern"
-                    }
-                },
-                "set": {
-                    "description": "Set is a boolean indicating whether the EventPatternList has been set\nexplicitly or not.",
-                    "type": "boolean"
-                },
-                "valid": {
-                    "description": "Valid is a boolean indicating whether the event patterns or valid or\nnot.\nValid is also false if the EventPatternList has not been set.",
-                    "type": "boolean"
-                }
-            }
-        },
-        "pattern.InfoPattern": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "name": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                },
-                "shouldNotBeSet": {
-                    "type": "boolean"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.",
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "value": {
-                    "type": "object",
-                    "$ref": "#/definitions/pattern.StringPattern"
-                }
-            }
-        },
-        "pattern.IntegerPattern": {
-            "type": "object",
-            "properties": {
-                "equal": {
-                    "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "gt": {
-                    "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "gte": {
-                    "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "lt": {
-                    "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "lte": {
-                    "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
-        },
-        "pattern.IntegerRefPattern": {
-            "type": "object",
-            "properties": {
-                "equal": {
-                    "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "equalNil": {
-                    "description": "If EqualNil is true, the field should be nil or not be set to be matched\nby the pattern.",
-                    "type": "boolean"
-                },
-                "gt": {
-                    "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "gte": {
-                    "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "lt": {
-                    "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "lte": {
-                    "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
-        },
-        "pattern.InterfacePattern": {
-            "type": "object",
-            "properties": {
-                "equal": {
-                    "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalString"
-                },
-                "equalNil": {
-                    "description": "If EqualNil is true, the field should be nil or not be set to be matched\nby the pattern.",
-                    "type": "boolean"
-                },
-                "gt": {
-                    "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "gte": {
-                    "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "hasEvery": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalStringArray"
-                },
-                "hasNot": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalStringArray"
-                },
-                "hasOneOf": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalStringArray"
-                },
-                "isEmpty": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalBool"
-                },
-                "lt": {
-                    "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "lte": {
-                    "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "regexMatch": {
-                    "description": "If RegexMatch is set, the value of a field has to be matched by this\nregular expression to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalRegexp"
-                },
-                "unexpectedFields": {
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
-        },
-        "pattern.StringArrayPattern": {
-            "type": "object",
-            "properties": {
-                "hasEvery": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalStringArray"
-                },
-                "hasNot": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalStringArray"
-                },
-                "hasOneOf": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalStringArray"
-                },
-                "isEmpty": {
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalBool"
-                },
-                "unexpectedFields": {
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
-        },
-        "pattern.StringPattern": {
-            "type": "object",
-            "properties": {
-                "equal": {
-                    "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalString"
-                },
-                "regexMatch": {
-                    "description": "If RegexMatch is set, the value of a field has to be matched by this\nregular expression to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalRegexp"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
-        },
-        "pattern.StringRefPattern": {
-            "type": "object",
-            "properties": {
-                "equal": {
-                    "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalString"
-                },
-                "equalNil": {
-                    "description": "If EqualNil is true, the field should be nil or not be set to be matched\nby the pattern.",
-                    "type": "boolean"
-                },
-                "regexMatch": {
-                    "description": "If RegexMatch is set, the value of a field has to be matched by this\nregular expression to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalRegexp"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
-        },
-        "pattern.TimePattern": {
-            "type": "object",
-            "properties": {
-                "equal": {
-                    "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "gt": {
-                    "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "gte": {
-                    "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "lt": {
-                    "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "lte": {
-                    "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
-        },
-        "pattern.TimeRefPattern": {
-            "type": "object",
-            "properties": {
-                "equal": {
-                    "description": "If Equal is set, the value of a field has to be equal to the value of\nEqual to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "equalNil": {
-                    "description": "If EqualNil is true, the field should be nil or not be set to be matched\nby the pattern.",
-                    "type": "boolean"
-                },
-                "gt": {
-                    "description": "If Gt is set, the value of a field has to be greater than the value\nof Gt to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "gte": {
-                    "description": "If Gte is set, the value of a field has to be greater than the value\nof Gte to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "lt": {
-                    "description": "If Lt is set, the value of a field has to be greater than the value\nof Lt to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "lte": {
-                    "description": "If Lte is set, the value of a field has to be greater than the value\nof Lte to be matched by the pattern.",
-                    "type": "object",
-                    "$ref": "#/definitions/types.OptionalInt64"
-                },
-                "unexpectedFields": {
-                    "description": "When unmarshalling a BSON document, the fields of this document that are\nnot defined in this struct are added to UnexpectedFields.\nUnexpectedFields should always be empty.",
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
-        },
-        "pbehavior.BulkDeleteRequest": {
+        "pbehavior.BulkDeleteRequestItem": {
             "type": "object",
             "required": [
-                "ids"
+                "_id"
             ],
             "properties": {
-                "ids": {
-                    "type": "array",
-                    "items": {
+                "_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "pbehavior.BulkDeleteResponseItem": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
                         "type": "string"
                     }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "item": {
+                    "type": "object",
+                    "$ref": "#/definitions/pbehavior.BulkDeleteRequestItem"
+                },
+                "status": {
+                    "type": "integer"
                 }
             }
         },
@@ -11353,6 +12065,30 @@ var doc = `{
                 },
                 "type": {
                     "type": "string"
+                }
+            }
+        },
+        "pbehavior.BulkUpdateResponseItem": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "item": {
+                    "type": "object",
+                    "$ref": "#/definitions/pbehavior.BulkUpdateRequestItem"
+                },
+                "status": {
+                    "type": "integer"
                 }
             }
         },
@@ -12199,6 +12935,9 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/pattern.AlarmPatternList"
                 },
+                "comment": {
+                    "type": "string"
+                },
                 "drop_scenario_if_not_matched": {
                     "type": "boolean"
                 },
@@ -12230,6 +12969,9 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/pattern.AlarmPatternList"
                 },
+                "comment": {
+                    "type": "string"
+                },
                 "drop_scenario_if_not_matched": {
                     "type": "boolean"
                 },
@@ -12245,6 +12987,140 @@ var doc = `{
                 },
                 "type": {
                     "type": "string"
+                }
+            }
+        },
+        "scenario.BulkCreateResponseItem": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "item": {
+                    "type": "object",
+                    "$ref": "#/definitions/scenario.CreateRequest"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "scenario.BulkDeleteRequestItem": {
+            "type": "object",
+            "required": [
+                "_id"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "scenario.BulkDeleteResponseItem": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "item": {
+                    "type": "object",
+                    "$ref": "#/definitions/scenario.BulkDeleteRequestItem"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "scenario.BulkUpdateRequestItem": {
+            "type": "object",
+            "required": [
+                "_id",
+                "actions",
+                "author",
+                "enabled",
+                "name",
+                "priority",
+                "triggers"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "actions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/scenario.ActionRequest"
+                    }
+                },
+                "author": {
+                    "type": "string"
+                },
+                "delay": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "disable_during_periods": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "triggers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "scenario.BulkUpdateResponseItem": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "item": {
+                    "type": "object",
+                    "$ref": "#/definitions/scenario.BulkUpdateRequestItem"
+                },
+                "status": {
+                    "type": "integer"
                 }
             }
         },
@@ -12267,6 +13143,56 @@ var doc = `{
                 },
                 "valid": {
                     "type": "boolean"
+                }
+            }
+        },
+        "scenario.CreateRequest": {
+            "type": "object",
+            "required": [
+                "actions",
+                "author",
+                "enabled",
+                "name",
+                "priority",
+                "triggers"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "actions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/scenario.ActionRequest"
+                    }
+                },
+                "author": {
+                    "type": "string"
+                },
+                "delay": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "disable_during_periods": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "triggers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -12401,6 +13327,15 @@ var doc = `{
                 "alarm_display_name": {
                     "type": "string"
                 },
+                "alarm_id": {
+                    "type": "string"
+                },
+                "assigned_instructions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/alarm.InstructionWithAlarms"
+                    }
+                },
                 "category": {
                     "type": "object",
                     "$ref": "#/definitions/entitycategory.Category"
@@ -12432,7 +13367,19 @@ var doc = `{
                         "$ref": "#/definitions/serviceweather.Info"
                     }
                 },
+                "is_all_auto_instructions_completed": {
+                    "type": "boolean"
+                },
+                "is_auto_instruction_failed": {
+                    "type": "boolean"
+                },
+                "is_auto_instruction_running": {
+                    "type": "boolean"
+                },
                 "is_grey": {
+                    "type": "boolean"
+                },
+                "is_manual_instruction_waiting_result": {
                     "type": "boolean"
                 },
                 "last_update_date": {
@@ -12446,6 +13393,10 @@ var doc = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "pbehavior_info": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.PbehaviorInfo"
                 },
                 "pbehaviors": {
                     "type": "array",
@@ -12469,7 +13420,7 @@ var doc = `{
                 },
                 "stats": {
                     "type": "object",
-                    "$ref": "#/definitions/serviceweather.Stats"
+                    "$ref": "#/definitions/statistics.EventStatistics"
                 },
                 "status": {
                     "type": "object",
@@ -12568,6 +13519,10 @@ var doc = `{
                 "output": {
                     "type": "string"
                 },
+                "pbehavior_info": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.PbehaviorInfo"
+                },
                 "pbehaviors": {
                     "type": "array",
                     "items": {
@@ -12591,23 +13546,6 @@ var doc = `{
                 "status": {
                     "type": "object",
                     "$ref": "#/definitions/alarm.AlarmStep"
-                }
-            }
-        },
-        "serviceweather.Stats": {
-            "type": "object",
-            "properties": {
-                "ko": {
-                    "type": "integer"
-                },
-                "last_event": {
-                    "type": "integer"
-                },
-                "last_ko": {
-                    "type": "integer"
-                },
-                "ok": {
-                    "type": "integer"
                 }
             }
         },
@@ -12700,6 +13638,23 @@ var doc = `{
                     "type": "number"
                 },
                 "type": {
+                    "type": "integer"
+                }
+            }
+        },
+        "statistics.EventStatistics": {
+            "type": "object",
+            "properties": {
+                "ko": {
+                    "type": "integer"
+                },
+                "last_event": {
+                    "type": "integer"
+                },
+                "last_ko": {
+                    "type": "integer"
+                },
+                "ok": {
                     "type": "integer"
                 }
             }
@@ -13023,73 +13978,6 @@ var doc = `{
                 }
             }
         },
-        "types.OptionalBool": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "description": "Set is a boolean indicating whether the value was set or not.",
-                    "type": "boolean"
-                },
-                "value": {
-                    "description": "Value contains the value of the bool. It should only be taken into\naccount if Set is true.",
-                    "type": "boolean"
-                }
-            }
-        },
-        "types.OptionalInt64": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "description": "Set is a boolean indicating whether the value was set or not.",
-                    "type": "boolean"
-                },
-                "value": {
-                    "description": "Value contains the value of the int64. It should only be taken into\naccount if Set is true.",
-                    "type": "integer"
-                }
-            }
-        },
-        "types.OptionalRegexp": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "description": "Set is a boolean indicating whether the value was set or not.",
-                    "type": "boolean"
-                },
-                "value": {
-                    "description": "Value contains the value of the regular expression. It should only be\ntaken into account if Set is true.",
-                    "type": "object",
-                    "$ref": "#/definitions/utils.RegexExpression"
-                }
-            }
-        },
-        "types.OptionalString": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "description": "Set is a boolean indicating whether the value was set or not.",
-                    "type": "boolean"
-                },
-                "value": {
-                    "description": "Value contains the value of the string. It should only be taken into\naccount if Set is true.",
-                    "type": "string"
-                }
-            }
-        },
-        "types.OptionalStringArray": {
-            "type": "object",
-            "properties": {
-                "set": {
-                    "type": "boolean"
-                },
-                "value": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
         "types.PbehaviorInfo": {
             "type": "object",
             "properties": {
@@ -13124,7 +14012,188 @@ var doc = `{
                 }
             }
         },
+        "user.BulkCreateResponseItem": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "item": {
+                    "type": "object",
+                    "$ref": "#/definitions/user.Request"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "user.BulkDeleteRequestItem": {
+            "type": "object",
+            "required": [
+                "_id"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "user.BulkDeleteResponseItem": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "item": {
+                    "type": "object",
+                    "$ref": "#/definitions/user.BulkDeleteRequestItem"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "user.BulkUpdateRequestItem": {
+            "type": "object",
+            "required": [
+                "_id",
+                "email",
+                "enable",
+                "name",
+                "role"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "defaultview": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "enable": {
+                    "type": "boolean"
+                },
+                "firstname": {
+                    "type": "string"
+                },
+                "lastname": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "ui_groups_navigation_type": {
+                    "type": "string"
+                },
+                "ui_language": {
+                    "type": "string"
+                },
+                "ui_tours": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        },
+        "user.BulkUpdateResponseItem": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "item": {
+                    "type": "object",
+                    "$ref": "#/definitions/user.BulkUpdateRequestItem"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
         "user.EditRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "enable",
+                "name",
+                "role"
+            ],
+            "properties": {
+                "defaultview": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "enable": {
+                    "type": "boolean"
+                },
+                "firstname": {
+                    "type": "string"
+                },
+                "lastname": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "ui_groups_navigation_type": {
+                    "type": "string"
+                },
+                "ui_language": {
+                    "type": "string"
+                },
+                "ui_tours": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        },
+        "user.Request": {
             "type": "object",
             "required": [
                 "email",
@@ -13276,9 +14345,6 @@ var doc = `{
                     "type": "string"
                 }
             }
-        },
-        "utils.RegexExpression": {
-            "type": "object"
         },
         "view.BulkDeleteRequest": {
             "type": "object",

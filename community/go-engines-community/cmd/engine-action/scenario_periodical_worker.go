@@ -17,11 +17,9 @@ func (w *scenarioPeriodicalWorker) GetInterval() time.Duration {
 	return w.PeriodicalInterval
 }
 
-func (w *scenarioPeriodicalWorker) Work(ctx context.Context) error {
+func (w *scenarioPeriodicalWorker) Work(ctx context.Context) {
 	err := w.ActionService.ProcessAbandonedExecutions(ctx)
 	if err != nil {
-		w.Logger.Error().Err(err).Msg("Periodical process: failed to process abandoned scenarios.")
+		w.Logger.Error().Err(err).Msg("failed to process abandoned scenarios")
 	}
-
-	return nil
 }

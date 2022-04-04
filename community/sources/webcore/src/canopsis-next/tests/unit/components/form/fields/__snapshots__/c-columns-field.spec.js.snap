@@ -107,6 +107,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
       </div>
       <!---->
       <!---->
+      <!---->
     </div>
   </div>
   <div
@@ -210,6 +211,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
           value="column.columnWithHtml"
         />
       </div>
+      <!---->
       <!---->
       <!---->
     </div>
@@ -317,6 +319,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
       </div>
       <!---->
       <!---->
+      <!---->
     </div>
   </div>
   <div
@@ -422,6 +425,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
       </div>
       <!---->
       <!---->
+      <!---->
     </div>
   </div>
   <div
@@ -525,6 +529,113 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
           value="column.columnWithColorIndicatorAndHtml"
         />
       </div>
+      <!---->
+      <!---->
+      <!---->
+    </div>
+  </div>
+  <div
+    class="my-2 v-card v-sheet theme--light"
+  >
+    <div
+      class="layout pt-2 justify-space-between"
+    >
+      <div
+        class="flex xs3"
+      >
+        <div
+          class="layout text-xs-center pl-2 justify-space-between"
+        >
+          <div
+            class="flex xs1"
+          >
+            <button
+              class="v-btn v-btn--icon theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </button>
+          </div>
+          <div
+            class="flex xs5"
+          >
+            <button
+              class="v-btn v-btn--icon theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_downward
+                </i>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex d-flex xs3"
+      >
+        <div
+          class="text-xs-right pr-2"
+        >
+          <button
+            class="v-btn v-btn--icon theme--light"
+            type="button"
+          >
+            <div
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light red--text"
+              >
+                close
+              </i>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      class="layout justify-center wrap"
+    >
+      <div
+        class="flex xs11"
+      >
+        <input
+          class="v-text-field"
+          error-messages=""
+          name="label[5]"
+          placeholder="common.label"
+          value="Column with template"
+        />
+      </div>
+      <div
+        class="flex xs11"
+      >
+        <input
+          class="v-text-field"
+          error-messages=""
+          name="value[5]"
+          placeholder="common.value"
+          value="column.columnWithTemplate"
+        />
+      </div>
+      <!---->
       <!---->
       <!---->
     </div>
@@ -646,6 +757,68 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
           placeholder="common.value"
           value="column.defaultColumn"
         />
+      </div>
+      <div
+        class="flex xs11"
+      >
+        <div
+          class="layout row"
+        >
+          <div
+            class="v-input v-input--selection-controls v-input--switch theme--light"
+          >
+            <div
+              class="v-input__control"
+            >
+              <div
+                class="v-input__slot"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <input
+                    aria-checked="false"
+                    aria-label="settings.columns.withTemplate"
+                    role="checkbox"
+                    type="checkbox"
+                    value=""
+                  />
+                  <div
+                    class="v-input--selection-controls__ripple"
+                  />
+                  <div
+                    class="v-input--switch__track theme--light"
+                  />
+                  <div
+                    class="v-input--switch__thumb theme--light"
+                  >
+                    <transition-stub
+                      mode="out-in"
+                      name="fab-transition"
+                    />
+                  </div>
+                </div>
+                <label
+                  aria-hidden="true"
+                  class="v-label theme--light"
+                  style="left: 0px; position: relative;"
+                >
+                  settings.columns.withTemplate
+                </label>
+              </div>
+              <div
+                class="v-messages theme--light"
+              >
+                <transition-group-stub
+                  class="v-messages__wrapper"
+                  name="message-transition"
+                  tag="div"
+                />
+              </div>
+            </div>
+          </div>
+          <!---->
+        </div>
       </div>
       <div
         class="flex xs11"
@@ -864,6 +1037,68 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
           placeholder="common.value"
           value="column.columnWithHtml"
         />
+      </div>
+      <div
+        class="flex xs11"
+      >
+        <div
+          class="layout row"
+        >
+          <div
+            class="v-input v-input--selection-controls v-input--switch theme--light"
+          >
+            <div
+              class="v-input__control"
+            >
+              <div
+                class="v-input__slot"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <input
+                    aria-checked="false"
+                    aria-label="settings.columns.withTemplate"
+                    role="checkbox"
+                    type="checkbox"
+                    value=""
+                  />
+                  <div
+                    class="v-input--selection-controls__ripple"
+                  />
+                  <div
+                    class="v-input--switch__track theme--light"
+                  />
+                  <div
+                    class="v-input--switch__thumb theme--light"
+                  >
+                    <transition-stub
+                      mode="out-in"
+                      name="fab-transition"
+                    />
+                  </div>
+                </div>
+                <label
+                  aria-hidden="true"
+                  class="v-label theme--light"
+                  style="left: 0px; position: relative;"
+                >
+                  settings.columns.withTemplate
+                </label>
+              </div>
+              <div
+                class="v-messages theme--light"
+              >
+                <transition-group-stub
+                  class="v-messages__wrapper"
+                  name="message-transition"
+                  tag="div"
+                />
+              </div>
+            </div>
+          </div>
+          <!---->
+        </div>
       </div>
       <div
         class="flex xs11"
@@ -1082,6 +1317,68 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
           placeholder="common.value"
           value="column.columnWithColorIndicatorState"
         />
+      </div>
+      <div
+        class="flex xs11"
+      >
+        <div
+          class="layout row"
+        >
+          <div
+            class="v-input v-input--selection-controls v-input--switch theme--light"
+          >
+            <div
+              class="v-input__control"
+            >
+              <div
+                class="v-input__slot"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <input
+                    aria-checked="false"
+                    aria-label="settings.columns.withTemplate"
+                    role="checkbox"
+                    type="checkbox"
+                    value=""
+                  />
+                  <div
+                    class="v-input--selection-controls__ripple"
+                  />
+                  <div
+                    class="v-input--switch__track theme--light"
+                  />
+                  <div
+                    class="v-input--switch__thumb theme--light"
+                  >
+                    <transition-stub
+                      mode="out-in"
+                      name="fab-transition"
+                    />
+                  </div>
+                </div>
+                <label
+                  aria-hidden="true"
+                  class="v-label theme--light"
+                  style="left: 0px; position: relative;"
+                >
+                  settings.columns.withTemplate
+                </label>
+              </div>
+              <div
+                class="v-messages theme--light"
+              >
+                <transition-group-stub
+                  class="v-messages__wrapper"
+                  name="message-transition"
+                  tag="div"
+                />
+              </div>
+            </div>
+          </div>
+          <!---->
+        </div>
       </div>
       <div
         class="flex xs11"
@@ -1311,6 +1608,68 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
         class="flex xs11"
       >
         <div
+          class="layout row"
+        >
+          <div
+            class="v-input v-input--selection-controls v-input--switch theme--light"
+          >
+            <div
+              class="v-input__control"
+            >
+              <div
+                class="v-input__slot"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <input
+                    aria-checked="false"
+                    aria-label="settings.columns.withTemplate"
+                    role="checkbox"
+                    type="checkbox"
+                    value=""
+                  />
+                  <div
+                    class="v-input--selection-controls__ripple"
+                  />
+                  <div
+                    class="v-input--switch__track theme--light"
+                  />
+                  <div
+                    class="v-input--switch__thumb theme--light"
+                  >
+                    <transition-stub
+                      mode="out-in"
+                      name="fab-transition"
+                    />
+                  </div>
+                </div>
+                <label
+                  aria-hidden="true"
+                  class="v-label theme--light"
+                  style="left: 0px; position: relative;"
+                >
+                  settings.columns.withTemplate
+                </label>
+              </div>
+              <div
+                class="v-messages theme--light"
+              >
+                <transition-group-stub
+                  class="v-messages__wrapper"
+                  name="message-transition"
+                  tag="div"
+                />
+              </div>
+            </div>
+          </div>
+          <!---->
+        </div>
+      </div>
+      <div
+        class="flex xs11"
+      >
+        <div
           class="v-input v-input--selection-controls v-input--switch theme--light"
         >
           <div
@@ -1535,6 +1894,68 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
         class="flex xs11"
       >
         <div
+          class="layout row"
+        >
+          <div
+            class="v-input v-input--selection-controls v-input--switch theme--light"
+          >
+            <div
+              class="v-input__control"
+            >
+              <div
+                class="v-input__slot"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <input
+                    aria-checked="false"
+                    aria-label="settings.columns.withTemplate"
+                    role="checkbox"
+                    type="checkbox"
+                    value=""
+                  />
+                  <div
+                    class="v-input--selection-controls__ripple"
+                  />
+                  <div
+                    class="v-input--switch__track theme--light"
+                  />
+                  <div
+                    class="v-input--switch__thumb theme--light"
+                  >
+                    <transition-stub
+                      mode="out-in"
+                      name="fab-transition"
+                    />
+                  </div>
+                </div>
+                <label
+                  aria-hidden="true"
+                  class="v-label theme--light"
+                  style="left: 0px; position: relative;"
+                >
+                  settings.columns.withTemplate
+                </label>
+              </div>
+              <div
+                class="v-messages theme--light"
+              >
+                <transition-group-stub
+                  class="v-messages__wrapper"
+                  name="message-transition"
+                  tag="div"
+                />
+              </div>
+            </div>
+          </div>
+          <!---->
+        </div>
+      </div>
+      <div
+        class="flex xs11"
+      >
+        <div
           class="v-input v-input--selection-controls v-input--switch v-input--is-label-active v-input--is-dirty theme--light"
         >
           <div
@@ -1651,6 +2072,299 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
             value="impact_state"
           />
         </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="my-2 v-card v-sheet theme--light"
+  >
+    <div
+      class="layout pt-2 justify-space-between"
+    >
+      <div
+        class="flex xs3"
+      >
+        <div
+          class="layout text-xs-center pl-2 justify-space-between"
+        >
+          <div
+            class="flex xs1"
+          >
+            <button
+              class="v-btn v-btn--icon theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </button>
+          </div>
+          <div
+            class="flex xs5"
+          >
+            <button
+              class="v-btn v-btn--icon theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_downward
+                </i>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex d-flex xs3"
+      >
+        <div
+          class="text-xs-right pr-2"
+        >
+          <button
+            class="v-btn v-btn--icon theme--light"
+            type="button"
+          >
+            <div
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light red--text"
+              >
+                close
+              </i>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      class="layout justify-center wrap"
+    >
+      <div
+        class="flex xs11"
+      >
+        <input
+          class="v-text-field"
+          error-messages=""
+          name="label[5]"
+          placeholder="common.label"
+          value="Column with template"
+        />
+      </div>
+      <div
+        class="flex xs11"
+      >
+        <input
+          class="v-text-field"
+          error-messages=""
+          name="value[5]"
+          placeholder="common.value"
+          value="column.columnWithTemplate"
+        />
+      </div>
+      <div
+        class="flex xs11"
+      >
+        <div
+          class="layout row"
+        >
+          <div
+            class="v-input v-input--selection-controls v-input--switch v-input--is-label-active v-input--is-dirty theme--light"
+          >
+            <div
+              class="v-input__control"
+            >
+              <div
+                class="v-input__slot"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <input
+                    aria-checked="true"
+                    aria-label="settings.columns.withTemplate"
+                    role="checkbox"
+                    type="checkbox"
+                    value=""
+                  />
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                  <div
+                    class="v-input--switch__track theme--light primary--text"
+                  />
+                  <div
+                    class="v-input--switch__thumb theme--light primary--text"
+                  >
+                    <transition-stub
+                      mode="out-in"
+                      name="fab-transition"
+                    />
+                  </div>
+                </div>
+                <label
+                  aria-hidden="true"
+                  class="v-label theme--light"
+                  style="left: 0px; position: relative;"
+                >
+                  settings.columns.withTemplate
+                </label>
+              </div>
+              <div
+                class="v-messages theme--light"
+              >
+                <transition-group-stub
+                  class="v-messages__wrapper"
+                  name="message-transition"
+                  tag="div"
+                />
+              </div>
+            </div>
+          </div>
+          <button
+            class="primary v-btn v-btn--small theme--light"
+            type="button"
+          >
+            <div
+              class="v-btn__content"
+            >
+              <span>
+                common.edit
+              </span>
+            </div>
+          </button>
+        </div>
+      </div>
+      <div
+        class="flex xs11"
+      >
+        <div
+          class="v-input v-input--selection-controls v-input--switch v-input--is-disabled theme--light"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="false"
+                  aria-label="settings.columns.isHtml"
+                  disabled="disabled"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+                <div
+                  class="v-input--switch__track theme--light"
+                />
+                <div
+                  class="v-input--switch__thumb theme--light"
+                >
+                  <transition-stub
+                    mode="out-in"
+                    name="fab-transition"
+                  />
+                </div>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                settings.columns.isHtml
+              </label>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex xs11"
+      >
+        <div
+          class="v-input v-input--selection-controls v-input--switch v-input--is-disabled theme--light"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="false"
+                  aria-label="settings.colorIndicator.title"
+                  disabled="disabled"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+                <div
+                  class="v-input--switch__track theme--light"
+                />
+                <div
+                  class="v-input--switch__thumb theme--light"
+                >
+                  <transition-stub
+                    mode="out-in"
+                    name="fab-transition"
+                  />
+                </div>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                settings.colorIndicator.title
+              </label>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+        <!---->
       </div>
     </div>
   </div>
@@ -1789,6 +2503,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
           value="column.defaultColumn"
         />
       </div>
+      <!---->
       <div
         class="flex xs11"
       >
@@ -2007,6 +2722,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
           value="column.columnWithHtml"
         />
       </div>
+      <!---->
       <div
         class="flex xs11"
       >
@@ -2225,6 +2941,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
           value="column.columnWithColorIndicatorState"
         />
       </div>
+      <!---->
       <div
         class="flex xs11"
       >
@@ -2449,6 +3166,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
           value="column.columnWithColorIndicatorImpactState"
         />
       </div>
+      <!---->
       <div
         class="flex xs11"
       >
@@ -2673,6 +3391,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
           value="column.columnWithColorIndicatorAndHtml"
         />
       </div>
+      <!---->
       <div
         class="flex xs11"
       >

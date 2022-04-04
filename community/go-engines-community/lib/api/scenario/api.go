@@ -1,25 +1,31 @@
 package scenario
 
 import (
+	"context"
+	"encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/valyala/fastjson"
 	"net/http"
 )
 
 type api struct {
-	store             Store
-	actionLogger      logger.ActionLogger
+	store        Store
+	actionLogger logger.ActionLogger
+
+	//todo: priority intervals with new requirements are looks weird now, should think about cleaner solution
 	priorityIntervals action.PriorityIntervals
 }
 
 type API interface {
 	GetMinimalPriority(c *gin.Context)
 	CheckPriority(c *gin.Context)
-	common.CrudAPI
+	common.BulkCrudAPI
 }
 
 func NewApi(
@@ -115,14 +121,17 @@ func (a *api) Get(c *gin.Context) {
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
 
+	priority := a.priorityIntervals.GetMinimal()
+	request.Priority = &priority
+
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey)
-	author := c.MustGet(auth.Username)
-	setActionParameterAuthorAndUserID(&request.EditRequest, author.(string), userId.(string))
+	userId := c.MustGet(auth.UserKey).(string)
+	author := c.MustGet(auth.Username).(string)
+	setActionParameterAuthorAndUserID(&request.EditRequest, author, userId)
 
 	scenario, err := a.store.Insert(c.Request.Context(), request)
 	if err != nil {
@@ -131,7 +140,7 @@ func (a *api) Create(c *gin.Context) {
 
 	a.priorityIntervals.Take(scenario.Priority)
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeScenario,
 		ValueID:   scenario.ID,
@@ -172,14 +181,17 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
+	priority := a.priorityIntervals.GetMinimal()
+	request.Priority = &priority
+
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey)
-	author := c.MustGet(auth.Username)
-	setActionParameterAuthorAndUserID(&request.EditRequest, author.(string), userId.(string))
+	userId := c.MustGet(auth.UserKey).(string)
+	author := c.MustGet(auth.Username).(string)
+	setActionParameterAuthorAndUserID(&request.EditRequest, author, userId)
 
 	newScenario, err := a.store.Update(c.Request.Context(), request)
 	if err != nil {
@@ -193,7 +205,7 @@ func (a *api) Update(c *gin.Context) {
 	a.priorityIntervals.Restore(oldScenario.Priority)
 	a.priorityIntervals.Take(newScenario.Priority)
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypeScenario,
 		ValueID:   c.Param("id"),
@@ -241,7 +253,7 @@ func (a *api) Delete(c *gin.Context) {
 
 	a.priorityIntervals.Restore(scenario.Priority)
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionDelete,
 		ValueType: logger.ValueTypeScenario,
 		ValueID:   c.Param("id"),
@@ -305,19 +317,312 @@ func (a *api) CheckPriority(c *gin.Context) {
 	})
 }
 
+// Bulk create scenarios
+// @Summary Bulk create scenarios
+// @Description Bulk create scenarios
+// @Tags scenarios
+// @ID scenarios-bulk-create
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []CreateRequest true "body"
+// @Success 207 {array} []BulkCreateResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/scenarios [post]
+func (a *api) BulkCreate(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+
+	var ar fastjson.Arena
+
+	raw, err := c.GetRawData()
+	if err != nil {
+		panic(err)
+	}
+
+	jsonValue, err := fastjson.ParseBytes(raw)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	rawObjects, err := jsonValue.Array()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	ctx := c.Request.Context()
+	response := ar.NewArray()
+
+	for idx, rawObject := range rawObjects {
+		object, err := rawObject.Object()
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		var request CreateRequest
+		err = json.Unmarshal(object.MarshalTo(nil), &request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		if request.Priority == nil {
+			priority := a.priorityIntervals.GetMinimal()
+			request.Priority = &priority
+		}
+
+		err = binding.Validator.ValidateStruct(request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
+			continue
+		}
+
+		setActionParameterAuthorAndUserID(&request.EditRequest, c.MustGet(auth.Username).(string), userId)
+
+		scenario, err := a.store.Insert(ctx, request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		a.priorityIntervals.Take(scenario.Priority)
+		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, scenario.ID, http.StatusOK, rawObject, nil))
+
+		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+			Action:    logger.ActionCreate,
+			ValueType: logger.ValueTypeScenario,
+			ValueID:   scenario.ID,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+	}
+
+	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+}
+
+// Bulk update scenarios
+// @Summary Bulk update scenarios
+// @Description Bulk update scenarios
+// @Tags scenarios
+// @ID scenarios-bulk-update
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []BulkUpdateRequestItem true "body"
+// @Success 207 {array} []BulkUpdateResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/scenarios [put]
+func (a *api) BulkUpdate(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+
+	var ar fastjson.Arena
+
+	raw, err := c.GetRawData()
+	if err != nil {
+		panic(err)
+	}
+
+	jsonValue, err := fastjson.ParseBytes(raw)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	rawObjects, err := jsonValue.Array()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	ctx := c.Request.Context()
+	response := ar.NewArray()
+
+	for idx, rawObject := range rawObjects {
+		object, err := rawObject.Object()
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		var request BulkUpdateRequestItem
+		err = json.Unmarshal(object.MarshalTo(nil), &request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		if request.Priority == nil {
+			priority := a.priorityIntervals.GetMinimal()
+			request.Priority = &priority
+		}
+
+		err = binding.Validator.ValidateStruct(request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
+			continue
+		}
+
+		oldScenario, err := a.store.GetOneBy(c.Request.Context(), request.ID)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		if oldScenario == nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			continue
+		}
+
+		setActionParameterAuthorAndUserID(&request.EditRequest, c.MustGet(auth.Username).(string), userId)
+
+		scenario, err := a.store.Update(ctx, UpdateRequest(request))
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		if scenario == nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			continue
+		}
+
+		a.priorityIntervals.Restore(oldScenario.Priority)
+		a.priorityIntervals.Take(scenario.Priority)
+		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, scenario.ID, http.StatusOK, rawObject, nil))
+
+		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+			Action:    logger.ActionUpdate,
+			ValueType: logger.ValueTypeScenario,
+			ValueID:   scenario.ID,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+	}
+
+	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+}
+
+// Bulk delete scenarios
+// @Summary Bulk delete scenarios
+// @Description Bulk delete scenarios
+// @Tags scenarios
+// @ID scenarios-bulk-delete
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body []BulkDeleteRequestItem true "body"
+// @Success 207 {array} []BulkDeleteResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/scenarios [delete]
+func (a *api) BulkDelete(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+
+	var ar fastjson.Arena
+
+	raw, err := c.GetRawData()
+	if err != nil {
+		panic(err)
+	}
+
+	jsonValue, err := fastjson.ParseBytes(raw)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	rawObjects, err := jsonValue.Array()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	ctx := c.Request.Context()
+	response := ar.NewArray()
+
+	for idx, rawObject := range rawObjects {
+		object, err := rawObject.Object()
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		var request BulkDeleteRequestItem
+		err = json.Unmarshal(object.MarshalTo(nil), &request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		err = binding.Validator.ValidateStruct(request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
+			continue
+		}
+
+		scenario, err := a.store.GetOneBy(c.Request.Context(), request.ID)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		if scenario == nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			continue
+		}
+
+		ok, err := a.store.Delete(ctx, request.ID)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		if !ok {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			continue
+		}
+
+		a.priorityIntervals.Restore(scenario.Priority)
+		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))
+
+		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+			Action:    logger.ActionDelete,
+			ValueType: logger.ValueTypeScenario,
+			ValueID:   request.ID,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+	}
+
+	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+}
+
 func setActionParameterAuthorAndUserID(request *EditRequest, author, userID string) {
 	for i, action := range request.Actions {
 		switch v := action.Parameters.(type) {
 		case SnoozeParametersRequest:
-			v.Author = author
+			if v.Author == "" {
+				v.Author = author
+			}
 			v.User = userID
 			request.Actions[i].Parameters = v
 		case ChangeStateParametersRequest:
-			v.Author = author
+			if v.Author == "" {
+				v.Author = author
+			}
 			v.User = userID
 			request.Actions[i].Parameters = v
 		case AssocTicketParametersRequest:
-			v.Author = author
+			if v.Author == "" {
+				v.Author = author
+			}
 			v.User = userID
 			request.Actions[i].Parameters = v
 		case PbehaviorParametersRequest:
@@ -325,7 +630,9 @@ func setActionParameterAuthorAndUserID(request *EditRequest, author, userID stri
 			v.User = userID
 			request.Actions[i].Parameters = v
 		case ParametersRequest:
-			v.Author = author
+			if v.Author == "" {
+				v.Author = author
+			}
 			v.User = userID
 			request.Actions[i].Parameters = v
 		}

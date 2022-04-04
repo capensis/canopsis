@@ -39,7 +39,7 @@ require (
 	github.com/gorilla/sessions v1.2.1
 	github.com/gorilla/websocket v1.4.2
 	github.com/json-iterator/go v1.1.11
-	github.com/mailru/easyjson v0.7.7 // indirect
+	github.com/mailru/easyjson v0.7.7
 	github.com/mitchellh/mapstructure v1.4.1
 	github.com/pelletier/go-toml v1.9.3
 	github.com/rs/zerolog v1.23.0
@@ -53,13 +53,13 @@ require (
 	github.com/teambition/rrule-go v1.7.1
 	github.com/tidwall/pretty v1.1.0 // indirect
 	github.com/valyala/fastjson v1.6.3
-	go.mongodb.org/mongo-driver v1.7.1
-	golang.org/x/net v0.0.0-20211013171255-e13a2654a71e
+	go.mongodb.org/mongo-driver v1.8.1
+	golang.org/x/net v0.0.0-20211013171255-e13a2654a71e // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	golang.org/x/sys v0.0.0-20211013075003-97ac67df715c // indirect
 	golang.org/x/text v0.3.7
 	golang.org/x/tools v0.1.5 // indirect
-	gopkg.in/yaml.v2 v2.4.0
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
 require github.com/kylelemons/godebug v1.1.0
@@ -75,6 +75,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.15.1
 	github.com/jackc/pgconn v1.10.0
 	github.com/jackc/pgproto3/v2 v2.1.1
+	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (

@@ -7,6 +7,7 @@ import {
   PING_INTERVAL,
   RECONNECT_INTERVAL,
   EVENTS_TYPES,
+  ERROR_MESSAGES,
 } from '../constants';
 
 import SocketRoom from './socket-room';
@@ -36,7 +37,16 @@ class Socket {
    * @returns {*|boolean}
    */
   get isConnectionOpen() {
-    return this.connection && this.connection.readyState === WebSocket.OPEN;
+    return this.connection?.readyState === WebSocket.OPEN;
+  }
+
+  /**
+   * Getter for checking if connection is in connecting status
+   *
+   * @returns {*|boolean}
+   */
+  get isConnecting() {
+    return this.connection?.readyState === WebSocket.CONNECTING;
   }
 
   /**
@@ -270,14 +280,21 @@ class Socket {
 
     this.ping();
 
-    setTimeout(() => this.startPinging(), PING_INTERVAL);
+    this.pingTimeout = setTimeout(() => this.startPinging(), PING_INTERVAL);
+  }
+
+  /**
+   * Stop custom ping mechanism
+   */
+  stopPinging() {
+    clearTimeout(this.pingTimeout);
   }
 
   /**
    * Start reconnecting mechanism
    */
   startReconnecting() {
-    if (this.isConnectionOpen) {
+    if (this.isConnectionOpen || this.isConnecting) {
       return;
     }
 
@@ -293,24 +310,35 @@ class Socket {
       return;
     }
 
-    setTimeout(() => {
+    this.reconnectingTimeout = setTimeout(() => {
       this.reconnect();
       this.startReconnecting();
     }, RECONNECT_INTERVAL);
   }
 
   /**
+   * Stop reconnecting mechanism
+   */
+  stopReconnecting() {
+    this.reconnecting = false;
+    this.reconnectsCount = 0;
+
+    clearTimeout(this.reconnectingTimeout);
+  }
+
+  /**
    * Base handler for 'open' event
    */
   baseOpenHandler() {
-    this.reconnecting = false;
-    this.reconnectsCount = 0;
+    this.stopReconnecting();
 
     if (this.sendQueue.length) {
       this.sendQueue.forEach(data => this.send(data));
     }
 
     this.sendQueue = [];
+
+    this.stopPinging();
     this.startPinging();
   }
 
@@ -322,6 +350,7 @@ class Socket {
       return;
     }
 
+    this.stopReconnecting();
     this.startReconnecting();
   }
 
@@ -341,6 +370,7 @@ class Socket {
       return;
     }
 
+    this.stopReconnecting();
     this.startReconnecting();
   }
 
@@ -351,18 +381,6 @@ class Socket {
    */
   baseMessageHandler({ data }) {
     const { type, room, msg, error } = JSON.parse(data);
-
-    if (type === RESPONSE_MESSAGES_TYPES.error) {
-      this.connection.dispatchEvent(
-        new ErrorEvent('error', { message: error }),
-      );
-      return;
-    }
-
-    if (type === RESPONSE_MESSAGES_TYPES.pong) {
-      this.lastPongedAt = Date.now();
-      return;
-    }
 
     switch (type) {
       case RESPONSE_MESSAGES_TYPES.pong:
@@ -407,5 +425,6 @@ class Socket {
 }
 
 Socket.EVENTS_TYPES = EVENTS_TYPES;
+Socket.ERROR_MESSAGES = ERROR_MESSAGES;
 
 export default Socket;

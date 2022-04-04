@@ -5,6 +5,7 @@
         :disabled="disabled",
         :data-test="$attrs['data-test']",
         :loading="loading",
+        :small="small",
         icon,
         @click.stop.prevent="$listeners.click"
       )
@@ -56,6 +57,10 @@ export default {
       },
     },
     left: {
+      type: Boolean,
+      required: false,
+    },
+    small: {
       type: Boolean,
       required: false,
     },

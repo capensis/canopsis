@@ -260,7 +260,7 @@ export default {
     },
   },
   methods: {
-    async showExecuteInstructionModal(assignedInstruction) {
+    showExecuteInstructionModal(assignedInstruction) {
       const refreshAlarm = () => this.refreshAlarmById(this.item._id);
 
       this.$modals.show({
@@ -268,7 +268,7 @@ export default {
         name: MODALS.executeRemediationInstruction,
         config: {
           assignedInstruction,
-          alarm: this.item,
+          alarmId: this.item._id,
           onOpen: refreshAlarm,
           onClose: refreshAlarm,
           onComplete: refreshAlarm,

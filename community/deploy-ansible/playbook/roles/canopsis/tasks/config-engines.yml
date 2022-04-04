@@ -11,14 +11,6 @@
     group: root
     mode: 0644
 
-- name: deploy Canopsis influx storage configuration templates
-  template:
-    src: common-engines/storage-influxdb.j2
-    dest: "{{ canopsis_home }}/etc/influx/storage.conf"
-    owner: root
-    group: root
-    mode: 0644
-
 - name: deploy Canopsis mongo store configuration templates
   template:
     src: common-engines/mongo_store.j2

@@ -148,7 +148,7 @@ func (s *service) Process(ctx context.Context, event types.Event) error {
 	return s.calculateState(ctx, event)
 }
 
-func (s *service) markServices(parentCtx context.Context, idleSinceMap *ServicesIdleSinceMap, services []ServiceData, impacts []string, timestamp int64) {
+func (s *service) markServices(parentCtx context.Context, idleSinceMap *ServicesIdleSinceMap, services []EntityService, impacts []string, timestamp int64) {
 	ctx, cancel := context.WithCancel(parentCtx)
 	defer cancel()
 
@@ -182,7 +182,7 @@ func (s *service) markServices(parentCtx context.Context, idleSinceMap *Services
 					for _, service := range services {
 						if service.ID == impact && len(service.Impacts) > 0 {
 							wg.Add(len(service.Impacts))
-							go func(service ServiceData) {
+							go func(service EntityService) {
 								for _, impact := range service.Impacts {
 									select {
 									case <-ctx.Done():
@@ -209,7 +209,7 @@ func (s *service) RecomputeIdleSince(parentCtx context.Context) error {
 
 	defer trace.StartRegion(ctx, "service.RecomputeIdleSince").End()
 
-	services, err := s.loadServices(ctx, false)
+	services, err := s.adapter.GetValid(ctx)
 	if err != nil {
 		return err
 	}
@@ -330,7 +330,7 @@ func (s *service) ProcessRpc(ctx context.Context, event types.Event) error {
 // method checks alarm cache to detect which alarm state was used previously.
 // If lockClient is not defined service is not locked.
 func (s *service) calculateState(ctx context.Context, event types.Event) error {
-	services, err := s.storage.Load(ctx)
+	services, err := s.storage.GetAll(ctx)
 	if err != nil {
 		return err
 	}
@@ -546,16 +546,12 @@ func (s *service) UpdateService(ctx context.Context, event types.Event) error {
 		}()
 	}
 
-	service, err := s.adapter.GetByID(ctx, serviceID)
+	serviceData, _, _, err := s.storage.Reload(ctx, serviceID)
 	if err != nil {
 		return err
 	}
 
-	if service == nil || !service.Enabled {
-		err := s.storage.Delete(ctx, serviceID)
-		if err != nil {
-			return err
-		}
+	if serviceData == nil {
 		err = s.countersCache.Remove(ctx, serviceID)
 		if err != nil {
 			return err
@@ -568,15 +564,6 @@ func (s *service) UpdateService(ctx context.Context, event types.Event) error {
 		return nil
 	}
 
-	serviceData := ServiceData{
-		ID:             service.ID,
-		OutputTemplate: service.OutputTemplate,
-	}
-	err = s.storage.Save(ctx, serviceData)
-	if err != nil {
-		return err
-	}
-
 	err = s.computeServiceCounters(ctx, serviceID, serviceData.OutputTemplate, s.lockClient != nil)
 	if err != nil {
 		return err
@@ -586,24 +573,16 @@ func (s *service) UpdateService(ctx context.Context, event types.Event) error {
 }
 
 func (s *service) ReloadService(ctx context.Context, serviceID string) error {
-	service, err := s.adapter.GetByID(ctx, serviceID)
+	data, _, _, err := s.storage.Reload(ctx, serviceID)
 	if err != nil {
 		return err
 	}
 
-	if service == nil || !service.Enabled {
-		err := s.storage.Delete(ctx, serviceID)
-		if err != nil {
-			return err
-		}
-
+	if data == nil {
 		return s.countersCache.Remove(ctx, serviceID)
 	}
 
-	return s.storage.Save(ctx, ServiceData{
-		ID:             service.ID,
-		OutputTemplate: service.OutputTemplate,
-	})
+	return nil
 }
 
 // ComputeAllServices recomputes all services counters and alarm state.
@@ -614,7 +593,7 @@ func (s *service) ComputeAllServices(parentCtx context.Context) error {
 
 	defer trace.StartRegion(ctx, "service.ComputeAllServices").End()
 
-	services, err := s.loadServices(ctx, true)
+	services, err := s.loadServices(ctx)
 	if err != nil {
 		return err
 	}
@@ -664,33 +643,20 @@ func (s *service) ClearCache(ctx context.Context) error {
 	return s.countersCache.ClearAll(ctx)
 }
 
-func (s *service) loadServices(ctx context.Context, redisSave bool) ([]ServiceData, error) {
-	services, err := s.adapter.GetValid(ctx)
+func (s *service) loadServices(ctx context.Context) ([]ServiceData, error) {
+	data, err := s.storage.ReloadAll(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	ids := make([]string, len(services))
-	data := make([]ServiceData, len(services))
+	ids := make([]string, len(data))
 	for i := range data {
-		ids[i] = services[i].ID
-		data[i] = ServiceData{
-			ID:             services[i].ID,
-			OutputTemplate: services[i].OutputTemplate,
-			Impacts:        services[i].Impacts,
-		}
+		ids[i] = data[i].ID
 	}
 
-	if redisSave {
-		err = s.storage.SaveAll(ctx, data)
-		if err != nil {
-			return nil, err
-		}
-
-		err = s.countersCache.KeepOnly(ctx, ids)
-		if err != nil {
-			return nil, err
-		}
+	err = s.countersCache.KeepOnly(ctx, ids)
+	if err != nil {
+		return nil, err
 	}
 
 	return data, nil

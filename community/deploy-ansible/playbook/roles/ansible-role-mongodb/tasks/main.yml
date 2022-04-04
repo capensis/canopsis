@@ -15,7 +15,7 @@
   include: configure.yml
   tags: [mongodb]
 
-- name: Check where admin user already exists
+- name: Check whether admin user already exists
   command: >
     mongo --quiet -u {{ mongodb_user_admin_name }} \
           -p {{ mongodb_user_admin_password }} --port {{ mongodb_net_port }} --eval 'db.version()' admin
@@ -47,9 +47,4 @@
     - "{{ mongodb_users | default([]) }}"
   when: mongodb_security_authorization == 'enabled'
   no_log: true
-  tags: [mongodb]
-
-- name: Include MMS Agent configuration
-  include: mms-agent.yml
-  when: mongodb_mms_api_key | length > 0
   tags: [mongodb]

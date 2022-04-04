@@ -3,6 +3,12 @@
   tags:
     - cps_mongodb
 
+- import_tasks: config-postgresql.yml
+  become: true
+  become_user: postgres
+  tags:
+    - cps_postgresql
+
 - import_tasks: config-rabbitmq.yml
   tags:
     - cps_rabbitmq

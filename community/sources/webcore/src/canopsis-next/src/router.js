@@ -28,6 +28,7 @@ const AdminBroadcastMessages = () => import(/* webpackChunkName: "BroadcastMessa
 const AdminPlaylists = () => import(/* webpackChunkName: "Playlist" */ '@/views/admin/playlists.vue');
 const AdminPlanning = () => import(/* webpackChunkName: "Planning" */ '@/views/admin/planning.vue');
 const AdminRemediation = () => import(/* webpackChunkName: "Remediation" */ '@/views/admin/remediation.vue');
+const AdminEngines = () => import(/* webpackChunkName: "Engines" */ '@/views/admin/engines.vue');
 const AdminHealthcheck = () => import(/* webpackChunkName: "Healthcheck" */ '@/views/admin/healthcheck.vue');
 const AdminKPI = () => import(/* webpackChunkName: "KPI" */ '@/views/admin/kpi.vue');
 const ExploitationPbehaviors = () => import(/* webpackChunkName: "Pbehavior" */ '@/views/exploitation/pbehaviors.vue');
@@ -92,7 +93,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USERS_PERMISSIONS.technical.action,
+        id: USERS_PERMISSIONS.technical.permission,
       },
     },
   },
@@ -182,6 +183,18 @@ const routes = [
       requiresPermission: {
         action: CRUD_ACTIONS.can,
         id: USERS_PERMISSIONS.technical.healthcheck,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminEngines,
+    name: ROUTES_NAMES.adminEngines,
+    component: AdminEngines,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        action: CRUD_ACTIONS.can,
+        id: USERS_PERMISSIONS.technical.engine,
       },
     },
   },

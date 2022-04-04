@@ -5,13 +5,7 @@
       "models_userview": {
         "checksum": 15
       },
-      "models_action": {
-        "checksum": 15
-      },
-      "models_profile": {
-        "checksum": 15
-      },
-      "models_account": {
+      "models_permission": {
         "checksum": 15
       },
       "models_role": {
@@ -68,121 +62,6 @@
       "models_notification_instructionStats": {
         "checksum": 15
       },
-      "tabs_showeditionmenu": {
-        "checksum": 1
-      },
-      "actionbutton_canuploadmibfile": {
-        "checksum": 15,
-        "desc": "Upload mib file to canopsis system"
-      },
-      "actionbutton_canediturlfield": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_connectoredit": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "view_event": {
-        "checksum": 7,
-        "desc": ""
-      },
-      "actionbutton_connectordisable": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_connectorenable": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_connectorgetconf": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_connectorgetstate": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_connectorsetconf": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "list_search": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "list_filters": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "menu_aclconfig": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "menu_authsystems": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "menu_enginesconfig": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "menu_pluginsconfig": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "menu_uisettings": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_ack": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_fastack": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_cancel": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_uncancel": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_changestate": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_eventnavigation": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_history": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_incident": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_info": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_ticketnumber": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "models_taskmail": {
-        "checksum": 1,
-        "desc": ""
-      },
-      "models_taskdataclean": {
-        "checksum": 1,
-        "desc": ""
-      },
       "listalarm_ack": {
         "checksum": 1,
         "desc": ""
@@ -212,14 +91,6 @@
         "desc": ""
       },
       "listalarm_changeState": {
-        "checksum": 1,
-        "desc": ""
-      },
-      "listalarm_changeCriticity": {
-        "checksum": 1,
-        "desc": ""
-      },
-      "listalarm_restoreAlarm": {
         "checksum": 1,
         "desc": ""
       },
@@ -260,10 +131,6 @@
         "desc": ""
       },
       "listalarm_links": {
-        "checksum": 1,
-        "desc": ""
-      },
-      "listalarm_done": {
         "checksum": 1,
         "desc": ""
       },
@@ -323,10 +190,6 @@
         "checksum": 1,
         "desc": ""
       },
-      "serviceweather_entityDeclareTicket": {
-        "checksum": 1,
-        "desc": ""
-      },
       "serviceweather_entityValidate": {
         "checksum": 1,
         "desc": ""
@@ -351,31 +214,15 @@
         "checksum": 1,
         "desc": ""
       },
+      "serviceweather_executeInstruction": {
+        "checksum": 1,
+        "desc": ""
+      },
       "serviceweather_entityLinks": {
         "checksum": 1,
         "desc": ""
       },
       "serviceweather_pbehaviorList": {
-        "checksum": 1,
-        "desc": ""
-      },
-      "serviceweather_ack": {
-        "checksum": 1,
-        "desc": ""
-      },
-      "serviceweather_confirm": {
-        "checksum": 1,
-        "desc": ""
-      },
-      "serviceweather_invalidate": {
-        "checksum": 1,
-        "desc": ""
-      },
-      "serviceweather_declareticket": {
-        "checksum": 1,
-        "desc": ""
-      },
-      "serviceweather_pause": {
         "checksum": 1,
         "desc": ""
       },
@@ -392,6 +239,10 @@
         "desc": ""
       },
       "serviceweather_userFilter": {
+        "checksum": 1,
+        "desc": ""
+      },
+      "serviceweather_category": {
         "checksum": 1,
         "desc": ""
       },
@@ -447,14 +298,6 @@
         "checksum": 1,
         "desc": ""
       },
-      "view_current_alarms": {
-        "checksum": 7,
-        "desc": ""
-      },
-      "view_history_alarms": {
-        "checksum": 7,
-        "desc": ""
-      },
       "models_broadcastMessage": {
         "checksum": 15,
         "desc": ""
@@ -495,6 +338,10 @@
         "checksum": 15,
         "desc": ""
       },
+      "models_engine": {
+        "checksum": 1,
+        "desc": ""
+      },
       "common_variablesHelp": {
         "checksum": 1,
         "desc": ""
@@ -523,18 +370,6 @@
         "checksum": 1,
         "crecord_type": "right"
       },
-      "api_alarm_update": {
-        "checksum": 1,
-        "crecord_type": "right"
-      },
-      "api_alarm_delete": {
-        "checksum": 1,
-        "crecord_type": "right"
-      },
-      "api_alarmfilter": {
-        "checksum": 15,
-        "crecord_type": "right"
-      },
       "api_idlerule": {
         "checksum": 15,
         "crecord_type": "right"
@@ -544,10 +379,6 @@
         "crecord_type": "right"
       },
       "api_action": {
-        "checksum": 15,
-        "crecord_type": "right"
-      },
-      "api_webhook": {
         "checksum": 15,
         "crecord_type": "right"
       },
@@ -702,6 +533,14 @@
       "api_filter": {
         "checksum": 15,
         "crecord_type": "right"
+      },
+      "api_snmprule": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_snmpmib": {
+        "checksum": 15,
+        "crecord_type": "right"
       }
     },
     "defaultview": "875df4c2-027b-4549-8add-e20ed7ff7d4f"
@@ -709,25 +548,6 @@
   {
     "_id": "Supervision",
     "rights": {
-      "tabs_showeditionmenu": {
-        "checksum": 1
-      },
-      "actionbutton_ack": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_fastack": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "list_search": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "list_filters": {
-        "checksum": 15,
-        "desc": ""
-      },
       "listalarm_ack": {
         "checksum": 1,
         "desc": ""
@@ -740,27 +560,11 @@
         "checksum": 1,
         "desc": ""
       },
-      "view_current_alarms": {
-        "checksum": 7,
-        "desc": ""
-      },
-      "serviceweather_ack": {
-        "checksum": 1,
-        "desc": ""
-      },
-      "serviceweather_confirm": {
-        "checksum": 1,
-        "desc": ""
-      },
       "serviceweather_userFilter": {
         "checksum": 1,
         "desc": ""
       },
       "serviceweather_category": {
-        "checksum": 1,
-        "desc": ""
-      },
-      "serviceweather_invalidate": {
         "checksum": 1,
         "desc": ""
       },
@@ -808,46 +612,11 @@
         "crecord_type": "right"
       }
     },
-    "defaultview": "view.current_alarms"
+    "defaultview": ""
   },
   {
     "_id": "Support",
     "rights": {
-      "tabs_showeditionmenu": {
-        "checksum": 1
-      },
-      "actionbutton_changestate": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_cancel": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_info": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_ack": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_fastack": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "list_search": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "list_filters": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "view_current_alarms": {
-        "checksum": 5,
-        "desc": ""
-      },
       "listalarm_listFilters": {
         "checksum": 1,
         "desc": ""
@@ -884,38 +653,11 @@
         "crecord_type": "right"
       }
     },
-    "defaultview": "view.current_alarms"
+    "defaultview": ""
   },
   {
     "_id": "Manager",
     "rights": {
-      "tabs_showeditionmenu": {
-        "checksum": 1
-      },
-      "menu_aclconfig": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "menu_authsystems": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_uncancel": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "actionbutton_changestate": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "list_search": {
-        "checksum": 15,
-        "desc": ""
-      },
-      "list_filters": {
-        "checksum": 15,
-        "desc": ""
-      },
       "listalarm_cancelAck": {
         "checksum": 1,
         "desc": ""
@@ -928,34 +670,6 @@
         "checksum": 1,
         "desc": ""
       },
-      "listalarm_done": {
-        "checksum": 1,
-        "desc": ""
-      },
-      "view_current_alarms": {
-        "checksum": 7,
-        "desc": ""
-      },
-      "serviceweather_ack": {
-        "checksum": 1,
-        "desc": ""
-      },
-      "serviceweather_confirm": {
-        "checksum": 1,
-        "desc": ""
-      },
-      "serviceweather_invalidate": {
-        "checksum": 1,
-        "desc": ""
-      },
-      "serviceweather_declareticket": {
-        "checksum": 1,
-        "desc": ""
-      },
-      "serviceweather_pause": {
-        "checksum": 1,
-        "desc": ""
-      },
       "listalarm_listFilters": {
         "checksum": 1,
         "desc": ""
@@ -1000,21 +714,13 @@
         "crecord_type": "right"
       }
     },
-    "defaultview": "view.current_alarms"
+    "defaultview": ""
   },
   {
     "_id": "Visualisation",
     "rights": {
-      "view_current_alarms": {
-        "checksum": 5,
-        "desc": ""
-      },
       "listalarm_listFilters": {
         "checksum": 1,
-        "desc": ""
-      },
-      "api_alarmfilter": {
-        "checksum": 4,
         "desc": ""
       },
       "api_idlerule": {
@@ -1029,19 +735,11 @@
         "checksum": 4,
         "desc": ""
       },
-      "api_webhook": {
-        "checksum": 4,
-        "desc": ""
-      },
       "api_metaalarmrule": {
         "checksum": 4,
         "desc": ""
       },
       "api_dynamicinfos": {
-        "checksum": 4,
-        "desc": ""
-      },
-      "api_heartbeat": {
         "checksum": 4,
         "desc": ""
       },
@@ -1097,15 +795,11 @@
         "crecord_type": "right"
       }
     },
-    "defaultview": "view.current_alarms"
+    "defaultview": ""
   },
   {
     "_id": "Norights",
     "rights": {
-      "view_norights": {
-        "checksum": 5,
-        "desc": ""
-      },
       "api_viewgroup": {
         "checksum": 4,
         "desc": ""
@@ -1115,6 +809,6 @@
         "desc": ""
       }
     },
-    "defaultview": "view.norights"
+    "defaultview": ""
   }
 ]

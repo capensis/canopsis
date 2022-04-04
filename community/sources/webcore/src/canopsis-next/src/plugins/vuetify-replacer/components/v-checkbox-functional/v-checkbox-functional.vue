@@ -1,13 +1,10 @@
 <template lang="pug">
-  .v-input.v-input--selection-controls.v-input--checkbox.theme--light(
+  div.v-input.v-input--selection-controls.v-input--checkbox.theme--light(
     :class="{ 'v-input--is-disabled': disabled, 'v-input--hide-details': hideDetails }"
   )
-    .v-input__control
-      .v-input__slot
-        .v-input--selection-controls__input(
-          data-test="vCheckboxFunctional",
-          @click="$emit('change', !inputValue)"
-        )
+    div.v-input__control
+      div.v-input__slot
+        div.v-input--selection-controls__input(@click="$emit('change', !inputValue)")
           input(
             class="hidden",
             :aria-checked="String(inputValue)",
@@ -16,7 +13,7 @@
             role="checkbox",
             type="checkbox"
           )
-          .v-input--selection-controls__ripple.primary--text(v-ripple="{ center: true }")
+          div.v-input--selection-controls__ripple.primary--text(v-ripple="{ center: true }")
           i.v-icon.material-icons.theme--light(
             :class="{ 'primary--text': inputValue }"
           ) {{ inputValue ? 'check_box' : 'check_box_outline_blank' }}

@@ -223,3 +223,4 @@ FilePattern = "/tmp/import_%s.json"
 # Auth token expiration ttl. It's used also used for session ttl (deprected).
 TokenExpiration = "24h"
 TokenSigningMethod = "HS256"
+BulkMaxSize = 10000

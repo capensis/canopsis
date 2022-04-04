@@ -17,20 +17,20 @@ Ces variables concernent l'ensemble des moteurs Go, et certains outils comme `ca
 
 ### URI de connexion aux services externes
 
-Votre installation de Canopsis doit obligatoirement comporter les adresses et données de connexion (on parle d'URI) permettant de se connecter aux services externes Redis, MongoDB, RabbitMQ et InfluxDB.
+Votre installation de Canopsis doit obligatoirement comporter les adresses et données de connexion (on parle d'URI) permettant de se connecter aux services externes Redis, MongoDB et RabbitMQ.
 
 | Variable d'environnement | Valeur par défaut | Utilité |
 |:-------------------------|-------------------|---------|
 | `CPS_AMQP_URL` | (vide) | Une URI de connexion RabbitMQ (cf. [Spécification d'URI RabbitMQ](https://www.rabbitmq.com/uri-spec.html)) |
 | `CPS_API_URL` | (vide) | Une URI de connexion à l'API Canopsis |
-| `CPS_INFLUX_URL` | (vide) | Une URI de connexion InfluxDB (pas de spécification officielle) |
-| `CPS_MONGO_URL` | (vide) | Une URI de connexion MongoDB (cf. [Spécification d'URI MongoDB](https://docs.mongodb.com/v3.6/reference/connection-string/)) |
+| `CPS_MONGO_URL` | (vide) | Une URI de connexion MongoDB (cf. [Spécification d'URI MongoDB](https://docs.mongodb.com/v4.2/reference/connection-string/)) |
 | `CPS_OLD_API_URL` | (vide) | URI de connexion à l'ancienne API Gunicorn de Canopsis |
+| `CPS_POSTGRES_URL` | (vide) | URI de connexion PostgreSQL/TimescaleDB (cf. [Spécification d'URI PostgreSQL](https://www.postgresql.org/docs/13/libpq-connect.html#LIBPQ-CONNSTRING)) |
 | `CPS_REDIS_URL` | (vide) | Une URI de connexion Redis (cf. [Spécification d'URI Redis](https://www.iana.org/assignments/uri-schemes/prov/redis)) |
 
 ### Tentatives de connexion aux services externes
 
-Les variables suivantes concernent les tentatives de connexion aux services externes de Canopsis, à savoir Redis, RabbitMQ, MongoDB et InfluxDB.
+Les variables suivantes concernent les tentatives de connexion aux services externes de Canopsis, à savoir Redis, RabbitMQ et MongoDB.
 
 Elles servent notamment à gérer le cas où les moteurs démarrent avant que ces services ne soient prêts (ce qui est essentiel pour Docker Compose).
 

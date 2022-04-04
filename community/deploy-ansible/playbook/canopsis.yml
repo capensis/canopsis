@@ -7,9 +7,9 @@
     -
       role: "ansible-role-mongodb"
     -
-      role: "ansible-role-rabbitmq"
+      role: "postgresql-timescaledb"
     -
-      role: "ansible-role-influxdb-maat"
+      role: "ansible-role-rabbitmq"
     -
       role: "ansible-role-redis"
     -

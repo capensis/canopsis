@@ -1,6 +1,7 @@
 package view
 
 import (
+	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
@@ -126,18 +127,14 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	userID, ok := c.Get(auth.UserKey)
-	if !ok {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
-		return
-	}
+	userID := c.MustGet(auth.UserKey).(string)
 
-	views, err := a.store.Insert(c.Request.Context(), userID.(string), []EditRequest{request})
+	views, err := a.store.Insert(c.Request.Context(), userID, []EditRequest{request})
 	if err != nil {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), userID, logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeView,
 		ValueID:   views[0].ID,
@@ -187,7 +184,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypeView,
 		ValueID:   views[0].ID,
@@ -223,7 +220,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionDelete,
 		ValueType: logger.ValueTypeView,
 		ValueID:   id,
@@ -309,19 +306,15 @@ func (a *api) BulkCreate(c *gin.Context) {
 		return
 	}
 
-	userID, ok := c.Get(auth.UserKey)
-	if !ok {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
-		return
-	}
+	userID := c.MustGet(auth.UserKey).(string)
 
-	views, err := a.store.Insert(c.Request.Context(), userID.(string), request.Items)
+	views, err := a.store.Insert(c.Request.Context(), userID, request.Items)
 	if err != nil {
 		panic(err)
 	}
 
 	for _, view := range views {
-		err = a.actionLogger.Action(c, logger.LogEntry{
+		err = a.actionLogger.Action(context.Background(), userID, logger.LogEntry{
 			Action:    logger.ActionCreate,
 			ValueType: logger.ValueTypeView,
 			ValueID:   view.ID,
@@ -384,7 +377,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 	}
 
 	for _, view := range views {
-		err = a.actionLogger.Action(c, logger.LogEntry{
+		err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 			Action:    logger.ActionUpdate,
 			ValueType: logger.ValueTypeView,
 			ValueID:   view.ID,
@@ -444,7 +437,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 	}
 
 	for _, id := range request.IDs {
-		err = a.actionLogger.Action(c, logger.LogEntry{
+		err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 			Action:    logger.ActionDelete,
 			ValueType: logger.ValueTypeView,
 			ValueID:   id,

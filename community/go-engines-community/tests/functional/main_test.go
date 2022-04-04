@@ -59,11 +59,15 @@ func TestMain(m *testing.M) {
 		log.Fatal(err)
 	}
 
-	dbClient, err := mongo.NewClient(ctx, 0, 0)
+	dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer dbClient.Disconnect(context.Background())
+	defer func() {
+		if err = dbClient.Disconnect(context.Background()); err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	amqpConnection, err := amqp.NewConnection(liblog.NewLogger(false), 0, 0)
 	if err != nil {

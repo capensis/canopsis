@@ -1,0 +1,55 @@
+---
+- name: Install PostgreSQL GPG key to /etc/pki/rpm-gpg
+  copy:
+    src: rpm-gpg/RPM-GPG-KEY-PGDG
+    dest: /etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Install pkgcloud TimescaleDB GPG key to /etc/pki/rpm-gpg
+  copy:
+    src: rpm-gpg/RPM-GPG-KEY-PKGCLOUD-TIMESCALEDB
+    dest: /etc/pki/rpm-gpg/RPM-GPG-KEY-PKGCLOUD-TIMESCALEDB
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Import PostgreSQL GPG key into RPM
+  rpm_key:
+    key: /etc/pki/rpm-gpg/RPM-GPG-KEY-PKGCLOUD-TIMESCALEDB
+    state: present
+
+- name: Import pkgcloud TimescaleDB GPG key into RPM
+  rpm_key:
+    key: /etc/pki/rpm-gpg/RPM-GPG-KEY-PKGCLOUD-TIMESCALEDB
+    state: present
+
+- name: Add PostgreSQL repo
+  template:
+    src: yum.repos.d/canopsis-pgdg-redhat-all.repo.j2
+    dest: /etc/yum.repos.d/canopsis-pgdg-redhat-all.repo
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Add packagecloud-timescaledb repo
+  template:
+    src: yum.repos.d/canopsis-packagecloud-timescaledb.repo.j2
+    dest: /etc/yum.repos.d/canopsis-packagecloud-timescaledb.repo
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Install libicu dependency for TimescaleDB
+  yum:
+    name: libicu
+    state: present
+
+- name: Install TimescaleDB from upstream repositories
+  yum:
+    name: 
+      - "{{ timescaledb_package }}{{ timescaledb_full_version }}" 
+      - "{{ timescaledb_loader_package }}{{ timescaledb_full_version }}"
+    state: present
+    enablerepo: "timescale_timescaledb,pgdg-common,pgdg{{ postgresql_main_version }}"

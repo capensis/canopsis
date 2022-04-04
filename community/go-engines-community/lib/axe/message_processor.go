@@ -42,7 +42,6 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		return nil, nil
 	}
 
-	p.Logger.Debug().Msgf("unmarshaled: %+v", event)
 	trace.Log(ctx, "event.event_type", event.EventType)
 	trace.Log(ctx, "event.timestamp", event.Timestamp.String())
 	trace.Log(ctx, "event.source_type", event.SourceType)
@@ -93,7 +92,7 @@ func (p *messageProcessor) updatePbhLastAlarmDate(ctx context.Context, event typ
 	go func() {
 		err := p.PbehaviorAdapter.UpdateLastAlarmDate(ctx, event.PbehaviorInfo.ID, types.CpsTime{Time: time.Now()})
 		if err != nil {
-			p.Logger.Err(err).Msg("")
+			p.Logger.Err(err).Msg("cannot update pbehavior")
 		}
 	}()
 }
@@ -117,7 +116,7 @@ func (p *messageProcessor) handleRemediation(event types.Event, msg []byte) erro
 		AlarmChange: *event.AlarmChange,
 	})
 	if err != nil {
-		p.logError(err, "failed to encode remediation event", msg)
+		p.logError(err, "cannot encode remediation event", msg)
 		return nil
 	}
 
@@ -130,7 +129,7 @@ func (p *messageProcessor) handleRemediation(event types.Event, msg []byte) erro
 			return err
 		}
 
-		p.logError(err, "failed to send rpc call to remediation", msg)
+		p.logError(err, "cannot send rpc call to remediation", msg)
 	}
 
 	return nil

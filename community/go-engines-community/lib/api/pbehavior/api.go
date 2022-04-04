@@ -2,7 +2,11 @@ package pbehavior
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/valyala/fastjson"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -227,12 +231,12 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	err = a.store.Insert(c.Request.Context(), []*Response{model})
+	err = a.store.Insert(c.Request.Context(), model)
 	if err != nil {
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypePbehavior,
 		ValueID:   model.ID,
@@ -285,7 +289,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.store.Update(c.Request.Context(), []*Response{model})
+	ok, err := a.store.Update(c.Request.Context(), model)
 	if err != nil {
 		panic(err)
 	}
@@ -295,7 +299,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypePbehavior,
 		ValueID:   model.ID,
@@ -403,7 +407,7 @@ func (a *api) Patch(c *gin.Context) {
 			return
 		}
 
-		ok, err = a.store.Update(c.Request.Context(), []*Response{model})
+		ok, err = a.store.Update(c.Request.Context(), model)
 		if err != nil {
 			panic(err)
 		}
@@ -414,7 +418,7 @@ func (a *api) Patch(c *gin.Context) {
 		}
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionUpdate,
 		ValueType: logger.ValueTypePbehavior,
 		ValueID:   model.ID,
@@ -443,7 +447,7 @@ func (a *api) Patch(c *gin.Context) {
 // @Router /pbehaviors/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(c.Request.Context(), []string{id})
+	ok, err := a.store.Delete(c.Request.Context(), id)
 	if err != nil {
 		panic(err)
 	}
@@ -453,7 +457,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(c, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionDelete,
 		ValueType: logger.ValueTypePbehavior,
 		ValueID:   id,
@@ -478,36 +482,75 @@ func (a *api) Delete(c *gin.Context) {
 // @Security JWTAuth
 // @Security BasicAuth
 // @Param body body []CreateRequest true "body"
-// @Success 201 {array} Response
+// @Success 207 {array} []BulkCreateResponseItem
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /bulk/pbehaviors [post]
 func (a *api) BulkCreate(c *gin.Context) {
-	var request BulkCreateRequest
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
-		return
-	}
+	userId := c.MustGet(auth.UserKey).(string)
 
-	models, err := a.transformer.TransformBulkCreateRequestToModels(c.Request.Context(), request.Items)
-	if err != nil {
-		if err == ErrReasonNotExists || err == ErrExceptionNotExists || err == pbehaviorexception.ErrTypeNotExists {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		} else {
-			panic(err)
-		}
+	var ar fastjson.Arena
 
-		return
-	}
-
-	err = a.store.Insert(c.Request.Context(), models)
+	raw, err := c.GetRawData()
 	if err != nil {
 		panic(err)
 	}
 
-	ids := make([]string, len(models))
-	for i, model := range models {
-		ids[i] = model.ID
-		err = a.actionLogger.Action(c, logger.LogEntry{
+	jsonValue, err := fastjson.ParseBytes(raw)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	rawObjects, err := jsonValue.Array()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	ctx := c.Request.Context()
+	response := ar.NewArray()
+	ids := make([]string, 0, len(rawObjects))
+
+	for idx, rawObject := range rawObjects {
+		object, err := rawObject.Object()
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		var request CreateRequest
+		err = json.Unmarshal(object.MarshalTo(nil), &request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		err = binding.Validator.ValidateStruct(request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
+			continue
+		}
+
+		model, err := a.transformer.TransformCreateRequestToModel(ctx, request)
+		if err != nil {
+			if err == ErrReasonNotExists || err == ErrExceptionNotExists || err == pbehaviorexception.ErrTypeNotExists {
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+				continue
+			}
+
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		err = a.store.Insert(ctx, model)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, model.ID, http.StatusOK, rawObject, nil))
+
+		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 			Action:    logger.ActionCreate,
 			ValueType: logger.ValueTypePbehavior,
 			ValueID:   model.ID,
@@ -515,61 +558,101 @@ func (a *api) BulkCreate(c *gin.Context) {
 		if err != nil {
 			a.actionLogger.Err(err, "failed to log action")
 		}
+
+		ids = append(ids, model.ID)
 	}
 
 	a.sendComputeTask(pbehavior.ComputeTask{
 		PbehaviorIds: ids,
 	})
 
-	c.JSON(http.StatusCreated, models)
+	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
-// Bulk update pbehaviors by id
-// @Summary Bulk update pbehaviors by id
-// @Description Bulk update pbehaviors by id
+// Bulk update pbehaviors
+// @Summary Bulk update pbehaviors
+// @Description Bulk update pbehaviors
 // @Tags pbehaviors
-// @ID pbehaviors-bulk-update-by-id
+// @ID pbehaviors-bulk-update
 // @Accept json
 // @Produce json
 // @Security JWTAuth
 // @Security BasicAuth
 // @Param body body []BulkUpdateRequestItem true "body"
-// @Success 200 {array} Response
+// @Success 207 {array} []BulkUpdateResponseItem
 // @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /bulk/pbehaviors/{id} [put]
+// @Router /bulk/pbehaviors [put]
 func (a *api) BulkUpdate(c *gin.Context) {
-	request := BulkUpdateRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
-		return
-	}
+	userId := c.MustGet(auth.UserKey).(string)
 
-	models, err := a.transformer.TransformBulkUpdateRequestToModels(c.Request.Context(), request.Items)
-	if err != nil {
-		if err == ErrReasonNotExists || err == ErrExceptionNotExists || err == pbehaviorexception.ErrTypeNotExists {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		} else {
-			panic(err)
-		}
+	var ar fastjson.Arena
 
-		return
-	}
-
-	ok, err := a.store.Update(c.Request.Context(), models)
+	raw, err := c.GetRawData()
 	if err != nil {
 		panic(err)
 	}
 
-	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+	jsonValue, err := fastjson.ParseBytes(raw)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 		return
 	}
 
-	ids := make([]string, len(models))
-	for i, model := range models {
-		ids[i] = model.ID
-		err = a.actionLogger.Action(c, logger.LogEntry{
+	rawObjects, err := jsonValue.Array()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	ctx := c.Request.Context()
+	response := ar.NewArray()
+	ids := make([]string, 0, len(rawObjects))
+
+	for idx, rawObject := range rawObjects {
+		object, err := rawObject.Object()
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		var request BulkUpdateRequestItem
+		err = json.Unmarshal(object.MarshalTo(nil), &request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		err = binding.Validator.ValidateStruct(request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
+			continue
+		}
+
+		model, err := a.transformer.TransformUpdateRequestToModel(ctx, UpdateRequest(request))
+		if err != nil {
+			if err == ErrReasonNotExists || err == ErrExceptionNotExists || err == pbehaviorexception.ErrTypeNotExists {
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+				continue
+			}
+
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		ok, err := a.store.Update(ctx, model)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		if !ok {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			continue
+		}
+
+		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, model.ID, http.StatusOK, rawObject, nil))
+
+		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 			Action:    logger.ActionUpdate,
 			ValueType: logger.ValueTypePbehavior,
 			ValueID:   model.ID,
@@ -577,59 +660,106 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		if err != nil {
 			a.actionLogger.Err(err, "failed to log action")
 		}
+
+		ids = append(ids, model.ID)
 	}
 
 	a.sendComputeTask(pbehavior.ComputeTask{
 		PbehaviorIds: ids,
 	})
 
-	c.JSON(http.StatusOK, models)
+	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
-// Bulk delete pbehaviors by id
-// @Summary Bulk delete pbehaviors by id
-// @Description Bulk delete pbehaviors by id
+// Bulk delete pbehaviors
+// @Summary Bulk delete pbehaviors
+// @Description Bulk delete pbehaviors
 // @Tags pbehaviors
-// @ID pbehaviors-bulk-delete-by-id
+// @ID pbehaviors-bulk-delete
+// @Accept json
+// @Produce json
 // @Security JWTAuth
 // @Security BasicAuth
-// @Param request query BulkDeleteRequest true "request"
-// @Success 204
-// @Failure 404 {object} common.ErrorResponse
-// @Router /bulk/pbehaviors/{id} [delete]
+// @Param body body []BulkDeleteRequestItem true "body"
+// @Success 207 {array} []BulkDeleteResponseItem
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /bulk/pbehaviors [delete]
 func (a *api) BulkDelete(c *gin.Context) {
-	request := BulkDeleteRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
-		return
-	}
+	userId := c.MustGet(auth.UserKey).(string)
 
-	ok, err := a.store.Delete(c.Request.Context(), request.IDs)
+	var ar fastjson.Arena
+
+	raw, err := c.GetRawData()
 	if err != nil {
 		panic(err)
 	}
 
-	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+	jsonValue, err := fastjson.ParseBytes(raw)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 		return
 	}
 
-	for _, id := range request.IDs {
-		err = a.actionLogger.Action(c, logger.LogEntry{
+	rawObjects, err := jsonValue.Array()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	ctx := c.Request.Context()
+	response := ar.NewArray()
+	ids := make([]string, 0, len(rawObjects))
+
+	for idx, rawObject := range rawObjects {
+		object, err := rawObject.Object()
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		var request BulkDeleteRequestItem
+		err = json.Unmarshal(object.MarshalTo(nil), &request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		err = binding.Validator.ValidateStruct(request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
+			continue
+		}
+
+		ok, err := a.store.Delete(ctx, request.ID)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		if !ok {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			continue
+		}
+
+		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))
+
+		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 			Action:    logger.ActionDelete,
 			ValueType: logger.ValueTypePbehavior,
-			ValueID:   id,
+			ValueID:   request.ID,
 		})
 		if err != nil {
 			a.actionLogger.Err(err, "failed to log action")
 		}
+
+		ids = append(ids, request.ID)
 	}
 
 	a.sendComputeTask(pbehavior.ComputeTask{
-		PbehaviorIds: request.IDs,
+		PbehaviorIds: ids,
 	})
 
-	c.Status(http.StatusNoContent)
+	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
 // Count entities matching filter

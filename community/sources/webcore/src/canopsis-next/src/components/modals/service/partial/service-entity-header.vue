@@ -7,7 +7,7 @@
         hide-details,
         @change="$listeners.select"
       )
-    v-flex.pa-2(v-for="icon in mainIcons", :key="icon")
+    v-flex.pa-2
       v-icon(color="white", small) {{ icon }}
     v-flex.pl-1.white--text.subheading(xs12)
       v-layout(align-center)
@@ -56,14 +56,6 @@ export default {
       type: String,
       default: 'name',
     },
-    active: {
-      type: Boolean,
-      default: false,
-    },
-    paused: {
-      type: Boolean,
-      default: false,
-    },
   },
   computed: {
     alertIsVisible: {
@@ -79,16 +71,8 @@ export default {
       return get({ entity: this.entity }, this.entityNameField, this.entityNameField);
     },
 
-    mainIcons() {
-      const mainIcons = [];
-
-      if (!this.paused && !this.active) {
-        mainIcons.push(WEATHER_ICONS[this.entity.icon]);
-      }
-
-      mainIcons.push(...this.entity.pbehaviors.map(({ type }) => type.icon_name));
-
-      return mainIcons;
+    icon() {
+      return WEATHER_ICONS[this.entity.icon];
     },
 
     extraIcons() {

@@ -33,7 +33,6 @@ Feature: create and update alarm by main event stream
             "_id": "test-resource-axe-1/test-component-axe-1"
           },
           "infos": {},
-          "links": {},
           "t": {{ .createTimestamp }},
           "v": {
             "children": [],
@@ -146,7 +145,6 @@ Feature: create and update alarm by main event stream
             "_id": "test-resource-axe-2/test-component-axe-2"
           },
           "infos": {},
-          "links": {},
           "t": {{ .createTimestamp }},
           "v": {
             "children": [],
@@ -1832,6 +1830,155 @@ Feature: create and update alarm by main event stream
                 "_t": "changestate",
                 "a": "test-author-axe-18",
                 "m": "test-output-axe-18",
+                "val": 2
+              }
+            ]
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given changestate with same state as already existed one should not update alarm state anymore
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "event_type" : "check",
+      "connector" : "test-connector-axe-20",
+      "connector_name" : "test-connector-name-axe-20",
+      "source_type" : "resource",
+      "component" :  "test-component-axe-20",
+      "resource" : "test-resource-axe-20",
+      "state" : 2,
+      "output" : "test-output-axe-20",
+      "long_output" : "test-long-output-axe-20",
+      "author" : "test-author-axe-20",
+      "timestamp": {{ nowAdd "-19s" }}
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "event_type" : "changestate",
+      "state": 2,
+      "connector" : "test-connector-axe-20",
+      "connector_name" : "test-connector-name-axe-20",
+      "source_type" : "resource",
+      "component" :  "test-component-axe-20",
+      "resource" : "test-resource-axe-20",
+      "output" : "test-output-axe-20",
+      "long_output" : "test-long-output-axe-20",
+      "author" : "test-author-axe-20",
+      "timestamp": {{ nowAdd "-5s" }}
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-20"}]}&with_steps=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "component": "test-component-axe-20",
+            "connector": "test-connector-axe-20",
+            "connector_name": "test-connector-name-axe-20",
+            "resource": "test-resource-axe-20",
+            "state": {
+              "_t": "changestate",
+              "a": "test-author-axe-20",
+              "m": "test-output-axe-20",
+              "val": 2
+            },
+            "status": {
+              "val": 1
+            },
+            "steps": [
+              {
+                "_t": "stateinc",
+                "val": 2
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "changestate",
+                "a": "test-author-axe-20",
+                "m": "test-output-axe-20",
+                "val": 2
+              }
+            ]
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I send an event:
+    """json
+    {
+      "event_type" : "check",
+      "connector" : "test-connector-axe-20",
+      "connector_name" : "test-connector-name-axe-20",
+      "source_type" : "resource",
+      "component" :  "test-component-axe-20",
+      "resource" : "test-resource-axe-20",
+      "state" : 3,
+      "output" : "test-output-axe-20",
+      "long_output" : "test-long-output-axe-20",
+      "author" : "test-author-axe-20"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-20"}]}&with_steps=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "component": "test-component-axe-20",
+            "connector": "test-connector-axe-20",
+            "connector_name": "test-connector-name-axe-20",
+            "resource": "test-resource-axe-20",
+            "state": {
+              "_t": "changestate",
+              "a": "test-author-axe-20",
+              "m": "test-output-axe-20",
+              "val": 2
+            },
+            "status": {
+              "val": 1
+            },
+            "steps": [
+              {
+                "_t": "stateinc",
+                "val": 2
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "changestate",
+                "a": "test-author-axe-20",
+                "m": "test-output-axe-20",
                 "val": 2
               }
             ]

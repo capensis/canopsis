@@ -1,5 +1,7 @@
 package types
 
+//go:generate easyjson -no_std_marshalers
+
 import (
 	"encoding/json"
 	"errors"
@@ -131,6 +133,7 @@ type PerfData struct {
 }
 
 // Event represents a canopsis event.
+//easyjson:json
 type Event struct {
 	ID            *string    `bson:"_id" json:"_id"`
 	Connector     string     `bson:"connector" json:"connector"`
@@ -189,7 +192,6 @@ type Event struct {
 	// RemovedFromServices contains ids of entity services from which entity has been removed as dependency.
 	RemovedFromServices []string `bson:"removed_from_services,omitempty" json:"removed_from_services,omitempty"`
 
-	ExecutionTime time.Duration `bson:"execution_time" json:"execution_time"`
 	// PbhParameters is used only with EventTypePbhCreate
 	PbhParameters string `bson:"pbh_parameters,omitempty" json:"pbh_parameters,omitempty"`
 

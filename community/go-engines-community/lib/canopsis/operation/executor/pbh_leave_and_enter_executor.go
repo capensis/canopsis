@@ -41,7 +41,7 @@ func (e *pbhLeaveAndEnterExecutor) Exec(
 
 	currPbehaviorInfo := alarm.Value.PbehaviorInfo
 
-	if currPbehaviorInfo == params.PbehaviorInfo {
+	if currPbehaviorInfo.Same(params.PbehaviorInfo) {
 		return "", nil
 	}
 

@@ -1,0 +1,216 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
+<tr
+  class=""
+>
+  <td
+    class="pr-0"
+  >
+    <div
+      class="layout row align-center justify-space-between"
+    >
+      <v-checkbox-functional-stub
+        hidedetails="true"
+        inputvalue="true"
+        label=""
+      />
+      <!---->
+      <div
+        class="layout align-center ml-3"
+      >
+        <c-expand-btn-stub
+          class="v-tour-alarmsExpandPanel-step-1"
+        />
+      </div>
+    </div>
+  </td>
+  <td>
+    <alarm-column-value-stub
+      alarm="[object Object]"
+      column="[object Object]"
+      columnsfilters="[object Object],[object Object]"
+      widget="[object Object]"
+    />
+  </td>
+  <td>
+    <alarm-column-value-stub
+      alarm="[object Object]"
+      column="[object Object]"
+      columnsfilters="[object Object],[object Object]"
+      widget="[object Object]"
+    />
+  </td>
+  <td>
+    <actions-panel-stub
+      item="[object Object]"
+      widget="[object Object]"
+    />
+  </td>
+</tr>
+`;
+
+exports[`alarms-list-row Renders \`alarms-list-row\` with default and required props 1`] = `
+<tr
+  class=""
+>
+  <!---->
+  <td>
+    <alarm-column-value-stub
+      alarm="[object Object]"
+      column="[object Object]"
+      columnsfilters=""
+      widget="[object Object]"
+    />
+  </td>
+  <td>
+    <alarm-column-value-stub
+      alarm="[object Object]"
+      column="[object Object]"
+      columnsfilters=""
+      widget="[object Object]"
+    />
+  </td>
+  <td>
+    <actions-panel-stub
+      item="[object Object]"
+      widget="[object Object]"
+    />
+  </td>
+</tr>
+`;
+
+exports[`alarms-list-row Renders \`alarms-list-row\` with expand button 1`] = `
+<tr
+  class=""
+>
+  <td
+    class="pr-0"
+  >
+    <div
+      class="layout row align-center justify-space-between"
+    >
+      <!---->
+      <!---->
+      <div
+        class="layout align-center ml-3"
+      >
+        <c-expand-btn-stub
+          class=""
+        />
+      </div>
+    </div>
+  </td>
+  <td>
+    <actions-panel-stub
+      item="[object Object]"
+      widget="[object Object]"
+    />
+  </td>
+</tr>
+`;
+
+exports[`alarms-list-row Renders \`alarms-list-row\` with feature classes 1`] = `
+<tr
+  class="class-2"
+>
+  <!---->
+  <td>
+    <actions-panel-stub
+      item="[object Object]"
+      widget="[object Object]"
+    />
+  </td>
+</tr>
+`;
+
+exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in parent alarm 1`] = `
+<tr
+  class=""
+>
+  <td
+    class="pr-0"
+  >
+    <div
+      class="layout row align-center justify-space-between"
+    >
+      <!---->
+      <div
+        class="layout align-center"
+      >
+        <alarm-list-row-icon-stub
+          alarm="[object Object]"
+        />
+      </div>
+      <!---->
+    </div>
+  </td>
+  <td>
+    <actions-panel-stub
+      item="[object Object]"
+      parentalarm="[object Object]"
+      widget="[object Object]"
+    />
+  </td>
+</tr>
+`;
+
+exports[`alarms-list-row Renders \`alarms-list-row\` with instructions 1`] = `
+<tr
+  class=""
+>
+  <td
+    class="pr-0"
+  >
+    <div
+      class="layout row align-center justify-space-between"
+    >
+      <!---->
+      <div
+        class="layout align-center"
+      >
+        <alarm-list-row-icon-stub
+          alarm="[object Object]"
+        />
+      </div>
+      <!---->
+    </div>
+  </td>
+  <td>
+    <actions-panel-stub
+      item="[object Object]"
+      parentalarm="[object Object]"
+      widget="[object Object]"
+    />
+  </td>
+</tr>
+`;
+
+exports[`alarms-list-row Renders \`alarms-list-row\` with resolved alarm 1`] = `
+<tr
+  class=""
+>
+  <td
+    class="pr-0"
+  >
+    <div
+      class="layout row align-center justify-space-between"
+    >
+      <v-checkbox-functional-stub
+        disabled="true"
+        hidedetails="true"
+        label=""
+      />
+      <!---->
+      <!---->
+    </div>
+  </td>
+  <td>
+    <actions-panel-stub
+      isresolvedalarm="true"
+      item="[object Object]"
+      widget="[object Object]"
+    />
+  </td>
+</tr>
+`;

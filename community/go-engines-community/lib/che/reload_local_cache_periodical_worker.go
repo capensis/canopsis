@@ -19,18 +19,14 @@ func (w *reloadLocalCachePeriodicalWorker) GetInterval() time.Duration {
 	return w.PeriodicalInterval
 }
 
-func (w *reloadLocalCachePeriodicalWorker) Work(ctx context.Context) error {
-	w.Logger.Debug().Msg("Loading event filter rules")
+func (w *reloadLocalCachePeriodicalWorker) Work(ctx context.Context) {
 	err := w.EventFilterService.LoadRules(ctx)
 	if err != nil {
 		w.Logger.Error().Err(err).Msg("unable to load rules")
 	}
 
-	w.Logger.Debug().Msg("Loading services")
 	err = w.EnrichmentCenter.LoadServices(ctx)
 	if err != nil {
 		w.Logger.Error().Err(err).Msg("unable to load services")
 	}
-
-	return nil
 }

@@ -3,7 +3,7 @@
     :calendar="calendar",
     :config="calendarConfig",
     :events="events",
-    :readOnly="readOnly",
+    :read-only="readOnly",
     fluid,
     fill-height,
     current-time-for-today,
@@ -20,7 +20,7 @@
     )
       pbehavior-create-event(
         slot-scope="{ calendarEvent, close, edit }",
-        :calendarEvent="calendarEvent",
+        :calendar-event="calendarEvent",
         :filter="filter",
         @close="close",
         @submit="edit",
@@ -33,7 +33,7 @@
     )
       pbehavior-create-event(
         slot-scope="{ calendarEvent, close, add }",
-        :calendarEvent="calendarEvent",
+        :calendar-event="calendarEvent",
         :filter="filter",
         @close="close",
         @submit="add",
@@ -60,7 +60,7 @@ import { pbehaviorToTimespanRequest } from '@/helpers/forms/timespans-pbehavior'
 import { convertDateToTimestampByTimezone, convertDateToMoment } from '@/helpers/date/date';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
-import entitiesPbehaviorTimespansMixin from '@/mixins/entities/pbehavior/timespans';
+import { entitiesPbehaviorTimespansMixin } from '@/mixins/entities/pbehavior/timespans';
 
 import PbehaviorCreateEvent from './partials/pbehavior-create-event.vue';
 import PbehaviorPlanningCalendarLegend from './partials/pbehavior-planning-calendar-legend.vue';

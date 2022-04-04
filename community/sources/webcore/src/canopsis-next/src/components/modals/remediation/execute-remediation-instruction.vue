@@ -258,7 +258,7 @@ export default {
         if (!execution) {
           this.instructionExecution = await this.createRemediationInstructionExecution({
             data: {
-              alarm: this.config.alarm._id,
+              alarm: this.config.alarmId,
               instruction: this.instructionId,
             },
           });

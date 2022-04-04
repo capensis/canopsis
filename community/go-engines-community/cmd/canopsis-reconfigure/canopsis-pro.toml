@@ -234,19 +234,6 @@ noWait = false
 # args =
 
 [[RabbitMQ.queues]]
-name = "Engine_kpi"
-durable = true
-autoDelete = false
-exclusive = false
-noWait = false
-# args =
-[RabbitMQ.queues.bind]
-key = "*.*.initkpi.#"
-exchange = "canopsis.events"
-noWait = false
-# args =
-
-[[RabbitMQ.queues]]
 name = "Engine_pbehavior"
 durable = true
 autoDelete = false
@@ -319,6 +306,7 @@ FilePattern = "/tmp/import_%s.json"
 # Auth token expiration ttl. It's used also used for session ttl (deprected).
 TokenExpiration = "24h"
 TokenSigningMethod = "HS256"
+BulkMaxSize = 10000
 
 [Canopsis.metrics]
 # Long SLI intervals are splitted to short intervals which are defined by SliInterval paramter.

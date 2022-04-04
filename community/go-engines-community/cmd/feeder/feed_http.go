@@ -78,7 +78,7 @@ func (h *HTTPSender) sendEvent(eventFiles []string) {
 			os.Exit(ErrFileNotFound)
 		}
 
-		if validJSON(filename) == false {
+		if !validJSON(filename) {
 			h.Logger.Warn().Msgf("%s is not a valid json, skipping.", filename)
 			continue
 		}
@@ -153,9 +153,7 @@ func (f *Feeder) modeSendEventHTTP() {
 		Logger:  f.logger,
 	}
 
-	var fileList []string
-
-	fileList = getJSONFileNames(f.flags.File)
+	fileList := getJSONFileNames(f.flags.File)
 
 	s.Login()
 	s.sendEvent(fileList)

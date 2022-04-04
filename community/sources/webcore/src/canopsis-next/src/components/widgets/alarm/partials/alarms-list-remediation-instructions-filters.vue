@@ -2,23 +2,24 @@
   v-layout(row, wrap, align-center)
     remediation-instructions-filters-list(
       :filters="lockedFilters",
-      :closable="hasAccessToEditFilter",
+      :closable="editable",
       @input="$listeners['update:lockedFilters']"
     )
     remediation-instructions-filters-list(
       :filters="filters",
-      :editable="hasAccessToEditFilter",
-      :closable="hasAccessToEditFilter",
+      :editable="editable",
+      :closable="editable",
       @input="$listeners['update:filters']"
     )
-    v-tooltip(v-if="hasAccessToUserFilter", bottom)
-      v-btn(
-        slot="activator",
-        icon,
-        small,
-        @click="showCreateFilterModal"
-      )
-        v-icon(:color="buttonIconColor") adjust
+    v-tooltip(v-if="addable", bottom)
+      template(#activator="{ on }")
+        v-btn(
+          v-on="on",
+          icon,
+          small,
+          @click="showCreateFilterModal"
+        )
+          v-icon(:color="buttonIconColor") adjust
       span {{ $t('remediationInstructionsFilters.button') }}
 </template>
 
@@ -41,17 +42,13 @@ export default {
       type: Array,
       default: () => [],
     },
-    hasAccessToUserFilter: {
+    addable: {
       type: Boolean,
-      default: true,
+      default: false,
     },
-    hasAccessToEditFilter: {
+    editable: {
       type: Boolean,
-      default: true,
-    },
-    hasAccessToListFilters: {
-      type: Boolean,
-      default: true,
+      default: false,
     },
   },
   computed: {
@@ -68,7 +65,10 @@ export default {
         name: MODALS.createRemediationInstructionsFilter,
         config: {
           filters: this.filters,
-          action: newFilter => this.$emit('update:filters', [...this.filters, { _id: uid(), ...newFilter }]),
+          action: newFilter => this.$emit(
+            'update:filters',
+            [...this.filters, { _id: uid(), ...newFilter }],
+          ),
         },
       });
     },
