@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    v-layout.d-inline-flex(align-center, row)
+    v-layout.d-inline-flex(v-if="serviceEntities.length", align-center, row)
       v-checkbox-functional.ml-3.pa-0(v-model="isAllSelected")
       template(v-if="selectedEntities.length")
         service-entity-actions(:actions="actions", @apply="applyActionForSelected")
