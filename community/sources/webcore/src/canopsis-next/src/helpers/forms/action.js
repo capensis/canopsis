@@ -30,6 +30,7 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
 /**
  * @typedef {Object} ActionDefaultParameters
  * @property {string} output
+ * @property {string} author
  */
 
 /**
@@ -40,6 +41,11 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
 /**
  * @typedef {ActionDefaultParameters} ActionChangeStateParameters
  * @property {number} state
+ */
+
+/**
+ * @typedef {ActionDefaultParameters} ActionAssocTicketParameters
+ * @property {string} ticket
  */
 
 /**
@@ -77,11 +83,6 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  */
 
 /**
- * @typedef {ActionDefaultParameters} ActionAssocTicketParameters
- * @property {string} ticket
- */
-
-/**
  * @typedef {
  *   Pbehavior |
  *   ActionDefaultParameters |
@@ -98,6 +99,7 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  * @property {boolean} drop_scenario_if_not_matched
  * @property {boolean} emit_trigger
  * @property {Object} patterns
+ * @property {string} comment
  * @property {Object[]} alarm_patterns
  * @property {Object[]} entity_patterns
  * @property {ActionParameters} parameters
@@ -128,7 +130,8 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  * @returns {ActionDefaultParameters}
  */
 const defaultActionParametersToForm = (parameters = {}) => ({
-  output: parameters.output || '',
+  output: parameters.output ?? '',
+  author: parameters.author ?? '',
 });
 
 /**
@@ -185,7 +188,7 @@ const snoozeActionParametersToForm = (parameters = {}) => ({
  */
 const changeStateActionParametersToForm = (parameters = {}) => ({
   ...defaultActionParametersToForm(parameters),
-  state: parameters.state || ENTITIES_STATES.minor,
+  state: parameters.state ?? ENTITIES_STATES.minor,
 });
 
 /**
@@ -196,7 +199,7 @@ const changeStateActionParametersToForm = (parameters = {}) => ({
  */
 const assocTicketActionParametersToForm = (parameters = {}) => ({
   ...defaultActionParametersToForm(parameters),
-  ticket: parameters.ticket || '',
+  ticket: parameters.ticket ?? '',
 });
 
 /**
@@ -276,6 +279,7 @@ export const actionToForm = (action = {}, timezone = getLocaleTimezone()) => {
     parameters: actionParametersToForm(action, timezone),
     drop_scenario_if_not_matched: !!action.drop_scenario_if_not_matched,
     emit_trigger: !!action.emit_trigger,
+    comment: action.comment || '',
     patterns: {
       alarm_patterns: action.alarm_patterns ? cloneDeep(action.alarm_patterns) : [],
       entity_patterns: action.entity_patterns ? cloneDeep(action.entity_patterns) : [],
@@ -317,14 +321,6 @@ export const formToWebhookActionParameters = (parameters = {}) => {
 };
 
 /**
- * Convert snooze parameters to action
- *
- * @param {ActionSnoozeParameters | {}} parameters
- * @return {ActionSnoozeParameters}
- */
-export const formToSnoozeActionParameters = (parameters = {}) => parameters;
-
-/**
  * Convert pbehavior parameters to action
  *
  * @param {PbehaviorForm | {}} [parameters = {}]
@@ -353,7 +349,6 @@ export const formToAction = (form, timezone) => {
   const parametersByCurrentType = form.parameters[form.type];
 
   const parametersPreparers = {
-    [ACTION_TYPES.snooze]: formToSnoozeActionParameters,
     [ACTION_TYPES.webhook]: formToWebhookActionParameters,
     [ACTION_TYPES.pbehavior]: formToPbehaviorActionParameters,
   };

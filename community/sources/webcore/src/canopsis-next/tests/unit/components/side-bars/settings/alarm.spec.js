@@ -608,7 +608,7 @@ describe('alarm', () => {
       queryData: {
         ...defaultQuery,
         include_instructions: [remediationInstruction._id],
-        include_types: [REMEDIATION_INSTRUCTION_TYPES.auto],
+        include_instruction_types: [REMEDIATION_INSTRUCTION_TYPES.auto],
       },
     });
   });

@@ -3,8 +3,8 @@ package serviceweather
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log"
+	"sort"
 	"time"
 
 	alarmapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
@@ -29,14 +29,14 @@ type Store interface {
 
 func NewStore(
 	dbClient mongo.DbClient,
-	legacyURL fmt.Stringer,
-	statsStore StatsStore,
+	legacyURL string,
+	alarmStore alarmapi.Store,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 ) Store {
 	return &store{
 		dbCollection:           dbClient.Collection(mongo.EntityMongoCollection),
 		pbehaviorCollection:    dbClient.Collection(mongo.PbehaviorMongoCollection),
-		statsStore:             statsStore,
+		alarmStore:             alarmStore,
 		defaultSortBy:          "name",
 		links:                  alarmapi.NewLinksFetcher(legacyURL, linkFetchTimeout),
 		timezoneConfigProvider: timezoneConfigProvider,
@@ -47,7 +47,7 @@ type store struct {
 	dbCollection           mongo.DbCollection
 	pbehaviorCollection    mongo.DbCollection
 	links                  alarmapi.LinksFetcher
-	statsStore             StatsStore
+	alarmStore             alarmapi.Store
 	defaultSortBy          string
 	timezoneConfigProvider config.TimezoneConfigProvider
 }
@@ -125,13 +125,15 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 		return nil, err
 	}
 
+	location := s.timezoneConfigProvider.Get().Location
+
 	pipeline := []bson.M{
 		{"$match": bson.M{"$and": []bson.M{
 			{"$expr": bson.M{"$in": bson.A{"$_id", service.Depends}}},
 			{"$expr": bson.M{"$eq": bson.A{"$enabled", true}}},
 		}}},
 	}
-	pipeline = append(pipeline, getFindEntitiesPipeline()...)
+	pipeline = append(pipeline, getFindEntitiesPipeline(location)...)
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		query.Query,
 		pipeline,
@@ -153,9 +155,42 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 	}
 
 	pbhIDs := make([]string, 0)
+	alarmIds := make([]string, 0, len(res.Data))
 	for _, v := range res.Data {
-		if v.PbehaviorInfo.ID != "" {
+		if v.PbehaviorInfo != nil && v.PbehaviorInfo.ID != "" {
 			pbhIDs = append(pbhIDs, v.PbehaviorInfo.ID)
+		}
+
+		if v.AlarmID != "" {
+			alarmIds = append(alarmIds, v.AlarmID)
+		}
+	}
+
+	if query.WithInstructions {
+		assignedInstructionsMap, err := s.alarmStore.GetAssignedInstructionsMap(ctx, alarmIds)
+		if err != nil {
+			return nil, err
+		}
+
+		statusesByAlarm, err := s.alarmStore.GetInstructionExecutionStatuses(ctx, alarmIds)
+		if err != nil {
+			return nil, err
+		}
+
+		for idx, v := range res.Data {
+			sort.Slice(assignedInstructionsMap[v.AlarmID], func(i, j int) bool {
+				return assignedInstructionsMap[v.AlarmID][i].Name < assignedInstructionsMap[v.AlarmID][j].Name
+			})
+
+			assignedInstructions := assignedInstructionsMap[v.AlarmID]
+			if assignedInstructions == nil {
+				assignedInstructions = make([]alarmapi.InstructionWithAlarms, 0)
+			}
+			res.Data[idx].AssignedInstructions = assignedInstructions
+			res.Data[idx].IsAutoInstructionRunning = statusesByAlarm[v.AlarmID].AutoRunning
+			res.Data[idx].IsAllAutoInstructionsCompleted = statusesByAlarm[v.AlarmID].AutoAllCompleted
+			res.Data[idx].IsAutoInstructionFailed = statusesByAlarm[v.AlarmID].AutoFailed
+			res.Data[idx].IsManualInstructionWaitingResult = statusesByAlarm[v.AlarmID].ManualRunning
 		}
 	}
 
@@ -165,20 +200,15 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 	}
 
 	for i := range res.Data {
-		if !res.Data[i].PbehaviorInfo.IsActive() || !service.PbehaviorInfo.IsActive() {
+		if res.Data[i].PbehaviorInfo != nil && !res.Data[i].PbehaviorInfo.IsActive() || !service.PbehaviorInfo.IsActive() {
 			res.Data[i].IsGrey = true
 		}
 
-		if v, ok := pbhs[res.Data[i].PbehaviorInfo.ID]; ok {
-			res.Data[i].Pbehaviors = []pbehavior.Response{v}
-		} else {
-			res.Data[i].Pbehaviors = []pbehavior.Response{}
-		}
+		res.Data[i].Pbehaviors = make([]pbehavior.Response, 0)
 
-		if s.statsStore != nil {
-			res.Data[i].Stats, err = s.statsStore.GetStats(ctx, res.Data[i].ID, s.timezoneConfigProvider.Get().Location)
-			if err != nil {
-				return nil, err
+		if res.Data[i].PbehaviorInfo != nil {
+			if v, ok := pbhs[res.Data[i].PbehaviorInfo.ID]; ok {
+				res.Data[i].Pbehaviors = append(res.Data[i].Pbehaviors, v)
 			}
 		}
 	}
@@ -233,11 +263,8 @@ func (s *store) fillLinks(ctx context.Context, apiKey string, result *EntityAggr
 		entities[entity.ID] = append(entities[entity.ID], i)
 	}
 	res, err := s.links.Fetch(ctx, apiKey, linksEntities)
-	if err != nil {
+	if err != nil || res == nil {
 		return err
-	}
-	if res == nil {
-		return nil
 	}
 
 	for _, rec := range res.Data {
@@ -290,29 +317,24 @@ func getFindPipeline() []bson.M {
 		}},
 		{"$unwind": bson.M{"path": "$category", "preserveNullAndEmptyArrays": true}},
 		// Find pbehavior types
-		{"$addFields": bson.M{
-			"alarm_counters": bson.M{"$map": bson.M{
-				"input": bson.M{"$objectToArray": "$alarms_cumulative_data.watched_pbehavior_count"},
-				"as":    "each",
-				"in": bson.M{
-					"type":  "$$each.k",
-					"count": "$$each.v",
-				},
-			}},
+		{"$addFields": bson.M{"pbh_types": bson.M{"$ifNull": bson.A{
+			bson.M{"$map": bson.M{"input": bson.M{"$objectToArray": "$alarms_cumulative_data.watched_pbehavior_count"}, "as": "each", "in": "$$each.k"}},
+			[]int{-1}}}}},
+		{"$lookup": bson.M{"as": "alarm_counters", "from": "pbehavior_type",
+			"let": bson.M{"pbh_types": "$pbh_types", "cumulative": bson.M{"$objectToArray": "$alarms_cumulative_data.watched_pbehavior_count"}},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$expr": bson.M{"$in": []string{"$_id", "$$pbh_types"}}}},
+				{"$addFields": bson.M{
+					"count": bson.M{"$mergeObjects": bson.M{
+						"$filter": bson.M{"input": "$$cumulative", "as": "each", "cond": bson.M{"$eq": []string{"$$each.k", "$_id"}}}}}}},
+				{"$project": bson.M{"count": "$count.v", "type": "$$ROOT"}},
+				{"$match": bson.M{"$expr": bson.M{"$gt": bson.A{"$count", 0}}}},
+				{"$project": bson.M{"type.loader_id": 0, "_id": 0, "type.count": 0}},
+			},
 		}},
-		{"$unwind": bson.M{"path": "$alarm_counters", "preserveNullAndEmptyArrays": true}},
-		{"$lookup": bson.M{
-			"from":         pbehaviorlib.TypeCollectionName,
-			"localField":   "alarm_counters.type",
-			"foreignField": "_id",
-			"as":           "alarm_counters.type",
-		}},
-		{"$unwind": bson.M{"path": "$alarm_counters.type", "preserveNullAndEmptyArrays": true}},
-		{"$group": bson.M{
-			"_id":            "$_id",
-			"data":           bson.M{"$first": "$$ROOT"},
-			"alarm_counters": bson.M{"$push": "$alarm_counters"},
-		}},
+		{"$project": bson.M{"pbh_types": 0}},
+		{"$project": bson.M{"_id": "$_id", "alarm_counters": "$alarm_counters", "data": "$$ROOT"}},
+
 		{"$replaceRoot": bson.M{
 			"newRoot": bson.M{"$mergeObjects": bson.A{
 				"$data",
@@ -496,7 +518,10 @@ func getFindIconPipeline() []bson.M {
 	}
 }
 
-func getFindEntitiesPipeline() []bson.M {
+func getFindEntitiesPipeline(location *time.Location) []bson.M {
+	year, month, day := time.Now().In(location).Date()
+	truncatedInLocation := time.Date(year, month, day, 0, 0, 0, 0, location).Unix()
+
 	pipeline := []bson.M{
 		// Find category
 		{"$lookup": bson.M{
@@ -506,6 +531,22 @@ func getFindEntitiesPipeline() []bson.M {
 			"as":           "category",
 		}},
 		{"$unwind": bson.M{"path": "$category", "preserveNullAndEmptyArrays": true}},
+		// Event statistics
+		{"$lookup": bson.M{
+			"from":       mongo.EventStatistics,
+			"localField": "_id", "foreignField": "_id",
+			"as": "stats",
+		}},
+		{"$unwind": bson.M{"path": "$stats", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			// stats counters with "last_event" prior "truncatedInLocation" represent as 0
+			"stats.ok": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$gt": bson.A{"$stats.last_event", truncatedInLocation}},
+				"then": "$stats.ok", "else": 0}},
+			"stats.ko": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$gt": bson.A{"$stats.last_event", truncatedInLocation}},
+				"then": "$stats.ko", "else": 0}},
+		}},
 		// Find connected alarm.
 		{"$lookup": bson.M{
 			"from": alarm.AlarmCollectionName,
@@ -524,6 +565,7 @@ func getFindEntitiesPipeline() []bson.M {
 		{"$unwind": bson.M{"path": "$alarm", "preserveNullAndEmptyArrays": true}},
 		// Add alarms fields to result
 		{"$addFields": bson.M{
+			"alarm_id":         "$alarm._id",
 			"connector":        "$alarm.v.connector",
 			"connector_name":   "$alarm.v.connector_name",
 			"component":        "$alarm.v.component",

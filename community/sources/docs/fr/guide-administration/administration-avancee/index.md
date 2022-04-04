@@ -7,7 +7,7 @@ Cette section vous accompagne dans l'administration avancée des composants de C
 ### Actions avancées sur les bases de données
 
 - [Connexion à la base de données MongoDB](connexion-a-la-base-de-donnees.md)
-- [Nettoyage, sauvegarde et restauration des bases de données (MongoDB et InfluxDB)](actions-base-donnees.md)
+- [Nettoyage, sauvegarde et restauration des bases de données](actions-base-donnees.md)
 
 ### Authentification
 

@@ -2,29 +2,42 @@ package entityservice
 
 import (
 	"context"
+	"errors"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
+	"time"
 )
 
-const cacheKey = "services"
+const (
+	cacheKey = "services"
+	// lastUpdateCacheKey is used to prevent race condition when multiple goroutine or instances update cache.
+	lastUpdateCacheKey = "services-last-update"
+)
 
 type Storage interface {
-	SaveAll(ctx context.Context, data []ServiceData) error
-	Save(ctx context.Context, data ServiceData) error
-	Load(ctx context.Context, ) ([]ServiceData, error)
+	// ReloadAll loads all enabled services from database and saves their data to cache.
+	ReloadAll(ctx context.Context) ([]ServiceData, error)
+	// Reload loads service by id from database and saves its data to cache.
+	// Return parameter isNew contains true if service didn't exist in cache.
+	// Return parameter isDisabled contains true if service is disabled. Service data is nil in this case.
+	Reload(ctx context.Context, id string) (s *ServiceData, isNew bool, isDisabled bool, err error)
+	// GetAll returns all services data from cache.
+	GetAll(ctx context.Context) ([]ServiceData, error)
+	// Get returns service data  by id from cache.
 	Get(ctx context.Context, id string) (*ServiceData, error)
-	Delete(ctx context.Context, id string) error
 }
 
 func NewStorage(
-	client redis.Cmdable,
+	adapter Adapter,
+	client redis.UniversalClient,
 	encoder encoding.Encoder,
 	decoder encoding.Decoder,
 	logger zerolog.Logger,
 ) Storage {
 	return &redisStorage{
+		adapter: adapter,
 		client:  client,
 		encoder: encoder,
 		decoder: decoder,
@@ -33,7 +46,8 @@ func NewStorage(
 }
 
 type redisStorage struct {
-	client  redis.Cmdable
+	adapter Adapter
+	client  redis.UniversalClient
 	encoder encoding.Encoder
 	decoder encoding.Decoder
 	logger  zerolog.Logger
@@ -43,60 +57,149 @@ type ServiceData struct {
 	ID             string                    `json:"_id"`
 	OutputTemplate string                    `json:"output_template,omitempty"`
 	EntityPatterns pattern.EntityPatternList `json:"entity_patterns"`
-	Impacts        []string                  `json:"impacts"`
 }
 
-func (s *redisStorage) SaveAll(ctx context.Context, data []ServiceData) error {
-	m := make(map[string]interface{}, len(data))
-	for _, v := range data {
-		str, err := s.encoder.Encode(v)
+func (s *redisStorage) ReloadAll(ctx context.Context) ([]ServiceData, error) {
+	var data []ServiceData
+
+	txf := func(tx *redis.Tx) error {
+		res := tx.HKeys(ctx, cacheKey)
+		if err := res.Err(); err != nil {
+			return err
+		}
+		oldKeys := res.Val()
+
+		services, err := s.adapter.GetValid(ctx)
 		if err != nil {
 			return err
 		}
-		m[v.ID] = str
-	}
-	// Save services.
-	if len(m) > 0 {
-		err := s.client.HSet(ctx, cacheKey, m).Err()
-		if err != nil {
-			return err
+
+		m := make(map[string]interface{}, len(services))
+		data = make([]ServiceData, len(services))
+		for i, v := range services {
+			data[i] = ServiceData{
+				ID:             v.ID,
+				OutputTemplate: v.OutputTemplate,
+				EntityPatterns: v.EntityPatterns,
+			}
+			str, err := s.encoder.Encode(data[i])
+			if err != nil {
+				return err
+			}
+			m[v.ID] = str
 		}
-	}
-	// Remove deleted services.
-	res := s.client.HKeys(ctx, cacheKey)
-	if err := res.Err(); err != nil {
+
+		removed := make([]string, 0)
+		for _, k := range oldKeys {
+			if _, ok := m[k]; !ok {
+				removed = append(removed, k)
+			}
+		}
+
+		_, err = tx.TxPipelined(ctx, func(pipe redis.Pipeliner) error {
+			if len(m) > 0 {
+				pipe.HSet(ctx, cacheKey, m)
+			}
+
+			if len(removed) > 0 {
+				pipe.HDel(ctx, cacheKey, removed...)
+			}
+
+			pipe.Set(ctx, lastUpdateCacheKey, time.Now(), 0)
+			return nil
+		})
 		return err
 	}
 
-	removed := make([]string, 0)
-	for _, k := range res.Val() {
-		if _, ok := m[k]; !ok {
-			removed = append(removed, k)
-		}
-	}
+	for i := 0; i < maxRetries; i++ {
+		err := s.client.Watch(ctx, txf, lastUpdateCacheKey)
 
-	if len(removed) > 0 {
-		err := s.client.HDel(ctx, cacheKey, removed...).Err()
 		if err != nil {
-			return err
+			if err == redis.TxFailedErr {
+				continue
+			}
+
+			return nil, err
 		}
+
+		return data, nil
 	}
 
-	return nil
+	return nil, errors.New("reached maximum number of retries")
 }
 
-func (s *redisStorage) Save(ctx context.Context, data ServiceData) error {
-	str, err := s.encoder.Encode(data)
-	if err != nil {
-		return err
+func (s *redisStorage) Reload(ctx context.Context, id string) (*ServiceData, bool, bool, error) {
+	var data *ServiceData
+	var isNew, isDisabled bool
+
+	txf := func(tx *redis.Tx) error {
+		data = nil
+		isNew = false
+		isDisabled = false
+
+		service, err := s.adapter.GetByID(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		var str []byte
+
+		if service != nil {
+			if service.Enabled {
+				data = &ServiceData{
+					ID:             service.ID,
+					OutputTemplate: service.OutputTemplate,
+					EntityPatterns: service.EntityPatterns,
+				}
+
+				str, err = s.encoder.Encode(data)
+				if err != nil {
+					return err
+				}
+			} else {
+				isDisabled = true
+			}
+		}
+
+		res, err := tx.TxPipelined(ctx, func(pipe redis.Pipeliner) error {
+			if data == nil {
+				pipe.HDel(ctx, cacheKey, id)
+			} else {
+				pipe.HSet(ctx, cacheKey, data.ID, str)
+			}
+
+			pipe.Set(ctx, lastUpdateCacheKey, time.Now(), 0)
+			return nil
+		})
+
+		if err != nil {
+			return err
+		}
+
+		if data != nil {
+			if ic, ok := res[0].(*redis.IntCmd); ok {
+				isNew = ic.Val() > 0
+			}
+		}
+
+		return nil
 	}
 
-	err = s.client.HSet(ctx, cacheKey, data.ID, str).Err()
-	if err != nil {
-		return err
+	for i := 0; i < maxRetries; i++ {
+		err := s.client.Watch(ctx, txf, lastUpdateCacheKey)
+
+		if err != nil {
+			if err == redis.TxFailedErr {
+				continue
+			}
+
+			return nil, false, false, err
+		}
+
+		return data, isNew, isDisabled, nil
 	}
 
-	return nil
+	return nil, false, false, errors.New("reached maximum number of retries")
 }
 
 func (s *redisStorage) Get(ctx context.Context, id string) (*ServiceData, error) {
@@ -117,11 +220,7 @@ func (s *redisStorage) Get(ctx context.Context, id string) (*ServiceData, error)
 	return data, nil
 }
 
-func (s *redisStorage) Delete(ctx context.Context, id string) error {
-	return s.client.HDel(ctx, cacheKey, id).Err()
-}
-
-func (s *redisStorage) Load(ctx context.Context) ([]ServiceData, error) {
+func (s *redisStorage) GetAll(ctx context.Context) ([]ServiceData, error) {
 	res := s.client.HGetAll(ctx, cacheKey)
 	if err := res.Err(); err != nil {
 		if err == redis.Nil {

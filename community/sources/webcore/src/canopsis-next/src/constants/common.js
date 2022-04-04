@@ -13,6 +13,7 @@ export const ROUTES_NAMES = {
   adminPlanning: 'admin-planning-administration',
   adminRemediation: 'admin-remediation-administration',
   adminHealthcheck: 'admin-healthcheck',
+  adminEngines: 'admin-engines',
   adminKPI: 'admin-kpi',
   exploitationPbehaviors: 'exploitation-pbehaviors',
   exploitationEventFilter: 'exploitation-event-filter',
@@ -42,6 +43,7 @@ export const ROUTES = {
   adminPlanning: '/admin/planning',
   adminRemediation: '/admin/remediation',
   adminHealthcheck: '/admin/healthcheck',
+  adminEngines: '/admin/engines',
   adminKPI: '/admin/kpi',
   exploitationPbehaviors: '/exploitation/pbehaviors',
   exploitationEventFilter: '/exploitation/event-filter',
@@ -238,3 +240,5 @@ export const ASSOCIATIVE_TABLES_NAMES = {
   dynamicInfoTemplates: 'dynamic-info-templates',
   filterHints: 'filterhints',
 };
+
+export const DEFAULT_COLUMN_TEMPLATE_VALUE = '{{ value }}';

@@ -5,35 +5,36 @@
 package mock_file
 
 import (
-	gomock "github.com/golang/mock/gomock"
 	io "io"
 	reflect "reflect"
+
+	gomock "github.com/golang/mock/gomock"
 )
 
-// MockStorage is a mock of Storage interface
+// MockStorage is a mock of Storage interface.
 type MockStorage struct {
 	ctrl     *gomock.Controller
 	recorder *MockStorageMockRecorder
 }
 
-// MockStorageMockRecorder is the mock recorder for MockStorage
+// MockStorageMockRecorder is the mock recorder for MockStorage.
 type MockStorageMockRecorder struct {
 	mock *MockStorage
 }
 
-// NewMockStorage creates a new mock instance
+// NewMockStorage creates a new mock instance.
 func NewMockStorage(ctrl *gomock.Controller) *MockStorage {
 	mock := &MockStorage{ctrl: ctrl}
 	mock.recorder = &MockStorageMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockStorage) EXPECT() *MockStorageMockRecorder {
 	return m.recorder
 }
 
-// Copy mocks base method
+// Copy mocks base method.
 func (m *MockStorage) Copy(arg0, arg1 string) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Copy", arg0, arg1)
@@ -42,13 +43,13 @@ func (m *MockStorage) Copy(arg0, arg1 string) (string, error) {
 	return ret0, ret1
 }
 
-// Copy indicates an expected call of Copy
+// Copy indicates an expected call of Copy.
 func (mr *MockStorageMockRecorder) Copy(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Copy", reflect.TypeOf((*MockStorage)(nil).Copy), arg0, arg1)
 }
 
-// CopyReader mocks base method
+// CopyReader mocks base method.
 func (m *MockStorage) CopyReader(arg0 string, arg1 io.Reader) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CopyReader", arg0, arg1)
@@ -57,13 +58,13 @@ func (m *MockStorage) CopyReader(arg0 string, arg1 io.Reader) (string, error) {
 	return ret0, ret1
 }
 
-// CopyReader indicates an expected call of CopyReader
+// CopyReader indicates an expected call of CopyReader.
 func (mr *MockStorageMockRecorder) CopyReader(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CopyReader", reflect.TypeOf((*MockStorage)(nil).CopyReader), arg0, arg1)
 }
 
-// Delete mocks base method
+// Delete mocks base method.
 func (m *MockStorage) Delete(arg0, arg1 string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Delete", arg0, arg1)
@@ -71,13 +72,13 @@ func (m *MockStorage) Delete(arg0, arg1 string) error {
 	return ret0
 }
 
-// Delete indicates an expected call of Delete
+// Delete indicates an expected call of Delete.
 func (mr *MockStorageMockRecorder) Delete(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockStorage)(nil).Delete), arg0, arg1)
 }
 
-// DeleteByName mocks base method
+// DeleteByName mocks base method.
 func (m *MockStorage) DeleteByName(arg0 string) (bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteByName", arg0)
@@ -86,13 +87,13 @@ func (m *MockStorage) DeleteByName(arg0 string) (bool, error) {
 	return ret0, ret1
 }
 
-// DeleteByName indicates an expected call of DeleteByName
+// DeleteByName indicates an expected call of DeleteByName.
 func (mr *MockStorageMockRecorder) DeleteByName(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteByName", reflect.TypeOf((*MockStorage)(nil).DeleteByName), arg0)
 }
 
-// GetEtag mocks base method
+// GetEtag mocks base method.
 func (m *MockStorage) GetEtag(arg0, arg1 string) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetEtag", arg0, arg1)
@@ -101,13 +102,13 @@ func (m *MockStorage) GetEtag(arg0, arg1 string) (string, error) {
 	return ret0, ret1
 }
 
-// GetEtag indicates an expected call of GetEtag
+// GetEtag indicates an expected call of GetEtag.
 func (mr *MockStorageMockRecorder) GetEtag(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEtag", reflect.TypeOf((*MockStorage)(nil).GetEtag), arg0, arg1)
 }
 
-// GetFilepath mocks base method
+// GetFilepath mocks base method.
 func (m *MockStorage) GetFilepath(arg0, arg1 string) string {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetFilepath", arg0, arg1)
@@ -115,13 +116,13 @@ func (m *MockStorage) GetFilepath(arg0, arg1 string) string {
 	return ret0
 }
 
-// GetFilepath indicates an expected call of GetFilepath
+// GetFilepath indicates an expected call of GetFilepath.
 func (mr *MockStorageMockRecorder) GetFilepath(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFilepath", reflect.TypeOf((*MockStorage)(nil).GetFilepath), arg0, arg1)
 }
 
-// Move mocks base method
+// Move mocks base method.
 func (m *MockStorage) Move(arg0, arg1 string) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Move", arg0, arg1)
@@ -130,7 +131,7 @@ func (m *MockStorage) Move(arg0, arg1 string) (string, error) {
 	return ret0, ret1
 }
 
-// Move indicates an expected call of Move
+// Move indicates an expected call of Move.
 func (mr *MockStorageMockRecorder) Move(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Move", reflect.TypeOf((*MockStorage)(nil).Move), arg0, arg1)

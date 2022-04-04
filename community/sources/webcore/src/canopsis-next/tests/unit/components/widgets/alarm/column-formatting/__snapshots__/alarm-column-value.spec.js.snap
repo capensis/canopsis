@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-column-value Renders \`alarm-column-value\` with custom props 1`] = `
+<color-indicator-wrapper-stub
+  alarm="[object Object]"
+  entity="[object Object]"
+  type="impact_state"
+>
+  <alarm-column-cell-stub
+    alarm="[object Object]"
+    column="[object Object]"
+    columnsfilters="[object Object],[object Object]"
+    widget="[object Object]"
+  />
+</color-indicator-wrapper-stub>
+`;
+
+exports[`alarm-column-value Renders \`alarm-column-value\` with custom template 1`] = `
+<v-runtime-template-stub
+  template=<div>entity-name === entity-name in the alarm-name</div>
+  templateprops="[object Object]"
+/>
+`;
+
+exports[`alarm-column-value Renders \`alarm-column-value\` with required props 1`] = `
+<color-indicator-wrapper-stub
+  alarm="[object Object]"
+  entity="[object Object]"
+  type="state"
+>
+  <alarm-column-cell-stub
+    alarm="[object Object]"
+    column="[object Object]"
+    columnsfilters=""
+    widget="[object Object]"
+  />
+</color-indicator-wrapper-stub>
+`;

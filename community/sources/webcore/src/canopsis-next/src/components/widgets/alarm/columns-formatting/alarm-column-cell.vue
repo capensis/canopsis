@@ -12,7 +12,7 @@
       v-layout(align-center)
         div(v-if="column.isHtml", v-html="sanitizedValue")
         div(v-else, v-bind="component.bind", v-on="component.on")
-        v-btn.ma-0(data-test="alarmInfoPopupOpenButton", icon, small, @click.stop="showInfoPopup")
+        v-btn.ma-0(icon, small, @click.stop="showInfoPopup")
           v-icon(small) info
     alarm-column-cell-popup-body(
       :alarm="alarm",
@@ -29,6 +29,7 @@ import sanitizeHTML from 'sanitize-html';
 
 import { ALARM_ENTITY_FIELDS, COLOR_INDICATOR_TYPES } from '@/constants';
 
+import { formToColumnValue } from '@/helpers/forms/widgets/alarm';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 import { convertDurationToString } from '@/helpers/date/duration';
 
@@ -116,7 +117,10 @@ export default {
     popupData() {
       const popups = get(this.widget.parameters, 'infoPopups', []);
 
-      return popups.find(popup => popup.column === this.column.value);
+      /**
+       * TODO: improve on view refactoring
+       */
+      return popups.find(popup => formToColumnValue(popup.column) === this.column.value);
     },
 
     columnFilter() {
@@ -176,7 +180,7 @@ export default {
             is: 'alarm-column-value-categories',
             asList: get(this.widget.parameters, 'linksCategoriesAsList.enabled', false),
             limit: get(this.widget.parameters, 'linksCategoriesAsList.limit'),
-            links: this.alarm.links,
+            links: this.alarm.links ?? {},
           },
         },
         [ALARM_ENTITY_FIELDS.extraDetails]: {
@@ -217,9 +221,7 @@ export default {
   },
   methods: {
     showInfoPopup() {
-      if (this.popupData) {
-        this.isInfoPopupOpen = true;
-      }
+      this.isInfoPopupOpen = true;
     },
     hideInfoPopup() {
       this.isInfoPopupOpen = false;

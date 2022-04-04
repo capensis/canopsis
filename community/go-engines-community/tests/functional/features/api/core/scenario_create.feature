@@ -32,7 +32,8 @@ Feature: Create a scenario
             }
           },
           "drop_scenario_if_not_matched": false,
-          "emit_trigger": false
+          "emit_trigger": false,
+          "comment": "test comment"
         },
         {
           "alarm_patterns": [
@@ -133,7 +134,8 @@ Feature: Create a scenario
             }
           },
           "drop_scenario_if_not_matched": false,
-          "emit_trigger": false
+          "emit_trigger": false,
+          "comment": "test comment"
         },
         {
           "alarm_patterns": [
@@ -532,7 +534,9 @@ Feature: Create a scenario
     When I am admin
     When I do POST /api/v4/scenarios:
     """
-    {}
+    {
+      "priority": 123
+    }
     """
     Then the response code should be 400
     Then the response body should be:
@@ -542,7 +546,6 @@ Feature: Create a scenario
         "actions": "Actions is missing.",
         "enabled": "Enabled is missing.",
         "name": "Name is missing.",
-        "priority": "Priority is missing.",
         "triggers": "Triggers is missing."
       }
     }

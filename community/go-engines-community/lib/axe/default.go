@@ -20,6 +20,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation/executor"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resolverule"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -65,7 +66,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 	defer depmake.Catch(logger)
 
 	m := DependencyMaker{}
-	dbClient := m.DepMongoClient(ctx)
+	dbClient := m.DepMongoClient(ctx, logger)
 	cfg := m.DepConfig(ctx, dbClient)
 	config.SetDbClientRetry(dbClient, cfg)
 	if pgPool != nil {
@@ -93,7 +94,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		logger,
 	)
 
-	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider)
+	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)
 
 	pbhRpcClient := libengine.NewRPCClient(
 		canopsis.AxeRPCConsumerName,
@@ -133,7 +134,9 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 	}
 
 	engineAxe := libengine.New(
-		nil,
+		func(ctx context.Context) error {
+			return alarmStatusService.Load(ctx)
+		},
 		func(ctx context.Context) {
 			err := dbClient.Disconnect(ctx)
 			if err != nil {
@@ -185,6 +188,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		&messageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			EventProcessor: alarm.NewEventProcessor(
+				dbClient,
 				alarm.NewAdapter(dbClient),
 				entity.NewAdapter(dbClient),
 				correlation.NewRuleAdapter(dbClient),
@@ -193,6 +197,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 				alarmStatusService,
 				redis.NewLockClient(corrRedisClient),
 				metricsSender,
+				statistics.NewEventStatisticsSender(dbClient, logger, timezoneConfigProvider),
 				logger,
 			),
 			RemediationRpcClient:   remediationRpcClient,
@@ -225,14 +230,19 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 	))
 	engineAxe.AddConsumer(serviceRpcClient)
 	engineAxe.AddConsumer(pbhRpcClient)
-	engineAxe.AddPeriodicalWorker(libengine.NewRunInfoPeriodicalWorker(
+	engineAxe.AddPeriodicalWorker("run info", libengine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		libengine.NewRunInfoManager(runInfoRedisClient),
 		libengine.NewInstanceRunInfo(canopsis.AxeEngineName, canopsis.AxeQueueName, options.PublishToQueue, nil, rpcPublishQueues),
 		amqpChannel,
 		logger,
 	))
-	engineAxe.AddPeriodicalWorker(libengine.NewLockedPeriodicalWorker(
+	engineAxe.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
+		PeriodicalInterval: options.PeriodicalWaitTime,
+		AlarmStatusService: alarmStatusService,
+		Logger:             logger,
+	})
+	engineAxe.AddPeriodicalWorker("alarms", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),
 		redis.AxePeriodicalLockKey,
 		&periodicalWorker{
@@ -240,7 +250,6 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 			ChannelPub:         amqpChannel,
 			AlarmService:       alarm.NewService(alarm.NewAdapter(dbClient), resolverule.NewAdapter(dbClient), alarmStatusService, logger),
 			AlarmAdapter:       alarm.NewAdapter(dbClient),
-			AlarmStatusService: alarmStatusService,
 			Encoder:            json.NewEncoder(),
 			IdleAlarmService: idlealarm.NewService(
 				idlerule.NewRuleAdapter(dbClient),
@@ -254,7 +263,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		},
 		logger,
 	))
-	engineAxe.AddPeriodicalWorker(libengine.NewLockedPeriodicalWorker(
+	engineAxe.AddPeriodicalWorker("resolve archiver", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),
 		redis.AxeResolvedArchiverPeriodicalLockKey,
 		&resolvedArchiverWorker{
@@ -267,13 +276,13 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		},
 		logger,
 	))
-	engineAxe.AddPeriodicalWorker(libengine.NewLoadConfigPeriodicalWorker(
+	engineAxe.AddPeriodicalWorker("alarm config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(dbClient),
 		alarmConfigProvider,
 		logger,
 	))
-	engineAxe.AddPeriodicalWorker(libengine.NewLoadConfigPeriodicalWorker(
+	engineAxe.AddPeriodicalWorker("tz config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(dbClient),
 		timezoneConfigProvider,

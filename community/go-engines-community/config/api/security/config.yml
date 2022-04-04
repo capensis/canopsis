@@ -22,12 +22,13 @@ security:
 #      name: uid
 #      firstname: uid
 #      lastname: uid
+#      role: role
 #    canopsis_saml_url: http://localhost:8084/saml
 #    canopsis_sso_binding: redirect
 #    canopsis_acs_binding: redirect
 #    sign_auth_request: false
 #    name_id_format: urn:oasis:names:tc:SAML:2.0:nameid-format:persistent
-#    default_role: "admin"
+#    default_role: "Norights"
 #    skip_verify: true
 #    skip_signature_validation: true
 #    acs_index: 1

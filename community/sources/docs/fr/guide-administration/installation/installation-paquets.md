@@ -11,7 +11,7 @@ Assurez-vous d'avoir suivi les [prérequis réseau et de sécurité](../administ
 L'installation nécessite l'ajout de dépôts RPM tiers, ainsi qu'un accès HTTP et HTTPS pour le téléchargement de diverses dépendances. Plus de détails dans la [matrice des flux réseau](../matrice-des-flux-reseau/index.md).
 
 !!! information
-    Notez que Canopsis installe ses propres versions d'InfluxDB, MongoDB, Nginx, Redis et RabbitMQ, et que seules ces versions sont validées pour fonctionner avec Canopsis. Veillez à ne pas remplacer ces versions par vos propres versions, que ce soit de façon intentionnelle, ou par l'ajout de dépôt tiers qui pourraient écraser celles fournies par Canopsis.
+    Notez que Canopsis installe ses propres versions de MongoDB, Nginx, Redis et RabbitMQ, et que seules ces versions sont validées pour fonctionner avec Canopsis. Veillez à ne pas remplacer ces versions par vos propres versions, que ce soit de façon intentionnelle, ou par l'ajout de dépôt tiers qui pourraient écraser celles fournies par Canopsis.
 
     Plus de détails sur les [prérequis des versions](prerequis-des-versions.md).
 
@@ -51,7 +51,6 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
     Installation de l'édition open-source de Canopsis :
     ```sh
     yum install canopsis-core
-    yum install canopsis-engines-go
     ```
 
 === "Canopsis Pro (souscription commerciale)"
@@ -77,7 +76,6 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
     Installation de Canopsis Pro :
     ```sh
     yum install canopsis-cat
-    yum install canopsis-engines-go canopsis-engines-go-cat
     ```
 
 ## Initialisation de Canopsis
