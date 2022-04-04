@@ -61,6 +61,7 @@ export default {
   computed: {
     actions() {
       return getAvailableActionsByEntities(this.selectedEntities)
+        .filter(this.actionsAccessFilterHandler)
         .map(action => ({
           ...action,
           disabled: !this.hasEntityWithoutAction(action.type),
