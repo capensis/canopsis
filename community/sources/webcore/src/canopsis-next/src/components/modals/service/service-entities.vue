@@ -150,7 +150,7 @@ export default {
     },
 
     getPausedPbehaviorsByEntitites(entities) {
-      return entities.map(entity => ({ id: entity.pbehavior_info.id }));
+      return entities.map(entity => ({ _id: entity.pbehavior_info.id }));
     },
 
     async createPbehaviorsWithPopups(pbehaviors) {
