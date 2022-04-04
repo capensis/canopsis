@@ -33,7 +33,8 @@
                 entity-info-tab(
                   :entity="entity",
                   :template="template",
-                  @add:action="$listeners['add:action']"
+                  @add:action="$listeners['add:action']",
+                  @refresh="$listeners.refresh"
                 )
               v-tab {{ $t('modals.service.entity.tabs.treeOfDependencies') }}
               v-tab-item(lazy)
