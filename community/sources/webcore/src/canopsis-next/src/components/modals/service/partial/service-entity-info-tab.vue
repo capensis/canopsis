@@ -76,6 +76,7 @@ export default {
 
     availableActions() {
       return getAvailableActionsByEntity(this.entity)
+        .filter(this.actionsAccessFilterHandler)
         .map(action => ({
           ...action,
           disabled: this.isActionDisabled(action.type),
