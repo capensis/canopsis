@@ -5,7 +5,12 @@
         v-layout(justify-space-between)
           v-layout(v-if="availableActions.length", row, align-center, wrap)
             div {{ $t('common.actionsLabel') }}:
-            service-entity-actions(:actions="availableActions", @apply="applyActionForEntity")
+            service-entity-actions(
+              :actions="availableActions",
+              :assigned-instructions="entity.assigned_instructions",
+              @apply="applyActionForEntity",
+              @execute="executeAlarmInstruction"
+            )
       v-tooltip(v-if="hasPbehaviors && hasAccessToManagePbehaviors", top)
         v-btn(slot="activator", small, @click="showPbehaviorsListModal")
           v-icon(small) list
@@ -71,7 +76,6 @@ export default {
 
     availableActions() {
       return getAvailableActionsByEntity(this.entity)
-        .filter(this.actionsAccessFilterHandler)
         .map(action => ({
           ...action,
           disabled: this.isActionDisabled(action.type),
@@ -107,7 +111,6 @@ export default {
         config: {
           assignedInstruction,
           alarmId: this.entity.alarm_id,
-          onOpen: refreshEntities,
           onClose: refreshEntities,
           onComplete: refreshEntities,
         },

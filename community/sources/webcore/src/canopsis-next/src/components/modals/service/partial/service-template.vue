@@ -13,7 +13,7 @@
     v-runtime-template(v-if="compiledTemplate && !pending", :template="compiledTemplate")
     div.float-clear
     c-table-pagination(
-      v-if="totalItems > pagination.rowsPerPage && hasEntitiesHelper",
+      v-if="!pending && totalItems > pagination.rowsPerPage && hasEntitiesHelper",
       :total-items="totalItems",
       :rows-per-page="pagination.rowsPerPage",
       :page="pagination.page",
