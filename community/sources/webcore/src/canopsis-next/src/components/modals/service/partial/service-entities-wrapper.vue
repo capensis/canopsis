@@ -1,8 +1,9 @@
 <template lang="pug">
   div
-    v-layout.ma-2(v-if="selectedEntities.length", align-center, row)
-      span.font-weight-bold {{ $t('serviceWeather.massActions') }}:
-      service-entity-actions(:actions="actions", @apply="applyActionForSelected")
+    v-layout.d-inline-flex(align-center, row)
+      v-checkbox-functional.ml-3.pa-0(v-model="isAllSelected")
+      template(v-if="selectedEntities.length")
+        service-entity-actions(:actions="actions", @apply="applyActionForSelected")
     div.mt-2(v-for="serviceEntity in serviceEntities", :key="serviceEntity.key")
       service-entity(
         :service-id="service._id",
@@ -59,6 +60,17 @@ export default {
     };
   },
   computed: {
+    isAllSelected: {
+      get() {
+        return this.serviceEntities.every(({ _id: id }) => this.selectedEntitiesIds.includes(id));
+      },
+      set(checked) {
+        this.selectedEntities = checked
+          ? [...this.serviceEntities]
+          : [];
+      },
+    },
+
     actions() {
       return getAvailableActionsByEntities(this.selectedEntities)
         .filter(this.actionsAccessFilterHandler)
