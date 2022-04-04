@@ -202,7 +202,7 @@ export default {
         config: {
           pattern: editablePattern,
           type: editablePattern.type,
-          title: this.getEditPatternModalTitle(editablePattern.type),
+          title: this.getEditPatternModalTitle(editablePattern),
           action: async (pattern) => {
             await this.updatePattern({ id: editablePattern._id, data: pattern });
 
