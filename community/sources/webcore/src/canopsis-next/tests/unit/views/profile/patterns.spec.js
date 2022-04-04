@@ -80,7 +80,9 @@ describe('patterns', () => {
 
   afterEach(() => {
     currentUserPermissionsById.mockClear();
+    fetchCorporatePatternsListWithPreviousParams.mockClear();
     fetchPatternsListWithPreviousParams.mockClear();
+    createPattern.mockClear();
     updatePattern.mockClear();
     removePattern.mockClear();
     bulkRemovePattern.mockClear();
