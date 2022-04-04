@@ -13,7 +13,8 @@
         :selected="isEntitySelected(serviceEntity)",
         @select="updateSelected(serviceEntity, $event)",
         @remove-unavailable="removeEntityFromUnavailable(serviceEntity)",
-        @add:action="$listeners['add:action']"
+        @add:action="$listeners['add:action']",
+        @refresh="$listeners.refresh"
       )
 </template>
 

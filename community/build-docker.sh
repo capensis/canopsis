@@ -26,33 +26,20 @@ function build_for_distribution() {
     echo "BUILDING DISTRIBUTION ${distribution}"
     docker build ${docker_args} -f docker/Dockerfile.sysbase-${distribution} -t canopsis/canopsis-sysbase:${full_tag} .
 
-    if [ "${CANOPSIS_BUILD_NEXT}" = "1" ]; then
-        echo "BUILDING CORE NEXT"
-        cd ${workdir}
-        docker build ${docker_args} -f docker/Dockerfile.canopsis-next -t canopsis/canopsis-next:${full_tag} .
-
-        next_dist="${workdir}/sources/webcore/src/canopsis-next/dist"
-        if [ ! -d ${next_dist} ]; then
-            mkdir -p ${next_dist}
-        fi
-        docker run -v ${next_dist}:/dist/ -e FIX_OWNER=${fix_ownership} canopsis/canopsis-next:${full_tag}
-    fi
-
     echo "BUILDING CORE ${distribution}"
     docker build ${docker_args} -f docker/Dockerfile -t canopsis/canopsis-core:${full_tag} .
 
     echo "Building provisioning image"
     docker build ${docker_args} -f docker/Dockerfile.prov -t canopsis/canopsis-prov:${full_tag} .
 
-    echo "Building nginx image"
-    docker build ${docker_args} -f docker/Dockerfile.nginx -t canopsis/nginx:${full_tag} .
+    echo "Building provisioning-openshift image"
+    docker build ${docker_args} -f docker/Dockerfile.prov -t canopsis/canopsis-prov-openshift:${full_tag} --target prov-openshift .
 
     if [ "${distribution}" = "debian-9" ]; then
         echo "TAGGING OFFICIAL CANOPSIS-CORE IMAGE"
 
         docker tag canopsis/canopsis-core:${full_tag} canopsis/canopsis-core:${tag}
         docker tag canopsis/canopsis-prov:${full_tag} canopsis/canopsis-prov:${tag}
-        docker tag canopsis/nginx:${full_tag} canopsis/nginx:${tag}
     fi
 
     if [ "${CANOPSIS_DOCKER_MODE}" == "test" ]||[ "${CANOPSIS_DOCKER_MODE}" == "test-ci" ]; then

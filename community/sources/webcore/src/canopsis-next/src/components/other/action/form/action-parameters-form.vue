@@ -57,7 +57,6 @@ export default {
         [ACTION_TYPES.assocticket]: 'action-assocticket-form',
         [ACTION_TYPES.ack]: 'action-note-form',
         [ACTION_TYPES.ackremove]: 'action-note-form',
-        [ACTION_TYPES.declareticket]: 'action-note-form',
         [ACTION_TYPES.cancel]: 'action-note-form',
         [ACTION_TYPES.webhook]: 'action-webhook-form',
       }[this.action.type];

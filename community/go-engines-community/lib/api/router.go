@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"net/url"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
@@ -58,6 +59,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -118,6 +120,7 @@ func RegisterRoutes(
 	router gin.IRouter,
 	security Security,
 	enforcer libsecurity.Enforcer,
+	legacyUrl string,
 	dbClient mongo.DbClient,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	pbhEntityTypeResolver libpbehavior.EntityTypeResolver,
@@ -140,7 +143,7 @@ func RegisterRoutes(
 ) {
 	sessionStore := security.GetSessionStore()
 	authMiddleware := security.GetAuthMiddleware()
-	security.RegisterCallbackRoutes(router)
+	security.RegisterCallbackRoutes(router, dbClient)
 	authApi := auth.NewApi(
 		security.GetTokenService(),
 		security.GetTokenStore(),
@@ -191,9 +194,9 @@ func RegisterRoutes(
 			userPreferencesRouter.PUT("", userPreferencesApi.Update)
 		}
 
+		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder()), actionLogger, metricsUserMetaUpdater)
 		userRouter := protected.Group("/users")
 		{
-			userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder()), actionLogger, metricsUserMetaUpdater)
 			userRouter.POST("",
 				middleware.Authorize(apisecurity.PermAcl, model.PermissionCreate, enforcer),
 				userApi.Create,
@@ -251,7 +254,8 @@ func RegisterRoutes(
 			)
 		}
 
-		alarmAPI := alarm.NewApi(alarm.NewStore(dbClient, GetLegacyURL()), exportExecutor, timezoneConfigProvider)
+		alarmStore := alarm.NewStore(dbClient, legacyUrl)
+		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, timezoneConfigProvider)
 		alarmRouter := protected.Group("/alarms")
 		{
 			alarmRouter.GET(
@@ -287,7 +291,7 @@ func RegisterRoutes(
 			)
 		}
 
-		entityAPI := entity.NewApi(entity.NewStore(dbClient), exportExecutor, entityCleanerTaskChan, logger)
+		entityAPI := entity.NewApi(entity.NewStore(dbClient, timezoneConfigProvider), exportExecutor, entityCleanerTaskChan, logger)
 		entityExportRouter := protected.Group("/entity-export")
 		{
 			entityExportRouter.POST(
@@ -421,7 +425,7 @@ func RegisterRoutes(
 		}
 		entityRouter := protected.Group("/entities")
 		{
-			entityAPI := entity.NewApi(entity.NewStore(dbClient), exportExecutor, entityCleanerTaskChan, logger)
+			entityAPI := entity.NewApi(entity.NewStore(dbClient, timezoneConfigProvider), exportExecutor, entityCleanerTaskChan, logger)
 			entityRouter.GET(
 				"",
 				middleware.Authorize(authObjEntity, permRead, enforcer),
@@ -461,10 +465,10 @@ func RegisterRoutes(
 				entitybasicsAPI.Delete,
 			)
 		}
+
+		entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient), entityPublChan, metricsEntityMetaUpdater, actionLogger, logger)
 		entityserviceRouter := protected.Group("/entityservices")
 		{
-			entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient), entityPublChan, metricsEntityMetaUpdater,
-				actionLogger, logger)
 			entityserviceRouter.POST(
 				"",
 				middleware.Authorize(authObjEntityService, permCreate, enforcer),
@@ -585,11 +589,10 @@ func RegisterRoutes(
 
 		weatherRouter := protected.Group("/weather-services")
 		{
-			statsStore := serviceweather.NewStatsStore(dbClient)
 			weatherAPI := serviceweather.NewApi(serviceweather.NewStore(
 				dbClient,
-				GetLegacyURL(),
-				statsStore,
+				legacyUrl,
+				alarmStore,
 				timezoneConfigProvider,
 			))
 			weatherRouter.GET(
@@ -807,9 +810,9 @@ func RegisterRoutes(
 			)
 		}
 
+		scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient), actionLogger, scenarioPriorityIntervals)
 		scenarioRouter := protected.Group("/scenarios")
 		{
-			scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient), actionLogger, scenarioPriorityIntervals)
 			scenarioRouter.POST(
 				"",
 				middleware.Authorize(authObjAction, permCreate, enforcer),
@@ -932,14 +935,160 @@ func RegisterRoutes(
 			)
 		}
 
+		idleRuleAPI := idlerule.NewApi(idlerule.NewStore(dbClient), actionLogger, userInterfaceConfig)
+		idleRuleRouter := protected.Group("/idle-rules")
+		{
+			idleRuleRouter.POST(
+				"",
+				middleware.Authorize(authObjIdleRule, permCreate, enforcer),
+				middleware.SetAuthor(),
+				idleRuleAPI.Create,
+			)
+			idleRuleRouter.GET(
+				"",
+				middleware.Authorize(authObjIdleRule, permRead, enforcer),
+				idleRuleAPI.List,
+			)
+			idleRuleRouter.GET(
+				"/:id",
+				middleware.Authorize(authObjIdleRule, permRead, enforcer),
+				idleRuleAPI.Get,
+			)
+			idleRuleRouter.PUT(
+				"/:id",
+				middleware.Authorize(authObjIdleRule, permUpdate, enforcer),
+				middleware.SetAuthor(),
+				idleRuleAPI.Update,
+			)
+			idleRuleRouter.DELETE(
+				"/:id",
+				middleware.Authorize(authObjIdleRule, permDelete, enforcer),
+				idleRuleAPI.Delete,
+			)
+			idleRuleRouter.POST(
+				"/count",
+				middleware.Authorize(authObjPbh, permCreate, enforcer),
+				idleRuleAPI.CountPatterns)
+		}
+
 		bulkRouter := protected.Group("/bulk")
 		{
+			scenarioRouter := bulkRouter.Group("/scenarios")
+			{
+				scenarioRouter.POST(
+					"",
+					middleware.Authorize(authObjAction, permCreate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					scenarioAPI.BulkCreate,
+				)
+				scenarioRouter.PUT(
+					"",
+					middleware.Authorize(authObjAction, permUpdate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					scenarioAPI.BulkUpdate,
+				)
+				scenarioRouter.DELETE(
+					"",
+					middleware.Authorize(authObjAction, permDelete, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					scenarioAPI.BulkDelete,
+				)
+			}
+
+			idleruleRouter := bulkRouter.Group("/idle-rules")
+			{
+				idleruleRouter.POST(
+					"",
+					middleware.Authorize(authObjIdleRule, permCreate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					idleRuleAPI.BulkCreate,
+				)
+				idleruleRouter.PUT(
+					"",
+					middleware.Authorize(authObjIdleRule, permUpdate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					idleRuleAPI.BulkUpdate,
+				)
+				idleruleRouter.DELETE(
+					"",
+					middleware.Authorize(authObjIdleRule, permDelete, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					idleRuleAPI.BulkDelete,
+				)
+			}
+
+			eventFilterRouter := bulkRouter.Group("/eventfilters")
+			{
+				eventFilterRouter.POST(
+					"",
+					middleware.Authorize(authEventFilter, permCreate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					eventFilterApi.BulkCreate,
+				)
+				eventFilterRouter.PUT(
+					"",
+					middleware.Authorize(authEventFilter, permUpdate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					eventFilterApi.BulkUpdate,
+				)
+				eventFilterRouter.DELETE(
+					"",
+					middleware.Authorize(authEventFilter, permDelete, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					eventFilterApi.BulkDelete,
+				)
+			}
+
+			entityserviceRouter := bulkRouter.Group("/entityservices")
+			{
+				entityserviceRouter.POST(
+					"",
+					middleware.Authorize(authObjEntityService, permCreate, enforcer),
+					middleware.PreProcessBulk(conf, false),
+					entityserviceAPI.BulkCreate,
+				)
+				entityserviceRouter.PUT(
+					"",
+					middleware.Authorize(authObjEntityService, permUpdate, enforcer),
+					middleware.PreProcessBulk(conf, false),
+					entityserviceAPI.BulkUpdate,
+				)
+				entityserviceRouter.DELETE(
+					"",
+					middleware.Authorize(authObjEntityService, permDelete, enforcer),
+					middleware.PreProcessBulk(conf, false),
+					entityserviceAPI.BulkDelete,
+				)
+			}
+
+			userRouter := bulkRouter.Group("/users")
+			{
+				userRouter.POST(
+					"",
+					middleware.Authorize(apisecurity.PermAcl, permCreate, enforcer),
+					middleware.PreProcessBulk(conf, false),
+					userApi.BulkCreate,
+				)
+				userRouter.PUT(
+					"",
+					middleware.Authorize(apisecurity.PermAcl, permUpdate, enforcer),
+					middleware.PreProcessBulk(conf, false),
+					userApi.BulkUpdate,
+				)
+				userRouter.DELETE(
+					"",
+					middleware.Authorize(apisecurity.PermAcl, permDelete, enforcer),
+					middleware.PreProcessBulk(conf, false),
+					userApi.BulkDelete,
+				)
+			}
+
 			viewRouter := bulkRouter.Group("/views")
 			{
 				viewRouter.POST(
 					"",
 					middleware.Authorize(authObjView, permCreate, enforcer),
-					middleware.SetAuthorToBulk(),
+					middleware.PreProcessBulk(conf, true),
 					viewAPI.BulkCreate,
 					middleware.ReloadEnforcerPolicyOnChange(enforcer),
 				)
@@ -947,7 +1096,7 @@ func RegisterRoutes(
 					"",
 					middleware.Authorize(authObjView, permUpdate, enforcer),
 					middleware.ProvideAuthorizedIds(permUpdate, enforcer),
-					middleware.SetAuthorToBulk(),
+					middleware.PreProcessBulk(conf, true),
 					viewAPI.BulkUpdate,
 				)
 				viewRouter.DELETE(
@@ -964,13 +1113,13 @@ func RegisterRoutes(
 				viewGroupRouter.POST(
 					"",
 					middleware.Authorize(authObjViewGroup, permCreate, enforcer),
-					middleware.SetAuthorToBulk(),
+					middleware.PreProcessBulk(conf, true),
 					viewGroupAPI.BulkCreate,
 				)
 				viewGroupRouter.PUT(
 					"",
 					middleware.Authorize(authObjViewGroup, permUpdate, enforcer),
-					middleware.SetAuthorToBulk(),
+					middleware.PreProcessBulk(conf, true),
 					viewGroupAPI.BulkUpdate,
 				)
 				viewGroupRouter.DELETE(
@@ -985,13 +1134,13 @@ func RegisterRoutes(
 				pbehaviorRouter.POST(
 					"",
 					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionCreate, enforcer),
-					middleware.SetAuthorToBulk(),
+					middleware.PreProcessBulk(conf, true),
 					pbehaviorApi.BulkCreate,
 				)
 				pbehaviorRouter.PUT(
 					"",
 					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionUpdate, enforcer),
-					middleware.SetAuthorToBulk(),
+					middleware.PreProcessBulk(conf, true),
 					pbehaviorApi.BulkUpdate,
 				)
 				pbehaviorRouter.DELETE(
@@ -1025,42 +1174,6 @@ func RegisterRoutes(
 				middleware.Authorize(authMessageRateStatsRead, permCan, enforcer),
 				messageRateStatsAPI.List,
 			)
-		}
-
-		idleRuleRouter := protected.Group("/idle-rules")
-		{
-			idleRuleAPI := idlerule.NewApi(idlerule.NewStore(dbClient), actionLogger, userInterfaceConfig)
-			idleRuleRouter.POST(
-				"",
-				middleware.Authorize(authObjIdleRule, permCreate, enforcer),
-				middleware.SetAuthor(),
-				idleRuleAPI.Create,
-			)
-			idleRuleRouter.GET(
-				"",
-				middleware.Authorize(authObjIdleRule, permRead, enforcer),
-				idleRuleAPI.List,
-			)
-			idleRuleRouter.GET(
-				"/:id",
-				middleware.Authorize(authObjIdleRule, permRead, enforcer),
-				idleRuleAPI.Get,
-			)
-			idleRuleRouter.PUT(
-				"/:id",
-				middleware.Authorize(authObjIdleRule, permUpdate, enforcer),
-				middleware.SetAuthor(),
-				idleRuleAPI.Update,
-			)
-			idleRuleRouter.DELETE(
-				"/:id",
-				middleware.Authorize(authObjIdleRule, permDelete, enforcer),
-				idleRuleAPI.Delete,
-			)
-			idleRuleRouter.POST(
-				"/count",
-				middleware.Authorize(authObjPbh, permCreate, enforcer),
-				idleRuleAPI.CountPatterns)
 		}
 
 		fileRouter := protected.Group("/file")
@@ -1154,4 +1267,19 @@ func RegisterRoutes(
 			)
 		}
 	}
+}
+
+func GetProxy(
+	legacyUrl *url.URL,
+	security Security,
+	enforcer libsecurity.Enforcer,
+	accessConfig proxy.AccessConfig,
+) []gin.HandlerFunc {
+	authMiddleware := security.GetAuthMiddleware()
+
+	return append(
+		authMiddleware,
+		middleware.ProxyAuthorize(enforcer, accessConfig),
+		ReverseProxyHandler(legacyUrl),
+	)
 }

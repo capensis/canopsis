@@ -280,3 +280,100 @@ Feature: update state settings
       }
     }
     """
+
+  Scenario: PUT zero state settings
+    When I am admin
+    When I do PUT /api/v4/state-settings/junit:
+    """
+    {
+      "type": "junit",
+      "method": "worst_of_share",
+      "junit_thresholds": {
+        "skipped": {
+          "minor": 0,
+          "major": 20,
+          "critical": 30,
+          "type": 1
+        },
+        "errors": {
+          "minor": 0,
+          "major": 20,
+          "critical": 30,
+          "type": 1
+        },
+        "failures": {
+          "minor": 10,
+          "major": 20,
+          "critical": 30,
+          "type": 0
+        }
+      }
+    }
+    """
+    Then the response code should be 200
+    Then the response body should be:
+    """
+    {
+      "_id": "junit",
+      "type": "junit",
+      "method": "worst_of_share",
+      "junit_thresholds": {
+        "skipped": {
+          "minor": 0,
+          "major": 20,
+          "critical": 30,
+          "type": 1
+        },
+        "errors": {
+          "minor": 0,
+          "major": 20,
+          "critical": 30,
+          "type": 1
+        },
+        "failures": {
+          "minor": 10,
+          "major": 20,
+          "critical": 30,
+          "type": 0
+        }
+      }
+    }
+    """
+
+  Scenario: PUT settings without state value
+    When I am admin
+    When I do PUT /api/v4/state-settings/junit:
+    """
+    {
+      "type": "junit",
+      "method": "worst_of_share",
+      "junit_thresholds": {
+        "skipped": {
+          "major": 20,
+          "critical": 30,
+          "type": 1
+        },
+        "errors": {
+          "minor": 0,
+          "major": 20,
+          "critical": 30,
+          "type": 1
+        },
+        "failures": {
+          "major": 20,
+          "critical": 30,
+          "type": 0
+        }
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """
+    {
+      "errors": {
+        "junit_thresholds.failures.minor": "Minor is missing.",
+        "junit_thresholds.skipped.minor": "Minor is missing."
+      }
+    }
+    """

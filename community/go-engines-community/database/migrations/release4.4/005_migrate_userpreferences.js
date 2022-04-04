@@ -2,14 +2,13 @@
     var cursor = db.userpreferences.aggregate([
         {
             $match: {
-                widgetXtype: "AlarmsList",
-                "widget_preferences.remediationInstructionsFilters": {$ne: null}
+                "content.remediationInstructionsFilters": {$ne: null}
             }
         },
         {
             $lookup: {
                 from: "instruction",
-                localField: "widget_preferences.remediationInstructionsFilters.instructions",
+                localField: "content.remediationInstructionsFilters.instructions",
                 foreignField: "name",
                 as: "instructions",
             }
@@ -24,7 +23,7 @@
         });
 
         var filters = [];
-        doc.widget_preferences.remediationInstructionsFilters.forEach(function (filter) {
+        doc.content.remediationInstructionsFilters.forEach(function (filter) {
             var newInstructions = [];
             filter.instructions.forEach(function (name) {
                 var instruction = instructionsByName[name];
@@ -43,7 +42,7 @@
 
         db.userpreferences.updateOne({_id: doc._id}, {
             $set: {
-                "widget_preferences.remediationInstructionsFilters": filters,
+                "content.remediationInstructionsFilters": filters,
             }
         });
     }

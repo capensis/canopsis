@@ -57,7 +57,7 @@ func (e *changeStateExecutor) Exec(
 		return "", fmt.Errorf("cannot change ok state")
 	}
 
-	if currentState == params.State {
+	if currentState == params.State && alarm.IsStateLocked() {
 		return "", nil
 	}
 

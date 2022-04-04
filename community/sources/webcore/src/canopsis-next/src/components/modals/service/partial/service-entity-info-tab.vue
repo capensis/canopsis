@@ -6,7 +6,7 @@
           v-layout(v-if="availableActions.length", row, align-center, wrap)
             div {{ $t('common.actionsLabel') }}:
             service-entity-actions(:actions="availableActions", @apply="applyActionForEntity")
-      v-tooltip(v-if="active && hasAccessToManagePbehaviors", top)
+      v-tooltip(v-if="hasPbehaviors && hasAccessToManagePbehaviors", top)
         v-btn(slot="activator", small, @click="showPbehaviorsListModal")
           v-icon(small) list
         span {{ $t('modals.service.editPbehaviors') }}
@@ -17,10 +17,10 @@
 import {
   CRUD_ACTIONS,
   MODALS,
+  PBEHAVIOR_TYPE_TYPES,
   USERS_PERMISSIONS,
 } from '@/constants';
 
-import { isPausedPbehavior } from '@/helpers/entities/pbehavior';
 import { getAvailableActionsByEntity } from '@/helpers/entities/entity';
 import { mapIds } from '@/helpers/entities';
 
@@ -49,18 +49,14 @@ export default {
       type: String,
       default: '',
     },
-    active: {
-      type: Boolean,
-      default: false,
-    },
-    paused: {
-      type: Boolean,
-      default: false,
-    },
   },
   computed: {
-    pausedPbehaviors() {
-      return this.entity.pbehaviors.filter(isPausedPbehavior);
+    paused() {
+      return this.entity.pbehavior_info?.canonical_type === PBEHAVIOR_TYPE_TYPES.pause;
+    },
+
+    hasPbehaviors() {
+      return !!this.entity.pbehaviors.length;
     },
 
     hasAccessToManagePbehaviors() {
@@ -95,10 +91,25 @@ export default {
       this.$modals.show({
         name: MODALS.pbehaviorList,
         config: {
-          pbehaviors: this.pausedPbehaviors,
+          pbehaviors: this.entity.pbehaviors,
           entityId: this.entity._id,
           onlyActive: true,
           availableActions: [CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
+        },
+      });
+    },
+
+    executeAlarmInstruction(assignedInstruction) {
+      const refreshEntities = () => this.$emit('refresh');
+
+      this.$modals.show({
+        name: MODALS.executeRemediationInstruction,
+        config: {
+          assignedInstruction,
+          alarmId: this.entity.alarm_id,
+          onOpen: refreshEntities,
+          onClose: refreshEntities,
+          onComplete: refreshEntities,
         },
       });
     },

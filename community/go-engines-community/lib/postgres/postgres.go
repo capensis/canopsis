@@ -1,6 +1,7 @@
 package postgres
 
 //go:generate mockgen -destination=../../mocks/lib/postgres/postgres.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres BasePool,Pool
+//go:generate mockgen -destination=../../mocks/github.com/jackc/pgx/pgx.go github.com/jackc/pgx/v4 Rows,Tx,BatchResults
 
 import (
 	"context"
@@ -166,7 +167,11 @@ func (p *poolWithRetries) WithTransaction(ctx context.Context, f func(context.Co
 			return err
 		}
 
-		defer tx.Rollback(ctx)
+		defer func() {
+			if rbErr := tx.Rollback(ctx); rbErr != nil && err == nil && !errors.Is(rbErr, pgx.ErrTxClosed) {
+				err = rbErr
+			}
+		}()
 
 		err = f(ctx, tx)
 		if err != nil {

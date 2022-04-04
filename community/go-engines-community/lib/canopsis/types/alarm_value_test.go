@@ -7,6 +7,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"github.com/rs/zerolog"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -28,10 +29,13 @@ func TestAlarmStepsCrop(t *testing.T) {
 			Type:  types.AlarmStepStateDecrease,
 			Value: 1,
 		}
-		steps.Add(st)
+		err := steps.Add(st)
+		So(err, ShouldBeNil)
 		for i := 0; i < 10; i++ {
-			steps.Add(s1)
-			steps.Add(s2)
+			err = steps.Add(s1)
+			So(err, ShouldBeNil)
+			err = steps.Add(s2)
+			So(err, ShouldBeNil)
 		}
 		cropNum := 30
 		Convey("Crop does not work for the first 21 steps", func() {
@@ -39,8 +43,10 @@ func TestAlarmStepsCrop(t *testing.T) {
 			So(update, ShouldBeFalse)
 			Convey("Crop does work for the 41 steps", func() {
 				for i := 0; i < 10; i++ {
-					steps.Add(s1)
-					steps.Add(s2)
+					err = steps.Add(s1)
+					So(err, ShouldBeNil)
+					err = steps.Add(s2)
+					So(err, ShouldBeNil)
 				}
 
 				steps, update := steps.Crop(&st, cropNum)
@@ -77,7 +83,7 @@ func TestAlarmStepCropOldData(t *testing.T) {
 	defer cancel()
 
 	Convey("Setup", t, func() {
-		s, err := mongo.NewClient(ctx, 0, 0)
+		s, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
 		So(err, ShouldBeNil)
 
 		c := s.Collection(mongo.AlarmMongoCollection)

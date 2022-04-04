@@ -12,7 +12,8 @@
           :pagination.sync="pagination",
           :total-items="serviceEntitiesMeta.total_count",
           :pending="serviceEntitiesPending",
-          @add:action="addActionToQueue"
+          @add:action="addActionToQueue",
+          @refresh="fetchList"
         )
         v-layout(v-else, column)
           v-flex(xs12)
@@ -47,7 +48,7 @@ import { PAGINATION_LIMIT } from '@/config';
 import { MODALS, SORT_ORDERS, WEATHER_ACTIONS_TYPES } from '@/constants';
 
 import { addKeyInEntities } from '@/helpers/entities';
-import { createDowntimePbehavior, isPausedPbehavior } from '@/helpers/entities/pbehavior';
+import { createDowntimePbehavior } from '@/helpers/entities/pbehavior';
 import { convertActionsToEvents } from '@/helpers/entities/entity';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
@@ -123,9 +124,13 @@ export default {
   },
   methods: {
     fetchList() {
+      const params = this.getQuery();
+
+      params.with_instructions = true;
+
       return this.fetchServiceEntitiesList({
         id: this.service._id,
-        params: this.getQuery(),
+        params,
       });
     },
 
@@ -145,11 +150,7 @@ export default {
     },
 
     getPausedPbehaviorsByEntitites(entities) {
-      return entities.reduce((acc, entity) => {
-        acc.push(...entity.pbehaviors?.filter(isPausedPbehavior));
-
-        return acc;
-      }, []);
+      return entities.map(entity => ({ id: entity.pbehavior_info.id }));
     },
 
     async createPbehaviorsWithPopups(pbehaviors) {

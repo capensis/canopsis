@@ -8,8 +8,6 @@
             :entity="entity",
             :entity-name-field="entityNameField",
             :last-action-unavailable="lastActionUnavailable",
-            :active="hasActivePbehavior",
-            :paused="hasPausedPbehavior",
             @select="$listeners.select",
             @remove-unavailable="$listeners['remove-unavailable']"
           )
@@ -19,9 +17,8 @@
               v-if="!isService",
               :entity="entity",
               :template="template",
-              :active="hasActivePbehavior",
-              :paused="hasPausedPbehavior",
-              @add:action="$listeners['add:action']"
+              @add:action="$listeners['add:action']",
+              @refresh="$listeners.refresh"
             )
             v-tabs(
               v-else,
@@ -36,8 +33,6 @@
                 entity-info-tab(
                   :entity="entity",
                   :template="template",
-                  :active="hasActivePbehavior",
-                  :paused="hasPausedPbehavior",
                   @add:action="$listeners['add:action']"
                 )
               v-tab {{ $t('modals.service.entity.tabs.treeOfDependencies') }}
@@ -54,7 +49,6 @@ import { isNull } from 'lodash';
 import { ENTITY_TYPES } from '@/constants';
 
 import { getEntityColor } from '@/helpers/color';
-import { hasActivePbehavior, hasPausedPbehavior } from '@/helpers/entities/pbehavior';
 
 import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
 
@@ -109,14 +103,6 @@ export default {
 
     colorIndicator() {
       return this.widgetParameters.colorIndicator;
-    },
-
-    hasActivePbehavior() {
-      return hasActivePbehavior(this.entity.pbehaviors);
-    },
-
-    hasPausedPbehavior() {
-      return hasPausedPbehavior(this.entity.pbehaviors);
     },
 
     isService() {

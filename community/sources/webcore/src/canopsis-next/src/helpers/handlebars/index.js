@@ -13,7 +13,7 @@ const Handlebars = promisedHandlebars(HandlebarsLib);
  * @returns {Promise}
  */
 export async function compile(template, context) {
-  const handleBarFunction = Handlebars.compile(template);
+  const handleBarFunction = Handlebars.compile(template ?? '');
   const result = await handleBarFunction(context);
 
   const element = document.createElement('div');
@@ -62,3 +62,4 @@ registerHelper('capitalize', helpers.capitalizeHelper);
 registerHelper('capitalize-all', helpers.capitalizeAllHelper);
 registerHelper('lowercase', helpers.lowercaseHelper);
 registerHelper('uppercase', helpers.uppercaseHelper);
+registerHelper('replace', helpers.replaceHelper);

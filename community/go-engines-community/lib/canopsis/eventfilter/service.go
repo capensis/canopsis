@@ -3,6 +3,7 @@ package eventfilter
 import (
 	"context"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"io/ioutil"
 	"path/filepath"
 	"plugin"
@@ -28,6 +29,7 @@ type Report struct {
 
 // service is the service that manages the event filter.
 type service struct {
+	dbClient mongo.DbClient
 	// adapter is an adapter to the rules collection.
 	adapter Adapter
 
@@ -47,8 +49,9 @@ type service struct {
 }
 
 // NewService creates an event filter service.
-func NewService(adapter Adapter, timezoneConfigProvider config.TimezoneConfigProvider, logger zerolog.Logger) Service {
+func NewService(dbClient mongo.DbClient, adapter Adapter, timezoneConfigProvider config.TimezoneConfigProvider, logger zerolog.Logger) Service {
 	s := service{
+		dbClient:               dbClient,
 		adapter:                adapter,
 		timezoneConfigProvider: timezoneConfigProvider,
 		logger:                 logger,
@@ -109,7 +112,7 @@ func (s *service) loadRuleDataSources(rule *Rule) error {
 		if !success {
 			return fmt.Errorf("no such data source: %s", source.Type)
 		}
-		getter, err := factory.Create(source.DataSourceBase.Parameters)
+		getter, err := factory.Create(s.dbClient, source.DataSourceBase.Parameters)
 		if err != nil {
 			return err
 		}
@@ -138,6 +141,13 @@ func (s *service) LoadRules(ctx context.Context) error {
 		}
 	}
 
+	ids := make([]string, len(rules))
+	for i, rule := range rules {
+		ids[i] = rule.ID
+	}
+
+	s.logger.Debug().Strs("rules", ids).Msg("load event filter rules")
+
 	s.rulesMutex.Lock()
 	s.rules = rules
 	s.rulesMutex.Unlock()
@@ -151,10 +161,6 @@ func (s *service) ProcessEvent(ctx context.Context, event types.Event) (types.Ev
 	s.rulesMutex.RLock()
 	defer s.rulesMutex.RUnlock()
 
-	if event.Debug {
-		s.logger.Info().Str("event", fmt.Sprintf("%+v", event)).Msg("eventfilter | entering event filter")
-	}
-
 	report := Report{}
 	outcome := UnsetOutcome
 	tz := s.timezoneConfigProvider.Get()
@@ -163,29 +169,24 @@ func (s *service) ProcessEvent(ctx context.Context, event types.Event) (types.Ev
 			break
 		}
 
-		if event.Debug {
-			s.logger.Info().Msgf("eventfilter | >>> rule %s", rule.ID)
-		}
-
 		regexMatches, match := rule.Patterns.GetRegexMatches(event)
 		if match {
-			if event.Debug {
-				s.logger.Info().Str("regex", fmt.Sprintf("%+v", regexMatches)).Msg("eventfilter | event matches, applying rule with regex matches")
-			}
-
 			event, outcome = rule.Apply(ctx, event, regexMatches, &report, &tz, s.logger)
+			var logLevel *zerolog.Event
 
 			if event.Debug {
-				s.logger.Info().Msgf("eventfilter | outcome: %s", outcome)
-				s.logger.Info().Msgf("eventfilter | event: %+v", event)
+				logLevel = s.logger.Info()
+			} else {
+				logLevel = s.logger.Debug()
 			}
-		} else if event.Debug {
-			s.logger.Info().Msg("eventfilter | event does not match")
-		}
-	}
 
-	if event.Debug {
-		s.logger.Info().Msg("eventfilter | leaving event filter")
+			logLevel.
+				Str("rule", rule.ID).
+				Str("event", fmt.Sprintf("%+v", event)).
+				Str("regex", fmt.Sprintf("%+v", regexMatches)).
+				Str("outcome", string(outcome)).
+				Msgf("event filter matches event")
+		}
 	}
 
 	if outcome == Drop {
