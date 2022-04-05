@@ -174,14 +174,14 @@ describe('c-pattern-rules-field', () => {
   });
 
   test('Rule added after click on the add button', () => {
-    const attributeItem = {
+    const attribute = {
       value: 'test',
     };
     const wrapper = factory({
       propsData: {
         rules,
         attributes: [
-          attributeItem,
+          attribute,
         ],
       },
     });
@@ -198,7 +198,7 @@ describe('c-pattern-rules-field', () => {
     expect(eventData).toEqual([
       ...rules,
       {
-        attribute: attributeItem.value,
+        attribute: attribute.value,
         dictionary: '',
         field: '',
         operator: '',
@@ -229,18 +229,24 @@ describe('c-pattern-rules-field', () => {
   });
 
   test('Renders `c-pattern-rules-field` with custom props', () => {
+    const attribute = {
+      text: 'Attribute text',
+      value: 'attribute value',
+      options: {
+        operators: [PATTERN_OPERATORS.notEqual],
+        customProp: 'customPropValue',
+      },
+    };
     const wrapper = snapshotFactory({
       propsData: {
-        rules,
-        attributes: [
+        rules: [
+          ...rules,
           {
-            text: 'Attribute text',
-            value: 'attribute value',
-            options: {
-              operators: [PATTERN_OPERATORS.notEqual],
-              customProp: 'customPropValue',
-            },
+            attribute: attribute.value,
           },
+        ],
+        attributes: [
+          attribute,
         ],
         required: true,
         disabled: true,
