@@ -613,6 +613,13 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 			"manual_running": bson.M{"$gt": bson.A{
 				bson.M{"$size": bson.M{"$filter": bson.M{
 					"input": "$manual_statuses",
+					"cond":  bson.M{"$eq": bson.A{"$$this", InstructionExecutionStatusRunning}},
+				}}},
+				0,
+			}},
+			"manual_waiting_result": bson.M{"$gt": bson.A{
+				bson.M{"$size": bson.M{"$filter": bson.M{
+					"input": "$manual_statuses",
 					"cond":  bson.M{"$eq": bson.A{"$$this", InstructionExecutionStatusWaitResult}},
 				}}},
 				0,
@@ -682,7 +689,8 @@ func (s *store) fillInstructionFlags(ctx context.Context, result *AggregationRes
 	for i, v := range result.Data {
 		result.Data[i].IsAutoInstructionRunning = statusesByAlarm[v.ID].AutoRunning
 		result.Data[i].IsAllAutoInstructionsCompleted = statusesByAlarm[v.ID].AutoAllCompleted
-		result.Data[i].IsManualInstructionWaitingResult = statusesByAlarm[v.ID].ManualRunning
+		result.Data[i].IsManualInstructionRunning = statusesByAlarm[v.ID].ManualRunning
+		result.Data[i].IsManualInstructionWaitingResult = statusesByAlarm[v.ID].ManualWaitingResult
 	}
 
 	return nil
