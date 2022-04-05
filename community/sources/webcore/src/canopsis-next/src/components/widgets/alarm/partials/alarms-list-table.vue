@@ -22,6 +22,7 @@
         item-key="_id",
         hide-actions,
         multi-sort,
+        compact,
         @update:pagination="updatePaginationHandler"
       )
         template(#progress="")
