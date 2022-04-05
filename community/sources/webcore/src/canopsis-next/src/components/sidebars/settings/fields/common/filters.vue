@@ -3,15 +3,22 @@
     template(#activator="")
       v-list-tile {{ $t('settings.filters') }}
     v-container
-      filter-selector(
-        v-field="value",
-        :label="$t('filterSelector.defaultFilter')",
-        :filters="filters",
-        :condition="condition",
-        :hide-select="hideSelect",
-        @update:condition="$emit('update:condition', $event)",
-        @update:filters="updateFilters"
-      )
+      v-layout(column)
+        filter-selector(
+          v-field="value",
+          :label="$t('filterSelector.defaultFilter')",
+          :filters="filters",
+          :condition="condition",
+          :hide-prepend="hidePrepend",
+          @update:condition="$emit('update:condition', $event)"
+        )
+        filters-list(
+          v-if="widgetId",
+          :widget-id="widgetId",
+          :addable="addable",
+          :editable="editable",
+          with-alarm
+        )
 </template>
 
 <script>
@@ -22,11 +29,17 @@ import { FILTER_DEFAULT_VALUES } from '@/constants';
 import { authMixin } from '@/mixins/auth';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
+import FiltersList from '@/components/other/filter/filters-list.vue';
 
+// TODO: add withAlarm and etc properties
 export default {
-  components: { FilterSelector },
+  components: { FilterSelector, FiltersList },
   mixins: [authMixin],
   props: {
+    widgetId: {
+      type: String,
+      required: false,
+    },
     filters: {
       type: Array,
       default: () => [],
@@ -39,7 +52,7 @@ export default {
       type: String,
       default: FILTER_DEFAULT_VALUES.condition,
     },
-    hideSelect: {
+    hidePrepend: {
       type: Boolean,
       default: false,
     },

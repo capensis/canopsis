@@ -76,7 +76,12 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(formToFilter(this.form, this.patternsFields));
+          await this.config.action({
+            ...formToFilter(this.form, this.patternsFields),
+
+            widget: this.config.widgetId,
+            is_private: this.config.private,
+          });
         }
 
         this.$modals.hide();

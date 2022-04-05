@@ -49,28 +49,23 @@ export const widgetFilterSelectMixin = {
       return Promise.resolve();
     },
 
-    async updateFilters(viewFilters, mainFilter = this.mainFilter) {
-      await this.updateFieldsInWidgetPreferences({ viewFilters, mainFilter });
-      this.updateQueryBySelectedFilterAndCondition(mainFilter, this.mainFilterCondition);
-    },
-
     async updateSelectedCondition(condition = FILTER_DEFAULT_VALUES.condition) {
       await this.updateFieldsInWidgetPreferences({ mainFilterCondition: condition });
       this.updateQueryBySelectedFilterAndCondition(this.mainFilter, condition);
     },
 
     // TODO: remove
-    async updateSelectedFilter(filterObject) {
-      await this.updateFieldsInWidgetPreferences({ mainFilter: filterObject || {}, mainFilterUpdatedAt: Date.now() });
-      this.updateQueryBySelectedFilterAndCondition(filterObject || {}, this.mainFilterCondition);
+    async updateSelectedFilter(mainFilter = null) {
+      await this.updateFieldsInWidgetPreferences({ mainFilter, mainFilterUpdatedAt: Date.now() });
+      this.updateQueryBySelectedFilterAndCondition(mainFilter, this.mainFilterCondition);
     },
 
     updateQueryBySelectedFilterAndCondition(filter, condition) {
       this.query = {
         ...this.query,
+        ...prepareMainFilterToQueryFilter(filter, condition),
 
         page: 1,
-        filter: prepareMainFilterToQueryFilter(filter, condition),
       };
     },
   },

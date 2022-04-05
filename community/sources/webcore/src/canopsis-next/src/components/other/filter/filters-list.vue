@@ -65,6 +65,10 @@ export default {
       return this.getWidgetById(this.widgetId);
     },
 
+    userPreference() {
+      return this.getWidgetById(this.widgetId);
+    },
+
     filters() {
       return (this.widget?.filters ?? []).filter(filter => filter.is_private === this.private);
     },
