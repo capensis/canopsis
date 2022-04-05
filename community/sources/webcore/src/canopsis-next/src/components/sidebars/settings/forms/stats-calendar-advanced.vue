@@ -5,7 +5,7 @@
     v-list.grey.lighten-4.px-2.py-0(expand)
       field-filters(
         :filters="value.filters",
-        hide-select,
+        hide-prepend,
         addable,
         editable,
         @update:filters="updateField('filters', $event)"

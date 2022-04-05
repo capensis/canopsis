@@ -242,7 +242,6 @@ export default {
     extraInfo: 'Extra info | Extra infos',
     custom: 'Personnalisé',
     actions: {
-      close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
       saveChanges: 'Sauvegarder',

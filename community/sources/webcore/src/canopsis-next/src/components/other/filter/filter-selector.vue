@@ -4,22 +4,21 @@
     :items="preparedFilters",
     :label="label",
     :multiple="isMultiple",
-    :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
+    :disabled="disabled",
     item-text="title",
     item-value="_id",
-    return-object,
     clearable
   )
-    template(#prepend-item="")
+    template(#prepend-item="", v-if="!hidePrepend")
       v-layout.pl-3
-        v-flex(v-show="!hideSelect")
+        v-flex
           c-enabled-field(
             :value="isMultiple",
             :label="$t('filterSelector.fields.mixFilters')",
             hide-details,
             @input="updateIsMultipleFlag"
           )
-        v-flex(v-show="!hideSelect && isMultiple")
+        v-flex(v-show="isMultiple")
           c-operator-field(:value="condition", @input="updateCondition")
       v-divider.mt-3
 
@@ -29,6 +28,11 @@
       v-list-tile-content
         v-list-tile-title
           span {{ item.title }}
+          v-icon.ml-2(
+            v-if="!hideIcon",
+            :color="tile.props.value ? parent.color : ''",
+            small
+          ) {{ item.is_private ? 'person' : 'lock' }}
 </template>
 
 <script>
@@ -64,17 +68,17 @@ export default {
       type: String,
       default: FILTER_DEFAULT_VALUES.condition,
     },
-    hideSelect: { // TODO: remove it
+    hidePrepend: {
       type: Boolean,
       default: false,
     },
-    hasAccessToListFilters: {
+    hideIcon: {
       type: Boolean,
       default: false,
     },
-    hasAccessToUserFilter: {
+    disabled: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     withEntity: {
       type: Boolean,
@@ -97,18 +101,19 @@ export default {
     },
 
     preparedFilters() {
-      const preparedFilters = this.hasAccessToUserFilter ? [...this.filters] : [];
-      const preparedLockedFilters = this.lockedFilters.map(filter => ({ ...filter, locked: true }));
+      const preparedFilters = [...this.filters];
 
-      if (preparedFilters.length && preparedLockedFilters.length) {
-        return preparedFilters.concat({ divider: true }, preparedLockedFilters);
-      }
-
-      if (preparedFilters.length) {
+      if (!this.lockedFilters.length) {
         return preparedFilters;
       }
 
-      return preparedLockedFilters;
+      if (preparedFilters.length) {
+        preparedFilters.push({ divider: true });
+      }
+
+      preparedFilters.push(...this.lockedFilters);
+
+      return preparedFilters;
     },
   },
   methods: {

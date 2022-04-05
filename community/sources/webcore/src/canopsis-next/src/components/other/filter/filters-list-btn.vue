@@ -39,7 +39,6 @@ export default {
           addable: this.addable,
           editable: this.editable,
           withAlarm: true,
-          // TODO: uncomment
           withEntity: true,
           withPbehavior: true,
         },

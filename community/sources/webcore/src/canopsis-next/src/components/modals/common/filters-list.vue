@@ -12,8 +12,6 @@
         :addable="config.hasAccessToAddFilter",
         :editable="config.hasAccessToEditFilter"
       )
-    template(#actions="")
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
 </template>
 
 <script>

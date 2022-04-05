@@ -43,7 +43,10 @@
           template(v-if="hasAccessToListFilters")
             field-filters(
               v-model="form.parameters.mainFilter",
+              :widget-id="widget._id",
               :filters="form.parameters.viewFilters",
+              :addable="hasAccessToAddFilter",
+              :editable="hasAccessToEditFilter",
               :condition.sync="form.parameters.mainFilterCondition",
               @input="updateMainFilterUpdatedAt"
             )

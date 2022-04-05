@@ -1,37 +1,31 @@
-import { isEmpty, isString } from 'lodash';
+import { isEmpty } from 'lodash';
 
 import { FILTER_DEFAULT_VALUES, FILTER_MONGO_OPERATORS } from '@/constants';
 
 /**
  * Prepare user main filter to query filter
  *
- * @param {Object|Array} [filterObject = {}]
+ * @param {Object|Array} [mainFilter = null]
  * @param {string} [condition = FILTER_DEFAULT_VALUES.condition]
  * @returns {Object|string|undefined}
  */
-export function prepareMainFilterToQueryFilter(
-  filterObject = {},
-  condition = FILTER_DEFAULT_VALUES.condition,
-) {
-  let result;
-
-  if (Array.isArray(filterObject) && filterObject.length) {
-    result = {
-      [condition]: filterObject.map((item) => {
-        if (isString(item.filter)) {
-          return JSON.parse(item.filter);
-        }
-
-        return item.filter || {};
-      }),
-    };
-  } else if (!Array.isArray(filterObject)) {
-    const { filter } = filterObject;
-
-    result = isString(filter) ? JSON.parse(filter) : filter;
+export function prepareMainFilterToQueryFilter(mainFilter = null, condition = FILTER_DEFAULT_VALUES.condition) {
+  if (!mainFilter) {
+    return undefined;
   }
 
-  return result;
+  if (Array.isArray(mainFilter)) {
+    if (!mainFilter.length) {
+      return undefined;
+    }
+
+    return {
+      condition,
+      filters: mainFilter,
+    };
+  }
+
+  return { filter: mainFilter };
 }
 
 /**

@@ -20,13 +20,13 @@
         v-layout(row, wrap, align-center)
           filter-selector(
             :label="$t('settings.selectAFilter')",
-            :filters="widget.filters",
+            :filters="userPreference.filters",
+            :locked-filters="widget.filters",
             :value="mainFilter",
             :condition="mainFilterCondition",
-            :has-access-to-user-filter="false",
-            :has-access-to-list-filters="false",
+            :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
             @update:condition="updateSelectedCondition",
-            @update:filters="updateFilters"
+            @input="updateSelectedFilter"
           )
           filters-list-btn(
             :widget-id="widget._id",

@@ -242,7 +242,6 @@ export default {
     extraInfo: 'Extra info | Extra infos',
     custom: 'Custom',
     actions: {
-      close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
       saveChanges: 'Save changes',
