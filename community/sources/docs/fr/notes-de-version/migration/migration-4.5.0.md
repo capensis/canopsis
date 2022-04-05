@@ -509,6 +509,17 @@ Le provisioning doit être lancé afin de mettre à jour certaines données en b
     docker-compose -f 00-data.docker-compose.yml up -d
     ```
 
+    Si vous avez personnalisé la ligne de commande de l'outil `canopsis-reconfigure`, assurez vous de reporter ces options
+
+    ```yaml
+      reconfigure:
+        image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}canopsis-reconfigure:${CANOPSIS_IMAGE_TAG}
+        env_file:
+          - compose.env
+        command:
+          - /canopsis-reconfigure -migrate-postgres=true -postgres-migration-mode=up -postgres-migration-directory=/opt/canopsis/share/migrations/postgres
+    ```
+
     Exécutez la commande suivante :
     
     ```sh
