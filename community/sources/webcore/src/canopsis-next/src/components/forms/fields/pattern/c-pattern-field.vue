@@ -84,7 +84,7 @@ export default {
     this.fetchList();
   },
   methods: {
-    getParams() {
+    getQuery() {
       const params = { limit: MAX_LIMIT };
 
       if (this.type) {
@@ -93,10 +93,11 @@ export default {
 
       return params;
     },
+
     async fetchList() {
       this.pending = true;
 
-      const { data: items } = await this.fetchPatternsListWithoutStore({ params: this.getParams() });
+      const { data: items } = await this.fetchPatternsListWithoutStore({ params: this.getQuery() });
 
       this.items = items;
       this.pending = false;
