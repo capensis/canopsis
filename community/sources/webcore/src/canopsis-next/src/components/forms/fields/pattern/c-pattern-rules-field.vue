@@ -106,7 +106,7 @@ export default {
     addFilterRule() {
       const [firstAttribute] = this.attributes;
 
-      this.addItemIntoArray(patternRuleToForm({ attribute: firstAttribute?.value }));
+      this.addItemIntoArray(patternRuleToForm({ field: firstAttribute?.value }));
     },
   },
 };
