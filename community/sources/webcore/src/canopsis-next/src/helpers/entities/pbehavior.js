@@ -1,6 +1,7 @@
 import { MAX_PBEHAVIOR_DEFAULT_TSTOP, PBEHAVIOR_TYPE_TYPES, WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE } from '@/constants';
 
 import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
+import uid from '@/helpers/uid';
 
 /**
  * Check if pbehavior is active
@@ -46,7 +47,7 @@ export const hasPausedPbehavior = pbehaviors => pbehaviors.some(isPausedPbehavio
 export const createDowntimePbehavior = ({ entity, reason, comment, type }) => pbehaviorToRequest(formToPbehavior({
   reason,
   type,
-  name: `${WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE}-${entity.name}-${Date.now()}`,
+  name: `${WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE}-${entity.name}-${uid()}`,
   tstart: new Date(),
   tstop: new Date(MAX_PBEHAVIOR_DEFAULT_TSTOP * 1000),
   comments: [{
