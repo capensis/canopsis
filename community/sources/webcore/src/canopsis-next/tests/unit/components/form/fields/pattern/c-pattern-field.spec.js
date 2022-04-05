@@ -1,8 +1,9 @@
+import flushPromises from 'flush-promises';
+
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
 import { createMockedStoreModules } from '@unit/utils/store';
-import flushPromises from 'flush-promises';
 import { MAX_LIMIT, PATTERN_CUSTOM_ITEM_VALUE, PATTERN_TYPES } from '@/constants';
 
 import CPatternField from '@/components/forms/fields/pattern/c-pattern-field.vue';
