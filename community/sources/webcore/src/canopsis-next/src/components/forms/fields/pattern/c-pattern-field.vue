@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { MAX_LIMIT, PATTERN_CUSTOM_ITEM_VALUE, PATTERN_TYPES } from '@/constants';
+import { MAX_LIMIT, PATTERN_CUSTOM_ITEM_VALUE } from '@/constants';
 
 import { entitiesPatternsMixin } from '@/mixins/entities/pattern';
 
@@ -54,7 +54,7 @@ export default {
     },
     type: {
       type: String,
-      default: PATTERN_TYPES.alarm,
+      required: false,
     },
   },
   data() {
