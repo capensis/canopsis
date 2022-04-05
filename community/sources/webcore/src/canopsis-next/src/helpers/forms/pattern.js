@@ -131,7 +131,7 @@ const isInfosPatternRuleAttribute = value => [
 export const patternRuleToForm = (rule = {}) => {
   const form = {
     key: uid(),
-    attribute: '',
+    attribute: rule.field ?? '',
     operator: '',
     field: '',
     dictionary: '',
@@ -291,8 +291,6 @@ export const patternRuleToForm = (rule = {}) => {
     form.field = PATTERN_INFOS_NAME_OPERATORS.includes(rule.cond.type)
       ? PATTERN_RULE_INFOS_FIELDS.name
       : PATTERN_RULE_INFOS_FIELDS.value;
-  } else {
-    form.attribute = rule.field;
   }
 
   return form;
