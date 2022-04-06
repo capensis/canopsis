@@ -17,6 +17,13 @@
           block,
           @click="$emit('execute-job', job)"
         ) {{ job.name }}
+        v-btn.error.ml-2(
+          v-show="isRunningJob && hasJobsInQueue",
+          round,
+          small,
+          block,
+          @click="$emit('cancel-job-execution', job)"
+        ) {{ $t('common.cancel') }}
     td.text-xs-center
       span(v-if="!isCancelledJob") {{ job.started_at | date('long', '-') }}
       span(v-else) -
@@ -81,6 +88,10 @@ export default {
 
     hasStatusMessage() {
       return this.job.output || this.job.fail_reason;
+    },
+
+    hasJobsInQueue() {
+      return this.job.queue_number > 0;
     },
 
     statusIcon() {
