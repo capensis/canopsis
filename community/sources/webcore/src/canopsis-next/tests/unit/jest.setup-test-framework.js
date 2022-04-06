@@ -39,4 +39,26 @@ expect.extend({
 
     return toMatchSnapshot.call(this, menu.element);
   },
+  toEmit(wrapper, event, data) {
+    const emittedEvents = wrapper.emitted(event);
+
+    try {
+      expect(emittedEvents).toHaveLength(1);
+    } catch (err) {
+      return {
+        pass: false,
+        message: () => `Event '${event}' not emitted`,
+      };
+    }
+
+    const [eventData] = emittedEvents[0];
+
+    try {
+      expect(eventData).toEqual(data);
+    } catch (err) {
+      return err.matcherResult;
+    }
+
+    return { pass: true };
+  },
 });
