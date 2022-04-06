@@ -10,7 +10,7 @@
       @next="nextOperation(index)",
       @previous="previousOperation",
       @execute-job="executeJob",
-      @cancel-job-execution="executeJob"
+      @cancel-job-execution="cancelJobExecution"
     )
 </template>
 
