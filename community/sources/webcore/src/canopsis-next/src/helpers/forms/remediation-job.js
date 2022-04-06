@@ -7,6 +7,7 @@ import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
  * @property {string} job_id
  * @property {string} name
  * @property {string} payload
+ * @property {boolean} multiple_executions
  * @property {Object} query
  */
 /**
@@ -21,10 +22,11 @@ import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
  * @return {RemediationJobForm}
  */
 export const remediationJobToForm = (remediationJob = {}) => ({
-  config: remediationJob.config || '',
-  job_id: remediationJob.job_id || '',
-  name: remediationJob.name || '',
-  payload: remediationJob.payload || '',
+  config: remediationJob.config ?? '',
+  job_id: remediationJob.job_id ?? '',
+  name: remediationJob.name ?? '',
+  payload: remediationJob.payload ?? '',
+  multiple_executions: remediationJob.multiple_executions ?? false,
   query: remediationJob.query ? objectToTextPairs(remediationJob.query) : [],
 });
 
