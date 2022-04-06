@@ -19,10 +19,14 @@
 </template>
 
 <script>
+import { pick } from 'lodash';
+
 import { SOCKET_ROOMS } from '@/config';
 import { MODALS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants';
 
 import Socket from '@/plugins/socket/services/socket';
+
+import { getEmptyRemediationJobExecution } from '@/helpers/forms/remediation-job';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesRemediationJobExecutionMixin } from '@/mixins/entities/remediation/job-execution';
@@ -169,7 +173,7 @@ export default {
     /**
      * Execute special job by operation
      *
-     * @param {RemediationJob} job
+     * @param {RemediationJobExecution} job
      * @param {RemediationInstructionStepOperation} operation
      * @return {Promise<void>}
      */
@@ -183,15 +187,7 @@ export default {
           },
         });
 
-        this.setOperation({
-          ...operation,
-
-          jobs: operation.jobs.map(operationJob => (
-            operationJob.job_id === updatedJob.job_id
-              ? updatedJob
-              : operationJob
-          )),
-        });
+        this.setJob(updatedJob, operation);
       } catch (err) {
         console.error(err);
 
@@ -199,9 +195,23 @@ export default {
       }
     },
 
-    async cancelJobExecution({ jobExecutionId }) {
+    /**
+     * Cancel special job by operation
+     *
+     * @param {RemediationJobExecution} job
+     * @param {RemediationInstructionStepOperation} operation
+     * @return {Promise<void>}
+     */
+    async cancelJobExecution({ job, operation }) {
       try {
-        await this.cancelRemediationJobExecution({ id: jobExecutionId }); // TODO: put job updating
+        await this.cancelRemediationJobExecution({ id: job._id });
+
+        const updatedJob = {
+          ...getEmptyRemediationJobExecution(),
+          ...pick(job, ['_id', 'job_id', 'name', 'payload', 'query']),
+        };
+
+        this.setJob(updatedJob, operation);
       } catch (err) {
         console.error(err);
 
@@ -232,6 +242,24 @@ export default {
           instructionName: this.instructionExecution?.name,
         }),
         autoClose: false,
+      });
+    },
+
+    /**
+     * Set job into special operation into current instructionExecution
+     *
+     * @param {RemediationJobExecution} job
+     * @param {RemediationInstructionStepOperation} operation
+     */
+    setJob(job, operation) {
+      this.setOperation({
+        ...operation,
+
+        jobs: operation.jobs.map(operationJob => (
+          operationJob.job_id === job.job_id
+            ? job
+            : operationJob
+        )),
       });
     },
 
