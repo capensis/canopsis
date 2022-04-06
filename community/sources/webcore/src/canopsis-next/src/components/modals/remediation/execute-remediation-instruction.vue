@@ -11,7 +11,8 @@
             @next-step="nextStep",
             @next-operation="nextOperation",
             @previous-operation="previousOperation",
-            @execute-job="executeJob"
+            @execute-job="executeJob",
+            @cancel-job-execution="cancelJobExecution"
           )
           v-layout(v-else, justify-center)
             v-progress-circular(color="primary", indeterminate)
@@ -191,6 +192,16 @@ export default {
               : operationJob
           )),
         });
+      } catch (err) {
+        console.error(err);
+
+        this.$popups.error({ text: err.error || this.$t('errors.default') });
+      }
+    },
+
+    async cancelJobExecution({ jobExecutionId }) {
+      try {
+        await this.cancelRemediationJobExecution({ id: jobExecutionId }); // TODO: put job updating
       } catch (err) {
         console.error(err);
 
