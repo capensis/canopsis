@@ -32,7 +32,7 @@ func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder) Store {
 		dbClient:              dbClient,
 		dbCollection:          dbClient.Collection(mongo.RightsMongoCollection),
 		passwordEncoder:       passwordEncoder,
-		defaultSearchByFields: []string{"_id", "crecord_name", "firstname", "lastname"},
+		defaultSearchByFields: []string{"_id", "crecord_name", "firstname", "lastname", "role.name"},
 		defaultSortBy:         "name",
 	}
 }
@@ -48,21 +48,26 @@ type store struct {
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
 	pipeline := []bson.M{
 		{"$match": bson.M{"crecord_type": securitymodel.LineTypeSubject}},
-		{"$addFields": bson.M{
-			"name":  "$crecord_name",
-			"email": "$mail",
-		}},
 	}
+	pipeline = append(pipeline, getRenameFieldsPipeline()...)
+	project := make([]bson.M, 0)
 
 	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	if len(filter) > 0 || r.Permission != "" {
+		pipeline = append(pipeline, getRolePipeline()...)
+	} else {
+		project = append(project, getRolePipeline()...)
+	}
+
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	pipeline = append(pipeline, getNestedObjectsPipeline()...)
 	if r.Permission != "" {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{fmt.Sprintf("role.rights.%s", r.Permission): bson.M{"$exists": true}}})
 	}
+
+	project = append(project, getViewPipeline()...)
 
 	sortBy := s.defaultSortBy
 	if r.SortBy != "" {
@@ -73,6 +78,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		r.Query,
 		pipeline,
 		common.GetSortQuery(sortBy, r.Sort),
+		project,
 	))
 
 	if err != nil {
@@ -222,6 +228,14 @@ func (s *store) BulkDelete(ctx context.Context, ids []string) error {
 }
 
 func getNestedObjectsPipeline() []bson.M {
+	pipeline := getRenameFieldsPipeline()
+	pipeline = append(pipeline, getRolePipeline()...)
+	pipeline = append(pipeline, getViewPipeline()...)
+
+	return pipeline
+}
+
+func getRolePipeline() []bson.M {
 	return []bson.M{
 		{"$graphLookup": bson.M{
 			"from":             mongo.RightsMongoCollection,
@@ -229,6 +243,7 @@ func getNestedObjectsPipeline() []bson.M {
 			"connectFromField": "role",
 			"connectToField":   "_id",
 			"as":               "role",
+			"maxDepth":         0,
 		}},
 		{"$unwind": bson.M{"path": "$role", "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{
@@ -239,6 +254,11 @@ func getNestedObjectsPipeline() []bson.M {
 				"defaultview": "$role.defaultview",
 			},
 		}},
+	}
+}
+
+func getViewPipeline() []bson.M {
+	return []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.ViewMongoCollection,
 			"localField":   "defaultview",
@@ -253,6 +273,11 @@ func getNestedObjectsPipeline() []bson.M {
 			"as":           "role.defaultview",
 		}},
 		{"$unwind": bson.M{"path": "$role.defaultview", "preserveNullAndEmptyArrays": true}},
+	}
+}
+
+func getRenameFieldsPipeline() []bson.M {
+	return []bson.M{
 		{"$addFields": bson.M{
 			"name":                      "$crecord_name",
 			"email":                     "$mail",
