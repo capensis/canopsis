@@ -216,6 +216,7 @@ export default {
        * Add actions for available instructions
        */
       if (assignedInstructions.length && filteredActionsMap.executeInstruction) {
+        const pausedInstruction = this.item.assigned_instructions.find(instruction => instruction.execution);
         const hasRunningInstruction = this.item.is_auto_instruction_running
           || this.item.is_manual_instruction_running
           || this.item.is_manual_instruction_waiting_result;
@@ -227,7 +228,7 @@ export default {
           const action = {
             ...filteredActionsMap.executeInstruction,
 
-            disabled: hasRunningInstruction,
+            disabled: hasRunningInstruction || (pausedInstruction && pausedInstruction._id !== instruction._id),
             title: this.$t(`alarmList.actions.titles.${titlePrefix}Instruction`, {
               instructionName: instruction.name,
             }),
