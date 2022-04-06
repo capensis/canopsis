@@ -96,6 +96,7 @@
  * @property {boolean} metaalarm
  * @property {AlarmAssignedInstruction[]} [assigned_instructions]
  * @property {boolean} [is_auto_instruction_running]
+ * @property {boolean} [is_manual_instruction_running]
  * @property {boolean} [is_manual_instruction_waiting_result]
  * @property {boolean} [is_all_auto_instructions_completed]
  * @property {boolean} [children_instructions]
