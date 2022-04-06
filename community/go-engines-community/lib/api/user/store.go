@@ -3,16 +3,16 @@ package user
 import (
 	"context"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"math"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 type Store interface {
@@ -53,7 +53,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	project := make([]bson.M, 0)
 
 	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
-	if len(filter) > 0 || r.Permission != "" {
+	if len(filter) > 0 || r.Permission != "" || r.SortBy == "role.name" {
 		pipeline = append(pipeline, getRolePipeline()...)
 	} else {
 		project = append(project, getRolePipeline()...)
