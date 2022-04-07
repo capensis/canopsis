@@ -121,13 +121,13 @@ export default {
         is_all_auto_instructions_completed: isAutoInstructionCompleted = false,
       } = this.alarm;
 
-      const hasInstruction = !!assignedInstructions.length;
+      const hasAssignedInstructions = !!assignedInstructions.length;
 
-      if (parentAlarmChildrenInstructions && hasInstruction) {
+      if (parentAlarmChildrenInstructions && hasAssignedInstructions) {
         return true;
       }
 
-      return hasInstruction
+      return hasAssignedInstructions
           || isAutoInstructionRunning
           || isAutoInstructionCompleted
           || isManualInstructionWaitingResult;
