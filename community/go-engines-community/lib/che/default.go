@@ -143,6 +143,7 @@ func NewEngine(
 			EventFilterService:       eventfilterService,
 			ContextGraphManager:      contextGraphManager,
 			AmqpPublisher:            m.DepAMQPChannelPub(amqpConnection),
+			MetaUpdater:              metricsEntityMetaUpdater,
 			Encoder:                  json.NewEncoder(),
 			Decoder:                  json.NewDecoder(),
 			Logger:                   logger,

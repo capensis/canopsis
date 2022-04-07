@@ -6,7 +6,7 @@ import (
 )
 
 type StateCountersService interface {
-	RecomputeEntityServiceCounters(ctx context.Context, event types.Event) error
-	UpdateServiceCounters(ctx context.Context, entity types.Entity, alarm *types.Alarm, alarmChange types.AlarmChange) (map[string]int, error)
-	UpdateServiceState(serviceID string, serviceState int) error
+	RecomputeEntityServiceCounters(ctx context.Context, event types.Event) (map[string]UpdatedServicesInfo, error)
+	UpdateServiceCounters(ctx context.Context, entity types.Entity, alarm *types.Alarm, alarmChange types.AlarmChange) (map[string]UpdatedServicesInfo, error)
+	UpdateServiceState(serviceID string, serviceInfo UpdatedServicesInfo) error
 }

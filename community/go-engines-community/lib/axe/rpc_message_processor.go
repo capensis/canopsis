@@ -108,7 +108,7 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 
 	now := time.Now()
 
-	var updatedServiceStates map[string]int
+	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
 	firstTimeTran := true
 
 	err = p.DbClient.WithTransaction(ctx, func(tCtx context.Context) error {
@@ -153,8 +153,8 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 
 	// services alarms
 	go func() {
-		for servID, servState := range updatedServiceStates {
-			err := p.StateCountersService.UpdateServiceState(servID, servState)
+		for servID, servInfo := range updatedServiceStates {
+			err := p.StateCountersService.UpdateServiceState(servID, servInfo)
 			if err != nil {
 				p.Logger.Err(err).Msg("failed to update service state")
 			}

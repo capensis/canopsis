@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -18,6 +19,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
 	"runtime/trace"
+	"time"
 )
 
 type messageProcessor struct {
@@ -25,6 +27,7 @@ type messageProcessor struct {
 	DbClient                 mongo.DbClient
 	AlarmConfigProvider      config.AlarmConfigProvider
 	EventFilterService       eventfilter.Service
+	MetaUpdater              metrics.MetaUpdater
 	ContextGraphManager      contextgraph.Manager
 	AmqpPublisher            libamqp.Publisher
 	Encoder                  encoding.Encoder
@@ -68,16 +71,18 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	event.Output = utils.TruncateString(event.Output, alarmConfig.OutputLength)
 	event.LongOutput = utils.TruncateString(event.LongOutput, alarmConfig.LongOutputLength)
 
+	var updatedEntities []types.Entity
+
 	err = p.DbClient.WithTransaction(ctx, func(tCtx context.Context) error {
 		if event.EventType == types.EventTypeRecomputeEntityService {
-			eventEntity, updatedEntities, err := p.ContextGraphManager.RecomputeService(ctx, event.GetEID())
+			eventEntity, updatedEntities, err := p.ContextGraphManager.RecomputeService(tCtx, event.GetEID())
 			if err != nil {
 				return fmt.Errorf("cannot recompute service: %w", err)
 			}
 
 			event.Entity = &eventEntity
 
-			_, err = p.ContextGraphManager.UpdateEntities(ctx, updatedEntities)
+			_, err = p.ContextGraphManager.UpdateEntities(tCtx, "", updatedEntities)
 			if err != nil {
 				return fmt.Errorf("cannot update entities: %w", err)
 			}
@@ -85,7 +90,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 			return nil
 		}
 
-		eventEntity, err := p.ContextGraphManager.Handle(ctx, event)
+		eventEntity, contextGraphEntities, err := p.ContextGraphManager.Handle(tCtx, event)
 		if err != nil {
 			return fmt.Errorf("cannot update context graph: %w", err)
 		}
@@ -96,20 +101,16 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		}
 
 		// Process event by event filters.
-		event, err = p.EventFilterService.ProcessEvent(ctx, event)
+		event, err = p.EventFilterService.ProcessEvent(tCtx, event)
 		if err != nil {
-			return fmt.Errorf("cannot apply event filters on event: %w", err)
+			return err
 		}
 
 		eventEntity = *event.Entity
-
-		var updatedEntities []types.Entity
-		if eventEntity.IsNew || event.IsEntityUpdated {
-			updatedEntities = []types.Entity{eventEntity}
-		}
+		updatedEntities = []types.Entity{eventEntity}
 
 		if event.IsEntityUpdated && eventEntity.Type == types.EntityTypeComponent {
-			resources, err := p.ContextGraphManager.FillResourcesWithInfos(ctx, eventEntity)
+			resources, err := p.ContextGraphManager.FillResourcesWithInfos(tCtx, eventEntity)
 			if err != nil {
 				return fmt.Errorf("cannot update entity infos: %w", err)
 			}
@@ -117,26 +118,16 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 			updatedEntities = append(updatedEntities, resources...)
 		}
 
+		updatedEntities = append(updatedEntities, contextGraphEntities...)
+
 		if len(updatedEntities) > 0 {
 			// if it's a new resource add a component info to check if component is matched by the service
-			if event.Entity.IsNew && event.SourceType == types.SourceTypeResource {
-				updatedEntities = append(updatedEntities, types.Entity{
-					ID:        event.Component,
-					Name:      event.Component,
-					Impacts:   []string{event.Connector + "/" + event.ConnectorName},
-					Depends:   []string{event.Entity.ID},
-					Enabled:   true,
-					Type:      types.EntityTypeComponent,
-					Component: event.Component,
-				})
-			}
-
-			updatedEntities, err = p.ContextGraphManager.CheckServices(ctx, updatedEntities)
+			updatedEntities, err = p.ContextGraphManager.CheckServices(tCtx, updatedEntities)
 			if err != nil {
 				return fmt.Errorf("cannot check services: %w", err)
 			}
 
-			eventEntity, err = p.ContextGraphManager.UpdateEntities(ctx, updatedEntities)
+			eventEntity, err = p.ContextGraphManager.UpdateEntities(tCtx, eventEntity.ID, updatedEntities)
 			if err != nil {
 				return fmt.Errorf("cannot update entities: %w", err)
 			}
@@ -159,6 +150,70 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		p.logError(err, "cannot apply event filters on event", d.Body)
 		return nil, nil
 	}
+
+	go func() {
+		for _, ent := range updatedEntities {
+			go func(id string) {
+				p.MetaUpdater.UpdateById(context.Background(), id)
+			}(ent.ID)
+
+			if (len(ent.ImpactedServicesToAdd) != 0 || len(ent.ImpactedServicesToRemove) != 0) && ent.ID != event.GetEID() && ent.Type != types.EntityTypeService {
+				var updateCountersEvent types.Event
+
+				switch ent.Type {
+				case types.EntityTypeResource:
+					updateCountersEvent = types.Event{
+						EventType:     types.EventTypeUpdateCounters,
+						SourceType:    types.SourceTypeResource,
+						Connector:     event.Connector,
+						ConnectorName: event.ConnectorName,
+						Component:     ent.Component,
+						Resource:      ent.Name,
+						Timestamp:     types.CpsTime{Time: time.Now()},
+						Entity:        &ent,
+					}
+				case types.EntityTypeComponent:
+					updateCountersEvent = types.Event{
+						EventType:     types.EventTypeUpdateCounters,
+						SourceType:    types.SourceTypeComponent,
+						Connector:     event.Connector,
+						ConnectorName: event.ConnectorName,
+						Component:     ent.Component,
+						Timestamp:     types.CpsTime{Time: time.Now()},
+						Entity:        &ent,
+					}
+				case types.EntityTypeConnector:
+					updateCountersEvent = types.Event{
+						EventType:     types.EventTypeUpdateCounters,
+						SourceType:    types.SourceTypeConnector,
+						Connector:     event.Connector,
+						ConnectorName: event.ConnectorName,
+						Timestamp:     types.CpsTime{Time: time.Now()},
+						Entity:        &ent,
+					}
+				}
+
+				body, err := p.Encoder.Encode(updateCountersEvent)
+				if err != nil {
+					p.Logger.Err(err).Msg("unable to serialize event")
+				}
+
+				err = p.AmqpPublisher.Publish(
+					"",
+					canopsis.AxeQueueName,
+					false,
+					false,
+					amqp.Publishing{
+						Body:        body,
+						ContentType: "application/json",
+					},
+				)
+				if err != nil {
+					p.Logger.Err(err).Msg("unable to send service event")
+				}
+			}
+		}
+	}()
 
 	event.Format()
 	body, err := p.Encoder.Encode(event)

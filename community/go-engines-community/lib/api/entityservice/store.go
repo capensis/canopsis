@@ -4,6 +4,7 @@ import (
 	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -32,6 +33,7 @@ type store struct {
 	dbCollection              mongo.DbCollection
 	alarmDbCollection         mongo.DbCollection
 	resolvedAlarmDbCollection mongo.DbCollection
+	serviceCountersCollection mongo.DbCollection
 }
 
 func NewStore(db mongo.DbClient) Store {
@@ -39,6 +41,7 @@ func NewStore(db mongo.DbClient) Store {
 		dbCollection:              db.Collection(mongo.EntityMongoCollection),
 		alarmDbCollection:         db.Collection(mongo.AlarmMongoCollection),
 		resolvedAlarmDbCollection: db.Collection(mongo.ResolvedAlarmMongoCollection),
+		serviceCountersCollection: db.Collection(mongo.EntityServiceCountersMongoCollection),
 	}
 }
 
@@ -249,6 +252,14 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 		return nil, err
 	}
 
+	_, err = s.serviceCountersCollection.InsertOne(ctx, statecounters.EntityServiceCounters{
+		ID:             entity.ID,
+		OutputTemplate: entity.OutputTemplate,
+	})
+	if err != nil {
+		return nil, err
+	}
+
 	return s.GetOneBy(ctx, entity.ID)
 }
 
@@ -292,6 +303,17 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 	serviceChanges.IsPatternChanged = !reflect.DeepEqual(oldValues.EntityPatterns, request.EntityPatterns)
 
 	service, err := s.GetOneBy(ctx, request.ID)
+	if err != nil {
+		return nil, serviceChanges, err
+	}
+
+	_, err = s.serviceCountersCollection.UpdateOne(
+		ctx,
+		bson.M{"_id": service.ID}, bson.M{
+			"$set": bson.M{
+				"output_template": service.OutputTemplate,
+			},
+		})
 	if err != nil {
 		return nil, serviceChanges, err
 	}

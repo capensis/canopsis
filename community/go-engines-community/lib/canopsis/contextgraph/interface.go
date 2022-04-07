@@ -14,7 +14,7 @@ type EntityServiceStorage interface {
 }
 
 type Manager interface {
-	Handle(ctx context.Context, event types.Event) (types.Entity, error)
+	Handle(ctx context.Context, event types.Event) (types.Entity, []types.Entity, error)
 
 	CheckServices(ctx context.Context, entities []types.Entity) ([]types.Entity, error)
 
@@ -22,7 +22,7 @@ type Manager interface {
 
 	RecomputeService(ctx context.Context, serviceID string) (types.Entity, []types.Entity, error)
 
-	UpdateEntities(ctx context.Context, entities []types.Entity) (types.Entity, error)
+	UpdateEntities(ctx context.Context, eventEntityID string, entities []types.Entity) (types.Entity, error)
 
 	FillResourcesWithInfos(ctx context.Context, component types.Entity) ([]types.Entity, error)
 }

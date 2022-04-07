@@ -40,20 +40,21 @@ type Entity struct {
 	Description string   `bson:"description" json:"description"`
 	Impacts     []string `bson:"impact" json:"impact"`
 	// impacted_services field is only for connectors, see entity service RecomputeIdleSince method
-	ImpactedServices         []string        `bson:"impacted_services,omitempty" json:"impacted_services,omitempty"`
-	ImpactedServicesToAdd    []string        `bson:"impacted_services_to_add,omitempty" json:"impacted_services_to_add"`
-	ImpactedServicesToRemove []string        `bson:"impacted_services_to_remove,omitempty" json:"impacted_services_to_remove"`
-	Depends                  []string        `bson:"depends,omitempty" json:"depends"`
-	EnableHistory            []CpsTime       `bson:"enable_history" json:"enable_history"`
-	Measurements             interface{}     `bson:"measurements" json:"measurements"` // unused collection ids
-	Enabled                  bool            `bson:"enabled" json:"enabled"`
-	Infos                    map[string]Info `bson:"infos" json:"infos"`
-	ComponentInfos           map[string]Info `bson:"component_infos,omitempty" json:"component_infos,omitempty"`
-	Type                     string          `bson:"type" json:"type"`
-	Component                string          `bson:"component,omitempty" json:"component,omitempty"`
-	Category                 string          `bson:"category" json:"category"`
-	ImpactLevel              int64           `bson:"impact_level" json:"impact_level"`
-	AlarmsCumulativeData     struct {
+	ImpactedServicesFromDependencies []string        `bson:"impacted_services_from_dependencies,omitempty" json:"impacted_services_from_dependencies,omitempty"`
+	ImpactedServices                 []string        `bson:"impacted_services,omitempty" json:"impacted_services,omitempty"`
+	ImpactedServicesToAdd            []string        `bson:"impacted_services_to_add,omitempty" json:"impacted_services_to_add"`
+	ImpactedServicesToRemove         []string        `bson:"impacted_services_to_remove,omitempty" json:"impacted_services_to_remove"`
+	Depends                          []string        `bson:"depends" json:"depends"`
+	EnableHistory                    []CpsTime       `bson:"enable_history" json:"enable_history"`
+	Measurements                     interface{}     `bson:"measurements" json:"measurements"` // unused collection ids
+	Enabled                          bool            `bson:"enabled" json:"enabled"`
+	Infos                            map[string]Info `bson:"infos" json:"infos"`
+	ComponentInfos                   map[string]Info `bson:"component_infos,omitempty" json:"component_infos,omitempty"`
+	Type                             string          `bson:"type" json:"type"`
+	Component                        string          `bson:"component,omitempty" json:"component,omitempty"`
+	Category                         string          `bson:"category" json:"category"`
+	ImpactLevel                      int64           `bson:"impact_level" json:"impact_level"`
+	AlarmsCumulativeData             struct {
 		// Only for Service.
 		// WatchedCount is count of unresolved alarms.
 		WatchedCount int64 `bson:"watched_count"`

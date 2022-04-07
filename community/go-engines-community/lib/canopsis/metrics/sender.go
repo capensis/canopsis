@@ -18,7 +18,7 @@ type Sender interface {
 	SendCreateAndPbhEnter(ctx context.Context, alarm types.Alarm, timestamp time.Time)
 	SendCorrelation(ctx context.Context, timestamp time.Time, child types.Alarm)
 	SendUserActivity(ctx context.Context, timestamp time.Time, username string, value int64)
-	SendPbhEnter(ctx context.Context, alarm *types.Alarm, entity types.Entity)
+	SendPbhEnter(ctx context.Context, alarm types.Alarm, entity types.Entity)
 	SendPbhLeave(ctx context.Context, entity types.Entity, timestamp time.Time, prevCanonicalType string, prevTimestamp time.Time)
 	SendPbhLeaveAndEnter(ctx context.Context, alarm *types.Alarm, entity types.Entity, prevCanonicalType string, prevTimestamp time.Time)
 	SendUpdateState(ctx context.Context, alarm types.Alarm, entity types.Entity, previousState types.CpsNumber)
@@ -66,7 +66,7 @@ func (s *nullSender) SendCorrelation(_ context.Context, _ time.Time, _ types.Ala
 func (s *nullSender) SendUserActivity(_ context.Context, _ time.Time, _ string, _ int64) {
 }
 
-func (s *nullSender) SendPbhEnter(_ context.Context, _ *types.Alarm, _ types.Entity) {
+func (s *nullSender) SendPbhEnter(_ context.Context, _ types.Alarm, _ types.Entity) {
 
 }
 

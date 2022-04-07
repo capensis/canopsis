@@ -83,7 +83,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		return alarmChange, nil
 	}
 
-	var updatedServiceStates map[string]int
+	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
 	firstTimeTran := true
 
 	err := s.dbClient.WithTransaction(ctx, func(tCtx context.Context) error {
@@ -101,6 +101,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		alarmNotFound := false
 		if _, ok := err.(errt.NotFound); ok {
 			alarmNotFound = true
+			err = nil
 		} else if err != nil {
 			return fmt.Errorf("cannot fetch alarm: %w", err)
 		}
@@ -112,6 +113,8 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		s.fillAlarmChange(event.Alarm, *event.Entity, &alarmChange)
 
 		switch event.EventType {
+		case types.EventTypeUpdateCounters:
+			alarmChange.Type = types.AlarmChangeTypeNone
 		case types.EventTypeEntityToggled:
 			if !event.Entity.Enabled {
 				alarmChange, err = s.resolveAlarmForDisabledEntity(tCtx, event)
@@ -122,7 +125,8 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 				break
 			}
 
-			err = s.stateCountersService.RecomputeEntityServiceCounters(tCtx, *event)
+			updatedServiceStates, err = s.stateCountersService.RecomputeEntityServiceCounters(tCtx, *event)
+			return err
 		case types.EventTypeCheck:
 			alarmChange.Type, err = s.storeAlarm(tCtx, event)
 
@@ -167,8 +171,8 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 
 	// services alarms
 	go func() {
-		for servID, servState := range updatedServiceStates {
-			err := s.stateCountersService.UpdateServiceState(servID, servState)
+		for servID, servInfo := range updatedServiceStates {
+			err := s.stateCountersService.UpdateServiceState(servID, servInfo)
 			if err != nil {
 				s.logger.Err(err).Msg("failed to update service state")
 			}
@@ -193,12 +197,12 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		)
 	}()
 
-	if event.Alarm == nil {
-		return alarmChange, nil
-	}
-
 	if event.EventType == types.EventTypeCheck {
 		go s.sendEventStatistics(ctx, *event)
+	}
+
+	if event.Alarm == nil {
+		return alarmChange, nil
 	}
 
 	if alarmChange.Type == types.AlarmChangeTypeResolve {

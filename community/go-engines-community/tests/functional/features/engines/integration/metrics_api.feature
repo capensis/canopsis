@@ -3,6 +3,33 @@ Feature: Entities and users should be synchronized in metrics db
 
   Scenario: given updated entity should get metrics by updated entity
     Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "type": "enrichment",
+      "patterns": [{
+        "event_type": "check",
+        "component": "test-component-metrics-api-1"
+      }],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "client",
+            "description": "client",
+            "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "description": "test-component-metrics-api-1-description",
+      "enabled": true,
+      "priority": 3
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
     When I do POST /api/v4/cat/filters:
     """json
     {

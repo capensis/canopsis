@@ -200,7 +200,7 @@ Feature: update service weather on event
       "output": "noveo alarm"
     }
     """
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
     When I do GET /api/v4/weather-services?filter={"name":"test-service-weather-3"}
     Then the response code should be 200
     Then the response body should contain:

@@ -56,7 +56,7 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 	}
 
 	if event.PbhEvent.EventType != "" {
-		var updatedServiceStates map[string]int
+		var updatedServiceInfos map[string]statecounters.UpdatedServicesInfo
 		firstTimeTran := true
 		var alarmChange types.AlarmChange
 
@@ -116,7 +116,7 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 			p.updateEntity(ctx, event.PbhEvent.Entity, *event.Alarm, alarmChange.Type)
 			p.updatePbhLastAlarmDate(ctx, alarmChange.Type, event.Alarm.Value.PbehaviorInfo)
 
-			updatedServiceStates, err = p.StateCountersService.UpdateServiceCounters(tCtx, *event.Entity, event.Alarm, alarmChange)
+			updatedServiceInfos, err = p.StateCountersService.UpdateServiceCounters(tCtx, *event.Entity, event.Alarm, alarmChange)
 			return err
 		})
 
@@ -131,8 +131,8 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 
 		// services alarms
 		go func() {
-			for servID, servState := range updatedServiceStates {
-				err := p.StateCountersService.UpdateServiceState(servID, servState)
+			for servID, servInfo := range updatedServiceInfos {
+				err := p.StateCountersService.UpdateServiceState(servID, servInfo)
 				if err != nil {
 					p.Logger.Err(err).Msg("failed to update service state")
 				}
