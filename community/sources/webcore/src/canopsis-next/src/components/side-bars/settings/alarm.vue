@@ -19,6 +19,7 @@
             v-model="settings.widget.parameters.widgetColumns",
             :label="$t('settings.columnNames')",
             with-html,
+            with-template,
             with-color-indicator
           )
           v-divider

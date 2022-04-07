@@ -3105,7 +3105,7 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Entity id",
-                        "name": "id",
+                        "name": "_id",
                         "in": "query",
                         "required": true
                     }
@@ -3150,7 +3150,7 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Entity id",
-                        "name": "id",
+                        "name": "_id",
                         "in": "query",
                         "required": true
                     },
@@ -3204,7 +3204,7 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Entity id",
-                        "name": "id",
+                        "name": "_id",
                         "in": "query",
                         "required": true
                     }
@@ -9157,6 +9157,9 @@ var doc = `{
                 "is_all_auto_instructions_completed": {
                     "type": "boolean"
                 },
+                "is_auto_instruction_failed": {
+                    "type": "boolean"
+                },
                 "is_auto_instruction_running": {
                     "type": "boolean"
                 },
@@ -9349,7 +9352,7 @@ var doc = `{
                 },
                 "pbehavior_info": {
                     "type": "object",
-                    "$ref": "#/definitions/types.PbehaviorInfo"
+                    "$ref": "#/definitions/entity.PbehaviorInfo"
                 },
                 "pbh_inactive_duration": {
                     "type": "integer"
@@ -9612,18 +9615,6 @@ var doc = `{
                 "_id": {
                     "type": "string"
                 },
-                "active_on_pbh": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "disabled_on_pbh": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "execution": {
                     "type": "object",
                     "$ref": "#/definitions/alarm.Execution"
@@ -9744,6 +9735,10 @@ var doc = `{
                 },
                 "author": {
                     "type": "string"
+                },
+                "comments": {
+                    "type": "object",
+                    "$ref": "#/definitions/pbehavior.Comments"
                 },
                 "name": {
                     "type": "string"
@@ -10317,11 +10312,28 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/entity.Infos"
                 },
+                "ko_events": {
+                    "type": "integer"
+                },
+                "last_event_date": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
                 "measurements": {
                     "type": "object"
                 },
                 "name": {
                     "type": "string"
+                },
+                "ok_events": {
+                    "type": "integer"
+                },
+                "pbehavior_info": {
+                    "type": "object",
+                    "$ref": "#/definitions/entity.PbehaviorInfo"
+                },
+                "state": {
+                    "type": "integer"
                 },
                 "type": {
                     "type": "string"
@@ -10418,6 +10430,43 @@ var doc = `{
                 },
                 "with_flags": {
                     "type": "boolean"
+                }
+            }
+        },
+        "entity.PbehaviorInfo": {
+            "type": "object",
+            "properties": {
+                "canonical_type": {
+                    "description": "CanonicalType is Type of pbehavior.Type.",
+                    "type": "string"
+                },
+                "icon_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID is ID of pbehavior.PBehavior.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name is Name of pbehavior.PBehavior.",
+                    "type": "string"
+                },
+                "reason": {
+                    "description": "Reason is Name of pbehavior.Reason.",
+                    "type": "string"
+                },
+                "timestamp": {
+                    "description": "Timestamp is time when entity enters pbehavior.\nUse pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.",
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "type": {
+                    "description": "TypeID is ID of pbehavior.Type.",
+                    "type": "string"
+                },
+                "type_name": {
+                    "description": "TypeName is Name of pbehavior.Type.",
+                    "type": "string"
                 }
             }
         },
@@ -10530,13 +10579,30 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/entity.Infos"
                 },
+                "ko_events": {
+                    "type": "integer"
+                },
+                "last_event_date": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
                 "measurements": {
                     "type": "object"
                 },
                 "name": {
                     "type": "string"
                 },
+                "ok_events": {
+                    "type": "integer"
+                },
+                "pbehavior_info": {
+                    "type": "object",
+                    "$ref": "#/definitions/entity.PbehaviorInfo"
+                },
                 "sli_avail_state": {
+                    "type": "integer"
+                },
+                "state": {
                     "type": "integer"
                 },
                 "type": {
@@ -10879,16 +10945,33 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/entity.Infos"
                 },
+                "ko_events": {
+                    "type": "integer"
+                },
+                "last_event_date": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
                 "measurements": {
                     "type": "object"
                 },
                 "name": {
                     "type": "string"
                 },
+                "ok_events": {
+                    "type": "integer"
+                },
                 "output_template": {
                     "type": "string"
                 },
+                "pbehavior_info": {
+                    "type": "object",
+                    "$ref": "#/definitions/entity.PbehaviorInfo"
+                },
                 "sli_avail_state": {
+                    "type": "integer"
+                },
+                "state": {
                     "type": "integer"
                 },
                 "type": {
@@ -12641,10 +12724,6 @@ var doc = `{
                 }
             }
         },
-        "primitive.M": {
-            "type": "object",
-            "additionalProperties": true
-        },
         "resolverule.CreateRequest": {
             "type": "object",
             "required": [
@@ -13248,6 +13327,9 @@ var doc = `{
                 "alarm_display_name": {
                     "type": "string"
                 },
+                "alarm_id": {
+                    "type": "string"
+                },
                 "assigned_instructions": {
                     "type": "array",
                     "items": {
@@ -13288,6 +13370,9 @@ var doc = `{
                 "is_all_auto_instructions_completed": {
                     "type": "boolean"
                 },
+                "is_auto_instruction_failed": {
+                    "type": "boolean"
+                },
                 "is_auto_instruction_running": {
                     "type": "boolean"
                 },
@@ -13308,6 +13393,10 @@ var doc = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "pbehavior_info": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.PbehaviorInfo"
                 },
                 "pbehaviors": {
                     "type": "array",
@@ -13331,7 +13420,7 @@ var doc = `{
                 },
                 "stats": {
                     "type": "object",
-                    "$ref": "#/definitions/serviceweather.Stats"
+                    "$ref": "#/definitions/statistics.EventStatistics"
                 },
                 "status": {
                     "type": "object",
@@ -13430,6 +13519,10 @@ var doc = `{
                 "output": {
                     "type": "string"
                 },
+                "pbehavior_info": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.PbehaviorInfo"
+                },
                 "pbehaviors": {
                     "type": "array",
                     "items": {
@@ -13453,23 +13546,6 @@ var doc = `{
                 "status": {
                     "type": "object",
                     "$ref": "#/definitions/alarm.AlarmStep"
-                }
-            }
-        },
-        "serviceweather.Stats": {
-            "type": "object",
-            "properties": {
-                "ko": {
-                    "type": "integer"
-                },
-                "last_event": {
-                    "type": "integer"
-                },
-                "last_ko": {
-                    "type": "integer"
-                },
-                "ok": {
-                    "type": "integer"
                 }
             }
         },
@@ -13562,6 +13638,23 @@ var doc = `{
                     "type": "number"
                 },
                 "type": {
+                    "type": "integer"
+                }
+            }
+        },
+        "statistics.EventStatistics": {
+            "type": "object",
+            "properties": {
+                "ko": {
+                    "type": "integer"
+                },
+                "last_event": {
+                    "type": "integer"
+                },
+                "last_ko": {
+                    "type": "integer"
+                },
+                "ok": {
                     "type": "integer"
                 }
             }

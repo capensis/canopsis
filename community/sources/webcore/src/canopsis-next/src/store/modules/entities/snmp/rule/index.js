@@ -66,9 +66,11 @@ export default {
         throw err;
       }
     },
+
     create(context, { data } = {}) {
       return request.post(API_ROUTES.snmpRule.create, data);
     },
+
     remove(context, { data = {} } = {}) {
       return request.delete(API_ROUTES.snmpRule.list, { data });
     },

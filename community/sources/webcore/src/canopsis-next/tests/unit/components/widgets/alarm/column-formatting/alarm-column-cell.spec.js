@@ -1,9 +1,9 @@
 import flushPromises from 'flush-promises';
 
 import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { DATETIME_FORMATS } from '@/constants';
 
 import AlarmColumnCell from '@/components/widgets/alarm/columns-formatting/alarm-column-cell.vue';
-import { DATETIME_FORMATS } from '@/constants';
 
 const localVue = createVueInstance();
 

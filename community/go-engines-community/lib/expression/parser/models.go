@@ -1,9 +1,11 @@
+//nolint:govet
 package parser
 
 import (
 	"fmt"
-	"go.mongodb.org/mongo-driver/bson"
 	"reflect"
+
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type Expression struct {

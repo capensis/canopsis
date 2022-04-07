@@ -6,21 +6,27 @@
           v-text-field(
             v-field="form.name",
             v-validate="'required'",
-            :label="$t('service.fields.name')",
+            :label="$t('common.name')",
             :error-messages="errors.collect('name')",
             name="name"
           )
       v-layout
-        v-flex(xs6)
-          c-entity-category-field.mr-3(v-field="form.category", addable, required)
-        v-flex(xs6)
+        v-flex.pr-3(xs6)
+          c-entity-category-field(v-field="form.category", addable, required)
+        v-flex.pr-3(xs4)
+          c-state-type-field(
+            v-field="form.sli_avail_state",
+            :label="$t('service.availabilityState')",
+            required
+          )
+        v-flex(xs2)
           c-impact-level-field(v-field="form.impact_level", required)
       v-layout(wrap, justify-center)
         v-flex
           v-textarea(
             v-field="form.output_template",
             v-validate="'required'",
-            :label="$t('service.fields.outputTemplate')",
+            :label="$t('service.outputTemplate')",
             :error-messages="errors.collect('output_template')",
             name="output_template"
           )

@@ -37,24 +37,19 @@ type manager struct {
 }
 
 func (m *manager) LoadServices(ctx context.Context) error {
-	services, err := m.adapter.GetValid(ctx)
+	data, err := m.storage.ReloadAll(ctx)
 	if err != nil {
 		return err
 	}
 
-	ids := make([]string, len(services))
-	data := make([]ServiceData, len(services))
-	for i := range services {
-		ids[i] = services[i].ID
-		data[i] = ServiceData{
-			ID:             services[i].ID,
-			EntityPatterns: services[i].EntityPatterns,
-		}
+	ids := make([]string, len(data))
+	for i := range data {
+		ids[i] = data[i].ID
 	}
 
 	m.logger.Debug().Strs("services", ids).Msg("load services")
 
-	return m.storage.SaveAll(ctx, data)
+	return nil
 }
 
 func (m *manager) UpdateServices(ctx context.Context, entities []types.Entity) (map[string][]string, map[string][]string, error) {
@@ -62,7 +57,7 @@ func (m *manager) UpdateServices(ctx context.Context, entities []types.Entity) (
 		return nil, nil, nil
 	}
 
-	services, err := m.storage.Load(ctx)
+	services, err := m.storage.GetAll(ctx)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -85,12 +80,13 @@ func (m *manager) UpdateServices(ctx context.Context, entities []types.Entity) (
 }
 
 func (m *manager) UpdateService(ctx context.Context, serviceID string) (bool, []string, error) {
-	service, err := m.adapter.GetByID(ctx, serviceID)
+	data, isNew, isDisabled, err := m.storage.Reload(ctx, serviceID)
 	if err != nil {
 		return false, nil, err
 	}
 
-	if service == nil {
+	// Change context graph only for completely removed service.
+	if data == nil && !isDisabled {
 		removedFrom, err := m.removeService(ctx, serviceID)
 		if err != nil {
 			return false, nil, err
@@ -99,44 +95,29 @@ func (m *manager) UpdateService(ctx context.Context, serviceID string) (bool, []
 		return true, removedFrom, nil
 	}
 
-	// Remove from cache but not change context graph
-	if !service.Enabled {
-		return true, nil, m.storage.Delete(ctx, serviceID)
+	if isDisabled {
+		return true, nil, nil
 	}
 
-	data, err := m.storage.Get(ctx, service.ID)
+	removedIDs, err := m.entityAdapter.RemoveImpactByQuery(ctx, data.EntityPatterns.AsNegativeMongoDriverQuery(), data.ID)
 	if err != nil {
 		return false, nil, err
 	}
 
-	isNew := data == nil
-	err = m.storage.Save(ctx, ServiceData{
-		ID:             service.ID,
-		EntityPatterns: service.EntityPatterns,
-	})
-	if err != nil {
-		return false, nil, err
-	}
-
-	removedIDs, err := m.entityAdapter.RemoveImpactByQuery(ctx, service.EntityPatterns.AsNegativeMongoDriverQuery(), service.ID)
-	if err != nil {
-		return false, nil, err
-	}
-
-	addedIDs, err := m.entityAdapter.AddImpactByQuery(ctx, service.EntityPatterns.AsMongoDriverQuery(), service.ID)
+	addedIDs, err := m.entityAdapter.AddImpactByQuery(ctx, data.EntityPatterns.AsMongoDriverQuery(), data.ID)
 	if err != nil {
 		return false, nil, err
 	}
 
 	if len(removedIDs) > 0 {
-		_, err := m.adapter.RemoveDepends(ctx, service.ID, removedIDs)
+		_, err := m.adapter.RemoveDepends(ctx, data.ID, removedIDs)
 		if err != nil {
 			return false, nil, err
 		}
 	}
 
 	if len(addedIDs) > 0 {
-		_, err := m.adapter.AddDepends(ctx, service.ID, addedIDs)
+		_, err := m.adapter.AddDepends(ctx, data.ID, addedIDs)
 		if err != nil {
 			return false, nil, err
 		}
@@ -146,23 +127,12 @@ func (m *manager) UpdateService(ctx context.Context, serviceID string) (bool, []
 }
 
 func (m *manager) ReloadService(ctx context.Context, serviceID string) error {
-	service, err := m.adapter.GetByID(ctx, serviceID)
-	if err != nil {
-		return err
-	}
-
-	if service == nil || !service.Enabled {
-		return m.storage.Delete(ctx, serviceID)
-	}
-
-	return m.storage.Save(ctx, ServiceData{
-		ID:             service.ID,
-		EntityPatterns: service.EntityPatterns,
-	})
+	_, _, _, err := m.storage.Reload(ctx, serviceID)
+	return err
 }
 
 func (m *manager) HasEntityServiceByComponentInfos(ctx context.Context) (bool, error) {
-	services, err := m.storage.Load(ctx)
+	services, err := m.storage.GetAll(ctx)
 	if err != nil {
 		return false, err
 	}
@@ -327,12 +297,7 @@ func (m *manager) processService(ctx context.Context, data ServiceData, entities
 
 // removeService removes service from cache and context graph.
 func (m *manager) removeService(ctx context.Context, serviceID string) ([]string, error) {
-	err := m.storage.Delete(ctx, serviceID)
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = m.entityAdapter.RemoveImpactByQuery(ctx, bson.M{"impact": serviceID}, serviceID)
+	_, err := m.entityAdapter.RemoveImpactByQuery(ctx, bson.M{"impact": serviceID}, serviceID)
 	if err != nil {
 		return nil, err
 	}
@@ -343,7 +308,7 @@ func (m *manager) removeService(ctx context.Context, serviceID string) ([]string
 	}
 
 	removedFromIDs := make([]string, 0)
-	data, err := m.storage.Load(ctx)
+	data, err := m.storage.GetAll(ctx)
 	if err != nil {
 		return nil, err
 	}

@@ -52,7 +52,7 @@ func (w *worker) Work(ctx context.Context, filename, source string) (stats Stats
 		return stats, fmt.Errorf("empty import")
 	}
 
-	stats.Updated, stats.Deleted, err = w.bulkWrite(ctx, writeModels, canopsis.DefaultBulkSize)
+	stats.Updated, stats.Deleted, err = w.bulkWrite(ctx, writeModels, canopsis.DefaultBulkSize, canopsis.DefaultBulkBytesSize)
 	if err != nil {
 		return stats, err
 	}
@@ -346,16 +346,44 @@ func (w *worker) sendUpdateServiceEvents(ctx context.Context) error {
 	return nil
 }
 
-func (w *worker) bulkWrite(ctx context.Context, writeModels []mongo.WriteModel, limit int) (int64, int64, error) {
+func (w *worker) bulkWrite(ctx context.Context, writeModels []mongo.WriteModel, limit, limitBytes int) (int64, int64, error) {
 	var updated, deleted int64
 
-	for i := 0; i < len(writeModels); i += limit {
-		end := i + limit
-		if i+limit > len(writeModels) {
+	start := 0
+	end := 0
+	for {
+		if end == len(writeModels) {
+			break
+		}
+
+		start = end
+		end = start + limit
+
+		if end > len(writeModels) {
 			end = len(writeModels)
 		}
 
-		p := writeModels[i:end]
+		bulkSize := 0
+		for i := start; i < end; i++ {
+			b, err := bson.Marshal(writeModels[i])
+			if err != nil {
+				return 0, 0, err
+			}
+
+			l := len(b)
+			if l+bulkSize >= limitBytes {
+				if i > start {
+					end = i
+				} else {
+					end = start + 1
+				}
+				break
+			}
+
+			bulkSize += l
+		}
+
+		p := writeModels[start:end]
 		result, err := w.entityCollection.BulkWrite(ctx, p)
 		if err != nil {
 			return 0, 0, err

@@ -17,7 +17,7 @@ fi
 if [ "x$1" == "xshell" ]; then
   exec /bin/bash
 else
-    sudo /opt/canopsis/bin/env2cfg
+    /opt/canopsis/bin/env2cfg
     if [ "${CPS_OLD_API}" = "1" ]; then
         /opt/canopsis/bin/canopsis-oldapi --access-logfile /opt/canopsis/var/log/oldapi-access.log -k gevent --limit-request-line ${LIMIT_REQUEST_LINE} -w ${WORKERS_SIZE} -b 0.0.0.0:8081
     else

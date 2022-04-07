@@ -338,6 +338,10 @@
         "checksum": 15,
         "desc": ""
       },
+      "models_engine": {
+        "checksum": 1,
+        "desc": ""
+      },
       "common_variablesHelp": {
         "checksum": 1,
         "desc": ""
@@ -527,6 +531,14 @@
         "crecord_type": "right"
       },
       "api_filter": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_snmprule": {
+        "checksum": 15,
+        "crecord_type": "right"
+      },
+      "api_snmpmib": {
         "checksum": 15,
         "crecord_type": "right"
       }

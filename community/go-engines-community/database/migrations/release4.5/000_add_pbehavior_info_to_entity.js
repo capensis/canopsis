@@ -1,4 +1,4 @@
-db.periodical_alarm.find({"v.pbehavior_info": {$ne: null}}).forEach(function (doc) {
+db.periodical_alarm.find({"v.pbehavior_info.id": {$nin: ["", null]}}).forEach(function (doc) {
     var timestamp;
     for (var i = doc.v.steps.length-1; i >= 0; i--) {
         if (doc.v.steps[i]._t === "pbhenter") {
