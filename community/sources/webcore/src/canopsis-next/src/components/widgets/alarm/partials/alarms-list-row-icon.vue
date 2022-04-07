@@ -38,10 +38,17 @@ export default {
         };
       }
 
-      if (this.alarm.is_all_auto_instructions_completed) {
+      if (this.alarm.is_auto_instruction_failed) {
         return {
           icon: 'assignment_late',
           class: 'error--text',
+          tooltip: this.$t('alarmList.tooltips.autoInstructionsFailed'),
+        };
+      }
+
+      if (this.alarm.is_all_auto_instructions_completed) {
+        return {
+          icon: 'warning',
           tooltip: this.$t('alarmList.tooltips.allAutoInstructionExecuted'),
         };
       }
