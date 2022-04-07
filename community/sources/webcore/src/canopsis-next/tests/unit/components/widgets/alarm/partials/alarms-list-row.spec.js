@@ -446,6 +446,7 @@ describe('alarms-list-row', () => {
       propsData: {
         row: {
           item: {
+            assigned_instructions: [{}],
             v: {
               status: {},
             },
@@ -466,6 +467,7 @@ describe('alarms-list-row', () => {
   it('Renders `alarms-list-row` with filtered children in parent alarm', () => {
     const alarm = {
       _id: 'alarm-id',
+      assigned_instructions: [{}],
       v: {
         status: {},
       },
