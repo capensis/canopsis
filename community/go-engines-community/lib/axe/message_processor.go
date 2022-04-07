@@ -68,6 +68,11 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 	p.updatePbhLastAlarmDate(ctx, event)
 
+	// there is nothing to do with that kind of event in the next engines.
+	if event.EventType == types.EventTypeRecomputeEntityService {
+		return nil, nil
+	}
+
 	// Encode and publish the event to the next engine
 	var bevent []byte
 	trace.WithRegion(ctx, "encode-event", func() {

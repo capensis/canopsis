@@ -3,6 +3,33 @@ Feature: Entities should be synchronized in metrics db
 
   Scenario: given updated entity should get metrics by updated entity
     Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "type": "enrichment",
+      "patterns": [{
+        "event_type": "check",
+        "component": "test-component-metrics-che-1"
+      }],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "client",
+            "description": "client",
+            "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "description": "test-component-metrics-che-1-description",
+      "enabled": true,
+      "priority": 3
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
     When I do POST /api/v4/cat/filters:
     """json
     {
@@ -120,6 +147,33 @@ Feature: Entities should be synchronized in metrics db
 
   Scenario: given updated component should get metrics by updated resource
     Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """
+    {
+      "type": "enrichment",
+      "patterns": [{
+        "event_type": "check",
+        "component": "test-component-metrics-che-2"
+      }],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "client",
+            "description": "client",
+            "value": "{{ `{{ .Event.ExtraInfos.client }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "description": "test-component-metrics-che-2-description",
+      "enabled": true,
+      "priority": 3
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
     When I do POST /api/v4/cat/filters:
     """json
     {
@@ -209,7 +263,7 @@ Feature: Entities should be synchronized in metrics db
       "client": "test-client-metrics-che-2-updated"
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of event processing
     When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter2ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
     Then the response code should be 200
     Then the response body should contain:

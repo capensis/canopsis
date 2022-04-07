@@ -16,7 +16,8 @@ type EntityServiceCounters struct {
 	State             StateCounters    `bson:"state"`
 	Acknowledged      int              `bson:"acked"`
 	NotAcknowledged   int              `bson:"unacked"`
-	PbehaviorCounters map[string]int64 `bson:"pbehavior"`
+	PbehaviorCounters map[string]int64 `bson:"pbehavior,omitempty"`
+	OutputTemplate    string           `bson:"output_template,omitempty"`
 }
 
 func (s EntityServiceCounters) GetWorstState() int {

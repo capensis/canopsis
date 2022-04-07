@@ -246,7 +246,7 @@ Feature: update connector alarm
       "output": "test-output-axe-idlerule-connector-3"
     }
     """
-    When I wait the end of 3 events processing
+    When I wait the end of 5 events processing
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-connector-axe-idlerule-connector-3/test-connector-name-axe-idlerule-connector-3"}]}
     Then the response code should be 200
     Then the response body should contain:

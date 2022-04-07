@@ -101,6 +101,8 @@ const (
 	EventTypeEntityUpdated = "entityupdated"
 	// EventTypeEntityToggled is used to notify engines that entity is enabled/disabled.
 	EventTypeEntityToggled = "entitytoggled"
+
+	EventTypeUpdateCounters = "updatecounters"
 	// EventTypeAlarmSkipped is used to check alarm in service counters if alarm was skipped
 	// during service recompute.
 	EventTypeAlarmSkipped = "alarmskipped"

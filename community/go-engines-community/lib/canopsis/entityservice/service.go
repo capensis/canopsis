@@ -54,10 +54,6 @@ func NewService(
 	encoder encoding.Encoder,
 	adapter Adapter,
 	entityAdapter entity.Adapter,
-	countersCache CountersCache,
-	storage Storage,
-	lockClient libredis.LockClient,
-	redisClient redis.Cmdable,
 	logger zerolog.Logger,
 ) Service {
 	service := service{
@@ -67,10 +63,6 @@ func NewService(
 		encoder:         encoder,
 		adapter:         adapter,
 		entityAdapter:   entityAdapter,
-		countersCache:   countersCache,
-		storage:         storage,
-		lockClient:      lockClient,
-		redisClient:     redisClient,
 		logger:          logger,
 	}
 	return &service
@@ -271,7 +263,7 @@ func (s *service) RecomputeIdleSince(parentCtx context.Context) error {
 					}
 
 					if ent.Type == types.EntityTypeConnector {
-						s.markServices(ctx, &idleSinceMap, services, ent.ImpactedServices, ent.IdleSince.Unix())
+						s.markServices(ctx, &idleSinceMap, services, ent.ImpactedServicesFromDependencies, ent.IdleSince.Unix())
 					}
 				}
 			}

@@ -1,4 +1,4 @@
-Feature: Get alarms
+Feature: Get alarmsss
   I need to be able to get a alarms
 
   Scenario: given get search request should return assigned instructions for the alarm by pbehavior

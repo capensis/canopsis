@@ -155,7 +155,7 @@ Feature: get service entities with assigned instructions
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
+    When I wait the end of 3 events processing
     When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-1?with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
