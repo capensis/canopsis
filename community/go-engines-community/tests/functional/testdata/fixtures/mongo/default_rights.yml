@@ -369,6 +369,19 @@ default_rights:
       "@permission_to_edit_user_3":
         checksum: 7
 
+  role_to_get_user_1 (extend role):
+    _id: test-role-to-get-user-1
+    defaultview: test-view-to-edit-user
+    description: test-role-to-get-user-1-description
+    rights:
+      "@permission_api_instruction_approve":
+        checksum: 1
+
+  role_to_get_user_2 (extend role):
+    _id: test-role-to-get-user-2
+    defaultview: test-view-to-edit-user
+    description: test-role-to-get-user-2-description
+
   user_to_get_1 (extend user):
     _id: test-user-to-get-1
     authkey: 3ct2e1ff-5e9e-4b1f-9d80-d968d61g5202
@@ -377,7 +390,7 @@ default_rights:
     groupsNavigationType: side-bar
     lastname: test-user-to-get-1-lastname
     mail: test-user-to-get-1-email@canopsis.net
-    role: "@role_to_edit_user"
+    role: "@role_to_get_user_1"
     tours:
       test-tour-to-get-user-1: true
     ui_language: en
@@ -390,7 +403,7 @@ default_rights:
     groupsNavigationType: side-bar
     lastname: test-user-to-get-2-lastname
     mail: test-user-to-get-2-email@canopsis.net
-    role: "@role_to_edit_user"
+    role: "@role_to_get_user_2"
     ui_language: en
 
   user_to_check_unique_name (extend user):
