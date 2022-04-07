@@ -117,8 +117,9 @@ func (a *api) Update(c *gin.Context) {
 
 	if entity.Enabled || isToggled {
 		a.sendChangeMessage(entityservice.ChangeEntityMessage{
-			ID:        entity.ID,
-			IsToggled: isToggled,
+			ID:         entity.ID,
+			EntityType: entity.Type,
+			IsToggled:  isToggled,
 		})
 	}
 
