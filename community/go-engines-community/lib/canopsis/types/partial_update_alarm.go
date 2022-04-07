@@ -378,7 +378,15 @@ func ResolveSnoozeAfterPbhLeave(timestamp CpsTime, alarm *Alarm) {
 			step := steps[i]
 			switch step.Type {
 			case AlarmStepSnooze:
-				snoozeElapsed += lastEnterTime - step.Timestamp.Unix()
+				// this means, that snooze step is happened after pbh_enter step,
+				// it's possible to do with a scenario feature, so if it happens,
+				// then elapsed time = 0
+				if lastEnterTime == 0 {
+					snoozeElapsed = 0
+				} else {
+					snoozeElapsed += lastEnterTime - step.Timestamp.Unix()
+				}
+
 				snoozeDuration = int64(step.Value) - step.Timestamp.Unix()
 
 				break Loop

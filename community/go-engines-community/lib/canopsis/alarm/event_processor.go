@@ -14,6 +14,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	liboperation "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -37,6 +39,7 @@ type eventProcessor struct {
 	alarmStatusService  alarmstatus.Service
 	logger              zerolog.Logger
 	metricsSender       metrics.Sender
+	statisticsSender    statistics.EventStatisticsSender
 }
 
 func NewEventProcessor(
@@ -49,6 +52,7 @@ func NewEventProcessor(
 	alarmStatusService alarmstatus.Service,
 	redisLockClient redis.LockClient,
 	metricsSender metrics.Sender,
+	statisticsSender statistics.EventStatisticsSender,
 	logger zerolog.Logger,
 ) EventProcessor {
 	return &eventProcessor{
@@ -61,6 +65,7 @@ func NewEventProcessor(
 		alarmStatusService:  alarmStatusService,
 		redisLockClient:     redisLockClient,
 		metricsSender:       metricsSender,
+		statisticsSender:    statisticsSender,
 		logger:              logger,
 	}
 }
@@ -98,9 +103,14 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	switch event.EventType {
 	case types.EventTypeCheck:
 		changeType, err := s.storeAlarm(ctx, event)
+		if err == nil {
+			go s.sendEventStatistics(ctx, *event)
+		}
+
 		if changeType == types.AlarmChangeTypeStateIncrease || changeType == types.AlarmChangeTypeStateDecrease {
 			s.updateMetaChildrenState(ctx, event)
-		} else if event.Alarm != nil && event.Alarm.IsMetaChildren() &&
+		}
+		if event.Alarm != nil && event.Alarm.IsMetaChildren() &&
 			s.alarmConfigProvider.Get().EnableLastEventDate {
 			s.updateMetaLastEventDate(ctx, event)
 		}
@@ -192,6 +202,11 @@ func (s *eventProcessor) fillAlarmChange(ctx context.Context, event *types.Event
 		} else {
 			alarmChange.PreviousStateChange = event.Timestamp
 			alarmChange.PreviousStatusChange = event.Timestamp
+		}
+
+		if event.Entity != nil {
+			alarmChange.PreviousPbehaviorTypeID = event.Entity.PbehaviorInfo.TypeID
+			alarmChange.PreviousPbehaviorCannonicalType = event.Entity.PbehaviorInfo.CanonicalType
 		}
 	} else {
 		alarmChange.PreviousState = alarm.Value.State.Value
@@ -985,6 +1000,25 @@ func (s *eventProcessor) processPbhEventsForEntity(ctx context.Context, event *t
 	}
 
 	return nil
+}
+
+func (s *eventProcessor) sendEventStatistics(ctx context.Context, event types.Event) {
+	if event.Entity == nil {
+		return
+	}
+
+	if event.Entity.PbehaviorInfo.Is(pbehavior.TypeInactive) {
+		return
+	}
+
+	stats := statistics.EventStatistics{LastEvent: &event.Timestamp}
+	if event.State == types.AlarmStateOK {
+		stats.OK = 1
+	} else {
+		stats.KO = 1
+	}
+
+	s.statisticsSender.Send(ctx, event.GetEID(), stats)
 }
 
 func newAlarm(event types.Event, alarmConfig config.AlarmConfig) types.Alarm {
