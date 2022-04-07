@@ -21,7 +21,7 @@ export default {
     iconData() {
       let tooltip;
 
-      if (this.alarm.is_auto_instruction_running) {
+      if (this.alarm.is_manual_instruction_running) {
         tooltip = this.$t('alarmList.tooltips.hasManualInstructionInRunning');
       } else if (this.alarm.is_manual_instruction_waiting_result) {
         tooltip = this.$t('alarmList.tooltips.awaitingInstructionComplete');
