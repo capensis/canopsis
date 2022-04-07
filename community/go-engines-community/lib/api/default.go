@@ -24,6 +24,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
@@ -132,7 +133,7 @@ func Default(
 	// Create entity service event publisher.
 	entityPublChan := make(chan entityservice.ChangeEntityMessage, chanBuf)
 	entityServiceEventPublisher := entityservice.NewEventPublisher(
-		alarm.NewAdapter(dbClient), amqpChannel,
+		alarm.NewAdapter(dbClient), libentity.NewAdapter(dbClient), amqpChannel,
 		json.NewEncoder(), canopsis.JsonContentType,
 		canopsis.FIFOAckExchangeName, canopsis.FIFOQueueName, logger,
 	)
