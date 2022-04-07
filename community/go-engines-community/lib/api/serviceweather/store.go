@@ -308,6 +308,26 @@ func (s *store) getSort(sortBy, sort string) bson.M {
 
 func getFindPipeline() []bson.M {
 	pipeline := []bson.M{
+		{
+			"$lookup": bson.M{
+				"from": mongo.EntityServiceCountersMongoCollection,
+				"let":  bson.M{"id": "$_id"},
+				"pipeline": []bson.M{
+					{
+						"$match": bson.M{"$expr": bson.M{"$eq": bson.A{"$_id", "$$id"}}},
+					},
+					{
+						"$replaceWith": bson.M{
+							"watched_count":           "$active",
+							"watched_pbehavior_count": "$pbehavior",
+							"watched_not_acked_count": "$unacked",
+						},
+					},
+				},
+				"as": "alarms_cumulative_data",
+			},
+		},
+		{"$unwind": bson.M{"path": "$alarms_cumulative_data", "preserveNullAndEmptyArrays": true}},
 		// Find category
 		{"$lookup": bson.M{
 			"from":         mongo.EntityCategoryMongoCollection,

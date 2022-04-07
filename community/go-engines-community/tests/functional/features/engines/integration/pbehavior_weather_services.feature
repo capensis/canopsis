@@ -137,7 +137,7 @@ Feature: get service weather
     }
     """
     Then the response code should be 201
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
     When I do GET /api/v4/weather-services?filter={"name":"test-pbehavior-weather-service-2"}
     Then the response code should be 200
     Then the response body should contain:
@@ -1364,7 +1364,7 @@ Feature: get service weather
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of 3 events processing
+    When I wait the end of 4 events processing
     When I do GET /api/v4/weather-services?filter={"name":"test-pbehavior-weather-service-18"}
     Then the response code should be 200
     Then the response body should contain:
@@ -1414,7 +1414,7 @@ Feature: get service weather
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of 3 events processing
+    When I wait the end of 4 events processing
     When I do GET /api/v4/weather-services?filter={"name":"test-pbehavior-weather-service-18"}
     Then the response code should be 200
     Then the response body should contain:
@@ -1551,7 +1551,7 @@ Feature: get service weather
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
     When I do GET /api/v4/weather-services?filter={"name":"test-pbehavior-weather-service-19"}
     Then the response code should be 200
     Then the response body should contain:

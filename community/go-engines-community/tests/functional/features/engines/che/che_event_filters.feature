@@ -582,7 +582,7 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-5"
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-event-filters-5
     Then the response code should be 200
     Then the response body should contain:
@@ -1420,33 +1420,12 @@ Feature: modify event on event filter
     Then the response body should contain:
     """
     {
-      "data": [
-        {
-          "_id": "test-resource-che-event-filters-11/assets_customer_not_exist_2",
-          "category": null,
-          "component": "assets_customer_not_exist_2",
-          "depends": [
-            "test-connector-che-event-filters-11/test-connector-name-che-event-filters-11"
-          ],
-          "enabled": true,
-          "impact": [
-            "assets_customer_not_exist_2"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-resource-che-event-filters-11",
-          "type": "resource"
-        }
-      ],
+      "data": [],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 0
       }
     }
     """

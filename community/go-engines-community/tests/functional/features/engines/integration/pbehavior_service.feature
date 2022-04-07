@@ -163,13 +163,13 @@ Feature: no update service when entity is inactive
               {
                 "_t": "statedec",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 0; Acknowledged: 0; NotAcknowledged: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateInfo: 1; Pbehaviors: map[test-maintenance-type-to-engine:1];",
+                "m": "All: 1; Alarms: 0; Acknowledged: 0; NotAcknowledged: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateInfo: 0; Pbehaviors: map[test-maintenance-type-to-engine:1];",
                 "val": 0
               },
               {
                 "_t": "statusdec",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 0; Acknowledged: 0; NotAcknowledged: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateInfo: 1; Pbehaviors: map[test-maintenance-type-to-engine:1];",
+                "m": "All: 1; Alarms: 0; Acknowledged: 0; NotAcknowledged: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateInfo: 0; Pbehaviors: map[test-maintenance-type-to-engine:1];",
                 "val": 0
               }
             ]
@@ -270,13 +270,13 @@ Feature: no update service when entity is inactive
               {
                 "_t": "statedec",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 0; Acknowledged: 0; NotAcknowledged: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateInfo: 1; Pbehaviors: map[test-maintenance-type-to-engine:1];",
+                "m": "All: 1; Alarms: 0; Acknowledged: 0; NotAcknowledged: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateInfo: 0; Pbehaviors: map[test-maintenance-type-to-engine:1];",
                 "val": 0
               },
               {
                 "_t": "statusdec",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 0; Acknowledged: 0; NotAcknowledged: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateInfo: 1; Pbehaviors: map[test-maintenance-type-to-engine:1];",
+                "m": "All: 1; Alarms: 0; Acknowledged: 0; NotAcknowledged: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateInfo: 0; Pbehaviors: map[test-maintenance-type-to-engine:1];",
                 "val": 0
               },
               {
@@ -337,44 +337,42 @@ Feature: no update service when entity is inactive
     }
     """
     When I wait the end of 2 events processing
-    When I do POST /api/v4/pbehaviors:
+    When I do POST /api/v4/bulk/pbehaviors:
     """json
-    {
-      "enabled": true,
-      "name": "test-pbehavior-service-4-1",
-      "tstart": {{ now }},
-      "tstop": {{ nowAdd "2s" }},
-      "type": "test-inactive-type-to-engine",
-      "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
-          {
-            "name": "test-resource-pbehavior-service-4-1"
-          }
-        ]
+    [
+      {
+        "enabled": true,
+        "name": "test-pbehavior-service-4-1",
+        "tstart": {{ now }},
+        "tstop": {{ nowAdd "2s" }},
+        "type": "test-inactive-type-to-engine",
+        "reason": "test-reason-to-engine",
+        "filter":{
+          "$and":[
+            {
+              "name": "test-resource-pbehavior-service-4-1"
+            }
+          ]
+        }
+      },
+      {
+        "enabled": true,
+        "name": "test-pbehavior-service-4-2",
+        "tstart": {{ now }},
+        "tstop": {{ nowAdd "10m" }},
+        "type": "test-maintenance-type-to-engine",
+        "reason": "test-reason-to-engine",
+        "filter":{
+          "$and":[
+            {
+              "name": "test-resource-pbehavior-service-4-1"
+            }
+          ]
+        }
       }
-    }
+    ]
     """
-    Then the response code should be 201
-    When I do POST /api/v4/pbehaviors:
-    """json
-    {
-      "enabled": true,
-      "name": "test-pbehavior-service-4-2",
-      "tstart": {{ now }},
-      "tstop": {{ nowAdd "10m" }},
-      "type": "test-maintenance-type-to-engine",
-      "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
-          {
-            "name": "test-resource-pbehavior-service-4-1"
-          }
-        ]
-      }
-    }
-    """
-    Then the response code should be 201
+    Then the response code should be 207
     When I wait the end of 2 events processing
     When I wait 2s
     When I wait the end of 2 events processing
@@ -425,25 +423,25 @@ Feature: no update service when entity is inactive
               {
                 "_t": "statedec",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 0; Acknowledged: 0; NotAcknowledged: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateInfo: 1; Pbehaviors: map[test-inactive-type-to-engine:1];",
+                "m": "All: 1; Alarms: 0; Acknowledged: 0; NotAcknowledged: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateInfo: 0; Pbehaviors: map[test-inactive-type-to-engine:1];",
                 "val": 0
               },
               {
                 "_t": "statusdec",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 0; Acknowledged: 0; NotAcknowledged: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateInfo: 1; Pbehaviors: map[test-inactive-type-to-engine:1];",
+                "m": "All: 1; Alarms: 0; Acknowledged: 0; NotAcknowledged: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateInfo: 0; Pbehaviors: map[test-inactive-type-to-engine:1];",
                 "val": 0
               },
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 2; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateInfo: 1; Pbehaviors: map[test-inactive-type-to-engine:0 test-maintenance-type-to-engine:1];",
+                "m": "All: 2; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateInfo: 0; Pbehaviors: map[test-inactive-type-to-engine:0 test-maintenance-type-to-engine:1];",
                 "val": 2
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "All: 2; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateInfo: 1; Pbehaviors: map[test-inactive-type-to-engine:0 test-maintenance-type-to-engine:1];",
+                "m": "All: 2; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateInfo: 0; Pbehaviors: map[test-inactive-type-to-engine:0 test-maintenance-type-to-engine:1];",
                 "val": 1
               }
             ]

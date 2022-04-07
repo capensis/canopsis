@@ -15,6 +15,8 @@ import (
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"math"
+	"strings"
+	"text/template"
 	"time"
 )
 
@@ -27,6 +29,11 @@ type service struct {
 	logger                    zerolog.Logger
 	pubExchangeName           string
 	pubQueueName              string
+}
+
+type UpdatedServicesInfo struct {
+	State  int
+	Output string
 }
 
 func NewStateCountersService(
@@ -54,16 +61,16 @@ type ServiceCountersConf struct {
 	AlarmChange types.AlarmChange
 }
 
-func (s *service) UpdateServiceState(serviceID string, serviceState int) error {
+func (s *service) UpdateServiceState(serviceID string, serviceInfo UpdatedServicesInfo) error {
 	event := types.Event{
 		EventType:     types.EventTypeCheck,
 		SourceType:    types.SourceTypeService,
 		Component:     serviceID,
 		Connector:     types.ConnectorEngineService,
 		ConnectorName: types.ConnectorEngineService,
-		State:         types.CpsNumber(serviceState),
-		//Output:        output,
-		Timestamp: types.CpsTime{Time: time.Now()},
+		State:         types.CpsNumber(serviceInfo.State),
+		Output:        serviceInfo.Output,
+		Timestamp:     types.CpsTime{Time: time.Now()},
 	}
 
 	body, err := s.encoder.Encode(event)
@@ -88,12 +95,12 @@ func (s *service) UpdateServiceState(serviceID string, serviceState int) error {
 	return nil
 }
 
-func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity, alarm *types.Alarm, alarmChange types.AlarmChange) (map[string]int, error) {
+func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity, alarm *types.Alarm, alarmChange types.AlarmChange) (map[string]UpdatedServicesInfo, error) {
 	switch alarmChange.Type {
 	case types.AlarmChangeTypeCreate, types.AlarmChangeTypeCreateAndPbhEnter,
 		types.AlarmChangeTypePbhEnter, types.AlarmChangeTypePbhLeave, types.AlarmChangeTypePbhLeaveAndEnter,
 		types.AlarmChangeTypeChangeState, types.AlarmChangeTypeStateDecrease, types.AlarmChangeTypeStateIncrease,
-		types.AlarmChangeTypeResolve, types.AlarmChangeTypeAck, types.AlarmChangeTypeAckremove:
+		types.AlarmChangeTypeResolve, types.AlarmChangeTypeAck, types.AlarmChangeTypeAckremove, types.AlarmChangeTypeNone:
 	default:
 		return nil, nil
 	}
@@ -107,7 +114,7 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 	}
 	changeType := alarmChange.Type
 
-	updatedServiceStates := make(map[string]int)
+	updatedServiceInfos := make(map[string]UpdatedServicesInfo)
 	updateCountersModels := make(
 		[]mongodriver.WriteModel,
 		0,
@@ -132,10 +139,10 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 
 	inSlice := append(entity.ImpactedServices, entity.ImpactedServicesToRemove...)
 	if len(inSlice) == 0 {
-		return updatedServiceStates, nil
+		return updatedServiceInfos, nil
 	}
 
-	cursor, err = s.serviceCountersCollection.Find(ctx, bson.M{"_id": bson.M{"$in": inSlice}})
+	cursor, err = s.serviceCountersCollection.Find(context.Background(), bson.M{"_id": bson.M{"$in": inSlice}})
 	if err != nil {
 		return nil, err
 	}
@@ -154,9 +161,31 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 			counters.PbehaviorCounters = make(map[string]int64)
 		}
 
-		prevWorst := counters.GetWorstState()
-
 		switch changeType {
+		case types.AlarmChangeTypeNone:
+			if serviceToRemove[counters.ID] {
+				if alarm != nil {
+					counters.All--
+					if alarm.IsInActivePeriod() {
+						counters.DecrementAlarmCounters(curState, acked)
+					} else {
+						counters.PbehaviorCounters[alarm.Value.PbehaviorInfo.TypeID]--
+					}
+				} else if !entity.PbehaviorInfo.IsActive() {
+					counters.PbehaviorCounters[entity.PbehaviorInfo.TypeID]--
+				}
+			} else if serviceToAdd[counters.ID] {
+				if alarm != nil {
+					counters.All++
+					if alarm.IsInActivePeriod() {
+						counters.IncrementAlarmCounters(curState, acked)
+					} else {
+						counters.PbehaviorCounters[alarm.Value.PbehaviorInfo.TypeID]++
+					}
+				} else if !entity.PbehaviorInfo.IsActive() {
+					counters.PbehaviorCounters[entity.PbehaviorInfo.TypeID]++
+				}
+			}
 		case types.AlarmChangeTypeCreate, types.AlarmChangeTypeCreateAndPbhEnter:
 			if serviceToRemove[counters.ID] {
 				continue
@@ -293,9 +322,7 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 				counters.All--
 				if alarm.IsInActivePeriod() {
 					counters.DecrementAlarmCounters(curState, acked)
-				}
-
-				if !entity.Enabled {
+				} else if serviceToRemove[counters.ID] {
 					counters.PbehaviorCounters[entity.PbehaviorInfo.TypeID]--
 				}
 			}
@@ -339,10 +366,14 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 			}
 		}
 
-		curWorst := counters.GetWorstState()
+		output, err := s.getServiceOutput(counters)
+		if err != nil {
+			return nil, err
+		}
 
-		if prevWorst != curWorst {
-			updatedServiceStates[counters.ID] = curWorst
+		updatedServiceInfos[counters.ID] = UpdatedServicesInfo{
+			State:  counters.GetWorstState(),
+			Output: output,
 		}
 
 		updateCountersModels = append(updateCountersModels,
@@ -379,12 +410,39 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 		}
 	}
 
-	return updatedServiceStates, nil
+	return updatedServiceInfos, nil
 }
 
-func (s *service) RecomputeEntityServiceCounters(ctx context.Context, event types.Event) error {
+func (s *service) RecomputeEntityServiceCounters(ctx context.Context, event types.Event) (map[string]UpdatedServicesInfo, error) {
 	if event.Entity == nil {
-		return nil
+		return nil, nil
+	}
+
+	updatedServiceStates := make(map[string]UpdatedServicesInfo)
+	var counters EntityServiceCounters
+	err := s.serviceCountersCollection.FindOne(ctx, bson.M{"_id": event.Entity.ID}).Decode(&counters)
+	if err != nil && err != mongodriver.ErrNoDocuments {
+		return nil, err
+	}
+
+	counters = EntityServiceCounters{
+		ID:             event.Entity.ID,
+		OutputTemplate: counters.OutputTemplate,
+	}
+
+	if len(event.Entity.Depends) == 0 {
+		output, err := s.getServiceOutput(counters)
+		if err != nil {
+			return nil, err
+		}
+
+		updatedServiceStates[event.Entity.ID] = UpdatedServicesInfo{
+			State:  counters.GetWorstState(),
+			Output: output,
+		}
+
+		_, err = s.serviceCountersCollection.UpdateOne(ctx, bson.M{"_id": event.GetEID()}, bson.M{"$set": counters}, options.Update().SetUpsert(true))
+		return updatedServiceStates, err
 	}
 
 	cursor, err := s.entityCollection.Aggregate(ctx, []bson.M{
@@ -411,68 +469,69 @@ func (s *service) RecomputeEntityServiceCounters(ctx context.Context, event type
 				"preserveNullAndEmptyArrays": true,
 			},
 		},
+		{
+			"$match": bson.M{"alarm.v.resolved": nil},
+		},
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	defer cursor.Close(ctx)
-
-	state := EntityServiceCounters{ID: event.GetEID()}
 
 	for cursor.Next(ctx) {
 		var depEnt types.AlarmWithEntity
 		err := cursor.Decode(&depEnt)
 		if err != nil {
-			return err
+			return nil, err
 		}
 
-		switch int(depEnt.Alarm.CurrentState()) {
-		case types.AlarmStateOK:
-			state.State.Info++
-		case types.AlarmStateMinor:
-			state.State.Minor++
-		case types.AlarmStateMajor:
-			state.State.Major++
-		case types.AlarmStateCritical:
-			state.State.Critical++
+		if depEnt.Alarm.ID != "" {
+			counters.All++
+			if depEnt.Alarm.IsInActivePeriod() {
+				counters.IncrementAlarmCounters(int(depEnt.Alarm.CurrentState()), depEnt.Alarm.IsAck())
+			} else {
+				counters.PbehaviorCounters[depEnt.Alarm.Value.PbehaviorInfo.TypeID]++
+			}
+		} else {
+			if !depEnt.Entity.PbehaviorInfo.IsActive() {
+				counters.PbehaviorCounters[depEnt.Entity.PbehaviorInfo.TypeID]++
+			}
 		}
 	}
 
-	_, err = s.serviceCountersCollection.UpdateOne(ctx, bson.M{"_id": event.GetEID()}, bson.M{"$set": state}, options.Update().SetUpsert(true))
+	_, err = s.serviceCountersCollection.UpdateOne(ctx, bson.M{"_id": event.GetEID()}, bson.M{"$set": counters}, options.Update().SetUpsert(true))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	go func(servID string, state int) {
-		body, err := s.encoder.Encode(types.Event{
-			EventType:     types.EventTypeCheck,
-			SourceType:    types.SourceTypeService,
-			Component:     servID,
-			Connector:     types.ConnectorEngineService,
-			ConnectorName: types.ConnectorEngineService,
-			State:         types.CpsNumber(state),
-			//Output:        output,
-			Timestamp: types.CpsTime{Time: time.Now()},
-		})
-		if err != nil {
-			s.logger.Err(err).Msg("unable to serialize service event")
-		}
+	output, err := s.getServiceOutput(counters)
+	if err != nil {
+		return nil, err
+	}
 
-		err = s.pubChannel.Publish(
-			s.pubExchangeName,
-			s.pubQueueName,
-			false,
-			false,
-			libamqp.Publishing{
-				Body:        body,
-				ContentType: "application/json",
-			},
-		)
-		if err != nil {
-			s.logger.Err(err).Msg("unable to send service event")
-		}
-	}(event.GetEID(), state.GetWorstState())
+	updatedServiceStates[event.Entity.ID] = UpdatedServicesInfo{
+		State:  counters.GetWorstState(),
+		Output: output,
+	}
 
-	return nil
+	return updatedServiceStates, nil
+}
+
+func (s *service) getServiceOutput(counters EntityServiceCounters) (string, error) {
+	tpl, err := template.New("template").Parse(counters.OutputTemplate)
+	if err != nil {
+		return "", fmt.Errorf(
+			"unable to parse output template for service %s: %w", counters.OutputTemplate, err)
+	}
+
+	b := strings.Builder{}
+	err = tpl.Execute(&b, counters)
+	if err != nil {
+		return "", fmt.Errorf(
+			"unable to execute output template for service %s: %w",
+			counters.OutputTemplate, err)
+	}
+
+	return b.String(), nil
 }

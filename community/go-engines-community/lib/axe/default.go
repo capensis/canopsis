@@ -12,6 +12,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm"
@@ -37,6 +38,7 @@ type Options struct {
 	ModeDebug                bool
 	PublishToQueue           string
 	PostProcessorsDirectory  string
+	FifoAckExchange          string
 	IgnoreDefaultTomlConfig  bool
 	PeriodicalWaitTime       time.Duration
 	WithRemediation          bool
@@ -52,6 +54,7 @@ func ParseOptions() Options {
 	flag.StringVar(&opts.PostProcessorsDirectory, "postProcessorsDirectory", ".", "The path of the directory containing the post-processing plugins.")
 	flag.BoolVar(&opts.IgnoreDefaultTomlConfig, "ignoreDefaultTomlConfig", false, "load toml file values into database. - deprecated")
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
+	flag.StringVar(&opts.FifoAckExchange, "fifoAckExchange", canopsis.FIFOAckExchangeName, "Publish FIFO Ack event to this exchange.")
 	flag.BoolVar(&opts.WithRemediation, "withRemediation", false, "Start remediation instructions")
 	flag.Parse()
 
@@ -89,6 +92,16 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		canopsis.CheExchangeName,
 		canopsis.FIFOQueueName,
 		json.NewEncoder(),
+		logger,
+	)
+
+	entityServicesService := entityservice.NewService(
+		amqpChannel,
+		canopsis.CheExchangeName,
+		canopsis.FIFOQueueName,
+		json.NewEncoder(),
+		entityservice.NewAdapter(dbClient),
+		entity.NewAdapter(dbClient),
 		logger,
 	)
 
@@ -183,7 +196,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		false,
 		"",
 		options.PublishToQueue,
-		canopsis.FIFOAckExchangeName,
+		options.FifoAckExchange,
 		canopsis.FIFOAckQueueName,
 		amqpConnection,
 		&messageProcessor{
@@ -284,6 +297,16 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 			LimitConfigAdapter:        datastorage.NewAdapter(dbClient),
 			AlarmAdapter:              alarm.NewAdapter(dbClient),
 			Logger:                    logger,
+		},
+		logger,
+	))
+	engineAxe.AddPeriodicalWorker("idle since", libengine.NewLockedPeriodicalWorker(
+		redis.NewLockClient(lockRedisClient),
+		redis.ServiceIdleSincePeriodicalLockKey,
+		&idleSincePeriodicalWorker{
+			EntityServiceService: entityServicesService,
+			PeriodicalInterval:   options.PeriodicalWaitTime,
+			Logger:               logger,
 		},
 		logger,
 	))
