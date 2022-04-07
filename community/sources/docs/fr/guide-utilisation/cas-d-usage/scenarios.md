@@ -9,7 +9,7 @@ Rendez vous dans l'interface de gestion des *scenarios* et créez en un nouveau.
 
 ![Nouveau scenario](./img/scn_snooze_new_scn.png)
 
-Configurez le comme ci-dessous. avec comme alarm pattern : 
+Configurez le comme ci-dessous avec comme alarm pattern :
 ```json
 {
     "v": {
