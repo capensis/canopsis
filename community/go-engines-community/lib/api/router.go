@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"net/url"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
@@ -58,6 +59,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -118,6 +120,7 @@ func RegisterRoutes(
 	router gin.IRouter,
 	security Security,
 	enforcer libsecurity.Enforcer,
+	legacyUrl string,
 	dbClient mongo.DbClient,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	pbhEntityTypeResolver libpbehavior.EntityTypeResolver,
@@ -251,7 +254,7 @@ func RegisterRoutes(
 			)
 		}
 
-		alarmStore := alarm.NewStore(dbClient, GetLegacyURL())
+		alarmStore := alarm.NewStore(dbClient, legacyUrl)
 		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, timezoneConfigProvider)
 		alarmRouter := protected.Group("/alarms")
 		{
@@ -288,7 +291,7 @@ func RegisterRoutes(
 			)
 		}
 
-		entityAPI := entity.NewApi(entity.NewStore(dbClient), exportExecutor, entityCleanerTaskChan, logger)
+		entityAPI := entity.NewApi(entity.NewStore(dbClient, timezoneConfigProvider), exportExecutor, entityCleanerTaskChan, logger)
 		entityExportRouter := protected.Group("/entity-export")
 		{
 			entityExportRouter.POST(
@@ -422,7 +425,7 @@ func RegisterRoutes(
 		}
 		entityRouter := protected.Group("/entities")
 		{
-			entityAPI := entity.NewApi(entity.NewStore(dbClient), exportExecutor, entityCleanerTaskChan, logger)
+			entityAPI := entity.NewApi(entity.NewStore(dbClient, timezoneConfigProvider), exportExecutor, entityCleanerTaskChan, logger)
 			entityRouter.GET(
 				"",
 				middleware.Authorize(authObjEntity, permRead, enforcer),
@@ -586,11 +589,9 @@ func RegisterRoutes(
 
 		weatherRouter := protected.Group("/weather-services")
 		{
-			statsStore := serviceweather.NewStatsStore(dbClient)
 			weatherAPI := serviceweather.NewApi(serviceweather.NewStore(
 				dbClient,
-				GetLegacyURL(),
-				statsStore,
+				legacyUrl,
 				alarmStore,
 				timezoneConfigProvider,
 			))
@@ -1266,4 +1267,19 @@ func RegisterRoutes(
 			)
 		}
 	}
+}
+
+func GetProxy(
+	legacyUrl *url.URL,
+	security Security,
+	enforcer libsecurity.Enforcer,
+	accessConfig proxy.AccessConfig,
+) []gin.HandlerFunc {
+	authMiddleware := security.GetAuthMiddleware()
+
+	return append(
+		authMiddleware,
+		middleware.ProxyAuthorize(enforcer, accessConfig),
+		ReverseProxyHandler(legacyUrl),
+	)
 }
