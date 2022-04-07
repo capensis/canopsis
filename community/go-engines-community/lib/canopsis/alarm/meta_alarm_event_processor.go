@@ -396,10 +396,11 @@ func (p *metaAlarmEventProcessor) processChild(ctx context.Context, event types.
 		}
 	}
 
-	// todo maybe only on check events ?
-	err := p.adapter.UpdateLastEventDate(ctx, event.Alarm.Value.Parents, event.Timestamp)
-	if err != nil {
-		return fmt.Errorf("cannot update parent alarms: %w", err)
+	if event.EventType == types.EventTypeCheck && p.alarmConfigProvider.Get().EnableLastEventDate {
+		err := p.adapter.UpdateLastEventDate(ctx, event.Alarm.Value.Parents, event.Timestamp)
+		if err != nil {
+			return fmt.Errorf("cannot update parent alarms: %w", err)
+		}
 	}
 
 	return nil
