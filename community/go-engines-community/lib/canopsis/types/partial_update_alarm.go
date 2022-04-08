@@ -146,6 +146,7 @@ func (a *Alarm) PartialUpdatePbhLeave(timestamp CpsTime, author, output, userID,
 		for i := len(a.Value.Steps) - 2; i >= 0; i-- {
 			if a.Value.Steps[i].Type == AlarmStepPbhEnter {
 				enterTimestamp = a.Value.Steps[i].Timestamp
+				break
 			}
 		}
 
@@ -199,6 +200,7 @@ func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo P
 		for i := len(a.Value.Steps) - 3; i >= 0; i-- {
 			if a.Value.Steps[i].Type == AlarmStepPbhEnter {
 				enterTimestamp = a.Value.Steps[i].Timestamp
+				break
 			}
 		}
 
