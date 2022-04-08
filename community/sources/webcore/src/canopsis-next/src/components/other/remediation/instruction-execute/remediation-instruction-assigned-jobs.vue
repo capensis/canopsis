@@ -14,7 +14,8 @@
           remediation-instruction-assigned-job(
             :job="props.item",
             :key="props.item.job_id",
-            @execute-job="$listeners['execute-job']"
+            @execute-job="$listeners['execute-job']",
+            @cancel-job-execution="$listeners['cancel-job-execution']"
           )
 </template>
 

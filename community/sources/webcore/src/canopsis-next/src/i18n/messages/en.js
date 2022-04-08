@@ -469,6 +469,7 @@ export default {
     tooltips: {
       priority: 'The priority parameter is derived from the alarm severity multiplied by impact level of the entity on which the alarm is raised',
       hasInstruction: 'There is an instruction for this type of incidents',
+      hasManualInstructionInRunning: 'Manual instruction in progress',
       hasAutoInstructionInRunning: 'Automatic instruction in progress',
       allAutoInstructionExecuted: 'All automatic instructions has been executed',
       awaitingInstructionComplete: 'Awaiting for the instruction to complete',
@@ -1459,6 +1460,7 @@ export default {
         configuration: 'Configuration',
         jobId: 'Job ID',
         query: 'Query',
+        multipleExecutions: 'Allow parallel execution',
       },
       errors: {
         invalidJSON: 'Invalid JSON',
@@ -2213,6 +2215,7 @@ export default {
     failedAt: 'Failed at {time}',
     startedAt: 'Started at {time}',
     closeConfirmationText: 'Would you like to resume this instruction later?',
+    queueNumber: '{number} {name} jobs are in the queue',
     popups: {
       success: '{instructionName} has been successfully completed',
       failed: '{instructionName} has been failed. Please escalate this problem further',
