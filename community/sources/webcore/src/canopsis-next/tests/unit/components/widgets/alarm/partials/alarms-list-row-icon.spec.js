@@ -73,4 +73,17 @@ describe('alarms-list-row-icon', () => {
     expect(wrapper.element).toMatchSnapshot();
     expect(wrapper).toMatchTooltipSnapshot();
   });
+
+  it('Renders `alarms-list-row-icon` with manual instruction running', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        alarm: {
+          is_manual_instruction_running: true,
+        },
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchTooltipSnapshot();
+  });
 });
