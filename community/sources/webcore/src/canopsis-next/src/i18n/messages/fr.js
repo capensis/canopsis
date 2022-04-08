@@ -469,6 +469,7 @@ export default {
     tooltips: {
       priority: 'Le paramètre de priorité est dérivé de la gravité de l\'alarme multipliée par le niveau d\'impact de l\'entité sur laquelle l\'alarme est déclenchée',
       hasInstruction: 'Au moins une consigne de remédiation est attachée à cette alarme',
+      hasManualInstructionInRunning: 'Consigne manuelle en cours',
       hasAutoInstructionInRunning: 'Consigne automatique en cours',
       allAutoInstructionExecuted: 'Toutes les consignes automatiques ont été exécutées',
       awaitingInstructionComplete: 'En attente de la fin de la consigne pour terminer',
@@ -1459,6 +1460,7 @@ export default {
         configuration: 'Configuration',
         jobId: 'Identifiant de la tâche',
         query: 'Requête',
+        multipleExecutions: 'Autoriser l\'exécution parallèle',
       },
       errors: {
         invalidJSON: 'JSON non valide',
@@ -2213,6 +2215,7 @@ export default {
     failedAt: 'Échec à {time}',
     startedAt: 'Commencé à {time}\n(Date de lancement Canopsis)',
     closeConfirmationText: 'Souhaitez-vous reprendre cette consigne plus tard ?',
+    queueNumber: '{number} {name} travaux sont dans la file d\'attente',
     popups: {
       success: '{instructionName} a été exécutée avec succès',
       failed: '{instructionName} a échoué. Veuillez faire remonter ce problème',
