@@ -9160,6 +9160,9 @@ var doc = `{
                 "is_auto_instruction_running": {
                     "type": "boolean"
                 },
+                "is_manual_instruction_running": {
+                    "type": "boolean"
+                },
                 "is_manual_instruction_waiting_result": {
                     "type": "boolean"
                 },
@@ -13054,7 +13057,6 @@ var doc = `{
                 "author",
                 "enabled",
                 "name",
-                "priority",
                 "triggers"
             ],
             "properties": {
@@ -13150,7 +13152,6 @@ var doc = `{
                 "author",
                 "enabled",
                 "name",
-                "priority",
                 "triggers"
             ],
             "properties": {
@@ -13200,7 +13201,6 @@ var doc = `{
                 "author",
                 "enabled",
                 "name",
-                "priority",
                 "triggers"
             ],
             "properties": {
@@ -13371,6 +13371,9 @@ var doc = `{
                     "type": "boolean"
                 },
                 "is_grey": {
+                    "type": "boolean"
+                },
+                "is_manual_instruction_running": {
                     "type": "boolean"
                 },
                 "is_manual_instruction_waiting_result": {
