@@ -96,6 +96,7 @@
     "jest-environment-jsdom": "^26.6.2",
     "jest-image-snapshot": "^4.5.1",
     "jest-localstorage-mock": "^2.2.0",
+    "jest-snapshot": "^27.5.1",
     "lint-staged": "^6.0.0",
     "mutation-observer": "^1.0.3",
     "nightwatch": "1.3.5",
