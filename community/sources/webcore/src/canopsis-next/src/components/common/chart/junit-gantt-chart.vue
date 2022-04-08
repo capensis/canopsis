@@ -144,10 +144,18 @@ export default {
         scales: {
           y: {
             stacked: true,
+            ticks: {
+              font: {
+                family: 'Arial, sans-serif',
+              },
+            },
           },
           x: {
             position: 'top',
             ticks: {
+              font: {
+                family: 'Arial, sans-serif',
+              },
               callback: value => `${value}s`,
             },
             suggestedMin: 0,
