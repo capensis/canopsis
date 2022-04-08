@@ -1,0 +1,214 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-column-cell Renders \`alarm-column-cell\` with column extra details 1`] = `
+<alarm-column-value-extra-details-stub
+  alarm="[object Object]"
+/>
+`;
+
+exports[`alarm-column-cell Renders \`alarm-column-cell\` with column impact state 1`] = `
+<color-indicator-wrapper-stub
+  alarm="[object Object]"
+  entity="[object Object]"
+  type="impact_state"
+/>
+`;
+
+exports[`alarm-column-cell Renders \`alarm-column-cell\` with column links 1`] = `
+<alarm-column-value-categories-stub
+  links="[object Object]"
+/>
+`;
+
+exports[`alarm-column-cell Renders \`alarm-column-cell\` with column links as list 1`] = `
+<alarm-column-value-categories-stub
+  links="[object Object]"
+/>
+`;
+
+exports[`alarm-column-cell Renders \`alarm-column-cell\` with column links category 1`] = `
+<alarm-column-value-links-stub
+  links=""
+/>
+`;
+
+exports[`alarm-column-cell Renders \`alarm-column-cell\` with column priority 1`] = `
+<color-indicator-wrapper-stub
+  alarm="[object Object]"
+  entity="[object Object]"
+  type="impact_state"
+/>
+`;
+
+exports[`alarm-column-cell Renders \`alarm-column-cell\` with column state 1`] = `
+<alarm-column-value-state-stub
+  alarm="[object Object]"
+  propertykey="v.state.val"
+/>
+`;
+
+exports[`alarm-column-cell Renders \`alarm-column-cell\` with column status 1`] = `
+<alarm-column-value-status-stub
+  alarm="[object Object]"
+/>
+`;
+
+exports[`alarm-column-cell Renders \`alarm-column-cell\` with invalid html 1`] = `<div />`;
+
+exports[`alarm-column-cell Renders \`alarm-column-cell\` with popups 1`] = `
+<div
+  class="v-menu v-menu--inline"
+>
+  <div
+    class="v-menu__activator v-menu__activator--active"
+  >
+    <div>
+      <div
+        class="layout align-center"
+      >
+        <c-ellipsis-stub
+          text="Name"
+        />
+        <button
+          class="ma-0 v-btn v-btn--icon v-btn--small theme--light"
+          data-test="alarmInfoPopupOpenButton"
+          type="button"
+        >
+          <div
+            class="v-btn__content"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              info
+            </i>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+  <transition-stub
+    name="v-menu-transition"
+  />
+</div>
+`;
+
+exports[`alarm-column-cell Renders \`alarm-column-cell\` with popups 2`] = `
+<div
+  class="v-menu__content theme--light menuable__content__active "
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8; display: none; z-index: 8;"
+>
+  <alarm-column-cell-popup-body-stub
+    alarm="[object Object]"
+    template="template"
+  />
+</div>
+`;
+
+exports[`alarm-column-cell Renders \`alarm-column-cell\` with popups after hide 1`] = `
+<div
+  class="v-menu v-menu--inline"
+>
+  <div
+    class="v-menu__activator"
+  >
+    <div>
+      <div
+        class="layout align-center"
+      >
+        <c-ellipsis-stub
+          text="Name"
+        />
+        <button
+          class="ma-0 v-btn v-btn--icon v-btn--small theme--light"
+          data-test="alarmInfoPopupOpenButton"
+          type="button"
+        >
+          <div
+            class="v-btn__content"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              info
+            </i>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+  <transition-stub
+    name="v-menu-transition"
+  />
+</div>
+`;
+
+exports[`alarm-column-cell Renders \`alarm-column-cell\` with popups after hide 2`] = `
+<div
+  class="v-menu__content theme--light "
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8; display: none; z-index: 8;"
+>
+  <alarm-column-cell-popup-body-stub
+    alarm="[object Object]"
+    template="template"
+  />
+</div>
+`;
+
+exports[`alarm-column-cell Renders \`alarm-column-cell\` with popups and html 1`] = `
+<div
+  class="v-menu v-menu--inline"
+>
+  <div
+    class="v-menu__activator v-menu__activator--active"
+  >
+    <div>
+      <div
+        class="layout align-center"
+      >
+        <div>
+          <div>
+            Name
+          </div>
+        </div>
+        <button
+          class="ma-0 v-btn v-btn--icon v-btn--small theme--light"
+          data-test="alarmInfoPopupOpenButton"
+          type="button"
+        >
+          <div
+            class="v-btn__content"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+              style="font-size: 16px;"
+            >
+              info
+            </i>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+  <transition-stub
+    name="v-menu-transition"
+  />
+</div>
+`;
+
+exports[`alarm-column-cell Renders \`alarm-column-cell\` with popups and html 2`] = `
+<div
+  class="v-menu__content theme--light menuable__content__active "
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8; display: none; z-index: 8;"
+>
+  <alarm-column-cell-popup-body-stub
+    alarm="[object Object]"
+    template="template"
+  />
+</div>
+`;

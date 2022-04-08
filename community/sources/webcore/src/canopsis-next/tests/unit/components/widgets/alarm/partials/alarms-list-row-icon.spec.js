@@ -35,19 +35,6 @@ describe('alarms-list-row-icon', () => {
     expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `alarms-list-row-icon` with auto instruction failed', () => {
-    const wrapper = snapshotFactory({
-      propsData: {
-        alarm: {
-          is_auto_instruction_failed: true,
-        },
-      },
-    });
-
-    expect(wrapper.element).toMatchSnapshot();
-    expect(wrapper).toMatchTooltipSnapshot();
-  });
-
   it('Renders `alarms-list-row-icon` with auto instruction running', () => {
     const wrapper = snapshotFactory({
       propsData: {
