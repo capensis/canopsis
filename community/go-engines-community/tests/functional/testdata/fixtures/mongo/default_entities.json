@@ -471,6 +471,34 @@
     "impact_level": 1
   },
   {
+    "_id": "test-instruction-execution-start-resource-3-1/test-instruction-execution-start-component",
+    "depends": [],
+    "enable_history": [1597030220],
+    "enabled": true,
+    "impact": [],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-instruction-execution-start-resource-3-1",
+    "type": "resource",
+    "component": "test-instruction-execution-start-component",
+    "impact_level": 1
+  },
+  {
+    "_id": "test-instruction-execution-start-resource-3-2/test-instruction-execution-start-component",
+    "depends": [],
+    "enable_history": [1597030220],
+    "enabled": true,
+    "impact": [],
+    "infos": {
+    },
+    "measurements": null,
+    "name": "test-instruction-execution-start-resource-3-2",
+    "type": "resource",
+    "component": "test-instruction-execution-start-component",
+    "impact_level": 1
+  },
+  {
     "_id": "test-instruction-execution-next-resource-1/test-instruction-execution-next-component",
     "depends": [],
     "enable_history": [1597030220],
