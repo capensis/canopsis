@@ -1,0 +1,507 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`actions-panel Renders \`actions-panel\` with auto instruction in running 1`] = `
+<div
+  class="shared-actions-panel"
+>
+  <button
+    class="action-declareTicket"
+  >
+    alarmList.actions.titles.declareTicket|report_problem|declareTicket
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    alarmList.actions.titles.associateTicket|local_play|associateTicket
+  </button>
+  <button
+    class="action-cancel"
+  >
+    alarmList.actions.titles.cancel|delete|cancel
+  </button>
+   
+  <button
+    class="drop-down-action-ackRemove"
+  >
+    alarmList.actions.titles.ackRemove|not_interested|ackRemove
+  </button>
+  <button
+    class="drop-down-action-changeState"
+  >
+    alarmList.actions.titles.changeState|thumbs_up_down|changeState
+  </button>
+  <button
+    class="drop-down-action-ack"
+  >
+    alarmList.actions.titles.ack|playlist_add_check|ack
+  </button>
+  <button
+    class="drop-down-action-snooze"
+  >
+    alarmList.actions.titles.snooze|alarm|snooze
+  </button>
+  <button
+    class="drop-down-action-pbehaviorAdd"
+  >
+    alarmList.actions.titles.pbehavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="drop-down-action-pbehaviorList"
+  >
+    alarmList.actions.titles.pbehaviorList|list|pbehaviorList
+  </button>
+  <button
+    class="drop-down-action-comment"
+  >
+    alarmList.actions.titles.comment|comment|comment
+  </button>
+  <button
+    class="drop-down-action-history"
+  >
+    alarmList.actions.titles.history|history|history
+  </button>
+  <button
+    class="drop-down-action-variablesHelp"
+  >
+    alarmList.actions.titles.variablesHelp|help|variablesHelp
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    alarmList.actions.titles.resumeInstruction:{"instructionName":"Running instruction"}|assignment|executeInstruction
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    alarmList.actions.titles.executeInstruction:{"instructionName":"New instruction"}|assignment|executeInstruction
+  </button>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with full unresolved alarm, but without access 1`] = `
+<div
+  class="shared-actions-panel"
+>
+
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with manual instruction in running 1`] = `
+<div
+  class="shared-actions-panel"
+>
+  <button
+    class="action-declareTicket"
+  >
+    alarmList.actions.titles.declareTicket|report_problem|declareTicket
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    alarmList.actions.titles.associateTicket|local_play|associateTicket
+  </button>
+  <button
+    class="action-cancel"
+  >
+    alarmList.actions.titles.cancel|delete|cancel
+  </button>
+   
+  <button
+    class="drop-down-action-ackRemove"
+  >
+    alarmList.actions.titles.ackRemove|not_interested|ackRemove
+  </button>
+  <button
+    class="drop-down-action-changeState"
+  >
+    alarmList.actions.titles.changeState|thumbs_up_down|changeState
+  </button>
+  <button
+    class="drop-down-action-ack"
+  >
+    alarmList.actions.titles.ack|playlist_add_check|ack
+  </button>
+  <button
+    class="drop-down-action-snooze"
+  >
+    alarmList.actions.titles.snooze|alarm|snooze
+  </button>
+  <button
+    class="drop-down-action-pbehaviorAdd"
+  >
+    alarmList.actions.titles.pbehavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="drop-down-action-pbehaviorList"
+  >
+    alarmList.actions.titles.pbehaviorList|list|pbehaviorList
+  </button>
+  <button
+    class="drop-down-action-comment"
+  >
+    alarmList.actions.titles.comment|comment|comment
+  </button>
+  <button
+    class="drop-down-action-history"
+  >
+    alarmList.actions.titles.history|history|history
+  </button>
+  <button
+    class="drop-down-action-variablesHelp"
+  >
+    alarmList.actions.titles.variablesHelp|help|variablesHelp
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    alarmList.actions.titles.resumeInstruction:{"instructionName":"Running instruction"}|assignment|executeInstruction
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    alarmList.actions.titles.executeInstruction:{"instructionName":"New instruction"}|assignment|executeInstruction
+  </button>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with manual instruction in waiting result 1`] = `
+<div
+  class="shared-actions-panel"
+>
+  <button
+    class="action-declareTicket"
+  >
+    alarmList.actions.titles.declareTicket|report_problem|declareTicket
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    alarmList.actions.titles.associateTicket|local_play|associateTicket
+  </button>
+  <button
+    class="action-cancel"
+  >
+    alarmList.actions.titles.cancel|delete|cancel
+  </button>
+   
+  <button
+    class="drop-down-action-ackRemove"
+  >
+    alarmList.actions.titles.ackRemove|not_interested|ackRemove
+  </button>
+  <button
+    class="drop-down-action-changeState"
+  >
+    alarmList.actions.titles.changeState|thumbs_up_down|changeState
+  </button>
+  <button
+    class="drop-down-action-ack"
+  >
+    alarmList.actions.titles.ack|playlist_add_check|ack
+  </button>
+  <button
+    class="drop-down-action-snooze"
+  >
+    alarmList.actions.titles.snooze|alarm|snooze
+  </button>
+  <button
+    class="drop-down-action-pbehaviorAdd"
+  >
+    alarmList.actions.titles.pbehavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="drop-down-action-pbehaviorList"
+  >
+    alarmList.actions.titles.pbehaviorList|list|pbehaviorList
+  </button>
+  <button
+    class="drop-down-action-comment"
+  >
+    alarmList.actions.titles.comment|comment|comment
+  </button>
+  <button
+    class="drop-down-action-history"
+  >
+    alarmList.actions.titles.history|history|history
+  </button>
+  <button
+    class="drop-down-action-variablesHelp"
+  >
+    alarmList.actions.titles.variablesHelp|help|variablesHelp
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    alarmList.actions.titles.resumeInstruction:{"instructionName":"Running instruction"}|assignment|executeInstruction
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    alarmList.actions.titles.executeInstruction:{"instructionName":"New instruction"}|assignment|executeInstruction
+  </button>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with paused manual instruction 1`] = `
+<div
+  class="shared-actions-panel"
+>
+  <button
+    class="action-declareTicket"
+  >
+    alarmList.actions.titles.declareTicket|report_problem|declareTicket
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    alarmList.actions.titles.associateTicket|local_play|associateTicket
+  </button>
+  <button
+    class="action-cancel"
+  >
+    alarmList.actions.titles.cancel|delete|cancel
+  </button>
+   
+  <button
+    class="drop-down-action-ackRemove"
+  >
+    alarmList.actions.titles.ackRemove|not_interested|ackRemove
+  </button>
+  <button
+    class="drop-down-action-changeState"
+  >
+    alarmList.actions.titles.changeState|thumbs_up_down|changeState
+  </button>
+  <button
+    class="drop-down-action-ack"
+  >
+    alarmList.actions.titles.ack|playlist_add_check|ack
+  </button>
+  <button
+    class="drop-down-action-snooze"
+  >
+    alarmList.actions.titles.snooze|alarm|snooze
+  </button>
+  <button
+    class="drop-down-action-pbehaviorAdd"
+  >
+    alarmList.actions.titles.pbehavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="drop-down-action-pbehaviorList"
+  >
+    alarmList.actions.titles.pbehaviorList|list|pbehaviorList
+  </button>
+  <button
+    class="drop-down-action-comment"
+  >
+    alarmList.actions.titles.comment|comment|comment
+  </button>
+  <button
+    class="drop-down-action-history"
+  >
+    alarmList.actions.titles.history|history|history
+  </button>
+  <button
+    class="drop-down-action-variablesHelp"
+  >
+    alarmList.actions.titles.variablesHelp|help|variablesHelp
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    alarmList.actions.titles.executeInstruction:{"instructionName":"New instruction"}|assignment|executeInstruction
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+  >
+    alarmList.actions.titles.resumeInstruction:{"instructionName":"Paused instruction"}|assignment|executeInstruction
+  </button>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with resolved alarm 1`] = `
+<div
+  class="shared-actions-panel"
+>
+  <button
+    class="action-pbehaviorList"
+  >
+    alarmList.actions.titles.pbehaviorList|list|pbehaviorList
+  </button>
+  <button
+    class="action-variablesHelp"
+  >
+    alarmList.actions.titles.variablesHelp|help|variablesHelp
+  </button>
+
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapping status 1`] = `
+<div
+  class="shared-actions-panel"
+>
+  <button
+    class="action-declareTicket"
+  >
+    alarmList.actions.titles.declareTicket|report_problem|declareTicket
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    alarmList.actions.titles.associateTicket|local_play|associateTicket
+  </button>
+  <button
+    class="action-cancel"
+  >
+    alarmList.actions.titles.cancel|delete|cancel
+  </button>
+   
+  <button
+    class="drop-down-action-ackRemove"
+  >
+    alarmList.actions.titles.ackRemove|not_interested|ackRemove
+  </button>
+  <button
+    class="drop-down-action-changeState"
+  >
+    alarmList.actions.titles.changeState|thumbs_up_down|changeState
+  </button>
+  <button
+    class="drop-down-action-ack"
+  >
+    alarmList.actions.titles.ack|playlist_add_check|ack
+  </button>
+  <button
+    class="drop-down-action-snooze"
+  >
+    alarmList.actions.titles.snooze|alarm|snooze
+  </button>
+  <button
+    class="drop-down-action-pbehaviorAdd"
+  >
+    alarmList.actions.titles.pbehavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="drop-down-action-pbehaviorList"
+  >
+    alarmList.actions.titles.pbehaviorList|list|pbehaviorList
+  </button>
+  <button
+    class="drop-down-action-comment"
+  >
+    alarmList.actions.titles.comment|comment|comment
+  </button>
+  <button
+    class="drop-down-action-history"
+  >
+    alarmList.actions.titles.history|history|history
+  </button>
+  <button
+    class="drop-down-action-variablesHelp"
+  >
+    alarmList.actions.titles.variablesHelp|help|variablesHelp
+  </button>
+  <button
+    class="drop-down-action-manualMetaAlarmUngroup"
+  >
+    alarmList.actions.titles.manualMetaAlarmUngroup|link_off|manualMetaAlarmUngroup
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+  >
+    alarmList.actions.titles.resumeInstruction:{"instructionName":"Running instruction"}|assignment|executeInstruction
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    alarmList.actions.titles.executeInstruction:{"instructionName":"New instruction"}|assignment|executeInstruction
+  </button>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and ongoing status 1`] = `
+<div
+  class="shared-actions-panel"
+>
+  <button
+    class="action-ack"
+  >
+    alarmList.actions.titles.ack|playlist_add_check|ack
+  </button>
+  <button
+    class="action-fastAck"
+  >
+    alarmList.actions.titles.fastAck|check|fastAck
+  </button>
+  <button
+    class="action-snooze"
+  >
+    alarmList.actions.titles.snooze|alarm|snooze
+  </button>
+
+  <button
+    class="drop-down-action-pbehaviorAdd"
+  >
+    alarmList.actions.titles.pbehavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="drop-down-action-pbehaviorList"
+  >
+    alarmList.actions.titles.pbehaviorList|list|pbehaviorList
+  </button>
+  <button
+    class="drop-down-action-comment"
+  >
+    alarmList.actions.titles.comment|comment|comment
+  </button>
+  <button
+    class="drop-down-action-history"
+  >
+    alarmList.actions.titles.history|history|history
+  </button>
+  <button
+    class="drop-down-action-variablesHelp"
+  >
+    alarmList.actions.titles.variablesHelp|help|variablesHelp
+  </button>
+  <button
+    class="drop-down-action-manualMetaAlarmUngroup"
+  >
+    alarmList.actions.titles.manualMetaAlarmUngroup|link_off|manualMetaAlarmUngroup
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    alarmList.actions.titles.resumeInstruction:{"instructionName":"Running instruction"}|assignment|executeInstruction
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+  >
+    alarmList.actions.titles.executeInstruction:{"instructionName":"New instruction"}|assignment|executeInstruction
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+  >
+    alarmList.actions.titles.resumeInstruction:{"instructionName":"Paused instruction"}|assignment|executeInstruction
+  </button>
+</div>
+`;
+
+exports[`actions-panel Renders \`actions-panel\` without entity, instructions, but with status stealthy 1`] = `
+<div
+  class="shared-actions-panel"
+>
+
+</div>
+`;
