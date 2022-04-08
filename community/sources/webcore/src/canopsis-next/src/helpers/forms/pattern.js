@@ -302,7 +302,7 @@ export const patternRuleToForm = (rule = {}) => {
  * @param {PatternRules} rules
  * @return {PatternRuleForm[]}
  */
-export const patternRulesToForm = (rules = [undefined]) => rules.map(patternRuleToForm);
+export const patternRulesToForm = (rules = []) => rules.map(patternRuleToForm);
 
 /**
  * Convert pattern rules to group form
@@ -315,7 +315,7 @@ export const patternRulesToGroup = rules => ({
   rules: patternRulesToForm(rules),
 });
 
-const patternsToGroups = (patterns = [undefined]) => patterns.map(patternRulesToGroup);
+const patternsToGroups = (patterns = []) => patterns.map(patternRulesToGroup);
 
 /**
  * Convert pattern to pattern form

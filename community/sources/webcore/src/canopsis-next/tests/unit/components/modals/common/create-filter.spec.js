@@ -137,18 +137,10 @@ describe('create-filter', () => {
     expect(action).toBeCalledWith({
       is_private: false,
       title: '',
-      alarm_pattern: [
-        [defaultPattern],
-      ],
-      entity_pattern: [
-        [defaultPattern],
-      ],
-      event_pattern: [
-        [defaultPattern],
-      ],
-      pbehavior_pattern: [
-        [defaultPattern],
-      ],
+      alarm_pattern: [],
+      entity_pattern: [],
+      event_pattern: [],
+      pbehavior_pattern: [],
     });
     expect($modals.hide).toBeCalledWith();
   });
@@ -256,7 +248,7 @@ describe('create-filter', () => {
     expect(formErrors).toEqual(addedErrors);
     expect(action).toBeCalledWith({
       is_private: false,
-      alarm_pattern: [[defaultPattern]],
+      alarm_pattern: [],
       title: '',
     });
     expect($modals.hide).not.toBeCalledWith();
