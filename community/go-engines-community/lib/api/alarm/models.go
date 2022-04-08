@@ -91,16 +91,19 @@ type Alarm struct {
 		Data  []string `bson:"data"`
 		Total int      `bson:"total"`
 	} `bson:"children_ids,omitempty" json:"-"`
-	Children                         *Children               `bson:"children,omitempty" json:"consequences,omitempty"`
-	Causes                           *Causes                 `bson:"causes,omitempty" json:"causes,omitempty"`
-	FilteredChildrenIDs              []string                `bson:"filtered_children_ids,omitempty" json:"filtered_children,omitempty"`
+	Children            *Children `bson:"children,omitempty" json:"consequences,omitempty"`
+	Causes              *Causes   `bson:"causes,omitempty" json:"causes,omitempty"`
+	FilteredChildrenIDs []string  `bson:"filtered_children_ids,omitempty" json:"filtered_children,omitempty"`
+
 	AssignedInstructions             []InstructionWithAlarms `bson:"assigned_instructions,omitempty" json:"assigned_instructions,omitempty"`
 	IsAutoInstructionRunning         *bool                   `bson:"-" json:"is_auto_instruction_running,omitempty"`
 	IsAllAutoInstructionsCompleted   *bool                   `bson:"-" json:"is_all_auto_instructions_completed,omitempty"`
 	IsAutoInstructionFailed          *bool                   `bson:"-" json:"is_auto_instruction_failed,omitempty"`
+	IsManualInstructionRunning       *bool                   `bson:"-" json:"is_manual_instruction_running,omitempty"`
 	IsManualInstructionWaitingResult *bool                   `bson:"-" json:"is_manual_instruction_waiting_result,omitempty"`
-	Links                            map[string]interface{}  `bson:"-" json:"links"`
-	ImpactState                      int64                   `bson:"impact_state" json:"impact_state"`
+
+	Links       map[string]interface{} `bson:"-" json:"links"`
+	ImpactState int64                  `bson:"impact_state" json:"impact_state"`
 }
 
 type MetaAlarmRule struct {
@@ -207,11 +210,12 @@ type InstructionWithAlarms struct {
 }
 
 type ExecutionStatus struct {
-	ID               string `bson:"_id"`
-	AutoRunning      *bool  `bson:"auto_running"`
-	ManualRunning    *bool  `bson:"manual_running"`
-	AutoFailed       *bool  `bson:"auto_failed"`
-	AutoAllCompleted *bool  `bson:"auto_all_completed"`
+	ID                  string `bson:"_id"`
+	AutoRunning         *bool  `bson:"auto_running"`
+	ManualRunning       *bool  `bson:"manual_running"`
+	ManualWaitingResult *bool  `bson:"manual_waiting_result"`
+	AutoFailed          *bool  `bson:"auto_failed"`
+	AutoAllCompleted    *bool  `bson:"auto_all_completed"`
 }
 
 type Execution struct {

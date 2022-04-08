@@ -75,6 +75,8 @@ definitions:
         type: boolean
       is_auto_instruction_running:
         type: boolean
+      is_manual_instruction_running:
+        type: boolean
       is_manual_instruction_waiting_result:
         type: boolean
       links:
@@ -2741,7 +2743,6 @@ definitions:
     - author
     - enabled
     - name
-    - priority
     - triggers
     type: object
   scenario.BulkUpdateResponseItem:
@@ -2806,7 +2807,6 @@ definitions:
     - author
     - enabled
     - name
-    - priority
     - triggers
     type: object
   scenario.EditRequest:
@@ -2839,7 +2839,6 @@ definitions:
     - author
     - enabled
     - name
-    - priority
     - triggers
     type: object
   scenario.GetMinimalPriorityResponse:
@@ -2932,6 +2931,8 @@ definitions:
       is_auto_instruction_running:
         type: boolean
       is_grey:
+        type: boolean
+      is_manual_instruction_running:
         type: boolean
       is_manual_instruction_waiting_result:
         type: boolean
