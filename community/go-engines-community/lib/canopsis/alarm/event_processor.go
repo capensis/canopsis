@@ -75,7 +75,11 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 
 	alarmChange := types.NewAlarmChange()
 
-	if event.Entity != nil && !event.Entity.Enabled {
+	if event.Entity == nil {
+		return alarmChange, nil
+	}
+
+	if !event.Entity.Enabled {
 		if event.EventType == types.EventTypeEntityToggled ||
 			event.EventType == types.EventTypeRecomputeEntityService {
 			return s.resolveAlarmForDisabledEntity(ctx, event)
@@ -128,17 +132,9 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	}
 
 	if event.Alarm == nil {
-		if event.Entity == nil {
-			return alarmChange, nil
-		}
-
 		err = s.processPbhEventsForEntity(ctx, event, &alarmChange)
 
 		return alarmChange, err
-	}
-
-	if event.Entity == nil {
-		return alarmChange, nil
 	}
 
 	operation := s.createOperationFromEvent(event)
@@ -235,10 +231,6 @@ func (s *eventProcessor) storeAlarm(ctx context.Context, event *types.Event) (ty
 
 func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event) (types.AlarmChangeType, error) {
 	changeType := types.AlarmChangeTypeNone
-
-	if event.Entity == nil {
-		return changeType, nil
-	}
 
 	alarmConfig := s.alarmConfigProvider.Get()
 	alarm := newAlarm(*event, alarmConfig)
