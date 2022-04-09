@@ -138,6 +138,10 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 			return err
 		}
 
+		if event.Entity == nil {
+			return nil
+		}
+
 		updatedServiceStates, err = p.StateCountersService.UpdateServiceCounters(tCtx, *event.Entity, event.Alarm, alarmChange)
 		return err
 	})
@@ -151,18 +155,22 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 		return p.getErrRpcEvent(fmt.Errorf("cannot update alarm: %v", err), alarm), nil
 	}
 
-	// services alarms
+	// update services states
 	go func() {
 		for servID, servInfo := range updatedServiceStates {
 			err := p.StateCountersService.UpdateServiceState(servID, servInfo)
 			if err != nil {
-				p.Logger.Err(err).Msg("failed to update service state")
+				p.Logger.Err(err).Str("id", servID).Msg("failed to update service state")
 			}
 		}
 	}()
 
 	// send metrics
 	go func() {
+		if alarm == nil || event.Entity == nil {
+			return
+		}
+
 		p.MetricsSender.SendEventMetrics(
 			context.Background(),
 			*alarm,

@@ -94,13 +94,13 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 	stateCountersService := statecounters.NewStateCountersService(
 		dbClient,
 		amqpChannel,
-		canopsis.CheExchangeName,
+		canopsis.FIFOExchangeName,
 		canopsis.FIFOQueueName,
 		json.NewEncoder(),
 		logger,
 	)
 
-	entityServicesService := entityservice.NewService(
+	idleSinceService := entityservice.NewService(
 		entityservice.NewAdapter(dbClient),
 		entity.NewAdapter(dbClient),
 		logger,
@@ -283,12 +283,6 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		AlarmStatusService: alarmStatusService,
 		Logger:             logger,
 	})
-	//engineAxe.AddPeriodicalWorker("service states", libengine.NewLockedPeriodicalWorker(
-	//	redis.NewLockClient(lockRedisClient),
-	//	redis.AxeEntityServiceStateLockKey,
-	//	NewEntityServiceStateWorker(dbClient, logger, time.Second*10),
-	//	logger,
-	//))
 	engineAxe.AddPeriodicalWorker("alarms", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),
 		redis.AxePeriodicalLockKey,
@@ -327,9 +321,9 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		redis.NewLockClient(lockRedisClient),
 		redis.ServiceIdleSincePeriodicalLockKey,
 		&idleSincePeriodicalWorker{
-			EntityServiceService: entityServicesService,
-			PeriodicalInterval:   options.PeriodicalWaitTime,
-			Logger:               logger,
+			IdleSinceService:   idleSinceService,
+			PeriodicalInterval: options.PeriodicalWaitTime,
+			Logger:             logger,
 		},
 		logger,
 	))

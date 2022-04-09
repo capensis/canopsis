@@ -1,6 +1,8 @@
 package statecounters
 
-import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+)
 
 type StateCounters struct {
 	Critical int64 `bson:"critical"`
@@ -59,6 +61,32 @@ func (s *EntityServiceCounters) DecrementState(state int) {
 		s.State.Major--
 	case types.AlarmStateCritical:
 		s.State.Critical--
+	}
+}
+
+func (s *EntityServiceCounters) AddEntityToCounters(entity types.Entity, alarm *types.Alarm) {
+	if alarm != nil {
+		s.All++
+		if alarm.IsInActivePeriod() {
+			s.IncrementAlarmCounters(int(alarm.CurrentState()), alarm.IsAck())
+		} else {
+			s.PbehaviorCounters[alarm.Value.PbehaviorInfo.TypeID]++
+		}
+	} else if !entity.PbehaviorInfo.IsActive() {
+		s.PbehaviorCounters[entity.PbehaviorInfo.TypeID]++
+	}
+}
+
+func (s *EntityServiceCounters) RemoveEntityFromCounters(entity types.Entity, alarm *types.Alarm) {
+	if alarm != nil {
+		s.All--
+		if alarm.IsInActivePeriod() {
+			s.DecrementAlarmCounters(int(alarm.CurrentState()), alarm.IsAck())
+		} else {
+			s.PbehaviorCounters[alarm.Value.PbehaviorInfo.TypeID]--
+		}
+	} else if !entity.PbehaviorInfo.IsActive() {
+		s.PbehaviorCounters[entity.PbehaviorInfo.TypeID]--
 	}
 }
 

@@ -9,9 +9,9 @@ import (
 )
 
 type idleSincePeriodicalWorker struct {
-	EntityServiceService entityservice.IdleSinceService
-	PeriodicalInterval   time.Duration
-	Logger               zerolog.Logger
+	IdleSinceService   entityservice.IdleSinceService
+	PeriodicalInterval time.Duration
+	Logger             zerolog.Logger
 }
 
 func (w *idleSincePeriodicalWorker) GetInterval() time.Duration {
@@ -23,7 +23,7 @@ func (w *idleSincePeriodicalWorker) Work(parenCtx context.Context) {
 	defer task.End()
 
 	w.Logger.Debug().Msg("Recompute idle_since")
-	err := w.EntityServiceService.RecomputeIdleSince(ctx)
+	err := w.IdleSinceService.RecomputeIdleSince(ctx)
 	if err != nil {
 		w.Logger.Warn().Err(err).Msg("error while recomputing idle_since")
 	}
