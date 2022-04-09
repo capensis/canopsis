@@ -126,27 +126,6 @@ noWait = false
 # args =
 
 [[RabbitMQ.queues]]
-name = "Engine_service"
-durable = true
-autoDelete = false
-exclusive = false
-noWait = false
-# args =
-  [RabbitMQ.queues.bind]
-  key = "Engine_service"
-  exchange = "amq.direct"
-  noWait = false
-  # args =
-
-[[RabbitMQ.queues]]
-name = "Engine_service_rpc_server"
-durable = true
-autoDelete = false
-exclusive = false
-noWait = false
-# args =
-
-[[RabbitMQ.queues]]
 name = "Engine_pbehavior"
 durable = true
 autoDelete = false
