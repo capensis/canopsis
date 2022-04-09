@@ -86,7 +86,7 @@ func NewEngine(
 			}
 
 			// Below are actions locked with ChePeriodicalLockKey for multi-instance configuration
-			err = contextGraphManager.UpdateImpactedServices(ctx)
+			err = contextGraphManager.UpdateImpactedServicesFromDependencies(ctx)
 			if err != nil {
 				logger.Warn().Err(err).Msg("error while recomputing impacted services for connectors")
 			}

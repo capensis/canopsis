@@ -18,7 +18,7 @@ func (w *impactedServicesPeriodicalWorker) GetInterval() time.Duration {
 }
 
 func (w *impactedServicesPeriodicalWorker) Work(ctx context.Context) {
-	err := w.Manager.UpdateImpactedServices(ctx)
+	err := w.Manager.UpdateImpactedServicesFromDependencies(ctx)
 	if err != nil {
 		w.Logger.Warn().Err(err).Msg("error while recomputing impacted services for connectors")
 	}

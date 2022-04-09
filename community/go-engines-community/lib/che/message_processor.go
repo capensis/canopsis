@@ -90,7 +90,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 			return nil
 		}
 
-		eventEntity, contextGraphEntities, err := p.ContextGraphManager.Handle(tCtx, event)
+		eventEntity, contextGraphEntities, err := p.ContextGraphManager.HandleEvent(tCtx, event)
 		if err != nil {
 			return fmt.Errorf("cannot update context graph: %w", err)
 		}
@@ -107,7 +107,12 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		}
 
 		eventEntity = *event.Entity
-		updatedEntities = []types.Entity{eventEntity}
+		if eventEntity.IsNew ||
+			event.IsEntityUpdated ||
+			event.EventType == types.EventTypeEntityUpdated ||
+			event.SourceType == types.SourceTypeService {
+			updatedEntities = []types.Entity{eventEntity}
+		}
 
 		if event.IsEntityUpdated && eventEntity.Type == types.EntityTypeComponent {
 			resources, err := p.ContextGraphManager.FillResourcesWithInfos(tCtx, eventEntity)
@@ -135,6 +140,13 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 			event.Entity = &eventEntity
 		}
 
+		if !eventEntity.IsNew && !event.IsEntityUpdated && event.Entity.LastEventDate != nil {
+			err := p.ContextGraphManager.UpdateLastEventDate(tCtx, event.Entity.ID, *event.Entity.LastEventDate)
+			if err != nil {
+				return err
+			}
+		}
+
 		return nil
 	})
 
@@ -147,7 +159,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 			return nil, err
 		}
 
-		p.logError(err, "cannot apply event filters on event", d.Body)
+		p.logError(err, "cannot process event", d.Body)
 		return nil, nil
 	}
 
