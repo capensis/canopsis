@@ -86,6 +86,7 @@ func TestCheckServices(t *testing.T) {
 				{
 					ID:      "serv-1",
 					Depends: []string{"id-1"},
+					Type:    types.EntityTypeService,
 				},
 			},
 		},
@@ -157,10 +158,12 @@ func TestCheckServices(t *testing.T) {
 				{
 					ID:      "serv-1",
 					Depends: []string{"id-1"},
+					Type:    types.EntityTypeService,
 				},
 				{
 					ID:      "serv-2",
 					Depends: []string{"id-1"},
+					Type:    types.EntityTypeService,
 				},
 			},
 		},
@@ -235,10 +238,12 @@ func TestCheckServices(t *testing.T) {
 				{
 					ID:      "serv-1",
 					Depends: []string{"id-1"},
+					Type:    types.EntityTypeService,
 				},
 				{
 					ID:      "serv-2",
 					Depends: []string{"id-1"},
+					Type:    types.EntityTypeService,
 				},
 			},
 		},
@@ -289,6 +294,7 @@ func TestCheckServices(t *testing.T) {
 				{
 					ID:      "serv-1",
 					Depends: []string{},
+					Type:    types.EntityTypeService,
 				},
 			},
 		},
@@ -363,10 +369,12 @@ func TestCheckServices(t *testing.T) {
 				{
 					ID:      "serv-1",
 					Depends: []string{},
+					Type:    types.EntityTypeService,
 				},
 				{
 					ID:      "serv-2",
 					Depends: []string{},
+					Type:    types.EntityTypeService,
 				},
 			},
 		},
@@ -465,10 +473,12 @@ func TestCheckServices(t *testing.T) {
 				{
 					ID:      "serv-2",
 					Depends: []string{},
+					Type:    types.EntityTypeService,
 				},
 				{
 					ID:      "serv-3",
 					Depends: []string{"id-1"},
+					Type:    types.EntityTypeService,
 				},
 			},
 		},
@@ -529,6 +539,7 @@ func TestCheckServices(t *testing.T) {
 				{
 					ID:      "serv-1",
 					Depends: []string{"id-1", "id-2"},
+					Type:    types.EntityTypeService,
 				},
 			},
 		},
@@ -612,10 +623,12 @@ func TestCheckServices(t *testing.T) {
 				{
 					ID:      "serv-1",
 					Depends: []string{"id-1", "id-2"},
+					Type:    types.EntityTypeService,
 				},
 				{
 					ID:      "serv-2",
 					Depends: []string{"id-1", "id-2"},
+					Type:    types.EntityTypeService,
 				},
 			},
 		},
@@ -679,6 +692,7 @@ func TestCheckServices(t *testing.T) {
 				{
 					ID:      "serv-1",
 					Depends: []string{},
+					Type:    types.EntityTypeService,
 				},
 			},
 		},
@@ -766,10 +780,12 @@ func TestCheckServices(t *testing.T) {
 				{
 					ID:      "serv-1",
 					Depends: []string{},
+					Type:    types.EntityTypeService,
 				},
 				{
 					ID:      "serv-2",
 					Depends: []string{},
+					Type:    types.EntityTypeService,
 				},
 			},
 		},
@@ -883,14 +899,17 @@ func TestCheckServices(t *testing.T) {
 				{
 					ID:      "serv-1",
 					Depends: []string{"id-1", "id-2"},
+					Type:    types.EntityTypeService,
 				},
 				{
 					ID:      "serv-2",
 					Depends: []string{},
+					Type:    types.EntityTypeService,
 				},
 				{
 					ID:      "serv-3",
 					Depends: []string{"id-1", "id-2"},
+					Type:    types.EntityTypeService,
 				},
 			},
 		},
@@ -1248,6 +1267,10 @@ func TestRecomputeService(t *testing.T) {
 					ImpactedServices:      []string{"serv-0", "serv-2"},
 					ImpactedServicesToAdd: []string{},
 				},
+				{
+					ID:      "serv-1",
+					Depends: []string{},
+				},
 			},
 		},
 		{
@@ -1296,25 +1319,22 @@ func TestRecomputeService(t *testing.T) {
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:                    "id-1",
-					Component:             "component-1",
-					Impacts:               []string{"component-1", "serv-1"},
-					ImpactedServices:      []string{"serv-1"},
-					ImpactedServicesToAdd: []string{"serv-1"},
+					ID:               "id-1",
+					Component:        "component-1",
+					Impacts:          []string{"component-1", "serv-1"},
+					ImpactedServices: []string{"serv-1"},
 				},
 				{
-					ID:                    "id-2",
-					Component:             "component-1",
-					Impacts:               []string{"component-1", "serv-1"},
-					ImpactedServices:      []string{"serv-1"},
-					ImpactedServicesToAdd: []string{"serv-1"},
+					ID:               "id-2",
+					Component:        "component-1",
+					Impacts:          []string{"component-1", "serv-1"},
+					ImpactedServices: []string{"serv-1"},
 				},
 				{
-					ID:                    "id-3",
-					Component:             "component-1",
-					Impacts:               []string{"component-1", "serv-1"},
-					ImpactedServices:      []string{"serv-1"},
-					ImpactedServicesToAdd: []string{"serv-1"},
+					ID:               "id-3",
+					Component:        "component-1",
+					Impacts:          []string{"component-1", "serv-1"},
+					ImpactedServices: []string{"serv-1"},
 				},
 				{
 					ID:      "serv-1",
@@ -1371,25 +1391,22 @@ func TestRecomputeService(t *testing.T) {
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:                    "id-1",
-					Component:             "component-1",
-					Impacts:               []string{"component-1", "serv-0", "serv-2", "serv-1"},
-					ImpactedServices:      []string{"serv-1", "serv-0", "serv-2"},
-					ImpactedServicesToAdd: []string{"serv-1"},
+					ID:               "id-1",
+					Component:        "component-1",
+					Impacts:          []string{"component-1", "serv-0", "serv-2", "serv-1"},
+					ImpactedServices: []string{"serv-1", "serv-0", "serv-2"},
 				},
 				{
-					ID:                    "id-2",
-					Component:             "component-1",
-					Impacts:               []string{"component-1", "serv-0", "serv-2", "serv-1"},
-					ImpactedServices:      []string{"serv-1", "serv-0", "serv-2"},
-					ImpactedServicesToAdd: []string{"serv-1"},
+					ID:               "id-2",
+					Component:        "component-1",
+					Impacts:          []string{"component-1", "serv-0", "serv-2", "serv-1"},
+					ImpactedServices: []string{"serv-1", "serv-0", "serv-2"},
 				},
 				{
-					ID:                    "id-3",
-					Component:             "component-1",
-					Impacts:               []string{"component-1", "serv-0", "serv-2", "serv-1"},
-					ImpactedServices:      []string{"serv-1", "serv-0", "serv-2"},
-					ImpactedServicesToAdd: []string{"serv-1"},
+					ID:               "id-3",
+					Component:        "component-1",
+					Impacts:          []string{"component-1", "serv-0", "serv-2", "serv-1"},
+					ImpactedServices: []string{"serv-1", "serv-0", "serv-2"},
 				},
 				{
 					ID:      "serv-1",
@@ -1448,25 +1465,22 @@ func TestRecomputeService(t *testing.T) {
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:                       "id-2",
-					Component:                "component-2",
-					Impacts:                  []string{"component-2"},
-					ImpactedServices:         []string{},
-					ImpactedServicesToRemove: []string{"serv-1"},
+					ID:               "id-2",
+					Component:        "component-2",
+					Impacts:          []string{"component-2"},
+					ImpactedServices: []string{},
 				},
 				{
-					ID:                       "id-3",
-					Component:                "component-2",
-					Impacts:                  []string{"component-2"},
-					ImpactedServices:         []string{},
-					ImpactedServicesToRemove: []string{"serv-1"},
+					ID:               "id-3",
+					Component:        "component-2",
+					Impacts:          []string{"component-2"},
+					ImpactedServices: []string{},
 				},
 				{
-					ID:                    "id-4",
-					Component:             "component-1",
-					Impacts:               []string{"component-1", "serv-1"},
-					ImpactedServices:      []string{"serv-1"},
-					ImpactedServicesToAdd: []string{"serv-1"},
+					ID:               "id-4",
+					Component:        "component-1",
+					Impacts:          []string{"component-1", "serv-1"},
+					ImpactedServices: []string{"serv-1"},
 				},
 				{
 					ID:      "serv-1",
@@ -1526,25 +1540,22 @@ func TestRecomputeService(t *testing.T) {
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:                       "id-2",
-					Component:                "component-2",
-					Impacts:                  []string{"component-2", "serv-0", "serv-2"},
-					ImpactedServices:         []string{"serv-0", "serv-2"},
-					ImpactedServicesToRemove: []string{"serv-1"},
+					ID:               "id-2",
+					Component:        "component-2",
+					Impacts:          []string{"component-2", "serv-0", "serv-2"},
+					ImpactedServices: []string{"serv-0", "serv-2"},
 				},
 				{
-					ID:                       "id-3",
-					Component:                "component-2",
-					Impacts:                  []string{"component-2", "serv-0", "serv-2"},
-					ImpactedServices:         []string{"serv-0", "serv-2"},
-					ImpactedServicesToRemove: []string{"serv-1"},
+					ID:               "id-3",
+					Component:        "component-2",
+					Impacts:          []string{"component-2", "serv-0", "serv-2"},
+					ImpactedServices: []string{"serv-0", "serv-2"},
 				},
 				{
-					ID:                    "id-4",
-					Component:             "component-1",
-					Impacts:               []string{"component-1", "serv-0", "serv-1", "serv-2"},
-					ImpactedServices:      []string{"serv-0", "serv-1", "serv-2"},
-					ImpactedServicesToAdd: []string{"serv-1"},
+					ID:               "id-4",
+					Component:        "component-1",
+					Impacts:          []string{"component-1", "serv-0", "serv-1", "serv-2"},
+					ImpactedServices: []string{"serv-0", "serv-1", "serv-2"},
 				},
 				{
 					ID:      "serv-1",
@@ -1619,11 +1630,10 @@ func TestRecomputeService(t *testing.T) {
 					ImpactedServicesToAdd: []string{},
 				},
 				{
-					ID:                    "id-4",
-					Component:             "component-1",
-					Impacts:               []string{"component-1", "serv-1"},
-					ImpactedServices:      []string{"serv-1"},
-					ImpactedServicesToAdd: []string{"serv-1"},
+					ID:               "id-4",
+					Component:        "component-1",
+					Impacts:          []string{"component-1", "serv-1"},
+					ImpactedServices: []string{"serv-1"},
 				},
 				{
 					ID:      "serv-1",
@@ -1698,11 +1708,10 @@ func TestRecomputeService(t *testing.T) {
 					ImpactedServicesToAdd: []string{"serv-0", "serv-2"},
 				},
 				{
-					ID:                    "id-4",
-					Component:             "component-1",
-					Impacts:               []string{"component-1", "serv-1"},
-					ImpactedServices:      []string{"serv-1"},
-					ImpactedServicesToAdd: []string{"serv-1"},
+					ID:               "id-4",
+					Component:        "component-1",
+					Impacts:          []string{"component-1", "serv-1"},
+					ImpactedServices: []string{"serv-1"},
 				},
 				{
 					ID:      "serv-1",
@@ -1892,7 +1901,7 @@ func TestRecomputeService(t *testing.T) {
 			}).Return(nil).AnyTimes()
 			collection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(cursor, nil).AnyTimes()
 
-			result, err := manager.RecomputeService(ctx, dataset.serviceName)
+			_, result, err := manager.RecomputeService(ctx, dataset.serviceName)
 			if err != nil {
 				t.Error(err)
 			}
@@ -2018,7 +2027,7 @@ func BenchmarkRecomputeServicesRemoveAll(b *testing.B) {
 
 	manager := contextgraph.NewManager(adapter, dbClient, storage, metaUpdater)
 	for i := 0; i < b.N; i++ {
-		_, _ = manager.RecomputeService(ctx, "serv-1")
+		_, _, _ = manager.RecomputeService(ctx, "serv-1")
 	}
 }
 
@@ -2086,7 +2095,7 @@ func BenchmarkRecomputeServicesAddAll(b *testing.B) {
 	manager := contextgraph.NewManager(adapter, dbClient, storage, metaUpdater)
 	for i := 0; i < b.N; i++ {
 		call = 0
-		_, _ = manager.RecomputeService(ctx, "serv-1")
+		_, _, _ = manager.RecomputeService(ctx, "serv-1")
 	}
 }
 
@@ -2174,7 +2183,6 @@ func BenchmarkRecomputeServicesMixed(b *testing.B) {
 	manager := contextgraph.NewManager(adapter, dbClient, storage, metaUpdater)
 	for i := 0; i < b.N; i++ {
 		call = 0
-		jjj, _ := manager.RecomputeService(ctx, "serv-1")
-		fmt.Printf("%v\n", jjj)
+		_, _, _ = manager.RecomputeService(ctx, "serv-1")
 	}
 }

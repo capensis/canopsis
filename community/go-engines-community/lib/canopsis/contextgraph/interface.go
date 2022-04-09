@@ -14,15 +14,20 @@ type EntityServiceStorage interface {
 }
 
 type Manager interface {
-	Handle(ctx context.Context, event types.Event) (types.Entity, []types.Entity, error)
-
+	//HandleEvent processes canopsis contextable events, upserts new entities,
+	//returns event entity as first arguments, and slice of linked entities if they're new as a second argument
+	HandleEvent(ctx context.Context, event types.Event) (types.Entity, []types.Entity, error)
+	//CheckServices processes slice of entities to check if they're belonged to an entity service and add this information to the impact/depends slices,
+	//returns slice of the same entities, which were passed to a function plus entity service entities, which were affected.
 	CheckServices(ctx context.Context, entities []types.Entity) ([]types.Entity, error)
-
-	UpdateImpactedServices(ctx context.Context) error
-
+	//UpdateImpactedServicesFromDependencies updates impacted services from dependencies info for connector entity
+	UpdateImpactedServicesFromDependencies(ctx context.Context) error
+	//RecomputeService recomputes context graph for an entity service
 	RecomputeService(ctx context.Context, serviceID string) (types.Entity, []types.Entity, error)
-
+	//UpdateEntities updates entities in the db
 	UpdateEntities(ctx context.Context, eventEntityID string, entities []types.Entity) (types.Entity, error)
-
+	//FillResourcesWithInfos fills all dependent component's resources with component_infos
 	FillResourcesWithInfos(ctx context.Context, component types.Entity) ([]types.Entity, error)
+
+	UpdateLastEventDate(ctx context.Context, entityID string, timestamp types.CpsTime) error
 }
