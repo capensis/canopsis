@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -765,9 +764,12 @@ func (m *manager) UpdateImpactedServicesFromDependencies(ctx context.Context) er
 		return err
 	}
 
-	writeModels := make([]mongo.WriteModel, 0, canopsis.DefaultBulkSize)
-
 	defer cursor.Close(ctx)
+
+	writeModels := make([]mongo.WriteModel, 0, canopsis.DefaultBulkSize)
+	var newModel mongo.WriteModel
+	bulkBytesSize := 0
+
 	for cursor.Next(ctx) {
 		var info struct {
 			ID               string   `bson:"_id"`
@@ -779,22 +781,45 @@ func (m *manager) UpdateImpactedServicesFromDependencies(ctx context.Context) er
 		}
 
 		if len(info.ImpactedServices) > 0 {
-			writeModels = append(writeModels, mongo.NewUpdateOneModel().SetFilter(bson.M{"_id": info.ID}).SetUpdate(bson.M{
+			newModel = mongo.NewUpdateOneModel().SetFilter(bson.M{"_id": info.ID}).SetUpdate(bson.M{
 				"$set": bson.M{"impacted_services_from_dependencies": info.ImpactedServices},
-			}))
+			})
 		} else {
-			writeModels = append(writeModels, mongo.NewUpdateOneModel().SetFilter(bson.M{"_id": info.ID}).SetUpdate(bson.M{
+			newModel = mongo.NewUpdateOneModel().SetFilter(bson.M{"_id": info.ID}).SetUpdate(bson.M{
 				"$unset": bson.M{"impacted_services_from_dependencies": ""},
-			}))
+			})
 		}
 
-		if len(writeModels) == entityservice.BulkMaxSize {
+		b, err := bson.Marshal(newModel)
+		if err != nil {
+			return err
+		}
+
+		newModelLen := len(b)
+		if bulkBytesSize+newModelLen > canopsis.DefaultBulkBytesSize {
 			err := m.adapter.Bulk(ctx, writeModels)
 			if err != nil {
 				return err
 			}
 
 			writeModels = writeModels[:0]
+			bulkBytesSize = 0
+		}
+
+		bulkBytesSize += newModelLen
+		writeModels = append(
+			writeModels,
+			newModel,
+		)
+
+		if len(writeModels) == canopsis.DefaultBulkSize {
+			err := m.adapter.Bulk(ctx, writeModels)
+			if err != nil {
+				return err
+			}
+
+			writeModels = writeModels[:0]
+			bulkBytesSize = 0
 		}
 	}
 

@@ -9,7 +9,7 @@ import (
 )
 
 type idleSincePeriodicalWorker struct {
-	EntityServiceService entityservice.Service
+	EntityServiceService entityservice.IdleSinceService
 	PeriodicalInterval   time.Duration
 	Logger               zerolog.Logger
 }
