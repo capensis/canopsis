@@ -68,8 +68,9 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 	p.updatePbhLastAlarmDate(ctx, event)
 
-	// there is nothing to do with that kind of event in the next engines.
-	if event.EventType == types.EventTypeRecomputeEntityService {
+	// there is nothing to do with those kinds of event in the next engines.
+	if event.EventType == types.EventTypeRecomputeEntityService ||
+		event.EventType == types.EventTypeUpdateCounters {
 		return nil, nil
 	}
 
