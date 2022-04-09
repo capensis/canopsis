@@ -61,6 +61,53 @@ type ServiceCountersConf struct {
 	AlarmChange types.AlarmChange
 }
 
+func (s *service) RecomputeAllServices(ctx context.Context) error {
+	cursor, err := s.entityCollection.Find(ctx, bson.M{"enabled": true, "type": types.EntityTypeService})
+	if err != nil {
+		return err
+	}
+
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var serv types.Entity
+		err = cursor.Decode(&serv)
+		if err != nil {
+			return fmt.Errorf("unable to decode entity service document: %w", err)
+		}
+
+		event := types.Event{
+			EventType:     types.EventTypeRecomputeEntityService,
+			SourceType:    types.SourceTypeService,
+			Component:     serv.Name,
+			Connector:     types.ConnectorEngineService,
+			ConnectorName: types.ConnectorEngineService,
+			Timestamp:     types.CpsTime{Time: time.Now()},
+		}
+
+		body, err := s.encoder.Encode(event)
+		if err != nil {
+			return fmt.Errorf("unable to serialize service event: %w", err)
+		}
+
+		err = s.pubChannel.Publish(
+			s.pubExchangeName,
+			s.pubQueueName,
+			false,
+			false,
+			libamqp.Publishing{
+				Body:        body,
+				ContentType: "application/json",
+			},
+		)
+		if err != nil {
+			return fmt.Errorf("unable to send service event: %w", err)
+		}
+	}
+
+	return nil
+}
+
 func (s *service) UpdateServiceState(serviceID string, serviceInfo UpdatedServicesInfo) error {
 	event := types.Event{
 		EventType:     types.EventTypeCheck,
@@ -75,7 +122,7 @@ func (s *service) UpdateServiceState(serviceID string, serviceInfo UpdatedServic
 
 	body, err := s.encoder.Encode(event)
 	if err != nil {
-		return fmt.Errorf("unable to serialize service event: %v", err)
+		return fmt.Errorf("unable to serialize service event: %w", err)
 	}
 
 	err = s.pubChannel.Publish(
@@ -89,7 +136,7 @@ func (s *service) UpdateServiceState(serviceID string, serviceInfo UpdatedServic
 		},
 	)
 	if err != nil {
-		return fmt.Errorf("unable to send service event: %v", err)
+		return fmt.Errorf("unable to send service event: %w", err)
 	}
 
 	return nil
@@ -97,7 +144,7 @@ func (s *service) UpdateServiceState(serviceID string, serviceInfo UpdatedServic
 
 func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity, alarm *types.Alarm, alarmChange types.AlarmChange) (map[string]UpdatedServicesInfo, error) {
 	switch alarmChange.Type {
-	case types.AlarmChangeTypeCreate, types.AlarmChangeTypeCreateAndPbhEnter,
+	case types.AlarmChangeTypeCreate, types.AlarmChangeTypeCreateAndPbhEnter, types.AlarmChangeTypeEnabled,
 		types.AlarmChangeTypePbhEnter, types.AlarmChangeTypePbhLeave, types.AlarmChangeTypePbhLeaveAndEnter,
 		types.AlarmChangeTypeChangeState, types.AlarmChangeTypeStateDecrease, types.AlarmChangeTypeStateIncrease,
 		types.AlarmChangeTypeResolve, types.AlarmChangeTypeAck, types.AlarmChangeTypeAckremove, types.AlarmChangeTypeNone:
@@ -149,6 +196,9 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 
 	defer cursor.Close(ctx)
 
+	var newModel mongodriver.WriteModel
+	bulkBytesSize := 0
+
 	for cursor.Next(ctx) {
 		var counters EntityServiceCounters
 
@@ -162,6 +212,10 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 		}
 
 		switch changeType {
+		case types.AlarmChangeTypeEnabled:
+			if !serviceToRemove[counters.ID] && !entity.PbehaviorInfo.IsActive() {
+				counters.PbehaviorCounters[entity.PbehaviorInfo.TypeID]++
+			}
 		case types.AlarmChangeTypeNone:
 			if serviceToRemove[counters.ID] {
 				if alarm != nil {
@@ -322,7 +376,7 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 				counters.All--
 				if alarm.IsInActivePeriod() {
 					counters.DecrementAlarmCounters(curState, acked)
-				} else if serviceToRemove[counters.ID] {
+				} else if serviceToRemove[counters.ID] || !entity.Enabled {
 					counters.PbehaviorCounters[entity.PbehaviorInfo.TypeID]--
 				}
 			}
@@ -376,15 +430,35 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 			Output: output,
 		}
 
-		updateCountersModels = append(updateCountersModels,
-			mongodriver.
-				NewUpdateOneModel().
-				SetFilter(bson.M{"_id": counters.ID}).
-				SetUpdate(bson.M{"$set": counters}).
-				SetUpsert(true),
+		newModel = mongodriver.
+			NewUpdateOneModel().
+			SetFilter(bson.M{"_id": counters.ID}).
+			SetUpdate(bson.M{"$set": counters}).
+			SetUpsert(true)
+
+		b, err := bson.Marshal(newModel)
+		if err != nil {
+			return nil, err
+		}
+
+		newModelLen := len(b)
+		if bulkBytesSize+newModelLen > canopsis.DefaultBulkBytesSize {
+			_, err = s.serviceCountersCollection.BulkWrite(ctx, updateCountersModels)
+			if err != nil {
+				return nil, err
+			}
+
+			updateCountersModels = updateCountersModels[:0]
+			bulkBytesSize = 0
+		}
+
+		bulkBytesSize += newModelLen
+		updateCountersModels = append(
+			updateCountersModels,
+			newModel,
 		)
 
-		if len(updateCountersModels) >= canopsis.DefaultBulkSize {
+		if len(updateCountersModels) == canopsis.DefaultBulkSize {
 			_, err = s.serviceCountersCollection.BulkWrite(ctx, updateCountersModels)
 			if err != nil {
 				return nil, err

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
@@ -16,9 +17,8 @@ import (
 )
 
 const (
-	added       = 0
-	removed     = 1
-	bulkMaxSize = 10000
+	added   = 0
+	removed = 1
 )
 
 func NewManager(
@@ -43,70 +43,86 @@ type manager struct {
 }
 
 func (m *manager) UpdateEntities(ctx context.Context, eventEntityID string, entities []types.Entity) (types.Entity, error) {
-	writeModels := make([]mongo.WriteModel, 0, bulkMaxSize)
+	writeModels := make([]mongo.WriteModel, 0, canopsis.DefaultBulkSize)
 
 	var eventEntity types.Entity
 
+	bulkBytesSize := 0
+	var newModel mongo.WriteModel
 	for _, ent := range entities {
 		set := bson.M{}
 
 		if ent.ID == eventEntityID {
 			eventEntity = ent
-
-			if ent.IsNew {
-				writeModels = append(
-					writeModels,
-					mongo.NewInsertOneModel().SetDocument(ent),
-				)
-
-				continue
-			}
-
 			set["last_event_date"] = ent.LastEventDate
 		}
 
-		if ent.Infos != nil {
-			set["infos"] = ent.Infos
-		}
+		if ent.ID == eventEntityID && ent.IsNew {
+			newModel = mongo.NewInsertOneModel().SetDocument(ent)
+		} else {
+			if ent.Infos != nil {
+				set["infos"] = ent.Infos
+			}
 
-		if ent.ComponentInfos != nil {
-			set["component_infos"] = ent.ComponentInfos
-		}
+			if ent.ComponentInfos != nil {
+				set["component_infos"] = ent.ComponentInfos
+			}
 
-		if ent.Impacts != nil {
-			set["impact"] = ent.Impacts
-		}
+			if ent.Impacts != nil {
+				set["impact"] = ent.Impacts
+			}
 
-		if ent.ImpactedServices != nil {
-			set["impacted_services"] = ent.ImpactedServices
-		}
+			if ent.ImpactedServices != nil {
+				set["impacted_services"] = ent.ImpactedServices
+			}
 
-		if ent.ImpactedServicesToAdd != nil {
-			set["impacted_services_to_add"] = ent.ImpactedServicesToAdd
-		}
+			if ent.ImpactedServicesToAdd != nil {
+				set["impacted_services_to_add"] = ent.ImpactedServicesToAdd
+			}
 
-		if ent.ImpactedServicesToRemove != nil {
-			set["impacted_services_to_remove"] = ent.ImpactedServicesToRemove
-		}
+			if ent.ImpactedServicesToRemove != nil {
+				set["impacted_services_to_remove"] = ent.ImpactedServicesToRemove
+			}
 
-		if ent.Depends != nil {
-			set["depends"] = ent.Depends
-		}
+			if ent.Depends != nil {
+				set["depends"] = ent.Depends
+			}
 
-		writeModels = append(
-			writeModels,
-			mongo.NewUpdateOneModel().
+			newModel = mongo.NewUpdateOneModel().
 				SetFilter(bson.M{"_id": ent.ID}).
-				SetUpdate(bson.M{"$set": set}),
-		)
+				SetUpdate(bson.M{"$set": set})
+		}
 
-		if len(writeModels) == bulkMaxSize {
+		b, err := bson.Marshal(newModel)
+		if err != nil {
+			return types.Entity{}, err
+		}
+
+		newModelLen := len(b)
+		if bulkBytesSize+newModelLen > canopsis.DefaultBulkBytesSize {
 			_, err := m.collection.BulkWrite(ctx, writeModels)
 			if err != nil {
 				return types.Entity{}, err
 			}
 
 			writeModels = writeModels[:0]
+			bulkBytesSize = 0
+		}
+
+		bulkBytesSize += newModelLen
+		writeModels = append(
+			writeModels,
+			newModel,
+		)
+
+		if len(writeModels) == canopsis.DefaultBulkSize {
+			_, err := m.collection.BulkWrite(ctx, writeModels)
+			if err != nil {
+				return types.Entity{}, err
+			}
+
+			writeModels = writeModels[:0]
+			bulkBytesSize = 0
 		}
 	}
 
@@ -195,14 +211,14 @@ func (m *manager) CheckServices(ctx context.Context, entities []types.Entity) ([
 			toRemoveMap[impact] = true
 		}
 
-		for idx := 0; idx < len(ent.ImpactedServicesToAdd); idx++ {
+		for idx := 0; idx < len(ent.ImpactedServicesToAdd) && len(removedFrom) != 0; idx++ {
 			if toRemoveMap[ent.ImpactedServicesToAdd[idx]] {
 				ent.ImpactedServicesToAdd = append(ent.ImpactedServicesToAdd[:idx], ent.ImpactedServicesToAdd[idx+1:]...)
 				idx--
 			}
 		}
 
-		for idx := 0; idx < len(ent.ImpactedServicesToRemove); idx++ {
+		for idx := 0; idx < len(ent.ImpactedServicesToRemove) && len(addedTo) != 0; idx++ {
 			if toAddMap[ent.ImpactedServicesToRemove[idx]] {
 				ent.ImpactedServicesToRemove = append(ent.ImpactedServicesToRemove[:idx], ent.ImpactedServicesToRemove[idx+1:]...)
 				idx--
@@ -333,7 +349,9 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 		}
 
 		service.Depends = []string{}
-		impactedEntities = append(impactedEntities, service.Entity)
+		if service.Entity.ID != "" {
+			impactedEntities = append(impactedEntities, service.Entity)
+		}
 
 		return service.Entity, append(dependedEntities, impactedEntities...), nil
 	}
@@ -376,18 +394,12 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 				}
 			}
 
-			//wasInToAdd := false
 			for idx, impServ := range ent.ImpactedServicesToAdd {
 				if impServ == serviceID {
-					//wasInToAdd = true
 					ent.ImpactedServicesToAdd = append(ent.ImpactedServicesToAdd[:idx], ent.ImpactedServicesToAdd[idx+1:]...)
 					break
 				}
 			}
-
-			//if !wasInToAdd {
-			//	ent.ImpactedServicesToRemove = append(ent.ImpactedServicesToRemove, serviceID)
-			//}
 
 			updatedEntities = append(updatedEntities, ent)
 		}
@@ -422,10 +434,8 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 	for _, ent := range entitiesToAdd {
 		service.Depends = append(service.Depends, ent.ID)
 
-		//wasInToRemove := false
 		for idx, impServ := range ent.ImpactedServicesToRemove {
 			if impServ == serviceID {
-				//wasInToRemove = true
 				ent.ImpactedServicesToRemove = append(ent.ImpactedServicesToRemove[:idx], ent.ImpactedServicesToRemove[idx+1:]...)
 				break
 			}
@@ -433,10 +443,6 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 
 		ent.Impacts = append(ent.Impacts, serviceID)
 		ent.ImpactedServices = append(ent.ImpactedServices, serviceID)
-
-		//if !wasInToRemove {
-		//	ent.ImpactedServicesToAdd = append(ent.ImpactedServicesToAdd, serviceID)
-		//}
 
 		updatedEntities = append(updatedEntities, ent)
 	}
@@ -447,7 +453,7 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 	}), nil
 }
 
-func (m *manager) Handle(ctx context.Context, event types.Event) (types.Entity, []types.Entity, error) {
+func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Entity, []types.Entity, error) {
 	eventEntity, err := m.adapter.GetEntityByID(ctx, event.GetEID())
 	isNew := errors.Is(err, libentity.ErrNotFound)
 	if err != nil && !isNew {
@@ -545,7 +551,7 @@ func (m *manager) Handle(ctx context.Context, event types.Event) (types.Entity, 
 				},
 			}
 		} else {
-			err = m.updateLastEventDate(ctx, connectorID, now)
+			err = m.UpdateLastEventDate(ctx, connectorID, now)
 			if err != nil {
 				return types.Entity{}, nil, err
 			}
@@ -753,13 +759,13 @@ func (m *manager) Handle(ctx context.Context, event types.Event) (types.Entity, 
 	return eventEntity, contextGraphEntities, nil
 }
 
-func (m *manager) UpdateImpactedServices(ctx context.Context) error {
+func (m *manager) UpdateImpactedServicesFromDependencies(ctx context.Context) error {
 	cursor, err := m.adapter.GetImpactedServicesInfo(ctx)
 	if err != nil {
 		return err
 	}
 
-	writeModels := make([]mongo.WriteModel, 0, bulkMaxSize)
+	writeModels := make([]mongo.WriteModel, 0, canopsis.DefaultBulkSize)
 
 	defer cursor.Close(ctx)
 	for cursor.Next(ctx) {
@@ -839,7 +845,7 @@ type entConf struct {
 	eType             string
 }
 
-func (m *manager) updateLastEventDate(ctx context.Context, entityID string, timestamp types.CpsTime) error {
+func (m *manager) UpdateLastEventDate(ctx context.Context, entityID string, timestamp types.CpsTime) error {
 	_, err := m.collection.UpdateOne(
 		ctx,
 		bson.M{"_id": entityID},

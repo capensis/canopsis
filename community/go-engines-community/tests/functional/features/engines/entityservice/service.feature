@@ -2790,3 +2790,162 @@ Feature: update service on event
       }
     }
     """
+
+  Scenario: given disabled and enabled again entity should update service alarm
+    Given I am admin
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "name": "test-entityservice-service-21-name",
+      "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
+      "impact_level": 1,
+      "enabled": true,
+      "entity_patterns": [{"name": "test-resource-service-21-1"},{"name": "test-resource-service-21-2"}],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 201
+    When I save response serviceID={{ .lastResponse._id }}
+    When I wait the end of 2 events processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-service-21-1",
+      "connector_name": "test-connector-name-service-21-1",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-service-21-1",
+      "resource": "test-resource-service-21-1",
+      "state": 1,
+      "output": "test-output-service-21-1"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-service-21-2",
+      "connector_name": "test-connector-name-service-21-2",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-service-21-2",
+      "resource": "test-resource-service-21-2",
+      "state": 1,
+      "output": "test-output-service-21-2"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-service-21-2",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "10m" }},
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "filter":{
+        "$and":[
+          {
+            "name": "test-resource-service-21-2"
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "output": "All: 2; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateInfo: 0; Pbehaviors: map[test-maintenance-type-to-engine:1];"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do PUT /api/v4/entitybasics?_id=test-resource-service-21-2/test-component-service-21-2:
+    """json
+    {
+      "impact_level": 1,
+      "enabled": false,
+      "infos": [],
+      "impact": [
+        "test-component-service-21-2"
+      ],
+      "depends": [
+        "test-connector-service-21-2/test-connector-name-service-21-2"
+      ],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "output": "All: 1; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateInfo: 0; Pbehaviors: map[test-maintenance-type-to-engine:0];"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do PUT /api/v4/entitybasics?_id=test-resource-service-21-2/test-component-service-21-2:
+    """json
+    {
+      "impact_level": 1,
+      "enabled": true,
+      "infos": [],
+      "impact": [
+        "test-component-service-21-2"
+      ],
+      "depends": [
+        "test-connector-service-21-2/test-connector-name-service-21-2"
+      ],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "output": "All: 1; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateInfo: 0; Pbehaviors: map[test-maintenance-type-to-engine:1];"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """

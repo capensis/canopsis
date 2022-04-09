@@ -118,6 +118,8 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		case types.EventTypeEntityToggled:
 			if !event.Entity.Enabled {
 				alarmChange, err = s.resolveAlarmForDisabledEntity(tCtx, event)
+			} else {
+				alarmChange.Type = types.AlarmChangeTypeEnabled
 			}
 		case types.EventTypeRecomputeEntityService:
 			if !event.Entity.Enabled {

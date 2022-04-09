@@ -9,4 +9,5 @@ type StateCountersService interface {
 	RecomputeEntityServiceCounters(ctx context.Context, event types.Event) (map[string]UpdatedServicesInfo, error)
 	UpdateServiceCounters(ctx context.Context, entity types.Entity, alarm *types.Alarm, alarmChange types.AlarmChange) (map[string]UpdatedServicesInfo, error)
 	UpdateServiceState(serviceID string, serviceInfo UpdatedServicesInfo) error
+	RecomputeAllServices(ctx context.Context) error
 }

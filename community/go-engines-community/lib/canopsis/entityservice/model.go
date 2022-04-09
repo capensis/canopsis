@@ -11,7 +11,6 @@ import (
 type EntityService struct {
 	types.Entity   `bson:",inline"`
 	EntityPatterns pattern.EntityPatternList `bson:"entity_patterns" json:"entity_patterns"`
-	WaitRecompute  bool                      `bson:"wait_recompute" json:"wait_recompute"`
 	OutputTemplate string                    `bson:"output_template" json:"output_template"`
 }
 

@@ -3,6 +3,7 @@ package axe
 import (
 	"context"
 	"flag"
+	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
@@ -28,6 +29,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
 	"time"
 )
@@ -42,6 +44,7 @@ type Options struct {
 	IgnoreDefaultTomlConfig  bool
 	PeriodicalWaitTime       time.Duration
 	WithRemediation          bool
+	RecomputeAllOnInit       bool
 }
 
 func ParseOptions() Options {
@@ -56,6 +59,7 @@ func ParseOptions() Options {
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
 	flag.StringVar(&opts.FifoAckExchange, "fifoAckExchange", canopsis.FIFOAckExchangeName, "Publish FIFO Ack event to this exchange.")
 	flag.BoolVar(&opts.WithRemediation, "withRemediation", false, "Start remediation instructions")
+	flag.BoolVar(&opts.RecomputeAllOnInit, "recomputeAllOnInit", false, "Recompute entity services on init.")
 	flag.Parse()
 
 	flagVersion := flag.Bool("version", false, "version infos")
@@ -83,6 +87,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 	lockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	pbhRedisClient := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
 	runInfoRedisClient := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
+	initRedisLock := redis.NewLockClient(lockRedisClient)
 
 	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)
 
@@ -154,6 +159,28 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 
 	engineAxe := libengine.New(
 		func(ctx context.Context) error {
+			if options.RecomputeAllOnInit {
+				_, err := initRedisLock.Obtain(ctx, redis.AxeEntityServiceStateLockKey,
+					options.PeriodicalWaitTime, &redislock.Options{
+						RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
+					})
+				if err != nil {
+					// Lock is set for options.PeriodicalWaitTime TTL, other instances should skip actions below
+					if err != redislock.ErrNotObtained {
+						return fmt.Errorf("cannot obtain lock: %w", err)
+					}
+				} else {
+					logger.Info().Msg("started to send recompute entity service events")
+
+					err = stateCountersService.RecomputeAllServices(ctx)
+					if err != nil {
+						return fmt.Errorf("failed to send recompute entity service events: %w", err)
+					}
+
+					logger.Info().Msg("finished to send recompute entity service events")
+				}
+			}
+
 			return alarmStatusService.Load(ctx)
 		},
 		func(ctx context.Context) {
