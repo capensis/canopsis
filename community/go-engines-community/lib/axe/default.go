@@ -101,10 +101,6 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 	)
 
 	entityServicesService := entityservice.NewService(
-		amqpChannel,
-		canopsis.CheExchangeName,
-		canopsis.FIFOQueueName,
-		json.NewEncoder(),
 		entityservice.NewAdapter(dbClient),
 		entity.NewAdapter(dbClient),
 		logger,
