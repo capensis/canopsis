@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-filter-field Renders \`c-filters-field\` with default custom props 1`] = `
+exports[`c-filter-field Renders \`c-filter-field\` with default custom props 1`] = `
 <div
-  class="v-input v-text-field v-select v-autocomplete v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+  class="v-input v-text-field v-select v-autocomplete v-input--hide-details theme--light"
 >
   <div
     class="v-input__control"
@@ -15,7 +15,7 @@ exports[`c-filter-field Renders \`c-filters-field\` with default custom props 1`
       >
         <label
           aria-hidden="true"
-          class="v-label v-label--active theme--light"
+          class="v-label theme--light"
           style="left: 0px; position: absolute;"
         >
           Custom label
@@ -31,14 +31,12 @@ exports[`c-filter-field Renders \`c-filters-field\` with default custom props 1`
           class="v-input__append-inner"
         >
           <div
-            class="v-input__icon v-input__icon--clear"
+            class="v-input__icon v-input__icon--"
           >
             <i
               aria-hidden="true"
               class="v-icon v-icon--link material-icons theme--light"
-            >
-              clear
-            </i>
+            />
           </div>
         </div>
         <div
@@ -64,7 +62,7 @@ exports[`c-filter-field Renders \`c-filters-field\` with default custom props 1`
 </div>
 `;
 
-exports[`c-filter-field Renders \`c-filters-field\` with default custom props 2`] = `
+exports[`c-filter-field Renders \`c-filter-field\` with default custom props 2`] = `
 <div
   class="v-menu__content theme--light v-autocomplete__content"
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
@@ -77,11 +75,10 @@ exports[`c-filter-field Renders \`c-filters-field\` with default custom props 2`
       role="list"
     >
       <div
-        class="primary--text"
         role="listitem"
       >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
+        <div
+          class="v-list__tile theme--light"
         >
           <div
             class="v-list__tile__content"
@@ -89,51 +86,17 @@ exports[`c-filter-field Renders \`c-filters-field\` with default custom props 2`
             <div
               class="v-list__tile__title"
             >
-              Fake 1
+              No data available
             </div>
           </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Fake 2
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Fake 3
-            </div>
-          </div>
-        </a>
+        </div>
       </div>
     </div>
   </div>
 </div>
 `;
 
-exports[`c-filter-field Renders \`c-filters-field\` with default props 1`] = `
+exports[`c-filter-field Renders \`c-filter-field\` with default props 1`] = `
 <div
   class="v-input v-text-field v-select v-autocomplete v-input--hide-details theme--light"
 >
@@ -195,7 +158,7 @@ exports[`c-filter-field Renders \`c-filters-field\` with default props 1`] = `
 </div>
 `;
 
-exports[`c-filter-field Renders \`c-filters-field\` with default props 2`] = `
+exports[`c-filter-field Renders \`c-filter-field\` with default props 2`] = `
 <div
   class="v-menu__content theme--light v-autocomplete__content"
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
@@ -210,8 +173,8 @@ exports[`c-filter-field Renders \`c-filters-field\` with default props 2`] = `
       <div
         role="listitem"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list__tile theme--light"
         >
           <div
             class="v-list__tile__content"
@@ -219,44 +182,10 @@ exports[`c-filter-field Renders \`c-filters-field\` with default props 2`] = `
             <div
               class="v-list__tile__title"
             >
-              Fake 1
+              No data available
             </div>
           </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Fake 2
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Fake 3
-            </div>
-          </div>
-        </a>
+        </div>
       </div>
     </div>
   </div>
