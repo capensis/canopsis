@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"net/url"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
@@ -119,6 +120,7 @@ func RegisterRoutes(
 	router gin.IRouter,
 	security Security,
 	enforcer libsecurity.Enforcer,
+	legacyUrl string,
 	dbClient mongo.DbClient,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	pbhEntityTypeResolver libpbehavior.EntityTypeResolver,
@@ -252,7 +254,7 @@ func RegisterRoutes(
 			)
 		}
 
-		alarmStore := alarm.NewStore(dbClient, GetLegacyURL())
+		alarmStore := alarm.NewStore(dbClient, legacyUrl)
 		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, timezoneConfigProvider)
 		alarmRouter := protected.Group("/alarms")
 		{
@@ -593,7 +595,7 @@ func RegisterRoutes(
 		{
 			weatherAPI := serviceweather.NewApi(serviceweather.NewStore(
 				dbClient,
-				GetLegacyURL(),
+				legacyUrl,
 				alarmStore,
 				timezoneConfigProvider,
 			))
@@ -1272,6 +1274,7 @@ func RegisterRoutes(
 }
 
 func GetProxy(
+	legacyUrl *url.URL,
 	security Security,
 	enforcer libsecurity.Enforcer,
 	accessConfig proxy.AccessConfig,
@@ -1281,6 +1284,6 @@ func GetProxy(
 	return append(
 		authMiddleware,
 		middleware.ProxyAuthorize(enforcer, accessConfig),
-		ReverseProxyHandler(),
+		ReverseProxyHandler(legacyUrl),
 	)
 }

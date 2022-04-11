@@ -31,6 +31,7 @@ type engine struct {
 	deferFunc         func(ctx context.Context)
 	consumers         []Consumer
 	periodicalWorkers map[string]PeriodicalWorker
+	routines          []Routine
 	logger            zerolog.Logger
 }
 
@@ -46,10 +47,15 @@ func (e *engine) AddPeriodicalWorker(name string, worker PeriodicalWorker) {
 	e.periodicalWorkers[name] = worker
 }
 
+func (e *engine) AddRoutine(v Routine) {
+	e.routines = append(e.routines, v)
+}
+
 func (e *engine) Run(ctx context.Context) error {
 	e.logger.Info().
 		Int("consumers", len(e.consumers)).
 		Int("periodical workers", len(e.periodicalWorkers)).
+		Int("routines", len(e.routines)).
 		Msg("engine started")
 	defer e.logger.Info().Msg("engine stopped")
 	defer func() {
@@ -100,6 +106,13 @@ func (e *engine) Run(ctx context.Context) error {
 		worker := v
 		g.Go(func() error {
 			return e.runPeriodicalWorker(ctx, name, worker)
+		})
+	}
+
+	for _, r := range e.routines {
+		routine := r
+		g.Go(func() error {
+			return routine(ctx)
 		})
 	}
 
