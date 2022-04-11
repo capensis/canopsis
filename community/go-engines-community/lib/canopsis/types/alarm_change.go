@@ -46,10 +46,9 @@ const (
 	// AlarmChangeTypeInstructionAbort is used for manual and auto instruction execution.
 	AlarmChangeTypeInstructionAbort AlarmChangeType = "instructionabort"
 	// Following change types are used for auto instruction execution.
-	AlarmChangeTypeAutoInstructionStart          AlarmChangeType = "autoinstructionstart"
-	AlarmChangeTypeAutoInstructionComplete       AlarmChangeType = "autoinstructioncomplete"
-	AlarmChangeTypeAutoInstructionFail           AlarmChangeType = "autoinstructionfail"
-	AlarmChangeTypeAutoInstructionAlreadyRunning AlarmChangeType = "autoinstructionalreadyrunning"
+	AlarmChangeTypeAutoInstructionStart    AlarmChangeType = "autoinstructionstart"
+	AlarmChangeTypeAutoInstructionComplete AlarmChangeType = "autoinstructioncomplete"
+	AlarmChangeTypeAutoInstructionFail     AlarmChangeType = "autoinstructionfail"
 	// Following change types are used for job execution.
 	AlarmChangeTypeInstructionJobStart    AlarmChangeType = "instructionjobstart"
 	AlarmChangeTypeInstructionJobComplete AlarmChangeType = "instructionjobcomplete"
