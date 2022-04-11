@@ -6,9 +6,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
+	"strings"
 	"time"
 )
 
@@ -19,6 +21,7 @@ type EventPublisher interface {
 
 type eventPublisher struct {
 	alarmAdapter  libalarm.Adapter
+	entityAdapter entity.Adapter
 	encoder       encoding.Encoder
 	amqpPublisher libamqp.Publisher
 	// contentType is added to amqp message to support encoded format.
@@ -31,8 +34,8 @@ type eventPublisher struct {
 type ChangeEntityMessage struct {
 	ID string
 	// IsToggled is true if entity is disabled or enabled.
-	IsToggled bool
-	IsService bool
+	IsToggled  bool
+	EntityType string
 	// IsPatternChanged defines should service's context graph and state be recomputed.
 	IsServicePatternChanged bool
 	// ServiceAlarm is required on entity service delete because alarm is removed from
@@ -42,6 +45,7 @@ type ChangeEntityMessage struct {
 
 func NewEventPublisher(
 	alarmAdapter libalarm.Adapter,
+	entityAdapter entity.Adapter,
 	publisher libamqp.Publisher,
 	encoder encoding.Encoder,
 	contentType string,
@@ -50,6 +54,7 @@ func NewEventPublisher(
 ) EventPublisher {
 	return &eventPublisher{
 		alarmAdapter:  alarmAdapter,
+		entityAdapter: entityAdapter,
 		amqpPublisher: publisher,
 		encoder:       encoder,
 		contentType:   contentType,
@@ -77,7 +82,7 @@ func (p *eventPublisher) Publish(
 				continue
 			}
 
-			if msg.IsService {
+			if msg.EntityType == types.EntityTypeService {
 				go p.publishServiceEvent(msg)
 			} else {
 				go p.publishBasicEntityEvent(ctx, msg)
@@ -121,28 +126,58 @@ func (p *eventPublisher) publishBasicEntityEvent(ctx context.Context, msg Change
 		return
 	}
 
+	var event types.Event
+
 	if len(alarms) == 0 {
-		p.logger.Warn().Str("entity", msg.ID).Msg("no alarm for entity, cannot send event")
-		return
-	}
+		switch msg.EntityType {
+		case types.EntityTypeComponent:
+			connector, err := p.entityAdapter.FindConnectorForComponent(ctx, msg.ID)
+			if err != nil || connector == nil {
+				p.logger.Warn().Str("entity", msg.ID).Msg("cannot generate event to component: no alarms and no connector")
+				return
+			}
+			event = types.Event{
+				Connector:     strings.ReplaceAll(connector.ID, "/"+connector.Name, ""),
+				ConnectorName: connector.Name,
+				Component:     msg.ID,
+			}
+		case types.EntityTypeResource:
+			connector, err := p.entityAdapter.FindConnectorForResource(ctx, msg.ID)
+			if err != nil || connector == nil {
+				p.logger.Warn().Str("entity", msg.ID).Msg("cannot generate event to resource: no alarms and no connector")
+				return
+			}
+			component, err := p.entityAdapter.FindComponentForResource(ctx, msg.ID)
+			if err != nil || component == nil {
+				p.logger.Warn().Str("entity", msg.ID).Msg("cannot generate event to resource: no alarms and no component")
+				return
+			}
 
-	var eventType string
-	if msg.IsToggled {
-		eventType = types.EventTypeEntityToggled
+			event = types.Event{
+				Connector:     strings.ReplaceAll(connector.ID, "/"+connector.Name, ""),
+				ConnectorName: connector.Name,
+				Component:     component.ID,
+				Resource:      strings.ReplaceAll(msg.ID, "/"+component.ID, ""),
+			}
+		}
 	} else {
-		eventType = types.EventTypeEntityUpdated
+		alarm := alarms[0]
+		event = types.Event{
+			Connector:     alarm.Value.Connector,
+			ConnectorName: alarm.Value.ConnectorName,
+			Component:     alarm.Value.Component,
+			Resource:      alarm.Value.Resource,
+		}
 	}
 
-	alarm := alarms[0]
-	event := types.Event{
-		EventType:     eventType,
-		Connector:     alarm.Value.Connector,
-		ConnectorName: alarm.Value.ConnectorName,
-		Component:     alarm.Value.Component,
-		Resource:      alarm.Value.Resource,
-		Timestamp:     types.CpsTime{Time: time.Now()},
-		Author:        canopsis.DefaultEventAuthor,
+	if msg.IsToggled {
+		event.EventType = types.EventTypeEntityToggled
+	} else {
+		event.EventType = types.EventTypeEntityUpdated
 	}
+
+	event.Timestamp = types.NewCpsTime()
+	event.Author = canopsis.DefaultEventAuthor
 	event.SourceType = event.DetectSourceType()
 	err = p.publishEvent(event)
 	if err != nil {

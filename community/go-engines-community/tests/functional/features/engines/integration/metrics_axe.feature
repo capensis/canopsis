@@ -88,24 +88,31 @@ Feature: Metrics should be added on alarm changes
     ]
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-metrics-axe-2-1"}]}&with_steps=true until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-metrics-axe-2-1"}]}&with_steps=true until response code is 200 and response array key "data.0.v.steps" contains:
     """json
-    {
-      "data": [
-        {
-          "v": {
-            "steps": [
-              {},
-              {},
-              {"_t": "autoinstructionstart"},
-              {"_t": "instructionjobstart"},
-              {"_t": "instructionjobcomplete"},
-              {"_t": "autoinstructioncomplete"}
-            ]
-          }
-        }
-      ]
-    }
+    [
+      {
+        "_t": "autoinstructioncomplete",
+        "m": "Instruction test-instruction-metrics-axe-2-1-name."
+      },
+      {
+        "_t": "autoinstructioncomplete",
+        "m": "Instruction test-instruction-metrics-axe-2-2-name."
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-metrics-axe-2-2"}]}&with_steps=true until response code is 200 and response array key "data.0.v.steps" contains:
+    """json
+    [
+      {
+        "_t": "autoinstructioncomplete",
+        "m": "Instruction test-instruction-metrics-axe-2-1-name."
+      },
+      {
+        "_t": "autoinstructioncomplete",
+        "m": "Instruction test-instruction-metrics-axe-2-2-name."
+      }
+    ]
     """
     When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=instruction_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
     Then the response code should be 200

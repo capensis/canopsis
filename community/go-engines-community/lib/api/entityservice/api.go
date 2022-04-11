@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/rs/zerolog"
@@ -190,7 +191,7 @@ func (a *api) Create(c *gin.Context) {
 	if service.Enabled {
 		a.sendChangeMsg(entityservice.ChangeEntityMessage{
 			ID:                      service.ID,
-			IsService:               true,
+			EntityType:              service.Type,
 			IsServicePatternChanged: true,
 		})
 	}
@@ -246,7 +247,7 @@ func (a *api) Update(c *gin.Context) {
 	if service.Enabled || serviceChanges.IsToggled {
 		a.sendChangeMsg(entityservice.ChangeEntityMessage{
 			ID:                      service.ID,
-			IsService:               true,
+			EntityType:              service.Type,
 			IsServicePatternChanged: serviceChanges.IsPatternChanged,
 			IsToggled:               serviceChanges.IsToggled,
 		})
@@ -292,7 +293,7 @@ func (a *api) Delete(c *gin.Context) {
 
 	a.sendChangeMsg(entityservice.ChangeEntityMessage{
 		ID:                      id,
-		IsService:               true,
+		EntityType:              types.EntityTypeService,
 		IsServicePatternChanged: true,
 		ServiceAlarm:            alarm,
 	})
@@ -379,7 +380,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 		if service.Enabled {
 			a.sendChangeMsg(entityservice.ChangeEntityMessage{
 				ID:                      service.ID,
-				IsService:               true,
+				EntityType:              service.Type,
 				IsServicePatternChanged: true,
 			})
 		}
@@ -476,7 +477,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		if service.Enabled || serviceChanges.IsToggled {
 			a.sendChangeMsg(entityservice.ChangeEntityMessage{
 				ID:                      service.ID,
-				IsService:               true,
+				EntityType:              service.Type,
 				IsServicePatternChanged: serviceChanges.IsPatternChanged,
 				IsToggled:               serviceChanges.IsToggled,
 			})
@@ -573,7 +574,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 
 		a.sendChangeMsg(entityservice.ChangeEntityMessage{
 			ID:                      request.ID,
-			IsService:               true,
+			EntityType:              types.EntityTypeService,
 			IsServicePatternChanged: true,
 			ServiceAlarm:            alarm,
 		})

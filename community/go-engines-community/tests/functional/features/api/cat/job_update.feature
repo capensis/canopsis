@@ -1,28 +1,12 @@
 Feature: Job update
 
   Scenario: PUT as unauthorized
-    When I do PUT /api/v4/cat/jobs/test-job-to-update:
-    """json
-    {
-      "name": "test-job-name-to-update",
-      "config": "test-job-config-to-edit-job",
-      "job_id": "test-job-id",
-      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-    }
-    """
+    When I do PUT /api/v4/cat/jobs/test-job-to-update
     Then the response code should be 401
 
   Scenario: PUT without permissions
     When I am noperms
-    When I do PUT /api/v4/cat/jobs/test-job-to-update:
-    """json
-    {
-      "name": "test-job-name-to-update",
-      "config": "test-job-config-to-edit-job",
-      "job_id": "test-job-id",
-      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-    }
-    """
+    When I do PUT /api/v4/cat/jobs/test-job-to-update
     Then the response code should be 403
 
   Scenario: PUT a valid job without any changes
@@ -33,7 +17,8 @@ Feature: Job update
       "name": "test-job-name-to-update",
       "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
-      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+      "multiple_executions": false
     }
     """
     Then the response code should be 200
@@ -60,7 +45,8 @@ Feature: Job update
       },
       "job_id": "test-job-id",
       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-      "query": null
+      "query": null,
+      "multiple_executions": false
     }
     """
 
@@ -72,7 +58,8 @@ Feature: Job update
       "name": "test-job-name-to-update",
       "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
-      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+      "multiple_executions": true
     }
     """
     Then the response code should be 200
@@ -99,7 +86,8 @@ Feature: Job update
       },
       "job_id": "test-job-id",
       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-      "query": null
+      "query": null,
+      "multiple_executions": true
     }
     """
 
@@ -111,7 +99,8 @@ Feature: Job update
       "name": "test-job-name-do-not-exists",
       "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
-      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+      "multiple_executions": false
     }
     """
     Then the response code should be 404
@@ -124,7 +113,8 @@ Feature: Job update
       "name": "test-job-name-to-get",
       "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
-      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+      "multiple_executions": false
     }
     """
     Then the response code should be 400
@@ -145,7 +135,8 @@ Feature: Job update
       "name": "test-job-name-to-update",
       "config": "test-job-config-not-exist",
       "job_id": "test-job-id",
-      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+      "multiple_executions": false
     }
     """
     Then the response code should be 400

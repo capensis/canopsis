@@ -61,6 +61,18 @@ func (mr *MockEngineMockRecorder) AddPeriodicalWorker(arg0, arg1 interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddPeriodicalWorker", reflect.TypeOf((*MockEngine)(nil).AddPeriodicalWorker), arg0, arg1)
 }
 
+// AddRoutine mocks base method.
+func (m *MockEngine) AddRoutine(arg0 engine.Routine) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "AddRoutine", arg0)
+}
+
+// AddRoutine indicates an expected call of AddRoutine.
+func (mr *MockEngineMockRecorder) AddRoutine(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddRoutine", reflect.TypeOf((*MockEngine)(nil).AddRoutine), arg0)
+}
+
 // Run mocks base method.
 func (m *MockEngine) Run(arg0 context.Context) error {
 	m.ctrl.T.Helper()

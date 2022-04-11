@@ -22,6 +22,8 @@ import { convertDateToString } from '@/helpers/date/date';
 
 import localStorageService from '@/services/local-storage';
 
+import Socket from '@/plugins/socket/services/socket';
+
 import { authMixin } from '@/mixins/auth';
 import { systemMixin } from '@/mixins/system';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
@@ -74,11 +76,20 @@ export default {
   mounted() {
     this.socketConnectWithErrorHandling();
     this.fetchCurrentUserWithErrorHandling();
+    this.showLocalStorageWarningPopupMessage();
   },
   methods: {
     ...mapActions({
       fetchPausedExecutionsWithoutStore: 'fetchPausedListWithoutStore',
     }),
+
+    showLocalStorageWarningPopupMessage() {
+      const text = localStorageService.pop('warningPopup');
+
+      if (text) {
+        this.$popups.warning({ text, autoClose: false });
+      }
+    },
 
     registerCurrentUserOnceWatcher() {
       const unwatch = this.$watch('currentUser', async (currentUser) => {
@@ -138,6 +149,11 @@ export default {
     socketErrorHandler({ message } = {}) {
       if (message) {
         this.$popups.error({ text: message });
+
+        if (message === Socket.ERROR_MESSAGES.authenticationFailed) {
+          localStorageService.set('warningPopup', this.$t('warnings.authTokenExpired'));
+          this.logout();
+        }
       }
     },
 

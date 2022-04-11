@@ -182,6 +182,7 @@ Feature: update an instruction statistics
     {
       "data": [
         {
+          "is_manual_instruction_running": true,
           "is_manual_instruction_waiting_result": false
         }
       ]
@@ -197,6 +198,7 @@ Feature: update an instruction statistics
     {
       "data": [
         {
+          "is_manual_instruction_running": false,
           "is_manual_instruction_waiting_result": true
         }
       ]
@@ -207,6 +209,7 @@ Feature: update an instruction statistics
     {
       "data": [
         {
+          "is_manual_instruction_running": false,
           "is_manual_instruction_waiting_result": false
         }
       ]
