@@ -3,6 +3,7 @@ package eventfilter
 import (
 	"context"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"strings"
 
 	libcontext "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context"
@@ -24,7 +25,7 @@ func NewEntityDataSourceFactory(enrichmentCenter libcontext.EnrichmentCenter, en
 }
 
 // Create returns a new empty EntityDataSourceGetter.
-func (p EntityDataSourceFactory) Create(parameters map[string]interface{}) (DataSourceGetter, error) {
+func (p EntityDataSourceFactory) Create(_ mongo.DbClient, parameters map[string]interface{}) (DataSourceGetter, error) {
 	if len(parameters) != 0 {
 		unexpectedParameters := make([]string, 0, len(parameters))
 		for key := range parameters {
