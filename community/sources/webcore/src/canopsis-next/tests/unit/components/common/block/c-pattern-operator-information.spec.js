@@ -4,15 +4,24 @@ import CPatternOperatorInformation from '@/components/common/block/c-pattern-ope
 
 const localVue = createVueInstance();
 
+const stubs = {
+  'c-pattern-operator-chip': true,
+};
+
 const snapshotFactory = (options = {}) => mount(CPatternOperatorInformation, {
   localVue,
+  stubs,
 
   ...options,
 });
 
 describe('c-pattern-operator-information', () => {
   test('Renders `c-pattern-operator-information`', () => {
-    const wrapper = snapshotFactory();
+    const wrapper = snapshotFactory({
+      slots: {
+        default: '<div class="default-slot" />',
+      },
+    });
 
     expect(wrapper.element).toMatchSnapshot();
   });
