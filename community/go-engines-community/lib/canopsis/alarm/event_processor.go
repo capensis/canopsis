@@ -3,8 +3,6 @@ package alarm
 import (
 	"context"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"runtime/trace"
 	"sync"
 	"time"
@@ -16,6 +14,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	liboperation "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -109,7 +109,8 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 
 		if changeType == types.AlarmChangeTypeStateIncrease || changeType == types.AlarmChangeTypeStateDecrease {
 			s.updateMetaChildrenState(ctx, event)
-		} else if event.Alarm != nil && event.Alarm.IsMetaChildren() &&
+		}
+		if event.Alarm != nil && event.Alarm.IsMetaChildren() &&
 			s.alarmConfigProvider.Get().EnableLastEventDate {
 			s.updateMetaLastEventDate(ctx, event)
 		}
@@ -495,7 +496,7 @@ func (s *eventProcessor) createOperationFromEvent(event *types.Event) types.Oper
 		types.EventTypeInstructionResumed, types.EventTypeInstructionCompleted,
 		types.EventTypeInstructionFailed, types.EventTypeInstructionAborted,
 		types.EventTypeAutoInstructionStarted, types.EventTypeAutoInstructionCompleted,
-		types.EventTypeAutoInstructionFailed, types.EventTypeAutoInstructionAlreadyRunning,
+		types.EventTypeAutoInstructionFailed,
 		types.EventTypeInstructionJobStarted, types.EventTypeInstructionJobCompleted,
 		types.EventTypeInstructionJobAborted, types.EventTypeInstructionJobFailed:
 		parameters = types.OperationInstructionParameters{
