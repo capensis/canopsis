@@ -48,8 +48,8 @@ type cancelableComputer struct {
 	publisher           libamqp.Publisher
 	queue               string
 
-	mxIds          sync.Mutex
-	idsToRecompute []string
+	tasksMx sync.Mutex
+	tasks   []string
 }
 
 // NewCancelableComputer creates new computer.
@@ -77,36 +77,25 @@ func NewCancelableComputer(
 }
 
 func (c *cancelableComputer) Compute(ctx context.Context, ch <-chan ComputeTask) {
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
-
 	startComputeCh := make(chan bool, 1)
-	defer close(startComputeCh)
-
-	done := make(chan bool)
 
 	go func() {
-		defer close(done)
+		defer close(startComputeCh)
 
 		for {
 			select {
 			case <-ctx.Done():
 				return
-			case _, ok := <-startComputeCh:
+			case task, ok := <-ch:
 				if !ok {
 					return
 				}
 
-				c.mxIds.Lock()
-				idsToRecompute := c.idsToRecompute
-				c.idsToRecompute = c.idsToRecompute[:0]
-				c.mxIds.Unlock()
-
-				if len(idsToRecompute) == 0 {
-					continue
+				if len(task.PbehaviorIds) == 0 {
+					c.addTasks([]string{calculateAll})
+				} else {
+					c.addTasks(task.PbehaviorIds)
 				}
-
-				c.computePbehavior(ctx, idsToRecompute)
 
 				select {
 				case startComputeCh <- true:
@@ -116,37 +105,37 @@ func (c *cancelableComputer) Compute(ctx context.Context, ch <-chan ComputeTask)
 		}
 	}()
 
-loop:
-	for {
-		select {
-		case <-ctx.Done():
-			break loop
-		case task, ok := <-ch:
-			if !ok {
-				break loop
+	for range startComputeCh {
+		for {
+			tasks := c.getTasks()
+			if len(tasks) == 0 {
+				break
 			}
 
-			c.mxIds.Lock()
-			if len(task.PbehaviorIds) == 0 {
-				c.idsToRecompute = append(c.idsToRecompute, calculateAll)
-			} else {
-				c.idsToRecompute = append(c.idsToRecompute, task.PbehaviorIds...)
-			}
-			c.mxIds.Unlock()
-
-			select {
-			case startComputeCh <- true:
-			default:
-			}
+			c.computePbehaviors(ctx, tasks)
 		}
 	}
-
-	cancel()
-	<-done
 }
 
-// computePbehavior obtains lock and calls computer.
-func (c *cancelableComputer) computePbehavior(
+func (c *cancelableComputer) addTasks(tasks []string) {
+	c.tasksMx.Lock()
+	defer c.tasksMx.Unlock()
+
+	c.tasks = append(c.tasks, tasks...)
+}
+
+func (c *cancelableComputer) getTasks() []string {
+	c.tasksMx.Lock()
+	defer c.tasksMx.Unlock()
+
+	tasks := c.tasks
+	c.tasks = make([]string, 0)
+
+	return tasks
+}
+
+// computePbehaviors obtains lock and calls computer.
+func (c *cancelableComputer) computePbehaviors(
 	ctx context.Context,
 	pbehaviorIds []string,
 ) {

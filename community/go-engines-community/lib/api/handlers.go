@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 	"net/http/httputil"
+	"net/url"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -15,8 +16,7 @@ const headerSetCookie = "set-cookie"
 
 // ReverseProxyHandler directs requests to old API.
 // It doesn't support old API session and uses auth api key for authentication.
-func ReverseProxyHandler() gin.HandlerFunc {
-	legacyURL := GetLegacyURL()
+func ReverseProxyHandler(legacyURL *url.URL) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		proxy := &httputil.ReverseProxy{
 			Director: func(req *http.Request) {
