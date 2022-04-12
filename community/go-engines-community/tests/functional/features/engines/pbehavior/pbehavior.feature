@@ -24,6 +24,7 @@ Feature: update alarm on pbehavior
       "name": "test-pbehavior-1",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "10m" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -154,6 +155,7 @@ Feature: update alarm on pbehavior
       "name": "test-pbehavior-2",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "10m" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -236,6 +238,7 @@ Feature: update alarm on pbehavior
       "name": "test-pbehavior-3",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "10m" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -283,6 +286,7 @@ Feature: update alarm on pbehavior
       "name": "test-pbehavior-4",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "2s" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -323,6 +327,7 @@ Feature: update alarm on pbehavior
       "name": "test-pbehavior-5",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "10m" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -370,6 +375,7 @@ Feature: update alarm on pbehavior
       "name": "test-pbehavior-6",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "10m" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -449,6 +455,7 @@ Feature: update alarm on pbehavior
       "name": "test-pbehavior-7",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "10m" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -469,6 +476,7 @@ Feature: update alarm on pbehavior
       "name": "test-pbehavior-7",
       "tstart": {{ .lastResponse.tstart }},
       "tstop": {{ .lastResponse.tstop }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -545,6 +553,7 @@ Feature: update alarm on pbehavior
       "name": "test-pbehavior-8",
       "tstart": {{ nowAdd "2s" }},
       "tstop": {{ nowAdd "10m" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -613,6 +622,7 @@ Feature: update alarm on pbehavior
       "name": "test-pbehavior-9",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -624,8 +634,8 @@ Feature: update alarm on pbehavior
       }
     }
     """
-    When I wait 1s
     Then the response code should be 201
+    When I wait 1s
     When I send an event:
     """json
     {

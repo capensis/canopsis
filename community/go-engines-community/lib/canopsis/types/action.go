@@ -11,6 +11,8 @@ const (
 	ActionTypeWebhook     = "webhook"
 )
 
+const ActionPbehaviorColor = "#808080"
+
 type ActionPBehaviorParameters struct {
 	Author         string            `bson:"author" json:"author"`
 	UserID         string            `bson:"user" json:"user" mapstructure:"user"`

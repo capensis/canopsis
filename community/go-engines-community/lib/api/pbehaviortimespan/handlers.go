@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Get all pbehavior timespans
+// GetTimeSpans gets all pbehavior timespans
 // @Summary Get all pbehavior timespans
 // @Description Get time spans of calendar event within view span; {by_date: false} adds exception spans with types, {by_date: true} merges adjacent spans if gap between sequential ones less than 24 hours
 // @Tags pbehavior-timespans
@@ -15,7 +15,7 @@ import (
 // @Accept json
 // @Produce json
 // @Param body body TimespansRequest true "body"
-// @Success 200 {array} timespansItemResponse
+// @Success 200 {array} ItemResponse
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /pbehavior-timespans [post]
 func GetTimeSpans(s Service) gin.HandlerFunc {

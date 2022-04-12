@@ -2014,6 +2014,8 @@ definitions:
     properties:
       _id:
         type: string
+      color:
+        type: string
       enabled:
         type: boolean
       exceptions:
@@ -2040,6 +2042,7 @@ definitions:
         type: string
     required:
     - _id
+    - color
     - enabled
     - filter
     - name
@@ -2062,6 +2065,45 @@ definitions:
         type: object
       status:
         type: integer
+    type: object
+  pbehavior.CalendarByEntityIDRequest:
+    properties:
+      _id:
+        type: string
+      from:
+        type: integer
+      to:
+        type: integer
+    required:
+    - _id
+    - from
+    - to
+    type: object
+  pbehavior.CalendarRequest:
+    properties:
+      from:
+        type: integer
+      to:
+        type: integer
+    required:
+    - from
+    - to
+    type: object
+  pbehavior.CalendarResponse:
+    properties:
+      _id:
+        type: string
+      color:
+        type: string
+      from:
+        type: integer
+      title:
+        type: string
+      to:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehavior.Type'
+        type: object
     type: object
   pbehavior.Comment:
     properties:
@@ -2090,6 +2132,8 @@ definitions:
     properties:
       _id:
         type: string
+      color:
+        type: string
       enabled:
         type: boolean
       exceptions:
@@ -2115,6 +2159,7 @@ definitions:
       type:
         type: string
     required:
+    - color
     - enabled
     - filter
     - name
@@ -2133,6 +2178,8 @@ definitions:
     type: object
   pbehavior.PatchRequest:
     properties:
+      color:
+        type: string
       enabled:
         type: boolean
       exceptions:
@@ -2163,6 +2210,8 @@ definitions:
       _id:
         type: string
       author:
+        type: string
+      color:
         type: string
       comments:
         $ref: '#/definitions/pbehavior.Comments'
@@ -2209,8 +2258,6 @@ definitions:
     properties:
       _id:
         type: string
-      color:
-        type: string
       description:
         type: string
       icon_name:
@@ -2224,6 +2271,8 @@ definitions:
     type: object
   pbehavior.UpdateRequest:
     properties:
+      color:
+        type: string
       enabled:
         type: boolean
       exceptions:
@@ -2249,6 +2298,7 @@ definitions:
       type:
         type: string
     required:
+    - color
     - enabled
     - filter
     - name
@@ -2342,46 +2392,7 @@ definitions:
     - description
     - name
     type: object
-  pbehaviortimespan.ExdateRequest:
-    properties:
-      begin:
-        type: integer
-      end:
-        type: integer
-      type:
-        type: string
-    required:
-    - begin
-    - end
-    type: object
-  pbehaviortimespan.TimespansRequest:
-    properties:
-      by_date:
-        type: boolean
-      end_at:
-        type: integer
-      exceptions:
-        items:
-          type: string
-        type: array
-      exdates:
-        items:
-          $ref: '#/definitions/pbehaviortimespan.ExdateRequest'
-        type: array
-      rrule:
-        type: string
-      start_at:
-        type: integer
-      view_from:
-        type: integer
-      view_to:
-        type: integer
-    required:
-    - start_at
-    - view_from
-    - view_to
-    type: object
-  pbehaviortimespan.timespansItemResponse:
+  pbehaviortimespan.ItemResponse:
     properties:
       from:
         type: integer
@@ -2391,10 +2402,36 @@ definitions:
         $ref: '#/definitions/pbehavior.Type'
         type: object
     type: object
+  pbehaviortimespan.TimespansRequest:
+    properties:
+      end_at:
+        type: integer
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/pbehaviorexception.ExdateRequest'
+        type: array
+      rrule:
+        type: string
+      start_at:
+        type: integer
+      type:
+        type: string
+      view_from:
+        type: integer
+      view_to:
+        type: integer
+    required:
+    - start_at
+    - type
+    - view_from
+    - view_to
+    type: object
   pbehaviortype.EditRequest:
     properties:
-      color:
-        type: string
       description:
         type: string
       icon_name:
@@ -2415,8 +2452,6 @@ definitions:
   pbehaviortype.Type:
     properties:
       _id:
-        type: string
-      color:
         type: string
       deletable:
         type: boolean
@@ -5414,6 +5449,38 @@ paths:
       summary: Clean disabled entities
       tags:
       - entities
+  /entities/pbehavior-calendar:
+    get:
+      consumes:
+      - application/json
+      description: Get list of pbehaviors' timespans
+      operationId: pbehaviors-calendar-by-entity-id
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/pbehavior.CalendarByEntityIDRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/pbehavior.CalendarResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Find pbehaviors by entity id
+      tags:
+      - pbehaviors
   /entities/pbehaviors:
     get:
       consumes:
@@ -5423,7 +5490,7 @@ paths:
       parameters:
       - description: Entity id
         in: query
-        name: id
+        name: _id
         required: true
         type: string
       produces:
@@ -6896,6 +6963,43 @@ paths:
       summary: Update notification settings
       tags:
       - notification
+  /pbehavior-calendar:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of pbehaviors
+      operationId: pbehaviors-calendar
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/pbehavior.CalendarRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PaginatedListResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/pbehavior.CalendarResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Find all pbehaviors
+      tags:
+      - pbehaviors
   /pbehavior-comments:
     post:
       consumes:
@@ -7346,7 +7450,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/pbehaviortimespan.timespansItemResponse'
+              $ref: '#/definitions/pbehaviortimespan.ItemResponse'
             type: array
         "400":
           description: Bad Request

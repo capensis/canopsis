@@ -29,14 +29,14 @@ type typeResolver struct {
 	// DefaultActiveTypeID uses if there aren't any behaviors.
 	DefaultActiveTypeID string
 	// TypesByID contains all types.
-	TypesByID map[string]*Type
+	TypesByID map[string]Type
 }
 
 // NewTypeResolver creates new type resolver.
 func NewTypeResolver(
 	span timespan.Span,
 	computedPbehaviors map[string]ComputedPbehavior,
-	typesByID map[string]*Type,
+	typesByID map[string]Type,
 	defaultActiveTypeID string,
 ) TypeResolver {
 	return &typeResolver{
@@ -86,7 +86,7 @@ func (r *typeResolver) Resolve(
 		if !ok {
 			return ResolveResult{}, fmt.Errorf("unknown type %v, probably need recompute data", r.DefaultActiveTypeID)
 		}
-		if *res.ResolvedType == *activeType {
+		if *res.ResolvedType == activeType {
 			res = ResolveResult{}
 		}
 	}
@@ -131,7 +131,7 @@ func (r *typeResolver) GetPbehaviors(
 						}
 
 						resCh <- ResolveResult{
-							ResolvedType:      resolvedType,
+							ResolvedType:      &resolvedType,
 							ResolvedPbhID:     d.id,
 							ResolvedPbhName:   d.computed.Name,
 							ResolvedPbhReason: d.computed.Reason,

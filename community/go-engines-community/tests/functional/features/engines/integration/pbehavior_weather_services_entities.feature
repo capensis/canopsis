@@ -39,6 +39,7 @@ Feature: get service entities
       "name": "test-pbehavior-weather-service-entity-1",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "10m" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -122,6 +123,7 @@ Feature: get service entities
       "name": "test-pbehavior-weather-service-entity-2",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "10m" }},
+      "color": "#FFFFFF",
       "type": "test-active-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -222,6 +224,7 @@ Feature: get service entities
       "name": "test-pbehavior-weather-service-entity-3-1",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "10m" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -316,6 +319,7 @@ Feature: get service entities
       "name": "test-pbehavior-weather-service-entity-4",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "10m" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -394,6 +398,7 @@ Feature: get service entities
       "name": "test-pbehavior-weather-service-entity-5",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "10m" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
@@ -472,6 +477,7 @@ Feature: get service entities
       "name": "test-pbehavior-weather-service-entity-6",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "10m" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{
