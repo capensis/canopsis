@@ -386,14 +386,23 @@ instruction:
     jobs:
       - job: test-job-to-check-linked-to-auto-instruction
 
-  instruction_to_start_multiple_times (extend instruction_manual):
-    _id: test-instruction-execution-to-start-multiple-times
+  instruction_to_start_multiple_times_1 (extend instruction_manual):
+    _id: test-instruction-execution-to-start-multiple-times-1
     entity_pattern:
     alarm_pattern:
       - - field: v.resource
           cond:
             type: eq
             value: test-instruction-execution-start-resource-2
+
+  instruction_to_start_multiple_times_2 (extend instruction_manual):
+    _id: test-instruction-execution-to-start-multiple-times-2
+    entity_pattern:
+    alarm_pattern:
+      - - field: v.resource
+          cond:
+            type: is_one_of
+            value: ["test-instruction-execution-start-resource-3-1", "test-instruction-execution-start-resource-3-2"]
 
   instruction_execution_running (extend instruction_manual):
     _id: test-instruction-execution-running

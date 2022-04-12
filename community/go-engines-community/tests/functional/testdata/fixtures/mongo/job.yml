@@ -3,6 +3,7 @@ job:
     _id: <UUID()>
     name: <Word()>
     config: test-job-config-to-edit-job
+    multiple_executions: false
     external_id: <UUID()>
     author: root
     created: <NowUnix()>
@@ -10,6 +11,7 @@ job:
   job_dummy_succeeded (template):
     _id: <UUID()>
     name: <Word()>
+    multiple_executions: false
     config: test-job-config-to-run-auto-instruction
     external_id: test-job-succeeded
     author: root
@@ -18,6 +20,7 @@ job:
   job_dummy_long_succeeded (template):
     _id: <UUID()>
     name: <Word()>
+    multiple_executions: false
     config: test-job-config-to-run-auto-instruction
     external_id: test-job-long-succeeded
     author: root
@@ -26,6 +29,7 @@ job:
   job_dummy_failed (template):
     _id: <UUID()>
     name: <Word()>
+    multiple_executions: false
     config: test-job-config-to-run-auto-instruction
     external_id: test-job-failed
     author: root
@@ -34,6 +38,7 @@ job:
   job_dummy_long_failed (template):
     _id: <UUID()>
     name: <Word()>
+    multiple_executions: false
     config: test-job-config-to-run-auto-instruction
     external_id: test-job-long-failed
     author: root
@@ -42,6 +47,7 @@ job:
   job_dummy_http_error (template):
     _id: <UUID()>
     name: <Word()>
+    multiple_executions: false
     config: test-job-config-to-run-auto-instruction
     external_id: test-job-http-error
     author: root
