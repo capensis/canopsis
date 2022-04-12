@@ -200,10 +200,8 @@ func (s *eventProcessor) fillAlarmChange(ctx context.Context, event *types.Event
 			alarmChange.PreviousStatusChange = event.Timestamp
 		}
 
-		if event.Entity != nil {
-			alarmChange.PreviousPbehaviorTypeID = event.Entity.PbehaviorInfo.TypeID
-			alarmChange.PreviousPbehaviorCannonicalType = event.Entity.PbehaviorInfo.CanonicalType
-		}
+		alarmChange.PreviousPbehaviorTypeID = event.Entity.PbehaviorInfo.TypeID
+		alarmChange.PreviousPbehaviorCannonicalType = event.Entity.PbehaviorInfo.CanonicalType
 	} else {
 		alarmChange.PreviousState = alarm.Value.State.Value
 		alarmChange.PreviousStateChange = alarm.Value.State.Timestamp
@@ -361,7 +359,7 @@ func (s *eventProcessor) updateAlarm(ctx context.Context, event *types.Event) (t
 
 func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event) (types.AlarmChangeType, error) {
 	changeType := types.AlarmChangeTypeNone
-	if event.Entity == nil || event.Alarm == nil && event.State == types.AlarmStateOK {
+	if event.Alarm == nil && event.State == types.AlarmStateOK {
 		return changeType, nil
 	}
 

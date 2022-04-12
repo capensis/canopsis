@@ -112,12 +112,12 @@ func InitializeTestSuite(ctx context.Context, flags Flags, dbClient mongo.DbClie
 			}
 			time.Sleep(flags.periodicalWaitTime)
 		})
-		//godogCtx.AfterSuite(func() {
-		//	err := clearStores(ctx, flags, dbClient, redisClient)
-		//	if err != nil {
-		//		panic(err)
-		//	}
-		//})
+		godogCtx.AfterSuite(func() {
+			err := clearStores(ctx, flags, dbClient, redisClient)
+			if err != nil {
+				panic(err)
+			}
+		})
 	}
 }
 
