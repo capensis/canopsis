@@ -4,7 +4,7 @@ Feature: get a pbehavior by entity id
 
   Scenario: given get request should return pbehaviors
     When I am admin
-    When I do GET /api/v4/entities/pbehaviors?id=test-pbehavior-get-by-entity-id-resource/test-pbehavior-get-by-entity-id-component
+    When I do GET /api/v4/entities/pbehaviors?_id=test-pbehavior-get-by-entity-id-resource/test-pbehavior-get-by-entity-id-component
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -13,6 +13,7 @@ Feature: get a pbehavior by entity id
         "_id": "test-pbehavior-to-get-by-entity-id",
         "author": "root",
         "comments": [],
+        "color": "#FFFFFF",
         "created": 1592215337,
         "updated": 1592215337,
         "enabled": true,
@@ -45,3 +46,36 @@ Feature: get a pbehavior by entity id
       }
     ]
     """
+
+  Scenario: given get request with not exist id should return error
+    When I am admin
+    When I do GET /api/v4/entities/pbehaviors?_id=not-exist
+    Then the response code should be 404
+    Then the response body should be:
+    """json
+    {
+      "error": "Not found"
+    }
+    """
+
+  Scenario: given invalid get request should return error
+    When I am admin
+    When I do GET /api/v4/entities/pbehaviors
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "_id": "ID is missing."
+      }
+    }
+    """
+
+  Scenario: given get request and no auth user should not allow access
+    When I do GET /api/v4/entities/pbehaviors
+    Then the response code should be 401
+
+  Scenario: given get request and auth user without permissions should not allow access
+    When I am noperms
+    When I do GET /api/v4/entities/pbehaviors
+    Then the response code should be 403

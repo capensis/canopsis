@@ -2614,6 +2614,58 @@ var doc = `{
                 }
             }
         },
+        "/entities/pbehavior-calendar": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get list of pbehaviors' timespans",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehaviors"
+                ],
+                "summary": "Find pbehaviors by entity id",
+                "operationId": "pbehaviors-calendar-by-entity-id",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pbehavior.CalendarByEntityIDRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/pbehavior.CalendarResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/entities/pbehaviors": {
             "get": {
                 "security": [
@@ -2640,7 +2692,7 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Entity id",
-                        "name": "id",
+                        "name": "_id",
                         "in": "query",
                         "required": true
                     }
@@ -5020,6 +5072,70 @@ var doc = `{
                 }
             }
         },
+        "/pbehavior-calendar": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get paginated list of pbehaviors",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pbehaviors"
+                ],
+                "summary": "Find all pbehaviors",
+                "operationId": "pbehaviors-calendar",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pbehavior.CalendarRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.PaginatedListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/pbehavior.CalendarResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/pbehavior-comments": {
             "post": {
                 "security": [
@@ -5743,7 +5859,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/pbehaviortimespan.timespansItemResponse"
+                                "$ref": "#/definitions/pbehaviortimespan.ItemResponse"
                             }
                         }
                     },
@@ -12022,6 +12138,7 @@ var doc = `{
             "type": "object",
             "required": [
                 "_id",
+                "color",
                 "enabled",
                 "filter",
                 "name",
@@ -12031,6 +12148,9 @@ var doc = `{
             ],
             "properties": {
                 "_id": {
+                    "type": "string"
+                },
+                "color": {
                     "type": "string"
                 },
                 "enabled": {
@@ -12095,6 +12215,64 @@ var doc = `{
                 }
             }
         },
+        "pbehavior.CalendarByEntityIDRequest": {
+            "type": "object",
+            "required": [
+                "_id",
+                "from",
+                "to"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "from": {
+                    "type": "integer"
+                },
+                "to": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pbehavior.CalendarRequest": {
+            "type": "object",
+            "required": [
+                "from",
+                "to"
+            ],
+            "properties": {
+                "from": {
+                    "type": "integer"
+                },
+                "to": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pbehavior.CalendarResponse": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "color": {
+                    "type": "string"
+                },
+                "from": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "to": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "object",
+                    "$ref": "#/definitions/pbehavior.Type"
+                }
+            }
+        },
         "pbehavior.Comment": {
             "type": "object",
             "properties": {
@@ -12133,6 +12311,7 @@ var doc = `{
         "pbehavior.CreateRequest": {
             "type": "object",
             "required": [
+                "color",
                 "enabled",
                 "filter",
                 "name",
@@ -12142,6 +12321,9 @@ var doc = `{
             ],
             "properties": {
                 "_id": {
+                    "type": "string"
+                },
+                "color": {
                     "type": "string"
                 },
                 "enabled": {
@@ -12199,6 +12381,9 @@ var doc = `{
         "pbehavior.PatchRequest": {
             "type": "object",
             "properties": {
+                "color": {
+                    "type": "string"
+                },
                 "enabled": {
                     "type": "boolean"
                 },
@@ -12244,6 +12429,9 @@ var doc = `{
                     "type": "string"
                 },
                 "author": {
+                    "type": "string"
+                },
+                "color": {
                     "type": "string"
                 },
                 "comments": {
@@ -12310,9 +12498,6 @@ var doc = `{
                 "_id": {
                     "type": "string"
                 },
-                "color": {
-                    "type": "string"
-                },
                 "description": {
                     "type": "string"
                 },
@@ -12333,6 +12518,7 @@ var doc = `{
         "pbehavior.UpdateRequest": {
             "type": "object",
             "required": [
+                "color",
                 "enabled",
                 "filter",
                 "name",
@@ -12341,6 +12527,9 @@ var doc = `{
                 "type"
             ],
             "properties": {
+                "color": {
+                    "type": "string"
+                },
                 "enabled": {
                     "type": "boolean"
                 },
@@ -12508,65 +12697,7 @@ var doc = `{
                 }
             }
         },
-        "pbehaviortimespan.ExdateRequest": {
-            "type": "object",
-            "required": [
-                "begin",
-                "end"
-            ],
-            "properties": {
-                "begin": {
-                    "type": "integer"
-                },
-                "end": {
-                    "type": "integer"
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "pbehaviortimespan.TimespansRequest": {
-            "type": "object",
-            "required": [
-                "start_at",
-                "view_from",
-                "view_to"
-            ],
-            "properties": {
-                "by_date": {
-                    "type": "boolean"
-                },
-                "end_at": {
-                    "type": "integer"
-                },
-                "exceptions": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "exdates": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/pbehaviortimespan.ExdateRequest"
-                    }
-                },
-                "rrule": {
-                    "type": "string"
-                },
-                "start_at": {
-                    "type": "integer"
-                },
-                "view_from": {
-                    "type": "integer"
-                },
-                "view_to": {
-                    "type": "integer"
-                }
-            }
-        },
-        "pbehaviortimespan.timespansItemResponse": {
+        "pbehaviortimespan.ItemResponse": {
             "type": "object",
             "properties": {
                 "from": {
@@ -12581,6 +12712,47 @@ var doc = `{
                 }
             }
         },
+        "pbehaviortimespan.TimespansRequest": {
+            "type": "object",
+            "required": [
+                "start_at",
+                "type",
+                "view_from",
+                "view_to"
+            ],
+            "properties": {
+                "end_at": {
+                    "type": "integer"
+                },
+                "exceptions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "exdates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pbehaviorexception.ExdateRequest"
+                    }
+                },
+                "rrule": {
+                    "type": "string"
+                },
+                "start_at": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "view_from": {
+                    "type": "integer"
+                },
+                "view_to": {
+                    "type": "integer"
+                }
+            }
+        },
         "pbehaviortype.EditRequest": {
             "type": "object",
             "required": [
@@ -12591,9 +12763,6 @@ var doc = `{
                 "type"
             ],
             "properties": {
-                "color": {
-                    "type": "string"
-                },
                 "description": {
                     "type": "string"
                 },
@@ -12615,9 +12784,6 @@ var doc = `{
             "type": "object",
             "properties": {
                 "_id": {
-                    "type": "string"
-                },
-                "color": {
                     "type": "string"
                 },
                 "deletable": {

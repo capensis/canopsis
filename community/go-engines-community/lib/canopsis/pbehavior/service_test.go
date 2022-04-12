@@ -84,21 +84,21 @@ func TestService(t *testing.T) {
 
 func newMockModelProvider(ctrl *gomock.Controller, suiteData serviceSuiteDataSet) *mock_pbehavior.MockModelProvider {
 	mock := mock_pbehavior.NewMockModelProvider(ctrl)
-	typesByID := make(map[string]*pbehavior.Type)
-	pbehaviorsByID := make(map[string]*pbehavior.PBehavior)
-	reasonsByID := make(map[string]*pbehavior.Reason)
-	exceptionsByID := make(map[string]*pbehavior.Exception)
+	typesByID := make(map[string]pbehavior.Type)
+	pbehaviorsByID := make(map[string]pbehavior.PBehavior)
+	reasonsByID := make(map[string]pbehavior.Reason)
+	exceptionsByID := make(map[string]pbehavior.Exception)
 	for k := range suiteData.types {
-		typesByID[suiteData.types[k].ID] = &suiteData.types[k]
+		typesByID[suiteData.types[k].ID] = suiteData.types[k]
 	}
 	for k := range suiteData.pbehaviors {
-		pbehaviorsByID[suiteData.pbehaviors[k].ID] = &suiteData.pbehaviors[k]
+		pbehaviorsByID[suiteData.pbehaviors[k].ID] = suiteData.pbehaviors[k]
 	}
 	for k := range suiteData.reasons {
-		reasonsByID[suiteData.reasons[k].ID] = &suiteData.reasons[k]
+		reasonsByID[suiteData.reasons[k].ID] = suiteData.reasons[k]
 	}
 	for k := range suiteData.exceptions {
-		exceptionsByID[suiteData.exceptions[k].ID] = &suiteData.exceptions[k]
+		exceptionsByID[suiteData.exceptions[k].ID] = suiteData.exceptions[k]
 	}
 	mock.
 		EXPECT().
@@ -106,7 +106,7 @@ func newMockModelProvider(ctrl *gomock.Controller, suiteData serviceSuiteDataSet
 		Return(typesByID, nil)
 	mock.
 		EXPECT().
-		GetEnabledPbehaviors(gomock.Any()).
+		GetEnabledPbehaviors(gomock.Any(), gomock.Any()).
 		Return(pbehaviorsByID, nil)
 	mock.
 		EXPECT().

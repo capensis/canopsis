@@ -62,8 +62,8 @@ func (r *entityTypeResolver) Resolve(
 				return ResolveResult{}, err
 			}
 
-			filters := make(map[string]string, len(computed.computedPbehaviors))
-			for id, pbehavior := range computed.computedPbehaviors {
+			filters := make(map[string]string, len(computed.ComputedPbehaviors))
+			for id, pbehavior := range computed.ComputedPbehaviors {
 				filters[id] = pbehavior.Filter
 			}
 
@@ -77,14 +77,14 @@ func (r *entityTypeResolver) Resolve(
 		return ResolveResult{}, nil
 	}
 
-	if computed.defaultActiveType == "" {
+	if computed.DefaultActiveType == "" {
 		computed, err = r.store.GetComputedByIDs(ctx, pbhIDs)
 		if err != nil {
 			return ResolveResult{}, err
 		}
 	}
 
-	resolver := NewTypeResolver(span, computed.computedPbehaviors, computed.typesByID, computed.defaultActiveType)
+	resolver := NewTypeResolver(span, computed.ComputedPbehaviors, computed.TypesByID, computed.DefaultActiveType)
 
 	return resolver.Resolve(ctx, t, pbhIDs)
 }
@@ -104,7 +104,7 @@ func (r *entityTypeResolver) GetPbehaviors(ctx context.Context, pbhIDs []string,
 		return nil, err
 	}
 
-	resolver := NewTypeResolver(span, data.computedPbehaviors, data.typesByID, data.defaultActiveType)
+	resolver := NewTypeResolver(span, data.ComputedPbehaviors, data.TypesByID, data.DefaultActiveType)
 	pbhs, err := resolver.GetPbehaviors(ctx, t, pbhIDs)
 	if err != nil {
 		return nil, err

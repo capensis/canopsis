@@ -22,8 +22,10 @@ import (
 
 type API interface {
 	common.BulkCrudAPI
+	Calendar(c *gin.Context)
 	Patch(c *gin.Context)
 	ListByEntityID(c *gin.Context)
+	CalendarByEntityID(c *gin.Context)
 	ListEntities(c *gin.Context)
 	CountFilter(c *gin.Context)
 }
@@ -55,7 +57,7 @@ func NewApi(
 	}
 }
 
-// Find all pbehaviors
+// List
 // @Summary Find all pbehaviors
 // @Description Get paginated list of pbehaviors
 // @Tags pbehaviors
@@ -96,7 +98,37 @@ func (a *api) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// Find pbehaviors by entity id
+// Calendar
+// @Summary Find all pbehaviors
+// @Description Get paginated list of pbehaviors
+// @Tags pbehaviors
+// @ID pbehaviors-calendar
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body CalendarRequest true "body"
+// @Success 200 {object} common.PaginatedListResponse{data=[]CalendarResponse}
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /pbehavior-calendar [get]
+func (a *api) Calendar(c *gin.Context) {
+	var r CalendarRequest
+
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+
+		return
+	}
+
+	res, err := a.store.Calendar(c.Request.Context(), r)
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+// ListByEntityID
 // @Summary Find pbehaviors by entity id
 // @Description Get list of pbehaviors
 // @Tags pbehaviors
@@ -105,7 +137,7 @@ func (a *api) List(c *gin.Context) {
 // @Produce json
 // @Security JWTAuth
 // @Security BasicAuth
-// @Param id query string true "Entity id"
+// @Param _id query string true "Entity id"
 // @Success 200 {array} Response
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /entities/pbehaviors [get]
@@ -117,7 +149,54 @@ func (a *api) ListByEntityID(c *gin.Context) {
 		return
 	}
 
+	exist, err := a.store.ExistEntity(c.Request.Context(), r.ID)
+	if err != nil {
+		panic(err)
+	}
+	if !exist {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
 	res, err := a.store.FindByEntityID(c.Request.Context(), r.ID)
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+// CalendarByEntityID
+// @Summary Find pbehaviors by entity id
+// @Description Get list of pbehaviors' timespans
+// @Tags pbehaviors
+// @ID pbehaviors-calendar-by-entity-id
+// @Accept json
+// @Produce json
+// @Security JWTAuth
+// @Security BasicAuth
+// @Param body body CalendarByEntityIDRequest true "body"
+// @Success 200 {array} CalendarResponse
+// @Failure 400 {object} common.ValidationErrorResponse
+// @Router /entities/pbehavior-calendar [get]
+func (a *api) CalendarByEntityID(c *gin.Context) {
+	var r CalendarByEntityIDRequest
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+
+		return
+	}
+
+	exist, err := a.store.ExistEntity(c.Request.Context(), r.ID)
+	if err != nil {
+		panic(err)
+	}
+	if !exist {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	res, err := a.store.CalendarByEntityID(c.Request.Context(), r)
 	if err != nil {
 		panic(err)
 	}

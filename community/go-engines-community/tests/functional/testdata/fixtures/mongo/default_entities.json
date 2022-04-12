@@ -5006,5 +5006,15 @@
     "measurements": null,
     "name": "test-service-weather-entity-6",
     "type": "service"
+  },
+  {
+    "_id": "test-resource-to-calendar-get-by-entity/test-component-to-calendar-get-by-entity",
+    "depends": ["test-connector/test-connector-name"],
+    "enabled": true,
+    "impact": ["test-component-to-calendar-get-by-entity"],
+    "name": "test-resource-to-calendar-get-by-entity",
+    "type": "resource",
+    "component": "test-component-to-calendar-get-by-entity",
+    "impact_level": 1
   }
 ]

@@ -127,8 +127,8 @@ func (p *createPbehaviorMessageProcessor) createPbehavior(
 	entity *types.Entity,
 ) (*libpbehavior.PBehavior, error) {
 	typeCollection := p.DbClient.Collection(mongo.PbehaviorTypeMongoCollection)
-	res := typeCollection.FindOne(ctx, bson.M{"_id": params.Type})
-	if err := res.Err(); err != nil {
+	err := typeCollection.FindOne(ctx, bson.M{"_id": params.Type}).Err()
+	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			return nil, fmt.Errorf("pbehavior type not exist: %q", params.Type)
 		} else {
@@ -137,8 +137,8 @@ func (p *createPbehaviorMessageProcessor) createPbehavior(
 	}
 
 	reasonCollection := p.DbClient.Collection(mongo.PbehaviorReasonMongoCollection)
-	res = reasonCollection.FindOne(ctx, bson.M{"_id": params.Reason})
-	if err := res.Err(); err != nil {
+	err = reasonCollection.FindOne(ctx, bson.M{"_id": params.Reason}).Err()
+	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			return nil, fmt.Errorf("pbehavior reason not exist: %q", params.Reason)
 		} else {
@@ -163,7 +163,7 @@ func (p *createPbehaviorMessageProcessor) createPbehavior(
 
 	pbehavior := libpbehavior.PBehavior{
 		ID:      utils.NewID(),
-		Author:  params.UserID,                       // since author now contains username, we should use user_id in author
+		Author:  params.UserID, // since author now contains username, we should use user_id in author
 		Enabled: true,
 		Filter:  fmt.Sprintf(`{"_id": "%s"}`, entity.ID),
 		Name:    params.Name,
@@ -172,12 +172,13 @@ func (p *createPbehaviorMessageProcessor) createPbehavior(
 		Start:   &start,
 		Stop:    &stop,
 		Type:    params.Type,
+		Color:   types.ActionPbehaviorColor,
 		Created: now,
 		Updated: now,
 	}
 
 	collection := p.DbClient.Collection(mongo.PbehaviorMongoCollection)
-	_, err := collection.InsertOne(ctx, pbehavior)
+	_, err = collection.InsertOne(ctx, pbehavior)
 	if err != nil {
 		return nil, fmt.Errorf("create new pbehavior failed: %w", err)
 	}

@@ -100,12 +100,12 @@ func (s *service) RecomputeByID(ctx context.Context, pbehaviorID string) (resErr
 	if err != nil {
 		return err
 	}
-	res, err := s.computer.Recompute(ctx, span, []string{pbehaviorID})
+	res, err := s.computer.ComputeByIds(ctx, span, []string{pbehaviorID})
 	if err != nil {
 		return err
 	}
 
-	computedPbehavior := res[pbehaviorID]
+	computedPbehavior := res.ComputedPbehaviors[pbehaviorID]
 	if computedPbehavior.Name == "" {
 		err = s.store.DelComputedPbehavior(ctx, pbehaviorID)
 		if err != nil {
@@ -141,13 +141,13 @@ func (s *service) RecomputeByIds(ctx context.Context, pbehaviorIds []string) (re
 		return err
 	}
 
-	res, err := s.computer.Recompute(ctx, span, pbehaviorIds)
+	res, err := s.computer.ComputeByIds(ctx, span, pbehaviorIds)
 	if err != nil {
 		return err
 	}
 
 	for _, pbehaviorID := range pbehaviorIds {
-		computedPbehavior := res[pbehaviorID]
+		computedPbehavior := res.ComputedPbehaviors[pbehaviorID]
 
 		if computedPbehavior.Name == "" {
 			err = s.store.DelComputedPbehavior(ctx, pbehaviorID)
@@ -218,17 +218,17 @@ func (s *service) compute(ctx context.Context, span *timespan.Span) (count int, 
 
 	s.resolver = NewTypeResolver(
 		*span,
-		res.computedPbehaviors,
-		res.typesByID,
-		res.defaultActiveType,
+		res.ComputedPbehaviors,
+		res.TypesByID,
+		res.DefaultActiveType,
 	)
 
-	err = s.matcher.LoadAll(ctx, getFilters(res.computedPbehaviors))
+	err = s.matcher.LoadAll(ctx, getFilters(res.ComputedPbehaviors))
 	if err != nil {
 		return 0, err
 	}
 
-	return len(res.computedPbehaviors), nil
+	return len(res.ComputedPbehaviors), nil
 }
 
 func (s *service) load(ctx context.Context, span timespan.Span) error {
@@ -239,12 +239,12 @@ func (s *service) load(ctx context.Context, span timespan.Span) error {
 
 	s.resolver = NewTypeResolver(
 		span,
-		data.computedPbehaviors,
-		data.typesByID,
-		data.defaultActiveType,
+		data.ComputedPbehaviors,
+		data.TypesByID,
+		data.DefaultActiveType,
 	)
 
-	return s.matcher.LoadAll(ctx, getFilters(data.computedPbehaviors))
+	return s.matcher.LoadAll(ctx, getFilters(data.ComputedPbehaviors))
 }
 
 func getFilters(computed map[string]ComputedPbehavior) map[string]string {

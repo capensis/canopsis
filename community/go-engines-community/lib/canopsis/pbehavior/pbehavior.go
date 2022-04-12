@@ -31,7 +31,6 @@ type Type struct {
 	Type        string `bson:"type" json:"type"`
 	Priority    int    `bson:"priority" json:"priority"`
 	IconName    string `bson:"icon_name" json:"icon_name"`
-	Color       string `bson:"color,omitempty" json:"color,omitempty"`
 }
 
 type Comments []*Comment
@@ -55,4 +54,6 @@ type PBehavior struct {
 	Updated    types.CpsTime  `bson:"updated,omitempty"`
 
 	LastAlarmDate *types.CpsTime `bson:"last_alarm_date,omitempty"`
+
+	Color string `bson:"color"`
 }

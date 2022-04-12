@@ -84,15 +84,15 @@ func (s *store) GetSpan(ctx context.Context) (timespan.Span, error) {
 }
 
 func (s *store) SetComputed(ctx context.Context, computed ComputeResult) error {
-	data := make(map[string]interface{}, len(computed.computedPbehaviors)+2)
+	data := make(map[string]interface{}, len(computed.ComputedPbehaviors)+2)
 	var err error
-	data[s.typesKey], err = s.encoder.Encode(computed.typesByID)
+	data[s.typesKey], err = s.encoder.Encode(computed.TypesByID)
 	if err != nil {
 		return fmt.Errorf("cannot encode computed types: %w", err)
 	}
-	data[s.defaultActiveTypeKey] = computed.defaultActiveType
+	data[s.defaultActiveTypeKey] = computed.DefaultActiveType
 
-	for k, v := range computed.computedPbehaviors {
+	for k, v := range computed.ComputedPbehaviors {
 		data[s.computedKey+k], err = s.encoder.Encode(v)
 		if err != nil {
 			return fmt.Errorf("cannot encode computed pbehavior: %w", err)
@@ -192,7 +192,7 @@ func (s *store) GetComputed(ctx context.Context) (ComputeResult, error) {
 		}
 	}
 
-	computed.computedPbehaviors = pbhs
+	computed.ComputedPbehaviors = pbhs
 
 	return computed, nil
 }
@@ -258,7 +258,7 @@ func (s *store) GetComputedByIDs(ctx context.Context, pbhIDs []string) (ComputeR
 		}
 	}
 
-	computed.computedPbehaviors = pbhs
+	computed.ComputedPbehaviors = pbhs
 
 	return computed, nil
 }
@@ -273,7 +273,7 @@ func (s *store) getTypes(ctx context.Context) (ComputeResult, error) {
 
 	switch str := res.Val()[0].(type) {
 	case string:
-		err := s.decoder.Decode([]byte(str), &computed.typesByID)
+		err := s.decoder.Decode([]byte(str), &computed.TypesByID)
 		if err != nil {
 			return computed, fmt.Errorf("cannot decode types: %w", err)
 		}
@@ -285,7 +285,7 @@ func (s *store) getTypes(ctx context.Context) (ComputeResult, error) {
 
 	switch str := res.Val()[1].(type) {
 	case string:
-		computed.defaultActiveType = str
+		computed.DefaultActiveType = str
 	case nil:
 		/*do nothing*/
 	default:
