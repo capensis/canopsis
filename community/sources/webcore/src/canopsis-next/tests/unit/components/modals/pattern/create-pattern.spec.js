@@ -1,35 +1,31 @@
 import flushPromises from 'flush-promises';
+import Faker from 'faker';
 
 import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
-
 import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
-import {
-  ALARM_PATTERN_FIELDS,
-  PATTERN_CONDITIONS,
-  PATTERN_CUSTOM_ITEM_VALUE,
-  PATTERN_OPERATORS,
-} from '@/constants';
-import CreateFilter from '@/components/modals/common/create-filter.vue';
+import { PATTERN_TYPES } from '@/constants';
 import ClickOutside from '@/services/click-outside';
+
+import CreatePattern from '@/components/modals/pattern/create-pattern.vue';
 
 const localVue = createVueInstance();
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
-  'patterns-form': true,
+  'pattern-form': true,
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
 };
 
 const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
-  'patterns-form': true,
+  'pattern-form': true,
 };
 
-const factory = (options = {}) => shallowMount(CreateFilter, {
+const factory = (options = {}) => shallowMount(CreatePattern, {
   localVue,
   stubs,
   attachTo: document.body,
@@ -43,7 +39,7 @@ const factory = (options = {}) => shallowMount(CreateFilter, {
   ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(CreateFilter, {
+const snapshotFactory = (options = {}) => mount(CreatePattern, {
   localVue,
   stubs: snapshotStubs,
 
@@ -59,28 +55,14 @@ const snapshotFactory = (options = {}) => mount(CreateFilter, {
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');
 const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
 const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
-const selectPatternsForm = wrapper => wrapper.find('patterns-form-stub');
+const selectPatternForm = wrapper => wrapper
+  .find('pattern-form-stub');
 
-describe('create-filter', () => {
+describe('create-pattern', () => {
   const $modals = mockModals();
   const $popups = mockPopups();
 
-  const defaultPattern = {
-    field: '',
-    cond: {
-      type: PATTERN_CONDITIONS.equal,
-      value: '',
-    },
-  };
-  const customPattern = {
-    field: ALARM_PATTERN_FIELDS.component,
-    cond: {
-      type: PATTERN_CONDITIONS.notEqual,
-      value: 'component',
-    },
-  };
-
-  test('Form submitted without fields after trigger submit button', async () => {
+  test('Form submitted after trigger submit button', async () => {
     const action = jest.fn();
     const wrapper = factory({
       propsData: {
@@ -102,45 +84,10 @@ describe('create-filter', () => {
     await flushPromises();
 
     expect(action).toBeCalledWith({
-      is_private: false,
       title: '',
-    });
-    expect($modals.hide).toBeCalledWith();
-  });
-
-  test('Form submitted with all fields after trigger submit button', async () => {
-    const action = jest.fn();
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config: {
-            withTitle: true,
-            withEntity: true,
-            withPbehavior: true,
-            withAlarm: true,
-            withEvent: true,
-            action,
-          },
-        },
-      },
-      mocks: {
-        $modals,
-      },
-    });
-
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
-
-    await flushPromises();
-
-    expect(action).toBeCalledWith({
-      is_private: false,
-      title: '',
+      is_corporate: false,
+      type: PATTERN_TYPES.alarm,
       alarm_pattern: [],
-      entity_pattern: [],
-      event_pattern: [],
-      pbehavior_pattern: [],
     });
     expect($modals.hide).toBeCalledWith();
   });
@@ -160,7 +107,7 @@ describe('create-filter', () => {
       },
     });
 
-    const patternsForm = selectPatternsForm(wrapper);
+    const patternForm = selectPatternForm(wrapper);
 
     const validator = wrapper.getValidator();
 
@@ -168,8 +115,8 @@ describe('create-filter', () => {
       name: 'name',
       rules: 'required:true',
       getter: () => false,
-      context: () => patternsForm.vm,
-      vm: patternsForm.vm,
+      context: () => patternForm.vm,
+      vm: patternForm.vm,
     });
 
     const submitButton = selectSubmitButton(wrapper);
@@ -206,22 +153,14 @@ describe('create-filter', () => {
   test('Errors added after trigger submit button with action errors', async () => {
     const formErrors = {
       title: 'Title error',
-      old_mongo_query: 'Old mongo query error',
-      alarm_pattern: 'Alarm pattern error',
-      entity_pattern: 'Entity pattern error',
-      pbehavior_pattern: 'PBehavior pattern error',
-      event_pattern: 'Event pattern error',
+      is_corporate: 'Is corporate error',
+      type: 'Type error',
     };
-    const action = jest.fn().mockRejectedValue({
-      ...formErrors,
-      unavailableField: 'Error',
-    });
+    const action = jest.fn().mockRejectedValue({ ...formErrors, unavailableField: 'Error' });
     const wrapper = factory({
       propsData: {
         modal: {
           config: {
-            withAlarm: true,
-
             action,
           },
         },
@@ -241,9 +180,10 @@ describe('create-filter', () => {
 
     expect(formErrors).toEqual(addedErrors);
     expect(action).toBeCalledWith({
-      is_private: false,
-      alarm_pattern: [],
       title: '',
+      is_corporate: false,
+      type: PATTERN_TYPES.alarm,
+      alarm_pattern: [],
     });
     expect($modals.hide).not.toBeCalledWith();
   });
@@ -256,19 +196,18 @@ describe('create-filter', () => {
       anotherUnavailableField: 'Second error',
     };
     const action = jest.fn().mockRejectedValue(errors);
-    const customFilter = {
-      title: 'Title',
-      is_private: true,
-      alarm_pattern: [
-        [customPattern],
-      ],
+    const customPattern = {
+      title: Faker.datatype.string(),
+      id: Faker.datatype.string(),
+      type: PATTERN_TYPES.entity,
+      is_corporate: true,
+      entity_pattern: [],
     };
     const wrapper = factory({
       propsData: {
         modal: {
           config: {
-            filter: customFilter,
-            withAlarm: true,
+            pattern: customPattern,
             action,
           },
         },
@@ -289,7 +228,12 @@ describe('create-filter', () => {
     expect($popups.error).toBeCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(action).toBeCalledWith(customFilter);
+    expect(action).toBeCalledWith({
+      entity_pattern: customPattern.entity_pattern,
+      is_corporate: customPattern.is_corporate,
+      type: customPattern.type,
+      title: customPattern.title,
+    });
     expect($modals.hide).not.toBeCalledWith();
 
     consoleErrorSpy.mockClear();
@@ -297,25 +241,10 @@ describe('create-filter', () => {
 
   test('Modal submitted with correct data after trigger form', async () => {
     const action = jest.fn();
-    const filter = {
-      title: 'Title',
-      is_private: true,
-      alarm_pattern: [
-        [customPattern],
-      ],
-      entity_pattern: [
-        [defaultPattern],
-      ],
-    };
     const wrapper = factory({
       propsData: {
         modal: {
           config: {
-            withTitle: true,
-            withEntity: true,
-            withAlarm: true,
-            filter,
-
             action,
           },
         },
@@ -325,27 +254,17 @@ describe('create-filter', () => {
       },
     });
 
-    const patternsForm = selectPatternsForm(wrapper);
+    const patternForm = selectPatternForm(wrapper);
 
     const newForm = {
-      title: filter.title,
-      is_private: filter.is_private,
-      alarm_pattern: {
-        id: PATTERN_CUSTOM_ITEM_VALUE,
-        groups: [{
-          rules: [{
-            attribute: ALARM_PATTERN_FIELDS.ack,
-            operator: PATTERN_OPERATORS.acked,
-          }],
-        }],
-      },
-      entity_pattern: {
-        id: PATTERN_CUSTOM_ITEM_VALUE,
-        groups: [],
-      },
+      all: false,
+      auto: false,
+      manual: false,
+      with: false,
+      instructions: [{}],
     };
 
-    patternsForm.vm.$emit('input', newForm);
+    patternForm.vm.$emit('input', newForm);
 
     const submitButton = selectSubmitButton(wrapper);
 
@@ -353,22 +272,7 @@ describe('create-filter', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith({
-      alarm_pattern: [
-        [
-          {
-            field: ALARM_PATTERN_FIELDS.ack,
-            cond: {
-              type: PATTERN_CONDITIONS.equal,
-              value: true,
-            },
-          },
-        ],
-      ],
-      entity_pattern: [],
-      is_private: filter.is_private,
-      title: filter.title,
-    });
+    expect(action).toBeCalledWith(newForm);
     expect($modals.hide).toBeCalled();
   });
 
@@ -393,7 +297,7 @@ describe('create-filter', () => {
     expect($modals.hide).toBeCalled();
   });
 
-  test('Renders `create-filter` with empty modal', () => {
+  test('Renders `create-pattern` with empty modal', () => {
     const wrapper = snapshotFactory({
       propsData: {
         modal: {
@@ -408,17 +312,38 @@ describe('create-filter', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `create-filter` with all parameters', () => {
+  test('Renders `create-pattern` with pattern', () => {
+    const pattern = {
+      title: 'Title',
+      id: 'Id',
+      type: PATTERN_TYPES.alarm,
+      is_corporate: true,
+      alarm_pattern: [],
+    };
     const wrapper = snapshotFactory({
       propsData: {
         modal: {
           config: {
-            withTitle: true,
-            withEntity: true,
-            withPbehavior: true,
-            withAlarm: true,
-            withEvent: true,
-            title: 'Create filter title',
+            type: PATTERN_TYPES.alarm,
+            pattern,
+          },
+        },
+      },
+      mocks: {
+        $modals,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  test('Renders `create-pattern` with hidden title', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        modal: {
+          config: {
+            hideTitle: true,
+            text: 'create-pattern text',
           },
         },
       },
