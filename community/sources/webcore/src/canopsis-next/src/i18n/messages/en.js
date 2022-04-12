@@ -764,6 +764,7 @@ export default {
         + '</dl>',
     },
     density: {
+      title: 'Density',
       default: 'Default',
       compact: 'Compact',
     },
