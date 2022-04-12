@@ -41,13 +41,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.density-icon {
-  padding: 2px;
-  border-radius: 5px;
-  border: 1px solid #707070;
-}
+.density {
+  &-icon {
+    padding: 2px;
+    border-radius: 5px;
+    border: 1px solid #707070;
+  }
 
-.density-radio-group /deep/ .v-input__control {
-  width: 100%;
+  &-radio-group /deep/ .v-input__control {
+    width: 100%;
+  }
 }
 </style>
