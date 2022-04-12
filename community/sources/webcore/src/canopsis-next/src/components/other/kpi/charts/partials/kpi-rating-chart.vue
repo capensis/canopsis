@@ -94,6 +94,7 @@ export default {
             ticks: {
               font: {
                 size: 11,
+                family: 'Arial, sans-serif',
               },
             },
           },
@@ -103,6 +104,7 @@ export default {
             ticks: {
               font: {
                 size: 11,
+                family: 'Arial, sans-serif',
               },
               callback: this.getChartYTick,
             },
