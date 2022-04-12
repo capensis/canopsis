@@ -122,30 +122,3 @@ Feature: Create a pbehavior type
       }
     }
     """
-
-  Scenario: given create request should return ok to get request
-    When I am admin
-    When I do POST /api/v4/pbehavior-types:
-    """json
-    {
-      "name": "Active State 2",
-      "description": "Active state type",
-      "type": "active",
-      "priority": 188,
-      "icon_name": "exclamation-mark.png",
-      "color": "green"
-    }
-    """
-    When I do GET /api/v4/pbehavior-types/{{ .lastResponse._id}}
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "name": "Active State 2",
-      "description": "Active state type",
-      "type": "active",
-      "priority": 188,
-      "icon_name": "exclamation-mark.png",
-      "color": "green"
-    }
-    """

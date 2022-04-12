@@ -49,6 +49,7 @@ Feature: update meta alarm on pbehavior
       "name": "test-pbehavior-axe-correlation-1",
       "tstart": {{ now }},
       "tstop": {{ nowAdd "10m" }},
+      "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
       "filter":{

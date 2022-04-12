@@ -10,6 +10,7 @@ Feature: create a PBehavior comment
       "name":"test-pbehavior-to-comment-create",
       "tstart":1591172881,
       "tstop":1591536400,
+      "color": "#FFFFFF",
       "type":"test-type-to-pbh-edit-1",
       "reason":"test-reason-1",
       "filter":{
