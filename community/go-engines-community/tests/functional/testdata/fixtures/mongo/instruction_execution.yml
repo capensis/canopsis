@@ -21,9 +21,7 @@ instruction_execution:
     instruction_modified_on: 1596712203
     step_history:
     - operation_history:
-      - job_history:
-        - test-job-execution-to-get
-        operation: test-instruction-execution-running-step-1-operation-1
+      - operation: test-instruction-execution-running-step-1-operation-1
         started_at: 1597905434
       step: test-instruction-execution-running-step-1
 
@@ -33,8 +31,7 @@ instruction_execution:
     instruction_modified_on: 1596712203
     step_history:
     - operation_history:
-      - job_history: []
-        operation: test-instruction-cancel-execution-running-1-step-1-operation-1
+      - operation: test-instruction-cancel-execution-running-1-step-1-operation-1
         started_at: 1597905434
       step: test-instruction-cancel-execution-running-1-step-1
     user: root
@@ -44,8 +41,7 @@ instruction_execution:
     instruction: test-instruction-to-update-w-approval-should-cancel-execution
     step_history:
     - operation_history:
-      - job_history: []
-        operation: test-instruction-to-update-w-approval-should-cancel-execution-running-1-step-1-operation-1
+      - operation: test-instruction-to-update-w-approval-should-cancel-execution-running-1-step-1-operation-1
         started_at: 1597905434
       step: test-instruction-to-update-w-approval-should-cancel-execution-running-1-step-1
     user: root
@@ -56,8 +52,7 @@ instruction_execution:
     instruction_modified_on: 1596712203
     step_history:
     - operation_history:
-      - job_history: []
-        operation: test-instruction-delete-execution-running-step-1-operation-1
+      - operation: test-instruction-delete-execution-running-step-1-operation-1
         started_at: 1597905434
       step: test-instruction-delete-execution-running-step-1
 
@@ -69,11 +64,9 @@ instruction_execution:
     - operation_history:
       - completed_at: 1597905437
         description: test-instruction-execution-resume-1-step-1-operation-1-description
-        job_history: []
         operation: test-instruction-execution-resume-1-step-1-operation-1
         started_at: 1597905434
       - description: test-instruction-execution-resume-1-step-1-operation-2-description
-        job_history: []
         operation: test-instruction-execution-resume-1-step-1-operation-2
         started_at: 1597905437
       step: test-instruction-execution-resume-1-step-1
