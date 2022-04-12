@@ -37,8 +37,8 @@ const (
 	basicPrefix         = "Basic"
 	bearerPrefix        = "Bearer"
 
-	repeatRequestCount    = 10
-	repeatRequestInterval = time.Millisecond * 10
+	startRepeatRequestInterval = time.Millisecond * 10
+	totalRepeatRequestInterval = time.Second * 10
 )
 
 // ApiClient represents utility struct which implements API steps to feature context.
@@ -315,6 +315,108 @@ func (a *ApiClient) TheResponseKeyShouldBeGreaterOrEqualThan(path string, value 
 	return fmt.Errorf("%s not exists in response:\n%v", path, a.responseBodyOutput)
 }
 
+// TheResponseArrayKeyShouldContain
+// Step example:
+//   Then the response array key "data.0.v.steps" should contain:
+//   """
+//   [
+//     {
+//       "_t": "stateinc"
+//     }
+//   ]
+//   """
+func (a *ApiClient) TheResponseArrayKeyShouldContain(path string, doc string) error {
+	if nestedVal, ok := getNestedJsonVal(a.responseBody, strings.Split(path, ".")); ok {
+		receivedStr, _ := json.MarshalIndent(nestedVal, "", "  ")
+
+		switch received := nestedVal.(type) {
+		case []interface{}:
+			expected := make([]map[string]interface{}, 0)
+			err := json.Unmarshal([]byte(doc), &expected)
+			if err != nil {
+				return err
+			}
+
+			if len(expected) == 0 {
+				return fmt.Errorf("%s is empty", doc)
+			}
+
+			for _, ev := range expected {
+				if len(ev) == 0 {
+					return fmt.Errorf("%s contains empty element", doc)
+				}
+
+				found := false
+				for _, v := range received {
+					if err := checkResponse(getPartialResponse(v, ev), ev); err == nil {
+						found = true
+						break
+					}
+				}
+
+				if !found {
+					expectedStr, _ := json.MarshalIndent(ev, "", "  ")
+					return fmt.Errorf("%s\nis not in:\n%s", expectedStr, receivedStr)
+				}
+			}
+
+			return nil
+		}
+
+		return fmt.Errorf("%s is not array but %T:\n%s", path, nestedVal, receivedStr)
+	}
+
+	return fmt.Errorf("%s not exists in response:\n%v", path, a.responseBodyOutput)
+}
+
+// TheResponseArrayKeyShouldContainOnlyOne
+// Step example:
+//   Then the response array key "data.0.v.steps" should contain only one:
+//   """
+//   {
+//     "_t": "stateinc"
+//   }
+//   """
+func (a *ApiClient) TheResponseArrayKeyShouldContainOnlyOne(path string, doc string) error {
+	if nestedVal, ok := getNestedJsonVal(a.responseBody, strings.Split(path, ".")); ok {
+		receivedStr, _ := json.MarshalIndent(nestedVal, "", "  ")
+
+		switch received := nestedVal.(type) {
+		case []interface{}:
+			expected := make(map[string]interface{})
+			err := json.Unmarshal([]byte(doc), &expected)
+			if err != nil {
+				return err
+			}
+
+			if len(expected) == 0 {
+				return fmt.Errorf("%s is empty", doc)
+			}
+
+			found := 0
+			for _, v := range received {
+				if err := checkResponse(getPartialResponse(v, expected), expected); err == nil {
+					found++
+				}
+			}
+
+			if found == 0 {
+				return fmt.Errorf("%s\nis not in:\n%s", doc, receivedStr)
+			}
+
+			if found > 1 {
+				return fmt.Errorf("%s\nis %d times in:\n%s", doc, found, receivedStr)
+			}
+
+			return nil
+		}
+
+		return fmt.Errorf("%s is not array but %T:\n%s", path, nestedVal, receivedStr)
+	}
+
+	return fmt.Errorf("%s not exists in response:\n%v", path, a.responseBodyOutput)
+}
+
 // getNestedJsonVal returns val by path.
 func getNestedJsonVal(v interface{}, path []string) (interface{}, bool) {
 	field := path[0]
@@ -575,13 +677,9 @@ func (a *ApiClient) IDoRequestUntilResponseCode(method, uri string, code int) er
 		return fmt.Errorf("cannot create request: %w", err)
 	}
 
-	timeout := repeatRequestInterval
-	for i := 0; i < repeatRequestCount; i++ {
-		if i != 0 {
-			time.Sleep(timeout)
-			timeout *= 2
-		}
-
+	timeout := startRepeatRequestInterval
+	start := time.Now()
+	for {
 		err := a.doRequest(req)
 		if err != nil {
 			return err
@@ -590,6 +688,13 @@ func (a *ApiClient) IDoRequestUntilResponseCode(method, uri string, code int) er
 		if code == a.response.StatusCode {
 			return nil
 		}
+
+		if time.Since(start) > totalRepeatRequestInterval {
+			break
+		}
+
+		time.Sleep(timeout)
+		timeout *= 2
 	}
 
 	return fmt.Errorf("max retries exceeded, expected response code to be: %d, but actual is: %d\nresponse body: %v",
@@ -633,13 +738,9 @@ func (a *ApiClient) IDoRequestUntilResponse(method, uri string, code int, doc st
 	}
 
 	var resDiffErr error
-	timeout := repeatRequestInterval
-	for i := 0; i < repeatRequestCount; i++ {
-		if i != 0 {
-			time.Sleep(timeout)
-			timeout *= 2
-		}
-
+	timeout := startRepeatRequestInterval
+	start := time.Now()
+	for {
 		err := a.doRequest(req)
 		if err != nil {
 			return err
@@ -651,6 +752,13 @@ func (a *ApiClient) IDoRequestUntilResponse(method, uri string, code int, doc st
 				return nil
 			}
 		}
+
+		if time.Since(start) > totalRepeatRequestInterval {
+			break
+		}
+
+		time.Sleep(timeout)
+		timeout *= 2
 	}
 
 	if code != a.response.StatusCode {
@@ -698,13 +806,9 @@ func (a *ApiClient) IDoRequestUntilResponseContains(method, uri string, code int
 	}
 
 	var resDiffErr error
-	timeout := repeatRequestInterval
-	for i := 0; i < repeatRequestCount; i++ {
-		if i != 0 {
-			time.Sleep(timeout)
-			timeout *= 2
-		}
-
+	timeout := startRepeatRequestInterval
+	start := time.Now()
+	for {
 		err := a.doRequest(req)
 		if err != nil {
 			return err
@@ -718,6 +822,13 @@ func (a *ApiClient) IDoRequestUntilResponseContains(method, uri string, code int
 				return nil
 			}
 		}
+
+		if time.Since(start) > totalRepeatRequestInterval {
+			break
+		}
+
+		time.Sleep(timeout)
+		timeout *= 2
 	}
 
 	if code != a.response.StatusCode {
@@ -748,13 +859,9 @@ func (a *ApiClient) IDoRequestUntilResponseKeyIsGreaterOrEqualThan(method, uri s
 	}
 
 	var resDiffErr error
-	timeout := repeatRequestInterval
-	for i := 0; i < repeatRequestCount; i++ {
-		if i != 0 {
-			time.Sleep(timeout)
-			timeout *= 2
-		}
-
+	timeout := startRepeatRequestInterval
+	start := time.Now()
+	for {
 		err := a.doRequest(req)
 		if err != nil {
 			return err
@@ -767,6 +874,70 @@ func (a *ApiClient) IDoRequestUntilResponseKeyIsGreaterOrEqualThan(method, uri s
 				return nil
 			}
 		}
+
+		if time.Since(start) > totalRepeatRequestInterval {
+			break
+		}
+
+		time.Sleep(timeout)
+		timeout *= 2
+	}
+
+	if code != a.response.StatusCode {
+		return fmt.Errorf("max retries exceeded: expected response code to be: %d, but actual is: %d\nresponse body: %v",
+			code,
+			a.response.StatusCode,
+			a.responseBodyOutput,
+		)
+	}
+
+	return fmt.Errorf("max retries exceeded: %w", resDiffErr)
+}
+
+// IDoRequestUntilResponseArrayKeyContains
+// Step example:
+//   When I do GET /api/v4/alarms until response code is 200 and response array key "data.0.v.steps" contains:
+//   """
+//   [
+//     {
+//       "_t": "stateinc"
+//     }
+//   ]
+//   """
+func (a *ApiClient) IDoRequestUntilResponseArrayKeyContains(method, uri string, code int, path string, doc string) error {
+	uri, err := a.getRequestURL(uri)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(method, uri, nil)
+	if err != nil {
+		return fmt.Errorf("cannot create request: %w", err)
+	}
+
+	var resDiffErr error
+	timeout := startRepeatRequestInterval
+	start := time.Now()
+	for {
+		err := a.doRequest(req)
+		if err != nil {
+			return err
+		}
+
+		if code == a.response.StatusCode {
+			resDiffErr = a.TheResponseArrayKeyShouldContain(path, doc)
+
+			if resDiffErr == nil {
+				return nil
+			}
+		}
+
+		if time.Since(start) > totalRepeatRequestInterval {
+			break
+		}
+
+		time.Sleep(timeout)
+		timeout *= 2
 	}
 
 	if code != a.response.StatusCode {
@@ -810,6 +981,43 @@ func (a *ApiClient) ISaveResponse(key, value string) error {
 	}
 
 	a.vars[key] = b.String()
+
+	return nil
+}
+
+// ValueShouldBeGteLteThan
+// Step example:
+//	Then "value1" > "value2"
+//	Then "value1" <= "value2"
+func (a *ApiClient) ValueShouldBeGteLteThan(left, op, right string) error {
+	leftV, err := a.getFloatVar(left)
+	if err != nil {
+		return err
+	}
+	rightV, err := a.getFloatVar(right)
+	if err != nil {
+		return err
+	}
+	switch op {
+	case "<":
+		if !(leftV < rightV) {
+			return fmt.Errorf("%q is not lesser than %q", left, right)
+		}
+	case "<=":
+		if !(leftV <= rightV) {
+			return fmt.Errorf("%q is not lesser or equal than %q", left, right)
+		}
+	case ">":
+		if !(leftV > rightV) {
+			return fmt.Errorf("%q is not greater than %q", left, right)
+		}
+	case ">=":
+		if !(leftV >= rightV) {
+			return fmt.Errorf("%q is not greater or equal than %q", left, right)
+		}
+	default:
+		return fmt.Errorf("unknown operator %q", op)
+	}
 
 	return nil
 }
@@ -964,6 +1172,14 @@ func (a *ApiClient) executeTemplate(tpl string) (*bytes.Buffer, error) {
 	}
 
 	return buf, nil
+}
+
+func (a *ApiClient) getFloatVar(name string) (float64, error) {
+	val, ok := a.vars[name]
+	if !ok {
+		return 0, fmt.Errorf("%q doesn't exist", name)
+	}
+	return strconv.ParseFloat(val, 64)
 }
 
 // getPartialResponse removes fields from received which are not presented in expected.

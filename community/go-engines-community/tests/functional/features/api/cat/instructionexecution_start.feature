@@ -133,13 +133,13 @@ Feature: run a instruction
     """
     Then the response key "steps.0.operations.0.started_at" should not be "0"
 
-  Scenario: given instruction should not start instruction multiple times
+  Scenario: given instruction should not start instruction multiple times for one alarm
     When I am admin
     When I do POST /api/v4/cat/executions:
     """json
     {
       "alarm": "test-instruction-execution-start-2",
-      "instruction": "test-instruction-execution-to-start-multiple-times"
+      "instruction": "test-instruction-execution-to-start-multiple-times-1"
     }
     """
     Then the response code should be 200
@@ -147,10 +147,29 @@ Feature: run a instruction
     """json
     {
       "alarm": "test-instruction-execution-start-2",
-      "instruction": "test-instruction-execution-to-start-multiple-times"
+      "instruction": "test-instruction-execution-to-start-multiple-times-1"
     }
     """
     Then the response code should be 400
+
+  Scenario: given instruction should start instruction multiple times for multiple alarms
+    When I am admin
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "test-instruction-execution-start-3-1",
+      "instruction": "test-instruction-execution-to-start-multiple-times-2"
+    }
+    """
+    Then the response code should be 200
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "test-instruction-execution-start-3-2",
+      "instruction": "test-instruction-execution-to-start-multiple-times-2"
+    }
+    """
+    Then the response code should be 200
 
   Scenario: given invalid request should return errors
     When I am admin

@@ -77,7 +77,8 @@ Feature: get a instruction
                       },
                       "job_id": "test-job-to-instruction-edit-1-external-id",
                       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-                      "query": null
+                      "query": null,
+                      "multiple_executions": false
                     },
                     {
                       "_id": "test-job-to-instruction-edit-2",
@@ -100,7 +101,8 @@ Feature: get a instruction
                       },
                       "job_id": "test-job-to-instruction-edit-2-external-id",
                       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-                      "query": null
+                      "query": null,
+                      "multiple_executions": false
                     }
                   ]
                 },
@@ -130,7 +132,8 @@ Feature: get a instruction
                       },
                       "job_id": "test-job-to-instruction-edit-2-external-id",
                       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-                      "query": null
+                      "query": null,
+                      "multiple_executions": false
                     }
                   ]
                 }
@@ -167,7 +170,8 @@ Feature: get a instruction
                       },
                       "job_id": "test-job-to-instruction-edit-2-external-id",
                       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-                      "query": null
+                      "query": null,
+                      "multiple_executions": false
                     },
                     {
                       "_id": "test-job-to-instruction-edit-1",
@@ -190,7 +194,8 @@ Feature: get a instruction
                       },
                       "job_id": "test-job-to-instruction-edit-1-external-id",
                       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-                      "query": null
+                      "query": null,
+                      "multiple_executions": false
                     }
                   ]
                 }
@@ -263,7 +268,8 @@ Feature: get a instruction
                 },
                 "job_id": "test-job-to-instruction-edit-1-external-id",
                 "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-                "query": null
+                "query": null,
+                "multiple_executions": false
               },
               "stop_on_fail": true
             },
@@ -289,7 +295,8 @@ Feature: get a instruction
                 },
                 "job_id": "test-job-to-instruction-edit-2-external-id",
                 "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-                "query": null
+                "query": null,
+                "multiple_executions": false
               }
             }
           ],
@@ -482,7 +489,8 @@ Feature: get a instruction
                    },
                    "job_id": "test-job-to-instruction-edit-1-external-id",
                    "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-                   "query": null
+                   "query": null,
+                   "multiple_executions": false
                  },
                  {
                    "_id": "test-job-to-instruction-edit-2",
@@ -505,7 +513,8 @@ Feature: get a instruction
                    },
                    "job_id": "test-job-to-instruction-edit-2-external-id",
                    "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-                   "query": null
+                   "query": null,
+                   "multiple_executions": false
                  }
                ]
               },
@@ -535,7 +544,8 @@ Feature: get a instruction
                    },
                    "job_id": "test-job-to-instruction-edit-2-external-id",
                    "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-                   "query": null
+                   "query": null,
+                   "multiple_executions": false
                  }
                ]
              }
@@ -572,7 +582,8 @@ Feature: get a instruction
                  },
                  "job_id": "test-job-to-instruction-edit-2-external-id",
                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-                 "query": null
+                 "query": null,
+                 "multiple_executions": false
                },
                {
                  "_id": "test-job-to-instruction-edit-1",
@@ -595,7 +606,8 @@ Feature: get a instruction
                  },
                  "job_id": "test-job-to-instruction-edit-1-external-id",
                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-                 "query": null
+                 "query": null,
+                 "multiple_executions": false
                }
              ]
            }

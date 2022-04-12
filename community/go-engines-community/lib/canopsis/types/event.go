@@ -81,10 +81,9 @@ const (
 	// EventTypeInstructionAborted is the same for manual and auto instructions.
 	EventTypeInstructionAborted = "instructionaborted"
 	// Following event types are used to add auto instruction execution to alarm steps.
-	EventTypeAutoInstructionStarted        = "autoinstructionstarted"
-	EventTypeAutoInstructionCompleted      = "autoinstructioncompleted"
-	EventTypeAutoInstructionFailed         = "autoinstructionfailed"
-	EventTypeAutoInstructionAlreadyRunning = "autoinstructionalreadyrunning"
+	EventTypeAutoInstructionStarted   = "autoinstructionstarted"
+	EventTypeAutoInstructionCompleted = "autoinstructioncompleted"
+	EventTypeAutoInstructionFailed    = "autoinstructionfailed"
 	// Following event types are used to add job execution to alarm steps. Events are
 	// the same for manual and auto instructions.
 	EventTypeInstructionJobStarted   = "instructionjobstarted"
