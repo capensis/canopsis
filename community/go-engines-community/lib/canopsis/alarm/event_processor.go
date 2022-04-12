@@ -475,7 +475,7 @@ func (s *eventProcessor) createOperationFromEvent(event types.Event) types.Opera
 		types.EventTypeInstructionResumed, types.EventTypeInstructionCompleted,
 		types.EventTypeInstructionFailed, types.EventTypeInstructionAborted,
 		types.EventTypeAutoInstructionStarted, types.EventTypeAutoInstructionCompleted,
-		types.EventTypeAutoInstructionFailed, types.EventTypeAutoInstructionAlreadyRunning,
+		types.EventTypeAutoInstructionFailed,
 		types.EventTypeInstructionJobStarted, types.EventTypeInstructionJobCompleted,
 		types.EventTypeInstructionJobAborted, types.EventTypeInstructionJobFailed:
 		parameters = types.OperationInstructionParameters{
