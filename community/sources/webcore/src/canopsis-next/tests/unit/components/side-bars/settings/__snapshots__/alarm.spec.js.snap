@@ -251,7 +251,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
                     class="v-list__tile theme--light"
                   >
                     <div>
-                      Density
+                      settings.density.title
                     </div>
                   </div>
                 </div>
@@ -674,7 +674,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
                     class="v-list__tile theme--light"
                   >
                     <div>
-                      Density
+                      settings.density.title
                     </div>
                   </div>
                 </div>
@@ -1094,7 +1094,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
                     class="v-list__tile theme--light"
                   >
                     <div>
-                      Density
+                      settings.density.title
                     </div>
                   </div>
                 </div>

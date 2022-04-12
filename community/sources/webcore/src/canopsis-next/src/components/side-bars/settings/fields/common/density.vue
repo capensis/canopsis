@@ -2,7 +2,7 @@
   v-list-group
     template(#activator="")
       v-list-tile
-        div Density
+        div {{ $t('settings.density.title') }}
     v-container
       v-radio-group.density-radio-group(v-field="value", :name="name")
         v-layout.mb-3(row)
