@@ -108,6 +108,8 @@
           v-divider
           export-csv-form(v-model="settings.widget.parameters", datetime-format)
           v-divider
+          field-density(v-model="settings.widget.parameters.dense")
+          v-divider
           field-switcher(
             v-model="settings.widget.parameters.sticky_header",
             :title="$t('settings.stickyHeader')"
@@ -144,6 +146,7 @@ import FieldRemediationInstructionsFilters from './fields/common/remediation-ins
 import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue';
 import FieldInfoPopup from './fields/alarm/info-popup.vue';
 import FieldEnabledLimit from './fields/common/enabled-limit.vue';
+import FieldDensity from './fields/common/density.vue';
 import ExportCsvForm from './forms/export-csv.vue';
 
 /**
@@ -170,6 +173,7 @@ export default {
     FieldRemediationInstructionsFilters,
     FieldInfoPopup,
     FieldEnabledLimit,
+    FieldDensity,
     ExportCsvForm,
   },
   mixins: [
