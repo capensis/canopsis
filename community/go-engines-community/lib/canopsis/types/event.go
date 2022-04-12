@@ -81,10 +81,9 @@ const (
 	// EventTypeInstructionAborted is the same for manual and auto instructions.
 	EventTypeInstructionAborted = "instructionaborted"
 	// Following event types are used to add auto instruction execution to alarm steps.
-	EventTypeAutoInstructionStarted        = "autoinstructionstarted"
-	EventTypeAutoInstructionCompleted      = "autoinstructioncompleted"
-	EventTypeAutoInstructionFailed         = "autoinstructionfailed"
-	EventTypeAutoInstructionAlreadyRunning = "autoinstructionalreadyrunning"
+	EventTypeAutoInstructionStarted   = "autoinstructionstarted"
+	EventTypeAutoInstructionCompleted = "autoinstructioncompleted"
+	EventTypeAutoInstructionFailed    = "autoinstructionfailed"
 	// Following event types are used to add job execution to alarm steps. Events are
 	// the same for manual and auto instructions.
 	EventTypeInstructionJobStarted   = "instructionjobstarted"
@@ -192,7 +191,6 @@ type Event struct {
 	// RemovedFromServices contains ids of entity services from which entity has been removed as dependency.
 	RemovedFromServices []string `bson:"removed_from_services,omitempty" json:"removed_from_services,omitempty"`
 
-	ExecutionTime time.Duration `bson:"execution_time" json:"execution_time"`
 	// PbhParameters is used only with EventTypePbhCreate
 	PbhParameters string `bson:"pbh_parameters,omitempty" json:"pbh_parameters,omitempty"`
 

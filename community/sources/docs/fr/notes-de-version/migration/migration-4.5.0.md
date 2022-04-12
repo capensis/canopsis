@@ -509,6 +509,10 @@ Le provisioning doit être lancé afin de mettre à jour certaines données en b
     docker-compose -f 00-data.docker-compose.yml up -d
     ```
 
+    !!! Attention
+        Si vous avez personnalisé la ligne de commande de l'outil `canopsis-reconfigure`, nous vous conseillons de supprimer cette persionnalisation.  
+        L'outil est en effet pré paramétré pour fonctionner naturellement.
+
     Exécutez la commande suivante :
     
     ```sh
