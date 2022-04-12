@@ -262,6 +262,24 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
 </div>
 `;
 
+exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props with compact mode 1`] = `
+<div
+  class="flex white"
+>
+  <div
+    class="flex px-3 xs12"
+    style="display: none;"
+  >
+    <mass-actions-panel-stub
+      itemsids=""
+      widget="[object Object]"
+    />
+  </div>
+  <c-empty-data-table-columns-stub />
+  <!---->
+</div>
+`;
+
 exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but without selectable 1`] = `
 <div
   class="flex white"

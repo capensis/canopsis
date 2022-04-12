@@ -80,6 +80,7 @@
       :has-columns="hasColumns",
       :columns="columns",
       :sticky-header="widget.parameters.sticky_header",
+      :dense="widget.parameters.dense",
       selectable,
       expandable
     )

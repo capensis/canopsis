@@ -223,6 +223,7 @@ export default {
     showInfoPopup() {
       this.isInfoPopupOpen = true;
     },
+
     hideInfoPopup() {
       this.isInfoPopupOpen = false;
     },
