@@ -70,8 +70,13 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
     <!---->
   </div>
   <div
-    class="layout row wrap align-center"
+    class="layout alarms-list__top-pagination white px-4 row wrap align-center"
   >
+    <c-enabled-field
+      class="ma-0 position-absolute"
+      hide-details="hide-details"
+      label="settings.density.compact"
+    />
     <c-pagination-stub
       limit="13"
       total="10"

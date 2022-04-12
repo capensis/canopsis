@@ -9,7 +9,7 @@
           v-flex(xs6)
             v-radio(
               :value="false",
-              :label="$t('settings.density.default')",
+              :label="$t('settings.density.comfort')",
               color="primary"
             )
           v-flex(xs6)
@@ -34,7 +34,7 @@ export default {
     },
     name: {
       type: String,
-      default: 'density',
+      default: 'dense',
     },
   },
 };

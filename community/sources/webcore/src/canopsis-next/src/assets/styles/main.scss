@@ -56,6 +56,10 @@ $mobileBreakpoint: 450px;
   position: relative;
 }
 
+.position-absolute {
+  position: absolute;
+}
+
 .validation-header.error--text {
   animation: shake .6s cubic-bezier(.25,.8,.5,1);
   transition: .3s cubic-bezier(.25,.8,.5,1);

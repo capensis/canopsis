@@ -59,7 +59,13 @@
           color="black",
           @click="exportAlarmsList"
         )
-    v-layout(row, wrap, align-center)
+    v-layout.alarms-list__top-pagination.white.px-4(row, wrap, align-center)
+      c-enabled-field.ma-0.position-absolute(
+        :value="userPreference.content.dense",
+        :label="$t('settings.density.compact')",
+        hide-details,
+        @input="updateDense"
+      )
       c-pagination(
         v-if="hasColumns",
         :page="query.page",
@@ -80,7 +86,7 @@
       :has-columns="hasColumns",
       :columns="columns",
       :sticky-header="widget.parameters.sticky_header",
-      :dense="widget.parameters.dense",
+      :dense="dense",
       selectable,
       expandable
     )
@@ -202,6 +208,10 @@ export default {
     hasAccessToExportAsCsv() {
       return this.checkAccess(USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv);
     },
+
+    dense() {
+      return this.userPreference.content.dense ?? this.widget.parameters.dense;
+    },
   },
   methods: {
     refreshExpanded() {
@@ -250,6 +260,12 @@ export default {
 
         limit,
       };
+    },
+
+    updateDense(dense) {
+      this.updateContentInUserPreference({
+        dense,
+      });
     },
 
     expandFirstAlarm() {
@@ -336,3 +352,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.alarms-list__top-pagination {
+  min-height: 28px;
+}
+</style>
