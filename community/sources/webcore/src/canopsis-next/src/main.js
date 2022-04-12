@@ -148,6 +148,11 @@ import PublishedWithChangesIcon from '@/components/icons/published_with_changes.
 import DensityMediumIcon from '@/components/icons/density_medium.vue';
 import DensitySmallIcon from '@/components/icons/density_small.vue';
 
+/**
+ * Groups
+ */
+import CDensityBtnToggle from '@/components/common/groups/c-density-btn-toggle.vue';
+
 import * as modalsComponents from '@/components/modals';
 
 /* eslint-enable import/first */
@@ -271,6 +276,7 @@ Vue.component('c-fab-btn', CFabBtn);
 Vue.component('c-refresh-btn', CRefreshBtn);
 Vue.component('c-download-btn', CDownloadBtn);
 Vue.component('c-copy-btn', CCopyBtn);
+Vue.component('c-density-btn-toggle', CDensityBtnToggle);
 Vue.component('c-empty-data-table-columns', CEmptyDataTableColumns);
 Vue.component('c-enabled', CEnabled);
 Vue.component('c-ellipsis', CEllipsis);

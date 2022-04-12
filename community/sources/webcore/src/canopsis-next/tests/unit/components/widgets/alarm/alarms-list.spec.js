@@ -35,6 +35,7 @@ const stubs = {
   'alarms-list-remediation-instructions-filters': true,
   'c-action-btn': true,
   'c-pagination': true,
+  'c-density-btn-toggle': true,
   'c-table-pagination': true,
   'alarms-expand-panel-tour': true,
   'alarms-list-table': {

@@ -60,12 +60,7 @@
           @click="exportAlarmsList"
         )
     v-layout.alarms-list__top-pagination.white.px-4(row, wrap, align-center)
-      c-enabled-field.ma-0.position-absolute(
-        :value="userPreference.content.dense",
-        :label="$t('settings.density.compact')",
-        hide-details,
-        @input="updateDense"
-      )
+      c-density-btn-toggle(:value="userPreference.content.dense", @change="updateDense")
       c-pagination(
         v-if="hasColumns",
         :page="query.page",
@@ -355,6 +350,6 @@ export default {
 
 <style lang="scss" scoped>
 .alarms-list__top-pagination {
-  min-height: 28px;
+  min-height: 46px;
 }
 </style>
