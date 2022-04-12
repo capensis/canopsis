@@ -317,18 +317,18 @@ export default {
   },
   search: {
     alarmAdvancedSearch: '<span>Aide sur la recherche avancée :</span>\n'
-    + '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n'
-    + '<p>Le "-" avant la recherche est obligatoire</p>\n'
-    + '<p>Opérateurs:\n'
-    + '    <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n'
-    + '<p>Les types de valeurs : Chaîne de caractères entre guillemets doubles, Booléen ("TRUE", "FALSE"), Entier, Nombre flottant, "NULL"</p>\n'
-    + '<dl><dt>Exemples :</dt><dt>- Connector = "connector_1"</dt>\n'
-    + '    <dd>Alarmes dont le connecteur est "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n'
-    + '    <dd>Alarmes dont le connecteur est "connector_1" et la ressource est "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n'
-    + '    <dd>Alarmes dont le connecteur est "connector_1" ou la ressource est "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n'
-    + '    <dd>Alarmes dont le connecteur contient 1 ou 2</dd><dt>- NOT Connector = "connector_1"</dt>\n'
-    + '    <dd>Alarmes dont le connecteur n\'est pas "connector_1"</dd>\n'
-    + '</dl>',
+      + '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n'
+      + '<p>Le "-" avant la recherche est obligatoire</p>\n'
+      + '<p>Opérateurs:\n'
+      + '    <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n'
+      + '<p>Les types de valeurs : Chaîne de caractères entre guillemets doubles, Booléen ("TRUE", "FALSE"), Entier, Nombre flottant, "NULL"</p>\n'
+      + '<dl><dt>Exemples :</dt><dt>- Connector = "connector_1"</dt>\n'
+      + '    <dd>Alarmes dont le connecteur est "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n'
+      + '    <dd>Alarmes dont le connecteur est "connector_1" et la ressource est "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n'
+      + '    <dd>Alarmes dont le connecteur est "connector_1" ou la ressource est "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n'
+      + '    <dd>Alarmes dont le connecteur contient 1 ou 2</dd><dt>- NOT Connector = "connector_1"</dt>\n'
+      + '    <dd>Alarmes dont le connecteur n\'est pas "connector_1"</dd>\n'
+      + '</dl>',
     contextAdvancedSearch: '<span>Aide sur la recherche avancée :</span>\n'
       + '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n'
       + '<p>Le "-" avant la recherche est obligatoire</p>\n'
@@ -468,6 +468,7 @@ export default {
     tooltips: {
       priority: 'Le paramètre de priorité est dérivé de la gravité de l\'alarme multipliée par le niveau d\'impact de l\'entité sur laquelle l\'alarme est déclenchée',
       hasInstruction: 'Au moins une consigne de remédiation est attachée à cette alarme',
+      hasManualInstructionInRunning: 'Instruction manuelle en cours',
       hasAutoInstructionInRunning: 'Consigne automatique en cours',
       allAutoInstructionExecuted: 'Toutes les consignes automatiques ont été exécutées',
       awaitingInstructionComplete: 'En attente de la fin de la consigne pour terminer',
@@ -1458,6 +1459,7 @@ export default {
         configuration: 'Configuration',
         jobId: 'Identifiant de la tâche',
         query: 'Requête',
+        multipleExecutions: 'Autoriser l\'exécution parallèle',
       },
       errors: {
         invalidJSON: 'JSON non valide',
@@ -2212,6 +2214,7 @@ export default {
     failedAt: 'Échec à {time}',
     startedAt: 'Commencé à {time}\n(Date de lancement Canopsis)',
     closeConfirmationText: 'Souhaitez-vous reprendre cette consigne plus tard ?',
+    queueNumber: '{number} {name} travaux sont dans la file d\'attente',
     popups: {
       success: '{instructionName} a été exécutée avec succès',
       failed: '{instructionName} a échoué. Veuillez faire remonter ce problème',

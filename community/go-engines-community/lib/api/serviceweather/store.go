@@ -185,7 +185,8 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, query Entit
 			res.Data[idx].AssignedInstructions = assignedInstructionsMap[v.AlarmID]
 			res.Data[idx].IsAutoInstructionRunning = statusesByAlarm[v.AlarmID].AutoRunning
 			res.Data[idx].IsAllAutoInstructionsCompleted = statusesByAlarm[v.AlarmID].AutoAllCompleted
-			res.Data[idx].IsManualInstructionWaitingResult = statusesByAlarm[v.AlarmID].ManualRunning
+			res.Data[idx].IsManualInstructionRunning = statusesByAlarm[v.AlarmID].ManualRunning
+			res.Data[idx].IsManualInstructionWaitingResult = statusesByAlarm[v.AlarmID].ManualWaitingResult
 		}
 	}
 
