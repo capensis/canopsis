@@ -114,7 +114,7 @@ export default {
     },
 
     hasAlarmInstruction() {
-      const { children_instructions: childrenInstructions = false } = this.parentAlarm || {};
+      const { children_instructions: parentAlarmChildrenInstructions = false } = this.parentAlarm || {};
       const {
         assigned_instructions: assignedInstructions = [],
         is_auto_instruction_running: isAutoInstructionRunning = false,
@@ -122,11 +122,16 @@ export default {
         is_all_auto_instructions_completed: isAutoInstructionCompleted = false,
       } = this.alarm;
 
-      return assignedInstructions.length
+      const hasInstruction = !!assignedInstructions.length;
+
+      if (parentAlarmChildrenInstructions && hasInstruction) {
+        return true;
+      }
+
+      return hasInstruction
           || isAutoInstructionRunning
           || isAutoInstructionCompleted
-          || isManualInstructionWaitingResult
-          || childrenInstructions;
+          || isManualInstructionWaitingResult;
     },
 
     isResolvedAlarm() {
