@@ -9,6 +9,7 @@
     c-empty-data-table-columns(v-if="!hasColumns")
     div(v-else)
       v-data-table.alarms-list-table(
+        ref="dataTable",
         v-model="selected",
         :class="vDataTableClass",
         :items="alarms",
@@ -18,11 +19,10 @@
         :select-all="selectable",
         :loading="loading || columnsFiltersPending",
         :expand="expandable",
-        ref="dataTable",
+        :dense="dense",
         item-key="_id",
         hide-actions,
         multi-sort,
-        compact,
         @update:pagination="updatePaginationHandler"
       )
         template(#progress="")
@@ -145,6 +145,10 @@ export default {
       default: false,
     },
     stickyHeader: {
+      type: Boolean,
+      default: false,
+    },
+    dense: {
       type: Boolean,
       default: false,
     },

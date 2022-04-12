@@ -761,6 +761,10 @@ export default {
         + '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n'
         + '</dl>',
     },
+    density: {
+      default: 'Défaut',
+      compact: 'Compact',
+    },
   },
   modals: {
     common: {

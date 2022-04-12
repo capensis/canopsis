@@ -21,7 +21,7 @@ export default {
       type: String,
       required: false,
     },
-    compact: {
+    dense: {
       type: Boolean,
       default: false,
     },
@@ -39,7 +39,7 @@ export default {
       return {
         'v-datatable v-table': true,
         'v-datatable--select-all': this.selectAll !== false,
-        'v-datatable--compact': this.compact,
+        'v-datatable--dense': this.dense,
         [this.tableClass]: !!this.tableClass,
         ...this.themeClasses,
       };
@@ -254,7 +254,9 @@ export default {
 </script>
 
 <style lang="scss">
-$compactPadding: 10px;
+$densePadding: 10px;
+$denseCellHeight: 32px;
+$denseColorIndicatorPadding: 1px 5px;
 
 .v-datatable {
   &-header__sort-badge {
@@ -271,9 +273,22 @@ $compactPadding: 10px;
     color: rgba(0,0,0,.87);
   }
 
-  &--compact {
+  &--dense {
     td, th {
-      padding: 0 $compactPadding !important;
+      padding: 0 $densePadding !important;
+    }
+
+    td:not(.v-datatable__expand-col) {
+      height: $denseCellHeight !important;
+
+      .v-btn {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      .color-indicator {
+        padding: $denseColorIndicatorPadding;
+      }
     }
   }
 
