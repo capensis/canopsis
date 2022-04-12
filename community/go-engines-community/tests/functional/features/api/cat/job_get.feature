@@ -31,7 +31,8 @@ Feature: get a job
           },
           "job_id": "test-job-id",
           "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-          "query": null
+          "query": null,
+          "multiple_executions": false
         }
       ],
       "meta": {
@@ -102,7 +103,8 @@ Feature: get a job
       },
       "job_id": "test-job-id",
       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-      "query": null
+      "query": null,
+      "multiple_executions": false
     }
     """
 

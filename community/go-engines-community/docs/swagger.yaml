@@ -75,6 +75,8 @@ definitions:
         type: boolean
       is_auto_instruction_running:
         type: boolean
+      is_manual_instruction_running:
+        type: boolean
       is_manual_instruction_waiting_result:
         type: boolean
       links:
@@ -3203,6 +3205,8 @@ definitions:
       is_auto_instruction_running:
         type: boolean
       is_grey:
+        type: boolean
+      is_manual_instruction_running:
         type: boolean
       is_manual_instruction_waiting_result:
         type: boolean

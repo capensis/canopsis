@@ -19,6 +19,7 @@ describe('alarms-list-row-icon', () => {
     });
 
     expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it('Renders `alarms-list-row-icon` with all auto instructions', () => {
@@ -31,6 +32,20 @@ describe('alarms-list-row-icon', () => {
     });
 
     expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchTooltipSnapshot();
+  });
+
+  it('Renders `alarms-list-row-icon` with auto instruction failed', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        alarm: {
+          is_auto_instruction_failed: true,
+        },
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it('Renders `alarms-list-row-icon` with auto instruction running', () => {
@@ -43,6 +58,7 @@ describe('alarms-list-row-icon', () => {
     });
 
     expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it('Renders `alarms-list-row-icon` with manual instruction waiting result', () => {
@@ -55,5 +71,19 @@ describe('alarms-list-row-icon', () => {
     });
 
     expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchTooltipSnapshot();
+  });
+
+  it('Renders `alarms-list-row-icon` with manual instruction running', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        alarm: {
+          is_manual_instruction_running: true,
+        },
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 });

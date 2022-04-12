@@ -101,6 +101,11 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		}
 	}
 
+	if event.Entity == nil && event.EventType == types.EventTypeCheck {
+		p.Logger.Warn().Str("entity", event.GetEID()).Msg("entity doesn't exist")
+		return nil, nil
+	}
+
 	// Process event by event filters.
 	if p.FeatureEventProcessing {
 		event, err = p.EventFilterService.ProcessEvent(ctx, event)
