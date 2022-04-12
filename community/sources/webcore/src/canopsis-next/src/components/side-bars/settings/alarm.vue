@@ -38,6 +38,8 @@
           v-divider
           field-default-elements-per-page(v-model="settings.userPreferenceContent.itemsPerPage")
           v-divider
+          field-density(v-model="settings.widget.parameters.dense")
+          v-divider
           field-opened-resolved-filter(v-model="settings.widget.parameters.opened")
           v-divider
           template(v-if="hasAccessToListFilters")
@@ -107,8 +109,6 @@
           )
           v-divider
           export-csv-form(v-model="settings.widget.parameters", datetime-format)
-          v-divider
-          field-density(v-model="settings.widget.parameters.dense")
           v-divider
           field-switcher(
             v-model="settings.widget.parameters.sticky_header",
