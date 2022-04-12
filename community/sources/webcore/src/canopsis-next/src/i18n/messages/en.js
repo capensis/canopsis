@@ -764,9 +764,9 @@ export default {
         + '</dl>',
     },
     density: {
-      title: 'Density',
-      default: 'Default',
-      compact: 'Compact',
+      title: 'Default view',
+      comfort: 'Comfort view',
+      compact: 'Compact view',
     },
   },
   modals: {
