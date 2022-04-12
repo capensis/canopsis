@@ -15,8 +15,10 @@ import (
 )
 
 type api struct {
-	store             Store
-	actionLogger      logger.ActionLogger
+	store        Store
+	actionLogger logger.ActionLogger
+
+	//todo: priority intervals with new requirements are looks weird now, should think about cleaner solution
 	priorityIntervals action.PriorityIntervals
 }
 
@@ -119,6 +121,9 @@ func (a *api) Get(c *gin.Context) {
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
 
+	priority := a.priorityIntervals.GetMinimal()
+	request.Priority = &priority
+
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
@@ -175,6 +180,9 @@ func (a *api) Update(c *gin.Context) {
 		c.JSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
+
+	priority := a.priorityIntervals.GetMinimal()
+	request.Priority = &priority
 
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
@@ -361,6 +369,11 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
+		if request.Priority == nil {
+			priority := a.priorityIntervals.GetMinimal()
+			request.Priority = &priority
+		}
+
 		err = binding.Validator.ValidateStruct(request)
 		if err != nil {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
@@ -375,6 +388,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
+		a.priorityIntervals.Take(scenario.Priority)
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, scenario.ID, http.StatusOK, rawObject, nil))
 
 		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
@@ -442,9 +456,25 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			continue
 		}
 
+		if request.Priority == nil {
+			priority := a.priorityIntervals.GetMinimal()
+			request.Priority = &priority
+		}
+
 		err = binding.Validator.ValidateStruct(request)
 		if err != nil {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
+			continue
+		}
+
+		oldScenario, err := a.store.GetOneBy(c.Request.Context(), request.ID)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		if oldScenario == nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
 			continue
 		}
 
@@ -461,6 +491,8 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			continue
 		}
 
+		a.priorityIntervals.Restore(oldScenario.Priority)
+		a.priorityIntervals.Take(scenario.Priority)
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, scenario.ID, http.StatusOK, rawObject, nil))
 
 		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
@@ -534,6 +566,17 @@ func (a *api) BulkDelete(c *gin.Context) {
 			continue
 		}
 
+		scenario, err := a.store.GetOneBy(c.Request.Context(), request.ID)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		if scenario == nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			continue
+		}
+
 		ok, err := a.store.Delete(ctx, request.ID)
 		if err != nil {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
@@ -545,6 +588,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 			continue
 		}
 
+		a.priorityIntervals.Restore(scenario.Priority)
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))
 
 		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
@@ -564,15 +608,21 @@ func setActionParameterAuthorAndUserID(request *EditRequest, author, userID stri
 	for i, action := range request.Actions {
 		switch v := action.Parameters.(type) {
 		case SnoozeParametersRequest:
-			v.Author = author
+			if v.Author == "" {
+				v.Author = author
+			}
 			v.User = userID
 			request.Actions[i].Parameters = v
 		case ChangeStateParametersRequest:
-			v.Author = author
+			if v.Author == "" {
+				v.Author = author
+			}
 			v.User = userID
 			request.Actions[i].Parameters = v
 		case AssocTicketParametersRequest:
-			v.Author = author
+			if v.Author == "" {
+				v.Author = author
+			}
 			v.User = userID
 			request.Actions[i].Parameters = v
 		case PbehaviorParametersRequest:
@@ -580,7 +630,9 @@ func setActionParameterAuthorAndUserID(request *EditRequest, author, userID stri
 			v.User = userID
 			request.Actions[i].Parameters = v
 		case ParametersRequest:
-			v.Author = author
+			if v.Author == "" {
+				v.Author = author
+			}
 			v.User = userID
 			request.Actions[i].Parameters = v
 		}

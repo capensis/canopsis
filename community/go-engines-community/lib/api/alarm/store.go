@@ -64,7 +64,7 @@ type store struct {
 	deferredNestedObjects []bson.M
 }
 
-func NewStore(dbClient mongo.DbClient, legacyURL fmt.Stringer) Store {
+func NewStore(dbClient mongo.DbClient, legacyURL string) Store {
 	s := &store{
 		mainDbCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
 		resolvedDbCollection:             dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
@@ -622,6 +622,13 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 			"manual_running": bson.M{"$gt": bson.A{
 				bson.M{"$size": bson.M{"$filter": bson.M{
 					"input": "$manual_statuses",
+					"cond":  bson.M{"$eq": bson.A{"$$this", InstructionExecutionStatusRunning}},
+				}}},
+				0,
+			}},
+			"manual_waiting_result": bson.M{"$gt": bson.A{
+				bson.M{"$size": bson.M{"$filter": bson.M{
+					"input": "$manual_statuses",
 					"cond":  bson.M{"$eq": bson.A{"$$this", InstructionExecutionStatusWaitResult}},
 				}}},
 				0,
@@ -692,7 +699,8 @@ func (s *store) fillInstructionFlags(ctx context.Context, result *AggregationRes
 		result.Data[i].IsAutoInstructionRunning = statusesByAlarm[v.ID].AutoRunning
 		result.Data[i].IsAllAutoInstructionsCompleted = statusesByAlarm[v.ID].AutoAllCompleted
 		result.Data[i].IsAutoInstructionFailed = statusesByAlarm[v.ID].AutoFailed
-		result.Data[i].IsManualInstructionWaitingResult = statusesByAlarm[v.ID].ManualRunning
+		result.Data[i].IsManualInstructionRunning = statusesByAlarm[v.ID].ManualRunning
+		result.Data[i].IsManualInstructionWaitingResult = statusesByAlarm[v.ID].ManualWaitingResult
 	}
 
 	return nil
@@ -721,34 +729,56 @@ func (s *store) fillLinks(ctx context.Context, apiKey string, result *Aggregatio
 	if result == nil || len(result.Data) == 0 {
 		return nil
 	}
-
-	maxItems := len(result.Data)
-	if maxItems > 100 {
-		maxItems = 100
+	// Do not fetch links for long page.
+	if len(result.Data) > 100 {
+		return nil
 	}
-	linksEntities := make([]AlarmEntity, 0, maxItems)
-	alarms := make(map[string]int, maxItems)
-	for i, al := range result.Data {
+
+	linksEntities := make([]AlarmEntity, 0, len(result.Data))
+	alarmIndexes := make(map[string]int, len(result.Data))
+	childIndexes := make(map[string][][]int)
+
+	for i, item := range result.Data {
 		linksEntities = append(linksEntities, AlarmEntity{
-			AlarmID:  al.ID,
-			EntityID: al.Entity.ID,
+			AlarmID:  item.ID,
+			EntityID: item.Entity.ID,
 		})
-		alarms[al.ID] = i
-		if len(linksEntities) == maxItems {
-			break
+		alarmIndexes[item.ID] = i
+
+		if item.Children != nil {
+			for j, child := range item.Children.Data {
+				childIndexes[child.ID] = append(childIndexes[child.ID], []int{i, j})
+
+				if len(childIndexes[child.ID]) > 1 {
+					continue
+				}
+
+				linksEntities = append(linksEntities, AlarmEntity{
+					AlarmID:  child.ID,
+					EntityID: child.Entity.ID,
+				})
+			}
 		}
 	}
 
 	res, err := s.links.Fetch(ctx, apiKey, linksEntities)
-	if err != nil {
+	if err != nil || res == nil {
 		return err
 	}
 
 	for _, rec := range res.Data {
-		if i, ok := alarms[rec.AlarmID]; ok {
+		if i, ok := alarmIndexes[rec.AlarmID]; ok {
 			result.Data[i].Links = make(map[string]interface{}, len(rec.Links))
 			for category, link := range rec.Links {
 				result.Data[i].Links[category] = link
+			}
+		}
+		if indexes, ok := childIndexes[rec.AlarmID]; ok {
+			for _, i := range indexes {
+				result.Data[i[0]].Children.Data[i[1]].Links = make(map[string]interface{}, len(rec.Links))
+				for category, link := range rec.Links {
+					result.Data[i[0]].Children.Data[i[1]].Links[category] = link
+				}
 			}
 		}
 	}

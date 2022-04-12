@@ -3,8 +3,6 @@ package alarm
 import (
 	"context"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"runtime/trace"
 	"sync"
 	"time"
@@ -16,6 +14,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	liboperation "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -75,7 +75,11 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 
 	alarmChange := types.NewAlarmChange()
 
-	if event.Entity != nil && !event.Entity.Enabled {
+	if event.Entity == nil {
+		return alarmChange, nil
+	}
+
+	if !event.Entity.Enabled {
 		if event.EventType == types.EventTypeEntityToggled ||
 			event.EventType == types.EventTypeRecomputeEntityService {
 			return s.resolveAlarmForDisabledEntity(ctx, event)
@@ -109,7 +113,8 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 
 		if changeType == types.AlarmChangeTypeStateIncrease || changeType == types.AlarmChangeTypeStateDecrease {
 			s.updateMetaChildrenState(ctx, event)
-		} else if event.Alarm != nil && event.Alarm.IsMetaChildren() &&
+		}
+		if event.Alarm != nil && event.Alarm.IsMetaChildren() &&
 			s.alarmConfigProvider.Get().EnableLastEventDate {
 			s.updateMetaLastEventDate(ctx, event)
 		}
@@ -127,17 +132,9 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	}
 
 	if event.Alarm == nil {
-		if event.Entity == nil {
-			return alarmChange, nil
-		}
-
 		err = s.processPbhEventsForEntity(ctx, event, &alarmChange)
 
 		return alarmChange, err
-	}
-
-	if event.Entity == nil {
-		return alarmChange, nil
 	}
 
 	operation := s.createOperationFromEvent(event)
@@ -203,10 +200,8 @@ func (s *eventProcessor) fillAlarmChange(ctx context.Context, event *types.Event
 			alarmChange.PreviousStatusChange = event.Timestamp
 		}
 
-		if event.Entity != nil {
-			alarmChange.PreviousPbehaviorTypeID = event.Entity.PbehaviorInfo.TypeID
-			alarmChange.PreviousPbehaviorCannonicalType = event.Entity.PbehaviorInfo.CanonicalType
-		}
+		alarmChange.PreviousPbehaviorTypeID = event.Entity.PbehaviorInfo.TypeID
+		alarmChange.PreviousPbehaviorCannonicalType = event.Entity.PbehaviorInfo.CanonicalType
 	} else {
 		alarmChange.PreviousState = alarm.Value.State.Value
 		alarmChange.PreviousStateChange = alarm.Value.State.Timestamp
@@ -234,10 +229,6 @@ func (s *eventProcessor) storeAlarm(ctx context.Context, event *types.Event) (ty
 
 func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event) (types.AlarmChangeType, error) {
 	changeType := types.AlarmChangeTypeNone
-
-	if event.Entity == nil {
-		return changeType, nil
-	}
 
 	alarmConfig := s.alarmConfigProvider.Get()
 	alarm := newAlarm(*event, alarmConfig)
@@ -368,7 +359,7 @@ func (s *eventProcessor) updateAlarm(ctx context.Context, event *types.Event) (t
 
 func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event) (types.AlarmChangeType, error) {
 	changeType := types.AlarmChangeTypeNone
-	if event.Entity == nil || event.Alarm == nil && event.State == types.AlarmStateOK {
+	if event.Alarm == nil && event.State == types.AlarmStateOK {
 		return changeType, nil
 	}
 
@@ -495,7 +486,7 @@ func (s *eventProcessor) createOperationFromEvent(event *types.Event) types.Oper
 		types.EventTypeInstructionResumed, types.EventTypeInstructionCompleted,
 		types.EventTypeInstructionFailed, types.EventTypeInstructionAborted,
 		types.EventTypeAutoInstructionStarted, types.EventTypeAutoInstructionCompleted,
-		types.EventTypeAutoInstructionFailed, types.EventTypeAutoInstructionAlreadyRunning,
+		types.EventTypeAutoInstructionFailed,
 		types.EventTypeInstructionJobStarted, types.EventTypeInstructionJobCompleted,
 		types.EventTypeInstructionJobAborted, types.EventTypeInstructionJobFailed:
 		parameters = types.OperationInstructionParameters{

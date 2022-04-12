@@ -24,6 +24,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
@@ -133,7 +134,7 @@ func Default(
 	// Create entity service event publisher.
 	entityPublChan := make(chan entityservice.ChangeEntityMessage, chanBuf)
 	entityServiceEventPublisher := entityservice.NewEventPublisher(
-		alarm.NewAdapter(dbClient), amqpChannel,
+		alarm.NewAdapter(dbClient), libentity.NewAdapter(dbClient), amqpChannel,
 		json.NewEncoder(), canopsis.JsonContentType,
 		canopsis.FIFOAckExchangeName, canopsis.FIFOQueueName, logger,
 	)
@@ -217,6 +218,7 @@ func Default(
 		},
 		logger,
 	)
+	legacyUrl := GetLegacyURL(logger)
 	api.AddRouter(func(router gin.IRouter) {
 		router.Use(middleware.Cache())
 
@@ -224,6 +226,10 @@ func Default(
 			router.Use(devmiddleware.ReloadEnforcerPolicy(enforcer))
 		}
 
+		legacyUrlStr := ""
+		if legacyUrl != nil {
+			legacyUrlStr = legacyUrl.String()
+		}
 		RegisterValidators(dbClient, flags.EnableSameServiceNames)
 		RegisterRoutes(
 			ctx,
@@ -231,6 +237,7 @@ func Default(
 			router,
 			security,
 			enforcer,
+			legacyUrlStr,
 			dbClient,
 			timezoneConfigProvider,
 			pbhEntityTypeResolver,
@@ -252,7 +259,13 @@ func Default(
 			logger,
 		)
 	})
-	api.AddNoRoute(GetProxy(security, enforcer, proxyAccessConfig)...)
+	if legacyUrl == nil {
+		api.AddNoRoute(func(c *gin.Context) {
+			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		})
+	} else {
+		api.AddNoRoute(GetProxy(legacyUrl, security, enforcer, proxyAccessConfig)...)
+	}
 	api.AddNoMethod(func(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusMethodNotAllowed, common.MethodNotAllowedResponse)
 	})
