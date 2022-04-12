@@ -67,7 +67,7 @@ func (e *RPCAxeEvent) UnmarshalJSON(b []byte) error {
 		EventTypeInstructionResumed, EventTypeInstructionCompleted,
 		EventTypeInstructionFailed, EventTypeInstructionAborted,
 		EventTypeAutoInstructionStarted, EventTypeAutoInstructionCompleted,
-		EventTypeAutoInstructionFailed, EventTypeAutoInstructionAlreadyRunning,
+		EventTypeAutoInstructionFailed,
 		EventTypeInstructionJobStarted, EventTypeInstructionJobCompleted,
 		EventTypeInstructionJobAborted, EventTypeInstructionJobFailed:
 		var params OperationInstructionParameters
@@ -162,10 +162,5 @@ type RPCRemediationEvent struct {
 }
 
 type RPCRemediationJobEvent struct {
-	Alarm          *Alarm  `json:"alarm"`
-	Entity         *Entity `json:"entity"`
-	JobExecutionID string  `json:"job_execution_id"`
-	Output         string  `json:"output"`
-	Author         string  `json:"author"`
-	ExecutionID    string  `json:"execution"`
+	JobExecutionID string `json:"job_execution_id"`
 }
