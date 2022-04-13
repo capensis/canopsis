@@ -68,13 +68,13 @@ Le driver permet de peupler le référentiel interne Canopsis en vue de l’enri
 
 ## Notifications
 
-Canopsis permet d’émettre des notifications vers différents outils à partir d’un jeu de règles et de déclencheurs (créations d’alarmes, acquittements, changements de criticité…). Les possibilités de notifications offertes par Canopsis sont toutes dépendantes du modèle de données de l’outil cible (la création d’un ticket d’incident Snow n’est pas forcément identique d’une instance à l’autre).
+Canopsis permet d’émettre des notifications vers différents outils à partir d’un jeu de règles et de déclencheurs (créations d’alarmes, acquittements, changements de criticité…). Les possibilités de notifications offertes par Canopsis sont toutes dépendantes du modèle de données de l’outil cible (la création d’un ticket d’incident ServiceNow n’est pas forcément identique d’une instance à l’autre).
 
 ### Générique
 
 | **Nom** | **Destination** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|
-| [Webhooks](../guide-administration/moteurs/moteur-webhook.md) | Tout outil qui peut réceptionner des webhooks | Pro | Oui | Version ≥ 3 (moteurs Go) |
+| [Webhooks](../guide-administration/moteurs/moteur-webhook.md) | Tout outil / API HTTP qui peut réceptionner des appels webhooks | Pro | Oui | Version ≥ 3 (moteurs Go) |
 
 ### Transport
 
@@ -83,6 +83,15 @@ Canopsis permet d’émettre des notifications vers différents outils à partir
 | [Logstash](../guide-utilisation/cas-d-usage/notifications.md) | [Liste des destinations](https://www.elastic.co/guide/en/logstash/current/output-plugins.html) | Pro | Oui | Version ≥ 3 (moteurs Go) |
 | [IM](../guide-utilisation/cas-d-usage/notifications.md) | Toute messagerie instantanée disposant d’une API qui accepte des requêtes HTTP | Pro | Oui | Version ≥ 3 (moteurs Go) |
 | Email | Tout serveur email disposant d’une API qui accepte des requêtes HTTP | Pro | Oui | Version ≥ 3 (moteurs Go) |
+
+### Ordonnanceur de Tâches
+
+| **Nom** | **Version Validée(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
+|:-----:|:--------:|:---------:|:----------:|:-----------:|
+| [AWX](https://doc.canopsis.net/guide-administration/remediation/#configuration-awx) | 14.0.0 | Pro | Non | Version ≥ 4 (moteurs Go) |
+| [Rundeck](https://doc.canopsis.net/guide-administration/remediation/#configuration-pour-rundeck) | 3.3.7 | Pro | Non | Version ≥ 4 (moteurs Go) |
+| [Jenkins](https://doc.canopsis.net/guide-administration/remediation/#configuration-pour-jenkins) | 2.297 | Pro | Non | Version ≥ 4 (moteurs Go) |
+
 
 ### Ticketing
 
