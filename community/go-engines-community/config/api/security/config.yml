@@ -9,27 +9,34 @@ security:
   auth_providers:
     - basic
     - apikey
-#    - ldap
-#    - saml
+    - ldap
+    - saml
 
 #  saml:
-#    x509_cert: D:\saml\myservice.cert
-#    x509_key:  D:\saml\myservice.key
-#    idp_metadata_url: http://localhost:8080/simplesaml/saml2/idp/metadata.php
-#    idp_metadata_xml: D:\\saml\\IDPORANGE_URIMetadata.xml
+#    x509_cert: /certs/saml.cert
+#    x509_key:  /certs/saml.key
+#    # sample with SimpleSamlPHP server
+#    idp_metadata_url: http://saml-server:8090/simplesaml/saml2/idp/metadata.php
+#    # other option with plain XML file
+#    # idp_metadata_xml: /path/to/xml
 #    idp_attributes_map:
-#      email: email
-#      name: uid
-#      firstname: uid
-#      lastname: uid
-#      role: role
-#    canopsis_saml_url: http://localhost:8084/saml
+#       email: email
+#       name: uid
+#       firstname: uid
+#       lastname: uid
+#    canopsis_saml_url: http://canopsis/api/v4/saml
+#    default_role: "admin"
+#    insecure_skip_verify: false
 #    canopsis_sso_binding: redirect
 #    canopsis_acs_binding: redirect
 #    sign_auth_request: false
 #    name_id_format: urn:oasis:names:tc:SAML:2.0:nameid-format:persistent
-#    default_role: "Norights"
-#    skip_verify: true
 #    skip_signature_validation: true
 #    acs_index: 1
-#    auto_user_registration: false
+#    auto_user_registration: true
+
+session:
+  # stats_frame uses for session stats. Session stats are accumulated during frame period.
+  # New stats row will be created if duration between stats requests are more then frame.
+  stats_frame: 5m
+
