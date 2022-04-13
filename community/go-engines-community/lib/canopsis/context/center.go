@@ -3,7 +3,6 @@ package context
 import (
 	"context"
 	"errors"
-	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
@@ -256,8 +255,6 @@ func (c *center) getConnectorImpactedServices(ctx context.Context, dependencies 
 }
 
 func (c *center) UpdateImpactedServices(ctx context.Context) error {
-	t := time.Now()
-
 	cursor, err := c.dbCollection.Aggregate(
 		ctx,
 		[]bson.M{
@@ -343,8 +340,6 @@ func (c *center) UpdateImpactedServices(ctx context.Context) error {
 	if len(writeModels) > 0 {
 		err = c.adapter.Bulk(ctx, writeModels)
 	}
-
-	fmt.Printf("took %s\n", time.Since(t))
 
 	return err
 }
