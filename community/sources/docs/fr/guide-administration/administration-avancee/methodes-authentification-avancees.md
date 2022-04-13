@@ -195,7 +195,7 @@ security:
        name: uid
        firstname: uid
        lastname: uid
-    canopsis_saml_url: http(s)://<IP_MACHINE>:8082/saml
+    canopsis_saml_url: http(s)://<IP_MACHINE>/api/v4/saml
     default_role: "admin"
     insecure_skip_verify: false
     canopsis_sso_binding: redirect
