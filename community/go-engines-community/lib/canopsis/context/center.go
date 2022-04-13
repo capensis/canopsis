@@ -3,25 +3,29 @@ package context
 import (
 	"context"
 	"errors"
+	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
+	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"time"
 )
 
-const bulkMaxSize = 10000
-
 func NewEnrichmentCenter(
 	adapter libentity.Adapter,
+	dbClient libmongo.DbClient,
 	enableEnrich bool,
 	entityServiceManager entityservice.Manager,
 	metricMetaUpdater metrics.MetaUpdater,
 ) EnrichmentCenter {
 	return &center{
+		dbClient:             dbClient,
+		dbCollection:         dbClient.Collection(libmongo.EntityMongoCollection),
 		adapter:              adapter,
 		enableEnrich:         enableEnrich,
 		entityServiceManager: entityServiceManager,
@@ -30,6 +34,8 @@ func NewEnrichmentCenter(
 }
 
 type center struct {
+	dbClient             libmongo.DbClient
+	dbCollection         libmongo.DbCollection
 	adapter              libentity.Adapter
 	enableEnrich         bool
 	entityServiceManager entityservice.Manager
@@ -208,48 +214,137 @@ func (c *center) UpdateEntityInfos(ctx context.Context, entity *types.Entity) (U
 	return updatedServices, nil
 }
 
+func (c *center) getConnectorImpactedServices(ctx context.Context, dependencies []string) ([]string, error) {
+	cursor, err := c.dbCollection.Aggregate(
+		ctx,
+		[]bson.M{
+			{
+				"$match": bson.M{
+					"type":    types.EntityTypeService,
+					"depends": bson.M{"$in": dependencies},
+				},
+			},
+			{
+				"$project": bson.M{
+					"_id": 1,
+				},
+			},
+		},
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursor.Close(ctx)
+
+	var ids []string
+	for cursor.Next(ctx) {
+		var serviceIdDoc struct {
+			ID string `bson:"_id"`
+		}
+
+		err = cursor.Decode(&serviceIdDoc)
+		if err != nil {
+			return nil, err
+		}
+
+		ids = append(ids, serviceIdDoc.ID)
+	}
+
+	return ids, nil
+}
+
 func (c *center) UpdateImpactedServices(ctx context.Context) error {
-	cursor, err := c.adapter.GetImpactedServicesInfo(ctx)
+	t := time.Now()
+
+	cursor, err := c.dbCollection.Aggregate(
+		ctx,
+		[]bson.M{
+			{
+				"$match": bson.M{"type": types.EntityTypeConnector},
+			},
+			{
+				"$project": bson.M{
+					"_id":     1,
+					"impact":  1,
+					"depends": 1,
+				},
+			},
+		},
+	)
 	if err != nil {
 		return err
 	}
 
-	writeModels := make([]mongo.WriteModel, 0, bulkMaxSize)
-
 	defer cursor.Close(ctx)
+
+	var newModel mongo.WriteModel
+	writeModels := make([]mongo.WriteModel, 0, canopsis.DefaultBulkSize)
+	bulkBytesSize := 0
+
 	for cursor.Next(ctx) {
 		var info struct {
-			ID               string   `bson:"_id"`
-			ImpactedServices []string `bson:"impacted_services"`
+			ID      string   `bson:"_id"`
+			Impact  []string `bson:"impact"`
+			Depends []string `bson:"depends"`
 		}
-		err := cursor.Decode(&info)
+
+		err = cursor.Decode(&info)
 		if err != nil {
 			return err
 		}
 
-		if len(info.ImpactedServices) > 0 {
-			writeModels = append(writeModels, mongo.NewUpdateOneModel().SetFilter(bson.M{"_id": info.ID}).SetUpdate(bson.M{
-				"$set": bson.M{"impacted_services": info.ImpactedServices},
-			}))
-		} else {
-			writeModels = append(writeModels, mongo.NewUpdateOneModel().SetFilter(bson.M{"_id": info.ID}).SetUpdate(bson.M{
-				"$unset": bson.M{"impacted_services": ""},
-			}))
+		impServs, err := c.getConnectorImpactedServices(ctx, append(info.Impact, info.Depends...))
+		if err != nil {
+			return err
 		}
 
-		if len(writeModels) == entityservice.BulkMaxSize {
+		if len(impServs) > 0 {
+			newModel = mongo.NewUpdateOneModel().SetFilter(bson.M{"_id": info.ID}).SetUpdate(bson.M{
+				"$set": bson.M{"impacted_services": impServs},
+			})
+		} else {
+			newModel = mongo.NewUpdateOneModel().SetFilter(bson.M{"_id": info.ID}).SetUpdate(bson.M{
+				"$unset": bson.M{"impacted_services": ""},
+			})
+		}
+
+		b, err := bson.Marshal(newModel)
+		if err != nil {
+			return err
+		}
+
+		newModelLen := len(b)
+		if bulkBytesSize+newModelLen > canopsis.DefaultBulkBytesSize {
 			err := c.adapter.Bulk(ctx, writeModels)
 			if err != nil {
 				return err
 			}
 
 			writeModels = writeModels[:0]
+			bulkBytesSize = 0
+		}
+
+		bulkBytesSize += newModelLen
+		writeModels = append(writeModels, newModel)
+
+		if len(writeModels) == canopsis.DefaultBulkSize {
+			err := c.adapter.Bulk(ctx, writeModels)
+			if err != nil {
+				return err
+			}
+
+			writeModels = writeModels[:0]
+			bulkBytesSize = 0
 		}
 	}
 
 	if len(writeModels) > 0 {
 		err = c.adapter.Bulk(ctx, writeModels)
 	}
+
+	fmt.Printf("took %s\n", time.Since(t))
 
 	return err
 }
