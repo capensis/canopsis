@@ -9,8 +9,8 @@ security:
   auth_providers:
     - basic
     - apikey
-    - ldap
-    - saml
+    #- ldap
+    #- saml
 
 #  saml:
 #    x509_cert: /certs/saml.cert
