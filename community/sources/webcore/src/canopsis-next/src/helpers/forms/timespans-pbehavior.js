@@ -28,6 +28,7 @@ export const pbehaviorToTimespanRequest = ({
     rrule: pbehavior.rrule,
     start_at: pbehavior.tstart,
     end_at: pbehavior.tstop,
+    type: pbehavior.type._id,
     view_from: viewFrom,
     view_to: viewTo,
     exdates: exdatesToRequest(pbehavior.exdates),

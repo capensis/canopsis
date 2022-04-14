@@ -21,6 +21,8 @@
           :disabled="disabled",
           :label="endLabel",
           :name="`${name}_end`",
+          :min="endMin",
+          :max="endMax",
           reverse,
           @input="$emit('update:end', $event)"
         )
@@ -74,6 +76,14 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    endMin: {
+      type: String,
+      required: false,
+    },
+    endMax: {
+      type: String,
+      required: false,
     },
   },
 };

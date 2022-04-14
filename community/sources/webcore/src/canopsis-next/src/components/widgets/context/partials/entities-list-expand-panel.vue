@@ -2,7 +2,9 @@
   v-tabs(color="secondary lighten-1", slider-color="primary", dark, centered)
     v-tab {{ $tc('common.pbehavior', 2) }}
     v-tab-item
-      pbehaviors-list-tab(:item-id="item._id", :tab-id="tabId")
+      v-card.secondary.lighten-2(flat)
+        v-card-text
+          pbehaviors-list-tab(:entity="item", :tab-id="tabId")
 
     template(v-if="item.type !== $constants.ENTITY_TYPES.service")
       v-tab {{ $t('context.impactDepends') }}

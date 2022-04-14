@@ -10,7 +10,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
+import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
 export default {

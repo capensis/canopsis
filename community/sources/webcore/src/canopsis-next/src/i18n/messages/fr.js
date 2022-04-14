@@ -1377,7 +1377,6 @@ export default {
         type: 'Type',
         priority: 'Priorité',
         iconName: 'Nom de l\'icône',
-        isSpecialColor: 'Utiliser une couleur spéciale pour le type ?',
       },
     },
     pbehaviorRecurrentChangesConfirmation: {
@@ -1630,6 +1629,12 @@ export default {
           + '<strong>Les opérations de suppression sont irreversibles.</strong>',
         phraseText: 'Merci de recopier le texte qui suit pour confirmer:',
         phrase: 'archiver ou supprimer',
+      },
+    },
+    pbehaviorsCalendar: {
+      title: 'Comportements périodiques',
+      entity: {
+        title: 'Comportements périodiques - {name}',
       },
     },
   },

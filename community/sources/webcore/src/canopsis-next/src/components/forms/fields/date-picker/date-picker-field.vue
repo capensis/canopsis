@@ -28,6 +28,8 @@
       :value="value",
       :opened="opened",
       :color="color",
+      :min="min",
+      :max="max",
       :allowed-dates="allowedDates",
       @input="input",
       @change="change"
@@ -88,6 +90,14 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    min: {
+      type: [String, Number],
+      required: false,
+    },
+    max: {
+      type: [String, Number],
+      required: false,
     },
     allowedDates: {
       type: Function,

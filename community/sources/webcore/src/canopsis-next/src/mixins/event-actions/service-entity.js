@@ -3,7 +3,6 @@ import {
   ENTITIES_STATES,
   WEATHER_EVENT_DEFAULT_ENTITY,
   WEATHER_ACK_EVENT_OUTPUT,
-  MAX_PBEHAVIOR_DEFAULT_TSTOP,
   WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE,
 } from '@/constants';
 
@@ -134,7 +133,7 @@ export default {
         },
         name: `${WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE}-${entity.name}-${Date.now()}`,
         tstart: new Date(),
-        tstop: new Date(MAX_PBEHAVIOR_DEFAULT_TSTOP * 1000),
+        tstop: null,
       };
 
       this.addEvent({ type: EVENT_ENTITY_TYPES.pause, data, entity }, entity);

@@ -7,6 +7,7 @@
     :return-object="false",
     :filter="filter",
     :label="label",
+    :disabled="disabled",
     placeholder="−−:−−",
     append-icon="",
     hide-details,
@@ -37,6 +38,10 @@ export default {
       default: 4,
     },
     roundHours: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },

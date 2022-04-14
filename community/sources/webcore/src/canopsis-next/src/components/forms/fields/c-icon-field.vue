@@ -1,6 +1,7 @@
 <template lang="pug">
   v-autocomplete(
     v-field="value",
+    v-validate="rules",
     :label="label",
     :hint="hint",
     :items="availableIconNames",
@@ -22,14 +23,6 @@
 import materialIconNameByCode from '@/assets/material-icons/MaterialIcons-Regular.json';
 
 export default {
-  $_veeValidate: {
-    name() {
-      return this.name;
-    },
-    value() {
-      return this.value;
-    },
-  },
   inject: ['$validator'],
   model: {
     prop: 'value',
@@ -52,10 +45,20 @@ export default {
       type: String,
       default: 'icon_name',
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     availableIconNames() {
       return Object.keys(materialIconNameByCode);
+    },
+
+    rules() {
+      return {
+        required: this.required,
+      };
     },
   },
 };
