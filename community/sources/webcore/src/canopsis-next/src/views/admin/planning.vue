@@ -33,7 +33,7 @@ import { permissionsTechnicalPbehaviorExceptionsMixin } from '@/mixins/permissio
 import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
 import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior/reasons';
 import entitiesPbehaviorExceptionsMixin from '@/mixins/entities/pbehavior/exceptions';
-import queryMixin from '@/mixins/query';
+import { queryMixin } from '@/mixins/query';
 
 import PlanningTypes from '@/components/other/pbehavior/types/planning-types.vue';
 import PlanningReasons from '@/components/other/pbehavior/reasons/planning-reasons.vue';
