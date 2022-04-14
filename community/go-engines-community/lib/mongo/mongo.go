@@ -531,7 +531,10 @@ func (c *dbClient) WithTransaction(ctx context.Context, f func(context.Context) 
 	return err
 }
 
-func (c *dbClient) checkTransactionEnabled(ctx context.Context, logger zerolog.Logger) {
+func (c *dbClient) checkTransactionEnabled(pCtx context.Context, logger zerolog.Logger) {
+	ctx, cancel := context.WithTimeout(pCtx, time.Second)
+	defer cancel()
+
 	session, err := c.Client.StartSession()
 	if err != nil {
 		logger.Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
