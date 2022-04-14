@@ -3,14 +3,19 @@
     v-if="hasCreateAnyUserAccess || hasCreateAnyRoleAccess || hasCreateAnyPermissionAccess",
     @refresh="refresh"
   )
-    v-tooltip(v-if="hasCreateAnyUserAccess", top)
-      v-btn(slot="activator", fab, dark, small, color="indigo", @click.stop="showCreateUserModal")
-        v-icon people
-      span {{ $t('modals.createUser.create.title') }}
-    v-tooltip(v-if="hasCreateAnyRoleAccess", top)
-      v-btn(slot="activator", fab, dark, small, color="deep-purple", @click.stop="showCreateRoleModal")
-        v-icon supervised_user_circle
-      span {{ $t('modals.createRole.create.title') }}
+    c-action-fab-btn(
+      v-if="hasCreateAnyUserAccess",
+      :tooltip="$t('modals.createUser.create.title')",
+      color="indigo",
+      icon="people",
+      @click="showCreateUserModal"
+    )
+    c-action-fab-btn(
+      :tooltip="$t('modals.createRole.create.title')",
+      color="deep-purple",
+      icon="supervised_user_circle",
+      @click="showCreateRoleModal"
+    )
 </template>
 
 <script>

@@ -137,8 +137,10 @@ export const API_ROUTES = {
     pbehaviors: '/api/v4/pbehaviors',
     pbehaviorsCount: '/api/v4/pbehaviors/count',
     pbehaviorComments: '/api/v4/pbehavior-comments',
-    pbehaviorById: '/api/v4/entities/pbehaviors',
+    entities: '/api/v4/entities/pbehaviors',
+    entitiesCalendar: '/api/v4/entities/pbehavior-calendar',
     reasons: '/api/v4/pbehavior-reasons',
+    calendar: '/api/v4/pbehavior-calendar',
   },
   engineRunInfo: '/api/v4/engine-runinfo',
   cas: {
@@ -316,6 +318,8 @@ export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';
 export const EXPORT_FETCHING_INTERVAL = 2000;
 
 export const DEFAULT_CATEGORIES_LIMIT = 3;
+
+export const MAX_PBEHAVIOR_DATES_DIFF_YEARS = 5;
 
 export const HEALTHCHECK_HISTORY_FILENAME_PREFIX = 'healthcheck_history-';
 

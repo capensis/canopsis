@@ -21,7 +21,7 @@ import GridOverviewWidget from '@/components/widgets/grid-overview-widget.vue';
 import GridEditWidgets from '@/components/widgets/grid-edit-widgets.vue';
 import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 
-import queryMixin from '@/mixins/query';
+import { queryMixin } from '@/mixins/query';
 
 export default {
   components: {

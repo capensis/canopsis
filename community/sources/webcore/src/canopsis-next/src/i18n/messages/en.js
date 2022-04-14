@@ -1377,7 +1377,6 @@ export default {
         type: 'Type',
         priority: 'Priority',
         iconName: 'Icon name',
-        isSpecialColor: 'Use special color for the type?',
       },
     },
     pbehaviorRecurrentChangesConfirmation: {
@@ -1630,6 +1629,12 @@ export default {
           + '<strong>Deletion operation won\'t be cancellable.</strong>',
         phraseText: 'Please, type the following to confirm:',
         phrase: 'archive or delete',
+      },
+    },
+    pbehaviorsCalendar: {
+      title: 'Periodic behaviors',
+      entity: {
+        title: 'Periodic behaviors - {name}',
       },
     },
   },

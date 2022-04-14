@@ -1,21 +1,27 @@
 <template lang="pug">
-  v-card.secondary.lighten-2(flat)
-    v-card-text
-      v-data-table.ma-0(:items="pbehaviors", :headers="headers")
-        template(slot="items", slot-scope="props")
-          td {{ props.item.name }}
-          td {{ props.item.author }}
-          td
-            c-enabled(:value="props.item.enabled")
-          td {{ props.item.tstart | timezone($system.timezone) }}
-          td {{ props.item.tstop | timezone($system.timezone) }}
-          td {{ props.item.type.name }}
-          td {{ props.item.reason.name }}
-          td {{ props.item.rrule }}
-          td
-            v-layout(v-if="hasAccessToDeletePbehavior", row)
-              c-action-btn(type="edit", @click="showEditPbehaviorModal(props.item)")
-              c-action-btn(type="delete", @click="showDeletePbehaviorModal(props.item._id)")
+  v-layout.white(column)
+    v-layout(row, justify-end)
+      c-action-fab-btn.ma-2(
+        :tooltip="$t('modals.pbehaviorsCalendar.title')",
+        icon="calendar_today",
+        color="secondary",
+        @click="showPbehaviorsCalendarModal"
+      )
+    v-data-table.ma-0(:items="pbehaviors", :headers="headers", :loading="pending")
+      template(#items="{ item }")
+        td {{ item.name }}
+        td {{ item.author }}
+        td
+          c-enabled(:value="item.enabled")
+        td {{ item.tstart | timezone($system.timezone) }}
+        td {{ item.tstop | timezone($system.timezone) }}
+        td {{ item.type.name }}
+        td {{ item.reason.name }}
+        td {{ item.rrule }}
+        td
+          v-layout(v-if="hasAccessToDeletePbehavior", row)
+            c-action-btn(type="edit", @click="showEditPbehaviorModal(item)")
+            c-action-btn(type="delete", @click="showDeletePbehaviorModal(item._id)")
 </template>
 
 <script>
@@ -24,7 +30,7 @@ import { createNamespacedHelpers } from 'vuex';
 import { MODALS, USERS_PERMISSIONS } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
-import queryMixin from '@/mixins/query';
+import { queryMixin } from '@/mixins/query';
 
 const { mapActions } = createNamespacedHelpers('pbehavior');
 
@@ -35,8 +41,8 @@ export default {
     queryMixin,
   ],
   props: {
-    itemId: {
-      type: String,
+    entity: {
+      type: Object,
       required: true,
     },
     tabId: {
@@ -57,43 +63,15 @@ export default {
 
     headers() {
       return [
-        {
-          text: this.$t('common.name'),
-          value: 'name',
-        },
-        {
-          text: this.$t('common.author'),
-          value: 'author',
-        },
-        {
-          text: this.$t('pbehaviors.isEnabled'),
-          value: 'enabled',
-        },
-        {
-          text: this.$t('pbehaviors.begins'),
-          value: 'tstart',
-        },
-        {
-          text: this.$t('pbehaviors.ends'),
-          value: 'tstop',
-        },
-        {
-          text: this.$t('pbehaviors.type'),
-          value: 'type.type',
-        },
-        {
-          text: this.$t('pbehaviors.reason'),
-          value: 'reason.name',
-        },
-        {
-          text: this.$t('pbehaviors.rrule'),
-          value: 'rrule',
-        },
-        {
-          text: this.$t('common.actionsLabel'),
-          value: 'actionsLabel',
-          sortable: false,
-        },
+        { text: this.$t('common.name'), value: 'name' },
+        { text: this.$t('common.author'), value: 'author' },
+        { text: this.$t('pbehaviors.isEnabled'), value: 'enabled' },
+        { text: this.$t('pbehaviors.begins'), value: 'tstart' },
+        { text: this.$t('pbehaviors.ends'), value: 'tstop' },
+        { text: this.$t('pbehaviors.type'), value: 'type.type' },
+        { text: this.$t('pbehaviors.reason'), value: 'reason.name' },
+        { text: this.$t('pbehaviors.rrule'), value: 'rrule' },
+        { text: this.$t('common.actionsLabel'), value: 'actionsLabel', sortable: false },
       ];
     },
 
@@ -126,6 +104,16 @@ export default {
       });
     },
 
+    showPbehaviorsCalendarModal() {
+      this.$modals.show({
+        name: MODALS.pbehaviorsCalendar,
+        config: {
+          title: this.$t('modals.pbehaviorsCalendar.entity.title', { name: this.entity.name }),
+          entityId: this.entity._id,
+        },
+      });
+    },
+
     showDeletePbehaviorModal(pbehaviorId) {
       this.$modals.show({
         name: MODALS.confirmation,
@@ -138,10 +126,12 @@ export default {
         },
       });
     },
+
     async fetchList() {
       try {
         this.pending = true;
-        this.pbehaviors = await this.fetchPbehaviorsByEntityIdWithoutStore({ id: this.itemId });
+
+        this.pbehaviors = await this.fetchPbehaviorsByEntityIdWithoutStore({ id: this.entity._id });
       } catch (err) {
         console.warn(err);
       } finally {
