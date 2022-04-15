@@ -1,7 +1,7 @@
 <template lang="pug">
   c-action-btn(:tooltip="tooltip", top)
     template(#button="")
-      v-btn(:color="color", fab, dark, small, @click.stop="$listeners.click")
+      v-btn(:color="color", :small="small", fab, dark, @click.stop="$listeners.click")
         v-icon {{ icon }}
 </template>
 
@@ -19,6 +19,10 @@ export default {
     tooltip: {
       type: String,
       default: '',
+    },
+    small: {
+      type: Boolean,
+      default: false,
     },
   },
 };

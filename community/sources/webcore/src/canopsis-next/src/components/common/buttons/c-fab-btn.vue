@@ -1,7 +1,8 @@
 <template lang="pug">
-  .fab
+  div.fab
     v-layout(column)
       c-refresh-btn(@click="$listeners.refresh")
+      slot(name="additional")
       v-tooltip(v-if="hasAccess && $listeners.create", left)
         v-btn(
           :dark="dark",
