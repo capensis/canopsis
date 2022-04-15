@@ -8,28 +8,94 @@ Canopsis fournit des indicateurs statistiques et des indicateurs de performance 
 #### Table des matières
 1. [Utilisation](#utilisation)<br>
 2. [Graphiques](#graphiques)<br>
+ A. [Métriques d’alarmes](#metriques-dalarmes)<br>
+ B. [Notations](#notations)<br>
+ C. [SLI](#sli)<br>
+3. [Filtres](#filtres)<br>
+4. [Paramètres d’évaluation](#parametres-devaluation)<br>
+5. [Glossaire des paramètres de comparaison](#glossaire-des-parametres-de-comparaison)<br>
  A. [Compteurs](#compteurs)<br>
  B. [Taux](#taux)<br>
  C. [Temps](#temps)<br>
  D. [Criticité](#criticite)<br>
- E. [SLI](#sli)<br>
-3. [Filtres](#filtres)<br>
-4. [Paramètres d’évaluation](#parametres-devaluation)<br>
 
 ## Utilisation
 
 Dans le menu principal de Canopsis, cliquer sur le menu administration :
+
 ![Menu Principal](./img/menu_1.png)
 
 Dans le menu administration, cliquer sur le menu KPI :
+
 ![Menu Administration](./img/menu_2.png)
 
 Fonctionnalités disponibles :
 
+![Fonctionnalités](./img/fonctionnalites.png)
+
 ## Graphiques
-### Compteurs
+### Métriques d’alarmes
+
+Les notations permettent de créer des aggrégats en fonction des critères donnés.
+
+Valeurs configurables :
+
+* plage de temps, personnalisée ou via les valeurs usuelles
+* échantillonage : étendue de la donnée représentée (heure/jour/semaine/mois)
+* [filtres](#filtres)
+* [paramètres](#glossaire-des-parametres-de-comparaison), pour choisir l’indicateur souhaité
+
+*Par ex. état du nombre d’alarmes actives et acquittées par jour sur une période de six mois :*
 
 ![Métrique d’alarme](./img/alarmes.png)
+
+### Notations
+
+Les notations permettent de créer des aggrégats en fonction des critères donnés.
+
+Valeurs configurables :
+
+* plage de temps, personnalisée ou via les valeurs usuelles
+* [filtres](#filtres)
+* [critères](#parametres-devaluation)
+* [paramètres](#glossaire-des-parametres-de-comparaison), pour choisir l’indicateur souhaité
+
+*Par ex. le nombre d’alarmes actives avec acquittements, rangées par rôle :*
+
+![Notations](./img/notations.png)
+
+### SLI
+
+Le Service Level Indicator montre le temps passé par le SI en bon fonctionnement, en maintenance et en panne.
+
+Valeurs configurables :
+
+* plage de temps, personnalisée ou via les valeurs usuelles
+* échantillonage : étendue de la donnée représentée (heure/jour/semaine/mois)
+* afficher : présentation en pourcentage ou en valeurs absolues
+* [filtres](#filtres)
+
+*Par ex. la répartition en pourcentage du temps passé dans les divers états chaque jour :*
+
+![SLI](./img/sli.png)
+
+## Filtres
+
+Les filtres permettent de restreindre le périmètre pour le SLI/SLA. (en utilisant le pattern d’entités)
+<!--- TODO: ajouter l’eplication de la création d’un filtre --->
+
+## Paramètres d’évaluation
+
+Les paramètres d’évaluation contrôlent les critères utilisables pour les [notations](#notations).
+<!--- TODO: étendre l’explication (l’actuelle renvoit aux notation, qui renvoit récursivement ici) --->
+
+*Paramètres par défaut :*
+
+![Paramètres](./img/parametres.png)
+
+## Glossaire des paramètres de comparaison
+
+### Compteurs
 
 | Nom            | Description     |
 |----------------|-----------------|
@@ -70,22 +136,10 @@ Fonctionnalités disponibles :
 | Temps moyen entre les pannes (MTBF)  | Temps moyen entre les pannes sur une entité (hors comportements périodiques)  |
 | Délai moyen d'acquittement des alarmes | Temps moyen d'acquittement des alarmes |
 | Temps moyen pour résoudre des alarmes | Temps moyen avant passage des alarmes en état résolu. |
-| Durée totale de l’activité | TODO |
+| Durée totale de l’activité | Temps de connexion par utilisateur à l’interface web de Canopsis |
 
 ### Criticité
 
 | Nom            | Description     |
 |----------------|-----------------|
 |  Criticité courante | Criticité actuelle d’une entité : 0 pour OK, 1 pour Mineur, 2 pour Majeur et 3 pour Critique (comme dans la météo de service). |
-
-### SLI
-
-![SLI](./img/sli.png)
-
-| Nom            | Description     |
-|----------------|-----------------|
-| SLI | Le Service Level Indicator montre le temps passé par le SI en bon fonctionnement, en maintenance et en panne |
-
-## Filtres
-
-## Paramètres d’évaluation
