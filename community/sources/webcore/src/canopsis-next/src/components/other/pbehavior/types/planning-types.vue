@@ -5,6 +5,7 @@
       :pending="pbehaviorTypesPending",
       :totalItems="pbehaviorTypesMeta.total_count",
       :pagination.sync="pagination",
+      :deletable="hasDeleteAnyPbehaviorTypeAccess",
       @remove-selected="showRemoveSelectedPbehaviorTypeModal",
       @remove="showRemovePbehaviorTypeModal",
       @edit="showEditPbehaviorTypeModal"
@@ -88,7 +89,6 @@ export default {
             await Promise.all(selected.map(({ _id: id }) => this.tryRemovePbehaviorType(id)));
 
             await this.fetchList();
-            this.selected = [];
           },
         },
       });

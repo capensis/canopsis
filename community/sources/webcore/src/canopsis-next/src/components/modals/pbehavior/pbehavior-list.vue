@@ -1,7 +1,7 @@
 <template lang="pug">
-  modal-wrapper(data-test="pbehaviorListModal", close)
+  modal-wrapper(close)
     template(slot="title")
-      span {{ $t('alarmList.actions.titles.pbehaviorList') }}
+      span {{ $t('common.pbehaviorList') }}
     template(slot="text")
       c-advanced-data-table(:headers="headers", :items="filteredPbehaviors", expand)
         template(slot="enabled", slot-scope="props")
@@ -36,7 +36,7 @@
         )
           v-icon add
     template(slot="actions")
-      v-btn.primary(data-test="pbehaviorListConfirmButton", @click="$modals.hide") {{ $t('common.ok') }}
+      v-btn.primary(@click="$modals.hide") {{ $t('common.ok') }}
 </template>
 
 <script>

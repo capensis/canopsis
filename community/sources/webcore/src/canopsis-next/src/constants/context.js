@@ -180,9 +180,6 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.pbehaviorAdd]: {
     icon: 'pause',
   },
-  [EVENT_ENTITY_TYPES.pbehaviorList]: {
-    icon: 'list',
-  },
   [EVENT_ENTITY_TYPES.ackRemove]: {
     color: COLORS.entitiesEvents.ackRemove,
     icon: 'not_interested',

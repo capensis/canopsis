@@ -19,19 +19,21 @@
         td {{ item.tstop | timezone($system.timezone) }}
         td {{ item.type.name }}
         td {{ item.reason.name }}
-        td {{ item.rrule }}
         td
-          v-layout(v-if="hasAccessToDeletePbehavior", row)
-            c-action-btn(type="edit", @click="showEditPbehaviorModal(item)")
-            c-action-btn(type="delete", @click="showDeletePbehaviorModal(item._id)")
+          v-icon {{ item.rrule ? 'check' : 'clear' }}
+        td
+          v-icon(color="primary") {{ item.type.icon_name }}
+        td
+          v-layout(row)
+            c-action-btn(v-if="editable", type="edit", @click="showEditPbehaviorModal(item)")
+            c-action-btn(v-if="deletable", type="delete", @click="showDeletePbehaviorModal(item._id)")
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS, USERS_PERMISSIONS } from '@/constants';
+import { MODALS } from '@/constants';
 
-import { authMixin } from '@/mixins/auth';
 import { queryMixin } from '@/mixins/query';
 
 const { mapActions } = createNamespacedHelpers('pbehavior');
@@ -39,7 +41,6 @@ const { mapActions } = createNamespacedHelpers('pbehavior');
 export default {
   inject: ['$system'],
   mixins: [
-    authMixin,
     queryMixin,
   ],
   props: {
@@ -49,7 +50,15 @@ export default {
     },
     tabId: {
       type: String,
-      required: true,
+      required: false,
+    },
+    deletable: {
+      type: Boolean,
+      default: false,
+    },
+    editable: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -59,10 +68,6 @@ export default {
     };
   },
   computed: {
-    hasAccessToDeletePbehavior() {
-      return this.checkAccess(USERS_PERMISSIONS.business.context.actions.pbehaviorDelete);
-    },
-
     headers() {
       return [
         { text: this.$t('common.name'), value: 'name' },
@@ -73,6 +78,7 @@ export default {
         { text: this.$t('pbehaviors.type'), value: 'type.type' },
         { text: this.$t('pbehaviors.reason'), value: 'reason.name' },
         { text: this.$t('pbehaviors.rrule'), value: 'rrule' },
+        { text: this.$t('common.icon'), value: 'type.icon_name' },
         { text: this.$t('common.actionsLabel'), value: 'actionsLabel', sortable: false },
       ];
     },
