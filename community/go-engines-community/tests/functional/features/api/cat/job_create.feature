@@ -3,28 +3,12 @@ Feature: create a job
   Only admin should be able to create a job
 
   Scenario: POST a valid job but unauthorized
-    When I do POST /api/v4/cat/jobs:
-    """json
-    {
-      "name": "test-job-name",
-      "config": "test-job-config-to-edit-job",
-      "job_id": "test-job-id",
-      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-    }
-    """
+    When I do POST /api/v4/cat/jobs
     Then the response code should be 401
 
   Scenario: POST a valid job but without permissions
     When I am noperms
-    When I do POST /api/v4/cat/jobs:
-    """json
-    {
-      "name": "test-job-name",
-      "config": "test-job-config-to-edit-job",
-      "job_id": "test-job-id",
-      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-    }
-    """
+    When I do POST /api/v4/cat/jobs
     Then the response code should be 403
 
   Scenario: POST a valid job
@@ -35,7 +19,11 @@ Feature: create a job
       "name": "test-job-name",
       "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
-      "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}"
+      "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
+      "query": {
+        "resource": "{{ `{{ .Alarm.Value.Resource }}` }}"
+      },
+      "multiple_executions": true
     }
     """
     Then the response code should be 201
@@ -55,7 +43,11 @@ Feature: create a job
         "type": "rundeck"
       },
       "job_id": "test-job-id",
-      "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}"
+      "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
+      "query": {
+        "resource": "{{ `{{ .Alarm.Value.Resource }}` }}"
+      },
+      "multiple_executions": true
     }
     """
 
@@ -67,7 +59,8 @@ Feature: create a job
       "name": "test-job-name-2",
       "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
-      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+      "multiple_executions": false
     }
     """
     Then the response code should be 201
@@ -89,7 +82,8 @@ Feature: create a job
         "type": "rundeck"
       },
       "job_id": "test-job-id",
-      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+      "multiple_executions": false
     }
     """
 
@@ -102,7 +96,8 @@ Feature: create a job
       "name": "test-job-name-2-custom-id-1",
       "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
-      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+      "multiple_executions": false
     }
     """
     Then the response code should be 201
@@ -118,7 +113,8 @@ Feature: create a job
       "name": "test-job-name-2-custom-id-2",
       "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
-      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+      "multiple_executions": false
     }
     """
     Then the response code should be 400
@@ -139,7 +135,8 @@ Feature: create a job
       "name": "test-job-name-to-get",
       "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
-      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+      "multiple_executions": false
     }
     """
     Then the response code should be 400
@@ -160,7 +157,8 @@ Feature: create a job
       "name": "test-job-name-with-not-existed-config",
       "config": "test-job-config-not-exists",
       "job_id": "test-job-id",
-      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+      "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+      "multiple_executions": false
     }
     """
     Then the response code should be 400

@@ -13,7 +13,7 @@
             :close="close"
           )
     template(v-if="!$modal.minimized")
-      v-card-text(v-if="$slots.text", key="text")
+      v-card-text(v-if="$slots.text", :class="textClass", key="text")
         slot(name="text")
       template(v-if="$slots.actions")
         v-divider(key="divider")
@@ -46,6 +46,10 @@ export default {
     titleColor: {
       type: String,
       default: COLORS.primary,
+    },
+    textClass: {
+      type: String,
+      required: false,
     },
   },
   computed: {

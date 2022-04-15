@@ -213,6 +213,7 @@ export default {
     criteria: 'Criteria',
     ratingSettings: 'Rating settings',
     pbehavior: 'Pbehavior | Pbehaviors',
+    template: 'Template',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -468,9 +469,11 @@ export default {
     tooltips: {
       priority: 'The priority parameter is derived from the alarm severity multiplied by impact level of the entity on which the alarm is raised',
       hasInstruction: 'There is an instruction for this type of incidents',
+      hasManualInstructionInRunning: 'Manual instruction in progress',
       hasAutoInstructionInRunning: 'Automatic instruction in progress',
       allAutoInstructionExecuted: 'All automatic instructions has been executed',
       awaitingInstructionComplete: 'Awaiting for the instruction to complete',
+      autoInstructionsFailed: 'Automatic instructions failed',
     },
     metrics: {
       [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Number of created alarms',
@@ -625,7 +628,6 @@ export default {
       title: 'Info popup',
       fields: {
         column: 'Column',
-        template: 'Template',
       },
     },
     rowGridSize: {
@@ -701,6 +703,7 @@ export default {
     templateEditor: 'Template',
     columns: {
       isHtml: 'Is it HTML?',
+      withTemplate: 'Custom template',
       isState: 'Displayed as severity?',
     },
     liveReporting: {
@@ -983,7 +986,6 @@ export default {
       title: 'Info popup',
       add: 'Add',
       column: 'Column',
-      template: 'Template',
       addInfoPopup: {
         title: 'Add an info popup',
       },
@@ -1458,6 +1460,7 @@ export default {
         configuration: 'Configuration',
         jobId: 'Job ID',
         query: 'Query',
+        multipleExecutions: 'Allow parallel execution',
       },
       errors: {
         invalidJSON: 'Invalid JSON',
@@ -1718,6 +1721,9 @@ export default {
     statsRequestProblem: 'An error occurred while retrieving stats data',
     statsWrongEditionError: "Stats widgets are not available with 'core' edition",
     socketConnectionProblem: 'Problem with connection to socket server',
+  },
+  warnings: {
+    authTokenExpired: 'Authentication token was expired',
   },
   calendar: {
     today: 'Today',
@@ -2209,6 +2215,7 @@ export default {
     failedAt: 'Failed at {time}',
     startedAt: 'Started at {time}',
     closeConfirmationText: 'Would you like to resume this instruction later?',
+    queueNumber: '{number} {name} jobs are in the queue',
     popups: {
       success: '{instructionName} has been successfully completed',
       failed: '{instructionName} has been failed. Please escalate this problem further',

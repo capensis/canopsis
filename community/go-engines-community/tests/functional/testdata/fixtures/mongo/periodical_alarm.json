@@ -1060,6 +1060,142 @@
     }
   },
   {
+    "_id": "test-instruction-execution-start-3-1",
+    "d": "test-instruction-execution-start-resource-3-1/test-instruction-execution-start-component",
+    "t": 1596942720,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1596942720,
+        "a": "test-instruction-execution-start-connector.test-instruction-execution-start-connectorname",
+        "m": "test-instruction-execution-start alarm",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1596942720,
+        "a": "test-instruction-execution-start-connector.test-instruction-execution-start-connectorname",
+        "m": "test-instruction-execution-start alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1596942720,
+          "a": "test-instruction-execution-start-connector.test-instruction-execution-start-connectorname",
+          "m": "test-instruction-execution-start alarm",
+          "val": 3
+        },
+        {
+          "_t": "statusinc",
+          "t": 1596942720,
+          "a": "test-instruction-execution-start-connector.test-instruction-execution-start-connectorname",
+          "m": "test-instruction-execution-start alarm",
+          "val": 1
+        },
+        {
+          "_t": "comment",
+          "t": 1597033041,
+          "a": "system",
+          "m": "comment test-instruction-execution-start",
+          "role": "admin",
+          "val": 0,
+          "initiator": "user"
+        }
+      ],
+      "component": "test-instruction-execution-start-component",
+      "connector": "test-instruction-execution-start-connector",
+      "connector_name": "test-instruction-execution-start-connectorname",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-instruction-execution-start alarm",
+      "output": "test-instruction-execution-start alarm",
+      "initial_long_output": "",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1596942720,
+      "resource": "test-instruction-execution-start-resource-3-1",
+      "tags": [],
+      "parents": [],
+      "children": [],
+      "total_state_changes": 1,
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
+    "_id": "test-instruction-execution-start-3-2",
+    "d": "test-instruction-execution-start-resource-3-2/test-instruction-execution-start-component",
+    "t": 1596942720,
+    "v": {
+      "state": {
+        "_t": "stateinc",
+        "t": 1596942720,
+        "a": "test-instruction-execution-start-connector.test-instruction-execution-start-connectorname",
+        "m": "test-instruction-execution-start alarm",
+        "val": 3
+      },
+      "status": {
+        "_t": "statusinc",
+        "t": 1596942720,
+        "a": "test-instruction-execution-start-connector.test-instruction-execution-start-connectorname",
+        "m": "test-instruction-execution-start alarm",
+        "val": 1
+      },
+      "steps": [
+        {
+          "_t": "stateinc",
+          "t": 1596942720,
+          "a": "test-instruction-execution-start-connector.test-instruction-execution-start-connectorname",
+          "m": "test-instruction-execution-start alarm",
+          "val": 3
+        },
+        {
+          "_t": "statusinc",
+          "t": 1596942720,
+          "a": "test-instruction-execution-start-connector.test-instruction-execution-start-connectorname",
+          "m": "test-instruction-execution-start alarm",
+          "val": 1
+        },
+        {
+          "_t": "comment",
+          "t": 1597033041,
+          "a": "system",
+          "m": "comment test-instruction-execution-start",
+          "role": "admin",
+          "val": 0,
+          "initiator": "user"
+        }
+      ],
+      "component": "test-instruction-execution-start-component",
+      "connector": "test-instruction-execution-start-connector",
+      "connector_name": "test-instruction-execution-start-connectorname",
+      "creation_date": 1596942720,
+      "display_name": "RC-KC_tW",
+      "initial_output": "test-instruction-execution-start alarm",
+      "output": "test-instruction-execution-start alarm",
+      "initial_long_output": "",
+      "long_output_history": [
+        ""
+      ],
+      "last_update_date": 1596942720,
+      "last_event_date": 1596942720,
+      "resource": "test-instruction-execution-start-resource-3-2",
+      "tags": [],
+      "parents": [],
+      "children": [],
+      "total_state_changes": 1,
+      "infos": {
+      },
+      "infos_rule_version": {
+      }
+    }
+  },
+  {
     "_id": "test-instruction-execution-next-1",
     "d": "test-instruction-execution-next-resource-1/test-instruction-execution-next-component",
     "t": 1596942720,

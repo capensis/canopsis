@@ -509,6 +509,10 @@ Le provisioning doit être lancé afin de mettre à jour certaines données en b
     docker-compose -f 00-data.docker-compose.yml up -d
     ```
 
+    !!! Attention
+        Si vous avez personnalisé la ligne de commande de l'outil `canopsis-reconfigure`, nous vous conseillons de supprimer cette persionnalisation.  
+        L'outil est en effet pré paramétré pour fonctionner naturellement.
+
     Exécutez la commande suivante :
     
     ```sh
@@ -528,7 +532,16 @@ Le provisioning doit être lancé afin de mettre à jour certaines données en b
     ```sh
     # Note : cette commande ne doit être exécutée qu'une seule fois et ne doit donc pas être ajoutée aux fichiers YAML
     # option --network à adapter si nécessaire
-    docker run --env-file compose.env --network=canopsis-pro_default docker.canopsis.net/docker/pro/migrate-metrics:4.5.0
+    docker run -it --rm --env-file compose.env --network=canopsis-pro_default docker.canopsis.net/docker/pro/migrate-metrics:4.5.0
+    ```
+
+    Le retour de la commande doit ressembler à cela
+
+    ```sh
+    WRN git.canopsis.net/canopsis/canopsis-community/community/go-engines-community@v0.0.0/lib/mongo/mongo.go:550 > MongoDB version does not support transactions, transactions are disabled
+    INF git.canopsis.net/canopsis/canopsis-pro/pro/go-engines-pro/cmd/migrate-metrics/main.go:39 > entities migration finished 19.941129479s
+    INF git.canopsis.net/canopsis/canopsis-pro/pro/go-engines-pro/cmd/migrate-metrics/main.go:44 > users migration finished 20.516699ms
+    INF git.canopsis.net/canopsis/canopsis-pro/pro/go-engines-pro/cmd/migrate-metrics/main.go:50 > alarm metrics migration finished 1m16.718781144s
     ```
 
 ### Remise en route des moteurs et des services de Canopsis
