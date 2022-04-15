@@ -214,6 +214,7 @@ export default {
     ratingSettings: 'Paramètres d\'évaluation',
     pbehavior: 'Comportement périodique | Comportements périodiques',
     template: 'Template',
+    pbehaviorList: 'Lister les comportements périodiques',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -379,7 +380,6 @@ export default {
         ackRemove: 'Annuler l\'acquittement',
         pbehavior: 'Définir un comportement périodique',
         snooze: 'Mettre en veille',
-        pbehaviorList: 'Lister les comportements périodiques',
         declareTicket: 'Déclarer un incident',
         associateTicket: 'Associer un ticket',
         cancel: 'Annuler l\'alarme',

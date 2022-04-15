@@ -4,7 +4,12 @@
     v-tab-item
       v-card.secondary.lighten-2(flat)
         v-card-text
-          pbehaviors-list-tab(:entity="item", :tab-id="tabId")
+          pbehaviors-simple-list(
+            :entity="item",
+            :tab-id="tabId",
+            :deletable="hasDeleteAnyPbehaviorAccess",
+            :editable="hasUpdateAnyPbehaviorAccess"
+          )
 
     template(v-if="item.type !== $constants.ENTITY_TYPES.service")
       v-tab {{ $t('context.impactDepends') }}
@@ -26,7 +31,10 @@
 </template>
 
 <script>
-import PbehaviorsListTab from './expand-panel-tabs/pbehaviors-tab.vue';
+import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
+
+import PbehaviorsSimpleList from '@/components/other/pbehavior/partials/pbehaviors-simple-list.vue';
+
 import ImpactDependsTab from './expand-panel-tabs/impact-depends-tab.vue';
 import InfosTab from './expand-panel-tabs/infos-tab.vue';
 import TreeOfDependenciesTab from './expand-panel-tabs/tree-of-dependencies-tab.vue';
@@ -34,12 +42,13 @@ import ImpactChainDependenciesTab from './expand-panel-tabs/impact-chain-depende
 
 export default {
   components: {
+    PbehaviorsSimpleList,
     ImpactChainDependenciesTab,
-    PbehaviorsListTab,
     ImpactDependsTab,
     InfosTab,
     TreeOfDependenciesTab,
   },
+  mixins: [permissionsTechnicalExploitationPbehaviorMixin],
   props: {
     item: {
       type: Object,

@@ -1,7 +1,7 @@
 <template lang="pug">
   c-action-btn(
     v-if="hasReadAnyPbehaviorAccess",
-    :tooltip="$t('alarmList.actions.titles.pbehaviorList')",
+    :tooltip="$t('common.pbehaviorList')",
     icon="list",
     @click="showPbehaviorsListModal"
   )

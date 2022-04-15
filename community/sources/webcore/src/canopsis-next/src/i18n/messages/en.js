@@ -214,6 +214,7 @@ export default {
     ratingSettings: 'Rating settings',
     pbehavior: 'Pbehavior | Pbehaviors',
     template: 'Template',
+    pbehaviorList: 'List periodic behaviors',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -379,7 +380,6 @@ export default {
         ackRemove: 'Cancel ack',
         pbehavior: 'Periodical behavior',
         snooze: 'Snooze alarm',
-        pbehaviorList: 'List periodic behaviors',
         declareTicket: 'Declare ticket',
         associateTicket: 'Associate ticket',
         cancel: 'Cancel alarm',
