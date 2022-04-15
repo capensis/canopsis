@@ -9,6 +9,7 @@
       color="indigo",
       icon="people",
       small,
+      top,
       @click="showCreateUserModal"
     )
     c-action-fab-btn(
@@ -16,6 +17,7 @@
       color="deep-purple",
       icon="supervised_user_circle",
       small,
+      top,
       @click="showCreateRoleModal"
     )
 </template>

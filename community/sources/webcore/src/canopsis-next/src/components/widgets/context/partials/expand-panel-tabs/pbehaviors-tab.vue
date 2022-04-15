@@ -6,6 +6,7 @@
         icon="calendar_today",
         color="secondary",
         small,
+        left,
         @click="showPbehaviorsCalendarModal"
       )
     v-data-table.ma-0(:items="pbehaviors", :headers="headers", :loading="pending")
