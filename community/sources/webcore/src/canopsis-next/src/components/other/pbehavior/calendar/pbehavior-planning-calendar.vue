@@ -194,7 +194,7 @@ export default {
       const startTimestamps = Object.values(this.allPbehaviorsById).map(({ tstart }) => tstart);
 
       if (startTimestamps.length) {
-        const startTimestamp = Math.min(...startTimestamps);
+        const startTimestamp = Math.min.apply(null, startTimestamps);
         const calendarStart = convertDateToMoment(startTimestamp);
         const { filled: { start } } = this.calendar;
 
