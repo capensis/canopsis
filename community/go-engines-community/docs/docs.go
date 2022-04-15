@@ -9157,7 +9157,13 @@ var doc = `{
                 "is_all_auto_instructions_completed": {
                     "type": "boolean"
                 },
+                "is_auto_instruction_failed": {
+                    "type": "boolean"
+                },
                 "is_auto_instruction_running": {
+                    "type": "boolean"
+                },
+                "is_manual_instruction_running": {
                     "type": "boolean"
                 },
                 "is_manual_instruction_waiting_result": {
@@ -13054,7 +13060,6 @@ var doc = `{
                 "author",
                 "enabled",
                 "name",
-                "priority",
                 "triggers"
             ],
             "properties": {
@@ -13150,7 +13155,6 @@ var doc = `{
                 "author",
                 "enabled",
                 "name",
-                "priority",
                 "triggers"
             ],
             "properties": {
@@ -13200,7 +13204,6 @@ var doc = `{
                 "author",
                 "enabled",
                 "name",
-                "priority",
                 "triggers"
             ],
             "properties": {
@@ -13367,10 +13370,16 @@ var doc = `{
                 "is_all_auto_instructions_completed": {
                     "type": "boolean"
                 },
+                "is_auto_instruction_failed": {
+                    "type": "boolean"
+                },
                 "is_auto_instruction_running": {
                     "type": "boolean"
                 },
                 "is_grey": {
+                    "type": "boolean"
+                },
+                "is_manual_instruction_running": {
                     "type": "boolean"
                 },
                 "is_manual_instruction_waiting_result": {

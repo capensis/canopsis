@@ -6,6 +6,7 @@
     "config": "test-job-config-to-edit-job",
     "external_id": "test-job-id",
     "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+    "multiple_executions": false,
     "created": 1596712203
   },
   {
@@ -15,6 +16,7 @@
     "config": "test-job-config-to-edit-job",
     "external_id": "test-job-id",
     "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+    "multiple_executions": false,
     "created": 1596712203
   },
   {
@@ -24,6 +26,7 @@
     "config": "test-job-config-to-edit-job",
     "external_id": "test-job-id",
     "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+    "multiple_executions": false,
     "created": 1596712203
   },
   {
@@ -33,6 +36,7 @@
     "config": "test-job-config-to-edit-job",
     "external_id": "test-job-id",
     "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+    "multiple_executions": false,
     "created": 1596712203
   },
   {
@@ -42,6 +46,7 @@
     "config": "test-job-config-to-edit-job",
     "external_id": "test-job-id",
     "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+    "multiple_executions": false,
     "created": 1596712203
   },
   {
@@ -51,6 +56,7 @@
     "config": "test-job-config-to-edit-instruction",
     "external_id": "test-job-to-instruction-edit-1-external-id",
     "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+    "multiple_executions": false,
     "created": 1596712203
   },
   {
@@ -60,6 +66,7 @@
     "config": "test-job-config-to-edit-instruction",
     "external_id": "test-job-to-instruction-edit-2-external-id",
     "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+    "multiple_executions": false,
     "created": 1596712203
   },
   {
@@ -69,6 +76,7 @@
     "config": "test-job-config-to-edit-job",
     "external_id": "test-job-id",
     "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+    "multiple_executions": false,
     "created": 1596712203
   },
   {
@@ -78,6 +86,7 @@
     "config": "test-jobconfig-to-execution-get",
     "external_id": "test-job-id",
     "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+    "multiple_executions": false,
     "created": 1596712203
   },
   {
@@ -87,6 +96,7 @@
     "config": "test-job-config-to-check-linked",
     "external_id": "test-job-id",
     "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+    "multiple_executions": false,
     "created": 1596712203
   },
   {
@@ -96,6 +106,7 @@
     "config": "test-job-config-to-run-auto-instruction",
     "external_id": "test-job-succeeded",
     "payload": "{\"test-job-to-run-auto-instruction-1-key\": \"test-job-to-run-auto-instruction-1-val\"}",
+    "multiple_executions": false,
     "created": 1596712203
   },
   {
@@ -105,6 +116,7 @@
     "config": "test-job-config-to-run-auto-instruction",
     "external_id": "test-job-succeeded",
     "payload": "{\"test-job-to-run-auto-instruction-2-key\": \"test-job-to-run-auto-instruction-2-val\"}",
+    "multiple_executions": false,
     "created": 1596712203
   },
   {
@@ -114,6 +126,7 @@
     "config": "test-job-config-to-run-auto-instruction",
     "external_id": "test-job-failed",
     "payload": "{\"test-job-to-run-auto-instruction-3-key\": \"test-job-to-run-auto-instruction-3-val\"}",
+    "multiple_executions": false,
     "created": 1596712203
   },
   {
@@ -123,6 +136,7 @@
     "config": "test-job-config-to-run-auto-instruction",
     "external_id": "test-job-http-error",
     "payload": "{\"test-job-to-run-auto-instruction-4-key\": \"test-job-to-run-auto-instruction-4-val\"}",
+    "multiple_executions": false,
     "created": 1596712203
   },
   {
@@ -132,6 +146,7 @@
     "config": "test-job-config-to-run-auto-instruction",
     "external_id": "test-job-http-error",
     "payload": "{\"test-job-to-run-auto-instruction-to-approve-update-key\": \"test-job-to-run-auto-instruction-to-approve-update-val\"}",
+    "multiple_executions": false,
     "created": 1596712203
   },
   {
@@ -141,6 +156,7 @@
     "config": "test-job-config-to-run-auto-instruction",
     "external_id": "test-job-http-error",
     "payload": "{\"test-job-to-run-auto-instruction-to-approve-update-2-key\": \"test-job-to-run-auto-instruction-to-approve-update-2-val\"}",
+    "multiple_executions": false,
     "created": 1596712203
   },
   {
@@ -150,6 +166,7 @@
     "config": "test-job-config-to-run-auto-instruction",
     "external_id": "test-job-long-succeeded",
     "payload": "{\"test-job-to-run-auto-instruction-5-key\": \"test-job-to-run-auto-instruction-5-val\"}",
+    "multiple_executions": false,
     "created": 1596712203
   },
   {
@@ -159,6 +176,7 @@
     "config": "test-job-config-to-run-auto-instruction",
     "external_id": "test-job-long-failed",
     "payload": "{\"test-job-to-run-auto-instruction-6-key\": \"test-job-to-run-auto-instruction-6-val\"}",
+    "multiple_executions": false,
     "created": 1596712203
   },
   {
@@ -168,6 +186,7 @@
     "config": "test-job-config-to-run-auto-instruction",
     "external_id": "test-job-long-succeeded",
     "payload": "{\"test-job-to-run-auto-instruction-7-key\": \"test-job-to-run-auto-instruction-7-val\"}",
+    "multiple_executions": false,
     "created": 1596712203
   },
   {
@@ -177,6 +196,7 @@
     "config": "test-job-config-running",
     "external_id": "test-job-id",
     "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+    "multiple_executions": false,
     "created": 1596712203
   },
   {
@@ -185,6 +205,7 @@
     "author": "test-author-metrics-axe",
     "config": "test-job-config-metrics-axe",
     "external_id": "test-job-long-succeeded",
+    "multiple_executions": false,
     "created": 1596712203
   }
 ]
