@@ -1,8 +1,13 @@
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { createMockedStoreModules } from '@unit/utils/store';
+import {
+  CANOPSIS_EDITION,
+  ENTITY_TYPES,
+  JUNIT_ALARM_CONNECTOR,
+  USERS_PERMISSIONS,
+} from '@/constants';
 import AlarmsExpandPanel from '@/components/widgets/alarm/partials/alarms-expand-panel.vue';
-import { CANOPSIS_EDITION, ENTITY_TYPES, JUNIT_ALARM_CONNECTOR } from '@/constants';
 
 const localVue = createVueInstance();
 
@@ -12,6 +17,7 @@ const stubs = {
   'group-alarms-list': true,
   'service-dependencies': true,
   'entity-gantt': true,
+  'pbehaviors-simple-list': true,
 };
 
 const factory = (options = {}) => shallowMount(AlarmsExpandPanel, {
@@ -39,11 +45,20 @@ describe('alarms-expand-panel', () => {
     name: 'info',
     getters: { edition: CANOPSIS_EDITION.cat },
   };
+  const authModule = {
+    name: 'auth',
+    getters: {
+      currentUserPermissionsById: {
+        [USERS_PERMISSIONS.technical.exploitation.pbehavior]: { actions: [] },
+      },
+    },
+  };
 
   it('Tab key updated after change tour enabled', async () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         infoModule,
+        authModule,
       ]),
       propsData: {
         alarm: {
@@ -83,6 +98,7 @@ describe('alarms-expand-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         infoModule,
+        authModule,
       ]),
       propsData: {
         alarm: {
@@ -115,6 +131,7 @@ describe('alarms-expand-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         infoModule,
+        authModule,
       ]),
       propsData: {
         alarm: {
@@ -141,6 +158,7 @@ describe('alarms-expand-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         infoModule,
+        authModule,
       ]),
       propsData: {
         alarm: {
@@ -172,6 +190,7 @@ describe('alarms-expand-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         infoModule,
+        authModule,
       ]),
       propsData: {
         alarm: {
@@ -200,6 +219,7 @@ describe('alarms-expand-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         catInfoModule,
+        authModule,
       ]),
       propsData: {
         alarm: {
