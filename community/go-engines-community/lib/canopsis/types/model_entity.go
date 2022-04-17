@@ -67,12 +67,12 @@ type Entity struct {
 	LastEventDate *CpsTime `bson:"last_event_date,omitempty" json:"last_event_date,omitempty"`
 	// LastIdleRuleApply is used to mark entity if some idle rule was applied.
 	LastIdleRuleApply string `bson:"last_idle_rule_apply,omitempty" json:"last_idle_rule_apply,omitempty"`
-
 	// IdleSince represents since when entity didn't receive any events.
-	IdleSince    *CpsTime `bson:"idle_since,omitempty" json:"idle_since,omitempty"`
-	ImportSource string   `bson:"import_source,omitempty" json:"import_source"`
+	IdleSince *CpsTime `bson:"idle_since,omitempty" json:"idle_since,omitempty"`
 
-	Imported      *CpsTime      `bson:"imported,omitempty" json:"imported"`
+	ImportSource string   `bson:"import_source,omitempty" json:"import_source"`
+	Imported     *CpsTime `bson:"imported,omitempty" json:"imported"`
+
 	PbehaviorInfo PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
 
 	SliAvailState int64 `bson:"sli_avail_state" json:"sli_avail_state"`
