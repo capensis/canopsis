@@ -54,15 +54,6 @@ type Entity struct {
 	Component                        string          `bson:"component,omitempty" json:"component,omitempty"`
 	Category                         string          `bson:"category" json:"category"`
 	ImpactLevel                      int64           `bson:"impact_level" json:"impact_level"`
-	AlarmsCumulativeData             struct {
-		// Only for Service.
-		// WatchedCount is count of unresolved alarms.
-		WatchedCount int64 `bson:"watched_count"`
-		// WatchedPbehaviorCount contains counters of unresolved and in pbehavior alarms.
-		WatchedPbehaviorCount map[string]int64 `bson:"watched_pbehavior_count"`
-		// WatchedNotAckedCount is count of unresolved and not acked and active (by pbehavior) alarms.
-		WatchedNotAckedCount int64 `bson:"watched_not_acked_count"`
-	} `bson:"alarms_cumulative_data,omitempty" json:"-"`
 	Created       CpsTime  `bson:"created" json:"created"`
 	LastEventDate *CpsTime `bson:"last_event_date,omitempty" json:"last_event_date,omitempty"`
 	// LastIdleRuleApply is used to mark entity if some idle rule was applied.
