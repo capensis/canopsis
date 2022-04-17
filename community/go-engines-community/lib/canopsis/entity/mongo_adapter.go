@@ -49,7 +49,7 @@ func (a *mongoAdapter) Get(ctx context.Context, id string) (types.Entity, bool) 
 	entity, err := a.GetEntityByID(ctx, id)
 	entity.EnsureInitialized()
 
-	if err == ErrNotFound {
+	if errors.Is(err, ErrNotFound) {
 		return entity, false
 	} else if err != nil {
 		return entity, false
