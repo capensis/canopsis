@@ -14,7 +14,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
@@ -62,21 +61,18 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 
 		err = p.DbClient.WithTransaction(ctx, func(tCtx context.Context) error {
 			if !firstTimeTran {
-				ent, exist := p.EntityAdapter.Get(tCtx, event.Entity.ID)
-				if !exist {
-					return fmt.Errorf("entity with id = %s is not found after transaction rollback", event.Entity.ID)
-				}
-
-				event.Entity = &ent
-
-				al, err := p.AlarmAdapter.GetOpenedAlarmByAlarmId(tCtx, event.Alarm.ID)
-				if _, ok := err.(errt.NotFound); ok {
-					return fmt.Errorf("alarm with id = %s is not found after transaction rollback", event.Alarm.ID)
-				} else if err != nil {
+				var alarmsWithEntity []types.AlarmWithEntity
+				err := p.AlarmAdapter.GetOpenedAlarmsWithEntityByAlarmIDs(ctx, []string{event.Alarm.ID}, &alarmsWithEntity)
+				if err != nil {
 					return err
 				}
 
-				event.Alarm = &al
+				if len(alarmsWithEntity) == 0 {
+					return fmt.Errorf("entity with id = %s or alarm with id = %s is not found after transaction rollback", event.Entity.ID, event.Alarm.ID)
+				}
+
+				event.Entity = &alarmsWithEntity[0].Entity
+				event.Alarm = &alarmsWithEntity[0].Alarm
 			}
 
 			firstTimeTran = false
