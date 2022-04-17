@@ -478,18 +478,6 @@ func (e *Event) GenerateContextInformations() []ContextInformation {
 	return []ContextInformation{connector, component, resource}
 }
 
-// NewEntity create an entity from ContextInformation struct
-func (ci *ContextInformation) NewEntity() Entity {
-	return NewEntity(
-		ci.ID,
-		ci.Name,
-		ci.Type,
-		map[string]Info{},
-		ci.Impacts,
-		ci.Depends,
-	)
-}
-
 var cpsNumberType = reflect.TypeOf(CpsNumber(0))
 var cpsNumberPtrType = reflect.PtrTo(cpsNumberType)
 var cpsTimeType = reflect.TypeOf(CpsTime{})
