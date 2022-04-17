@@ -193,13 +193,6 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	}()
 
 	if event.EventType == types.EventTypeCheck {
-		go func() {
-			err := s.metaAlarmEventProcessor.Process(context.Background(), *event)
-			if err != nil {
-				s.logger.Err(err).Msg("cannot process meta alarm")
-			}
-		}()
-
 		go s.sendEventStatistics(ctx, *event)
 	}
 
