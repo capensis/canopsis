@@ -108,8 +108,20 @@ func (mr *MockSenderMockRecorder) SendCreateAndPbhEnter(arg0, arg1, arg2 interfa
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendCreateAndPbhEnter", reflect.TypeOf((*MockSender)(nil).SendCreateAndPbhEnter), arg0, arg1, arg2)
 }
 
+// SendEventMetrics mocks base method.
+func (m *MockSender) SendEventMetrics(arg0 context.Context, arg1 types.Alarm, arg2 types.Entity, arg3 types.AlarmChange, arg4 time.Time, arg5, arg6 string) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendEventMetrics", arg0, arg1, arg2, arg3, arg4, arg5, arg6)
+}
+
+// SendEventMetrics indicates an expected call of SendEventMetrics.
+func (mr *MockSenderMockRecorder) SendEventMetrics(arg0, arg1, arg2, arg3, arg4, arg5, arg6 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendEventMetrics", reflect.TypeOf((*MockSender)(nil).SendEventMetrics), arg0, arg1, arg2, arg3, arg4, arg5, arg6)
+}
+
 // SendPbhEnter mocks base method.
-func (m *MockSender) SendPbhEnter(arg0 context.Context, arg1 *types.Alarm, arg2 types.Entity) {
+func (m *MockSender) SendPbhEnter(arg0 context.Context, arg1 types.Alarm, arg2 types.Entity) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "SendPbhEnter", arg0, arg1, arg2)
 }

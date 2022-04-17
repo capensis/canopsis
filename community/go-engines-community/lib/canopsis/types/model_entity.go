@@ -1,9 +1,6 @@
 package types
 
 import (
-	"strings"
-	"time"
-
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -54,8 +51,8 @@ type Entity struct {
 	Component                        string          `bson:"component,omitempty" json:"component,omitempty"`
 	Category                         string          `bson:"category" json:"category"`
 	ImpactLevel                      int64           `bson:"impact_level" json:"impact_level"`
-	Created       CpsTime  `bson:"created" json:"created"`
-	LastEventDate *CpsTime `bson:"last_event_date,omitempty" json:"last_event_date,omitempty"`
+	Created                          CpsTime         `bson:"created" json:"created"`
+	LastEventDate                    *CpsTime        `bson:"last_event_date,omitempty" json:"last_event_date,omitempty"`
 	// LastIdleRuleApply is used to mark entity if some idle rule was applied.
 	LastIdleRuleApply string `bson:"last_idle_rule_apply,omitempty" json:"last_idle_rule_apply,omitempty"`
 	// IdleSince represents since when entity didn't receive any events.
@@ -157,36 +154,5 @@ func NewInfo(name string, description string, value interface{}) Info {
 		Name:        name,
 		Description: description,
 		Value:       value,
-	}
-}
-
-// NewEntity instanciate a new entity struct [sic]
-func NewEntity(id string, name string, entityType string, infos map[string]Info, impacts, depends []string) Entity {
-	history := []CpsTime{CpsTime{time.Now()}}
-
-	if infos == nil {
-		infos = make(map[string]Info)
-	}
-	component := ""
-	switch entityType {
-	case EntityTypeComponent:
-		component = id
-	case EntityTypeResource, EntityTypeMetaAlarm:
-		idParts := strings.Split(id, "/")
-		component = idParts[len(idParts)-1]
-	}
-
-	return Entity{
-		ID:            id,
-		Name:          name,
-		Impacts:       impacts,
-		Depends:       depends,
-		EnableHistory: history,
-		Measurements:  nil,
-		Enabled:       true,
-		Infos:         infos,
-		Type:          entityType,
-		Component:     component,
-		IsNew:         true,
 	}
 }
