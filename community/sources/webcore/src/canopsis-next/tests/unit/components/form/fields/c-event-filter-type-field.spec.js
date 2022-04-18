@@ -29,7 +29,7 @@ const snapshotFactory = (options = {}) => mount(CEventFilterTypeField, {
   ...options,
 });
 
-const selectTextField = wrapper => wrapper.find('select.v-select');
+const selectSelectField = wrapper => wrapper.find('select.v-select');
 
 describe('c-event-filter-type-field', () => {
   test('Value changed after trigger the text field', () => {
@@ -39,9 +39,9 @@ describe('c-event-filter-type-field', () => {
       },
     });
 
-    const textField = selectTextField(wrapper);
+    const selectField = selectSelectField(wrapper);
 
-    textField.setValue(EVENT_FILTER_TYPES.drop);
+    selectField.setValue(EVENT_FILTER_TYPES.drop);
 
     expect(wrapper).toEmit('input', EVENT_FILTER_TYPES.drop);
   });
