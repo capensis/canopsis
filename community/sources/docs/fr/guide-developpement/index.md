@@ -25,10 +25,14 @@ Les anciennes API v1 ou v2 ne sont plus utilisées par les dernières versions
 
 ### URL de l'API
 
-L'API Canopsis peut être interrogée sur deux URL différentes :
+L'API Canopsis peut être interrogée sur plusieurs URL différentes :
 
- - `http://<canopsis>/backend/api/v4/`: via le reverse-proxy Nginx (avec les [en-têtes CORS](https://developer.mozilla.org/fr/docs/Web/HTTP/CORS))
+ - `http(s)://<canopsis>/api/v4/`: via le reverse-proxy Nginx (avec les [en-têtes CORS](https://developer.mozilla.org/fr/docs/Web/HTTP/CORS))
  - `http://<canopsis>:8082/api/v4/`: moteur `canopsis-api` directement (sans les en-têtes CORS)
+
+
+!!! Warning
+    Depuis Canopsis 4.4, l'URL `http(s)://<canopsis>/backend/api/v4/` est dépréciée. Pensez à mettre à jour vos scripts et applications clients de celle-ci.
 
 > Remplacer `<canopsis>` par l'adresse IP ou le nom de domaine du Canopsis déployé.
 
