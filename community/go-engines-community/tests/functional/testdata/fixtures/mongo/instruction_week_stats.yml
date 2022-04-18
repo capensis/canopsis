@@ -1,16 +1,19 @@
-instruction_week_stats:
-  week_stats (template):
-    _id: <UUID()>
-    execution_count: 0
-    init_critical: 0
-    init_major: 0
-    init_minor: 0
-    res_critical: 0
-    res_major: 0
-    res_minor: 0
+template:
+  - &week_stats {
+    _id: <UUID()>,
+    execution_count: 0,
+    init_critical: 0,
+    init_major: 0,
+    init_minor: 0,
+    res_critical: 0,
+    res_major: 0,
+    res_minor: 0,
     res_ok: 0
+  }
 
-  instruction_week_stats_to_get_stats_instruction_1 (extend week_stats):
+instruction_week_stats:
+  instruction_week_stats_to_get_stats_instruction_1:
+    <<: *week_stats
     instruction: test-instruction-to-stats-get-1
     date: 1617555600
     execution_count: 6
@@ -21,14 +24,16 @@ instruction_week_stats:
     res_major: 2
     res_minor: 3
 
-  instruction_week_stats_to_get_stats_instruction_2 (extend week_stats):
+  instruction_week_stats_to_get_stats_instruction_2:
+    <<: *week_stats
     instruction: test-instruction-to-stats-get-1
     date: 1616950800
     execution_count: 1
     init_critical: 1
     res_ok: 1
 
-  instruction_week_stats_to_get_stats_instruction_3 (extend week_stats):
+  instruction_week_stats_to_get_stats_instruction_3:
+    <<: *week_stats
     instruction: test-instruction-to-stats-get-2
     date: 1617555600
     execution_count: 6
@@ -39,7 +44,8 @@ instruction_week_stats:
     res_major: 2
     res_minor: 3
 
-  instruction_week_stats_to_get_stats_instruction_4 (extend week_stats):
+  instruction_week_stats_to_get_stats_instruction_4:
+    <<: *week_stats
     instruction: test-instruction-to-stats-get-2
     date: 1616950800
     execution_count: 1
