@@ -1,41 +1,41 @@
 <template lang="pug">
   modal-wrapper(close)
-    template(slot="title")
+    template(#title="")
       span {{ $t('common.pbehaviorList') }}
-    template(slot="text")
+    template(#text="")
       c-advanced-data-table(:headers="headers", :items="filteredPbehaviors", expand)
-        template(slot="enabled", slot-scope="props")
-          c-enabled(:value="props.item.enabled")
-        template(slot="tstart", slot-scope="props") {{ props.item.tstart | timezone($system.timezone) }}
-        template(slot="tstop", slot-scope="props") {{ props.item.tstop | timezone($system.timezone) }}
-        template(slot="rrule", slot-scope="props")
-          v-icon {{ props.item.rrule ? 'check' : 'clear' }}
-        template(slot="expand", slot-scope="props")
-          pbehaviors-list-expand-item(:pbehavior="props.item")
-        template(slot="actions", slot-scope="props")
+        template(#enabled="{ item }")
+          c-enabled(:value="item.enabled")
+        template(#tstart="{ item }") {{ item.tstart | timezone($system.timezone) }}
+        template(#tstop="{ item }") {{ item.tstop | timezone($system.timezone) }}
+        template(#rrule="{ item }")
+          v-icon {{ item.rrule ? 'check' : 'clear' }}
+        template(#expand="{ item }")
+          pbehaviors-list-expand-item(:pbehavior="item")
+        template(#actions="{ item }")
           v-layout(row)
             c-action-btn(
               v-if="hasAccessToEditPbehavior",
               type="edit",
-              @click="showEditPbehaviorModal(props.item)"
+              @click="showEditPbehaviorModal(item)"
             )
             c-action-btn(
               v-if="hasAccessToDeletePbehavior",
               type="delete",
-              @click="showRemovePbehaviorModal(props.item._id)"
+              @click="showRemovePbehaviorModal(item._id)"
             )
-        template(slot="is_active_status", slot-scope="props")
-          v-icon(:color="props.item.is_active_status ? 'primary' : 'error'") $vuetify.icons.settings_sync
+        template(#is_active_status="{ item }")
+          v-icon(:color="item.is_active_status ? 'primary' : 'error'") $vuetify.icons.settings_sync
       v-layout(v-if="showAddButton", justify-end)
         v-btn(
+          color="primary",
           icon,
           fab,
           small,
-          color="primary",
           @click="showCreatePbehaviorModal"
         )
           v-icon add
-    template(slot="actions")
+    template(#actions="")
       v-btn.primary(@click="$modals.hide") {{ $t('common.ok') }}
 </template>
 
@@ -53,6 +53,7 @@ import ModalWrapper from '../modal-wrapper.vue';
  * Modal showing a list of an alarm's pbehaviors
  */
 export default {
+  name: MODALS.pbehaviorList,
   inject: ['$system'],
   components: {
     PbehaviorsListExpandItem,
