@@ -1,6 +1,7 @@
 package fixtures
 
 import (
+	"bytes"
 	"fmt"
 	"reflect"
 	"regexp"
@@ -9,17 +10,14 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"github.com/brianvoe/gofakeit/v6"
-	"gopkg.in/yaml.v2"
+	"github.com/goccy/go-yaml"
 )
 
 const (
-	tplRegexp        = `^(?P<name>[\w\-\d]+)\s*\(template\)$`
-	docRegexp        = `^(?P<name>[\w\-\d]+)$`
-	docWithTplRegexp = `^(?P<name>[\w\-\d]+)\s*\(extend\s*(?P<tpl>[\w\-\d]+)\)$`
-	referenceRegexp  = `^@(?P<ref>[\w\-\d]+)$`
-	methodRegexp     = `^<(?P<method>\w+)\((?P<args>[^)]*)\)(\.(?P<field>\w+))?>$`
-	keyCurrent       = "Current"
-	keyIndex         = "Index"
+	referenceRegexp = `^@(?P<ref>[\w\-\d]+)$`
+	methodRegexp    = `^<(?P<method>\w+)\((?P<args>[^)]*)\)(\.(?P<field>\w+))?>$`
+	keyCurrent      = "Current"
+	keyIndex        = "Index"
 )
 
 type Parser interface {
@@ -34,9 +32,6 @@ func NewParser(passwordEncoder password.Encoder) Parser {
 
 	return &parser{
 		reflectFaker: reflect.ValueOf(faker),
-		docRe:        regexp.MustCompile(docRegexp),
-		docWithTplRe: regexp.MustCompile(docWithTplRegexp),
-		tplRe:        regexp.MustCompile(tplRegexp),
 		referenceRe:  regexp.MustCompile(referenceRegexp),
 		methodRe:     regexp.MustCompile(methodRegexp),
 	}
@@ -45,12 +40,13 @@ func NewParser(passwordEncoder password.Encoder) Parser {
 type parser struct {
 	reflectFaker reflect.Value
 
-	docRe, docWithTplRe, tplRe, referenceRe, methodRe *regexp.Regexp
+	referenceRe, methodRe *regexp.Regexp
 }
 
 func (p *parser) Parse(content []byte) (map[string][]interface{}, error) {
 	var dataByCollection yaml.MapSlice
-	err := yaml.Unmarshal(content, &dataByCollection)
+	decoder := yaml.NewDecoder(bytes.NewBuffer(content), yaml.UseOrderedMap())
+	err := decoder.Decode(&dataByCollection)
 	if err != nil {
 		return nil, fmt.Errorf("cannot decode content: %w", err)
 	}
@@ -64,12 +60,15 @@ func (p *parser) Parse(content []byte) (map[string][]interface{}, error) {
 			return nil, fmt.Errorf("%+v not string key", collV.Key)
 		}
 
+		if collectionName == "template" {
+			continue
+		}
+
 		data, ok := collV.Value.(yaml.MapSlice)
 		if !ok {
 			return nil, fmt.Errorf("cannot decode content: %q must be object", collectionName)
 		}
 
-		tpls := make(map[string]yaml.MapSlice)
 		docs := make([]interface{}, 0, len(data))
 		index := 0
 
@@ -84,47 +83,13 @@ func (p *parser) Parse(content []byte) (map[string][]interface{}, error) {
 				return nil, fmt.Errorf("cannot decode content: %q must be object", key)
 			}
 
-			matches := p.tplRe.FindStringSubmatch(key)
-			if len(matches) > 0 {
-				name := matches[p.tplRe.SubexpIndex("name")]
-				tpls[name] = val
-
-				continue
-			}
-
-			matches = p.docRe.FindStringSubmatch(key)
-			if len(matches) > 0 {
-				name := matches[p.docRe.SubexpIndex("name")]
-				doc, err := p.processItem(index, val, references)
-				index++
-				if err != nil {
-					return nil, fmt.Errorf("cannot process %s: %w", name, err)
-				}
-
-				references[name] = doc["_id"]
-				docs = append(docs, doc)
-				continue
-			}
-
-			matches = p.docWithTplRe.FindStringSubmatch(key)
-			if len(matches) == 0 {
-				return nil, fmt.Errorf("invalid doc key %q", key)
-			}
-
-			name := matches[p.docWithTplRe.SubexpIndex("name")]
-			tplName := matches[p.docWithTplRe.SubexpIndex("tpl")]
-			tpl, ok := tpls[tplName]
-			if !ok {
-				return nil, fmt.Errorf("unknown tpl %q", tplName)
-			}
-
-			doc, err := p.processItem(index, mergeOrderedMaps(tpl, val), references)
+			doc, err := p.processItem(index, val, references)
 			index++
 			if err != nil {
-				return nil, fmt.Errorf("cannot process %s: %w", name, err)
+				return nil, fmt.Errorf("cannot process %s: %w", key, err)
 			}
 
-			references[name] = doc["_id"]
+			references[key] = doc["_id"]
 			docs = append(docs, doc)
 		}
 
@@ -228,40 +193,6 @@ func (p *parser) processValue(fieldVal interface{}, index int, doc map[string]in
 	default:
 		return fieldVal, nil
 	}
-}
-
-func mergeOrderedMaps(l, r yaml.MapSlice) yaml.MapSlice {
-	res := make(yaml.MapSlice, len(r))
-	has := make(map[interface{}]bool)
-
-	for i, rv := range r {
-		has[rv.Key] = true
-		v := rv
-
-		if rm, ok := rv.Value.(yaml.MapSlice); ok {
-			for _, lv := range l {
-				if lv.Key == rv.Key {
-					if lm, ok := lv.Value.(yaml.MapSlice); ok {
-						v = yaml.MapItem{
-							Key:   rv.Key,
-							Value: mergeOrderedMaps(lm, rm),
-						}
-						break
-					}
-				}
-			}
-		}
-
-		res[i] = v
-	}
-
-	for _, v := range l {
-		if !has[v.Key] {
-			res = append(res, v)
-		}
-	}
-
-	return res
 }
 
 func callReflectMethod(rv reflect.Value, method, args string) (interface{}, error) {
