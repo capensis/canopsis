@@ -9,9 +9,8 @@
     :name="name",
     @input="errors.remove(name)"
   )
-    template(#append="")
+    template(v-if="helpText", #append="")
       c-help-icon(
-        v-if="helpText",
         :text="helpText",
         icon="help",
         color="grey darken-1",
