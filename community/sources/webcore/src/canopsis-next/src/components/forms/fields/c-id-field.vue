@@ -1,6 +1,6 @@
 <template lang="pug">
   v-text-field(
-    v-validate,
+    v-validate="",
     v-field="value",
     :label="label || $t('common.id')",
     :error-messages="errors.collect(name)",
@@ -9,14 +9,14 @@
     :name="name",
     @input="errors.remove(name)"
   )
-    c-help-icon(
-      v-if="helpText",
-      slot="append",
-      :text="helpText",
-      icon="help",
-      color="grey darken-1",
-      left
-    )
+    template(#append="")
+      c-help-icon(
+        v-if="helpText",
+        :text="helpText",
+        icon="help",
+        color="grey darken-1",
+        left
+      )
 </template>
 
 <script>
