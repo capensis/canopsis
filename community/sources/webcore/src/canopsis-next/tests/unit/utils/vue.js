@@ -65,7 +65,7 @@ export const createVueInstance = () => createLocalVue();
 const enhanceWrapper = (wrapper) => {
   wrapper.getValidator = () => wrapper.vm.$validator;
   wrapper.getValidatorErrorsObject = () => {
-    const { errors = [] } = wrapper.vm.$validator;
+    const { errors = { items: [] } } = wrapper.getValidator();
 
     return errors.items.reduce((acc, { field, msg }) => {
       acc[field] = msg;
