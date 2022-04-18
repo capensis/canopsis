@@ -57,6 +57,7 @@ func NewEngine(
 
 	enrichmentCenter := libcontext.NewEnrichmentCenter(
 		entityAdapter,
+		mongoClient,
 		options.FeatureContextEnrich,
 		entityservice.NewManager(
 			entityServiceAdapter,

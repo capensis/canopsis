@@ -341,7 +341,7 @@ func (s *eventProcessor) updateAlarm(ctx context.Context, event *types.Event) (t
 
 func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event) (types.AlarmChangeType, error) {
 	changeType := types.AlarmChangeTypeNone
-	if event.Entity == nil || event.Alarm == nil && event.State == types.AlarmStateOK {
+	if event.Alarm == nil && event.State == types.AlarmStateOK {
 		return changeType, nil
 	}
 
