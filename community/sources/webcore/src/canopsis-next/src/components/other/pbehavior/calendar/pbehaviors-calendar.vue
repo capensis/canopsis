@@ -36,10 +36,15 @@ export default {
     },
   },
   data() {
+    const calendar = Calendar.months();
+
+    calendar.set({ listTimes: false });
+
     return {
+      calendar,
+
       pending: false,
       events: [],
-      calendar: Calendar.months(),
     };
   },
   computed: {
