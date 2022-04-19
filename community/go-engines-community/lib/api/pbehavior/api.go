@@ -139,6 +139,7 @@ func (a *api) Calendar(c *gin.Context) {
 // @Security BasicAuth
 // @Param _id query string true "Entity id"
 // @Success 200 {array} Response
+// @Failure 404 {object} common.ErrorResponse
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /entities/pbehaviors [get]
 func (a *api) ListByEntityID(c *gin.Context) {
@@ -177,6 +178,7 @@ func (a *api) ListByEntityID(c *gin.Context) {
 // @Security BasicAuth
 // @Param body body CalendarByEntityIDRequest true "body"
 // @Success 200 {array} CalendarResponse
+// @Failure 404 {object} common.ErrorResponse
 // @Failure 400 {object} common.ValidationErrorResponse
 // @Router /entities/pbehavior-calendar [get]
 func (a *api) CalendarByEntityID(c *gin.Context) {
