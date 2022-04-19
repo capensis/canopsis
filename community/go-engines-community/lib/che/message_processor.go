@@ -141,7 +141,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		}
 
 		if !eventEntity.IsNew && !event.IsEntityUpdated && event.Entity.LastEventDate != nil {
-			err := p.ContextGraphManager.UpdateLastEventDate(tCtx, event.Entity.ID, *event.Entity.LastEventDate)
+			err := p.ContextGraphManager.UpdateLastEventDate(tCtx, event.EventType, event.Entity.ID, *event.Entity.LastEventDate)
 			if err != nil {
 				return err
 			}
@@ -163,69 +163,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		return nil, nil
 	}
 
-	go func() {
-		for _, ent := range updatedEntities {
-			go func(id string) {
-				p.MetaUpdater.UpdateById(context.Background(), id)
-			}(ent.ID)
-
-			if (len(ent.ImpactedServicesToAdd) != 0 || len(ent.ImpactedServicesToRemove) != 0) && ent.ID != event.GetEID() && ent.Type != types.EntityTypeService {
-				var updateCountersEvent types.Event
-
-				switch ent.Type {
-				case types.EntityTypeResource:
-					updateCountersEvent = types.Event{
-						EventType:     types.EventTypeUpdateCounters,
-						SourceType:    types.SourceTypeResource,
-						Connector:     event.Connector,
-						ConnectorName: event.ConnectorName,
-						Component:     ent.Component,
-						Resource:      ent.Name,
-						Timestamp:     types.CpsTime{Time: time.Now()},
-						Entity:        &ent,
-					}
-				case types.EntityTypeComponent:
-					updateCountersEvent = types.Event{
-						EventType:     types.EventTypeUpdateCounters,
-						SourceType:    types.SourceTypeComponent,
-						Connector:     event.Connector,
-						ConnectorName: event.ConnectorName,
-						Component:     ent.Component,
-						Timestamp:     types.CpsTime{Time: time.Now()},
-						Entity:        &ent,
-					}
-				case types.EntityTypeConnector:
-					updateCountersEvent = types.Event{
-						EventType:     types.EventTypeUpdateCounters,
-						SourceType:    types.SourceTypeConnector,
-						Connector:     event.Connector,
-						ConnectorName: event.ConnectorName,
-						Timestamp:     types.CpsTime{Time: time.Now()},
-						Entity:        &ent,
-					}
-				}
-
-				body, err := p.Encoder.Encode(updateCountersEvent)
-				if err != nil {
-					p.Logger.Err(err).Msg("unable to serialize event")
-				}
-
-				err = p.AmqpPublisher.Publish(
-					"",
-					canopsis.AxeQueueName,
-					false,
-					false,
-					amqp.Publishing{
-						Body:        body,
-						ContentType: "application/json",
-					},
-				)
-				if err != nil {
-					p.Logger.Err(err).Msg("unable to send service event")
-				}
-			}
-		}
-	}()
+	go p.postProcessUpdatedEntities(event, updatedEntities)
 
 	event.Format()
 	body, err := p.Encoder.Encode(event)
@@ -235,6 +173,72 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	}
 
 	return body, nil
+}
+
+func (p *messageProcessor) postProcessUpdatedEntities(event types.Event, updatedEntities []types.Entity) {
+	entityIDs := make([]string, len(updatedEntities))
+
+	for idx, ent := range updatedEntities {
+		entityIDs[idx] = ent.ID
+
+		if (len(ent.ImpactedServicesToAdd) != 0 || len(ent.ImpactedServicesToRemove) != 0) && ent.ID != event.GetEID() && ent.Type != types.EntityTypeService {
+			var updateCountersEvent types.Event
+
+			switch ent.Type {
+			case types.EntityTypeResource:
+				updateCountersEvent = types.Event{
+					EventType:     types.EventTypeUpdateCounters,
+					SourceType:    types.SourceTypeResource,
+					Connector:     event.Connector,
+					ConnectorName: event.ConnectorName,
+					Component:     ent.Component,
+					Resource:      ent.Name,
+					Timestamp:     types.CpsTime{Time: time.Now()},
+					Entity:        &ent,
+				}
+			case types.EntityTypeComponent:
+				updateCountersEvent = types.Event{
+					EventType:     types.EventTypeUpdateCounters,
+					SourceType:    types.SourceTypeComponent,
+					Connector:     event.Connector,
+					ConnectorName: event.ConnectorName,
+					Component:     ent.Component,
+					Timestamp:     types.CpsTime{Time: time.Now()},
+					Entity:        &ent,
+				}
+			case types.EntityTypeConnector:
+				updateCountersEvent = types.Event{
+					EventType:     types.EventTypeUpdateCounters,
+					SourceType:    types.SourceTypeConnector,
+					Connector:     event.Connector,
+					ConnectorName: event.ConnectorName,
+					Timestamp:     types.CpsTime{Time: time.Now()},
+					Entity:        &ent,
+				}
+			}
+
+			body, err := p.Encoder.Encode(updateCountersEvent)
+			if err != nil {
+				p.Logger.Err(err).Msg("unable to serialize event")
+			}
+
+			err = p.AmqpPublisher.Publish(
+				"",
+				canopsis.AxeQueueName,
+				false,
+				false,
+				amqp.Publishing{
+					Body:        body,
+					ContentType: "application/json",
+				},
+			)
+			if err != nil {
+				p.Logger.Err(err).Msg("unable to send service event")
+			}
+		}
+	}
+
+	p.MetaUpdater.UpdateById(context.Background(), entityIDs...)
 }
 
 func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {
