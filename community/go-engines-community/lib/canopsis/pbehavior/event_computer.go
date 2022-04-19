@@ -96,34 +96,34 @@ func (c *eventComputer) computeByRrule(
 	exdates []Exdate,
 ) ([]ComputedType, error) {
 	location := event.span.From().Location()
-	timespans, err := GetTimeSpans(event, span)
+	eventTimespans, err := GetTimeSpans(event, span)
 	if err != nil {
 		return nil, err
 	}
 
-	computed := make([]ComputedType, len(timespans))
-	for i := range timespans {
-		computed[i].Span = timespans[i]
+	computed := make([]ComputedType, len(eventTimespans))
+	for i := range eventTimespans {
+		computed[i].Span = eventTimespans[i]
 		computed[i].ID = typeID
 	}
 
 	computedByExdate := make([]ComputedType, 0)
 
 	for _, exdate := range exdates {
-		newComputed := make([]ComputedType, 0, len(computed))
+		computedWithoutExdates := make([]ComputedType, 0, len(computed))
 
 		for _, curr := range computed {
 			from := utils.MaxTime(curr.Span.From(), exdate.Begin.Time.In(location))
 			to := utils.MinTime(curr.Span.To(), exdate.End.Time.In(location))
 			if from.After(to) {
-				newComputed = append(newComputed, curr)
+				computedWithoutExdates = append(computedWithoutExdates, curr)
 				continue
 			}
 
 			exdateSpan := timespan.New(from, to)
 			diffs := curr.Span.Diff(exdateSpan)
 			for _, diff := range diffs {
-				newComputed = append(newComputed, ComputedType{
+				computedWithoutExdates = append(computedWithoutExdates, ComputedType{
 					ID:   curr.ID,
 					Span: diff,
 				})
@@ -135,7 +135,7 @@ func (c *eventComputer) computeByRrule(
 			})
 		}
 
-		computed = newComputed
+		computed = computedWithoutExdates
 		if len(computed) == 0 {
 			break
 		}
@@ -181,14 +181,14 @@ func (c *eventComputer) computeByActiveType(
 				utils.MinTime(dateSpan.To(), span.To()),
 			),
 		}
-
+		// Exclude event intervals from inactive intervals.
 		for _, eventTimespan := range eventTimespans {
-			newTimespans := make([]timespan.Span, 0)
+			timespansWithoutEvent := make([]timespan.Span, 0)
 			for _, activeTimespan := range timespans {
-				newTimespans = append(newTimespans, activeTimespan.Diff(eventTimespan)...)
+				timespansWithoutEvent = append(timespansWithoutEvent, activeTimespan.Diff(eventTimespan)...)
 			}
 
-			timespans = newTimespans
+			timespans = timespansWithoutEvent
 		}
 
 		for _, activeTimespan := range timespans {
