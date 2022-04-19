@@ -56,7 +56,7 @@ func (m *manager) UpdateEntities(ctx context.Context, eventEntityID string, enti
 			set["last_event_date"] = ent.LastEventDate
 		}
 
-		if ent.ID == eventEntityID && ent.IsNew {
+		if ent.IsNew {
 			newModel = mongo.NewInsertOneModel().SetDocument(ent)
 		} else {
 			if ent.Infos != nil {
@@ -476,6 +476,10 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 	}
 
 	now := types.CpsTime{Time: time.Now()}
+	if event.EventType == types.EventTypeCheck {
+		eventEntity.LastEventDate = &now
+	}
+
 	connectorName := event.ConnectorName
 	connectorID := event.Connector + "/" + connectorName
 	resourceID := event.Resource + "/" + event.Component
@@ -484,18 +488,12 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 
 	if event.SourceType == types.SourceTypeComponent {
 		if isNew {
-			isNew, err = m.upsertEntity(ctx, entConf{
-				time:   now,
-				ID:     connectorID,
-				name:   connectorName,
-				depend: event.Component,
-				eType:  types.EntityTypeConnector,
-			})
+			exist, err := m.entityExist(ctx, connectorID)
 			if err != nil {
 				return types.Entity{}, nil, err
 			}
 
-			if isNew {
+			if !exist {
 				contextGraphEntities = []types.Entity{
 					{
 						ID:            connectorID,
@@ -509,7 +507,20 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 						ImpactLevel:   types.EntityDefaultImpactLevel,
 						Created:       now,
 						LastEventDate: &now,
+						IsNew:         true,
 					},
+				}
+			} else {
+				_, err := m.collection.UpdateOne(
+					ctx,
+					bson.M{"_id": connectorID},
+					bson.M{
+						"$addToSet": bson.M{"depends": event.Component},
+						"$set":      bson.M{"last_event_date": now},
+					},
+				)
+				if err != nil {
+					return types.Entity{}, nil, err
 				}
 			}
 
@@ -533,47 +544,63 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 		// if component isn't new, then check if connector exists, if not upsert it.
 		// if connector exists update last_event_date
 		if !eventEntity.HasImpact(connectorID) {
+			exist, err := m.entityExist(ctx, connectorID)
+			if err != nil {
+				return types.Entity{}, nil, err
+			}
+
 			eventEntity.Impacts = append(eventEntity.Impacts, connectorID)
-			contextGraphEntities = []types.Entity{
-				{
-					ID:            connectorID,
-					Name:          connectorName,
-					Impacts:       []string{},
-					Depends:       []string{event.Component},
-					EnableHistory: []types.CpsTime{now},
-					Enabled:       true,
-					Type:          types.EntityTypeConnector,
-					Infos:         map[string]types.Info{},
-					ImpactLevel:   types.EntityDefaultImpactLevel,
-					Created:       now,
-					LastEventDate: &now,
-				},
+			if !exist {
+				contextGraphEntities = []types.Entity{
+					{
+						ID:            connectorID,
+						Name:          connectorName,
+						Impacts:       []string{},
+						Depends:       []string{event.Component},
+						EnableHistory: []types.CpsTime{now},
+						Enabled:       true,
+						Type:          types.EntityTypeConnector,
+						Infos:         map[string]types.Info{},
+						ImpactLevel:   types.EntityDefaultImpactLevel,
+						Created:       now,
+						LastEventDate: &now,
+					},
+				}
+			} else {
+				_, err := m.collection.UpdateOne(
+					ctx,
+					bson.M{"_id": connectorID},
+					bson.M{
+						"$addToSet": bson.M{"depends": event.Component},
+						"$set":      bson.M{"last_event_date": now},
+					},
+				)
+				if err != nil {
+					return types.Entity{}, nil, err
+				}
 			}
 		} else {
-			err = m.UpdateLastEventDate(ctx, connectorID, now)
+			_, err := m.collection.UpdateOne(
+				ctx,
+				bson.M{"_id": connectorID},
+				bson.M{"$set": bson.M{"last_event_date": now}},
+			)
 			if err != nil {
 				return types.Entity{}, nil, err
 			}
 		}
 
-		return eventEntity, contextGraphEntities, nil
+		return eventEntity, contextGraphEntities, err
 	}
 
 	//if resource is new, then upsert connector and component
 	if isNew {
-		isNew, err = m.upsertEntity(ctx, entConf{
-			time:   now,
-			ID:     connectorID,
-			name:   connectorName,
-			depend: event.Component,
-			impact: resourceID,
-			eType:  types.EntityTypeConnector,
-		})
+		exist, err := m.entityExist(ctx, connectorID)
 		if err != nil {
 			return types.Entity{}, nil, err
 		}
 
-		if isNew {
+		if !exist {
 			contextGraphEntities = append(contextGraphEntities, types.Entity{
 				ID:            connectorID,
 				Name:          connectorName,
@@ -586,39 +613,25 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 				ImpactLevel:   types.EntityDefaultImpactLevel,
 				Created:       now,
 				LastEventDate: &now,
-			})
-		}
-
-		isNew, err = m.upsertEntity(ctx, entConf{
-			time:      now,
-			ID:        event.Component,
-			name:      event.Component,
-			component: event.Component,
-			depend:    resourceID,
-			impact:    connectorID,
-			eType:     types.EntityTypeComponent,
-		})
-		if err != nil {
-			return types.Entity{}, nil, err
-		}
-
-		if isNew {
-			contextGraphEntities = append(contextGraphEntities, types.Entity{
-				ID:            event.Component,
-				Name:          event.Component,
-				Impacts:       []string{connectorID},
-				Depends:       []string{resourceID},
-				EnableHistory: []types.CpsTime{now},
-				Enabled:       true,
-				Type:          types.EntityTypeComponent,
-				Component:     event.Component,
-				Infos:         map[string]types.Info{},
-				ImpactLevel:   types.EntityDefaultImpactLevel,
-				Created:       now,
 				IsNew:         true,
-				LastEventDate: &now,
 			})
+		} else {
+			_, err := m.collection.UpdateOne(
+				ctx,
+				bson.M{"_id": connectorID},
+				bson.M{
+					"$addToSet": bson.M{"impact": resourceID},
+					"$set":      bson.M{"last_event_date": now},
+				},
+			)
+			if err != nil {
+				return types.Entity{}, nil, err
+			}
 		}
+
+		componentInfosDoc := struct {
+			ComponentInfos map[string]types.Info `bson:"infos"`
+		}{}
 
 		cursor, err := m.collection.Aggregate(
 			ctx,
@@ -639,12 +652,37 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 			return types.Entity{}, nil, err
 		}
 
-		componentInfosDoc := struct {
-			ComponentInfos map[string]types.Info `bson:"infos"`
-		}{}
-
+		exist = false
 		if cursor.Next(ctx) {
+			exist = true
 			err = cursor.Decode(&componentInfosDoc)
+			if err != nil {
+				return types.Entity{}, nil, err
+			}
+		}
+
+		if !exist {
+			contextGraphEntities = append(contextGraphEntities, types.Entity{
+				ID:            event.Component,
+				Name:          event.Component,
+				Impacts:       []string{connectorID},
+				Depends:       []string{resourceID},
+				EnableHistory: []types.CpsTime{now},
+				Enabled:       true,
+				Type:          types.EntityTypeComponent,
+				Component:     event.Component,
+				Infos:         map[string]types.Info{},
+				ImpactLevel:   types.EntityDefaultImpactLevel,
+				Created:       now,
+				IsNew:         true,
+				LastEventDate: &now,
+			})
+		} else {
+			_, err := m.collection.UpdateOne(
+				ctx,
+				bson.M{"_id": event.Component},
+				bson.M{"$addToSet": bson.M{"depends": resourceID}},
+			)
 			if err != nil {
 				return types.Entity{}, nil, err
 			}
@@ -669,90 +707,60 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 	}
 
 	//if resource isn't new, then check if component or connector exists, if not upsert them.
-	connectorConf := entConf{
-		ID:   connectorID,
-		time: now,
-	}
-	componentConf := entConf{}
 	if !eventEntity.HasDepend(connectorID) {
+		exist, err := m.entityExist(ctx, connectorID)
+		if err != nil {
+			return types.Entity{}, nil, err
+		}
+
 		eventEntity.Depends = append(eventEntity.Depends, connectorID)
 
-		connectorConf = entConf{
-			ID:     connectorID,
-			time:   now,
-			name:   connectorName,
-			depend: event.Component,
-			impact: resourceID,
-			eType:  types.EntityTypeConnector,
+		_, err = m.collection.UpdateOne(
+			ctx,
+			bson.M{"_id": event.Component},
+			bson.M{"$addToSet": bson.M{"impact": connectorID}},
+		)
+		if err != nil {
+			return types.Entity{}, nil, err
 		}
 
-		componentConf = entConf{
-			ID:     event.Component,
-			impact: connectorID,
-			time:   now,
+		if !exist {
+			contextGraphEntities = append(contextGraphEntities, types.Entity{
+				ID:            connectorID,
+				Name:          connectorName,
+				Impacts:       []string{resourceID},
+				Depends:       []string{event.Component},
+				EnableHistory: []types.CpsTime{now},
+				Enabled:       true,
+				Type:          types.EntityTypeConnector,
+				Infos:         map[string]types.Info{},
+				ImpactLevel:   types.EntityDefaultImpactLevel,
+				Created:       now,
+				LastEventDate: &now,
+				IsNew:         true,
+			})
+		} else {
+			_, err := m.collection.UpdateOne(
+				ctx,
+				bson.M{"_id": connectorID},
+				bson.M{
+					"$addToSet": bson.M{"impact": resourceID},
+					"$set":      bson.M{"last_event_date": now},
+				},
+			)
+			if err != nil {
+				return types.Entity{}, nil, err
+			}
 		}
-	}
-
-	if !eventEntity.HasImpact(event.Component) {
-		eventEntity.Impacts = append(eventEntity.Impacts, event.Component)
-
-		connectorConf.depend = event.Component
-		componentConf = entConf{
-			time:      now,
-			ID:        event.Component,
-			name:      event.Component,
-			component: event.Component,
-			depend:    resourceID,
-			impact:    componentConf.impact,
-			eType:     types.EntityTypeComponent,
+	} else {
+		_, err := m.collection.UpdateOne(
+			ctx,
+			bson.M{"_id": connectorID},
+			bson.M{"$set": bson.M{"last_event_date": now}},
+		)
+		if err != nil {
+			return types.Entity{}, nil, err
 		}
-	}
-
-	connectorConf.time = now
-	eventEntity.LastEventDate = &now
-
-	isNew, err = m.upsertEntity(ctx, connectorConf)
-	if err != nil {
-		return types.Entity{}, nil, err
-	}
-
-	if isNew {
-		contextGraphEntities = append(contextGraphEntities, types.Entity{
-			ID:            connectorID,
-			Name:          connectorName,
-			Impacts:       []string{resourceID},
-			Depends:       []string{event.Component},
-			EnableHistory: []types.CpsTime{now},
-			Enabled:       true,
-			Type:          types.EntityTypeConnector,
-			Infos:         map[string]types.Info{},
-			ImpactLevel:   types.EntityDefaultImpactLevel,
-			Created:       now,
-			LastEventDate: &now,
-		})
-	}
-
-	isNew, err = m.upsertEntity(ctx, componentConf)
-	if err != nil {
-		return types.Entity{}, nil, err
-	}
-
-	if isNew {
-		contextGraphEntities = append(contextGraphEntities, types.Entity{
-			ID:            event.Component,
-			Name:          event.Component,
-			Impacts:       []string{connectorID},
-			Depends:       []string{resourceID},
-			EnableHistory: []types.CpsTime{now},
-			Enabled:       true,
-			Type:          types.EntityTypeComponent,
-			Component:     event.Component,
-			Infos:         map[string]types.Info{},
-			ImpactLevel:   types.EntityDefaultImpactLevel,
-			Created:       now,
-			IsNew:         true,
-			LastEventDate: &now,
-		})
 	}
 
 	return eventEntity, contextGraphEntities, nil
@@ -859,18 +867,11 @@ func (m *manager) FillResourcesWithInfos(ctx context.Context, component types.En
 	return resources, nil
 }
 
-type entConf struct {
-	time              types.CpsTime
-	onlyLastEventDate bool
-	ID                string
-	name              string
-	component         string
-	depend            string
-	impact            string
-	eType             string
-}
+func (m *manager) UpdateLastEventDate(ctx context.Context, eventType string, entityID string, timestamp types.CpsTime) error {
+	if eventType != types.EventTypeCheck {
+		return nil
+	}
 
-func (m *manager) UpdateLastEventDate(ctx context.Context, entityID string, timestamp types.CpsTime) error {
 	_, err := m.collection.UpdateOne(
 		ctx,
 		bson.M{"_id": entityID},
@@ -881,63 +882,30 @@ func (m *manager) UpdateLastEventDate(ctx context.Context, entityID string, time
 	return err
 }
 
-func (m *manager) upsertEntity(ctx context.Context, conf entConf) (bool, error) {
-	if conf.ID == "" {
-		return false, nil
-	}
+//func (m *manager) addToSetImpact(ctx context.Context, id string, impact string, updateLastEventDate bool) error {
+//	_, err := m.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$addToSet": bson.M{"impact": impact}})
+//	return err
+//}
+//
+//func (m *manager) addToSetDepend(ctx context.Context, id string, depend string, updateLastEventDate bool) error {
+//	update := bson.M{"$addToSet": bson.M{"depends": depend}}
+//	if updateLastEventDate {
+//		update["$set"] =
+//	}
+//
+//	_, err := m.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$addToSet": bson.M{"depends": depend}})
+//	return err
+//}
 
-	if conf.onlyLastEventDate {
-		_, err := m.collection.UpdateOne(
-			ctx,
-			bson.M{"_id": conf.ID},
-			bson.M{"$set": bson.M{"last_event_date": conf.time}},
-			options.Update().SetUpsert(true),
-		)
+func (m *manager) entityExist(ctx context.Context, id string) (bool, error) {
+	err := m.collection.FindOne(ctx, bson.M{"_id": id}).Err()
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return false, nil
+		}
 
 		return false, err
 	}
 
-	setOnInsert := bson.M{
-		"name":           conf.name,
-		"component":      conf.component,
-		"enable_history": []types.CpsTime{conf.time},
-		"enabled":        true,
-		"infos":          bson.M{},
-		"impact_level":   types.EntityDefaultImpactLevel,
-		"created":        conf.time,
-		"type":           conf.eType,
-	}
-
-	update := bson.M{
-		"$set": bson.M{
-			"last_event_date": conf.time,
-		},
-		"$setOnInsert": setOnInsert,
-	}
-
-	addToSet := bson.M{}
-	if conf.depend != "" {
-		addToSet["depends"] = conf.depend
-	} else {
-		setOnInsert["depends"] = []string{}
-	}
-
-	if conf.impact != "" {
-		addToSet["impact"] = conf.impact
-	} else {
-		setOnInsert["impact"] = []string{}
-	}
-
-	if len(addToSet) != 0 {
-		update["$addToSet"] = addToSet
-	}
-
-	res, err := m.collection.UpdateOne(
-		ctx,
-		bson.M{"_id": conf.ID},
-		update,
-		options.Update().SetUpsert(true),
-	)
-
-	return res.MatchedCount == 0, err
+	return true, nil
 }
