@@ -46,20 +46,9 @@ func NewApi(
 	return a
 }
 
-// Create import
-// @Summary Create import task
-// @Description Create import task
-// @Tags contextgraph-import
-// @ID contextgraph-import-create-import
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param source query string true "source"
+// Import
 // @Param body body ImportRequest true "body"
 // @Success 200 {object} ImportResponse
-// @Failure 400 {object} common.ErrorResponse
-// @Router /contextgraph/import [put]
 func (a *api) Import(c *gin.Context) {
 	query := ImportQuery{}
 	if err := c.BindQuery(&query); err != nil {
@@ -96,18 +85,8 @@ func (a *api) Import(c *gin.Context) {
 	c.JSON(http.StatusOK, ImportResponse{ID: job.ID})
 }
 
-// Get import status by id
-// @Summary Get import status by id
-// @Description Get import status by id
-// @Tags contextgraph-import
-// @ID contextgraph-import-get-status-by-id
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "import id"
+// Status
 // @Success 200 {object} ImportJob
-// @Failure 404 {object} common.ErrorResponse
-// @Router /contextgraph/import/status/{id} [get]
 func (a *api) Status(c *gin.Context) {
 	status, err := a.reporter.GetStatus(c.Request.Context(), c.Param("id"))
 	if err != nil {
