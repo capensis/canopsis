@@ -3,10 +3,10 @@ import AxiosMockAdapter from 'axios-mock-adapter';
 
 import { shallowMount, createVueInstance } from '@unit/utils/vue';
 
-import { entitiesPatternsMixin } from '@/mixins/entities/pattern';
-import store from '@/store';
-import request from '@/services/request';
 import { API_ROUTES } from '@/config';
+import request from '@/services/request';
+import store from '@/store';
+import { entitiesPatternsMixin } from '@/mixins/entities/pattern';
 
 const localVue = createVueInstance();
 
@@ -75,5 +75,28 @@ describe('Entities pattern mixin', () => {
 
     expect(wrapper.vm.patternsMeta).toEqual(meta);
     expect(wrapper.vm.patterns).toEqual(patterns);
+  });
+
+  test('Patterns list fetched with previous params', async () => {
+    const params = {
+      page: Faker.datatype.string(),
+    };
+    const reversedPatterns = patterns.slice().reverse();
+    axiosMockAdapter
+      .onGet(API_ROUTES.patterns, { params })
+      .replyOnce(200, { data: patterns, meta });
+
+    const wrapper = factory();
+
+    await wrapper.vm.fetchPatternsList({ params });
+
+    axiosMockAdapter
+      .onGet(API_ROUTES.patterns, { params })
+      .replyOnce(200, { data: reversedPatterns, meta });
+
+    await wrapper.vm.fetchPatternsListWithPreviousParams();
+
+    expect(wrapper.vm.patternsMeta).toEqual(meta);
+    expect(wrapper.vm.patterns).toEqual(reversedPatterns);
   });
 });
