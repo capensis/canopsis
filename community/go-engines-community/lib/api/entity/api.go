@@ -56,7 +56,6 @@ func NewApi(
 }
 
 // List
-// @Param request query ListRequestWithPagination true "request"
 // @Success 200 {object} common.PaginatedListResponse{data=[]Entity}
 func (a *api) List(c *gin.Context) {
 	var query ListRequestWithPagination
@@ -170,8 +169,6 @@ func (a *api) DownloadExport(c *gin.Context) {
 	c.File(t.File)
 }
 
-// Clean
-// @Param request query CleanRequest true "request"
 func (a *api) Clean(c *gin.Context) {
 	var r CleanRequest
 	if err := c.ShouldBindJSON(&r); err != nil {

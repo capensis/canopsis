@@ -54,7 +54,6 @@ func NewApi(
 }
 
 // List
-// @Param request query ListRequestWithPagination true "request"
 // @Success 200 {object} common.PaginatedListResponse{data=[]Alarm}
 func (a *api) List(c *gin.Context) {
 	var r ListRequestWithPagination
@@ -85,7 +84,6 @@ func (a *api) List(c *gin.Context) {
 }
 
 // Count
-// @Param request query FilterRequest true "request"
 // @Success 200 {object} Count
 func (a *api) Count(c *gin.Context) {
 	var r FilterRequest

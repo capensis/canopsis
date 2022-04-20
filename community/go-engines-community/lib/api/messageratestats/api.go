@@ -24,7 +24,6 @@ func NewApi(
 }
 
 // List
-// @Param request query ListRequest true "request"
 // @Success 200 {object} StatsListResponse
 func (a *api) List(c *gin.Context) {
 	var r = ListRequest{}
