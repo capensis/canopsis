@@ -49,9 +49,6 @@ describe('alarm-column-cell', () => {
     'v.status.t',
     'v.resolved',
     't',
-    'v.active_duration',
-    'v.snooze_duration',
-    'v.pbh_inactive_duration',
   ])('Default filter for date field: "%s" converted value to time', async (field) => {
     const column = {
       value: field,
@@ -63,10 +60,7 @@ describe('alarm-column-cell', () => {
           t: timestamp,
           v: {
             last_update_date: timestamp,
-            active_duration: timestamp,
-            snooze_duration: timestamp,
             creation_date: timestamp,
-            pbh_inactive_duration: timestamp,
             last_event_date: timestamp,
             activation_date: timestamp,
             resolved: timestamp,
@@ -91,6 +85,9 @@ describe('alarm-column-cell', () => {
   it.each([
     'v.duration',
     'v.current_state_duration',
+    'v.active_duration',
+    'v.snooze_duration',
+    'v.pbh_inactive_duration',
   ])('Default filter for duration field: "%s" converted value to duration', async (field) => {
     const column = {
       value: field,
@@ -100,8 +97,11 @@ describe('alarm-column-cell', () => {
       propsData: {
         alarm: {
           v: {
-            current_state_duration: duration,
             duration,
+            current_state_duration: duration,
+            active_duration: duration,
+            snooze_duration: duration,
+            pbh_inactive_duration: duration,
           },
         },
         widget: {},
