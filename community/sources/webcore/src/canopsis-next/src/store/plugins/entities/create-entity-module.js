@@ -112,7 +112,7 @@ export default ({
   };
 
   if (withFetchingParams) {
-    moduleMutations[types.FETCH_LIST] = (state, { params }) => {
+    moduleMutations[types.FETCH_LIST] = (state, { params } = {}) => {
       state.pending = true;
       state.fetchingParams = params;
     };
