@@ -380,7 +380,6 @@ export default {
   .alarms-list-table {
     tbody {
       position: relative;
-      z-index: 1;
     }
 
     thead {
