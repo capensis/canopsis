@@ -23,19 +23,9 @@ func NewApi(
 	}
 }
 
-// Find message rate stats
-// @Summary Find message rate stats
-// @Description Get paginated list of stats
-// @Tags message-rate-stats
-// @ID message-rate-stats-find-all
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
+// List
 // @Param request query ListRequest true "request"
 // @Success 200 {object} StatsListResponse
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /message-rate-stats [get]
 func (a *api) List(c *gin.Context) {
 	var r = ListRequest{}
 
