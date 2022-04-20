@@ -116,10 +116,7 @@ paths:
           in: query
           schema:
             type: boolean
-        - name: search
-          in: query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/search'
         - name: time_field
           in: query
           schema:
@@ -313,10 +310,7 @@ paths:
             type: array
             items:
               type: string
-        - name: limit
-          in: query
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/limit'
         - name: manual
           in: query
           schema:
@@ -333,18 +327,12 @@ paths:
           in: query
           schema:
             type: boolean
-        - name: page
-          in: query
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/page'
         - name: paginate
           in: query
           schema:
             type: boolean
-        - name: search
-          in: query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/search'
         - name: sort_dir
           in: query
           schema:
@@ -509,23 +497,9 @@ paths:
       description: Get paginated list of broadcast-message
       operationId: broadcast-messages-find-all
       parameters:
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
-        - name: search
-          in: query
-          description: search query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
       responses:
         200:
           description: OK
@@ -1442,30 +1416,18 @@ paths:
           in: query
           schema:
             type: string
-        - name: limit
-          in: query
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/limit'
         - name: no_events
           in: query
           schema:
             type: boolean
-        - name: page
-          in: query
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/page'
         - name: paginate
           in: query
           schema:
             type: boolean
-        - name: search
-          in: query
-          schema:
-            type: string
-        - name: sort
-          in: query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
         - name: sort_by
           in: query
           schema:
@@ -1566,28 +1528,10 @@ paths:
       description: Get paginated list of entity categories
       operationId: entity-categories-find-all
       parameters:
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
-        - name: search
-          in: query
-          description: search query
-          schema:
-            type: string
-        - name: sort
-          in: query
-          description: sort query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
         - name: sort_by
           in: query
           description: sort query
@@ -1962,18 +1906,8 @@ paths:
           required: true
           schema:
             type: string
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
       responses:
         200:
           description: OK
@@ -2011,18 +1945,8 @@ paths:
           required: true
           schema:
             type: string
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
       responses:
         200:
           description: OK
@@ -2351,23 +2275,9 @@ paths:
       description: Get paginated list of eventfilter
       operationId: eventfilters-find-all
       parameters:
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
-        - name: search
-          in: query
-          description: search query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
       responses:
         200:
           description: OK
@@ -2671,23 +2581,9 @@ paths:
       description: Get paginated list of flapping rule
       operationId: flappingrules-find-all
       parameters:
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
-        - name: search
-          in: query
-          description: search query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
       responses:
         200:
           description: OK
@@ -2845,28 +2741,10 @@ paths:
       description: Get paginated list of idle rules
       operationId: idlerules-find-all
       parameters:
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
-        - name: search
-          in: query
-          description: search query
-          schema:
-            type: string
-        - name: sort
-          in: query
-          description: sort query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
         - name: sort_by
           in: query
           description: sort query
@@ -3192,18 +3070,8 @@ paths:
       description: Get notification settings
       operationId: notification-get
       parameters:
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
       responses:
         200:
           description: OK
@@ -3327,28 +3195,10 @@ paths:
       description: Get paginated list of behavior exceptions
       operationId: pbehavior-exceptions-find-all
       parameters:
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
-        - name: search
-          in: query
-          description: search query
-          schema:
-            type: string
-        - name: sort
-          in: query
-          description: sort query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
         - name: sort_by
           in: query
           description: sort query
@@ -3553,28 +3403,10 @@ paths:
       description: Get paginated list of behavior reasons
       operationId: pbehavior-reasons-find-all
       parameters:
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
-        - name: search
-          in: query
-          description: search query
-          schema:
-            type: string
-        - name: sort
-          in: query
-          description: sort query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
         - name: sort_by
           in: query
           description: sort query
@@ -3779,28 +3611,10 @@ paths:
       description: Get paginated list of behavior types
       operationId: pbehavior-types-find-all
       parameters:
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
-        - name: search
-          in: query
-          description: search query
-          schema:
-            type: string
-        - name: sort
-          in: query
-          description: sort query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
         - name: sort_by
           in: query
           description: sort query
@@ -3974,28 +3788,10 @@ paths:
       description: Get paginated list of pbehaviors
       operationId: pbehaviors-find-all
       parameters:
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
-        - name: search
-          in: query
-          description: search query
-          schema:
-            type: string
-        - name: sort
-          in: query
-          description: sort query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
         - name: sort_by
           in: query
           description: sort query
@@ -4206,28 +4002,10 @@ paths:
           required: true
           schema:
             type: string
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
-        - name: search
-          in: query
-          description: search query
-          schema:
-            type: string
-        - name: sort
-          in: query
-          description: sort query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
         - name: sort_by
           in: query
           description: sort query
@@ -4306,28 +4084,10 @@ paths:
       description: Get paginated list of permissions
       operationId: permissions-find-all
       parameters:
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
-        - name: search
-          in: query
-          description: search query
-          schema:
-            type: string
-        - name: sort
-          in: query
-          description: sort query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
         - name: sort_by
           in: query
           description: sort query
@@ -4364,28 +4124,10 @@ paths:
       description: Get paginated list of playlist
       operationId: playlists-find-all
       parameters:
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
-        - name: search
-          in: query
-          description: search query
-          schema:
-            type: string
-        - name: sort
-          in: query
-          description: sort query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
         - name: sort_by
           in: query
           description: sort query
@@ -4548,23 +4290,9 @@ paths:
       description: Get paginated list of resolve rule
       operationId: resolverules-find-all
       parameters:
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
-        - name: search
-          in: query
-          description: search query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
       responses:
         200:
           description: OK
@@ -4722,28 +4450,10 @@ paths:
       description: Get paginated list of roles
       operationId: roles-find-all
       parameters:
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
-        - name: search
-          in: query
-          description: search query
-          schema:
-            type: string
-        - name: sort
-          in: query
-          description: sort query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
         - name: sort_by
           in: query
           description: sort query
@@ -4906,28 +4616,10 @@ paths:
       description: Get paginated list of scenarios
       operationId: scenarios-find-all
       parameters:
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
-        - name: search
-          in: query
-          description: search query
-          schema:
-            type: string
-        - name: sort
-          in: query
-          description: sort query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
         - name: sort_by
           in: query
           description: sort query
@@ -5137,18 +4829,8 @@ paths:
       description: Get paginated list of state settings
       operationId: state-settings-list
       parameters:
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
       responses:
         200:
           description: OK
@@ -5283,28 +4965,10 @@ paths:
       description: Get paginated list of users
       operationId: users-find-all
       parameters:
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
-        - name: search
-          in: query
-          description: search query
-          schema:
-            type: string
-        - name: sort
-          in: query
-          description: sort query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
         - name: permission
           in: query
           description: role permission
@@ -5472,28 +5136,10 @@ paths:
       description: Get paginated list of view groups
       operationId: viewgroups-find-all
       parameters:
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
-        - name: search
-          in: query
-          description: search query
-          schema:
-            type: string
-        - name: sort
-          in: query
-          description: sort query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
         - name: sort_by
           in: query
           description: sort query
@@ -5690,28 +5336,10 @@ paths:
       description: Get paginated list of views
       operationId: views-find-all
       parameters:
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
-        - name: search
-          in: query
-          description: search query
-          schema:
-            type: string
-        - name: sort
-          in: query
-          description: sort query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
         - name: sort_by
           in: query
           description: sort query
@@ -5874,28 +5502,14 @@ paths:
       description: Get paginated list of services
       operationId: weather-services-find-all
       parameters:
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
         - name: filter
           in: query
           description: filter query
           schema:
             type: string
-        - name: sort
-          in: query
-          description: sort query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/sort'
         - name: sort_by
           in: query
           description: sort query
@@ -5943,23 +5557,9 @@ paths:
           required: true
           schema:
             type: string
-        - name: page
-          in: query
-          description: current page
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          description: items per page
-          required: true
-          schema:
-            type: integer
-        - name: sort
-          in: query
-          description: sort query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
         - name: sort_by
           in: query
           description: sort query
@@ -5994,6 +5594,39 @@ paths:
         - BearerAuth: [ ]
         - BasicAuth: [ ]
 components:
+  parameters:
+    page:
+      name: page
+      in: query
+      description: current page
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+    limit:
+      name: limit
+      in: query
+      description: items per page
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+    search:
+      name: search
+      in: query
+      description: search query
+      schema:
+        type: string
+    sort:
+      name: sort
+      in: query
+      description: sort query
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+  
   schemas:
     event.Event:
       type: object
