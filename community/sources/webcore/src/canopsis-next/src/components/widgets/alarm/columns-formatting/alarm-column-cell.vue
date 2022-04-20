@@ -142,7 +142,7 @@ export default {
         ...this.columnsFiltersMap,
       };
 
-      return PROPERTIES_FILTERS_MAP[this.column.value];
+      return this.$i18n.locale && PROPERTIES_FILTERS_MAP[this.column.value];
     },
 
     component() {
