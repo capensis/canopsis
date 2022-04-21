@@ -72,7 +72,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
   <div
     class="layout alarms-list__top-pagination white px-4 row wrap align-center"
   >
-    <c-density-btn-toggle />
+    <c-density-btn-toggle-stub />
     <c-pagination-stub
       limit="13"
       total="10"
