@@ -254,11 +254,11 @@ export default {
 </script>
 
 <style lang="scss">
-$densePadding: 10px;
+$densePadding: 6px;
 $denseCellHeight: 32px;
 $denseColorIndicatorPadding: 1px 5px;
 
-.v-datatable {
+table.v-datatable {
   &-header__sort-badge {
     display: inline-flex;
     justify-content: center;
@@ -273,21 +273,23 @@ $denseColorIndicatorPadding: 1px 5px;
     color: rgba(0, 0, 0, .87);
   }
 
-  &--dense {
-    td, th {
-      padding: 0 $densePadding !important;
-    }
-
-    td:not(.v-datatable__expand-col) {
-      height: $denseCellHeight !important;
-
-      .v-btn {
-        margin-top: 0;
-        margin-bottom: 0;
+  &--dense.v-datatable {
+    tbody, thead {
+      td, th {
+        padding: 0 $densePadding;
       }
 
-      .color-indicator {
-        padding: $denseColorIndicatorPadding;
+      td:not(.v-datatable__expand-col) {
+        height: $denseCellHeight;
+
+        .v-btn {
+          margin-top: 0;
+          margin-bottom: 0;
+        }
+
+        .color-indicator {
+          padding: $denseColorIndicatorPadding;
+        }
       }
     }
   }
