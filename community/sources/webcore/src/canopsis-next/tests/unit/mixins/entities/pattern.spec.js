@@ -77,6 +77,41 @@ describe('Entities pattern mixin', () => {
     expect(wrapper.vm.patterns).toEqual(patterns);
   });
 
+  test('Patterns list fetched with error', async () => {
+    const error = Faker.datatype.string();
+    const params = {
+      page: Faker.datatype.string(),
+    };
+    axiosMockAdapter
+      .onGet(API_ROUTES.patterns, { params })
+      .replyOnce(200, { data: patterns, meta });
+
+    const wrapper = factory();
+
+    await wrapper.vm.fetchPatternsList({ params });
+
+    axiosMockAdapter
+      .onGet(API_ROUTES.patterns, { params })
+      .reply(400, error);
+
+    const originalError = console.error;
+    console.error = jest.fn();
+
+    try {
+      await wrapper.vm.fetchPatternsList({ params });
+    } catch (err) {
+      expect(err).toEqual(error);
+    }
+
+    expect(console.error).toBeCalledWith(error);
+
+    expect(wrapper.vm.patternsPending).toBe(false);
+    expect(wrapper.vm.patternsMeta).toEqual(meta);
+    expect(wrapper.vm.patterns).toEqual(patterns);
+
+    console.error = originalError;
+  });
+
   test('Patterns list fetched with previous params', async () => {
     const params = {
       page: Faker.datatype.string(),
