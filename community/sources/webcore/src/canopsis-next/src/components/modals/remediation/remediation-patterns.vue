@@ -59,8 +59,8 @@ export default {
     return {
       form: {
         ...filterPatternsToForm(instruction),
-        active_on_pbh: instruction.active_on_pbh ?? [],
-        disabled_on_pbh: instruction.disabled_on_pbh ?? [],
+        active_on_pbh: instruction?.active_on_pbh ?? [],
+        disabled_on_pbh: instruction?.disabled_on_pbh ?? [],
       },
     };
   },
