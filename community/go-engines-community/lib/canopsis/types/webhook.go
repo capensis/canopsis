@@ -6,20 +6,13 @@ import (
 	"fmt"
 )
 
-type WebhookParameters struct {
-	Request       WebhookRequest        `bson:"request" json:"request"`
-	DeclareTicket *WebhookDeclareTicket `bson:"declare_ticket,omitempty" json:"declare_ticket,omitempty" mapstructure:"declare_ticket,omitempty"`
-	RetryCount    int64                 `bson:"retry_count,omitempty" json:"retry_count,omitempty" mapstructure:"retry_count"`
-	RetryDelay    *DurationWithUnit     `bson:"retry_delay,omitempty" json:"retry_delay,omitempty" mapstructure:"retry_delay"`
-}
-
 type WebhookRequest struct {
-	URL        string            `bson:"url" json:"url"`
-	Method     string            `bson:"method" json:"method"`
+	URL        string            `bson:"url" json:"url" binding:"required,url"`
+	Method     string            `bson:"method" json:"method" binding:"required"`
 	Auth       *WebhookBasicAuth `bson:"auth,omitempty" json:"auth,omitempty"`
 	Headers    map[string]string `bson:"headers,omitempty" json:"headers,omitempty"`
 	Payload    string            `bson:"payload,omitempty" json:"payload,omitempty"`
-	SkipVerify bool              `bson:"skip_verify" json:"skip_verify" mapstructure:"skip_verify"`
+	SkipVerify bool              `bson:"skip_verify" json:"skip_verify"`
 }
 
 type WebhookBasicAuth struct {
@@ -28,10 +21,10 @@ type WebhookBasicAuth struct {
 }
 
 type WebhookDeclareTicket struct {
-	EmptyResponse bool              `bson:"empty_response" json:"empty_response" mapstructure:"empty_response"`
-	TicketID      string            `bson:"ticket_id" json:"ticket_id" mapstructure:"ticket_id"`
-	IsRegexp      bool              `bson:"is_regexp" json:"is_regexp" mapstructure:"is_regexp"`
-	Fields        map[string]string `bson:",inline" mapstructure:",remain"`
+	EmptyResponse bool              `bson:"empty_response" json:"empty_response"`
+	TicketID      string            `bson:"ticket_id" json:"ticket_id"`
+	IsRegexp      bool              `bson:"is_regexp" json:"is_regexp"`
+	Fields        map[string]string `bson:",inline"`
 }
 
 func (t *WebhookDeclareTicket) UnmarshalJSON(b []byte) error {

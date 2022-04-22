@@ -369,7 +369,6 @@ Feature: Bulk create idlerules
           "operation": {
             "type": "snooze",
             "parameters": {
-              "author": "root",
               "output": "test-idle-rule-to-bulk-create-1-operation-output",
               "duration": {
                 "value": 3,
@@ -404,7 +403,6 @@ Feature: Bulk create idlerules
           "operation": {
             "type": "snooze",
             "parameters": {
-              "author": "root",
               "output": "test-idle-rule-to-bulk-create-2-operation-output",
               "duration": {
                 "value": 3,
