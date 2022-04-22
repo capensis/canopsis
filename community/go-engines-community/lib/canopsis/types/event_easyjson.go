@@ -294,6 +294,8 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.Initiator = string(in.String())
 		case "delayed_scenario_id":
 			out.DelayedScenarioID = string(in.String())
+		case "delayed_scenario_data":
+			out.DelayedScenarioData = string(in.String())
 		case "added_to_services":
 			if in.IsNull() {
 				in.Skip()
@@ -641,6 +643,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"delayed_scenario_id\":"
 		out.RawString(prefix)
 		out.String(string(in.DelayedScenarioID))
+	}
+	if in.DelayedScenarioData != "" {
+		const prefix string = ",\"delayed_scenario_data\":"
+		out.RawString(prefix)
+		out.String(string(in.DelayedScenarioData))
 	}
 	if len(in.AddedToServices) != 0 {
 		const prefix string = ",\"added_to_services\":"

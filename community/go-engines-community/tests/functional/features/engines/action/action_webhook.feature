@@ -4,7 +4,7 @@ Feature: execute action on trigger
   Scenario: given scenario and check event should update alarm
     Given I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-action-webhook-1-name",
       "enabled": true,
@@ -34,7 +34,7 @@ Feature: execute action on trigger
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"{{ `{{ .Entity.ID }}` }}\",\"enabled\":true,\"priority\":41,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-webhook-1-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\":\"test-scenario-action-webhook-1 {{ `{{ .Entity.ID }}` }}\",\"enabled\":true,\"priority\":41,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-webhook-1-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "empty_response": false,
@@ -52,7 +52,7 @@ Feature: execute action on trigger
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-action-webhook-1",
       "connector_name" : "test-connector-name-action-webhook-1",
@@ -68,15 +68,16 @@ Feature: execute action on trigger
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-action-webhook-1"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
           "v": {
             "ticket": {
               "_t": "declareticket",
+              "a": "system",
               "data": {
-                "scenario_name": "test-resource-action-webhook-1/test-component-action-webhook-1"
+                "scenario_name": "test-scenario-action-webhook-1 test-resource-action-webhook-1/test-component-action-webhook-1"
               }
             },
             "steps": [
@@ -87,7 +88,9 @@ Feature: execute action on trigger
                 "_t": "statusinc"
               },
               {
-                "_t": "declareticket"
+                "_t": "declareticket",
+                "a": "system",
+                "user_id": ""
               }
             ],
             "connector": "test-connector-action-webhook-1",
@@ -109,7 +112,7 @@ Feature: execute action on trigger
   Scenario: given scenario and check event should emit declare ticket trigger
     Given I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-action-webhook-2-1-name",
       "enabled": true,
@@ -131,6 +134,8 @@ Feature: execute action on trigger
           ],
           "type": "webhook",
           "parameters": {
+            "forward_author": true,
+            "author": "test-scenario-action-webhook-2-action-1-author {{ `{{ .Alarm.Value.Resource }}` }}",
             "request": {
               "method": "POST",
               "url": "{{ .apiURL }}/api/v4/scenarios",
@@ -139,7 +144,7 @@ Feature: execute action on trigger
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"test-scenario-action-webhook-2\",\"enabled\":true,\"priority\":42,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-webhook-2-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\":\"test-scenario-action-webhook-2 {{ `{{ .Alarm.Value.Resource }}` }}\",\"enabled\":true,\"priority\":42,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-webhook-2-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "empty_response": false,
@@ -156,7 +161,7 @@ Feature: execute action on trigger
     """
     Then the response code should be 201
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-action-webhook-2-2-name",
       "enabled": true,
@@ -186,7 +191,7 @@ Feature: execute action on trigger
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-action-webhook-2",
       "connector_name" : "test-connector-name-action-webhook-2",
@@ -202,13 +207,17 @@ Feature: execute action on trigger
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-action-webhook-2"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
           "v": {
             "ticket": {
-              "_t": "declareticket"
+              "_t": "declareticket",
+              "a": "root",
+              "data": {
+                "scenario_name": "test-scenario-action-webhook-2 test-resource-action-webhook-2"
+              }
             },
             "ack": {
               "_t": "ack"
@@ -221,7 +230,9 @@ Feature: execute action on trigger
                 "_t": "statusinc"
               },
               {
-                "_t": "declareticket"
+                "_t": "declareticket",
+                "a": "root",
+                "user_id": "root"
               },
               {
                 "_t": "ack"
@@ -246,7 +257,7 @@ Feature: execute action on trigger
   Scenario: given scenario and ack resources event should update resource alarms
     Given I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-action-webhook-3-name",
       "enabled": true,
@@ -294,7 +305,7 @@ Feature: execute action on trigger
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-action-webhook-3",
       "connector_name" : "test-connector-name-action-webhook-3",
@@ -307,7 +318,7 @@ Feature: execute action on trigger
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-action-webhook-3",
       "connector_name" : "test-connector-name-action-webhook-3",
@@ -321,7 +332,7 @@ Feature: execute action on trigger
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-action-webhook-3",
       "connector_name" : "test-connector-name-action-webhook-3",
@@ -336,7 +347,7 @@ Feature: execute action on trigger
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-component-action-webhook-3"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -378,7 +389,7 @@ Feature: execute action on trigger
     When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-action-webhook-3/test-component-action-webhook-3"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -422,7 +433,7 @@ Feature: execute action on trigger
   Scenario: given webhook scenario to test response and header templates
     Given I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-action-webhook-4-name",
       "enabled": true,
@@ -492,7 +503,7 @@ Feature: execute action on trigger
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-action-webhook-4",
       "connector_name" : "test-connector-name-action-webhook-4",
@@ -508,7 +519,7 @@ Feature: execute action on trigger
     When I do GET /api/v4/scenarios?search=test-scenario-action-webhook-4-webhook
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -534,7 +545,7 @@ Feature: execute action on trigger
   Scenario: given scenario and declareticket event should update alarm
     Given I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-action-webhook-5-name",
       "enabled": true,
@@ -556,6 +567,7 @@ Feature: execute action on trigger
           ],
           "type": "webhook",
           "parameters": {
+            "forward_author": false,
             "request": {
               "method": "POST",
               "url": "{{ .apiURL }}/api/v4/scenarios",
@@ -582,7 +594,7 @@ Feature: execute action on trigger
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-action-webhook-5",
       "connector_name" : "test-connector-name-action-webhook-5",
@@ -596,7 +608,7 @@ Feature: execute action on trigger
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-action-webhook-5",
       "connector_name" : "test-connector-name-action-webhook-5",
@@ -611,13 +623,14 @@ Feature: execute action on trigger
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-action-webhook-5"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
           "v": {
             "ticket": {
               "_t": "declareticket",
+              "a": "system",
               "data": {
                 "scenario_name": "test-resource-action-webhook-5/test-component-action-webhook-5"
               }
@@ -630,7 +643,9 @@ Feature: execute action on trigger
                 "_t": "statusinc"
               },
               {
-                "_t": "declareticket"
+                "_t": "declareticket",
+                "a": "system",
+                "user_id": ""
               }
             ],
             "connector": "test-connector-action-webhook-5",
@@ -652,7 +667,7 @@ Feature: execute action on trigger
   Scenario: given scenarios with 2 actions and webhook should be able to use additional data in template
     Given I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-action-webhook-6-name",
       "enabled": true,
@@ -730,7 +745,7 @@ Feature: execute action on trigger
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-action-webhook-6",
       "connector_name" : "test-connector-name-action-webhook-6",
@@ -747,7 +762,7 @@ Feature: execute action on trigger
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-action-webhook-6"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -755,7 +770,7 @@ Feature: execute action on trigger
             "ticket": {
               "_t": "declareticket",
               "data": {
-                "scenario_name_2": "test-scenario-action-webhook-6-action-2-declareticketwebhook-system-external"
+                "scenario_name_2": "test-scenario-action-webhook-6-action-2-declareticketwebhook-QA_canopsis-external"
               }
             },
             "steps": [
@@ -790,7 +805,7 @@ Feature: execute action on trigger
     When I do GET /api/v4/scenarios?search=test-scenario-action-webhook-6-action-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -822,11 +837,11 @@ Feature: execute action on trigger
     When I do GET /api/v4/scenarios?search=test-scenario-action-webhook-6-action-2
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
-          "name": "test-scenario-action-webhook-6-action-2-declareticketwebhook-system-external",
+          "name": "test-scenario-action-webhook-6-action-2-declareticketwebhook-QA_canopsis-external",
           "enabled": true,
           "triggers": [
             "create"
