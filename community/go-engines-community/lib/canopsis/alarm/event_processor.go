@@ -3,6 +3,7 @@ package alarm
 import (
 	"context"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"runtime/trace"
 	"sync"
 	"time"
@@ -250,7 +251,7 @@ func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event) (t
 		)
 
 		err := alarm.PartialUpdatePbhEnter(event.Timestamp, event.PbehaviorInfo,
-			event.Author, output, event.UserID, event.Role, event.Initiator)
+			canopsis.DefaultEventAuthor, output, "", event.Role, event.Initiator)
 		if err != nil {
 			return changeType, fmt.Errorf("cannot add alarm steps: %w", err)
 		}
@@ -383,7 +384,7 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 			)
 
 			err := alarm.PartialUpdatePbhEnter(event.Timestamp, event.PbehaviorInfo,
-				event.Author, output, event.UserID, event.Role, event.Initiator)
+				canopsis.DefaultEventAuthor, output, "", event.Role, event.Initiator)
 			if err != nil {
 				return changeType, fmt.Errorf("cannot add alarm steps: %w", err)
 			}
@@ -453,52 +454,22 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 }
 
 func (s *eventProcessor) createOperationFromEvent(event *types.Event) types.Operation {
-	var parameters interface{}
+	parameters := types.OperationParameters{
+		Ticket:    event.Ticket,
+		Output:    event.Output,
+		Author:    event.Author,
+		Execution: event.Execution,
+	}
 	switch event.EventType {
-	case types.EventTypeAssocTicket:
-		parameters = types.OperationAssocTicketParameters{
-			Ticket: event.Ticket,
-			Output: event.Output,
-			Author: event.Author,
-		}
 	case types.EventTypeSnooze:
-		parameters = types.OperationSnoozeParameters{
-			Duration: types.DurationWithUnit{
-				Value: int64(event.Duration),
-				Unit:  "s",
-			},
-			Output: event.Output,
-			Author: event.Author,
+		parameters.Duration = &types.DurationWithUnit{
+			Value: int64(event.Duration),
+			Unit:  "s",
 		}
 	case types.EventTypeChangestate, types.EventTypeKeepstate:
-		parameters = types.OperationChangeStateParameters{
-			State:  event.State,
-			Output: event.Output,
-			Author: event.Author,
-		}
+		parameters.State = &event.State
 	case types.EventTypePbhEnter, types.EventTypePbhLeave, types.EventTypePbhLeaveAndEnter:
-		parameters = types.OperationPbhParameters{
-			PbehaviorInfo: event.PbehaviorInfo,
-			Output:        event.Output,
-			Author:        event.Author,
-		}
-	case types.EventTypeInstructionStarted, types.EventTypeInstructionPaused,
-		types.EventTypeInstructionResumed, types.EventTypeInstructionCompleted,
-		types.EventTypeInstructionFailed, types.EventTypeInstructionAborted,
-		types.EventTypeAutoInstructionStarted, types.EventTypeAutoInstructionCompleted,
-		types.EventTypeAutoInstructionFailed,
-		types.EventTypeInstructionJobStarted, types.EventTypeInstructionJobCompleted,
-		types.EventTypeInstructionJobAborted, types.EventTypeInstructionJobFailed:
-		parameters = types.OperationInstructionParameters{
-			Execution: event.Execution,
-			Output:    event.Output,
-			Author:    event.Author,
-		}
-	default:
-		parameters = types.OperationParameters{
-			Output: event.Output,
-			Author: event.Author,
-		}
+		parameters.PbehaviorInfo = &event.PbehaviorInfo
 	}
 
 	return types.Operation{
