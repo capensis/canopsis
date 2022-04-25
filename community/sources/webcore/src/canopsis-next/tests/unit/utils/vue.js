@@ -64,6 +64,15 @@ export const createVueInstance = () => createLocalVue();
  */
 const enhanceWrapper = (wrapper) => {
   wrapper.getValidator = () => wrapper.vm.$validator;
+  wrapper.getValidatorErrorsObject = () => {
+    const { errors = { items: [] } } = wrapper.getValidator();
+
+    return errors.items.reduce((acc, { field, msg }) => {
+      acc[field] = msg;
+
+      return acc;
+    }, {});
+  };
   wrapper.findAllMenus = () => wrapper.findAll('.v-menu__content');
   wrapper.findMenu = () => wrapper.find('.v-menu__content');
   wrapper.findAllTooltips = () => wrapper.findAll('.v-tooltip__content');
