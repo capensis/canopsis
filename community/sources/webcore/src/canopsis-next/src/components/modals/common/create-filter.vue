@@ -20,6 +20,7 @@
 
 <script>
 import { omit } from 'lodash';
+
 import { MODALS, PATTERNS_FIELDS } from '@/constants';
 
 import { filterToForm, formToFilter } from '@/helpers/forms/filter';
