@@ -1,0 +1,208 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-event-filter-type-field Renders \`c-event-filter-type-field\` with custom props 1`] = `
+<div
+  class="v-input v-text-field v-select theme--light"
+  role="combobox"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-select__slot"
+      >
+        <label
+          aria-hidden="true"
+          class="v-label theme--light"
+          style="left: 0px; position: absolute;"
+        >
+          Custom label
+        </label>
+        <div
+          class="v-select__selections"
+        >
+          <input
+            aria-label="Custom label"
+            aria-readonly="false"
+            autocomplete="on"
+            name="customName"
+            readonly="readonly"
+            type="text"
+          />
+        </div>
+        <div
+          class="v-input__append-inner"
+        >
+          <div
+            class="v-input__icon v-input__icon--append"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              arrow_drop_down
+            </i>
+          </div>
+        </div>
+      </div>
+      <div
+        class="v-menu"
+      />
+    </div>
+    <div
+      class="v-text-field__details"
+    >
+      <div
+        class="v-messages theme--light"
+      >
+        <div
+          class="v-messages__wrapper"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-event-filter-type-field Renders \`c-event-filter-type-field\` with default props 1`] = `
+<div
+  class="v-input v-text-field v-select theme--light"
+  role="combobox"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-select__slot"
+      >
+        <label
+          aria-hidden="true"
+          class="v-label theme--light"
+          style="left: 0px; position: absolute;"
+        >
+          Type
+        </label>
+        <div
+          class="v-select__selections"
+        >
+          <input
+            aria-label="Type"
+            aria-readonly="false"
+            autocomplete="on"
+            name="type"
+            readonly="readonly"
+            type="text"
+          />
+        </div>
+        <div
+          class="v-input__append-inner"
+        >
+          <div
+            class="v-input__icon v-input__icon--append"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              arrow_drop_down
+            </i>
+          </div>
+        </div>
+      </div>
+      <div
+        class="v-menu"
+      />
+    </div>
+    <div
+      class="v-text-field__details"
+    >
+      <div
+        class="v-messages theme--light"
+      >
+        <div
+          class="v-messages__wrapper"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-event-filter-type-field Renders \`c-event-filter-type-field\` with errors 1`] = `
+<div
+  class="v-input v-text-field v-select v-input--has-state theme--light error--text"
+  role="combobox"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-select__slot"
+      >
+        <label
+          aria-hidden="true"
+          class="v-label theme--light error--text"
+          style="left: 0px; position: absolute;"
+        >
+          Type
+        </label>
+        <div
+          class="v-select__selections"
+        >
+          <input
+            aria-label="Type"
+            aria-readonly="false"
+            autocomplete="on"
+            name="type"
+            readonly="readonly"
+            type="text"
+          />
+        </div>
+        <div
+          class="v-input__append-inner"
+        >
+          <div
+            class="v-input__icon v-input__icon--append"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light error--text"
+            >
+              arrow_drop_down
+            </i>
+          </div>
+        </div>
+      </div>
+      <div
+        class="v-menu"
+      />
+    </div>
+    <div
+      class="v-text-field__details"
+    >
+      <div
+        class="v-messages theme--light error--text"
+      >
+        <div
+          class="v-messages__wrapper"
+        >
+          <div
+            class="v-messages__message message-transition-enter message-transition-enter-active"
+          >
+            The field is required
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
