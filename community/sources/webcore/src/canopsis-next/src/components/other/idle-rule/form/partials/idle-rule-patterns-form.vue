@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-patterns-field.mt-2(
+  c-patterns-field(
     v-field="form",
     :with-alarm="!isEntityType",
     :alarm-attributes="alarmAttributes",
