@@ -150,18 +150,6 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("entityfilter", fe.StructField())
 		return t
 	})
-	_ = v.RegisterTranslation("eventfilter_patterns_invalid", trans, func(ut ut.Translator) error {
-		return ut.Add("eventfilter_patterns_invalid", "Invalid eventfilter pattern list.", true)
-	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("eventfilter_patterns_invalid", fe.StructField())
-		return t
-	})
-	_ = v.RegisterTranslation("eventfilter_invalid_onsuccess", trans, func(ut ut.Translator) error {
-		return ut.Add("eventfilter_invalid_onsuccess", "Invalid OnSuccess value.", true)
-	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("eventfilter_invalid_onsuccess", fe.StructField())
-		return t
-	})
 	_ = v.RegisterTranslation("url", trans, func(ut ut.Translator) error {
 		return ut.Add("url", "{0} is not an url.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {

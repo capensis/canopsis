@@ -35,7 +35,6 @@ eventfilter:
     created: 1608635535
     description: drop filter
     enabled: true
-    patterns:
     event_pattern: [
       [
         {

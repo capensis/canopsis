@@ -64,10 +64,6 @@ type Rule struct {
 	savedpattern.EntityPatternFields `bson:",inline"`
 }
 
-//func (r Rule) Match(event types.Event) bool {
-//	r.EventPatterns.
-//}
-
 type RuleConfig struct {
 	Resource      string `bson:"resource,omitempty" json:"resource,omitempty"`
 	Component     string `bson:"component,omitempty" json:"component,omitempty"`
