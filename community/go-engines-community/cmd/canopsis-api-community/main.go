@@ -1,6 +1,6 @@
 package main
 
-//go:generate swag init  -d ../../lib -g ../cmd/canopsis-api-community/main.go -o ../../lib/api/docs --outputTypes yaml --instanceName schemas
+//go:generate swag init  -d ../../lib -g ../cmd/canopsis-api-community/$GOFILE -o ../../lib/api/docs --outputTypes yaml --instanceName schemas
 
 import (
 	"context"
