@@ -3,6 +3,7 @@ package eventfilter
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"github.com/gin-gonic/gin/binding"
@@ -20,15 +21,18 @@ import (
 type api struct {
 	store        Store
 	actionLogger logger.ActionLogger
+	transformer  common.PatternFieldsTransformer
 }
 
 func NewApi(
 	store Store,
 	actionLogger logger.ActionLogger,
+	transformer common.PatternFieldsTransformer,
 ) common.BulkCrudAPI {
 	return &api{
 		store:        store,
 		actionLogger: actionLogger,
+		transformer:  transformer,
 	}
 }
 
@@ -47,12 +51,26 @@ func NewApi(
 // @Router /eventfilter/rules [post]
 func (a api) Create(c *gin.Context) {
 	var request CreateRequest
-	if err := c.ShouldBindJSON(&request); err != nil {
+	var err error
+
+	if err = c.ShouldBindJSON(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	eventfilter, err := a.store.Insert(c.Request.Context(), request)
+	ctx := c.Request.Context()
+
+	err = a.transformEditRequest(ctx, &request.EditRequest)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
+	}
+
+	eventfilter, err := a.store.Insert(ctx, request)
 	if err != nil {
 		panic(err)
 	}
@@ -158,7 +176,20 @@ func (a api) Update(c *gin.Context) {
 	}
 
 	request.ID = c.Param("id")
-	eventfilter, err := a.store.Update(c.Request.Context(), request)
+
+	ctx := c.Request.Context()
+
+	err := a.transformEditRequest(ctx, &request.EditRequest)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
+	}
+
+	eventfilter, err := a.store.Update(ctx, request)
 	if err != nil {
 		panic(err)
 	}
@@ -272,6 +303,18 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
+		err = a.transformEditRequest(ctx, &request.EditRequest)
+		if err != nil {
+			valErr := common.ValidationError{}
+			if errors.As(err, &valErr) {
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
+				continue
+			}
+
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
 		eventfilter, err := a.store.Insert(ctx, request)
 		if err != nil {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
@@ -348,6 +391,18 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		err = binding.Validator.ValidateStruct(request)
 		if err != nil {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
+			continue
+		}
+
+		err = a.transformEditRequest(ctx, &request.EditRequest)
+		if err != nil {
+			valErr := common.ValidationError{}
+			if errors.As(err, &valErr) {
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
+				continue
+			}
+
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
 			continue
 		}
 
@@ -459,4 +514,11 @@ func (a *api) BulkDelete(c *gin.Context) {
 	}
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+}
+
+func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
+	var err error
+
+	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.EntityPatternFieldsRequest)
+	return err
 }

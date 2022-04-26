@@ -15,8 +15,17 @@ eventfilter:
     external_data:
       entity:
         type: entity
-    patterns:
-    - resource: test-eventfilter-to-get-1-pattern
+    event_pattern: [
+      [
+        {
+          field: resource,
+          cond: {
+            type: eq,
+            value: test-eventfilter-to-get-1-pattern
+          }
+        }
+      ]
+    ]
     priority: 0
     type: enrichment
     updated: 1608285370
@@ -27,7 +36,17 @@ eventfilter:
     description: drop filter
     enabled: true
     patterns:
-    - resource: test-eventfilter-to-get-2-pattern
+    event_pattern: [
+      [
+        {
+          field: resource,
+          cond: {
+            type: eq,
+            value: test-eventfilter-to-get-2-pattern
+          }
+        }
+      ]
+    ]
     priority: 1
     type: drop
     updated: 1608635535
@@ -37,122 +56,314 @@ eventfilter:
     created: 1608635535
     description: break filter
     enabled: true
-    patterns:
-    - resource: test-eventfilter-to-get-3-pattern
+    event_pattern: [
+      [
+        {
+          field: resource,
+          cond: {
+            type: eq,
+            value: test-eventfilter-to-get-3-pattern
+          }
+        }
+      ]
+    ]
     priority: 2
     type: break
     updated: 1608635535
   eventfilter_4:
-    _id: test-eventfilter-to-update
+    _id: test-eventfilter-to-update-1
     author: root
     created: 1608635535
     description: break filter
     enabled: true
-    patterns:
-    - resource: test-eventfilter-to-update-pattern
+    event_pattern: [
+      [
+        {
+          field: resource,
+          cond: {
+            type: eq,
+            value: test-eventfilter-to-update-pattern
+          }
+        }
+      ]
+    ]
     priority: 3
     type: break
     updated: 1608635535
   eventfilter_5:
+    _id: test-eventfilter-to-update-2
+    author: root
+    created: 1608635535
+    description: break filter
+    enabled: true
+    event_pattern: [
+      [
+        {
+          field: resource,
+          cond: {
+            type: eq,
+            value: test-eventfilter-to-update-pattern
+          }
+        }
+      ]
+    ]
+    entity_pattern: [
+      [
+        {
+          field: name,
+          cond: {
+            type: eq,
+            value: test-eventfilter-update-2-pattern
+          }
+        }
+      ]
+    ]
+    priority: 3
+    type: break
+    updated: 1608635535
+  eventfilter_6:
+    _id: test-eventfilter-to-update-3
+    author: root
+    created: 1608635535
+    description: break filter
+    enabled: true
+    event_pattern: [
+      [
+        {
+          field: resource,
+          cond: {
+            type: eq,
+            value: test-eventfilter-to-update-pattern
+          }
+        }
+      ]
+    ]
+    entity_pattern: [
+      [
+        {
+          field: name,
+          cond: {
+            type: eq,
+            value: test-eventfilter-update-3-pattern
+          }
+        }
+      ]
+    ]
+    priority: 3
+    type: break
+    updated: 1608635535
+  eventfilter_7:
+    _id: test-eventfilter-to-update-4
+    author: root
+    created: 1608635535
+    description: break filter
+    enabled: true
+    event_pattern: [
+      [
+        {
+          field: resource,
+          cond: {
+            type: eq,
+            value: test-eventfilter-to-update-pattern
+          }
+        }
+      ]
+    ]
+    entity_pattern: [
+      [
+        {
+          field: name,
+          cond: {
+            type: eq,
+            value: test-eventfilter-update-4-pattern
+          }
+        }
+      ]
+    ]
+    priority: 3
+    type: break
+    updated: 1608635535
+  eventfilter_8:
     _id: test-eventfilter-bulk-update-1
     author: root
     created: 1608635535
     description: break filter
     enabled: true
-    patterns:
-    - resource: test-eventfilter-bulk-update-1-pattern
+    event_pattern: [
+      [
+        {
+          field: resource,
+          cond: {
+            type: eq,
+            value: test-eventfilter-bulk-update-1-pattern
+          }
+        }
+      ]
+    ]
     priority: 3
     type: break
     updated: 1608635535
-  eventfilter_6:
+  eventfilter_9:
     _id: test-eventfilter-bulk-update-2
     author: root
     created: 1608635535
     description: break filter
     enabled: true
-    patterns:
-    - resource: test-eventfilter-bulk-update-2-pattern
+    event_pattern: [
+      [
+        {
+          field: resource,
+          cond: {
+            type: eq,
+            value: test-eventfilter-bulk-update-2-pattern
+          }
+        }
+      ]
+    ]
     priority: 3
     type: break
     updated: 1608635535
-  eventfilter_7:
+  eventfilter_10:
     _id: test-eventfilter-bulk-update-3
     author: root
     created: 1608635535
     description: break filter
     enabled: true
-    patterns:
-    - resource: test-eventfilter-bulk-update-3-pattern
+    event_pattern: [
+      [
+        {
+          field: resource,
+          cond: {
+            type: eq,
+            value: test-eventfilter-bulk-update-3-pattern
+          }
+        }
+      ]
+    ]
     priority: 3
     type: break
     updated: 1608635535
-  eventfilter_8:
+  eventfilter_11:
     _id: test-eventfilter-bulk-update-4
     author: root
     created: 1608635535
     description: break filter
     enabled: true
-    patterns:
-    - resource: test-eventfilter-bulk-update-4-pattern
+    event_pattern: [
+      [
+        {
+          field: resource,
+          cond: {
+            type: eq,
+            value: test-eventfilter-bulk-update-4-pattern
+          }
+        }
+      ]
+    ]
     priority: 3
     type: break
     updated: 1608635535
-  eventfilter_9:
+  eventfilter_12:
     _id: test-eventfilter-bulk-update-5
     author: root
     created: 1608635535
     description: break filter
     enabled: true
-    patterns:
-    - resource: test-eventfilter-bulk-update-5-pattern
+    event_pattern: [
+      [
+        {
+          field: resource,
+          cond: {
+            type: eq,
+            value: test-eventfilter-bulk-update-5-pattern
+          }
+        }
+      ]
+    ]
     priority: 3
     type: break
     updated: 1608635535
-  eventfilter_10:
+  eventfilter_13:
     _id: test-eventfilter-to-delete
     author: root
     created: 1608635535
     description: break filter
     enabled: true
-    patterns:
-    - resource: test-eventfilter-to-delete-pattern
+    event_pattern: [
+      [
+        {
+          field: resource,
+          cond: {
+            type: eq,
+            value: test-eventfilter-to-delete-pattern
+          }
+        }
+      ]
+    ]
     priority: 4
     type: break
     updated: 1608635535
-  eventfilter_11:
+  eventfilter_14:
     _id: test-eventfilter-to-bulk-delete-1
     author: root
     created: 1608635535
     description: break filter
     enabled: true
-    patterns:
-    - resource: test-eventfilter-to-bulk-delete-1-pattern
+    event_pattern: [
+      [
+        {
+          field: resource,
+          cond: {
+            type: eq,
+            value: test-eventfilter-bulk-delete-1-pattern
+          }
+        }
+      ]
+    ]
     priority: 4
     type: break
     updated: 1608635535
-  eventfilter_12:
+  eventfilter_15:
     _id: test-eventfilter-to-bulk-delete-2
     author: root
     created: 1608635535
     description: break filter
     enabled: true
-    patterns:
-    - resource: test-eventfilter-to-bulk-delete-2-pattern
+    event_pattern: [
+      [
+        {
+          field: resource,
+          cond: {
+            type: eq,
+            value: test-eventfilter-bulk-delete-2-pattern
+          }
+        }
+      ]
+    ]
     priority: 4
     type: break
     updated: 1608635535
-  eventfilter_13:
+  eventfilter_16:
     _id: test-eventfilter-check-id
     author: root
     created: 1608635535
     description: break filter
     enabled: true
-    patterns:
-    - resource: test-eventfilter-check-id-pattern
+    event_pattern: [
+      [
+        {
+          field: resource,
+          cond: {
+            type: eq,
+            value: test-eventfilter-check-id-pattern
+          }
+        }
+      ]
+    ]
     priority: 5
     type: break
     updated: 1608635535
-  eventfilter_14:
+  eventfilter_17:
     _id: test-update-change-entity
     author: root
     config:
@@ -160,8 +371,17 @@ eventfilter:
     created: 1608635535
     description: update change_entity
     enabled: true
-    patterns:
-    - resource: never be used change entity update test
+    event_pattern: [
+      [
+        {
+          field: resource,
+          cond: {
+            type: eq,
+            value: never be used change entity update test
+          }
+        }
+      ]
+    ]
     priority: 5
     type: change_entity
     updated: 1608635535

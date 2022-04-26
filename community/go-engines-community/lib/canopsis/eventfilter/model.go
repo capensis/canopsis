@@ -1,8 +1,9 @@
 package eventfilter
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -52,14 +53,20 @@ type Rule struct {
 	Author       string                            `bson:"author" json:"author" swaggerignore:"true"`
 	Description  string                            `bson:"description" json:"description" binding:"required,max=255"`
 	Type         string                            `bson:"type" json:"type" binding:"required,oneof=break drop enrichment change_entity"`
-	Patterns     pattern.EventPatternList          `bson:"patterns" json:"patterns"`
 	Priority     int                               `bson:"priority" json:"priority"`
 	Enabled      bool                              `bson:"enabled" json:"enabled"`
 	Config       RuleConfig                        `bson:"config" json:"config"`
 	ExternalData map[string]ExternalDataParameters `bson:"external_data" json:"external_data,omitempty"`
 	Created      *types.CpsTime                    `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated      *types.CpsTime                    `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+
+	EventPatterns                    pattern.Event `json:"event_pattern" bson:"event_pattern"`
+	savedpattern.EntityPatternFields `bson:",inline"`
 }
+
+//func (r Rule) Match(event types.Event) bool {
+//	r.EventPatterns.
+//}
 
 type RuleConfig struct {
 	Resource      string `bson:"resource,omitempty" json:"resource,omitempty"`
@@ -80,8 +87,13 @@ type Action struct {
 	Value       interface{} `bson:"value" json:"value"`
 }
 
+type RegexMatch struct {
+	pattern.EventRegexMatches
+	Entity pattern.EntityRegexMatches
+}
+
 type TemplateParameters struct {
 	Event        types.Event
-	RegexMatch   pattern.EventRegexMatches
+	RegexMatch   RegexMatch
 	ExternalData map[string]interface{}
 }
