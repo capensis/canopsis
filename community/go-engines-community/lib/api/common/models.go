@@ -114,12 +114,22 @@ func NewValidationErrorResponse(err error, request interface{}) interface{} {
 }
 
 func NewValidationErrorFastJsonValue(ar *fastjson.Arena, err error, request interface{}) *fastjson.Value {
-	var errs validator.ValidationErrors
-	if errors.As(err, &errs) {
+	var validatorErrs validator.ValidationErrors
+	if errors.As(err, &validatorErrs) {
 		value := ar.NewObject()
-		for _, fe := range errs {
+		for _, fe := range validatorErrs {
 			field := transformNamespace(fe.Namespace(), request)
 			value.Set(field, ar.NewString(libvalidator.TranslateError(fe)))
+		}
+
+		return value
+	}
+
+	var commonValidatorErrs ValidationError
+	if errors.As(err, &commonValidatorErrs) {
+		value := ar.NewObject()
+		for k, v := range commonValidatorErrs.ValidationErrorResponse().Errors {
+			value.Set(k, ar.NewString(v))
 		}
 
 		return value
