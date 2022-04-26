@@ -264,6 +264,12 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("regexp", fe.StructField())
 		return t
 	})
+	_ = v.RegisterTranslation("event_pattern", trans, func(ut ut.Translator) error {
+		return ut.Add("event_pattern", "{0} is invalid event pattern.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("event_pattern", fe.StructField())
+		return t
+	})
 	_ = v.RegisterTranslation("alarm_pattern", trans, func(ut ut.Translator) error {
 		return ut.Add("alarm_pattern", "{0} is invalid alarm pattern.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {

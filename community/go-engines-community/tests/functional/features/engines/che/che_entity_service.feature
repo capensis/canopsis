@@ -696,15 +696,35 @@ Feature: create service entity
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "resource": "test-resource-che-service-6",
-        "current_entity": {
-          "infos": {
-            "manager": null
+      "event_pattern": [
+        [
+          {
+            "field": "resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-che-service-6"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
           }
-        }
-      }],
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.manager",
+            "cond": {
+              "type": "exist",
+              "value": false
+            }
+          }
+        ]
+      ],
       "config": {
         "actions": [
           {
@@ -815,15 +835,35 @@ Feature: create service entity
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "resource": "test-resource-che-service-7",
-        "current_entity": {
-          "infos": {
-            "manager": null
+      "event_pattern": [
+        [
+          {
+            "field": "resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-che-service-7"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
           }
-        }
-      }],
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.manager",
+            "cond": {
+              "type": "exist",
+              "value": false
+            }
+          }
+        ]
+      ],
       "config": {
         "actions": [
           {
@@ -916,10 +956,24 @@ Feature: create service entity
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "resource": "test-resource-che-service-7"
-      }],
+      "event_pattern": [
+        [
+          {
+            "field": "resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-che-service-7"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
+          }
+        ]
+      ],
       "config": {
         "actions": [
           {
@@ -1195,15 +1249,35 @@ Feature: create service entity
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "resource": "test-resource-che-service-10",
-        "current_entity": {
-          "infos": {
-            "manager": null
+      "event_pattern": [
+        [
+          {
+            "field": "resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-che-service-10"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
           }
-        }
-      }],
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.manager",
+            "cond": {
+              "type": "exist",
+              "value": false
+            }
+          }
+        ]
+      ],
       "config": {
         "actions": [
           {
@@ -1547,16 +1621,42 @@ Feature: create service entity
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "source_type": "component",
-        "component": "test-component-che-service-13",
-        "current_entity": {
-          "infos": {
-            "manager": null
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-che-service-13"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
+          },
+          {
+            "field": "source_type",
+            "cond": {
+              "type": "eq",
+              "value": "component"
+            }
           }
-        }
-      }],
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.manager",
+            "cond": {
+              "type": "exist",
+              "value": false
+            }
+          }
+        ]
+      ],
       "config": {
         "actions": [
           {
@@ -1692,16 +1792,42 @@ Feature: create service entity
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "source_type": "component",
-        "component": "test-component-che-service-14",
-        "current_entity": {
-          "infos": {
-            "manager": null
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-che-service-14"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
+          },
+          {
+            "field": "source_type",
+            "cond": {
+              "type": "eq",
+              "value": "component"
+            }
           }
-        }
-      }],
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.manager",
+            "cond": {
+              "type": "exist",
+              "value": false
+            }
+          }
+        ]
+      ],
       "config": {
         "actions": [
           {

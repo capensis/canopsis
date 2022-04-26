@@ -67,6 +67,10 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	if err != nil {
 		panic(err)
 	}
+	err = v.RegisterValidation("event_pattern", common.ValidateEventPattern)
+	if err != nil {
+		panic(err)
+	}
 	err = v.RegisterValidation("alarm_pattern", common.ValidateAlarmPattern)
 	if err != nil {
 		panic(err)

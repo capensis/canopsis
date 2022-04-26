@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"text/template"
 )
@@ -19,7 +18,7 @@ func NewChangeEntityApplicator(externalDataContainer *ExternalDataContainer) Rul
 	return &changeEntityApplicator{externalDataContainer: externalDataContainer, buf: bytes.Buffer{}}
 }
 
-func (a *changeEntityApplicator) Apply(ctx context.Context, rule Rule, event types.Event, regexMatch pattern.EventRegexMatches, cfgTimezone *config.TimezoneConfig) (string, types.Event, error) {
+func (a *changeEntityApplicator) Apply(ctx context.Context, rule Rule, event types.Event, regexMatch RegexMatch, cfgTimezone *config.TimezoneConfig) (string, types.Event, error) {
 	externalData, err := a.getExternalData(ctx, rule, event, regexMatch, cfgTimezone)
 	if err != nil {
 		return OutcomeDrop, event, err
@@ -62,7 +61,7 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule Rule, event typ
 	return OutcomePass, event, nil
 }
 
-func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule Rule, event types.Event, regexMatch pattern.EventRegexMatches, cfgTimezone *config.TimezoneConfig) (map[string]interface{}, error) {
+func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule Rule, event types.Event, regexMatch RegexMatch, cfgTimezone *config.TimezoneConfig) (map[string]interface{}, error) {
 	externalData := make(map[string]interface{})
 
 	for name, parameters := range rule.ExternalData {

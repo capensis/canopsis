@@ -13,10 +13,16 @@ Feature: Get an eventfilter
       "author": "root",
       "description": "how it should have ended.",
       "type": "enrichment",
-      "patterns": [
-        {
-          "resource": "test-eventfilter-to-get-1-pattern"
-        }
+      "event_pattern": [
+        [
+          {
+            "field": "resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-to-get-1-pattern"
+            }
+          }
+        ]
       ],
       "priority": 0,
       "enabled": true,
@@ -54,10 +60,16 @@ Feature: Get an eventfilter
           "author": "root",
           "description": "how it should have ended.",
           "type": "enrichment",
-          "patterns": [
-            {
-              "resource": "test-eventfilter-to-get-1-pattern"
-            }
+          "event_pattern": [
+            [
+              {
+                "field": "resource",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-to-get-1-pattern"
+                }
+              }
+            ]
           ],
           "config": {
             "actions": [
@@ -85,10 +97,16 @@ Feature: Get an eventfilter
           "author": "root",
           "description": "drop filter",
           "type": "drop",
-          "patterns": [
-            {
-              "resource": "test-eventfilter-to-get-2-pattern"
-            }
+          "event_pattern": [
+            [
+              {
+                "field": "resource",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-to-get-2-pattern"
+                }
+              }
+            ]
           ],
           "priority": 1,
           "config": {},
@@ -101,10 +119,16 @@ Feature: Get an eventfilter
           "author": "root",
           "description": "break filter",
           "type": "break",
-          "patterns": [
-            {
-              "resource": "test-eventfilter-to-get-3-pattern"
-            }
+          "event_pattern": [
+            [
+              {
+                "field": "resource",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-to-get-3-pattern"
+                }
+              }
+            ]
           ],
           "priority": 2,
           "config": {},

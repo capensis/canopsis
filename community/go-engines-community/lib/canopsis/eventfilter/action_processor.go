@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"text/template"
@@ -18,7 +17,7 @@ func NewActionProcessor() ActionProcessor {
 	return &actionProcessor{buf: bytes.Buffer{}}
 }
 
-func (p *actionProcessor) Process(action Action, event types.Event, regexMatch pattern.EventRegexMatches, externalData map[string]interface{}, cfgTimezone *config.TimezoneConfig) (types.Event, error) {
+func (p *actionProcessor) Process(action Action, event types.Event, regexMatch RegexMatch, externalData map[string]interface{}, cfgTimezone *config.TimezoneConfig) (types.Event, error) {
 	switch action.Type {
 	case ActionSetField:
 		err := event.SetField(action.Name, action.Value)
