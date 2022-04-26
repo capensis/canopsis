@@ -176,6 +176,12 @@ job:
     name: test-job-to-run-auto-instruction-7-name
     payload: '{"test-job-to-run-auto-instruction-7-key": "test-job-to-run-auto-instruction-7-val"}'
 
+  job_to_run_auto_instruction_8:
+    <<: *job_dummy_long_succeeded
+    _id: test-job-to-run-auto-instruction-8
+    name: test-job-to-run-auto-instruction-8-name
+    payload: '{"test-job-to-run-auto-instruction-8-key": "test-job-to-run-auto-instruction-8-val"}'
+
   job_to_metrics_axe:
     <<: *job_dummy_long_succeeded
     _id: test-job-metrics-axe
