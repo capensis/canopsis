@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/docs"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	apilogger "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
@@ -267,24 +268,26 @@ func Default(
 			metricsUserMetaUpdater,
 			logger,
 		)
-
-		if flags.EnableDocs {
-		}
 	})
 	if flags.EnableDocs {
 		api.AddRouter(func(router gin.IRouter) {
 			router.GET("/swagger/*filepath", func(c *gin.Context) {
 				c.FileFromFS(fmt.Sprintf("swaggerui/%s", c.Param("filepath")), http.FS(docsUiFile))
 			})
-			if !overrideDocs {
-				router.GET("/swagger.yaml", func(c *gin.Context) {
-					c.FileFromFS("docs/swagger.yaml", http.FS(docsFile))
-				})
-				router.GET("/schemas_swagger.yaml", func(c *gin.Context) {
-					c.FileFromFS("docs/schemas_swagger.yaml", http.FS(docsFile))
-				})
-			}
 		})
+		if !overrideDocs {
+			content, err := docsFile.ReadFile("docs/swagger.yaml")
+			if err != nil {
+				return nil, nil, err
+			}
+			schemasContent, err := docsFile.ReadFile("docs/schemas_swagger.yaml")
+			if err != nil {
+				return nil, nil, err
+			}
+			api.AddRouter(func(router gin.IRouter) {
+				router.GET("/swagger.yaml", docs.GetHandler(schemasContent, content))
+			})
+		}
 	}
 	if legacyUrl == nil {
 		api.AddNoRoute(func(c *gin.Context) {
@@ -344,7 +347,7 @@ func Default(
 	return api, docsFile, nil
 }
 
-func newWebsocketHub(enforcer libsecurity.Enforcer, tokenProvider libsecurity.TokenProvider, logger zerolog.Logger, roomPerms ...map[string][]string) websocket.Hub {
+func newWebsocketHub(enforcer libsecurity.Enforcer, tokenProvider libsecurity.TokenProvider, logger zerolog.Logger) websocket.Hub {
 	websocketUpgrader := websocket.NewUpgrader(gorillawebsocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 2048,
