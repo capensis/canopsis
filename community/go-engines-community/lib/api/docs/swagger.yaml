@@ -29,9 +29,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /active-broadcast-message:
     get:
       tags:
@@ -48,6 +45,8 @@ paths:
                 type: array
                 items:
                   $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.BroadcastMessage'
+      security:
+        - {}
   /alarm-counters:
     get:
       tags:
@@ -142,9 +141,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /alarm-export:
     post:
       tags:
@@ -172,9 +168,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /alarm-export/{id}:
     get:
       tags:
@@ -208,9 +201,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /alarm-export/{id}/download:
     get:
       tags:
@@ -245,9 +235,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /alarms:
     get:
       tags:
@@ -385,9 +372,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /app-info:
     get:
       tags:
@@ -402,9 +386,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/appinfo.AppInfoResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /associativetable:
     get:
       tags:
@@ -432,9 +413,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - associativetables
@@ -461,9 +439,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - associativetables
@@ -486,9 +461,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /broadcast-message:
     get:
       tags:
@@ -520,9 +492,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - broadcast-messages
@@ -549,9 +518,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /broadcast-message/{id}:
     get:
       tags:
@@ -579,9 +545,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     put:
       tags:
         - broadcast-messages
@@ -621,9 +584,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - broadcast-messages
@@ -646,9 +606,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /bulk/entityservices:
     put:
       tags:
@@ -682,9 +639,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - entityservices
@@ -717,9 +671,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - entityservices
@@ -752,9 +703,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /bulk/eventfilters:
     put:
       tags:
@@ -788,9 +736,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - eventfilters
@@ -823,9 +768,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - eventfilters
@@ -858,9 +800,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /bulk/idle-rules:
     put:
       tags:
@@ -894,9 +833,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - idlerules
@@ -929,9 +865,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - idlerules
@@ -964,9 +897,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /bulk/pbehaviors:
     put:
       tags:
@@ -1000,9 +930,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - pbehaviors
@@ -1035,9 +962,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - pbehaviors
@@ -1070,9 +994,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /bulk/scenarios:
     put:
       tags:
@@ -1106,9 +1027,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - scenarios
@@ -1141,9 +1059,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - scenarios
@@ -1176,9 +1091,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /bulk/users:
     put:
       tags:
@@ -1212,9 +1124,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - users
@@ -1247,9 +1156,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - users
@@ -1282,9 +1188,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /contextgraph/import:
     put:
       tags:
@@ -1319,9 +1222,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /contextgraph/import/status/{id}:
     get:
       tags:
@@ -1349,9 +1249,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /data-storage:
     get:
       tags:
@@ -1366,9 +1263,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/datastorage.DataStorage'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     put:
       tags:
         - datastorage
@@ -1389,9 +1283,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/datastorage.DataStorage'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /entities:
     get:
       tags:
@@ -1456,9 +1347,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /entities/clean:
     post:
       tags:
@@ -1485,9 +1373,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /entities/pbehaviors:
     get:
       tags:
@@ -1517,9 +1402,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /entity-categories:
     get:
       tags:
@@ -1557,9 +1439,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - entity-categories
@@ -1586,9 +1465,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /entity-categories/{id}:
     get:
       tags:
@@ -1616,9 +1492,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     put:
       tags:
         - entity-categories
@@ -1658,9 +1531,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - entity-categories
@@ -1683,9 +1553,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /entity-export:
     post:
       tags:
@@ -1713,9 +1580,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /entity-export/{id}:
     get:
       tags:
@@ -1749,9 +1613,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /entity-export/{id}/download:
     get:
       tags:
@@ -1786,9 +1647,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /entitybasics:
     get:
       tags:
@@ -1816,9 +1674,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     put:
       tags:
         - entitybasics
@@ -1858,9 +1713,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - entitybasics
@@ -1889,9 +1741,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /entityservice-dependencies:
     get:
       tags:
@@ -1928,9 +1777,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /entityservice-impacts:
     get:
       tags:
@@ -1967,9 +1813,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /entityservices:
     post:
       tags:
@@ -1997,9 +1840,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /entityservices/{id}:
     get:
       tags:
@@ -2027,9 +1867,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     put:
       tags:
         - entityservices
@@ -2069,9 +1906,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - entityservices
@@ -2094,9 +1928,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /event:
     post:
       tags:
@@ -2264,9 +2095,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /eventfilter/rules:
     get:
       tags:
@@ -2298,9 +2126,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - eventfilters
@@ -2327,9 +2152,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /eventfilter/rules/{id}:
     get:
       tags:
@@ -2357,9 +2179,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     put:
       tags:
         - eventfilters
@@ -2399,9 +2218,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - eventfilters
@@ -2424,9 +2240,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /file:
     get:
       tags:
@@ -2455,9 +2268,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - files
@@ -2496,9 +2306,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /file-access:
     get:
       tags:
@@ -2539,9 +2346,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - files
@@ -2570,9 +2374,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /flapping-rules:
     get:
       tags:
@@ -2604,9 +2405,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - flappingrules
@@ -2633,9 +2431,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /flapping-rules/{id}:
     get:
       tags:
@@ -2663,9 +2458,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     put:
       tags:
         - flappingrules
@@ -2705,9 +2497,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - flappingrules
@@ -2730,13 +2519,10 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /idle-rules:
     get:
       tags:
-        - idle rules
+        - idlerules
       summary: Find idle rules
       description: Get paginated list of idle rules
       operationId: idlerules-find-all
@@ -2770,9 +2556,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - idlerules
@@ -2799,9 +2582,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /idle-rules/{id}:
     get:
       tags:
@@ -2829,9 +2609,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     put:
       tags:
         - idlerules
@@ -2871,9 +2648,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - idlerules
@@ -2896,9 +2670,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /idle-rules/count:
     post:
       tags:
@@ -2932,9 +2703,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /internal/user_interface:
     put:
       tags:
@@ -2962,9 +2730,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - internal
@@ -2974,9 +2739,6 @@ paths:
       responses:
         204:
           description: OK
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /logged-user-count:
     get:
       tags:
@@ -2987,9 +2749,6 @@ paths:
       responses:
         204:
           description: OK
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /login:
     post:
       tags:
@@ -3011,6 +2770,8 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/auth.loginResponse'
+      security:
+        - {}
   /logout:
     post:
       tags:
@@ -3059,9 +2820,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /notification:
     get:
       tags:
@@ -3086,9 +2844,6 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/notification.Notification'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     put:
       tags:
         - notification
@@ -3128,9 +2883,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /pbehavior-comments:
     post:
       tags:
@@ -3158,9 +2910,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /pbehavior-comments/:id:
     delete:
       tags:
@@ -3184,9 +2933,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /pbehavior-exceptions:
     get:
       tags:
@@ -3229,9 +2975,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - pbehavior-exceptions
@@ -3258,9 +3001,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /pbehavior-exceptions/{id}:
     get:
       tags:
@@ -3288,9 +3028,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     put:
       tags:
         - pbehavior-exceptions
@@ -3330,9 +3067,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - pbehavior-exceptions
@@ -3361,9 +3095,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /pbehavior-ics/{id}:
     get:
       tags:
@@ -3392,9 +3123,6 @@ paths:
             application/octet-stream:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /pbehavior-reasons:
     get:
       tags:
@@ -3437,9 +3165,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - pbehavior-reasons
@@ -3466,9 +3191,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /pbehavior-reasons/{id}:
     get:
       tags:
@@ -3496,9 +3218,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     put:
       tags:
         - pbehavior-reasons
@@ -3538,9 +3257,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - pbehavior-reasons
@@ -3569,9 +3285,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /pbehavior-timespans:
     post:
       tags:
@@ -3645,9 +3358,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - pbehavior-types
@@ -3674,9 +3384,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /pbehavior-types/{id}:
     get:
       tags:
@@ -3704,9 +3411,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     put:
       tags:
         - pbehavior-types
@@ -3746,9 +3450,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - pbehavior-types
@@ -3777,9 +3478,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /pbehaviors:
     get:
       tags:
@@ -3817,9 +3515,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - pbehaviors
@@ -3846,9 +3541,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /pbehaviors/{id}:
     get:
       tags:
@@ -3876,9 +3568,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     put:
       tags:
         - pbehaviors
@@ -3918,9 +3607,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - pbehaviors
@@ -3943,9 +3629,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     patch:
       tags:
         - pbehaviors
@@ -3985,9 +3668,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /pbehaviors/{id}/entities:
     get:
       tags:
@@ -4037,9 +3717,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /pbehaviors/count:
     post:
       tags:
@@ -4073,9 +3750,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /permissions:
     get:
       tags:
@@ -4113,9 +3787,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /playlists:
     get:
       tags:
@@ -4153,9 +3824,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - playlists
@@ -4182,9 +3850,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /playlists/{id}:
     get:
       tags:
@@ -4212,9 +3877,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     put:
       tags:
         - playlists
@@ -4254,9 +3916,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - playlists
@@ -4279,9 +3938,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /resolve-rules:
     get:
       tags:
@@ -4313,9 +3969,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - resolverules
@@ -4342,9 +3995,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /resolve-rules/{id}:
     get:
       tags:
@@ -4372,9 +4022,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     put:
       tags:
         - resolverules
@@ -4414,9 +4061,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - resolverules
@@ -4439,9 +4083,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /roles:
     get:
       tags:
@@ -4479,9 +4120,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - roles
@@ -4508,9 +4146,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /roles/{id}:
     get:
       tags:
@@ -4538,9 +4173,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     put:
       tags:
         - roles
@@ -4580,9 +4212,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - roles
@@ -4605,9 +4234,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /scenarios:
     get:
       tags:
@@ -4645,9 +4271,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - scenarios
@@ -4674,9 +4297,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /scenarios/{id}:
     get:
       tags:
@@ -4704,9 +4324,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     put:
       tags:
         - scenarios
@@ -4746,9 +4363,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - scenarios
@@ -4771,9 +4385,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /scenarios/check-priority:
     post:
       tags:
@@ -4801,9 +4412,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /scenarios/minimal-priority:
     get:
       tags:
@@ -4818,9 +4426,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/scenario.GetMinimalPriorityResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /state-settings:
     get:
       tags:
@@ -4845,9 +4450,6 @@ paths:
                         type: array
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/statesettings.StateSetting'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /state-settings/{id}:
     put:
       tags:
@@ -4888,9 +4490,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /user-preferences:
     put:
       tags:
@@ -4924,9 +4523,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /user-preferences/{id}:
     get:
       tags:
@@ -4954,9 +4550,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /users:
     get:
       tags:
@@ -4999,9 +4592,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - users
@@ -5028,9 +4618,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /users/{id}:
     get:
       tags:
@@ -5058,9 +4645,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     put:
       tags:
         - users
@@ -5100,9 +4684,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - users
@@ -5125,9 +4706,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /view-groups:
     get:
       tags:
@@ -5165,9 +4743,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - viewgroups
@@ -5194,9 +4769,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /view-groups/{id}:
     get:
       tags:
@@ -5224,9 +4796,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     put:
       tags:
         - viewgroups
@@ -5266,9 +4835,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - viewgroups
@@ -5297,9 +4863,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /view-positions:
     put:
       tags:
@@ -5325,9 +4888,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /views:
     get:
       tags:
@@ -5365,9 +4925,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     post:
       tags:
         - views
@@ -5394,9 +4951,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /views/{id}:
     get:
       tags:
@@ -5424,9 +4978,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     put:
       tags:
         - views
@@ -5466,9 +5017,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
     delete:
       tags:
         - views
@@ -5491,9 +5039,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /weather-services:
     get:
       tags:
@@ -5540,9 +5085,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
   /weather-services/{id}:
     get:
       tags:
@@ -5590,9 +5132,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-      security:
-        - BearerAuth: [ ]
-        - BasicAuth: [ ]
 components:
   parameters:
     page:
@@ -5634,7 +5173,7 @@ components:
         - connector
         - connector_name
         - component
-        - resource
+        - event_type
         - source_type
       properties:
         component:
@@ -5645,12 +5184,37 @@ components:
           type: string
         event_type:
           type: string
+          enum:
+            - check
+            - ack
+            - ackremove
+            - cancel
+            - uncancel
+            - comment
+            - snooze
+            - changestate
+            - assocticket
+            - declareticket
         resource:
           type: string
         source_type:
           type: string
+          enum:
+            - resource
+            - component
         state:
           type: integer
+          enum:
+            - 0
+            - 1
+            - 2
+            - 3
+          description: >
+            State:
+              * `0` - Info
+              * `1` - Minor
+              * `2` - Major
+              * `3` - Critical
         output:
           type: string
         long_output:
@@ -5685,3 +5249,7 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+
+security:
+  - BearerAuth: [ ]
+  - BasicAuth: [ ]
