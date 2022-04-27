@@ -82,7 +82,28 @@ Valeurs configurables :
 ## Filtres
 
 Les filtres permettent de restreindre le périmètre pour le SLI/SLA. (en utilisant le pattern d’entités)
-<!--- TODO: ajouter l’eplication de la création d’un filtre --->
+
+Pour créer un filtre, cliquer sur le bouton "plus" :
+
+![Création de filtre 1/5](./img/filtres_1.png)
+
+Cliquer sur le bouton "Ajouter".
+
+![Création de filtre 2/5](./img/filtres_2.png)
+
+Cliquer sur le bouton "plus" pour ajouter une règle.
+
+![Création de filtre 3/5](./img/filtres_3.png)
+
+Passer en mode avancé pour une comparaison de texte.
+
+![Création de filtre 4/5](./img/filtres_4.png)
+
+Ajouter ma règle de comparaison.
+
+*Par ex. une regex sur le nom de mon application :*
+
+![Création de filtre 5/5](./img/filtres_5.png)
 
 ## Paramètres d’évaluation
 
