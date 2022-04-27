@@ -45,6 +45,9 @@ func main() {
 	}()
 
 	exchange := canopsis.CanopsisEventsExchange
+	if len(os.Args) > 1 {
+		exchange = os.Args[1]
+	}
 
 	queue, err := ch.QueueDeclare(
 		daemonName,
