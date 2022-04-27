@@ -51,9 +51,9 @@ func main() {
 
 	queue, err := ch.QueueDeclare(
 		daemonName,
+		true,
+		true,
 		false,
-		true,
-		true,
 		false,
 		nil,
 	)
