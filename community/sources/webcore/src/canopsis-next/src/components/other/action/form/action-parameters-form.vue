@@ -8,6 +8,7 @@ import { ACTION_TYPES } from '@/constants';
 
 import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
 
+import ActionChangeStateForm from './action-change-state-form.vue';
 import ActionAssocticketForm from './action-assocticket-form.vue';
 import ActionNoteForm from './action-note-form.vue';
 import ActionPbehaviorForm from './action-pbehavior-form.vue';
@@ -17,6 +18,7 @@ import ActionWebhookForm from './action-webhook-form.vue';
 export default {
   inject: ['$validator'],
   components: {
+    ActionChangeStateForm,
     ActionAssocticketForm,
     ActionNoteForm,
     ActionPbehaviorForm,
@@ -51,7 +53,7 @@ export default {
     },
     component() {
       return {
-        [ACTION_TYPES.changeState]: 'c-change-state-field',
+        [ACTION_TYPES.changeState]: 'action-change-state-form',
         [ACTION_TYPES.snooze]: 'action-snooze-form',
         [ACTION_TYPES.pbehavior]: 'action-pbehavior-form',
         [ACTION_TYPES.assocticket]: 'action-assocticket-form',
