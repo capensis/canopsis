@@ -30,7 +30,8 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
 /**
  * @typedef {Object} ActionDefaultParameters
  * @property {string} output
- * @property {string} author
+ * @property {boolean} [forward_author]
+ * @property {string} [author]
  */
 
 /**
@@ -131,6 +132,7 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  */
 const defaultActionParametersToForm = (parameters = {}) => ({
   output: parameters.output ?? '',
+  forward_author: !parameters.author,
   author: parameters.author ?? '',
 });
 
@@ -361,6 +363,8 @@ export const formToAction = (form, timezone) => {
   return {
     ...omit(form, ['key', 'patterns']),
     ...form.patterns,
-    parameters,
+    parameters: parameters.forward_author
+      ? omit(parameters, ['author'])
+      : parameters,
   };
 };
