@@ -34,84 +34,77 @@ Si la configuration fonctionne vous devriez voir cet icône ![Icone snooze](img/
 
 ### Configuration
 
-Rendez vous dans l'interface de gestion des *scenarios* et créez en un nouveau.
+Créez le scenario suivant dans Canopsis:
 
-![Nouveau scenario](./img/scn_snooze_new_scn.png)
+!!! info Note
+	Pensez à mettre à jour l'URL ainsi que les paramètres d'authentification pour qu'ils correspondent à votre instance Itop.
 
-Configurez le comme ci-dessous avec comme alarm pattern (adaptez la configuration à votre besoin):
-```json
-{
-    "v": {
-        "state": {
-            "val": {
-                ">": 0
-            }
-        }
-    }
-}
-```
+<details>
 
-![Configuration scenario](./img/scn_itop_config.png)
-
-```json
-{
-	"_id": "5cccf32a-94b1-40eb-b04c-1820d3f0d8d7",
-	"name": "create_itop_ticket",
-	"author": "root",
-	"enabled": true,
-	"disable_during_periods": [],
-	"triggers": [
+<summary>Requête CURL pour envoyer la configuration à Canopsis.</summary>
+```bash
+curl -X POST -u root:root -H "Content-type: application/json" -d '{
+	"name" : "create_itop_ticket",
+	"author" : "root",
+	"enabled" : true,
+	"disable_during_periods" : [ ],
+	"triggers" : [
 		"create"
 	],
-	"actions": [
+	"actions" : [
 		{
-			"type": "webhook",
-			"comment": "",
-			"parameters": {
-				"declare_ticket": {
-					"empty_response": false,
-					"is_regexp": true,
-					"ticket_id": "objects\\.UserRequest::[0-9]+\\.fields\\.id"
+			"type" : "webhook",
+			"comment" : "",
+			"parameters" : {
+				"declare_ticket" : {
+					"empty_response" : false,
+					"is_regexp" : true,
+					"ticket_id" : "objects\\.UserRequest::.*\\.fields\\.friendlyname"
 				},
-				"request": {
-					"auth": {
-						"password": "Canopsis1234!",
-						"username": "canopsis"
+				"request" : {
+					"auth" : {
+						"username" : "admin",
+						"password" : "ChAtX713IHw8"
 					},
-					"headers": {
-						"Content-Type": "multipart/form-data; boundary=------------------------2cc8c4c68ee8223f"
+					"headers" : {
+						"Content-type" : "application/x-www-form-urlencoded"
 					},
-					"method": "POST",
-					"payload": "--------------------------2cc8c4c68ee8223f\nContent-Disposition: form-data; name=\"version\"\n\n1.3\n--------------------------2cc8c4c68ee8223f\nContent-Disposition: form-data; name=\"auth_user\"\n\ncanopsis\n--------------------------2cc8c4c68ee8223f\nContent-Disposition: form-data; name=\"auth_pwd\"\n\nCanopsis1234!\n--------------------------2cc8c4c68ee8223f\nContent-Disposition: form-data; name=\"json_data\"; filename=\"data.json\"\nContent-Type: application/octet-stream\n\n{\n  \"operation\":\"core/create\",\n  \"comment\":\"Alarm created by Canopsis\",\n  \"class\":\"UserRequest\",\n  \"output_fields\":\"id, friendlyname\",\n  \"fields\":\n  {\n    \"org_id\":\"SELECT Organization WHERE name = 'IT Department'\",\n    \"title\":\"Alarm on : {{ .Alarm.Value.Component }} {{ .Alarm.Value.Resource }}\",\n    \"description\":\"Message : {{ .Alarm.Value.State.Message }}\"\n  }\n}\n\n--------------------------2cc8c4c68ee8223f--",
-					"skip_verify": true,
-					"url": "http://192.168.0.33:8000/webservices/rest.php"
+					"method" : "POST",
+					"payload" : "json_data={\n  \"operation\":\"core/create\",\n  \"comment\":\"Alarm created by Canopsis\",\n  \"class\":\"UserRequest\",\n  \"output_fields\":\"id, friendlyname\",\n  \"fields\":\n  {\n    \"org_id\":\"SELECT Organization WHERE name = \\\"Demo\\\"\",\n    \"title\":\"Alarm on : {{ .Alarm.Value.Component }} {{ .Alarm.Value.Resource }}\",\n    \"description\":\"Message : {{ .Alarm.Value.State.Message }}\",\n    \"functionalcis_list\" : [{\"functionalci_id\":\"SELECT Server WHERE name=\\\"{{ .Alarm.Value.Component}}\\\"\"}]\n  }\n}",
+					"skip_verify" : true,
+					"url" : "http://itop/webservices/rest.php?version=1.3&login_mode=basic"
 				},
-				"retry_count": 3,
-				"retry_delay": {
-					"unit": "m",
-					"value": 1
+				"retry_count" : 3,
+				"retry_delay" : {
+					"unit" : "m",
+					"value" : 1
 				}
 			},
-			"alarm_patterns": [
+			"alarm_patterns" : [
 				{
-					"v": {
-						"state": {
-							"val": {
-								">": 0
+					"v" : {
+						"state" : {
+							"val" : {
+								">" : 0
 							}
 						}
 					}
 				}
 			],
-			"entity_patterns": null,
-			"drop_scenario_if_not_matched": false,
-			"emit_trigger": false
+			"entity_patterns" : null,
+			"drop_scenario_if_not_matched" : false,
+			"emit_trigger" : false
 		}
 	],
-	"priority": 1,
-	"delay": null,
-}
+	"priority" : 3,
+	"delay" : null
+}' 'http://localhost:8082/api/v4/scenarios'
 ```
+
+</details>
+
+![Configuration Webhook ITOP](./img/scn_itop_config.png)
+
 
 
 Lors de la réception d'une alarme, un ticket sera automatiquement créé sur Itop.
