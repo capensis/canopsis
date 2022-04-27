@@ -26,7 +26,7 @@ Configurez le comme ci-dessous avec comme alarm pattern :
 
 ![Configuration scenario](./img/scn_snooze_configuration.png)
 
-Lors de la réception d'une alarme, elle sera automatiquement ignorée pendant 5minutes. Ce délai peut permettre à un évènement résolvant cette alarme d'arriver.
+Lors de la réception d'une alarme, elle sera automatiquement ignorée pendant 5 minutes. Ce délai peut permettre à un évènement résolvant cette alarme d'arriver.
 
 Si la configuration fonctionne vous devriez voir cet icône ![Icone snooze](img/scn_snooze_result.png) sur les alarme arrivant dans le bac.
 
