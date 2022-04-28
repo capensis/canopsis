@@ -1,0 +1,175 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`remediation-patterns Renders \`remediation-patterns\` with empty modal 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close="close"
+  >
+    <span>
+      Assign patterns
+    </span>
+     
+    <c-patterns-field-stub
+      value="[object Object]"
+      with-alarm="with-alarm"
+      with-entity="with-entity"
+    />
+    <c-collapse-panel-stub
+      color="grey"
+    >
+      <div
+        class="v-card v-sheet theme--light"
+      >
+        <div
+          class="v-card__text"
+        >
+          <remediation-patterns-pbehavior-types-form-stub
+            form="[object Object]"
+          />
+        </div>
+      </div>
+    </c-collapse-panel-stub>
+     
+    <button
+      class="v-btn v-btn--flat theme--light"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        Cancel
+      </div>
+    </button>
+    <button
+      class="primary v-btn theme--light"
+      type="submit"
+    >
+      <div
+        class="v-btn__content"
+      >
+        Submit
+      </div>
+    </button>
+  </div>
+</form>
+`;
+
+exports[`remediation-patterns Renders \`remediation-patterns\` with instruction 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close="close"
+  >
+    <span>
+      Assign patterns
+    </span>
+     
+    <c-patterns-field-stub
+      value="[object Object]"
+      with-alarm="with-alarm"
+      with-entity="with-entity"
+    />
+    <c-collapse-panel-stub
+      color="grey"
+    >
+      <div
+        class="v-card v-sheet theme--light"
+      >
+        <div
+          class="v-card__text"
+        >
+          <remediation-patterns-pbehavior-types-form-stub
+            form="[object Object]"
+          />
+        </div>
+      </div>
+    </c-collapse-panel-stub>
+     
+    <button
+      class="v-btn v-btn--flat theme--light"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        Cancel
+      </div>
+    </button>
+    <button
+      class="primary v-btn theme--light"
+      type="submit"
+    >
+      <div
+        class="v-btn__content"
+      >
+        Submit
+      </div>
+    </button>
+  </div>
+</form>
+`;
+
+exports[`remediation-patterns Renders \`remediation-patterns\` with title 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close="close"
+  >
+    <span>
+      Remediation patterns title
+    </span>
+     
+    <c-patterns-field-stub
+      value="[object Object]"
+      with-alarm="with-alarm"
+      with-entity="with-entity"
+    />
+    <c-collapse-panel-stub
+      color="grey"
+    >
+      <div
+        class="v-card v-sheet theme--light"
+      >
+        <div
+          class="v-card__text"
+        >
+          <remediation-patterns-pbehavior-types-form-stub
+            form="[object Object]"
+          />
+        </div>
+      </div>
+    </c-collapse-panel-stub>
+     
+    <button
+      class="v-btn v-btn--flat theme--light"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        Cancel
+      </div>
+    </button>
+    <button
+      class="primary v-btn theme--light"
+      type="submit"
+    >
+      <div
+        class="v-btn__content"
+      >
+        Submit
+      </div>
+    </button>
+  </div>
+</form>
+`;
