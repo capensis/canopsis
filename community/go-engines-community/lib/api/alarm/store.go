@@ -27,6 +27,8 @@ import (
 const (
 	InstructionExecutionStatusRunning    = 0
 	InstructionExecutionStatusPaused     = 1
+	InstructionExecutionStatusAborted    = 4
+	InstructionExecutionStatusFailed     = 4
 	InstructionExecutionStatusWaitResult = 5
 	InstructionTypeManual                = 0
 	InstructionTypeAuto                  = 1
@@ -34,6 +36,9 @@ const (
 )
 
 const linkFetchTimeout = 30 * time.Second
+const valuePrefix = "v."
+const defaultTimeFieldOpened = "t"
+const defaultTimeFieldResolved = "v.resolved"
 
 type Store interface {
 	Find(ctx context.Context, apiKey string, r ListRequestWithPagination) (*AggregationResult, error)
@@ -59,7 +64,7 @@ type store struct {
 	deferredNestedObjects []bson.M
 }
 
-func NewStore(dbClient mongo.DbClient, legacyURL fmt.Stringer) Store {
+func NewStore(dbClient mongo.DbClient, legacyURL string) Store {
 	s := &store{
 		mainDbCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
 		resolvedDbCollection:             dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
@@ -335,7 +340,7 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 	pipeline := make([]bson.M, 0)
 	pipeline = append(pipeline, bson.M{"$match": bson.M{"$and": []bson.M{
 		{
-			"d": bson.M{"$in": childrenIds},
+			"d":         bson.M{"$in": childrenIds},
 			"v.parents": bson.M{"$in": parentIds},
 		},
 	}}})
@@ -607,7 +612,21 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 				}}},
 				0,
 			}},
+			"auto_failed": bson.M{"$gt": bson.A{
+				bson.M{"$size": bson.M{"$filter": bson.M{
+					"input": "$auto_statuses",
+					"cond":  bson.M{"$in": bson.A{"$$this", []int{InstructionExecutionStatusAborted, InstructionExecutionStatusFailed}}},
+				}}},
+				0,
+			}},
 			"manual_running": bson.M{"$gt": bson.A{
+				bson.M{"$size": bson.M{"$filter": bson.M{
+					"input": "$manual_statuses",
+					"cond":  bson.M{"$eq": bson.A{"$$this", InstructionExecutionStatusRunning}},
+				}}},
+				0,
+			}},
+			"manual_waiting_result": bson.M{"$gt": bson.A{
 				bson.M{"$size": bson.M{"$filter": bson.M{
 					"input": "$manual_statuses",
 					"cond":  bson.M{"$eq": bson.A{"$$this", InstructionExecutionStatusWaitResult}},
@@ -679,7 +698,9 @@ func (s *store) fillInstructionFlags(ctx context.Context, result *AggregationRes
 	for i, v := range result.Data {
 		result.Data[i].IsAutoInstructionRunning = statusesByAlarm[v.ID].AutoRunning
 		result.Data[i].IsAllAutoInstructionsCompleted = statusesByAlarm[v.ID].AutoAllCompleted
-		result.Data[i].IsManualInstructionWaitingResult = statusesByAlarm[v.ID].ManualRunning
+		result.Data[i].IsAutoInstructionFailed = statusesByAlarm[v.ID].AutoFailed
+		result.Data[i].IsManualInstructionRunning = statusesByAlarm[v.ID].ManualRunning
+		result.Data[i].IsManualInstructionWaitingResult = statusesByAlarm[v.ID].ManualWaitingResult
 	}
 
 	return nil
@@ -708,34 +729,56 @@ func (s *store) fillLinks(ctx context.Context, apiKey string, result *Aggregatio
 	if result == nil || len(result.Data) == 0 {
 		return nil
 	}
-
-	maxItems := len(result.Data)
-	if maxItems > 100 {
-		maxItems = 100
+	// Do not fetch links for long page.
+	if len(result.Data) > 100 {
+		return nil
 	}
-	linksEntities := make([]AlarmEntity, 0, maxItems)
-	alarms := make(map[string]int, maxItems)
-	for i, al := range result.Data {
+
+	linksEntities := make([]AlarmEntity, 0, len(result.Data))
+	alarmIndexes := make(map[string]int, len(result.Data))
+	childIndexes := make(map[string][][]int)
+
+	for i, item := range result.Data {
 		linksEntities = append(linksEntities, AlarmEntity{
-			AlarmID:  al.ID,
-			EntityID: al.Entity.ID,
+			AlarmID:  item.ID,
+			EntityID: item.Entity.ID,
 		})
-		alarms[al.ID] = i
-		if len(linksEntities) == maxItems {
-			break
+		alarmIndexes[item.ID] = i
+
+		if item.Children != nil {
+			for j, child := range item.Children.Data {
+				childIndexes[child.ID] = append(childIndexes[child.ID], []int{i, j})
+
+				if len(childIndexes[child.ID]) > 1 {
+					continue
+				}
+
+				linksEntities = append(linksEntities, AlarmEntity{
+					AlarmID:  child.ID,
+					EntityID: child.Entity.ID,
+				})
+			}
 		}
 	}
 
 	res, err := s.links.Fetch(ctx, apiKey, linksEntities)
-	if err != nil {
+	if err != nil || res == nil {
 		return err
 	}
 
 	for _, rec := range res.Data {
-		if i, ok := alarms[rec.AlarmID]; ok {
+		if i, ok := alarmIndexes[rec.AlarmID]; ok {
 			result.Data[i].Links = make(map[string]interface{}, len(rec.Links))
 			for category, link := range rec.Links {
 				result.Data[i].Links[category] = link
+			}
+		}
+		if indexes, ok := childIndexes[rec.AlarmID]; ok {
+			for _, i := range indexes {
+				result.Data[i[0]].Children.Data[i[1]].Links = make(map[string]interface{}, len(rec.Links))
+				for category, link := range rec.Links {
+					result.Data[i[0]].Children.Data[i[1]].Links[category] = link
+				}
 			}
 		}
 	}
@@ -793,7 +836,7 @@ func (s *store) addStartFromFilter(r FilterRequest, match *[]bson.M) {
 		return
 	}
 
-	*match = append(*match, bson.M{"t": bson.M{"$gte": r.StartFrom}})
+	*match = append(*match, bson.M{s.getTimeField(r): bson.M{"$gte": r.StartFrom}})
 }
 
 func (s *store) addStartToFilter(r FilterRequest, match *[]bson.M) {
@@ -801,7 +844,23 @@ func (s *store) addStartToFilter(r FilterRequest, match *[]bson.M) {
 		return
 	}
 
-	*match = append(*match, bson.M{"t": bson.M{"$lte": r.StartTo}})
+	*match = append(*match, bson.M{s.getTimeField(r): bson.M{"$lte": r.StartTo}})
+}
+
+func (s *store) getTimeField(r FilterRequest) string {
+	if r.TimeField == "t" {
+		return r.TimeField
+	}
+
+	if r.TimeField == "" {
+		if r.GetOpenedFilter() == OnlyResolved {
+			return defaultTimeFieldResolved
+		}
+
+		return defaultTimeFieldOpened
+	}
+
+	return fmt.Sprintf("%s%s", valuePrefix, r.TimeField)
 }
 
 func (s *store) addOpenedFilter(r FilterRequest, match *[]bson.M) {
@@ -1042,14 +1101,28 @@ func (s *store) addNestedObjects(r FilterRequest, pipeline *[]bson.M) {
 	)
 	s.deferredNestedObjects = []bson.M{
 		{"$lookup": bson.M{
-			"from":         pbehavior.PBehaviorCollectionName,
+			"from":         mongo.PbehaviorMongoCollection,
 			"foreignField": "_id",
 			"localField":   "v.pbehavior_info.id",
 			"as":           "pbehavior",
 		}},
 		{"$unwind": bson.M{"path": "$pbehavior", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"pbehavior.comments": bson.M{
+				"$slice": bson.A{bson.M{"$reverseArray": "$pbehavior.comments"}, 1},
+			},
+		}},
+		{"$addFields": bson.M{
+			"pbehavior": bson.M{
+				"$cond": bson.M{
+					"if":   "$pbehavior._id",
+					"then": "$pbehavior",
+					"else": nil,
+				},
+			},
+		}},
 		{"$lookup": bson.M{
-			"from":         pbehavior.TypeCollectionName,
+			"from":         mongo.PbehaviorTypeMongoCollection,
 			"foreignField": "_id",
 			"localField":   "pbehavior.type_",
 			"as":           "pbehavior.type",
@@ -1166,6 +1239,25 @@ func (s *store) getProject(r ListRequest, entitiesToProject bool) []bson.M {
 			bson.M{"$unwind": bson.M{"path": "$entity.category", "preserveNullAndEmptyArrays": true}},
 		)
 	}
+	pipeline = append(pipeline,
+		bson.M{"$lookup": bson.M{
+			"from":         mongo.PbehaviorTypeMongoCollection,
+			"foreignField": "_id",
+			"localField":   "v.pbehavior_info.type",
+			"as":           "pbehavior_type",
+		}},
+		bson.M{"$unwind": bson.M{"path": "$pbehavior_type", "preserveNullAndEmptyArrays": true}},
+		bson.M{"$addFields": bson.M{
+			"v.pbehavior_info": bson.M{"$cond": bson.M{
+				"if": "$v.pbehavior_info",
+				"then": bson.M{"$mergeObjects": bson.A{
+					"$v.pbehavior_info",
+					bson.M{"icon_name": "$pbehavior_type.icon_name"},
+				}},
+				"else": nil,
+			}},
+		}},
+	)
 	pipeline = append(pipeline, []bson.M{
 		{"$addFields": addFields},
 		lastCommentNilWhenEmpty,

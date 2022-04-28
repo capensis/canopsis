@@ -71,7 +71,11 @@ definitions:
         type: object
       is_all_auto_instructions_completed:
         type: boolean
+      is_auto_instruction_failed:
+        type: boolean
       is_auto_instruction_running:
+        type: boolean
+      is_manual_instruction_running:
         type: boolean
       is_manual_instruction_waiting_result:
         type: boolean
@@ -201,7 +205,7 @@ definitions:
           type: string
         type: array
       pbehavior_info:
-        $ref: '#/definitions/types.PbehaviorInfo'
+        $ref: '#/definitions/entity.PbehaviorInfo'
         type: object
       pbh_inactive_duration:
         type: integer
@@ -311,6 +315,8 @@ definitions:
         type: string
       separator:
         type: string
+      time_field:
+        type: string
       time_format:
         type: string
       tstart:
@@ -363,6 +369,8 @@ definitions:
         type: boolean
       search:
         type: string
+      time_field:
+        type: string
       tstart:
         type: integer
       tstop:
@@ -372,14 +380,6 @@ definitions:
     properties:
       _id:
         type: string
-      active_on_pbh:
-        items:
-          type: string
-        type: array
-      disabled_on_pbh:
-        items:
-          type: string
-        type: array
       execution:
         $ref: '#/definitions/alarm.Execution'
         type: object
@@ -434,6 +434,8 @@ definitions:
         type: string
       sort_key:
         type: string
+      time_field:
+        type: string
       tstart:
         type: integer
       tstop:
@@ -458,6 +460,9 @@ definitions:
         type: string
       author:
         type: string
+      comments:
+        $ref: '#/definitions/pbehavior.Comments'
+        type: object
       name:
         type: string
       rrule:
@@ -840,10 +845,22 @@ definitions:
       infos:
         $ref: '#/definitions/entity.Infos'
         type: object
+      ko_events:
+        type: integer
+      last_event_date:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
       measurements:
         type: object
       name:
         type: string
+      ok_events:
+        type: integer
+      pbehavior_info:
+        $ref: '#/definitions/entity.PbehaviorInfo'
+        type: object
+      state:
+        type: integer
       type:
         type: string
     type: object
@@ -907,6 +924,35 @@ definitions:
         type: string
       with_flags:
         type: boolean
+    type: object
+  entity.PbehaviorInfo:
+    properties:
+      canonical_type:
+        description: CanonicalType is Type of pbehavior.Type.
+        type: string
+      icon_name:
+        type: string
+      id:
+        description: ID is ID of pbehavior.PBehavior.
+        type: string
+      name:
+        description: Name is Name of pbehavior.PBehavior.
+        type: string
+      reason:
+        description: Reason is Name of pbehavior.Reason.
+        type: string
+      timestamp:
+        $ref: '#/definitions/types.CpsTime'
+        description: |-
+          Timestamp is time when entity enters pbehavior.
+          Use pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.
+        type: object
+      type:
+        description: TypeID is ID of pbehavior.Type.
+        type: string
+      type_name:
+        description: TypeName is Name of pbehavior.Type.
+        type: string
     type: object
   entitybasic.EditRequest:
     properties:
@@ -982,11 +1028,23 @@ definitions:
       infos:
         $ref: '#/definitions/entity.Infos'
         type: object
+      ko_events:
+        type: integer
+      last_event_date:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
       measurements:
         type: object
       name:
         type: string
+      ok_events:
+        type: integer
+      pbehavior_info:
+        $ref: '#/definitions/entity.PbehaviorInfo'
+        type: object
       sli_avail_state:
+        type: integer
+      state:
         type: integer
       type:
         type: string
@@ -1219,13 +1277,25 @@ definitions:
       infos:
         $ref: '#/definitions/entity.Infos'
         type: object
+      ko_events:
+        type: integer
+      last_event_date:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
       measurements:
         type: object
       name:
         type: string
+      ok_events:
+        type: integer
       output_template:
         type: string
+      pbehavior_info:
+        $ref: '#/definitions/entity.PbehaviorInfo'
+        type: object
       sli_avail_state:
+        type: integer
+      state:
         type: integer
       type:
         type: string
@@ -2420,9 +2490,6 @@ definitions:
       updated:
         type: integer
     type: object
-  primitive.M:
-    additionalProperties: true
-    type: object
   resolverule.CreateRequest:
     properties:
       _id:
@@ -2676,7 +2743,6 @@ definitions:
     - author
     - enabled
     - name
-    - priority
     - triggers
     type: object
   scenario.BulkUpdateResponseItem:
@@ -2741,7 +2807,6 @@ definitions:
     - author
     - enabled
     - name
-    - priority
     - triggers
     type: object
   scenario.EditRequest:
@@ -2774,7 +2839,6 @@ definitions:
     - author
     - enabled
     - name
-    - priority
     - triggers
     type: object
   scenario.GetMinimalPriorityResponse:
@@ -2833,6 +2897,8 @@ definitions:
         type: integer
       alarm_display_name:
         type: string
+      alarm_id:
+        type: string
       assigned_instructions:
         items:
           $ref: '#/definitions/alarm.InstructionWithAlarms'
@@ -2860,9 +2926,13 @@ definitions:
         type: object
       is_all_auto_instructions_completed:
         type: boolean
+      is_auto_instruction_failed:
+        type: boolean
       is_auto_instruction_running:
         type: boolean
       is_grey:
+        type: boolean
+      is_manual_instruction_running:
         type: boolean
       is_manual_instruction_waiting_result:
         type: boolean
@@ -2874,6 +2944,9 @@ definitions:
         type: array
       name:
         type: string
+      pbehavior_info:
+        $ref: '#/definitions/types.PbehaviorInfo'
+        type: object
       pbehaviors:
         items:
           $ref: '#/definitions/pbehavior.Response'
@@ -2889,7 +2962,7 @@ definitions:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
       stats:
-        $ref: '#/definitions/serviceweather.Stats'
+        $ref: '#/definitions/statistics.EventStatistics'
         type: object
       status:
         $ref: '#/definitions/alarm.AlarmStep'
@@ -2956,6 +3029,9 @@ definitions:
         type: string
       output:
         type: string
+      pbehavior_info:
+        $ref: '#/definitions/types.PbehaviorInfo'
+        type: object
       pbehaviors:
         items:
           $ref: '#/definitions/pbehavior.Response'
@@ -2973,17 +3049,6 @@ definitions:
       status:
         $ref: '#/definitions/alarm.AlarmStep'
         type: object
-    type: object
-  serviceweather.Stats:
-    properties:
-      ko:
-        type: integer
-      last_event:
-        type: integer
-      last_ko:
-        type: integer
-      ok:
-        type: integer
     type: object
   serviceweather.WeatherLink:
     properties:
@@ -3048,6 +3113,17 @@ definitions:
     - major
     - minor
     - type
+    type: object
+  statistics.EventStatistics:
+    properties:
+      ko:
+        type: integer
+      last_event:
+        type: integer
+      last_ko:
+        type: integer
+      ok:
+        type: integer
     type: object
   types.Alarm:
     properties:
@@ -3828,6 +3904,9 @@ paths:
         name: search
         type: string
       - in: query
+        name: time_field
+        type: string
+      - in: query
         name: tstart
         type: integer
       - in: query
@@ -4017,6 +4096,9 @@ paths:
         type: string
       - in: query
         name: sort_key
+        type: string
+      - in: query
+        name: time_field
         type: string
       - in: query
         name: tstart
@@ -5628,7 +5710,7 @@ paths:
       parameters:
       - description: Entity id
         in: query
-        name: id
+        name: _id
         required: true
         type: string
       responses:
@@ -5653,7 +5735,7 @@ paths:
       parameters:
       - description: Entity id
         in: query
-        name: id
+        name: _id
         required: true
         type: string
       produces:
@@ -5681,7 +5763,7 @@ paths:
       parameters:
       - description: Entity id
         in: query
-        name: id
+        name: _id
         required: true
         type: string
       - description: body

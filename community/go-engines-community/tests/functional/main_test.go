@@ -63,7 +63,11 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer dbClient.Disconnect(context.Background())
+	defer func() {
+		if err = dbClient.Disconnect(context.Background()); err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	amqpConnection, err := amqp.NewConnection(liblog.NewLogger(false), 0, 0)
 	if err != nil {
@@ -167,6 +171,7 @@ func InitializeScenario(flags Flags, dbClient mongo.DbClient, amqpConnection amq
 		ctx.Step(`^I do (\w+) (.+) until response code is (\d+) and body is:$`, apiClient.IDoRequestUntilResponse)
 		ctx.Step(`^I do (\w+) (.+) until response code is (\d+) and body contains:$`, apiClient.IDoRequestUntilResponseContains)
 		ctx.Step(`^I do (\w+) (.+) until response code is (\d+) and response key \"([\w\.]+)\" is greater or equal than (\d+)$`, apiClient.IDoRequestUntilResponseKeyIsGreaterOrEqualThan)
+		ctx.Step(`^I do (\w+) (.+) until response code is (\d+) and response array key \"([\w\.]+)\" contains:$`, apiClient.IDoRequestUntilResponseArrayKeyContains)
 		ctx.Step(`^I do (\w+) (.+):$`, apiClient.IDoRequestWithBody)
 		ctx.Step(`^I do (\w+) (.+) until response code is (\d+)$`, apiClient.IDoRequestUntilResponseCode)
 		ctx.Step(`^I do (\w+) (.+)$`, apiClient.IDoRequest)
@@ -178,7 +183,10 @@ func InitializeScenario(flags Flags, dbClient mongo.DbClient, amqpConnection amq
 		ctx.Step(`^the response key \"([\w\.]+)\" should not be \"([^\"]+)\"$`, apiClient.TheResponseKeyShouldNotBe)
 		ctx.Step(`^the difference between ([\w\.]+) ([\w\.]+) is in range (-?\d+\.?\d*),(-?\d+\.?\d*)$`, apiClient.TheDifferenceBetweenValues)
 		ctx.Step(`^the response key \"([\w\.]+)\" should be greater or equal than (\d+)$`, apiClient.TheResponseKeyShouldBeGreaterOrEqualThan)
+		ctx.Step(`^the response array key \"([\w\.]+)\" should contain:$`, apiClient.TheResponseArrayKeyShouldContain)
+		ctx.Step(`^the response array key \"([\w\.]+)\" should contain only one:$`, apiClient.TheResponseArrayKeyShouldContainOnlyOne)
 		ctx.Step(`^I save response ([\w]+)=(.+)$`, apiClient.ISaveResponse)
+		ctx.Step(`^\"([\w]+)\" (>|<|>=|<=) \"([\w]+)\"$`, apiClient.ValueShouldBeGteLteThan)
 		ctx.Step(`^an alarm (.+) should be in the db$`, mongoClient.AlarmShouldBeInTheDb)
 		ctx.Step(`^an entity (.+) should be in the db$`, mongoClient.EntityShouldBeInTheDb)
 		ctx.Step(`^I set header ([\w\.\-]+)=(.+)$`, apiClient.ISetRequestHeader)

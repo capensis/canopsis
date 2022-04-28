@@ -173,7 +173,11 @@ func (p *poolWithRetries) WithTransaction(ctx context.Context, f func(context.Co
 			return err
 		}
 
-		defer tx.Rollback(ctx)
+		defer func() {
+			if rbErr := tx.Rollback(ctx); rbErr != nil && err == nil && !errors.Is(rbErr, pgx.ErrTxClosed) {
+				err = rbErr
+			}
+		}()
 
 		err = f(ctx, tx)
 		if err != nil {

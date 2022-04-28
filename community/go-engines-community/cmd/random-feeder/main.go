@@ -1,3 +1,5 @@
+//nolint
+// no lint until #4082 has not fixed
 package main
 
 import (

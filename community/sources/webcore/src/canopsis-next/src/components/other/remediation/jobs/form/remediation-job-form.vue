@@ -2,6 +2,10 @@
   v-layout(column)
     v-layout(row)
       c-enabled-field(v-field="form.enabled")
+      c-enabled-field(
+        v-field="form.multiple_executions",
+        :label="$t('modals.createRemediationJob.fields.multipleExecutions')"
+      )
     v-layout(row)
       v-text-field(
         v-field="form.name",

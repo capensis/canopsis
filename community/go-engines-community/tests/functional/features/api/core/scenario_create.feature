@@ -534,7 +534,9 @@ Feature: Create a scenario
     When I am admin
     When I do POST /api/v4/scenarios:
     """
-    {}
+    {
+      "priority": 123
+    }
     """
     Then the response code should be 400
     Then the response body should be:
@@ -544,7 +546,6 @@ Feature: Create a scenario
         "actions": "Actions is missing.",
         "enabled": "Enabled is missing.",
         "name": "Name is missing.",
-        "priority": "Priority is missing.",
         "triggers": "Triggers is missing."
       }
     }

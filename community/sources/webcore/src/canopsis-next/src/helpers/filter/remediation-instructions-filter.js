@@ -30,25 +30,27 @@ export function prepareRemediationInstructionsFiltersToQuery(filters = []) {
   }
 
   const result = filters.reduce((acc, filter) => {
-    const key = filter.with ? PARAMETERS_FILTERS_TYPES.include : PARAMETERS_FILTERS_TYPES.exclude;
+    const key = filter.with
+      ? PARAMETERS_FILTERS_TYPES.include
+      : PARAMETERS_FILTERS_TYPES.exclude;
 
     if (
-      acc[key].types.includes(REMEDIATION_INSTRUCTION_TYPES.auto)
-      && acc[key].types.includes(REMEDIATION_INSTRUCTION_TYPES.manual)
+      acc[key].instruction_types.includes(REMEDIATION_INSTRUCTION_TYPES.auto)
+      && acc[key].instruction_types.includes(REMEDIATION_INSTRUCTION_TYPES.manual)
     ) {
       return acc;
     }
 
     if (filter.all) {
-      acc[key].types = [REMEDIATION_INSTRUCTION_TYPES.auto, REMEDIATION_INSTRUCTION_TYPES.manual];
+      acc[key].instruction_types = [REMEDIATION_INSTRUCTION_TYPES.auto, REMEDIATION_INSTRUCTION_TYPES.manual];
     }
 
     if (filter.auto) {
-      acc[key].types.push(REMEDIATION_INSTRUCTION_TYPES.auto);
+      acc[key].instruction_types.push(REMEDIATION_INSTRUCTION_TYPES.auto);
     }
 
     if (filter.manual) {
-      acc[key].types.push(REMEDIATION_INSTRUCTION_TYPES.manual);
+      acc[key].instruction_types.push(REMEDIATION_INSTRUCTION_TYPES.manual);
     }
 
     const instructionsIds = filter.instructions
@@ -59,8 +61,8 @@ export function prepareRemediationInstructionsFiltersToQuery(filters = []) {
 
     return acc;
   }, {
-    [PARAMETERS_FILTERS_TYPES.include]: { types: [], instructions: [] },
-    [PARAMETERS_FILTERS_TYPES.exclude]: { types: [], instructions: [] },
+    [PARAMETERS_FILTERS_TYPES.include]: { instruction_types: [], instructions: [] },
+    [PARAMETERS_FILTERS_TYPES.exclude]: { instruction_types: [], instructions: [] },
   });
 
   Object.entries(result).forEach(([filterTypeKey, filterTypeRules = {}]) => {

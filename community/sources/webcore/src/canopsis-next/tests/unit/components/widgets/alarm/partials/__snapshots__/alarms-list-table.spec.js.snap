@@ -1,0 +1,410 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] = `
+<div
+  class="flex white"
+>
+  <div
+    class="flex px-3 xs12"
+    style="display: none;"
+  >
+    <mass-actions-panel-stub
+      itemsids=""
+      widget="[object Object]"
+    />
+  </div>
+  <div>
+    <div
+      class="alarms-list-table columns-sm"
+    >
+      <div
+        class="v-table__overflow"
+      >
+        <table
+          class="v-datatable v-table v-datatable--select-all theme--light"
+        >
+          <thead
+            style="transform: translateY(0px); opacity: 1;"
+          >
+            <tr>
+              <th>
+                <div
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                >
+                  <div
+                    class="v-input__control"
+                  >
+                    <div
+                      class="v-input__slot"
+                    >
+                      <div
+                        class="v-input--selection-controls__input"
+                      >
+                        <input
+                          aria-checked="false"
+                          role="checkbox"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div
+                          class="v-input--selection-controls__ripple"
+                        />
+                        <i
+                          aria-hidden="true"
+                          class="v-icon material-icons theme--light"
+                        >
+                          check_box_outline_blank
+                        </i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </th>
+              <th
+                aria-label=""
+                aria-sort="none"
+                class="column sortable text-xs-left"
+                role="columnheader"
+                scope="col"
+                tabindex="0"
+              >
+                <alarm-header-cell-stub
+                  header="[object Object]"
+                />
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                  style="font-size: 16px;"
+                >
+                  arrow_upward
+                </i>
+              </th>
+              <th
+                aria-label="common.actionsLabel: Not sorted."
+                aria-sort="none"
+                class="column text-xs-left"
+                role="columnheader"
+                scope="col"
+              >
+                <alarm-header-cell-stub
+                  header="[object Object]"
+                />
+              </th>
+            </tr>
+            <tr
+              class="v-datatable__progress"
+            >
+              <th
+                class="column"
+                colspan="3"
+              >
+                <transition-stub
+                  name="fade-transition"
+                >
+                  <div
+                    aria-valuemax="100"
+                    aria-valuemin="0"
+                    class="v-progress-linear"
+                    role="progressbar"
+                    style="height: 2px;"
+                  >
+                    <div
+                      class="v-progress-linear__background primary"
+                      style="height: 2px; opacity: 0.3; width: 100%;"
+                    />
+                    <div
+                      class="v-progress-linear__bar"
+                    >
+                      <transition-stub
+                        name="fade-transition"
+                      >
+                        <div
+                          class="v-progress-linear__bar__indeterminate v-progress-linear__bar__indeterminate--active"
+                        >
+                          <div
+                            class="v-progress-linear__bar__indeterminate long primary"
+                          />
+                          <div
+                            class="v-progress-linear__bar__indeterminate short primary"
+                          />
+                        </div>
+                      </transition-stub>
+                      <transition-stub
+                        name="slide-x-transition"
+                      />
+                    </div>
+                  </div>
+                </transition-stub>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <alarms-list-row-stub
+              columns="[object Object]"
+              columnsfilters=""
+              expandable="true"
+              hidegroups="true"
+              istourenabled="true"
+              parentalarm="[object Object]"
+              row="[object Object]"
+              selectable="true"
+              widget="[object Object]"
+            />
+            <tr
+              class="v-datatable__expand-row"
+            >
+              <transition-group-stub
+                class="v-datatable__expand-col"
+                colspan="3"
+                tag="td"
+              />
+            </tr>
+            <alarms-list-row-stub
+              columns="[object Object]"
+              columnsfilters=""
+              expandable="true"
+              hidegroups="true"
+              parentalarm="[object Object]"
+              row="[object Object]"
+              selectable="true"
+              widget="[object Object]"
+            />
+            <tr
+              class="v-datatable__expand-row"
+            >
+              <transition-group-stub
+                class="v-datatable__expand-col"
+                colspan="3"
+                tag="td"
+              />
+            </tr>
+            <alarms-list-row-stub
+              columns="[object Object]"
+              columnsfilters=""
+              expandable="true"
+              hidegroups="true"
+              parentalarm="[object Object]"
+              row="[object Object]"
+              selectable="true"
+              widget="[object Object]"
+            />
+            <tr
+              class="v-datatable__expand-row"
+            >
+              <transition-group-stub
+                class="v-datatable__expand-col"
+                colspan="3"
+                tag="td"
+              />
+            </tr>
+            <alarms-list-row-stub
+              columns="[object Object]"
+              columnsfilters=""
+              expandable="true"
+              hidegroups="true"
+              parentalarm="[object Object]"
+              row="[object Object]"
+              selectable="true"
+              widget="[object Object]"
+            />
+            <tr
+              class="v-datatable__expand-row"
+            >
+              <transition-group-stub
+                class="v-datatable__expand-col"
+                colspan="3"
+                tag="td"
+              />
+            </tr>
+            <alarms-list-row-stub
+              columns="[object Object]"
+              columnsfilters=""
+              expandable="true"
+              hidegroups="true"
+              parentalarm="[object Object]"
+              row="[object Object]"
+              selectable="true"
+              widget="[object Object]"
+            />
+            <tr
+              class="v-datatable__expand-row"
+            >
+              <transition-group-stub
+                class="v-datatable__expand-col"
+                colspan="3"
+                tag="td"
+              />
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props 1`] = `
+<div
+  class="flex white"
+>
+  <div
+    class="flex px-3 xs12"
+    style="display: none;"
+  >
+    <mass-actions-panel-stub
+      itemsids=""
+      widget="[object Object]"
+    />
+  </div>
+  <c-empty-data-table-columns-stub />
+  <!---->
+</div>
+`;
+
+exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but without selectable 1`] = `
+<div
+  class="flex white"
+>
+  <div
+    class="flex px-3 xs12"
+    style="display: none;"
+  >
+    <mass-actions-panel-stub
+      itemsids=""
+      widget="[object Object]"
+    />
+  </div>
+  <div>
+    <div
+      class="alarms-list-table columns-sm"
+    >
+      <div
+        class="v-table__overflow"
+      >
+        <table
+          class="v-datatable v-table theme--light"
+        >
+          <thead>
+            <tr>
+              <th
+                aria-label=": Not sorted."
+                aria-sort="none"
+                class="column text-xs-left"
+                role="columnheader"
+                scope="col"
+              >
+                <alarm-header-cell-stub
+                  header="[object Object]"
+                />
+              </th>
+              <th
+                aria-label="common.actionsLabel: Not sorted."
+                aria-sort="none"
+                class="column text-xs-left"
+                role="columnheader"
+                scope="col"
+              >
+                <alarm-header-cell-stub
+                  header="[object Object]"
+                />
+              </th>
+            </tr>
+            <tr
+              class="v-datatable__progress"
+            >
+              <th
+                class="column"
+                colspan="2"
+              />
+            </tr>
+          </thead>
+          <tbody>
+            <alarms-list-row-stub
+              columns=""
+              columnsfilters=""
+              expandable="true"
+              row="[object Object]"
+              widget="[object Object]"
+            />
+            <tr
+              class="v-datatable__expand-row"
+            >
+              <transition-group-stub
+                class="v-datatable__expand-col"
+                colspan="2"
+                tag="td"
+              />
+            </tr>
+            <alarms-list-row-stub
+              columns=""
+              columnsfilters=""
+              expandable="true"
+              row="[object Object]"
+              widget="[object Object]"
+            />
+            <tr
+              class="v-datatable__expand-row"
+            >
+              <transition-group-stub
+                class="v-datatable__expand-col"
+                colspan="2"
+                tag="td"
+              />
+            </tr>
+            <alarms-list-row-stub
+              columns=""
+              columnsfilters=""
+              expandable="true"
+              row="[object Object]"
+              widget="[object Object]"
+            />
+            <tr
+              class="v-datatable__expand-row"
+            >
+              <transition-group-stub
+                class="v-datatable__expand-col"
+                colspan="2"
+                tag="td"
+              />
+            </tr>
+            <alarms-list-row-stub
+              columns=""
+              columnsfilters=""
+              expandable="true"
+              row="[object Object]"
+              widget="[object Object]"
+            />
+            <tr
+              class="v-datatable__expand-row"
+            >
+              <transition-group-stub
+                class="v-datatable__expand-col"
+                colspan="2"
+                tag="td"
+              />
+            </tr>
+            <alarms-list-row-stub
+              columns=""
+              columnsfilters=""
+              expandable="true"
+              row="[object Object]"
+              widget="[object Object]"
+            />
+            <tr
+              class="v-datatable__expand-row"
+            >
+              <transition-group-stub
+                class="v-datatable__expand-col"
+                colspan="2"
+                tag="td"
+              />
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!---->
+</div>
+`;

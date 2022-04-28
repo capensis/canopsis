@@ -9,7 +9,6 @@ import (
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm"
@@ -24,7 +23,6 @@ type periodicalWorker struct {
 	ChannelPub          libamqp.Channel
 	AlarmService        libalarm.Service
 	AlarmAdapter        libalarm.Adapter
-	AlarmStatusService  alarmstatus.Service
 	Encoder             encoding.Encoder
 	IdleAlarmService    idlealarm.Service
 	AlarmConfigProvider config.AlarmConfigProvider
@@ -41,11 +39,6 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 
 	idleCtx, cancel := context.WithTimeout(ctx, w.GetInterval())
 	defer cancel()
-
-	err := w.AlarmStatusService.Load(ctx)
-	if err != nil {
-		w.Logger.Err(err).Msg("cannot load alarm status rules")
-	}
 
 	alarmConfig := w.AlarmConfigProvider.Get()
 	if alarmConfig.TimeToKeepResolvedAlarms > 0 {
@@ -190,8 +183,6 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 			w.Logger.Err(err).Msg("cannot publish event")
 		}
 	}
-
-	return
 }
 
 func (w *periodicalWorker) publishToEngineFIFO(event types.Event) error {

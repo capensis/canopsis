@@ -1,5 +1,6 @@
 <template lang="pug">
-  div
+  div.position-relative
+    c-progress-overlay(:pending="pending")
     v-tooltip(v-if="hasPbehaviorListAccess", left)
       v-btn.pbehavior-modal-btn(
         slot="activator",
@@ -9,8 +10,8 @@
       )
         v-icon(small) list
       span {{ $t('modals.service.editPbehaviors') }}
-    v-runtime-template(v-if="compiledTemplate", :template="compiledTemplate")
-    .float-clear
+    v-runtime-template(v-if="compiledTemplate && !pending", :template="compiledTemplate")
+    div.float-clear
     c-table-pagination(
       v-if="totalItems > pagination.rowsPerPage && hasEntitiesHelper",
       :total-items="totalItems",
@@ -66,6 +67,10 @@ export default {
       type: Number,
       required: false,
     },
+    pending: {
+      type: Boolean,
+      required: false,
+    },
   },
   asyncComputed: {
     modalTemplate() {
@@ -101,6 +106,7 @@ export default {
           :widget-parameters="widgetParameters"
           entity-name-field="${entityNameField}"
           @add:event="addEventToQueue"
+          @refresh="refreshEntities"
         ></service-entities-wrapper>
       `);
     });
@@ -111,6 +117,10 @@ export default {
   methods: {
     addEventToQueue(event) {
       this.$emit('add:event', event);
+    },
+
+    refreshEntities() {
+      this.$emit('refresh');
     },
 
     showPbehaviorsListModal() {

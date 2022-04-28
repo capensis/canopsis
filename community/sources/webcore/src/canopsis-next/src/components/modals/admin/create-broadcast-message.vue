@@ -1,12 +1,13 @@
 <template lang="pug">
-  v-form.create-broadcast-message-modal(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(slot="title")
+  v-form(@submit.prevent="submit")
+    modal-wrapper(text-class="pa-0", close)
+      template(#title="")
         span {{ title }}
-      template(slot="text")
-        broadcast-message(:message="message", :color="form.color")
-        broadcast-message-form(v-model="form")
-      template(slot="actions")
+      template(#text="")
+        v-layout(column)
+          broadcast-message(:message="message", :color="form.color")
+          broadcast-message-form.pa-3(v-model="form")
+      template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary.white--text(
           :disabled="isDisabled",
@@ -68,18 +69,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .create-broadcast-message-modal {
-    & /deep/ .v-card__text {
-      position: relative;
-    }
-
-    & /deep/ .broadcast-message {
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 0;
-    }
-  }
-</style>

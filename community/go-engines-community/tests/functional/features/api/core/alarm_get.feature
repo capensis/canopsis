@@ -1135,42 +1135,6 @@ Feature: Get alarms
     }
     """
 
-  Scenario: given get alarm in pbehavior should return pbehavior
-    When I am admin
-    When I do GET /api/v4/alarms?search=test-alarm-pbehavior-get
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-    {
-      "data": [
-        {
-          "pbehavior": {
-            "_id": "test-pbehavior-to-get-alarm",
-            "author": "root",
-            "name": "pbehavior-to-get-alarm",
-            "rrule": "",
-            "tstart": 1591172881,
-            "tstop": 1591536400,
-            "type": {
-              "_id": "test-type-to-pbh-edit-1",
-              "description": "Pbh edit 1 State type",
-              "icon_name": "test-to-pbh-edit-1-icon",
-              "name": "Pbh edit 1 State",
-              "priority": 10,
-              "type": "active"
-            }
-          }
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
-      }
-    }
-    """
-
   Scenario: given get search expression request should return alarms which are matched
   to expression filter
     When I am admin
@@ -1696,168 +1660,6 @@ Feature: Get alarms
     }
     """
 
-    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-with-pbh-with-some-active&with_instructions=true
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-    {
-      "data": [
-        {
-          "_id": "test-alarm-instruction-with-pbehavior-1",
-          "assigned_instructions": [
-            {
-              "_id": "test-instruction-with-pbh-all-active",
-              "name": "test-alarm-with-pbh-all-active-name",
-              "execution": null
-            },
-            {
-              "_id": "test-instruction-with-pbh-with-some-active",
-              "name": "test-alarm-with-pbh-with-some-active-name",
-              "active_on_pbh": [
-                "pbh-type-for-instruction-with-pbehavior-1",
-                "pbh-type-for-instruction-with-pbehavior-2"
-              ],
-              "execution": null
-            }
-          ]
-        },
-        {
-          "_id": "test-alarm-instruction-with-pbehavior-2",
-          "assigned_instructions": [
-            {
-              "_id": "test-instruction-with-pbh-all-active",
-              "name": "test-alarm-with-pbh-all-active-name",
-              "execution": null
-            },
-            {
-              "_id": "test-instruction-with-pbh-with-some-active",
-              "name": "test-alarm-with-pbh-with-some-active-name",
-              "active_on_pbh": [
-                "pbh-type-for-instruction-with-pbehavior-1",
-                "pbh-type-for-instruction-with-pbehavior-2"
-              ],
-              "execution": null
-            }
-          ]
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 2
-      }
-    }
-    """
-
-    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-with-pbh-all-active&with_instructions=true
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-    {
-      "data": [
-        {
-          "_id": "test-alarm-instruction-with-pbehavior-1",
-          "assigned_instructions": [
-            {
-              "_id": "test-instruction-with-pbh-all-active",
-              "name": "test-alarm-with-pbh-all-active-name",
-              "execution": null
-            },
-            {
-              "_id": "test-instruction-with-pbh-with-some-active",
-              "name": "test-alarm-with-pbh-with-some-active-name",
-              "active_on_pbh": [
-                "pbh-type-for-instruction-with-pbehavior-1",
-                "pbh-type-for-instruction-with-pbehavior-2"
-              ],
-              "execution": null
-            }
-          ]
-        },
-        {
-          "_id": "test-alarm-instruction-with-pbehavior-2",
-          "assigned_instructions": [
-            {
-              "_id": "test-instruction-with-pbh-all-active",
-              "name": "test-alarm-with-pbh-all-active-name",
-              "execution": null
-            },
-            {
-              "_id": "test-instruction-with-pbh-with-some-active",
-              "name": "test-alarm-with-pbh-with-some-active-name",
-              "active_on_pbh": [
-                "pbh-type-for-instruction-with-pbehavior-1",
-                "pbh-type-for-instruction-with-pbehavior-2"
-              ],
-              "execution": null
-            }
-          ]
-        },
-        {
-          "_id": "test-alarm-instruction-with-pbehavior-3",
-          "assigned_instructions": [
-            {
-              "_id": "test-instruction-with-pbh-all-active",
-              "name": "test-alarm-with-pbh-all-active-name",
-              "execution": null
-            },
-            {
-              "_id": "test-instruction-with-pbh-with-some-disabled",
-              "name": "test-alarm-with-pbh-with-some-disabled-name",
-              "disabled_on_pbh": [
-                "pbh-type-for-instruction-with-pbehavior-1",
-                "pbh-type-for-instruction-with-pbehavior-2"
-              ],
-              "execution": null
-            }
-          ]
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 3
-      }
-    }
-    """
-
-    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-with-pbh-with-some-disabled&with_instructions=true
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-    {
-      "data": [
-        {
-          "_id": "test-alarm-instruction-with-pbehavior-3",
-          "assigned_instructions": [
-            {
-              "_id": "test-instruction-with-pbh-all-active",
-              "name": "test-alarm-with-pbh-all-active-name",
-              "execution": null
-            },
-            {
-              "_id": "test-instruction-with-pbh-with-some-disabled",
-              "name": "test-alarm-with-pbh-with-some-disabled-name",
-              "disabled_on_pbh": [
-                "pbh-type-for-instruction-with-pbehavior-1",
-                "pbh-type-for-instruction-with-pbehavior-2"
-              ],
-              "execution": null
-            }
-          ]
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
-      }
-    }
-    """
-
   Scenario: get alarm with idle_since
     When I am admin
     When I do GET /api/v4/alarms?search=test-idle-since
@@ -1999,6 +1801,406 @@ Feature: Get alarms
         "page_count": 1,
         "per_page": 10,
         "total_count": 3
+      }
+    }
+    """
+
+  Scenario: given get time inverval request should return alarms by default t field
+    When I am admin
+    When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&tstart=2000000000&tstop=2000000010&sort_key=v.resource&sort_dir=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-time-fields-search-get-1"
+        },
+        {
+          "_id": "test-alarm-time-fields-search-get-2"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&tstart=2000000010&tstop=2000000020&sort_key=v.resource&sort_dir=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-time-fields-search-get-2"
+        },
+        {
+          "_id": "test-alarm-time-fields-search-get-3"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+
+  Scenario: given get time inverval request should return alarms by time_field
+    When I am admin
+    When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&tstart=1900000000&tstop=1900000010&sort_key=v.resource&sort_dir=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 0
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&time_field=t&tstart=2000000000&tstop=2000000010&sort_key=v.resource&sort_dir=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-time-fields-search-get-1"
+        },
+        {
+          "_id": "test-alarm-time-fields-search-get-2"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&time_field=t&tstart=2000000010&tstop=2000000020&sort_key=v.resource&sort_dir=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-time-fields-search-get-2"
+        },
+        {
+          "_id": "test-alarm-time-fields-search-get-3"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&time_field=creation_date&tstart=1900000000&tstop=1900000010&sort_key=v.resource&sort_dir=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-time-fields-search-get-1"
+        },
+        {
+          "_id": "test-alarm-time-fields-search-get-2"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&opened=true&time_field=creation_date&tstart=1900000010&tstop=1900000020&sort_key=v.resource&sort_dir=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-time-fields-search-get-2"
+        },
+        {
+          "_id": "test-alarm-time-fields-search-get-3"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&opened=true&tstart=1800000000&tstop=1800000010&sort_key=v.resource&sort_dir=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 0
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&opened=true&time_field=creation_date&tstart=1800000000&tstop=1800000010&sort_key=v.resource&sort_dir=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 0
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&opened=true&time_field=last_update_date&tstart=1800000000&tstop=1800000010&sort_key=v.resource&sort_dir=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-time-fields-search-get-1"
+        },
+        {
+          "_id": "test-alarm-time-fields-search-get-2"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&opened=true&time_field=last_update_date&tstart=1800000010&tstop=1800000020&sort_key=v.resource&sort_dir=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-time-fields-search-get-2"
+        },
+        {
+          "_id": "test-alarm-time-fields-search-get-3"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&opened=true&tstart=1700000000&tstop=1700000010&sort_key=v.resource&sort_dir=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 0
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&opened=true&time_field=creation_date&tstart=1700000000&tstop=1700000010&sort_key=v.resource&sort_dir=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 0
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&opened=true&time_field=last_update_date&tstart=1700000000&tstop=1700000010&sort_key=v.resource&sort_dir=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 0
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&opened=true&time_field=last_event_date&tstart=1700000000&tstop=1700000010&sort_key=v.resource&sort_dir=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-time-fields-search-get-1"
+        },
+        {
+          "_id": "test-alarm-time-fields-search-get-2"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&opened=true&time_field=last_event_date&tstart=1700000010&tstop=1700000020&sort_key=v.resource&sort_dir=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-time-fields-search-get-2"
+        },
+        {
+          "_id": "test-alarm-time-fields-search-get-3"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&time_field=resolved&tstart=2100000000&tstop=2100000010&sort_key=v.resource&sort_dir=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-time-fields-search-get-4"
+        },
+        {
+          "_id": "test-alarm-time-fields-search-get-5"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&time_field=resolved&tstart=2100000010&tstop=2100000020&sort_key=v.resource&sort_dir=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-time-fields-search-get-5"
+        },
+        {
+          "_id": "test-alarm-time-fields-search-get-6"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+
+  Scenario: given get time inverval request for closed alarms should return alarms by default resolved field
+    When I am admin
+    When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&opened=false&tstart=2200000000&tstop=2200000010&sort_key=v.resource&sort_dir=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-time-fields-search-get-resolved-1"
+        },
+        {
+          "_id": "test-alarm-time-fields-search-get-resolved-2"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&opened=false&tstart=2200000010&tstop=2200000020&sort_key=v.resource&sort_dir=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id": "test-alarm-time-fields-search-get-resolved-2"
+        },
+        {
+          "_id": "test-alarm-time-fields-search-get-resolved-3"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+
+  Scenario: given get time inverval request with bad time_field should return error
+    When I am admin
+    When I do GET /api/v4/alarms?search=test-alarm-time-fields-search-get&time_field=test&tstart=2200000010&tstop=2200000020&sort_key=v.resource&sort_dir=asc
+    Then the response code should be 400
+    Then the response body should be:
+    """
+    {
+      "errors": {
+        "time_field": "TimeField must be one of [t creation_date resolved last_update_date last_event_date] or empty."
       }
     }
     """

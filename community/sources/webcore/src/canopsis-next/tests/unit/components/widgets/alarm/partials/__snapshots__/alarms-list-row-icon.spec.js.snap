@@ -1,0 +1,181 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with all auto instructions 1`] = `
+<span
+  class="v-tooltip v-tooltip--top"
+>
+  <transition-stub
+    name="slide-y-reverse-transition"
+  />
+  <span>
+    <i
+      aria-hidden="true"
+      class="v-icon instruction-icon material-icons theme--light black--text"
+      style="font-size: 16px;"
+    >
+      warning
+    </i>
+  </span>
+</span>
+`;
+
+exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with all auto instructions 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <span>
+    alarmList.tooltips.allAutoInstructionExecuted
+  </span>
+</div>
+`;
+
+exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with auto instruction failed 1`] = `
+<span
+  class="v-tooltip v-tooltip--top"
+>
+  <transition-stub
+    name="slide-y-reverse-transition"
+  />
+  <span>
+    <i
+      aria-hidden="true"
+      class="v-icon instruction-icon material-icons theme--light black--text error--text"
+      style="font-size: 16px;"
+    >
+      assignment_late
+    </i>
+  </span>
+</span>
+`;
+
+exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with auto instruction failed 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <span>
+    alarmList.tooltips.autoInstructionsFailed
+  </span>
+</div>
+`;
+
+exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with auto instruction running 1`] = `
+<span
+  class="v-tooltip v-tooltip--top"
+>
+  <transition-stub
+    name="slide-y-reverse-transition"
+  />
+  <span>
+    <i
+      aria-hidden="true"
+      class="v-icon instruction-icon material-icons theme--light black--text instruction-icon--auto-running"
+      style="font-size: 16px;"
+    >
+      assignment
+    </i>
+  </span>
+</span>
+`;
+
+exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with auto instruction running 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <span>
+    alarmList.tooltips.hasAutoInstructionInRunning
+  </span>
+</div>
+`;
+
+exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with instruction 1`] = `
+<span
+  class="v-tooltip v-tooltip--top"
+>
+  <transition-stub
+    name="slide-y-reverse-transition"
+  />
+  <span>
+    <i
+      aria-hidden="true"
+      class="v-icon instruction-icon material-icons theme--light black--text"
+      style="font-size: 16px;"
+    >
+      assignment
+    </i>
+  </span>
+</span>
+`;
+
+exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with instruction 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <span>
+    alarmList.tooltips.hasInstruction
+  </span>
+</div>
+`;
+
+exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with manual instruction running 1`] = `
+<span
+  class="v-tooltip v-tooltip--top"
+>
+  <transition-stub
+    name="slide-y-reverse-transition"
+  />
+  <span>
+    <i
+      aria-hidden="true"
+      class="v-icon instruction-icon material-icons theme--light black--text instruction-icon--auto-running"
+      style="font-size: 16px;"
+    >
+      assignment
+    </i>
+  </span>
+</span>
+`;
+
+exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with manual instruction running 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <span>
+    alarmList.tooltips.hasManualInstructionInRunning
+  </span>
+</div>
+`;
+
+exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with manual instruction waiting result 1`] = `
+<span
+  class="v-tooltip v-tooltip--top"
+>
+  <transition-stub
+    name="slide-y-reverse-transition"
+  />
+  <span>
+    <i
+      aria-hidden="true"
+      class="v-icon instruction-icon material-icons theme--light black--text instruction-icon--auto-running"
+      style="font-size: 16px;"
+    >
+      assignment
+    </i>
+  </span>
+</span>
+`;
+
+exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with manual instruction waiting result 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <span>
+    alarmList.tooltips.awaitingInstructionComplete
+  </span>
+</div>
+`;

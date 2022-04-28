@@ -298,7 +298,7 @@ describe('c-mixed-field', () => {
       },
     });
 
-    const menuContent = wrapper.find('.v-menu__content');
+    const menuContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
@@ -318,7 +318,7 @@ describe('c-mixed-field', () => {
       },
     });
 
-    const menuContent = wrapper.find('.v-menu__content');
+    const menuContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
@@ -350,7 +350,7 @@ describe('c-mixed-field', () => {
       },
     });
 
-    const menuContent = wrapper.find('.v-menu__content');
+    const menuContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
@@ -378,7 +378,7 @@ describe('c-mixed-field', () => {
       },
     });
 
-    const menuContents = wrapper.findAll('.v-menu__content');
+    const menuContents = wrapper.findAllMenus();
 
     expect(wrapper.element).toMatchSnapshot();
     menuContents.wrappers.forEach((menuContent) => {
@@ -402,7 +402,7 @@ describe('c-mixed-field', () => {
       },
     });
 
-    const menuContent = wrapper.find('.v-menu__content');
+    const menuContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
@@ -424,7 +424,7 @@ describe('c-mixed-field', () => {
       },
     });
 
-    const menuContent = wrapper.find('.v-menu__content');
+    const menuContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
@@ -446,7 +446,7 @@ describe('c-mixed-field', () => {
       },
     });
 
-    const menuContent = wrapper.find('.v-menu__content');
+    const menuContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
@@ -468,7 +468,7 @@ describe('c-mixed-field', () => {
       },
     });
 
-    const menuContent = wrapper.find('.v-menu__content');
+    const menuContent = wrapper.findMenu();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();

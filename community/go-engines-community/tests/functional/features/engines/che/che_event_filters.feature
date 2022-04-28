@@ -4,7 +4,7 @@ Feature: modify event on event filter
   Scenario: given check event and drop event filter should drop event
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "drop",
       "patterns": [{
@@ -19,7 +19,7 @@ Feature: modify event on event filter
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-event-filters-1",
       "connector_name": "test-connector-name-che-event-filters-1",
@@ -35,7 +35,7 @@ Feature: modify event on event filter
     When I do GET /api/v4/entities?search=che-event-filters-1
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [],
       "meta": {
@@ -50,7 +50,7 @@ Feature: modify event on event filter
   Scenario: given check event and break event filter should not process next event filters
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "break",
       "patterns": [{
@@ -64,7 +64,7 @@ Feature: modify event on event filter
     """
     Then the response code should be 201
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "drop",
       "patterns": [{
@@ -79,7 +79,7 @@ Feature: modify event on event filter
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-event-filters-2",
       "connector_name": "test-connector-name-che-event-filters-2",
@@ -95,7 +95,7 @@ Feature: modify event on event filter
     When I do GET /api/v4/entities?search=che-event-filters-2
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -162,7 +162,7 @@ Feature: modify event on event filter
     should update event and entity
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -190,18 +190,12 @@ Feature: modify event on event filter
     """
     Then the response code should be 201
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
         "event_type": "check",
-        "component": "test-component-che-event-filters-3",
-        "current_entity": {
-          "infos": {
-            "customer": null,
-            "manager": null
-          }
-        }
+        "component": "test-component-che-event-filters-3"
       }],
       "actions": [
         {
@@ -226,7 +220,7 @@ Feature: modify event on event filter
     """
     Then the response code should be 201
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -249,15 +243,12 @@ Feature: modify event on event filter
     """
     Then the response code should be 201
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
         "event_type": "check",
-        "component": "test-component-che-event-filters-3",
-        "current_entity": {
-          "infos": {"output": null}
-        }
+        "component": "test-component-che-event-filters-3"
       }],
       "actions": [
         {
@@ -277,7 +268,7 @@ Feature: modify event on event filter
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-event-filters-3",
       "connector_name": "test-connector-name-che-event-filters-3",
@@ -295,7 +286,7 @@ Feature: modify event on event filter
     When I do GET /api/v4/entities?search=che-event-filters-3
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -373,11 +364,52 @@ Feature: modify event on event filter
       }
     }
     """
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-che-event-filters-3",
+      "connector_name": "test-connector-name-che-event-filters-3",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-che-event-filters-3",
+      "resource": "test-resource-che-event-filters-3",
+      "state": 2,
+      "output": "test-output-che-event-filters-3",
+      "customer": "test-customer-che-event-filters-3",
+      "manager": "test-manager-che-event-filters-3-updated"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/entitybasics?_id=test-resource-che-event-filters-3/test-component-che-event-filters-3
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-resource-che-event-filters-3/test-component-che-event-filters-3",
+      "infos": {
+        "customer": {
+          "description": "Client",
+          "name": "customer",
+          "value": "test-customer-che-event-filters-3"
+        },
+        "manager": {
+          "description": "Manager",
+          "name": "manager",
+          "value": "test-manager-che-event-filters-3-updated"
+        },
+        "output": {
+          "description": "Output",
+          "name": "output",
+          "value": "test-output-che-event-filters-3 (client: test-customer-che-event-filters-3)"
+        }
+      }
+    }
+    """
 
   Scenario: given resource event should fill component infos
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -406,7 +438,7 @@ Feature: modify event on event filter
     """
     Then the response code should be 201
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -435,7 +467,7 @@ Feature: modify event on event filter
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-event-filters-4",
       "connector_name": "test-connector-name-che-event-filters-4",
@@ -449,7 +481,7 @@ Feature: modify event on event filter
     When I save response createComponentTimestamp={{ now }}
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-event-filters-4",
       "connector_name": "test-connector-name-che-event-filters-4",
@@ -466,7 +498,7 @@ Feature: modify event on event filter
     When I do GET /api/v4/entities?search=che-event-filters-4
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -554,7 +586,7 @@ Feature: modify event on event filter
   Scenario: given component event should fill component infos of resource entity
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -583,7 +615,7 @@ Feature: modify event on event filter
     """
     Then the response code should be 201
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -612,7 +644,7 @@ Feature: modify event on event filter
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-event-filters-5",
       "connector_name": "test-connector-name-che-event-filters-5",
@@ -626,7 +658,7 @@ Feature: modify event on event filter
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-event-filters-5",
       "connector_name": "test-connector-name-che-event-filters-5",
@@ -641,7 +673,7 @@ Feature: modify event on event filter
     When I do GET /api/v4/entities?search=che-event-filters-5
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -720,7 +752,7 @@ Feature: modify event on event filter
   Scenario: given check event and enrichment event filter should not update disabled entity
     Given I am admin
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-event-filters-6",
       "connector_name": "test-connector-name-che-event-filters-6",
@@ -734,7 +766,7 @@ Feature: modify event on event filter
     """
     When I wait the end of event processing
     When I do PUT /api/v4/entitybasics?_id=test-resource-che-event-filters-6/test-component-che-event-filters-6:
-    """
+    """json
     {
       "enabled": false,
       "impact_level": 1,
@@ -751,7 +783,7 @@ Feature: modify event on event filter
     Then the response code should be 200
     When I wait the end of event processing
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -779,7 +811,7 @@ Feature: modify event on event filter
     """
     Then the response code should be 201
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -809,7 +841,7 @@ Feature: modify event on event filter
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-event-filters-6",
       "connector_name": "test-connector-name-che-event-filters-6",
@@ -825,7 +857,7 @@ Feature: modify event on event filter
     When I do GET /api/v4/entities?search=che-event-filters-6
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -892,7 +924,7 @@ Feature: modify event on event filter
   should update event and entity
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -920,7 +952,7 @@ Feature: modify event on event filter
     """
     Then the response code should be 201
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -950,7 +982,7 @@ Feature: modify event on event filter
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-event-filters-7",
       "connector_name": "test-connector-name-che-event-filters-7",
@@ -966,7 +998,7 @@ Feature: modify event on event filter
     When I do GET /api/v4/entities?search=che-event-filters-7
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -1039,7 +1071,7 @@ Feature: modify event on event filter
   should update event and entity
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -1067,7 +1099,7 @@ Feature: modify event on event filter
     """
     Then the response code should be 201
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -1103,7 +1135,7 @@ Feature: modify event on event filter
     """
     Then the response code should be 201
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -1126,7 +1158,7 @@ Feature: modify event on event filter
     """
     Then the response code should be 201
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "patterns": [{
@@ -1154,7 +1186,7 @@ Feature: modify event on event filter
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector": "test-connector-che-event-filters-8",
       "connector_name": "test-connector-name-che-event-filters-8",
@@ -1172,7 +1204,7 @@ Feature: modify event on event filter
     When I do GET /api/v4/entities?search=che-event-filters-8
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {

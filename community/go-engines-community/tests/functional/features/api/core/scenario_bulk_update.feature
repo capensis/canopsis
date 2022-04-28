@@ -69,7 +69,9 @@ Feature: Bulk update a scenario
           }
         ]
       },
-      {},
+      {
+        "priority": 12345
+      },
       {
         "name": "test-scenario-to-check-unique-name-name",
         "enabled": true,
@@ -435,11 +437,12 @@ Feature: Bulk update a scenario
           "actions": "Actions is missing.",
           "enabled": "Enabled is missing.",
           "name": "Name is missing.",
-          "priority": "Priority is missing.",
           "triggers": "Triggers is missing.",
           "_id": "ID is missing."
         },
-        "item": {}
+        "item": {
+          "priority": 12345
+        }
       },
       {
         "status": 400,

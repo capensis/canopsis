@@ -81,7 +81,7 @@ func TestService_Process_GivenEvent_ShouldUpdateServices(t *testing.T) {
 			serviceID: newServiceCounters,
 		}, nil)
 	mockStorage := mock_entityservice.NewMockStorage(ctrl)
-	mockStorage.EXPECT().Load(ctx).Return(services, nil)
+	mockStorage.EXPECT().GetAll(ctx).Return(services, nil)
 	mockRedisClient := mock_v8.NewMockCmdable(ctrl)
 	mockLockClient := mock_redis.NewMockLockClient(ctrl)
 	mockServiceLock := mock_redis.NewMockLock(ctrl)
@@ -194,7 +194,7 @@ func TestService_Process_GivenEventAndCachedAlarmCounters_ShouldUpdateServices(t
 			serviceID: newServiceCounters,
 		}, nil)
 	mockStorage := mock_entityservice.NewMockStorage(ctrl)
-	mockStorage.EXPECT().Load(gomock.Any()).Return(services, nil)
+	mockStorage.EXPECT().GetAll(gomock.Any()).Return(services, nil)
 	mockRedisClient := mock_v8.NewMockCmdable(ctrl)
 	mockLockClient := mock_redis.NewMockLockClient(ctrl)
 	mockServiceLock := mock_redis.NewMockLock(ctrl)
@@ -275,7 +275,7 @@ func TestService_Process_GivenEventAndLockedService_ShouldSkipEvent(t *testing.T
 	mockCountersCache.EXPECT().RemoveAndGet(gomock.Any(), gomock.Any()).Times(0)
 	mockCountersCache.EXPECT().Update(gomock.Any(), gomock.Any()).Times(0)
 	mockStorage := mock_entityservice.NewMockStorage(ctrl)
-	mockStorage.EXPECT().Load(gomock.Any()).Return(services, nil)
+	mockStorage.EXPECT().GetAll(gomock.Any()).Return(services, nil)
 	mockRedisClient := mock_v8.NewMockCmdable(ctrl)
 	mockRedisClient.EXPECT().
 		HSetNX(gomock.Any(), gomock.Eq(fmt.Sprintf("skipped-entities-%s", serviceID)), gomock.Any(), gomock.Eq(resendEventBody)).
@@ -322,8 +322,7 @@ func TestService_Process_GivenEventAndLockedService_ShouldSkipEvent(t *testing.T
 
 func TestService_UpdateService_GivenEvent_ShouldUpdateService(t *testing.T) {
 	serviceID := "test-service"
-	entityService := entityservice.EntityService{
-		Entity:         types.Entity{ID: serviceID, Enabled: true},
+	serviceData := entityservice.ServiceData{
 		EntityPatterns: pattern.EntityPatternList{},
 		OutputTemplate: "test-output",
 	}
@@ -361,7 +360,6 @@ func TestService_UpdateService_GivenEvent_ShouldUpdateService(t *testing.T) {
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	mockEncoder.EXPECT().Encode(gomock.Any()).Return(eventBody, nil)
 	mockAdapter := mock_entityservice.NewMockAdapter(ctrl)
-	mockAdapter.EXPECT().GetByID(gomock.Any(), gomock.Eq(serviceID)).Return(&entityService, nil)
 	mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
 	mockCursor := mock_mongo.NewMockCursor(ctrl)
 	mockAdapter.EXPECT().
@@ -392,7 +390,7 @@ func TestService_UpdateService_GivenEvent_ShouldUpdateService(t *testing.T) {
 		Return(nil)
 	gomock.InOrder(firstReplaceCall, secondReplaceCall)
 	mockStorage := mock_entityservice.NewMockStorage(ctrl)
-	mockStorage.EXPECT().Save(gomock.Any(), gomock.Any()).Return(nil)
+	mockStorage.EXPECT().Reload(gomock.Any(), gomock.Any()).Return(&serviceData, false, false, nil)
 	mockRedisClient := mock_v8.NewMockCmdable(ctrl)
 	mockRedisClient.EXPECT().
 		HGetAll(gomock.Any(), gomock.Eq(fmt.Sprintf("skipped-entities-%s", serviceID))).

@@ -24,6 +24,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
@@ -31,6 +32,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session/mongostore"
 	"github.com/gin-gonic/gin"
 	gorillawebsocket "github.com/gorilla/websocket"
@@ -118,16 +120,26 @@ func Default(
 		p.ApiConfigProvider = config.NewApiConfigProvider(cfg, logger)
 	}
 	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, p.ApiConfigProvider, cookieOptions, logger)
+
+	if flags.EnableSameServiceNames {
+		logger.Info().Msg("Non-unique names for services ENABLED")
+	}
+
+	proxyAccessConfig, err := proxy.LoadAccessConfig(flags.ConfigDir)
+	if err != nil {
+		logger.Err(err).Msg("cannot load access config")
+		return nil, err
+	}
 	// Create pbehavior computer.
 	pbhComputeChan := make(chan libpbehavior.ComputeTask, chanBuf)
 	pbhEntityMatcher := libpbehavior.NewComputedEntityMatcher(dbClient, pbhRedisSession, json.NewEncoder(), json.NewDecoder())
 	pbhStore := libpbehavior.NewStore(pbhRedisSession, json.NewEncoder(), json.NewDecoder())
 	pbhService := libpbehavior.NewService(libpbehavior.NewModelProvider(dbClient), pbhEntityMatcher, pbhStore, libredis.NewLockClient(pbhRedisSession))
-	pbhEntityTypeResolver := libpbehavior.NewEntityTypeResolver(pbhStore, pbhEntityMatcher)
+	pbhEntityTypeResolver := libpbehavior.NewEntityTypeResolver(pbhStore, libpbehavior.NewEntityMatcher(dbClient), pbhEntityMatcher)
 	// Create entity service event publisher.
 	entityPublChan := make(chan entityservice.ChangeEntityMessage, chanBuf)
 	entityServiceEventPublisher := entityservice.NewEventPublisher(
-		alarm.NewAdapter(dbClient), amqpChannel,
+		alarm.NewAdapter(dbClient), libentity.NewAdapter(dbClient), amqpChannel,
 		json.NewEncoder(), canopsis.JsonContentType,
 		canopsis.FIFOAckExchangeName, canopsis.FIFOQueueName, logger,
 	)
@@ -148,7 +160,7 @@ func Default(
 
 	entityCleanerTaskChan := make(chan entity.CleanTask)
 	disabledEntityCleaner := entity.NewDisabledCleaner(
-		entity.NewStore(dbClient),
+		entity.NewStore(dbClient, timezoneConfigProvider),
 		datastorage.NewAdapter(dbClient),
 		metricsEntityMetaUpdater,
 		logger,
@@ -213,6 +225,7 @@ func Default(
 		},
 		logger,
 	)
+	legacyUrl := GetLegacyURL(logger)
 	api.AddRouter(func(router gin.IRouter) {
 		router.Use(middleware.Cache())
 
@@ -220,13 +233,18 @@ func Default(
 			router.Use(devmiddleware.ReloadEnforcerPolicy(enforcer))
 		}
 
-		RegisterValidators(dbClient)
+		legacyUrlStr := ""
+		if legacyUrl != nil {
+			legacyUrlStr = legacyUrl.String()
+		}
+		RegisterValidators(dbClient, flags.EnableSameServiceNames)
 		RegisterRoutes(
 			ctx,
 			cfg,
 			router,
 			security,
 			enforcer,
+			legacyUrlStr,
 			dbClient,
 			p.TimezoneConfigProvider,
 			pbhEntityTypeResolver,
@@ -248,9 +266,13 @@ func Default(
 			logger,
 		)
 	})
-	api.AddNoRoute(func(c *gin.Context) {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
-	})
+	if legacyUrl == nil {
+		api.AddNoRoute(func(c *gin.Context) {
+			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		})
+	} else {
+		api.AddNoRoute(GetProxy(legacyUrl, security, enforcer, proxyAccessConfig)...)
+	}
 	api.AddNoMethod(func(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusMethodNotAllowed, common.MethodNotAllowedResponse)
 	})
@@ -313,8 +335,12 @@ func newWebsocketHub(enforcer libsecurity.Enforcer, tokenProvider libsecurity.To
 	websocketAuthorizer := websocket.NewAuthorizer(enforcer, tokenProvider)
 	websocketHub := websocket.NewHub(websocketUpgrader, websocketAuthorizer,
 		canopsis.PeriodicalWaitTime, logger)
-	websocketHub.RegisterRoom(websocket.RoomBroadcastMessages)
-	websocketHub.RegisterRoom(websocket.RoomLoggedUserCount)
+	if err := websocketHub.RegisterRoom(websocket.RoomBroadcastMessages); err != nil {
+		logger.Err(err).Msg("Register BroadcastMessages room")
+	}
+	if err := websocketHub.RegisterRoom(websocket.RoomLoggedUserCount); err != nil {
+		logger.Err(err).Msg("Register LoggedUserCount room")
+	}
 	return websocketHub
 }
 

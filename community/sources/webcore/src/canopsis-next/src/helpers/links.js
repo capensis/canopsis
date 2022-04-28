@@ -1,5 +1,3 @@
-import { isObject } from 'lodash';
-
 import { getCollectionComparator } from './sort';
 
 /**
@@ -15,18 +13,19 @@ import { getCollectionComparator } from './sort';
  * @param {string} category
  * @return {{ label: string, link: string }[]}
  */
-export function harmonizeLinks(links, category) {
-  return links.map((link, index) => {
-    if (isObject(link) && link.link && link.label) {
-      return link;
-    }
+export const harmonizeLinks = (
+  links,
+  category,
+) => links.map((link, index) => {
+  if (link?.link && link?.label) {
+    return link;
+  }
 
-    return {
-      label: `${category} - ${index}`,
-      link,
-    };
-  }).sort(getCollectionComparator('label'));
-}
+  return {
+    label: `${category} - ${index}`,
+    link,
+  };
+}).sort(getCollectionComparator('label'));
 
 /**
  * Category harmonization
@@ -35,15 +34,16 @@ export function harmonizeLinks(links, category) {
  * @param {Function} additionalFilter
  * @return {Array}
  */
-export function harmonizeCategories(categories, additionalFilter = () => true) {
-  return Object.entries(categories).reduce((acc, [category, categoryLinks]) => {
-    if (categoryLinks.length && additionalFilter(category)) {
-      acc.push({
-        label: category,
-        links: harmonizeLinks(categoryLinks, category),
-      });
-    }
+export const harmonizeCategories = (
+  categories,
+  additionalFilter = () => true,
+) => Object.entries(categories).reduce((acc, [category, categoryLinks]) => {
+  if (categoryLinks.length && additionalFilter(category)) {
+    acc.push({
+      label: category,
+      links: harmonizeLinks(categoryLinks, category),
+    });
+  }
 
-    return acc;
-  }, []).sort(getCollectionComparator('label'));
-}
+  return acc;
+}, []).sort(getCollectionComparator('label'));
