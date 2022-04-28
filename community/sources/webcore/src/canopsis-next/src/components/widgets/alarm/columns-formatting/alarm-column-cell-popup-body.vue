@@ -9,7 +9,7 @@
           small,
           @click="$emit('close')"
         )
-          v-icon(small, color="error") close
+          v-icon(color="error", small) close
     v-fade-transition
       v-card-text.pa-2
         v-runtime-template(:template="popupTextContent")
@@ -37,7 +37,7 @@ export default {
       lazy: true,
 
       async get() {
-        const context = { alarm: this.alarm, entity: this.alarm.entity || {} };
+        const context = { alarm: this.alarm, entity: this.alarm.entity ?? {} };
         const compiledTemplate = await compile(this.template, context);
 
         return `<div>${compiledTemplate}</div>`;

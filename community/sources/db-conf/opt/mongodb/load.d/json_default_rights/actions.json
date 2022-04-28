@@ -120,6 +120,13 @@
         "type": "CRUD"
     },
     {
+        "_id": "models_engine",
+        "loader_id": "models_engine",
+        "crecord_name": "models_engine",
+        "crecord_type": "action",
+        "desc": "Engines"
+    },
+    {
         "_id": "models_exploitation_eventFilter",
         "loader_id": "models_exploitation_eventFilter",
         "crecord_name": "models_exploitation_eventFilter",
@@ -494,6 +501,13 @@
         "crecord_name": "serviceweather_entityManagePbehaviors",
         "crecord_type": "action",
         "desc": "Service weather: Access to pbehaviors management"
+    },
+    {
+        "_id": "serviceweather_executeInstruction",
+        "loader_id": "serviceweather_executeInstruction",
+        "crecord_name": "serviceweather_executeInstruction",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to execute instruction"
     },
     {
         "_id": "serviceweather_entityLinks",
@@ -1020,5 +1034,21 @@
         "crecord_name": "api_filter",
         "desc": "Filters",
         "type": "CRUD"
+    },
+    {
+        "_id": "api_snmprule",
+        "loader_id": "api_snmprule",
+        "crecord_type": "action",
+        "crecord_name": "api_snmprule",
+        "desc": "SNMP api",
+        "type": "CRUD"
+    },
+    {
+        "_id": "api_snmpmib",
+        "loader_id": "api_snmpmib",
+        "crecord_type": "action",
+        "crecord_name": "api_snmpmib",
+        "type": "CRUD",
+        "desc": "SNMP MIB api"
     }
 ]

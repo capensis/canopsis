@@ -5,7 +5,7 @@ describe('getDateLabelBySampling', () => {
   const timestamp = 1636523087405;
 
   it('Valid string with sampling by hour', () => {
-    expect(getDateLabelBySampling(timestamp, SAMPLINGS.hour)).toBe('10/11/2021 12:44');
+    expect(getDateLabelBySampling(timestamp, SAMPLINGS.hour)).toBe('10/11/2021 06:44');
   });
 
   it('Valid string with sampling by day', () => {

@@ -3,6 +3,7 @@ package eventfilter_test
 import (
 	"context"
 	mock_context "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/context"
+	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/golang/mock/gomock"
 	"testing"
 
@@ -19,10 +20,12 @@ func TestEntityDataSourceCreate(t *testing.T) {
 		enrichmentCenter := mock_context.NewMockEnrichmentCenter(ctrl)
 		enrichFields := libcontext.NewEnrichFields("", "")
 
+		dbClient := mock_mongo.NewMockDbClient(ctrl)
+
 		factory := eventfilter.NewEntityDataSourceFactory(enrichmentCenter, enrichFields)
 
 		Convey("Creating an entity data source with parameters returns an error", func() {
-			_, err := factory.Create(map[string]interface{}{
+			_, err := factory.Create(dbClient, map[string]interface{}{
 				"unexpected_parameters": "test",
 			})
 			So(err, ShouldNotBeNil)
@@ -42,7 +45,9 @@ func TestEntityDataSourceGet(t *testing.T) {
 		factory := eventfilter.NewEntityDataSourceFactory(enrichmentCenter, enrichFields)
 
 		Convey("Creating an entity data source without parameters succeeds", func() {
-			source, err := factory.Create(map[string]interface{}{})
+			dbClient := mock_mongo.NewMockDbClient(ctrl)
+
+			source, err := factory.Create(dbClient, map[string]interface{}{})
 			So(err, ShouldBeNil)
 			So(source, ShouldNotBeNil)
 

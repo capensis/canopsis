@@ -55,6 +55,7 @@ Feature: update service weather on event
           },
           "is_action_required": true,
           "alarm_counters": [],
+          "pbehavior_info": null,
           "pbehaviors": []
         }
       ],
@@ -154,6 +155,7 @@ Feature: update service weather on event
           "secondary_icon": "",
           "is_action_required": true,
           "alarm_counters": [],
+          "pbehavior_info": null,
           "pbehaviors": []
         }
       ],
@@ -224,6 +226,7 @@ Feature: update service weather on event
           "secondary_icon": "",
           "is_action_required": false,
           "alarm_counters": [],
+          "pbehavior_info": null,
           "pbehaviors": []
         }
       ],
@@ -334,6 +337,7 @@ Feature: update service weather on event
           "secondary_icon": "",
           "is_action_required": false,
           "alarm_counters": [],
+          "pbehavior_info": null,
           "pbehaviors": []
         }
       ],
@@ -402,6 +406,7 @@ Feature: update service weather on event
           },
           "is_action_required": true,
           "alarm_counters": [],
+          "pbehavior_info": null,
           "pbehaviors": []
         }
       ],

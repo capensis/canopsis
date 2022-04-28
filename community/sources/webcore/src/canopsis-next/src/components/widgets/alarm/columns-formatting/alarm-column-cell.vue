@@ -12,7 +12,7 @@
       v-layout(align-center)
         div(v-if="column.isHtml", v-html="sanitizedValue")
         div(v-else, v-bind="component.bind", v-on="component.on")
-        v-btn.ma-0(data-test="alarmInfoPopupOpenButton", icon, small, @click.stop="showInfoPopup")
+        v-btn.ma-0(icon, small, @click.stop="showInfoPopup")
           v-icon(small) info
     alarm-column-cell-popup-body(
       :alarm="alarm",
@@ -135,14 +135,14 @@ export default {
         'v.duration': convertDurationToString,
         'v.current_state_duration': convertDurationToString,
         t: convertDateToStringWithFormatForToday,
-        'v.active_duration': convertDateToStringWithFormatForToday,
-        'v.snooze_duration': convertDateToStringWithFormatForToday,
-        'v.pbh_inactive_duration': convertDateToStringWithFormatForToday,
+        'v.active_duration': convertDurationToString,
+        'v.snooze_duration': convertDurationToString,
+        'v.pbh_inactive_duration': convertDurationToString,
 
         ...this.columnsFiltersMap,
       };
 
-      return PROPERTIES_FILTERS_MAP[this.column.value];
+      return this.$i18n.locale && PROPERTIES_FILTERS_MAP[this.column.value];
     },
 
     component() {
@@ -180,7 +180,10 @@ export default {
             is: 'alarm-column-value-categories',
             asList: get(this.widget.parameters, 'linksCategoriesAsList.enabled', false),
             limit: get(this.widget.parameters, 'linksCategoriesAsList.limit'),
-            links: this.alarm.links,
+            links: this.alarm.links ?? {},
+          },
+          on: {
+            activate: this.$listeners.activate,
           },
         },
         [ALARM_ENTITY_FIELDS.extraDetails]: {
@@ -221,9 +224,7 @@ export default {
   },
   methods: {
     showInfoPopup() {
-      if (this.popupData) {
-        this.isInfoPopupOpen = true;
-      }
+      this.isInfoPopupOpen = true;
     },
     hideInfoPopup() {
       this.isInfoPopupOpen = false;

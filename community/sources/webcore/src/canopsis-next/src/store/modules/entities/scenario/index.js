@@ -15,5 +15,9 @@ export default createEntityModule({
     checkPriority(context, { data }) {
       return request.post(API_ROUTES.scenario.checkPriority, data);
     },
+
+    fetchMinimalPriority() {
+      return request.get(API_ROUTES.scenario.minimalPriority);
+    },
   },
 });
