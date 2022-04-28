@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-status-rule-patterns-form Renders \`alarm-status-rule-patterns-form\` with custom props 1`] = `
+<c-patterns-field-stub
+  alarm-attributes="[object Object],[object Object]"
+  alarm-excluded-attributes="v.last_update_date,v.last_event_date,resolved"
+  disabled="true"
+  entity-excluded-items="last_event_date"
+  some-required="true"
+  value="[object Object]"
+  with-alarm="with-alarm"
+  with-entity="with-entity"
+/>
+`;
+
+exports[`alarm-status-rule-patterns-form Renders \`alarm-status-rule-patterns-form\` with default props 1`] = `
+<c-patterns-field-stub
+  alarm-attributes="[object Object],[object Object]"
+  alarm-excluded-attributes="v.last_update_date,v.last_event_date,resolved"
+  entity-excluded-items="last_event_date"
+  value="[object Object]"
+  with-alarm="with-alarm"
+  with-entity="with-entity"
+/>
+`;
