@@ -1,0 +1,418 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with full pbehavior 1`] = `
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <span>
+      <i
+        aria-hidden="true"
+        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
+        style="font-size: 16px;"
+      />
+    </span>
+  </span>
+</div>
+`;
+
+exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with full pbehavior 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <div>
+    <strong>
+      alarmList.actions.iconsTitles.pbehaviors
+    </strong>
+    <div>
+      <div
+        class="mt-2 font-weight-bold"
+      >
+        pbehavior-name
+      </div>
+      <div>
+        common.author: pbehavior-author
+      </div>
+      <div>
+        common.type: type-name
+      </div>
+      <div>
+        common.reason: pbehavior-reason-name
+      </div>
+      <div>
+        07/12/2013 3:13:20 - 07/12/2013 6:00:00
+      </div>
+      <div>
+        rrule
+      </div>
+      <div>
+        common.comment:2:
+        <div
+          class="ml-2"
+        >
+          - pbehavior-comment-1-author: pbehavior-comment-1-message
+        </div>
+      </div>
+      <div>
+        common.comment:2:
+        <div
+          class="ml-2"
+        >
+          - pbehavior-comment-2-author: pbehavior-comment-2-message
+        </div>
+      </div>
+      <hr
+        class="v-divider theme--light"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with pbehavior started in previous month 1`] = `
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <span>
+      <i
+        aria-hidden="true"
+        class="v-icon c-extra-details__badge cyan accent-2 white--text material-icons theme--light"
+        style="font-size: 16px;"
+      />
+    </span>
+  </span>
+</div>
+`;
+
+exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with pbehavior started in previous month 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <div>
+    <strong>
+      alarmList.actions.iconsTitles.pbehaviors
+    </strong>
+    <div>
+      <div
+        class="mt-2 font-weight-bold"
+      >
+        pbehavior-name
+      </div>
+      <div>
+        common.author: pbehavior-author
+      </div>
+      <!---->
+      <div>
+        common.reason: pbehavior-reason-name
+      </div>
+      <div>
+        07/08/2013 16:13:20 - 07/08/2013 19:00:00
+      </div>
+      <div>
+        rrule
+      </div>
+      <div>
+        common.comment:2:
+        <div
+          class="ml-2"
+        >
+          - pbehavior-comment-1-author: pbehavior-comment-1-message
+        </div>
+      </div>
+      <div>
+        common.comment:2:
+        <div
+          class="ml-2"
+        >
+          - pbehavior-comment-2-author: pbehavior-comment-2-message
+        </div>
+      </div>
+      <hr
+        class="v-divider theme--light"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without comments 1`] = `
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <span>
+      <i
+        aria-hidden="true"
+        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
+        style="font-size: 16px;"
+      />
+    </span>
+  </span>
+</div>
+`;
+
+exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without comments 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <div>
+    <strong>
+      alarmList.actions.iconsTitles.pbehaviors
+    </strong>
+    <div>
+      <div
+        class="mt-2 font-weight-bold"
+      >
+        pbehavior-name
+      </div>
+      <div>
+        common.author: pbehavior-author
+      </div>
+      <div>
+        common.type: type-name
+      </div>
+      <div>
+        common.reason: pbehavior-reason-name
+      </div>
+      <div>
+        07/12/2013 3:13:20 - 07/12/2013 6:00:00
+      </div>
+      <div>
+        rrule
+      </div>
+      <hr
+        class="v-divider theme--light"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without reason 1`] = `
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <span>
+      <i
+        aria-hidden="true"
+        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
+        style="font-size: 16px;"
+      />
+    </span>
+  </span>
+</div>
+`;
+
+exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without reason 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <div>
+    <strong>
+      alarmList.actions.iconsTitles.pbehaviors
+    </strong>
+    <div>
+      <div
+        class="mt-2 font-weight-bold"
+      >
+        pbehavior-name
+      </div>
+      <div>
+        common.author: pbehavior-author
+      </div>
+      <div>
+        common.type: type-name
+      </div>
+      <!---->
+      <div>
+        07/12/2013 3:13:20 - 07/12/2013 6:00:00
+      </div>
+      <div>
+        rrule
+      </div>
+      <div>
+        common.comment:2:
+        <div
+          class="ml-2"
+        >
+          - pbehavior-comment-1-author: pbehavior-comment-1-message
+        </div>
+      </div>
+      <div>
+        common.comment:2:
+        <div
+          class="ml-2"
+        >
+          - pbehavior-comment-2-author: pbehavior-comment-2-message
+        </div>
+      </div>
+      <hr
+        class="v-divider theme--light"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rrule 1`] = `
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <span>
+      <i
+        aria-hidden="true"
+        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
+        style="font-size: 16px;"
+      />
+    </span>
+  </span>
+</div>
+`;
+
+exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rrule 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <div>
+    <strong>
+      alarmList.actions.iconsTitles.pbehaviors
+    </strong>
+    <div>
+      <div
+        class="mt-2 font-weight-bold"
+      >
+        pbehavior-name
+      </div>
+      <div>
+        common.author: pbehavior-author
+      </div>
+      <div>
+        common.type: type-name
+      </div>
+      <div>
+        common.reason: pbehavior-reason-name
+      </div>
+      <div>
+        07/12/2013 3:13:20 - 07/12/2013 6:00:00
+      </div>
+      <!---->
+      <div>
+        common.comment:2:
+        <div
+          class="ml-2"
+        >
+          - pbehavior-comment-1-author: pbehavior-comment-1-message
+        </div>
+      </div>
+      <div>
+        common.comment:2:
+        <div
+          class="ml-2"
+        >
+          - pbehavior-comment-2-author: pbehavior-comment-2-message
+        </div>
+      </div>
+      <hr
+        class="v-divider theme--light"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without tstop 1`] = `
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <span>
+      <i
+        aria-hidden="true"
+        class="v-icon c-extra-details__badge cyan accent-2 white--text icon icon-name theme--light"
+        style="font-size: 16px;"
+      />
+    </span>
+  </span>
+</div>
+`;
+
+exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without tstop 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <div>
+    <strong>
+      alarmList.actions.iconsTitles.pbehaviors
+    </strong>
+    <div>
+      <div
+        class="mt-2 font-weight-bold"
+      >
+        pbehavior-name
+      </div>
+      <div>
+        common.author: pbehavior-author
+      </div>
+      <div>
+        common.type: type-name
+      </div>
+      <div>
+        common.reason: pbehavior-reason-name
+      </div>
+      <div>
+        07/12/2013 3:13:20
+        <!---->
+      </div>
+      <div>
+        rrule
+      </div>
+      <div>
+        common.comment:2:
+        <div
+          class="ml-2"
+        >
+          - pbehavior-comment-1-author: pbehavior-comment-1-message
+        </div>
+      </div>
+      <div>
+        common.comment:2:
+        <div
+          class="ml-2"
+        >
+          - pbehavior-comment-2-author: pbehavior-comment-2-message
+        </div>
+      </div>
+      <hr
+        class="v-divider theme--light"
+      />
+    </div>
+  </div>
+</div>
+`;

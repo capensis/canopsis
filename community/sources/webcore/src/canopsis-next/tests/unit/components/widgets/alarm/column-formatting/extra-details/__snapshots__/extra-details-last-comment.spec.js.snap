@@ -1,0 +1,111 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with date in previous month 1`] = `
+<div
+  class="c-clickable-tooltip c-extra-details"
+>
+  <div>
+    <i
+      aria-hidden="true"
+      class="v-icon white--text purple lighten-2 c-extra-details__badge material-icons theme--light"
+      style="font-size: 16px;"
+    >
+      comment
+    </i>
+  </div>
+  <span
+    class="v-tooltip v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <span />
+  </span>
+</div>
+`;
+
+exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with date in previous month 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <span>
+    <div
+      class="text-md-center"
+    >
+      <strong>
+        alarmList.actions.iconsTitles.comment
+      </strong>
+      <div>
+        common.by: lastComment-author
+      </div>
+      <div>
+        common.date: 07/08/2013 19:00:00
+      </div>
+      <div
+        class="c-extra-details__message"
+      >
+        common.comment:undefined: 
+        <span>
+          lastComment-message
+        </span>
+      </div>
+    </div>
+  </span>
+</div>
+`;
+
+exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with full last comment 1`] = `
+<div
+  class="c-clickable-tooltip c-extra-details"
+>
+  <div>
+    <i
+      aria-hidden="true"
+      class="v-icon white--text purple lighten-2 c-extra-details__badge material-icons theme--light"
+      style="font-size: 16px;"
+    >
+      comment
+    </i>
+  </div>
+  <span
+    class="v-tooltip v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <span />
+  </span>
+</div>
+`;
+
+exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with full last comment 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <span>
+    <div
+      class="text-md-center"
+    >
+      <strong>
+        alarmList.actions.iconsTitles.comment
+      </strong>
+      <div>
+        common.by: lastComment-author
+      </div>
+      <div>
+        common.date: 6:00:00
+      </div>
+      <div
+        class="c-extra-details__message"
+      >
+        common.comment:undefined: 
+        <span>
+          lastComment-message
+        </span>
+      </div>
+    </div>
+  </span>
+</div>
+`;

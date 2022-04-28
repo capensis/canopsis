@@ -1,11 +1,13 @@
 # https://www.mkdocs.org/about/release-notes
-mkdocs==1.2.3 ; python_version >= '3.6'
+# warning: the documentation build machine has Python 3.7 by default
+mkdocs==1.2.3 ; python_version >= '3.7'
 
 # https://squidfunk.github.io/mkdocs-material/changelog/
-mkdocs-material==7.3.6
+# => also sync the Mermaid extra_javascript line in mkdocs.yml when updating this
+mkdocs-material==8.1.11
 
 # https://github.com/timvink/mkdocs-git-revision-date-localized-plugin/releases
-mkdocs-git-revision-date-localized-plugin==0.9.3
+mkdocs-git-revision-date-localized-plugin==0.12.1
 
 # https://facelessuser.github.io/pymdown-extensions/about/changelog/
-pymdown-extensions==9.1
+pymdown-extensions==9.2

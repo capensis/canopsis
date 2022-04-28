@@ -9,9 +9,15 @@ export const layoutNavigationTopBarMenuMixin = {
     prepareLinks(links) {
       const { permissionsWithDefaultType = [] } = this;
       const preparedLinks = links
-        .filter(({ permission }) => (permissionsWithDefaultType.includes(permission)
-          ? this.checkAccess(permission)
-          : this.checkAppInfoAccessByPermission(permission) && this.checkReadAccess(permission)))
+        .filter(({ permission }) => {
+          if (this.checkAppInfoAccessByPermission(permission)) {
+            return permissionsWithDefaultType.includes(permission)
+              ? this.checkAccess(permission)
+              : this.checkReadAccess(permission);
+          }
+
+          return false;
+        })
         .map(link => ({ ...link, title: this.$t(`pageHeaders.${link.permission}.title`) }));
 
       return sortBy(preparedLinks, 'title');

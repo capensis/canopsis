@@ -17,12 +17,10 @@
     )
       v-icon(slot="append", color="black") calendar_today
     div.c-quick-interval__range
-      v-select.ml-4(
+      c-quick-date-interval-type-field.ml-4(
         v-model="range",
-        :items="quickRanges",
-        :label="$t('quickRanges.title')",
-        hide-details,
-        return-object
+        :custom-filter="isAllowedQuickRange",
+        hide-details
       )
 </template>
 
@@ -95,9 +93,10 @@ export default {
 
         return this.quickRanges.find(({ value }) => value === range.value);
       },
+
       set({ start, stop }) {
         if (start && stop) {
-          this.$emit('input', {
+          this.updateModel({
             ...this.interval,
             from: start,
             to: stop,

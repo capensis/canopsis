@@ -38,6 +38,7 @@ type FilterRequest struct {
 type BaseFilterRequest struct {
 	Filter                  string         `form:"filter" json:"filter"`
 	Search                  string         `form:"search" json:"search"`
+	TimeField               string         `form:"time_field" json:"time_field" binding:"oneoforempty=t creation_date resolved last_update_date last_event_date"`
 	StartFrom               *types.CpsTime `form:"tstart" json:"tstart" swaggertype:"integer"`
 	StartTo                 *types.CpsTime `form:"tstop" json:"tstop" swaggertype:"integer"`
 	Opened                  *bool          `form:"opened" json:"opened"`
@@ -90,15 +91,19 @@ type Alarm struct {
 		Data  []string `bson:"data"`
 		Total int      `bson:"total"`
 	} `bson:"children_ids,omitempty" json:"-"`
-	Children                         *Children               `bson:"children,omitempty" json:"consequences,omitempty"`
-	Causes                           *Causes                 `bson:"causes,omitempty" json:"causes,omitempty"`
-	FilteredChildrenIDs              []string                `bson:"filtered_children_ids,omitempty" json:"filtered_children,omitempty"`
+	Children            *Children `bson:"children,omitempty" json:"consequences,omitempty"`
+	Causes              *Causes   `bson:"causes,omitempty" json:"causes,omitempty"`
+	FilteredChildrenIDs []string  `bson:"filtered_children_ids,omitempty" json:"filtered_children,omitempty"`
+
 	AssignedInstructions             []InstructionWithAlarms `bson:"assigned_instructions,omitempty" json:"assigned_instructions,omitempty"`
 	IsAutoInstructionRunning         *bool                   `bson:"-" json:"is_auto_instruction_running,omitempty"`
 	IsAllAutoInstructionsCompleted   *bool                   `bson:"-" json:"is_all_auto_instructions_completed,omitempty"`
+	IsAutoInstructionFailed          *bool                   `bson:"-" json:"is_auto_instruction_failed,omitempty"`
+	IsManualInstructionRunning       *bool                   `bson:"-" json:"is_manual_instruction_running,omitempty"`
 	IsManualInstructionWaitingResult *bool                   `bson:"-" json:"is_manual_instruction_waiting_result,omitempty"`
-	Links                            map[string]interface{}  `bson:"-" json:"links"`
-	ImpactState                      int64                   `bson:"impact_state" json:"impact_state"`
+
+	Links       map[string]interface{} `bson:"-" json:"links"`
+	ImpactState int64                  `bson:"impact_state" json:"impact_state"`
 }
 
 type MetaAlarmRule struct {
@@ -117,44 +122,44 @@ type Children struct {
 }
 
 type AlarmValue struct {
-	ACK                           *AlarmStep           `bson:"ack,omitempty" json:"ack,omitempty"`
-	Canceled                      *AlarmStep           `bson:"canceled,omitempty" json:"canceled,omitempty"`
-	Done                          *AlarmStep           `bson:"done,omitempty" json:"done,omitempty"`
-	Snooze                        *AlarmStep           `bson:"snooze,omitempty" json:"snooze,omitempty"`
-	State                         *AlarmStep           `bson:"state,omitempty" json:"state,omitempty"`
-	Status                        *AlarmStep           `bson:"status,omitempty" json:"status,omitempty"`
-	Ticket                        *AlarmTicket         `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	LastComment                   *AlarmStep           `bson:"last_comment,omitempty" json:"lastComment,omitempty"`
-	Steps                         []AlarmStep          `bson:"steps,omitempty" json:"steps,omitempty"`
-	Component                     string               `bson:"component" json:"component"`
-	Connector                     string               `bson:"connector" json:"connector"`
-	ConnectorName                 string               `bson:"connector_name" json:"connector_name"`
-	CreationDate                  types.CpsTime        `bson:"creation_date" json:"creation_date" swaggertype:"integer"`
-	ActivationDate                *types.CpsTime       `bson:"activation_date,omitempty" json:"activation_date,omitempty" swaggertype:"integer"`
-	DisplayName                   string               `bson:"display_name" json:"display_name"`
-	InitialOutput                 string               `bson:"initial_output" json:"initial_output"`
-	Output                        string               `bson:"output" json:"output"`
-	InitialLongOutput             string               `bson:"initial_long_output" json:"initial_long_output"`
-	LongOutput                    string               `bson:"long_output" json:"long_output"`
-	LongOutputHistory             []string             `bson:"long_output_history" json:"long_output_history"`
-	LastUpdateDate                types.CpsTime        `bson:"last_update_date" json:"last_update_date" swaggertype:"integer"`
-	LastEventDate                 types.CpsTime        `bson:"last_event_date" json:"last_event_date" swaggertype:"integer"`
-	Resource                      string               `bson:"resource,omitempty" json:"resource,omitempty"`
-	Resolved                      *types.CpsTime       `bson:"resolved,omitempty" json:"resolved,omitempty" swaggertype:"integer"`
-	PbehaviorInfo                 *types.PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
-	Tags                          []string             `bson:"tags" json:"tags"`
-	Meta                          string               `bson:"meta,omitempty" json:"meta,omitempty"`
-	Parents                       []string             `bson:"parents" json:"parents"`
-	Children                      []string             `bson:"children" json:"children"`
-	StateChangesSinceStatusUpdate types.CpsNumber      `bson:"state_changes_since_status_update,omitempty" json:"state_changes_since_status_update,omitempty"`
-	TotalStateChanges             types.CpsNumber      `bson:"total_state_changes,omitempty" json:"total_state_changes,omitempty"`
-	RuleVersion                   map[string]string    `bson:"infos_rule_version" json:"infos_rule_version"`
-	Duration                      int                  `bson:"duration" json:"duration"`
-	CurrentStateDuration          int                  `bson:"current_state_duration" json:"current_state_duration"`
-	SnoozeDuration                int64                `bson:"snooze_duration" json:"snooze_duration"`
-	PbehaviorInactiveDuration     int64                `bson:"pbh_inactive_duration" json:"pbh_inactive_duration"`
-	ActiveDuration                int64                `bson:"active_duration" json:"active_duration"`
-	EventsCount                   types.CpsNumber      `bson:"events_count,omitempty" json:"events_count,omitempty"`
+	ACK                           *AlarmStep            `bson:"ack,omitempty" json:"ack,omitempty"`
+	Canceled                      *AlarmStep            `bson:"canceled,omitempty" json:"canceled,omitempty"`
+	Done                          *AlarmStep            `bson:"done,omitempty" json:"done,omitempty"`
+	Snooze                        *AlarmStep            `bson:"snooze,omitempty" json:"snooze,omitempty"`
+	State                         *AlarmStep            `bson:"state,omitempty" json:"state,omitempty"`
+	Status                        *AlarmStep            `bson:"status,omitempty" json:"status,omitempty"`
+	Ticket                        *AlarmTicket          `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	LastComment                   *AlarmStep            `bson:"last_comment,omitempty" json:"lastComment,omitempty"`
+	Steps                         []AlarmStep           `bson:"steps,omitempty" json:"steps,omitempty"`
+	Component                     string                `bson:"component" json:"component"`
+	Connector                     string                `bson:"connector" json:"connector"`
+	ConnectorName                 string                `bson:"connector_name" json:"connector_name"`
+	CreationDate                  types.CpsTime         `bson:"creation_date" json:"creation_date" swaggertype:"integer"`
+	ActivationDate                *types.CpsTime        `bson:"activation_date,omitempty" json:"activation_date,omitempty" swaggertype:"integer"`
+	DisplayName                   string                `bson:"display_name" json:"display_name"`
+	InitialOutput                 string                `bson:"initial_output" json:"initial_output"`
+	Output                        string                `bson:"output" json:"output"`
+	InitialLongOutput             string                `bson:"initial_long_output" json:"initial_long_output"`
+	LongOutput                    string                `bson:"long_output" json:"long_output"`
+	LongOutputHistory             []string              `bson:"long_output_history" json:"long_output_history"`
+	LastUpdateDate                types.CpsTime         `bson:"last_update_date" json:"last_update_date" swaggertype:"integer"`
+	LastEventDate                 types.CpsTime         `bson:"last_event_date" json:"last_event_date" swaggertype:"integer"`
+	Resource                      string                `bson:"resource,omitempty" json:"resource,omitempty"`
+	Resolved                      *types.CpsTime        `bson:"resolved,omitempty" json:"resolved,omitempty" swaggertype:"integer"`
+	PbehaviorInfo                 *entity.PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
+	Tags                          []string              `bson:"tags" json:"tags"`
+	Meta                          string                `bson:"meta,omitempty" json:"meta,omitempty"`
+	Parents                       []string              `bson:"parents" json:"parents"`
+	Children                      []string              `bson:"children" json:"children"`
+	StateChangesSinceStatusUpdate types.CpsNumber       `bson:"state_changes_since_status_update,omitempty" json:"state_changes_since_status_update,omitempty"`
+	TotalStateChanges             types.CpsNumber       `bson:"total_state_changes,omitempty" json:"total_state_changes,omitempty"`
+	RuleVersion                   map[string]string     `bson:"infos_rule_version" json:"infos_rule_version"`
+	Duration                      int                   `bson:"duration" json:"duration"`
+	CurrentStateDuration          int                   `bson:"current_state_duration" json:"current_state_duration"`
+	SnoozeDuration                int64                 `bson:"snooze_duration" json:"snooze_duration"`
+	PbehaviorInactiveDuration     int64                 `bson:"pbh_inactive_duration" json:"pbh_inactive_duration"`
+	ActiveDuration                int64                 `bson:"active_duration" json:"active_duration"`
+	EventsCount                   types.CpsNumber       `bson:"events_count,omitempty" json:"events_count,omitempty"`
 
 	Infos map[string]map[string]interface{} `bson:"infos" json:"infos"`
 }
@@ -182,13 +187,14 @@ type AlarmTicket struct {
 }
 
 type Pbehavior struct {
-	ID     string          `bson:"_id" json:"_id"`
-	Author string          `bson:"author" json:"author"`
-	Name   string          `bson:"name" json:"name"`
-	RRule  string          `bson:"rrule" json:"rrule"`
-	Start  *types.CpsTime  `bson:"tstart" json:"tstart" swaggertype:"integer"`
-	Stop   *types.CpsTime  `bson:"tstop" json:"tstop" swaggertype:"integer"`
-	Type   *pbehavior.Type `bson:"type" json:"type"`
+	ID       string             `bson:"_id" json:"_id"`
+	Author   string             `bson:"author" json:"author"`
+	Name     string             `bson:"name" json:"name"`
+	RRule    string             `bson:"rrule" json:"rrule"`
+	Start    *types.CpsTime     `bson:"tstart" json:"tstart" swaggertype:"integer"`
+	Stop     *types.CpsTime     `bson:"tstop" json:"tstop" swaggertype:"integer"`
+	Type     *pbehavior.Type    `bson:"type" json:"type"`
+	Comments pbehavior.Comments `bson:"comments" json:"comments"`
 }
 
 type InstructionWithAlarms struct {
@@ -196,18 +202,20 @@ type InstructionWithAlarms struct {
 	AlarmPatterns        pattern.AlarmPatternList  `bson:"alarm_patterns" json:"-"`
 	EntityPatterns       pattern.EntityPatternList `bson:"entity_patterns" json:"-"`
 	Name                 string                    `bson:"name" json:"name"`
-	ActiveOnPbh          []string                  `bson:"active_on_pbh,omitempty" json:"active_on_pbh,omitempty"`
-	DisabledOnPbh        []string                  `bson:"disabled_on_pbh,omitempty" json:"disabled_on_pbh,omitempty"`
+	ActiveOnPbh          []string                  `bson:"active_on_pbh,omitempty" json:"-"`
+	DisabledOnPbh        []string                  `bson:"disabled_on_pbh,omitempty" json:"-"`
 	Execution            *Execution                `bson:"-" json:"execution"`
 	AlarmsWithExecutions []Execution               `bson:"alarms_with_executions" json:"-"`
 	Created              types.CpsTime             `bson:"created,omitempty" json:"-"`
 }
 
 type ExecutionStatus struct {
-	ID               string `bson:"_id"`
-	AutoRunning      *bool  `bson:"auto_running"`
-	ManualRunning    *bool  `bson:"manual_running"`
-	AutoAllCompleted *bool  `bson:"auto_all_completed"`
+	ID                  string `bson:"_id"`
+	AutoRunning         *bool  `bson:"auto_running"`
+	ManualRunning       *bool  `bson:"manual_running"`
+	ManualWaitingResult *bool  `bson:"manual_waiting_result"`
+	AutoFailed          *bool  `bson:"auto_failed"`
+	AutoAllCompleted    *bool  `bson:"auto_all_completed"`
 }
 
 type Execution struct {

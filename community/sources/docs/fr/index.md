@@ -18,7 +18,18 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
 
 ### Dernières versions
 
+<!-- du plus récent au plus ancien -->
+*  [Canopsis 4.5.6](notes-de-version/4.5.6.md), publié le 21 avril 2022.
+*  [Canopsis 4.5.5](notes-de-version/4.5.5.md), publié le 13 avril 2022.
+*  [Canopsis 4.5.4](notes-de-version/4.5.4.md), publié le 25 mars 2022.
+*  [Canopsis 4.5.3](notes-de-version/4.5.3.md), publié le 18 mars 2022.
+*  [Canopsis 4.5.2](notes-de-version/4.5.2.md), publié le 11 mars 2022.
+*  [Canopsis 4.5.1](notes-de-version/4.5.1.md), publié le 4 mars 2022.
+*  [Canopsis 4.5.0](notes-de-version/4.5.0.md), publié le 18 février 2022. Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-4.5.0.md).
+*  [Canopsis 4.4.1](notes-de-version/4.4.1.md), publié le 18 mars 2022.
 *  [Canopsis 4.4.0](notes-de-version/4.4.0.md), publié le 14 décembre 2021.
+*  [Canopsis 4.3.8](notes-de-version/4.3.8.md), publié le 17 mars 2022.
+*  [Canopsis 4.3.7](notes-de-version/4.3.7.md), publié le 28 janvier 2022.
 *  [Canopsis 4.3.6](notes-de-version/4.3.6.md), publié le 13 décembre 2021.
 *  [Canopsis 4.3.5](notes-de-version/4.3.5.md), publié le 10 décembre 2021.
 *  [Canopsis 4.3.4](notes-de-version/4.3.4.md), publié le 23 novembre 2021.
@@ -29,11 +40,11 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
 
 ### Anciennes versions
 
+<!-- du plus récent au plus ancien -->
 | | | | | | |
 |-:|-|-|-|-|-|
-| *mai 2021* | [4.2.0](notes-de-version/4.2.0.md) | | | |
-| *mars 2021* | [4.1.0](notes-de-version/4.1.0.md) | [4.1.1](notes-de-version/4.1.1.md) | | |
-| *janvier–février 2021* | [4.0.0](notes-de-version/4.0.0.md) | [4.0.1](notes-de-version/4.0.1.md) | [4.0.2](notes-de-version/4.0.2.md) | [4.0.3](notes-de-version/4.0.3.md) |
+| *mars–mai 2021* | [4.2.0](notes-de-version/4.2.0.md) | [4.1.1](notes-de-version/4.1.1.md) | [4.1.0](notes-de-version/4.1.0.md) | |
+| *janvier–février 2021* | [4.0.3](notes-de-version/4.0.3.md) | [4.0.2](notes-de-version/4.0.2.md) | [4.0.1](notes-de-version/4.0.1.md) | [4.0.0](notes-de-version/4.0.0.md) |
 | *septembre–novembre 2020* | [3.48.0](notes-de-version/3.48.0.md) | [3.47.0](notes-de-version/3.47.0.md) | [3.46.0](notes-de-version/3.46.0.md) | [3.45.0](notes-de-version/3.45.0.md) |
 | *juin–août 2020* | [3.44.1](notes-de-version/3.44.1.md) | [3.44.0](notes-de-version/3.44.0.md) | [3.43.1](notes-de-version/3.43.1.md) | [3.42.0](notes-de-version/3.42.0.md) |
 | *mars–mai 2020* | [3.41.0](notes-de-version/3.41.0.md) | [3.40.0](notes-de-version/3.40.0.md) | [3.39.1](notes-de-version/3.39.1.md) | [3.39.0](notes-de-version/3.39.0.md) | [3.38.0](notes-de-version/3.38.0.md) |
