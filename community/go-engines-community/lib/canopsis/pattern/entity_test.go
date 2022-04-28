@@ -15,7 +15,7 @@ func TestEntity_Match(t *testing.T) {
 
 	for name, data := range dataSets {
 		t.Run(name, func(t *testing.T) {
-			ok, err := data.pattern.Match(data.entity)
+			ok, _, err := data.pattern.Match(data.entity)
 			if !errors.Is(err, data.matchErr) {
 				t.Errorf("expected error %v but got %v", data.matchErr, err)
 			}
@@ -241,7 +241,7 @@ func benchmarkEntityMatch(b *testing.B, fieldCond pattern.FieldCondition, entity
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_, err := p.Match(entity)
+		_, _, err := p.Match(entity)
 		if err != nil {
 			b.Fatalf("unexpected error %v", err)
 		}
@@ -272,7 +272,7 @@ func benchmarkEntityUnmarshalBsonAndMatch(b *testing.B, fieldCond pattern.FieldC
 			b.Fatalf("unexpected error %v", err)
 		}
 
-		_, err = w.Pattern.Match(entity)
+		_, _, err = w.Pattern.Match(entity)
 		if err != nil {
 			b.Fatalf("unexpected error %v", err)
 		}
@@ -496,6 +496,162 @@ func getEntityMatchDataSets() map[string]entityDataSet {
 			},
 			matchResult: false,
 		},
+		"given string component info condition should match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.info_name",
+						FieldType: pattern.FieldTypeString,
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
+					},
+				},
+			},
+			entity: types.Entity{
+				ComponentInfos: map[string]types.Info{
+					"info_name": {
+						Name:        "info_name",
+						Description: "test description",
+						Value:       "test name",
+					},
+				},
+			},
+			matchResult: true,
+		},
+		"given string component info condition should not match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.info_name",
+						FieldType: pattern.FieldTypeString,
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
+					},
+				},
+			},
+			entity: types.Entity{
+				ComponentInfos: map[string]types.Info{
+					"info_name": {
+						Name:        "info_name",
+						Description: "test description",
+						Value:       "test another name",
+					},
+				},
+			},
+			matchResult: false,
+		},
+		"given string component info condition and not string info should not match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.info_name",
+						FieldType: pattern.FieldTypeString,
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
+					},
+				},
+			},
+			entity: types.Entity{
+				ComponentInfos: map[string]types.Info{
+					"info_name": {
+						Name:        "info_name",
+						Description: "test description",
+						Value:       2,
+					},
+				},
+			},
+			matchResult: false,
+		},
+		"given string component info condition and unknown info should not match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.info_name",
+						FieldType: pattern.FieldTypeString,
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
+					},
+				},
+			},
+			entity:      types.Entity{},
+			matchResult: false,
+		},
+		"given exist component info condition should match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.info_name",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
+					},
+				},
+			},
+			entity: types.Entity{
+				ComponentInfos: map[string]types.Info{
+					"info_name": {
+						Name:        "info_name",
+						Description: "test description",
+						Value:       "test name",
+					},
+				},
+			},
+			matchResult: true,
+		},
+		"given exist component info condition should not match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.info_name",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
+					},
+				},
+			},
+			entity: types.Entity{
+				ComponentInfos: map[string]types.Info{
+					"info_another_name": {
+						Name:        "info_another_name",
+						Description: "test description",
+						Value:       "test name",
+					},
+				},
+			},
+			matchResult: false,
+		},
+		"given not exist component info condition should match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.info_name",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
+					},
+				},
+			},
+			entity: types.Entity{
+				ComponentInfos: map[string]types.Info{
+					"info_another_name": {
+						Name:        "info_another_name",
+						Description: "test description",
+						Value:       "test name",
+					},
+				},
+			},
+			matchResult: true,
+		},
+		"given not exist component info condition should not match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.info_name",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
+					},
+				},
+			},
+			entity: types.Entity{
+				ComponentInfos: map[string]types.Info{
+					"info_name": {
+						Name:        "info_name",
+						Description: "test description",
+						Value:       "test name",
+					},
+				},
+			},
+			matchResult: false,
+		},
 	}
 }
 
@@ -593,6 +749,27 @@ func getEntityMongoQueryDataSets() map[string]entityDataSet {
 						{"$and": []bson.M{
 							{"entity.infos.info_name.val": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
 							{"entity.infos.info_name.val": bson.M{"$eq": 3}},
+						}},
+					}},
+				}}},
+			},
+		},
+		"given component infos condition": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.info_name",
+						FieldType: pattern.FieldTypeInt,
+						Condition: pattern.NewIntCondition(pattern.ConditionEqual, 3),
+					},
+				},
+			},
+			mongoQueryResult: []bson.M{
+				{"$match": bson.M{"$or": []bson.M{
+					{"$and": []bson.M{
+						{"$and": []bson.M{
+							{"entity.component_infos.info_name.val": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
+							{"entity.component_infos.info_name.val": bson.M{"$eq": 3}},
 						}},
 					}},
 				}}},

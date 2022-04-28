@@ -7,10 +7,22 @@ Feature: modify event on event filter
     """json
     {
       "type": "drop",
-      "patterns": [{
-        "event_type": "check",
-        "component": "test-component-che-event-filters-1"
-      }],
+      "event_pattern":[[
+        {
+          "field": "event_type",
+          "cond": {
+            "type": "eq",
+            "value": "check"
+          }
+        },
+        {
+          "field": "component",
+          "cond": {
+            "type": "eq",
+            "value": "test-component-che-event-filters-1"
+          }
+        }
+      ]],
       "description": "test-event-filter-che-event-filters-1-description",
       "priority": 1,
       "enabled": true
@@ -53,10 +65,22 @@ Feature: modify event on event filter
     """json
     {
       "type": "break",
-      "patterns": [{
-        "event_type": "check",
-        "component": "test-component-che-event-filters-2"
-      }],
+      "event_pattern":[[
+        {
+          "field": "event_type",
+          "cond": {
+            "type": "eq",
+            "value": "check"
+          }
+        },
+        {
+          "field": "component",
+          "cond": {
+            "type": "eq",
+            "value": "test-component-che-event-filters-2"
+          }
+        }
+      ]],
       "description": "test-event-filter-che-event-filters-2-description",
       "priority": 1,
       "enabled": true
@@ -67,10 +91,22 @@ Feature: modify event on event filter
     """json
     {
       "type": "drop",
-      "patterns": [{
-        "event_type": "check",
-        "component": "test-component-che-event-filters-2"
-      }],
+      "event_pattern":[[
+        {
+          "field": "event_type",
+          "cond": {
+            "type": "eq",
+            "value": "check"
+          }
+        },
+        {
+          "field": "component",
+          "cond": {
+            "type": "eq",
+            "value": "test-component-che-event-filters-2"
+          }
+        }
+      ]],
       "description": "test-event-filter-che-event-filters-1-description",
       "priority": 2,
       "enabled": true
@@ -175,10 +211,22 @@ Feature: modify event on event filter
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "component": "test-component-che-event-filters-3"
-      }],
+      "event_pattern":[[
+        {
+          "field": "event_type",
+          "cond": {
+            "type": "eq",
+            "value": "check"
+          }
+        },
+        {
+          "field": "component",
+          "cond": {
+            "type": "eq",
+            "value": "test-component-che-event-filters-3"
+          }
+        }
+      ]],
       "config": {
         "actions": [
           {
@@ -207,10 +255,15 @@ Feature: modify event on event filter
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "component": "test-component-che-event-filters-3"
-      }],
+      "event_pattern":[[
+        {
+          "field": "component",
+          "cond": {
+            "type": "eq",
+            "value": "test-component-che-event-filters-3"
+          }
+        }
+      ]],
       "config": {
         "actions": [
           {
@@ -232,10 +285,22 @@ Feature: modify event on event filter
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "component": "test-component-che-event-filters-3"
-      }],
+      "event_pattern":[[
+        {
+          "field": "event_type",
+          "cond": {
+            "type": "eq",
+            "value": "check"
+          }
+        },
+        {
+          "field": "component",
+          "cond": {
+            "type": "eq",
+            "value": "test-component-che-event-filters-3"
+          }
+        }
+      ]],
       "config": {
         "actions": [
           {
@@ -410,14 +475,42 @@ Feature: modify event on event filter
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "source_type": "component",
-        "component": "test-component-che-event-filters-4",
-        "current_entity": {
-          "infos": {"customer": null}
-        }
-      }],
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-che-event-filters-4"
+            }
+          },
+          {
+            "field": "source_type",
+            "cond": {
+              "type": "eq",
+              "value": "component"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.customer",
+            "cond": {
+              "type": "exist",
+              "value": false
+            }
+          }
+        ]
+      ],
       "config": {
         "actions": [
           {
@@ -560,14 +653,42 @@ Feature: modify event on event filter
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "source_type": "component",
-        "component": "test-component-che-event-filters-5",
-        "current_entity": {
-          "infos": {"customer": null}
-        }
-      }],
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-che-event-filters-5"
+            }
+          },
+          {
+            "field": "source_type",
+            "cond": {
+              "type": "eq",
+              "value": "component"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.customer",
+            "cond": {
+              "type": "exist",
+              "value": false
+            }
+          }
+        ]
+      ],
       "config": {
         "actions": [
           {
@@ -741,15 +862,35 @@ Feature: modify event on event filter
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "component": "test-component-che-event-filters-6",
-        "current_entity": {
-          "infos": {
-            "customer": null
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-che-event-filters-6"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
           }
-        }
-      }],
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.customer",
+            "cond": {
+              "type": "exist",
+              "value": false
+            }
+          }
+        ]
+      ],
       "config": {
         "actions": [
           {
@@ -865,15 +1006,35 @@ Feature: modify event on event filter
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "component": "test-component-che-event-filters-7",
-        "current_entity": {
-          "infos": {
-            "testdate": null
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-che-event-filters-7"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
           }
-        }
-      }],
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.testdate",
+            "cond": {
+              "type": "exist",
+              "value": false
+            }
+          }
+        ]
+      ],
       "config": {
         "actions": [
           {
@@ -996,16 +1157,42 @@ Feature: modify event on event filter
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "component": "test-component-che-event-filters-8",
-        "current_entity": {
-          "infos": {
-            "customer": null,
-            "testdate": null
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-che-event-filters-8"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
           }
-        }
-      }],
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.customer",
+            "cond": {
+              "type": "exist",
+              "value": false
+            }
+          },
+          {
+            "field": "infos.testdate",
+            "cond": {
+              "type": "exist",
+              "value": false
+            }
+          }
+        ]
+      ],
       "config": {
         "actions": [
           {
@@ -1034,10 +1221,24 @@ Feature: modify event on event filter
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "component": "test-component-che-event-filters-8"
-      }],
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-che-event-filters-8"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
+          }
+        ]
+      ],
       "config": {
         "actions": [
           {
@@ -1059,13 +1260,35 @@ Feature: modify event on event filter
     """json
     {
       "type": "enrichment",
-      "patterns": [{
-        "event_type": "check",
-        "component": "test-component-che-event-filters-8",
-        "current_entity": {
-          "infos": {"output": null}
-        }
-      }],
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-che-event-filters-8"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "infos.output",
+            "cond": {
+              "type": "exist",
+              "value": false
+            }
+          }
+        ]
+      ],
       "config": {
         "actions": [
           {
@@ -1208,9 +1431,17 @@ Feature: modify event on event filter
           "collection": "assets"
         }
       },
-      "patterns": [{
-        "component": "test-eventfilter-assets-customer-1"
-      }],
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-assets-customer-1"
+            }
+          }
+        ]
+      ],
       "description": "test-event-filter-che-event-filters-9-description",
       "priority": 1,
       "enabled": true,
@@ -1302,9 +1533,17 @@ Feature: modify event on event filter
           "collection": "assets"
         }
       },
-      "patterns": [{
-        "component": "assets_customer_not_exist"
-      }],
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "assets_customer_not_exist"
+            }
+          }
+        ]
+      ],
       "description": "test-event-filter-che-event-filters-10-description",
       "priority": 1,
       "enabled": true,
@@ -1410,9 +1649,17 @@ Feature: modify event on event filter
           "collection": "assets"
         }
       },
-      "patterns": [{
-        "component": "assets_customer_not_exist_2"
-      }],
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "assets_customer_not_exist_2"
+            }
+          }
+        ]
+      ],
       "description": "test-event-filter-che-event-filters-11-description",
       "priority": 1,
       "enabled": true,
@@ -1512,9 +1759,17 @@ Feature: modify event on event filter
           }
         }
       },
-      "patterns": [{
-        "component": "test-component-che-event-filters-12"
-      }],
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-che-event-filters-12"
+            }
+          }
+        ]
+      ],
       "description": "test-event-filter-che-event-filters-12-description",
       "priority": 1,
       "enabled": true,
@@ -1613,9 +1868,17 @@ Feature: modify event on event filter
           "collection": "assets"
         }
       },
-      "patterns": [{
-        "component": "test-eventfilter-assets-customer-2"
-      }],
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-assets-customer-2"
+            }
+          }
+        ]
+      ],
       "description": "test-event-filter-che-event-filters-13-description",
       "priority": 1,
       "enabled": true,
@@ -1699,6 +1962,145 @@ Feature: modify event on event filter
         "page_count": 1,
         "per_page": 10,
         "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given check event and drop event filter with several event patterns should drop event
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "drop",
+      "event_pattern":[
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-che-event-filters-14"
+            }
+          }
+        ],
+        [
+          {
+            "field": "resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-che-event-filters-14"
+            }
+          }
+        ]
+      ],
+      "description": "test-event-filter-che-event-filters-14-description",
+      "priority": 1,
+      "enabled": true
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-che-event-filters-14",
+      "connector_name": "test-connector-name-che-event-filters-14",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-che-event-filters-14-another",
+      "resource": "test-resource-che-event-filters-14",
+      "state": 2,
+      "output": "test-output-che-event-filters-14"
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-che-event-filters-14",
+      "connector_name": "test-connector-name-che-event-filters-14",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-che-event-filters-14",
+      "resource": "test-resource-che-event-filters-14-another",
+      "state": 2,
+      "output": "test-output-che-event-filters-14"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=che-event-filters-14
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 0
+      }
+    }
+    """
+
+  Scenario: given check event and drop event filter with several event patterns should drop event
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "entity_pattern": [[
+        {
+          "field": "name",
+          "cond": {
+            "type": "regexp",
+            "value": "CMDB:(?P<SI_CMDB>.*?)($|,)"
+          }
+        }
+      ]],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "test_template",
+            "description": "test template",
+            "value": "{{ `{{ .RegexMatch.Entity.Name.SI_CMDB }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "description": "test-event-filter-che-event-filters-15-description",
+      "priority": 1,
+      "enabled": true
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """json
+    {
+      "connector": "test_connector",
+      "connector_name": "test_connector_name",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-che-event-filters-15",
+      "resource": "CMDB:TEST_PROD",
+      "state": 2
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/entitybasics?_id=CMDB:TEST_PROD/test-component-che-event-filters-15
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "CMDB:TEST_PROD/test-component-che-event-filters-15",
+      "infos": {
+        "test_template": {
+          "name": "test_template",
+          "description": "test template",
+          "value": "TEST_PROD"
+        }
       }
     }
     """

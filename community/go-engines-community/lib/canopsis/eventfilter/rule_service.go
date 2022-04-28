@@ -3,6 +3,7 @@ package eventfilter
 import (
 	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 	"sync"
@@ -45,19 +46,30 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 	outcome := OutcomePass
 	tz := s.timezoneConfigProvider.Get()
 
-	var err error
 	for _, rule := range s.rules {
 		if outcome != OutcomePass {
 			break
 		}
 
-		regexMatches, match := rule.Patterns.GetRegexMatches(event)
+		match, eventRegexMatches, err := rule.EventPatterns.Match(event)
 		if !match {
 			if event.Debug {
 				s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is not matched")
 			}
 
 			continue
+		}
+
+		var entityRegexMatches pattern.EntityRegexMatches
+		if event.Entity != nil {
+			match, entityRegexMatches, err = rule.EntityPattern.Match(*event.Entity)
+			if !match {
+				if event.Debug {
+					s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is not matched")
+				}
+
+				continue
+			}
 		}
 
 		if event.Debug {
@@ -70,7 +82,10 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 			continue
 		}
 
-		outcome, event, err = applicator.Apply(ctx, rule, event, regexMatches, &tz)
+		outcome, event, err = applicator.Apply(ctx, rule, event, RegexMatch{
+			EventRegexMatches: eventRegexMatches,
+			Entity:            entityRegexMatches,
+		}, &tz)
 		if err != nil {
 			s.logger.Err(err).Str("rule_id", rule.ID).Str("rule_type", rule.Type).Msg("Event filter rule service: failed to apply")
 		}

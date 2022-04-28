@@ -6,9 +6,17 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "description" : "test-correlation-valuegroup-1",
       "enabled": true,
-      "patterns" : [{
-          "connector" : "test-valuegroup-1"
-      }],
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-valuegroup-1"
+            }
+          }
+        ]
+      ],
       "enabled" : true,
       "external_data" : {},
       "config": {
@@ -189,9 +197,17 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "description" : "test-correlation-valuegroup-2",
       "enabled": true,
-      "patterns" : [{
-          "connector" : "test-valuegroup-2"
-      }],
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-valuegroup-2"
+            }
+          }
+        ]
+      ],
       "enabled" : true,
       "external_data" : {},
       "config": {
@@ -216,9 +232,17 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "description" : "test-correlation-valuegroup-2",
       "enabled": true,
-      "patterns" : [{
-          "connector" : "test-valuegroup-2"
-      }],
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-valuegroup-2"
+            }
+          }
+        ]
+      ],
       "enabled" : true,
       "external_data" : {},
       "config": {
@@ -597,9 +621,17 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "description" : "test-correlation-valuegroup-3",
       "enabled": true,
-      "patterns" : [{
-          "connector" : "test-valuegroup-3"
-      }],
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-valuegroup-3"
+            }
+          }
+        ]
+      ],
       "enabled" : true,
       "external_data" : {},
       "config": {
@@ -748,9 +780,17 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "description" : "test-correlation-valuegroup-4",
       "enabled": true,
-      "patterns" : [{
-          "connector" : "test-valuegroup-4"
-      }],
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-valuegroup-4"
+            }
+          }
+        ]
+      ],
       "enabled" : true,
       "external_data" : {},
       "config": {
@@ -873,9 +913,17 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "description" : "test-correlation-valuegroup-5",
       "enabled": true,
-      "patterns" : [{
-          "connector" : "test-valuegroup-5"
-      }],
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-valuegroup-5"
+            }
+          }
+        ]
+      ],
       "enabled" : true,
       "external_data" : {},
       "config": {
@@ -1016,9 +1064,17 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "description" : "test-correlation-valuegroup-6",
       "enabled": true,
-      "patterns" : [{
-          "connector" : "test-valuegroup-6"
-      }],
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-valuegroup-6"
+            }
+          }
+        ]
+      ],
       "enabled" : true,
       "external_data" : {},
       "config": {

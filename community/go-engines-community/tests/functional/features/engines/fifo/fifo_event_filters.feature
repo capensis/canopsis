@@ -8,13 +8,24 @@ Feature: modify event on fifo event filter
     {
       "description": "test",
       "type": "change_entity",
-      "patterns": [
-        {
-          "connector": "test_connector",
-          "customer_tags": {
-            "regex_match": "CMDB:(?P<SI_CMDB>.*?)($|,)"
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test_connector"
+            }
+          },
+          {
+            "field": "extra.customer_tags",
+            "field_type": "string",
+            "cond": {
+              "type": "regexp",
+              "value": "CMDB:(?P<SI_CMDB>.*?)($|,)"
+            }
           }
-        }
+        ]
       ],
       "config": {
         "component": "new component"
@@ -66,13 +77,24 @@ Feature: modify event on fifo event filter
     {
       "description": "test",
       "type": "change_entity",
-      "patterns": [
-        {
-          "connector": "test_connector",
-          "customer_tags": {
-            "regex_match": "CMDB:(?P<SI_CMDB>.*?)($|,)"
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test_connector"
+            }
+          },
+          {
+            "field": "extra.customer_tags",
+            "field_type": "string",
+            "cond": {
+              "type": "regexp",
+              "value": "CMDB:(?P<SI_CMDB>.*?)($|,)"
+            }
           }
-        }
+        ]
       ],
       "config": {
         "component": "{{ `{{.RegexMatch.ExtraInfos.customer_tags.SI_CMDB}}` }}"
