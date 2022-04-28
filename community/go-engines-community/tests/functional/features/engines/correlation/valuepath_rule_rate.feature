@@ -85,9 +85,17 @@ Feature: correlation feature - valuegroup rule with threshold rate
       {
         "description" : "test-correlation-valuegroup-rate-2",
         "enabled": true,
-        "patterns" : [{
-            "connector" : "test-valuegroup-rule-rate-2-connector"
-        }],
+        "event_pattern": [
+          [
+            {
+              "field": "connector",
+              "cond": {
+                "type": "eq",
+                "value": "test-valuegroup-rule-rate-2-connector"
+              }
+            }
+          ]
+        ],
         "enabled" : true,
         "external_data" : {},
         "config": {

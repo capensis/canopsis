@@ -18,150 +18,184 @@ Feature: Bulk update eventfilters
     [
       {
         "_id": "test-eventfilter-bulk-update-1",
-        "description": "test update 1",
-        "type": "enrichment",
-        "patterns": [
-          {
-            "connector": "test-eventfilter-update-1-pattern"
-          }
-        ],
-        "priority": 0,
-        "enabled": true,
-        "config": {
-          "actions": [
+        "description": "drop filter",
+        "type": "drop",
+        "event_pattern": [
+          [
             {
-              "type": "set_field",
-              "name": "connector",
-              "value": "kafka_connector"
+              "field": "resource",
+              "cond": {
+                "type": "eq",
+                "value": "test-eventfilter-to-update-pattern-updated"
+              }
             }
-          ],
-          "on_success": "pass",
-          "on_failure": "pass"
-        },
-        "external_data": {
-          "test": {
-            "type": "mongo"
-          }
-        }
+          ]
+        ],
+        "priority": 1,
+        "enabled": true
       },
       {
         "_id": "test-eventfilter-bulk-update-1",
-        "description": "test update 1111",
-        "type": "enrichment",
-        "patterns": [
-          {
-            "connector": "test-eventfilter-update-1-pattern"
-          }
+        "description": "drop filter updated",
+        "type": "drop",
+        "event_pattern": [
+          [
+            {
+              "field": "resource",
+              "cond": {
+                "type": "eq",
+                "value": "test-eventfilter-to-update-pattern-updated"
+              }
+            }
+          ]
         ],
-        "priority": 0,
-        "enabled": true,
-        "config": {
-          "actions": [
+        "priority": 1,
+        "enabled": true
+      },
+      {
+        "_id": "test-eventfilter-bulk-update-2",
+        "description": "drop filter",
+        "type": "drop",
+        "event_pattern": [
+          [
             {
-              "type": "set_field",
-              "name": "connector",
-              "value": "kafka_connector"
+              "field": "resource",
+              "cond": {
+                "type": "eq",
+                "value": "test-eventfilter-to-update-pattern"
+              }
             }
-          ],
-          "on_success": "pass",
-          "on_failure": "pass"
-        },
-        "external_data": {
-          "test": {
-            "type": "mongo"
-          }
-        }
-      },
-      {
-        "_id": "test-eventfilter-bulk-update-2",
-        "type": "unspecified"
-      },
-      {
-        "_id": "test-eventfilter-bulk-update-2",
-        "type": "enrichment",
-        "description": "some",
-        "config": {
-          "actions": []
-        }
-      },
-      {
-        "_id": "test-eventfilter-bulk-update-2",
-        "type": "enrichment",
-        "description": "some",
-        "config": {
-          "actions": [
-            {
-              "type":"set_entity_info_from_template",
-              "name":"test",
-              "value":"{{.ExternalData.test}}",
-              "description":"test"
-            }
-          ],
-          "on_failure": "continue",
-          "on_success": "continue"
-        }
-      },
-      {
-        "_id": "test-eventfilter-bulk-update-2",
-        "description": "test update 2",
-        "type": "enrichment",
-        "patterns": [
-          {
-            "connector": "test-eventfilter-update-2-pattern"
-          }
+          ]
         ],
-        "priority": 0,
-        "enabled": true,
-        "config": {
-          "actions": [
+        "entity_pattern": [
+          [
             {
-              "type": "set_field",
-              "name": "connector",
-              "value": "kafka_connector"
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-eventfilter-update-2-pattern-updated"
+              }
             }
-          ],
-          "on_success": "pass",
-          "on_failure": "pass"
-        },
-        "external_data": {
-          "test": {
-            "type": "mongo"
-          }
-        }
+          ]
+        ],
+        "priority": 1,
+        "enabled": true
       },
       {
         "_id": "test-eventfilter-bulk-update-3",
-        "description": "test update 3",
-        "type": "enrichment",
-        "patterns": [
-          {
-            "connector": "test-eventfilter-update-3-pattern"
-          }
-        ],
-        "priority": 0,
-        "enabled": false,
-        "config": {
-          "actions": [
+        "description": "drop filter",
+        "type": "drop",
+        "event_pattern": [
+          [
             {
-              "type": "set_field",
-              "name": "connector",
-              "value": "kafka_connector"
+              "field": "resource",
+              "cond": {
+                "type": "eq",
+                "value": "test-eventfilter-to-update-pattern-updated"
+              }
             }
-          ],
-          "on_success": "pass",
-          "on_failure": "pass"
-        },
-        "external_data": {
-          "test": {
-            "type": "mongo"
-          }
-        }
+          ]
+        ],
+        "entity_pattern": [
+          [
+            {
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-eventfilter-update-3-pattern-updated"
+              }
+            }
+          ]
+        ],
+        "priority": 1,
+        "enabled": true
       },
       {
         "_id": "test-eventfilter-bulk-update-4",
+        "description": "drop filter",
+        "type": "drop",
+        "event_pattern": [
+          [
+            {
+              "field": "resource",
+              "cond": {
+                "type": "eq",
+                "value": "test-eventfilter-to-update-pattern"
+              }
+            }
+          ]
+        ],
+        "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+        "priority": 1,
+        "enabled": true
+      },
+      {
+        "_id": "test-eventfilter-bulk-update-5",
+        "description": "drop filter",
+        "type": "drop",
+        "entity_pattern": [
+          [
+            {
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-pattern-to-rule-edit-2-pattern"
+              }
+            }
+          ]
+        ],
+        "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+        "priority": 1,
+        "enabled": true
+      },
+      {
+        "_id": "test-eventfilter-not-found",
+        "description": "drop filter",
+        "type": "drop",
+        "event_pattern": [
+          [
+            {
+              "field": "resource",
+              "cond": {
+                "type": "eq",
+                "value": "test-eventfilter-to-update-pattern-updated"
+              }
+            }
+          ]
+        ],
+        "priority": 1,
+        "enabled": true
+      },
+      {
+        "_id": "test-eventfilter-bulk-update-5",
+        "description": "update change_entity",
+        "type": "change_entity",
+        "event_pattern": [
+          [
+            {
+              "field": "resource",
+              "cond": {
+                "type": "eq",
+                "value": "never be used change entity update test"
+              }
+            }
+          ]
+        ],
+        "enabled": true
+      },
+      {
+        "_id": "test-eventfilter-bulk-update-5",
         "type":"enrichment",
-        "description":"some description",
-        "patterns":[{}],
+        "description":"Another entity copy",
+        "event_pattern":[[
+          {
+            "field": "connector_bad",
+            "cond": {
+              "type": "eq",
+              "value": "some"
+            }
+          }
+        ]],
         "priority":0,
         "enabled":true,
         "config": {
@@ -174,100 +208,8 @@ Feature: Bulk update eventfilters
       {
         "_id": "test-eventfilter-bulk-update-5",
         "type":"enrichment",
-        "description":"some description",
-        "patterns":null,
-        "priority":0,
-        "enabled":true,
-        "config": {
-          "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
-          "on_success":"pass",
-          "on_failure":"pass"
-        },
-        "external_data":{"entity":{"type":"entity"}}
-      },
-      {
-        "_id": "test-eventfilter-bulk-update-5",
-        "type":"enrichment",
-        "description":"some description",
-        "patterns":[4],
-        "priority":0,
-        "enabled":true,
-        "config": {
-          "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
-          "on_success":"pass",
-          "on_failure":"pass"
-        },
-        "external_data":{"entity":{"type":"entity"}},
-        "author": "root"
-      },
-      {
-        "_id": "test-eventfilter-bulk-update-5",
-        "type":"enrichment",
-        "description":"Invalid pattern with empty document",
-        "patterns":[{},{"connector": "test-eventfilter-update-1-pattern"}],
-        "priority":0,
-        "enabled":true,
-        "config": {
-          "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
-          "on_success":"pass",
-          "on_failure":"pass"
-        },
-        "external_data":{"entity":{"type":"entity"}}
-      },
-      {
-        "_id": "test-eventfilter-bulk-update-5",
-        "description": "test",
-        "type": "change_entity",
-        "patterns": [
-          {
-            "connector": "test_connector",
-            "customer_tags": {
-              "regex_match": "CMDB:(?P<SI_CMDB>.*?)($|,)"
-            }
-          }
-        ],
-        "enabled": true
-      },
-      {
-        "_id": "test-eventfilter-bulk-update-5",
-        "description": "test",
-        "type": "change_entity",
-        "patterns": [
-          {
-            "connector": "test_connector",
-            "customer_tags": {
-              "regex_match": "CMDB:(?P<SI_CMDB>.*?)($|,)"
-            }
-          }
-        ],
-        "config": {
-          "component": "",
-          "connector": "",
-          "resource": "",
-          "connector_name": ""
-        },
-        "enabled": true
-      },
-      {
-        "_id": "test-eventfilter-bulk-update-5",
-        "description": "test",
-        "type": "change_entity",
-        "patterns": [
-          {
-            "connector": "test_connector",
-            "customer_tags": {
-              "regex_match": "CMDB:(?P<SI_CMDB>.*?)($|,)"
-            }
-          }
-        ],
-        "config": {},
-        "enabled": true
-      },
-      {
-        "_id": "test-eventfilter-bulk-update-6",
-        "type":"enrichment",
-        "description":"some description",
-        "patterns":[{}],
+        "description":"Another entity copy",
+        "corporate_entity_pattern": "test-pattern-not-exist",
         "priority":0,
         "enabled":true,
         "config": {
@@ -284,324 +226,218 @@ Feature: Bulk update eventfilters
     """json
     [
       {
-        "id": "test-eventfilter-bulk-update-1",
         "status": 200,
         "item": {
           "_id": "test-eventfilter-bulk-update-1",
-          "description": "test update 1",
-          "type": "enrichment",
-          "patterns": [
-            {
-              "connector": "test-eventfilter-update-1-pattern"
-            }
-          ],
-          "priority": 0,
-          "enabled": true,
-          "config": {
-            "actions": [
+          "description": "drop filter",
+          "type": "drop",
+          "event_pattern": [
+            [
               {
-                "type": "set_field",
-                "name": "connector",
-                "value": "kafka_connector"
+                "field": "resource",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-to-update-pattern-updated"
+                }
               }
-            ],
-            "on_success": "pass",
-            "on_failure": "pass"
-          },
-          "external_data": {
-            "test": {
-              "type": "mongo"
-            }
-          }
+            ]
+          ],
+          "priority": 1,
+          "enabled": true
         }
       },
       {
         "status": 200,
         "item": {
           "_id": "test-eventfilter-bulk-update-1",
-          "description": "test update 1111",
-          "type": "enrichment",
-          "patterns": [
-            {
-              "connector": "test-eventfilter-update-1-pattern"
-            }
+          "description": "drop filter updated",
+          "type": "drop",
+          "event_pattern": [
+            [
+              {
+                "field": "resource",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-to-update-pattern-updated"
+                }
+              }
+            ]
           ],
-          "priority": 0,
-          "enabled": true,
-          "config": {
-            "actions": [
-              {
-                "type": "set_field",
-                "name": "connector",
-                "value": "kafka_connector"
-              }
-            ],
-            "on_success": "pass",
-            "on_failure": "pass"
-          },
-          "external_data": {
-            "test": {
-              "type": "mongo"
-            }
-          }
+          "priority": 1,
+          "enabled": true
         }
       },
       {
-        "status": 400,
-        "item": {
-          "type": "unspecified"
-        },
-        "errors": {
-          "type": "Type must be one of [break drop enrichment change_entity]."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "type": "enrichment",
-          "description": "some",
-          "config": {
-            "actions": []
-          }
-        },
-        "errors": {
-          "actions": "Actions is missing.",
-          "on_failure": "OnFailure is required when Type enrichment is defined.",
-          "on_success": "OnSuccess is required when Type enrichment is defined."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "type": "enrichment",
-          "description": "some",
-          "config": {
-            "actions": [
-              {
-                "type":"set_entity_info_from_template",
-                "name":"test",
-                "value":"{{.ExternalData.test}}",
-                "description":"test"
-              }
-            ],
-            "on_failure": "continue",
-            "on_success": "continue"
-          }
-        },
-        "errors": {
-          "on_failure": "OnFailure must be one of [pass drop break].",
-          "on_success": "OnSuccess must be one of [pass drop break]."
-        }
-      },
-      {
-        "id": "test-eventfilter-bulk-update-2",
         "status": 200,
         "item": {
           "_id": "test-eventfilter-bulk-update-2",
-          "description": "test update 2",
-          "type": "enrichment",
-          "patterns": [
-            {
-              "connector": "test-eventfilter-update-2-pattern"
-            }
-          ],
-          "priority": 0,
-          "enabled": true,
-          "config": {
-            "actions": [
+          "description": "drop filter",
+          "type": "drop",
+          "event_pattern": [
+            [
               {
-                "type": "set_field",
-                "name": "connector",
-                "value": "kafka_connector"
+                "field": "resource",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-to-update-pattern"
+                }
               }
-            ],
-            "on_success": "pass",
-            "on_failure": "pass"
-          },
-          "external_data": {
-            "test": {
-              "type": "mongo"
-            }
-          }
+            ]
+          ],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-update-2-pattern-updated"
+                }
+              }
+            ]
+          ],
+          "priority": 1,
+          "enabled": true
         }
       },
       {
-        "id": "test-eventfilter-bulk-update-3",
         "status": 200,
         "item": {
           "_id": "test-eventfilter-bulk-update-3",
-          "description": "test update 3",
-          "type": "enrichment",
-          "patterns": [
-            {
-              "connector": "test-eventfilter-update-3-pattern"
-            }
-          ],
-          "priority": 0,
-          "enabled": false,
-          "config": {
-            "actions": [
+          "description": "drop filter",
+          "type": "drop",
+          "event_pattern": [
+            [
               {
-                "type": "set_field",
-                "name": "connector",
-                "value": "kafka_connector"
+                "field": "resource",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-to-update-pattern-updated"
+                }
               }
-            ],
-            "on_success": "pass",
-            "on_failure": "pass"
-          },
-          "external_data": {
-            "test": {
-              "type": "mongo"
-            }
-          }
+            ]
+          ],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-update-3-pattern-updated"
+                }
+              }
+            ]
+          ],
+          "priority": 1,
+          "enabled": true
         }
       },
       {
         "status": 200,
         "item": {
           "_id": "test-eventfilter-bulk-update-4",
-          "type":"enrichment",
-          "description":"some description",
-          "patterns":[{}],
-          "priority":0,
-          "enabled":true,
-          "config": {
-            "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
-            "on_success":"pass",
-            "on_failure":"pass"
-          },
-          "external_data":{"entity":{"type":"entity"}}
-        }
-      },
-      {
-        "status": 200,
-        "item": {
-          "_id": "test-eventfilter-bulk-update-5",
-          "type":"enrichment",
-          "description":"some description",
-          "patterns":null,
-          "priority":0,
-          "enabled":true,
-          "config": {
-            "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
-            "on_success":"pass",
-            "on_failure":"pass"
-          },
-          "external_data":{"entity":{"type":"entity"}}
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "_id": "test-eventfilter-bulk-update-5",
-          "type":"enrichment",
-          "description":"some description",
-          "patterns":[4],
-          "priority":0,
-          "enabled":true,
-          "config": {
-            "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
-            "on_success":"pass",
-            "on_failure":"pass"
-          },
-          "external_data":{"entity":{"type":"entity"}},
-          "author": "root"
-        },
-        "error": "error decoding key list: unable to parse event pattern list element"
-      },
-      {
-        "status": 400,
-        "item": {
-          "_id": "test-eventfilter-bulk-update-5",
-          "type":"enrichment",
-          "description":"Invalid pattern with empty document",
-          "patterns":[{},{"connector": "test-eventfilter-update-1-pattern"}],
-          "priority":0,
-          "enabled":true,
-          "config": {
-            "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
-            "on_success":"pass",
-            "on_failure":"pass"
-          },
-          "external_data":{"entity":{"type":"entity"}}
-        },
-        "error": "error decoding key list: unable to parse event pattern list element"
-      },
-      {
-        "status": 400,
-        "item": {
-          "_id": "test-eventfilter-bulk-update-5",
-          "description": "test",
-          "type": "change_entity",
-          "patterns": [
-            {
-              "connector": "test_connector",
-              "customer_tags": {
-                "regex_match": "CMDB:(?P<SI_CMDB>.*?)($|,)"
+          "description": "drop filter",
+          "type": "drop",
+          "event_pattern": [
+            [
+              {
+                "field": "resource",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-to-update-pattern"
+                }
               }
-            }
+            ]
           ],
+          "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+          "priority": 1,
+          "enabled": true
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "_id": "test-eventfilter-bulk-update-5",
+          "description": "drop filter",
+          "type": "drop",
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-rule-edit-2-pattern"
+                }
+              }
+            ]
+          ],
+          "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+          "priority": 1,
           "enabled": true
         },
         "errors": {
-          "config": "Config is missing."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "_id": "test-eventfilter-bulk-update-5",
-          "description": "test",
-          "type": "change_entity",
-          "patterns": [
-            {
-              "connector": "test_connector",
-              "customer_tags": {
-                "regex_match": "CMDB:(?P<SI_CMDB>.*?)($|,)"
-              }
-            }
-          ],
-          "config": {
-            "component": "",
-            "connector": "",
-            "resource": "",
-            "connector_name": ""
-          },
-          "enabled": true
-        },
-        "errors": {
-          "config": "Config is missing."
-        }
-      },
-      {
-        "status": 400,
-        "item": {
-          "_id": "test-eventfilter-bulk-update-5",
-          "description": "test",
-          "type": "change_entity",
-          "patterns": [
-            {
-              "connector": "test_connector",
-              "customer_tags": {
-                "regex_match": "CMDB:(?P<SI_CMDB>.*?)($|,)"
-              }
-            }
-          ],
-          "config": {},
-          "enabled": true
-        },
-        "errors": {
-          "config": "Config is missing."
+          "entity_pattern": "Can't be present both EntityPattern and CorporateEntityPattern."
         }
       },
       {
         "status": 404,
         "item": {
-          "_id": "test-eventfilter-bulk-update-6",
+          "_id": "test-eventfilter-not-found",
+          "description": "drop filter",
+          "type": "drop",
+          "event_pattern": [
+            [
+              {
+                "field": "resource",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-to-update-pattern-updated"
+                }
+              }
+            ]
+          ],
+          "priority": 1,
+          "enabled": true
+        },
+        "error": "Not found"
+      },
+      {
+        "status": 400,
+        "item": {
+          "_id": "test-eventfilter-bulk-update-5",
+          "description": "update change_entity",
+          "type": "change_entity",
+          "event_pattern": [
+            [
+              {
+                "field": "resource",
+                "cond": {
+                  "type": "eq",
+                  "value": "never be used change entity update test"
+                }
+              }
+            ]
+          ],
+          "enabled": true
+        },
+        "errors": {
+          "config": "Config is missing."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "_id": "test-eventfilter-bulk-update-5",
           "type":"enrichment",
-          "description":"some description",
-          "patterns":[{}],
+          "description":"Another entity copy",
+          "event_pattern":[[
+            {
+              "field": "connector_bad",
+              "cond": {
+                "type": "eq",
+                "value": "some"
+              }
+            }
+          ]],
           "priority":0,
           "enabled":true,
           "config": {
@@ -611,7 +447,29 @@ Feature: Bulk update eventfilters
           },
           "external_data":{"entity":{"type":"entity"}}
         },
-        "error": "Not found"
+        "errors": {
+          "event_pattern": "EventPattern is invalid event pattern."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "_id": "test-eventfilter-bulk-update-5",
+          "type":"enrichment",
+          "description":"Another entity copy",
+          "corporate_entity_pattern": "test-pattern-not-exist",
+          "priority":0,
+          "enabled":true,
+          "config": {
+            "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
+            "on_success":"pass",
+            "on_failure":"pass"
+          },
+          "external_data":{"entity":{"type":"entity"}}
+        },
+        "errors": {
+          "corporate_entity_pattern": "CorporateEntityPattern doesn't exist."
+        }
       }
     ]
     """
@@ -624,119 +482,136 @@ Feature: Bulk update eventfilters
         {
           "_id": "test-eventfilter-bulk-update-1",
           "author": "root",
-          "description": "test update 1111",
-          "type": "enrichment",
-          "patterns": [
-            {
-              "connector": "test-eventfilter-update-1-pattern"
-            }
-          ],
-          "priority": 0,
-          "enabled": true,
-          "config": {
-            "actions": [
+          "description": "drop filter updated",
+          "type": "drop",
+          "event_pattern": [
+            [
               {
-                "type": "set_field",
-                "name": "connector",
-                "value": "kafka_connector"
+                "field": "resource",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-to-update-pattern-updated"
+                }
               }
-            ],
-            "on_success": "pass",
-            "on_failure": "pass"
-          },
-          "external_data": {
-            "test": {
-              "type": "mongo"
-            }
-          }
+            ]
+          ],
+          "priority": 1,
+          "enabled": true,
+          "created": 1608635535
         },
         {
           "_id": "test-eventfilter-bulk-update-2",
           "author": "root",
-          "description": "test update 2",
-          "type": "enrichment",
-          "patterns": [
-            {
-              "connector": "test-eventfilter-update-2-pattern"
-            }
-          ],
-          "priority": 0,
-          "enabled": true,
-          "config": {
-            "actions": [
+          "description": "drop filter",
+          "type": "drop",
+          "event_pattern": [
+            [
               {
-                "type": "set_field",
-                "name": "connector",
-                "value": "kafka_connector"
+                "field": "resource",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-to-update-pattern"
+                }
               }
-            ],
-            "on_success": "pass",
-            "on_failure": "pass"
-          },
-          "external_data": {
-            "test": {
-              "type": "mongo"
-            }
-          }
+            ]
+          ],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-update-2-pattern-updated"
+                }
+              }
+            ]
+          ],
+          "priority": 1,
+          "enabled": true,
+          "created": 1608635535
         },
         {
           "_id": "test-eventfilter-bulk-update-3",
           "author": "root",
-          "description": "test update 3",
-          "type": "enrichment",
-          "patterns": [
-            {
-              "connector": "test-eventfilter-update-3-pattern"
-            }
-          ],
-          "priority": 0,
-          "enabled": false,
-          "config": {
-            "actions": [
+          "description": "drop filter",
+          "type": "drop",
+          "event_pattern": [
+            [
               {
-                "type": "set_field",
-                "name": "connector",
-                "value": "kafka_connector"
+                "field": "resource",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-to-update-pattern-updated"
+                }
               }
-            ],
-            "on_success": "pass",
-            "on_failure": "pass"
-          },
-          "external_data": {
-            "test": {
-              "type": "mongo"
-            }
-          }
+            ]
+          ],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-update-3-pattern-updated"
+                }
+              }
+            ]
+          ],
+          "priority": 1,
+          "enabled": true,
+          "created": 1608635535
         },
         {
           "_id": "test-eventfilter-bulk-update-4",
-          "type":"enrichment",
-          "description":"some description",
-          "patterns":[{}],
-          "priority":0,
-          "enabled":true,
-          "config": {
-            "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
-            "on_success":"pass",
-            "on_failure":"pass"
-          },
-          "external_data":{"entity":{"type":"entity"}},
-          "author": "root"
+          "author": "root",
+          "description": "drop filter",
+          "type": "drop",
+          "event_pattern": [
+            [
+              {
+                "field": "resource",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-to-update-pattern"
+                }
+              }
+            ]
+          ],
+          "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+          "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-rule-edit-2-pattern"
+                }
+              }
+            ]
+          ],
+          "priority": 1,
+          "enabled": true,
+          "created": 1608635535
         },
         {
           "_id": "test-eventfilter-bulk-update-5",
-          "type":"enrichment",
-          "description":"some description",
-          "patterns":null,
-          "priority":0,
-          "enabled":true,
-          "config": {
-            "actions":[{"value":"ExternalData.entity","name":"Entity","type":"copy"}],
-            "on_success":"pass",
-            "on_failure":"pass"
-          },
-          "external_data":{"entity":{"type":"entity"}},
-          "author": "root"
+          "author": "root",
+          "description": "break filter",
+          "enabled": true,
+          "event_pattern": [
+            [
+              {
+                "cond": {
+                  "type": "eq",
+                  "value": "test-eventfilter-bulk-update-5-pattern"
+                },
+                "field": "resource"
+              }
+            ]
+          ],
+          "priority": 3,
+          "type": "break"
         }
       ],
       "meta": {

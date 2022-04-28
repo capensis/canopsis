@@ -178,6 +178,19 @@ func ValidateAlarmPattern(fl validator.FieldLevel) bool {
 	return p.Validate()
 }
 
+func ValidateEventPattern(fl validator.FieldLevel) bool {
+	i := fl.Field().Interface()
+	if i == nil {
+		return true
+	}
+	p, ok := i.(pattern.Event)
+	if !ok {
+		return false
+	}
+
+	return p.Validate()
+}
+
 func ValidateEntityPattern(fl validator.FieldLevel) bool {
 	i := fl.Field().Interface()
 	if i == nil {

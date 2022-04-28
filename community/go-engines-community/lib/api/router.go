@@ -329,6 +329,7 @@ func RegisterRoutes(
 		eventFilterApi := eventfilter.NewApi(
 			eventfilter.NewStore(dbClient),
 			actionLogger,
+			common.NewPatternFieldsTransformer(dbClient),
 		)
 		eventFilterRouter := protected.Group("/eventfilter/rules")
 		{

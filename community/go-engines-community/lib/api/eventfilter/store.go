@@ -18,10 +18,10 @@ import (
 )
 
 type Store interface {
-	Insert(ctx context.Context, model CreateRequest) (*eventfilter.Rule, error)
+	Insert(ctx context.Context, request CreateRequest) (*eventfilter.Rule, error)
 	GetById(ctx context.Context, id string) (*eventfilter.Rule, error)
 	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
-	Update(ctx context.Context, model UpdateRequest) (*eventfilter.Rule, error)
+	Update(ctx context.Context, request UpdateRequest) (*eventfilter.Rule, error)
 	Delete(ctx context.Context, id string) (bool, error)
 }
 
@@ -46,10 +46,28 @@ func NewStore(
 	}
 }
 
-func (s *store) Insert(ctx context.Context, model CreateRequest) (*eventfilter.Rule, error) {
+func (s *store) transformRequestToDocument(r EditRequest) eventfilter.Rule {
+	return eventfilter.Rule{
+		Author:              r.Author,
+		Description:         r.Description,
+		Type:                r.Type,
+		Priority:            r.Priority,
+		Enabled:             r.Enabled,
+		Config:              r.Config,
+		ExternalData:        r.ExternalData,
+		EventPatterns:       r.EventPattern,
+		EntityPatternFields: r.EntityPatternFieldsRequest.ToModel(),
+	}
+}
+
+func (s *store) Insert(ctx context.Context, request CreateRequest) (*eventfilter.Rule, error) {
+	model := s.transformRequestToDocument(request.EditRequest)
+
+	model.ID = request.ID
 	if model.ID == "" {
 		model.ID = utils.NewID()
 	}
+
 	now := types.NewCpsTime(time.Now().Unix())
 	model.Created = &now
 	model.Updated = &now
@@ -113,9 +131,12 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 	return &result, nil
 }
 
-func (s *store) Update(ctx context.Context, model UpdateRequest) (*eventfilter.Rule, error) {
+func (s *store) Update(ctx context.Context, request UpdateRequest) (*eventfilter.Rule, error) {
 	var data eventfilter.Rule
 	updated := types.NewCpsTime(time.Now().Unix())
+
+	model := s.transformRequestToDocument(request.EditRequest)
+	model.ID = request.ID
 	model.Created = nil
 	model.Updated = &updated
 	err := s.dbCollection.FindOneAndUpdate(
