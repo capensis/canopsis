@@ -22,7 +22,8 @@ import { ENTITIES_STATES } from '@/constants';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
-import ActionAuthorField from '@/components/other/action/form/partials/action-author-field.vue';
+
+import ActionAuthorField from './partials/action-author-field.vue';
 
 export default {
   inject: ['$validator'],

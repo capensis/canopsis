@@ -132,7 +132,7 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  */
 const defaultActionParametersToForm = (parameters = {}) => ({
   output: parameters.output ?? '',
-  forward_author: !parameters.author,
+  forward_author: parameters.forward_author ?? true,
   author: parameters.author ?? '',
 });
 
