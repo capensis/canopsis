@@ -14,10 +14,6 @@ type eventfilterValidator struct {
 func (v *eventfilterValidator) ValidateEventFilter(sl validator.StructLevel) {
 	r := sl.Current().Interface().(EditRequest)
 
-	if !r.Patterns.IsValid() {
-		sl.ReportError(r.Patterns, "patterns", "Patterns", "eventfilter_patterns_invalid", "")
-	}
-
 	if r.Type == eventfilter.RuleTypeChangeEntity &&
 		r.Config.Component == "" &&
 		r.Config.Resource == "" &&

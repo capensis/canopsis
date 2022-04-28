@@ -27,10 +27,24 @@ Feature: update connector alarm
     """
     {
       "type": "enrichment",
-      "patterns": [{
-        "source_type": "connector",
-        "connector": "test-connector-axe-idlerule-connector-1"
-      }],
+      "event_pattern": [
+        [
+          {
+            "field": "source_type",
+            "cond": {
+              "type": "eq",
+              "value": "connector"
+            }
+          },
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-connector-axe-idlerule-connector-1"
+            }
+          }
+        ]
+      ],
       "config": {
         "actions": [
           {
