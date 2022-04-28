@@ -136,12 +136,16 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 
 		return alarmChange, err
 	}
+	entityOldIdleSince, entityOldLastIdleRuleApply := event.Entity.IdleSince, event.Entity.LastIdleRuleApply
 
 	operation := s.createOperationFromEvent(event)
 	changeType, err := s.executor.Exec(ctx, operation, event.Alarm, event.Entity, event.Timestamp, event.UserID, event.Role, event.Initiator)
 	if err != nil {
 		return alarmChange, fmt.Errorf("cannot update alarm: %w", err)
 	}
+
+	mustUpdateIdleFields := entityOldIdleSince != event.Entity.IdleSince ||
+		entityOldLastIdleRuleApply == event.Entity.LastIdleRuleApply
 
 	if changeType == types.AlarmChangeTypeResolve {
 		err := s.adapter.CopyAlarmToResolvedCollection(ctx, *event.Alarm)
@@ -152,10 +156,13 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 
 	if event.IdleRuleApply != "" {
 		event.Entity.LastIdleRuleApply = event.IdleRuleApply
-		err := s.entityAdapter.UpdateIdleFields(ctx, event.Entity.ID, event.Entity.IdleSince,
+		mustUpdateIdleFields = true
+	}
+	if mustUpdateIdleFields {
+		err = s.entityAdapter.UpdateIdleFields(ctx, event.Entity.ID, event.Entity.IdleSince,
 			event.Entity.LastIdleRuleApply)
 		if err != nil {
-			return alarmChange, fmt.Errorf("cannot update alarm: %w", err)
+			return alarmChange, fmt.Errorf("cannot update entity: %w", err)
 		}
 	}
 
@@ -790,6 +797,9 @@ func (s *eventProcessor) updateMetaChildrenState(ctx context.Context, event *typ
 func (s *eventProcessor) resolveAlarmForDisabledEntity(ctx context.Context, event *types.Event) (types.AlarmChange, error) {
 	alarmChange := types.NewAlarmChange()
 	alarm, err := s.adapter.GetOpenedAlarm(ctx, event.Connector, event.ConnectorName, event.GetEID())
+	event.Entity.IdleSince = nil
+	event.Entity.LastIdleRuleApply = ""
+
 	if _, ok := err.(errt.NotFound); ok {
 		return alarmChange, nil
 	} else if err != nil {
