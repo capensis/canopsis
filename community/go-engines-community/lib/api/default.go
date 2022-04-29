@@ -160,7 +160,7 @@ func Default(
 
 	entityCleanerTaskChan := make(chan entity.CleanTask)
 	disabledEntityCleaner := entity.NewDisabledCleaner(
-		entity.NewStore(dbClient, timezoneConfigProvider),
+		entity.NewStore(dbClient, p.TimezoneConfigProvider),
 		datastorage.NewAdapter(dbClient),
 		metricsEntityMetaUpdater,
 		logger,
