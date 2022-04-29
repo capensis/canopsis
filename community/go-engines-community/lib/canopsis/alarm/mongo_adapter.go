@@ -185,6 +185,10 @@ func (a mongoAdapter) GetOpenedAlarmByAlarmId(id string) (types.Alarm, error) {
 	})
 }
 
+func (a mongoAdapter) GetAlarmByAlarmId(id string) (types.Alarm, error) {
+	return a.getAlarmWithErr(bson.M{"_id": id})
+}
+
 func (a mongoAdapter) GetOpenedAlarm(connector, connectorName, id string) (types.Alarm, error) {
 	return a.getAlarmWithErr(bson.M{
 		"d":                id,
