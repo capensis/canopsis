@@ -216,7 +216,7 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 
 			for _, v := range dataset.scenarioInfos {
 				info := v
-				get := alarmAdapter.EXPECT().GetOpenedAlarmByAlarmId(gomock.Eq(info.Alarm.ID)).
+				get := alarmAdapter.EXPECT().GetAlarmByAlarmId(gomock.Eq(info.Alarm.ID)).
 					Return(info.Alarm, nil)
 				getInOrder = append(getInOrder, get)
 
