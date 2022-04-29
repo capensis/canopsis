@@ -66,7 +66,7 @@ func TestMain(m *testing.M) {
 	}
 	defer func() {
 		if err = dbClient.Disconnect(context.Background()); err != nil {
-			log.Fatal(err)
+			logger.Fatal().Err(err).Msg("")
 		}
 	}()
 
