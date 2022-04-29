@@ -54,6 +54,8 @@ type Adapter interface {
 
 	GetOpenedAlarmByAlarmId(id string) (types.Alarm, error)
 
+	GetAlarmByAlarmId(id string) (types.Alarm, error)
+
 	// GetOpenedAlarm find one opened alarm with his entity id.
 	// Note : a control is added to prevent fetching future alarms.
 	GetOpenedAlarm(connector, connectorName, id string) (types.Alarm, error)

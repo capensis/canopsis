@@ -77,9 +77,13 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 				s.logger.Debug().Msgf("scenario for alarm_id = %s finished", result.Alarm.ID)
 				// Fetch updated alarm from storage since task manager returns
 				// updated alarm after one scenario and not after all scenarios.
-				alarm, err := s.alarmAdapter.GetOpenedAlarmByAlarmId(result.Alarm.ID)
+				alarm, err := s.alarmAdapter.GetAlarmByAlarmId(result.Alarm.ID)
 				if err != nil {
 					s.logger.Error().Err(err).Msg("failed to fetch alarm")
+					break
+				}
+
+				if alarm.IsResolved() {
 					break
 				}
 
