@@ -62,7 +62,7 @@ export default {
           route: { name: 'admin-rights' },
           title: this.$t('common.rights'),
           icon: 'verified_user',
-          permission: USERS_PERMISSIONS.technical.action,
+          permission: USERS_PERMISSIONS.technical.permission,
         },
         {
           route: { name: 'admin-roles' },

@@ -220,11 +220,11 @@
         "type": "CRUD"
     },
     {
-        "_id": "models_action",
-        "loader_id": "models_action",
-        "crecord_name": "models_action",
+        "_id": "models_permission",
+        "loader_id": "models_permission",
+        "crecord_name": "models_permission",
         "crecord_type": "action",
-        "desc": "Actions",
+        "desc": "Rights",
         "type": "CRUD"
     },
     {

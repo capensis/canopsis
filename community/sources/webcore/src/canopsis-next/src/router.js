@@ -81,7 +81,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresRight: {
-        id: USERS_PERMISSIONS.technical.action,
+        id: USERS_PERMISSIONS.technical.permission,
       },
     },
   },

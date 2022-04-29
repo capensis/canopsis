@@ -4,7 +4,7 @@
         "models_userview" : {
             "checksum" : 15
         },
-        "models_action" : {
+        "models_permission" : {
             "checksum" : 15
         },
         "models_profile" : {
