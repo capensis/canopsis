@@ -109,7 +109,7 @@ curl -X POST -u root:root -H "Content-type: application/json" -d '{
 
 Lors de la réception d'une alarme, un ticket sera automatiquement créé sur Itop.
 
-Si la configuration fonctionne vous devriez voir apparaitre un ticket dans Itop :
+Vous devriez voir apparaitre un ticket dans Itop :
 
 ![Ticket dans l'interface Itop](./img/scn_itop_ticket.png)
 
@@ -132,9 +132,9 @@ fakeapi retourne le JSON ci dessous pour ce premier appel:
 ```
 #### 2 - Un second webhook qui va appeler l'api avec l'action `getObjectById` avec en paramètre l'id récupéré a l'étape précédente.
 
-dans le corps du deuxième webhook, nous utilisons le format `{{index .Response "JSON_KEY"}}` pour récuperer l'information dans le corps du webhook précédent (ici `{{index .Response "id"}}` pour récuperer la clé `id`).
+dans le corps du deuxième webhook, nous utilisons le format `{{index .Response "JSON_KEY"}}` pour récupérer l'information dans le corps du webhook précédent (ici `{{index .Response "id"}}` pour récupérer la clé `id`).
 !!! note Note
-	Nous aurions aussi pu utiliser le format `{{index .Header "Header-Name"}}` pour récuperer le contenu d'un header de la réponse du webhook précédent.
+	Nous aurions aussi pu utiliser le format `{{index .Header "Header-Name"}}` pour récupérer le contenu d'un header de la réponse du webhook précédent.
 
 ### Démarrage de l'api
 
