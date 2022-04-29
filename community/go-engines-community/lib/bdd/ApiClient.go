@@ -417,6 +417,54 @@ func (a *ApiClient) TheResponseArrayKeyShouldContain(path string, doc string) er
 	return fmt.Errorf("%s not exists in response:\n%v", path, a.responseBodyOutput)
 }
 
+// TheResponseArrayKeyShouldContainOnlyOne
+// Step example:
+//   Then the response array key "data.0.v.steps" should contain only one:
+//   """
+//   {
+//     "_t": "stateinc"
+//   }
+//   """
+func (a *ApiClient) TheResponseArrayKeyShouldContainOnlyOne(path string, doc string) error {
+	if nestedVal, ok := getNestedJsonVal(a.responseBody, strings.Split(path, ".")); ok {
+		receivedStr, _ := json.MarshalIndent(nestedVal, "", "  ")
+
+		switch received := nestedVal.(type) {
+		case []interface{}:
+			expected := make(map[string]interface{})
+			err := json.Unmarshal([]byte(doc), &expected)
+			if err != nil {
+				return err
+			}
+
+			if len(expected) == 0 {
+				return fmt.Errorf("%s is empty", doc)
+			}
+
+			found := 0
+			for _, v := range received {
+				if err := checkResponse(getPartialResponse(v, expected), expected); err == nil {
+					found++
+				}
+			}
+
+			if found == 0 {
+				return fmt.Errorf("%s\nis not in:\n%s", doc, receivedStr)
+			}
+
+			if found > 1 {
+				return fmt.Errorf("%s\nis %d times in:\n%s", doc, found, receivedStr)
+			}
+
+			return nil
+		}
+
+		return fmt.Errorf("%s is not array but %T:\n%s", path, nestedVal, receivedStr)
+	}
+
+	return fmt.Errorf("%s not exists in response:\n%v", path, a.responseBodyOutput)
+}
+
 // getNestedJsonVal returns val by path.
 func getNestedJsonVal(v interface{}, path []string) (interface{}, bool) {
 	field := path[0]
