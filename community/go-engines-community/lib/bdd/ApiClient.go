@@ -363,7 +363,26 @@ func (a *ApiClient) TheResponseArrayKeyShouldContain(path string, doc string) er
 			expected := make([]map[string]interface{}, 0)
 			err := json.Unmarshal([]byte(doc), &expected)
 			if err != nil {
-				return err
+				expected := make([]interface{}, 0)
+				err := json.Unmarshal([]byte(doc), &expected)
+				if err != nil {
+					return err
+				}
+				for _, ev := range expected {
+					found := false
+					for _, v := range received {
+						if err := checkResponse(v, ev); err == nil {
+							found = true
+							break
+						}
+					}
+
+					if !found {
+						return fmt.Errorf("%s\nis not in:\n%s", ev, receivedStr)
+					}
+				}
+
+				return nil
 			}
 
 			if len(expected) == 0 {
@@ -387,54 +406,6 @@ func (a *ApiClient) TheResponseArrayKeyShouldContain(path string, doc string) er
 					expectedStr, _ := json.MarshalIndent(ev, "", "  ")
 					return fmt.Errorf("%s\nis not in:\n%s", expectedStr, receivedStr)
 				}
-			}
-
-			return nil
-		}
-
-		return fmt.Errorf("%s is not array but %T:\n%s", path, nestedVal, receivedStr)
-	}
-
-	return fmt.Errorf("%s not exists in response:\n%v", path, a.responseBodyOutput)
-}
-
-// TheResponseArrayKeyShouldContainOnlyOne
-// Step example:
-//   Then the response array key "data.0.v.steps" should contain only one:
-//   """
-//   {
-//     "_t": "stateinc"
-//   }
-//   """
-func (a *ApiClient) TheResponseArrayKeyShouldContainOnlyOne(path string, doc string) error {
-	if nestedVal, ok := getNestedJsonVal(a.responseBody, strings.Split(path, ".")); ok {
-		receivedStr, _ := json.MarshalIndent(nestedVal, "", "  ")
-
-		switch received := nestedVal.(type) {
-		case []interface{}:
-			expected := make(map[string]interface{})
-			err := json.Unmarshal([]byte(doc), &expected)
-			if err != nil {
-				return err
-			}
-
-			if len(expected) == 0 {
-				return fmt.Errorf("%s is empty", doc)
-			}
-
-			found := 0
-			for _, v := range received {
-				if err := checkResponse(getPartialResponse(v, expected), expected); err == nil {
-					found++
-				}
-			}
-
-			if found == 0 {
-				return fmt.Errorf("%s\nis not in:\n%s", doc, receivedStr)
-			}
-
-			if found > 1 {
-				return fmt.Errorf("%s\nis %d times in:\n%s", doc, found, receivedStr)
 			}
 
 			return nil
@@ -1200,14 +1171,6 @@ func (a *ApiClient) executeTemplate(tpl string) (*bytes.Buffer, error) {
 	}
 
 	return buf, nil
-}
-
-func (a *ApiClient) getFloatVar(name string) (float64, error) {
-	val, ok := a.vars[name]
-	if !ok {
-		return 0, fmt.Errorf("%q doesn't exist", name)
-	}
-	return strconv.ParseFloat(val, 64)
 }
 
 // getPartialResponse removes fields from received which are not presented in expected.
