@@ -102,6 +102,7 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with custom
 >
   <c-pattern-field-stub
     class="mb-2"
+    disabled="true"
     required="required"
     return-object="return-object"
     type="alarm"
