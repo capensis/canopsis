@@ -1063,7 +1063,7 @@ Feature: create and update alarm by main event stream
     """json
     {
       "event_type" : "snooze",
-      "duration": 600,
+      "duration": 3600,
       "connector" : "test-connector-axe-11",
       "connector_name" : "test-connector-name-axe-11",
       "source_type" : "resource",
@@ -1092,7 +1092,7 @@ Feature: create and update alarm by main event stream
               "user_id": "test-author-id-11",
               "m": "test-output-axe-11",
               "t": {{ .snoozeEventTimestamp }},
-              "val": {{ .snoozeEventTimestamp | sumTime 600 }}
+              "val": {{ .snoozeEventTimestamp | sumTime 3600 }}
             },
             "component": "test-component-axe-11",
             "connector": "test-connector-axe-11",
@@ -1120,7 +1120,7 @@ Feature: create and update alarm by main event stream
                 "user_id": "test-author-id-11",
                 "m": "test-output-axe-11",
                 "t": {{ .snoozeEventTimestamp }},
-                "val": {{ .snoozeEventTimestamp | sumTime 600 }}
+                "val": {{ .snoozeEventTimestamp | sumTime 3600 }}
               }
             ]
           }
@@ -1159,7 +1159,7 @@ Feature: create and update alarm by main event stream
     """json
     {
       "event_type" : "snooze",
-      "duration": 600,
+      "duration": 3600,
       "connector" : "test-connector-axe-12",
       "connector_name" : "test-connector-name-axe-12",
       "source_type" : "resource",
@@ -1225,7 +1225,7 @@ Feature: create and update alarm by main event stream
                 "user_id": "test-author-id-12",
                 "m": "test-output-axe-12",
                 "t": {{ .snoozeEventTimestamp }},
-                "val": {{ .snoozeEventTimestamp | sumTime 600 }}
+                "val": {{ .snoozeEventTimestamp | sumTime 3600 }}
               }
             ]
           }

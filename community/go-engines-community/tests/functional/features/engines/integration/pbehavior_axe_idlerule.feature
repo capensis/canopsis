@@ -26,8 +26,8 @@ Feature: update alarm on idle rule
           "name": "test-pbehavior-pbehavior-axe-idlerule-1",
           "start_on_trigger": true,
           "duration": {
-            "value": 10,
-            "unit": "m"
+            "value": 1,
+            "unit": "h"
           },
           "type": "test-maintenance-type-to-engine",
           "reason": "test-reason-to-engine"
