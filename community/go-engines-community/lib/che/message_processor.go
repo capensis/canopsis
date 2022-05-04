@@ -148,9 +148,6 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 		if updated != nil {
 			updatedEntityServices = updatedEntityServices.Add(*updated)
-		} else {
-			// If context graph is not updated do not recompute service state.
-			event.EventType = types.EventTypeUpdateEntityService
 		}
 	}
 
