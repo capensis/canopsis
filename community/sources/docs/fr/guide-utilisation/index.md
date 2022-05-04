@@ -16,3 +16,4 @@ Guide destiné à l'utilisateur final, il vous accompagne dans la prise en main 
   * [Règles d'inactivité](menu-exploitation/regles-inactivite.md)
   * [Règles de bagot](menu-exploitation/regles-bagot.md)
   * [Règles de résolution](menu-exploitation/regles-resolution.md)
+  * [Scenarios](menu-exploitation/scenarios.md)
