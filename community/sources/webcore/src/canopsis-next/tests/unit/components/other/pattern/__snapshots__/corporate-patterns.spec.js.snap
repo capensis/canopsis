@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`corporate-patterns Renders \`corporate-patterns\` with patterns 1`] = `
+<patterns-list-stub
+  corporate="true"
+  pagination="[object Object]"
+  patterns="[object Object]"
+  totalitems="1"
+/>
+`;
+
+exports[`corporate-patterns Renders \`corporate-patterns\` without patterns 1`] = `
+<patterns-list-stub
+  corporate="true"
+  pagination="[object Object]"
+  patterns=""
+  totalitems="0"
+/>
+`;
