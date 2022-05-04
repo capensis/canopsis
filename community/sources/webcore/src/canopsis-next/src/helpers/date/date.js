@@ -1,7 +1,5 @@
 import moment from 'moment-timezone';
 
-import 'moment/locale/fr';
-
 import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
 
 /**
