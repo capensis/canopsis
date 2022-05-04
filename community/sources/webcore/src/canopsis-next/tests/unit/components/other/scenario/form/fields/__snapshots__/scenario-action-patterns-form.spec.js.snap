@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`scenario-action-patterns-form Renders \`scenario-action-patterns-form\` with custom props 1`] = `
+<c-patterns-field-stub
+  alarm-attributes="[object Object],[object Object]"
+  alarm-excluded-attributes="v.last_update_date,v.last_event_date,resolved"
+  entity-excluded-items="last_event_date,impact,depends"
+  form="[object Object]"
+  name="customName"
+  some-required="some-required"
+  value="[object Object]"
+  with-alarm="with-alarm"
+  with-entity="with-entity"
+/>
+`;
+
+exports[`scenario-action-patterns-form Renders \`scenario-action-patterns-form\` with default props 1`] = `
+<c-patterns-field-stub
+  alarm-attributes="[object Object],[object Object]"
+  alarm-excluded-attributes="v.last_update_date,v.last_event_date,resolved"
+  entity-excluded-items="last_event_date,impact,depends"
+  name="patterns"
+  some-required="some-required"
+  value="[object Object]"
+  with-alarm="with-alarm"
+  with-entity="with-entity"
+/>
+`;
