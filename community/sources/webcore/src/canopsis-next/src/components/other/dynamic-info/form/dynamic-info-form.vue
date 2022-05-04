@@ -34,9 +34,9 @@
 </template>
 
 <script>
-import DynamicInfoGeneralForm from './partials/dynamic-info-general-form.vue';
-import DynamicInfoInfosForm from './partials/dynamic-info-infos-form.vue';
-import DynamicInfoPatternsForm from './partials/dynamic-info-patterns-form.vue';
+import DynamicInfoGeneralForm from './fields/dynamic-info-general-form.vue';
+import DynamicInfoInfosForm from './fields/dynamic-info-infos-form.vue';
+import DynamicInfoPatternsForm from './fields/dynamic-info-patterns-form.vue';
 
 export default {
   inject: ['$validator'],
