@@ -167,6 +167,19 @@ indexes:
         instruction: 1
         date: 1
 
+  job_history:
+    job_1_status_1:
+      keys:
+        job: 1
+        status: 1
+    next_exec_1_status_1:
+      keys:
+        next_exec: 1
+        status: 1
+    execution_1:
+      keys:
+        execution: 1
+
   default_rights:
     crecord_type_1_role_1:
       keys:
