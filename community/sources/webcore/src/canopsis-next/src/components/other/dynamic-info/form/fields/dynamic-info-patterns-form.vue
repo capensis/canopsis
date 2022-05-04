@@ -26,7 +26,7 @@ export default {
   props: {
     form: {
       type: Object,
-      required: true,
+      default: () => ({}),
     },
     disabled: {
       type: Boolean,
