@@ -15,15 +15,8 @@
       clearable
     )
     c-enabled-field(v-field="form.enabled")
-    c-triggers-field(
-      :value="form.triggers",
-      name="triggers",
-      @input="updateField('triggers', $event)"
-    )
-    c-disable-during-periods-field(
-      v-field="form.disable_during_periods",
-      name="disable_during_periods"
-    )
+    c-triggers-field(:value="form.triggers", @input="updateField('triggers', $event)")
+    c-disable-during-periods-field(v-field="form.disable_during_periods")
     c-priority-field(v-model="form.priority", :min="1", required)
     scenario-actions-form.mt-2(v-field="form.actions", name="actions")
 </template>
