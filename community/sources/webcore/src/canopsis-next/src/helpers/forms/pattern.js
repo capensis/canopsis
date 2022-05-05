@@ -3,6 +3,7 @@ import { isBoolean } from 'lodash';
 import {
   ALARM_PATTERN_FIELDS,
   ENTITY_PATTERN_FIELDS,
+  EVENT_FILTER_PATTERN_FIELDS,
   PATTERN_CONDITIONS,
   PATTERN_CUSTOM_ITEM_VALUE,
   PATTERN_INFOS_NAME_OPERATORS,
@@ -123,6 +124,14 @@ const isInfosPatternRuleAttribute = value => [
 ].includes(value);
 
 /**
+ * Check pattern is extra infos
+ *
+ * @param {string} value
+ * @return {boolean}
+ */
+const isExtraInfosPatternRuleAttribute = value => value === EVENT_FILTER_PATTERN_FIELDS.extraInfos;
+
+/**
  * Convert pattern rule to form
  *
  * @param {PatternRule} rule
@@ -152,6 +161,7 @@ export const patternRuleToForm = (rule = {}) => {
   const isEntityInfos = rule.field?.startsWith(ENTITY_PATTERN_FIELDS.infos);
   const isDuration = rule.field === ALARM_PATTERN_FIELDS.duration;
   const isInfos = isAlarmInfos || isEntityInfos;
+  const isExtraInfos = !isInfos && rule.field?.startsWith(EVENT_FILTER_PATTERN_FIELDS.extraInfos);
 
   switch (rule.cond.type) {
     case PATTERN_CONDITIONS.equal: {
@@ -282,6 +292,11 @@ export const patternRuleToForm = (rule = {}) => {
     form.duration = durationToForm(rule.cond.value);
   }
 
+  if (isExtraInfos) {
+    form.attribute = EVENT_FILTER_PATTERN_FIELDS.extraInfos;
+    form.field = rule.field.slice(EVENT_FILTER_PATTERN_FIELDS.extraInfos.length + 1);
+  }
+
   if (isInfos) {
     const infosPrefix = isAlarmInfos ? ALARM_PATTERN_FIELDS.infos : ENTITY_PATTERN_FIELDS.infos;
 
@@ -376,10 +391,15 @@ export const formRuleToPatternRule = (rule) => {
   };
 
   const isInfos = isInfosPatternRuleAttribute(rule.attribute);
+  const isExtraInfos = isExtraInfosPatternRuleAttribute(rule.attribute);
   const isDate = isDatePatternRule(rule.attribute);
 
   if (isInfos) {
     pattern.field = [rule.attribute, rule.dictionary].join('.');
+  }
+
+  if (isExtraInfos) {
+    pattern.field = [rule.attribute, rule.field].join('.');
   }
 
   if (isDate) {
@@ -388,7 +408,7 @@ export const formRuleToPatternRule = (rule) => {
     return pattern;
   }
 
-  if (isInfos && rule.field !== PATTERN_RULE_INFOS_FIELDS.name) {
+  if ((isInfos && rule.field !== PATTERN_RULE_INFOS_FIELDS.name) || isExtraInfos) {
     pattern.field_type = getValueType(rule.value);
   }
 
