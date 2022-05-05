@@ -46,7 +46,7 @@ paths:
                 items:
                   $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.BroadcastMessage'
       security:
-        - {}
+        - { }
   /alarm-counters:
     get:
       tags:
@@ -621,6 +621,48 @@ paths:
               type: array
               items:
                 $ref: 'schemas_swagger.yaml#/definitions/entityservice.BulkUpdateRequestItem'
+            examples:
+              update:
+                summary: Update
+                description: Update services.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "name": "Group 1",
+                    "output_template": "All: {{.All}}
+                      Alarms: {{.Alarms}}
+                      Acknowledged: {{.Acknowledged}}
+                      NotAcknowledged: {{.NotAcknowledged}}
+                      StateCritical: {{.State.Critical}}
+                      StateMajor: {{.State.Major}}
+                      StateMinor: {{.State.Minor}}
+                      StateInfo: {{.State.Info}}
+                      Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
+                      Pause: {{index .PbehaviorCounters \"default_pause\"}}
+                      Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
+                    "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                    "impact_level": 2,
+                    "enabled": true,
+                    "entity_patterns": [
+                      {
+                        "type": "resource",
+                        "infos": {
+                          "group": {
+                            "value": "g1"
+                          }
+                        }
+                      }
+                    ],
+                    "sli_avail_state": 1,
+                    "infos": [
+                      {
+                        "name": "group",
+                        "description": "Group id",
+                        "value": "g1"
+                      }
+                    ]
+                  }
+                ]
         required: true
       responses:
         207:
@@ -653,6 +695,47 @@ paths:
               type: array
               items:
                 $ref: 'schemas_swagger.yaml#/definitions/entityservice.CreateRequest'
+            examples:
+              create:
+                summary: Create
+                description: Create services.
+                value: [
+                  {
+                    "name": "Group 1",
+                    "output_template": "All: {{.All}}
+                      Alarms: {{.Alarms}}
+                      Acknowledged: {{.Acknowledged}}
+                      NotAcknowledged: {{.NotAcknowledged}}
+                      StateCritical: {{.State.Critical}}
+                      StateMajor: {{.State.Major}}
+                      StateMinor: {{.State.Minor}}
+                      StateInfo: {{.State.Info}}
+                      Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
+                      Pause: {{index .PbehaviorCounters \"default_pause\"}}
+                      Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
+                    "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                    "impact_level": 2,
+                    "enabled": true,
+                    "entity_patterns": [
+                      {
+                        "type": "resource",
+                        "infos": {
+                          "group": {
+                            "value": "g1"
+                          }
+                        }
+                      }
+                    ],
+                    "sli_avail_state": 1,
+                    "infos": [
+                      {
+                        "name": "group",
+                        "description": "Group id",
+                        "value": "g1"
+                      }
+                    ]
+                  }
+                ]
         required: true
       responses:
         207:
@@ -685,6 +768,15 @@ paths:
               type: array
               items:
                 $ref: 'schemas_swagger.yaml#/definitions/entityservice.BulkDeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete services.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  }
+                ]
         required: true
       responses:
         207:
@@ -912,6 +1004,37 @@ paths:
               type: array
               items:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkUpdateRequestItem'
+            examples:
+              update:
+                summary: Update
+                description: Update pbehaviors
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "name": "Active period",
+                    "enabled": true,
+                    "tstart": 1650855600,
+                    "tstop": 1650891600,
+                    "rrule": "FREQ=DAILY",
+                    "type": "default_active",
+                    "reason": "default_reason",
+                    "filter": {
+                      "$and": [
+                        {
+                          "name": "cps_resource"
+                        }
+                      ]
+                    },
+                    "exdates": [
+                      {
+                        "begin": 1651460400,
+                        "end": 1651496400,
+                        "type": "default_maintenance"
+                      }
+                    ],
+                    "exceptions": [ "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101" ]
+                  }
+                ]
         required: true
       responses:
         207:
@@ -944,6 +1067,36 @@ paths:
               type: array
               items:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehavior.CreateRequest'
+            examples:
+              create:
+                summary: Create
+                description: Create pbehaviors
+                value: [
+                  {
+                    "name": "Active period",
+                    "enabled": true,
+                    "tstart": 1650855600,
+                    "tstop": 1650891600,
+                    "rrule": "FREQ=DAILY",
+                    "type": "default_active",
+                    "reason": "default_reason",
+                    "filter": {
+                      "$and": [
+                        {
+                          "name": "cps_resource"
+                        }
+                      ]
+                    },
+                    "exdates": [
+                      {
+                        "begin": 1651460400,
+                        "end": 1651496400,
+                        "type": "default_maintenance"
+                      }
+                    ],
+                    "exceptions": [ "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101" ]
+                  }
+                ]
         required: true
       responses:
         207:
@@ -976,6 +1129,15 @@ paths:
               type: array
               items:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkDeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete pbehaviors
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  }
+                ]
         required: true
       responses:
         207:
@@ -1009,6 +1171,49 @@ paths:
               type: array
               items:
                 $ref: 'schemas_swagger.yaml#/definitions/scenario.BulkUpdateRequestItem'
+            examples:
+              update:
+                summary: Update
+                description: Update scenarios.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "name": "Scenario with acknowledge action",
+                    "comment": "The scenario acknowledges an alarm on create",
+                    "enabled": true,
+                    "priority": 10,
+                    "triggers": [ "create" ],
+                    "actions": [
+                      {
+                        "type": "ack",
+                        "parameters": {
+                          "output": "The alarm is acknowledged by scenario"
+                        },
+                        "alarm_patterns": [
+                          {
+                            "v": {
+                              "state": {
+                                "val": 3
+                              }
+                            }
+                          }
+                        ],
+                        "entity_patterns": [
+                          {
+                            "type": "resource",
+                            "infos": {
+                              "group": {
+                                "value": "g1"
+                              }
+                            }
+                          }
+                        ],
+                        "drop_scenario_if_not_matched": false,
+                        "emit_trigger": false
+                      }
+                    ]
+                  }
+                ]
         required: true
       responses:
         207:
@@ -1041,6 +1246,48 @@ paths:
               type: array
               items:
                 $ref: 'schemas_swagger.yaml#/definitions/scenario.CreateRequest'
+            examples:
+              create:
+                summary: Create
+                description: Create scenarios.
+                value: [
+                  {
+                    "name": "Scenario with acknowledge action",
+                    "comment": "The scenario acknowledges an alarm on create",
+                    "enabled": true,
+                    "priority": 10,
+                    "triggers": [ "create" ],
+                    "actions": [
+                      {
+                        "type": "ack",
+                        "parameters": {
+                          "output": "The alarm is acknowledged by scenario"
+                        },
+                        "alarm_patterns": [
+                          {
+                            "v": {
+                              "state": {
+                                "val": 3
+                              }
+                            }
+                          }
+                        ],
+                        "entity_patterns": [
+                          {
+                            "type": "resource",
+                            "infos": {
+                              "group": {
+                                "value": "g1"
+                              }
+                            }
+                          }
+                        ],
+                        "drop_scenario_if_not_matched": false,
+                        "emit_trigger": false
+                      }
+                    ]
+                  }
+                ]
         required: true
       responses:
         207:
@@ -1073,6 +1320,15 @@ paths:
               type: array
               items:
                 $ref: 'schemas_swagger.yaml#/definitions/scenario.BulkDeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete scenarios.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  }
+                ]
         required: true
       responses:
         207:
@@ -1208,6 +1464,235 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/contextgraph.ImportRequest'
+            examples:
+              basic:
+                summary: Basic
+                description: Import basic entities
+                value: {
+                  "json": {
+                    "cis": [
+                      {
+                        "_id": "cps_component",
+                        "name": "cps_component",
+                        "type": "component",
+                        "impact_level": 1,
+                        "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                        "infos": {
+                          "group": {
+                            "description": "Group id",
+                            "value": "g1"
+                          }
+                        },
+                        "action": "set",
+                        "enabled": true
+                      },
+                      {
+                        "_id": "cps_resource_1/cps_component",
+                        "name": "cps_resource_1",
+                        "type": "resource",
+                        "impact_level": 1,
+                        "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                        "infos": {
+                          "group": {
+                            "description": "Group id",
+                            "value": "g1"
+                          }
+                        },
+                        "action": "create",
+                        "enabled": true
+                      },
+                      {
+                        "_id": "cps_resource_2/cps_component",
+                        "name": "cps_resource_2",
+                        "type": "resource",
+                        "impact_level": 1,
+                        "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                        "infos": {
+                          "group": {
+                            "description": "Group id",
+                            "value": "g1"
+                          }
+                        },
+                        "action": "update",
+                        "enabled": true
+                      },
+                      {
+                        "_id": "cps_resource_3/cps_component",
+                        "action": "delete"
+                      },
+                      {
+                        "_id": "cps_resource_4/cps_component",
+                        "action": "enable"
+                      },
+                      {
+                        "_id": "cps_resource_5/cps_component",
+                        "action": "disable"
+                      }
+                    ],
+                    "links": [
+                      {
+                        "from": [ "cps_resource_1/cps_component", "cps_resource_2/cps_component" ],
+                        "to": "cps_component",
+                        "action": "create"
+                      },
+                      {
+                        "from": [ "cps_component" ],
+                        "to": "cps_connector/cps_connector_name",
+                        "action": "create"
+                      },
+                      {
+                        "from": [ "cps_connector/cps_connector_name" ],
+                        "to": "cps_resource_1/cps_component",
+                        "action": "create"
+                      },
+                      {
+                        "from": [ "cps_connector/cps_connector_name" ],
+                        "to": "cps_resource_2/cps_component",
+                        "action": "create"
+                      },
+                      {
+                        "from": [ "cps_resource_3/cps_component" ],
+                        "to": "cps_component",
+                        "action": "delete"
+                      },
+                      {
+                        "from": [ "cps_connector/cps_connector_name" ],
+                        "to": "cps_resource_3/cps_component",
+                        "action": "delete"
+                      }
+                    ]
+                  }
+                }
+              service:
+                summary: Service
+                description: Import services
+                value: {
+                  "json": {
+                    "cis": [
+                      {
+                        "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                        "name": "Group 1",
+                        "output_template": "All: {{.All}}
+                          Alarms: {{.Alarms}}
+                          Acknowledged: {{.Acknowledged}}
+                          NotAcknowledged: {{.NotAcknowledged}}
+                          StateCritical: {{.State.Critical}}
+                          StateMajor: {{.State.Major}}
+                          StateMinor: {{.State.Minor}}
+                          StateInfo: {{.State.Info}}
+                          Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
+                          Pause: {{index .PbehaviorCounters \"default_pause\"}}
+                          Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
+                        "entity_patterns": [
+                          {
+                            "type": "resource",
+                            "infos": {
+                              "group": {
+                                "value": "g1"
+                              }
+                            }
+                          }
+                        ],
+                        "type": "service",
+                        "impact_level": 2,
+                        "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                        "infos": {
+                          "group": {
+                            "description": "Group id",
+                            "value": "g1"
+                          }
+                        },
+                        "action": "set",
+                        "enabled": true
+                      },
+                      {
+                        "_id": "60836aca-6ba5-487b-8773-66b86ca1b422",
+                        "name": "Group 2",
+                        "output_template": "All: {{.All}}
+                          Alarms: {{.Alarms}}
+                          Acknowledged: {{.Acknowledged}}
+                          NotAcknowledged: {{.NotAcknowledged}}
+                          StateCritical: {{.State.Critical}}
+                          StateMajor: {{.State.Major}}
+                          StateMinor: {{.State.Minor}}
+                          StateInfo: {{.State.Info}}
+                          Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
+                          Pause: {{index .PbehaviorCounters \"default_pause\"}}
+                          Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
+                        "entity_patterns": [
+                          {
+                            "type": "resource",
+                            "infos": {
+                              "group": {
+                                "value": "g2"
+                              }
+                            }
+                          }
+                        ],
+                        "type": "service",
+                        "impact_level": 2,
+                        "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                        "infos": {
+                          "group": {
+                            "description": "Group id",
+                            "value": "g1"
+                          }
+                        },
+                        "action": "create",
+                        "enabled": true
+                      },
+                      {
+                        "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                        "name": "Group 3",
+                        "output_template": "All: {{.All}}
+                          Alarms: {{.Alarms}}
+                          Acknowledged: {{.Acknowledged}}
+                          NotAcknowledged: {{.NotAcknowledged}}
+                          StateCritical: {{.State.Critical}}
+                          StateMajor: {{.State.Major}}
+                          StateMinor: {{.State.Minor}}
+                          StateInfo: {{.State.Info}}
+                          Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
+                          Pause: {{index .PbehaviorCounters \"default_pause\"}}
+                          Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
+                        "entity_patterns": [
+                          {
+                            "type": "resource",
+                            "infos": {
+                              "group": {
+                                "value": "g3"
+                              }
+                            }
+                          }
+                        ],
+                        "type": "service",
+                        "impact_level": 2,
+                        "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                        "infos": {
+                          "group": {
+                            "description": "Group id",
+                            "value": "g3"
+                          }
+                        },
+                        "action": "update",
+                        "enabled": true
+                      },
+                      {
+                        "_id": "185bff86-4e9c-4923-a373-69d3116c713b",
+                        "action": "delete"
+                      },
+                      {
+                        "_id": "9b49ff9d-f65a-4508-9ddc-298d7dc2e191",
+                        "action": "enable"
+                      },
+                      {
+                        "_id": "41b3b72b-2801-4512-ace4-4c0d644189c3",
+                        "action": "disable"
+                      }
+                    ],
+                    "links": [ ]
+                  }
+                }
         required: true
       responses:
         200:
@@ -1451,6 +1936,13 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/entitycategory.EditRequest'
+            examples:
+              create:
+                summary: Create
+                description: Create a category.
+                value: {
+                  "name": "Backend"
+                }
         required: true
       responses:
         201:
@@ -1511,6 +2003,13 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/entitycategory.EditRequest'
+            examples:
+              update:
+                summary: Update
+                description: Update a category.
+                value: {
+                  "name": "Backend"
+                }
         required: true
       responses:
         200:
@@ -1693,6 +2192,79 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/entitybasic.EditRequest'
+            examples:
+              resource:
+                summary: Resource
+                description: Update a resource.
+                value: {
+                  "description": "Important resource",
+                  "enabled": true,
+                  "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                  "impact_level": 3,
+                  "sli_avail_state": 1,
+                  "infos": [
+                    {
+                      "name": "group",
+                      "description": "Group id",
+                      "value": "g1"
+                    }
+                  ],
+                  "impact": [
+                    "cps_component"
+                  ],
+                  "depends": [
+                    "cps_connector/cps_connector_name"
+                  ]
+                }
+              component:
+                summary: Component
+                description: Update a component.
+                value: {
+                  "description": "Important component",
+                  "enabled": true,
+                  "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                  "impact_level": 3,
+                  "sli_avail_state": 1,
+                  "infos": [
+                    {
+                      "name": "group",
+                      "description": "Group id",
+                      "value": "g1"
+                    }
+                  ],
+                  "impact": [
+                    "cps_connector/cps_connector_name"
+                  ],
+                  "depends": [
+                    "cps_resource_1/cps_component",
+                    "cps_resource_2/cps_component"
+                  ]
+                }
+              connector:
+                summary: Connector
+                description: Update a connector.
+                value: {
+                  "description": "Important connector",
+                  "enabled": true,
+                  "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                  "impact_level": 3,
+                  "sli_avail_state": 1,
+                  "infos": [
+                    {
+                      "name": "group",
+                      "description": "Group id",
+                      "value": "g1"
+                    }
+                  ],
+                  "impact": [
+                    "cps_resource_1/cps_component_1",
+                    "cps_resource_2/cps_component_2"
+                  ],
+                  "depends": [
+                    "cps_component_1",
+                    "cps_component_2"
+                  ]
+                }
         required: true
       responses:
         200:
@@ -1826,6 +2398,45 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/entityservice.EditRequest'
+            examples:
+              create:
+                summary: Create
+                description: Create a service.
+                value: {
+                  "name": "Group 1",
+                  "output_template": "All: {{.All}}
+                    Alarms: {{.Alarms}}
+                    Acknowledged: {{.Acknowledged}}
+                    NotAcknowledged: {{.NotAcknowledged}}
+                    StateCritical: {{.State.Critical}}
+                    StateMajor: {{.State.Major}}
+                    StateMinor: {{.State.Minor}}
+                    StateInfo: {{.State.Info}}
+                    Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
+                    Pause: {{index .PbehaviorCounters \"default_pause\"}}
+                    Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
+                  "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                  "impact_level": 2,
+                  "enabled": true,
+                  "entity_patterns": [
+                    {
+                      "type": "resource",
+                      "infos": {
+                        "group": {
+                          "value": "g1"
+                        }
+                      }
+                    }
+                  ],
+                  "sli_avail_state": 1,
+                  "infos": [
+                    {
+                      "name": "group",
+                      "description": "Group id",
+                      "value": "g1"
+                    }
+                  ]
+                }
         required: true
       responses:
         201:
@@ -1886,6 +2497,45 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/entityservice.EditRequest'
+            examples:
+              update:
+                summary: Update
+                description: Update a service.
+                value: {
+                  "name": "Group 1",
+                  "output_template": "All: {{.All}}
+                    Alarms: {{.Alarms}}
+                    Acknowledged: {{.Acknowledged}}
+                    NotAcknowledged: {{.NotAcknowledged}}
+                    StateCritical: {{.State.Critical}}
+                    StateMajor: {{.State.Major}}
+                    StateMinor: {{.State.Minor}}
+                    StateInfo: {{.State.Info}}
+                    Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
+                    Pause: {{index .PbehaviorCounters \"default_pause\"}}
+                    Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
+                  "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                  "impact_level": 2,
+                  "enabled": true,
+                  "entity_patterns": [
+                    {
+                      "type": "resource",
+                      "infos": {
+                        "group": {
+                          "value": "g1"
+                        }
+                      }
+                    }
+                  ],
+                  "sli_avail_state": 1,
+                  "infos": [
+                    {
+                      "name": "group",
+                      "description": "Group id",
+                      "value": "g1"
+                    }
+                  ]
+                }
         required: true
       responses:
         200:
@@ -2284,12 +2934,15 @@ paths:
         content:
           multipart/form-data:
             schema:
+              type: object
               required:
                 - files
               properties:
                 files:
-                  type: string
-                  description: request
+                  type: array
+                  items:
+                    type: string
+                    format: binary
         required: true
       responses:
         200:
@@ -2771,7 +3424,7 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/auth.loginResponse'
       security:
-        - {}
+        - { }
   /logout:
     post:
       tags:
@@ -2896,6 +3549,14 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/pbehaviorcomment.Request'
+            examples:
+              create:
+                summary: Create
+                description: Create a comment
+                value: {
+                  "pbehavior": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                  "message": "A comment for the pbehavior"
+                }
         required: true
       responses:
         201:
@@ -2987,6 +3648,31 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Request'
+            examples:
+              create:
+                summary: Create
+                description: Create an exception
+                value: {
+                  "name": "Public holidays 2022",
+                  "description": "New Year, Easter, Christmas",
+                  "exdates": [
+                    {
+                      "begin": 1640991600,
+                      "end": 1641078000,
+                      "type": "default_inactive"
+                    },
+                    {
+                      "begin": 1650232800,
+                      "end": 1650319200,
+                      "type": "default_inactive"
+                    },
+                    {
+                      "begin": 1671922800,
+                      "end": 1672009200,
+                      "type": "default_inactive"
+                    }
+                  ]
+                }
         required: true
       responses:
         201:
@@ -3047,6 +3733,31 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Request'
+            examples:
+              update:
+                summary: Update
+                description: Update an exception
+                value: {
+                  "name": "Public holidays 2022",
+                  "description": "New Year, Easter, Christmas",
+                  "exdates": [
+                    {
+                      "begin": 1640991600,
+                      "end": 1641078000,
+                      "type": "default_inactive"
+                    },
+                    {
+                      "begin": 1650232800,
+                      "end": 1650319200,
+                      "type": "default_inactive"
+                    },
+                    {
+                      "begin": 1671922800,
+                      "end": 1672009200,
+                      "type": "default_inactive"
+                    }
+                  ]
+                }
         required: true
       responses:
         200:
@@ -3177,6 +3888,14 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Request'
+            examples:
+              create:
+                summary: Create
+                description: Create a reason
+                value: {
+                  "name": "Deployment",
+                  "description": "New version deployment"
+                }
         required: true
       responses:
         201:
@@ -3237,6 +3956,14 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Request'
+            examples:
+              update:
+                summary: Update
+                description: Update a reason
+                value: {
+                  "name": "Deployment",
+                  "description": "New version deployment"
+                }
         required: true
       responses:
         200:
@@ -3370,6 +4097,17 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.EditRequest'
+            examples:
+              create:
+                summary: Create
+                description: Create a type
+                value: {
+                  "name": "Unplanned maintenance",
+                  "description": "Maintenances which are not on the schedule",
+                  "type": "maintenance",
+                  "priority": 10,
+                  "icon_name": "broken_image"
+                }
         required: true
       responses:
         201:
@@ -3430,6 +4168,17 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.EditRequest'
+            examples:
+              update:
+                summary: Update
+                description: Update a type
+                value: {
+                  "name": "Unplanned maintenance",
+                  "description": "Maintenances which are not on the schedule",
+                  "type": "maintenance",
+                  "priority": 10,
+                  "icon_name": "broken_image"
+                }
         required: true
       responses:
         200:
@@ -3527,6 +4276,91 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/pbehavior.CreateRequest'
+            examples:
+              maintenance:
+                summary: Maintenance period
+                description: Create a pbehavior with one maintenance period
+                value: {
+                  "name": "Maintenance period",
+                  "enabled": true,
+                  "tstart": 1591172881,
+                  "tstop": 1591536400,
+                  "rrule": "",
+                  "type": "default_Maintenance",
+                  "reason": "default_reason",
+                  "filter": {
+                    "$and": [
+                      {
+                        "name": "cps_resource"
+                      }
+                    ]
+                  }
+                }
+              pause:
+                summary: Pause period
+                description: Create a pbehavior with endless pause period
+                value: {
+                  "name": "Pause period",
+                  "enabled": true,
+                  "tstart": 1591172881,
+                  "tstop": null,
+                  "rrule": "",
+                  "type": "default_pause",
+                  "reason": "default_reason",
+                  "filter": {
+                    "$and": [
+                      {
+                        "name": "cps_resource"
+                      }
+                    ]
+                  }
+                }
+              inactive:
+                summary: Inactive period
+                description: Create a pbehavior with weekend inactive periods
+                value: {
+                  "name": "Inactive period",
+                  "enabled": true,
+                  "tstart": 1651269600,
+                  "tstop": 1651442400,
+                  "rrule": "FREQ=WEEKLY",
+                  "type": "default_inactive",
+                  "reason": "default_reason",
+                  "filter": {
+                    "$and": [
+                      {
+                        "name": "cps_resource"
+                      }
+                    ]
+                  }
+                }
+              active:
+                summary: Active period
+                description: Create a pbehavior with daily active periods except some days
+                value: {
+                  "name": "Active period",
+                  "enabled": true,
+                  "tstart": 1650855600,
+                  "tstop": 1650891600,
+                  "rrule": "FREQ=DAILY",
+                  "type": "default_active",
+                  "reason": "default_reason",
+                  "filter": {
+                    "$and": [
+                      {
+                        "name": "cps_resource"
+                      }
+                    ]
+                  },
+                  "exdates": [
+                    {
+                      "begin": 1651460400,
+                      "end": 1651496400,
+                      "type": "default_maintenance"
+                    }
+                  ],
+                  "exceptions": [ "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101" ]
+                }
         required: true
       responses:
         201:
@@ -3587,6 +4421,34 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/pbehavior.UpdateRequest'
+            examples:
+              update:
+                summary: Update
+                description: Update a pbehavior
+                value: {
+                  "name": "Active period",
+                  "enabled": true,
+                  "tstart": 1650855600,
+                  "tstop": 1650891600,
+                  "rrule": "FREQ=DAILY",
+                  "type": "default_active",
+                  "reason": "default_reason",
+                  "filter": {
+                    "$and": [
+                      {
+                        "name": "cps_resource"
+                      }
+                    ]
+                  },
+                  "exdates": [
+                    {
+                      "begin": 1651460400,
+                      "end": 1651496400,
+                      "type": "default_maintenance"
+                    }
+                  ],
+                  "exceptions": [ "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101" ]
+                }
         required: true
       responses:
         200:
@@ -3648,6 +4510,14 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/pbehavior.PatchRequest'
+            examples:
+              update:
+                summary: Update interval
+                description: Update only a pbehavior interval
+                value: {
+                  "tstart": 1650855600,
+                  "tstop": 1650891600
+                }
         required: true
       responses:
         200:
@@ -4283,6 +5153,352 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/scenario.EditRequest'
+            examples:
+              ack:
+                summary: Acknowledge action
+                description: Create a scenario with acknowledge action.
+                value: {
+                  "name": "Scenario with acknowledge action",
+                  "comment": "The scenario acknowledges an alarm on create",
+                  "enabled": true,
+                  "priority": 10,
+                  "triggers": [ "create" ],
+                  "actions": [
+                    {
+                      "type": "ack",
+                      "parameters": {
+                        "output": "The alarm is acknowledged by scenario"
+                      },
+                      "alarm_patterns": [
+                        {
+                          "v": {
+                            "state": {
+                              "val": 3
+                            }
+                          }
+                        }
+                      ],
+                      "entity_patterns": [
+                        {
+                          "type": "resource",
+                          "infos": {
+                            "group": {
+                              "value": "g1"
+                            }
+                          }
+                        }
+                      ],
+                      "drop_scenario_if_not_matched": false,
+                      "emit_trigger": false
+                    }
+                  ]
+                }
+              ackremove:
+                summary: Acknowledge remove action
+                description: Create a scenario with acknowledge remove action.
+                value: {
+                  "name": "Scenario with acknowledge remove action",
+                  "comment": "The scenario removes an acknowledge of an alarm on state increase",
+                  "enabled": true,
+                  "priority": 10,
+                  "triggers": [ "stateinc" ],
+                  "actions": [
+                    {
+                      "type": "ackremove",
+                      "parameters": {
+                        "output": "The alarm is unacknowledged by scenario"
+                      },
+                      "alarm_patterns": [
+                        {
+                          "v": {
+                            "state": {
+                              "val": 3
+                            }
+                          }
+                        }
+                      ],
+                      "entity_patterns": [
+                        {
+                          "type": "resource",
+                          "infos": {
+                            "group": {
+                              "value": "g1"
+                            }
+                          }
+                        }
+                      ],
+                      "drop_scenario_if_not_matched": false,
+                      "emit_trigger": false
+                    }
+                  ]
+                }
+              assocticket:
+                summary: Associate ticket action
+                description: Create a scenario with associate ticket action.
+                value: {
+                  "name": "Scenario with associate ticket action",
+                  "comment": "The scenario adds a ticket to an alarm on activate",
+                  "enabled": true,
+                  "priority": 10,
+                  "triggers": [ "activate" ],
+                  "actions": [
+                    {
+                      "type": "assocticket",
+                      "parameters": {
+                        "output": "The ticket is added to the alarm by scenario",
+                        "ticket": "ENV-116"
+                      },
+                      "alarm_patterns": [
+                        {
+                          "v": {
+                            "state": {
+                              "val": 3
+                            }
+                          }
+                        }
+                      ],
+                      "entity_patterns": [
+                        {
+                          "type": "resource",
+                          "infos": {
+                            "group": {
+                              "value": "g1"
+                            }
+                          }
+                        }
+                      ],
+                      "drop_scenario_if_not_matched": false,
+                      "emit_trigger": false
+                    }
+                  ]
+                }
+              cancel:
+                summary: Cancel action
+                description: Create a scenario with cancel action.
+                value: {
+                  "name": "Scenario with cancel action",
+                  "comment": "The scenario cancels an alarm on state decrease",
+                  "enabled": true,
+                  "priority": 10,
+                  "triggers": [ "statedec" ],
+                  "actions": [
+                    {
+                      "type": "cancel",
+                      "parameters": {
+                        "output": "The alarm is canceled by scenario"
+                      },
+                      "alarm_patterns": [
+                        {
+                          "v": {
+                            "state": {
+                              "val": 1
+                            }
+                          }
+                        }
+                      ],
+                      "entity_patterns": [
+                        {
+                          "type": "resource",
+                          "infos": {
+                            "group": {
+                              "value": "g1"
+                            }
+                          }
+                        }
+                      ],
+                      "drop_scenario_if_not_matched": false,
+                      "emit_trigger": false
+                    }
+                  ]
+                }
+              changestate:
+                summary: Change state action
+                description: Create a scenario with change state action.
+                value: {
+                  "name": "Scenario with change state action",
+                  "comment": "The scenario changes a state of an alarm on acknowledge",
+                  "enabled": true,
+                  "priority": 10,
+                  "triggers": [ "ack" ],
+                  "actions": [
+                    {
+                      "type": "changestate",
+                      "parameters": {
+                        "output": "The state of the alarm is changed by scenario",
+                        "state": 3
+                      },
+                      "alarm_patterns": [
+                        {
+                          "v": {
+                            "status": {
+                              "val": 1
+                            }
+                          }
+                        }
+                      ],
+                      "entity_patterns": [
+                        {
+                          "type": "resource",
+                          "infos": {
+                            "group": {
+                              "value": "g1"
+                            }
+                          }
+                        }
+                      ],
+                      "drop_scenario_if_not_matched": false,
+                      "emit_trigger": false
+                    }
+                  ]
+                }
+              pbehavior:
+                summary: Pbehavior action
+                description: Create a scenario with pbehavior action.
+                value: {
+                  "name": "Scenario with pbehavior action",
+                  "comment": "The scenario creates a pbehavior for an alarm on create",
+                  "enabled": true,
+                  "priority": 10,
+                  "triggers": [ "create" ],
+                  "actions": [
+                    {
+                      "type": "pbehavior",
+                      "parameters": {
+                        "name": "The pbehavior is created by scenario",
+                        "reason": "default_reason",
+                        "type": "default_pause",
+                        "start_on_trigger": true,
+                        "duration": {
+                          "value": 10,
+                          "unit": "m"
+                        }
+                      },
+                      "alarm_patterns": [
+                        {
+                          "v": {
+                            "state": {
+                              "val": 3
+                            }
+                          }
+                        }
+                      ],
+                      "entity_patterns": [
+                        {
+                          "type": "resource",
+                          "infos": {
+                            "group": {
+                              "value": "g1"
+                            }
+                          }
+                        }
+                      ],
+                      "drop_scenario_if_not_matched": false,
+                      "emit_trigger": false
+                    }
+                  ]
+                }
+              snooze:
+                summary: Snooze action
+                description: Create a scenario with snooze action.
+                value: {
+                  "name": "Scenario with snooze action",
+                  "comment": "The scenario snoozes an alarm on create",
+                  "enabled": true,
+                  "priority": 10,
+                  "triggers": [ "create" ],
+                  "actions": [
+                    {
+                      "type": "snooze",
+                      "parameters": {
+                        "output": "The alarm is snoozed by scenario",
+                        "duration": {
+                          "value": 10,
+                          "unit": "m"
+                        }
+                      },
+                      "alarm_patterns": [
+                        {
+                          "v": {
+                            "state": {
+                              "val": 3
+                            }
+                          }
+                        }
+                      ],
+                      "entity_patterns": [
+                        {
+                          "type": "resource",
+                          "infos": {
+                            "group": {
+                              "value": "g1"
+                            }
+                          }
+                        }
+                      ],
+                      "drop_scenario_if_not_matched": false,
+                      "emit_trigger": false
+                    }
+                  ]
+                }
+              webhook:
+                summary: Webhook action
+                description: Create a scenario with webhook action.
+                value: {
+                  "name": "Scenario with webhook action",
+                  "comment": "The scenario does webhook request for an alarm on declare ticket",
+                  "enabled": true,
+                  "priority": 10,
+                  "triggers": [ "declareticket" ],
+                  "actions": [
+                    {
+                      "type": "webhook",
+                      "parameters": {
+                        "request": {
+                          "method": "POST",
+                          "url": "https://test-rest-api.com/ticket",
+                          "auth": {
+                            "username": "admin",
+                            "password": "admin"
+                          },
+                          "headers": { "Content-Type": "application/json" },
+                          "payload": "{\"service\":\"{{ .Alarm.Value.Resource }}\",\"host\":\"{{ .Alarm.Value.Component }}\",\"group\":\"{{ .Entity.Infos.group.Value }}\",\"change\":\"{{ .AdditionalData.AlarmChangeType }}\"}"
+                        },
+                        "declare_ticket": {
+                          "empty_response": false,
+                          "is_regexp": false,
+                          "ticket_id": "id",
+                          "external_link": "link"
+                        },
+                        "retry_count": 3,
+                        "retry_delay": {
+                          "value": 3,
+                          "unit": "s"
+                        }
+                      },
+                      "alarm_patterns": [
+                        {
+                          "v": {
+                            "state": {
+                              "val": 3
+                            }
+                          }
+                        }
+                      ],
+                      "entity_patterns": [
+                        {
+                          "type": "resource",
+                          "infos": {
+                            "group": {
+                              "value": "g1"
+                            }
+                          }
+                        }
+                      ],
+                      "drop_scenario_if_not_matched": false,
+                      "emit_trigger": false
+                    }
+                  ]
+                }
         required: true
       responses:
         201:
@@ -4343,6 +5559,352 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/scenario.EditRequest'
+            examples:
+              ack:
+                summary: Acknowledge action
+                description: Update a scenario with acknowledge action.
+                value: {
+                  "name": "Scenario with acknowledge action",
+                  "comment": "The scenario acknowledges an alarm on create",
+                  "enabled": true,
+                  "priority": 10,
+                  "triggers": [ "create" ],
+                  "actions": [
+                    {
+                      "type": "ack",
+                      "parameters": {
+                        "output": "The alarm is acknowledged by scenario"
+                      },
+                      "alarm_patterns": [
+                        {
+                          "v": {
+                            "state": {
+                              "val": 3
+                            }
+                          }
+                        }
+                      ],
+                      "entity_patterns": [
+                        {
+                          "type": "resource",
+                          "infos": {
+                            "group": {
+                              "value": "g1"
+                            }
+                          }
+                        }
+                      ],
+                      "drop_scenario_if_not_matched": false,
+                      "emit_trigger": false
+                    }
+                  ]
+                }
+              ackremove:
+                summary: Acknowledge remove action
+                description: Update a scenario with acknowledge remove action.
+                value: {
+                  "name": "Scenario with acknowledge remove action",
+                  "comment": "The scenario removes an acknowledge of an alarm on state increase",
+                  "enabled": true,
+                  "priority": 10,
+                  "triggers": [ "stateinc" ],
+                  "actions": [
+                    {
+                      "type": "ackremove",
+                      "parameters": {
+                        "output": "The alarm is unacknowledged by scenario"
+                      },
+                      "alarm_patterns": [
+                        {
+                          "v": {
+                            "state": {
+                              "val": 3
+                            }
+                          }
+                        }
+                      ],
+                      "entity_patterns": [
+                        {
+                          "type": "resource",
+                          "infos": {
+                            "group": {
+                              "value": "g1"
+                            }
+                          }
+                        }
+                      ],
+                      "drop_scenario_if_not_matched": false,
+                      "emit_trigger": false
+                    }
+                  ]
+                }
+              assocticket:
+                summary: Associate ticket action
+                description: Update a scenario with associate ticket action.
+                value: {
+                  "name": "Scenario with associate ticket action",
+                  "comment": "The scenario adds a ticket to an alarm on activate",
+                  "enabled": true,
+                  "priority": 10,
+                  "triggers": [ "activate" ],
+                  "actions": [
+                    {
+                      "type": "assocticket",
+                      "parameters": {
+                        "output": "The ticket is added to the alarm by scenario",
+                        "ticket": "ENV-116"
+                      },
+                      "alarm_patterns": [
+                        {
+                          "v": {
+                            "state": {
+                              "val": 3
+                            }
+                          }
+                        }
+                      ],
+                      "entity_patterns": [
+                        {
+                          "type": "resource",
+                          "infos": {
+                            "group": {
+                              "value": "g1"
+                            }
+                          }
+                        }
+                      ],
+                      "drop_scenario_if_not_matched": false,
+                      "emit_trigger": false
+                    }
+                  ]
+                }
+              cancel:
+                summary: Cancel action
+                description: Update a scenario with cancel action.
+                value: {
+                  "name": "Scenario with cancel action",
+                  "comment": "The scenario cancels an alarm on state decrease",
+                  "enabled": true,
+                  "priority": 10,
+                  "triggers": [ "statedec" ],
+                  "actions": [
+                    {
+                      "type": "cancel",
+                      "parameters": {
+                        "output": "The alarm is canceled by scenario"
+                      },
+                      "alarm_patterns": [
+                        {
+                          "v": {
+                            "state": {
+                              "val": 1
+                            }
+                          }
+                        }
+                      ],
+                      "entity_patterns": [
+                        {
+                          "type": "resource",
+                          "infos": {
+                            "group": {
+                              "value": "g1"
+                            }
+                          }
+                        }
+                      ],
+                      "drop_scenario_if_not_matched": false,
+                      "emit_trigger": false
+                    }
+                  ]
+                }
+              changestate:
+                summary: Change state action
+                description: Update a scenario with change state action.
+                value: {
+                  "name": "Scenario with change state action",
+                  "comment": "The scenario changes a state of an alarm on acknowledge",
+                  "enabled": true,
+                  "priority": 10,
+                  "triggers": [ "ack" ],
+                  "actions": [
+                    {
+                      "type": "changestate",
+                      "parameters": {
+                        "output": "The state of the alarm is changed by scenario",
+                        "state": 3
+                      },
+                      "alarm_patterns": [
+                        {
+                          "v": {
+                            "status": {
+                              "val": 1
+                            }
+                          }
+                        }
+                      ],
+                      "entity_patterns": [
+                        {
+                          "type": "resource",
+                          "infos": {
+                            "group": {
+                              "value": "g1"
+                            }
+                          }
+                        }
+                      ],
+                      "drop_scenario_if_not_matched": false,
+                      "emit_trigger": false
+                    }
+                  ]
+                }
+              pbehavior:
+                summary: Pbehavior action
+                description: Update a scenario with pbehavior action.
+                value: {
+                  "name": "Scenario with pbehavior action",
+                  "comment": "The scenario creates a pbehavior for an alarm on create",
+                  "enabled": true,
+                  "priority": 10,
+                  "triggers": [ "create" ],
+                  "actions": [
+                    {
+                      "type": "pbehavior",
+                      "parameters": {
+                        "name": "The pbehavior is created by scenario",
+                        "reason": "default_reason",
+                        "type": "default_pause",
+                        "start_on_trigger": true,
+                        "duration": {
+                          "value": 10,
+                          "unit": "m"
+                        }
+                      },
+                      "alarm_patterns": [
+                        {
+                          "v": {
+                            "state": {
+                              "val": 3
+                            }
+                          }
+                        }
+                      ],
+                      "entity_patterns": [
+                        {
+                          "type": "resource",
+                          "infos": {
+                            "group": {
+                              "value": "g1"
+                            }
+                          }
+                        }
+                      ],
+                      "drop_scenario_if_not_matched": false,
+                      "emit_trigger": false
+                    }
+                  ]
+                }
+              snooze:
+                summary: Snooze action
+                description: Update a scenario with snooze action.
+                value: {
+                  "name": "Scenario with snooze action",
+                  "comment": "The scenario snoozes an alarm on create",
+                  "enabled": true,
+                  "priority": 10,
+                  "triggers": [ "create" ],
+                  "actions": [
+                    {
+                      "type": "snooze",
+                      "parameters": {
+                        "output": "The alarm is snoozed by scenario",
+                        "duration": {
+                          "value": 10,
+                          "unit": "m"
+                        }
+                      },
+                      "alarm_patterns": [
+                        {
+                          "v": {
+                            "state": {
+                              "val": 3
+                            }
+                          }
+                        }
+                      ],
+                      "entity_patterns": [
+                        {
+                          "type": "resource",
+                          "infos": {
+                            "group": {
+                              "value": "g1"
+                            }
+                          }
+                        }
+                      ],
+                      "drop_scenario_if_not_matched": false,
+                      "emit_trigger": false
+                    }
+                  ]
+                }
+              webhook:
+                summary: Webhook action
+                description: Update a scenario with webhook action.
+                value: {
+                  "name": "Scenario with webhook action",
+                  "comment": "The scenario does webhook request for an alarm on declare ticket",
+                  "enabled": true,
+                  "priority": 10,
+                  "triggers": [ "declareticket" ],
+                  "actions": [
+                    {
+                      "type": "webhook",
+                      "parameters": {
+                        "request": {
+                          "method": "POST",
+                          "url": "https://test-rest-api.com/ticket",
+                          "auth": {
+                            "username": "admin",
+                            "password": "admin"
+                          },
+                          "headers": { "Content-Type": "application/json" },
+                          "payload": "{\"service\":\"{{ .Alarm.Value.Resource }}\",\"host\":\"{{ .Alarm.Value.Component }}\",\"group\":\"{{ .Entity.Infos.group.Value }}\",\"change\":\"{{ .AdditionalData.AlarmChangeType }}\"}"
+                        },
+                        "declare_ticket": {
+                          "empty_response": false,
+                          "is_regexp": false,
+                          "ticket_id": "id",
+                          "external_link": "link"
+                        },
+                        "retry_count": 3,
+                        "retry_delay": {
+                          "value": 3,
+                          "unit": "s"
+                        }
+                      },
+                      "alarm_patterns": [
+                        {
+                          "v": {
+                            "state": {
+                              "val": 3
+                            }
+                          }
+                        }
+                      ],
+                      "entity_patterns": [
+                        {
+                          "type": "resource",
+                          "infos": {
+                            "group": {
+                              "value": "g1"
+                            }
+                          }
+                        }
+                      ],
+                      "drop_scenario_if_not_matched": false,
+                      "emit_trigger": false
+                    }
+                  ]
+                }
         required: true
       responses:
         200:

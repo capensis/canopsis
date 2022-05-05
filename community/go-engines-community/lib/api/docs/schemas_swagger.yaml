@@ -1576,6 +1576,13 @@ definitions:
       _id:
         type: string
       action:
+        enum:
+        - set
+        - create
+        - update
+        - delete
+        - enable
+        - disable
         type: string
       action_properties: {}
       category:
@@ -1597,6 +1604,11 @@ definitions:
       output_template:
         type: string
       type:
+        enum:
+        - connector
+        - component
+        - resource
+        - service
         type: string
     type: object
   importcontextgraph.Link:
@@ -1604,6 +1616,9 @@ definitions:
       _id:
         type: string
       action:
+        enum:
+        - create
+        - delete
         type: string
       action_properties: {}
       from:
@@ -2090,6 +2105,11 @@ definitions:
       priority:
         type: integer
       type:
+        enum:
+        - active
+        - inactive
+        - maintenance
+        - pause
         type: string
     required:
     - description
@@ -2342,6 +2362,15 @@ definitions:
         $ref: '#/definitions/pattern.EntityPatternList'
       parameters: {}
       type:
+        enum:
+        - ack
+        - ackremove
+        - assocticket
+        - cancel
+        - changestate
+        - pbehavior
+        - snooze
+        - webhook
         type: string
     required:
     - drop_scenario_if_not_matched
