@@ -20,8 +20,8 @@ type EditRequest struct {
 	Author               string                  `json:"author" binding:"required,max=255"`
 	Enabled              *bool                   `json:"enabled" binding:"required"`
 	Priority             *int                    `json:"priority" binding:"gt=0"`
-	Triggers             []string                `json:"triggers" binding:"required,notblank"`
-	DisableDuringPeriods []string                `json:"disable_during_periods"`
+	Triggers             []string                `json:"triggers" binding:"required,notblank,dive,oneof=create statedec stateinc changestate changestatus ack ackremove cancel uncancel comment done declareticket declareticketwebhook assocticket snooze unsnooze resolve activate pbhenter pbhleave"`
+	DisableDuringPeriods []string                `json:"disable_during_periods" binding:"dive,oneof=maintenance pause inactive"`
 	Delay                *types.DurationWithUnit `json:"delay"`
 	Actions              []ActionRequest         `json:"actions" binding:"required,notblank,dive"`
 }
@@ -86,7 +86,7 @@ type CheckPriorityResponse struct {
 }
 
 type ActionRequest struct {
-	Type                     string                    `json:"type" binding:"required"`
+	Type                     string                    `json:"type" binding:"required,oneof=ack ackremove assocticket cancel changestate pbehavior snooze webhook"`
 	Parameters               interface{}               `json:"parameters,omitempty"`
 	Comment                  string                    `json:"comment"`
 	AlarmPatterns            pattern.AlarmPatternList  `json:"alarm_patterns"`
