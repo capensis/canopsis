@@ -241,6 +241,8 @@ export default {
     resolvedAt: 'Resolved at',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Personnalisé',
+    eventType: 'Type d\'événement',
+    sourceType: 'Type de Source',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -348,6 +350,18 @@ export default {
 
       [PATTERN_OPERATORS.acked]: 'Acquis',
       [PATTERN_OPERATORS.notAcked]: 'Non confirmé',
+    },
+    entityEventTypes: {
+      [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
+      [EVENT_ENTITY_TYPES.ackRemove]: 'Suppression d\'acquittement',
+      [EVENT_ENTITY_TYPES.assocTicket]: 'Associer un ticket',
+      [EVENT_ENTITY_TYPES.declareTicket]: 'Déclarer un incident',
+      [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
+      [EVENT_ENTITY_TYPES.uncancel]: 'Uncancel',
+      [EVENT_ENTITY_TYPES.changeState]: 'Changer d\'état',
+      [EVENT_ENTITY_TYPES.check]: 'Vérifier',
+      [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
+      [EVENT_ENTITY_TYPES.snooze]: 'Snooze',
     },
   },
   variableTypes: {
