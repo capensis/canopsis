@@ -11,7 +11,7 @@ db.periodical_alarm.find({"v.steps._t": {$in: ["pbhenter", "snooze"]}}).forEach(
                 }
                 break;
             case "pbhenter":
-                if (step.cannonical_type !== "active") {
+                if (step.pbehavior_canonical_type !== "active") {
                     pbhEnterTs = step.t;
                 }
                 break;
