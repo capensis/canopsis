@@ -3,7 +3,6 @@ package executor
 import (
 	"context"
 	"fmt"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
@@ -17,13 +16,12 @@ type pbhLeaveAndEnterExecutor struct {
 	metricsSender metrics.Sender
 }
 
-// NewAckExecutor creates new executor.
 func NewPbhLeaveAndEnterExecutor(configProvider config.AlarmConfigProvider, metricsSender metrics.Sender) operationlib.Executor {
 	return &pbhLeaveAndEnterExecutor{configProvider: configProvider, metricsSender: metricsSender}
 }
 
 func (e *pbhLeaveAndEnterExecutor) Exec(
-	ctx context.Context,
+	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
 	entity *types.Entity,
@@ -40,9 +38,9 @@ func (e *pbhLeaveAndEnterExecutor) Exec(
 		userID = params.User
 	}
 
-	currPbehaviorInfo := alarm.Value.PbehaviorInfo
+	currPbehaviorInfo := entity.PbehaviorInfo
 
-	if currPbehaviorInfo.Same(params.PbehaviorInfo) {
+	if currPbehaviorInfo.IsDefaultActive() || currPbehaviorInfo.Same(params.PbehaviorInfo) {
 		return "", nil
 	}
 
@@ -61,9 +59,7 @@ func (e *pbhLeaveAndEnterExecutor) Exec(
 
 	entity.PbehaviorInfo = alarm.Value.PbehaviorInfo
 
-	if currPbehaviorInfo.Timestamp != nil {
-		go e.metricsSender.SendPbhLeaveAndEnter(context.Background(), alarm, *entity, currPbehaviorInfo.CanonicalType, currPbehaviorInfo.Timestamp.Time)
-	}
+	go e.metricsSender.SendPbhLeaveAndEnter(context.Background(), alarm, *entity, currPbehaviorInfo.CanonicalType, currPbehaviorInfo.Timestamp.Time)
 
 	return types.AlarmChangeTypePbhLeaveAndEnter, nil
 }
