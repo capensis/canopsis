@@ -366,15 +366,17 @@ const formToActionParameters = (form, timezone) => {
   const prepareParametersToAction = parametersPreparers[form.type];
   const parameters = prepareParametersToAction
     ? prepareParametersToAction(parametersByCurrentType, timezone)
-    : { ...parametersByCurrentType };
+    : omit(parametersByCurrentType, ['author', 'forward_author']);
 
-  if (isPbehaviorActionType(form.type)) {
-    return omit(parameters, ['author', 'forward_author']);
+  if (!isPbehaviorActionType(form.type)) {
+    parameters.forward_author = parametersByCurrentType.forward_author;
+
+    if (!parameters.forward_author) {
+      parameters.author = parametersByCurrentType.author;
+    }
   }
 
-  return parameters.forward_author
-    ? omit(parameters, ['author'])
-    : parameters;
+  return parameters;
 };
 
 /**

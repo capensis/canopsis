@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    c-enabled-field(
+    c-enabled-field.mt-0(
       v-field="value.forward_author",
       :label="$t('scenario.forwardAuthor')"
     )
