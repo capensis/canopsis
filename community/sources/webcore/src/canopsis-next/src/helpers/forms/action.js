@@ -72,6 +72,8 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  * @property {boolean} declare_ticket.is_regexp
  * @property {number} retry_count
  * @property {Duration} retry_delay
+ * @property {boolean} [forward_author]
+ * @property {string} [author]
  */
 
 /**
@@ -169,6 +171,8 @@ const webhookActionParametersToForm = (parameters = {}) => {
   const { empty_response: emptyResponse, is_regexp: isRegexp, ...variables } = parameters.declare_ticket || {};
 
   return {
+    forward_author: parameters.forward_author ?? true,
+    author: parameters.author ?? '',
     declare_ticket: objectToTextPairs(variables),
     empty_response: !!emptyResponse,
     is_regexp: !!isRegexp,
