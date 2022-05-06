@@ -7,9 +7,11 @@ db.periodical_alarm.find({"v.pbehavior_info.id": {$nin: ["", null]}}).forEach(fu
         }
     }
 
-    db.periodical_alarm.updateOne({_id: doc._id}, {$set: {"v.pbehavior_info.timestamp": timestamp}});
+    if (timestamp) {
+        db.periodical_alarm.updateOne({_id: doc._id}, {$set: {"v.pbehavior_info.timestamp": timestamp}});
 
-    var pbehaviorInfo = doc.v.pbehavior_info;
-    pbehaviorInfo.timestamp = timestamp;
-    db.default_entities.updateOne({_id: doc.d}, {$set: {"pbehavior_info": pbehaviorInfo}});
+        var pbehaviorInfo = doc.v.pbehavior_info;
+        pbehaviorInfo.timestamp = timestamp;
+        db.default_entities.updateOne({_id: doc.d}, {$set: {"pbehavior_info": pbehaviorInfo}});
+    }
 });
