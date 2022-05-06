@@ -2298,7 +2298,7 @@ export default {
     addAction: 'Add action',
     emptyActions: 'No actions added yet',
     output: 'Output Action Format',
-    forwardAuthor: 'Forward author',
+    forwardAuthor: 'Forward author to the next step',
     urlHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>'
       + '<i>For example:</i>'
       + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'
