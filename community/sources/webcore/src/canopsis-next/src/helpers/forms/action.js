@@ -341,13 +341,13 @@ export const formToPbehaviorActionParameters = (parameters = {}, timezone = getL
 };
 
 /**
- * Convert form to action
+ * Convert form to action parameters
  *
  * @param {ActionForm} form
  * @param {string} [timezone]
- * @returns {Action}
+ * @returns {ActionParameters}
  */
-export const formToAction = (form, timezone) => {
+const formToActionParameters = (form, timezone) => {
   const parametersByCurrentType = form.parameters[form.type];
 
   const parametersPreparers = {
@@ -360,11 +360,24 @@ export const formToAction = (form, timezone) => {
     ? prepareParametersToAction(parametersByCurrentType, timezone)
     : { ...parametersByCurrentType };
 
-  return {
-    ...omit(form, ['key', 'patterns']),
-    ...form.patterns,
-    parameters: parameters.forward_author
-      ? omit(parameters, ['author'])
-      : parameters,
-  };
+  if (form.type === ACTION_TYPES.pbehavior) {
+    return omit(parameters, ['author', 'forward_author']);
+  }
+
+  return parameters.forward_author
+    ? omit(parameters, ['author'])
+    : parameters;
 };
+
+/**
+ * Convert form to action
+ *
+ * @param {ActionForm} form
+ * @param {string} [timezone]
+ * @returns {Action}
+ */
+export const formToAction = (form, timezone) => ({
+  ...omit(form, ['key', 'patterns']),
+  ...form.patterns,
+  parameters: formToActionParameters(form, timezone),
+});
