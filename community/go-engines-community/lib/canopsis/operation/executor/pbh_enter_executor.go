@@ -16,7 +16,6 @@ type pbhEnterExecutor struct {
 	metricsSender metrics.Sender
 }
 
-// NewAckExecutor creates new executor.
 func NewPbhEnterExecutor(configProvider config.AlarmConfigProvider, metricsSender metrics.Sender) operationlib.Executor {
 	return &pbhEnterExecutor{configProvider: configProvider, metricsSender: metricsSender}
 }
@@ -39,7 +38,7 @@ func (e *pbhEnterExecutor) Exec(
 		userID = params.User
 	}
 
-	if alarm.Value.PbehaviorInfo.Same(params.PbehaviorInfo) {
+	if entity.PbehaviorInfo.Same(params.PbehaviorInfo) {
 		return "", nil
 	}
 
