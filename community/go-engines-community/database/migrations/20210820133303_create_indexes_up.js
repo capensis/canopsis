@@ -65,6 +65,16 @@ db.instruction_mod_stats.createIndex({
     date: 1,
 }, {name: "instruction_1_date_1"});
 
+db.job_history.createIndex({
+    job: 1,
+    status: 1,
+}, {name: "job_1_status_1"});
+db.job_history.createIndex({
+    next_exec: 1,
+    status: 1,
+}, {name: "next_exec_1_status_1"});
+db.job_history.createIndex({execution: 1}, {name: "execution_1"});
+
 db.default_rights.createIndex({
     crecord_type: 1,
     role: 1,

@@ -31,4 +31,8 @@ db.instruction_week_stats.dropIndex("instruction_1_date_1");
 
 db.instruction_mod_stats.dropIndex("instruction_1_date_1");
 
+db.job_history.dropIndex("job_1_status_1");
+db.job_history.dropIndex("next_exec_1_status_1");
+db.job_history.dropIndex("execution_1");
+
 db.default_rights.dropIndex("crecord_type_1_role_1");
