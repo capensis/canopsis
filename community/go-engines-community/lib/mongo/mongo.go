@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"net/url"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
@@ -87,11 +86,6 @@ const (
 	FilterMongoCollection = "filter"
 
 	PatternMongoCollection = "pattern"
-)
-
-const (
-	transactionReplicaSetVersion     = "4.0"
-	transactionShardedClusterVersion = "4.2"
 )
 
 type SingleResultHelper interface {
@@ -554,17 +548,21 @@ func (c *dbClient) checkTransactionEnabled(pCtx context.Context, logger zerolog.
 
 	defer session.EndSession(ctx)
 
+	collection := c.Collection("test_collection")
+	_, err = collection.InsertOne(ctx, bson.M{})
+	if err != nil {
+		logger.Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
+		return
+	}
+
 	_, err = session.WithTransaction(ctx, func(sessCtx mongo.SessionContext) (interface{}, error) {
 		return nil, func(ctx mongo.SessionContext) error {
-			_, err := c.Collection("test_collection").InsertOne(ctx, bson.M{"_id": "test"})
-			if err != nil {
-				return err
-			}
-
-			_, err = c.Collection("test_collection").DeleteOne(ctx, bson.M{"_id": "test"})
+			_, err = collection.DeleteMany(ctx, bson.M{})
 			return err
 		}(sessCtx)
 	})
+
+	_ = collection.Drop(ctx)
 
 	if err != nil {
 		logger.Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
@@ -592,48 +590,4 @@ func getURL() (mongoURL, dbName string, err error) {
 func IsConnectionError(err error) bool {
 	return mongo.IsNetworkError(err) ||
 		strings.Contains(err.Error(), "server selection error")
-}
-
-type helloCommandResult struct {
-	SetName string `bson:"setName"`
-	Msg     string `bson:"msg"`
-}
-
-func (r helloCommandResult) IsReplicaSet() bool {
-	return r.SetName != ""
-}
-
-func (r helloCommandResult) IsShardedCluster() bool {
-	return r.Msg == "isdbgrid"
-}
-
-func isVersionGte(version, expectedVersion string) bool {
-	if version == "" || expectedVersion == "" {
-		return false
-	}
-
-	versionParts := strings.Split(version, ".")
-	expectedVersionParts := strings.Split(expectedVersion, ".")
-
-	for i, ev := range expectedVersionParts {
-		if len(versionParts) <= i {
-			return true
-		}
-
-		v := versionParts[i]
-		vi, err := strconv.Atoi(v)
-		if err != nil {
-			return false
-		}
-		evi, err := strconv.Atoi(ev)
-		if err != nil {
-			return false
-		}
-
-		if vi < evi {
-			return false
-		}
-	}
-
-	return true
 }
