@@ -72,12 +72,12 @@ export const FILTER_MONGO_OPERATORS = {
   less: '$lt',
 };
 
-export const PATTERN_INPUT_TYPES = {
+export const PATTERN_FIELD_TYPES = {
   string: 'string',
   number: 'int',
   boolean: 'bool',
   null: 'null',
-  array: 'string_array',
+  stringArray: 'string_array',
 };
 
 export const FILTER_DEFAULT_VALUES = {
@@ -86,7 +86,7 @@ export const FILTER_DEFAULT_VALUES = {
     field: '',
     operator: '',
     input: '',
-    inputType: PATTERN_INPUT_TYPES.string,
+    inputType: PATTERN_FIELD_TYPES.string,
   },
   group: {
     condition: FILTER_MONGO_OPERATORS.and,
