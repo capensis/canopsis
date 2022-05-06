@@ -1064,10 +1064,19 @@ func (s *store) addNestedObjects(r FilterRequest, pipeline *[]bson.M) {
 	}
 }
 
+// when one of sort_by attributes is an entity's field then entities $lookup should be kept until $sort stage
 func (s *store) resetEntities(r ListRequest, pipeline *[]bson.M) bool {
-	if strings.HasPrefix(r.SortBy, "entity.") || strings.HasPrefix(r.SortBy, "infos.") {
+	if len(r.MultiSort) != 0 {
+		for _, multiSortValue := range r.MultiSort {
+			multiSortData := strings.Split(multiSortValue, ",")
+			if strings.HasPrefix(multiSortData[0], "entity.") || strings.HasPrefix(multiSortData[0], "infos.") {
+				return false
+			}
+		}
+	} else if strings.HasPrefix(r.SortBy, "entity.") || strings.HasPrefix(r.SortBy, "infos.") {
 		return false
 	}
+
 	*pipeline = append(*pipeline, bson.M{"$project": bson.M{"entity": 0}})
 	return true
 }
