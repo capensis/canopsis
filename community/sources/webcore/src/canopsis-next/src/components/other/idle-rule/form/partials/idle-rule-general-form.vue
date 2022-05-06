@@ -35,6 +35,8 @@
 <script>
 import { ACTION_TYPES } from '@/constants';
 
+import { isPbehaviorActionType } from '@/helpers/forms/action';
+
 import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
 
 import ActionParametersForm from '@/components/other/action/form/action-parameters-form.vue';
@@ -62,7 +64,7 @@ export default {
   },
   computed: {
     isPbehaviorOperation() {
-      return this.form.operation.type === ACTION_TYPES.pbehavior;
+      return isPbehaviorActionType(this.form.operation.type);
     },
 
     parameters: {

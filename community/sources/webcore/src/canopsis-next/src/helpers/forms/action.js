@@ -125,6 +125,14 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  */
 
 /**
+ * Check action type is pbehavior
+ *
+ * @param {ActionType} type
+ * @return {boolean}
+ */
+export const isPbehaviorActionType = type => type === ACTION_TYPES.pbehavior;
+
+/**
  * Convert action parameters to form
  *
  * @param {ActionDefaultParameters | {}} [parameters = {}]
@@ -360,7 +368,7 @@ const formToActionParameters = (form, timezone) => {
     ? prepareParametersToAction(parametersByCurrentType, timezone)
     : { ...parametersByCurrentType };
 
-  if (form.type === ACTION_TYPES.pbehavior) {
+  if (isPbehaviorActionType(form.type)) {
     return omit(parameters, ['author', 'forward_author']);
   }
 
