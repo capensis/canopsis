@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { ACTION_TYPES } from '@/constants';
+import { isPbehaviorActionType } from '@/helpers/forms/action';
 
 import { formMixin, validationChildrenMixin } from '@/mixins/form';
 import { confirmableFormMixinCreator } from '@/mixins/confirmable-form';
@@ -99,7 +99,7 @@ export default {
   },
   computed: {
     isPbehaviorAction() {
-      return this.action.type === ACTION_TYPES.pbehavior;
+      return isPbehaviorActionType(this.action.type);
     },
 
     parameters: {
