@@ -150,10 +150,6 @@
 								"value" : "v.status.val"
 							}
 						],
-						"alarmsStateFilter" : {
-							"opened" : false,
-							"resolved" : true
-						},
 						"mainFilter" : null,
 						"sticky_header" : false,
 						"viewFilters" : [ ],
