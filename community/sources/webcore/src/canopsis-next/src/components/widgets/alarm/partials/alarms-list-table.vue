@@ -9,6 +9,7 @@
     c-empty-data-table-columns(v-if="!hasColumns")
     div(v-else)
       v-data-table.alarms-list-table(
+        ref="dataTable",
         v-model="selected",
         :class="vDataTableClass",
         :items="alarms",
@@ -18,7 +19,7 @@
         :select-all="selectable",
         :loading="loading || columnsFiltersPending",
         :expand="expandable",
-        ref="dataTable",
+        :dense="dense",
         item-key="_id",
         hide-actions,
         multi-sort,
@@ -144,6 +145,10 @@ export default {
       default: false,
     },
     stickyHeader: {
+      type: Boolean,
+      default: false,
+    },
+    dense: {
       type: Boolean,
       default: false,
     },
@@ -398,57 +403,51 @@ export default {
       }
     }
 
-    &.columns-lg {
-      table.v-table {
-        tbody, thead {
-          td, th {
-            padding: 0 8px;
-          }
+    &.columns-lg .v-table {
+      &:not(.v-datatable--dense) {
+        td, th {
+          padding: 0 8px;
+        }
+      }
 
-          @media screen and (max-width: 1600px) {
-            td, th {
-              padding: 0 4px;
-            }
-          }
+      @media screen and (max-width: 1600px) {
+        td, th {
+          padding: 0 4px;
+        }
+      }
 
-          @media screen and (max-width: 1450px) {
-            td, th {
-              font-size: 0.85em;
-            }
+      @media screen and (max-width: 1450px) {
+        td, th {
+          font-size: 0.85em;
+        }
 
-            .badge {
-              font-size: inherit;
-            }
-          }
+        .badge {
+          font-size: inherit;
         }
       }
     }
 
-    &.columns-md {
-      table.v-table {
-        tbody, thead {
-          @media screen and (max-width: 1700px) {
-            td, th {
-              padding: 0 12px;
-            }
-          }
+    &.columns-md .v-table {
+      @media screen and (max-width: 1700px) {
+        td, th {
+          padding: 0 12px;
+        }
+      }
 
-          @media screen and (max-width: 1250px) {
-            td, th {
-              padding: 0 8px;
-            }
-          }
+      @media screen and (max-width: 1250px) {
+        td, th {
+          padding: 0 8px;
+        }
+      }
 
-          @media screen and (max-width: 1150px) {
-            td, th {
-              font-size: 0.85em;
-              padding: 0 4px;
-            }
+      @media screen and (max-width: 1150px) {
+        td, th {
+          font-size: 0.85em;
+          padding: 0 4px;
+        }
 
-            .badge {
-              font-size: inherit;
-            }
-          }
+        .badge {
+          font-size: inherit;
         }
       }
     }

@@ -763,6 +763,11 @@ export default {
         + '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n'
         + '</dl>',
     },
+    density: {
+      title: 'Vue par défaut',
+      comfort: 'Vue confort',
+      compact: 'Vue compacte',
+    },
   },
   modals: {
     common: {
