@@ -79,7 +79,7 @@ func (p *createPbehaviorMessageProcessor) Process(
 	ctx context.Context,
 	alarm *types.Alarm,
 	entity *types.Entity,
-	params types.ActionPBehaviorParameters,
+	params types.RPCPBehaviorParameters,
 	_ []byte,
 ) (*types.Event, error) {
 	pbehavior, err := p.createPbehavior(ctx, params, entity)
@@ -123,7 +123,7 @@ func (p *createPbehaviorMessageProcessor) Process(
 
 func (p *createPbehaviorMessageProcessor) createPbehavior(
 	ctx context.Context,
-	params types.ActionPBehaviorParameters,
+	params types.RPCPBehaviorParameters,
 	entity *types.Entity,
 ) (*libpbehavior.PBehavior, error) {
 	typeCollection := p.DbClient.Collection(mongo.PbehaviorTypeMongoCollection)
@@ -149,8 +149,8 @@ func (p *createPbehaviorMessageProcessor) createPbehavior(
 	now := types.NewCpsTime()
 	var start, stop types.CpsTime
 	if params.Tstart != nil && params.Tstop != nil {
-		start = types.NewCpsTime(*params.Tstart)
-		stop = types.NewCpsTime(*params.Tstop)
+		start = *params.Tstart
+		stop = *params.Tstop
 	} else if params.StartOnTrigger != nil && *params.StartOnTrigger &&
 		params.Duration != nil && params.Duration.Value > 0 {
 		start = now
@@ -163,7 +163,6 @@ func (p *createPbehaviorMessageProcessor) createPbehavior(
 
 	pbehavior := libpbehavior.PBehavior{
 		ID:      utils.NewID(),
-		Author:  params.UserID,                       // since author now contains username, we should use user_id in author
 		Enabled: true,
 		Filter:  fmt.Sprintf(`{"_id": "%s"}`, entity.ID),
 		Name:    params.Name,
