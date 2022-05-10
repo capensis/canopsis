@@ -5,7 +5,7 @@ Feature: Update a idle rule
   Scenario: given update request should update exception
     When I am admin
     When I do PUT /api/v4/idle-rules/test-idle-rule-to-update:
-    """
+    """json
     {
       "name": "test-idle-rule-to-update-name",
       "description": "test-idle-rule-to-update-description",
@@ -42,7 +42,7 @@ Feature: Update a idle rule
     """
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-idle-rule-to-update",
       "name": "test-idle-rule-to-update-name",
@@ -70,7 +70,6 @@ Feature: Update a idle rule
       "operation": {
         "type": "snooze",
         "parameters": {
-          "author": "root",
           "output": "test-idle-rule-to-update-operation-output-updated",
           "duration": {
             "value": 5,
@@ -85,14 +84,14 @@ Feature: Update a idle rule
   Scenario: given update request with already exists name should return error
     When I am admin
     When I do PUT /api/v4/idle-rules/test-idle-rule-to-update:
-    """
+    """json
     {
       "name": "test-idle-rule-to-check-unique-name-name"
     }
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "name": "Name already exists."
@@ -112,7 +111,7 @@ Feature: Update a idle rule
   Scenario: given no exist idle rule id should return error
     When I am admin
     When I do PUT /api/v4/idle-rules/notexist:
-    """
+    """json
     {
       "name": "test-idle-rule-notexists-name",
       "description": "test-idle-rule-notexists-description",
