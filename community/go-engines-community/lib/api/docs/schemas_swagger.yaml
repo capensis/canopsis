@@ -36,6 +36,66 @@ definitions:
           type: boolean
         type: object
     type: object
+  action.Parameters:
+    properties:
+      author:
+        type: string
+      declare_ticket:
+        $ref: '#/definitions/types.WebhookDeclareTicket'
+        description: DeclareTicket is used in webhook action.
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+        description: Duration is used in snooze and pbehavior actions.
+      forward_author:
+        type: boolean
+      name:
+        description: Name is used in pbehavior action.
+        maxLength: 255
+        type: string
+      output:
+        maxLength: 255
+        type: string
+      reason:
+        description: Reason is used in pbehavior action.
+        type: string
+      request:
+        $ref: '#/definitions/types.WebhookRequest'
+        description: Request is used in webhook action.
+      retry_count:
+        description: RetryCount is used in webhook action.
+        minimum: 0
+        type: integer
+      retry_delay:
+        $ref: '#/definitions/types.DurationWithUnit'
+        description: RetryDelay is used in webhook action.
+      rrule:
+        description: RRule is used in pbehavior action.
+        type: string
+      start_on_trigger:
+        description: StartOnTrigger is used in pbehavior action.
+        type: boolean
+      state:
+        description: |-
+          State is used in changestate action.
+            * `0` - Info
+            * `1` - Minor
+            * `2` - Major
+            * `3` - Critical
+        type: integer
+      ticket:
+        description: Ticket is used in assocticket action.
+        maxLength: 255
+        type: string
+      tstart:
+        description: Tstart is used in pbehavior action.
+        type: integer
+      tstop:
+        description: Tstop is used in pbehavior action.
+        type: integer
+      type:
+        description: Type is used in pbehavior action.
+        type: string
+    type: object
   alarm.Alarm:
     properties:
       _id:
@@ -1520,17 +1580,49 @@ definitions:
     type: object
   idlerule.Operation:
     properties:
-      parameters: {}
+      parameters:
+        $ref: '#/definitions/idlerule.Parameters'
       type:
         type: string
     type: object
   idlerule.OperationRequest:
     properties:
-      parameters: {}
+      parameters:
+        $ref: '#/definitions/idlerule.Parameters'
       type:
         type: string
     required:
     - type
+    type: object
+  idlerule.Parameters:
+    properties:
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+        description: Snooze and Pbehavior
+      name:
+        description: Pbehavior
+        maxLength: 255
+        type: string
+      output:
+        type: string
+      reason:
+        $ref: '#/definitions/pbehavior.Reason'
+      rrule:
+        type: string
+      start_on_trigger:
+        type: boolean
+      state:
+        description: ChangeState
+        type: integer
+      ticket:
+        description: AssocTicket
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehavior.Type'
     type: object
   idlerule.Rule:
     properties:
@@ -1854,6 +1946,20 @@ definitions:
         type: integer
       type:
         type: string
+    type: object
+  pbehavior.Reason:
+    properties:
+      _id:
+        type: string
+      created:
+        type: integer
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - description
+    - name
     type: object
   pbehavior.Response:
     properties:
@@ -2343,8 +2449,7 @@ definitions:
       entity_patterns:
         $ref: '#/definitions/pattern.EntityPatternList'
       parameters:
-        additionalProperties: true
-        type: object
+        $ref: '#/definitions/scenario.Parameters'
       type:
         type: string
     type: object
@@ -2360,7 +2465,8 @@ definitions:
         type: boolean
       entity_patterns:
         $ref: '#/definitions/pattern.EntityPatternList'
-      parameters: {}
+      parameters:
+        $ref: '#/definitions/action.Parameters'
       type:
         enum:
         - ack
@@ -2551,6 +2657,48 @@ definitions:
     properties:
       priority:
         type: integer
+    type: object
+  scenario.Parameters:
+    properties:
+      author:
+        type: string
+      declare_ticket:
+        $ref: '#/definitions/types.WebhookDeclareTicket'
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+        description: Snooze and Pbehavior
+      forward_author:
+        type: boolean
+      name:
+        description: Pbehavior
+        type: string
+      output:
+        type: string
+      reason:
+        $ref: '#/definitions/pbehavior.Reason'
+      request:
+        $ref: '#/definitions/types.WebhookRequest'
+        description: Webhook
+      retry_count:
+        type: integer
+      retry_delay:
+        $ref: '#/definitions/types.DurationWithUnit'
+      rrule:
+        type: string
+      start_on_trigger:
+        type: boolean
+      state:
+        description: ChangeState
+        type: integer
+      ticket:
+        description: AssocTicket
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehavior.Type'
     type: object
   scenario.Scenario:
     properties:
@@ -3058,6 +3206,46 @@ definitions:
       type_name:
         description: TypeName is Name of pbehavior.Type.
         type: string
+    type: object
+  types.WebhookBasicAuth:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  types.WebhookDeclareTicket:
+    properties:
+      empty_response:
+        type: boolean
+      fields:
+        additionalProperties:
+          type: string
+        type: object
+      is_regexp:
+        type: boolean
+      ticket_id:
+        type: string
+    type: object
+  types.WebhookRequest:
+    properties:
+      auth:
+        $ref: '#/definitions/types.WebhookBasicAuth'
+      headers:
+        additionalProperties:
+          type: string
+        type: object
+      method:
+        type: string
+      payload:
+        type: string
+      skip_verify:
+        type: boolean
+      url:
+        type: string
+    required:
+    - method
+    - url
     type: object
   user.BulkCreateResponseItem:
     properties:

@@ -35,8 +35,8 @@ type Rule struct {
 	// DisableDuringPeriods is an option that allows to disable the rule
 	// when entity is in listed periods due pbehavior schedule.
 	DisableDuringPeriods []string      `bson:"disable_during_periods" json:"disable_during_periods"`
-	Created              types.CpsTime `bson:"created" json:"created" swaggertype:"integer"`
-	Updated              types.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
+	Created              types.CpsTime `bson:"created" json:"created"`
+	Updated              types.CpsTime `bson:"updated" json:"updated"`
 	// Only for Alarm rules
 	AlarmPatterns  pattern.AlarmPatternList `bson:"alarm_patterns,omitempty" json:"alarm_patterns,omitempty"`
 	AlarmCondition string                   `bson:"alarm_condition,omitempty" json:"alarm_condition,omitempty"`
