@@ -95,8 +95,6 @@ func (a *api) Create(c *gin.Context) {
 	}
 
 	userId := c.MustGet(auth.UserKey).(string)
-	author := c.MustGet(auth.Username).(string)
-	setActionParameterAuthorAndUserID(&request.EditRequest, author, userId)
 
 	scenario, err := a.store.Insert(c.Request.Context(), request)
 	if err != nil {
@@ -143,8 +141,6 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	userId := c.MustGet(auth.UserKey).(string)
-	author := c.MustGet(auth.Username).(string)
-	setActionParameterAuthorAndUserID(&request.EditRequest, author, userId)
 
 	newScenario, err := a.store.Update(c.Request.Context(), request)
 	if err != nil {
@@ -294,8 +290,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
-		setActionParameterAuthorAndUserID(&request.EditRequest, c.MustGet(auth.Username).(string), userId)
-
 		scenario, err := a.store.Insert(ctx, request)
 		if err != nil {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
@@ -381,8 +375,6 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
 			continue
 		}
-
-		setActionParameterAuthorAndUserID(&request.EditRequest, c.MustGet(auth.Username).(string), userId)
 
 		scenario, err := a.store.Update(ctx, UpdateRequest(request))
 		if err != nil {
@@ -496,39 +488,4 @@ func (a *api) BulkDelete(c *gin.Context) {
 	}
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
-}
-
-func setActionParameterAuthorAndUserID(request *EditRequest, author, userID string) {
-	for i, action := range request.Actions {
-		switch v := action.Parameters.(type) {
-		case SnoozeParametersRequest:
-			if v.Author == "" {
-				v.Author = author
-			}
-			v.User = userID
-			request.Actions[i].Parameters = v
-		case ChangeStateParametersRequest:
-			if v.Author == "" {
-				v.Author = author
-			}
-			v.User = userID
-			request.Actions[i].Parameters = v
-		case AssocTicketParametersRequest:
-			if v.Author == "" {
-				v.Author = author
-			}
-			v.User = userID
-			request.Actions[i].Parameters = v
-		case PbehaviorParametersRequest:
-			v.Author = author
-			v.User = userID
-			request.Actions[i].Parameters = v
-		case ParametersRequest:
-			if v.Author == "" {
-				v.Author = author
-			}
-			v.User = userID
-			request.Actions[i].Parameters = v
-		}
-	}
 }
