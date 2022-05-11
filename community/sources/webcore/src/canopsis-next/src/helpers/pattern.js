@@ -12,6 +12,7 @@ import {
   PATTERN_RULE_INFOS_FIELDS,
   PATTERN_RULE_TYPES,
   PATTERN_STRING_OPERATORS,
+  PATTERN_CONDITIONS,
 } from '@/constants';
 
 /**
@@ -260,3 +261,11 @@ export const convertValueByOperator = (value, operator) => {
 
   return convertValueByType(value, operatorValueType);
 };
+
+/**
+ * Check condition is valid
+ *
+ * @param {string} condition
+ * @return {boolean}
+ */
+export const isValidPatternCondition = condition => Object.values(PATTERN_CONDITIONS).includes(condition);
