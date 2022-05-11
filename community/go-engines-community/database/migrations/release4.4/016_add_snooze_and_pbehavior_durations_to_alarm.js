@@ -2,10 +2,13 @@ db.periodical_alarm.find({"v.steps._t": {$in: ["pbhenter", "snooze"]}}).forEach(
     var snoozeDuration = 0;
     var pbhDuration = 0;
     var pbhEnterTs = 0;
+    var now = Math.ceil((new Date()).getTime() / 1000);
     doc.v.steps.forEach(function (step) {
         switch (step._t) {
             case "snooze":
-                snoozeDuration += step.val - step.t;
+                if (step.val < now) {
+                    snoozeDuration += step.val - step.t;
+                }
                 break;
             case "pbhenter":
                 if (step.cannonical_type !== "active") {
