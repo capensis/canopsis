@@ -2,7 +2,6 @@ package executor
 
 import (
 	"context"
-	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
@@ -29,11 +28,7 @@ func (e *pbhLeaveExecutor) Exec(
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
-	var params types.OperationPbhParameters
-	var ok bool
-	if params, ok = operation.Parameters.(types.OperationPbhParameters); !ok {
-		return "", fmt.Errorf("invalid parameters")
-	}
+	params := operation.Parameters
 
 	if userID == "" {
 		userID = params.User

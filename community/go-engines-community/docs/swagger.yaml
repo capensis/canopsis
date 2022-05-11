@@ -39,6 +39,54 @@ definitions:
           type: boolean
         type: object
     type: object
+  action.Parameters:
+    properties:
+      author:
+        type: string
+      declare_ticket:
+        $ref: '#/definitions/types.WebhookDeclareTicket'
+        type: object
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+        description: Snooze and Pbehavior
+        type: object
+      forward_author:
+        type: boolean
+      name:
+        description: Pbehavior
+        type: string
+      output:
+        type: string
+      reason:
+        type: string
+      request:
+        $ref: '#/definitions/types.WebhookRequest'
+        description: Webhook
+        type: object
+      retry_count:
+        type: integer
+      retry_delay:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+      rrule:
+        type: string
+      start_on_trigger:
+        type: boolean
+      state:
+        description: ChangeState
+        type: integer
+      ticket:
+        description: AssocTicket
+        type: string
+      tstart:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+      tstop:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+      type:
+        type: string
+    type: object
   alarm.Alarm:
     properties:
       _id:
@@ -1887,6 +1935,7 @@ definitions:
   idlerule.Operation:
     properties:
       parameters:
+        $ref: '#/definitions/idlerule.Parameters'
         type: object
       type:
         type: string
@@ -1894,11 +1943,44 @@ definitions:
   idlerule.OperationRequest:
     properties:
       parameters:
+        $ref: '#/definitions/idlerule.Parameters'
         type: object
       type:
         type: string
     required:
     - type
+    type: object
+  idlerule.Parameters:
+    properties:
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+        description: Snooze and Pbehavior
+        type: object
+      name:
+        description: Pbehavior
+        type: string
+      output:
+        type: string
+      reason:
+        $ref: '#/definitions/pbehavior.Reason'
+        type: object
+      rrule:
+        type: string
+      start_on_trigger:
+        type: boolean
+      state:
+        description: ChangeState
+        type: integer
+      ticket:
+        description: AssocTicket
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehavior.Type'
+        type: object
     type: object
   idlerule.Rule:
     properties:
@@ -2373,6 +2455,21 @@ definitions:
         type: integer
       type:
         type: string
+    type: object
+  pbehavior.Reason:
+    properties:
+      _id:
+        type: string
+      created:
+        $ref: '#/definitions/types.CpsTime'
+        type: object
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - description
+    - name
     type: object
   pbehavior.Response:
     properties:
@@ -2917,7 +3014,7 @@ definitions:
         $ref: '#/definitions/pattern.EntityPatternList'
         type: object
       parameters:
-        additionalProperties: true
+        $ref: '#/definitions/scenario.Parameters'
         type: object
       type:
         type: string
@@ -2937,6 +3034,7 @@ definitions:
         $ref: '#/definitions/pattern.EntityPatternList'
         type: object
       parameters:
+        $ref: '#/definitions/action.Parameters'
         type: object
       type:
         type: string
@@ -3119,6 +3217,54 @@ definitions:
     properties:
       priority:
         type: integer
+    type: object
+  scenario.Parameters:
+    properties:
+      author:
+        type: string
+      declare_ticket:
+        $ref: '#/definitions/types.WebhookDeclareTicket'
+        type: object
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+        description: Snooze and Pbehavior
+        type: object
+      forward_author:
+        type: boolean
+      name:
+        description: Pbehavior
+        type: string
+      output:
+        type: string
+      reason:
+        $ref: '#/definitions/pbehavior.Reason'
+        type: object
+      request:
+        $ref: '#/definitions/types.WebhookRequest'
+        description: Webhook
+        type: object
+      retry_count:
+        type: integer
+      retry_delay:
+        $ref: '#/definitions/types.DurationWithUnit'
+        type: object
+      rrule:
+        type: string
+      start_on_trigger:
+        type: boolean
+      state:
+        description: ChangeState
+        type: integer
+      ticket:
+        description: AssocTicket
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehavior.Type'
+        type: object
     type: object
   scenario.Scenario:
     properties:
@@ -3641,6 +3787,47 @@ definitions:
       type_name:
         description: TypeName is Name of pbehavior.Type.
         type: string
+    type: object
+  types.WebhookBasicAuth:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  types.WebhookDeclareTicket:
+    properties:
+      empty_response:
+        type: boolean
+      fields:
+        additionalProperties:
+          type: string
+        type: object
+      is_regexp:
+        type: boolean
+      ticket_id:
+        type: string
+    type: object
+  types.WebhookRequest:
+    properties:
+      auth:
+        $ref: '#/definitions/types.WebhookBasicAuth'
+        type: object
+      headers:
+        additionalProperties:
+          type: string
+        type: object
+      method:
+        type: string
+      payload:
+        type: string
+      skip_verify:
+        type: boolean
+      url:
+        type: string
+    required:
+    - method
+    - url
     type: object
   user.BulkCreateResponseItem:
     properties:
