@@ -133,7 +133,7 @@ func (p *messageProcessor) processEvent(ctx context.Context, event types.Event, 
 }
 
 func (p *messageProcessor) processPbhCreateEvent(ctx context.Context, event types.Event, msg []byte) error {
-	params := types.ActionPBehaviorParameters{}
+	params := types.RPCPBehaviorParameters{}
 	err := p.Decoder.Decode([]byte(event.PbhParameters), &params)
 	if err != nil {
 		p.logError(err, "invalid params for create pbehavior", msg)
