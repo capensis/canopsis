@@ -26,8 +26,8 @@ export const sideBarSettingsWidgetAlarmMixin = {
               ? widgetColumnsToForm(alarmsList.widgetColumns)
               : formWidgetColumnsToColumns(alarmsList.widgetColumns),
             infoPopups: isInitialization
-              ? widgetColumnsToForm(alarmsList.widgetColumns)
-              : formWidgetColumnsToColumns(alarmsList.widgetColumns),
+              ? widgetColumnsToForm(alarmsList.infoPopups)
+              : formWidgetColumnsToColumns(alarmsList.infoPopups),
           },
         },
       };
