@@ -7,7 +7,7 @@ Feature: Get a scenario
     When I do GET /api/v4/scenarios?search=test-scenario-to-get
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -47,7 +47,8 @@ Feature: Get a scenario
                 "reason": {
                   "_id": "test-reason-to-edit-scenario",
                   "description": "test-reason-to-edit-scenario-description",
-                  "name": "test-reason-to-edit-scenario-name"
+                  "name": "test-reason-to-edit-scenario-name",
+                  "created": 1592215337
                 },
                 "type": {
                   "_id": "test-type-to-edit-scenario",
@@ -61,9 +62,7 @@ Feature: Get a scenario
                 "duration": {
                   "value": 3,
                   "unit": "s"
-                },
-                "tstart": null,
-                "tstop": null
+                }
               }
             }
           ],
@@ -129,7 +128,7 @@ Feature: Get a scenario
     When I do GET /api/v4/scenarios?search=test-scenario-to-get&sort_by=delay&sort=desc
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -162,7 +161,7 @@ Feature: Get a scenario
     When I do GET /api/v4/scenarios/test-scenario-to-get-1
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-scenario-to-get-1",
       "actions": [
@@ -200,7 +199,8 @@ Feature: Get a scenario
             "reason": {
               "_id": "test-reason-to-edit-scenario",
               "description": "test-reason-to-edit-scenario-description",
-              "name": "test-reason-to-edit-scenario-name"
+              "name": "test-reason-to-edit-scenario-name",
+              "created": 1592215337
             },
             "type": {
               "_id": "test-type-to-edit-scenario",
@@ -214,9 +214,7 @@ Feature: Get a scenario
             "duration": {
               "value": 3,
               "unit": "s"
-            },
-            "tstart": null,
-            "tstop": null
+            }
           }
         }
       ],

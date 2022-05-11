@@ -59,7 +59,8 @@
           color="black",
           @click="exportAlarmsList"
         )
-    v-layout(row, wrap, align-center)
+    v-layout.alarms-list__top-pagination.white.px-4(row, wrap, align-center)
+      c-density-btn-toggle(:value="userPreference.content.dense", @change="updateDense")
       c-pagination(
         v-if="hasColumns",
         :page="query.page",
@@ -80,6 +81,7 @@
       :has-columns="hasColumns",
       :columns="columns",
       :sticky-header="widget.parameters.sticky_header",
+      :dense="dense",
       selectable,
       expandable
     )
@@ -201,6 +203,10 @@ export default {
     hasAccessToExportAsCsv() {
       return this.checkAccess(USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv);
     },
+
+    dense() {
+      return this.userPreference.content.dense ?? this.widget.parameters.dense;
+    },
   },
   methods: {
     refreshExpanded() {
@@ -249,6 +255,12 @@ export default {
 
         limit,
       };
+    },
+
+    updateDense(dense) {
+      this.updateContentInUserPreference({
+        dense,
+      });
     },
 
     expandFirstAlarm() {
@@ -335,3 +347,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.alarms-list__top-pagination {
+  min-height: 46px;
+}
+</style>
