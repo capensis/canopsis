@@ -4,7 +4,7 @@ Feature: no execute action when entity is inactive
   Scenario: given action and maintenance pbehavior should not update alarm
     Given I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-pbehavior-action-1-name",
       "enabled": true,
@@ -24,7 +24,7 @@ Feature: no execute action when entity is inactive
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-pbehavior-action-1",
       "connector_name" : "test-connector-name-pbehavior-action-1",
@@ -38,7 +38,7 @@ Feature: no execute action when entity is inactive
     """
     When I wait the end of event processing
     When I do POST /api/v4/pbehaviors:
-    """
+    """json
     {
       "enabled": true,
       "name": "test-pbehavior-action-1",
@@ -59,7 +59,7 @@ Feature: no execute action when entity is inactive
     Then the response code should be 201
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-pbehavior-action-1",
       "connector_name" : "test-connector-name-pbehavior-action-1",
@@ -75,7 +75,7 @@ Feature: no execute action when entity is inactive
     When I do GET /api/v4/alarms?filter={"$and":[{"v.ack":{"$exists":false}},{"v.resource":"test-resource-pbehavior-action-1"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -87,7 +87,11 @@ Feature: no execute action when entity is inactive
             "steps": [
               {"_t": "stateinc"},
               {"_t": "statusinc"},
-              {"_t": "pbhenter"},
+              {
+                "_t": "pbhenter",
+                "a": "system",
+                "user_id": ""
+              },
               {"_t": "stateinc"}
             ]
           }
@@ -105,7 +109,7 @@ Feature: no execute action when entity is inactive
   Scenario: given delayed action and maintenance pbehavior should update alarm after pbehavior
     Given I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-pbehavior-action-2-name",
       "enabled": true,
@@ -128,7 +132,7 @@ Feature: no execute action when entity is inactive
     """
     Then the response code should be 201
     When I do POST /api/v4/pbehaviors:
-    """
+    """json
     {
       "enabled": true,
       "name": "test-pbehavior-action-2",
@@ -149,7 +153,7 @@ Feature: no execute action when entity is inactive
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-pbehavior-action-2",
       "connector_name" : "test-connector-name-pbehavior-action-2",
@@ -167,7 +171,7 @@ Feature: no execute action when entity is inactive
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-pbehavior-action-2"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -179,8 +183,16 @@ Feature: no execute action when entity is inactive
             "steps": [
               {"_t": "stateinc"},
               {"_t": "statusinc"},
-              {"_t": "pbhenter"},
-              {"_t": "pbhleave"}
+              {
+                "_t": "pbhenter",
+                "a": "system",
+                "user_id": ""
+              },
+              {
+                "_t": "pbhleave",
+                "a": "system",
+                "user_id": ""
+              }
             ]
           }
         }
@@ -197,14 +209,14 @@ Feature: no execute action when entity is inactive
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-pbehavior-action-2"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
           "v": {
             "ack": {
               "_t": "ack",
-              "a": "root"
+              "a": "system"
             },
             "connector" : "test-connector-pbehavior-action-2",
             "connector_name" : "test-connector-name-pbehavior-action-2",
@@ -213,8 +225,16 @@ Feature: no execute action when entity is inactive
             "steps": [
               {"_t": "stateinc"},
               {"_t": "statusinc"},
-              {"_t": "pbhenter"},
-              {"_t": "pbhleave"},
+              {
+                "_t": "pbhenter",
+                "a": "system",
+                "user_id": ""
+              },
+              {
+                "_t": "pbhleave",
+                "a": "system",
+                "user_id": ""
+              },
               {"_t": "ack"}
             ]
           }
@@ -232,7 +252,7 @@ Feature: no execute action when entity is inactive
   Scenario: given pbehavior action should create pbehavior and update new alarm
     Given I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-pbehavior-action-3-name",
       "enabled": true,
@@ -258,7 +278,7 @@ Feature: no execute action when entity is inactive
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-pbehavior-action-3",
       "connector_name" : "test-connector-name-pbehavior-action-3",
@@ -274,7 +294,7 @@ Feature: no execute action when entity is inactive
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-pbehavior-action-3"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -289,7 +309,11 @@ Feature: no execute action when entity is inactive
             "steps": [
               {"_t": "stateinc"},
               {"_t": "statusinc"},
-              {"_t": "pbhenter"}
+              {
+                "_t": "pbhenter",
+                "a": "system",
+                "user_id": ""
+              }
             ]
           }
         }
@@ -306,7 +330,7 @@ Feature: no execute action when entity is inactive
   Scenario: given pbehavior action with start on trigger should create pbehavior
     Given I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-pbehavior-action-4-name",
       "enabled": true,
@@ -335,7 +359,7 @@ Feature: no execute action when entity is inactive
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-pbehavior-action-4",
       "connector_name" : "test-connector-name-pbehavior-action-4",
@@ -351,7 +375,7 @@ Feature: no execute action when entity is inactive
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-pbehavior-action-4"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -366,7 +390,11 @@ Feature: no execute action when entity is inactive
             "steps": [
               {"_t": "stateinc"},
               {"_t": "statusinc"},
-              {"_t": "pbhenter"}
+              {
+                "_t": "pbhenter",
+                "a": "system",
+                "user_id": ""
+              }
             ]
           }
         }
@@ -383,7 +411,7 @@ Feature: no execute action when entity is inactive
   Scenario: given pbehavior action should create pbehavior and update old alarm
     Given I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-pbehavior-action-5-name",
       "enabled": true,
@@ -411,7 +439,7 @@ Feature: no execute action when entity is inactive
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-pbehavior-action-5",
       "connector_name" : "test-connector-name-pbehavior-action-5",
@@ -425,7 +453,7 @@ Feature: no execute action when entity is inactive
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-pbehavior-action-5",
       "connector_name" : "test-connector-name-pbehavior-action-5",
@@ -441,7 +469,7 @@ Feature: no execute action when entity is inactive
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-pbehavior-action-5"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -457,7 +485,11 @@ Feature: no execute action when entity is inactive
               {"_t": "stateinc"},
               {"_t": "statusinc"},
               {"_t": "stateinc"},
-              {"_t": "pbhenter"}
+              {
+                "_t": "pbhenter",
+                "a": "system",
+                "user_id": ""
+              }
             ]
           }
         }
@@ -474,7 +506,7 @@ Feature: no execute action when entity is inactive
   Scenario: given pbehavior action should create pbehavior and update last alarm date of pbehavior
     Given I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-pbehavior-action-6-name",
       "enabled": true,
@@ -502,7 +534,7 @@ Feature: no execute action when entity is inactive
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-pbehavior-action-6",
       "connector_name" : "test-connector-name-pbehavior-action-6",
@@ -516,7 +548,7 @@ Feature: no execute action when entity is inactive
     """
     When I wait the end of event processing
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-pbehavior-action-6",
       "connector_name" : "test-connector-name-pbehavior-action-6",

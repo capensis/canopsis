@@ -240,7 +240,7 @@ Feature: update alarm on idle rule
               },
               {
                 "_t": "pbhenter",
-                "a": "root",
+                "a": "system",
                 "m": "Pbehavior test-pbehavior-pbehavior-axe-idlerule-2-name. Type: Engine maintenance. Reason: Test Engine."
               }
             ]
@@ -285,7 +285,7 @@ Feature: update alarm on idle rule
               },
               {
                 "_t": "pbhenter",
-                "a": "root",
+                "a": "system",
                 "m": "Pbehavior test-pbehavior-pbehavior-axe-idlerule-2-name. Type: Engine maintenance. Reason: Test Engine."
               },
               {
@@ -295,7 +295,7 @@ Feature: update alarm on idle rule
               },
               {
                 "_t": "ack",
-                "a": "root",
+                "a": "system",
                 "m": "test-pbehavior-pbehavior-axe-idlerule-2-output"
               }
             ]
