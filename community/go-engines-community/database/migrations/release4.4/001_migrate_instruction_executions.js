@@ -128,7 +128,7 @@
         }
 
         if (!doc.instruction_modified_on && doc.instruction) {
-            if (doc.started_at < doc.instruction.last_modified) {
+            if (doc.started_at < doc.instruction.last_modified && doc.instruction.created) {
                 set["instruction_modified_on"] = doc.instruction.created;
             } else {
                 set["instruction_modified_on"] = doc.instruction.last_modified;

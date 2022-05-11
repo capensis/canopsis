@@ -83,6 +83,8 @@ Feature: update alarm on pbehavior
               },
               {
                 "_t": "pbhenter",
+                "a": "system",
+                "user_id": "",
                 "m": "Pbehavior test-pbehavior-1. Type: Engine maintenance. Reason: Test Engine."
               }
             ]
@@ -200,6 +202,8 @@ Feature: update alarm on pbehavior
               },
               {
                 "_t": "pbhenter",
+                "a": "system",
+                "user_id": "",
                 "m": "Pbehavior test-pbehavior-2. Type: Engine maintenance. Reason: Test Engine."
               }
             ]
@@ -413,10 +417,14 @@ Feature: update alarm on pbehavior
               },
               {
                 "_t": "pbhenter",
+                "a": "system",
+                "user_id": "",
                 "m": "Pbehavior test-pbehavior-6. Type: Engine maintenance. Reason: Test Engine."
               },
               {
                 "_t": "pbhleave",
+                "a": "system",
+                "user_id": "",
                 "m": "Pbehavior test-pbehavior-6. Type: Engine maintenance. Reason: Test Engine."
               }
             ]
@@ -511,10 +519,14 @@ Feature: update alarm on pbehavior
               },
               {
                 "_t": "pbhenter",
+                "a": "system",
+                "user_id": "",
                 "m": "Pbehavior test-pbehavior-7. Type: Engine maintenance. Reason: Test Engine."
               },
               {
                 "_t": "pbhleave",
+                "a": "system",
+                "user_id": "",
                 "m": "Pbehavior test-pbehavior-7. Type: Engine maintenance. Reason: Test Engine."
               }
             ]
@@ -681,6 +693,8 @@ Feature: update alarm on pbehavior
               },
               {
                 "_t": "pbhenter",
+                "a": "system",
+                "user_id": "",
                 "m": "Pbehavior test-pbehavior-9. Type: Engine maintenance. Reason: Test Engine."
               }
             ]

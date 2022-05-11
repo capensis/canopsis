@@ -438,12 +438,12 @@ Feature: update connector alarm
               },
               {
                 "_t": "assocticket",
-                "a": "root",
+                "a": "system",
                 "m": "test-ticket-axe-idlerule-connector-4"
               },
               {
                 "_t": "ack",
-                "a": "root",
+                "a": "system",
                 "m": "test-output-axe-idlerule-connector-4"
               }
             ]

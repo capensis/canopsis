@@ -105,17 +105,17 @@ func (m *MockDelayedScenarioManager) EXPECT() *MockDelayedScenarioManagerMockRec
 }
 
 // AddDelayedScenario mocks base method.
-func (m *MockDelayedScenarioManager) AddDelayedScenario(arg0 context.Context, arg1 types.Alarm, arg2 action.Scenario) error {
+func (m *MockDelayedScenarioManager) AddDelayedScenario(arg0 context.Context, arg1 types.Alarm, arg2 action.Scenario, arg3 action.AdditionalData) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddDelayedScenario", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "AddDelayedScenario", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // AddDelayedScenario indicates an expected call of AddDelayedScenario.
-func (mr *MockDelayedScenarioManagerMockRecorder) AddDelayedScenario(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockDelayedScenarioManagerMockRecorder) AddDelayedScenario(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddDelayedScenario", reflect.TypeOf((*MockDelayedScenarioManager)(nil).AddDelayedScenario), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddDelayedScenario", reflect.TypeOf((*MockDelayedScenarioManager)(nil).AddDelayedScenario), arg0, arg1, arg2, arg3)
 }
 
 // PauseDelayedScenarios mocks base method.
@@ -437,17 +437,17 @@ func (mr *MockScenarioStorageMockRecorder) ReloadScenarios(arg0 interface{}) *go
 }
 
 // RunDelayedScenarios mocks base method.
-func (m *MockScenarioStorage) RunDelayedScenarios(arg0 context.Context, arg1 []string, arg2 types.Alarm, arg3 types.Entity) error {
+func (m *MockScenarioStorage) RunDelayedScenarios(arg0 context.Context, arg1 []string, arg2 types.Alarm, arg3 types.Entity, arg4 action.AdditionalData) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RunDelayedScenarios", arg0, arg1, arg2, arg3)
+	ret := m.ctrl.Call(m, "RunDelayedScenarios", arg0, arg1, arg2, arg3, arg4)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // RunDelayedScenarios indicates an expected call of RunDelayedScenarios.
-func (mr *MockScenarioStorageMockRecorder) RunDelayedScenarios(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+func (mr *MockScenarioStorageMockRecorder) RunDelayedScenarios(arg0, arg1, arg2, arg3, arg4 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunDelayedScenarios", reflect.TypeOf((*MockScenarioStorage)(nil).RunDelayedScenarios), arg0, arg1, arg2, arg3)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunDelayedScenarios", reflect.TypeOf((*MockScenarioStorage)(nil).RunDelayedScenarios), arg0, arg1, arg2, arg3, arg4)
 }
 
 // MockWorkerPool is a mock of WorkerPool interface.

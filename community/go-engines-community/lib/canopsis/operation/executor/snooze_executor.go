@@ -27,9 +27,8 @@ func (e *snoozeExecutor) Exec(
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
-	var params types.OperationSnoozeParameters
-	var ok bool
-	if params, ok = operation.Parameters.(types.OperationSnoozeParameters); !ok {
+	params := operation.Parameters
+	if params.Duration == nil {
 		return "", fmt.Errorf("invalid parameters")
 	}
 
@@ -43,7 +42,7 @@ func (e *snoozeExecutor) Exec(
 
 	err := alarm.PartialUpdateSnooze(
 		time,
-		params.Duration,
+		*params.Duration,
 		params.Author,
 		utils.TruncateString(params.Output, e.configProvider.Get().OutputLength),
 		userID,
