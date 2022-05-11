@@ -165,7 +165,7 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
       class="layout"
     >
       <button
-        class="v-btn v-btn--icon theme--light"
+        class="mr-0 v-btn v-btn--icon theme--light"
         type="button"
       >
         <div

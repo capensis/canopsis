@@ -2,8 +2,10 @@
     function genID() {
         return UUID().toString().split('"')[1];
     }
+    var now = Math.ceil((new Date()).getTime() / 1000);
 
     db.instruction.find().forEach(function (doc) {
+        if (!doc.created) {doc.created = now}
         var modStats = [
             {
                 _id: genID(),

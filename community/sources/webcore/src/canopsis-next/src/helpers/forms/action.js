@@ -30,7 +30,8 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
 /**
  * @typedef {Object} ActionDefaultParameters
  * @property {string} output
- * @property {string} author
+ * @property {boolean} [forward_author]
+ * @property {string} [author]
  */
 
 /**
@@ -71,6 +72,8 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  * @property {boolean} declare_ticket.is_regexp
  * @property {number} retry_count
  * @property {Duration} retry_delay
+ * @property {boolean} [forward_author]
+ * @property {string} [author]
  */
 
 /**
@@ -124,6 +127,14 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  */
 
 /**
+ * Check action type is pbehavior
+ *
+ * @param {ActionType} type
+ * @return {boolean}
+ */
+export const isPbehaviorActionType = type => type === ACTION_TYPES.pbehavior;
+
+/**
  * Convert action parameters to form
  *
  * @param {ActionDefaultParameters | {}} [parameters = {}]
@@ -131,6 +142,7 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  */
 const defaultActionParametersToForm = (parameters = {}) => ({
   output: parameters.output ?? '',
+  forward_author: parameters.forward_author ?? true,
   author: parameters.author ?? '',
 });
 
@@ -159,6 +171,8 @@ const webhookActionParametersToForm = (parameters = {}) => {
   const { empty_response: emptyResponse, is_regexp: isRegexp, ...variables } = parameters.declare_ticket || {};
 
   return {
+    forward_author: parameters.forward_author ?? true,
+    author: parameters.author ?? '',
     declare_ticket: objectToTextPairs(variables),
     empty_response: !!emptyResponse,
     is_regexp: !!isRegexp,
@@ -339,13 +353,13 @@ export const formToPbehaviorActionParameters = (parameters = {}, timezone = getL
 };
 
 /**
- * Convert form to action
+ * Convert form to action parameters
  *
  * @param {ActionForm} form
  * @param {string} [timezone]
- * @returns {Action}
+ * @returns {ActionParameters}
  */
-export const formToAction = (form, timezone) => {
+const formToActionParameters = (form, timezone) => {
   const parametersByCurrentType = form.parameters[form.type];
 
   const parametersPreparers = {
@@ -356,11 +370,28 @@ export const formToAction = (form, timezone) => {
   const prepareParametersToAction = parametersPreparers[form.type];
   const parameters = prepareParametersToAction
     ? prepareParametersToAction(parametersByCurrentType, timezone)
-    : { ...parametersByCurrentType };
+    : omit(parametersByCurrentType, ['author', 'forward_author']);
 
-  return {
-    ...omit(form, ['key', 'patterns']),
-    ...form.patterns,
-    parameters,
-  };
+  if (!isPbehaviorActionType(form.type)) {
+    parameters.forward_author = parametersByCurrentType.forward_author;
+
+    if (!parameters.forward_author) {
+      parameters.author = parametersByCurrentType.author;
+    }
+  }
+
+  return parameters;
 };
+
+/**
+ * Convert form to action
+ *
+ * @param {ActionForm} form
+ * @param {string} [timezone]
+ * @returns {Action}
+ */
+export const formToAction = (form, timezone) => ({
+  ...omit(form, ['key', 'patterns']),
+  ...form.patterns,
+  parameters: formToActionParameters(form, timezone),
+});
