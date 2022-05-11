@@ -8,6 +8,7 @@ import (
 	"sync"
 	"text/template"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -213,22 +214,16 @@ func (s *pool) getRPCAxeEvent(task Task) (*types.RPCAxeEvent, error) {
 	if err != nil {
 		return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
 	}
-	params.Author, err = s.renderTemplate(params.Author, tplData)
-	if err != nil {
-		return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
-	}
 
-	author := params.Author
-	user := ""
-	if params.ForwardAuthor != nil && *params.ForwardAuthor {
-		author = task.AdditionalData.Author
-		user = task.AdditionalData.User
+	additionalData, err := s.resolveAuthor(task)
+	if err != nil {
+		return nil, err
 	}
 
 	axeParams := types.RPCAxeParameters{
 		Output:         params.Output,
-		Author:         author,
-		User:           user,
+		Author:         additionalData.Author,
+		User:           additionalData.User,
 		State:          params.State,
 		Ticket:         params.Ticket,
 		Duration:       params.Duration,
@@ -258,26 +253,18 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*types.RPCWeb
 		}
 	}
 
+	additionalData, err := s.resolveAuthor(task)
+	if err != nil {
+		return nil, err
+	}
+
 	tplData := map[string]interface{}{
 		"Alarm":          task.Alarm,
 		"Entity":         task.Entity,
 		"Children":       children,
 		"Response":       task.Response,
 		"Header":         task.Header,
-		"AdditionalData": task.AdditionalData,
-	}
-
-	var err error
-	author := ""
-	user := ""
-	if task.Action.Parameters.ForwardAuthor != nil && *task.Action.Parameters.ForwardAuthor {
-		author = task.AdditionalData.Author
-		user = task.AdditionalData.User
-	} else {
-		author, err = s.renderTemplate(task.Action.Parameters.Author, tplData)
-		if err != nil {
-			return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
-		}
+		"AdditionalData": additionalData,
 	}
 
 	request := *task.Action.Parameters.Request
@@ -304,8 +291,8 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*types.RPCWeb
 		DeclareTicket: task.Action.Parameters.DeclareTicket,
 		RetryCount:    task.Action.Parameters.RetryCount,
 		RetryDelay:    task.Action.Parameters.RetryDelay,
-		Author:        author,
-		User:          user,
+		Author:        additionalData.Author,
+		User:          additionalData.User,
 	}
 
 	return &types.RPCWebhookEvent{
@@ -338,4 +325,29 @@ func (s *pool) renderTemplate(templateStr string, data interface{}) (string, err
 		return "", err
 	}
 	return b.String(), nil
+}
+
+func (s *pool) resolveAuthor(task Task) (AdditionalData, error) {
+	additionalData := task.AdditionalData
+	if task.Action.Parameters.ForwardAuthor != nil && *task.Action.Parameters.ForwardAuthor {
+		return additionalData, nil
+	}
+
+	additionalData.User = ""
+
+	if task.Action.Parameters.Author == "" {
+		additionalData.Author = canopsis.DefaultEventAuthor
+		return additionalData, nil
+	}
+
+	var err error
+	additionalData.Author, err = s.renderTemplate(task.Action.Parameters.Author, types.AlarmWithEntity{
+		Alarm:  task.Alarm,
+		Entity: task.Entity,
+	})
+	if err != nil {
+		return additionalData, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
+	}
+
+	return additionalData, nil
 }
