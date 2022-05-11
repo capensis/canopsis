@@ -141,7 +141,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	}
 	entityOldIdleSince, entityOldLastIdleRuleApply := event.Entity.IdleSince, event.Entity.LastIdleRuleApply
 
-	operation := s.createOperationFromEvent(*event)
+	operation := s.createOperationFromEvent(event)
 	changeType, err := s.executor.Exec(ctx, operation, event.Alarm, event.Entity, event.Timestamp, event.UserID, event.Role, event.Initiator)
 	if err != nil {
 		return alarmChange, fmt.Errorf("cannot update alarm: %w", err)
