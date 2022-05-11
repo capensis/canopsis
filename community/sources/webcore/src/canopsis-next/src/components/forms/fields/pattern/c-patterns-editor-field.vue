@@ -46,14 +46,16 @@ import { isNull, isNumber, isObject, isString } from 'lodash';
 import { PATTERN_CONDITIONS, PATTERN_CUSTOM_ITEM_VALUE } from '@/constants';
 
 import { formGroupsToPatternRules, isDatePatternRule, patternsToGroups, patternToForm } from '@/helpers/forms/pattern';
-
-import { formMixin } from '@/mixins/form';
 import {
   getFieldType,
   isExtraInfosRuleType,
   isInfosRuleType,
   isStringArrayFieldType,
+  isValidPatternCondition,
 } from '@/helpers/pattern';
+import { isValidDateInterval, isValidTimeUnit } from '@/helpers/date/date';
+
+import { formMixin } from '@/mixins/form';
 
 export default {
   mixins: [formMixin],
@@ -130,7 +132,7 @@ export default {
     },
 
     isValidRuleConditionType({ cond }) {
-      return Object.values(PATTERN_CONDITIONS).includes(cond?.type);
+      return isValidPatternCondition(cond?.type);
     },
 
     isValidRuleFieldType({ cond, field_type: fieldType }) {
@@ -146,10 +148,10 @@ export default {
         if (isObject(cond.value)) {
           switch (cond.type) {
             case PATTERN_CONDITIONS.absoluteTime:
-              return isDatePatternRule(field) && isNumber(cond.value.from) && isNumber(cond.value.to);
+              return isDatePatternRule(field) && isValidDateInterval(cond.value);
             case PATTERN_CONDITIONS.greater:
             case PATTERN_CONDITIONS.less:
-              return isNumber(cond.value.value) && isString(cond.value.unit);
+              return isNumber(cond.value.value) && isValidTimeUnit(cond.value.unit);
           }
 
           return false;
