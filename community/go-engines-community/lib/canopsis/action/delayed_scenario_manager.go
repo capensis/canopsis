@@ -12,7 +12,7 @@ import (
 )
 
 type DelayedScenarioManager interface {
-	AddDelayedScenario(context.Context, types.Alarm, Scenario) error
+	AddDelayedScenario(context.Context, types.Alarm, Scenario, AdditionalData) error
 	PauseDelayedScenarios(context.Context, types.Alarm) error
 	ResumeDelayedScenarios(context.Context, types.Alarm) error
 	Run(context.Context) (<-chan DelayedScenarioTask, error)
@@ -46,18 +46,21 @@ type delayedScenarioManager struct {
 type DelayedScenarioTask struct {
 	Alarm    types.Alarm
 	Scenario Scenario
+
+	AdditionalData AdditionalData
 }
 
-func (m *delayedScenarioManager) AddDelayedScenario(ctx context.Context, alarm types.Alarm, scenario Scenario) error {
+func (m *delayedScenarioManager) AddDelayedScenario(ctx context.Context, alarm types.Alarm, scenario Scenario, additionalData AdditionalData) error {
 	if scenario.Delay == nil || scenario.Delay.Value == 0 {
 		return errors.New("scenario is not delayed")
 	}
 
 	now := types.NewCpsTime()
 	delayedScenario := DelayedScenario{
-		ScenarioID:    scenario.ID,
-		ExecutionTime: scenario.Delay.AddTo(now),
-		AlarmID:       alarm.ID,
+		ScenarioID:     scenario.ID,
+		ExecutionTime:  scenario.Delay.AddTo(now),
+		AlarmID:        alarm.ID,
+		AdditionalData: additionalData,
 	}
 	id, err := m.storage.Add(ctx, delayedScenario)
 	if err != nil {
@@ -295,6 +298,8 @@ func (m *delayedScenarioManager) getExpiredTimeoutScenarios(
 		tasks[i] = DelayedScenarioTask{
 			Alarm:    *alarm,
 			Scenario: *scenario,
+
+			AdditionalData: delayedScenario.AdditionalData,
 		}
 	}
 

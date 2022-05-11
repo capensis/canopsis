@@ -1,0 +1,111 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with custom props 1`] = `
+<div
+  class="v-item-group position-absolute density-btn-toggle theme--light v-btn-toggle"
+>
+  <span
+    class="v-tooltip v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <button
+      class="v-btn v-btn--flat v-btn--small theme--light"
+      type="button"
+      value="false"
+    >
+      <div
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+          style="font-size: 16px;"
+        >
+          $vuetify.icons.density_medium
+        </i>
+      </div>
+    </button>
+  </span>
+  <span
+    class="v-tooltip v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <button
+      class="v-btn v-btn--active v-btn--flat v-btn--small theme--light"
+      type="button"
+      value="true"
+    >
+      <div
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+          style="font-size: 16px;"
+        >
+          $vuetify.icons.density_small
+        </i>
+      </div>
+    </button>
+  </span>
+</div>
+`;
+
+exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with default props 1`] = `
+<div
+  class="v-item-group position-absolute density-btn-toggle theme--light v-btn-toggle"
+>
+  <span
+    class="v-tooltip v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <button
+      class="v-btn v-btn--active v-btn--flat v-btn--small theme--light"
+      type="button"
+      value="false"
+    >
+      <div
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+          style="font-size: 16px;"
+        >
+          $vuetify.icons.density_medium
+        </i>
+      </div>
+    </button>
+  </span>
+  <span
+    class="v-tooltip v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <button
+      class="v-btn v-btn--flat v-btn--small theme--light"
+      type="button"
+      value="true"
+    >
+      <div
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+          style="font-size: 16px;"
+        >
+          $vuetify.icons.density_small
+        </i>
+      </div>
+    </button>
+  </span>
+</div>
+`;
