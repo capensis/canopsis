@@ -29,9 +29,8 @@ func (e *pbhLeaveAndEnterExecutor) Exec(
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
-	var params types.OperationPbhParameters
-	var ok bool
-	if params, ok = operation.Parameters.(types.OperationPbhParameters); !ok {
+	params := operation.Parameters
+	if params.PbehaviorInfo == nil {
 		return "", fmt.Errorf("invalid parameters")
 	}
 
@@ -41,13 +40,13 @@ func (e *pbhLeaveAndEnterExecutor) Exec(
 
 	currPbehaviorInfo := alarm.Value.PbehaviorInfo
 
-	if currPbehaviorInfo.Same(params.PbehaviorInfo) {
+	if currPbehaviorInfo.Same(*params.PbehaviorInfo) {
 		return "", nil
 	}
 
 	err := alarm.PartialUpdatePbhLeaveAndEnter(
 		time,
-		params.PbehaviorInfo,
+		*params.PbehaviorInfo,
 		params.Author,
 		utils.TruncateString(params.Output, e.configProvider.Get().OutputLength),
 		userID,

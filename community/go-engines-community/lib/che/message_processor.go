@@ -173,6 +173,11 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		}
 	}
 
+	if event.Entity == nil && event.EventType == types.EventTypeCheck {
+		p.Logger.Warn().Str("entity", event.GetEID()).Msg("entity doesn't exist")
+		return nil, nil
+	}
+
 	event.AddedToServices = append(event.AddedToServices, updatedEntityServices.AddedTo...)
 	event.RemovedFromServices = append(event.RemovedFromServices, updatedEntityServices.RemovedFrom...)
 

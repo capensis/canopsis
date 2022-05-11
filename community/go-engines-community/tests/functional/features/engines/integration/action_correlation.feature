@@ -129,12 +129,12 @@ Feature: update meta alarm on action
                     },
                     {
                       "_t": "assocticket",
-                      "a": "root",
+                      "a": "system",
                       "m": "test-ticket-action-correlation-1"
                     },
                     {
                       "_t": "ack",
-                      "a": "root",
+                      "a": "system",
                       "m": "test-output-action-correlation-1-engine"
                     }
                   ]
@@ -175,12 +175,12 @@ Feature: update meta alarm on action
               },
               {
                 "_t": "assocticket",
-                "a": "root",
+                "a": "system",
                 "m": "test-ticket-action-correlation-1"
               },
               {
                 "_t": "ack",
-                "a": "root",
+                "a": "system",
                 "m": "test-output-action-correlation-1-engine"
               }
             ]
