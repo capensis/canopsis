@@ -17,6 +17,24 @@ type LinksFetcher interface {
 	Fetch(context.Context, string, []AlarmEntity) (*LinksResponse, error)
 }
 
+type LinksRequest struct {
+	Entities []AlarmEntity `json:"entities"`
+}
+
+type AlarmEntity struct {
+	AlarmID  string `json:"alarm"`
+	EntityID string `json:"entity"`
+}
+
+type EntityLinks struct {
+	AlarmEntity
+	Links map[string]interface{} `json:"links"`
+}
+
+type LinksResponse struct {
+	Data []EntityLinks
+}
+
 type linksFetcher struct {
 	Timeout   time.Duration
 	LegacyURL string

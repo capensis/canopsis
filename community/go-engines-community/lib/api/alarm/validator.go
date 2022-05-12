@@ -31,3 +31,11 @@ func ValidateListRequest(sl validator.StructLevel) {
 		}
 	}
 }
+
+func ValidateDetailsRequest(sl validator.StructLevel) {
+	r := sl.Current().Interface().(DetailsRequest)
+	if r.Steps.Page == 0 && r.Children.Page == 0 {
+		sl.ReportError(r.Steps.Page, "Steps.Page", "Page", "required", "")
+		sl.ReportError(r.Children.Page, "Children.Page", "Page", "required", "")
+	}
+}
