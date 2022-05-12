@@ -8,7 +8,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/scenario"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -125,8 +124,6 @@ func (a *api) Create(c *gin.Context) {
 	}
 
 	userId := c.MustGet(auth.UserKey).(string)
-	author := c.MustGet(auth.Username).(string)
-	setOperationParameterAuthorAndUserID(&request.EditRequest, author, userId)
 	rule, err := a.store.Insert(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
@@ -170,8 +167,6 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	userId := c.MustGet(auth.UserKey).(string)
-	author := c.MustGet(auth.Username).(string)
-	setOperationParameterAuthorAndUserID(&request.EditRequest, author, userId)
 	rule, err := a.store.Update(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
@@ -288,8 +283,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
-		setOperationParameterAuthorAndUserID(&request.EditRequest, c.MustGet(auth.Username).(string), userId)
-
 		rule, err := a.store.Insert(ctx, request)
 		if err != nil {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
@@ -368,8 +361,6 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
 			continue
 		}
-
-		setOperationParameterAuthorAndUserID(&request.EditRequest, c.MustGet(auth.Username).(string), userId)
 
 		rule, err := a.store.Update(ctx, UpdateRequest(request))
 		if err != nil {
@@ -516,33 +507,4 @@ func (a *api) CountPatterns(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, data)
-}
-
-func setOperationParameterAuthorAndUserID(request *EditRequest, author, userID string) {
-	if request.Operation == nil {
-		return
-	}
-
-	switch v := request.Operation.Parameters.(type) {
-	case scenario.SnoozeParametersRequest:
-		v.Author = author
-		v.User = userID
-		request.Operation.Parameters = v
-	case scenario.ChangeStateParametersRequest:
-		v.Author = author
-		v.User = userID
-		request.Operation.Parameters = v
-	case scenario.AssocTicketParametersRequest:
-		v.Author = author
-		v.User = userID
-		request.Operation.Parameters = v
-	case scenario.PbehaviorParametersRequest:
-		v.Author = author
-		v.User = userID
-		request.Operation.Parameters = v
-	case scenario.ParametersRequest:
-		v.Author = author
-		v.User = userID
-		request.Operation.Parameters = v
-	}
 }

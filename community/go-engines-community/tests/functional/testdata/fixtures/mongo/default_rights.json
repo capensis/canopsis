@@ -816,9 +816,14 @@
     "description": "test-role-to-get-user-1-description",
     "defaultview": "test-view-to-edit-user",
     "rights": {
-      "api_instruction_approve": {
-        "checksum": 1,
-        "crecord_type": "right"
+      "test-permission-to-edit-user-1": {
+        "checksum": 1
+      },
+      "test-permission-to-edit-user-2": {
+        "checksum": 15
+      },
+      "test-permission-to-edit-user-3": {
+        "checksum": 7
       }
     }
   },
