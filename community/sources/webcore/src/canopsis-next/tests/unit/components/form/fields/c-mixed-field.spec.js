@@ -127,7 +127,7 @@ describe('c-mixed-field', () => {
     expect(inputEvents).toHaveLength(1);
 
     const [eventData] = inputEvents[0];
-    expect(eventData).toEqual([12]);
+    expect(eventData).toEqual(['12']);
   });
 
   it('Value changed on the first field after remove selected type', async () => {
