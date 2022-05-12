@@ -79,13 +79,11 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with advanc
             class="v-window-item"
             style=""
           >
-            <c-json-field-stub
+            <c-patterns-advanced-editor-field-stub
+              attributes=""
               disabled="true"
-              label="Advanced editor"
               name="advancedJson"
-              readonly="readonly"
-              rows="10"
-              value="[object Object]"
+              value=""
             />
           </div>
         </transition-stub>

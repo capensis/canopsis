@@ -19,7 +19,7 @@ const localVue = createVueInstance();
 const stubs = {
   'c-pattern-field': true,
   'c-pattern-groups-field': true,
-  'c-json-field': true,
+  'c-patterns-advanced-editor-field': true,
 };
 
 const factory = (options = {}) => shallowMount(CPatternsEditorField, {
@@ -186,7 +186,9 @@ describe('c-patterns-editor-field', () => {
       propsData: {
         patterns: {
           id: 'pattern-id',
-          groups: [{}],
+          groups: [{
+            rules: [],
+          }],
         },
         attributes: [
           { value: 'attribute-1', text: 'Attribute 1' },

@@ -1,6 +1,6 @@
+import { isNumber } from 'lodash';
 import moment from 'moment-timezone';
 
-import { isNumber } from 'lodash';
 import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
 
 /**

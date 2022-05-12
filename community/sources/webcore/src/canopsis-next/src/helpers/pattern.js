@@ -122,7 +122,7 @@ export const isStringArrayFieldType = type => type === PATTERN_FIELD_TYPES.strin
 /**
  * Check field type is valid
  *
- * @param {*} type
+ * @param {*} value
  * @return {boolean}
  */
 export const isValidRuleFieldType = value => Object.values(PATTERN_FIELD_TYPES).includes(value);
@@ -156,7 +156,7 @@ export const getFieldType = (value) => {
 /**
  * Convert any value to type value
  *
- * @param {} type
+ * @param {PatternFieldType} type
  * @param {PatternValue} [value]
  * @param [defaultValue]
  * @return {PatternValue | undefined}
