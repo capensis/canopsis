@@ -15,7 +15,7 @@ import {
 } from '@/constants';
 
 import uid from '@/helpers/uid';
-import { getFieldType } from '@/helpers/pattern';
+import { getFieldType, isDatePatternRuleField, isInfosPatternRuleField } from '@/helpers/pattern';
 import { convertDateToTimestamp } from '@/helpers/date/date';
 import {
   getDiffBetweenStartAndStopQuickInterval,
@@ -95,32 +95,6 @@ import { durationToForm } from '@/helpers/date/duration';
  * @typedef {Pattern} PatternForm
  * @property {PatternGroupsForm} groups
  */
-
-/**
- * Check pattern is date
- *
- * @param {string} value
- * @return {boolean}
- */
-export const isDatePatternRule = value => [
-  ALARM_PATTERN_FIELDS.creationDate,
-  ALARM_PATTERN_FIELDS.lastEventDate,
-  ALARM_PATTERN_FIELDS.lastUpdateDate,
-  ALARM_PATTERN_FIELDS.ackAt,
-  ALARM_PATTERN_FIELDS.resolvedAt,
-  ENTITY_PATTERN_FIELDS.lastEventDate,
-].includes(value);
-
-/**
- * Check pattern is infos
- *
- * @param {string} value
- * @return {boolean}
- */
-const isInfosPatternRuleAttribute = value => [
-  ALARM_PATTERN_FIELDS.infos,
-  ENTITY_PATTERN_FIELDS.infos,
-].includes(value);
 
 /**
  * Convert pattern rule to form
@@ -375,8 +349,8 @@ export const formRuleToPatternRule = (rule) => {
     },
   };
 
-  const isInfos = isInfosPatternRuleAttribute(rule.attribute);
-  const isDate = isDatePatternRule(rule.attribute);
+  const isInfos = isInfosPatternRuleField(rule.attribute);
+  const isDate = isDatePatternRuleField(rule.attribute);
 
   if (isInfos) {
     pattern.field = [rule.attribute, rule.dictionary].join('.');
