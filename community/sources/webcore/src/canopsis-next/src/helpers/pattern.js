@@ -1,4 +1,4 @@
-import { isArray, isBoolean, isEmpty, isNan, isNull, isNumber, isUndefined } from 'lodash';
+import { isNil, isArray, isBoolean, isEmpty, isNan, isNull, isNumber, isObject, isString, isUndefined } from 'lodash';
 
 import {
   PATTERN_FIELD_TYPES,
@@ -13,7 +13,11 @@ import {
   PATTERN_RULE_TYPES,
   PATTERN_STRING_OPERATORS,
   PATTERN_CONDITIONS,
+  ALARM_PATTERN_FIELDS,
+  ENTITY_PATTERN_FIELDS,
 } from '@/constants';
+import { isValidDateInterval } from '@/helpers/date/date';
+import { isValidDuration } from '@/helpers/date/duration';
 
 /**
  * @typedef { 'string' | 'number' | 'infos' | 'date' | 'duration' } PatternRuleType
@@ -116,6 +120,14 @@ export const isDurationRuleType = type => type === PATTERN_RULE_TYPES.duration;
 export const isStringArrayFieldType = type => type === PATTERN_FIELD_TYPES.stringArray;
 
 /**
+ * Check field type is valid
+ *
+ * @param {*} type
+ * @return {boolean}
+ */
+export const isValidRuleFieldType = value => Object.values(PATTERN_FIELD_TYPES).includes(value);
+
+/**
  * Return field type by value
  *
  * @param {PatternValue} value
@@ -168,7 +180,7 @@ export const convertValueByType = (value, type, defaultValue) => {
     case PATTERN_FIELD_TYPES.null:
       return null;
     case PATTERN_FIELD_TYPES.stringArray:
-      return preparedValue ? [preparedValue] : [];
+      return preparedValue ? [String(preparedValue)] : [];
     default:
       return undefined;
   }
@@ -263,9 +275,164 @@ export const convertValueByOperator = (value, operator) => {
 };
 
 /**
+ * Check condition is boolean
+ *
+ * @param {string} condition
+ * @return {boolean}
+ */
+export const isBooleanCondition = condition => [
+  PATTERN_CONDITIONS.equal,
+  PATTERN_CONDITIONS.notEqual,
+  PATTERN_CONDITIONS.exist,
+  PATTERN_CONDITIONS.isEmpty,
+].includes(condition);
+
+/**
+ * Check condition is boolean
+ *
+ * @param {string} condition
+ * @return {boolean}
+ */
+export const isArrayCondition = condition => [
+  PATTERN_CONDITIONS.isEmpty,
+  PATTERN_CONDITIONS.hasNot,
+  PATTERN_CONDITIONS.hasOneOf,
+  PATTERN_CONDITIONS.hasEvery,
+].includes(condition);
+
+/**
  * Check condition is valid
  *
  * @param {string} condition
  * @return {boolean}
  */
 export const isValidPatternCondition = condition => Object.values(PATTERN_CONDITIONS).includes(condition);
+
+/**
+ * Check pattern field is date
+ *
+ * @param {string} value
+ * @return {boolean}
+ */
+export const isDatePatternRuleField = value => [
+  ALARM_PATTERN_FIELDS.creationDate,
+  ALARM_PATTERN_FIELDS.lastEventDate,
+  ALARM_PATTERN_FIELDS.lastUpdateDate,
+  ALARM_PATTERN_FIELDS.ackAt,
+  ALARM_PATTERN_FIELDS.resolvedAt,
+  ENTITY_PATTERN_FIELDS.lastEventDate,
+].includes(value);
+
+/**
+ * Check pattern field is number
+ *
+ * @param {string} value
+ * @return {boolean}
+ */
+export const isNumberPatternRuleField = value => [
+  ALARM_PATTERN_FIELDS.state,
+  ALARM_PATTERN_FIELDS.status,
+  ENTITY_PATTERN_FIELDS.impactLevel,
+].includes(value);
+
+/**
+ * Check pattern field is infos
+ *
+ * @param {string} value
+ * @return {boolean}
+ */
+export const isInfosPatternRuleField = value => [
+  ALARM_PATTERN_FIELDS.infos,
+  ENTITY_PATTERN_FIELDS.infos,
+].some(field => value?.startsWith(field));
+
+/**
+ * Check pattern field is duration
+ *
+ * @param {string} value
+ * @return {boolean}
+ */
+export const isDurationPatternRuleField = value => value === ALARM_PATTERN_FIELDS.duration;
+
+/**
+ * Check rule value is valid without field type
+ *
+ * @param {PatternRule | *} rule
+ * @return {boolean}
+ */
+export const isValidRuleValueWithoutFieldType = (rule) => {
+  const { field, cond } = rule;
+
+  if (isObject(cond.value)) {
+    switch (cond.type) {
+      case PATTERN_CONDITIONS.absoluteTime:
+        return isDatePatternRuleField(field) && isValidDateInterval(cond?.value);
+      case PATTERN_CONDITIONS.greater:
+      case PATTERN_CONDITIONS.less:
+        return isDurationPatternRuleField(field) && isValidDuration(cond?.value);
+    }
+
+    return false;
+  }
+
+  if (isNumber(cond.value)) {
+    if (isDatePatternRuleField(field) && cond.type === PATTERN_CONDITIONS.relativeTime) {
+      return isNumber(cond.value) && cond.value >= 0;
+    }
+
+    return isNumberPatternRuleField(field);
+  }
+
+  if (isArray(cond.value)) {
+    return false;
+  }
+
+  if (isBoolean(cond.value)) {
+    return isBooleanCondition(cond.type);
+  }
+
+  return isString(cond.value);
+};
+
+/**
+ * Check rule value is valid with field type
+ *
+ * @param {PatternRule | *} rule
+ * @return {boolean}
+ */
+export const isValidRuleValueWithFieldType = (rule) => {
+  const { field, cond, field_type: fieldType } = rule;
+
+  if (isStringArrayFieldType(fieldType)) {
+    return isArrayCondition(cond.type)
+      && isArray(cond.value)
+      && cond.value.every(isString);
+  }
+
+  return isInfosPatternRuleField(field) && getFieldType(cond.value) === fieldType;
+};
+
+/**
+ * Check rule value is valid
+ *
+ * @param {PatternRule | *} rule
+ * @return {boolean}
+ */
+export const isValidRuleValue = rule => (
+  rule.field_type
+    ? isValidRuleValueWithFieldType(rule)
+    : isValidRuleValueWithoutFieldType(rule)
+);
+
+/**
+ * Check pattern rule is valid
+ *
+ * @param {PatternRule | *} rule
+ * @return {boolean}
+ */
+export const isValidPatternRule = rule => !!rule?.field
+  && !isNil(rule.cond?.value)
+  && !isNil(rule.cond?.type)
+  && (!rule.field_type || isValidRuleFieldType(rule.field_type))
+  && isValidPatternCondition(rule.cond.type)
+  && isValidRuleValue(rule);
