@@ -16,7 +16,6 @@ type pbhEnterExecutor struct {
 	metricsSender metrics.Sender
 }
 
-// NewAckExecutor creates new executor.
 func NewPbhEnterExecutor(configProvider config.AlarmConfigProvider, metricsSender metrics.Sender) operationlib.Executor {
 	return &pbhEnterExecutor{configProvider: configProvider, metricsSender: metricsSender}
 }
@@ -29,9 +28,8 @@ func (e *pbhEnterExecutor) Exec(
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
-	var params types.OperationPbhParameters
-	var ok bool
-	if params, ok = operation.Parameters.(types.OperationPbhParameters); !ok {
+	params := operation.Parameters
+	if params.PbehaviorInfo == nil {
 		return "", fmt.Errorf("invalid parameters")
 	}
 
@@ -39,13 +37,13 @@ func (e *pbhEnterExecutor) Exec(
 		userID = params.User
 	}
 
-	if alarm.Value.PbehaviorInfo.Same(params.PbehaviorInfo) {
+	if entity.PbehaviorInfo.Same(*params.PbehaviorInfo) {
 		return "", nil
 	}
 
 	err := alarm.PartialUpdatePbhEnter(
 		time,
-		params.PbehaviorInfo,
+		*params.PbehaviorInfo,
 		params.Author,
 		utils.TruncateString(params.Output, e.configProvider.Get().OutputLength),
 		userID,

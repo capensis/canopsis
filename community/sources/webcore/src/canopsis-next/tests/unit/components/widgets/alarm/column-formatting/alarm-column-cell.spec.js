@@ -2,6 +2,7 @@ import flushPromises from 'flush-promises';
 
 import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
 import { DATETIME_FORMATS } from '@/constants';
+import { DEFAULT_LOCALE } from '@/config';
 
 import AlarmColumnCell from '@/components/widgets/alarm/columns-formatting/alarm-column-cell.vue';
 
@@ -21,6 +22,11 @@ const stubs = {
 const factory = (options = {}) => shallowMount(AlarmColumnCell, {
   localVue,
   stubs,
+  mocks: {
+    $i18n: {
+      locale: DEFAULT_LOCALE,
+    },
+  },
 
   ...options,
 });
@@ -28,6 +34,11 @@ const factory = (options = {}) => shallowMount(AlarmColumnCell, {
 const snapshotFactory = (options = {}) => mount(AlarmColumnCell, {
   localVue,
   stubs,
+  mocks: {
+    $i18n: {
+      locale: DEFAULT_LOCALE,
+    },
+  },
 
   ...options,
 });
@@ -245,6 +256,9 @@ describe('alarm-column-cell', () => {
         widget: {},
         column,
       },
+      listeners: {
+        activate: jest.fn(),
+      },
     });
 
     await flushPromises();
@@ -268,6 +282,9 @@ describe('alarm-column-cell', () => {
           },
         },
         column,
+      },
+      listeners: {
+        activate: jest.fn(),
       },
     });
 

@@ -182,6 +182,9 @@ export default {
             limit: get(this.widget.parameters, 'linksCategoriesAsList.limit'),
             links: this.alarm.links ?? {},
           },
+          on: {
+            activate: this.$listeners.activate,
+          },
         },
         [ALARM_ENTITY_FIELDS.extraDetails]: {
           bind: {
@@ -223,6 +226,7 @@ export default {
     showInfoPopup() {
       this.isInfoPopupOpen = true;
     },
+
     hideInfoPopup() {
       this.isInfoPopupOpen = false;
     },

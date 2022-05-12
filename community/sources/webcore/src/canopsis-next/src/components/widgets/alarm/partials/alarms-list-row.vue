@@ -26,7 +26,8 @@
         :alarm="alarm",
         :widget="widget",
         :column="column",
-        :columns-filters="columnsFilters"
+        :columns-filters="columnsFilters",
+        @activate="activateRow"
       )
     td
       actions-panel(
@@ -101,6 +102,11 @@ export default {
       default: null,
     },
   },
+  data() {
+    return {
+      active: false,
+    };
+  },
   computed: {
     ...featuresService.get('components.alarmListRow.computed', {}),
 
@@ -160,7 +166,7 @@ export default {
     },
 
     classes() {
-      const classes = { 'not-filtered': this.isNotFiltered };
+      const classes = { 'not-filtered': this.isNotFiltered, 'grey lighten-3': this.active };
 
       if (featuresService.has('components.alarmListRow.computed.classes')) {
         return featuresService.call('components.alarmListRow.computed.classes', this, classes);
@@ -170,6 +176,10 @@ export default {
     },
   },
   methods: {
+    activateRow(value) {
+      this.active = value;
+    },
+
     async showExpandPanel() {
       if (!this.row.expanded) {
         await this.fetchAlarmItemWithGroupsAndSteps(this.alarm);
