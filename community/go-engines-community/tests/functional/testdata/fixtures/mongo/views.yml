@@ -286,3 +286,7 @@ views:
   view_to_filter_check_access:
     <<: *view
     _id: test-view-to-filter-check-access
+
+  view_to_alarm_get:
+    <<: *view
+    _id: test-view-to-alarm-get

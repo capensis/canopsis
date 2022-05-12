@@ -64,13 +64,13 @@ func (l *loader) Load(ctx context.Context) error {
 			}
 
 			for collectionName, docs := range docsByCollection {
-				if len(docs) == 0 {
-					continue
-				}
-
 				deleted, err = l.deleteAll(ctx, docsByCollection, deleted)
 				if err != nil {
 					return err
+				}
+
+				if len(docs) == 0 {
+					continue
 				}
 
 				collection := l.client.Collection(collectionName)
