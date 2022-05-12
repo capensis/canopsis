@@ -326,15 +326,39 @@ func (a *ApiClient) TheResponseKeyShouldBeGreaterOrEqualThan(path string, value 
 //   ]
 //   """
 func (a *ApiClient) TheResponseArrayKeyShouldContain(path string, doc string) error {
+	b, err := a.executeTemplate(doc)
+	if err != nil {
+		return err
+	}
+
 	if nestedVal, ok := getNestedJsonVal(a.responseBody, strings.Split(path, ".")); ok {
 		receivedStr, _ := json.MarshalIndent(nestedVal, "", "  ")
 
 		switch received := nestedVal.(type) {
 		case []interface{}:
 			expected := make([]map[string]interface{}, 0)
-			err := json.Unmarshal([]byte(doc), &expected)
+			err := json.Unmarshal(b.Bytes(), &expected)
 			if err != nil {
-				return err
+				expected := make([]interface{}, 0)
+				err := json.Unmarshal(b.Bytes(), &expected)
+				if err != nil {
+					return err
+				}
+				for _, ev := range expected {
+					found := false
+					for _, v := range received {
+						if err := checkResponse(v, ev); err == nil {
+							found = true
+							break
+						}
+					}
+
+					if !found {
+						return fmt.Errorf("%s\nis not in:\n%s", ev, receivedStr)
+					}
+				}
+
+				return nil
 			}
 
 			if len(expected) == 0 {

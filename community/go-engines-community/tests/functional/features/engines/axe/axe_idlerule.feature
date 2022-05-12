@@ -1,5 +1,6 @@
 Feature: update alarm on idle rule
   I need to be able to update alarm on idle rule
+  todo check idle_since update
 
   Scenario: given idle rule and no events for alarm should update alarm
     Given I am admin

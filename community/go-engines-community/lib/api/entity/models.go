@@ -69,9 +69,9 @@ type Entity struct {
 	IdleSince      *types.CpsTime           `bson:"idle_since,omitempty" json:"idle_since,omitempty" swaggertype:"integer"`
 	PbehaviorInfo  *PbehaviorInfo           `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
 	LastEventDate  *types.CpsTime           `bson:"last_event_date,omitempty" json:"last_event_date,omitempty"`
-	OKEvents       int                      `bson:"ok_events" json:"ok_events"`
-	KOEvents       int                      `bson:"ko_events" json:"ko_events"`
-	State          int                      `bson:"state" json:"state"`
+	OKEvents       *int                     `bson:"ok_events" json:"ok_events,omitempty"`
+	KOEvents       *int                     `bson:"ko_events" json:"ko_events,omitempty"`
+	State          *int                     `bson:"state" json:"state,omitempty"`
 }
 
 type Infos map[string]Info

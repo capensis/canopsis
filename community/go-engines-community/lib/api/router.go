@@ -257,8 +257,8 @@ func RegisterRoutes(
 			)
 		}
 
-		alarmStore := alarm.NewStore(dbClient, legacyUrl)
-		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, timezoneConfigProvider)
+		alarmStore := alarm.NewStore(dbClient, legacyUrl, logger)
+		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, timezoneConfigProvider, logger)
 		alarmRouter := protected.Group("/alarms")
 		{
 			alarmRouter.GET(
@@ -266,15 +266,32 @@ func RegisterRoutes(
 				middleware.Authorize(authPermAlarmRead, permCan, enforcer),
 				alarmAPI.List,
 			)
-		}
-		alarmCountersRouter := protected.Group("/alarm-counters")
-		{
-			alarmCountersRouter.GET(
-				"",
+			alarmRouter.GET(
+				"/:id",
 				middleware.Authorize(authPermAlarmRead, permCan, enforcer),
-				alarmAPI.Count,
+				alarmAPI.Get,
 			)
 		}
+		protected.POST(
+			"/alarm-details",
+			middleware.Authorize(authPermAlarmRead, permCan, enforcer),
+			alarmAPI.GetDetails,
+		)
+		protected.GET(
+			"/manual-meta-alarms",
+			middleware.Authorize(authPermAlarmRead, permCan, enforcer),
+			alarmAPI.ListManual,
+		)
+		protected.GET(
+			"/entityservice-alarms/:id",
+			middleware.Authorize(authPermAlarmRead, permCan, enforcer),
+			alarmAPI.ListByService,
+		)
+		protected.GET(
+			"/alarm-counters",
+			middleware.Authorize(authPermAlarmRead, permCan, enforcer),
+			alarmAPI.Count,
+		)
 		alarmExportRouter := protected.Group("/alarm-export")
 		{
 			alarmExportRouter.POST(

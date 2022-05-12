@@ -104,13 +104,11 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 					},
 				},
 			},
-			mongoQueryResult: []bson.M{
-				{"$match": bson.M{"$or": []bson.M{
-					{"$and": []bson.M{
-						{"alarm.pbehavior_info._id": bson.M{"$eq": "test id"}},
-					}},
-				}}},
-			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.pbehavior_info._id": bson.M{"$eq": "test id"}},
+				}},
+			}},
 		},
 		"given multiple conditions": {
 			pattern: pattern.PbehaviorInfo{
@@ -125,14 +123,12 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 					},
 				},
 			},
-			mongoQueryResult: []bson.M{
-				{"$match": bson.M{"$or": []bson.M{
-					{"$and": []bson.M{
-						{"alarm.pbehavior_info._id": bson.M{"$eq": "test id"}},
-						{"alarm.pbehavior_info.type": bson.M{"$eq": "test type"}},
-					}},
-				}}},
-			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.pbehavior_info._id": bson.M{"$eq": "test id"}},
+					{"alarm.pbehavior_info.type": bson.M{"$eq": "test type"}},
+				}},
+			}},
 		},
 		"given multiple groups": {
 			pattern: pattern.PbehaviorInfo{
@@ -149,16 +145,14 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 					},
 				},
 			},
-			mongoQueryResult: []bson.M{
-				{"$match": bson.M{"$or": []bson.M{
-					{"$and": []bson.M{
-						{"alarm.pbehavior_info._id": bson.M{"$eq": "test id"}},
-					}},
-					{"$and": []bson.M{
-						{"alarm.pbehavior_info.type": bson.M{"$eq": "test type"}},
-					}},
-				}}},
-			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.pbehavior_info._id": bson.M{"$eq": "test id"}},
+				}},
+				{"$and": []bson.M{
+					{"alarm.pbehavior_info.type": bson.M{"$eq": "test type"}},
+				}},
+			}},
 		},
 		"given invalid condition": {
 			pattern: pattern.PbehaviorInfo{
@@ -180,5 +174,5 @@ type PbehaviorInfoDataSet struct {
 	matchErr         error
 	matchResult      bool
 	mongoQueryErr    error
-	mongoQueryResult []bson.M
+	mongoQueryResult bson.M
 }

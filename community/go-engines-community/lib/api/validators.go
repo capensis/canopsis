@@ -258,6 +258,8 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	v.RegisterStructValidation(idlerule.ValidateCountPatternRequest, idlerule.CountByPatternRequest{})
 
 	v.RegisterStructValidation(alarm.ValidateListRequest, alarm.ListRequest{})
+	v.RegisterStructValidation(alarm.ValidateDetailsRequest, alarm.DetailsRequest{})
+
 	v.RegisterStructValidation(datastorage.ValidateConfig, libdatastorage.Config{})
 
 	resolveRuleIdUniqueValidator := common.NewUniqueFieldValidator(client, mongo.ResolveRuleMongoCollection, "ID")

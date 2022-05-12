@@ -1,4 +1,79 @@
+template:
+  - &rule_attribute {
+    _id: <UUID()>,
+    type: attribute,
+    name: <Word()>,
+    author: root,
+    auto_resolve: false,
+    config: { alarm_patterns: [ { v: { component: <Word()> } } ] },
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}',
+    created: <NowUnix()>,
+    updated: <Current().created>
+  }
+
 meta_alarm_rules:
+  manual_rule:
+    _id: test-metaalarm-rule-manual
+    name: test-metaalarm-rule-manual-name
+    type: manualgroup
+    auto_resolve: false
+    patterns: null
+
+  rule_alarm_correlation_get_1_1:
+    <<: *rule_attribute
+    _id: test-metaalarm-rule-alarm-correlation-get-1-1
+    name: test-metaalarm-rule-alarm-correlation-get-1-1-name
+    config:
+      alarm_patterns:
+        - v:
+            resource: test-resource-to-alarm-correlation-get-1-1
+        - v:
+            resource: test-resource-to-alarm-correlation-get-1-2
+        - v:
+            resource: test-resource-to-alarm-correlation-get-1-3
+
+  rule_alarm_correlation_get_1_2:
+    <<: *rule_attribute
+    _id: test-metaalarm-rule-alarm-correlation-get-1-2
+    name: test-metaalarm-rule-alarm-correlation-get-1-2-name
+    config:
+      alarm_patterns:
+        - v:
+            resource: test-resource-to-alarm-correlation-get-1-3
+
+  rule_alarm_correlation_get_2_1:
+    <<: *rule_attribute
+    _id: test-metaalarm-rule-alarm-correlation-get-2-1
+    name: test-metaalarm-rule-alarm-correlation-get-2-1-name
+    config:
+      alarm_patterns:
+        - v:
+            resource: test-resource-to-alarm-correlation-get-2-1
+        - v:
+            resource: test-resource-to-alarm-correlation-get-2-2
+        - v:
+            resource: test-resource-to-alarm-correlation-get-2-3
+
+  rule_alarm_correlation_get_2_2:
+    <<: *rule_attribute
+    _id: test-metaalarm-rule-alarm-correlation-get-2-2
+    name: test-metaalarm-rule-alarm-correlation-get-2-2-name
+    config:
+      alarm_patterns:
+        - v:
+            resource: test-resource-to-alarm-correlation-get-2-1
+        - v:
+            resource: test-resource-to-alarm-correlation-get-2-3
+
+  rule_alarm_correlation_get_3:
+    <<: *rule_attribute
+    _id: test-metaalarm-rule-alarm-correlation-get-3
+    name: test-metaalarm-rule-alarm-correlation-get-3-name
+    config:
+      alarm_patterns:
+        - v:
+            resource: test-resource-to-alarm-correlation-get-3-1
+
   meta_alarm_rules_1:
     _id: test-alarm-get-metaalarm-rule-1
     auto_resolve: false
@@ -27,12 +102,6 @@ meta_alarm_rules:
     name: Test alarmcounter get
     patterns: null
     type: complex
-  meta_alarm_rules_5:
-    _id: test-alarm-get-metaalarm-rule-manual-1
-    auto_resolve: false
-    name: Test manual 1
-    patterns: null
-    type: manualgroup
   meta_alarm_rules_6:
     _id: test-metaalarm-to-get-1
     author: test-metaalarm-to-get-1-author
@@ -77,8 +146,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-metrics-axe-4
+        - v:
+            component: test-component-metrics-axe-4
     created: 1637907655
     name: test-metaalarm-metrics-axe-4-1-name
     output_template: ""
@@ -90,8 +159,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-metrics-axe-4
+        - v:
+            component: test-component-metrics-axe-4
     created: 1637907655
     name: test-metaalarm-metrics-axe-4-2-name
     output_template: ""
@@ -103,8 +172,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-metrics-axe-5
+        - v:
+            component: test-component-metrics-axe-5
     created: 1637907655
     name: test-metaalarm-metrics-axe-5-name
     output_template: ""
@@ -116,8 +185,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-metrics-axe-10
+        - v:
+            component: test-component-metrics-axe-10
     created: 1637907655
     name: test-metaalarm-metrics-axe-10-name
     output_template: ""
@@ -129,8 +198,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-metrics-axe-11
+        - v:
+            component: test-component-metrics-axe-11
     created: 1637907655
     name: test-metaalarm-metrics-axe-11-name
     output_template: ""
@@ -142,8 +211,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-1
+        - v:
+            component: test-component-axe-correlation-1
     created: 1637907655
     name: test-metaalarmrule-axe-correlation-1-name
     output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
@@ -156,8 +225,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-2
+        - v:
+            component: test-component-axe-correlation-2
     created: 1637907655
     name: test-metaalarmrule-axe-correlation-2-name
     output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
@@ -170,8 +239,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-3
+        - v:
+            component: test-component-axe-correlation-3
     created: 1637907655
     name: test-metaalarmrule-axe-correlation-3-name
     output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
@@ -184,8 +253,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-4
+        - v:
+            component: test-component-axe-correlation-4
     created: 1637907655
     name: test-metaalarmrule-axe-correlation-4-name
     output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
@@ -198,8 +267,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-5
+        - v:
+            component: test-component-axe-correlation-5
     created: 1637907655
     name: test-metaalarmrule-axe-correlation-5-name
     output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
@@ -212,8 +281,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-6
+        - v:
+            component: test-component-axe-correlation-6
     created: 1637907655
     name: test-metaalarmrule-axe-correlation-6-name
     output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
@@ -226,8 +295,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-7
+        - v:
+            component: test-component-axe-correlation-7
     created: 1637907655
     name: test-metaalarmrule-axe-correlation-7-name
     output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
@@ -240,8 +309,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-8
+        - v:
+            component: test-component-axe-correlation-8
     created: 1637907655
     name: test-metaalarmrule-axe-correlation-8-name
     output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
@@ -254,8 +323,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-9
+        - v:
+            component: test-component-axe-correlation-9
     created: 1637907655
     name: test-metaalarmrule-axe-correlation-9-name
     output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
@@ -268,8 +337,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-10
+        - v:
+            component: test-component-axe-correlation-10
     created: 1637907655
     name: test-metaalarmrule-axe-correlation-10-name
     output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
@@ -282,8 +351,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-11
+        - v:
+            component: test-component-axe-correlation-11
     created: 1637907655
     name: test-metaalarmrule-axe-correlation-11-name
     output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
@@ -296,8 +365,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-12
+        - v:
+            component: test-component-axe-correlation-12
     created: 1637907655
     name: test-metaalarmrule-axe-correlation-12-1-name
     output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
@@ -310,8 +379,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-12
+        - v:
+            component: test-component-axe-correlation-12
     created: 1637907655
     name: test-metaalarmrule-axe-correlation-12-2-name
     output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
@@ -324,8 +393,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-13
+        - v:
+            component: test-component-axe-correlation-13
     created: 1637907655
     name: test-metaalarmrule-axe-correlation-13-1-name
     output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
@@ -338,8 +407,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-13
+        - v:
+            component: test-component-axe-correlation-13
     created: 1637907655
     name: test-metaalarmrule-axe-correlation-13-2-name
     output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
@@ -352,8 +421,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-14
+        - v:
+            component: test-component-axe-correlation-14
     created: 1637907655
     name: test-metaalarmrule-axe-correlation-14-name
     output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
@@ -366,8 +435,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-action-correlation-1
+        - v:
+            component: test-component-action-correlation-1
     created: 1637907655
     name: test-metaalarmrule-action-correlation-1-name
     output_template: ""
@@ -379,8 +448,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-action-correlation-2
+        - v:
+            component: test-component-action-correlation-2
     created: 1637907655
     name: test-metaalarmrule-action-correlation-2-name
     output_template: ""
@@ -392,8 +461,8 @@ meta_alarm_rules:
     auto_resolve: false
     config:
       alarm_patterns:
-      - v:
-          component: test-component-action-correlation-3
+        - v:
+            component: test-component-action-correlation-3
     created: 1637907655
     name: test-metaalarmrule-action-correlation-3-name
     output_template: ""

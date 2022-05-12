@@ -666,13 +666,11 @@ func getEntityMongoQueryDataSets() map[string]entityDataSet {
 					},
 				},
 			},
-			mongoQueryResult: []bson.M{
-				{"$match": bson.M{"$or": []bson.M{
-					{"$and": []bson.M{
-						{"entity.name": bson.M{"$eq": "test name"}},
-					}},
-				}}},
-			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"entity.name": bson.M{"$eq": "test name"}},
+				}},
+			}},
 		},
 		"given multiple conditions": {
 			pattern: pattern.Entity{
@@ -687,14 +685,12 @@ func getEntityMongoQueryDataSets() map[string]entityDataSet {
 					},
 				},
 			},
-			mongoQueryResult: []bson.M{
-				{"$match": bson.M{"$or": []bson.M{
-					{"$and": []bson.M{
-						{"entity.name": bson.M{"$eq": "test name"}},
-						{"entity.category": bson.M{"$eq": "test category"}},
-					}},
-				}}},
-			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"entity.name": bson.M{"$eq": "test name"}},
+					{"entity.category": bson.M{"$eq": "test category"}},
+				}},
+			}},
 		},
 		"given multiple groups": {
 			pattern: pattern.Entity{
@@ -711,16 +707,14 @@ func getEntityMongoQueryDataSets() map[string]entityDataSet {
 					},
 				},
 			},
-			mongoQueryResult: []bson.M{
-				{"$match": bson.M{"$or": []bson.M{
-					{"$and": []bson.M{
-						{"entity.name": bson.M{"$eq": "test name"}},
-					}},
-					{"$and": []bson.M{
-						{"entity.category": bson.M{"$eq": "test category"}},
-					}},
-				}}},
-			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"entity.name": bson.M{"$eq": "test name"}},
+				}},
+				{"$and": []bson.M{
+					{"entity.category": bson.M{"$eq": "test category"}},
+				}},
+			}},
 		},
 		"given invalid condition": {
 			pattern: pattern.Entity{
@@ -743,16 +737,14 @@ func getEntityMongoQueryDataSets() map[string]entityDataSet {
 					},
 				},
 			},
-			mongoQueryResult: []bson.M{
-				{"$match": bson.M{"$or": []bson.M{
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
 					{"$and": []bson.M{
-						{"$and": []bson.M{
-							{"entity.infos.info_name.val": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
-							{"entity.infos.info_name.val": bson.M{"$eq": 3}},
-						}},
+						{"entity.infos.info_name.val": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
+						{"entity.infos.info_name.val": bson.M{"$eq": 3}},
 					}},
-				}}},
-			},
+				}},
+			}},
 		},
 		"given component infos condition": {
 			pattern: pattern.Entity{
@@ -764,16 +756,14 @@ func getEntityMongoQueryDataSets() map[string]entityDataSet {
 					},
 				},
 			},
-			mongoQueryResult: []bson.M{
-				{"$match": bson.M{"$or": []bson.M{
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
 					{"$and": []bson.M{
-						{"$and": []bson.M{
-							{"entity.component_infos.info_name.val": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
-							{"entity.component_infos.info_name.val": bson.M{"$eq": 3}},
-						}},
+						{"entity.component_infos.info_name.val": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
+						{"entity.component_infos.info_name.val": bson.M{"$eq": 3}},
 					}},
-				}}},
-			},
+				}},
+			}},
 		},
 	}
 }
@@ -784,5 +774,5 @@ type entityDataSet struct {
 	matchErr         error
 	matchResult      bool
 	mongoQueryErr    error
-	mongoQueryResult []bson.M
+	mongoQueryResult bson.M
 }

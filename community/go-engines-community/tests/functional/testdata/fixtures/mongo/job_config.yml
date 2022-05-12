@@ -12,7 +12,7 @@ template:
     _id: <UUID()>,
     type: rundeck,
     name: <Word()>,
-    host: http://localhost:3000,
+    host: "http://localhost:3000",
     auth_token: <UUID()>,
     author: root,
     created: <NowUnix()>
@@ -21,7 +21,7 @@ template:
     _id: <UUID()>,
     type: awx,
     name: <Word()>,
-    host: http://localhost:3000,
+    host: "http://localhost:3000",
     auth_token: <UUID()>,
     author: root,
     created: <NowUnix()>
@@ -30,7 +30,7 @@ template:
     _id: <UUID()>,
     type: jenkins,
     name: <Word()>,
-    host: http://localhost:3000,
+    host: "http://localhost:3000",
     auth_token: <UUID()>,
     author: root,
     created: <NowUnix()>
