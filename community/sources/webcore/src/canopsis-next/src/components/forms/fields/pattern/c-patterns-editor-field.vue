@@ -22,14 +22,12 @@
         )
       v-tab {{ $t('pattern.advancedEditor') }}
       v-tab-item(lazy)
-        c-json-field(
+        c-patterns-advanced-editor-field(
           :value="patternsJson",
-          :label="$t('pattern.advancedEditor')",
-          :readonly="disabled || !isCustomPattern",
+          :disabled="disabled || !isCustomPattern",
+          :attributes="attributes",
           name="advancedJson",
-          validate-on="button",
-          rows="10",
-          @input="updatePatternFromJSON"
+          @input="updateGroupsFromPatterns"
         )
 
     v-layout(v-if="withType && !isCustomPattern", justify-end)
@@ -41,19 +39,9 @@
 </template>
 
 <script>
-import { isNull, isNumber, isObject, isString } from 'lodash';
+import { PATTERN_CUSTOM_ITEM_VALUE } from '@/constants';
 
-import { PATTERN_CONDITIONS, PATTERN_CUSTOM_ITEM_VALUE } from '@/constants';
-
-import { formGroupsToPatternRules, isDatePatternRule, patternsToGroups, patternToForm } from '@/helpers/forms/pattern';
-import {
-  getFieldType,
-  isExtraInfosRuleType,
-  isInfosRuleType,
-  isStringArrayFieldType,
-  isValidPatternCondition,
-} from '@/helpers/pattern';
-import { isValidDateInterval, isValidTimeUnit } from '@/helpers/date/date';
+import { formGroupsToPatternRules, patternsToGroups, patternToForm } from '@/helpers/forms/pattern';
 
 import { formMixin } from '@/mixins/form';
 
@@ -121,59 +109,8 @@ export default {
       this.updateField('id', PATTERN_CUSTOM_ITEM_VALUE);
     },
 
-    isValidRuleField({ field }) {
-      return this.attributes.some(({ value, options }) => {
-        if (isInfosRuleType(options?.type) || isExtraInfosRuleType(options?.type)) {
-          return field.startsWith(value);
-        }
-
-        return value === field;
-      });
-    },
-
-    isValidRuleConditionType({ cond }) {
-      return isValidPatternCondition(cond?.type);
-    },
-
-    isValidRuleFieldType({ cond, field_type: fieldType }) {
-      return !fieldType || getFieldType(cond?.value) === fieldType;
-    },
-
-    isValidRuleConditionValue({ field, cond, field_type: fieldType }) {
-      if (isStringArrayFieldType(fieldType)) {
-        return cond.value.every(isString);
-      }
-
-      if (!fieldType) {
-        if (isObject(cond.value)) {
-          switch (cond.type) {
-            case PATTERN_CONDITIONS.absoluteTime:
-              return isDatePatternRule(field) && isValidDateInterval(cond.value);
-            case PATTERN_CONDITIONS.greater:
-            case PATTERN_CONDITIONS.less:
-              return isNumber(cond.value.value) && isValidTimeUnit(cond.value.unit);
-          }
-
-          return false;
-        }
-      }
-
-      return !isNull(cond?.value);
-    },
-
-    updatePatternFromJSON(patterns) {
-      const isValidGroups = patterns.every(rules => rules.every((rule) => {
-        const isValidField = this.isValidRuleField(rule);
-        const isValidFieldType = this.isValidRuleFieldType(rule);
-        const isValidConditionType = this.isValidRuleConditionType(rule);
-        const isValidConditionValue = this.isValidRuleConditionValue(rule);
-
-        return isValidField && isValidFieldType && isValidConditionType && isValidConditionValue;
-      }));
-
-      if (isValidGroups) {
-        this.updateField('groups', patternsToGroups(patterns));
-      }
+    updateGroupsFromPatterns(patterns) {
+      this.updateField('groups', patternsToGroups(patterns));
     },
   },
 };
