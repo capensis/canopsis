@@ -9,9 +9,17 @@
       @input="updatePattern"
     )
 
-    v-tabs(v-if="!withType || patterns.id", slider-color="primary", centered)
-      v-tab {{ $t('pattern.simpleEditor') }}
-      v-tab-item
+    v-tabs(
+      v-if="!withType || patterns.id",
+      v-model="activeTab",
+      slider-color="primary",
+      centered
+    )
+      v-tab(
+        :disabled="!isSimpleTab && hasErrors",
+        :href="`#${$constants.PATTERN_EDITOR_TABS.simple}`"
+      ) {{ $t('pattern.simpleEditor') }}
+      v-tab-item(:value="$constants.PATTERN_EDITOR_TABS.simple")
         c-pattern-groups-field.mt-2(
           v-field="patterns.groups",
           :disabled="formDisabled",
@@ -20,8 +28,12 @@
           :required="required",
           :attributes="attributes"
         )
-      v-tab {{ $t('pattern.advancedEditor') }}
-      v-tab-item(lazy)
+
+      v-tab(
+        :disabled="isSimpleTab && hasErrors",
+        :href="`#${$constants.PATTERN_EDITOR_TABS.advanced}`"
+      ) {{ $t('pattern.advancedEditor') }}
+      v-tab-item(:value="$constants.PATTERN_EDITOR_TABS.advanced", lazy)
         c-patterns-advanced-editor-field(
           :value="patternsJson",
           :disabled="disabled || !isCustomPattern",
@@ -39,13 +51,14 @@
 </template>
 
 <script>
-import { PATTERN_CUSTOM_ITEM_VALUE } from '@/constants';
+import { PATTERN_CUSTOM_ITEM_VALUE, PATTERN_EDITOR_TABS } from '@/constants';
 
 import { formGroupsToPatternRules, patternsToGroups, patternToForm } from '@/helpers/forms/pattern';
 
 import { formMixin } from '@/mixins/form';
 
 export default {
+  inject: ['$validator'],
   mixins: [formMixin],
   model: {
     prop: 'patterns',
@@ -81,7 +94,21 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      activeTab: PATTERN_EDITOR_TABS.simple,
+      patternsJson: [],
+    };
+  },
   computed: {
+    isSimpleTab() {
+      return this.activeTab === PATTERN_EDITOR_TABS.simple;
+    },
+
+    hasErrors() {
+      return this.errors.any();
+    },
+
     formDisabled() {
       return this.disabled || (this.withType && !this.isCustomPattern);
     },
@@ -89,9 +116,12 @@ export default {
     isCustomPattern() {
       return this.patterns.id === PATTERN_CUSTOM_ITEM_VALUE;
     },
-
-    patternsJson() {
-      return formGroupsToPatternRules(this.patterns.groups);
+  },
+  watch: {
+    activeTab(newTab) {
+      if (newTab === PATTERN_EDITOR_TABS.advanced) {
+        this.patternsJson = formGroupsToPatternRules(this.patterns.groups);
+      }
     },
   },
   methods: {
@@ -111,6 +141,8 @@ export default {
 
     updateGroupsFromPatterns(patterns) {
       this.updateField('groups', patternsToGroups(patterns));
+
+      this.activeTab = PATTERN_EDITOR_TABS.simple;
     },
   },
 };

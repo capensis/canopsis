@@ -192,6 +192,11 @@ export const PATTERN_TABS = {
   corporatePatterns: 'corporatePatterns',
 };
 
+export const PATTERN_EDITOR_TABS = {
+  simple: 'simple',
+  advanced: 'advanced',
+};
+
 export const PATTERNS_FIELDS = {
   alarm: 'alarm_pattern',
   entity: 'entity_pattern',
