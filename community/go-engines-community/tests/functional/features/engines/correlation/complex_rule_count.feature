@@ -7,12 +7,18 @@ Feature: correlation feature - complex rule with threshold count
     {
       "name": "test-complex-correlation-1",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "component": "test-complex-correlation-1"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-complex-correlation-1"
+            }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 10,
           "unit": "s"
@@ -136,12 +142,18 @@ Feature: correlation feature - complex rule with threshold count
     {
       "name": "test-complex-correlation-2",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "component": "test-complex-correlation-2"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-complex-correlation-2"
+            }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 3,
           "unit": "s"
@@ -381,12 +393,18 @@ Feature: correlation feature - complex rule with threshold count
     {
       "name": "test-complex-correlation-3",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "component": "test-complex-correlation-3"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-complex-correlation-3"
+            }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 3,
           "unit": "s"
@@ -543,12 +561,18 @@ Feature: correlation feature - complex rule with threshold count
     {
       "name": "test-complex-correlation-4",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "component": "test-complex-correlation-4"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-complex-correlation-4"
+            }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 5,
           "unit": "s"

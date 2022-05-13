@@ -7,15 +7,27 @@ Feature: correlation feature - corel rule
     {
       "name": "test-corel-1",
       "type": "corel",
-      "config": {
-        "entity_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "component": "child"
-          },
-          {
-            "component": "parent"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "child"
+            }
           }
         ],
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "parent"
+            }
+          }
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 20,
           "unit": "s"
@@ -118,20 +130,32 @@ Feature: correlation feature - corel rule
     {
       "name": "test-corel-2",
       "type": "corel",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "child-2"
+            }
+          }
+        ],
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "parent-2"
+            }
+          }
+        ]
+      ],
       "config": {
         "time_interval": {
           "value": 20,
           "unit": "s"
         },
         "threshold_count": 2,
-        "entity_patterns": [
-          {
-            "component": "child-2"
-          },
-          {
-            "component": "parent-2"
-          }
-        ],
         "corel_id": "{{ `{{ .Alarm.Value.Connector }}` }}",
         "corel_status": "{{ `{{ .Entity.Component }}` }}",
         "corel_parent": "parent-2",
@@ -288,20 +312,32 @@ Feature: correlation feature - corel rule
     {
       "name": "test-corel-3",
       "type": "corel",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "child-3"
+            }
+          }
+        ],
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "parent-3"
+            }
+          }
+        ]
+      ],
       "config": {
         "time_interval": {
           "value": 20,
           "unit": "s"
         },
         "threshold_count": 2,
-        "entity_patterns": [
-          {
-            "component": "child-3"
-          },
-          {
-            "component": "parent-3"
-          }
-        ],
         "corel_id": "{{ `{{ .Alarm.Value.Connector }}` }}",
         "corel_status": "{{ `{{ .Entity.Component }}` }}",
         "corel_parent": "parent-3",
@@ -467,15 +503,27 @@ Feature: correlation feature - corel rule
     {
       "name": "test-corel-4",
       "type": "corel",
-      "config": {
-        "entity_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "component": "child-4"
-          },
-          {
-            "component": "parent-4"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "child-4"
+            }
           }
         ],
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "parent-4"
+            }
+          }
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 5,
           "unit": "s"
@@ -588,15 +636,27 @@ Feature: correlation feature - corel rule
     {
       "name": "test-corel-5",
       "type": "corel",
-      "config": {
-        "entity_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "component": "child-5"
-          },
-          {
-            "component": "parent-5"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "child-5"
+            }
           }
         ],
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "parent-5"
+            }
+          }
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 5,
           "unit": "s"
@@ -709,15 +769,27 @@ Feature: correlation feature - corel rule
     {
       "name": "test-corel-6",
       "type": "corel",
-      "config": {
-        "entity_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "component": "child-6"
-          },
-          {
-            "component": "parent-6"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "child-6"
+            }
           }
         ],
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "parent-6"
+            }
+          }
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 5,
           "unit": "s"
@@ -885,15 +957,27 @@ Feature: correlation feature - corel rule
     {
       "name": "test-corel-7",
       "type": "corel",
-      "config": {
-        "entity_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "component": "child-7"
-          },
-          {
-            "component": "parent-7"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "child-7"
+            }
           }
         ],
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "parent-7"
+            }
+          }
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 20,
           "unit": "s"

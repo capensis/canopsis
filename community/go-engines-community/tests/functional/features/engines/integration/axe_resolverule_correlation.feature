@@ -9,15 +9,17 @@ Feature: resolve meta alarm
       "name": "test-metaalarmrule-axe-resolverule-correlation-1",
       "type": "attribute",
       "auto_resolve": true,
-      "config": {
-        "alarm_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "v": {
-              "component": "test-component-axe-resolverule-correlation-1"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-axe-resolverule-correlation-1"
             }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201

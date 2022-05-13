@@ -85,10 +85,10 @@ Feature: correlation feature - valuegroup rule with threshold rate
       {
         "description" : "test-correlation-valuegroup-rate-2",
         "enabled": true,
-        "event_pattern": [
+        "alarm_pattern": [
           [
             {
-              "field": "connector",
+              "field": "v.connector",
               "cond": {
                 "type": "eq",
                 "value": "test-valuegroup-rule-rate-2-connector"
@@ -560,19 +560,27 @@ Feature: correlation feature - valuegroup rule with threshold rate
     {
       "name": "test-valuegroup-correlation-rate-6",
       "type": "valuegroup",
-      "config": {
-        "total_entity_patterns": [
+      "total_entity_pattern": [
+        [
           {
-            "name": {
-              "regex_match": "test-valuegroup-rule-rate-6-resource"
-            }
-          },
-          {
-            "name": {
-              "regex_match": "test-valuegroup-rule-rate-7-resource"
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-valuegroup-rule-rate-6-resource"
             }
           }
         ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-valuegroup-rule-rate-7-resource"
+            }
+          }
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 15,
           "unit": "s"
