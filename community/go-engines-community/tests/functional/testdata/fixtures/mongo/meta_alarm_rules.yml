@@ -1,401 +1,458 @@
+template:
+  - &metaaalarm_rule_complex {
+    _id: <UUID()>,
+    auto_resolve: false,
+    name: <Word()>,
+    type: complex,
+    config: {
+      time_interval: {
+        unit: s,
+        value: 10
+      }
+    },
+    alarm_pattern: [
+      [
+        {
+          field: v.component,
+          cond: {
+            type: eq,
+            value: <Word()>
+          }
+        }
+      ]
+    ],
+    entity_pattern: [
+      [
+        {
+          field: name,
+          cond: {
+            type: eq,
+            value: <Word()>
+          }
+        }
+      ]
+    ]
+  }
+  - &metaaalarm_rule_attribute {
+    _id: <UUID()>,
+    auto_resolve: false,
+    name: <Word()>,
+    type: attribute,
+    alarm_pattern: [
+      [
+        {
+          field: v.component,
+          cond: {
+            type: eq,
+            value: <Word()>
+          }
+        }
+      ]
+    ],
+    entity_pattern: [
+      [
+        {
+          field: name,
+          cond: {
+            type: eq,
+            value: <Word()>
+          }
+        }
+      ]
+    ]
+  }
+  - &metaaalarm_rule_manual {
+    _id: <UUID()>,
+    auto_resolve: false,
+    name: <Word()>,
+    type: manualgroup
+  }
+
 meta_alarm_rules:
   meta_alarm_rules_1:
+    <<: *metaaalarm_rule_complex
     _id: test-alarm-get-metaalarm-rule-1
-    auto_resolve: false
     name: Test alarm get
-    patterns: null
-    type: complex
   meta_alarm_rules_2:
+    <<: *metaaalarm_rule_complex
     _id: test-alarm-get-metaalarm-children-instructions-rule-1
-    auto_resolve: false
     name: Test alarm get
-    patterns: null
-    type: complex
   meta_alarm_rules_3:
+    <<: *metaaalarm_rule_complex
     _id: test-alarm-get-metaalarm-rule-2
-    auto_resolve: false
-    config:
-      time_interval:
-        unit: s
-        value: 10
     name: Test alarm get
-    patterns: null
-    type: complex
   meta_alarm_rules_4:
+    <<: *metaaalarm_rule_complex
     _id: test-alarmcounter-get-metaalarm-rule-1
-    auto_resolve: false
     name: Test alarmcounter get
-    patterns: null
-    type: complex
   meta_alarm_rules_5:
+    <<: *metaaalarm_rule_manual
     _id: test-alarm-get-metaalarm-rule-manual-1
-    auto_resolve: false
     name: Test manual 1
-    patterns: null
-    type: manualgroup
   meta_alarm_rules_6:
+    <<: *metaaalarm_rule_complex
     _id: test-metaalarm-to-get-1
     author: test-metaalarm-to-get-1-author
-    auto_resolve: false
     name: Test alarm get
-    patterns: null
-    type: complex
+    alarm_pattern: null
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-get-1-pattern
   meta_alarm_rules_7:
+    <<: *metaaalarm_rule_complex
     _id: test-metaalarm-to-update-1
-    author: test-metaalarm-to-update-1-author
-    auto_resolve: false
     name: test-metaalarm-to-update-1
-    patterns: null
-    type: complex
+    alarm_pattern: null
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-update-1-pattern
   meta_alarm_rules_8:
+    <<: *metaaalarm_rule_complex
+    _id: test-metaalarm-to-update-2
+    name: test-metaalarm-to-update-2
+    alarm_pattern: null
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-update-2-pattern
+  meta_alarm_rules_9:
+    <<: *metaaalarm_rule_complex
+    _id: test-metaalarm-to-update-3
+    name: test-metaalarm-to-update-3
+    alarm_pattern: null
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-update-3-pattern
+    type: complex
+  meta_alarm_rules_10:
+    <<: *metaaalarm_rule_complex
+    _id: test-metaalarm-to-update-4
+    name: test-metaalarm-to-update-4
+    alarm_pattern: null
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-update-4-pattern
+  meta_alarm_rules_11:
+    <<: *metaaalarm_rule_complex
+    _id: test-metaalarm-to-update-5
+    name: test-metaalarm-to-update-5
+    alarm_pattern: null
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-update-5-pattern
+  meta_alarm_rules_12:
+    <<: *metaaalarm_rule_complex
+    _id: test-metaalarm-to-update-6
+    name: test-metaalarm-to-update-6
+    alarm_pattern: null
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-update-6-pattern
+  meta_alarm_rules_13:
+    <<: *metaaalarm_rule_complex
+    _id: test-metaalarm-to-update-7
+    name: test-metaalarm-to-update-7
+    alarm_pattern: null
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-update-7-pattern
+  meta_alarm_rules_14:
+    <<: *metaaalarm_rule_complex
+    _id: test-metaalarm-to-update-8
+    name: test-metaalarm-to-update-8
+    alarm_pattern: null
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-update-8-pattern
+  meta_alarm_rules_15:
+    <<: *metaaalarm_rule_complex
     _id: test-metaalarm-to-get-2
     author: test-metaalarm-to-get-2-author
-    auto_resolve: false
-    config:
-      time_interval:
-        unit: s
-        value: 10
     name: Test alarm get
-    patterns: null
-    type: complex
-  meta_alarm_rules_9:
-    _id: test-metaalarm-to-get-3
-    author: test-metaalarm-to-get-3-author
-    auto_resolve: false
-    name: Test alarm get
-    patterns: null
-    type: manualgroup
-  meta_alarm_rules_10:
-    _id: test-metaalarm-to-delete
-    auto_resolve: false
-    name: Test alarm get
-    patterns: null
-    type: complex
-  meta_alarm_rules_11:
-    _id: test-metaalarm-metrics-axe-4-1
-    author: test-author-metrics-axe-4-name
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-metrics-axe-4
-    created: 1637907655
-    name: test-metaalarm-metrics-axe-4-1-name
-    output_template: ""
-    type: attribute
-    updated: 1637907655
-  meta_alarm_rules_12:
-    _id: test-metaalarm-metrics-axe-4-2
-    author: test-author-metrics-axe-4-name
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-metrics-axe-4
-    created: 1637907655
-    name: test-metaalarm-metrics-axe-4-2-name
-    output_template: ""
-    type: attribute
-    updated: 1637907655
-  meta_alarm_rules_13:
-    _id: test-metaalarm-metrics-axe-5
-    author: test-author-metrics-axe-5-name
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-metrics-axe-5
-    created: 1637907655
-    name: test-metaalarm-metrics-axe-5-name
-    output_template: ""
-    type: attribute
-    updated: 1637907655
-  meta_alarm_rules_14:
-    _id: test-metaalarm-metrics-axe-10
-    author: test-author-metrics-axe-10-name
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-metrics-axe-10
-    created: 1637907655
-    name: test-metaalarm-metrics-axe-10-name
-    output_template: ""
-    type: attribute
-    updated: 1637907655
-  meta_alarm_rules_15:
-    _id: test-metaalarm-metrics-axe-11
-    author: test-author-metrics-axe-11-name
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-metrics-axe-11
-    created: 1637907655
-    name: test-metaalarm-metrics-axe-11-name
-    output_template: ""
-    type: attribute
-    updated: 1637907655
+    alarm_pattern: null
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-get-2-pattern
   meta_alarm_rules_16:
-    _id: test-metaalarmrule-axe-correlation-1
-    author: test-author-metaalarmrule-axe-correlation
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-1
-    created: 1637907655
-    name: test-metaalarmrule-axe-correlation-1-name
-    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
-      }}'
-    type: attribute
-    updated: 1637907655
+    <<: *metaaalarm_rule_manual
+    _id: test-metaalarm-to-get-3
+    name: Test manual 1
   meta_alarm_rules_17:
-    _id: test-metaalarmrule-axe-correlation-2
-    author: test-author-metaalarmrule-axe-correlation
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-2
-    created: 1637907655
-    name: test-metaalarmrule-axe-correlation-2-name
-    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
-      }}'
-    type: attribute
-    updated: 1637907655
+    <<: *metaaalarm_rule_complex
+    _id: test-metaalarm-to-delete
+    name: Test alarm get
   meta_alarm_rules_18:
-    _id: test-metaalarmrule-axe-correlation-3
-    author: test-author-metaalarmrule-axe-correlation
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-3
-    created: 1637907655
-    name: test-metaalarmrule-axe-correlation-3-name
-    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
-      }}'
-    type: attribute
-    updated: 1637907655
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarm-metrics-axe-4-1
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-metrics-axe-4
+    name: test-metaalarm-metrics-axe-4-1-name
   meta_alarm_rules_19:
-    _id: test-metaalarmrule-axe-correlation-4
-    author: test-author-metaalarmrule-axe-correlation
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-4
-    created: 1637907655
-    name: test-metaalarmrule-axe-correlation-4-name
-    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
-      }}'
-    type: attribute
-    updated: 1637907655
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarm-metrics-axe-4-2
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-metrics-axe-4
+    name: test-metaalarm-metrics-axe-4-2-name
   meta_alarm_rules_20:
-    _id: test-metaalarmrule-axe-correlation-5
-    author: test-author-metaalarmrule-axe-correlation
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-5
-    created: 1637907655
-    name: test-metaalarmrule-axe-correlation-5-name
-    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
-      }}'
-    type: attribute
-    updated: 1637907655
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarm-metrics-axe-5
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-metrics-axe-5
+    name: test-metaalarm-metrics-axe-5-name
   meta_alarm_rules_21:
-    _id: test-metaalarmrule-axe-correlation-6
-    author: test-author-metaalarmrule-axe-correlation
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-6
-    created: 1637907655
-    name: test-metaalarmrule-axe-correlation-6-name
-    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
-      }}'
-    type: attribute
-    updated: 1637907655
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarm-metrics-axe-10
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-metrics-axe-10
+    name: test-metaalarm-metrics-axe-10-name
   meta_alarm_rules_22:
-    _id: test-metaalarmrule-axe-correlation-7
-    author: test-author-metaalarmrule-axe-correlation
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-7
-    created: 1637907655
-    name: test-metaalarmrule-axe-correlation-7-name
-    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
-      }}'
-    type: attribute
-    updated: 1637907655
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarm-metrics-axe-11
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-metrics-axe-11
+    name: test-metaalarm-metrics-axe-11-name
   meta_alarm_rules_23:
-    _id: test-metaalarmrule-axe-correlation-8
-    author: test-author-metaalarmrule-axe-correlation
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-8
-    created: 1637907655
-    name: test-metaalarmrule-axe-correlation-8-name
-    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
-      }}'
-    type: attribute
-    updated: 1637907655
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-axe-correlation-1
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-axe-correlation-1
+    name: test-metaalarmrule-axe-correlation-1-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}'
   meta_alarm_rules_24:
-    _id: test-metaalarmrule-axe-correlation-9
-    author: test-author-metaalarmrule-axe-correlation
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-9
-    created: 1637907655
-    name: test-metaalarmrule-axe-correlation-9-name
-    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
-      }}'
-    type: attribute
-    updated: 1637907655
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-axe-correlation-2
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-axe-correlation-2
+    name: test-metaalarmrule-axe-correlation-2-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}'
   meta_alarm_rules_25:
-    _id: test-metaalarmrule-axe-correlation-10
-    author: test-author-metaalarmrule-axe-correlation
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-10
-    created: 1637907655
-    name: test-metaalarmrule-axe-correlation-10-name
-    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
-      }}'
-    type: attribute
-    updated: 1637907655
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-axe-correlation-3
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-axe-correlation-3
+    name: test-metaalarmrule-axe-correlation-3-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}'
   meta_alarm_rules_26:
-    _id: test-metaalarmrule-axe-correlation-11
-    author: test-author-metaalarmrule-axe-correlation
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-11
-    created: 1637907655
-    name: test-metaalarmrule-axe-correlation-11-name
-    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
-      }}'
-    type: attribute
-    updated: 1637907655
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-axe-correlation-4
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-axe-correlation-4
+    name: test-metaalarmrule-axe-correlation-4-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}'
   meta_alarm_rules_27:
-    _id: test-metaalarmrule-axe-correlation-12-1
-    author: test-author-metaalarmrule-axe-correlation
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-12
-    created: 1637907655
-    name: test-metaalarmrule-axe-correlation-12-1-name
-    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
-      }}'
-    type: attribute
-    updated: 1637907655
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-axe-correlation-5
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-axe-correlation-5
+    name: test-metaalarmrule-axe-correlation-5-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}'
   meta_alarm_rules_28:
-    _id: test-metaalarmrule-axe-correlation-12-2
-    author: test-author-metaalarmrule-axe-correlation
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-12
-    created: 1637907655
-    name: test-metaalarmrule-axe-correlation-12-2-name
-    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
-      }}'
-    type: attribute
-    updated: 1637907655
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-axe-correlation-6
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-axe-correlation-6
+    name: test-metaalarmrule-axe-correlation-6-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}'
   meta_alarm_rules_29:
-    _id: test-metaalarmrule-axe-correlation-13-1
-    author: test-author-metaalarmrule-axe-correlation
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-13
-    created: 1637907655
-    name: test-metaalarmrule-axe-correlation-13-1-name
-    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
-      }}'
-    type: attribute
-    updated: 1637907655
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-axe-correlation-7
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-axe-correlation-7
+    name: test-metaalarmrule-axe-correlation-7-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}'
   meta_alarm_rules_30:
-    _id: test-metaalarmrule-axe-correlation-13-2
-    author: test-author-metaalarmrule-axe-correlation
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-13
-    created: 1637907655
-    name: test-metaalarmrule-axe-correlation-13-2-name
-    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
-      }}'
-    type: attribute
-    updated: 1637907655
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-axe-correlation-8
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-axe-correlation-8
+    name: test-metaalarmrule-axe-correlation-8-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}'
   meta_alarm_rules_31:
-    _id: test-metaalarmrule-axe-correlation-14
-    author: test-author-metaalarmrule-axe-correlation
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-axe-correlation-14
-    created: 1637907655
-    name: test-metaalarmrule-axe-correlation-14-name
-    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component
-      }}'
-    type: attribute
-    updated: 1637907655
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-axe-correlation-9
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-axe-correlation-9
+    name: test-metaalarmrule-axe-correlation-9-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}'
   meta_alarm_rules_32:
-    _id: test-metaalarmrule-action-correlation-1
-    author: test-author-metaalarmrule-action-correlation
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-action-correlation-1
-    created: 1637907655
-    name: test-metaalarmrule-action-correlation-1-name
-    output_template: ""
-    type: attribute
-    updated: 1637907655
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-axe-correlation-10
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-axe-correlation-10
+    name: test-metaalarmrule-axe-correlation-10-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}'
   meta_alarm_rules_33:
-    _id: test-metaalarmrule-action-correlation-2
-    author: test-author-metaalarmrule-action-correlation
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-action-correlation-2
-    created: 1637907655
-    name: test-metaalarmrule-action-correlation-2-name
-    output_template: ""
-    type: attribute
-    updated: 1637907655
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-axe-correlation-11
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-axe-correlation-11
+    name: test-metaalarmrule-axe-correlation-11-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}'
   meta_alarm_rules_34:
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-axe-correlation-12-1
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-axe-correlation-12
+    name: test-metaalarmrule-axe-correlation-12-1-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}'
+  meta_alarm_rules_35:
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-axe-correlation-12-2
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-axe-correlation-12
+    name: test-metaalarmrule-axe-correlation-12-2-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}'
+  meta_alarm_rules_36:
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-axe-correlation-13-1
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-axe-correlation-13
+    name: test-metaalarmrule-axe-correlation-13-1-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}'
+  meta_alarm_rules_37:
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-axe-correlation-13-2
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-axe-correlation-13
+    name: test-metaalarmrule-axe-correlation-13-2-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}'
+  meta_alarm_rules_38:
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-axe-correlation-14
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-axe-correlation-14
+    name: test-metaalarmrule-axe-correlation-14-name
+    output_template: 'Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}'
+  meta_alarm_rules_39:
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-action-correlation-1
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-action-correlation-1
+    name: test-metaalarmrule-action-correlation-1-name
+  meta_alarm_rules_40:
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-action-correlation-2
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-action-correlation-2
+    name: test-metaalarmrule-action-correlation-2-name
+  meta_alarm_rules_41:
+    <<: *metaaalarm_rule_attribute
     _id: test-metaalarmrule-action-correlation-3
-    author: test-author-metaalarmrule-action-correlation
-    auto_resolve: false
-    config:
-      alarm_patterns:
-      - v:
-          component: test-component-action-correlation-3
-    created: 1637907655
+    entity_pattern: null
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-action-correlation-3
     name: test-metaalarmrule-action-correlation-3-name
-    output_template: ""
-    type: attribute
-    updated: 1637907655

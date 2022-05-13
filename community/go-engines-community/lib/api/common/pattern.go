@@ -12,9 +12,10 @@ import (
 )
 
 var (
-	ErrNotExistCorporateAlarmPattern     = ValidationError{field: "corporate_alarm_pattern", err: errors.New("CorporateAlarmPattern doesn't exist.")}
-	ErrNotExistCorporateEntityPattern    = ValidationError{field: "corporate_entity_pattern", err: errors.New("CorporateEntityPattern doesn't exist.")}
-	ErrNotExistCorporatePbehaviorPattern = ValidationError{field: "corporate_pbehavior_pattern", err: errors.New("CorporatePbehaviorPattern doesn't exist.")}
+	ErrNotExistCorporateAlarmPattern       = ValidationError{field: "corporate_alarm_pattern", err: errors.New("CorporateAlarmPattern doesn't exist.")}
+	ErrNotExistCorporateEntityPattern      = ValidationError{field: "corporate_entity_pattern", err: errors.New("CorporateEntityPattern doesn't exist.")}
+	ErrNotExistTotalCorporateEntityPattern = ValidationError{field: "corporate_total_entity_pattern", err: errors.New("CorporateTotalEntityPattern doesn't exist.")}
+	ErrNotExistCorporatePbehaviorPattern   = ValidationError{field: "corporate_pbehavior_pattern", err: errors.New("CorporatePbehaviorPattern doesn't exist.")}
 )
 
 type AlarmPatternFieldsRequest struct {
@@ -59,6 +60,27 @@ func (r EntityPatternFieldsRequest) ToModel() savedpattern.EntityPatternFields {
 	}
 }
 
+type TotalEntityPatternFieldsRequest struct {
+	TotalEntityPattern          pattern.Entity `json:"total_entity_pattern" binding:"entity_pattern"`
+	CorporateTotalEntityPattern string         `json:"corporate_total_entity_pattern"`
+
+	CorporatePattern savedpattern.SavedPattern `json:"-"`
+}
+
+func (r TotalEntityPatternFieldsRequest) ToModel() savedpattern.TotalEntityPatternFields {
+	if r.CorporatePattern.ID == "" {
+		return savedpattern.TotalEntityPatternFields{
+			TotalEntityPattern: r.TotalEntityPattern,
+		}
+	}
+
+	return savedpattern.TotalEntityPatternFields{
+		TotalEntityPattern:               r.CorporatePattern.EntityPattern,
+		CorporateTotalEntityPattern:      r.CorporatePattern.ID,
+		CorporateTotalEntityPatternTitle: r.CorporatePattern.Title,
+	}
+}
+
 type PbehaviorPatternFieldsRequest struct {
 	PbehaviorPattern          pattern.PbehaviorInfo `json:"pbehavior_pattern" binding:"pbehavior_pattern"`
 	CorporatePbehaviorPattern string                `json:"corporate_pbehavior_pattern"`
@@ -83,6 +105,7 @@ func (r PbehaviorPatternFieldsRequest) ToModel() savedpattern.PbehaviorPatternFi
 type PatternFieldsTransformer interface {
 	TransformAlarmPatternFieldsRequest(ctx context.Context, r AlarmPatternFieldsRequest) (AlarmPatternFieldsRequest, error)
 	TransformEntityPatternFieldsRequest(ctx context.Context, r EntityPatternFieldsRequest) (EntityPatternFieldsRequest, error)
+	TransformTotalEntityPatternFieldsRequest(ctx context.Context, r TotalEntityPatternFieldsRequest) (TotalEntityPatternFieldsRequest, error)
 	TransformPbehaviorPatternFieldsRequest(ctx context.Context, r PbehaviorPatternFieldsRequest) (PbehaviorPatternFieldsRequest, error)
 }
 
@@ -126,6 +149,21 @@ func (t *basePatternFieldsTransformer) TransformEntityPatternFieldsRequest(ctx c
 	return r, nil
 }
 
+func (t *basePatternFieldsTransformer) TransformTotalEntityPatternFieldsRequest(ctx context.Context, r TotalEntityPatternFieldsRequest) (TotalEntityPatternFieldsRequest, error) {
+	if r.CorporateTotalEntityPattern != "" {
+		err := t.patternCollection.FindOne(ctx, bson.M{"_id": r.CorporateTotalEntityPattern, "type": savedpattern.TypeEntity}).Decode(&r.CorporatePattern)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return r, ErrNotExistTotalCorporateEntityPattern
+			}
+
+			return r, err
+		}
+	}
+
+	return r, nil
+}
+
 func (t *basePatternFieldsTransformer) TransformPbehaviorPatternFieldsRequest(ctx context.Context, r PbehaviorPatternFieldsRequest) (PbehaviorPatternFieldsRequest, error) {
 	if r.CorporatePbehaviorPattern != "" {
 		err := t.patternCollection.FindOne(ctx, bson.M{"_id": r.CorporatePbehaviorPattern, "type": savedpattern.TypePbehavior}).Decode(&r.CorporatePattern)
@@ -154,6 +192,14 @@ func ValidateEntityPatternFieldsRequest(sl validator.StructLevel) {
 
 	if r.CorporateEntityPattern != "" && len(r.EntityPattern) > 0 {
 		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "required_not_both", "CorporateEntityPattern")
+	}
+}
+
+func ValidateTotalEntityPatternFieldsRequest(sl validator.StructLevel) {
+	r := sl.Current().Interface().(TotalEntityPatternFieldsRequest)
+
+	if r.CorporateTotalEntityPattern != "" && len(r.TotalEntityPattern) > 0 {
+		sl.ReportError(r.TotalEntityPattern, "TotalEntityPattern", "TotalEntityPattern", "required_not_both", "CorporateTotalEntityPattern")
 	}
 }
 

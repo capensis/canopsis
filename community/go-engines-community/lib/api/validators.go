@@ -89,6 +89,7 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	v.RegisterStructValidation(common.ValidateFilteredQuery, pagination.FilteredQuery{})
 	v.RegisterStructValidation(common.ValidateAlarmPatternFieldsRequest, common.AlarmPatternFieldsRequest{})
 	v.RegisterStructValidation(common.ValidateEntityPatternFieldsRequest, common.EntityPatternFieldsRequest{})
+	v.RegisterStructValidation(common.ValidateTotalEntityPatternFieldsRequest, common.TotalEntityPatternFieldsRequest{})
 	v.RegisterStructValidation(common.ValidatePbehaviorPatternFieldsRequest, common.PbehaviorPatternFieldsRequest{})
 
 	pbhValidator := pbehavior.NewValidator(client)
