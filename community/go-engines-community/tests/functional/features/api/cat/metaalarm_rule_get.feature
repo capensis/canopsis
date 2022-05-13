@@ -13,10 +13,27 @@ Feature: Get a metaalarm-rule
         {
           "_id": "test-metaalarm-to-get-1",
           "auto_resolve": false,
-          "config": {},
+          "config": {
+            "time_interval": {
+              "value": 10,
+              "unit": "s"
+            }
+          },
           "name": "Test alarm get",
           "author": "test-metaalarm-to-get-1-author",
-          "type": "complex"
+          "type": "complex",
+          "output_template": "",
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-get-1-pattern"
+                }
+              }
+            ]
+          ]
         },
         {
           "_id": "test-metaalarm-to-get-2",
@@ -29,7 +46,19 @@ Feature: Get a metaalarm-rule
           },
           "name": "Test alarm get",
           "author": "test-metaalarm-to-get-2-author",
-          "type": "complex"
+          "type": "complex",
+          "output_template": "",
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-get-2-pattern"
+                }
+              }
+            ]
+          ]
         }
       ],
       "meta": {
@@ -50,10 +79,27 @@ Feature: Get a metaalarm-rule
     {
       "_id": "test-metaalarm-to-get-1",
       "auto_resolve": false,
-      "config": {},
+      "config": {
+        "time_interval": {
+          "value": 10,
+          "unit": "s"
+        }
+      },
       "name": "Test alarm get",
       "author": "test-metaalarm-to-get-1-author",
-      "type": "complex"
+      "type": "complex",
+      "output_template": "",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-get-1-pattern"
+            }
+          }
+        ]
+      ]
     }
     """
 

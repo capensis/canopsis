@@ -7,14 +7,18 @@ Feature: correlation feature - complex rule with threshold rate
     {
       "name": "test-complex-correlation-threshold-rate-1",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "entity_pattern": [
+        [
           {
-            "name": {
-              "regex_match": "test-complex-rule-rate-1-resource"
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-1-resource"
             }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 10,
           "unit": "s"
@@ -138,14 +142,18 @@ Feature: correlation feature - complex rule with threshold rate
     {
       "name": "test-complex-correlation-threshold-rate-2",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "entity_pattern": [
+        [
           {
-            "name": {
-              "regex_match": "test-complex-rule-rate-2-resource"
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-2-resource"
             }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 10,
           "unit": "s"
@@ -309,14 +317,18 @@ Feature: correlation feature - complex rule with threshold rate
     {
       "name": "test-complex-correlation-threshold-rate-3",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "entity_pattern": [
+        [
           {
-            "name": {
-              "regex_match": "test-complex-rule-rate-3-resource"
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-3-resource"
             }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 3,
           "unit": "s"
@@ -473,14 +485,18 @@ Feature: correlation feature - complex rule with threshold rate
     {
       "name": "test-complex-correlation-threshold-rate-4",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "entity_pattern": [
+        [
           {
-            "name": {
-              "regex_match": "test-complex-rule-rate-4-resource"
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-4-resource"
             }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 3,
           "unit": "s"
@@ -658,14 +674,18 @@ Feature: correlation feature - complex rule with threshold rate
     {
       "name": "test-complex-correlation-threshold-rate-5",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "entity_pattern": [
+        [
           {
-            "name": {
-              "regex_match": "test-complex-rule-rate-5-resource"
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-5-resource"
             }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 5,
           "unit": "s"
@@ -807,26 +827,38 @@ Feature: correlation feature - complex rule with threshold rate
     {
       "name": "test-complex-correlation-threshold-rate-6",
       "type": "complex",
+      "total_entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-6-resource"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-7-resource"
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-7-resource"
+            }
+          }
+        ]
+      ],
       "config": {
-        "total_entity_patterns": [
-          {
-            "name": {
-              "regex_match": "test-complex-rule-rate-6-resource"
-            }
-          },
-          {
-            "name": {
-              "regex_match": "test-complex-rule-rate-7-resource"
-            }
-          }
-        ],
-        "entity_patterns": [
-          {
-            "name": {
-              "regex_match": "test-complex-rule-rate-7-resource"
-            }
-          }
-        ],
         "time_interval": {
           "value": 10,
           "unit": "s"
