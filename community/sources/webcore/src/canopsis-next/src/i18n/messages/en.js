@@ -241,6 +241,8 @@ export default {
     resolvedAt: 'Resolved at',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Custom',
+    eventType: 'Event type',
+    sourceType: 'Source type',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -348,6 +350,18 @@ export default {
 
       [PATTERN_OPERATORS.acked]: 'Acked',
       [PATTERN_OPERATORS.notAcked]: 'Not acked',
+    },
+    entityEventTypes: {
+      [EVENT_ENTITY_TYPES.ack]: 'Ack',
+      [EVENT_ENTITY_TYPES.ackRemove]: 'Ack remove',
+      [EVENT_ENTITY_TYPES.assocTicket]: 'Associate ticket',
+      [EVENT_ENTITY_TYPES.declareTicket]: 'Declare ticket',
+      [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
+      [EVENT_ENTITY_TYPES.uncancel]: 'Uncancel',
+      [EVENT_ENTITY_TYPES.changeState]: 'Change state',
+      [EVENT_ENTITY_TYPES.check]: 'Check',
+      [EVENT_ENTITY_TYPES.comment]: 'Comment',
+      [EVENT_ENTITY_TYPES.snooze]: 'Snooze',
     },
   },
   variableTypes: {
