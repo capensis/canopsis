@@ -94,6 +94,11 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 // It logs error and sends event to next engine on fail and
 // pbehavior type will be resolved in periodical worker.
 func (p *messageProcessor) processEvent(ctx context.Context, event types.Event, msg []byte) (types.PbehaviorInfo, error) {
+	// Skip resolve if the entity is already in pbehavior.
+	if !event.Entity.PbehaviorInfo.IsDefaultActive() {
+		return event.Entity.PbehaviorInfo, nil
+	}
+	// Resolve type in case if the entity is new.
 	ctx, cancel := context.WithTimeout(ctx, resolveTimeout)
 	defer cancel()
 	now := time.Now().In(p.TimezoneConfigProvider.Get().Location)
