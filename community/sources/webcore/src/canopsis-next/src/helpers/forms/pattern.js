@@ -16,7 +16,12 @@ import {
 } from '@/constants';
 
 import uid from '@/helpers/uid';
-import { getFieldType, isDatePatternRuleField, isInfosPatternRuleField } from '@/helpers/pattern';
+import {
+  getFieldType,
+  isDatePatternRuleField,
+  isInfosPatternRuleField,
+  isExtraInfosPatternRuleField,
+} from '@/helpers/pattern';
 import { convertDateToTimestamp } from '@/helpers/date/date';
 import {
   getDiffBetweenStartAndStopQuickInterval,
@@ -96,14 +101,6 @@ import { durationToForm } from '@/helpers/date/duration';
  * @typedef {Pattern} PatternForm
  * @property {PatternGroupsForm} groups
  */
-
-/**
- * Check pattern is extra infos
- *
- * @param {string} value
- * @return {boolean}
- */
-const isExtraInfosPatternRuleAttribute = value => value === EVENT_FILTER_PATTERN_FIELDS.extraInfos;
 
 /**
  * Convert pattern rule to form
@@ -365,7 +362,7 @@ export const formRuleToPatternRule = (rule) => {
   };
 
   const isInfos = isInfosPatternRuleField(rule.attribute);
-  const isExtraInfos = isExtraInfosPatternRuleAttribute(rule.attribute);
+  const isExtraInfos = isExtraInfosPatternRuleField(rule.attribute);
   const isDate = isDatePatternRuleField(rule.attribute);
 
   if (isInfos) {
