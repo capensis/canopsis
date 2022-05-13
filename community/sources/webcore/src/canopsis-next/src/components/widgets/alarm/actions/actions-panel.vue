@@ -197,9 +197,14 @@ export default {
             actions.unshift(filteredActionsMap.ack);
           }
 
+          if (!this.item.v.ticket) {
+            actions.unshift(
+              filteredActionsMap.declareTicket,
+              filteredActionsMap.associateTicket,
+            );
+          }
+
           actions.unshift(
-            filteredActionsMap.declareTicket,
-            filteredActionsMap.associateTicket,
             filteredActionsMap.cancel,
             filteredActionsMap.ackRemove,
             filteredActionsMap.changeState,
