@@ -4,6 +4,7 @@
       v-if="withType",
       :value="patterns.id",
       :type="type",
+      :disabled="disabled",
       return-object,
       required,
       @input="updatePattern"
