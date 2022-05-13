@@ -14,7 +14,7 @@ import {
   PATTERN_STRING_OPERATORS,
   PATTERN_CONDITIONS,
   ALARM_PATTERN_FIELDS,
-  ENTITY_PATTERN_FIELDS,
+  ENTITY_PATTERN_FIELDS, EVENT_FILTER_PATTERN_FIELDS,
 } from '@/constants';
 import { isValidDateInterval } from '@/helpers/date/date';
 import { isValidDuration } from '@/helpers/date/duration';
@@ -353,6 +353,14 @@ export const isInfosPatternRuleField = value => [
  * @return {boolean}
  */
 export const isDurationPatternRuleField = value => value === ALARM_PATTERN_FIELDS.duration;
+
+/**
+ * Check pattern is extra infos
+ *
+ * @param {string} value
+ * @return {boolean}
+ */
+export const isExtraInfosPatternRuleField = value => value === EVENT_FILTER_PATTERN_FIELDS.extraInfos;
 
 /**
  * Check rule value is valid without field type
