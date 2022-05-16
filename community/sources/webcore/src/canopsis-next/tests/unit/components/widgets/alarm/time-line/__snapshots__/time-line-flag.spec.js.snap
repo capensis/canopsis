@@ -203,6 +203,17 @@ exports[`time-line-flag Renders \`time-line-flag\` with type: changeState 1`] = 
 </div>
 `;
 
+exports[`time-line-flag Renders \`time-line-flag\` with type: check 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: black;"
+  >
+    clear
+  </i>
+</div>
+`;
+
 exports[`time-line-flag Renders \`time-line-flag\` with type: comment 1`] = `
 <div>
   <i
@@ -566,6 +577,17 @@ exports[`time-line-flag Renders \`time-line-flag\` with type: statusdec 1`] = `
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: statusinc 1`] = `
+<div>
+  <i
+    class="material-icons"
+    style="color: black;"
+  >
+    clear
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: uncancel 1`] = `
 <div>
   <i
     class="material-icons"
