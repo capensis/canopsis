@@ -259,7 +259,7 @@ $denseCellHeight: 32px;
 $denseColorIndicatorPadding: 1px 5px;
 
 table.v-datatable {
-  &-header__sort-badge {
+  .v-datatable-header__sort-badge {
     display: inline-flex;
     justify-content: center;
     align-items: center;
