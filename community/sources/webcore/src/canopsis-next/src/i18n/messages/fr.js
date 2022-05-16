@@ -2797,6 +2797,7 @@ export default {
     errors: {
       ruleRequired: 'Veuillez ajouter au moins une règle',
       groupRequired: 'Veuillez ajouter au moins un groupe',
+      invalidPatterns: 'Les modèles ne sont pas valides ou il y a un champ de modèle désactivé',
     },
   },
 

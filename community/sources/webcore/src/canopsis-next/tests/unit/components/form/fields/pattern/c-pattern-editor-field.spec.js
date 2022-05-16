@@ -26,12 +26,24 @@ const factory = (options = {}) => shallowMount(CPatternsEditorField, {
   localVue,
   stubs,
 
+  parentComponent: {
+    $_veeValidate: {
+      validator: 'new',
+    },
+  },
+
   ...options,
 });
 
 const snapshotFactory = (options = {}) => mount(CPatternsEditorField, {
   localVue,
   stubs,
+
+  parentComponent: {
+    $_veeValidate: {
+      validator: 'new',
+    },
+  },
 
   ...options,
 });

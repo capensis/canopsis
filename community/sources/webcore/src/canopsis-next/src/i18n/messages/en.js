@@ -2797,6 +2797,7 @@ export default {
     errors: {
       ruleRequired: 'Please add at least one rule',
       groupRequired: 'Please add at least one group',
+      invalidPatterns: 'Patterns are invalid or there is a disabled pattern field',
     },
   },
 

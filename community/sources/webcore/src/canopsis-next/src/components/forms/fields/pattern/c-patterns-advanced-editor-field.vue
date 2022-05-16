@@ -42,9 +42,28 @@ export default {
       required: false,
     },
   },
+  computed: {
+    disabledAttributes() {
+      return this.attributes.reduce((acc, { value, options }) => {
+        if (options?.disabled) {
+          acc.push(value);
+        }
+
+        return acc;
+      }, []);
+    },
+  },
   methods: {
+    isDisabledField(field) {
+      return this.disabledAttributes.includes(field);
+    },
+
     isValidRuleField({ field }) {
       return this.attributes.some(({ value, options }) => {
+        if (this.isDisabledField(value)) {
+          return false;
+        }
+
         if (isInfosRuleType(options?.type) || isExtraInfosRuleType(options?.type)) {
           return field.startsWith(value);
         }
@@ -74,7 +93,7 @@ export default {
         this.updateModel(patterns);
       } else {
         setTimeout(() => {
-          this.errors.add({ field: this.name, msg: this.$t('errors.JSONNotValid') });
+          this.errors.add({ field: this.name, msg: this.$t('pattern.errors.invalidPatterns') });
         });
       }
     },

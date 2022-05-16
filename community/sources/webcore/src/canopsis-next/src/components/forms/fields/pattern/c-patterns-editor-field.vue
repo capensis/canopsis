@@ -80,7 +80,7 @@ export default {
     },
     name: {
       type: String,
-      required: false,
+      default: 'patterns',
     },
     required: {
       type: Boolean,
@@ -115,7 +115,7 @@ export default {
     },
 
     errorMessage() {
-      return this.errors.collect(this.name).join('\n');
+      return this.errors.collect(this.name)?.join('\n');
     },
 
     isSimpleTab() {
