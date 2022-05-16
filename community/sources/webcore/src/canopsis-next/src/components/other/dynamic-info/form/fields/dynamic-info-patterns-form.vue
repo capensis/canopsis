@@ -3,8 +3,7 @@
     v-field="form",
     :disabled="disabled",
     :alarm-attributes="alarmAttributes",
-    :alarm-excluded-attributes="alarmExcludedAttributes",
-    :entity-excluded-items="entityExcludedItems",
+    :entity-attributes="entityAttributes",
     with-alarm,
     with-entity,
     some-required
@@ -54,19 +53,23 @@ export default {
           value: ALARM_PATTERN_FIELDS.resolvedAt,
           options: this.intervalOptions,
         },
+        {
+          value: ALARM_PATTERN_FIELDS.lastUpdateDate,
+          options: { disabled: true },
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.lastEventDate,
+          options: { disabled: true },
+        },
       ];
     },
 
-    alarmExcludedAttributes() {
+    entityAttributes() {
       return [
-        ALARM_PATTERN_FIELDS.lastUpdateDate,
-        ALARM_PATTERN_FIELDS.lastEventDate,
-      ];
-    },
-
-    entityExcludedItems() {
-      return [
-        ENTITY_PATTERN_FIELDS.lastEventDate,
+        {
+          value: ENTITY_PATTERN_FIELDS.lastEventDate,
+          options: { disabled: true },
+        },
       ];
     },
   },
