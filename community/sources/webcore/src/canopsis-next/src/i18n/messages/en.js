@@ -29,7 +29,7 @@ import {
   EVENT_FILTER_TYPES,
   PATTERN_OPERATORS,
   PATTERN_TYPES,
-  PATTERN_INPUT_TYPES,
+  PATTERN_FIELD_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -2369,11 +2369,11 @@ export default {
 
   mixedField: {
     types: {
-      [PATTERN_INPUT_TYPES.string]: '@:variableTypes.string',
-      [PATTERN_INPUT_TYPES.number]: '@:variableTypes.number',
-      [PATTERN_INPUT_TYPES.boolean]: '@:variableTypes.boolean',
-      [PATTERN_INPUT_TYPES.null]: '@:variableTypes.null',
-      [PATTERN_INPUT_TYPES.array]: '@:variableTypes.array',
+      [PATTERN_FIELD_TYPES.string]: '@:variableTypes.string',
+      [PATTERN_FIELD_TYPES.number]: '@:variableTypes.number',
+      [PATTERN_FIELD_TYPES.boolean]: '@:variableTypes.boolean',
+      [PATTERN_FIELD_TYPES.null]: '@:variableTypes.null',
+      [PATTERN_FIELD_TYPES.stringArray]: '@:variableTypes.array',
     },
   },
 
@@ -2797,6 +2797,7 @@ export default {
     errors: {
       ruleRequired: 'Please add at least one rule',
       groupRequired: 'Please add at least one group',
+      invalidPatterns: 'Patterns are invalid or there is a disabled pattern field',
     },
   },
 
