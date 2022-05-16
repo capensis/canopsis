@@ -3,11 +3,9 @@
     v-field="form",
     :disabled="disabled",
     :alarm-attributes="alarmAttributes",
-    :alarm-excluded-attributes="alarmExcludedAttributes",
-    name="config",
+    :with-total-entity="withTotalEntity",
     with-alarm,
-    with-entity,
-    with-event
+    with-entity
   )
 </template>
 
@@ -26,6 +24,10 @@ export default {
       default: () => ({}),
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    withTotalEntity: {
       type: Boolean,
       default: false,
     },
@@ -51,13 +53,14 @@ export default {
           value: ALARM_PATTERN_FIELDS.resolvedAt,
           options: this.intervalOptions,
         },
-      ];
-    },
-
-    alarmExcludedAttributes() {
-      return [
-        ALARM_PATTERN_FIELDS.lastUpdateDate,
-        ALARM_PATTERN_FIELDS.lastEventDate,
+        {
+          value: ALARM_PATTERN_FIELDS.lastUpdateDate,
+          options: { disabled: true },
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.lastEventDate,
+          options: { disabled: true },
+        },
       ];
     },
   },
