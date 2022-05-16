@@ -162,6 +162,7 @@ func (t *basePatternFieldsTransformer) TransformTotalEntityPatternFieldsRequest(
 	}
 
 	return r, nil
+
 }
 
 func (t *basePatternFieldsTransformer) TransformPbehaviorPatternFieldsRequest(ctx context.Context, r PbehaviorPatternFieldsRequest) (PbehaviorPatternFieldsRequest, error) {
