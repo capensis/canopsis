@@ -7,7 +7,7 @@ import {
   PATTERN_CONDITIONS,
   PATTERN_CUSTOM_ITEM_VALUE,
   PATTERN_INFOS_NAME_OPERATORS,
-  PATTERN_INPUT_TYPES,
+  PATTERN_FIELD_TYPES,
   PATTERN_OPERATORS,
   PATTERN_QUICK_RANGES,
   PATTERN_RULE_INFOS_FIELDS,
@@ -16,7 +16,12 @@ import {
 } from '@/constants';
 
 import uid from '@/helpers/uid';
-import { getValueType } from '@/helpers/pattern';
+import {
+  getFieldType,
+  isDatePatternRuleField,
+  isInfosPatternRuleField,
+  isExtraInfosPatternRuleField,
+} from '@/helpers/pattern';
 import { convertDateToTimestamp } from '@/helpers/date/date';
 import {
   getDiffBetweenStartAndStopQuickInterval,
@@ -96,40 +101,6 @@ import { durationToForm } from '@/helpers/date/duration';
  * @typedef {Pattern} PatternForm
  * @property {PatternGroupsForm} groups
  */
-
-/**
- * Check pattern is date
- *
- * @param {string} value
- * @return {boolean}
- */
-const isDatePatternRule = value => [
-  ALARM_PATTERN_FIELDS.creationDate,
-  ALARM_PATTERN_FIELDS.lastEventDate,
-  ALARM_PATTERN_FIELDS.lastUpdateDate,
-  ALARM_PATTERN_FIELDS.ackAt,
-  ALARM_PATTERN_FIELDS.resolvedAt,
-  ENTITY_PATTERN_FIELDS.lastEventDate,
-].includes(value);
-
-/**
- * Check pattern is infos
- *
- * @param {string} value
- * @return {boolean}
- */
-const isInfosPatternRuleAttribute = value => [
-  ALARM_PATTERN_FIELDS.infos,
-  ENTITY_PATTERN_FIELDS.infos,
-].includes(value);
-
-/**
- * Check pattern is extra infos
- *
- * @param {string} value
- * @return {boolean}
- */
-const isExtraInfosPatternRuleAttribute = value => value === EVENT_FILTER_PATTERN_FIELDS.extraInfos;
 
 /**
  * Convert pattern rule to form
@@ -330,7 +301,7 @@ export const patternRulesToGroup = rules => ({
   rules: patternRulesToForm(rules),
 });
 
-const patternsToGroups = (patterns = []) => patterns.map(patternRulesToGroup);
+export const patternsToGroups = (patterns = []) => patterns.map(patternRulesToGroup);
 
 /**
  * Convert pattern to pattern form
@@ -390,9 +361,9 @@ export const formRuleToPatternRule = (rule) => {
     },
   };
 
-  const isInfos = isInfosPatternRuleAttribute(rule.attribute);
-  const isExtraInfos = isExtraInfosPatternRuleAttribute(rule.attribute);
-  const isDate = isDatePatternRule(rule.attribute);
+  const isInfos = isInfosPatternRuleField(rule.attribute);
+  const isExtraInfos = isExtraInfosPatternRuleField(rule.attribute);
+  const isDate = isDatePatternRuleField(rule.attribute);
 
   if (isInfos) {
     pattern.field = [rule.attribute, rule.dictionary].join('.');
@@ -409,7 +380,7 @@ export const formRuleToPatternRule = (rule) => {
   }
 
   if ((isInfos && rule.field !== PATTERN_RULE_INFOS_FIELDS.name) || isExtraInfos) {
-    pattern.field_type = getValueType(rule.value);
+    pattern.field_type = getFieldType(rule.value);
   }
 
   switch (rule.operator) {
@@ -455,24 +426,24 @@ export const formRuleToPatternRule = (rule) => {
 
     case PATTERN_OPERATORS.hasEvery:
       pattern.cond.type = PATTERN_CONDITIONS.hasEvery;
-      pattern.field_type = PATTERN_INPUT_TYPES.array;
+      pattern.field_type = PATTERN_FIELD_TYPES.stringArray;
       break;
     case PATTERN_OPERATORS.hasOneOf:
       pattern.cond.type = PATTERN_CONDITIONS.hasOneOf;
-      pattern.field_type = PATTERN_INPUT_TYPES.array;
+      pattern.field_type = PATTERN_FIELD_TYPES.stringArray;
       break;
     case PATTERN_OPERATORS.hasNot:
       pattern.cond.type = PATTERN_CONDITIONS.hasNot;
-      pattern.field_type = PATTERN_INPUT_TYPES.array;
+      pattern.field_type = PATTERN_FIELD_TYPES.stringArray;
       break;
     case PATTERN_OPERATORS.isEmpty:
       pattern.cond.type = PATTERN_CONDITIONS.isEmpty;
-      pattern.field_type = PATTERN_INPUT_TYPES.array;
+      pattern.field_type = PATTERN_FIELD_TYPES.stringArray;
       pattern.cond.value = true;
       break;
     case PATTERN_OPERATORS.isNotEmpty:
       pattern.cond.type = PATTERN_CONDITIONS.isEmpty;
-      pattern.field_type = PATTERN_INPUT_TYPES.array;
+      pattern.field_type = PATTERN_FIELD_TYPES.stringArray;
       pattern.cond.value = false;
       break;
 

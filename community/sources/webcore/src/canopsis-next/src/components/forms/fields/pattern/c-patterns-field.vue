@@ -6,7 +6,6 @@
         :required="isPatternRequired",
         :disabled="disabled",
         :name="alarmPatternsFieldName",
-        :excluded="alarmExcludedAttributes",
         :attributes="alarmAttributes",
         with-type,
         @input="errors.remove(alarmPatternsFieldName)"
@@ -19,7 +18,6 @@
         :disabled="disabled",
         :name="entityPatternsFieldName",
         :attributes="entityAttributes",
-        :excluded="entityExcludedItems",
         with-type,
         @input="errors.remove(entityPatternsFieldName)"
       )
@@ -64,15 +62,7 @@ export default {
       type: Array,
       required: false,
     },
-    alarmExcludedAttributes: {
-      type: Array,
-      required: false,
-    },
     entityAttributes: {
-      type: Array,
-      required: false,
-    },
-    entityExcludedItems: {
       type: Array,
       required: false,
     },
@@ -134,19 +124,19 @@ export default {
     },
 
     alarmPatternsFieldName() {
-      return this.preparePatternsFieldName('alarm_patterns');
+      return this.preparePatternsFieldName('alarm_pattern');
     },
 
     eventPatternsFieldName() {
-      return this.preparePatternsFieldName('event_patterns');
+      return this.preparePatternsFieldName('event_pattern');
     },
 
     entityPatternsFieldName() {
-      return this.preparePatternsFieldName('entity_patterns');
+      return this.preparePatternsFieldName('entity_pattern');
     },
 
     entityPbehaviorFieldName() {
-      return this.preparePatternsFieldName('pbehavior_patterns');
+      return this.preparePatternsFieldName('pbehavior_pattern');
     },
   },
   methods: {
