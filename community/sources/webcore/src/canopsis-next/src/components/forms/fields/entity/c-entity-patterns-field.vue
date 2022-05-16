@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { keyBy, merge, omit } from 'lodash';
+import { keyBy, merge } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
@@ -34,10 +34,6 @@ export default {
     patterns: {
       type: Object,
       required: true,
-    },
-    excluded: {
-      type: Array,
-      default: () => [],
     },
     attributes: {
       type: Array,
@@ -207,7 +203,8 @@ export default {
 
     availableEntityAttributes() {
       const mergedAttributes = merge(
-        omit(this.availableAttributesByValue, this.excluded),
+        {},
+        this.availableAttributesByValue,
         this.externalAttributesByValue,
       );
 
