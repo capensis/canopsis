@@ -197,4 +197,5 @@ export const PATTERNS_FIELDS = {
   entity: 'entity_pattern',
   pbehavior: 'pbehavior_pattern',
   event: 'event_pattern',
+  totalEntity: 'total_entity_pattern',
 };
