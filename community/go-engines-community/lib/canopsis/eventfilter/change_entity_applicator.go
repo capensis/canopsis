@@ -18,16 +18,16 @@ func NewChangeEntityApplicator(externalDataContainer *ExternalDataContainer) Rul
 	return &changeEntityApplicator{externalDataContainer: externalDataContainer, buf: bytes.Buffer{}}
 }
 
-func (a *changeEntityApplicator) Apply(ctx context.Context, rule Rule, event types.Event, regexMatch RegexMatch, cfgTimezone *config.TimezoneConfig) (string, types.Event, error) {
-	externalData, err := a.getExternalData(ctx, rule, event, regexMatch, cfgTimezone)
+func (a *changeEntityApplicator) Apply(ctx context.Context, rule Rule, event types.Event, regexMatchWrapper RegexMatchWrapper, cfgTimezone *config.TimezoneConfig) (string, types.Event, error) {
+	externalData, err := a.getExternalData(ctx, rule, event, regexMatchWrapper, cfgTimezone)
 	if err != nil {
 		return OutcomeDrop, event, err
 	}
 
-	templateParams := TemplateParameters{
-		Event:        event,
-		RegexMatch:   regexMatch,
-		ExternalData: externalData,
+	templateParams := Template{
+		Event:             event,
+		RegexMatchWrapper: regexMatchWrapper,
+		ExternalData:      externalData,
 	}
 
 	if rule.Config.Resource != "" {
@@ -61,7 +61,7 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule Rule, event typ
 	return OutcomePass, event, nil
 }
 
-func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule Rule, event types.Event, regexMatch RegexMatch, cfgTimezone *config.TimezoneConfig) (map[string]interface{}, error) {
+func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule Rule, event types.Event, regexMatchWrapper RegexMatchWrapper, cfgTimezone *config.TimezoneConfig) (map[string]interface{}, error) {
 	externalData := make(map[string]interface{})
 
 	for name, parameters := range rule.ExternalData {
@@ -70,9 +70,9 @@ func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule Rule,
 			return nil, fmt.Errorf("no such data source: %s", parameters.Type)
 		}
 
-		data, err := getter.Get(ctx, parameters, TemplateParameters{
-			Event:      event,
-			RegexMatch: regexMatch,
+		data, err := getter.Get(ctx, parameters, Template{
+			Event:             event,
+			RegexMatchWrapper: regexMatchWrapper,
 		}, cfgTimezone)
 		if err != nil {
 			return externalData, err
@@ -92,7 +92,7 @@ func (a *changeEntityApplicator) executeTpl(tplText string, params TemplateParam
 
 	a.buf.Reset()
 
-	err = tpl.Execute(&a.buf, params)
+	err = tpl.Execute(&a.buf, params.GetTemplate())
 	if err != nil {
 		return "", err
 	}
