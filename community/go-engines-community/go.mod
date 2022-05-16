@@ -41,7 +41,6 @@ require (
 	github.com/gorilla/websocket v1.4.2
 	github.com/json-iterator/go v1.1.11
 	github.com/mailru/easyjson v0.7.7
-	github.com/mitchellh/mapstructure v1.4.1
 	github.com/pelletier/go-toml v1.9.3
 	github.com/rs/zerolog v1.23.0
 	github.com/russellhaering/gosaml2 v0.6.0
@@ -77,6 +76,7 @@ require (
 	github.com/jackc/pgproto3/v2 v2.1.1
 	github.com/rabbitmq/amqp091-go v1.3.0
 	gopkg.in/yaml.v2 v2.4.0
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
 require (
