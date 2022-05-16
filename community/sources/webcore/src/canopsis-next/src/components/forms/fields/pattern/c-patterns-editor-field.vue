@@ -10,6 +10,9 @@
       @input="updatePattern"
     )
 
+    v-flex
+      v-alert.pre-wrap(v-if="errorMessage", value="true") {{ errorMessage }}
+
     v-tabs(
       v-if="!withType || patterns.id",
       v-model="activeTab",
@@ -17,29 +20,26 @@
       centered
     )
       v-tab(
-        :disabled="!isSimpleTab && hasErrors",
+        :disabled="!isSimpleTab && hasJsonError",
         :href="`#${$constants.PATTERN_EDITOR_TABS.simple}`"
       ) {{ $t('pattern.simpleEditor') }}
       v-tab-item(:value="$constants.PATTERN_EDITOR_TABS.simple")
         c-pattern-groups-field.mt-2(
           v-field="patterns.groups",
           :disabled="formDisabled",
-          :name="name",
+          :name="patternGroupsFieldName",
           :type="type",
           :required="required",
           :attributes="attributes"
         )
 
-      v-tab(
-        :disabled="isSimpleTab && hasErrors",
-        :href="`#${$constants.PATTERN_EDITOR_TABS.advanced}`"
-      ) {{ $t('pattern.advancedEditor') }}
+      v-tab(:href="`#${$constants.PATTERN_EDITOR_TABS.advanced}`") {{ $t('pattern.advancedEditor') }}
       v-tab-item(:value="$constants.PATTERN_EDITOR_TABS.advanced", lazy)
         c-patterns-advanced-editor-field(
           :value="patternsJson",
           :disabled="disabled || !isCustomPattern",
           :attributes="attributes",
-          name="advancedJson",
+          :name="patternJsonFieldName",
           @input="updateGroupsFromPatterns"
         )
 
@@ -102,12 +102,24 @@ export default {
     };
   },
   computed: {
-    isSimpleTab() {
-      return this.activeTab === PATTERN_EDITOR_TABS.simple;
+    patternGroupsFieldName() {
+      return `${this.name}.groups`;
     },
 
-    hasErrors() {
-      return this.errors.any();
+    patternJsonFieldName() {
+      return `${this.name}.json`;
+    },
+
+    hasJsonError() {
+      return this.errors.has(this.patternJsonFieldName);
+    },
+
+    errorMessage() {
+      return this.errors.collect(this.name).join('\n');
+    },
+
+    isSimpleTab() {
+      return this.activeTab === PATTERN_EDITOR_TABS.simple;
     },
 
     formDisabled() {
@@ -124,6 +136,17 @@ export default {
         this.patternsJson = formGroupsToPatternRules(this.patterns.groups);
       }
     },
+  },
+  created() {
+    this.$validator.attach({
+      name: this.name,
+      getter: () => this.patterns.length,
+      context: () => this,
+      vm: this,
+    });
+  },
+  beforeDestroy() {
+    this.$validator.detach(this.name);
   },
   methods: {
     updatePattern(pattern) {
@@ -143,7 +166,7 @@ export default {
     updateGroupsFromPatterns(patterns) {
       this.updateField('groups', patternsToGroups(patterns));
 
-      this.activeTab = PATTERN_EDITOR_TABS.simple;
+      this.patternsJson = patterns;
     },
   },
 };

@@ -134,19 +134,19 @@ export default {
     },
 
     alarmPatternsFieldName() {
-      return this.preparePatternsFieldName('alarm_patterns');
+      return this.preparePatternsFieldName('alarm_pattern');
     },
 
     eventPatternsFieldName() {
-      return this.preparePatternsFieldName('event_patterns');
+      return this.preparePatternsFieldName('event_pattern');
     },
 
     entityPatternsFieldName() {
-      return this.preparePatternsFieldName('entity_patterns');
+      return this.preparePatternsFieldName('entity_pattern');
     },
 
     entityPbehaviorFieldName() {
-      return this.preparePatternsFieldName('pbehavior_patterns');
+      return this.preparePatternsFieldName('pbehavior_pattern');
     },
   },
   methods: {
