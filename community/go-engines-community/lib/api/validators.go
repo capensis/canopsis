@@ -217,7 +217,7 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 
 	v.RegisterStructValidation(widget.ValidateEditRequest, widget.EditRequest{})
 
-	v.RegisterStructValidation(widgetfilter.ValidateEditRequest, widgetfilter.EditRequest{})
+	v.RegisterStructValidationCtx(widgetfilter.NewValidator(client).ValidateEditRequest, widgetfilter.EditRequest{})
 
 	playlistUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.PlaylistMongoCollection, "Name")
 	v.RegisterStructValidationCtx(playlistUniqueNameValidator.Validate, playlist.EditRequest{})
