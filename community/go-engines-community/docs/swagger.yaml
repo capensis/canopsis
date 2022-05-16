@@ -7719,6 +7719,31 @@ paths:
       tags:
       - pbehavior-types
   /pbehaviors:
+    delete:
+      description: Delete pbehavior by name
+      operationId: pbehaviors-delete-by-name
+      parameters:
+      - description: pbehavior name
+        in: query
+        name: name
+        required: true
+        type: string
+      responses:
+        "204": {}
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - BasicAuth: []
+      summary: Delete pbehavior by name
+      tags:
+      - pbehaviors
     get:
       consumes:
       - application/json
