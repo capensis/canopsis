@@ -38,7 +38,7 @@ func (m *MockRuleApplicator) EXPECT() *MockRuleApplicatorMockRecorder {
 }
 
 // Apply mocks base method.
-func (m *MockRuleApplicator) Apply(arg0 context.Context, arg1 eventfilter.Rule, arg2 types.Event, arg3 eventfilter.RegexMatch, arg4 *config.TimezoneConfig) (string, types.Event, error) {
+func (m *MockRuleApplicator) Apply(arg0 context.Context, arg1 eventfilter.Rule, arg2 types.Event, arg3 eventfilter.RegexMatchWrapper, arg4 *config.TimezoneConfig) (string, types.Event, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Apply", arg0, arg1, arg2, arg3, arg4)
 	ret0, _ := ret[0].(string)
@@ -270,7 +270,7 @@ func (m *MockActionProcessor) EXPECT() *MockActionProcessorMockRecorder {
 }
 
 // Process mocks base method.
-func (m *MockActionProcessor) Process(arg0 eventfilter.Action, arg1 types.Event, arg2 eventfilter.RegexMatch, arg3 map[string]interface{}, arg4 *config.TimezoneConfig) (types.Event, error) {
+func (m *MockActionProcessor) Process(arg0 eventfilter.Action, arg1 types.Event, arg2 eventfilter.RegexMatchWrapper, arg3 map[string]interface{}, arg4 *config.TimezoneConfig) (types.Event, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Process", arg0, arg1, arg2, arg3, arg4)
 	ret0, _ := ret[0].(types.Event)

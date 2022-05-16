@@ -1,6 +1,7 @@
 package eventfilter
 
 import (
+	oldpattern "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -55,6 +56,7 @@ type Rule struct {
 	Type         string                            `bson:"type" json:"type" binding:"required,oneof=break drop enrichment change_entity"`
 	Priority     int                               `bson:"priority" json:"priority"`
 	Enabled      bool                              `bson:"enabled" json:"enabled"`
+	Patterns     oldpattern.EventPatternList       `bson:"patterns" json:"patterns"`
 	Config       RuleConfig                        `bson:"config" json:"config"`
 	ExternalData map[string]ExternalDataParameters `bson:"external_data" json:"external_data,omitempty"`
 	Created      *types.CpsTime                    `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
@@ -83,13 +85,43 @@ type Action struct {
 	Value       interface{} `bson:"value" json:"value"`
 }
 
+type RegexMatchWrapper struct {
+	BackwardCompatibility bool
+	OldRegexMatch         oldpattern.EventRegexMatches
+	RegexMatch            RegexMatch
+}
+
 type RegexMatch struct {
 	pattern.EventRegexMatches
 	Entity pattern.EntityRegexMatches
 }
 
-type TemplateParameters struct {
-	Event        types.Event
-	RegexMatch   RegexMatch
-	ExternalData map[string]interface{}
+type Template struct {
+	Event             types.Event
+	RegexMatchWrapper RegexMatchWrapper
+	ExternalData      map[string]interface{}
+}
+
+func (t Template) GetTemplate() interface{} {
+	if t.RegexMatchWrapper.BackwardCompatibility {
+		return struct {
+			Event        types.Event
+			RegexMatch   oldpattern.EventRegexMatches
+			ExternalData map[string]interface{}
+		}{
+			Event:        t.Event,
+			RegexMatch:   t.RegexMatchWrapper.OldRegexMatch,
+			ExternalData: t.ExternalData,
+		}
+	}
+
+	return struct {
+		Event        types.Event
+		RegexMatch   RegexMatch
+		ExternalData map[string]interface{}
+	}{
+		Event:        t.Event,
+		RegexMatch:   t.RegexMatchWrapper.RegexMatch,
+		ExternalData: t.ExternalData,
+	}
 }

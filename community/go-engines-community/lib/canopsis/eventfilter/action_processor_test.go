@@ -712,7 +712,10 @@ func TestActionProcessor(t *testing.T) {
 	processor := eventfilter.NewActionProcessor()
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			resultEvent, resultErr := processor.Process(dataset.action, dataset.event, dataset.regexMatches, dataset.externalData, nil)
+			resultEvent, resultErr := processor.Process(dataset.action, dataset.event, eventfilter.RegexMatchWrapper{
+				BackwardCompatibility: false,
+				RegexMatch:            dataset.regexMatches,
+			}, dataset.externalData, nil)
 			if !reflect.DeepEqual(resultEvent, dataset.expectedEvent) {
 				t.Errorf("expected an event = %v, but got %v", dataset.expectedEvent, resultEvent)
 			}

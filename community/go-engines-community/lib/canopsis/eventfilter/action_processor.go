@@ -17,7 +17,7 @@ func NewActionProcessor() ActionProcessor {
 	return &actionProcessor{buf: bytes.Buffer{}}
 }
 
-func (p *actionProcessor) Process(action Action, event types.Event, regexMatch RegexMatch, externalData map[string]interface{}, cfgTimezone *config.TimezoneConfig) (types.Event, error) {
+func (p *actionProcessor) Process(action Action, event types.Event, regexMatchWrapper RegexMatchWrapper, externalData map[string]interface{}, cfgTimezone *config.TimezoneConfig) (types.Event, error) {
 	switch action.Type {
 	case ActionSetField:
 		err := event.SetField(action.Name, action.Value)
@@ -30,10 +30,10 @@ func (p *actionProcessor) Process(action Action, event types.Event, regexMatch R
 
 		value, err := p.executeTpl(
 			templateStr,
-			TemplateParameters{
-				Event:        event,
-				RegexMatch:   regexMatch,
-				ExternalData: externalData,
+			Template{
+				Event:             event,
+				RegexMatchWrapper: regexMatchWrapper,
+				ExternalData:      externalData,
 			},
 			cfgTimezone,
 		)
@@ -59,10 +59,10 @@ func (p *actionProcessor) Process(action Action, event types.Event, regexMatch R
 
 		value, err := p.executeTpl(
 			templateStr,
-			TemplateParameters{
-				Event:        event,
-				RegexMatch:   regexMatch,
-				ExternalData: externalData,
+			Template{
+				Event:             event,
+				RegexMatchWrapper: regexMatchWrapper,
+				ExternalData:      externalData,
 			},
 			cfgTimezone,
 		)
@@ -82,12 +82,14 @@ func (p *actionProcessor) Process(action Action, event types.Event, regexMatch R
 			return event, ErrShouldBeAString
 		}
 
+		t := Template{
+			Event:             event,
+			RegexMatchWrapper: regexMatchWrapper,
+			ExternalData:      externalData,
+		}
+
 		value, err := utils.GetField(
-			TemplateParameters{
-				Event:        event,
-				RegexMatch:   regexMatch,
-				ExternalData: externalData,
-			},
+			t.GetTemplate(),
 			strValue,
 		)
 		if err != nil {
@@ -106,12 +108,14 @@ func (p *actionProcessor) Process(action Action, event types.Event, regexMatch R
 			return event, ErrShouldBeAString
 		}
 
+		t := Template{
+			Event:             event,
+			RegexMatchWrapper: regexMatchWrapper,
+			ExternalData:      externalData,
+		}
+
 		value, err := utils.GetField(
-			TemplateParameters{
-				Event:        event,
-				RegexMatch:   regexMatch,
-				ExternalData: externalData,
-			},
+			t.GetTemplate(),
 			strValue,
 		)
 		if err != nil {
@@ -137,7 +141,7 @@ func (p *actionProcessor) executeTpl(tplText string, params TemplateParameters, 
 
 	p.buf.Reset()
 
-	err = tpl.Execute(&p.buf, params)
+	err = tpl.Execute(&p.buf, params.GetTemplate())
 	if err != nil {
 		return "", err
 	}
