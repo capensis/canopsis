@@ -28,7 +28,7 @@ import { durationToForm } from '@/helpers/date/duration';
  */
 
 /**
- * @typedef { 'alarm_pattern' | 'entity_pattern' | 'pbehavior_pattern' } PatternsField
+ * @typedef { 'alarm_pattern' | 'entity_pattern' | 'pbehavior_pattern' | 'total_entity_pattern' } PatternsField
  */
 
 /**
@@ -333,7 +333,8 @@ export const patternToForm = (pattern = {}) => ({
     pattern.alarm_pattern
     || pattern.entity_pattern
     || pattern.pbehavior_pattern
-    || pattern.event_pattern,
+    || pattern.event_pattern
+    || pattern.total_entity_pattern,
   ),
 });
 

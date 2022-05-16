@@ -275,9 +275,7 @@ describe('meta-alarm-rule-form', () => {
 
     expect(wrapper).toEmit('input', {
       ...form,
-      config: {
-        patterns: newPatterns,
-      },
+      patterns: newPatterns,
     });
   });
 
