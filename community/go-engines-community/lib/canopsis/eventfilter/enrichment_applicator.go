@@ -23,16 +23,16 @@ func (a *enrichmentApplicator) Apply(
 	ctx context.Context,
 	rule Rule,
 	event types.Event,
-	regexMatch RegexMatch,
+	regexMatchWrapper RegexMatchWrapper,
 	cfgTimezone *config.TimezoneConfig,
 ) (string, types.Event, error) {
-	externalData, err := a.getExternalData(ctx, rule, event, regexMatch, cfgTimezone)
+	externalData, err := a.getExternalData(ctx, rule, event, regexMatchWrapper, cfgTimezone)
 	if err != nil {
 		return rule.Config.OnFailure, event, err
 	}
 
 	for _, action := range rule.Config.Actions {
-		event, err = a.actionProcessor.Process(action, event, regexMatch, externalData, cfgTimezone)
+		event, err = a.actionProcessor.Process(action, event, regexMatchWrapper, externalData, cfgTimezone)
 		if err != nil {
 			return rule.Config.OnFailure, event, err
 		}
@@ -41,7 +41,7 @@ func (a *enrichmentApplicator) Apply(
 	return rule.Config.OnSuccess, event, nil
 }
 
-func (a *enrichmentApplicator) getExternalData(ctx context.Context, rule Rule, event types.Event, regexMatch RegexMatch, cfgTimezone *config.TimezoneConfig) (map[string]interface{}, error) {
+func (a *enrichmentApplicator) getExternalData(ctx context.Context, rule Rule, event types.Event, regexMatchWrapper RegexMatchWrapper, cfgTimezone *config.TimezoneConfig) (map[string]interface{}, error) {
 	externalData := make(map[string]interface{})
 
 	for name, parameters := range rule.ExternalData {
@@ -50,9 +50,9 @@ func (a *enrichmentApplicator) getExternalData(ctx context.Context, rule Rule, e
 			return nil, fmt.Errorf("no such data source: %s", parameters.Type)
 		}
 
-		data, err := getter.Get(ctx, parameters, TemplateParameters{
-			Event:      event,
-			RegexMatch: regexMatch,
+		data, err := getter.Get(ctx, parameters, Template{
+			Event:             event,
+			RegexMatchWrapper: regexMatchWrapper,
 		}, cfgTimezone)
 		if err != nil {
 			return externalData, err

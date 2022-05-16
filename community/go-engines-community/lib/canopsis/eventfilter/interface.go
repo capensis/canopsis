@@ -16,12 +16,12 @@ const (
 )
 
 type ActionProcessor interface {
-	Process(action Action, event types.Event, regexMatch RegexMatch, externalData map[string]interface{}, cfgTimezone *config.TimezoneConfig) (types.Event, error)
+	Process(action Action, event types.Event, regexMatchWrapper RegexMatchWrapper, externalData map[string]interface{}, cfgTimezone *config.TimezoneConfig) (types.Event, error)
 }
 
 type RuleApplicator interface {
 	// Apply eventfilter rule, the first return value(string) should be one of the outcome constant values
-	Apply(context.Context, Rule, types.Event, RegexMatch, *config.TimezoneConfig) (string, types.Event, error)
+	Apply(context.Context, Rule, types.Event, RegexMatchWrapper, *config.TimezoneConfig) (string, types.Event, error)
 }
 
 type RuleAdapter interface {
@@ -41,4 +41,8 @@ type RuleApplicatorContainer interface {
 
 type ExternalDataGetter interface {
 	Get(ctx context.Context, parameters ExternalDataParameters, templateParameters TemplateParameters, cfgTimezone *config.TimezoneConfig) (interface{}, error)
+}
+
+type TemplateParameters interface {
+	GetTemplate() interface{}
 }

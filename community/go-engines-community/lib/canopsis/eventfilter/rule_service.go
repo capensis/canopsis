@@ -3,6 +3,7 @@ package eventfilter
 import (
 	"context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	oldpattern "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
@@ -51,24 +52,41 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 			break
 		}
 
-		match, eventRegexMatches, err := rule.EventPatterns.Match(event)
-		if !match {
-			if event.Debug {
-				s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is not matched")
-			}
-
-			continue
-		}
-
+		var err error
+		var match, backwardCompatibility bool
+		var oldRegexMatches oldpattern.EventRegexMatches
+		var eventRegexMatches pattern.EventRegexMatches
 		var entityRegexMatches pattern.EntityRegexMatches
-		if event.Entity != nil {
-			match, entityRegexMatches, err = rule.EntityPattern.Match(*event.Entity)
+
+		if rule.Patterns.IsSet() && rule.Patterns.IsValid() {
+			backwardCompatibility = true
+			oldRegexMatches, match = rule.Patterns.GetRegexMatches(event)
 			if !match {
 				if event.Debug {
 					s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is not matched")
 				}
 
 				continue
+			}
+		} else {
+			match, eventRegexMatches, err = rule.EventPatterns.Match(event)
+			if !match {
+				if event.Debug {
+					s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is not matched")
+				}
+
+				continue
+			}
+
+			if event.Entity != nil {
+				match, entityRegexMatches, err = rule.EntityPattern.Match(*event.Entity)
+				if !match {
+					if event.Debug {
+						s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is not matched")
+					}
+
+					continue
+				}
 			}
 		}
 
@@ -82,10 +100,15 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 			continue
 		}
 
-		outcome, event, err = applicator.Apply(ctx, rule, event, RegexMatch{
-			EventRegexMatches: eventRegexMatches,
-			Entity:            entityRegexMatches,
+		outcome, event, err = applicator.Apply(ctx, rule, event, RegexMatchWrapper{
+			BackwardCompatibility: backwardCompatibility,
+			OldRegexMatch:         oldRegexMatches,
+			RegexMatch: RegexMatch{
+				EventRegexMatches: eventRegexMatches,
+				Entity:            entityRegexMatches,
+			},
 		}, &tz)
+
 		if err != nil {
 			s.logger.Err(err).Str("rule_id", rule.ID).Str("rule_type", rule.Type).Msg("Event filter rule service: failed to apply")
 		}
