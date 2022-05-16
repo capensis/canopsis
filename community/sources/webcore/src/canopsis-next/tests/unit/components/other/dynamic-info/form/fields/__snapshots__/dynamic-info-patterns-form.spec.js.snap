@@ -2,9 +2,8 @@
 
 exports[`dynamic-info-patterns-form Renders \`dynamic-info-patterns-form\` with custom props 1`] = `
 <c-patterns-field-stub
-  alarm-attributes="[object Object],[object Object],[object Object]"
-  alarm-excluded-attributes="v.last_update_date,v.last_event_date"
-  entity-excluded-items="last_event_date"
+  alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object]"
+  entity-attributes="[object Object]"
   isentitytype="true"
   some-required="some-required"
   value="[object Object]"
@@ -15,9 +14,8 @@ exports[`dynamic-info-patterns-form Renders \`dynamic-info-patterns-form\` with 
 
 exports[`dynamic-info-patterns-form Renders \`dynamic-info-patterns-form\` with default props 1`] = `
 <c-patterns-field-stub
-  alarm-attributes="[object Object],[object Object],[object Object]"
-  alarm-excluded-attributes="v.last_update_date,v.last_event_date"
-  entity-excluded-items="last_event_date"
+  alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object]"
+  entity-attributes="[object Object]"
   some-required="some-required"
   value="[object Object]"
   with-alarm="with-alarm"
