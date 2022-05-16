@@ -98,6 +98,14 @@ widget_filters:
     _id: test-widgetfilter-to-update-5
     widget: test-widget-to-filter-edit
 
+  filter_to_update_6:
+    <<: *filter
+    _id: test-widgetfilter-to-update-6
+    widget: test-widget-to-filter-edit
+    created: 1605263992
+    old_mongo_query:
+      name: test-widgetfilter-to-update-6-pattern
+
   filter_to_delete_1:
     <<: *filter
     _id: test-widgetfilter-to-delete-1
