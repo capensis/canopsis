@@ -42,6 +42,7 @@ Feature: Get an eventfilter
           "type": "entity"
         }
       },
+      "patterns": null,
       "created": 1608284568,
       "updated": 1608285370
     }
@@ -89,6 +90,7 @@ Feature: Get an eventfilter
               "type": "entity"
             }
           },
+          "patterns": null,
           "created": 1608284568,
           "updated": 1608285370
         },
@@ -111,6 +113,7 @@ Feature: Get an eventfilter
           "priority": 1,
           "config": {},
           "enabled": true,
+          "patterns": null,
           "created": 1608635535,
           "updated": 1608635535
         },
@@ -133,6 +136,7 @@ Feature: Get an eventfilter
           "priority": 2,
           "config": {},
           "enabled": true,
+          "patterns": null,
           "created": 1608635535,
           "updated": 1608635535
         }
