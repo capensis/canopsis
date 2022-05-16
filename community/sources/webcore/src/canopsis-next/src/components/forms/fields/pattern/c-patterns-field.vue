@@ -6,7 +6,6 @@
         :required="isPatternRequired",
         :disabled="disabled",
         :name="alarmFieldName",
-        :excluded="alarmExcludedAttributes",
         :attributes="alarmAttributes",
         with-type,
         @input="errors.remove(alarmFieldName)"
@@ -19,7 +18,6 @@
         :disabled="disabled",
         :name="entityFieldName",
         :attributes="entityAttributes",
-        :excluded="entityExcludedItems",
         with-type,
         @input="errors.remove(entityFieldName)"
       )
@@ -74,15 +72,7 @@ export default {
       type: Array,
       required: false,
     },
-    alarmExcludedAttributes: {
-      type: Array,
-      required: false,
-    },
     entityAttributes: {
-      type: Array,
-      required: false,
-    },
-    entityExcludedItems: {
       type: Array,
       required: false,
     },
