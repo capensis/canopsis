@@ -360,7 +360,7 @@ export const isDurationPatternRuleField = value => value === ALARM_PATTERN_FIELD
  * @param {string} value
  * @return {boolean}
  */
-export const isExtraInfosPatternRuleField = value => value === EVENT_FILTER_PATTERN_FIELDS.extraInfos;
+export const isExtraInfosPatternRuleField = value => value?.startsWith(EVENT_FILTER_PATTERN_FIELDS.extraInfos);
 
 /**
  * Check rule value is valid without field type
@@ -417,7 +417,9 @@ export const isValidRuleValueWithFieldType = (rule) => {
       && cond.value.every(isString);
   }
 
-  return isInfosPatternRuleField(field) && getFieldType(cond.value) === fieldType;
+  const isInfos = isInfosPatternRuleField(field) || isExtraInfosPatternRuleField(field);
+
+  return isInfos && getFieldType(cond.value) === fieldType;
 };
 
 /**
