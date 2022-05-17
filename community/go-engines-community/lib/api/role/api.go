@@ -25,23 +25,8 @@ func NewApi(
 	}
 }
 
-// Find all roles
-// @Summary Find roles
-// @Description Get paginated list of roles
-// @Tags roles
-// @ID roles-find-all
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param page query integer true "current page"
-// @Param limit query integer true "items per page"
-// @Param search query string false "search query"
-// @Param sort query string false "sort query"
-// @Param sort_by query string false "sort query"
+// List
 // @Success 200 {object} common.PaginatedListResponse{data=[]Role}
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /roles [get]
 func (a *api) List(c *gin.Context) {
 	var query ListRequest
 	query.Query = pagination.GetDefaultQuery()
@@ -65,18 +50,8 @@ func (a *api) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// Get role by id
-// @Summary Get role by id
-// @Description Get role by id
-// @Tags roles
-// @ID roles-get-by-id
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "role id"
+// Get
 // @Success 200 {object} Role
-// @Failure 404 {object} common.ErrorResponse
-// @Router /roles/{id} [get]
 func (a *api) Get(c *gin.Context) {
 	role, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
 	if err != nil {
@@ -90,19 +65,9 @@ func (a *api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, role)
 }
 
-// Create role
-// @Summary Create role
-// @Description Create role
-// @Tags roles
-// @ID roles-create
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
+// Create
 // @Param body body CreateRequest true "body"
 // @Success 201 {object} Role
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /roles [post]
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
 	if err := c.ShouldBind(&request); err != nil {
@@ -127,21 +92,9 @@ func (a *api) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, role)
 }
 
-// Update role by id
-// @Summary Update role by id
-// @Description Update role by id
-// @Tags roles
-// @ID roles-update-by-id
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "role id"
+// Update
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Role
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /roles/{id} [put]
 func (a *api) Update(c *gin.Context) {
 	request := EditRequest{}
 
@@ -172,17 +125,6 @@ func (a *api) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, role)
 }
 
-// Delete role by id
-// @Summary Delete role by id
-// @Description Delete role by id
-// @Tags roles
-// @ID roles-delete-by-id
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "role id"
-// @Success 204
-// @Failure 404 {object} common.ErrorResponse
-// @Router /roles/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
 	ok, err := a.store.Delete(c.Request.Context(), id)
