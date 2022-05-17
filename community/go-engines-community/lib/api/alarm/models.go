@@ -166,8 +166,8 @@ type Alarm struct {
 	IsManualInstructionRunning       *bool                  `bson:"-" json:"is_manual_instruction_running,omitempty"`
 	IsManualInstructionWaitingResult *bool                  `bson:"-" json:"is_manual_instruction_waiting_result,omitempty"`
 
-	Links       *map[string]interface{} `bson:"-" json:"links,omitempty"`
-	ImpactState int64                   `bson:"impact_state" json:"impact_state"`
+	Links       map[string]interface{} `bson:"-" json:"links,omitempty"`
+	ImpactState int64                  `bson:"impact_state" json:"impact_state"`
 }
 
 type MetaAlarmRule struct {
