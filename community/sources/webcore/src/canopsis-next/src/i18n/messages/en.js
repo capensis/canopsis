@@ -1100,7 +1100,8 @@ export default {
       },
     },
     alarmsList: {
-      title: 'Alarms list',
+      title: 'Alarm list',
+      prefixTitle: '{prefix} alarm list',
     },
     createUser: {
       create: {
