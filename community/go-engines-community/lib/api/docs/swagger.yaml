@@ -4228,6 +4228,34 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /pbehaviors:
+    delete:
+      tags:
+        - pbehaviors
+      summary: Delete pbehavior by name
+      description: Delete pbehavior by name
+      operationId: pbehaviors-delete-by-name
+      parameters:
+        - name: name
+          in: query
+          description: pbehavior name
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
     get:
       tags:
         - pbehaviors
