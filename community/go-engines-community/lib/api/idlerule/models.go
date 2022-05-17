@@ -1,14 +1,11 @@
 package idlerule
 
 import (
-	"encoding/json"
-	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/scenario"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"github.com/mitchellh/mapstructure"
 )
 
 type CountByPatternRequest struct {
@@ -89,67 +86,57 @@ type BulkDeleteResponseItem struct {
 }
 
 type OperationRequest struct {
-	Type       string      `json:"type" binding:"required"`
-	Parameters interface{} `json:"parameters,omitempty"`
+	Type       string              `json:"type" binding:"required"`
+	Parameters idlerule.Parameters `json:"parameters,omitempty"`
 }
 
-func (r *OperationRequest) UnmarshalJSON(b []byte) error {
-	type Alias OperationRequest
-	tmp := struct {
-		*Alias
-	}{
-		Alias: (*Alias)(r),
-	}
+type Rule struct {
+	ID             string                    `bson:"_id,omitempty" json:"_id"`
+	Name           string                    `bson:"name" json:"name"`
+	Description    string                    `bson:"description" json:"description"`
+	Author         string                    `bson:"author" json:"author"`
+	Enabled        bool                      `bson:"enabled" json:"enabled"`
+	Type           string                    `bson:"type" json:"type"`
+	Priority       int64                     `bson:"priority" json:"priority"`
+	Duration       types.DurationWithUnit    `bson:"duration" json:"duration"`
+	EntityPatterns pattern.EntityPatternList `bson:"entity_patterns" json:"entity_patterns"`
+	// DisableDuringPeriods is an option that allows to disable the rule
+	// when entity is in listed periods due pbehavior schedule.
+	DisableDuringPeriods []string      `bson:"disable_during_periods" json:"disable_during_periods"`
+	Created              types.CpsTime `bson:"created" json:"created"`
+	Updated              types.CpsTime `bson:"updated" json:"updated"`
+	// Only for Alarm rules
+	AlarmPatterns  pattern.AlarmPatternList `bson:"alarm_patterns,omitempty" json:"alarm_patterns,omitempty"`
+	AlarmCondition string                   `bson:"alarm_condition,omitempty" json:"alarm_condition,omitempty"`
+	Operation      *Operation               `bson:"operation,omitempty" json:"operation,omitempty"`
+}
 
-	err := json.Unmarshal(b, &tmp)
-	if err != nil {
-		return err
-	}
+type Operation struct {
+	Type       string     `bson:"type" json:"type"`
+	Parameters Parameters `bson:"parameters,omitempty" json:"parameters"`
+}
 
-	switch r.Type {
-	case types.ActionTypeSnooze:
-		var params scenario.SnoozeParametersRequest
-		err := mapstructure.Decode(r.Parameters, &params)
-		if err != nil {
-			return fmt.Errorf("cannot decode map struct : %v", err)
-		}
-		r.Parameters = params
-	case types.ActionTypeChangeState:
-		var params scenario.ChangeStateParametersRequest
-		err := mapstructure.Decode(r.Parameters, &params)
-		if err != nil {
-			return fmt.Errorf("cannot decode map struct : %v", err)
-		}
-		r.Parameters = params
-	case types.ActionTypeAssocTicket:
-		var params scenario.AssocTicketParametersRequest
-		err := mapstructure.Decode(r.Parameters, &params)
-		if err != nil {
-			return fmt.Errorf("cannot decode map struct : %v", err)
-		}
-		r.Parameters = params
-	case types.ActionTypePbehavior:
-		var params scenario.PbehaviorParametersRequest
-		err := mapstructure.Decode(r.Parameters, &params)
-		if err != nil {
-			return fmt.Errorf("cannot decode map struct : %v", err)
-		}
-		r.Parameters = params
-	default:
-		var params scenario.ParametersRequest
-		err := mapstructure.Decode(r.Parameters, &params)
-		if err != nil {
-			return fmt.Errorf("cannot decode map struct : %v", err)
-		}
-		r.Parameters = params
-	}
-
-	return nil
+type Parameters struct {
+	Output string `json:"output,omitempty" bson:"output"`
+	// ChangeState
+	State *types.CpsNumber `json:"state,omitempty" bson:"state"`
+	// AssocTicket
+	Ticket string `json:"ticket,omitempty" bson:"ticket"`
+	// Snooze and Pbehavior
+	Duration *types.DurationWithUnit `json:"duration,omitempty" bson:"duration"`
+	// Pbehavior
+	Name           string            `json:"name,omitempty" binding:"max=255" bson:"name"`
+	Reason         *pbehavior.Reason `json:"reason,omitempty" bson:"reason"`
+	Type           *pbehavior.Type   `json:"type,omitempty" bson:"type"`
+	RRule          string            `json:"rrule,omitempty" bson:"rrule"`
+	Tstart         *int64            `json:"tstart,omitempty" bson:"tstart"`
+	Tstop          *int64            `json:"tstop,omitempty" bson:"tstop"`
+	StartOnTrigger *bool             `json:"start_on_trigger,omitempty" bson:"start_on_trigger"`
 }
 
 type AggregationResult struct {
-	Data       []idlerule.Rule `bson:"data" json:"data"`
-	TotalCount int64           `bson:"total_count" json:"total_count"`
+	Data       []Rule `bson:"data" json:"data"`
+	TotalCount int64  `bson:"total_count" json:"total_count"`
 }
 
 // GetTotal implementation PaginatedData interface
