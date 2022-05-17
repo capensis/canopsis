@@ -29,7 +29,7 @@ import {
   EVENT_FILTER_TYPES,
   PATTERN_OPERATORS,
   PATTERN_TYPES,
-  PATTERN_INPUT_TYPES,
+  PATTERN_FIELD_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -241,6 +241,8 @@ export default {
     resolvedAt: 'Resolved at',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Custom',
+    eventType: 'Event type',
+    sourceType: 'Source type',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -348,6 +350,18 @@ export default {
 
       [PATTERN_OPERATORS.acked]: 'Acked',
       [PATTERN_OPERATORS.notAcked]: 'Not acked',
+    },
+    entityEventTypes: {
+      [EVENT_ENTITY_TYPES.ack]: 'Ack',
+      [EVENT_ENTITY_TYPES.ackRemove]: 'Ack remove',
+      [EVENT_ENTITY_TYPES.assocTicket]: 'Associate ticket',
+      [EVENT_ENTITY_TYPES.declareTicket]: 'Declare ticket',
+      [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
+      [EVENT_ENTITY_TYPES.uncancel]: 'Uncancel',
+      [EVENT_ENTITY_TYPES.changeState]: 'Change state',
+      [EVENT_ENTITY_TYPES.check]: 'Check',
+      [EVENT_ENTITY_TYPES.comment]: 'Comment',
+      [EVENT_ENTITY_TYPES.snooze]: 'Snooze',
     },
   },
   variableTypes: {
@@ -1897,10 +1911,6 @@ export default {
     copyWidgetId: 'Copy widget ID',
     autoHeightButton: 'If this button is selected, height will be automatically calculated.',
   },
-  patternsList: {
-    noData: 'No pattern set. Click \'Add\' button to start adding fields to the pattern',
-    noDataDisabled: 'No pattern set.',
-  },
   validation: {
     messages: {
       _default: 'The value is not valid',
@@ -2359,11 +2369,11 @@ export default {
 
   mixedField: {
     types: {
-      [PATTERN_INPUT_TYPES.string]: '@:variableTypes.string',
-      [PATTERN_INPUT_TYPES.number]: '@:variableTypes.number',
-      [PATTERN_INPUT_TYPES.boolean]: '@:variableTypes.boolean',
-      [PATTERN_INPUT_TYPES.null]: '@:variableTypes.null',
-      [PATTERN_INPUT_TYPES.array]: '@:variableTypes.array',
+      [PATTERN_FIELD_TYPES.string]: '@:variableTypes.string',
+      [PATTERN_FIELD_TYPES.number]: '@:variableTypes.number',
+      [PATTERN_FIELD_TYPES.boolean]: '@:variableTypes.boolean',
+      [PATTERN_FIELD_TYPES.null]: '@:variableTypes.null',
+      [PATTERN_FIELD_TYPES.stringArray]: '@:variableTypes.array',
     },
   },
 
@@ -2769,14 +2779,16 @@ export default {
   },
 
   pattern: {
-    patterns: 'Filters',
-    myPatterns: 'My filters',
-    corporatePatterns: 'Shared filters',
+    patterns: 'Patterns',
+    myPatterns: 'My patterns',
+    corporatePatterns: 'Shared patterns',
     addRule: 'Add rule',
     addGroup: 'Add group',
     removeRule: 'Remove rule',
     advancedEditor: 'Advanced editor',
     simpleEditor: 'Simple editor',
+    noData: 'No pattern set. Click \'@:pattern.addGroup\' button to start adding fields to the pattern',
+    noDataDisabled: 'No pattern set.',
     types: {
       [PATTERN_TYPES.alarm]: 'Alarm pattern',
       [PATTERN_TYPES.entity]: 'Entity pattern',
@@ -2785,6 +2797,7 @@ export default {
     errors: {
       ruleRequired: 'Please add at least one rule',
       groupRequired: 'Please add at least one group',
+      invalidPatterns: 'Patterns are invalid or there is a disabled pattern field',
     },
   },
 

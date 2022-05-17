@@ -1,70 +1,50 @@
 <template lang="pug">
   v-layout(column)
-    c-collapse-panel.mb-2(v-if="withAlarm", color="grey")
-      template(#header="")
-        span.white--text {{ $t('common.alarmPatterns') }}
-      v-card
-        v-card-text
-          c-alarm-patterns-field(
-            v-field="value.alarm_pattern",
-            :required="isPatternRequired",
-            :disabled="disabled",
-            :name="alarmPatternsFieldName",
-            with-type,
-            @input="errors.remove(alarmPatternsFieldName)"
-          )
+    c-pattern-panel.mb-2(v-if="withAlarm", :title="$t('common.alarmPatterns')")
+      c-alarm-patterns-field(
+        v-field="value.alarm_pattern",
+        :required="isPatternRequired",
+        :disabled="disabled",
+        :name="alarmPatternsFieldName",
+        :attributes="alarmAttributes",
+        with-type,
+        @input="errors.remove(alarmPatternsFieldName)"
+      )
 
-    c-collapse-panel.mb-2(v-if="withEntity", color="grey")
-      template(#header="")
-        span.white--text {{ $t('common.entityPatterns') }}
-      v-card
-        v-card-text
-          c-entity-patterns-field(
-            v-field="value.entity_pattern",
-            :required="isPatternRequired",
-            :disabled="disabled",
-            :name="entityPatternsFieldName",
-            with-type,
-            @input="errors.remove(entityPatternsFieldName)"
-          )
+    c-pattern-panel.mb-2(v-if="withEntity", :title="$t('common.entityPatterns')")
+      c-entity-patterns-field(
+        v-field="value.entity_pattern",
+        :required="isPatternRequired",
+        :disabled="disabled",
+        :name="entityPatternsFieldName",
+        :attributes="entityAttributes",
+        with-type,
+        @input="errors.remove(entityPatternsFieldName)"
+      )
 
-    c-collapse-panel(v-if="withPbehavior", color="grey")
-      template(#header="")
-        span.white--text {{ $t('common.pbehaviorPatterns') }}
-      v-card
-        v-card-text
-          c-pbehavior-patterns-field(
-            v-field="value.pbehavior_pattern",
-            :required="isPatternRequired",
-            :disabled="disabled",
-            :name="entityPbehaviorFieldName",
-            with-type,
-            @input="errors.remove(entityPbehaviorFieldName)"
-          )
+    c-pattern-panel.mb-2(v-if="withPbehavior", :title="$t('common.pbehaviorPatterns')")
+      c-pbehavior-patterns-field(
+        v-field="value.pbehavior_pattern",
+        :required="isPatternRequired",
+        :disabled="disabled",
+        :name="entityPbehaviorFieldName",
+        with-type,
+        @input="errors.remove(entityPbehaviorFieldName)"
+      )
 
-    c-collapse-panel.mb-2(v-if="withEvent", color="grey")
-      template(#header="")
-        span.white--text {{ $t('common.eventPatterns') }}
-      v-card
-        v-card-text
-          c-event-filter-patterns-field(
-            v-field="value.event_pattern",
-            :required="isPatternRequired",
-            :disabled="disabled",
-            :name="eventPatternsFieldName",
-            @input="errors.remove(eventPatternsFieldName)"
-          )
+    c-pattern-panel(v-if="withEvent", :title="$t('common.eventPatterns')")
+      c-event-filter-patterns-field(
+        v-field="value.event_pattern",
+        :required="isPatternRequired",
+        :disabled="disabled",
+        :name="eventPatternsFieldName",
+        @input="errors.remove(eventPatternsFieldName)"
+      )
 </template>
 
 <script>
-import { formValidationHeaderMixin } from '@/mixins/form';
-
-import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
-
 export default {
   inject: ['$validator'],
-  components: { PatternsList },
-  mixins: [formValidationHeaderMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -77,6 +57,14 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    alarmAttributes: {
+      type: Array,
+      required: false,
+    },
+    entityAttributes: {
+      type: Array,
+      required: false,
     },
     withAlarm: {
       type: Boolean,
@@ -118,7 +106,17 @@ export default {
   },
   computed: {
     hasPatterns() {
-      return Object.values(this.value).some((patterns = []) => patterns.length);
+      const {
+        alarm_pattern: alarmPattern,
+        entity_pattern: entityPattern,
+        pbehavior_pattern: pbehaviorPattern,
+        event_pattern: eventPattern,
+      } = this.value;
+
+      return alarmPattern?.groups?.length
+        || entityPattern?.groups?.length
+        || pbehaviorPattern?.groups?.length
+        || eventPattern?.groups?.length;
     },
 
     isPatternRequired() {
@@ -126,19 +124,19 @@ export default {
     },
 
     alarmPatternsFieldName() {
-      return this.preparePatternsFieldName('alarm_patterns');
+      return this.preparePatternsFieldName('alarm_pattern');
     },
 
     eventPatternsFieldName() {
-      return this.preparePatternsFieldName('event_patterns');
+      return this.preparePatternsFieldName('event_pattern');
     },
 
     entityPatternsFieldName() {
-      return this.preparePatternsFieldName('entity_patterns');
+      return this.preparePatternsFieldName('entity_pattern');
     },
 
     entityPbehaviorFieldName() {
-      return this.preparePatternsFieldName('pbehavior_patterns');
+      return this.preparePatternsFieldName('pbehavior_pattern');
     },
   },
   methods: {

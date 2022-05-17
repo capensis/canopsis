@@ -165,8 +165,10 @@ import CPatternRulesField from '@/components/forms/fields/pattern/c-pattern-rule
 import CPatternGroupField from '@/components/forms/fields/pattern/c-pattern-group-field.vue';
 import CPatternGroupsField from '@/components/forms/fields/pattern/c-pattern-groups-field.vue';
 import CPatternsEditorField from '@/components/forms/fields/pattern/c-patterns-editor-field.vue';
+import CPatternsAdvancedEditorField from '@/components/forms/fields/pattern/c-patterns-advanced-editor-field.vue';
 import CEntityPatternsField from '@/components/forms/fields/entity/c-entity-patterns-field.vue';
 import CAlarmPatternsField from '@/components/forms/fields/alarm/c-alarm-patterns-field.vue';
+import CPatternPanel from '@/components/forms/fields/pattern/c-pattern-panel.vue';
 import CPbehaviorPatternsField from '@/components/forms/fields/pbehavior/c-pbehavior-patterns-field.vue';
 import CEventFilterPatternsField from '@/components/forms/fields/event-filter/c-event-filter-patterns-field.vue';
 
@@ -387,9 +389,11 @@ Vue.component('c-pattern-rules-field', CPatternRulesField);
 Vue.component('c-pattern-group-field', CPatternGroupField);
 Vue.component('c-pattern-groups-field', CPatternGroupsField);
 Vue.component('c-patterns-editor-field', CPatternsEditorField);
+Vue.component('c-patterns-advanced-editor-field', CPatternsAdvancedEditorField);
 Vue.component('c-pattern-field', CPatternField);
 Vue.component('c-pattern-operator-information', CPatternOperatorInformation);
 Vue.component('c-pattern-operator-chip', CPatternOperatorChip);
+Vue.component('c-pattern-panel', CPatternPanel);
 Vue.component('c-alarm-patterns-field', CAlarmPatternsField);
 Vue.component('c-entity-patterns-field', CEntityPatternsField);
 Vue.component('c-pbehavior-patterns-field', CPbehaviorPatternsField);
@@ -440,6 +444,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.testSuite]: { maxWidth: 920 },
     [MODALS.createPattern]: { maxWidth: 1280 },
     [MODALS.remediationPatterns]: { maxWidth: 1280 },
+    [MODALS.createIdleRule]: { maxWidth: 1280 },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },
