@@ -28,7 +28,8 @@ const (
 	SourceTypeMetaAlarm = "metaalarm"
 )
 
-//Event types
+// Event types.
+// Add each new event type to isValidEventType func.
 const (
 	EventTypeAck         = "ack"
 	EventTypeAckremove   = "ackremove"
@@ -45,7 +46,6 @@ const (
 	EventTypeDone              = "done"
 	EventTypeChangestate       = "changestate"
 	EventTypeKeepstate         = "keepstate"
-	EventTypePBehavior         = "pbehavior"
 	EventTypePerf              = "perf"
 	EventTypeSnooze            = "snooze"
 	EventTypeUnsnooze          = "unsnooze"
@@ -150,10 +150,10 @@ type Event struct {
 	Alarm         *Alarm     `bson:"current_alarm" json:"current_alarm"`
 	Entity        *Entity    `bson:"current_entity" json:"current_entity"`
 
-	Author        string     `bson:"author" json:"author"`
-	UserID        string     `bson:"user_id" json:"user_id"`
+	Author string `bson:"author" json:"author"`
+	UserID string `bson:"user_id" json:"user_id"`
 
-	RK            string     `bson:"routing_key" json:"routing_key"`
+	RK string `bson:"routing_key" json:"routing_key"`
 	// AckResources is used to ack all resource alarms on ack component alarm.
 	// It also adds declare ticket to all resource alarms on ack webhook.
 	// It's still used by some old users but meta alarms must be used instead.
@@ -346,6 +346,10 @@ func (e Event) IsValid() error {
 		}
 	default:
 		return errt.NewUnknownError(fmt.Errorf("wrong source type: %v", e.SourceType))
+	}
+
+	if !isValidEventType(e.EventType) {
+		return errt.NewUnknownError(fmt.Errorf("wrong event type: %v", e.EventType))
 	}
 
 	switch e.EventType {
@@ -574,8 +578,74 @@ func (e *Event) SetField(name string, value interface{}) (err error) {
 }
 
 func (e *Event) IsPbehaviorEvent() bool {
-	return e.EventType == EventTypePBehavior ||
-		e.EventType == EventTypePbhEnter ||
+	return e.EventType == EventTypePbhEnter ||
 		e.EventType == EventTypePbhLeave ||
 		e.EventType == EventTypePbhLeaveAndEnter
+}
+
+func isValidEventType(t string) bool {
+	switch t {
+	case EventTypeCheck,
+		EventTypeActivate,
+		EventTypeAck,
+		EventTypeAckremove,
+		EventTypeAssocTicket,
+		EventTypeCancel,
+		EventTypeComment,
+		EventTypeDeclareTicket,
+		EventTypeDeclareTicketWebhook,
+		EventTypeDone,
+		EventTypeChangestate,
+		EventTypeSnooze,
+		EventTypeUnsnooze,
+		EventTypeUncancel,
+		EventTypeResolveDone,
+		EventTypeResolveCancel,
+		EventTypeResolveClose,
+		EventTypePbhEnter,
+		EventTypePbhLeaveAndEnter,
+		EventTypePbhLeave,
+		EventTypePbhCreate,
+		EventTypeUpdateStatus,
+		EventTypeMetaAlarm,
+		EventTypeMetaAlarmUpdated,
+		EventManualMetaAlarmGroup,
+		EventManualMetaAlarmUngroup,
+		EventManualMetaAlarmUpdate,
+		EventTypeRecomputeEntityService,
+		EventTypeUpdateEntityService,
+		EventTypeEntityUpdated,
+		EventTypeEntityToggled,
+		EventTypeNoEvents,
+		EventTypeRunDelayedScenario,
+		EventTypeInstructionStarted,
+		EventTypeInstructionPaused,
+		EventTypeInstructionResumed,
+		EventTypeInstructionCompleted,
+		EventTypeInstructionFailed,
+		EventTypeInstructionAborted,
+		EventTypeAutoInstructionStarted,
+		EventTypeAutoInstructionCompleted,
+		EventTypeAutoInstructionFailed,
+		EventTypeAutoInstructionAlreadyRunning,
+		EventTypeInstructionJobStarted,
+		EventTypeInstructionJobCompleted,
+		EventTypeInstructionJobAborted,
+		EventTypeInstructionJobFailed,
+		EventTypeAlarmSkipped,
+		EventTypeJunitTestSuiteUpdated,
+		EventTypeJunitTestCaseUpdated,
+		EventTypeKeepstate,
+		EventTypePerf,
+		EventTypeStateIncrease,
+		EventTypeStateDecrease,
+		EventTypeStatusIncrease,
+		EventTypeStatusDecrease,
+		EventTypeStatCounterInc,
+		EventTypeStatDuration,
+		EventTypeStatStateInterval:
+		return true
+	}
+
+	return false
 }
