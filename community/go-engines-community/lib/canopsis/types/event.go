@@ -629,7 +629,6 @@ func isValidEventType(t string) bool {
 		EventTypeAutoInstructionStarted,
 		EventTypeAutoInstructionCompleted,
 		EventTypeAutoInstructionFailed,
-		EventTypeAutoInstructionAlreadyRunning,
 		EventTypeInstructionJobStarted,
 		EventTypeInstructionJobCompleted,
 		EventTypeInstructionJobAborted,
