@@ -84,7 +84,7 @@ func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule Rule,
 	return externalData, nil
 }
 
-func (a *changeEntityApplicator) executeTpl(tplText string, params TemplateParameters, cfgTimezone *config.TimezoneConfig) (string, error) {
+func (a *changeEntityApplicator) executeTpl(tplText string, params TemplateGetter, cfgTimezone *config.TimezoneConfig) (string, error) {
 	tpl, err := template.New("tpl").Option("missingkey=error").Funcs(types.GetTemplateFunc(cfgTimezone)).Parse(tplText)
 	if err != nil {
 		return "", err

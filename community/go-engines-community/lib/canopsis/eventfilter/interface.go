@@ -40,9 +40,9 @@ type RuleApplicatorContainer interface {
 }
 
 type ExternalDataGetter interface {
-	Get(ctx context.Context, parameters ExternalDataParameters, templateParameters TemplateParameters, cfgTimezone *config.TimezoneConfig) (interface{}, error)
+	Get(ctx context.Context, parameters ExternalDataParameters, templateParameters TemplateGetter, cfgTimezone *config.TimezoneConfig) (interface{}, error)
 }
 
-type TemplateParameters interface {
+type TemplateGetter interface {
 	GetTemplate() interface{}
 }

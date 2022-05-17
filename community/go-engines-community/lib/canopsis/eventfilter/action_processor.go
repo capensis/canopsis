@@ -133,7 +133,7 @@ func (p *actionProcessor) Process(action Action, event types.Event, regexMatchWr
 	return event, fmt.Errorf("action type = %s is invalid", action.Type)
 }
 
-func (p *actionProcessor) executeTpl(tplText string, params TemplateParameters, cfgTimezone *config.TimezoneConfig) (string, error) {
+func (p *actionProcessor) executeTpl(tplText string, params TemplateGetter, cfgTimezone *config.TimezoneConfig) (string, error) {
 	tpl, err := template.New("tpl").Option("missingkey=error").Funcs(types.GetTemplateFunc(cfgTimezone)).Parse(tplText)
 	if err != nil {
 		return "", err
