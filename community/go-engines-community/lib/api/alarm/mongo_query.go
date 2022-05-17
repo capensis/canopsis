@@ -390,7 +390,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r FilterRequ
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return common.NewValidationError("filter", errors.New("Filter doesn't exist."))
 		}
-		return err
+		return fmt.Errorf("cannot fetch widget filter: %w", err)
 	}
 
 	if len(filter.OldMongoQuery) > 0 {
@@ -400,7 +400,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r FilterRequ
 
 		b, err := json.Marshal(resolvedFilter)
 		if err != nil {
-			return err
+			return fmt.Errorf("cannot marshal old mongo query: %w", err)
 		}
 		strQuery := string(b)
 		extraLookups := false
@@ -429,7 +429,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r FilterRequ
 
 	alarmPatternQuery, err := filter.AlarmPattern.ToMongoQuery("")
 	if err != nil {
-		return err
+		return fmt.Errorf("invalid alarm pattern in widget filter id=%q: %w", filter.ID, err)
 	}
 
 	if len(alarmPatternQuery) > 0 {
@@ -449,7 +449,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r FilterRequ
 
 	pbhPatternQuery, err := filter.PbehaviorPattern.ToMongoQuery("v.pbehavior_info")
 	if err != nil {
-		return err
+		return fmt.Errorf("invalid pbehavior pattern in widget filter id=%q: %w", filter.ID, err)
 	}
 
 	if len(pbhPatternQuery) > 0 {
@@ -458,7 +458,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r FilterRequ
 
 	entityPatternQuery, err := filter.EntityPattern.ToMongoQuery("entity")
 	if err != nil {
-		return err
+		return fmt.Errorf("invalid entity pattern in widget filter id=%q: %w", filter.ID, err)
 	}
 
 	if len(entityPatternQuery) > 0 {
@@ -682,7 +682,7 @@ func (q *MongoQueryBuilder) getInstructionsFilters(ctx context.Context, filter b
 	filter["status"] = bson.M{"$in": bson.A{InstructionStatusApproved, nil}}
 	cursor, err := q.instructionCollection.Find(ctx, filter)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot fetch instructions: %w", err)
 	}
 	defer cursor.Close(ctx)
 
@@ -692,7 +692,7 @@ func (q *MongoQueryBuilder) getInstructionsFilters(ctx context.Context, filter b
 		var instruction Instruction
 		err := cursor.Decode(&instruction)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("cannot decode instruction: %w", err)
 		}
 
 		q, err := getInstructionQuery(instruction)
@@ -978,7 +978,7 @@ func getInstructionQuery(instruction Instruction) (bson.M, error) {
 
 	alarmPatternQuery, err := instruction.AlarmPattern.ToMongoQuery("")
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("invalid alarm pattern in instruction id=%q: %w", instruction.ID, err)
 	}
 	if len(alarmPatternQuery) > 0 {
 		and = append(and, alarmPatternQuery)
@@ -986,7 +986,7 @@ func getInstructionQuery(instruction Instruction) (bson.M, error) {
 
 	entityPatternQuery, err := instruction.EntityPattern.ToMongoQuery("entity")
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("invalid entuty pattern in instruction id=%q: %w", instruction.ID, err)
 	}
 	if len(entityPatternQuery) > 0 {
 		and = append(and, entityPatternQuery)

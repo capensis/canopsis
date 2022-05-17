@@ -831,8 +831,6 @@ func (s *store) fillLinks(ctx context.Context, apiKey string, result *Aggregatio
 	alarmIndexes := make(map[string]int, len(result.Data))
 
 	for i, item := range result.Data {
-		links := make(map[string]interface{})
-		result.Data[i].Links = &links
 		linksEntities[i] = AlarmEntity{
 			AlarmID:  item.ID,
 			EntityID: item.Entity.ID,
@@ -852,7 +850,7 @@ func (s *store) fillLinks(ctx context.Context, apiKey string, result *Aggregatio
 				links[category] = link
 			}
 
-			result.Data[i].Links = &links
+			result.Data[i].Links = links
 		}
 	}
 
