@@ -55,6 +55,8 @@ func (p *rpcServerMessageProcessor) Process(ctx context.Context, d amqp.Delivery
 
 	if pbhEvent == nil {
 		pbhEvent = &types.Event{}
+	} else {
+		pbhEvent.Entity = event.Entity
 	}
 
 	return p.getRpcEvent(types.RPCPBehaviorResultEvent{
@@ -115,8 +117,6 @@ func (p *createPbehaviorMessageProcessor) Process(
 	if pbhEvent.EventType == "" {
 		return nil, nil
 	}
-
-	pbhEvent.Entity = entity
 
 	return &pbhEvent, nil
 }
