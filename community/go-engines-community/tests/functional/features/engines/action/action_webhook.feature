@@ -669,7 +669,7 @@ Feature: execute action on trigger
     When I do POST /api/v4/scenarios:
     """json
     {
-      "name": "test-scenario-action-webhook-6-name",
+      "name": "test-scenario-action-webhook-6-1-name",
       "enabled": true,
       "priority": 70,
       "triggers": [
@@ -686,6 +686,7 @@ Feature: execute action on trigger
           ],
           "type": "webhook",
           "parameters": {
+            "forward_author": true,
             "request": {
               "method": "POST",
               "url": "{{ .apiURL }}/api/v4/scenarios",
@@ -696,13 +697,14 @@ Feature: execute action on trigger
               "headers": {
                 "Content-Type": "application/json"
               },
-              "payload": "{\"name\": \"{{ `test-scenario-action-webhook-6-action-1-{{ .AdditionalData.AlarmChangeType }}-{{ .AdditionalData.Author }}-{{ .AdditionalData.Initiator }}` }}\", \"enabled\":true,\"priority\":141,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-webhook-6-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\": \"{{ `test-scenario-action-webhook-6-1-action-1 [{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]` }}\", \"enabled\":true,\"priority\":113,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-webhook-6-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "empty_response": false,
               "is_regexp": false,
               "ticket_id": "_id",
-              "scenario_name": "name"        }
+              "scenario_name": "name"
+            }
           },
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false
@@ -716,7 +718,7 @@ Feature: execute action on trigger
             }
           ],
           "drop_scenario_if_not_matched": false,
-          "emit_trigger": false,
+          "emit_trigger": true,
           "type": "webhook",
           "parameters": {
             "request": {
@@ -729,7 +731,7 @@ Feature: execute action on trigger
               "headers": {
                 "Content-Type": "application/json"
               },
-              "payload": "{\"name\": \"{{ `test-scenario-action-webhook-6-action-2-{{ .AdditionalData.AlarmChangeType }}-{{ .AdditionalData.Author }}-{{ .AdditionalData.Initiator }}` }}\", \"enabled\":true,\"priority\":114,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-webhook-6-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\": \"{{ `test-scenario-action-webhook-6-1-action-2 [{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]` }}\", \"enabled\":true,\"priority\":114,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-webhook-6-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "empty_response": false,
@@ -738,6 +740,53 @@ Feature: execute action on trigger
               "scenario_name_2": "name"
             }
           }
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do POST /api/v4/scenarios:
+    """json
+    {
+      "name": "test-scenario-action-webhook-6-2-name",
+      "enabled": true,
+      "priority": 71,
+      "triggers": [
+        "declareticketwebhook"
+      ],
+      "actions": [
+        {
+          "alarm_patterns": [
+            {
+              "v": {
+                "resource": "test-resource-action-webhook-6"
+              }
+            }
+          ],
+          "type": "webhook",
+          "parameters": {
+            "author": "test-scenario-action-webhook-6-2-action-1-author",
+            "request": {
+              "method": "POST",
+              "url": "{{ .apiURL }}/api/v4/scenarios",
+              "auth": {
+                "username": "root",
+                "password": "test"
+              },
+              "headers": {
+                "Content-Type": "application/json"
+              },
+              "payload": "{\"name\": \"{{ `test-scenario-action-webhook-6-2-action-1 [{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]` }}\", \"enabled\":true,\"priority\":115,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-webhook-6-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+            },
+            "declare_ticket": {
+              "empty_response": false,
+              "is_regexp": false,
+              "ticket_id": "_id",
+              "scenario_name_3": "name"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
         }
       ]
     }
@@ -754,8 +803,8 @@ Feature: execute action on trigger
       "component" :  "test-component-action-webhook-6",
       "resource" : "test-resource-action-webhook-6",
       "state" : 2,
-      "author": "QA_canopsis",
-      "output" : "noveo alarm"
+      "output" : "noveo alarm",
+      "initiator": "user"
     }
     """
     When I wait the end of event processing
@@ -770,7 +819,7 @@ Feature: execute action on trigger
             "ticket": {
               "_t": "declareticket",
               "data": {
-                "scenario_name_2": "test-scenario-action-webhook-6-action-2-declareticketwebhook-QA_canopsis-external"
+                "scenario_name_3": "test-scenario-action-webhook-6-2-action-1 [declareticketwebhook] [test-scenario-action-webhook-6-2-action-1-author] [user] []"
               }
             },
             "steps": [
@@ -781,10 +830,19 @@ Feature: execute action on trigger
                 "_t": "statusinc"
               },
               {
-                "_t": "declareticket"
+                "_t": "declareticket",
+                "a": "root",
+                "user_id": "root"
               },
               {
-                "_t": "declareticket"
+                "_t": "declareticket",
+                "a": "system",
+                "user_id": ""
+              },
+              {
+                "_t": "declareticket",
+                "a": "test-scenario-action-webhook-6-2-action-1-author",
+                "user_id": ""
               }
             ],
             "connector": "test-connector-action-webhook-6",
@@ -802,14 +860,14 @@ Feature: execute action on trigger
       }
     }
     """
-    When I do GET /api/v4/scenarios?search=test-scenario-action-webhook-6-action-1
+    When I do GET /api/v4/scenarios?search=test-scenario-action-webhook-6-1-action-1
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "name": "test-scenario-action-webhook-6-action-1-create-QA_canopsis-external",
+          "name": "test-scenario-action-webhook-6-1-action-1 [create] [root] [user] [root]",
           "enabled": true,
           "triggers": [
             "create"
@@ -823,7 +881,7 @@ Feature: execute action on trigger
               ]
             }
           ],
-          "priority": 141
+          "priority": 113
         }
       ],
       "meta": {
@@ -834,14 +892,14 @@ Feature: execute action on trigger
       }
     }
     """
-    When I do GET /api/v4/scenarios?search=test-scenario-action-webhook-6-action-2
+    When I do GET /api/v4/scenarios?search=test-scenario-action-webhook-6-1-action-2
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "name": "test-scenario-action-webhook-6-action-2-declareticketwebhook-QA_canopsis-external",
+          "name": "test-scenario-action-webhook-6-1-action-2 [declareticketwebhook] [system] [user] []",
           "enabled": true,
           "triggers": [
             "create"
@@ -856,6 +914,38 @@ Feature: execute action on trigger
             }
           ],
           "priority": 114
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "per_page": 10,
+        "page_count": 1,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/scenarios?search=test-scenario-action-webhook-6-2-action-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-scenario-action-webhook-6-2-action-1 [declareticketwebhook] [test-scenario-action-webhook-6-2-action-1-author] [user] []",
+          "enabled": true,
+          "triggers": [
+            "create"
+          ],
+          "actions": [
+            {
+              "alarm_patterns": [
+                {
+                  "_id": "test-scenario-action-webhook-6-alarm"
+                }
+              ]
+            }
+          ],
+          "priority": 115
         }
       ],
       "meta": {
