@@ -42,7 +42,6 @@ require (
 	github.com/russellhaering/gosaml2 v0.6.0
 	github.com/russellhaering/goxmldsig v1.1.0
 	github.com/smartystreets/goconvey v1.6.4
-	github.com/streadway/amqp v1.0.0
 	github.com/teambition/rrule-go v1.7.1
 	github.com/tidwall/pretty v1.1.0 // indirect
 	github.com/valyala/fastjson v1.6.3
@@ -66,6 +65,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.15.1
 	github.com/jackc/pgconn v1.10.0
 	github.com/jackc/pgproto3/v2 v2.1.1
+	github.com/rabbitmq/amqp091-go v1.3.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 

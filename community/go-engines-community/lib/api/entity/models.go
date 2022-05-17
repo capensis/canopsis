@@ -19,7 +19,7 @@ type ListRequestWithPagination struct {
 type ListRequest struct {
 	BaseFilterRequest
 	Sort     string   `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
-	SortBy   string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=_id name type category impact_level category.name idle_since infos.*"`
+	SortBy   string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=_id name type category impact_level category.name idle_since infos.* last_event_date enabled"`
 	SearchBy []string `form:"active_columns[]" json:"active_columns[]"`
 }
 

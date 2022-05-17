@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -18,8 +18,8 @@ import (
 	"github.com/ajg/form"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	amqplib "github.com/streadway/amqp"
 	"github.com/valyala/fastjson"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -30,14 +30,14 @@ type API interface {
 }
 
 type api struct {
-	publisher                   amqp.Publisher
+	publisher                   libamqp.Publisher
 	alarmCollection             mongo.DbCollection
 	isAllowChangeSeverityToInfo bool
 	logger                      zerolog.Logger
 }
 
 func NewApi(
-	publisher amqp.Publisher,
+	publisher libamqp.Publisher,
 	client mongo.DbClient,
 	isAllowChangeSeverityToInfo bool,
 	logger zerolog.Logger,
@@ -354,10 +354,10 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 		"",
 		false,
 		false,
-		amqplib.Publishing{
+		amqp.Publishing{
 			ContentType:  "application/json",
 			Body:         value.MarshalTo(nil),
-			DeliveryMode: amqplib.Persistent,
+			DeliveryMode: amqp.Persistent,
 		},
 	)
 	if err != nil {

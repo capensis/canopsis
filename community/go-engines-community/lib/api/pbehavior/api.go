@@ -23,6 +23,7 @@ import (
 type API interface {
 	common.BulkCrudAPI
 	Patch(c *gin.Context)
+	DeleteByName(c *gin.Context)
 	ListByEntityID(c *gin.Context)
 	ListEntities(c *gin.Context)
 	CountFilter(c *gin.Context)
@@ -356,6 +357,40 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	if !ok {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
+		Action:    logger.ActionDelete,
+		ValueType: logger.ValueTypePbehavior,
+		ValueID:   id,
+	})
+	if err != nil {
+		a.actionLogger.Err(err, "failed to log action")
+	}
+
+	a.sendComputeTask(pbehavior.ComputeTask{
+		PbehaviorIds: []string{id},
+	})
+	c.JSON(http.StatusNoContent, nil)
+}
+
+func (a *api) DeleteByName(c *gin.Context) {
+	request := DeleteByNameRequest{}
+
+	if err := c.ShouldBindQuery(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+
+		return
+	}
+
+	id, err := a.store.DeleteByName(c.Request.Context(), request.Name)
+	if err != nil {
+		panic(err)
+	}
+
+	if id == "" {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
