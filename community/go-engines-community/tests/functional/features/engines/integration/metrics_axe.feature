@@ -647,7 +647,7 @@ Feature: Metrics should be added on alarm changes
       "connector" : "test-connector-metrics-axe-8",
       "connector_name" : "test-connector-name-metrics-axe-8",
       "source_type" : "resource",
-      "event_type" : "assocticket2",
+      "event_type" : "assocticket",
       "component" : "test-component-metrics-axe-8",
       "resource" : "test-resource-metrics-axe-8-1",
       "ticket": "testticket"
