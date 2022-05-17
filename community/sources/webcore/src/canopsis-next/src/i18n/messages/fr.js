@@ -1100,7 +1100,8 @@ export default {
       },
     },
     alarmsList: {
-      title: '{serviceName} - bac à alarmes',
+      title: 'Bac à alarmes',
+      prefixTitle: '{prefix} - bac à alarmes',
     },
     createUser: {
       create: {
