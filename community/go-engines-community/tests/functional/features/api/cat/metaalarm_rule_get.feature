@@ -103,6 +103,30 @@ Feature: Get a metaalarm-rule
     }
     """
 
+  Scenario: given get request should return metaalarm rule with old patterns
+    When I am admin
+    When I do GET /api/v4/cat/metaalarmrules/test-metaalarm-rule-backward-compatibility-to-get
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "_id": "test-metaalarm-rule-backward-compatibility-to-get",
+      "auto_resolve": false,
+      "config": {
+        "threshold_count": 3
+      },
+      "name": "test-metaalarm-rule-backward-compatibility-to-get-name",
+      "type": "complex",
+      "old_alarm_patterns": [
+        {
+          "v": {
+            "component": "test-metaalarm-rule-backward-compatibility-component-to-get"
+          }
+        }
+      ]
+    }
+    """
+
   Scenario: given get all request and no auth user should not allow access
     When I do GET /api/v4/cat/metaalarmrules
     Then the response code should be 401
