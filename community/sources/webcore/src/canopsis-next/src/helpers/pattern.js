@@ -14,7 +14,8 @@ import {
   PATTERN_STRING_OPERATORS,
   PATTERN_CONDITIONS,
   ALARM_PATTERN_FIELDS,
-  ENTITY_PATTERN_FIELDS, EVENT_FILTER_PATTERN_FIELDS,
+  ENTITY_PATTERN_FIELDS,
+  EVENT_FILTER_PATTERN_FIELDS,
 } from '@/constants';
 import { isValidDateInterval } from '@/helpers/date/date';
 import { isValidDuration } from '@/helpers/date/duration';
