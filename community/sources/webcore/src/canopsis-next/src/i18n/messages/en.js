@@ -1101,7 +1101,7 @@ export default {
     },
     alarmsList: {
       title: 'Alarm list',
-      prefixTitle: '{prefix} alarm list',
+      prefixTitle: '{prefix} - alarm list',
     },
     createUser: {
       create: {

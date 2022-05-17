@@ -4,6 +4,7 @@ import { ENTITIES_TYPES } from '@/constants';
 import request from '@/services/request';
 
 import { userPreferenceSchema } from '@/store/schemas';
+import { types as entitiesTypes } from '@/store/plugins/entities';
 
 export default {
   namespaced: true,
@@ -53,9 +54,9 @@ export default {
     },
 
     /**
-     * This action creates user preference
+     * This action updates user preference
      *
-     * @param {function} dispatch
+     * @param {Function} dispatch
      * @param {Object} data
      */
     async update({ dispatch }, { data }) {
@@ -68,6 +69,22 @@ export default {
       } catch (err) {
         console.warn(err);
       }
+    },
+
+    /**
+     * This action updates user preference but only in the store (without request)
+     *
+     * @param {Function} commit
+     * @param {Object} data
+     */
+    updateLocal({ commit }, { data }) {
+      const entities = {
+        [ENTITIES_TYPES.userPreference]: {
+          [data.widget]: data,
+        },
+      };
+
+      commit(entitiesTypes.ENTITIES_UPDATE, entities, { root: true });
     },
   },
 };
