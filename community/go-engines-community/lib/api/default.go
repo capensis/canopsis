@@ -2,7 +2,9 @@ package api
 
 import (
 	"context"
+	"embed"
 	"fmt"
+	"io/fs"
 	"net/http"
 	"os"
 	"time"
@@ -11,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/docs"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	apilogger "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
@@ -44,6 +47,12 @@ const chanBuf = 10
 const sessionStoreSessionMaxAge = 24 * time.Hour
 const sessionStoreAutoCleanInterval = 10 * time.Second
 
+//go:embed swaggerui/*
+var docsUiFile embed.FS
+
+//go:embed docs/*.yaml
+var docsFile embed.FS
+
 type ConfigProviders struct {
 	TimezoneConfigProvider      *config.BaseTimezoneConfigProvider
 	ApiConfigProvider           *config.BaseApiConfigProvider
@@ -60,18 +69,19 @@ func Default(
 	metricsUserMetaUpdater metrics.MetaUpdater,
 	exportExecutor export.TaskExecutor,
 	deferFunc DeferFunc,
-) (API, error) {
+	overrideDocs bool,
+) (API, fs.ReadFileFS, error) {
 	// Retrieve config.
 	dbClient, err := mongo.NewClient(ctx, 0, 0, logger)
 	if err != nil {
 		logger.Err(err).Msg("cannot connect to mongodb")
-		return nil, err
+		return nil, nil, err
 	}
 	configAdapter := config.NewAdapter(dbClient)
 	cfg, err := configAdapter.GetConfig(ctx)
 	if err != nil {
 		logger.Err(err).Msg("cannot load config")
-		return nil, err
+		return nil, nil, err
 	}
 	if p.TimezoneConfigProvider == nil {
 		p.TimezoneConfigProvider = config.NewTimezoneConfigProvider(cfg, logger)
@@ -82,30 +92,30 @@ func Default(
 	amqpConn, err := amqp.NewConnection(logger, -1, cfg.Global.GetReconnectTimeout())
 	if err != nil {
 		logger.Err(err).Msg("cannot connect to rmq")
-		return nil, err
+		return nil, nil, err
 	}
 	amqpChannel, err := amqpConn.Channel()
 	if err != nil {
 		logger.Err(err).Msg("cannot connect to rmq")
-		return nil, err
+		return nil, nil, err
 	}
 	// Connect to redis.
 	pbhRedisSession, err := libredis.NewSession(ctx, libredis.PBehaviorLockStorage, logger,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
 	if err != nil {
 		logger.Err(err).Msg("cannot connect to redis")
-		return nil, err
+		return nil, nil, err
 	}
 	engineRedisSession, err := libredis.NewSession(ctx, libredis.EngineRunInfo, logger,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
 	if err != nil {
 		logger.Err(err).Msg("cannot connect to redis")
-		return nil, err
+		return nil, nil, err
 	}
 	securityConfig, err := libsecurity.LoadConfig(flags.ConfigDir)
 	if err != nil {
 		logger.Err(err).Msg("cannot load security config")
-		return nil, err
+		return nil, nil, err
 	}
 
 	cookieOptions := CookieOptions{
@@ -128,7 +138,7 @@ func Default(
 	proxyAccessConfig, err := proxy.LoadAccessConfig(flags.ConfigDir)
 	if err != nil {
 		logger.Err(err).Msg("cannot load access config")
-		return nil, err
+		return nil, nil, err
 	}
 	// Create pbehavior computer.
 	pbhComputeChan := make(chan libpbehavior.ComputeTask, chanBuf)
@@ -169,7 +179,7 @@ func Default(
 	userInterfaceAdapter := config.NewUserInterfaceAdapter(dbClient)
 	userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
 	if err != nil && err != mongodriver.ErrNoDocuments {
-		return nil, err
+		return nil, nil, err
 	}
 	if p.UserInterfaceConfigProvider == nil {
 		p.UserInterfaceConfigProvider = config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
@@ -179,7 +189,7 @@ func Default(
 	scenarioPriorityIntervals := action.NewPriorityIntervals()
 	err = scenarioPriorityIntervals.Recalculate(ctx, dbClient.Collection(mongo.ScenarioMongoCollection))
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	// Create csv exporter.
@@ -266,6 +276,26 @@ func Default(
 			logger,
 		)
 	})
+	if flags.EnableDocs {
+		api.AddRouter(func(router gin.IRouter) {
+			router.GET("/swagger/*filepath", func(c *gin.Context) {
+				c.FileFromFS(fmt.Sprintf("swaggerui/%s", c.Param("filepath")), http.FS(docsUiFile))
+			})
+		})
+		if !overrideDocs {
+			content, err := docsFile.ReadFile("docs/swagger.yaml")
+			if err != nil {
+				return nil, nil, err
+			}
+			schemasContent, err := docsFile.ReadFile("docs/schemas_swagger.yaml")
+			if err != nil {
+				return nil, nil, err
+			}
+			api.AddRouter(func(router gin.IRouter) {
+				router.GET("/swagger.yaml", docs.GetHandler(schemasContent, content))
+			})
+		}
+	}
 	if legacyUrl == nil {
 		api.AddNoRoute(func(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -321,10 +351,10 @@ func Default(
 		broadcastMessageService.Start(ctx, broadcastMessageChan)
 	})
 
-	return api, nil
+	return api, docsFile, nil
 }
 
-func newWebsocketHub(enforcer libsecurity.Enforcer, tokenProvider libsecurity.TokenProvider, logger zerolog.Logger, roomPerms ...map[string][]string) websocket.Hub {
+func newWebsocketHub(enforcer libsecurity.Enforcer, tokenProvider libsecurity.TokenProvider, logger zerolog.Logger) websocket.Hub {
 	websocketUpgrader := websocket.NewUpgrader(gorillawebsocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 2048,
