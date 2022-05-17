@@ -6172,6 +6172,46 @@ var doc = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Delete pbehavior by name",
+                "tags": [
+                    "pbehaviors"
+                ],
+                "summary": "Delete pbehavior by name",
+                "operationId": "pbehaviors-delete-by-name",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "pbehavior name",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {},
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
             }
         },
         "/pbehaviors/count": {
@@ -9111,6 +9151,73 @@ var doc = `{
                 }
             }
         },
+        "action.Parameters": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "declare_ticket": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.WebhookDeclareTicket"
+                },
+                "duration": {
+                    "description": "Snooze and Pbehavior",
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "forward_author": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Pbehavior",
+                    "type": "string"
+                },
+                "output": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "request": {
+                    "description": "Webhook",
+                    "type": "object",
+                    "$ref": "#/definitions/types.WebhookRequest"
+                },
+                "retry_count": {
+                    "type": "integer"
+                },
+                "retry_delay": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "rrule": {
+                    "type": "string"
+                },
+                "start_on_trigger": {
+                    "type": "boolean"
+                },
+                "state": {
+                    "description": "ChangeState",
+                    "type": "integer"
+                },
+                "ticket": {
+                    "description": "AssocTicket",
+                    "type": "string"
+                },
+                "tstart": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "tstop": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "alarm.Alarm": {
             "type": "object",
             "properties": {
@@ -11710,7 +11817,8 @@ var doc = `{
             "type": "object",
             "properties": {
                 "parameters": {
-                    "type": "object"
+                    "type": "object",
+                    "$ref": "#/definitions/idlerule.Parameters"
                 },
                 "type": {
                     "type": "string"
@@ -11724,10 +11832,56 @@ var doc = `{
             ],
             "properties": {
                 "parameters": {
-                    "type": "object"
+                    "type": "object",
+                    "$ref": "#/definitions/idlerule.Parameters"
                 },
                 "type": {
                     "type": "string"
+                }
+            }
+        },
+        "idlerule.Parameters": {
+            "type": "object",
+            "properties": {
+                "duration": {
+                    "description": "Snooze and Pbehavior",
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "name": {
+                    "description": "Pbehavior",
+                    "type": "string"
+                },
+                "output": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "object",
+                    "$ref": "#/definitions/pbehavior.Reason"
+                },
+                "rrule": {
+                    "type": "string"
+                },
+                "start_on_trigger": {
+                    "type": "boolean"
+                },
+                "state": {
+                    "description": "ChangeState",
+                    "type": "integer"
+                },
+                "ticket": {
+                    "description": "AssocTicket",
+                    "type": "string"
+                },
+                "tstart": {
+                    "type": "integer"
+                },
+                "tstop": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "object",
+                    "$ref": "#/definitions/pbehavior.Type"
                 }
             }
         },
@@ -12233,6 +12387,28 @@ var doc = `{
                     "type": "integer"
                 },
                 "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "pbehavior.Reason": {
+            "type": "object",
+            "required": [
+                "description",
+                "name"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 }
             }
@@ -12953,7 +13129,7 @@ var doc = `{
                 },
                 "parameters": {
                     "type": "object",
-                    "additionalProperties": true
+                    "$ref": "#/definitions/scenario.Parameters"
                 },
                 "type": {
                     "type": "string"
@@ -12986,7 +13162,8 @@ var doc = `{
                     "$ref": "#/definitions/pattern.EntityPatternList"
                 },
                 "parameters": {
-                    "type": "object"
+                    "type": "object",
+                    "$ref": "#/definitions/action.Parameters"
                 },
                 "type": {
                     "type": "string"
@@ -13248,6 +13425,73 @@ var doc = `{
             "properties": {
                 "priority": {
                     "type": "integer"
+                }
+            }
+        },
+        "scenario.Parameters": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "declare_ticket": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.WebhookDeclareTicket"
+                },
+                "duration": {
+                    "description": "Snooze and Pbehavior",
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "forward_author": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Pbehavior",
+                    "type": "string"
+                },
+                "output": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "object",
+                    "$ref": "#/definitions/pbehavior.Reason"
+                },
+                "request": {
+                    "description": "Webhook",
+                    "type": "object",
+                    "$ref": "#/definitions/types.WebhookRequest"
+                },
+                "retry_count": {
+                    "type": "integer"
+                },
+                "retry_delay": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.DurationWithUnit"
+                },
+                "rrule": {
+                    "type": "string"
+                },
+                "start_on_trigger": {
+                    "type": "boolean"
+                },
+                "state": {
+                    "description": "ChangeState",
+                    "type": "integer"
+                },
+                "ticket": {
+                    "description": "AssocTicket",
+                    "type": "string"
+                },
+                "tstart": {
+                    "type": "integer"
+                },
+                "tstop": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "object",
+                    "$ref": "#/definitions/pbehavior.Type"
                 }
             }
         },
@@ -14011,6 +14255,68 @@ var doc = `{
                 },
                 "type_name": {
                     "description": "TypeName is Name of pbehavior.Type.",
+                    "type": "string"
+                }
+            }
+        },
+        "types.WebhookBasicAuth": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.WebhookDeclareTicket": {
+            "type": "object",
+            "properties": {
+                "empty_response": {
+                    "type": "boolean"
+                },
+                "fields": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "is_regexp": {
+                    "type": "boolean"
+                },
+                "ticket_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.WebhookRequest": {
+            "type": "object",
+            "required": [
+                "method",
+                "url"
+            ],
+            "properties": {
+                "auth": {
+                    "type": "object",
+                    "$ref": "#/definitions/types.WebhookBasicAuth"
+                },
+                "headers": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "method": {
+                    "type": "string"
+                },
+                "payload": {
+                    "type": "string"
+                },
+                "skip_verify": {
+                    "type": "boolean"
+                },
+                "url": {
                     "type": "string"
                 }
             }

@@ -21,6 +21,10 @@ export default {
       type: String,
       required: false,
     },
+    dense: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     activeItems() {
@@ -35,7 +39,8 @@ export default {
       return {
         'v-datatable v-table': true,
         'v-datatable--select-all': this.selectAll !== false,
-        [this.tableClass]: this.tableClass,
+        'v-datatable--dense': this.dense,
+        [this.tableClass]: !!this.tableClass,
         ...this.themeClasses,
       };
     },
@@ -143,7 +148,7 @@ export default {
 
         if (sortItem) {
           const sortPriority = this.$createElement('span', {
-            class: 'v-data-table-header__sort-badge',
+            class: 'v-datatable-header__sort-badge',
           }, `${sortItemIndex + 1}`);
 
           children.push(sortPriority);
@@ -248,18 +253,49 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.v-data-table-header__sort-badge {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  border: 0;
-  border-radius: 50%;
-  min-width: 18px;
-  min-height: 18px;
-  height: 18px;
-  width: 18px;
-  background-color: rgba(0,0,0,.12);
-  color: rgba(0,0,0,.87);
+<style lang="scss">
+$densePadding: 6px;
+$denseCellHeight: 32px;
+$denseColorIndicatorPadding: 1px 5px;
+
+table.v-datatable {
+  .v-datatable-header__sort-badge {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border: 0;
+    border-radius: 50%;
+    min-width: 18px;
+    min-height: 18px;
+    height: 18px;
+    width: 18px;
+    background-color: rgba(0, 0, 0, .12);
+    color: rgba(0, 0, 0, .87);
+  }
+
+  &--dense.v-datatable {
+    tbody, thead {
+      td, th {
+        padding: 0 $densePadding;
+      }
+
+      td:not(.v-datatable__expand-col) {
+        height: $denseCellHeight;
+
+        .v-btn {
+          margin-top: 0;
+          margin-bottom: 0;
+        }
+
+        .color-indicator {
+          padding: $denseColorIndicatorPadding;
+        }
+      }
+    }
+  }
+
+  th, td {
+    word-break: break-all;
+  }
 }
 </style>

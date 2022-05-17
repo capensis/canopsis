@@ -2,7 +2,7 @@ package amqp
 
 //go:generate mockgen -destination=../../mocks/lib/amqp/amqp.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp Connection,Channel,Publisher
 
-import "github.com/streadway/amqp"
+import amqp "github.com/rabbitmq/amqp091-go"
 
 // Connection is used to implement amqp connection.
 type Connection interface {
