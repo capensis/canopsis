@@ -38,13 +38,6 @@ type EntityPatternFields struct {
 	CorporateEntityPatternTitle string `bson:"corporate_entity_pattern_title" json:"corporate_entity_pattern_title,omitempty"`
 }
 
-type TotalEntityPatternFields struct {
-	TotalEntityPattern pattern.Entity `bson:"total_entity_pattern" json:"total_entity_pattern,omitempty"`
-
-	CorporateTotalEntityPattern      string `bson:"corporate_total_entity_pattern" json:"corporate_total_entity_pattern,omitempty"`
-	CorporateTotalEntityPatternTitle string `bson:"corporate_total_entity_pattern_title" json:"corporate_total_entity_pattern_title,omitempty"`
-}
-
 type PbehaviorPatternFields struct {
 	PbehaviorPattern pattern.PbehaviorInfo `bson:"pbehavior_pattern" json:"pbehavior_pattern,omitempty"`
 
