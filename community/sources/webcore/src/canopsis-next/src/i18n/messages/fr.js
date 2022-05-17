@@ -1101,6 +1101,7 @@ export default {
     },
     alarmsList: {
       title: 'Bac à alarmes',
+      prefixTitle: '{prefix} - bac à alarmes',
     },
     createUser: {
       create: {
