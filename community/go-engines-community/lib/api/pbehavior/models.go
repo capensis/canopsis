@@ -210,6 +210,10 @@ func (r *CountFilterResult) GetTotal() int64 {
 	return r.TotalCount
 }
 
+type DeleteByNameRequest struct {
+	Name string `form:"name" json:"name" binding:"required"`
+}
+
 type CalendarRequest struct {
 	From types.CpsTime `form:"from" json:"from" binding:"required" swaggertype:"integer"`
 	To   types.CpsTime `form:"to" json:"to" binding:"required" swaggertype:"integer"`
