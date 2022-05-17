@@ -1,3 +1,5 @@
+import { normalize } from 'normalizr';
+
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 
@@ -78,11 +80,7 @@ export default {
      * @param {Object} data
      */
     updateLocal({ commit }, { data }) {
-      const entities = {
-        [ENTITIES_TYPES.userPreference]: {
-          [data.widget]: data,
-        },
-      };
+      const { entities } = normalize(data, userPreferenceSchema);
 
       commit(entitiesTypes.ENTITIES_UPDATE, entities, { root: true });
     },
