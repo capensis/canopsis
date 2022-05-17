@@ -43,7 +43,7 @@ func NewApi(
 }
 
 // List
-// @Success 200 {object} common.PaginatedListResponse{data=[]viewgroup.View}
+// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
 func (a *api) List(c *gin.Context) {
 	var r ListRequest
 	r.Query = pagination.GetDefaultQuery()
@@ -179,6 +179,41 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// Copy
+// @Param body body EditRequest true "body"
+// @Success 200 {object} Response
+func (a *api) Copy(c *gin.Context) {
+	request := EditRequest{}
+
+	if err := c.ShouldBind(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	userId := c.MustGet(auth.UserKey).(string)
+	id := c.Param("id")
+	view, err := a.store.Copy(c.Request.Context(), id, request)
+	if err != nil {
+		panic(err)
+	}
+
+	if view == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+		Action:    logger.ActionCreate,
+		ValueType: logger.ValueTypeView,
+		ValueID:   view.ID,
+	})
+	if err != nil {
+		a.actionLogger.Err(err, "failed to log action")
+	}
+
+	c.JSON(http.StatusCreated, view)
 }
 
 // UpdatePositions

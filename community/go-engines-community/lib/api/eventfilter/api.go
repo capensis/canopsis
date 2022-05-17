@@ -120,8 +120,8 @@ func (a api) Get(c *gin.Context) {
 }
 
 // Update
-// @Param body body eventfilter.Rule true "body"
-// @Success 200 {object} UpdateRequest
+// @Param body body UpdateRequest true "body"
+// @Success 200 {object} eventfilter.Rule
 func (a api) Update(c *gin.Context) {
 	var request UpdateRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
