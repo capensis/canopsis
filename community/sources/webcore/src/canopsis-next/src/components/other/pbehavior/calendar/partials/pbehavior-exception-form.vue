@@ -3,15 +3,19 @@
     h3.my-3.grey--text {{ $t('pbehaviorExceptions.title') }}
     v-divider
     pbehavior-exception-list(v-if="exceptions.length", :exceptions="exceptions")
-    v-layout.mt-3(row)
+    v-layout.mt-3(column)
       v-flex(xs12)
-        v-alert(:value="!exdates.length", type="info") {{ $t('pbehaviorExceptions.emptyExceptions') }}
-        pbehavior-exception-field.mb-3(
-          v-for="(exdate, index) in exdates",
-          v-field="exdates[index]",
-          :key="exdate.key",
-          @delete="removeItemFromArray(index)"
-        )
+        v-alert(
+          v-if="!hasExceptionsOrExdates",
+          :value="true",
+          type="info"
+        ) {{ $t('pbehaviorExceptions.emptyExceptions') }}
+      pbehavior-exception-field.mb-3(
+        v-for="(exdate, index) in exdates",
+        v-field="exdates[index]",
+        :key="exdate.key",
+        @delete="removeItemFromArray(index)"
+      )
     v-layout(row)
       v-flex
         v-btn.ml-0(outline, @click="addException") {{ $t('pbehaviorExceptions.create') }}
@@ -45,6 +49,11 @@ export default {
     exceptions: {
       type: Array,
       default: () => [],
+    },
+  },
+  computed: {
+    hasExceptionsOrExdates() {
+      return this.exdates.length || this.exceptions.length;
     },
   },
   methods: {
