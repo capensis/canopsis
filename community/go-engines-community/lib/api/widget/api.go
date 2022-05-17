@@ -39,18 +39,8 @@ func NewApi(
 	}
 }
 
-// Get widget by id
-// @Summary Get widget by id
-// @Description Get widget by id
-// @Tags widgets
-// @ID widgets-get-by-id
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param id path string true "widget id"
+// Get
 // @Success 200 {object} Response
-// @Failure 404 {object} common.ErrorResponse
-// @Router /widgets/{id} [get]
 func (a *api) Get(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	widget, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
@@ -75,19 +65,9 @@ func (a *api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, widget)
 }
 
-// Create widget
-// @Summary Create widget
-// @Description Create widget
-// @Tags widgets
-// @ID widgets-create
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
+// Create
 // @Param body body EditRequest true "body"
 // @Success 201 {object} Response
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /widgets [post]
 func (a *api) Create(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	request := EditRequest{}
@@ -123,21 +103,9 @@ func (a *api) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, widget)
 }
 
-// Update widget by id
-// @Summary Update widget by id
-// @Description Update widget by id
-// @Tags widgets
-// @ID widgets-update-by-id
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param id path string true "widget id"
+// Update
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Response
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /widgets/{id} [put]
 func (a *api) Update(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	request := EditRequest{
@@ -191,17 +159,6 @@ func (a *api) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, widget)
 }
 
-// Delete widget by id
-// @Summary Delete widget by id
-// @Description Delete widget by id
-// @Tags widgets
-// @ID widgets-delete-by-id
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param id path string true "widget id"
-// @Success 204
-// @Failure 404 {object} common.ErrorResponse
-// @Router /widgets/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	id := c.Param("id")
@@ -238,21 +195,9 @@ func (a *api) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// Copy widget
-// @Summary Copy widget
-// @Description Copy widget
-// @Tags widgets
-// @ID widgets-copy
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param id path string true "widget id"
+// Copy
 // @Param body body EditRequest true "body"
 // @Success 201 {object} Response
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /widget-copy/{id} [post]
 func (a *api) Copy(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	id := c.Param("id")
@@ -314,19 +259,8 @@ func (a *api) Copy(c *gin.Context) {
 	c.JSON(http.StatusCreated, newWidget)
 }
 
-// Update widgets grid positions
-// @Summary Update widgets grid positions
-// @Description Update widgets grid positions
-// @Tags widgets
-// @ID widgets-update-grid-positions
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
+// UpdateGridPositions
 // @Param body body []EditGridPositionItemRequest true "body"
-// @Success 204
-// @Failure 404 {object} common.ErrorResponse
-// @Router /widget-grid-positions [put]
 func (a *api) UpdateGridPositions(c *gin.Context) {
 	request := EditGridPositionRequest{}
 

@@ -1173,8 +1173,13 @@ definitions:
     type: object
   eventfilter.Action:
     properties:
+      description:
+        type: string
+      name:
+        type: string
       type:
         type: string
+      value: {}
     type: object
   eventfilter.BulkCreateResponseItem:
     properties:
@@ -1187,7 +1192,7 @@ definitions:
       id:
         type: string
       item:
-        $ref: '#/definitions/eventfilter.EventFilter'
+        $ref: '#/definitions/eventfilter.CreateRequest'
       status:
         type: integer
     type: object
@@ -1217,10 +1222,10 @@ definitions:
     properties:
       _id:
         type: string
-      actions:
-        items:
-          $ref: '#/definitions/eventfilter.Action'
-        type: array
+      config:
+        $ref: '#/definitions/eventfilter.RuleConfig'
+      corporate_entity_pattern:
+        type: string
       created:
         type: integer
       description:
@@ -1228,15 +1233,22 @@ definitions:
         type: string
       enabled:
         type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      event_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       external_data:
-        additionalProperties: true
+        additionalProperties:
+          $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
-      on_failure:
-        type: string
-      on_success:
-        type: string
-      patterns:
-        $ref: '#/definitions/pattern.EventPatternList'
       priority:
         type: integer
       type:
@@ -1244,13 +1256,13 @@ definitions:
         - break
         - drop
         - enrichment
+        - change_entity
         type: string
       updated:
         type: integer
     required:
     - _id
     - description
-    - enabled
     - type
     type: object
   eventfilter.BulkUpdateResponseItem:
@@ -1268,14 +1280,14 @@ definitions:
       status:
         type: integer
     type: object
-  eventfilter.EventFilter:
+  eventfilter.CreateRequest:
     properties:
       _id:
         type: string
-      actions:
-        items:
-          $ref: '#/definitions/eventfilter.Action'
-        type: array
+      config:
+        $ref: '#/definitions/eventfilter.RuleConfig'
+      corporate_entity_pattern:
+        type: string
       created:
         type: integer
       description:
@@ -1283,15 +1295,22 @@ definitions:
         type: string
       enabled:
         type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      event_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       external_data:
-        additionalProperties: true
+        additionalProperties:
+          $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
-      on_failure:
-        type: string
-      on_success:
-        type: string
-      patterns:
-        $ref: '#/definitions/pattern.EventPatternList'
       priority:
         type: integer
       type:
@@ -1299,12 +1318,139 @@ definitions:
         - break
         - drop
         - enrichment
+        - change_entity
         type: string
       updated:
         type: integer
     required:
     - description
-    - enabled
+    - type
+    type: object
+  eventfilter.ExternalDataParameters:
+    properties:
+      collection:
+        description: are used in mongo external data
+        type: string
+      request:
+        $ref: '#/definitions/request.Parameters'
+        description: are used in api external data
+      select:
+        additionalProperties:
+          type: string
+        type: object
+      type:
+        type: string
+    type: object
+  eventfilter.Rule:
+    properties:
+      _id:
+        type: string
+      config:
+        $ref: '#/definitions/eventfilter.RuleConfig'
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
+      created:
+        type: integer
+      description:
+        maxLength: 255
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      event_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      external_data:
+        additionalProperties:
+          $ref: '#/definitions/eventfilter.ExternalDataParameters'
+        type: object
+      priority:
+        type: integer
+      type:
+        enum:
+        - break
+        - drop
+        - enrichment
+        - change_entity
+        type: string
+      updated:
+        type: integer
+    required:
+    - description
+    - type
+    type: object
+  eventfilter.RuleConfig:
+    properties:
+      actions:
+        description: enrichment fields
+        items:
+          $ref: '#/definitions/eventfilter.Action'
+        type: array
+      component:
+        type: string
+      connector:
+        type: string
+      connector_name:
+        type: string
+      on_failure:
+        type: string
+      on_success:
+        type: string
+      resource:
+        type: string
+    type: object
+  eventfilter.UpdateRequest:
+    properties:
+      config:
+        $ref: '#/definitions/eventfilter.RuleConfig'
+      corporate_entity_pattern:
+        type: string
+      created:
+        type: integer
+      description:
+        maxLength: 255
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      event_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      external_data:
+        additionalProperties:
+          $ref: '#/definitions/eventfilter.ExternalDataParameters'
+        type: object
+      priority:
+        type: integer
+      type:
+        enum:
+        - break
+        - drop
+        - enrichment
+        - change_entity
+        type: string
+      updated:
+        type: integer
+    required:
+    - description
     - type
     type: object
   export.Field:
@@ -1766,9 +1912,116 @@ definitions:
     type: object
   pattern.AlarmPatternList:
     type: object
+  pattern.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  pattern.BulkDeleteResponseItem:
+    properties:
+      error:
+        type: string
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      id:
+        type: string
+      item:
+        $ref: '#/definitions/pattern.BulkDeleteRequestItem'
+      status:
+        type: integer
+    type: object
+  pattern.Condition:
+    properties:
+      type:
+        type: string
+      value: {}
+    type: object
+  pattern.EditRequest:
+    properties:
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      is_corporate:
+        type: boolean
+      pbehavior_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      title:
+        maxLength: 255
+        type: string
+      type:
+        enum:
+        - alarm
+        - entity
+        - pbehavior
+        type: string
+    required:
+    - is_corporate
+    - title
+    - type
+    type: object
   pattern.EntityPatternList:
     type: object
-  pattern.EventPatternList:
+  pattern.FieldCondition:
+    properties:
+      cond:
+        $ref: '#/definitions/pattern.Condition'
+      field:
+        type: string
+      field_type:
+        description: 'FieldType is only defined for custom fields, ex: infos.'
+        type: string
+    type: object
+  pattern.Response:
+    properties:
+      _id:
+        type: string
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      author:
+        $ref: '#/definitions/common.User'
+      created:
+        type: integer
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      is_corporate:
+        type: boolean
+      pbehavior_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      title:
+        type: string
+      type:
+        type: string
+      updated:
+        type: integer
     type: object
   pbehavior.BulkCreateResponseItem:
     properties:
@@ -2300,6 +2553,34 @@ definitions:
         type: array
       updated:
         type: integer
+    type: object
+  request.BasicAuth:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  request.Parameters:
+    properties:
+      auth:
+        $ref: '#/definitions/request.BasicAuth'
+      headers:
+        additionalProperties:
+          type: string
+        type: object
+      method:
+        type: string
+      payload:
+        type: string
+      retry_count:
+        type: integer
+      retry_delay:
+        $ref: '#/definitions/types.DurationWithUnit'
+      skip_verify:
+        type: boolean
+      url:
+        type: string
     type: object
   resolverule.CreateRequest:
     properties:
@@ -3082,10 +3363,6 @@ definitions:
         $ref: '#/definitions/types.PbehaviorInfo'
       pbh_inactive_duration:
         type: integer
-      related_parents:
-        items:
-          type: string
-        type: array
       resolved:
         $ref: '#/definitions/types.CpsTime'
       resource:
@@ -3472,6 +3749,10 @@ definitions:
       content:
         additionalProperties: true
         type: object
+      filters:
+        items:
+          $ref: '#/definitions/widgetfilter.Response'
+        type: array
       widget:
         type: string
     type: object
@@ -3498,10 +3779,6 @@ definitions:
         type: string
       periodic_refresh:
         $ref: '#/definitions/types.DurationWithEnabled'
-      tabs:
-        items:
-          $ref: '#/definitions/view.TabRequest'
-        type: array
       tags:
         items:
           type: string
@@ -3514,76 +3791,96 @@ definitions:
     - group
     - title
     type: object
-  view.Tab:
+  view.ExportRequest:
     properties:
-      _id:
-        type: string
-      title:
-        type: string
-      widgets:
+      groups:
         items:
-          $ref: '#/definitions/view.Widget'
+          properties:
+            _id:
+              type: string
+            views:
+              items:
+                type: string
+              type: array
+          required:
+          - _id
+          type: object
+        type: array
+      views:
+        items:
+          type: string
         type: array
     type: object
-  view.TabRequest:
+  view.ExportResponse:
     properties:
-      _id:
-        maxLength: 255
-        type: string
-      title:
-        maxLength: 255
-        type: string
-      widgets:
+      groups:
         items:
-          $ref: '#/definitions/view.WidgetRequest'
+          $ref: '#/definitions/view.ExportViewGroupResponse'
         type: array
-    required:
-    - _id
-    - title
+      views:
+        items:
+          $ref: '#/definitions/view.Response'
+        type: array
     type: object
-  view.Widget:
+  view.ExportViewGroupResponse:
     properties:
       _id:
         type: string
-      grid_parameters:
-        additionalProperties: true
-        type: object
-      parameters:
-        additionalProperties: true
-        type: object
+      author:
+        type: string
+      created:
+        type: integer
       title:
         type: string
-      type:
-        type: string
+      updated:
+        type: integer
+      views:
+        items:
+          $ref: '#/definitions/view.Response'
+        type: array
     type: object
-  view.WidgetRequest:
+  view.ImportItemRequest:
     properties:
       _id:
-        maxLength: 255
         type: string
-      grid_parameters:
-        additionalProperties: true
-        type: object
-      parameters: {}
+      author:
+        type: string
+      created:
+        type: integer
       title:
-        maxLength: 255
         type: string
-      type:
-        maxLength: 255
-        type: string
-    required:
-    - _id
-    - type
+      updated:
+        type: integer
+      views:
+        items:
+          $ref: '#/definitions/view.Response'
+        type: array
     type: object
-  viewgroup.EditRequest:
+  view.Parameters:
     properties:
-      title:
-        maxLength: 255
+      directory:
         type: string
-    required:
-    - title
+      is_api:
+        description: Junit
+        type: boolean
+      main_filter:
+        type: string
+      report_fileregexp:
+        type: string
+      screenshot_directories:
+        items:
+          type: string
+        type: array
+      screenshot_filemask:
+        type: string
+      video_directories:
+        items:
+          type: string
+        type: array
+      video_filemask:
+        type: string
     type: object
-  viewgroup.View:
+  view.Response:
     properties:
       _id:
         type: string
@@ -3596,12 +3893,12 @@ definitions:
       enabled:
         type: boolean
       group:
-        $ref: '#/definitions/viewgroup.ViewGroup'
+        $ref: '#/definitions/view.ViewGroup'
       periodic_refresh:
         $ref: '#/definitions/types.DurationWithEnabled'
       tabs:
         items:
-          $ref: '#/definitions/view.Tab'
+          $ref: '#/definitions/viewtab.Response'
         type: array
       tags:
         items:
@@ -3611,6 +3908,27 @@ definitions:
         type: string
       updated:
         type: integer
+    type: object
+  view.ViewGroup:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        type: integer
+      title:
+        type: string
+      updated:
+        type: integer
+    type: object
+  viewgroup.EditRequest:
+    properties:
+      title:
+        maxLength: 255
+        type: string
+    required:
+    - title
     type: object
   viewgroup.ViewGroup:
     properties:
@@ -3628,8 +3946,173 @@ definitions:
         type: integer
       views:
         items:
-          $ref: '#/definitions/viewgroup.View'
+          $ref: '#/definitions/view.Response'
         type: array
+    type: object
+  viewtab.EditRequest:
+    properties:
+      title:
+        maxLength: 255
+        type: string
+      view:
+        type: string
+    required:
+    - title
+    - view
+    type: object
+  viewtab.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        $ref: '#/definitions/types.CpsTime'
+      title:
+        type: string
+      updated:
+        $ref: '#/definitions/types.CpsTime'
+      widgets:
+        items:
+          $ref: '#/definitions/widget.Response'
+        type: array
+    type: object
+  widget.EditGridPositionItemRequest:
+    properties:
+      _id:
+        type: string
+      grid_parameters:
+        additionalProperties: true
+        type: object
+    type: object
+  widget.EditRequest:
+    properties:
+      grid_parameters:
+        additionalProperties: true
+        type: object
+      parameters:
+        $ref: '#/definitions/view.Parameters'
+      tab:
+        type: string
+      title:
+        maxLength: 255
+        type: string
+      type:
+        maxLength: 255
+        type: string
+    required:
+    - tab
+    - type
+    type: object
+  widget.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        type: integer
+      filters:
+        items:
+          $ref: '#/definitions/widgetfilter.Response'
+        type: array
+      grid_parameters:
+        additionalProperties: true
+        type: object
+      parameters:
+        $ref: '#/definitions/view.Parameters'
+      title:
+        type: string
+      type:
+        type: string
+      updated:
+        type: integer
+    type: object
+  widgetfilter.EditRequest:
+    properties:
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      corporate_pbehavior_pattern:
+        type: string
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      is_private:
+        type: boolean
+      pbehavior_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      title:
+        maxLength: 255
+        type: string
+      widget:
+        type: string
+    required:
+    - is_private
+    - title
+    - widget
+    type: object
+  widgetfilter.Response:
+    properties:
+      _id:
+        type: string
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      author:
+        type: string
+      corporate_alarm_pattern:
+        type: string
+      corporate_alarm_pattern_title:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
+      corporate_pbehavior_pattern:
+        type: string
+      corporate_pbehavior_pattern_title:
+        type: string
+      created:
+        type: integer
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      is_private:
+        type: boolean
+      old_mongo_query:
+        additionalProperties: true
+        type: object
+      pbehavior_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      title:
+        type: string
+      updated:
+        type: integer
     type: object
 info:
   contact: {}
