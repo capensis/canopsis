@@ -261,6 +261,14 @@ export default {
       this.updateContentInUserPreference({
         dense,
       });
+
+      if (this.localWidget) {
+        this.query = {
+          ...this.query,
+
+          dense,
+        };
+      }
     },
 
     expandFirstAlarm() {
