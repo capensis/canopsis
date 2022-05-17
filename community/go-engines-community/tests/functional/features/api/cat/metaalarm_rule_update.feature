@@ -984,3 +984,87 @@ Feature: Update a metaalarmrule
       "error": "Not found"
     }
     """
+
+  Scenario: given update request should update metaalarmrule without changes in old patterns,
+            but should unset old patterns if new patterns are present
+    When I am admin
+    Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-rule-backward-compatibility-to-update:
+    """
+    {
+      "name": "test-metaalarm-rule-backward-compatibility-to-update-name-updated",
+      "auto_resolve": false,
+      "type": "complex",
+      "config": {
+        "threshold_count": 3
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/cat/metaalarmrules/test-metaalarm-rule-backward-compatibility-to-update
+    Then the response body should contain:
+    """
+    {
+      "_id": "test-metaalarm-rule-backward-compatibility-to-update",
+      "auto_resolve": false,
+      "config": {
+        "threshold_count": 3
+      },
+      "name": "test-metaalarm-rule-backward-compatibility-to-update-name-updated",
+      "type": "complex",
+      "old_alarm_patterns": [
+        {
+          "v": {
+            "component": "test-metaalarm-rule-backward-compatibility-component-to-update"
+          }
+        }
+      ]
+    }
+    """
+    Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-rule-backward-compatibility-to-update:
+    """
+    {
+      "name": "test-metaalarm-rule-backward-compatibility-to-update-name-updated",
+      "auto_resolve": false,
+      "type": "complex",
+      "config": {
+        "threshold_count": 3
+      },
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/cat/metaalarmrules/test-metaalarm-rule-backward-compatibility-to-update
+    Then the response body should contain:
+    """
+    {
+      "_id": "test-metaalarm-rule-backward-compatibility-to-update",
+      "auto_resolve": false,
+      "config": {
+        "threshold_count": 3
+      },
+      "name": "test-metaalarm-rule-backward-compatibility-to-update-name-updated",
+      "type": "complex",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response key "old_alarm_patterns" should not exist

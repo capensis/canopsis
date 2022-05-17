@@ -456,3 +456,110 @@ meta_alarm_rules:
             type: eq
             value: test-component-action-correlation-3
     name: test-metaalarmrule-action-correlation-3-name
+
+  metaalarm_rule_backward_compatibility_1:
+    _id: test-metaalarm-rule-backward-compatibility-1
+    auto_resolve: false
+    name: test-metaalarm-rule-backward-compatibility-1-name
+    config:
+      threshold_count: 3
+    type: complex
+    old_alarm_patterns:
+        - v:
+            component: test-metaalarm-rule-backward-compatibility-component-1
+
+  metaalarm_rule_backward_compatibility_2:
+    _id: test-metaalarm-rule-backward-compatibility-to-get
+    auto_resolve: false
+    name: test-metaalarm-rule-backward-compatibility-to-get-name
+    config:
+      threshold_count: 3
+    type: complex
+    old_alarm_patterns:
+        - v:
+            component: test-metaalarm-rule-backward-compatibility-component-to-get
+    
+  metaalarm_rule_backward_compatibility_3:
+    _id: test-metaalarm-rule-backward-compatibility-to-update
+    auto_resolve: false
+    name: test-metaalarm-rule-backward-compatibility-to-update-name
+    config:
+      threshold_count: 3
+    type: complex
+    old_alarm_patterns:
+      - v:
+          component: test-metaalarm-rule-backward-compatibility-component-to-update
+
+  metaalarm_rule_backward_compatibility_complex_rule_rate_1:
+    _id: test-complex-rule-rate-backward-compatibility-1
+    auto_resolve: false
+    name: test-complex-rule-rate-backward-compatibility-1-name
+    config:
+      threshold_rate: 0.6
+      time_interval: {
+        unit: s,
+        value: 10
+      }
+    type: complex
+    old_entity_patterns:
+      - name:
+          regex_match: test-complex-rule-rate-backward-compatibility-1-resource
+
+  metaalarm_rule_backward_compatibility_complex_rule_rate_2:
+    _id: test-complex-rule-rate-backward-compatibility-2
+    auto_resolve: false
+    name: test-complex-rule-rate-backward-compatibility-2-name
+    config:
+      threshold_rate: 0.4
+      time_interval: {
+        unit: s,
+        value: 10
+      }
+    type: complex
+    old_entity_patterns:
+      - name:
+          regex_match: test-complex-rule-rate-backward-compatibility-2-resource
+    old_total_entity_patterns:
+      - name:
+          regex_match: test-complex-rule-rate-backward-compatibility-1-resource
+      - name:
+          regex_match: test-complex-rule-rate-backward-compatibility-2-resource
+
+  metaalarm_rule_backward_compatibility_valuegroup_rate_1:
+    _id: test-valuegroup-rule-rate-backward-compatibility-1
+    auto_resolve: false
+    name: test-valuegroup-rule-rate-backward-compatibility-1-name
+    config:
+      threshold_rate: 0.6
+      time_interval: {
+        unit: s,
+        value: 10
+      }
+      value_paths:
+        - entity.infos.valuegroupRateOldPatterns1.value
+    type: valuegroup
+    old_entity_patterns:
+      - name:
+          regex_match: test-valuegroup-rule-rate-backward-compatibility-1-resource
+
+  metaalarm_rule_backward_compatibility_valuegroup_rate_2:
+    _id: test-valuegroup-rule-rate-backward-compatibility-2
+    auto_resolve: false
+    name: test-valuegroup-rule-rate-backward-compatibility-2-name
+    config:
+      threshold_rate: 0.4
+      time_interval: {
+        unit: s,
+        value: 10
+      }
+      value_paths:
+        - entity.infos.valuegroupRateOldPatterns1.value
+    type: valuegroup
+    old_entity_patterns:
+      - name:
+          regex_match: test-valuegroup-rule-rate-backward-compatibility-2-resource
+    total_entity_patterns:
+      - name:
+          regex_match: test-valuegroup-rule-rate-backward-compatibility-1-resource
+      - name:
+          regex_match: test-valuegroup-rule-rate-backward-compatibility-2-resource
