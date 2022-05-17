@@ -2,7 +2,7 @@ import Faker from 'faker';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
-import { PATTERN_INPUT_TYPES } from '@/constants';
+import { PATTERN_FIELD_TYPES } from '@/constants';
 
 import CMixedInputField from '@/components/forms/fields/c-mixed-input-field.vue';
 
@@ -52,7 +52,7 @@ describe('c-mixed-input-field', () => {
     const wrapper = factory({
       propsData: {
         value: 'Value',
-        inputType: PATTERN_INPUT_TYPES.string,
+        inputType: PATTERN_FIELD_TYPES.string,
       },
     });
     const textField = selectTextField(wrapper);
@@ -71,7 +71,7 @@ describe('c-mixed-input-field', () => {
     const wrapper = factory({
       propsData: {
         value: 12,
-        inputType: PATTERN_INPUT_TYPES.number,
+        inputType: PATTERN_FIELD_TYPES.number,
       },
     });
     const textField = selectTextField(wrapper);
@@ -94,7 +94,7 @@ describe('c-mixed-input-field', () => {
       propsData: {
         value: '',
         items: [item],
-        inputType: PATTERN_INPUT_TYPES.string,
+        inputType: PATTERN_FIELD_TYPES.string,
       },
     });
     const combobox = selectCombobox(wrapper);
@@ -130,7 +130,7 @@ describe('c-mixed-input-field', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: 'Value',
-        inputType: PATTERN_INPUT_TYPES.string,
+        inputType: PATTERN_FIELD_TYPES.string,
         name: 'mixedFieldName',
         label: 'Mixed field label',
         disabled: true,
@@ -138,9 +138,9 @@ describe('c-mixed-input-field', () => {
         hideDetails: true,
         errorMessages: ['First error message', 'Second error message'],
         types: [
-          { value: PATTERN_INPUT_TYPES.string, text: 'Custom string' },
-          { value: PATTERN_INPUT_TYPES.number },
-          { value: PATTERN_INPUT_TYPES.boolean },
+          { value: PATTERN_FIELD_TYPES.string, text: 'Custom string' },
+          { value: PATTERN_FIELD_TYPES.number },
+          { value: PATTERN_FIELD_TYPES.boolean },
         ],
       },
     });
@@ -153,7 +153,7 @@ describe('c-mixed-input-field', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: false,
-        inputType: PATTERN_INPUT_TYPES.boolean,
+        inputType: PATTERN_FIELD_TYPES.boolean,
         name: 'mixedFieldName',
         label: 'Mixed field with boolean type',
         items: [{
@@ -177,7 +177,7 @@ describe('c-mixed-input-field', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: false,
-        inputType: PATTERN_INPUT_TYPES.boolean,
+        inputType: PATTERN_FIELD_TYPES.boolean,
         name: 'mixedFieldName',
         label: 'Mixed field with boolean type',
       },
@@ -191,7 +191,7 @@ describe('c-mixed-input-field', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: 222,
-        inputType: PATTERN_INPUT_TYPES.number,
+        inputType: PATTERN_FIELD_TYPES.number,
         name: 'mixedFieldName',
         label: 'Mixed field with number type',
       },
@@ -204,7 +204,7 @@ describe('c-mixed-input-field', () => {
   it('Renders `c-mixed-input-field` with null type correctly', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        inputType: PATTERN_INPUT_TYPES.null,
+        inputType: PATTERN_FIELD_TYPES.null,
         value: null,
         name: 'mixedFieldName',
         label: 'Mixed field with null type',
@@ -219,7 +219,7 @@ describe('c-mixed-input-field', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: [0, '1', null, false, []],
-        inputType: PATTERN_INPUT_TYPES.array,
+        inputType: PATTERN_FIELD_TYPES.stringArray,
         name: 'mixedFieldName',
         label: 'Mixed field with null type',
       },
