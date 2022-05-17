@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-patterns-advanced-editor-field Renders \`c-patterns-advanced-editor-field\` with custom props 1`] = `
+<c-json-field-stub
+  label="Advanced editor"
+  name="customName"
+  readonly="true"
+  rows="10"
+  validate-on="button"
+  value="[object Object]"
+/>
+`;
+
+exports[`c-patterns-advanced-editor-field Renders \`c-patterns-advanced-editor-field\` with default props 1`] = `
+<c-json-field-stub
+  label="Advanced editor"
+  rows="10"
+  validate-on="button"
+  value=""
+/>
+`;
