@@ -27,16 +27,8 @@ func NewApi(
 	}
 }
 
-// Get application information
-// @Summary Get application information
-// @Description Get application information
-// @Tags internal
-// @ID internal-get-app-info
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
+// GetAppInfo
 // @Success 200 {object} AppInfoResponse
-// @Router /app-info [get]
 func (a *api) GetAppInfo(c *gin.Context) {
 	response := AppInfoResponse{}
 	var err error
@@ -78,20 +70,8 @@ func (a *api) GetAppInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-// Update user interface
-// @Summary update user interface
-// @Description update user interface
-// @Tags internal
-// @ID internal-update-user-interface
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param body body UserInterfaceConf true "body"
+// UpdateUserInterface
 // @Success 200 {object} UserInterfaceConf
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /internal/user_interface [post]
-// @Router /internal/user_interface [put]
 func (a *api) UpdateUserInterface(c *gin.Context) {
 	request := UserInterfaceConf{
 		MaxMatchedItems:          config.DefaultMaxMatchedItems,
@@ -110,15 +90,6 @@ func (a *api) UpdateUserInterface(c *gin.Context) {
 	c.JSON(http.StatusOK, request)
 }
 
-// Delete user interface
-// @Summary delete user interface
-// @Description delete user interface
-// @Tags internal
-// @ID internal-delete-user-interface
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Success 204
-// @Router /internal/user_interface [delete]
 func (a *api) DeleteUserInterface(c *gin.Context) {
 	err := a.store.DeleteUserInterfaceConfig(c.Request.Context())
 	if err != nil {
