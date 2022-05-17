@@ -213,7 +213,7 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error 
 		filter = bson.M{"corporate_pbehavior_pattern": pattern.ID}
 		set = bson.M{
 			"pbehavior_pattern":               pattern.PbehaviorPattern,
-			"pbehavior_pattern_pattern_title": pattern.Title,
+			"corporate_pbehavior_pattern_title": pattern.Title,
 		}
 	default:
 		return fmt.Errorf("unknown pattern type id=%s: %q", pattern.ID, pattern.Type)
