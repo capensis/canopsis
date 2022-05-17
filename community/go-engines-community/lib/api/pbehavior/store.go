@@ -33,6 +33,7 @@ type Store interface {
 	Update(ctx context.Context, model *Response) (bool, error)
 	UpdateByFilter(ctx context.Context, model *Response, filters bson.M) (bool, error)
 	Delete(ctx context.Context, id string) (bool, error)
+	DeleteByName(ctx context.Context, name string) (string, error)
 	Count(context.Context, Filter, int) (*CountFilterResult, error)
 	ExistEntity(ctx context.Context, entityId string) (bool, error)
 }
@@ -473,6 +474,24 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	}
 
 	return deleted > 0, nil
+}
+
+func (s *store) DeleteByName(ctx context.Context, name string) (string, error) {
+	pbh := pbehavior.PBehavior{}
+	err := s.dbCollection.FindOne(ctx, bson.M{"name": name}).Decode(&pbh)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return "", nil
+		}
+		return "", err
+	}
+
+	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": pbh.ID})
+	if err != nil || deleted == 0 {
+		return "", err
+	}
+
+	return pbh.ID, nil
 }
 
 func (s *store) ExistEntity(ctx context.Context, entityId string) (bool, error) {
