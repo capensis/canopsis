@@ -42,6 +42,14 @@ expect.extend({
   toEmit(wrapper, event, data) {
     const emittedEvents = wrapper.emitted(event);
 
+    if (this.isNot) {
+      try {
+        expect(emittedEvents).not.toBeTruthy();
+      } catch (err) {
+        return err.matcherResult;
+      }
+    }
+
     try {
       expect(emittedEvents).toHaveLength(1);
     } catch (err) {
