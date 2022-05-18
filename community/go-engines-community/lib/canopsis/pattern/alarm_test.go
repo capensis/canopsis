@@ -399,6 +399,7 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 					},
 				},
 			},
+			matchErr:    pattern.ErrWrongConditionValue,
 			matchResult: false,
 		},
 		"given string info condition and unknown info should not match": {
@@ -412,6 +413,7 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 				},
 			},
 			alarm:       types.Alarm{},
+			matchErr:    pattern.ErrWrongConditionValue,
 			matchResult: false,
 		},
 		"given exist info condition should match": {

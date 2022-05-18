@@ -107,7 +107,10 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 				"cond":  bson.M{"$eq": bson.A{"$$this.is_private", false}},
 			}},
 		}},
-		{"$sort": bson.D{{"widgets.grid_parameters.desktop.y", 1}, {"widgets.grid_parameters.desktop.x", 1}}},
+		{"$sort": bson.D{
+			{Key: "widgets.grid_parameters.desktop.y", Value: 1},
+			{Key: "widgets.grid_parameters.desktop.x", Value: 1},
+		}},
 		{"$group": bson.M{
 			"_id":     "$_id",
 			"data":    bson.M{"$first": "$data"},
@@ -304,6 +307,9 @@ func (s *store) isLinked(ctx context.Context, id string) (bool, error) {
 
 func (s *store) deleteWidgets(ctx context.Context, id string) error {
 	widgetCursor, err := s.widgetCollection.Find(ctx, bson.M{"tab": id})
+	if err != nil {
+		return err
+	}
 	widgets := make([]view.Widget, 0)
 	err = widgetCursor.All(ctx, &widgets)
 	if err != nil || len(widgets) == 0 {
