@@ -44,7 +44,7 @@ import { durationToForm } from '@/helpers/date/duration';
 /**
  * @typedef {Object} PatternRuleCondition
  * @property {string} type
- * @property {PatternRuleRangeCondition | Duration | string | number} value
+ * @property {PatternRuleRangeCondition | Duration | string | number | boolean | []} value
  */
 
 /**
@@ -131,7 +131,7 @@ const isInfosPatternRuleAttribute = value => [
 export const patternRuleToForm = (rule = {}) => {
   const form = {
     key: uid(),
-    attribute: '',
+    attribute: rule.field ?? '',
     operator: '',
     field: '',
     dictionary: '',
@@ -189,13 +189,13 @@ export const patternRuleToForm = (rule = {}) => {
       form.operator = isDuration
         ? PATTERN_OPERATORS.longer
         : PATTERN_OPERATORS.higher;
-      form.value = rule.cond.value;
+      form.value = isDuration ? '' : rule.cond.value;
       break;
     case PATTERN_CONDITIONS.less:
       form.operator = isDuration
         ? PATTERN_OPERATORS.shorter
-        : PATTERN_OPERATORS.longer;
-      form.value = rule.cond.value;
+        : PATTERN_OPERATORS.lower;
+      form.value = isDuration ? '' : rule.cond.value;
       break;
 
     case PATTERN_CONDITIONS.exist:
@@ -291,8 +291,6 @@ export const patternRuleToForm = (rule = {}) => {
     form.field = PATTERN_INFOS_NAME_OPERATORS.includes(rule.cond.type)
       ? PATTERN_RULE_INFOS_FIELDS.name
       : PATTERN_RULE_INFOS_FIELDS.value;
-  } else {
-    form.attribute = rule.field;
   }
 
   return form;
@@ -304,7 +302,7 @@ export const patternRuleToForm = (rule = {}) => {
  * @param {PatternRules} rules
  * @return {PatternRuleForm[]}
  */
-export const patternRulesToForm = (rules = [undefined]) => rules.map(patternRuleToForm);
+export const patternRulesToForm = (rules = []) => rules.map(patternRuleToForm);
 
 /**
  * Convert pattern rules to group form
@@ -317,7 +315,7 @@ export const patternRulesToGroup = rules => ({
   rules: patternRulesToForm(rules),
 });
 
-const patternsToGroups = (patterns = [undefined]) => patterns.map(patternRulesToGroup);
+const patternsToGroups = (patterns = []) => patterns.map(patternRulesToGroup);
 
 /**
  * Convert pattern to pattern form

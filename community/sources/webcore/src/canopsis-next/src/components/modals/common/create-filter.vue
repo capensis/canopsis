@@ -56,7 +56,7 @@ export default {
   },
   computed: {
     title() {
-      return this.config.title || this.$t('modals.createFilter.create.title');
+      return this.config.title ?? this.$t('modals.createFilter.create.title');
     },
 
     patternsFields() {
@@ -76,12 +76,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action({
-            ...formToFilter(this.form, this.patternsFields),
-
-            widget: this.config.widgetId,
-            is_private: this.config.private,
-          });
+          await this.config.action(formToFilter(this.form, this.patternsFields));
         }
 
         this.$modals.hide();

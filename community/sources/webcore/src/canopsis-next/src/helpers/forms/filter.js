@@ -70,6 +70,7 @@ export const filterPatternsToForm = (filter = {}) => {
 export const filterToForm = (filter = {}) => ({
   title: filter.title ?? '',
   old_mongo_query: filter.old_mongo_query,
+  is_private: filter.is_private ?? false,
   ...filterPatternsToForm(filter),
 });
 
@@ -116,6 +117,6 @@ export const formFilterToPatterns = (
  */
 export const formToFilter = (form, fields) => ({
   title: form.title,
-  is_private: !!form.is_private,
+  is_private: form.is_private,
   ...formFilterToPatterns(form, fields),
 });
