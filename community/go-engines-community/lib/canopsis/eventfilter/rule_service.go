@@ -58,9 +58,9 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 		var eventRegexMatches pattern.EventRegexMatches
 		var entityRegexMatches pattern.EntityRegexMatches
 
-		if rule.Patterns.IsSet() && rule.Patterns.IsValid() {
+		if rule.OldPatterns != nil && rule.OldPatterns.IsSet() && rule.OldPatterns.IsValid() {
 			backwardCompatibility = true
-			oldRegexMatches, match = rule.Patterns.GetRegexMatches(event)
+			oldRegexMatches, match = rule.OldPatterns.GetRegexMatches(event)
 			if !match {
 				if event.Debug {
 					s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is not matched")
