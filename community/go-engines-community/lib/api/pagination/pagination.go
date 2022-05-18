@@ -13,8 +13,8 @@ const (
 
 // Query is base request for pagination.
 type Query struct {
-	Page     int64 `form:"page" binding:"numeric,gte=0"`
-	Limit    int64 `form:"limit" binding:"numeric,gte=0"`
+	Page     int64 `form:"page" binding:"numeric,gt=0"`
+	Limit    int64 `form:"limit" binding:"numeric,gt=0"`
 	Paginate bool  `form:"paginate"`
 }
 

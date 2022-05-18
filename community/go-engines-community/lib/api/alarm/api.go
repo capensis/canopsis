@@ -152,14 +152,24 @@ func (a *api) GetDetails(c *gin.Context) {
 			continue
 		}
 
-		request.Steps.Paginate = true
-		if request.Steps.Limit == 0 {
-			request.Steps.Limit = defaultQuery.Limit
+		if request.Steps != nil {
+			request.Steps.Paginate = true
+			if request.Steps.Page == 0 {
+				request.Steps.Page = defaultQuery.Page
+			}
+			if request.Steps.Limit == 0 {
+				request.Steps.Limit = defaultQuery.Limit
+			}
 		}
 
-		request.Children.Paginate = true
-		if request.Children.Limit == 0 {
-			request.Children.Limit = defaultQuery.Limit
+		if request.Children != nil {
+			request.Children.Paginate = true
+			if request.Children.Page == 0 {
+				request.Children.Page = defaultQuery.Page
+			}
+			if request.Children.Limit == 0 {
+				request.Children.Limit = defaultQuery.Limit
+			}
 		}
 
 		err = binding.Validator.ValidateStruct(request)
