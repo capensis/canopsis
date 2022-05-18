@@ -16,22 +16,20 @@ type pbhLeaveAndEnterExecutor struct {
 	metricsSender metrics.Sender
 }
 
-// NewAckExecutor creates new executor.
 func NewPbhLeaveAndEnterExecutor(configProvider config.AlarmConfigProvider, metricsSender metrics.Sender) operationlib.Executor {
 	return &pbhLeaveAndEnterExecutor{configProvider: configProvider, metricsSender: metricsSender}
 }
 
 func (e *pbhLeaveAndEnterExecutor) Exec(
-	ctx context.Context,
+	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
 	entity *types.Entity,
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
-	var params types.OperationPbhParameters
-	var ok bool
-	if params, ok = operation.Parameters.(types.OperationPbhParameters); !ok {
+	params := operation.Parameters
+	if params.PbehaviorInfo == nil {
 		return "", fmt.Errorf("invalid parameters")
 	}
 
@@ -39,15 +37,15 @@ func (e *pbhLeaveAndEnterExecutor) Exec(
 		userID = params.User
 	}
 
-	currPbehaviorInfo := alarm.Value.PbehaviorInfo
+	currPbehaviorInfo := entity.PbehaviorInfo
 
-	if currPbehaviorInfo.Same(params.PbehaviorInfo) {
+	if currPbehaviorInfo.IsDefaultActive() || currPbehaviorInfo.Same(*params.PbehaviorInfo) {
 		return "", nil
 	}
 
 	err := alarm.PartialUpdatePbhLeaveAndEnter(
 		time,
-		params.PbehaviorInfo,
+		*params.PbehaviorInfo,
 		params.Author,
 		utils.TruncateString(params.Output, e.configProvider.Get().OutputLength),
 		userID,

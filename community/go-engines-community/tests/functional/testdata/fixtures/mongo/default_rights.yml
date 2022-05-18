@@ -518,8 +518,12 @@ default_rights:
     defaultview: test-view-to-edit-user
     description: test-role-to-get-user-1-description
     rights:
-      "@permission_api_instruction_approve":
+      "@permission_to_edit_user_1":
         checksum: 1
+      "@permission_to_edit_user_2":
+        checksum: 15
+      "@permission_to_edit_user_3":
+        checksum: 7
 
   role_to_get_user_2:
     <<: *role
