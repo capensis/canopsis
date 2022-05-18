@@ -42,23 +42,8 @@ func NewApi(
 	}
 }
 
-// Find all views
-// @Summary Find views
-// @Description Get paginated list of views
-// @Tags views
-// @ID views-find-all
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param page query integer true "current page"
-// @Param limit query integer true "items per page"
-// @Param search query string false "search query"
-// @Param sort query string false "sort query"
-// @Param sort_by query string false "sort query"
+// List
 // @Success 200 {object} common.PaginatedListResponse{data=[]Response}
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /views [get]
 func (a *api) List(c *gin.Context) {
 	var r ListRequest
 	r.Query = pagination.GetDefaultQuery()
@@ -93,18 +78,8 @@ func (a *api) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// Get view by id
-// @Summary Get view by id
-// @Description Get view by id
-// @Tags views
-// @ID views-get-by-id
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param id path string true "view id"
+// Get
 // @Success 200 {object} Response
-// @Failure 404 {object} common.ErrorResponse
-// @Router /views/{id} [get]
 func (a *api) Get(c *gin.Context) {
 	view, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
 	if err != nil {
@@ -118,19 +93,9 @@ func (a *api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, view)
 }
 
-// Create view
-// @Summary Create view
-// @Description Create view
-// @Tags views
-// @ID views-create
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
+// Create
 // @Param body body EditRequest true "body"
 // @Success 201 {object} Response
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /views [post]
 func (a *api) Create(c *gin.Context) {
 	request := EditRequest{}
 	if err := c.ShouldBind(&request); err != nil {
@@ -156,21 +121,9 @@ func (a *api) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, view)
 }
 
-// Update view by id
-// @Summary Update view by id
-// @Description Update view by id
-// @Tags views
-// @ID views-update-by-id
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param id path string true "view id"
+// Update
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Response
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /views/{id} [put]
 func (a *api) Update(c *gin.Context) {
 	request := EditRequest{
 		ID: c.Param("id"),
@@ -203,17 +156,6 @@ func (a *api) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, view)
 }
 
-// Delete view by id
-// @Summary Delete view by id
-// @Description Delete view by id
-// @Tags views
-// @ID views-delete-by-id
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param id path string true "view id"
-// @Success 204
-// @Failure 404 {object} common.ErrorResponse
-// @Router /views/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
 	ok, err := a.store.Delete(c.Request.Context(), id)
@@ -239,21 +181,9 @@ func (a *api) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// Copy view
-// @Summary Copy view
-// @Description Copy view
-// @Tags views
-// @ID views-copy
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param id path string true "view id"
+// Copy
 // @Param body body EditRequest true "body"
-// @Success 201 {object} View
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /view-copy/{id} [post]
+// @Success 200 {object} Response
 func (a *api) Copy(c *gin.Context) {
 	request := EditRequest{}
 
@@ -286,19 +216,8 @@ func (a *api) Copy(c *gin.Context) {
 	c.JSON(http.StatusCreated, view)
 }
 
-// Update views positions
-// @Summary Update views positions
-// @Description Update views positions
-// @Tags views
-// @ID views-update-positions
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
+// UpdatePositions
 // @Param body body []EditPositionItemRequest true "body"
-// @Success 204
-// @Failure 404 {object} common.ErrorResponse
-// @Router /view-positions [put]
 func (a *api) UpdatePositions(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	request := EditPositionRequest{}
@@ -334,18 +253,8 @@ func (a *api) UpdatePositions(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// Import views
-// @Summary Import views
-// @Description Import views
-// @Tags views
-// @ID views-import
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
+// Import
 // @Param body body []ImportItemRequest true "body"
-// @Success 204
-// @Router /view-import [post]
 func (a *api) Import(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	request := ImportRequest{}
@@ -391,18 +300,9 @@ func (a *api) Import(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// Export views
-// @Summary Export views
-// @Description Export views
-// @Tags views
-// @ID views-export
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
+// Export
 // @Param body body ExportRequest true "body"
 // @Success 200 {object} ExportResponse
-// @Router /view-export [post]
 func (a *api) Export(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	request := ExportRequest{}

@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -18,8 +18,8 @@ import (
 	"github.com/ajg/form"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	amqplib "github.com/streadway/amqp"
 	"github.com/valyala/fastjson"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -30,14 +30,14 @@ type API interface {
 }
 
 type api struct {
-	publisher                   amqp.Publisher
+	publisher                   libamqp.Publisher
 	alarmCollection             mongo.DbCollection
 	isAllowChangeSeverityToInfo bool
 	logger                      zerolog.Logger
 }
 
 func NewApi(
-	publisher amqp.Publisher,
+	publisher libamqp.Publisher,
 	client mongo.DbClient,
 	isAllowChangeSeverityToInfo bool,
 	logger zerolog.Logger,
@@ -50,39 +50,6 @@ func NewApi(
 	}
 }
 
-// Event structure used with swagger
-type Event struct {
-	Connector     string `json:"connector" example:"test_connector"`
-	ConnectorName string `json:"connector_name" example:"test_connectorname"`
-	SourceType    string `json:"source_type" example:"resource"`
-	EventType     string `json:"event_type" example:"check"`
-	Component     string `json:"component,omitempty" example:"test_component"`
-	State         string `json:"state,omitempty" example:"1"`
-	Resource      string `json:"resource" example:"test_resource"`
-}
-
-// Response structure used with swagger
-type Response struct {
-	SentEvents []Event `json:"sent_events"`
-	// FailedEvents is an empty array left for compatibility with old handler
-	FailedEvents []interface{} `json:"failed_events"`
-	// RetryEvents is an empty array left for compatibility with old handler
-	RetryEvents []interface{} `json:"retry_events"`
-}
-
-// Send event/events
-// @Summary Send event/events
-// @Description Send event/events
-// @Tags events
-// @ID event-send
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param body body Event true "body"
-// @Success 200 {object} Response
-// @Failure 400 {object} common.ErrorResponse
-// @Router /event [post]
 func (api *api) Send(c *gin.Context) {
 	var err error
 	var raw []byte
@@ -330,10 +297,10 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 		"",
 		false,
 		false,
-		amqplib.Publishing{
+		amqp.Publishing{
 			ContentType:  "application/json",
 			Body:         value.MarshalTo(nil),
-			DeliveryMode: amqplib.Persistent,
+			DeliveryMode: amqp.Persistent,
 		},
 	)
 	if err != nil {

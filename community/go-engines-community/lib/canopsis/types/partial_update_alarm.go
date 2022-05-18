@@ -150,9 +150,11 @@ func (a *Alarm) PartialUpdatePbhLeave(timestamp CpsTime, author, output, userID,
 			}
 		}
 
-		d := int64(timestamp.Sub(enterTimestamp.Time).Seconds())
-		a.Value.PbehaviorInactiveDuration += d
-		a.AddUpdate("$inc", bson.M{"v.pbh_inactive_duration": d})
+		if !enterTimestamp.IsZero() {
+			d := int64(timestamp.Sub(enterTimestamp.Time).Seconds())
+			a.Value.PbehaviorInactiveDuration += d
+			a.AddUpdate("$inc", bson.M{"v.pbh_inactive_duration": d})
+		}
 	}
 
 	return nil
@@ -204,9 +206,11 @@ func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo P
 			}
 		}
 
-		d := int64(timestamp.Sub(enterTimestamp.Time).Seconds())
-		a.Value.PbehaviorInactiveDuration += d
-		a.AddUpdate("$inc", bson.M{"v.pbh_inactive_duration": d})
+		if !enterTimestamp.IsZero() {
+			d := int64(timestamp.Sub(enterTimestamp.Time).Seconds())
+			a.Value.PbehaviorInactiveDuration += d
+			a.AddUpdate("$inc", bson.M{"v.pbh_inactive_duration": d})
+		}
 	}
 
 	return nil
