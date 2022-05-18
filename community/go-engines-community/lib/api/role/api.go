@@ -2,12 +2,13 @@ package role
 
 import (
 	"context"
+	"net/http"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type api struct {
@@ -102,6 +103,7 @@ func (a *api) Get(c *gin.Context) {
 // @Param body body CreateRequest true "body"
 // @Success 201 {object} Role
 // @Failure 400 {object} common.ValidationErrorResponse
+// @Failure 404 {object} common.ErrorResponse
 // @Router /roles [post]
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
@@ -113,6 +115,11 @@ func (a *api) Create(c *gin.Context) {
 	role, err := a.store.Insert(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
+	}
+
+	if role == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
 	}
 
 	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
