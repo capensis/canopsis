@@ -12,8 +12,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"github.com/streadway/amqp"
 	"golang.org/x/sync/errgroup"
 	"math"
 )
@@ -334,40 +334,19 @@ func (p *metaAlarmEventProcessor) processParentRpc(ctx context.Context, event ty
 		childEvent := types.Event{
 			EventType: event.EventType,
 			Timestamp: types.NewCpsTime(),
-			Author:    canopsis.DefaultEventAuthor,
+			Output:    event.Parameters.Output,
+			Author:    event.Parameters.Author,
+			UserID:    event.Parameters.User,
 			Initiator: types.InitiatorSystem,
+			Ticket:    event.Parameters.Ticket,
 		}
 
-		if params, ok := event.Parameters.(types.OperationParameters); ok {
-			childEvent.Output = params.Output
-			childEvent.Author = params.Author
-			childEvent.UserID = params.User
+		if event.Parameters.State != nil {
+			childEvent.State = *event.Parameters.State
 		}
 
-		if params, ok := event.Parameters.(types.OperationAssocTicketParameters); ok {
-			childEvent.Ticket = params.Ticket
-			childEvent.Output = params.Output
-			childEvent.Author = params.Author
-			childEvent.UserID = params.User
-		}
-
-		if params, ok := event.Parameters.(types.OperationChangeStateParameters); ok {
-			childEvent.State = params.State
-			childEvent.Output = params.Output
-			childEvent.Author = params.Author
-			childEvent.UserID = params.User
-		}
-
-		if params, ok := event.Parameters.(types.OperationDeclareTicketParameters); ok {
-			childEvent.Ticket = params.Ticket
-			childEvent.TicketData = params.Data
-			childEvent.Output = params.Output
-			childEvent.Author = params.Author
-			childEvent.UserID = params.User
-		}
-
-		if params, ok := event.Parameters.(types.OperationSnoozeParameters); ok {
-			seconds, err := params.Duration.To("s")
+		if event.Parameters.Duration != nil {
+			seconds, err := event.Parameters.Duration.To("s")
 			if err == nil {
 				childEvent.Duration = types.CpsNumber(seconds.Value)
 			}

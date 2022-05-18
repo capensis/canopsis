@@ -35,19 +35,8 @@ func NewApi(
 	}
 }
 
-// List finds all widget filters
-// @Summary Find widget filters
-// @Description Get paginated list of widget filters
-// @Tags widgetfilters
-// @ID widgetfilters-find-all
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param request query ListRequest true "request"
+// List
 // @Success 200 {object} common.PaginatedListResponse{data=[]Response}
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /widget-filters [get]
 func (a *api) List(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	var r ListRequest
@@ -82,18 +71,8 @@ func (a *api) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// Get widget filter by id
-// @Summary Get widget filter by id
-// @Description Get widget filter by id
-// @Tags widgetfilters
-// @ID widgetfilters-get-by-id
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param id path string true "filter id"
+// Get
 // @Success 200 {object} Response
-// @Failure 404 {object} common.ErrorResponse
-// @Router /widget-filters/{id} [get]
 func (a *api) Get(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	id := c.Param("id")
@@ -119,19 +98,9 @@ func (a *api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, filter)
 }
 
-// Create widget filter
-// @Summary Create widget filter
-// @Description Create widget filter
-// @Tags widgetfilters
-// @ID widgetfilters-create
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
+// Create
 // @Param body body EditRequest true "body"
 // @Success 201 {object} Response
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /widget-filters [post]
 func (a *api) Create(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	request := EditRequest{}
@@ -178,21 +147,9 @@ func (a *api) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, filter)
 }
 
-// Update widget filter by id
-// @Summary Update widget filter by id
-// @Description Update widget filter by id
-// @Tags widgetfilters
-// @ID widgetfilters-update-by-id
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param id path string true "filter id"
+// Update
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Response
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /widget-filters/{id} [put]
 func (a *api) Update(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	request := EditRequest{
@@ -265,17 +222,6 @@ func (a *api) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, filter)
 }
 
-// Delete widget filter by id
-// @Summary Delete widget filter by id
-// @Description Delete widget filter by id
-// @Tags widgetfilters
-// @ID widgetfilters-delete-by-id
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param id path string true "filter id"
-// @Success 204
-// @Failure 404 {object} common.ErrorResponse
-// @Router /widget-filters/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	id := c.Param("id")

@@ -265,9 +265,6 @@ func getNestedObjectsPipeline() []bson.M {
 			"as":           "actions.parameters.reason",
 		}},
 		{"$unwind": bson.M{"path": "$actions.parameters.reason", "preserveNullAndEmptyArrays": true}},
-		{"$project": bson.M{
-			"actions.parameters.reason.created": 0,
-		}},
 		{"$sort": bson.M{"action_index": 1}},
 		{"$group": bson.M{
 			"_id":     "$_id",

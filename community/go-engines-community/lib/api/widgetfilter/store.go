@@ -205,12 +205,15 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	filter.Widget = r.Widget
 	filter.Updated = now
 
+	update := bson.M{
+		"$set": filter,
+	}
+	if len(filter.EntityPattern) > 0 || len(filter.AlarmPattern) > 0 || len(filter.PbehaviorPattern) > 0 {
+		update["$unset"] = bson.M{"old_mongo_query": ""}
+	}
 	_, err := s.collection.UpdateOne(ctx,
 		bson.M{"_id": filter.ID},
-		bson.M{
-			"$set":   filter,
-			"$unset": bson.M{"old_mongo_query": ""},
-		},
+		update,
 	)
 	if err != nil {
 		return nil, err

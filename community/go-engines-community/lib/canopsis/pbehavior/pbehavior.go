@@ -13,7 +13,7 @@ const (
 type Comment struct {
 	ID        string         `bson:"_id" json:"_id"`
 	Author    string         `bson:"author" json:"author"`
-	Timestamp *types.CpsTime `bson:"ts" json:"ts"`
+	Timestamp *types.CpsTime `bson:"ts" json:"ts" swaggertype:"integer"`
 	Message   string         `bson:"message" json:"message"`
 }
 
