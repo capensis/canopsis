@@ -1,44 +1,28 @@
 package main
 
-//go:generate swag init  -d ../../lib -g ../cmd/canopsis-api-community/main.go -o ../../docs
+//go:generate swag init  -d ../../lib -g ../cmd/canopsis-api-community/$GOFILE -o ../../lib/api/docs --outputTypes yaml --instanceName schemas
 
 import (
 	"context"
 	"os"
 	"os/signal"
 
-	_ "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/docs"
-	libapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
-	liblog "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/gin-gonic/gin"
-	swaggerfiles "github.com/swaggo/files"
-	ginswagger "github.com/swaggo/gin-swagger"
 )
 
-// @title Canopsis API
-// @version 4.0
-// @description This is a Canopsis server.
-
-// @BasePath /api/v4
-// @query.collection.format multi
-
-// @securityDefinitions.basic BasicAuth
-
-// @securityDefinitions.apikey ApiKeyAuth
-// @in header
-// @name x-canopsis-authkey
-
-// @securityDefinitions.apikey JWTAuth
-// @in header
-// @name Authorization
+// @title Generated schemas
+// @description This doc contains auto generated Open API v2 schemas of requests and responses to use in Open Api v3 doc.
+// @version 4.0.0
 func main() {
-	var flags libapi.Flags
+	var flags api.Flags
 	flags.ParseArgs()
-	logger := liblog.NewLogger(flags.Debug)
+	logger := log.NewLogger(flags.Debug)
 	// Graceful shutdown.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
@@ -61,12 +45,12 @@ func main() {
 	// Set mongodb setting.
 	config.SetDbClientRetry(dbClient, cfg)
 	// Init security ACL enforcer.
-	enforcer, err := libsecurity.NewEnforcer(flags.ConfigDir, dbClient)
+	enforcer, err := security.NewEnforcer(flags.ConfigDir, dbClient)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("cannot create security enforce")
 	}
 
-	api, err := libapi.Default(
+	server, _, err := api.Default(
 		ctx,
 		flags,
 		enforcer,
@@ -81,18 +65,13 @@ func main() {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}
 		},
+		false,
 	)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("fail create api")
 	}
 
-	if flags.EnableDocs {
-		api.AddRouter(func(router gin.IRouter) {
-			router.GET("/swagger/*any", ginswagger.WrapHandler(swaggerfiles.Handler))
-		})
-	}
-
-	err = api.Run(ctx)
+	err = server.Run(ctx)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("fail start api")
 	}

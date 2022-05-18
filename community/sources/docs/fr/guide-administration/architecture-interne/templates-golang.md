@@ -142,9 +142,9 @@ Cette fonction prend en paramètre une chaîne qui est le format attendu de la d
 | `Monday`                     | `%A`                                                                                      | Nom du jour de la semaine         | Monday..Sunday      |
 | `Jan`                        | `%b`                                                                                      | Abréviation du nom du mois        | Jan..Dec            |
 | `January`                    | `%B`                                                                                      | Nom du mois                       | January..December   |
-| `01`                         | `%d`                                                                                      | Jour du mois                      | 01..31              |
+| `02`                         | `%d`                                                                                      | Jour du mois                      | 01..31              |
 | `15`                         | `%k`                                                                                      | Heure (sur 24 heures)             | 0..23               |
-| `02`                         | `%m`                                                                                      | Mois                              | 01..12              |
+| `01`                         | `%m`                                                                                      | Mois                              | 01..12              |
 | `04`                         | `%M`                                                                                      | Minute                            | 01..59              |
 | `05`                         | `%S`                                                                                      | Seconde                           | 01..61              |
 | `2006`                       | `%Y`                                                                                      | Année                             | 1970, 1984, 2019… |

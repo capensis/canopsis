@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -16,8 +16,8 @@ import (
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/bsm/redislock"
 	"github.com/go-redis/redis/v8"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	libamqp "github.com/streadway/amqp"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/sync/errgroup"
@@ -34,7 +34,7 @@ const (
 const BulkMaxSize = 10000
 
 type service struct {
-	pubChannel      amqp.Publisher
+	pubChannel      libamqp.Publisher
 	pubExchangeName string
 	pubQueueName    string
 	encoder         encoding.Encoder
@@ -49,7 +49,7 @@ type service struct {
 
 // NewService gives the correct service adapter.
 func NewService(
-	pubChannel amqp.Publisher,
+	pubChannel libamqp.Publisher,
 	pubExchangeName, pubQueueName string,
 	encoder encoding.Encoder,
 	adapter Adapter,
@@ -87,7 +87,7 @@ func (s *service) sendEvent(event types.Event) error {
 		s.pubQueueName,
 		false,
 		false,
-		libamqp.Publishing{
+		amqp.Publishing{
 			Body:        body,
 			ContentType: "application/json",
 		},
@@ -788,7 +788,7 @@ func (s *service) processSkippedQueue(ctx context.Context, serviceID string) err
 			s.pubQueueName,
 			false,
 			false,
-			libamqp.Publishing{
+			amqp.Publishing{
 				Body:        []byte(body),
 				ContentType: "application/json",
 			},
