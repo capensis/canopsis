@@ -403,7 +403,7 @@ eventfilter:
     created: 1608284568
     description: how it should have ended.
     enabled: true
-    patterns:
+    old_patterns:
       - resource:
           regex_match: 'CMDD:(?P<SI_CMDB>.*?)($|,)'
     priority: 0
