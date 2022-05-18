@@ -409,3 +409,37 @@ eventfilter:
     priority: 0
     type: enrichment
     updated: 1608285370
+
+  eventfilter_backward_compatibility_to_get:
+    _id: test-eventfilter-to-backward-compatibility-to-get
+    author: root
+    config:
+      actions:
+        - name: customer
+          description: customer
+          type: set_entity_info_from_template
+          value: 'test'
+      on_failure: pass
+      on_success: pass
+    created: 1608284568
+    description: how it should have ended.
+    enabled: true
+    old_patterns:
+      - resource:
+          regex_match: 'test-eventfilter-to-backward-compatibility-to-get'
+    priority: 0
+    type: enrichment
+    updated: 1608285370
+
+  eventfilter_backward_compatibility_to_update:
+    _id: test-eventfilter-to-backward-compatibility-to-update
+    author: root
+    created: 1608284568
+    description: how it should have ended.
+    enabled: true
+    old_patterns:
+      - resource:
+          regex_match: 'test-eventfilter-to-backward-compatibility-to-update'
+    priority: 0
+    type: drop
+    updated: 1608285370

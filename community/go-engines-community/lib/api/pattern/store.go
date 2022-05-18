@@ -212,7 +212,7 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error 
 	case savedpattern.TypePbehavior:
 		filter = bson.M{"corporate_pbehavior_pattern": pattern.ID}
 		set = bson.M{
-			"pbehavior_pattern":               pattern.PbehaviorPattern,
+			"pbehavior_pattern":                 pattern.PbehaviorPattern,
 			"corporate_pbehavior_pattern_title": pattern.Title,
 		}
 	default:

@@ -42,7 +42,6 @@ Feature: Get an eventfilter
           "type": "entity"
         }
       },
-      "patterns": null,
       "created": 1608284568,
       "updated": 1608285370
     }
@@ -90,7 +89,6 @@ Feature: Get an eventfilter
               "type": "entity"
             }
           },
-          "patterns": null,
           "created": 1608284568,
           "updated": 1608285370
         },
@@ -113,7 +111,6 @@ Feature: Get an eventfilter
           "priority": 1,
           "config": {},
           "enabled": true,
-          "patterns": null,
           "created": 1608635535,
           "updated": 1608635535
         },
@@ -136,7 +133,6 @@ Feature: Get an eventfilter
           "priority": 2,
           "config": {},
           "enabled": true,
-          "patterns": null,
           "created": 1608635535,
           "updated": 1608635535
         }
@@ -176,5 +172,43 @@ Feature: Get an eventfilter
     """
     {
       "error": "Not found"
+    }
+    """
+
+  Scenario: given search request should return an eventfilter with old patterns
+    When I am admin
+    When I do GET /api/v4/eventfilter/rules/test-eventfilter-to-backward-compatibility-to-get
+    Then the response code should be 200
+    Then the response body should be:
+    """
+    {
+      "_id": "test-eventfilter-to-backward-compatibility-to-get",
+      "author": "root",
+      "description": "how it should have ended.",
+      "type": "enrichment",
+      "priority": 0,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "customer",
+            "description": "customer",
+            "value": "test"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "event_pattern": null,
+      "old_patterns": [
+        {
+          "resource": {
+            "regex_match": "test-eventfilter-to-backward-compatibility-to-get"
+          }
+        }
+      ],
+      "created": 1608284568,
+      "updated": 1608285370
     }
     """

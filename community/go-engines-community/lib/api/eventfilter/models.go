@@ -4,7 +4,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
-	oldpattern "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -19,8 +18,6 @@ type EditRequest struct {
 	ExternalData map[string]eventfilter.ExternalDataParameters `bson:"external_data" json:"external_data,omitempty"`
 	Created      *types.CpsTime                                `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated      *types.CpsTime                                `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
-
-	Patterns oldpattern.EventPatternList `bson:"patterns" json:"patterns"`
 
 	common.EntityPatternFieldsRequest
 	EventPattern pattern.Event `json:"event_pattern" bson:"event_pattern" binding:"event_pattern"`
