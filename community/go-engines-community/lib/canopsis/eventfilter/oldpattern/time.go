@@ -1,4 +1,4 @@
-package pattern
+package oldpattern
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"

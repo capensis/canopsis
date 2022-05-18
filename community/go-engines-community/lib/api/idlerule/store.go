@@ -5,7 +5,7 @@ import (
 	"errors"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -164,7 +164,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	return deleted > 0, nil
 }
 
-func (s store) countEntitiesCollection(ctx context.Context, entityPattern pattern.EntityPatternList) (int64, error) {
+func (s store) countEntitiesCollection(ctx context.Context, entityPattern oldpattern.EntityPatternList) (int64, error) {
 	cursor, err := s.entityCollection.Aggregate(ctx, []bson.M{
 		{"$match": entityPattern.AsMongoDriverQuery()},
 		{"$count": "total_count"},
@@ -183,7 +183,7 @@ func (s store) countEntitiesCollection(ctx context.Context, entityPattern patter
 	return ar.GetTotal(), err
 }
 
-func (s store) countAlarmsCollection(ctx context.Context, alarmPattern pattern.AlarmPatternList) (int64, error) {
+func (s store) countAlarmsCollection(ctx context.Context, alarmPattern oldpattern.AlarmPatternList) (int64, error) {
 	cursor, err := s.alarmCollection.Aggregate(ctx, []bson.M{
 		{"$match": alarmPattern.AsMongoDriverQuery()},
 		{"$count": "total_count"},
