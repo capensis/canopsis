@@ -99,6 +99,8 @@ func (a *api) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
+// Get
+// @Success 200 {object} Alarm
 func (a *api) Get(c *gin.Context) {
 	apiKey := c.MustGet(auth.ApiKey).(string)
 	alarm, err := a.store.GetByID(c.Request.Context(), c.Param("id"), apiKey)
@@ -114,6 +116,9 @@ func (a *api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, alarm)
 }
 
+// GetDetails
+// @Param request body []DetailsRequest true "request"
+// @Success 200 {array} DetailsResponse
 func (a *api) GetDetails(c *gin.Context) {
 	raw, err := c.GetRawData()
 	if err != nil {
@@ -209,6 +214,8 @@ func (a *api) GetDetails(c *gin.Context) {
 	c.JSON(http.StatusMultiStatus, response)
 }
 
+// ListManual
+// @Success 200 {array} ManualResponse
 func (a *api) ListManual(c *gin.Context) {
 	var r ManualRequest
 	if err := c.ShouldBind(&r); err != nil {
@@ -224,6 +231,8 @@ func (a *api) ListManual(c *gin.Context) {
 	c.JSON(http.StatusOK, alarms)
 }
 
+// ListByService
+// @Success 200 {object} common.PaginatedListResponse{data=[]Alarm}
 func (a *api) ListByService(c *gin.Context) {
 	r := pagination.GetDefaultQuery()
 	if err := c.ShouldBind(&r); err != nil {
