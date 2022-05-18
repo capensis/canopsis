@@ -841,7 +841,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.EventFilter'
+                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Rule'
         required: true
       responses:
         207:
@@ -983,6 +983,48 @@ paths:
                   type: array
                   items:
                     $ref: 'schemas_swagger.yaml#/definitions/idlerule.BulkDeleteResponseItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /bulk/patterns:
+    delete:
+      tags:
+        - saved-patterns
+      summary: Bulk delete patterns
+      description: Bulk delete patterns
+      operationId: saved-patterns-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.BulkDeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete patterns
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: 'schemas_swagger.yaml#/definitions/pattern.BulkDeleteResponseItem'
         400:
           description: Bad Request
           content:
@@ -2769,7 +2811,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/eventfilter.EventFilter'
+                          $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Rule'
         400:
           description: Bad Request
           content:
@@ -2787,7 +2829,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/eventfilter.EventFilter'
+              $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Rule'
         required: true
       responses:
         201:
@@ -2795,7 +2837,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.EventFilter'
+                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Rule'
         400:
           description: Bad Request
           content:
@@ -2822,7 +2864,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.EventFilter'
+                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Rule'
         404:
           description: Not Found
           content:
@@ -2847,7 +2889,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/eventfilter.EventFilter'
+              $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Rule'
         required: true
       responses:
         200:
@@ -2855,7 +2897,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.EventFilter'
+                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Rule'
         400:
           description: Bad Request
           content:
@@ -3503,13 +3545,6 @@ paths:
       summary: Update notification settings
       description: Update notification settings
       operationId: notification-update
-      parameters:
-        - name: id
-          in: path
-          description: type id
-          required: true
-          schema:
-            type: string
       requestBody:
         description: body
         content:
@@ -3530,6 +3565,320 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /patterns:
+    get:
+      tags:
+        - saved-patterns
+      summary: Find all saved patterns
+      description: Get paginated list of saved patterns
+      operationId: saved-patterns-find-all
+      parameters:
+        - name: corporate
+          in: query
+          schema:
+            type: boolean
+        - name: type
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
+        - name: sort_by
+          in: query
+          description: sort query
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/pattern.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+    post:
+      tags:
+        - saved-patterns
+      summary: Create saved pattern
+      description: Create saved pattern
+      operationId: saved-patterns-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pattern.EditRequest'
+            examples:
+              alarm:
+                summary: Alarm pattern
+                description: Create an alarm pattern.
+                value: {
+                  "title": "Alarm pattern",
+                  "type": "alarm",
+                  "is_corporate": false,
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_component"
+                        }
+                      },
+                      {
+                        "field": "v.duration",
+                        "cond": {
+                          "type": "gt",
+                          "value": {
+                            "value": 3,
+                            "unit": "m"
+                          }
+                        }
+                      },
+                      {
+                        "field": "v.ack",
+                        "cond": {
+                          "type": "eq",
+                          "value": false
+                        }
+                      }
+                    ]
+                  ]
+                }
+              entity:
+                summary: Entity pattern
+                description: Create a entity pattern.
+                value: {
+                  "title": "Entity pattern",
+                  "type": "entity",
+                  "is_corporate": false,
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "_id",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource/cps_component"
+                        }
+                      },
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      },
+                      {
+                        "field": "category",
+                        "cond": {
+                          "type": "eq",
+                          "value": "293d7b83-e622-40d9-95ef-86b06eda3746"
+                        }
+                      },
+                      {
+                        "field": "type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "resource"
+                        }
+                      },
+                      {
+                        "field": "infos.custom_name",
+                        "field_type": "string",
+                        "cond": {
+                          "type": "eq",
+                          "value": "custom"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              pbehavior:
+                summary: Pbehavior pattern
+                description: Create a pbehavior pattern.
+                value: {
+                  "title": "Pbehavior pattern",
+                  "type": "pbehavior",
+                  "is_corporate": false,
+                  "pbehavior_pattern": [
+                    [
+                      {
+                        "field": "pbehavior_info._id",
+                        "cond": {
+                          "type": "eq",
+                          "value": "f7501e0a-a04d-46f1-bf10-4a85c4b37433"
+                        }
+                      },
+                      {
+                        "field": "pbehavior_info.type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "default_maintenance"
+                        }
+                      },
+                      {
+                        "field": "pbehavior_info.reason",
+                        "cond": {
+                          "type": "eq",
+                          "value": "default_reason"
+                        }
+                      }
+                    ]
+                  ]
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /patterns/{id}:
+    get:
+      tags:
+        - saved-patterns
+      summary: Get saved pattern by id
+      description: Get saved pattern by id
+      operationId: saved-patterns-get-by-id
+      parameters:
+        - name: id
+          in: path
+          description: pattern id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.Response'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    put:
+      tags:
+        - saved-patterns
+      summary: Update saved pattern by id
+      description: Update saved pattern by id
+      operationId: saved-patterns-update-by-id
+      parameters:
+        - name: id
+          in: path
+          description: pattern id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pattern.EditRequest'
+            examples:
+              update:
+                summary: Update
+                description: Update a pattern.
+                value: {
+                  "title": "Alarm pattern",
+                  "type": "alarm",
+                  "is_corporate": false,
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_component"
+                        }
+                      },
+                      {
+                        "field": "v.duration",
+                        "cond": {
+                          "type": "gt",
+                          "value": {
+                            "value": 3,
+                            "unit": "m"
+                          }
+                        }
+                      },
+                      {
+                        "field": "v.ack",
+                        "cond": {
+                          "type": "eq",
+                          "value": false
+                        }
+                      }
+                    ]
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    delete:
+      tags:
+        - saved-patterns
+      summary: Delete saved pattern by id
+      description: Delete saved pattern by id
+      operationId: saved-patterns-delete-by-id
+      parameters:
+        - name: id
+          in: path
+          description: pattern id
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: OK
         404:
           description: Not Found
           content:
@@ -3571,7 +3920,7 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-  /pbehavior-comments/:id:
+  /pbehavior-comments/{id}:
     delete:
       tags:
         - pbehavior-comments
@@ -6296,6 +6645,101 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /view-copy/{id}:
+    post:
+      tags:
+        - views
+      summary: Copy view
+      description: Copy view
+      operationId: views-copy
+      parameters:
+        - name: id
+          in: path
+          description: view id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/view.EditRequest'
+            examples:
+              copy:
+                summary: Copy
+                description: Copy a view. View's tabs are also copied.
+                value: {
+                  "title": "Opened",
+                  "description": "Opened alarms",
+                  "enabled": true,
+                  "group": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                  "periodic_refresh": {
+                    "enabled": true,
+                    "value": 600,
+                    "unit": "m"
+                  },
+                  "tags": [
+                    "alarms"
+                  ]
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/view.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /view-export:
+    post:
+      tags:
+        - views
+      summary: Export views
+      description: Export views
+      operationId: views-export
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/view.ExportRequest'
+            examples:
+              export:
+                summary: Export
+                description: Export selected groups and views.
+                value: {
+                  "groups": [
+                    {
+                      "_id": "15a8df93-fab2-417b-a96c-f624dc6dc204",
+                      "views": ["14e237d4-ad08-47a5-87f2-8ffe6741541f", "0be1d3df-816b-4359-a2ba-7bcccb33ed4f"]
+                    },
+                    {
+                      "_id": "98a07c80-a731-4e33-992e-c8aaee3eb529"
+                    }
+                  ],
+                  "views": ["6164d665-7ccb-4ffc-9d46-5350b2fefafe"]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/view.ExportResponse'
   /view-groups:
     get:
       tags:
@@ -6304,15 +6748,25 @@ paths:
       description: Get paginated list of view groups
       operationId: viewgroups-find-all
       parameters:
+        - name: with_flags
+          in: query
+          schema:
+            type: boolean
+        - name: with_views
+          in: query
+          schema:
+            type: boolean
+        - name: with_tabs
+          in: query
+          schema:
+            type: boolean
+        - name: with_widgets
+          in: query
+          schema:
+            type: boolean
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
-        - $ref: '#/components/parameters/sort'
-        - name: sort_by
-          in: query
-          description: sort query
-          schema:
-            type: string
       responses:
         200:
           description: OK
@@ -6345,6 +6799,13 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/viewgroup.EditRequest'
+            examples:
+              create:
+                summary: Create
+                description: Create a group.
+                value: {
+                  "title": "Alarms"
+                }
         required: true
       responses:
         201:
@@ -6405,6 +6866,13 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/viewgroup.EditRequest'
+            examples:
+              update:
+                summary: Update
+                description: Update a group.
+                value: {
+                  "title": "Alarms"
+                }
         required: true
       responses:
         200:
@@ -6446,13 +6914,198 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /view-import:
+    post:
+      tags:
+        - views
+      summary: Import views
+      description: Import views
+      operationId: views-import
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/view.ImportItemRequest'
+            examples:
+              import:
+                summary: Import
+                description: Import groups and views.
+                value: [
+                  {
+                    "title": "New group",
+                    "views": [
+                      {
+                        "title": "New view",
+                        "description": "New view",
+                        "enabled": true,
+                        "periodic_refresh": {
+                          "enabled": true,
+                          "value": 1,
+                          "unit": "s"
+                        },
+                        "tags": [
+                          "alarms"
+                        ],
+                        "tabs": [
+                          {
+                            "title": "New tab",
+                            "widgets": [
+                              {
+                                "title": "New widget",
+                                "type": "AlarmsList",
+                                "parameters": {
+                                  "main_filter": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
+                                  "widgetColumns": [
+                                    {
+                                      "value": "v.connector",
+                                      "label": "Connector"
+                                    },
+                                    {
+                                      "value": "v.connector_name",
+                                      "label": "Connector name"
+                                    },
+                                    {
+                                      "value": "v.component",
+                                      "label": "Component"
+                                    },
+                                    {
+                                      "value": "v.resource",
+                                      "label": "Resource"
+                                    },
+                                    {
+                                      "value": "v.output",
+                                      "label": "Output"
+                                    },
+                                    {
+                                      "value": "extra_details",
+                                      "label": "Extra details"
+                                    },
+                                    {
+                                      "value": "v.state.val",
+                                      "label": "State"
+                                    },
+                                    {
+                                      "value": "v.status.val",
+                                      "label": "Status"
+                                    }
+                                  ],
+                                  "sort": {
+                                    "order": "DESC"
+                                  },
+                                  "itemsPerPage": 15,
+                                  "alarmsStateFilter": {
+                                    "opened": true
+                                  }
+                                },
+                                "grid_parameters": {
+                                  "mobile": {
+                                    "x": 0,
+                                    "y": 0,
+                                    "w": 3,
+                                    "h": 1,
+                                    "autoHeight": true
+                                  },
+                                  "tablet": {
+                                    "x": 0,
+                                    "y": 0,
+                                    "w": 3,
+                                    "h": 1,
+                                    "autoHeight": true
+                                  },
+                                  "desktop": {
+                                    "x": 0,
+                                    "y": 0,
+                                    "w": 12,
+                                    "h": 1,
+                                    "autoHeight": true
+                                  }
+                                },
+                                "filters": [
+                                  {
+                                    "_id": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
+                                    "title": "New filter. ID is used to set main filter parameter.",
+                                    "is_private": false,
+                                    "alarm_pattern": [
+                                      [
+                                        {
+                                          "field": "v.component",
+                                          "cond": {
+                                            "type": "eq",
+                                            "value": "cps_component"
+                                          }
+                                        }
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "title": "New filter 2",
+                                    "is_private": false,
+                                    "entity_pattern": [
+                                      [
+                                        {
+                                          "field": "name",
+                                          "cond": {
+                                            "type": "eq",
+                                            "value": "cps_resource"
+                                          }
+                                        }
+                                      ]
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "title": "New tab 2"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "_id": "0be1d3df-816b-4359-a2ba-7bcccb33ed4f",
+                    "views": [
+                      {
+                        "_id": "15a8df93-fab2-417b-a96c-f624dc6dc204"
+                      },
+                      {
+                        "title": "New view. This view is added to existed group between existed views."
+                      },
+                      {
+                        "_id": "14e237d4-ad08-47a5-87f2-8ffe6741541f"
+                      }
+                    ]
+                  },
+                  {
+                    "title": "New group. Existed view is moved to this group.",
+                    "views": [
+                      {
+                        "_id": "84511962-6b00-4b3e-8a00-29216b2e1be6"
+                      }
+                    ]
+                  }
+                ]
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /view-positions:
     put:
       tags:
@@ -6468,7 +7121,252 @@ paths:
               type: array
               items:
                 $ref: 'schemas_swagger.yaml#/definitions/view.EditPositionItemRequest'
+            examples:
+              update:
+                summary: Update positions.
+                description: Update groups' and views' positions.
+                value: [
+                  {
+                    "_id": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
+                    "views": [
+                      "84511962-6b00-4b3e-8a00-29216b2e1be6",
+                      "0be1d3df-816b-4359-a2ba-7bcccb33ed4f",
+                      "14e237d4-ad08-47a5-87f2-8ffe6741541f"
+                    ]
+                  },
+                  {
+                    "_id": "15a8df93-fab2-417b-a96c-f624dc6dc204",
+                    "views": [
+                      "6164d665-7ccb-4ffc-9d46-5350b2fefafe",
+                      "7c573640-239b-4e8d-84e2-e1baf4bd0ae2"
+                    ]
+                  }
+                ]
         required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /view-tab-copy/{id}:
+    post:
+      tags:
+        - viewtabs
+      summary: Copy view tab
+      description: Copy view tab
+      operationId: viewtabs-copy
+      parameters:
+        - name: id
+          in: path
+          description: tab id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/viewtab.EditRequest'
+            examples:
+              copy:
+                summary: Copy
+                description: Copy a tab. Tab's widgets are also copied.
+                value: {
+                  "title": "Alarms",
+                  "view": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2"
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/viewtab.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /view-tab-positions:
+    put:
+      tags:
+        - viewtabs
+      summary: Update view tabs positions
+      description: Update view tabs positions
+      operationId: viewtabs-update-positions
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+            examples:
+              update:
+                summary: Update positions
+                description: Update tabs' positions
+                value: [
+                  "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
+                  "6ccfd7ea-9f04-4c0f-8809-25545cbb579e"
+                ]
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /view-tabs:
+    post:
+      tags:
+        - viewtabs
+      summary: Create view tab
+      description: Create view tab
+      operationId: viewtabs-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/viewtab.EditRequest'
+            examples:
+              create:
+                summary: Create
+                description: Create a tab.
+                value: {
+                  "title": "Alarms",
+                  "view": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2"
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/viewtab.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /view-tabs/{id}:
+    get:
+      tags:
+        - viewtabs
+      summary: Get view tab by id
+      description: Get view tab by id
+      operationId: viewtabs-get-by-id
+      parameters:
+        - name: id
+          in: path
+          description: tab id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/viewtab.Response'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    put:
+      tags:
+        - viewtabs
+      summary: Update view tab by id
+      description: Update view tab by id
+      operationId: viewtabs-update-by-id
+      parameters:
+        - name: id
+          in: path
+          description: tab id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/viewtab.EditRequest'
+            examples:
+              update:
+                summary: Update
+                description: Update a tab.
+                value: {
+                  "title": "Alarms",
+                  "view": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2"
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/viewtab.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    delete:
+      tags:
+        - viewtabs
+      summary: Delete view tab by id
+      description: Delete view tab by id
+      operationId: viewtabs-delete-by-id
+      parameters:
+        - name: id
+          in: path
+          description: tab id
+          required: true
+          schema:
+            type: string
       responses:
         204:
           description: OK
@@ -6489,12 +7387,6 @@ paths:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
-        - $ref: '#/components/parameters/sort'
-        - name: sort_by
-          in: query
-          description: sort query
-          schema:
-            type: string
       responses:
         200:
           description: OK
@@ -6508,7 +7400,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/viewgroup.View'
+                          $ref: 'schemas_swagger.yaml#/definitions/view.Response'
         400:
           description: Bad Request
           content:
@@ -6527,6 +7419,24 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/view.EditRequest'
+            examples:
+              create:
+                summary: Create
+                description: Create a view. Only users with author's role can see new view.
+                value: {
+                  "title": "Opened",
+                  "description": "Opened alarms",
+                  "enabled": true,
+                  "group": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                  "periodic_refresh": {
+                    "enabled": true,
+                    "value": 600,
+                    "unit": "m"
+                  },
+                  "tags": [
+                    "alarms"
+                  ]
+                }
         required: true
       responses:
         201:
@@ -6534,7 +7444,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/viewgroup.View'
+                $ref: 'schemas_swagger.yaml#/definitions/view.Response'
         400:
           description: Bad Request
           content:
@@ -6561,7 +7471,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/viewgroup.View'
+                $ref: 'schemas_swagger.yaml#/definitions/view.Response'
         404:
           description: Not Found
           content:
@@ -6587,6 +7497,24 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/view.EditRequest'
+            examples:
+              update:
+                summary: Update
+                description: Update a view.
+                value: {
+                  "title": "Opened",
+                  "description": "Opened alarms",
+                  "enabled": true,
+                  "group": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                  "periodic_refresh": {
+                    "enabled": true,
+                    "value": 600,
+                    "unit": "m"
+                  },
+                  "tags": [
+                    "alarms"
+                  ]
+                }
         required: true
       responses:
         200:
@@ -6594,7 +7522,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/viewgroup.View'
+                $ref: 'schemas_swagger.yaml#/definitions/view.Response'
         400:
           description: Bad Request
           content:
@@ -6722,6 +7650,692 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /widget-copy/{id}:
+    post:
+      tags:
+        - widgets
+      summary: Copy widget
+      description: Copy widget
+      operationId: widgets-copy
+      parameters:
+        - name: id
+          in: path
+          description: widget id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/widget.EditRequest'
+            examples:
+              copy:
+                summary: Copy
+                description: Copy a widget. Widget's filters are also copied.
+                value: {
+                  "tab": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
+                  "title": "Opened",
+                  "type": "AlarmsList",
+                  "grid_parameters": {
+                    "mobile": {
+                      "x": 0,
+                      "y": 0,
+                      "w": 3,
+                      "h": 1,
+                      "autoHeight": true
+                    },
+                    "tablet": {
+                      "x": 0,
+                      "y": 0,
+                      "w": 3,
+                      "h": 1,
+                      "autoHeight": true
+                    },
+                    "desktop": {
+                      "x": 0,
+                      "y": 0,
+                      "w": 12,
+                      "h": 1,
+                      "autoHeight": true
+                    }
+                  },
+                  "parameters": {
+                    "main_filter": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
+                    "widgetColumns": [
+                      {
+                        "value": "v.connector",
+                        "label": "Connector"
+                      },
+                      {
+                        "value": "v.connector_name",
+                        "label": "Connector name"
+                      },
+                      {
+                        "value": "v.component",
+                        "label": "Component"
+                      },
+                      {
+                        "value": "v.resource",
+                        "label": "Resource"
+                      },
+                      {
+                        "value": "v.output",
+                        "label": "Output"
+                      },
+                      {
+                        "value": "extra_details",
+                        "label": "Extra details"
+                      },
+                      {
+                        "value": "v.state.val",
+                        "label": "State"
+                      },
+                      {
+                        "value": "v.status.val",
+                        "label": "Status"
+                      }
+                    ],
+                    "sort": {
+                      "order": "DESC"
+                    },
+                    "itemsPerPage": 15,
+                    "alarmsStateFilter": {
+                      "opened": true
+                    }
+                  }
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/widget.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /widget-filters:
+    get:
+      tags:
+        - widgetfilters
+      summary: Find widget filters
+      description: Get paginated list of widget filters
+      operationId: widgetfilters-find-all
+      parameters:
+        - name: private
+          in: query
+          schema:
+            type: boolean
+        - name: widget
+          in: query
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/widgetfilter.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+    post:
+      tags:
+        - widgetfilters
+      summary: Create widget filter
+      description: Create widget filter
+      operationId: widgetfilters-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/widgetfilter.EditRequest'
+            examples:
+              embedpatterns:
+                summary: Embed patterns
+                description: Create a filter with embed patterns.
+                value: {
+                  "title": "Filter",
+                  "widget": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
+                  "is_private": true,
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_component"
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "pbehavior_pattern": [
+                    [
+                      {
+                        "field": "pbehavior_info.type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "default_maintenance"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              corporatepatterns:
+                summary: Corporate patterns
+                description: Create a filter with corporate patterns.
+                value: {
+                  "title": "Filter",
+                  "widget": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
+                  "is_private": true,
+                  "corporate_alarm_pattern": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
+                  "corporate_entity_pattern": "84511962-6b00-4b3e-8a00-29216b2e1be6",
+                  "corporate_pbehavior_pattern": "0be1d3df-816b-4359-a2ba-7bcccb33ed4f"
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/widgetfilter.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /widget-filters/{id}:
+    get:
+      tags:
+        - widgetfilters
+      summary: Get widget filter by id
+      description: Get widget filter by id
+      operationId: widgetfilters-get-by-id
+      parameters:
+        - name: id
+          in: path
+          description: filter id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/widgetfilter.Response'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    put:
+      tags:
+        - widgetfilters
+      summary: Update widget filter by id
+      description: Update widget filter by id
+      operationId: widgetfilters-update-by-id
+      parameters:
+        - name: id
+          in: path
+          description: filter id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/widgetfilter.EditRequest'
+            examples:
+              update:
+                summary: Update
+                description: Update a filter.
+                value: {
+                  "title": "Filter",
+                  "widget": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
+                  "is_private": true,
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_component"
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "pbehavior_pattern": [
+                    [
+                      {
+                        "field": "pbehavior_info.type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "default_maintenance"
+                        }
+                      }
+                    ]
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/widgetfilter.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    delete:
+      tags:
+        - widgetfilters
+      summary: Delete widget filter by id
+      description: Delete widget filter by id
+      operationId: widgetfilters-delete-by-id
+      parameters:
+        - name: id
+          in: path
+          description: filter id
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /widget-grid-positions:
+    put:
+      tags:
+        - widgets
+      summary: Update widgets grid positions
+      description: Update widgets grid positions
+      operationId: widgets-update-grid-positions
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/widget.EditGridPositionItemRequest'
+            examples:
+              update:
+                summary: Update grid positions
+                description: Update widgets' grid positions.
+                value: [
+                  {
+                    "_id": "84511962-6b00-4b3e-8a00-29216b2e1be6",
+                    "grid_parameters": {
+                      "desktop": {"x": 0, "y": 0, "w": 3, "h": 1, "autoHeight": false}
+                    }
+                  },
+                  {
+                    "_id": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
+                    "grid_parameters": {
+                      "desktop": {"x": 0, "y": 1, "w": 3, "h": 1, "autoHeight": false}
+                    }
+                  },
+                  {
+                    "_id": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
+                    "grid_parameters": {
+                      "desktop": {"x": 1, "y": 1, "w": 12, "h": 1, "autoHeight": true}
+                    }
+                  }
+                ]
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /widgets:
+    post:
+      tags:
+        - widgets
+      summary: Create widget
+      description: Create widget
+      operationId: widgets-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/widget.EditRequest'
+            examples:
+              create:
+                summary: Create
+                description: Create a widget.
+                value: {
+                  "tab": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
+                  "title": "Opened",
+                  "type": "AlarmsList",
+                  "grid_parameters": {
+                    "mobile": {
+                      "x": 0,
+                      "y": 0,
+                      "w": 3,
+                      "h": 1,
+                      "autoHeight": true
+                    },
+                    "tablet": {
+                      "x": 0,
+                      "y": 0,
+                      "w": 3,
+                      "h": 1,
+                      "autoHeight": true
+                    },
+                    "desktop": {
+                      "x": 0,
+                      "y": 0,
+                      "w": 12,
+                      "h": 1,
+                      "autoHeight": true
+                    }
+                  },
+                  "parameters": {
+                    "main_filter": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
+                    "widgetColumns": [
+                      {
+                        "value": "v.connector",
+                        "label": "Connector"
+                      },
+                      {
+                        "value": "v.connector_name",
+                        "label": "Connector name"
+                      },
+                      {
+                        "value": "v.component",
+                        "label": "Component"
+                      },
+                      {
+                        "value": "v.resource",
+                        "label": "Resource"
+                      },
+                      {
+                        "value": "v.output",
+                        "label": "Output"
+                      },
+                      {
+                        "value": "extra_details",
+                        "label": "Extra details"
+                      },
+                      {
+                        "value": "v.state.val",
+                        "label": "State"
+                      },
+                      {
+                        "value": "v.status.val",
+                        "label": "Status"
+                      }
+                    ],
+                    "sort": {
+                      "order": "DESC"
+                    },
+                    "itemsPerPage": 15,
+                    "alarmsStateFilter": {
+                      "opened": true
+                    }
+                  }
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/widget.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /widgets/{id}:
+    get:
+      tags:
+        - widgets
+      summary: Get widget by id
+      description: Get widget by id
+      operationId: widgets-get-by-id
+      parameters:
+        - name: id
+          in: path
+          description: widget id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/widget.Response'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    put:
+      tags:
+        - widgets
+      summary: Update widget by id
+      description: Update widget by id
+      operationId: widgets-update-by-id
+      parameters:
+        - name: id
+          in: path
+          description: widget id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/widget.EditRequest'
+            examples:
+              update:
+                summary: Update
+                description: Update a widget.
+                value: {
+                  "tab": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
+                  "title": "Opened",
+                  "type": "AlarmsList",
+                  "grid_parameters": {
+                    "mobile": {
+                      "x": 0,
+                      "y": 0,
+                      "w": 3,
+                      "h": 1,
+                      "autoHeight": true
+                    },
+                    "tablet": {
+                      "x": 0,
+                      "y": 0,
+                      "w": 3,
+                      "h": 1,
+                      "autoHeight": true
+                    },
+                    "desktop": {
+                      "x": 0,
+                      "y": 0,
+                      "w": 12,
+                      "h": 1,
+                      "autoHeight": true
+                    }
+                  },
+                  "parameters": {
+                    "main_filter": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
+                    "widgetColumns": [
+                      {
+                        "value": "v.connector",
+                        "label": "Connector"
+                      },
+                      {
+                        "value": "v.connector_name",
+                        "label": "Connector name"
+                      },
+                      {
+                        "value": "v.component",
+                        "label": "Component"
+                      },
+                      {
+                        "value": "v.resource",
+                        "label": "Resource"
+                      },
+                      {
+                        "value": "v.output",
+                        "label": "Output"
+                      },
+                      {
+                        "value": "extra_details",
+                        "label": "Extra details"
+                      },
+                      {
+                        "value": "v.state.val",
+                        "label": "State"
+                      },
+                      {
+                        "value": "v.status.val",
+                        "label": "Status"
+                      }
+                    ],
+                    "sort": {
+                      "order": "DESC"
+                    },
+                    "itemsPerPage": 15,
+                    "alarmsStateFilter": {
+                      "opened": true
+                    }
+                  }
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/widget.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    delete:
+      tags:
+        - widgets
+      summary: Delete widget by id
+      description: Delete widget by id
+      operationId: widgets-delete-by-id
+      parameters:
+        - name: id
+          in: path
+          description: widget id
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
 components:
   parameters:
     page:
