@@ -1,7 +1,7 @@
 package idlerule
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -140,7 +140,7 @@ func validateEntityRule(sl validator.StructLevel, r EditRequest) {
 	}
 }
 
-func validateEntityPatterns(sl validator.StructLevel, patterns pattern.EntityPatternList) bool {
+func validateEntityPatterns(sl validator.StructLevel, patterns oldpattern.EntityPatternList) bool {
 	patternsIsSet := false
 	if patterns.IsSet() {
 		if !patterns.IsValid() {
@@ -162,7 +162,7 @@ func validateEntityPatterns(sl validator.StructLevel, patterns pattern.EntityPat
 	return patternsIsSet
 }
 
-func validateAlarmPatterns(sl validator.StructLevel, patterns pattern.AlarmPatternList) bool {
+func validateAlarmPatterns(sl validator.StructLevel, patterns oldpattern.AlarmPatternList) bool {
 	patternsIsSet := false
 	if patterns.IsSet() {
 		if !patterns.IsValid() {

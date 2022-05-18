@@ -1,4 +1,4 @@
-package pattern_test
+package oldpattern_test
 
 import (
 	"reflect"
@@ -6,7 +6,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
@@ -14,7 +14,7 @@ import (
 )
 
 type interfacePatternWrapper struct {
-	Pattern pattern.InterfacePattern `bson:"pattern"`
+	Pattern oldpattern.InterfacePattern `bson:"pattern"`
 }
 
 func TestIntRangeInterfacePatternToMongoDriverQuery(t *testing.T) {
@@ -124,7 +124,7 @@ func TestValidEqualStringInterfacePatternMongoDriver(t *testing.T) {
 			So(bson.Unmarshal(bsonPattern, &w), ShouldBeNil)
 			p := w.Pattern
 
-			var m pattern.RegexMatches
+			var m oldpattern.RegexMatches
 
 			Convey("The pattern should accept the value of the string", func() {
 				So(p.Matches("value", &m), ShouldBeTrue)
@@ -170,7 +170,7 @@ func TestValidRegexInterfacePatternMongoDriver(t *testing.T) {
 			So(bson.Unmarshal(bsonPattern, &w), ShouldBeNil)
 			p := w.Pattern
 
-			var m pattern.RegexMatches
+			var m oldpattern.RegexMatches
 
 			Convey("The pattern should accept values that match the regex", func() {
 				So(p.Matches("abc-bla-def", &m), ShouldBeTrue)
@@ -219,7 +219,7 @@ func TestValidRegexInterfacePatternMongoDriver(t *testing.T) {
 			So(bson.Unmarshal(bsonPattern, &w), ShouldBeNil)
 			p := w.Pattern
 
-			var m pattern.RegexMatches
+			var m oldpattern.RegexMatches
 
 			Convey("The pattern should accept values that match the regex and return the values of the subexpressions", func() {
 				So(p.Matches("abc-bla-def", &m), ShouldBeTrue)
@@ -267,7 +267,7 @@ func TestValidEqualNilInterfacePatternMongoDriver(t *testing.T) {
 			So(bson.Unmarshal(bsonPattern, &w), ShouldBeNil)
 			p := w.Pattern
 
-			var m pattern.RegexMatches
+			var m oldpattern.RegexMatches
 
 			Convey("The pattern should accept nil", func() {
 				So(p.Matches(nil, &m), ShouldBeTrue)
@@ -313,7 +313,7 @@ func TestValidEqualInterfacePatternMongoDriver(t *testing.T) {
 			So(bson.Unmarshal(bsonPattern, &w), ShouldBeNil)
 			p := w.Pattern
 
-			var m pattern.RegexMatches
+			var m oldpattern.RegexMatches
 
 			Convey("The pattern should accept the value of the integer", func() {
 				So(p.Matches(7, &m), ShouldBeTrue)
@@ -360,7 +360,7 @@ func TestValidInequalitiesInterfacePatternMongoDriver(t *testing.T) {
 		bsonPattern, err := bson.Marshal(mapPattern)
 		So(err, ShouldBeNil)
 
-		var m pattern.RegexMatches
+		var m oldpattern.RegexMatches
 
 		Convey("The pattern should be decoded without errors", func() {
 			var w interfacePatternWrapper
@@ -403,7 +403,7 @@ func TestValidInequalitiesInterfacePatternMongoDriver(t *testing.T) {
 			So(bson.Unmarshal(bsonPattern, &w), ShouldBeNil)
 			p := w.Pattern
 
-			var m pattern.RegexMatches
+			var m oldpattern.RegexMatches
 
 			Convey("The filter should accept values that are in the range", func() {
 				So(p.Matches(0, &m), ShouldBeTrue)
@@ -538,15 +538,15 @@ func TestInterfacePatternMarshalBSON(t *testing.T) {
 	datasets := []struct {
 		TestName             string
 		ExpectedUnmarshalled bson.M
-		Pattern              pattern.InterfacePattern
+		Pattern              oldpattern.InterfacePattern
 	}{
 		{
 			TestName: "test for equal string",
 			ExpectedUnmarshalled: bson.M{
 				"pattern": "value",
 			},
-			Pattern: pattern.InterfacePattern{
-				StringConditions: pattern.StringConditions{
+			Pattern: oldpattern.InterfacePattern{
+				StringConditions: oldpattern.StringConditions{
 					Equal: types.OptionalString{
 						Set:   true,
 						Value: "value",
@@ -559,8 +559,8 @@ func TestInterfacePatternMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"pattern": bson.M{"regex_match": "abc-.*-def"},
 			},
-			Pattern: pattern.InterfacePattern{
-				StringConditions: pattern.StringConditions{
+			Pattern: oldpattern.InterfacePattern{
+				StringConditions: oldpattern.StringConditions{
 					RegexMatch: types.OptionalRegexp{
 						Set:   true,
 						Value: testRegexp,
@@ -578,8 +578,8 @@ func TestInterfacePatternMarshalBSON(t *testing.T) {
 					"is_empty":   false,
 				},
 			},
-			Pattern: pattern.InterfacePattern{
-				StringArrayConditions: pattern.StringArrayConditions{
+			Pattern: oldpattern.InterfacePattern{
+				StringArrayConditions: oldpattern.StringArrayConditions{
 					HasEvery: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test1"},
@@ -604,8 +604,8 @@ func TestInterfacePatternMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"pattern": int64(5),
 			},
-			Pattern: pattern.InterfacePattern{
-				IntegerConditions: pattern.IntegerConditions{
+			Pattern: oldpattern.InterfacePattern{
+				IntegerConditions: oldpattern.IntegerConditions{
 					Equal: types.OptionalInt64{
 						Set:   true,
 						Value: 5,
@@ -621,8 +621,8 @@ func TestInterfacePatternMarshalBSON(t *testing.T) {
 					"<=": int64(2),
 				},
 			},
-			Pattern: pattern.InterfacePattern{
-				IntegerConditions: pattern.IntegerConditions{
+			Pattern: oldpattern.InterfacePattern{
+				IntegerConditions: oldpattern.IntegerConditions{
 					Gte: types.OptionalInt64{
 						Set:   true,
 						Value: 0,
@@ -639,7 +639,7 @@ func TestInterfacePatternMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"pattern": nil,
 			},
-			Pattern: pattern.InterfacePattern{
+			Pattern: oldpattern.InterfacePattern{
 				EqualNil: true,
 			},
 		},
@@ -648,7 +648,7 @@ func TestInterfacePatternMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"pattern": primitive.Undefined{},
 			},
-			Pattern: pattern.InterfacePattern{},
+			Pattern: oldpattern.InterfacePattern{},
 		},
 	}
 
