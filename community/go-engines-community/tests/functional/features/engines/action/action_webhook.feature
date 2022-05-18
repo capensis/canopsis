@@ -457,7 +457,7 @@ Feature: execute action on trigger
           "parameters": {
             "request": {
               "method": "GET",
-              "url": "http://api:8082/api/v4/pbehavior-types/test-default-active-type",
+              "url": "{{ .apiURL }}/api/v4/pbehavior-types/test-default-active-type",
               "auth": {
                 "username": "root",
                 "password": "test"

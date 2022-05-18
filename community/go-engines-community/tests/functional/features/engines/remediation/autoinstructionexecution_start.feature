@@ -89,7 +89,6 @@ Feature: run an auto instruction
     }
     """
     When I wait the end of event processing
-    When I wait 1s
     When I send an event:
     """json
     {
@@ -104,51 +103,44 @@ Feature: run an auto instruction
     }
     """
     When I wait the end of event processing
-    When I wait the next periodical process
-    When I wait the next periodical process
-    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-2&with_steps=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-2&with_steps=true until response code is 200 and response array key "data.0.v.steps" contains:
+    """json
+    [
+      {
+        "_t": "autoinstructionstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-2-1-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-2-1-name. Job test-job-to-run-auto-instruction-1-name."
+      },
+      {
+        "_t": "instructionjobcomplete",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-2-1-name. Job test-job-to-run-auto-instruction-1-name."
+      },
+      {
+        "_t": "autoinstructioncomplete",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-2-1-name."
+      },
+      {
+        "_t": "statedec",
+        "val": 0
+      },
+      {
+        "_t": "statusdec",
+        "val": 0
+      }
+    ]
+    """
+    When I wait 100ms
+    When the response array key "data.0.v.steps" should contain only one:
     """json
     {
-      "data": [
-        {
-          "v": {
-            "steps": [
-              {},
-              {},
-              {
-                "_t": "autoinstructionstart",
-                "a": "system",
-                "m": "Instruction test-instruction-to-run-auto-instruction-2-1-name."
-              },
-              {
-                "_t": "instructionjobstart",
-                "a": "system",
-                "m": "Instruction test-instruction-to-run-auto-instruction-2-1-name. Job test-job-to-run-auto-instruction-1-name."
-              },
-              {
-                "_t": "instructionjobcomplete",
-                "a": "system",
-                "m": "Instruction test-instruction-to-run-auto-instruction-2-1-name. Job test-job-to-run-auto-instruction-1-name."
-              },
-              {
-                "_t": "autoinstructioncomplete",
-                "a": "system",
-                "m": "Instruction test-instruction-to-run-auto-instruction-2-1-name."
-              },
-              {
-                "_t": "statedec",
-                "val": 0
-              },
-              {
-                "_t": "statusdec",
-                "val": 0
-              }
-            ]
-          }
-        }
-      ]
+      "_t": "autoinstructionstart"
     }
     """
 
@@ -168,60 +160,50 @@ Feature: run an auto instruction
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-3&with_steps=true until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-3&with_steps=true until response code is 200 and response array key "data.0.v.steps" contains:
     """json
-    {
-      "data": [
-        {
-          "v": {
-            "steps": [
-              {},
-              {},
-              {
-                "_t": "autoinstructionstart",
-                "a": "system",
-                "m": "Instruction test-instruction-to-run-auto-instruction-3-1-name."
-              },
-              {
-                "_t": "instructionjobstart",
-                "a": "system",
-                "m": "Instruction test-instruction-to-run-auto-instruction-3-1-name. Job test-job-to-run-auto-instruction-3-name."
-              },
-              {
-                "_t": "instructionjobfail",
-                "a": "system",
-                "m": "Instruction test-instruction-to-run-auto-instruction-3-1-name. Job test-job-to-run-auto-instruction-3-name."
-              },
-              {
-                "_t": "autoinstructionfail",
-                "a": "system",
-                "m": "Instruction test-instruction-to-run-auto-instruction-3-1-name."
-              },
-              {
-                "_t": "autoinstructionstart",
-                "a": "system",
-                "m": "Instruction test-instruction-to-run-auto-instruction-3-2-name."
-              },
-              {
-                "_t": "instructionjobstart",
-                "a": "system",
-                "m": "Instruction test-instruction-to-run-auto-instruction-3-2-name. Job test-job-to-run-auto-instruction-1-name."
-              },
-              {
-                "_t": "instructionjobcomplete",
-                "a": "system",
-                "m": "Instruction test-instruction-to-run-auto-instruction-3-2-name. Job test-job-to-run-auto-instruction-1-name."
-              },
-              {
-                "_t": "autoinstructioncomplete",
-                "a": "system",
-                "m": "Instruction test-instruction-to-run-auto-instruction-3-2-name."
-              }
-            ]
-          }
-        }
-      ]
-    }
+    [
+      {
+        "_t": "autoinstructionstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-3-1-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-3-1-name. Job test-job-to-run-auto-instruction-3-name."
+      },
+      {
+        "_t": "instructionjobfail",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-3-1-name. Job test-job-to-run-auto-instruction-3-name."
+      },
+      {
+        "_t": "autoinstructionfail",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-3-1-name."
+      },
+      {
+        "_t": "autoinstructionstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-3-2-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-3-2-name. Job test-job-to-run-auto-instruction-1-name."
+      },
+      {
+        "_t": "instructionjobcomplete",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-3-2-name. Job test-job-to-run-auto-instruction-1-name."
+      },
+      {
+        "_t": "autoinstructioncomplete",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-3-2-name."
+      }
+    ]
     """
 
   Scenario: given multiple alarms for the same instruction should run the instruction for all
@@ -354,40 +336,30 @@ Feature: run an auto instruction
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-5&with_steps=true until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-5&with_steps=true until response code is 200 and response array key "data.0.v.steps" contains:
     """json
-    {
-      "data": [
-        {
-          "v": {
-            "steps": [
-              {},
-              {},
-              {
-                "_t": "autoinstructionstart",
-                "a": "system",
-                "m": "Instruction test-instruction-to-run-auto-instruction-5-name."
-              },
-              {
-                "_t": "instructionjobstart",
-                "a": "system",
-                "m": "Instruction test-instruction-to-run-auto-instruction-5-name. Job test-job-to-run-auto-instruction-4-name."
-              },
-              {
-                "_t": "instructionjobfail",
-                "a": "system",
-                "m": "Instruction test-instruction-to-run-auto-instruction-5-name. Job test-job-to-run-auto-instruction-4-name."
-              },
-              {
-                "_t": "autoinstructionfail",
-                "a": "system",
-                "m": "Instruction test-instruction-to-run-auto-instruction-5-name."
-              }
-            ]
-          }
-        }
-      ]
-    }
+    [
+      {
+        "_t": "autoinstructionstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-5-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-5-name. Job test-job-to-run-auto-instruction-4-name."
+      },
+      {
+        "_t": "instructionjobfail",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-5-name. Job test-job-to-run-auto-instruction-4-name."
+      },
+      {
+        "_t": "autoinstructionfail",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-5-name."
+      }
+    ]
     """
 
   Scenario: given multiple alarms for the same instruction should run next auto instructions for both alarms if instruction failed
