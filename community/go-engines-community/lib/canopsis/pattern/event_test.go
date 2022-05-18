@@ -302,6 +302,7 @@ func getEventMatchDataSets() map[string]eventDataSet {
 					"info_name": 2,
 				},
 			},
+			matchErr:    pattern.ErrWrongConditionValue,
 			matchResult: false,
 		},
 		"given extra field condition and unknown extra field should not match": {
@@ -315,6 +316,7 @@ func getEventMatchDataSets() map[string]eventDataSet {
 				},
 			},
 			event:       types.Event{},
+			matchErr:    pattern.ErrWrongConditionValue,
 			matchResult: false,
 		},
 	}
