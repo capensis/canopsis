@@ -77,11 +77,11 @@ type ManualResponse struct {
 }
 
 type DetailsRequest struct {
-	ID               string              `json:"_id" binding:"required"`
-	Opened           *bool               `json:"opened"`
-	WithInstructions bool                `json:"with_instructions"`
-	Steps            pagination.Query    `json:"steps"`
-	Children         ChildDetailsRequest `json:"children"`
+	ID               string               `json:"_id" binding:"required"`
+	Opened           *bool                `json:"opened"`
+	WithInstructions bool                 `json:"with_instructions"`
+	Steps            *pagination.Query    `json:"steps"`
+	Children         *ChildDetailsRequest `json:"children"`
 }
 
 type ChildDetailsRequest struct {

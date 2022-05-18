@@ -892,6 +892,12 @@ Feature: Get alarms
         }
       },
       {
+        "_id": "test-alarm-to-get-1",
+        "steps": {
+          "limit": 5
+        }
+      },
+      {
         "_id": "test-alarm-to-get-3",
         "steps": {
           "page": 1
@@ -926,12 +932,6 @@ Feature: Get alarms
       },
       {
         "_id": "not-exist"
-      },
-      {
-        "_id": "not-exist",
-        "steps": {
-          "limit": 10
-        }
       }
     ]
     """
@@ -1017,6 +1017,52 @@ Feature: Get alarms
       },
       {
         "status": 200,
+        "_id": "test-alarm-to-get-1",
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc",
+                "a": "test-connector-default.test-connector-default-name",
+                "m": "test-alarm-to-get-1-output",
+                "t": 1597030219,
+                "initiator": "external",
+                "val": 3
+              },
+              {
+                "_t": "statusinc",
+                "a": "test-connector-default.test-connector-default-name",
+                "m": "test-alarm-to-get-1-output",
+                "t": 1597030219,
+                "initiator": "external",
+                "val": 1
+              },
+              {
+                "_t": "comment",
+                "a": "root",
+                "m": "test-alarm-to-get-1-comment-1",
+                "t": 1597030220,
+                "initiator": "user"
+              },
+              {
+                "_t": "comment",
+                "a": "root",
+                "m": "test-alarm-to-get-1-comment-2",
+                "t": 1597030221,
+                "initiator": "user"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 5,
+              "total_count": 4
+            }
+          }
+        }
+      },
+      {
+        "status": 200,
         "_id": "test-alarm-to-get-3",
         "data": {
           "steps": {
@@ -1130,15 +1176,8 @@ Feature: Get alarms
         "status": 400,
         "_id": "not-exist",
         "errors": {
-          "steps.page": "Page is missing.",
-          "children.page": "Page is missing."
-        }
-      },
-      {
-        "status": 400,
-        "errors": {
-          "steps.page": "Page is missing.",
-          "children.page": "Page is missing."
+          "steps": "Steps is missing.",
+          "children": "Children is missing."
         }
       }
     ]

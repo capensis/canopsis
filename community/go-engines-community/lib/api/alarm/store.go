@@ -285,7 +285,7 @@ func (s *store) GetDetails(ctx context.Context, apiKey string, r DetailsRequest)
 		}},
 	}
 
-	if r.Steps.Page > 0 {
+	if r.Steps != nil {
 		pipeline = append(pipeline, bson.M{"$addFields": bson.M{
 			"steps.data":  bson.M{"$slice": bson.A{"$v.steps", (r.Steps.Page - 1) * r.Steps.Limit, r.Steps.Limit}},
 			"steps_count": bson.M{"$size": "$v.steps"},
@@ -312,20 +312,20 @@ func (s *store) GetDetails(ctx context.Context, apiKey string, r DetailsRequest)
 		return nil, nil
 	}
 
-	if r.Steps.Page > 0 {
-		details.Steps.Meta, err = common.NewPaginatedMeta(r.Steps, details.StepsCount)
+	if r.Steps != nil {
+		details.Steps.Meta, err = common.NewPaginatedMeta(*r.Steps, details.StepsCount)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if r.Children.Page > 0 {
+	if r.Children != nil {
 		children := AggregationResult{
 			Data: make([]Alarm, 0),
 		}
 
 		if details.IsMetaAlarm {
-			childrenPipeline, err := s.queryBuilder.CreateChildrenAggregationPipeline(r.Children, r.GetOpenedFilter(), details.EntityID, now)
+			childrenPipeline, err := s.queryBuilder.CreateChildrenAggregationPipeline(*r.Children, r.GetOpenedFilter(), details.EntityID, now)
 			if err != nil {
 				return nil, err
 			}
