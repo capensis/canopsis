@@ -36,19 +36,9 @@ func NewApi(
 	}
 }
 
-// Create eventfilter
-// @Summary Create eventfilter
-// @Description Create eventfilter
-// @Tags eventfilters
-// @ID eventfilters-create
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
+// Create
 // @Param body body CreateRequest true "body"
 // @Success 201 {object} eventfilter.Rule
-// @Failure 400 {object} common.ErrorResponse
-// @Router /eventfilter/rules [post]
 func (a api) Create(c *gin.Context) {
 	var request CreateRequest
 	var err error
@@ -87,21 +77,8 @@ func (a api) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, eventfilter)
 }
 
-// Find all eventfilter
-// @Summary Find all eventfilter
-// @Description Get paginated list of eventfilter
-// @Tags eventfilters
-// @ID eventfilters-find-all
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param page query integer true "current page"
-// @Param limit query integer true "items per page"
-// @Param search query string false "search query"
+// List
 // @Success 200 {object} common.PaginatedListResponse{data=[]eventfilter.Rule}
-// @Failure 400 {object} common.ErrorResponse
-// @Router /eventfilter/rules [get]
 func (a api) List(c *gin.Context) {
 	var query FilteredQuery
 	query.Query = pagination.GetDefaultQuery()
@@ -125,18 +102,8 @@ func (a api) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// Get eventfilter by id
-// @Summary Get eventfilter by id
-// @Description Get eventfilter by id
-// @Tags eventfilters
-// @ID eventfilters-get-by-id
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "eventfilter id"
+// Get
 // @Success 200 {object} eventfilter.Rule
-// @Failure 404 {object} common.ErrorResponse
-// @Router /eventfilter/rules/{id} [get]
 func (a api) Get(c *gin.Context) {
 	evf, err := a.store.GetById(c.Request.Context(), c.Param("id"))
 
@@ -152,21 +119,9 @@ func (a api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, evf)
 }
 
-// Update eventfilter by id
-// @Summary Update eventfilter by id
-// @Description Update eventfilter by id
-// @Tags eventfilters
-// @ID eventfilters-update-by-id
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "eventfilter id"
-// @Param body body eventfilter.Rule true "body"
-// @Success 200 {object} UpdateRequest
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /eventfilter/rules/{id} [put]
+// Update
+// @Param body body UpdateRequest true "body"
+// @Success 200 {object} eventfilter.Rule
 func (a api) Update(c *gin.Context) {
 	var request UpdateRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -211,17 +166,6 @@ func (a api) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, eventfilter)
 }
 
-// Delete eventfilter by id
-// @Summary Delete eventfilter by id
-// @Description Delete eventfilter by id
-// @Tags eventfilters
-// @ID eventfilters-delete-by-id
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "eventfilter id"
-// @Success 204
-// @Failure 404 {object} common.ErrorResponse
-// @Router /eventfilter/rules/{id} [delete]
 func (a api) Delete(c *gin.Context) {
 	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
 	if err != nil {
@@ -245,19 +189,9 @@ func (a api) Delete(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
-// Bulk create eventfilters
-// @Summary Bulk create eventfilters
-// @Description Bulk create eventfilters
-// @Tags eventfilters
-// @ID eventfilters-bulk-create
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
+// BulkCreate
 // @Param body body []CreateRequest true "body"
 // @Success 207 {array} []BulkCreateResponseItem
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /bulk/eventfilters [post]
 func (a *api) BulkCreate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -336,19 +270,9 @@ func (a *api) BulkCreate(c *gin.Context) {
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
-// Bulk update eventfilters
-// @Summary Bulk update eventfilters
-// @Description Bulk update eventfilters
-// @Tags eventfilters
-// @ID eventfilters-bulk-update
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
+// BulkUpdate
 // @Param body body []BulkUpdateRequestItem true "body"
 // @Success 207 {array} []BulkUpdateResponseItem
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /bulk/eventfilters [put]
 func (a *api) BulkUpdate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -432,19 +356,9 @@ func (a *api) BulkUpdate(c *gin.Context) {
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
-// Bulk delete eventfilters
-// @Summary Bulk delete eventfilters
-// @Description Bulk delete eventfilters
-// @Tags eventfilters
-// @ID eventfilters-bulk-delete
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
+// BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 // @Success 207 {array} []BulkDeleteResponseItem
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /bulk/eventfilters [delete]
 func (a *api) BulkDelete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 

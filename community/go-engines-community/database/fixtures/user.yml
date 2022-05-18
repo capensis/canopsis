@@ -139,8 +139,7 @@ widgets:
         order: ASC
       itemsPerPage: 10
       infoPopups: [ ]
-      alarmsStateFilter:
-        opened: true
+      opened: true
       moreInfoTemplate:
       periodic_refresh:
         value: 1
@@ -217,7 +216,7 @@ widgets:
         x: 0
         "y": 0
         w: 12
-        h: 1
+        h: 39
         autoHeight: true
 
   widget_context_explorer:

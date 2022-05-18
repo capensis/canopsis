@@ -89,6 +89,8 @@ type ErrorResponse struct {
 	Error string `json:"error"`
 }
 
+// NewErrorResponse
+// @Failure 500 {object} ErrorResponse
 func NewErrorResponse(err error) ErrorResponse {
 	return ErrorResponse{Error: err.Error()}
 }
@@ -106,6 +108,7 @@ type ValidationErrorResponse struct {
 }
 
 // NewValidationErrorResponse creates response by validation errors.
+// @Failure 400 {object} ValidationErrorResponse
 func NewValidationErrorResponse(err error, request interface{}) interface{} {
 	var errs validator.ValidationErrors
 	if errors.As(err, &errs) {
