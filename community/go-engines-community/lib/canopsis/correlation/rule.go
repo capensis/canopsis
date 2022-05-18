@@ -42,7 +42,7 @@ type Rule struct {
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	savedpattern.AlarmPatternFields  `bson:",inline"`
-	TotalEntityPatternFields
+	TotalEntityPatternFields         `bson:",inline"`
 
 	Created *types.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated *types.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`

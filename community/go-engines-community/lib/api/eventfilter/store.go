@@ -57,6 +57,7 @@ func (s *store) transformRequestToDocument(r EditRequest) eventfilter.Rule {
 		ExternalData:        r.ExternalData,
 		EventPatterns:       r.EventPattern,
 		EntityPatternFields: r.EntityPatternFieldsRequest.ToModel(),
+		OldPatterns:         nil,
 	}
 }
 
@@ -139,10 +140,16 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*eventfilter
 	model.ID = request.ID
 	model.Created = nil
 	model.Updated = &updated
+
+	update := bson.M{"$set": model}
+	if len(request.EntityPattern) > 0 || len(request.EventPattern) > 0 {
+		update["$unset"] = bson.M{"old_patterns": 1}
+	}
+
 	err := s.dbCollection.FindOneAndUpdate(
 		ctx,
 		bson.M{"_id": model.ID},
-		bson.M{"$set": model},
+		update,
 	).Decode(&data)
 	model.Created = data.Created
 	if err != nil {

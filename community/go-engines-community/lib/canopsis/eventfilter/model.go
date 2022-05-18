@@ -56,7 +56,7 @@ type Rule struct {
 	Type         string                            `bson:"type" json:"type" binding:"required,oneof=break drop enrichment change_entity"`
 	Priority     int                               `bson:"priority" json:"priority"`
 	Enabled      bool                              `bson:"enabled" json:"enabled"`
-	Patterns     oldpattern.EventPatternList       `bson:"patterns" json:"patterns"`
+	OldPatterns  *oldpattern.EventPatternList      `bson:"old_patterns,omitempty" json:"old_patterns,omitempty"`
 	Config       RuleConfig                        `bson:"config" json:"config"`
 	ExternalData map[string]ExternalDataParameters `bson:"external_data" json:"external_data,omitempty"`
 	Created      *types.CpsTime                    `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
