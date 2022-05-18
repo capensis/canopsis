@@ -8,7 +8,7 @@ import {
   PATTERN_CONDITIONS, PATTERN_FIELD_TYPES, PATTERN_RULE_TYPES, TIME_UNITS,
 } from '@/constants';
 
-import CPatternsAdvancedEditorField from '@/components/forms/fields/pattern/c-patterns-advanced-editor-field.vue';
+import CPatternAdvancedEditorField from '@/components/forms/fields/pattern/c-pattern-advanced-editor-field.vue';
 
 const localVue = createVueInstance();
 
@@ -16,14 +16,14 @@ const stubs = {
   'c-json-field': true,
 };
 
-const factory = (options = {}) => shallowMount(CPatternsAdvancedEditorField, {
+const factory = (options = {}) => shallowMount(CPatternAdvancedEditorField, {
   localVue,
   stubs,
 
   ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(CPatternsAdvancedEditorField, {
+const snapshotFactory = (options = {}) => mount(CPatternAdvancedEditorField, {
   localVue,
   stubs,
 
@@ -32,7 +32,7 @@ const snapshotFactory = (options = {}) => mount(CPatternsAdvancedEditorField, {
 
 const selectJsonFieldNode = wrapper => wrapper.vm.$children[0];
 
-describe('c-patterns-advanced-editor-field', () => {
+describe('c-pattern-advanced-editor-field', () => {
   test('Patterns invalid with wrong structure', () => {
     jest.useFakeTimers('legacy');
 
@@ -317,7 +317,7 @@ describe('c-patterns-advanced-editor-field', () => {
     expect(wrapper).toEmit('input', patterns);
   });
 
-  test('Renders `c-patterns-advanced-editor-field` with default props', () => {
+  test('Renders `c-pattern-advanced-editor-field` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: [[]],
@@ -328,7 +328,7 @@ describe('c-patterns-advanced-editor-field', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `c-patterns-advanced-editor-field` with custom props', () => {
+  test('Renders `c-pattern-advanced-editor-field` with custom props', () => {
     const name = Faker.datatype.string();
     const wrapper = snapshotFactory({
       propsData: {
