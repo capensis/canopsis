@@ -92,6 +92,9 @@ export default {
       if (isValidPatterns) {
         this.updateModel(patterns);
       } else {
+        /**
+         * Validator.errors.reset using nextTick twice, because we need to add errors after reset
+         */
         setTimeout(() => {
           this.errors.add({ field: this.name, msg: this.$t('pattern.errors.invalidPatterns') });
         });
