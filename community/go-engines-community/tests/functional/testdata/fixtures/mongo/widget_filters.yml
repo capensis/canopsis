@@ -219,44 +219,6 @@ widget_filters:
     old_mongo_query:
       name: test-widgetfilter-to-get-5-pattern
 
-  filter_to_get_6:
-    <<: *filter
-    _id: test-widgetfilter-to-get-6
-    title: test-widgetfilter-to-get-6-title
-    widget: test-widget-to-filter-edit
-    is_private: false
-    created: 1605263992
-    updated: <Current().created>
-    author: root
-    corporate_alarm_pattern: test-pattern-to-filter-get-1
-    corporate_alarm_pattern_title: test-pattern-to-filter-get-1-title
-    alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-pattern-to-filter-get-1-pattern
-    entity_pattern:
-    pbehavior_pattern:
-
-  filter_to_get_7:
-    <<: *filter
-    _id: test-widgetfilter-to-get-7
-    title: test-widgetfilter-to-get-7-title
-    widget: test-widget-to-filter-edit
-    is_private: false
-    created: 1605263992
-    updated: <Current().created>
-    author: root
-    corporate_alarm_pattern: test-pattern-to-filter-get-2
-    corporate_alarm_pattern_title: test-pattern-to-filter-get-2-title
-    alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-pattern-to-filter-get-2-pattern
-    entity_pattern:
-    pbehavior_pattern:
-
   filter_to_widget_get_1:
     <<: *filter
     _id: test-widgetfilter-to-widget-get-1

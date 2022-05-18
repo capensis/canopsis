@@ -217,25 +217,38 @@ pattern:
     created: 1605263992
     updated: 1605263992
 
-  pattern_to_filter_get_1:
+  pattern_to_filter_pattern_1:
     <<: *pattern_alarm
-    _id: test-pattern-to-filter-get-1
+    _id: test-pattern-to-filter-pattern-1
     is_corporate: true
+    title: test-pattern-to-filter-pattern-1-title
     alarm_pattern:
       - - field: v.component
           cond:
             type: eq
-            value: test-pattern-to-filter-get-1-pattern
+            value: test-pattern-to-filter-pattern-1-pattern
 
-  pattern_to_filter_get_2:
-    <<: *pattern_alarm
-    _id: test-pattern-to-filter-get-2
+  pattern_to_filter_pattern_2:
+    <<: *pattern_entity
+    _id: test-pattern-to-filter-pattern-2
     is_corporate: true
-    alarm_pattern:
-      - - field: v.component
+    title: test-pattern-to-filter-pattern-2-title
+    entity_pattern:
+      - - field: name
           cond:
             type: eq
-            value: test-pattern-to-filter-get-2-pattern
+            value: test-pattern-to-filter-pattern-2-pattern
+
+  pattern_to_filter_pattern_3:
+    <<: *pattern_pbehavior
+    _id: test-pattern-to-filter-pattern-3
+    is_corporate: true
+    title: test-pattern-to-filter-pattern-3-title
+    pbehavior_pattern:
+      - - field: pbehavior_info.type
+          cond:
+            type: eq
+            value: test-pattern-to-filter-pattern-3-pattern
 
   pattern_to_rule_edit_1:
     <<: *pattern_alarm
