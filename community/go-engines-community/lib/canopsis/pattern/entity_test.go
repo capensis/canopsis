@@ -401,6 +401,7 @@ func getEntityMatchDataSets() map[string]entityDataSet {
 					},
 				},
 			},
+			matchErr:    pattern.ErrWrongConditionValue,
 			matchResult: false,
 		},
 		"given string info condition and unknown info should not match": {
@@ -414,6 +415,7 @@ func getEntityMatchDataSets() map[string]entityDataSet {
 				},
 			},
 			entity:      types.Entity{},
+			matchErr:    pattern.ErrWrongConditionValue,
 			matchResult: false,
 		},
 		"given exist info condition should match": {
@@ -557,6 +559,7 @@ func getEntityMatchDataSets() map[string]entityDataSet {
 					},
 				},
 			},
+			matchErr:    pattern.ErrWrongConditionValue,
 			matchResult: false,
 		},
 		"given string component info condition and unknown info should not match": {
@@ -570,6 +573,7 @@ func getEntityMatchDataSets() map[string]entityDataSet {
 				},
 			},
 			entity:      types.Entity{},
+			matchErr:    pattern.ErrWrongConditionValue,
 			matchResult: false,
 		},
 		"given exist component info condition should match": {

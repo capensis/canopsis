@@ -192,8 +192,7 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error 
 		return nil
 	}
 
-	filter := bson.M{}
-	set := bson.M{}
+	var filter, set bson.M
 	switch pattern.Type {
 	case savedpattern.TypeAlarm:
 		filter = bson.M{"corporate_alarm_pattern": pattern.ID}
