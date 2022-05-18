@@ -35,18 +35,25 @@ type MongoQueryBuilder struct {
 	fieldsAliases        map[string]string
 	fieldsAliasesByRegex map[string]string
 
-	alarmMatch                  []bson.M
-	additionalMatch             []bson.M
-	lookupsForAlarmMatch        map[string]bool
-	lookupsForAdditionalMatch   map[string]bool
-	lookupsForSort              map[string]bool
-	excludeLookupsBeforeSort    []string
+	// alarmMatch is match before all lookups
+	alarmMatch []bson.M
+	// additionalMatch is match after some lookups
+	additionalMatch []bson.M
+	// lookupsForAdditionalMatch is required for match and for result
+	lookupsForAdditionalMatch map[string]bool
+	// lookupsForSort is required for sort and for result
+	lookupsForSort map[string]bool
+	// excludeLookupsBeforeSort is used to remove data from pipeline to decrease sorted data.
+	// Excluded data is added again in lookups after sort.
+	excludeLookupsBeforeSort []string
+	// lookups is a slice to define lookups' order since following lookups can depend on previous lookups
 	lookups                     []lookupWithKey
 	sort                        bson.M
 	computedFieldsForAlarmMatch map[string]bool
 	computedFieldsForSort       map[string]bool
 	computedFields              bson.M
-	excludedFields              []string
+	// excludedFields is used to remove redundant data from result
+	excludedFields []string
 }
 
 type lookupWithKey struct {
@@ -96,7 +103,6 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime) {
 	q.alarmMatch = make([]bson.M, 0)
 	q.additionalMatch = make([]bson.M, 0)
 
-	q.lookupsForAlarmMatch = make(map[string]bool)
 	q.lookupsForAdditionalMatch = make(map[string]bool)
 	q.lookupsForSort = make(map[string]bool)
 	q.excludeLookupsBeforeSort = make([]string, 0)
@@ -278,7 +284,6 @@ func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 	beforeLimit := make([]bson.M, 0)
 
 	q.addFieldsToPipeline(q.computedFieldsForAlarmMatch, addedComputedFields, &beforeLimit)
-	q.addLookupsToPipeline(q.lookupsForAlarmMatch, addedLookups, &beforeLimit)
 	beforeLimit = append(beforeLimit, q.alarmMatch...)
 
 	q.addLookupsToPipeline(q.lookupsForAdditionalMatch, addedLookups, &beforeLimit)
@@ -357,10 +362,18 @@ func (q *MongoQueryBuilder) handleFilter(ctx context.Context, r FilterRequest) e
 	alarmMatch := make([]bson.M, 0)
 
 	q.addOpenedFilter(r, &alarmMatch)
-	q.addSearchFilter(r, &alarmMatch)
 	q.addStartFromFilter(r, &alarmMatch)
 	q.addStartToFilter(r, &alarmMatch)
 	q.addOnlyParentsFilter(r, &alarmMatch)
+	searchMarch, withLookups := q.addSearchFilter(r)
+	if len(searchMarch) > 0 {
+		if withLookups {
+			q.additionalMatch = append(q.additionalMatch, bson.M{"$match": searchMarch})
+		} else {
+			alarmMatch = append(alarmMatch, searchMarch)
+		}
+	}
+
 	if len(alarmMatch) > 0 {
 		q.alarmMatch = append(q.alarmMatch, bson.M{"$match": bson.M{"$and": alarmMatch}})
 	}
@@ -469,7 +482,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r FilterRequ
 	return nil
 }
 
-func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest, match *[]bson.M) {
+func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (match bson.M, withLookups bool) {
 	if r.Search == "" {
 		return
 	}
@@ -488,42 +501,30 @@ func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest, match *[]bson.M) {
 		searchMatch[i] = bson.M{searchBy[i]: searchRegexp}
 	}
 
-	if r.OnlyParents {
-		childrenMatch := bson.M{"$or": searchMatch}
-		childrenCollection := mongo.AlarmMongoCollection
-		switch r.GetOpenedFilter() {
-		case OnlyOpened:
-			childrenMatch = bson.M{"$and": []bson.M{
-				{"v.resolved": nil},
-				{"$or": searchMatch},
-			}}
-		case OnlyResolved:
-			childrenCollection = mongo.ResolvedAlarmMongoCollection
-		}
-
-		q.lookupsForAlarmMatch["filtered_children"] = true
-		q.lookups = append(q.lookups, lookupWithKey{key: "filtered_children", pipeline: []bson.M{
-			{"$graphLookup": bson.M{
-				"from":                    childrenCollection,
-				"startWith":               "$d",
-				"connectFromField":        "d",
-				"connectToField":          "v.parents",
-				"restrictSearchWithMatch": childrenMatch,
-				"as":                      "filtered_children",
-				"maxDepth":                0,
-			}},
-			{"$addFields": bson.M{
-				"filtered_children": "$filtered_children._id",
-			}},
-		}})
-		*match = append(*match, bson.M{
-			"$or": append(searchMatch, bson.M{"filtered_children": bson.M{"$ne": []string{}}}),
-		})
-	} else {
-		*match = append(*match, bson.M{
-			"$or": searchMatch,
-		})
+	if !r.OnlyParents {
+		return bson.M{"$or": searchMatch}, false
 	}
+
+	childrenMatch := bson.M{"$or": searchMatch}
+	childrenCollection := mongo.AlarmMongoCollection
+	switch r.GetOpenedFilter() {
+	case OnlyOpened:
+		childrenMatch = bson.M{"$and": []bson.M{
+			{"v.resolved": nil},
+			{"$or": searchMatch},
+		}}
+	case OnlyResolved:
+		childrenCollection = mongo.ResolvedAlarmMongoCollection
+	}
+
+	q.lookupsForAdditionalMatch["filtered_children"] = true
+	q.lookups = append(q.lookups, lookupWithKey{key: "filtered_children", pipeline: getFilteredChildrenLookup(childrenCollection, childrenMatch)})
+
+	searchMatchWithChildren := make([]bson.M, len(searchBy))
+	copy(searchMatchWithChildren, searchMatch)
+	searchMatchWithChildren = append(searchMatchWithChildren, bson.M{"filtered_children": bson.M{"$ne": []string{}}})
+
+	return bson.M{"$or": searchMatchWithChildren}, true
 }
 
 func (q *MongoQueryBuilder) addStartFromFilter(r FilterRequest, match *[]bson.M) {
@@ -586,35 +587,9 @@ func (q *MongoQueryBuilder) addOnlyParentsFilter(r FilterRequest, match *[]bson.
 		{"v.meta": bson.M{"$ne": nil}},
 	}})
 
+	q.computedFields["is_meta_alarm"] = getIsMetaAlarmField()
 	q.lookups = append(q.lookups, lookupWithKey{key: "meta_alarm_rule", pipeline: getMetaAlarmRuleLookup()})
-
-	q.computedFields["is_meta_alarm"] = bson.M{"$cond": bson.A{bson.M{"$not": bson.A{"$v.meta"}}, false, true}}
-
-	q.lookups = append(q.lookups, lookupWithKey{key: "children", pipeline: []bson.M{
-		{"$graphLookup": bson.M{
-			"from":                    mongo.AlarmMongoCollection,
-			"startWith":               "$d",
-			"connectFromField":        "d",
-			"connectToField":          "v.parents",
-			"restrictSearchWithMatch": bson.M{"v.resolved": nil},
-			"as":                      "children",
-			"maxDepth":                0,
-		}},
-		{"$graphLookup": bson.M{
-			"from":             mongo.ResolvedAlarmMongoCollection,
-			"startWith":        "$d",
-			"connectFromField": "d",
-			"connectToField":   "v.parents",
-			"as":               "resolved_children",
-			"maxDepth":         0,
-		}},
-		{"$addFields": bson.M{
-			"children": bson.M{"$sum": bson.A{
-				bson.M{"$size": "$children"},
-				bson.M{"$size": "$resolved_children"},
-			}},
-		}},
-	}})
+	q.lookups = append(q.lookups, lookupWithKey{key: "children", pipeline: getChildrenCountLookup()})
 	q.excludedFields = append(q.excludedFields, "resolved_children")
 }
 
@@ -931,6 +906,51 @@ func getMetaAlarmRuleLookup() []bson.M {
 	}
 }
 
+func getChildrenCountLookup() []bson.M {
+	return []bson.M{
+		{"$graphLookup": bson.M{
+			"from":                    mongo.AlarmMongoCollection,
+			"startWith":               "$d",
+			"connectFromField":        "d",
+			"connectToField":          "v.parents",
+			"restrictSearchWithMatch": bson.M{"v.resolved": nil},
+			"as":                      "children",
+			"maxDepth":                0,
+		}},
+		{"$graphLookup": bson.M{
+			"from":             mongo.ResolvedAlarmMongoCollection,
+			"startWith":        "$d",
+			"connectFromField": "d",
+			"connectToField":   "v.parents",
+			"as":               "resolved_children",
+			"maxDepth":         0,
+		}},
+		{"$addFields": bson.M{
+			"children": bson.M{"$sum": bson.A{
+				bson.M{"$size": "$children"},
+				bson.M{"$size": "$resolved_children"},
+			}},
+		}},
+	}
+}
+
+func getFilteredChildrenLookup(childrenCollection string, childrenMatch bson.M) []bson.M {
+	return []bson.M{
+		{"$graphLookup": bson.M{
+			"from":                    childrenCollection,
+			"startWith":               "$d",
+			"connectFromField":        "d",
+			"connectToField":          "v.parents",
+			"restrictSearchWithMatch": childrenMatch,
+			"as":                      "filtered_children",
+			"maxDepth":                0,
+		}},
+		{"$addFields": bson.M{
+			"filtered_children": "$filtered_children._id",
+		}},
+	}
+}
+
 func getComputedFields(now types.CpsTime) bson.M {
 	return bson.M{
 		"infos":        "$v.infos",
@@ -971,6 +991,10 @@ func getComputedFields(now types.CpsTime) bson.M {
 			-1,
 		}},
 	}
+}
+
+func getIsMetaAlarmField() bson.M {
+	return bson.M{"$cond": bson.A{bson.M{"$not": bson.A{"$v.meta"}}, false, true}}
 }
 
 func getInstructionQuery(instruction Instruction) (bson.M, error) {
