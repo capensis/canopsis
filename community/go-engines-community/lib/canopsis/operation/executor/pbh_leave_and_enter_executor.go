@@ -16,13 +16,12 @@ type pbhLeaveAndEnterExecutor struct {
 	metricsSender metrics.Sender
 }
 
-// NewAckExecutor creates new executor.
 func NewPbhLeaveAndEnterExecutor(configProvider config.AlarmConfigProvider, metricsSender metrics.Sender) operationlib.Executor {
 	return &pbhLeaveAndEnterExecutor{configProvider: configProvider, metricsSender: metricsSender}
 }
 
 func (e *pbhLeaveAndEnterExecutor) Exec(
-	ctx context.Context,
+	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
 	entity *types.Entity,
@@ -38,9 +37,9 @@ func (e *pbhLeaveAndEnterExecutor) Exec(
 		userID = params.User
 	}
 
-	currPbehaviorInfo := alarm.Value.PbehaviorInfo
+	currPbehaviorInfo := entity.PbehaviorInfo
 
-	if currPbehaviorInfo.Same(*params.PbehaviorInfo) {
+	if currPbehaviorInfo.IsDefaultActive() || currPbehaviorInfo.Same(*params.PbehaviorInfo) {
 		return "", nil
 	}
 
