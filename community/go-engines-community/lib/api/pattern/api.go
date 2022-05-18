@@ -237,7 +237,7 @@ func (a *api) Delete(c *gin.Context) {
 
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
-// @Success 207 {array} []BulkDeleteResponseItem
+// @Success 207 {array} BulkDeleteResponseItem
 func (a *api) BulkDelete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
