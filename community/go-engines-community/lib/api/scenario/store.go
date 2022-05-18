@@ -2,11 +2,12 @@ package scenario
 
 import (
 	"context"
+	"math"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"math"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -30,7 +31,7 @@ type Store interface {
 }
 
 type store struct {
-	db                    mongo.DbClient
+	dbClient              mongo.DbClient
 	collection            mongo.DbCollection
 	transformer           ModelTransformer
 	defaultSearchByFields []string
@@ -40,7 +41,7 @@ type store struct {
 // NewStore instantiates scenario store.
 func NewStore(db mongo.DbClient) Store {
 	return &store{
-		db:                    db,
+		dbClient:              db,
 		collection:            db.Collection(mongo.ScenarioMongoCollection),
 		transformer:           NewModelTransformer(),
 		defaultSearchByFields: []string{"_id", "name", "author"},
@@ -129,13 +130,24 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Scenario, error) 
 
 	model.Created = now
 	model.Updated = now
+	var result *Scenario
 
-	_, err := s.collection.InsertOne(ctx, model)
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		result = nil
+		_, err := s.collection.InsertOne(ctx, model)
+		if err != nil {
+			return err
+		}
+
+		result, err = s.GetOneBy(ctx, model.ID)
+		return err
+	})
+
 	if err != nil {
 		return nil, err
 	}
 
-	return s.GetOneBy(ctx, model.ID)
+	return result, nil
 }
 
 // Update scenario.
@@ -144,16 +156,27 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Scenario, error) 
 	model := s.transformer.TransformEditRequestToModel(r.EditRequest)
 	model.Updated = now
 
-	res, err := s.collection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": model})
+	var result *Scenario
+
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		result = nil
+		res, err := s.collection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": model})
+		if err != nil {
+			return err
+		}
+
+		if res.MatchedCount == 0 {
+			return nil
+		}
+		result, err = s.GetOneBy(ctx, r.ID)
+		return err
+	})
+
 	if err != nil {
 		return nil, err
 	}
 
-	if res.MatchedCount == 0 {
-		return nil, nil
-	}
-
-	return s.GetOneBy(ctx, r.ID)
+	return result, nil
 }
 
 // Delete scenario by id

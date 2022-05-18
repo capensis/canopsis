@@ -178,3 +178,33 @@ indexes:
       keys:
         crecord_type: 1
         role: 1
+
+  action_scenario:
+    enabled_1:
+      keys:
+        enabled: 1
+
+  entity_category:
+    name_1:
+      keys:
+        name: 1
+
+  idle_rule:
+    enabled_1:
+    keys:
+      enabled: 1
+
+  job_config:
+    created_1:
+    keys:
+      created: 1
+
+  job:
+    created_1:
+    keys:
+      created: 1
+
+  instruction:
+    created_1:
+    keys:
+      created: 1

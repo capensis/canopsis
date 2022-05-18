@@ -4,8 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"time"
+
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -381,23 +382,31 @@ func (s *store) UpdateByFilter(ctx context.Context, model *Response, filters bso
 		update = bson.M{"$set": doc}
 	}
 
-	result, err := s.dbCollection.UpdateOne(
-		ctx,
-		filters,
-		update,
-	)
+	var updatedModel *Response
+	updated := false
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		updatedModel = nil
+		result, err := s.dbCollection.UpdateOne(
+			ctx,
+			filters,
+			update,
+		)
+		if err != nil {
+			return err
+		}
+		updated = result.MatchedCount > 0
+
+		updatedModel, err = s.GetOneBy(ctx, bson.M{"_id": model.ID})
+		return err
+	})
 	if err != nil {
 		return false, err
 	}
-
-	updatedModel, err := s.GetOneBy(ctx, bson.M{"_id": model.ID})
-	if err != nil {
-		return false, err
+	if updatedModel != nil {
+		*model = *updatedModel
 	}
 
-	*model = *updatedModel
-
-	return result.MatchedCount > 0, nil
+	return updated, nil
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {

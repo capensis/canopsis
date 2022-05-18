@@ -4472,6 +4472,12 @@
                         "schema": {
                             "$ref": "#/definitions/common.ValidationErrorResponse"
                         }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
                     }
                 }
             }
@@ -7297,6 +7303,12 @@
                         "schema": {
                             "$ref": "#/definitions/common.ValidationErrorResponse"
                         }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
                     }
                 }
             }
@@ -7568,6 +7580,12 @@
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/common.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
                         }
                     }
                 }
@@ -11837,8 +11855,7 @@
                     "type": "string"
                 },
                 "reason": {
-                    "type": "object",
-                    "$ref": "#/definitions/pbehavior.Reason"
+                    "type": "string"
                 },
                 "rrule": {
                     "type": "string"
@@ -11855,14 +11872,15 @@
                     "type": "string"
                 },
                 "tstart": {
-                    "type": "integer"
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
                 },
                 "tstop": {
-                    "type": "integer"
+                    "type": "object",
+                    "$ref": "#/definitions/types.CpsTime"
                 },
                 "type": {
-                    "type": "object",
-                    "$ref": "#/definitions/pbehavior.Type"
+                    "type": "string"
                 }
             }
         },
