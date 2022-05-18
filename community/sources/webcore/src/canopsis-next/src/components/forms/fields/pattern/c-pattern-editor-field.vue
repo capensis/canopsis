@@ -35,7 +35,7 @@
 
       v-tab(:href="`#${$constants.PATTERN_EDITOR_TABS.advanced}`") {{ $t('pattern.advancedEditor') }}
       v-tab-item(:value="$constants.PATTERN_EDITOR_TABS.advanced", lazy)
-        c-patterns-advanced-editor-field(
+        c-pattern-advanced-editor-field(
           :value="patternsJson",
           :disabled="disabled || !isCustomPattern",
           :attributes="attributes",

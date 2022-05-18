@@ -12,14 +12,14 @@ import {
   TIME_UNITS,
 } from '@/constants';
 
-import CPatternsEditorField from '@/components/forms/fields/pattern/c-patterns-editor-field.vue';
+import CPatternsEditorField from '@/components/forms/fields/pattern/c-pattern-editor-field.vue';
 
 const localVue = createVueInstance();
 
 const stubs = {
   'c-pattern-field': true,
   'c-pattern-groups-field': true,
-  'c-patterns-advanced-editor-field': true,
+  'c-pattern-advanced-editor-field': true,
 };
 
 const factory = (options = {}) => shallowMount(CPatternsEditorField, {
@@ -40,9 +40,9 @@ const selectTabItems = wrapper => wrapper.findAll('a.v-tabs__item');
 const selectAdvancedTab = wrapper => selectTabItems(wrapper).at(1);
 const selectPatternField = wrapper => wrapper.find('c-pattern-field-stub');
 const selectEditButton = wrapper => wrapper.find('v-btn-stub');
-const selectPatternsAdvancedEditorField = wrapper => wrapper.find('c-patterns-advanced-editor-field-stub');
+const selectPatternAdvancedEditorField = wrapper => wrapper.find('c-pattern-advanced-editor-field-stub');
 
-describe('c-patterns-editor-field', () => {
+describe('c-pattern-editor-field', () => {
   test('Pattern id changed to custom after trigger input event on the pattern field', () => {
     const wrapper = factory({
       propsData: {
@@ -181,7 +181,7 @@ describe('c-patterns-editor-field', () => {
       },
     });
 
-    const advancedEditor = selectPatternsAdvancedEditorField(wrapper);
+    const advancedEditor = selectPatternAdvancedEditorField(wrapper);
 
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.displayName,
@@ -222,7 +222,7 @@ describe('c-patterns-editor-field', () => {
     });
   });
 
-  test('Renders `c-patterns-editor-field` with default props', () => {
+  test('Renders `c-pattern-editor-field` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         patterns: {
@@ -236,7 +236,7 @@ describe('c-patterns-editor-field', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `c-patterns-editor-field` with custom props', () => {
+  test('Renders `c-pattern-editor-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         patterns: {
@@ -257,7 +257,7 @@ describe('c-patterns-editor-field', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `c-patterns-editor-field` with advanced tab', async () => {
+  test('Renders `c-pattern-editor-field` with advanced tab', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         patterns: {
