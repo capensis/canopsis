@@ -4,7 +4,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -198,15 +198,15 @@ type Pbehavior struct {
 }
 
 type InstructionWithAlarms struct {
-	ID                   string                    `bson:"_id" json:"_id"`
-	AlarmPatterns        pattern.AlarmPatternList  `bson:"alarm_patterns" json:"-"`
-	EntityPatterns       pattern.EntityPatternList `bson:"entity_patterns" json:"-"`
-	Name                 string                    `bson:"name" json:"name"`
-	ActiveOnPbh          []string                  `bson:"active_on_pbh,omitempty" json:"-"`
-	DisabledOnPbh        []string                  `bson:"disabled_on_pbh,omitempty" json:"-"`
-	Execution            *Execution                `bson:"-" json:"execution"`
-	AlarmsWithExecutions []Execution               `bson:"alarms_with_executions" json:"-"`
-	Created              types.CpsTime             `bson:"created,omitempty" json:"-"`
+	ID                   string                       `bson:"_id" json:"_id"`
+	AlarmPatterns        oldpattern.AlarmPatternList  `bson:"alarm_patterns" json:"-"`
+	EntityPatterns       oldpattern.EntityPatternList `bson:"entity_patterns" json:"-"`
+	Name                 string                       `bson:"name" json:"name"`
+	ActiveOnPbh          []string                     `bson:"active_on_pbh,omitempty" json:"-"`
+	DisabledOnPbh        []string                     `bson:"disabled_on_pbh,omitempty" json:"-"`
+	Execution            *Execution                   `bson:"-" json:"execution"`
+	AlarmsWithExecutions []Execution                  `bson:"alarms_with_executions" json:"-"`
+	Created              types.CpsTime                `bson:"created,omitempty" json:"-"`
 }
 
 type ExecutionStatus struct {

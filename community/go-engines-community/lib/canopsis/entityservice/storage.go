@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
 	"time"
@@ -54,9 +54,9 @@ type redisStorage struct {
 }
 
 type ServiceData struct {
-	ID             string                    `json:"_id"`
-	OutputTemplate string                    `json:"output_template,omitempty"`
-	EntityPatterns pattern.EntityPatternList `json:"entity_patterns"`
+	ID             string                       `json:"_id"`
+	OutputTemplate string                       `json:"output_template,omitempty"`
+	EntityPatterns oldpattern.EntityPatternList `json:"entity_patterns"`
 }
 
 func (s *redisStorage) ReloadAll(ctx context.Context) ([]ServiceData, error) {

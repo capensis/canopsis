@@ -1,4 +1,4 @@
-package pattern
+package oldpattern
 
 import (
 	"bytes"
@@ -338,7 +338,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 // EventPatterns.
 // The zero value of an EventPatternList (i.e. an EventPatternList that has not
 // been set) is considered valid, and matches all events.
-// Deprecated : community/go-engines-community/lib/canopsis/pattern/Event
+//Deprecated : community/go-engines-community/lib/canopsis/pattern/Event
 type EventPatternList struct {
 	Patterns []EventPattern `swaggerignore:"true"`
 

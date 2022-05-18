@@ -1,10 +1,10 @@
-package pattern_test
+package oldpattern_test
 
 import (
 	"reflect"
 	"testing"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
@@ -12,11 +12,11 @@ import (
 )
 
 type integerPatternWrapper struct {
-	Pattern pattern.IntegerPattern `bson:"pattern"`
+	Pattern oldpattern.IntegerPattern `bson:"pattern"`
 }
 
 type integerRefPatternWrapper struct {
-	Pattern pattern.IntegerRefPattern `bson:"pattern"`
+	Pattern oldpattern.IntegerRefPattern `bson:"pattern"`
 }
 
 func TestRangeIntegerPatternToMongoDriverQuery(t *testing.T) {
@@ -509,15 +509,15 @@ func TestIntegerPatternMarshalBSON(t *testing.T) {
 	datasets := []struct {
 		TestName             string
 		ExpectedUnmarshalled bson.M
-		Pattern              pattern.IntegerPattern
+		Pattern              oldpattern.IntegerPattern
 	}{
 		{
 			TestName: "test for equal",
 			ExpectedUnmarshalled: bson.M{
 				"pattern": int64(7),
 			},
-			Pattern: pattern.IntegerPattern{
-				IntegerConditions: pattern.IntegerConditions{
+			Pattern: oldpattern.IntegerPattern{
+				IntegerConditions: oldpattern.IntegerConditions{
 					Equal: types.OptionalInt64{
 						Set:   true,
 						Value: 7,
@@ -533,8 +533,8 @@ func TestIntegerPatternMarshalBSON(t *testing.T) {
 					"<=": int64(2),
 				},
 			},
-			Pattern: pattern.IntegerPattern{
-				IntegerConditions: pattern.IntegerConditions{
+			Pattern: oldpattern.IntegerPattern{
+				IntegerConditions: oldpattern.IntegerConditions{
 					Gte: types.OptionalInt64{
 						Set:   true,
 						Value: 0,
@@ -554,8 +554,8 @@ func TestIntegerPatternMarshalBSON(t *testing.T) {
 					"<": int64(3),
 				},
 			},
-			Pattern: pattern.IntegerPattern{
-				IntegerConditions: pattern.IntegerConditions{
+			Pattern: oldpattern.IntegerPattern{
+				IntegerConditions: oldpattern.IntegerConditions{
 					Gt: types.OptionalInt64{
 						Set:   true,
 						Value: 0,
@@ -575,8 +575,8 @@ func TestIntegerPatternMarshalBSON(t *testing.T) {
 					"<":  int64(3),
 				},
 			},
-			Pattern: pattern.IntegerPattern{
-				IntegerConditions: pattern.IntegerConditions{
+			Pattern: oldpattern.IntegerPattern{
+				IntegerConditions: oldpattern.IntegerConditions{
 					Gte: types.OptionalInt64{
 						Set:   true,
 						Value: 2,
@@ -593,8 +593,8 @@ func TestIntegerPatternMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"pattern": primitive.Undefined{},
 			},
-			Pattern: pattern.IntegerPattern{
-				IntegerConditions: pattern.IntegerConditions{},
+			Pattern: oldpattern.IntegerPattern{
+				IntegerConditions: oldpattern.IntegerConditions{},
 			},
 		},
 	}
@@ -626,16 +626,16 @@ func TestIntegerRefPatternMarshalBSON(t *testing.T) {
 	datasets := []struct {
 		TestName             string
 		ExpectedUnmarshalled bson.M
-		Pattern              pattern.IntegerRefPattern
+		Pattern              oldpattern.IntegerRefPattern
 	}{
 		{
 			TestName: "test for equal",
 			ExpectedUnmarshalled: bson.M{
 				"pattern": int64(7),
 			},
-			Pattern: pattern.IntegerRefPattern{
-				IntegerPattern: pattern.IntegerPattern{
-					IntegerConditions: pattern.IntegerConditions{
+			Pattern: oldpattern.IntegerRefPattern{
+				IntegerPattern: oldpattern.IntegerPattern{
+					IntegerConditions: oldpattern.IntegerConditions{
 						Equal: types.OptionalInt64{
 							Set:   true,
 							Value: 7,
@@ -652,9 +652,9 @@ func TestIntegerRefPatternMarshalBSON(t *testing.T) {
 					"<=": int64(2),
 				},
 			},
-			Pattern: pattern.IntegerRefPattern{
-				IntegerPattern: pattern.IntegerPattern{
-					IntegerConditions: pattern.IntegerConditions{
+			Pattern: oldpattern.IntegerRefPattern{
+				IntegerPattern: oldpattern.IntegerPattern{
+					IntegerConditions: oldpattern.IntegerConditions{
 						Gte: types.OptionalInt64{
 							Set:   true,
 							Value: 0,
@@ -675,9 +675,9 @@ func TestIntegerRefPatternMarshalBSON(t *testing.T) {
 					"<": int64(3),
 				},
 			},
-			Pattern: pattern.IntegerRefPattern{
-				IntegerPattern: pattern.IntegerPattern{
-					IntegerConditions: pattern.IntegerConditions{
+			Pattern: oldpattern.IntegerRefPattern{
+				IntegerPattern: oldpattern.IntegerPattern{
+					IntegerConditions: oldpattern.IntegerConditions{
 						Gt: types.OptionalInt64{
 							Set:   true,
 							Value: 0,
@@ -698,9 +698,9 @@ func TestIntegerRefPatternMarshalBSON(t *testing.T) {
 					"<":  int64(3),
 				},
 			},
-			Pattern: pattern.IntegerRefPattern{
-				IntegerPattern: pattern.IntegerPattern{
-					IntegerConditions: pattern.IntegerConditions{
+			Pattern: oldpattern.IntegerRefPattern{
+				IntegerPattern: oldpattern.IntegerPattern{
+					IntegerConditions: oldpattern.IntegerConditions{
 						Gte: types.OptionalInt64{
 							Set:   true,
 							Value: 2,
@@ -718,7 +718,7 @@ func TestIntegerRefPatternMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"pattern": nil,
 			},
-			Pattern: pattern.IntegerRefPattern{
+			Pattern: oldpattern.IntegerRefPattern{
 				EqualNil: true,
 			},
 		},
@@ -727,7 +727,7 @@ func TestIntegerRefPatternMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"pattern": primitive.Undefined{},
 			},
-			Pattern: pattern.IntegerRefPattern{},
+			Pattern: oldpattern.IntegerRefPattern{},
 		},
 	}
 

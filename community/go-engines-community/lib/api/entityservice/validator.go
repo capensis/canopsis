@@ -2,7 +2,7 @@ package entityservice
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
@@ -42,7 +42,7 @@ func (v *basicValidator) validateCategory(ctx context.Context, sl validator.Stru
 	}
 }
 
-func (v *basicValidator) validatePatterns(sl validator.StructLevel, patterns pattern.EntityPatternList) {
+func (v *basicValidator) validatePatterns(sl validator.StructLevel, patterns oldpattern.EntityPatternList) {
 	if !patterns.IsValid() {
 		sl.ReportError(patterns, "EntityPatterns", "EntityPatterns", "entitypattern_invalid", "")
 	} else {
