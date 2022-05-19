@@ -182,7 +182,7 @@ indexes:
   action_scenario:
     enabled_1:
       keys:
-        enabled: 1
+        priority: 1
 
   entity_category:
     name_1:
@@ -192,7 +192,7 @@ indexes:
   idle_rule:
     enabled_1:
     keys:
-      enabled: 1
+      priority: 1
 
   job_config:
     created_1:
