@@ -1090,6 +1090,20 @@ Feature: correlation feature - valuegroup rule with threshold rate
     }
     """
     When I wait the end of 1 events processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"test-valuegroup-rule-rate-backward-compatibility-2"}]}&with_steps=true&with_consequences=true&correlation=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 0
+      }
+    }
+    """
     When I send an event:
     """
     {

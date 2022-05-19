@@ -316,6 +316,10 @@ func (l AlarmPatternList) IsValid() bool {
 	return !l.Set || l.Valid
 }
 
+func (l AlarmPatternList) IsZero() bool {
+	return !l.Set
+}
+
 func (l *AlarmPatternList) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 	switch valueType {
 	case bsontype.Null:

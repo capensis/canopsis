@@ -486,10 +486,18 @@ meta_alarm_rules:
     config:
       threshold_count: 3
     type: complex
+    old_event_patterns:
+      - resource:
+          regex_match: test-metaalarm-rule-backward-compatibility-component-to-update
     old_alarm_patterns:
       - v:
           component: test-metaalarm-rule-backward-compatibility-component-to-update
-
+    old_entity_patterns:
+      - name:
+          regex_match: test-metaalarm-rule-backward-compatibility-component-to-update
+    old_total_entity_patterns:
+      - name:
+          regex_match: test-metaalarm-rule-backward-compatibility-component-to-update
   metaalarm_rule_backward_compatibility_complex_rule_rate_1:
     _id: test-complex-rule-rate-backward-compatibility-1
     auto_resolve: false
@@ -516,9 +524,11 @@ meta_alarm_rules:
         value: 10
       }
     type: complex
-    old_entity_patterns:
-      - name:
-          regex_match: test-complex-rule-rate-backward-compatibility-2-resource
+    entity_pattern:
+      - - field: name
+          cond:
+            type: regexp
+            value: test-complex-rule-rate-backward-compatibility-2-resource
     old_total_entity_patterns:
       - name:
           regex_match: test-complex-rule-rate-backward-compatibility-1-resource
@@ -555,10 +565,12 @@ meta_alarm_rules:
       value_paths:
         - entity.infos.valuegroupRateOldPatterns1.value
     type: valuegroup
-    old_entity_patterns:
-      - name:
-          regex_match: test-valuegroup-rule-rate-backward-compatibility-2-resource
-    total_entity_patterns:
+    entity_pattern:
+      - - field: name
+          cond:
+            type: regexp
+            value: test-valuegroup-rule-rate-backward-compatibility-2-resource
+    old_total_entity_patterns:
       - name:
           regex_match: test-valuegroup-rule-rate-backward-compatibility-1-resource
       - name:

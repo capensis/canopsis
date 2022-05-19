@@ -41,6 +41,10 @@ Feature: Update a metaalarmrule
       "name": "test-metaalarm-to-update-1-updated",
       "author": "root",
       "type": "complex",
+      "old_entity_patterns": null,
+      "old_total_entity_patterns": null,
+      "old_alarm_patterns": null,
+      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -64,6 +68,10 @@ Feature: Update a metaalarmrule
       "name": "test-metaalarm-to-update-1-updated",
       "author": "root",
       "type": "complex",
+      "old_entity_patterns": null,
+      "old_total_entity_patterns": null,
+      "old_alarm_patterns": null,
+      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -108,6 +116,10 @@ Feature: Update a metaalarmrule
       "name": "test-metaalarm-to-update-2",
       "author": "root",
       "type": "complex",
+      "old_entity_patterns": null,
+      "old_total_entity_patterns": null,
+      "old_alarm_patterns": null,
+      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -131,6 +143,10 @@ Feature: Update a metaalarmrule
       "name": "test-metaalarm-to-update-2",
       "author": "root",
       "type": "complex",
+      "old_entity_patterns": null,
+      "old_total_entity_patterns": null,
+      "old_alarm_patterns": null,
+      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -175,6 +191,10 @@ Feature: Update a metaalarmrule
       "name": "test-metaalarm-to-update-3",
       "author": "root",
       "type": "complex",
+      "old_entity_patterns": null,
+      "old_total_entity_patterns": null,
+      "old_alarm_patterns": null,
+      "old_event_patterns": null,
       "alarm_pattern": [
         [
           {
@@ -198,6 +218,10 @@ Feature: Update a metaalarmrule
       "name": "test-metaalarm-to-update-3",
       "author": "root",
       "type": "complex",
+      "old_entity_patterns": null,
+      "old_total_entity_patterns": null,
+      "old_alarm_patterns": null,
+      "old_event_patterns": null,
       "alarm_pattern": [
         [
           {
@@ -253,6 +277,10 @@ Feature: Update a metaalarmrule
       "name": "test-metaalarm-to-update-4",
       "author": "root",
       "type": "complex",
+      "old_entity_patterns": null,
+      "old_total_entity_patterns": null,
+      "old_alarm_patterns": null,
+      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -287,6 +315,10 @@ Feature: Update a metaalarmrule
       "name": "test-metaalarm-to-update-4",
       "author": "root",
       "type": "complex",
+      "old_entity_patterns": null,
+      "old_total_entity_patterns": null,
+      "old_alarm_patterns": null,
+      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -343,6 +375,10 @@ Feature: Update a metaalarmrule
       "name": "test-metaalarm-to-update-5",
       "author": "root",
       "type": "complex",
+      "old_entity_patterns": null,
+      "old_total_entity_patterns": null,
+      "old_alarm_patterns": null,
+      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -379,6 +415,10 @@ Feature: Update a metaalarmrule
       "name": "test-metaalarm-to-update-5",
       "author": "root",
       "type": "complex",
+      "old_entity_patterns": null,
+      "old_total_entity_patterns": null,
+      "old_alarm_patterns": null,
+      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -427,6 +467,10 @@ Feature: Update a metaalarmrule
       "name": "test-metaalarm-to-update-6",
       "author": "root",
       "type": "complex",
+      "old_entity_patterns": null,
+      "old_total_entity_patterns": null,
+      "old_alarm_patterns": null,
+      "old_event_patterns": null,
       "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
       "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
       "entity_pattern": [
@@ -465,6 +509,10 @@ Feature: Update a metaalarmrule
       "name": "test-metaalarm-to-update-6",
       "author": "root",
       "type": "complex",
+      "old_entity_patterns": null,
+      "old_total_entity_patterns": null,
+      "old_alarm_patterns": null,
+      "old_event_patterns": null,
       "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
       "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
       "entity_pattern": [
@@ -535,6 +583,10 @@ Feature: Update a metaalarmrule
       "name": "test-metaalarm-to-update-6-updated",
       "author": "root",
       "type": "complex",
+      "old_entity_patterns": null,
+      "old_total_entity_patterns": null,
+      "old_alarm_patterns": null,
+      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -569,6 +621,10 @@ Feature: Update a metaalarmrule
       "name": "test-metaalarm-to-update-6-updated",
       "author": "root",
       "type": "complex",
+      "old_entity_patterns": null,
+      "old_total_entity_patterns": null,
+      "old_alarm_patterns": null,
+      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -625,6 +681,10 @@ Feature: Update a metaalarmrule
       "name": "test-metaalarm-to-update-7-updated",
       "author": "root",
       "type": "complex",
+      "old_entity_patterns": null,
+      "old_total_entity_patterns": null,
+      "old_alarm_patterns": null,
+      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -661,6 +721,10 @@ Feature: Update a metaalarmrule
       "name": "test-metaalarm-to-update-7-updated",
       "author": "root",
       "type": "complex",
+      "old_entity_patterns": null,
+      "old_total_entity_patterns": null,
+      "old_alarm_patterns": null,
+      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -1017,6 +1081,27 @@ Feature: Update a metaalarmrule
             "component": "test-metaalarm-rule-backward-compatibility-component-to-update"
           }
         }
+      ],
+      "old_entity_patterns": [
+        {
+          "name": {
+            "regex_match": "test-metaalarm-rule-backward-compatibility-component-to-update"
+          }
+        }
+      ],
+      "old_total_entity_patterns": [
+        {
+          "name": {
+            "regex_match": "test-metaalarm-rule-backward-compatibility-component-to-update"
+          }
+        }
+      ],
+      "old_event_patterns": [
+        {
+          "resource": {
+            "regex_match": "test-metaalarm-rule-backward-compatibility-component-to-update"
+          }
+        }
       ]
     }
     """
@@ -1064,7 +1149,117 @@ Feature: Update a metaalarmrule
             }
           }
         ]
+      ],
+      "old_alarm_patterns": [
+        {
+          "v": {
+            "component": "test-metaalarm-rule-backward-compatibility-component-to-update"
+          }
+        }
+      ],
+      "old_entity_patterns": null,
+      "old_event_patterns": null,
+      "old_total_entity_patterns": [
+        {
+          "name": {
+            "regex_match": "test-metaalarm-rule-backward-compatibility-component-to-update"
+          }
+        }
       ]
     }
     """
-    Then the response key "old_alarm_patterns" should not exist
+    Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-rule-backward-compatibility-to-update:
+    """
+    {
+      "name": "test-metaalarm-rule-backward-compatibility-to-update-name-updated",
+      "auto_resolve": false,
+      "type": "complex",
+      "config": {
+        "threshold_count": 3
+      },
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ],
+      "total_entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ],
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/cat/metaalarmrules/test-metaalarm-rule-backward-compatibility-to-update
+    Then the response body should contain:
+    """
+    {
+      "_id": "test-metaalarm-rule-backward-compatibility-to-update",
+      "auto_resolve": false,
+      "config": {
+        "threshold_count": 3
+      },
+      "name": "test-metaalarm-rule-backward-compatibility-to-update-name-updated",
+      "type": "complex",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ],
+      "total_entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ],
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test"
+            }
+          }
+        ]
+      ],
+      "old_alarm_patterns": null,
+      "old_entity_patterns": null,
+      "old_total_entity_patterns": null,
+      "old_event_patterns": null
+    }
+    """
