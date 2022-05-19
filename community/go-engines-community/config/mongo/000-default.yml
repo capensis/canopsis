@@ -180,7 +180,7 @@ indexes:
         role: 1
 
   action_scenario:
-    enabled_1:
+    priority_1:
       keys:
         priority: 1
 
@@ -190,21 +190,21 @@ indexes:
         name: 1
 
   idle_rule:
-    enabled_1:
-    keys:
-      priority: 1
+    priority_1:
+      keys:
+        priority: 1
 
   job_config:
     created_1:
-    keys:
-      created: 1
+      keys:
+        created: 1
 
   job:
     created_1:
-    keys:
-      created: 1
+      keys:
+        created: 1
 
   instruction:
     created_1:
-    keys:
-      created: 1
+      keys:
+        created: 1
