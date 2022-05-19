@@ -10,6 +10,7 @@ import (
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -105,11 +106,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Scenario, error) {
 }
 
 func (s *store) IsPriorityValid(ctx context.Context, priority int) (bool, error) {
-	err := s.collection.FindOne(ctx, bson.M{"priority": priority}).Err()
-	if err == nil {
-		return false, nil
-	}
-
+	err := s.collection.FindOne(ctx, bson.M{action.PriorityField: priority}).Err()
 	if err == mongodriver.ErrNoDocuments {
 		return true, nil
 	}

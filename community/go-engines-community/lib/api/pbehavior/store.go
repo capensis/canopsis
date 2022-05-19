@@ -386,7 +386,7 @@ func (s *store) UpdateByFilter(ctx context.Context, model *Response, filters bso
 	updated := false
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		updatedModel = nil
-                updated = false
+		updated = false
 		result, err := s.dbCollection.UpdateOne(
 			ctx,
 			filters,
