@@ -180,7 +180,7 @@ func (m *MockExternalDataGetter) EXPECT() *MockExternalDataGetterMockRecorder {
 }
 
 // Get mocks base method.
-func (m *MockExternalDataGetter) Get(arg0 context.Context, arg1 eventfilter.ExternalDataParameters, arg2 eventfilter.TemplateParameters, arg3 *config.TimezoneConfig) (interface{}, error) {
+func (m *MockExternalDataGetter) Get(arg0 context.Context, arg1 eventfilter.ExternalDataParameters, arg2 eventfilter.TemplateGetter, arg3 *config.TimezoneConfig) (interface{}, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(interface{})
