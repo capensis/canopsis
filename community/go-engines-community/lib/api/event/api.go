@@ -311,17 +311,6 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 	return true
 }
 
-func processArray(value *fastjson.Value, key string, values []string) {
-	if value.Exists(key) {
-		return
-	}
-	items := fastjson.MustParse(`[]`)
-	for idx, item := range values {
-		items.SetArrayItem(idx, fastjson.MustParse(fmt.Sprintf("%q", item)))
-	}
-	value.Set(key, items)
-}
-
 func getStringField(value *fastjson.Value, key string) (string, error) {
 	fieldValue := value.Get(key)
 	if fieldValue == nil {
