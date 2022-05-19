@@ -218,15 +218,29 @@ Feature: run a job
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-1&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-1
     Then the response code should be 200
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "opened": true,
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
     Then the response body should contain:
     """json
-    {
-      "data": [
-        {
-          "v": {
-            "steps": [
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {},
               {},
               {
@@ -268,8 +282,8 @@ Feature: run a job
             ]
           }
         }
-      ]
-    }
+      }
+    ]
     """
 
   Scenario: given http error during job execution should return failed job status
@@ -364,13 +378,47 @@ Feature: run a job
     }
     """
     Then the response code should be 200
-    When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-2&with_steps=true until response code is 200 and body contains:
+    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 200 and body contains:
     """json
     {
-      "data": [
+      "steps": [
         {
-          "v": {
-            "steps": [
+          "operations": [
+            {
+              "jobs": [
+                {
+                  "status": 2
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-2
+    Then the response code should be 200
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "opened": true,
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {},
               {},
               {
@@ -391,8 +439,8 @@ Feature: run a job
             ]
           }
         }
-      ]
-    }
+      }
+    ]
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
     When I wait the end of event processing
@@ -1403,16 +1451,20 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-11-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-11-1"
-        },
-        {
-          "name": "test-resource-to-job-execution-start-11-2"
-        },
-        {
-          "name": "test-resource-to-job-execution-start-11-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-to-job-execution-start-11-1",
+                "test-resource-to-job-execution-start-11-2",
+                "test-resource-to-job-execution-start-11-3"
+              ]
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-11-description",
       "enabled": true,
@@ -1726,13 +1778,19 @@ Feature: run a job
     {
       "type": 0,
       "name": "test-instruction-to-job-execution-start-12-name",
-      "entity_patterns": [
-        {
-          "name": "test-resource-to-job-execution-start-12-1"
-        },
-        {
-          "name": "test-resource-to-job-execution-start-12-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-to-job-execution-start-12-1",
+                "test-resource-to-job-execution-start-12-2"
+              ]
+            }
+          }
+        ]
       ],
       "description": "test-instruction-to-job-execution-start-12-description",
       "enabled": true,

@@ -42,6 +42,7 @@ func NewStore(
 
 		linkedCollections: []string{
 			mongo.WidgetFiltersMongoCollection,
+			mongo.InstructionMongoCollection,
 		},
 	}
 }
@@ -203,14 +204,14 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error 
 	case savedpattern.TypeEntity:
 		filter = bson.M{"corporate_entity_pattern": pattern.ID}
 		set = bson.M{
-			"entity_pattern":                 pattern.AlarmPattern,
+			"entity_pattern":                 pattern.EntityPattern,
 			"corporate_entity_pattern_title": pattern.Title,
 		}
 	case savedpattern.TypePbehavior:
 		filter = bson.M{"corporate_pbehavior_pattern": pattern.ID}
 		set = bson.M{
-			"pbehavior_pattern":               pattern.AlarmPattern,
-			"pbehavior_pattern_pattern_title": pattern.Title,
+			"pbehavior_pattern":                 pattern.PbehaviorPattern,
+			"corporate_pbehavior_pattern_title": pattern.Title,
 		}
 	default:
 		return fmt.Errorf("unknown pattern type id=%s: %q", pattern.ID, pattern.Type)

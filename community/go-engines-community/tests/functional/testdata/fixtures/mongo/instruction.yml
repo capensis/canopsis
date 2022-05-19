@@ -191,6 +191,26 @@ instruction:
       unit: s
       value: 2
 
+  instruction_to_get_3:
+    <<: *instruction_auto
+    _id: test-instruction-to-get-3
+    created: 1596712203
+    description: test-instruction-to-get-3-description
+    old_alarm_patterns:
+      - _id: test-instruction-to-get-3-pattern
+    old_entity_patterns:
+      - name: test-instruction-to-get-3-pattern
+    alarm_pattern:
+    entity_pattern:
+    jobs:
+      - job: test-job-to-instruction-edit-1
+    last_executed_on: 1596712203
+    last_modified: 1596712203
+    name: test-instruction-to-get-3-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
   instruction_to_delete:
     <<: *instruction_manual
     _id: test-instruction-to-delete
@@ -201,6 +221,7 @@ instruction:
     last_executed_on: 1596712203
     avg_complete_time: 400
     rating: 3.5
+    created: 1596712203
 
   instruction_to_update_2:
     <<: *instruction_auto
@@ -208,6 +229,18 @@ instruction:
     last_executed_on: 1596712203
     avg_complete_time: 400
     rating: 3.5
+    created: 1596712203
+
+  instruction_to_update_3:
+    <<: *instruction_auto
+    _id: test-instruction-to-update-3
+    old_alarm_patterns:
+      - _id: test-instruction-to-update-3-pattern
+    old_entity_patterns:
+      - name: test-instruction-to-update-3-pattern
+    alarm_pattern:
+    entity_pattern:
+    created: 1596712203
 
   instruction_to_update_with_approval_1:
     <<: *instruction_manual
@@ -416,6 +449,17 @@ instruction:
       unit: s
       value: 2
 
+  instruction_to_update_with_approval_12:
+    <<: *instruction_auto
+    _id: test-instruction-to-update-with-approval-12
+    created: 1596712203
+    old_alarm_patterns:
+      - _id: test-instruction-to-update-with-approval-12-pattern
+    old_entity_patterns:
+      - name: test-instruction-to-update-with-approval-12-pattern
+    alarm_pattern:
+    entity_pattern:
+
   instruction_to_check_unique:
     <<: *instruction_manual
     _id: test-instruction-to-check-unique-id
@@ -445,25 +489,26 @@ instruction:
     jobs:
       - job: test-job-to-check-linked-to-auto-instruction
 
-  instruction_to_start_multiple_times_1:
+  instruction_to_execution_start_4_1:
     <<: *instruction_manual
-    _id: test-instruction-execution-to-start-multiple-times-1
+    _id: test-instruction-to-execution-start-4-1
+    name: test-instruction-to-execution-start-4-1-name
+    old_alarm_patterns:
+      - v:
+          resource: test-resource-to-instruction-execution-start-4-1
+    old_entity_patterns:
     entity_pattern:
     alarm_pattern:
-      - - field: v.resource
-          cond:
-            type: eq
-            value: test-instruction-execution-start-resource-2
 
-  instruction_to_start_multiple_times_2:
+  instruction_to_execution_start_4_2:
     <<: *instruction_manual
-    _id: test-instruction-execution-to-start-multiple-times-2
+    _id: test-instruction-to-execution-start-4-2
+    name: test-instruction-to-execution-start-4-2-name
+    old_alarm_patterns:
+    old_entity_patterns:
+      - name: test-resource-to-instruction-execution-start-4-2
     entity_pattern:
     alarm_pattern:
-      - - field: v.resource
-          cond:
-            type: is_one_of
-            value: [ "test-instruction-execution-start-resource-3-1", "test-instruction-execution-start-resource-3-2" ]
 
   instruction_execution_running:
     <<: *instruction_manual
@@ -866,6 +911,47 @@ instruction:
     timeout_after_execution:
       seconds: 2
       unit: s
+
+  instruction_to_run_auto_instruction_7_1:
+    <<: *instruction_auto
+    _id: test-instruction-to-run-auto-instruction-7-1
+    old_alarm_patterns:
+      - v:
+          resource: test-resource-to-run-auto-instruction-7-1
+    old_entity_patterns:
+    entity_pattern:
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-2
+        stop_on_fail: false
+    name: test-instruction-to-run-auto-instruction-7-1-name
+    timeout_after_execution:
+      seconds: 2
+      unit: s
+
+  instruction_to_run_auto_instruction_7_2:
+    <<: *instruction_auto
+    _id: test-instruction-to-run-auto-instruction-7-2
+    old_alarm_patterns:
+    old_entity_patterns:
+      - name: test-resource-to-run-auto-instruction-7-2
+    entity_pattern:
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-2
+        stop_on_fail: false
+    name: test-instruction-to-run-auto-instruction-7-2-name
+    timeout_after_execution:
+      seconds: 2
+      unit: s
+
+  instruction_without_patterns:
+    <<: *instruction_auto
+    _id: test-instruction-without-patterns
+    old_alarm_patterns:
+    old_entity_patterns:
+    entity_pattern:
+    alarm_pattern:
 
   instruction_to_stats_get_1:
     <<: *instruction_manual
@@ -1312,6 +1398,46 @@ instruction:
           cond:
             type: eq
             value: 1
+
+  instruction_alarm_instruction_get_7_1:
+    <<: *instruction_manual
+    _id: test-instruction-to-alarm-instruction-get-7-1
+    name: test-instruction-to-alarm-instruction-get-7-1-name
+    old_entity_patterns:
+      - name: test-resource-to-alarm-instruction-get-7-1
+    old_alarm_patterns:
+    entity_pattern:
+    alarm_pattern:
+
+  instruction_alarm_instruction_get_7_2:
+    <<: *instruction_manual
+    _id: test-instruction-to-alarm-instruction-get-7-2
+    name: test-instruction-to-alarm-instruction-get-7-2-name
+    old_entity_patterns:
+    old_alarm_patterns:
+      - v:
+          resource: test-resource-to-alarm-instruction-get-7-2
+    entity_pattern:
+    alarm_pattern:
+
+  instruction_alarm_instruction_get_9_1:
+    <<: *instruction_manual
+    _id: test-instruction-to-alarm-instruction-get-9-1
+    old_entity_patterns:
+      - name: test-resource-to-alarm-instruction-get-9-1
+    old_alarm_patterns:
+    entity_pattern:
+    alarm_pattern:
+
+  instruction_alarm_instruction_get_9_2:
+    <<: *instruction_manual
+    _id: test-instruction-to-alarm-instruction-get-9-2
+    old_entity_patterns:
+    old_alarm_patterns:
+      - v:
+          resource: test-resource-to-alarm-instruction-get-9-2
+    entity_pattern:
+    alarm_pattern:
 
   instruction_alarm_correlation_instruction_get_1_1:
     <<: *instruction_manual
