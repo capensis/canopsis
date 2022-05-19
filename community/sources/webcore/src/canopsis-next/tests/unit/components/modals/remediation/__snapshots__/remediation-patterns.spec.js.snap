@@ -9,51 +9,63 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with empty modal 
     class="modal-wrapper"
     close="close"
   >
-    <span>
-      Assign patterns
-    </span>
-     
-    <c-patterns-field-stub
-      value="[object Object]"
-      with-alarm="with-alarm"
-      with-entity="with-entity"
-    />
-    <c-collapse-panel-stub
-      color="grey"
+    <div
+      class="title"
     >
-      <div
-        class="v-card v-sheet theme--light"
+      <span>
+        Assign patterns
+      </span>
+    </div>
+     
+    <div
+      class="text"
+    >
+      <c-patterns-field-stub
+        value="[object Object]"
+        with-alarm="with-alarm"
+        with-entity="with-entity"
+      />
+      <c-collapse-panel-stub
+        color="grey"
       >
         <div
-          class="v-card__text"
+          class="v-card v-sheet theme--light"
         >
-          <remediation-patterns-pbehavior-types-form-stub
-            form="[object Object]"
-          />
+          <div
+            class="v-card__text"
+          >
+            <remediation-patterns-pbehavior-types-form-stub
+              form="[object Object]"
+            />
+          </div>
         </div>
-      </div>
-    </c-collapse-panel-stub>
+      </c-collapse-panel-stub>
+    </div>
      
-    <button
-      class="v-btn v-btn--flat theme--light"
-      type="button"
+    <div
+      class="actions"
     >
-      <div
-        class="v-btn__content"
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
       >
-        Cancel
-      </div>
-    </button>
-    <button
-      class="primary v-btn theme--light"
-      type="submit"
-    >
-      <div
-        class="v-btn__content"
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
       >
-        Submit
-      </div>
-    </button>
+        <div
+          class="v-btn__content"
+        >
+          Submit
+        </div>
+      </button>
+    </div>
   </div>
 </form>
 `;
@@ -67,51 +79,63 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with instruction 
     class="modal-wrapper"
     close="close"
   >
-    <span>
-      Assign patterns
-    </span>
-     
-    <c-patterns-field-stub
-      value="[object Object]"
-      with-alarm="with-alarm"
-      with-entity="with-entity"
-    />
-    <c-collapse-panel-stub
-      color="grey"
+    <div
+      class="title"
     >
-      <div
-        class="v-card v-sheet theme--light"
+      <span>
+        Assign patterns
+      </span>
+    </div>
+     
+    <div
+      class="text"
+    >
+      <c-patterns-field-stub
+        value="[object Object]"
+        with-alarm="with-alarm"
+        with-entity="with-entity"
+      />
+      <c-collapse-panel-stub
+        color="grey"
       >
         <div
-          class="v-card__text"
+          class="v-card v-sheet theme--light"
         >
-          <remediation-patterns-pbehavior-types-form-stub
-            form="[object Object]"
-          />
+          <div
+            class="v-card__text"
+          >
+            <remediation-patterns-pbehavior-types-form-stub
+              form="[object Object]"
+            />
+          </div>
         </div>
-      </div>
-    </c-collapse-panel-stub>
+      </c-collapse-panel-stub>
+    </div>
      
-    <button
-      class="v-btn v-btn--flat theme--light"
-      type="button"
+    <div
+      class="actions"
     >
-      <div
-        class="v-btn__content"
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
       >
-        Cancel
-      </div>
-    </button>
-    <button
-      class="primary v-btn theme--light"
-      type="submit"
-    >
-      <div
-        class="v-btn__content"
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
       >
-        Submit
-      </div>
-    </button>
+        <div
+          class="v-btn__content"
+        >
+          Submit
+        </div>
+      </button>
+    </div>
   </div>
 </form>
 `;
@@ -125,51 +149,63 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with title 1`] = 
     class="modal-wrapper"
     close="close"
   >
-    <span>
-      Remediation patterns title
-    </span>
-     
-    <c-patterns-field-stub
-      value="[object Object]"
-      with-alarm="with-alarm"
-      with-entity="with-entity"
-    />
-    <c-collapse-panel-stub
-      color="grey"
+    <div
+      class="title"
     >
-      <div
-        class="v-card v-sheet theme--light"
+      <span>
+        Remediation patterns title
+      </span>
+    </div>
+     
+    <div
+      class="text"
+    >
+      <c-patterns-field-stub
+        value="[object Object]"
+        with-alarm="with-alarm"
+        with-entity="with-entity"
+      />
+      <c-collapse-panel-stub
+        color="grey"
       >
         <div
-          class="v-card__text"
+          class="v-card v-sheet theme--light"
         >
-          <remediation-patterns-pbehavior-types-form-stub
-            form="[object Object]"
-          />
+          <div
+            class="v-card__text"
+          >
+            <remediation-patterns-pbehavior-types-form-stub
+              form="[object Object]"
+            />
+          </div>
         </div>
-      </div>
-    </c-collapse-panel-stub>
+      </c-collapse-panel-stub>
+    </div>
      
-    <button
-      class="v-btn v-btn--flat theme--light"
-      type="button"
+    <div
+      class="actions"
     >
-      <div
-        class="v-btn__content"
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
       >
-        Cancel
-      </div>
-    </button>
-    <button
-      class="primary v-btn theme--light"
-      type="submit"
-    >
-      <div
-        class="v-btn__content"
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
       >
-        Submit
-      </div>
-    </button>
+        <div
+          class="v-btn__content"
+        >
+          Submit
+        </div>
+      </button>
+    </div>
   </div>
 </form>
 `;
