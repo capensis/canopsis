@@ -119,7 +119,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 
 	defer cursor.Close(ctx)
 
-	for cursor.Next(ctx) {
+	if cursor.Next(ctx) {
 		widget := Response{}
 		err = cursor.Decode(&widget)
 		if err != nil {
