@@ -33,6 +33,8 @@ const (
 
 const linkFetchTimeout = 30 * time.Second
 
+const manualMetaAlarmsLimit = 100
+
 type Store interface {
 	Find(ctx context.Context, apiKey string, r ListRequestWithPagination) (*AggregationResult, error)
 	GetAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedInstruction, error)
@@ -197,7 +199,7 @@ func (s *store) FindManual(ctx context.Context, search string) ([]ManualResponse
 	}
 	pipeline = append(pipeline,
 		common.GetSortQuery("v.display_name", common.SortAsc),
-		bson.M{"$limit": 100},
+		bson.M{"$limit": manualMetaAlarmsLimit},
 		bson.M{"$project": bson.M{
 			"name": "$v.display_name",
 		}},
@@ -211,6 +213,10 @@ func (s *store) FindManual(ctx context.Context, search string) ([]ManualResponse
 	err = cursor.All(ctx, &res)
 	if err != nil {
 		return nil, err
+	}
+
+	if res == nil {
+		res = make([]ManualResponse, 0)
 	}
 
 	return res, nil

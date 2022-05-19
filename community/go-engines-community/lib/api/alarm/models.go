@@ -68,12 +68,12 @@ type SortRequest struct {
 }
 
 type ManualRequest struct {
-	Search string `json:"search"`
+	Search string `form:"search" json:"search"`
 }
 
 type ManualResponse struct {
-	ID   string `json:"_id"`
-	Name string `json:"name"`
+	ID   string `bson:"_id" json:"_id"`
+	Name string `bson:"name" json:"name"`
 }
 
 type DetailsRequest struct {
