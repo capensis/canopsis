@@ -33,7 +33,11 @@ Feature: Get a metaalarm-rule
                 }
               }
             ]
-          ]
+          ],
+          "old_entity_patterns": null,
+          "old_total_entity_patterns": null,
+          "old_alarm_patterns": null,
+          "old_event_patterns": null
         },
         {
           "_id": "test-metaalarm-to-get-2",
@@ -58,7 +62,11 @@ Feature: Get a metaalarm-rule
                 }
               }
             ]
-          ]
+          ],
+          "old_entity_patterns": null,
+          "old_total_entity_patterns": null,
+          "old_alarm_patterns": null,
+          "old_event_patterns": null
         }
       ],
       "meta": {
@@ -99,7 +107,11 @@ Feature: Get a metaalarm-rule
             }
           }
         ]
-      ]
+      ],
+      "old_entity_patterns": null,
+      "old_total_entity_patterns": null,
+      "old_alarm_patterns": null,
+      "old_event_patterns": null
     }
     """
 
@@ -123,7 +135,10 @@ Feature: Get a metaalarm-rule
             "component": "test-metaalarm-rule-backward-compatibility-component-to-get"
           }
         }
-      ]
+      ],
+      "old_entity_patterns": null,
+      "old_total_entity_patterns": null,
+      "old_event_patterns": null
     }
     """
 
