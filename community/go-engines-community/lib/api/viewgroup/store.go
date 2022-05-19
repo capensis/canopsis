@@ -131,7 +131,10 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds []str
 							"cond":  bson.M{"$eq": bson.A{"$$this.is_private", false}},
 						}},
 					}},
-					bson.M{"$sort": bson.D{{"widgets.grid_parameters.desktop.y", 1}, {"widgets.grid_parameters.desktop.x", 1}}},
+					bson.M{"$sort": bson.D{
+						{Key: "widgets.grid_parameters.desktop.y", Value: 1},
+						{Key: "widgets.grid_parameters.desktop.x", Value: 1},
+					}},
 					bson.M{"$group": bson.M{
 						"_id": bson.M{
 							"_id":  "$_id",

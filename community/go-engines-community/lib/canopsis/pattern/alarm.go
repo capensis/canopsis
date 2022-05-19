@@ -30,19 +30,23 @@ func (p Alarm) Match(alarm types.Alarm) (bool, error) {
 
 				switch v.FieldType {
 				case FieldTypeString:
-					if s, err := getStringValue(infoVal); err == nil {
+					var s string
+					if s, err = getStringValue(infoVal); err == nil {
 						matched, _, err = cond.MatchString(s)
 					}
 				case FieldTypeInt:
-					if i, err := getIntValue(infoVal); err == nil {
+					var i int64
+					if i, err = getIntValue(infoVal); err == nil {
 						matched, err = cond.MatchInt(i)
 					}
 				case FieldTypeBool:
-					if b, err := getBoolValue(infoVal); err == nil {
+					var b bool
+					if b, err = getBoolValue(infoVal); err == nil {
 						matched, err = cond.MatchBool(b)
 					}
 				case FieldTypeStringArray:
-					if a, err := getStringArrayValue(infoVal); err == nil {
+					var a []string
+					if a, err = getStringArrayValue(infoVal); err == nil {
 						matched, err = cond.MatchStringArray(a)
 					}
 				default:

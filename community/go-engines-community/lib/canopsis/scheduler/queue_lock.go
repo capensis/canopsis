@@ -224,20 +224,6 @@ func (s *baseQueueLock) push(ctx context.Context, lockID string, item []byte) er
 	return nil
 }
 
-func (s *baseQueueLock) unshift(ctx context.Context, lockID string, item []byte) error {
-	result := s.queueClient.LPush(ctx, lockID, item)
-
-	if err := result.Err(); err != nil {
-		s.logger.Err(err).
-			Str("lockID", lockID).
-			Msg("error on pushing item to redis queue")
-
-		return err
-	}
-
-	return nil
-}
-
 func (s *baseQueueLock) pop(ctx context.Context, lockID string) ([]byte, error) {
 	result := s.queueClient.LPop(ctx, lockID)
 

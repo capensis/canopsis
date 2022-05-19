@@ -375,7 +375,10 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 			"widgets.updated": 0,
 			"widgets.created": 0,
 		}},
-		{"$sort": bson.D{{"widgets.grid_parameters.desktop.y", 1}, {"widgets.grid_parameters.desktop.x", 1}}},
+		{"$sort": bson.D{
+			{Key: "widgets.grid_parameters.desktop.y", Value: 1},
+			{Key: "widgets.grid_parameters.desktop.x", Value: 1},
+		}},
 		{"$group": bson.M{
 			"_id": bson.M{
 				"_id": "$_id",
@@ -440,11 +443,9 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 	}
 	if len(r.Groups) > 0 {
 		groupIds := make([]string, len(r.Groups))
-		viewIds := make([]string, 0, len(r.Groups))
 		viewsByGroup := make(map[string]map[string]bool, len(r.Groups))
 		for i, group := range r.Groups {
 			groupIds[i] = group.ID
-			viewIds = append(viewIds, group.Views...)
 			viewsByGroup[group.ID] = make(map[string]bool, len(group.Views))
 			for _, v := range group.Views {
 				viewsByGroup[group.ID][v] = true
@@ -999,6 +1000,9 @@ func (s *store) updatePositions(
 
 func (s *store) deleteTabs(ctx context.Context, id string) error {
 	tabCursor, err := s.tabCollection.Find(ctx, bson.M{"view": id})
+	if err != nil {
+		return err
+	}
 	tabs := make([]view.Tab, 0)
 	err = tabCursor.All(ctx, &tabs)
 	if err != nil || len(tabs) == 0 {
@@ -1016,6 +1020,9 @@ func (s *store) deleteTabs(ctx context.Context, id string) error {
 	}
 
 	widgetCursor, err := s.widgetCollection.Find(ctx, bson.M{"tab": bson.M{"$in": tabIds}})
+	if err != nil {
+		return err
+	}
 	widgets := make([]view.Widget, 0)
 	err = widgetCursor.All(ctx, &widgets)
 	if err != nil || len(widgets) == 0 {
@@ -1082,7 +1089,10 @@ func getNestedObjectsPipeline() []bson.M {
 				"cond":  bson.M{"$eq": bson.A{"$$this.is_private", false}},
 			}},
 		}},
-		{"$sort": bson.D{{"widgets.grid_parameters.desktop.y", 1}, {"widgets.grid_parameters.desktop.x", 1}}},
+		{"$sort": bson.D{
+			{Key: "widgets.grid_parameters.desktop.y", Value: 1},
+			{Key: "widgets.grid_parameters.desktop.x", Value: 1},
+		}},
 		{"$group": bson.M{
 			"_id": bson.M{
 				"_id": "$_id",
