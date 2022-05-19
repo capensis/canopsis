@@ -175,6 +175,47 @@ Feature: Update a widget filter
       }
     }
     """
+    When I do PUT /api/v4/widget-filters/test-widgetfilter-to-update-6:
+    """json
+    {
+      "title": "test-widgetfilter-to-update-6-title",
+      "widget": "test-widget-to-filter-edit",
+      "is_private": false,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-widgetfilter-to-update-6-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "root",
+      "title": "test-widgetfilter-to-update-6-title",
+      "is_private": false,
+      "created": 1605263992,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-widgetfilter-to-update-6-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response key "old_mongo_query" should not exist
 
   Scenario: given update request and no auth user should not allow access
     When I do PUT /api/v4/widget-filters/test-widgetfilter-not-exist

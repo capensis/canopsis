@@ -624,3 +624,296 @@ Feature: update an instruction statistics
       }
     }
     """
+
+  Scenario: given get request should return assigned instruction with old pattern for the alarm
+    When I am admin
+    When I send an event:
+    """json
+    [
+      {
+        "connector": "test-connector-to-alarm-instruction-get-7",
+        "connector_name": "test-connector-name-to-alarm-instruction-get-7",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-instruction-get-7",
+        "resource": "test-resource-to-alarm-instruction-get-7-1",
+        "state": 1,
+        "output": "test-output-to-alarm-instruction-get-7"
+      },
+      {
+        "connector": "test-connector-to-alarm-instruction-get-7",
+        "connector_name": "test-connector-name-to-alarm-instruction-get-7",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-instruction-get-7",
+        "resource": "test-resource-to-alarm-instruction-get-7-2",
+        "state": 1,
+        "output": "test-output-to-alarm-instruction-get-7"
+      }
+    ]
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-7&with_instructions=true&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-7-1"
+          },
+          "assigned_instructions": [
+            {
+                "_id": "test-instruction-to-alarm-instruction-get-7-1",
+                "name": "test-instruction-to-alarm-instruction-get-7-1-name",
+                "execution": null
+            }
+          ]
+        },
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-7-2"
+          },
+          "assigned_instructions": [
+            {
+                "_id": "test-instruction-to-alarm-instruction-get-7-2",
+                "name": "test-instruction-to-alarm-instruction-get-7-2-name",
+                "execution": null
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+
+  Scenario: given get request should not return assigned instruction without patterns for the alarm
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-alarm-instruction-get-8",
+      "connector_name": "test-connector-name-to-alarm-instruction-get-8",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-alarm-instruction-get-8",
+      "resource": "test-resource-to-alarm-instruction-get-8",
+      "state": 1,
+      "output": "test-output-to-alarm-instruction-get-8"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-8&with_instructions=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-8"
+          },
+          "assigned_instructions": []
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given get request should return alarms with assigned instructions with old pattern depending from exclude or include instructions fields
+    When I am admin
+    When I send an event:
+    """json
+    [
+      {
+        "connector": "test-connector-to-alarm-instruction-get-9",
+        "connector_name": "test-connector-name-to-alarm-instruction-get-9",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-instruction-get-9",
+        "resource": "test-resource-to-alarm-instruction-get-9-1",
+        "state": 1,
+        "output": "test-output-to-alarm-instruction-get-9"
+      },
+      {
+        "connector": "test-connector-to-alarm-instruction-get-9",
+        "connector_name": "test-connector-name-to-alarm-instruction-get-9",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-instruction-get-9",
+        "resource": "test-resource-to-alarm-instruction-get-9-2",
+        "state": 1,
+        "output": "test-output-to-alarm-instruction-get-9"
+      }
+    ]
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-to-alarm-instruction-get-9-1&include_instructions[]=test-instruction-to-alarm-instruction-get-9-2&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-9-1"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-9-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-to-alarm-instruction-get-9-1&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-9-1"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-to-alarm-instruction-get-9-2&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-9-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?exclude_instructions[]=test-instruction-to-alarm-instruction-get-9-2&search=test-resource-to-alarm-instruction-get-9&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-9-1"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?exclude_instructions[]=test-instruction-to-alarm-instruction-get-9-1&search=test-resource-to-alarm-instruction-get-9&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-9-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given get request should not return alarms by instructions without patterns
+    When I am admin
+    When I send an event:
+    """json
+    [
+      {
+        "connector": "test-connector-to-alarm-instruction-get-10",
+        "connector_name": "test-connector-name-to-alarm-instruction-get-10",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-instruction-get-10",
+        "resource": "test-resource-to-alarm-instruction-get-10",
+        "state": 1,
+        "output": "test-output-to-alarm-instruction-get-10"
+      }
+    ]
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?include_instructions[]=test-instruction-without-patterns&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 0
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?exclude_instructions[]=test-instruction-without-patterns&search=test-resource-to-alarm-instruction-get-10&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-instruction-get-10"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """

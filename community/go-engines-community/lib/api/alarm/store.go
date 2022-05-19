@@ -530,14 +530,13 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 			return nil, nil, err
 		}
 
-		if len(instruction.AlarmPattern) > 0 || len(instruction.EntityPattern) > 0 {
+		q, err := getInstructionQuery(instruction.Instruction)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		if q != nil {
 			instructionMap[instruction.ID] = instruction
-
-			q, err := getInstructionQuery(instruction.Instruction)
-			if err != nil {
-				return nil, nil, err
-			}
-
 			instructionFiltersPipeline[instruction.ID] = []bson.M{{"$match": q}}
 			allInstructionMatches = append(allInstructionMatches, q)
 		}
