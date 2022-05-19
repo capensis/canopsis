@@ -87,7 +87,7 @@ exports[`c-patterns-editor-field Renders \`c-patterns-editor-field\` with advanc
             class="v-window-item"
             style=""
           >
-            <c-patterns-advanced-editor-field
+            <c-patterns-advanced-editor-field-stub
               attributes=""
               disabled="true"
               name="patterns.json"
