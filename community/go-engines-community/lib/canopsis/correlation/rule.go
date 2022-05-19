@@ -48,13 +48,13 @@ type Rule struct {
 	Updated *types.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 
 	// Deprecated: AlarmPatterns represents Alarm's attribute pattern list
-	OldAlarmPatterns *oldpattern.AlarmPatternList `bson:"old_alarm_patterns,omitempty" json:"old_alarm_patterns,omitempty"`
+	OldAlarmPatterns oldpattern.AlarmPatternList `bson:"old_alarm_patterns,omitempty" json:"old_alarm_patterns,omitempty"`
 	// Deprecated: EntityPatterns represents Entity's attribute pattern list
-	OldEntityPatterns *oldpattern.EntityPatternList `bson:"old_entity_patterns,omitempty" json:"old_entity_patterns,omitempty"`
+	OldEntityPatterns oldpattern.EntityPatternList `bson:"old_entity_patterns,omitempty" json:"old_entity_patterns,omitempty"`
 	// Deprecated: TotalEntityPatterns represents Entity's attribute pattern list to find total entity count.
-	OldTotalEntityPatterns *oldpattern.EntityPatternList `bson:"old_total_entity_patterns,omitempty" json:"old_total_entity_patterns,omitempty"`
+	OldTotalEntityPatterns oldpattern.EntityPatternList `bson:"old_total_entity_patterns,omitempty" json:"old_total_entity_patterns,omitempty"`
 	// Deprecated: EventPatterns represents Events's attribute pattern list
-	OldEventPatterns *oldpattern.EventPatternList `bson:"old_event_patterns,omitempty" json:"old_event_patterns,omitempty"`
+	OldEventPatterns oldpattern.EventPatternList `bson:"old_event_patterns,omitempty" json:"old_event_patterns,omitempty"`
 }
 
 type TotalEntityPatternFields struct {

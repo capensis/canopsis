@@ -454,6 +454,10 @@ func (l EventPatternList) IsValid() bool {
 	return !l.Set || l.Valid
 }
 
+func (l EventPatternList) IsZero() bool {
+	return !l.Set
+}
+
 func (l EventPatternList) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if !l.Set {
 		return bsontype.Null, nil, nil

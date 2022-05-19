@@ -508,6 +508,10 @@ func (l EntityPatternList) IsValid() bool {
 	return !l.Set || l.Valid
 }
 
+func (l EntityPatternList) IsZero() bool {
+	return !l.Set
+}
+
 func (l *EntityPatternList) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 	switch valueType {
 	case bsontype.Null:
