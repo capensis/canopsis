@@ -41,7 +41,6 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
     />
   </c-pattern-panel-stub>
   <c-pattern-panel-stub
-    class="mb-2"
     title="Event patterns"
   >
     <c-event-filter-patterns-field-stub
