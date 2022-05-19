@@ -32,7 +32,7 @@
         @input="errors.remove(pbehaviorFieldName)"
       )
 
-    c-pattern-panel.mb-2(v-if="withEvent", :title="$t('common.eventPatterns')")
+    c-pattern-panel(v-if="withEvent", :title="$t('common.eventPatterns')")
       c-event-filter-patterns-field(
         v-field="value.event_pattern",
         :required="isPatternRequired",

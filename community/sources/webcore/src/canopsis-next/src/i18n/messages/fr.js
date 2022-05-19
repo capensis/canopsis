@@ -2779,9 +2779,9 @@ export default {
   },
 
   pattern: {
-    patterns: 'Filtres',
-    myPatterns: 'Mes filtres',
-    corporatePatterns: 'Filtres partagés',
+    patterns: 'Modèles',
+    myPatterns: 'Mes modèles',
+    corporatePatterns: 'Modèles partagés',
     addRule: 'Ajouter une règle',
     addGroup: 'Ajouter un groupe',
     removeRule: 'Supprimer la règle',
