@@ -9,7 +9,7 @@ import { createModalWrapperStub } from '@unit/stubs/modal';
 import ClickOutside from '@/services/click-outside';
 import { MODALS } from '@/constants';
 
-import EditLiveReporting from '@/components/modals/alarm/info-popup-setting/info-popup-setting.vue';
+import InfoPopupSetting from '@/components/modals/alarm/info-popup-setting/info-popup-setting.vue';
 
 const localVue = createVueInstance();
 
@@ -25,7 +25,7 @@ const snapshotStubs = {
   'date-interval-selector': true,
 };
 
-const factory = (options = {}) => shallowMount(EditLiveReporting, {
+const factory = (options = {}) => shallowMount(InfoPopupSetting, {
   localVue,
   stubs,
   attachTo: document.body,
@@ -39,7 +39,7 @@ const factory = (options = {}) => shallowMount(EditLiveReporting, {
   ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(EditLiveReporting, {
+const snapshotFactory = (options = {}) => mount(InfoPopupSetting, {
   localVue,
   stubs: snapshotStubs,
 
