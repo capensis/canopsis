@@ -16,7 +16,7 @@
               :key="rule.id",
               :style="getRuleStyle(index)"
             ) &nbsp;{{ rule.name }}
-        div {{ $t('alarmList.actions.iconsFields.causes') }} : {{ causes.total }}
+        div {{ $t('alarmList.actions.iconsFields.causes') }} : {{ parents.total }}
 </template>
 
 <script>
@@ -24,14 +24,14 @@ import { EVENT_ENTITY_STYLE } from '@/constants';
 
 export default {
   props: {
-    causes: {
+    parents: {
       type: Object,
       required: true,
     },
   },
   computed: {
     causesRules() {
-      return this.causes?.rules ?? [];
+      return this.parents?.rules ?? [];
     },
 
     icon() {
