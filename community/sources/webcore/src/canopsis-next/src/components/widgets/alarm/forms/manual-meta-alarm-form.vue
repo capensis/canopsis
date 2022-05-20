@@ -8,13 +8,13 @@
         :label="$t('modals.createManualMetaAlarm.fields.metaAlarm')",
         :error-messages="errors.collect('manualMetaAlarm')",
         :loading="pending",
-        item-value="entity._id",
-        item-text="v.display_name",
+        item-value="_id",
+        item-text="name",
         name="manualMetaAlarm",
         return-object,
         blur-on-create
       )
-        template(slot="no-data")
+        template(#no-data="")
           v-list-tile
             v-list-tile-content
               v-list-tile-title(v-html="$t('modals.createManualMetaAlarm.noData')")
@@ -53,26 +53,15 @@ export default {
   },
   methods: {
     ...mapActions({
-      fetchAlarmsListWithoutStore: 'fetchListWithoutStore',
+      fetchManualMetaAlarmListWithoutStore: 'fetchManualMetaAlarmListWithoutStore',
     }),
 
     async fetchManualMetaAlarms() {
       this.pending = true;
 
-      const params = {
-        manual: true,
-        correlation: true,
-        page: 1,
+      const alarms = await this.fetchManualMetaAlarmListWithoutStore();
 
-        /**
-         * We need this option for fetching of every items
-         */
-        limit: 10000,
-      };
-
-      const { data = [] } = await this.fetchAlarmsListWithoutStore({ params });
-
-      this.manualMetaAlarms = data;
+      this.manualMetaAlarms = alarms ?? [];
       this.pending = false;
     },
   },

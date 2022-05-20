@@ -1,5 +1,4 @@
 import { createNamespacedHelpers } from 'vuex';
-import { get } from 'lodash';
 
 import { EXPORT_STATUSES } from '@/constants';
 
@@ -69,14 +68,6 @@ export default {
 
       if (alarm.v.resolved) {
         params.resolved = true;
-      }
-
-      if (get(alarm.consequences, 'data')) {
-        params.with_consequences = true;
-      }
-
-      if (get(alarm.causes, 'data')) {
-        params.with_causes = true;
       }
 
       await this.fetchAlarmItem({
