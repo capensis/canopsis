@@ -149,6 +149,7 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 						AckResources:   execution.AckResources,
 						Header:         execution.Header,
 						Response:       execution.Response,
+						ResponseMap:    execution.ResponseMap,
 						AdditionalData: task.AdditionalData,
 					}
 
@@ -349,12 +350,21 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 		scenarioExecution.Response = make(map[string]interface{})
 	}
 
+	if scenarioExecution.ResponseMap == nil {
+		scenarioExecution.ResponseMap = make(map[string]interface{})
+	}
+
 	for k, v := range taskRes.Header {
 		scenarioExecution.Header[k] = v
 	}
 
 	for k, v := range taskRes.Response {
 		scenarioExecution.Response[k] = v
+		scenarioExecution.ResponseMap[strconv.Itoa(scenarioExecution.ResponseCount)+"."+k] = v
+	}
+
+	if taskRes.Response != nil {
+		scenarioExecution.ResponseCount++
 	}
 
 	err = e.executionStorage.Update(ctx, *scenarioExecution)
@@ -390,6 +400,7 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 			AckResources:   scenarioExecution.AckResources,
 			Header:         scenarioExecution.Header,
 			Response:       scenarioExecution.Response,
+			ResponseMap:    scenarioExecution.ResponseMap,
 			AdditionalData: additionalData,
 		}
 
