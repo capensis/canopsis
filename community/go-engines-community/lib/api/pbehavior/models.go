@@ -198,15 +198,6 @@ func (r *AggregationEntitiesResult) GetTotal() int64 {
 	return r.TotalCount
 }
 
-type CountFilterResult struct {
-	OverLimit  bool  `bson:"-" json:"over_limit"`
-	TotalCount int64 `bson:"total_count" json:"total_count"`
-}
-
-func (r *CountFilterResult) GetTotal() int64 {
-	return r.TotalCount
-}
-
 type DeleteByNameRequest struct {
 	Name string `form:"name" json:"name" binding:"required"`
 }
