@@ -25,13 +25,6 @@ func ValidateEditRequest(sl validator.StructLevel) {
 	validateDisableDuringPeriods(sl, r.DisableDuringPeriods)
 }
 
-func ValidateCountPatternRequest(sl validator.StructLevel) {
-	r := sl.Current().Interface().(CountByPatternRequest)
-
-	validateAlarmPatterns(sl, r.AlarmPatterns)
-	validateEntityPatterns(sl, r.EntityPatterns)
-}
-
 func validateType(sl validator.StructLevel, t string) {
 	if t == "" {
 		return

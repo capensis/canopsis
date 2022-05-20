@@ -1695,22 +1695,6 @@ definitions:
       status:
         type: integer
     type: object
-  idlerule.CountByPatternRequest:
-    properties:
-      alarm_patterns:
-        $ref: '#/definitions/pattern.AlarmPatternList'
-      entity_patterns:
-        $ref: '#/definitions/pattern.EntityPatternList'
-    type: object
-  idlerule.CountByPatternResult:
-    properties:
-      over_limit:
-        type: boolean
-      total_count_alarms:
-        type: integer
-      total_count_entities:
-        type: integer
-    type: object
   idlerule.CreateRequest:
     properties:
       _id:
@@ -2008,6 +1992,43 @@ definitions:
         type: string
       value: {}
     type: object
+  pattern.Count:
+    properties:
+      count:
+        type: integer
+      over_limit:
+        type: boolean
+    type: object
+  pattern.CountRequest:
+    properties:
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      pbehavior_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+    type: object
+  pattern.CountResponse:
+    properties:
+      alarm_pattern:
+        $ref: '#/definitions/pattern.Count'
+      entity_pattern:
+        $ref: '#/definitions/pattern.Count'
+      pbehavior_pattern:
+        $ref: '#/definitions/pattern.Count'
+    type: object
   pattern.EditRequest:
     properties:
       alarm_pattern:
@@ -2191,13 +2212,6 @@ definitions:
       ts:
         type: integer
     type: object
-  pbehavior.CountFilterResult:
-    properties:
-      over_limit:
-        type: boolean
-      total_count:
-        type: integer
-    type: object
   pbehavior.CreateRequest:
     properties:
       _id:
@@ -2235,12 +2249,6 @@ definitions:
     - type
     type: object
   pbehavior.Filter:
-    type: object
-  pbehavior.FilterRequest:
-    properties:
-      filter: {}
-    required:
-    - filter
     type: object
   pbehavior.PatchRequest:
     properties:

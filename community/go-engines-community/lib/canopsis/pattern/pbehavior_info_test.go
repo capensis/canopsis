@@ -54,7 +54,7 @@ func getPbehaviorInfoMatchDataSets() map[string]PbehaviorInfoDataSet {
 			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field:     "pbehavior_info._id",
+						Field:     "pbehavior_info.id",
 						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test id"),
 					},
 				},
@@ -68,7 +68,7 @@ func getPbehaviorInfoMatchDataSets() map[string]PbehaviorInfoDataSet {
 			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field:     "pbehavior_info._id",
+						Field:     "pbehavior_info.id",
 						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test id"),
 					},
 				},
@@ -99,14 +99,14 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field:     "pbehavior_info._id",
+						Field:     "pbehavior_info.id",
 						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test id"),
 					},
 				},
 			},
 			mongoQueryResult: bson.M{"$or": []bson.M{
 				{"$and": []bson.M{
-					{"alarm.pbehavior_info._id": bson.M{"$eq": "test id"}},
+					{"alarm.pbehavior_info.id": bson.M{"$eq": "test id"}},
 				}},
 			}},
 		},
@@ -114,7 +114,7 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field:     "pbehavior_info._id",
+						Field:     "pbehavior_info.id",
 						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test id"),
 					},
 					{
@@ -125,7 +125,7 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 			},
 			mongoQueryResult: bson.M{"$or": []bson.M{
 				{"$and": []bson.M{
-					{"alarm.pbehavior_info._id": bson.M{"$eq": "test id"}},
+					{"alarm.pbehavior_info.id": bson.M{"$eq": "test id"}},
 					{"alarm.pbehavior_info.type": bson.M{"$eq": "test type"}},
 				}},
 			}},
@@ -134,7 +134,7 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field:     "pbehavior_info._id",
+						Field:     "pbehavior_info.id",
 						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test id"),
 					},
 				},
@@ -147,7 +147,7 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 			},
 			mongoQueryResult: bson.M{"$or": []bson.M{
 				{"$and": []bson.M{
-					{"alarm.pbehavior_info._id": bson.M{"$eq": "test id"}},
+					{"alarm.pbehavior_info.id": bson.M{"$eq": "test id"}},
 				}},
 				{"$and": []bson.M{
 					{"alarm.pbehavior_info.type": bson.M{"$eq": "test type"}},
@@ -158,7 +158,7 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 			pattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field:     "pbehavior_info._id",
+						Field:     "pbehavior_info.id",
 						Condition: pattern.NewStringCondition(pattern.ConditionIsEmpty, "test id"),
 					},
 				},

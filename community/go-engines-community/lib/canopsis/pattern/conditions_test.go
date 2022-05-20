@@ -733,6 +733,13 @@ func TestCondition_UnmarshalAndMatchRef(t *testing.T) {
 }
 
 func TestCondition_MatchTime(t *testing.T) {
+	timeRelativeCond, err := pattern.NewDurationCondition(pattern.ConditionTimeRelative, types.DurationWithUnit{
+		Value: 100,
+		Unit:  "s",
+	})
+	if err != nil {
+		panic(err)
+	}
 	datasets := []struct {
 		testName       string
 		conf           pattern.Condition
@@ -742,14 +749,14 @@ func TestCondition_MatchTime(t *testing.T) {
 	}{
 		{
 			testName:       "test relative is matched",
-			conf:           pattern.NewIntCondition(pattern.ConditionTimeRelative, 100),
+			conf:           timeRelativeCond,
 			value:          time.Now().Add(-50 * time.Second),
 			expectedErr:    false,
 			expectedResult: true,
 		},
 		{
 			testName:       "test relative is not matched",
-			conf:           pattern.NewIntCondition(pattern.ConditionTimeRelative, 100),
+			conf:           timeRelativeCond,
 			value:          time.Now().Add(-150 * time.Second),
 			expectedErr:    false,
 			expectedResult: false,
@@ -835,8 +842,11 @@ func TestCondition_MatchTime(t *testing.T) {
 func TestCondition_UnmarshalAndMatchTime(t *testing.T) {
 	dataSets := []pattern.Condition{
 		{
-			Type:  pattern.ConditionTimeRelative,
-			Value: 10,
+			Type: pattern.ConditionTimeRelative,
+			Value: types.DurationWithUnit{
+				Value: 100,
+				Unit:  "s",
+			},
 		},
 		{
 			Type: pattern.ConditionTimeAbsolute,

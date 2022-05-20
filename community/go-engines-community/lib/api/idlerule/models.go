@@ -8,17 +8,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
-type CountByPatternRequest struct {
-	EntityPatterns pattern.EntityPatternList `json:"entity_patterns"`
-	AlarmPatterns  pattern.AlarmPatternList  `json:"alarm_patterns"`
-}
-
-type CountByPatternResult struct {
-	OverLimit          bool  `json:"over_limit"`
-	TotalCountEntities int64 `json:"total_count_entities"`
-	TotalCountAlarms   int64 `json:"total_count_alarms"`
-}
-
 type FilteredQuery struct {
 	pagination.FilteredQuery
 	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name author duration created updated type priority"`

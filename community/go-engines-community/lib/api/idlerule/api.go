@@ -3,38 +3,28 @@ package idlerule
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/valyala/fastjson"
 	"net/http"
 )
 
-type API interface {
-	common.BulkCrudAPI
-	CountPatterns(c *gin.Context)
-}
-
 type api struct {
 	store        Store
 	actionLogger logger.ActionLogger
-	conf         config.UserInterfaceConfigProvider
 }
 
 func NewApi(
 	store Store,
 	actionLogger logger.ActionLogger,
-	conf config.UserInterfaceConfigProvider,
-) API {
+) common.BulkCrudAPI {
 	return &api{
 		store:        store,
 		actionLogger: actionLogger,
-		conf:         conf,
 	}
 }
 
@@ -382,30 +372,4 @@ func (a *api) BulkDelete(c *gin.Context) {
 	}
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
-}
-
-// CountPatterns
-// @Param body body CountByPatternRequest true "body"
-// @Success 200 {object} CountByPatternResult
-func (a *api) CountPatterns(c *gin.Context) {
-	var request CountByPatternRequest
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
-
-		return
-	}
-
-	data, err := a.store.CountByPatterns(c.Request.Context(), request, a.conf.Get().CheckCountRequestTimeout, a.conf.Get().MaxMatchedItems)
-	if errors.Is(err, context.DeadlineExceeded) {
-		c.AbortWithStatusJSON(http.StatusRequestTimeout, common.ErrTimeoutResponse)
-		return
-	} else if err != nil {
-		panic(err)
-	}
-
-	if int(data.TotalCountEntities) > a.conf.Get().MaxMatchedItems || int(data.TotalCountAlarms) > a.conf.Get().MaxMatchedItems {
-		data.OverLimit = true
-	}
-
-	c.JSON(http.StatusOK, data)
 }
