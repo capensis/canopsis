@@ -8,19 +8,17 @@
       div.text-md-center
         strong {{ $t('alarmList.actions.iconsTitles.grouping') }}
         div {{ $t('common.title') }} : {{ ruleName }}
-        div {{ $t('alarmList.actions.iconsFields.consequences') }} : {{ consequences.total }}
+        div {{ $t('alarmList.actions.iconsFields.consequences') }} : {{ total }}
 </template>
 
 <script>
-import { get } from 'lodash';
-
 import { EVENT_ENTITY_STYLE } from '@/constants';
 
 export default {
   props: {
-    consequences: {
-      type: Object,
-      required: true,
+    total: {
+      type: Number,
+      required: 0,
     },
     rule: {
       type: Object,
@@ -29,7 +27,7 @@ export default {
   },
   computed: {
     ruleName() {
-      return get(this.rule, 'name', '');
+      return this.rule?.name ?? '';
     },
 
     icon() {

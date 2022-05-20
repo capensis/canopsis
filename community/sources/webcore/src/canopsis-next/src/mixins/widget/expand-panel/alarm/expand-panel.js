@@ -27,16 +27,6 @@ export const widgetExpandPanelAlarmMixin = {
         with_steps: true,
       };
 
-      if (!this.hideGroups && correlation) {
-        if (alarm.causes) {
-          params.with_causes = true;
-        }
-
-        if (alarm.consequences) {
-          params.with_consequences = true;
-        }
-      }
-
       return this.fetchAlarmItemWithParams(alarm, params);
     },
 

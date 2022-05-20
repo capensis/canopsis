@@ -61,7 +61,11 @@ export default {
     },
   },
   actions: {
-    async fetchListWithoutStore(context, { params }) {
+    fetchManualMetaAlarmListWithoutStore(context, { params } = {}) {
+      return request.get(API_ROUTES.manualMetaAlarm, { params });
+    },
+
+    fetchListWithoutStore(context, { params }) {
       return request.get(API_ROUTES.alarmList, { params });
     },
 

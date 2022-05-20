@@ -72,6 +72,7 @@ export function convertAlarmWidgetToQuery(widget) {
     page: 1,
     limit: itemsPerPage || PAGINATION_LIMIT,
     with_instructions: true,
+    with_links: true,
     multiSortBy: [],
   };
 
