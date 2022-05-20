@@ -358,9 +358,10 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 		scenarioExecution.Header[k] = v
 	}
 
+	responseCountStr := strconv.Itoa(scenarioExecution.ResponseCount)
 	for k, v := range taskRes.Response {
 		scenarioExecution.Response[k] = v
-		scenarioExecution.ResponseMap[strconv.Itoa(scenarioExecution.ResponseCount)+"."+k] = v
+		scenarioExecution.ResponseMap[responseCountStr+"."+k] = v
 	}
 
 	if taskRes.Response != nil {
