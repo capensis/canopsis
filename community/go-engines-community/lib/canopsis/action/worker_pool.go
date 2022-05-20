@@ -48,7 +48,6 @@ type TaskResult struct {
 	Status          int
 	Header          map[string]string
 	Response        map[string]interface{}
-	ResponseMap     map[string]map[string]interface{}
 	Err             error
 }
 
