@@ -10,7 +10,7 @@
 <script>
 import { isNull, pick } from 'lodash';
 
-import { PATTERN_INPUT_TYPES } from '@/constants';
+import { PATTERN_FIELD_TYPES } from '@/constants';
 
 import { formBaseMixin } from '@/mixins/form';
 
@@ -24,11 +24,11 @@ export default {
     },
     inputType: {
       type: String,
-      default: PATTERN_INPUT_TYPES.string,
+      default: PATTERN_FIELD_TYPES.string,
     },
     label: {
       type: String,
-      default: PATTERN_INPUT_TYPES.string,
+      default: '',
     },
     name: {
       type: String,
@@ -84,8 +84,8 @@ export default {
 
     isInputTypeText() {
       return [
-        PATTERN_INPUT_TYPES.number,
-        PATTERN_INPUT_TYPES.string,
+        PATTERN_FIELD_TYPES.number,
+        PATTERN_FIELD_TYPES.string,
       ].includes(this.inputType);
     },
 
@@ -110,7 +110,7 @@ export default {
             ...additionalProps,
 
             class: 'c-mixed-input-field__text',
-            type: this.inputType === PATTERN_INPUT_TYPES.number ? 'number' : 'text',
+            type: this.inputType === PATTERN_FIELD_TYPES.number ? 'number' : 'text',
             singleLine: true,
             dense: true,
           },
@@ -121,7 +121,7 @@ export default {
         };
       }
 
-      if (this.inputType === PATTERN_INPUT_TYPES.boolean) {
+      if (this.inputType === PATTERN_FIELD_TYPES.boolean) {
         return {
           is: 'v-switch',
 
@@ -140,15 +140,14 @@ export default {
         };
       }
 
-      if (this.inputType === PATTERN_INPUT_TYPES.array) {
+      if (this.inputType === PATTERN_FIELD_TYPES.stringArray) {
         return {
-          is: 'c-array-mixed-field',
+          is: 'c-array-text-field',
 
           bind: {
             name: this.name,
             values: this.value,
             disabled: this.disabled,
-            types: this.types.filter(({ value }) => value !== PATTERN_INPUT_TYPES.array),
           },
           on: {
             change: this.updateModel,
@@ -172,11 +171,11 @@ export default {
     updateTextFieldValue(value) {
       let preparedValue = value;
 
-      if (isNull(value) && this.inputType !== PATTERN_INPUT_TYPES.null) {
+      if (isNull(value) && this.inputType !== PATTERN_FIELD_TYPES.null) {
         preparedValue = '';
       }
 
-      if (this.inputType === PATTERN_INPUT_TYPES.number) {
+      if (this.inputType === PATTERN_FIELD_TYPES.number) {
         preparedValue = Number(value);
       }
 
