@@ -603,6 +603,7 @@ Feature: Update an eventfilter
       "type": "drop",
       "priority": 0,
       "enabled": true,
+      "old_patterns": null,
       "event_pattern": [
         [
           {
@@ -616,4 +617,3 @@ Feature: Update an eventfilter
       ]
     }
     """
-    Then the response key "old_patterns" should not exist

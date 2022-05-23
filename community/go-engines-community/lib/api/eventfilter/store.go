@@ -57,7 +57,6 @@ func (s *store) transformRequestToDocument(r EditRequest) eventfilter.Rule {
 		ExternalData:        r.ExternalData,
 		EventPatterns:       r.EventPattern,
 		EntityPatternFields: r.EntityPatternFieldsRequest.ToModel(),
-		OldPatterns:         nil,
 	}
 }
 
