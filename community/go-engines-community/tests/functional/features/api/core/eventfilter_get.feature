@@ -13,6 +13,7 @@ Feature: Get an eventfilter
       "author": "root",
       "description": "how it should have ended.",
       "type": "enrichment",
+      "old_patterns": null,
       "event_pattern": [
         [
           {
@@ -60,6 +61,7 @@ Feature: Get an eventfilter
           "author": "root",
           "description": "how it should have ended.",
           "type": "enrichment",
+          "old_patterns": null,
           "event_pattern": [
             [
               {
@@ -97,6 +99,7 @@ Feature: Get an eventfilter
           "author": "root",
           "description": "drop filter",
           "type": "drop",
+          "old_patterns": null,
           "event_pattern": [
             [
               {
@@ -119,6 +122,7 @@ Feature: Get an eventfilter
           "author": "root",
           "description": "break filter",
           "type": "break",
+          "old_patterns": null,
           "event_pattern": [
             [
               {
