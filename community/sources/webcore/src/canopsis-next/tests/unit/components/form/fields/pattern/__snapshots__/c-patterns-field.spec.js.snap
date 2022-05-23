@@ -4,84 +4,51 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
 <div
   class="layout column"
 >
-  <c-collapse-panel-stub
+  <c-pattern-panel-stub
     class="mb-2"
-    color="grey"
+    title="Alarm patterns"
   >
-    <div
-      class="v-card v-sheet theme--light"
-    >
-      <div
-        class="v-card__text"
-      >
-        <c-alarm-patterns-field-stub
-          disabled="true"
-          name="name.alarm_patterns"
-          required="true"
-          value="[object Object]"
-          with-type="with-type"
-        />
-      </div>
-    </div>
-  </c-collapse-panel-stub>
-  <c-collapse-panel-stub
+    <c-alarm-patterns-field-stub
+      disabled="true"
+      name="name.alarm_pattern"
+      required="true"
+      value="[object Object]"
+      with-type="with-type"
+    />
+  </c-pattern-panel-stub>
+  <c-pattern-panel-stub
     class="mb-2"
-    color="grey"
+    title="Entity patterns"
   >
-    <div
-      class="v-card v-sheet theme--light"
-    >
-      <div
-        class="v-card__text"
-      >
-        <c-entity-patterns-field-stub
-          disabled="true"
-          name="name.entity_patterns"
-          required="true"
-          value="[object Object]"
-          with-type="with-type"
-        />
-      </div>
-    </div>
-  </c-collapse-panel-stub>
-  <c-collapse-panel-stub
-    color="grey"
-  >
-    <div
-      class="v-card v-sheet theme--light"
-    >
-      <div
-        class="v-card__text"
-      >
-        <c-pbehavior-patterns-field-stub
-          disabled="true"
-          name="name.pbehavior_patterns"
-          required="true"
-          value="[object Object]"
-          with-type="with-type"
-        />
-      </div>
-    </div>
-  </c-collapse-panel-stub>
-  <c-collapse-panel-stub
+    <c-entity-patterns-field-stub
+      disabled="true"
+      name="name.entity_pattern"
+      required="true"
+      value="[object Object]"
+      with-type="with-type"
+    />
+  </c-pattern-panel-stub>
+  <c-pattern-panel-stub
     class="mb-2"
-    color="grey"
+    title="Pbehavior patterns"
   >
-    <div
-      class="v-card v-sheet theme--light"
-    >
-      <div
-        class="v-card__text"
-      >
-        <c-event-filter-patterns-field-stub
-          disabled="true"
-          name="name.event_patterns"
-          required="true"
-          value="[object Object]"
-        />
-      </div>
-    </div>
-  </c-collapse-panel-stub>
+    <c-pbehavior-patterns-field-stub
+      disabled="true"
+      name="name.pbehavior_pattern"
+      required="true"
+      value="[object Object]"
+      with-type="with-type"
+    />
+  </c-pattern-panel-stub>
+  <c-pattern-panel-stub
+    title="Event patterns"
+  >
+    <c-event-filter-patterns-field-stub
+      disabled="true"
+      name="name.event_pattern"
+      required="true"
+    />
+  </c-pattern-panel-stub>
 </div>
 `;
 

@@ -1,5 +1,11 @@
 <template lang="pug">
   v-layout(column)
+    v-flex(xs12)
+      v-alert(
+        v-if="!groups.length",
+        :value="true",
+        type="info"
+      ) {{ disabled ? $t('pattern.noDataDisabled') : $t('pattern.noData') }}
     v-layout(v-for="(group, index) in groups", :key="group.key", wrap, row)
       v-flex(xs12)
         c-pattern-group-field(
