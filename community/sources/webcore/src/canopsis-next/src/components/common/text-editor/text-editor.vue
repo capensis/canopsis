@@ -396,7 +396,9 @@ export default {
         close();
       };
 
-      const imgElements = current instanceof HTMLDocument ? [...current.querySelectorAll('img')] : [];
+      const imgElements = current instanceof HTMLDocument
+        ? [...current.querySelectorAll('img')]
+        : [];
       const isImage = current.tagName === 'IMG';
       let sourceImage = null;
 
