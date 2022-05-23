@@ -792,6 +792,46 @@ Feature: execute action on trigger
     }
     """
     Then the response code should be 201
+    When I do POST /api/v4/scenarios:
+    """json
+    {
+      "name": "test-scenario-action-webhook-6-3-name",
+      "enabled": true,
+      "triggers": [
+        "create"
+      ],
+      "actions": [
+        {
+          "alarm_patterns": [
+            {
+              "v": {
+                "resource": "test-resource-action-webhook-6"
+              }
+            }
+          ],
+          "type": "webhook",
+          "parameters": {
+            "author": "test-scenario-action-webhook-6-3-action-1-author",
+            "request": {
+              "method": "POST",
+              "url": "{{ .apiURL }}/api/v4/scenarios",
+              "auth": {
+                "username": "root",
+                "password": "test"
+              },
+              "headers": {
+                "Content-Type": "application/json"
+              },
+              "payload": "{\"name\": \"{{ `{{ $testVar := .AdditionalData.Output }}test-scenario-action-webhook-6-3-action-1 [{{$testVar}}]` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-webhook-6-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        }
+      ]
+    }
+    """
+    Then the response code should be 201    
     When I wait the next periodical process
     When I send an event:
     """json
@@ -946,6 +986,37 @@ Feature: execute action on trigger
             }
           ],
           "priority": 115
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "per_page": 10,
+        "page_count": 1,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/scenarios?search=test-scenario-action-webhook-6-3-action-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-scenario-action-webhook-6-3-action-1 [noveo alarm]",
+          "enabled": true,
+          "triggers": [
+            "create"
+          ],
+          "actions": [
+            {
+              "alarm_patterns": [
+                {
+                  "_id": "test-scenario-action-webhook-6-alarm"
+                }
+              ]
+            }
+          ]
         }
       ],
       "meta": {
