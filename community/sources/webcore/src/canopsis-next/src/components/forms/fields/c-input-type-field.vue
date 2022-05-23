@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { PATTERN_INPUT_TYPES } from '@/constants';
+import { PATTERN_FIELD_TYPES } from '@/constants';
 
 export default {
   inject: ['$validator'],
@@ -75,11 +75,11 @@ export default {
   methods: {
     getInputTypeIcon(type) {
       return {
-        [PATTERN_INPUT_TYPES.string]: 'title',
-        [PATTERN_INPUT_TYPES.number]: 'exposure_plus_1',
-        [PATTERN_INPUT_TYPES.boolean]: 'toggle_on',
-        [PATTERN_INPUT_TYPES.null]: 'space_bar',
-        [PATTERN_INPUT_TYPES.array]: 'view_array',
+        [PATTERN_FIELD_TYPES.string]: 'title',
+        [PATTERN_FIELD_TYPES.number]: 'exposure_plus_1',
+        [PATTERN_FIELD_TYPES.boolean]: 'toggle_on',
+        [PATTERN_FIELD_TYPES.null]: 'space_bar',
+        [PATTERN_FIELD_TYPES.stringArray]: 'view_array',
       }[type];
     },
   },

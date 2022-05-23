@@ -139,7 +139,6 @@ describe('create-filter', () => {
       title: '',
       alarm_pattern: [],
       entity_pattern: [],
-      event_pattern: [],
       pbehavior_pattern: [],
     });
     expect($modals.hide).toBeCalledWith();
@@ -210,7 +209,6 @@ describe('create-filter', () => {
       alarm_pattern: 'Alarm pattern error',
       entity_pattern: 'Entity pattern error',
       pbehavior_pattern: 'PBehavior pattern error',
-      event_pattern: 'Event pattern error',
     };
     const action = jest.fn().mockRejectedValue({
       ...formErrors,
