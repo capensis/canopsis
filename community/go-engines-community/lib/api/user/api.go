@@ -3,6 +3,8 @@ package user
 import (
 	"context"
 	"encoding/json"
+	"net/http"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
@@ -11,7 +13,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/valyala/fastjson"
-	"net/http"
 )
 
 type api struct {
@@ -87,6 +88,10 @@ func (a *api) Create(c *gin.Context) {
 	user, err := a.store.Insert(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
+	}
+	if user == nil {
+		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		return
 	}
 
 	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
