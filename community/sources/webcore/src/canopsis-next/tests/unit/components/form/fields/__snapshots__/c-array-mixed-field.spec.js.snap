@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-array-mixed-field Renders \`c-array-mixed-field\` with all field types correctly 1`] = `
+exports[`c-array-text-field Renders \`c-array-text-field\` with all field types correctly 1`] = `
 <div>
   <div
     class="layout align-center"
@@ -211,7 +211,7 @@ exports[`c-array-mixed-field Renders \`c-array-mixed-field\` with all field type
 </div>
 `;
 
-exports[`c-array-mixed-field Renders \`c-array-mixed-field\` with default props correctly 1`] = `
+exports[`c-array-text-field Renders \`c-array-text-field\` with default props correctly 1`] = `
 <div>
   <button
     class="mx-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
@@ -226,7 +226,7 @@ exports[`c-array-mixed-field Renders \`c-array-mixed-field\` with default props 
 </div>
 `;
 
-exports[`c-array-mixed-field Renders disabled \`c-array-mixed-field\` correctly 1`] = `
+exports[`c-array-text-field Renders disabled \`c-array-text-field\` correctly 1`] = `
 <div>
   <div
     class="layout align-center"
