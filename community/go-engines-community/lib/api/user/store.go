@@ -158,7 +158,7 @@ func (s *store) Update(ctx context.Context, r Request) (*User, error) {
 			return err
 		}
 
-		user, err = s.GetOneBy(ctx, r.Name)
+		user, err = s.GetOneBy(ctx, r.ID)
 		return err
 	})
 	if err != nil {
