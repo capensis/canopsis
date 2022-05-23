@@ -1147,6 +1147,12 @@ Feature: execute action on trigger
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"}
+            },
+            "declare_ticket": {
+              "empty_response": false,
+              "is_regexp": false,
+              "ticket_id": "array.1.elem1",
+              "test_val": "array.0.elem1"
             }
           },
           "drop_scenario_if_not_matched": false,
@@ -1215,6 +1221,49 @@ Feature: execute action on trigger
               ]
             }
           ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-action-webhook-8"}]}&with_steps=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "ticket": {
+              "_t": "declareticket",
+              "a": "system",
+              "val": "test3",
+              "data": {
+                "test_val": "test1"
+              }
+            },
+            "steps": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc"
+              },
+              {
+                "_t": "declareticket",
+                "a": "system"
+              }
+            ],
+            "connector": "test-connector-action-webhook-8",
+            "connector_name": "test-connector-name-action-webhook-8",
+            "component": "test-component-action-webhook-8",
+            "resource": "test-resource-action-webhook-8"
+          }
         }
       ],
       "meta": {
