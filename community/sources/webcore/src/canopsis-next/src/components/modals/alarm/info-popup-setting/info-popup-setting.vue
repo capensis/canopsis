@@ -1,60 +1,55 @@
 <template lang="pug">
-  modal-wrapper(data-test="infoPopupSettingModal", close)
-    template(slot="title")
-      span {{ $t('modals.infoPopupSetting.title') }}
-    template(slot="text")
-      v-layout(justify-end)
+  v-form(@submit.prevent="submit")
+    modal-wrapper(close)
+      template(#title="")
+        span {{ $t('modals.infoPopupSetting.title') }}
+      template(#text="")
+        v-layout(justify-end)
+          v-btn(
+            icon,
+            fab,
+            small,
+            color="secondary",
+            @click="addPopup"
+          )
+            v-icon add
+        v-layout(column)
+          v-card.my-1(
+            v-for="(popup, index) in form.popups",
+            :key="index",
+            color="secondary white--text",
+            flat
+          )
+            v-card-title
+              v-layout(justify-space-between)
+                div {{ $t('modals.infoPopupSetting.column') }}: {{ popup.column }}
+                div
+                  v-btn(
+                    icon,
+                    small,
+                    @click="deletePopup(index)"
+                  )
+                    v-icon(color="error") delete
+                  v-btn(
+                    icon,
+                    small,
+                    @click="editPopup(index, popup)"
+                  )
+                    v-icon(color="primary") edit
+            v-card-text
+              p {{ $t('common.template') }}:
+              v-textarea(:value="popup.template", disabled, dark)
+      template(#actions="")
         v-btn(
-          data-test="infoPopupAddPopup",
-          icon,
-          fab,
-          small,
-          color="secondary",
-          @click="addPopup"
-        )
-          v-icon add
-      v-layout(column)
-        v-card.my-1(
-          v-for="(popup, index) in form.popups",
-          :key="index",
+          depressed,
           flat,
-          data-test="infoPopupSetting",
-          color="secondary white--text"
-        )
-          v-card-title
-            v-layout(justify-space-between)
-              div {{ $t('modals.infoPopupSetting.column') }}: {{ popup.column }}
-              div
-                v-btn(
-                  data-test="infoPopupDeletePopup",
-                  icon,
-                  small,
-                  @click="deletePopup(index)"
-                )
-                  v-icon(color="error") delete
-                v-btn(
-                  data-test="infoPopupEditPopup",
-                  icon,
-                  small,
-                  @click="editPopup(index, popup)"
-                )
-                  v-icon(color="primary") edit
-          v-card-text
-            p {{ $t('common.template') }}:
-            v-textarea(:value="popup.template", disabled, dark)
-    template(slot="actions")
-      v-btn(
-        data-test="infoPopupCancelButton",
-        depressed,
-        flat,
-        @click="$modals.hide"
-      ) {{ $t('common.cancel') }}
-      v-btn.primary(
-        :loading="submitting",
-        :disabled="isDisabled",
-        data-test="infoPopupSubmitButton",
-        @click="submit"
-      ) {{ $t('common.submit') }}
+          @click="$modals.hide"
+        ) {{ $t('common.cancel') }}
+        v-btn.primary(
+          :loading="submitting",
+          :disabled="isDisabled",
+          type="submit"
+        ) {{ $t('common.submit') }}
 </template>
 
 <script>
