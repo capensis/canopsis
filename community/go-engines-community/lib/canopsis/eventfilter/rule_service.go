@@ -65,7 +65,7 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 				continue
 			}
 
-			match = rule.OldPatterns.Matches(event)
+			oldRegexMatches, match = rule.OldPatterns.GetRegexMatches(event)
 		} else {
 			match, eventRegexMatches, err = rule.EventPatterns.Match(event)
 			if err != nil {
