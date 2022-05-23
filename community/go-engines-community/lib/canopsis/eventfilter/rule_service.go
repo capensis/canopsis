@@ -59,6 +59,7 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 		var entityRegexMatches pattern.EntityRegexMatches
 
 		if rule.OldPatterns.IsSet() {
+			backwardCompatibility = true
 			if !rule.OldPatterns.IsValid() {
 				s.logger.Warn().Msgf("Rule %s has an invalid old event pattern, skip", rule.ID)
 				continue
