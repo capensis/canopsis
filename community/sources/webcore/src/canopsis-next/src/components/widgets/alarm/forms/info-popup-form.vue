@@ -1,13 +1,12 @@
 <template lang="pug">
-  div(data-test="addInfoPopupLayout")
+  v-layout(column)
     v-select(
-      v-field="form.selectedColumn",
+      v-field="form.column",
       v-validate="'required'",
       :items="columns",
       :error-messages="errors.collect('column')",
       item-text="label",
-      name="column",
-      return-object
+      name="column"
     )
     text-editor-field(
       v-field="form.template",
