@@ -2,17 +2,16 @@ package pbehavior
 
 import (
 	"encoding/json"
-	"errors"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorexception"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorreason"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	mongobson "go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/bsontype"
-	"go.mongodb.org/mongo-driver/x/bsonx/bsoncore"
 )
 
 type ListRequest struct {
@@ -28,15 +27,16 @@ type EntitiesListRequest struct {
 type EditRequest struct {
 	Author     string                             `json:"author" swaggerignore:"true"`
 	Enabled    *bool                              `json:"enabled" binding:"required"`
-	Filter     interface{}                        `json:"filter" binding:"required"`
 	Name       string                             `json:"name" binding:"required,max=255"`
 	Reason     string                             `json:"reason" binding:"required"`
 	RRule      string                             `json:"rrule"`
-	Start      types.CpsTime                      `json:"tstart" binding:"required" swaggertype:"integer"`
+	Start      *types.CpsTime                     `json:"tstart" binding:"required" swaggertype:"integer"`
 	Stop       *types.CpsTime                     `json:"tstop" swaggertype:"integer"`
 	Type       string                             `json:"type" binding:"required"`
 	Exdates    []pbehaviorexception.ExdateRequest `json:"exdates" binding:"dive"`
 	Exceptions []string                           `json:"exceptions"`
+
+	common.EntityPatternFieldsRequest
 }
 
 type CreateRequest struct {
@@ -86,21 +86,25 @@ type BulkDeleteResponseItem struct {
 }
 
 type PatchRequest struct {
+	ID         string                             `json:"-"`
 	Author     string                             `json:"author" swaggerignore:"true"`
-	Enabled    *bool                              `json:"enabled"`
-	Filter     interface{}                        `json:"filter"`
 	Name       *string                            `json:"name"`
+	Enabled    *bool                              `json:"enabled"`
 	Reason     *string                            `json:"reason"`
-	RRule      *string                            `json:"rrule"`
-	Start      *types.CpsTime                     `json:"tstart" swaggertype:"integer"`
-	Stop       NullableTime                       `json:"tstop" swaggertype:"integer"`
 	Type       *string                            `json:"type"`
+	Start      *int64                             `json:"tstart" swaggertype:"integer"`
+	Stop       NullableTime                       `json:"tstop" swaggertype:"integer"`
+	RRule      *string                            `json:"rrule"`
 	Exdates    []pbehaviorexception.ExdateRequest `json:"exdates" binding:"dive"`
 	Exceptions []string                           `json:"exceptions"`
+
+	EntityPattern          pattern.Entity             `json:"entity_pattern"`
+	CorporateEntityPattern *string                    `json:"corporate_entity_pattern"`
+	CorporatePattern       *savedpattern.SavedPattern `json:"-"`
 }
 
 type FilterRequest struct {
-	Filter interface{} `json:"filter" binding:"required"`
+	EntityPattern pattern.Entity `json:"entity_pattern" binding:"entity_pattern" binding:"required"`
 }
 
 type FindByEntityIDRequest struct {
@@ -112,7 +116,6 @@ type Response struct {
 	Author        string                         `bson:"author" json:"author"`
 	Comments      pbehavior.Comments             `bson:"comments" json:"comments"`
 	Enabled       bool                           `bson:"enabled" json:"enabled"`
-	Filter        Filter                         `bson:"filter" json:"filter"`
 	Name          string                         `bson:"name" json:"name"`
 	Reason        *pbehaviorreason.Reason        `bson:"reason" json:"reason"`
 	RRule         string                         `bson:"rrule" json:"rrule"`
@@ -126,36 +129,14 @@ type Response struct {
 	LastAlarmDate *types.CpsTime                 `bson:"last_alarm_date,omitempty" json:"last_alarm_date" swaggertype:"integer"`
 	// IsActiveStatus represents if pbehavior is in action for current time.
 	IsActiveStatus *bool `bson:"-" json:"is_active_status,omitempty"`
-}
 
-type Filter struct {
-	v interface{}
-}
+	OldMongoQuery map[string]interface{} `bson:"old_mongo_query" json:"old_mongo_query,omitempty"`
 
-func NewFilter(v interface{}) Filter {
-	return Filter{v: v}
-}
-
-func (f Filter) MarshalJSON() ([]byte, error) {
-	return json.Marshal(f.v)
-}
-
-func (f *Filter) UnmarshalBSONValue(_ bsontype.Type, b []byte) error {
-	v, _, ok := bsoncore.ReadString(b)
-	if !ok {
-		return errors.New("invalid value, expected string")
-	}
-
-	err := json.Unmarshal([]byte(v), &f.v)
-	return err
-}
-
-func (f Filter) MarshalBSONValue() (bsontype.Type, []byte, error) {
-	return mongobson.MarshalValue(f.v)
+	savedpattern.EntityPatternFields `bson:",inline"`
 }
 
 type NullableTime struct {
-	*types.CpsTime
+	val   *int64
 	isSet bool
 }
 
@@ -164,11 +145,11 @@ func (t *NullableTime) UnmarshalJSON(data []byte) error {
 	if string(data) == "null" {
 		return nil
 	}
-	temp := &types.CpsTime{}
-	if err := json.Unmarshal(data, temp); err != nil {
+	var i int64
+	if err := json.Unmarshal(data, &i); err != nil {
 		return err
 	}
-	t.CpsTime = temp
+	t.val = &i
 	return nil
 }
 
