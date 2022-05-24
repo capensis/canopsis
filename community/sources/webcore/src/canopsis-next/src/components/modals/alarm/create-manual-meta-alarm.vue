@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { get, isObject } from 'lodash';
+import { isObject } from 'lodash';
 
 import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
@@ -91,7 +91,7 @@ export default {
         const data = { output: this.form.output };
 
         if (this.eventType === EVENT_ENTITY_TYPES.manualMetaAlarmUpdate) {
-          data.ma_parents = [get(this.form.metaAlarm, 'entity._id')];
+          data.ma_parents = [this.form.metaAlarm?._id];
         } else {
           data.display_name = this.form.metaAlarm;
         }

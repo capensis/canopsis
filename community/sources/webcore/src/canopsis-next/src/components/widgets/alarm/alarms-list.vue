@@ -115,7 +115,7 @@ import { exportCsvMixinCreator } from '@/mixins/widget/export';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import widgetRemediationInstructionsFilterMixin from '@/mixins/widget/remediation-instructions-filter-select';
-import entitiesAlarmMixin from '@/mixins/entities/alarm';
+import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
 import { permissionsWidgetsAlarmsListCorrelation } from '@/mixins/permissions/widgets/alarms-list/correlation';
 import { permissionsWidgetsAlarmsListCategory } from '@/mixins/permissions/widgets/alarms-list/category';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
@@ -294,10 +294,10 @@ export default {
 
     async fetchList({ isPeriodicRefresh, isQueryNonceUpdate } = {}) {
       if (this.hasColumns) {
-        const query = this.getQuery();
+        const query = this.getQuery(); // TODO: move to helpers
 
         if ((isPeriodicRefresh || isQueryNonceUpdate) && !isEmpty(this.$refs.alarmsTable.expanded)) {
-          query.with_steps = true;
+          query.with_steps = true; // TODO: remove it
         }
 
         await this.fetchAlarmsList({
