@@ -236,6 +236,10 @@ export default {
     refreshTabs() {
       this.tabsKey = uid();
     },
+
+    fetchAlarmDetails() {
+
+    },
   },
 };
 </script>

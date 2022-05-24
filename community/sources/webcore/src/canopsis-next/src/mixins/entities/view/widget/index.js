@@ -10,6 +10,7 @@ export const entitiesWidgetMixin = {
   },
   methods: {
     ...mapActions({
+      fetchWidgetWithoutStore: 'fetchItemWithoutStore',
       createWidget: 'create',
       updateWidget: 'update',
       copyWidget: 'copy',

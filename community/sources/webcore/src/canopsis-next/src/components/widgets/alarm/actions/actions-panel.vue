@@ -16,7 +16,7 @@ import {
   REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
 } from '@/constants';
 
-import entitiesAlarmMixin from '@/mixins/entities/alarm';
+import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 
 import SharedActionsPanel from '@/components/common/actions-panel/actions-panel.vue';

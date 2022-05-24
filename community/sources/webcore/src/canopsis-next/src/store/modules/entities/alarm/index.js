@@ -1,11 +1,13 @@
 import Vue from 'vue';
-import { merge, get } from 'lodash';
+import { get } from 'lodash';
 
 import request, { useRequestCancelling } from '@/services/request';
 import i18n from '@/i18n';
 import { alarmSchema } from '@/store/schemas';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
+
+import detailModule from './detail';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -21,6 +23,9 @@ export const types = {
 
 export default {
   namespaced: true,
+  modules: {
+    detail: detailModule,
+  },
   state: {
     widgets: {},
   },
@@ -105,19 +110,18 @@ export default {
       });
     },
 
-    async fetchItem({ dispatch }, { id, params, dataPreparer = d => d.data }) {
-      try {
-        const paramsWithItemId = merge(params, { filter: { _id: id } });
+    fetchItem({ dispatch }, { id }) {
+      return dispatch('entities/fetch', {
+        route: `${API_ROUTES.alarmList}/${id}`,
+        schema: alarmSchema,
+      }, { root: true });
+    },
 
-        await dispatch('entities/fetch', {
-          route: API_ROUTES.alarmList,
-          schema: [alarmSchema],
-          params: paramsWithItemId,
-          dataPreparer,
-        }, { root: true });
-      } catch (err) {
-        console.error(err);
-      }
+    alarmDetails({ dispatch }, { id }) {
+      return dispatch('entities/fetch', {
+        route: `${API_ROUTES.alarmList}/${id}`,
+        schema: alarmSchema,
+      }, { root: true });
     },
 
     async createAlarmsListExport({ commit }, { widgetId, data = {} }) {
