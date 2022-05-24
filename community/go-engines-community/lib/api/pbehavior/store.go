@@ -2,9 +2,7 @@ package pbehavior
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -15,19 +13,18 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const limitMatch = 100
-
 type Store interface {
-	Insert(ctx context.Context, model *Response) error
+	Insert(ctx context.Context, r CreateRequest) (*Response, error)
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
 	FindByEntityID(ctx context.Context, entityID string) ([]Response, error)
-	GetOneBy(ctx context.Context, filter bson.M) (*Response, error)
+	GetOneBy(ctx context.Context, id string) (*Response, error)
 	FindEntities(ctx context.Context, pbhID string, request EntitiesListRequest) (*AggregationEntitiesResult, error)
-	Update(ctx context.Context, model *Response) (bool, error)
-	UpdateByFilter(ctx context.Context, model *Response, filters bson.M) (bool, error)
+	Update(ctx context.Context, r UpdateRequest) (*Response, error)
+	UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, error)
 	Delete(ctx context.Context, id string) (bool, error)
 	DeleteByName(ctx context.Context, name string) (string, error)
 }
@@ -35,7 +32,7 @@ type Store interface {
 type store struct {
 	dbClient mongo.DbClient
 
-	dbCollection, entitiesCollection mongo.DbCollection
+	dbCollection, entityCollection mongo.DbCollection
 
 	entityMatcher          pbehavior.EntityMatcher
 	entityTypeResolver     pbehavior.EntityTypeResolver
@@ -55,7 +52,7 @@ func NewStore(
 	return &store{
 		dbClient:                      dbClient,
 		dbCollection:                  dbClient.Collection(mongo.PbehaviorMongoCollection),
-		entitiesCollection:            dbClient.Collection(mongo.EntityMongoCollection),
+		entityCollection:              dbClient.Collection(mongo.EntityMongoCollection),
 		entityMatcher:                 entityMatcher,
 		entityTypeResolver:            entityTypeResolver,
 		timezoneConfigProvider:        timezoneConfigProvider,
@@ -65,49 +62,31 @@ func NewStore(
 	}
 }
 
-func (s *store) Insert(ctx context.Context, model *Response) error {
+func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
 	now := libtypes.NewCpsTime(time.Now().Unix())
-
-	if model.ID == "" {
-		model.ID = utils.NewID()
+	doc := s.transformRequestToDocument(r.EditRequest)
+	doc.ID = r.ID
+	if doc.ID == "" {
+		doc.ID = utils.NewID()
 	}
 
-	model.Created = &now
-	model.Updated = &now
-	model.Comments = make([]*pbehavior.Comment, 0)
+	doc.Created = &now
+	doc.Updated = &now
+	doc.Comments = make([]*pbehavior.Comment, 0)
 
-	doc, err := s.transformModelToDocument(*model)
-	if err != nil {
+	var pbh *Response
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		pbh = nil
+		_, err := s.dbCollection.InsertOne(ctx, doc)
+		if err != nil {
+			return err
+		}
+
+		pbh, err = s.GetOneBy(ctx, doc.ID)
 		return err
-	}
+	})
 
-	doc.ID = model.ID
-	doc.Created = now
-	doc.Updated = now
-
-	// If model.Stop is nil, insert to mongo using map so that
-	// tstop field can be cleared
-	if model.Stop == nil {
-		m := make(map[string]interface{})
-		var p []byte
-
-		p, err = bson.Marshal(doc)
-		if err != nil {
-			return err
-		}
-
-		err = bson.Unmarshal(p, &m)
-		if err != nil {
-			return err
-		}
-
-		delete(m, "tstop")
-		_, err = s.dbCollection.InsertOne(ctx, m)
-	} else {
-		_, err = s.dbCollection.InsertOne(ctx, doc)
-	}
-
-	return err
+	return pbh, err
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
@@ -142,7 +121,16 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 }
 
 func (s *store) FindByEntityID(ctx context.Context, entityID string) ([]Response, error) {
-	pbhIDs, err := s.getMatchedPbhIDs(ctx, entityID)
+	entity := libtypes.Entity{}
+	err := s.entityCollection.FindOne(ctx, bson.M{"_id": entityID}).Decode(&entity)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	pbhIDs, err := s.getMatchedPbhIDs(ctx, entity)
 	if err != nil {
 		return nil, err
 	}
@@ -169,53 +157,9 @@ func (s *store) FindByEntityID(ctx context.Context, entityID string) ([]Response
 	return res, nil
 }
 
-func (s *store) getMatchedPbhIDs(ctx context.Context, entityID string) ([]string, error) {
-	cursor, err := s.dbCollection.Find(ctx, bson.M{})
-	if err != nil {
-		return nil, err
-	}
-
-	defer cursor.Close(ctx)
-	pbhIDs := make([]string, 0)
-	filters := make(map[string]string)
-
-	for cursor.Next(ctx) {
-		var pbh struct {
-			ID     string `bson:"_id"`
-			Filter string `bson:"filter"`
-		}
-		err := cursor.Decode(&pbh)
-		if err != nil {
-			return nil, err
-		}
-
-		filters[pbh.ID] = pbh.Filter
-		if len(filters) == limitMatch {
-			ids, err := s.entityMatcher.MatchAll(ctx, entityID, filters)
-			if err != nil {
-				return nil, err
-			}
-
-			pbhIDs = append(pbhIDs, ids...)
-			filters = make(map[string]string)
-		}
-	}
-
-	if len(filters) > 0 {
-		ids, err := s.entityMatcher.MatchAll(ctx, entityID, filters)
-		if err != nil {
-			return nil, err
-		}
-
-		pbhIDs = append(pbhIDs, ids...)
-	}
-
-	return pbhIDs, nil
-}
-
-func (s *store) GetOneBy(ctx context.Context, filter bson.M) (*Response, error) {
+func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{
-		{"$match": filter},
+		{"$match": bson.M{"_id": id}},
 	}
 	pipeline = append(pipeline, GetNestedObjectsPipeline()...)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
@@ -239,13 +183,22 @@ func (s *store) GetOneBy(ctx context.Context, filter bson.M) (*Response, error) 
 }
 
 func (s *store) FindEntities(ctx context.Context, pbhID string, request EntitiesListRequest) (*AggregationEntitiesResult, error) {
-	pbh, err := s.GetOneBy(ctx, bson.M{"_id": pbhID})
+	pbh, err := s.GetOneBy(ctx, pbhID)
 	if err != nil || pbh == nil {
 		return nil, err
 	}
 
+	var match interface{}
+	if len(pbh.OldMongoQuery) > 0 {
+		match = pbh.OldMongoQuery
+	} else {
+		match, err = pbh.EntityPattern.ToMongoQuery("")
+		if err != nil {
+			return nil, err
+		}
+	}
 	pipeline := []bson.M{
-		{"$match": pbh.Filter},
+		{"$match": match},
 	}
 	filter := common.GetSearchQuery(request.Search, s.entitiesDefaultSearchByFields)
 	if len(filter) > 0 {
@@ -266,7 +219,7 @@ func (s *store) FindEntities(ctx context.Context, pbhID string, request Entities
 		}},
 		{"$unwind": bson.M{"path": "$category", "preserveNullAndEmptyArrays": true}},
 	}
-	cursor, err := s.entitiesCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
+	cursor, err := s.entityCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		request.Query,
 		pipeline,
 		common.GetSortQuery(sortBy, request.Sort),
@@ -289,114 +242,106 @@ func (s *store) FindEntities(ctx context.Context, pbhID string, request Entities
 	return &result, nil
 }
 
-func (s *store) Update(ctx context.Context, model *Response) (bool, error) {
-	if model == nil {
-		return true, nil
-	}
-
-	prevDoc := pbehavior.PBehavior{}
-	err := s.dbCollection.FindOne(ctx, bson.M{"_id": model.ID}).Decode(&prevDoc)
-	if err != nil {
-		if err == mongodriver.ErrNoDocuments {
-			return false, nil
-		}
-
-		return false, err
-	}
-
+func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) {
 	now := libtypes.NewCpsTime(time.Now().Unix())
-	doc, err := s.transformModelToDocument(*model)
-	if err != nil {
-		return false, err
+	doc := s.transformRequestToDocument(r.EditRequest)
+	doc.Updated = &now
+
+	unset := bson.M{}
+
+	if r.Stop == nil {
+		unset["tstop"] = ""
 	}
 
-	created := prevDoc.Created
-	model.Comments = prevDoc.Comments
-	model.LastAlarmDate = prevDoc.LastAlarmDate
-	model.Created = &created
-	model.Updated = &now
-	doc.Updated = now
+	if len(doc.EntityPattern) > 0 {
+		unset["old_mongo_query"] = ""
+	}
 
-	// If model.Stop is nil, insert to mongo using map so that
-	// tstop field can be cleared
-	var update interface{}
+	update := bson.M{"$set": doc}
+	if len(unset) > 0 {
+		update["$unset"] = unset
+	}
 
-	if model.Stop == nil {
-		m := make(map[string]interface{})
-		p, err := bson.Marshal(doc)
+	var pbh *Response
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		pbh = nil
+		_, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
 		if err != nil {
-			return false, err
+			return err
 		}
 
-		err = bson.Unmarshal(p, &m)
-		if err != nil {
-			return false, err
-		}
+		pbh, err = s.GetOneBy(ctx, r.ID)
+		return err
+	})
 
-		delete(m, "tstop")
-		update = bson.M{
-			"$set":   m,
-			"$unset": bson.M{"tstop": 1},
-		}
-	} else {
-		update = bson.M{"$set": doc}
-	}
-
-	result, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": model.ID}, update)
-	if err != nil {
-		return false, err
-	}
-
-	return result.MatchedCount > 0, nil
+	return pbh, err
 }
 
-func (s *store) UpdateByFilter(ctx context.Context, model *Response, filters bson.M) (bool, error) {
-	doc, err := s.transformModelToDocument(*model)
-	if err != nil {
-		return false, err
+func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, error) {
+	set := bson.M{
+		"author":  r.Author,
+		"updated": libtypes.NewCpsTime(),
+	}
+	unset := bson.M{}
+	if r.Name != nil {
+		set["name"] = *r.Name
+	}
+	if r.Enabled != nil {
+		set["enabled"] = *r.Enabled
+	}
+	if r.Reason != nil {
+		set["reason"] = *r.Reason
+	}
+	if r.Type != nil {
+		set["type_"] = *r.Type
+	}
+	if r.RRule != nil {
+		set["rrule"] = *r.RRule
+	}
+	if r.Start != nil {
+		set["tstart"] = *r.Start
+	}
+	if r.Stop.isSet {
+		if r.Stop.val == nil {
+			unset["tstop"] = ""
+		} else {
+			set["tstop"] = *r.Stop.val
+		}
+	}
+	if r.Exdates != nil {
+		set["exdates"] = r.Exdates
+	}
+	if r.Exceptions != nil {
+		set["exceptions"] = r.Exceptions
+	}
+	if r.EntityPattern != nil {
+		set["entity_pattern"] = r.EntityPattern
+		unset["corporate_entity_pattern"] = ""
+		unset["corporate_entity_pattern_title"] = ""
+	} else if r.CorporatePattern != nil {
+		set["entity_pattern"] = r.CorporatePattern.EntityPattern
+		set["corporate_entity_pattern"] = r.CorporatePattern.ID
+		set["corporate_entity_pattern_title"] = r.CorporatePattern.Title
 	}
 
-	doc.Updated = libtypes.NewCpsTime(time.Now().Unix())
+	update := bson.M{"$set": set}
+	if len(unset) > 0 {
+		update["$unset"] = unset
+	}
 
-	var update bson.M
-	if model.Stop == nil {
-		m := make(map[string]interface{})
-		p, err := bson.Marshal(doc)
+	var pbh *Response
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		pbh = nil
+		_, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
 		if err != nil {
-			return false, err
+			return err
 		}
 
-		err = bson.Unmarshal(p, &m)
-		if err != nil {
-			return false, err
-		}
+		pbh, err = s.GetOneBy(ctx, r.ID)
+		return err
+	})
 
-		delete(m, "tstop")
-		update = bson.M{
-			"$set":   m,
-			"$unset": bson.M{"tstop": 1},
-		}
-	} else {
-		update = bson.M{"$set": doc}
-	}
-
-	result, err := s.dbCollection.UpdateOne(
-		ctx,
-		filters,
-		update,
-	)
-	if err != nil {
-		return false, err
-	}
-
-	updatedModel, err := s.GetOneBy(ctx, bson.M{"_id": model.ID})
-	if err != nil {
-		return false, err
-	}
-
-	*model = *updatedModel
-
-	return result.MatchedCount > 0, nil
+	return pbh, err
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
@@ -426,37 +371,77 @@ func (s *store) DeleteByName(ctx context.Context, name string) (string, error) {
 	return pbh.ID, nil
 }
 
-func (s *store) transformModelToDocument(model Response) (pbehavior.PBehavior, error) {
-	exdates := make([]pbehavior.Exdate, len(model.Exdates))
-	for i := range model.Exdates {
-		exdates[i].Type = model.Exdates[i].Type.ID
-		exdates[i].Begin = model.Exdates[i].Begin
-		exdates[i].End = model.Exdates[i].End
-	}
-
-	exceptions := make([]string, len(model.Exceptions))
-	for i := range model.Exceptions {
-		exceptions[i] = model.Exceptions[i].ID
-	}
-
-	filter, err := json.Marshal(model.Filter)
+func (s *store) getMatchedPbhIDs(ctx context.Context, entity libtypes.Entity) ([]string, error) {
+	cursor, err := s.dbCollection.Find(ctx, bson.M{})
 	if err != nil {
-		return pbehavior.PBehavior{}, err
+		return nil, err
+	}
+
+	defer cursor.Close(ctx)
+	pbhIDs := make([]string, 0)
+	filters := make(map[string]interface{})
+
+	for cursor.Next(ctx) {
+		var pbh pbehavior.PBehavior
+		err := cursor.Decode(&pbh)
+		if err != nil {
+			return nil, err
+		}
+
+		if len(pbh.OldMongoQuery) > 0 {
+			filters[pbh.ID] = pbh.OldMongoQuery
+			continue
+		}
+
+		matched, _, err := pbh.EntityPattern.Match(entity)
+		if err != nil {
+			return nil, err
+		}
+
+		if matched {
+			pbhIDs = append(pbhIDs, pbh.ID)
+		}
+	}
+
+	if len(filters) > 0 {
+		ids, err := s.entityMatcher.MatchAll(ctx, entity.ID, filters)
+		if err != nil {
+			return nil, err
+		}
+
+		pbhIDs = append(pbhIDs, ids...)
+	}
+
+	return pbhIDs, nil
+}
+
+func (s *store) transformRequestToDocument(r EditRequest) pbehavior.PBehavior {
+	exdates := make([]pbehavior.Exdate, len(r.Exdates))
+	for i := range r.Exdates {
+		exdates[i].Type = r.Exdates[i].Type
+		exdates[i].Begin = r.Exdates[i].Begin
+		exdates[i].End = r.Exdates[i].End
+	}
+
+	exceptions := make([]string, len(r.Exceptions))
+	for i := range r.Exceptions {
+		exceptions[i] = r.Exceptions[i]
 	}
 
 	return pbehavior.PBehavior{
-		Author:     model.Author,
-		Enabled:    model.Enabled,
-		Filter:     string(filter),
-		Name:       model.Name,
-		Reason:     model.Reason.ID,
-		RRule:      model.RRule,
-		Start:      model.Start,
-		Stop:       model.Stop,
-		Type:       model.Type.ID,
+		Author:     r.Author,
+		Enabled:    *r.Enabled,
+		Name:       r.Name,
+		Reason:     r.Reason,
+		RRule:      r.RRule,
+		Start:      r.Start,
+		Stop:       r.Stop,
+		Type:       r.Type,
 		Exdates:    exdates,
 		Exceptions: exceptions,
-	}, nil
+
+		EntityPatternFields: r.EntityPatternFieldsRequest.ToModel(),
+	}
 }
 
 func (s *store) fillActiveStatuses(ctx context.Context, result []Response) error {

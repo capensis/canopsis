@@ -223,7 +223,11 @@ func (s *service) compute(ctx context.Context, span *timespan.Span) (count int, 
 		res.defaultActiveType,
 	)
 
-	err = s.matcher.LoadAll(ctx, getFilters(res.computedPbehaviors))
+	filters, err := getFilters(res.computedPbehaviors)
+	if err != nil {
+		return 0, err
+	}
+	err = s.matcher.LoadAll(ctx, filters)
 	if err != nil {
 		return 0, err
 	}
@@ -244,14 +248,27 @@ func (s *service) load(ctx context.Context, span timespan.Span) error {
 		data.defaultActiveType,
 	)
 
-	return s.matcher.LoadAll(ctx, getFilters(data.computedPbehaviors))
-}
-
-func getFilters(computed map[string]ComputedPbehavior) map[string]string {
-	filters := make(map[string]string, len(computed))
-	for id, pbehavior := range computed {
-		filters[id] = pbehavior.Filter
+	filters, err := getFilters(data.computedPbehaviors)
+	if err != nil {
+		return err
 	}
 
-	return filters
+	return s.matcher.LoadAll(ctx, filters)
+}
+
+func getFilters(computed map[string]ComputedPbehavior) (map[string]interface{}, error) {
+	filters := make(map[string]interface{}, len(computed))
+	var err error
+	for id, pbehavior := range computed {
+		if len(pbehavior.OldMongoQuery) > 0 {
+			filters[id] = pbehavior.OldMongoQuery
+		} else {
+			filters[id], err = pbehavior.Patten.ToMongoQuery("")
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	return filters, nil
 }
