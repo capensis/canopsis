@@ -22,7 +22,7 @@ export const widgetExpandPanelAlarmMixin = {
     fetchAlarmItemWithGroupsAndSteps(alarm) {
       const { correlation = false } = this.getQueryById(this.widget._id);
       const params = {
-        correlation,
+        with_children: correlation,
 
         with_steps: true,
       };

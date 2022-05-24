@@ -35,21 +35,9 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      groupedSteps: {},
-    };
-  },
-  watch: {
-    alarm: {
-      immediate: true,
-      handler(alarm) {
-        if (alarm.v.steps) {
-          this.groupedSteps = groupAlarmSteps(alarm.v.steps);
-        } else {
-          this.fetchAlarmItemWithGroupsAndSteps(alarm);
-        }
-      },
+  computed: {
+    groupedSteps() {
+      return groupAlarmSteps(this.alarm?.v?.steps ?? []);
     },
   },
 };

@@ -3,32 +3,29 @@
     :widget="widget",
     :alarms="alarmItems",
     :columns="columns",
+    :loading="pending",
     expandable,
     hasColumns
   )
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
-import { ENTITIES_TYPES, WIDGET_TYPES } from '@/constants';
+import { WIDGET_TYPES } from '@/constants';
 
 import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 
 import { authMixin } from '@/mixins/auth';
-import entitiesAlarmMixin from '@/mixins/entities/alarm';
-import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
+import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
+import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 
 import AlarmsListTable from '@/components/widgets/alarm/partials/alarms-list-table.vue';
-
-const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 
 export default {
   components: { AlarmsListTable },
   mixins: [
     authMixin,
     entitiesAlarmMixin,
-    entitiesViewGroupMixin,
+    entitiesWidgetMixin,
   ],
   props: {
     id: {
@@ -36,23 +33,19 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      pending: false,
+      widget: generateDefaultAlarmListWidget(),
+    };
+  },
   computed: {
-    ...entitiesMapGetters({ getEntityItem: 'getItem' }),
-
     widgetId() {
       return this.$route.query.widgetId;
     },
 
     alarmItems() {
       return this.getAlarmsList([this.id]);
-    },
-
-    widget() {
-      const widget = this.getEntityItem(ENTITIES_TYPES.widget, this.widgetId);
-
-      return !widget || widget.type !== WIDGET_TYPES.alarmList
-        ? generateDefaultAlarmListWidget()
-        : widget;
     },
 
     columns() {
@@ -66,11 +59,25 @@ export default {
     },
   },
 
-  mounted() {
-    this.fetchAlarmItem({ id: this.id });
+  async mounted() {
+    try {
+      this.pending = true;
 
-    if (this.widgetId && !this.groupsPending) {
-      this.fetchAllGroupsListWithWidgets();
+      const requests = [this.fetchAlarmItem({ id: this.id })];
+
+      if (this.widgetId) {
+        requests.push(this.fetchWidgetWithoutStore({ id: this.widgetId }));
+      }
+
+      const [, widget] = await Promise.all(requests);
+
+      if (widget?.type === WIDGET_TYPES.alarmList) {
+        this.widget = widget;
+      }
+    } catch (err) {
+      this.$popups.error({ text: err.description || this.$t('errors.default') });
+    } finally {
+      this.pending = false;
     }
   },
 };

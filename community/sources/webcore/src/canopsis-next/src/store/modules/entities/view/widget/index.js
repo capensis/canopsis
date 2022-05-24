@@ -12,6 +12,10 @@ export default {
     ),
   },
   actions: {
+    fetchItemWithoutStore(context, { id }) {
+      return request.get(`${API_ROUTES.widget.list}/${id}`);
+    },
+
     create(context, { data } = {}) {
       return request.post(API_ROUTES.widget.list, data);
     },

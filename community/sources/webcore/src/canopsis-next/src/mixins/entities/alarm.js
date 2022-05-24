@@ -7,7 +7,7 @@ const { mapGetters, mapActions } = createNamespacedHelpers('alarm');
 /**
  * @mixin
  */
-export default {
+export const entitiesAlarmMixin = {
   computed: {
     ...mapGetters({
       getAlarmItem: 'getItem',

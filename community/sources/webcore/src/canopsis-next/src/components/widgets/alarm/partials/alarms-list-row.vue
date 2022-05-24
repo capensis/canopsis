@@ -167,7 +167,25 @@ export default {
   methods: {
     async showExpandPanel() {
       if (!this.row.expanded) {
-        await this.fetchAlarmItemWithGroupsAndSteps(this.alarm);
+        await this.$store.dispatch('alarm/detail/fetchItem', {
+          data: [{
+            _id: this.alarm._id,
+            with_instructions: true,
+            opened: true,
+            steps: {
+              page: 1,
+              limit: 10,
+            },
+            children: {
+              page: 1,
+              limit: 10,
+              sort_by: '',
+              sort: '',
+              multi_sort: [],
+            },
+          }],
+        });
+        // await this.fetchAlarmItemWithGroupsAndSteps(this.alarm);
       }
 
       this.row.expanded = !this.row.expanded;
