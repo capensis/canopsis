@@ -134,7 +134,7 @@ func (m *MockEntityMatcher) EXPECT() *MockEntityMatcherMockRecorder {
 }
 
 // MatchAll mocks base method.
-func (m *MockEntityMatcher) MatchAll(arg0 context.Context, arg1 string, arg2 map[string]string) ([]string, error) {
+func (m *MockEntityMatcher) MatchAll(arg0 context.Context, arg1 string, arg2 map[string]interface{}) ([]string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "MatchAll", arg0, arg1, arg2)
 	ret0, _ := ret[0].([]string)
@@ -337,7 +337,7 @@ func (mr *MockComputedEntityMatcherMockRecorder) GetComputedEntityIDs(arg0 inter
 }
 
 // LoadAll mocks base method.
-func (m *MockComputedEntityMatcher) LoadAll(arg0 context.Context, arg1 map[string]string) error {
+func (m *MockComputedEntityMatcher) LoadAll(arg0 context.Context, arg1 map[string]interface{}) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "LoadAll", arg0, arg1)
 	ret0, _ := ret[0].(error)
