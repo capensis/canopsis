@@ -107,16 +107,13 @@ export default {
   },
   methods: {
     isDependencyOpen(item, parentKeys = []) {
-      const isHandledDependency = parentKeys.includes(item.key);
-
-      if (!item.parentKey || isHandledDependency) {
+      if (!item.parentKey || parentKeys.includes(item.key)) {
         return true;
       }
 
-      const isOpenedDependency = this.opened.includes(item.parentKey);
-
       return (
-        isOpenedDependency && this.isDependencyOpen(this.itemsById[item.parentKey], [...parentKeys, item.key])
+        this.opened.includes(item.parentKey)
+        && this.isDependencyOpen(this.itemsById[item.parentKey], [...parentKeys, item.key])
       );
     },
   },
