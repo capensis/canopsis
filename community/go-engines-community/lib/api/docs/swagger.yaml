@@ -3474,39 +3474,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-  /idle-rules/count:
-    post:
-      tags:
-        - idlerules
-      summary: Count entities and alarm matching patterns
-      description: Count entities and alarm matching patterns
-      operationId: idlerules-countpatterns
-      requestBody:
-        description: body
-        content:
-          application/json:
-            schema:
-              $ref: 'schemas_swagger.yaml#/definitions/idlerule.CountByPatternRequest'
-        required: true
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/idlerule.CountByPatternResult'
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-        408:
-          description: Request Timeout
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /internal/user_interface:
     put:
       tags:
@@ -5153,39 +5120,6 @@ paths:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
         404:
           description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-  /pbehaviors/count:
-    post:
-      tags:
-        - pbehaviors
-      summary: Count entities matching filter
-      description: Count entities matching filter
-      operationId: pbehaviors-countfilter
-      requestBody:
-        description: body
-        content:
-          application/json:
-            schema:
-              $ref: 'schemas_swagger.yaml#/definitions/pbehavior.FilterRequest'
-        required: true
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.CountFilterResult'
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-        408:
-          description: Request Timeout
           content:
             application/json:
               schema:
