@@ -36,6 +36,8 @@
 </template>
 
 <script>
+import { keyBy } from 'lodash';
+
 import { convertTreeArrayToArray } from '@/helpers/treeview';
 
 export default {
@@ -91,21 +93,31 @@ export default {
       return this.items.length;
     },
 
+    arrayItems() {
+      return convertTreeArrayToArray(this.items, this.itemChildren);
+    },
+
+    itemsById() {
+      return keyBy(this.arrayItems, this.itemKey);
+    },
+
     openedItems() {
-      const arrayItems = convertTreeArrayToArray(this.items, this.itemChildren);
-      const itemsById = arrayItems.reduce((acc, item) => {
-        acc[item[this.itemKey]] = item;
+      return this.arrayItems.filter(item => this.isDependencyOpen(item));
+    },
+  },
+  methods: {
+    isDependencyOpen(item, parentKeys = []) {
+      const isHandledDependency = parentKeys.includes(item.key);
 
-        return acc;
-      }, {});
+      if (!item.parentKey || isHandledDependency) {
+        return true;
+      }
 
-      const isItemOpen = item => !item.parentKey
-        || (
-          this.opened.includes(item.parentKey)
-          && isItemOpen(itemsById[item.parentKey])
-        );
+      const isOpenedDependency = this.opened.includes(item.parentKey);
 
-      return arrayItems.filter(isItemOpen);
+      return (
+        isOpenedDependency && this.isDependencyOpen(this.itemsById[item.parentKey], [...parentKeys, item.key])
+      );
     },
   },
 };

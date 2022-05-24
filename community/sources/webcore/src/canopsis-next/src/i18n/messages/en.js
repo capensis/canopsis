@@ -214,6 +214,7 @@ export default {
     ratingSettings: 'Rating settings',
     pbehavior: 'Pbehavior | Pbehaviors',
     template: 'Template',
+    cycleDependency: 'Cycle dependency',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
