@@ -11,7 +11,7 @@
     template(#expand="{ item }")
       v-btn(
         v-if="item.entity",
-        :color="$config.COLORS.impactState[item.impact_state]",
+        :color="getEntityColor(item)",
         icon,
         dark,
         @click="showTreeOfDependenciesModal(item)"
@@ -38,7 +38,7 @@
       div.expand-append
         v-icon arrow_right_alt
         v-chip.ma-0(
-          :color="$config.COLORS.impactState[item.impact_state]",
+          :color="getEntityColor(item)",
           text-color="white"
         )
           span.px-2.body-2.font-weight-bold {{ item.impact_state }}
@@ -59,9 +59,11 @@ import { get, uniq } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { MODALS, ENTITY_TYPES, DEFAULT_SERVICE_DEPENDENCIES_COLUMNS } from '@/constants';
+
+import { MODALS, ENTITY_TYPES, DEFAULT_SERVICE_DEPENDENCIES_COLUMNS, COLOR_INDICATOR_TYPES } from '@/constants';
 
 import { defaultColumnsToColumns } from '@/helpers/entities';
+import { getEntityColor } from '@/helpers/color';
 import {
   dependencyToTreeviewDependency,
   treeviewDependencyToDependency,
@@ -188,6 +190,10 @@ export default {
       fetchServiceDependenciesWithoutStore: 'fetchDependenciesWithoutStore',
       fetchServiceImpactsWithoutStore: 'fetchImpactsWithoutStore',
     }),
+
+    getEntityColor(entity) {
+      return getEntityColor(entity, COLOR_INDICATOR_TYPES.impactState);
+    },
 
     isInRootIds(id) {
       return this.rootIds.includes(id);
