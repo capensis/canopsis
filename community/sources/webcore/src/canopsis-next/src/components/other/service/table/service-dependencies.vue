@@ -8,45 +8,50 @@
     :light="light",
     item-key="key"
   )
-    template(slot="expand", slot-scope="props")
+    template(#expand="{ item }")
       v-btn(
-        v-if="props.item.entity",
-        :color="$config.COLORS.impactState[props.item.impact_state]",
+        v-if="item.entity",
+        :color="$config.COLORS.impactState[item.impact_state]",
         icon,
         dark,
-        @click="showTreeOfDependenciesModal(props.item)"
+        @click="showTreeOfDependenciesModal(item)"
       )
-        v-icon {{ props.item.entity | btnIcon }}
+        v-icon {{ item.entity | btnIcon }}
       v-tooltip(v-else, right)
         v-btn(
           slot="activator",
-          :loading="pendingByIds[props.item.parentId]",
+          :loading="pendingByIds[item.parentId]",
           icon,
-          @click="loadMore(props.item.parentId)"
+          @click="loadMore(item.parentId)"
         )
           v-icon more_horiz
         span {{ $t('common.loadMore') }}
+      v-tooltip(v-if="item.cycle", top)
+        template(#activator="{ on }")
+          v-icon(v-on="on", color="error", size="14") autorenew
+        span {{ $t('common.cycleDependency') }}
     template(
       slot="expand-append",
-      slot-scope="props",
-      v-if="includeRoot && isInRootIds(props.item._id)"
+      slot-scope="{ item }",
+      v-if="includeRoot && isInRootIds(item._id)"
     )
       div.expand-append
         v-icon arrow_right_alt
         v-chip.ma-0(
-          :color="$config.COLORS.impactState[props.item.impact_state]",
+          :color="$config.COLORS.impactState[item.impact_state]",
           text-color="white"
         )
-          span.px-2.body-2.font-weight-bold {{ props.item.impact_state }}
-    tr(slot="items", slot-scope="props")
-      td(v-for="(header, index) in headers", :key="header.value")
-        c-no-events-icon(v-if="!index", :value="props.item.entity | get('idle_since')", top)
-        color-indicator-wrapper(
-          v-else-if="props.item.entity",
-          :entity="props.item.entity",
-          :alarm="props.item.alarm",
-          :type="header.colorIndicator"
-        ) {{ props.item | get(header.value) }}
+          span.px-2.body-2.font-weight-bold {{ item.impact_state }}
+    template(#items="{ item }")
+      tr
+        td(v-for="(header, index) in headers", :key="header.value")
+          c-no-events-icon(v-if="!index", :value="item.entity | get('idle_since')", top)
+          color-indicator-wrapper(
+            v-else-if="item.entity",
+            :entity="item.entity",
+            :alarm="item.alarm",
+            :type="header.colorIndicator"
+          ) {{ item | get(header.value) }}
 </template>
 
 <script>
@@ -158,7 +163,11 @@ export default {
     },
 
     items() {
-      const items = dependenciesDenormalize(this.rootIds, this.dependenciesByIds, this.metaByIds);
+      const items = dependenciesDenormalize({
+        ids: this.rootIds,
+        dependenciesByIds: this.dependenciesByIds,
+        metaByIds: this.metaByIds,
+      });
 
       if (!this.includeRoot && this.rootHasNextPage) {
         items.push(getLoadMoreDenormalizedChild(this.treeviewRoot));
@@ -220,6 +229,10 @@ export default {
       return this.fetchDependenciesById(dependency._id);
     },
 
+    getDependencyChildren(id) {
+      return get(this.dependenciesByIds, [id, 'children']);
+    },
+
     async fetchDependenciesById(id, params = { limit: PAGINATION_LIMIT }) {
       this.$set(this.pendingByIds, id, true);
 
@@ -227,11 +240,14 @@ export default {
       const { dependencies, result } = normalizeDependencies(data);
 
       Object.entries(dependencies).forEach(([dependencyId, dependency]) => {
-        this.$set(this.dependenciesByIds, dependencyId, dependency);
+        const children = this.getDependencyChildren(dependencyId) ?? dependency.children;
+
+        this.$set(this.dependenciesByIds, dependencyId, { ...dependency, children });
       });
 
       if (this.dependenciesByIds[id] && result.length) {
-        const children = uniq([...get(this.dependenciesByIds[id], 'children', []), ...result]);
+        const oldChildren = this.getDependencyChildren(id) ?? [];
+        const children = uniq([...oldChildren, ...result]);
 
         this.$set(this.dependenciesByIds[id], 'children', children);
       }
