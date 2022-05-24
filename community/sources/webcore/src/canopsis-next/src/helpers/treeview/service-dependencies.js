@@ -72,7 +72,8 @@ export const dependencyToTreeviewDependency = (dependency = {}) => {
     ...dependency,
 
     entity: { ...dependency.entity, impact_state: dependency.impact_state },
-    key: uid('dependency'),
+    key: dependency.entity._id,
+    cycle: false,
     _id: dependency.entity._id,
   };
 
@@ -139,30 +140,41 @@ export const getLoadMoreDenormalizedChild = (parent) => {
  * @param {Object} [dependenciesByIds = {}]
  * @param {Object} [metaByIds = {}]
  * @param {DenormalizedServiceTreeviewDependency} [parent]
+ * @param {string[]} [parentIds]
  * @returns {DenormalizedServiceTreeviewDependency[]}
  */
-export const dependenciesDenormalize = (ids = [], dependenciesByIds = {}, metaByIds = {}, parent) => ids
+export const dependenciesDenormalize = ({
+  ids = [],
+  dependenciesByIds = {},
+  metaByIds = {},
+  parent,
+  parentIds = [],
+}) => ids
   .map((id) => {
     const meta = metaByIds[id] || {};
     const dependency = dependenciesByIds[id] || {};
-    const { children } = dependency;
-    const denormalizedDependency = { ...dependency };
+    const { children, ...denormalizedDependency } = dependency;
+    const isCycle = parentIds.includes(id);
 
     if (parent) {
       denormalizedDependency.parentKey = parent.key;
       denormalizedDependency.parentId = parent._id;
+      denormalizedDependency.key = `${parent.key}/${denormalizedDependency.key}`;
     }
 
-    if (!children) {
+    denormalizedDependency.cycle = isCycle;
+
+    if (!children || isCycle) {
       return denormalizedDependency;
     }
 
-    denormalizedDependency.children = dependenciesDenormalize(
-      children,
+    denormalizedDependency.children = dependenciesDenormalize({
+      ids: children,
       dependenciesByIds,
       metaByIds,
-      denormalizedDependency,
-    );
+      parent: denormalizedDependency,
+      parentIds: [...parentIds, id],
+    });
 
     if (meta.page < meta.page_count) {
       denormalizedDependency.children.push(getLoadMoreDenormalizedChild(dependency));
