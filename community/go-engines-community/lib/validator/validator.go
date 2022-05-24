@@ -84,6 +84,24 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("gte", fe.Field(), fe.Param())
 		return t
 	})
+	_ = v.RegisterTranslation("ltfield", trans, func(ut ut.Translator) error {
+		return ut.Add("ltfield", "{0} should be less than {1}.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("ltfield", fe.StructField(), fe.Param())
+		return t
+	})
+	_ = v.RegisterTranslation("ltefield", trans, func(ut ut.Translator) error {
+		return ut.Add("ltefield", "{0} should be less or equal than {1}.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("ltefield", fe.StructField(), fe.Param())
+		return t
+	})
+	_ = v.RegisterTranslation("lt", trans, func(ut ut.Translator) error {
+		return ut.Add("lt", "{0} should be less than {1}.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("lt", fe.Field(), fe.Param())
+		return t
+	})
 	_ = v.RegisterTranslation("lte", trans, func(ut ut.Translator) error {
 		return ut.Add("lte", "{0} should be less or equal than {1}.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {

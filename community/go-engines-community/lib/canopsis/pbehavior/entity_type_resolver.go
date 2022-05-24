@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -55,27 +54,28 @@ func (r *entityTypeResolver) Resolve(
 		return ResolveResult{}, err
 	}
 	computed := ComputeResult{}
-	if len(pbhIDs) == 0 {
-		if entity.Created.Time.After(t.Add(-2 * canopsis.PeriodicalWaitTime)) {
-			computed, err = r.store.GetComputed(ctx)
-			if err != nil {
-				return ResolveResult{}, err
-			}
-
-			filters := make(map[string]string, len(computed.computedPbehaviors))
-			for id, pbehavior := range computed.computedPbehaviors {
-				filters[id] = pbehavior.Filter
-			}
-
-			pbhIDs, err = r.matcher.MatchAll(ctx, entity.ID, filters)
-			if err != nil {
-				return ResolveResult{}, err
-			}
-		}
-	}
-	if len(pbhIDs) == 0 {
-		return ResolveResult{}, nil
-	}
+	// todo
+	//if len(pbhIDs) == 0 {
+	//	if entity.Created.Time.After(t.Add(-2 * canopsis.PeriodicalWaitTime)) {
+	//		computed, err = r.store.GetComputed(ctx)
+	//		if err != nil {
+	//			return ResolveResult{}, err
+	//		}
+	//
+	//		filters := make(map[string]string, len(computed.computedPbehaviors))
+	//		for id, pbehavior := range computed.computedPbehaviors {
+	//			filters[id] = pbehavior.Filter
+	//		}
+	//
+	//		pbhIDs, err = r.matcher.MatchAll(ctx, entity.ID, filters)
+	//		if err != nil {
+	//			return ResolveResult{}, err
+	//		}
+	//	}
+	//}
+	//if len(pbhIDs) == 0 {
+	//	return ResolveResult{}, nil
+	//}
 
 	if computed.defaultActiveType == "" {
 		computed, err = r.store.GetComputedByIDs(ctx, pbhIDs)

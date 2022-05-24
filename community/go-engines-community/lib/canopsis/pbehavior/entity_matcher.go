@@ -2,7 +2,6 @@ package pbehavior
 
 import (
 	"context"
-	"encoding/json"
 	"math"
 	"sort"
 
@@ -14,7 +13,7 @@ const defaultAggregationStep = 100
 
 // EntityMatcher checks if an entity is matched to filter.
 type EntityMatcher interface {
-	MatchAll(ctx context.Context, entityID string, filters map[string]string) ([]string, error)
+	MatchAll(ctx context.Context, entityID string, filters map[string]interface{}) ([]string, error)
 }
 
 // NewEntityMatcher creates new matcher.
@@ -45,7 +44,7 @@ type entityMatcher struct {
 func (m *entityMatcher) MatchAll(
 	ctx context.Context,
 	entityID string,
-	filters map[string]string,
+	filters map[string]interface{},
 ) ([]string, error) {
 	matched := make(map[string]bool)
 	filtersLen := len(filters)
@@ -114,17 +113,6 @@ func (m *entityMatcher) MatchAll(
 	return keys, nil
 }
 
-// transformFilter unmarshals string to bson expression.
-func transformFilter(filter string) (bson.M, error) {
-	var bsonFilter bson.M
-	err := json.Unmarshal([]byte(filter), &bsonFilter)
-	if err != nil {
-		return nil, err
-	}
-
-	return bson.M{"$match": bsonFilter}, nil
-}
-
 // getEntityAggregatePipeline returns doc where key is filter key and value is 1 or 0.
 func getEntityAggregatePipeline(
 	entityID string,
@@ -133,12 +121,7 @@ func getEntityAggregatePipeline(
 	facetPipeline := bson.M{}
 
 	for _, v := range filters {
-		p, err := transformFilter(v.Value)
-		if err != nil {
-			return nil, err
-		}
-
-		facetPipeline[v.Key] = []bson.M{p}
+		facetPipeline[v.Key] = []bson.M{{"$match": v.Value}}
 	}
 
 	return []bson.M{
@@ -168,5 +151,5 @@ func getEntityAggregatePipeline(
 
 type keyValue struct {
 	Key   string
-	Value string
+	Value interface{}
 }

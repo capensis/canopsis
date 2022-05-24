@@ -8,7 +8,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -164,15 +166,28 @@ func (p *createPbehaviorMessageProcessor) createPbehavior(
 	pbehavior := libpbehavior.PBehavior{
 		ID:      utils.NewID(),
 		Enabled: true,
-		Filter:  fmt.Sprintf(`{"_id": "%s"}`, entity.ID),
 		Name:    params.Name,
 		Reason:  params.Reason,
 		RRule:   params.RRule,
 		Start:   &start,
 		Stop:    &stop,
 		Type:    params.Type,
-		Created: now,
-		Updated: now,
+		Created: &now,
+		Updated: &now,
+
+		EntityPatternFields: savedpattern.EntityPatternFields{
+			EntityPattern: pattern.Entity{
+				{
+					{
+						Field: "_id",
+						Condition: pattern.Condition{
+							Type:  pattern.ConditionEqual,
+							Value: entity.ID,
+						},
+					},
+				},
+			},
+		},
 	}
 
 	collection := p.DbClient.Collection(mongo.PbehaviorMongoCollection)

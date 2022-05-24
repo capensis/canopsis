@@ -2,7 +2,6 @@ package pbehavior
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -301,15 +300,19 @@ func (c *cancelableComputer) findEntitiesMatchPbhFilter(
 	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			return nil, nil
-		} else {
-			return nil, err
 		}
+
+		return nil, err
 	}
 
 	var filter interface{}
-	err = json.Unmarshal([]byte(pbehavior.Filter), &filter)
-	if err != nil {
-		return nil, err
+	if len(pbehavior.OldMongoQuery) > 0 {
+		filter = pbehavior.OldMongoQuery
+	} else {
+		filter, err = pbehavior.EntityPattern.ToMongoQuery("")
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if len(excludeIds) > 0 {

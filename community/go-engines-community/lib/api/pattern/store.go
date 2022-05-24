@@ -47,6 +47,7 @@ func NewStore(
 			mongo.EventFilterRulesMongoCollection,
 			mongo.MetaAlarmRulesMongoCollection,
 			mongo.InstructionMongoCollection,
+			mongo.PbehaviorMongoCollection,
 		},
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"sort"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"github.com/teambition/rrule-go"
 	"golang.org/x/sync/errgroup"
@@ -46,9 +47,11 @@ type typeComputer struct {
 type ComputedPbehavior struct {
 	Name    string         `json:"n"`
 	Reason  string         `json:"r"`
-	Filter  string         `json:"f"`
 	Types   []computedType `json:"t"`
 	Created int64          `json:"c"`
+
+	Patten        pattern.Entity         `json:"p,omitempty"`
+	OldMongoQuery map[string]interface{} `json:"q,omitempty"`
 }
 
 // computedType represents computed typeID for determined time span.
@@ -429,11 +432,13 @@ func (c *typeComputer) computePbehavior(
 		}
 
 		return ComputedPbehavior{
-			Filter:  pbehavior.Filter,
 			Name:    pbehavior.Name,
 			Reason:  reasonName,
 			Types:   res,
 			Created: pbehavior.Created.Unix(),
+
+			Patten:        pbehavior.EntityPattern,
+			OldMongoQuery: pbehavior.OldMongoQuery,
 		}, nil
 	}
 

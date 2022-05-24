@@ -18,7 +18,7 @@ import (
 // filter-entity associations and uses computed data to resolve matched filters.
 type ComputedEntityMatcher interface {
 	// LoadAll computes filter-entity associations.
-	LoadAll(ctx context.Context, filters map[string]string) error
+	LoadAll(ctx context.Context, filters map[string]interface{}) error
 	// Match matches entity to filters by precomputed data.
 	Match(ctx context.Context, entityID string) ([]string, error)
 	GetComputedEntityIDs(ctx context.Context) ([]string, error)
@@ -48,7 +48,7 @@ type computedEntityMatcher struct {
 	key          string
 }
 
-func (m *computedEntityMatcher) LoadAll(ctx context.Context, filters map[string]string) error {
+func (m *computedEntityMatcher) LoadAll(ctx context.Context, filters map[string]interface{}) error {
 	ch := make(chan string)
 	type workerResult struct {
 		key       string
@@ -177,14 +177,9 @@ func (m *computedEntityMatcher) GetComputedEntityIDs(ctx context.Context) ([]str
 	return entityIDs, nil
 }
 
-func (m *computedEntityMatcher) findEntityIDs(ctx context.Context, filter string) ([]string, error) {
-	match, err := transformFilter(filter)
-	if err != nil {
-		return nil, err
-	}
-
+func (m *computedEntityMatcher) findEntityIDs(ctx context.Context, filter interface{}) ([]string, error) {
 	cursor, err := m.dbCollection.Aggregate(ctx, []bson.M{
-		match,
+		{"$match": filter},
 		{"$project": bson.M{
 			"_id": 1,
 		}},
