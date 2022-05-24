@@ -1127,13 +1127,17 @@ paths:
                     "rrule": "FREQ=DAILY",
                     "type": "default_active",
                     "reason": "default_reason",
-                    "filter": {
-                      "$and": [
+                    "entity_pattern": [
+                      [
                         {
-                          "name": "cps_resource"
+                          "field": "name",
+                          "cond": {
+                            "type": "eq",
+                            "value": "cps_resource"
+                          }
                         }
                       ]
-                    },
+                    ],
                     "exdates": [
                       {
                         "begin": 1651460400,
@@ -1189,13 +1193,17 @@ paths:
                     "rrule": "FREQ=DAILY",
                     "type": "default_active",
                     "reason": "default_reason",
-                    "filter": {
-                      "$and": [
+                    "entity_pattern": [
+                      [
                         {
-                          "name": "cps_resource"
+                          "field": "name",
+                          "cond": {
+                            "type": "eq",
+                            "value": "cps_resource"
+                          }
                         }
                       ]
-                    },
+                    ],
                     "exdates": [
                       {
                         "begin": 1651460400,
@@ -5088,13 +5096,17 @@ paths:
                   "rrule": "",
                   "type": "default_Maintenance",
                   "reason": "default_reason",
-                  "filter": {
-                    "$and": [
+                  "entity_pattern": [
+                    [
                       {
-                        "name": "cps_resource"
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
                       }
                     ]
-                  }
+                  ]
                 }
               pause:
                 summary: Pause period
@@ -5107,13 +5119,17 @@ paths:
                   "rrule": "",
                   "type": "default_pause",
                   "reason": "default_reason",
-                  "filter": {
-                    "$and": [
+                  "entity_pattern": [
+                    [
                       {
-                        "name": "cps_resource"
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
                       }
                     ]
-                  }
+                  ]
                 }
               inactive:
                 summary: Inactive period
@@ -5126,13 +5142,17 @@ paths:
                   "rrule": "FREQ=WEEKLY",
                   "type": "default_inactive",
                   "reason": "default_reason",
-                  "filter": {
-                    "$and": [
+                  "entity_pattern": [
+                    [
                       {
-                        "name": "cps_resource"
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
                       }
                     ]
-                  }
+                  ]
                 }
               active:
                 summary: Active period
@@ -5145,13 +5165,17 @@ paths:
                   "rrule": "FREQ=DAILY",
                   "type": "default_active",
                   "reason": "default_reason",
-                  "filter": {
-                    "$and": [
+                  "entity_pattern": [
+                    [
                       {
-                        "name": "cps_resource"
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
                       }
                     ]
-                  },
+                  ],
                   "exdates": [
                     {
                       "begin": 1651460400,
@@ -5233,13 +5257,17 @@ paths:
                   "rrule": "FREQ=DAILY",
                   "type": "default_active",
                   "reason": "default_reason",
-                  "filter": {
-                    "$and": [
+                  "entity_pattern": [
+                    [
                       {
-                        "name": "cps_resource"
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
                       }
                     ]
-                  },
+                  ],
                   "exdates": [
                     {
                       "begin": 1651460400,
