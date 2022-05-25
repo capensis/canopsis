@@ -283,6 +283,35 @@ func (a *ApiClient) TheResponseKeyShouldNotExist(path string) error {
 	return nil
 }
 
+/*
+Step example:
+	Then the difference between metaalarmLastEventDate createTimestamp is in range -2,2
+*/
+func (a *ApiClient) TheDifferenceBetweenValues(var1, var2 string, left, right float64) error {
+	val1, err := a.getFloatVar(var1)
+	if err != nil {
+		return fmt.Errorf("first variable %s", err)
+	}
+	val2, err := a.getFloatVar(var2)
+	if err != nil {
+		return fmt.Errorf("second variable %s", err)
+	}
+	d := val1 - val2
+	if d < left || right < d {
+		return fmt.Errorf("difference is %f and out of range %f, %f", d, left, right)
+	}
+
+	return nil
+}
+
+func (a *ApiClient) getFloatVar(name string) (float64, error) {
+	val, ok := a.vars[name]
+	if !ok {
+		return 0, fmt.Errorf("doesn't exist")
+	}
+	return strconv.ParseFloat(val, 64)
+}
+
 /**
 Step example:
 	Then the response key "data.0.duration" should be greater or equal than 3
@@ -1238,14 +1267,6 @@ func (a *ApiClient) executeTemplate(tpl string) (*bytes.Buffer, error) {
 	}
 
 	return buf, nil
-}
-
-func (a *ApiClient) getFloatVar(name string) (float64, error) {
-	val, ok := a.vars[name]
-	if !ok {
-		return 0, fmt.Errorf("%q doesn't exist", name)
-	}
-	return strconv.ParseFloat(val, 64)
 }
 
 // getPartialResponse removes fields from received which are not presented in expected.

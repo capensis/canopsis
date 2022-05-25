@@ -2107,10 +2107,7 @@ Feature: update service on event
     }
     """
     When I wait the end of event processing
-    When I wait 1s
-    When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]} until response code is 200 and body contains:
     """json
     {
       "data": [],
@@ -2208,10 +2205,7 @@ Feature: update service on event
     }
     """
     When I wait the end of event processing
-    When I wait 1s
-    When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true until response code is 200 and body contains:
     """json
     {
       "data": [],
@@ -2333,7 +2327,6 @@ Feature: update service on event
             "component": "{{ .serviceID }}",
             "connector": "service",
             "connector_name": "service",
-            "resolved": {{ .disableTimestamp }},
             "state": {
               "val": 3
             },
@@ -2365,6 +2358,8 @@ Feature: update service on event
       }
     }
     """
+    When I save response alarmResolve={{ (index .lastResponse.data 1).v.resolved }}
+    Then the difference between alarmResolve disableTimestamp is in range -2,2
 
   Scenario: given deleted entity service should update impact service alarm
     Given I am admin

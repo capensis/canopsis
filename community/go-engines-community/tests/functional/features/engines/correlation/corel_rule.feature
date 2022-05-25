@@ -398,10 +398,7 @@ Feature: correlation feature - corel rule
     }
     """
     When I wait the end of 1 events processing
-    When I wait 1s
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true until response code is 200 and body contains:
     """
     {
       "data": [],
