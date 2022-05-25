@@ -142,7 +142,7 @@ export default {
 
       if (this.inputType === PATTERN_FIELD_TYPES.stringArray) {
         return {
-          is: 'c-array-mixed-field',
+          is: 'c-array-text-field',
 
           bind: {
             name: this.name,
