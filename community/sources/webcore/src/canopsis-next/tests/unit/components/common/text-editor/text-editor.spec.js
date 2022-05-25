@@ -33,6 +33,27 @@ const selectEditorImageInsetButton = wrapper => selectEditorTabsWrapper(wrapper)
 
 describe('text-editor', () => {
   const XMLHttpRequest = mockXMLHttpRequest();
+  const filesMeta = [
+    {
+      filename: 'file.png',
+      mediatype: 'image/png',
+    },
+    {
+      filename: 'file.doc',
+      mediatype: 'other/doc',
+    },
+  ];
+  const files = filesMeta.map(({ filename, mediatype }) => new File(
+    [new ArrayBuffer(1)],
+    filename, { type: mediatype },
+  ));
+
+  const filesResponse = filesMeta.map(({ filename, mediatype }) => ({
+    _id: filename,
+    filename,
+    mediatype,
+    created: 1653398538,
+  }));
 
   test('Value changed after change props', async () => {
     const wrapper = snapshotFactory();
@@ -62,11 +83,10 @@ describe('text-editor', () => {
   });
 
   test('Image uploaded after trigger image control', async () => {
+    jest.useFakeTimers('legacy');
     const focusSpy = jest.spyOn(window, 'focus').mockImplementation(() => {});
 
-    const filename = 'file.png';
-    const mediatype = 'image/png';
-    const file = new File([new ArrayBuffer(1)], filename, { type: mediatype });
+    const [file] = files;
 
     const wrapper = snapshotFactory();
 
@@ -87,15 +107,11 @@ describe('text-editor', () => {
     expect(XMLHttpRequest.open).toBeCalledWith('POST', `${API_HOST}${API_ROUTES.file}?public=false`, true);
 
     await flushPromises();
+    jest.runAllTimers();
 
     expect(XMLHttpRequest.send).toBeCalledWith(expect.any(FormData));
 
-    const fileResponse = {
-      _id: '9f6e9bbe-c021-4ede-94bd-b42dfa7d22f7',
-      filename,
-      mediatype,
-      created: 1653398538,
-    };
+    const [fileResponse] = filesResponse;
 
     XMLHttpRequest.responseText = JSON.stringify([fileResponse]);
     XMLHttpRequest.status = 200;
@@ -110,6 +126,7 @@ describe('text-editor', () => {
       'input',
       `<img src="${API_HOST}${API_ROUTES.file}/${fileResponse._id}" style="width: 300px;">`,
     );
+    jest.useRealTimers();
   });
 
   test('Image as url uploaded after trigger image control', async () => {
@@ -171,8 +188,58 @@ describe('text-editor', () => {
     expect(XMLHttpRequest.open).not.toBeCalled();
   });
 
-  test('Renders `text-editor` with default props', async () => {
+  test('Image not uploaded after trigger paste event', async () => {
     jest.useFakeTimers('legacy');
+    const focusSpy = jest.spyOn(window, 'focus').mockImplementation(() => {});
+
+    const wrapper = snapshotFactory();
+
+    await flushPromises();
+
+    const editor = selectEditor(wrapper);
+
+    await editor.trigger('paste', {
+      clipboardData: {
+        files,
+        getData: () => {},
+      },
+    });
+
+    await flushPromises();
+
+    expect(XMLHttpRequest.open).toBeCalledWith('POST', `${API_HOST}${API_ROUTES.file}?public=false`, true);
+
+    await flushPromises();
+    jest.runAllTimers();
+
+    expect(XMLHttpRequest.send).toBeCalledWith(expect.any(FormData));
+
+    XMLHttpRequest.responseText = JSON.stringify(filesResponse);
+    XMLHttpRequest.status = 200;
+
+    XMLHttpRequest.onload();
+
+    await flushPromises();
+
+    expect(focusSpy).toBeCalled();
+
+    const firstFile = filesResponse[0];
+    const secondFile = filesResponse[1];
+
+    const firstEmitData = `<img src="${API_HOST}${API_ROUTES.file}/${firstFile._id}" style="width: 300px;">`;
+
+    const secondEmitData = `${firstEmitData}<a href="${API_HOST}${API_ROUTES.file}/${secondFile._id}" target="_blank">${secondFile.filename}</a>`;
+
+    expect(wrapper).toEmit(
+      'input',
+      firstEmitData,
+      secondEmitData,
+    );
+    jest.useRealTimers();
+  });
+
+  test('Renders `text-editor` with default props', async () => {
+    jest.useFakeTimers();
     const wrapper = snapshotFactory();
 
     await flushPromises();
@@ -183,7 +250,7 @@ describe('text-editor', () => {
   });
 
   test('Renders `text-editor` with files', async () => {
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
     const wrapper = snapshotFactory({
       value: `<img src="${API_HOST}${API_ROUTES.file}/123" style="width: 300px;">`,
     });
@@ -196,7 +263,7 @@ describe('text-editor', () => {
   });
 
   test('Renders `text-editor` with custom props', async () => {
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
     const wrapper = snapshotFactory({
       propsData: {
         value: '<div><p>Paragraph</p></div>',
