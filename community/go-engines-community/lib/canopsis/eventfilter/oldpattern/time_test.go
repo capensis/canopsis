@@ -1,11 +1,11 @@
-package pattern_test
+package oldpattern_test
 
 import (
 	"reflect"
 	"testing"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
@@ -13,11 +13,11 @@ import (
 )
 
 type timePatternWrapper struct {
-	Pattern pattern.TimePattern `bson:"pattern"`
+	Pattern oldpattern.TimePattern `bson:"pattern"`
 }
 
 type timeRefPatternWrapper struct {
-	Pattern pattern.TimeRefPattern `bson:"pattern"`
+	Pattern oldpattern.TimeRefPattern `bson:"pattern"`
 }
 
 func timestamp(value int64) types.CpsTime {
@@ -449,16 +449,16 @@ func TestTimePatternMarshalBSON(t *testing.T) {
 	datasets := []struct {
 		TestName             string
 		ExpectedUnmarshalled bson.M
-		Pattern              pattern.TimePattern
+		Pattern              oldpattern.TimePattern
 	}{
 		{
 			TestName: "test for equal",
 			ExpectedUnmarshalled: bson.M{
 				"pattern": int64(7),
 			},
-			Pattern: pattern.TimePattern{
-				IntegerPattern: pattern.IntegerPattern{
-					IntegerConditions: pattern.IntegerConditions{
+			Pattern: oldpattern.TimePattern{
+				IntegerPattern: oldpattern.IntegerPattern{
+					IntegerConditions: oldpattern.IntegerConditions{
 						Equal: types.OptionalInt64{
 							Set:   true,
 							Value: 7,
@@ -475,9 +475,9 @@ func TestTimePatternMarshalBSON(t *testing.T) {
 					"<=": int64(2),
 				},
 			},
-			Pattern: pattern.TimePattern{
-				IntegerPattern: pattern.IntegerPattern{
-					IntegerConditions: pattern.IntegerConditions{
+			Pattern: oldpattern.TimePattern{
+				IntegerPattern: oldpattern.IntegerPattern{
+					IntegerConditions: oldpattern.IntegerConditions{
 						Gte: types.OptionalInt64{
 							Set:   true,
 							Value: 0,
@@ -498,9 +498,9 @@ func TestTimePatternMarshalBSON(t *testing.T) {
 					"<": int64(3),
 				},
 			},
-			Pattern: pattern.TimePattern{
-				IntegerPattern: pattern.IntegerPattern{
-					IntegerConditions: pattern.IntegerConditions{
+			Pattern: oldpattern.TimePattern{
+				IntegerPattern: oldpattern.IntegerPattern{
+					IntegerConditions: oldpattern.IntegerConditions{
 						Gt: types.OptionalInt64{
 							Set:   true,
 							Value: 0,
@@ -521,9 +521,9 @@ func TestTimePatternMarshalBSON(t *testing.T) {
 					"<":  int64(3),
 				},
 			},
-			Pattern: pattern.TimePattern{
-				IntegerPattern: pattern.IntegerPattern{
-					IntegerConditions: pattern.IntegerConditions{
+			Pattern: oldpattern.TimePattern{
+				IntegerPattern: oldpattern.IntegerPattern{
+					IntegerConditions: oldpattern.IntegerConditions{
 						Gte: types.OptionalInt64{
 							Set:   true,
 							Value: 2,
@@ -541,7 +541,7 @@ func TestTimePatternMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"pattern": primitive.Undefined{},
 			},
-			Pattern: pattern.TimePattern{},
+			Pattern: oldpattern.TimePattern{},
 		},
 	}
 
@@ -572,17 +572,17 @@ func TestTimeRefPatternMarshalBSON(t *testing.T) {
 	datasets := []struct {
 		TestName             string
 		ExpectedUnmarshalled bson.M
-		Pattern              pattern.TimeRefPattern
+		Pattern              oldpattern.TimeRefPattern
 	}{
 		{
 			TestName: "test for equal",
 			ExpectedUnmarshalled: bson.M{
 				"pattern": int64(7),
 			},
-			Pattern: pattern.TimeRefPattern{
-				IntegerRefPattern: pattern.IntegerRefPattern{
-					IntegerPattern: pattern.IntegerPattern{
-						IntegerConditions: pattern.IntegerConditions{
+			Pattern: oldpattern.TimeRefPattern{
+				IntegerRefPattern: oldpattern.IntegerRefPattern{
+					IntegerPattern: oldpattern.IntegerPattern{
+						IntegerConditions: oldpattern.IntegerConditions{
 							Equal: types.OptionalInt64{
 								Set:   true,
 								Value: 7,
@@ -600,10 +600,10 @@ func TestTimeRefPatternMarshalBSON(t *testing.T) {
 					"<=": int64(2),
 				},
 			},
-			Pattern: pattern.TimeRefPattern{
-				IntegerRefPattern: pattern.IntegerRefPattern{
-					IntegerPattern: pattern.IntegerPattern{
-						IntegerConditions: pattern.IntegerConditions{
+			Pattern: oldpattern.TimeRefPattern{
+				IntegerRefPattern: oldpattern.IntegerRefPattern{
+					IntegerPattern: oldpattern.IntegerPattern{
+						IntegerConditions: oldpattern.IntegerConditions{
 							Gte: types.OptionalInt64{
 								Set:   true,
 								Value: 0,
@@ -625,10 +625,10 @@ func TestTimeRefPatternMarshalBSON(t *testing.T) {
 					"<": int64(3),
 				},
 			},
-			Pattern: pattern.TimeRefPattern{
-				IntegerRefPattern: pattern.IntegerRefPattern{
-					IntegerPattern: pattern.IntegerPattern{
-						IntegerConditions: pattern.IntegerConditions{
+			Pattern: oldpattern.TimeRefPattern{
+				IntegerRefPattern: oldpattern.IntegerRefPattern{
+					IntegerPattern: oldpattern.IntegerPattern{
+						IntegerConditions: oldpattern.IntegerConditions{
 							Gt: types.OptionalInt64{
 								Set:   true,
 								Value: 0,
@@ -650,10 +650,10 @@ func TestTimeRefPatternMarshalBSON(t *testing.T) {
 					"<":  int64(3),
 				},
 			},
-			Pattern: pattern.TimeRefPattern{
-				IntegerRefPattern: pattern.IntegerRefPattern{
-					IntegerPattern: pattern.IntegerPattern{
-						IntegerConditions: pattern.IntegerConditions{
+			Pattern: oldpattern.TimeRefPattern{
+				IntegerRefPattern: oldpattern.IntegerRefPattern{
+					IntegerPattern: oldpattern.IntegerPattern{
+						IntegerConditions: oldpattern.IntegerConditions{
 							Gte: types.OptionalInt64{
 								Set:   true,
 								Value: 2,
@@ -672,8 +672,8 @@ func TestTimeRefPatternMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"pattern": nil,
 			},
-			Pattern: pattern.TimeRefPattern{
-				IntegerRefPattern: pattern.IntegerRefPattern{
+			Pattern: oldpattern.TimeRefPattern{
+				IntegerRefPattern: oldpattern.IntegerRefPattern{
 					EqualNil: true,
 				},
 			},
@@ -683,7 +683,7 @@ func TestTimeRefPatternMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"pattern": primitive.Undefined{},
 			},
-			Pattern: pattern.TimeRefPattern{},
+			Pattern: oldpattern.TimeRefPattern{},
 		},
 	}
 

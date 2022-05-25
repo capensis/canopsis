@@ -6,10 +6,10 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "description" : "test-correlation-valuegroup-1",
       "enabled": true,
-      "event_pattern": [
+      "alarm_pattern": [
         [
           {
-            "field": "connector",
+            "field": "v.connector",
             "cond": {
               "type": "eq",
               "value": "test-valuegroup-1"
@@ -197,10 +197,10 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "description" : "test-correlation-valuegroup-2",
       "enabled": true,
-      "event_pattern": [
+      "alarm_pattern": [
         [
           {
-            "field": "connector",
+            "field": "v.connector",
             "cond": {
               "type": "eq",
               "value": "test-valuegroup-2"
@@ -232,10 +232,10 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "description" : "test-correlation-valuegroup-2",
       "enabled": true,
-      "event_pattern": [
+      "alarm_pattern": [
         [
           {
-            "field": "connector",
+            "field": "v.connector",
             "cond": {
               "type": "eq",
               "value": "test-valuegroup-2"
@@ -621,10 +621,10 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "description" : "test-correlation-valuegroup-3",
       "enabled": true,
-      "event_pattern": [
+      "alarm_pattern": [
         [
           {
-            "field": "connector",
+            "field": "v.connector",
             "cond": {
               "type": "eq",
               "value": "test-valuegroup-3"
@@ -780,10 +780,10 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "description" : "test-correlation-valuegroup-4",
       "enabled": true,
-      "event_pattern": [
+      "alarm_pattern": [
         [
           {
-            "field": "connector",
+            "field": "v.connector",
             "cond": {
               "type": "eq",
               "value": "test-valuegroup-4"
@@ -913,10 +913,10 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "description" : "test-correlation-valuegroup-5",
       "enabled": true,
-      "event_pattern": [
+      "alarm_pattern": [
         [
           {
-            "field": "connector",
+            "field": "v.connector",
             "cond": {
               "type": "eq",
               "value": "test-valuegroup-5"
@@ -1064,10 +1064,10 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "description" : "test-correlation-valuegroup-6",
       "enabled": true,
-      "event_pattern": [
+      "alarm_pattern": [
         [
           {
-            "field": "connector",
+            "field": "v.connector",
             "cond": {
               "type": "eq",
               "value": "test-valuegroup-6"
