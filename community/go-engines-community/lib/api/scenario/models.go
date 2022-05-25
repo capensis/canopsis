@@ -3,7 +3,7 @@ package scenario
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -84,13 +84,13 @@ type CheckPriorityResponse struct {
 }
 
 type ActionRequest struct {
-	Type                     string                    `json:"type" binding:"required,oneof=ack ackremove assocticket cancel changestate pbehavior snooze webhook"`
-	Parameters               action.Parameters         `json:"parameters,omitempty"`
-	Comment                  string                    `json:"comment"`
-	AlarmPatterns            pattern.AlarmPatternList  `json:"alarm_patterns"`
-	EntityPatterns           pattern.EntityPatternList `json:"entity_patterns"`
-	DropScenarioIfNotMatched *bool                     `json:"drop_scenario_if_not_matched" binding:"required"`
-	EmitTrigger              *bool                     `json:"emit_trigger" binding:"required"`
+	Type                     string                       `json:"type" binding:"required,oneof=ack ackremove assocticket cancel changestate pbehavior snooze webhook"`
+	Parameters               action.Parameters            `json:"parameters,omitempty"`
+	Comment                  string                       `json:"comment"`
+	AlarmPatterns            oldpattern.AlarmPatternList  `json:"alarm_patterns"`
+	EntityPatterns           oldpattern.EntityPatternList `json:"entity_patterns"`
+	DropScenarioIfNotMatched *bool                        `json:"drop_scenario_if_not_matched" binding:"required"`
+	EmitTrigger              *bool                        `json:"emit_trigger" binding:"required"`
 }
 
 type Scenario struct {
@@ -108,13 +108,13 @@ type Scenario struct {
 }
 
 type Action struct {
-	Type                     string                    `bson:"type" json:"type"`
-	Comment                  string                    `bson:"comment" json:"comment"`
-	Parameters               Parameters                `bson:"parameters,omitempty" json:"parameters,omitempty"`
-	AlarmPatterns            pattern.AlarmPatternList  `bson:"alarm_patterns" json:"alarm_patterns"`
-	EntityPatterns           pattern.EntityPatternList `bson:"entity_patterns" json:"entity_patterns"`
-	DropScenarioIfNotMatched bool                      `bson:"drop_scenario_if_not_matched" json:"drop_scenario_if_not_matched"`
-	EmitTrigger              bool                      `bson:"emit_trigger" json:"emit_trigger"`
+	Type                     string                       `bson:"type" json:"type"`
+	Comment                  string                       `bson:"comment" json:"comment"`
+	Parameters               Parameters                   `bson:"parameters,omitempty" json:"parameters,omitempty"`
+	AlarmPatterns            oldpattern.AlarmPatternList  `bson:"alarm_patterns" json:"alarm_patterns"`
+	EntityPatterns           oldpattern.EntityPatternList `bson:"entity_patterns" json:"entity_patterns"`
+	DropScenarioIfNotMatched bool                         `bson:"drop_scenario_if_not_matched" json:"drop_scenario_if_not_matched"`
+	EmitTrigger              bool                         `bson:"emit_trigger" json:"emit_trigger"`
 }
 
 type Parameters struct {

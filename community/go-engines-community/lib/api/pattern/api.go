@@ -3,33 +3,40 @@ package pattern
 import (
 	"context"
 	"encoding/json"
-	"github.com/gin-gonic/gin/binding"
-	"github.com/valyala/fastjson"
+	"errors"
 	"net/http"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/valyala/fastjson"
 )
 
 type API interface {
 	common.CrudAPI
 	BulkDelete(c *gin.Context)
+	Count(c *gin.Context)
 }
 
 type api struct {
 	store        Store
 	enforcer     security.Enforcer
 	actionLogger logger.ActionLogger
+
+	configProvider config.UserInterfaceConfigProvider
 }
 
 func NewApi(
 	store Store,
+	configProvider config.UserInterfaceConfigProvider,
 	enforcer security.Enforcer,
 	actionLogger logger.ActionLogger,
 ) API {
@@ -37,6 +44,8 @@ func NewApi(
 		store:        store,
 		enforcer:     enforcer,
 		actionLogger: actionLogger,
+
+		configProvider: configProvider,
 	}
 }
 
@@ -327,4 +336,31 @@ func (a *api) BulkDelete(c *gin.Context) {
 	}
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+}
+
+// Count
+// @Param body body CountRequest true "body"
+// @Success 200 {object} CountResponse
+func (a *api) Count(c *gin.Context) {
+	request := CountRequest{}
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	conf := a.configProvider.Get()
+	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Duration(conf.CheckCountRequestTimeout)*time.Second)
+	defer cancel()
+
+	res, err := a.store.Count(ctx, request, int64(conf.MaxMatchedItems))
+	if err != nil {
+		if errors.Is(err, context.DeadlineExceeded) {
+			c.AbortWithStatusJSON(http.StatusRequestTimeout, common.ErrTimeoutResponse)
+			return
+		} else {
+			panic(err)
+		}
+	}
+
+	c.JSON(http.StatusOK, res)
 }
