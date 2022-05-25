@@ -13,7 +13,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorexception"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
@@ -26,14 +25,12 @@ type API interface {
 	DeleteByName(c *gin.Context)
 	ListByEntityID(c *gin.Context)
 	ListEntities(c *gin.Context)
-	CountFilter(c *gin.Context)
 }
 
 type api struct {
 	transformer  ModelTransformer
 	store        Store
 	computeChan  chan<- pbehavior.ComputeTask
-	conf         config.UserInterfaceConfigProvider
 	actionLogger logger.ActionLogger
 	logger       zerolog.Logger
 }
@@ -42,7 +39,6 @@ func NewApi(
 	transformer ModelTransformer,
 	store Store,
 	computeChan chan<- pbehavior.ComputeTask,
-	conf config.UserInterfaceConfigProvider,
 	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
 ) API {
@@ -50,7 +46,6 @@ func NewApi(
 		transformer:  transformer,
 		store:        store,
 		computeChan:  computeChan,
-		conf:         conf,
 		actionLogger: actionLogger,
 		logger:       logger,
 	}
@@ -668,29 +663,6 @@ func (a *api) BulkDelete(c *gin.Context) {
 	})
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
-}
-
-// CountFilter
-// @Param body body FilterRequest true "body"
-// @Success 200 {object} CountFilterResult
-func (a api) CountFilter(c *gin.Context) {
-	var request FilterRequest
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
-
-		return
-	}
-
-	data, err := a.store.Count(c.Request.Context(), NewFilter(request.Filter), a.conf.Get().CheckCountRequestTimeout)
-	if errors.Is(err, context.DeadlineExceeded) {
-		c.AbortWithStatusJSON(http.StatusRequestTimeout, common.ErrTimeoutResponse)
-		return
-	} else if err != nil {
-		panic(err)
-	}
-	data.OverLimit = int(data.GetTotal()) > a.conf.Get().MaxMatchedItems
-
-	c.JSON(http.StatusOK, data)
 }
 
 func (a *api) sendComputeTask(task pbehavior.ComputeTask) {

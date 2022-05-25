@@ -102,7 +102,7 @@ func (p PbehaviorInfo) ToMongoQuery(prefix string) (bson.M, error) {
 
 func getPbehaviorInfoStringField(pbhInfo types.PbehaviorInfo, f string) (string, bool) {
 	switch f {
-	case "pbehavior_info._id":
+	case "pbehavior_info.id":
 		return pbhInfo.ID, true
 	case "pbehavior_info.type":
 		return pbhInfo.TypeID, true

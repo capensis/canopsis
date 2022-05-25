@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
+	"golang.org/x/sync/errgroup"
 )
 
 type Store interface {
@@ -18,6 +19,7 @@ type Store interface {
 	Find(ctx context.Context, r ListRequest, userId string) (*AggregationResult, error)
 	Update(ctx context.Context, r EditRequest) (*Response, error)
 	Delete(ctx context.Context, pattern Response) (bool, error)
+	Count(ctx context.Context, r CountRequest, maxCount int64) (CountResponse, error)
 }
 
 type store struct {
@@ -42,6 +44,8 @@ func NewStore(
 
 		linkedCollections: []string{
 			mongo.WidgetFiltersMongoCollection,
+			mongo.EventFilterRulesMongoCollection,
+			mongo.MetaAlarmRulesMongoCollection,
 			mongo.InstructionMongoCollection,
 		},
 	}
@@ -217,6 +221,18 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error 
 		return fmt.Errorf("unknown pattern type id=%s: %q", pattern.ID, pattern.Type)
 	}
 
+	if pattern.Type == savedpattern.TypeEntity {
+		_, err := s.client.Collection(mongo.MetaAlarmRulesMongoCollection).UpdateMany(ctx, bson.M{"corporate_total_entity_pattern": pattern.ID}, bson.M{
+			"$set": bson.M{
+				"total_entity_pattern":                 pattern.EntityPattern,
+				"corporate_total_entity_pattern_title": pattern.Title,
+			},
+		})
+		if err != nil {
+			return err
+		}
+	}
+
 	for _, collection := range s.linkedCollections {
 		_, err := s.client.Collection(collection).UpdateMany(ctx, filter, bson.M{
 			"$set": set,
@@ -246,6 +262,18 @@ func (s *store) cleanLinkedModels(ctx context.Context, pattern Response) error {
 		return fmt.Errorf("unknown pattern type for deleted pattern id=%s: %q", pattern.ID, pattern.Type)
 	}
 
+	if pattern.Type == savedpattern.TypeEntity {
+		_, err := s.client.Collection(mongo.MetaAlarmRulesMongoCollection).UpdateMany(ctx, bson.M{"corporate_total_entity_pattern": pattern.ID}, bson.M{
+			"$unset": bson.M{
+				"corporate_total_entity_pattern":       "",
+				"corporate_total_entity_pattern_title": "",
+			},
+		})
+		if err != nil {
+			return err
+		}
+	}
+
 	for _, collection := range s.linkedCollections {
 		_, err := s.client.Collection(collection).UpdateMany(ctx, bson.M{f: pattern.ID}, bson.M{
 			"$unset": bson.M{
@@ -259,6 +287,87 @@ func (s *store) cleanLinkedModels(ctx context.Context, pattern Response) error {
 	}
 
 	return nil
+}
+
+func (s *store) Count(ctx context.Context, r CountRequest, maxCount int64) (CountResponse, error) {
+	res := CountResponse{}
+	g, ctx := errgroup.WithContext(ctx)
+	var err error
+	var alarmPatternQuery, entityPatternQuery, pbhPatternQuery bson.M
+	var alarmPatternCount, entityPatternCount, pbhPatternCount Count
+	if len(r.AlarmPattern) > 0 {
+		alarmPatternQuery, err = r.AlarmPattern.ToMongoQuery("")
+		if err != nil {
+			return res, err
+		}
+	}
+	if len(r.PbehaviorPattern) > 0 {
+		pbhPatternQuery, err = r.PbehaviorPattern.ToMongoQuery("v")
+		if err != nil {
+			return res, err
+		}
+	}
+	if len(r.EntityPattern) > 0 {
+		entityPatternQuery, err = r.EntityPattern.ToMongoQuery("")
+		if err != nil {
+			return res, err
+		}
+	}
+
+	if len(alarmPatternQuery) > 0 {
+		g.Go(func() error {
+			alarmPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection), alarmPatternQuery)
+			alarmPatternCount.OverLimit = alarmPatternCount.Count > maxCount
+
+			return err
+		})
+	}
+	if len(pbhPatternQuery) > 0 {
+		g.Go(func() error {
+			var err error
+			pbhPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection), pbhPatternQuery)
+			pbhPatternCount.OverLimit = pbhPatternCount.Count > maxCount
+
+			return err
+		})
+	}
+	if len(entityPatternQuery) > 0 {
+		g.Go(func() error {
+			var err error
+			entityPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.EntityMongoCollection), entityPatternQuery)
+			entityPatternCount.OverLimit = entityPatternCount.Count > maxCount
+
+			return err
+		})
+	}
+	if err := g.Wait(); err != nil {
+		return res, err
+	}
+
+	res.AlarmPattern = alarmPatternCount
+	res.PbehaviorPattern = pbhPatternCount
+	res.EntityPattern = entityPatternCount
+
+	return res, nil
+}
+
+func (s *store) fetchCount(ctx context.Context, collection mongo.DbCollection, match bson.M) (int64, error) {
+	cursor, err := collection.Aggregate(ctx, []bson.M{
+		{"$match": match},
+		{"$count": "total_count"},
+	})
+	if err != nil {
+		return 0, err
+	}
+
+	defer cursor.Close(ctx)
+
+	res := AggregationResult{}
+	if cursor.Next(ctx) {
+		err = cursor.Decode(&res)
+	}
+
+	return res.GetTotal(), err
 }
 
 func getAuthorPipeline() []bson.M {

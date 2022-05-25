@@ -7,14 +7,18 @@ Feature: correlation feature - complex rule with threshold rate
     {
       "name": "test-complex-correlation-threshold-rate-1",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "entity_pattern": [
+        [
           {
-            "name": {
-              "regex_match": "test-complex-rule-rate-1-resource"
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-1-resource"
             }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 10,
           "unit": "s"
@@ -138,14 +142,18 @@ Feature: correlation feature - complex rule with threshold rate
     {
       "name": "test-complex-correlation-threshold-rate-2",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "entity_pattern": [
+        [
           {
-            "name": {
-              "regex_match": "test-complex-rule-rate-2-resource"
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-2-resource"
             }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 10,
           "unit": "s"
@@ -309,14 +317,18 @@ Feature: correlation feature - complex rule with threshold rate
     {
       "name": "test-complex-correlation-threshold-rate-3",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "entity_pattern": [
+        [
           {
-            "name": {
-              "regex_match": "test-complex-rule-rate-3-resource"
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-3-resource"
             }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 3,
           "unit": "s"
@@ -473,14 +485,18 @@ Feature: correlation feature - complex rule with threshold rate
     {
       "name": "test-complex-correlation-threshold-rate-4",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "entity_pattern": [
+        [
           {
-            "name": {
-              "regex_match": "test-complex-rule-rate-4-resource"
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-4-resource"
             }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 3,
           "unit": "s"
@@ -658,14 +674,18 @@ Feature: correlation feature - complex rule with threshold rate
     {
       "name": "test-complex-correlation-threshold-rate-5",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "entity_pattern": [
+        [
           {
-            "name": {
-              "regex_match": "test-complex-rule-rate-5-resource"
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-5-resource"
             }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 5,
           "unit": "s"
@@ -807,26 +827,38 @@ Feature: correlation feature - complex rule with threshold rate
     {
       "name": "test-complex-correlation-threshold-rate-6",
       "type": "complex",
+      "total_entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-6-resource"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-7-resource"
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-complex-rule-rate-7-resource"
+            }
+          }
+        ]
+      ],
       "config": {
-        "total_entity_patterns": [
-          {
-            "name": {
-              "regex_match": "test-complex-rule-rate-6-resource"
-            }
-          },
-          {
-            "name": {
-              "regex_match": "test-complex-rule-rate-7-resource"
-            }
-          }
-        ],
-        "entity_patterns": [
-          {
-            "name": {
-              "regex_match": "test-complex-rule-rate-7-resource"
-            }
-          }
-        ],
         "time_interval": {
           "value": 10,
           "unit": "s"
@@ -971,6 +1003,276 @@ Feature: correlation feature - complex rule with threshold rate
           "metaalarm": true,
           "rule": {
             "name": "test-complex-correlation-threshold-rate-6"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given meta alarm rule with threshold rate and old event patterns should create meta alarm
+    Given I am admin
+    When I send an event:
+    """
+    {
+      "connector": "test-complex-rule-rate-backward-compatibility-1-connector",
+      "connector_name": "test-complex-rule-rate-backward-compatibility-1-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-complex-rule-rate-backward-compatibility-1-component",
+      "resource": "test-complex-rule-rate-backward-compatibility-1-resource-1",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 1 events processing
+    When I send an event:
+    """
+    {
+      "connector": "test-complex-rule-rate-backward-compatibility-1-connector",
+      "connector_name": "test-complex-rule-rate-backward-compatibility-1-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-complex-rule-rate-backward-compatibility-1-component",
+      "resource": "test-complex-rule-rate-backward-compatibility-1-resource-2",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 1 events processing
+    When I send an event:
+    """
+    {
+      "connector": "test-complex-rule-rate-backward-compatibility-1-connector",
+      "connector_name": "test-complex-rule-rate-backward-compatibility-1-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-complex-rule-rate-backward-compatibility-1-component",
+      "resource": "test-complex-rule-rate-backward-compatibility-1-resource-3",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"test-complex-rule-rate-backward-compatibility-1"}]}&with_steps=true&with_consequences=true&correlation=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "consequences": {
+            "data": [
+              {
+                "causes": {
+                  "rules": [
+                    {
+                      "name": "test-complex-rule-rate-backward-compatibility-1-name"
+                    }
+                  ],
+                  "total": 1
+                }
+              },
+              {
+                "causes": {
+                  "rules": [
+                    {
+                      "name": "test-complex-rule-rate-backward-compatibility-1-name"
+                    }
+                  ],
+                  "total": 1
+                }
+              },
+              {
+                "causes": {
+                  "rules": [
+                    {
+                      "name": "test-complex-rule-rate-backward-compatibility-1-name"
+                    }
+                  ],
+                  "total": 1
+                }
+              }
+            ],
+            "total": 3
+          },
+          "metaalarm": true,
+          "rule": {
+            "name": "test-complex-rule-rate-backward-compatibility-1-name"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given meta alarm rule with threshold rate and old total event patterns should create meta alarm
+    Given I am admin
+    When I send an event:
+    """
+    {
+      "connector": "test-complex-rule-rate-backward-compatibility-2-connector",
+      "connector_name": "test-complex-rule-rate-backward-compatibility-2-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-complex-rule-rate-backward-compatibility-2-component",
+      "resource": "test-complex-rule-rate-backward-compatibility-2-resource-1",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 1 events processing
+    When I send an event:
+    """
+    {
+      "connector": "test-complex-rule-rate-backward-compatibility-2-connector",
+      "connector_name": "test-complex-rule-rate-backward-compatibility-2-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-complex-rule-rate-backward-compatibility-2-component",
+      "resource": "test-complex-rule-rate-backward-compatibility-2-resource-2",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 1 events processing
+    When I send an event:
+    """
+    {
+      "connector": "test-complex-rule-rate-backward-compatibility-2-connector",
+      "connector_name": "test-complex-rule-rate-backward-compatibility-2-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-complex-rule-rate-backward-compatibility-2-component",
+      "resource": "test-complex-rule-rate-backward-compatibility-2-resource-3",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 1 events processing
+    When I send an event:
+    """
+    {
+      "connector": "test-complex-rule-rate-backward-compatibility-1-connector",
+      "connector_name": "test-complex-rule-rate-backward-compatibility-2-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-complex-rule-rate-backward-compatibility-1-component",
+      "resource": "test-complex-rule-rate-backward-compatibility-1-resource-3",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 1 events processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"test-complex-rule-rate-backward-compatibility-2"}]}&with_steps=true&with_consequences=true&correlation=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 0
+      }
+    }
+    """
+    When I send an event:
+    """
+    {
+      "connector": "test-complex-rule-rate-backward-compatibility-2-connector",
+      "connector_name": "test-complex-rule-rate-backward-compatibility-2-connectorname",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-complex-rule-rate-backward-compatibility-2-component",
+      "resource": "test-complex-rule-rate-backward-compatibility-2-resource-4",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"test-complex-rule-rate-backward-compatibility-2"}]}&with_steps=true&with_consequences=true&correlation=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "consequences": {
+            "data": [
+              {
+                "causes": {
+                  "rules": [
+                    {
+                      "name": "test-complex-rule-rate-backward-compatibility-2-name"
+                    }
+                  ],
+                  "total": 1
+                }
+              },
+              {
+                "causes": {
+                  "rules": [
+                    {
+                      "name": "test-complex-rule-rate-backward-compatibility-2-name"
+                    }
+                  ],
+                  "total": 1
+                }
+              },
+              {
+                "causes": {
+                  "rules": [
+                    {
+                      "name": "test-complex-rule-rate-backward-compatibility-2-name"
+                    }
+                  ],
+                  "total": 1
+                }
+              },
+              {
+                "causes": {
+                  "rules": [
+                    {
+                      "name": "test-complex-rule-rate-backward-compatibility-2-name"
+                    }
+                  ],
+                  "total": 1
+                }
+              }
+            ],
+            "total": 4
+          },
+          "metaalarm": true,
+          "rule": {
+            "name": "test-complex-rule-rate-backward-compatibility-2-name"
           }
         }
       ],

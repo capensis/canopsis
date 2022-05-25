@@ -4,7 +4,7 @@ Package idlerule contains idle rule model and adapter.
 package idlerule
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -23,24 +23,24 @@ type Operation struct {
 
 // Rule represents alarm modification condition and operation.
 type Rule struct {
-	ID             string                    `bson:"_id,omitempty" json:"_id"`
-	Name           string                    `bson:"name" json:"name"`
-	Description    string                    `bson:"description" json:"description"`
-	Author         string                    `bson:"author" json:"author"`
-	Enabled        bool                      `bson:"enabled" json:"enabled"`
-	Type           string                    `bson:"type" json:"type"`
-	Priority       int64                     `bson:"priority" json:"priority"`
-	Duration       types.DurationWithUnit    `bson:"duration" json:"duration"`
-	EntityPatterns pattern.EntityPatternList `bson:"entity_patterns" json:"entity_patterns"`
+	ID             string                       `bson:"_id,omitempty" json:"_id"`
+	Name           string                       `bson:"name" json:"name"`
+	Description    string                       `bson:"description" json:"description"`
+	Author         string                       `bson:"author" json:"author"`
+	Enabled        bool                         `bson:"enabled" json:"enabled"`
+	Type           string                       `bson:"type" json:"type"`
+	Priority       int64                        `bson:"priority" json:"priority"`
+	Duration       types.DurationWithUnit       `bson:"duration" json:"duration"`
+	EntityPatterns oldpattern.EntityPatternList `bson:"entity_patterns" json:"entity_patterns"`
 	// DisableDuringPeriods is an option that allows to disable the rule
 	// when entity is in listed periods due pbehavior schedule.
 	DisableDuringPeriods []string      `bson:"disable_during_periods" json:"disable_during_periods"`
 	Created              types.CpsTime `bson:"created" json:"created"`
 	Updated              types.CpsTime `bson:"updated" json:"updated"`
 	// Only for Alarm rules
-	AlarmPatterns  pattern.AlarmPatternList `bson:"alarm_patterns,omitempty" json:"alarm_patterns,omitempty"`
-	AlarmCondition string                   `bson:"alarm_condition,omitempty" json:"alarm_condition,omitempty"`
-	Operation      *Operation               `bson:"operation,omitempty" json:"operation,omitempty"`
+	AlarmPatterns  oldpattern.AlarmPatternList `bson:"alarm_patterns,omitempty" json:"alarm_patterns,omitempty"`
+	AlarmCondition string                      `bson:"alarm_condition,omitempty" json:"alarm_condition,omitempty"`
+	Operation      *Operation                  `bson:"operation,omitempty" json:"operation,omitempty"`
 }
 
 type Parameters struct {

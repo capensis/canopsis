@@ -544,3 +544,76 @@ Feature: Update an eventfilter
       }
     }
     """
+
+  Scenario: given update request should update eventfilter without changes in old patterns,
+            but should unset old patterns if new patterns are present
+    When I am admin
+    Then I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-backward-compatibility-to-update:
+    """
+    {
+      "description": "changed description",
+      "type": "drop",
+      "priority": 0,
+      "enabled": true
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "author": "root",
+      "description": "changed description",
+      "type": "drop",
+      "priority": 0,
+      "enabled": true,
+      "old_patterns": [
+        {
+          "resource": {
+            "regex_match": "test-eventfilter-to-backward-compatibility-to-update"
+          }
+        }
+      ]
+    }
+    """
+    Then I do PUT /api/v4/eventfilter/rules/test-eventfilter-to-backward-compatibility-to-update:
+    """
+    {
+      "description": "changed description",
+      "type": "drop",
+      "priority": 0,
+      "enabled": true,
+      "event_pattern": [
+        [
+          {
+            "field": "resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-to-backward-compatibility-to-update"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "description": "changed description",
+      "type": "drop",
+      "priority": 0,
+      "enabled": true,
+      "old_patterns": null,
+      "event_pattern": [
+        [
+          {
+            "field": "resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-eventfilter-to-backward-compatibility-to-update"
+            }
+          }
+        ]
+      ]
+    }
+    """

@@ -7,12 +7,18 @@ Feature: correlation feature - complex rule with threshold count
     {
       "name": "test-complex-correlation-1",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "component": "test-complex-correlation-1"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-complex-correlation-1"
+            }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 10,
           "unit": "s"
@@ -136,12 +142,18 @@ Feature: correlation feature - complex rule with threshold count
     {
       "name": "test-complex-correlation-2",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "component": "test-complex-correlation-2"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-complex-correlation-2"
+            }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 3,
           "unit": "s"
@@ -381,12 +393,18 @@ Feature: correlation feature - complex rule with threshold count
     {
       "name": "test-complex-correlation-3",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "component": "test-complex-correlation-3"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-complex-correlation-3"
+            }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 3,
           "unit": "s"
@@ -543,12 +561,18 @@ Feature: correlation feature - complex rule with threshold count
     {
       "name": "test-complex-correlation-4",
       "type": "complex",
-      "config": {
-        "entity_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "component": "test-complex-correlation-4"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-complex-correlation-4"
+            }
           }
-        ],
+        ]
+      ],
+      "config": {
         "time_interval": {
           "value": 5,
           "unit": "s"
@@ -671,6 +695,113 @@ Feature: correlation feature - complex rule with threshold count
           "metaalarm": true,
           "rule": {
             "name": "test-complex-correlation-4"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given meta alarm rule with threshold count and events should create meta alarm
+    Given I am admin
+    When I send an event:
+    """
+    {
+      "connector": "test-metaalarm-rule-backward-compatibility-connector-1",
+      "connector_name": "test-metaalarm-rule-backward-compatibility-connector-name-1",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-metaalarm-rule-backward-compatibility-component-1",
+      "resource": "test-metaalarm-rule-backward-compatibility-resource-1",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 1 events processing
+    When I send an event:
+    """
+    {
+      "connector": "test-metaalarm-rule-backward-compatibility-connector-1",
+      "connector_name": "test-metaalarm-rule-backward-compatibility-connector-name-1",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-metaalarm-rule-backward-compatibility-component-1",
+      "resource": "test-metaalarm-rule-backward-compatibility-resource-2",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 1 events processing
+    When I send an event:
+    """
+    {
+      "connector": "test-metaalarm-rule-backward-compatibility-connector-1",
+      "connector_name": "test-metaalarm-rule-backward-compatibility-connector-name-1",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-metaalarm-rule-backward-compatibility-component-1",
+      "resource": "test-metaalarm-rule-backward-compatibility-resource-3",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"test-metaalarm-rule-backward-compatibility-1"}]}&with_steps=true&with_consequences=true&correlation=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "consequences": {
+            "data": [
+              {
+                "causes": {
+                  "rules": [
+                    {
+                      "name": "test-metaalarm-rule-backward-compatibility-1-name"
+                    }
+                  ],
+                  "total": 1
+                }
+              },
+              {
+                "causes": {
+                  "rules": [
+                    {
+                      "name": "test-metaalarm-rule-backward-compatibility-1-name"
+                    }
+                  ],
+                  "total": 1
+                }
+              },
+              {
+                "causes": {
+                  "rules": [
+                    {
+                      "name": "test-metaalarm-rule-backward-compatibility-1-name"
+                    }
+                  ],
+                  "total": 1
+                }
+              }
+            ],
+            "total": 3
+          },
+          "metaalarm": true,
+          "rule": {
+            "name": "test-metaalarm-rule-backward-compatibility-1-name"
           }
         }
       ],

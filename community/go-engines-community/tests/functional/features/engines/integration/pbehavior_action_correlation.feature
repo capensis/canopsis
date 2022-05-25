@@ -8,15 +8,17 @@ Feature: update meta alarm on action
     {
       "name": "test-metaalarmrule-pbehavior-action-correlation-1",
       "type": "attribute",
-      "config": {
-        "alarm_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "v": {
-              "component": "test-component-pbehavior-action-correlation-1"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-pbehavior-action-correlation-1"
             }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201

@@ -1,4 +1,4 @@
-package pattern
+package oldpattern
 
 type UnexpectedFieldsError struct {
 	Err error

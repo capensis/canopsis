@@ -744,7 +744,7 @@ Feature: Get alarms
     ]
     """
     When I wait the end of 4 events processing
-    When I do GET /api/v4/manual-meta-alarms?search=test-resource-to-alarm-correlation-get-3
+    When I do GET /api/v4/manual-meta-alarms?search=test-metalarm-to-alarm-correlation-get-3
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -757,6 +757,24 @@ Feature: Get alarms
       }
     ]
     """
+
+  Scenario: given get manual meta alarm request with not exist search should return empty response
+    When I am admin
+    When I do GET /api/v4/manual-meta-alarms?search=not-exist
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    []
+    """
+
+  Scenario: given get manual meta alarm unauth request should not allow access
+    When I do GET /api/v4/manual-meta-alarms
+    Then the response code should be 401
+
+  Scenario: given get manual meta alarm request and auth user without permissions should not allow access
+    When I am noperms
+    When I do GET /api/v4/manual-meta-alarms
+    Then the response code should be 403
 
   Scenario: given get search correlation request should return filtered children
     When I am admin
