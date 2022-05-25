@@ -195,12 +195,16 @@ exports[`text-editor Renders \`text-editor\` with custom props 1`] = `
         <div
           class="jodit_statusbar_item jodit_statusbar_item-right"
         >
-          <span />
+          <span>
+            Chars: 9
+          </span>
         </div>
         <div
           class="jodit_statusbar_item jodit_statusbar_item-right"
         >
-          <span />
+          <span>
+            Words: 1
+          </span>
         </div>
         <div
           class="jodit_statusbar_item"
@@ -674,12 +678,16 @@ exports[`text-editor Renders \`text-editor\` with default props 1`] = `
         <div
           class="jodit_statusbar_item jodit_statusbar_item-right"
         >
-          <span />
+          <span>
+            Chars: 0
+          </span>
         </div>
         <div
           class="jodit_statusbar_item jodit_statusbar_item-right"
         >
-          <span />
+          <span>
+            Words: 0
+          </span>
         </div>
         <div
           class="jodit_statusbar_item"
@@ -1141,12 +1149,16 @@ exports[`text-editor Renders \`text-editor\` with files 1`] = `
         <div
           class="jodit_statusbar_item jodit_statusbar_item-right"
         >
-          <span />
+          <span>
+            Chars: 0
+          </span>
         </div>
         <div
           class="jodit_statusbar_item jodit_statusbar_item-right"
         >
-          <span />
+          <span>
+            Words: 0
+          </span>
         </div>
         <div
           class="jodit_statusbar_item"
