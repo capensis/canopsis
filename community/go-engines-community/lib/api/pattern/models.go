@@ -63,3 +63,20 @@ func (r *AggregationResult) GetData() interface{} {
 func (r *AggregationResult) GetTotal() int64 {
 	return r.TotalCount
 }
+
+type CountRequest struct {
+	AlarmPattern     pattern.Alarm         `json:"alarm_pattern" binding:"alarm_pattern"`
+	EntityPattern    pattern.Entity        `json:"entity_pattern" binding:"entity_pattern"`
+	PbehaviorPattern pattern.PbehaviorInfo `json:"pbehavior_pattern" binding:"pbehavior_pattern"`
+}
+
+type CountResponse struct {
+	AlarmPattern     Count `json:"alarm_pattern" binding:"alarm_pattern"`
+	EntityPattern    Count `json:"entity_pattern" binding:"entity_pattern"`
+	PbehaviorPattern Count `json:"pbehavior_pattern" binding:"pbehavior_pattern"`
+}
+
+type Count struct {
+	Count     int64 `bson:"count" json:"count"`
+	OverLimit bool  `bson:"-" json:"over_limit"`
+}

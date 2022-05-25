@@ -2,17 +2,14 @@ package idlerule
 
 import (
 	"context"
-	"errors"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"sync"
 	"time"
 )
 
@@ -22,7 +19,6 @@ type Store interface {
 	GetOneBy(ctx context.Context, id string) (*Rule, error)
 	Update(context.Context, UpdateRequest) (*Rule, error)
 	Delete(ctx context.Context, id string) (bool, error)
-	CountByPatterns(ctx context.Context, filter CountByPatternRequest, timeout int, overLimit int) (*CountByPatternResult, error)
 }
 
 type store struct {
@@ -31,13 +27,6 @@ type store struct {
 	alarmCollection       mongo.DbCollection
 	defaultSearchByFields []string
 	defaultSortBy         string
-}
-
-type countResult struct {
-	entities    int64
-	alarms      int64
-	entitiesErr error
-	alarmsErr   error
 }
 
 func NewStore(db mongo.DbClient) Store {
@@ -162,123 +151,6 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	}
 
 	return deleted > 0, nil
-}
-
-func (s store) countEntitiesCollection(ctx context.Context, entityPattern oldpattern.EntityPatternList) (int64, error) {
-	cursor, err := s.entityCollection.Aggregate(ctx, []bson.M{
-		{"$match": entityPattern.AsMongoDriverQuery()},
-		{"$count": "total_count"},
-	})
-	if err != nil {
-		return 0, err
-	}
-
-	defer cursor.Close(ctx)
-
-	ar := AggregationResult{}
-	if cursor.Next(ctx) {
-		err = cursor.Decode(&ar)
-	}
-
-	return ar.GetTotal(), err
-}
-
-func (s store) countAlarmsCollection(ctx context.Context, alarmPattern oldpattern.AlarmPatternList) (int64, error) {
-	cursor, err := s.alarmCollection.Aggregate(ctx, []bson.M{
-		{"$match": alarmPattern.AsMongoDriverQuery()},
-		{"$count": "total_count"},
-	})
-	if err != nil {
-		return 0, err
-	}
-
-	defer cursor.Close(ctx)
-
-	ar := AggregationResult{}
-	if cursor.Next(ctx) {
-		err = cursor.Decode(&ar)
-	}
-
-	return ar.GetTotal(), err
-}
-
-func (s store) count(ctx context.Context, request CountByPatternRequest, overLimit int) <-chan countResult {
-	v := make(chan countResult)
-
-	go func(v chan<- countResult) {
-		defer close(v)
-
-		var entitiesCount, alarmCount int64
-		var entitiesErr, alarmErr error
-
-		wg := sync.WaitGroup{}
-		wg.Add(2)
-
-		ctx, cancel := context.WithCancel(ctx)
-
-		go func(cancel context.CancelFunc) {
-			defer wg.Done()
-
-			if !request.EntityPatterns.IsSet() || !request.EntityPatterns.IsValid() || len(request.EntityPatterns.Patterns) == 0 {
-				return
-			}
-
-			entitiesCount, entitiesErr = s.countEntitiesCollection(ctx, request.EntityPatterns)
-			if entitiesErr != nil || entitiesCount > int64(overLimit) {
-				cancel()
-			}
-		}(cancel)
-
-		go func(cancel context.CancelFunc) {
-			defer wg.Done()
-
-			if !request.AlarmPatterns.IsSet() || !request.AlarmPatterns.IsValid() || len(request.AlarmPatterns.Patterns) == 0 {
-				return
-			}
-
-			alarmCount, alarmErr = s.countAlarmsCollection(ctx, request.AlarmPatterns)
-			if alarmErr != nil || alarmCount > int64(overLimit) {
-				cancel()
-			}
-		}(cancel)
-
-		wg.Wait()
-
-		res := countResult{
-			entities:    entitiesCount,
-			alarms:      alarmCount,
-			entitiesErr: entitiesErr,
-			alarmsErr:   alarmErr,
-		}
-
-		v <- res
-	}(v)
-
-	return v
-}
-
-func (s store) CountByPatterns(ctx context.Context, request CountByPatternRequest, timeout int, overLimit int) (*CountByPatternResult, error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(timeout)*time.Second)
-	defer cancel()
-
-	res := <-s.count(ctx, request, overLimit)
-
-	if errors.Is(res.alarmsErr, context.DeadlineExceeded) || errors.Is(res.entitiesErr, context.DeadlineExceeded) {
-		return nil, context.DeadlineExceeded
-	}
-
-	if res.alarmsErr != nil && !errors.Is(res.alarmsErr, context.Canceled) {
-		return nil, res.alarmsErr
-	}
-
-	if res.entitiesErr != nil && !errors.Is(res.entitiesErr, context.Canceled) {
-		return nil, res.entitiesErr
-	}
-
-	return &CountByPatternResult{
-		TotalCountEntities: res.entities,
-		TotalCountAlarms:   res.alarms,
-	}, nil
 }
 
 func (s *store) updateFollowingPriorities(ctx context.Context, id string, priority int64) error {
