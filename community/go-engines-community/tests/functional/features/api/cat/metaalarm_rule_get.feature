@@ -13,10 +13,31 @@ Feature: Get a metaalarm-rule
         {
           "_id": "test-metaalarm-to-get-1",
           "auto_resolve": false,
-          "config": {},
+          "config": {
+            "time_interval": {
+              "value": 10,
+              "unit": "s"
+            }
+          },
           "name": "Test alarm get",
           "author": "test-metaalarm-to-get-1-author",
-          "type": "complex"
+          "type": "complex",
+          "output_template": "",
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-get-1-pattern"
+                }
+              }
+            ]
+          ],
+          "old_entity_patterns": null,
+          "old_total_entity_patterns": null,
+          "old_alarm_patterns": null,
+          "old_event_patterns": null
         },
         {
           "_id": "test-metaalarm-to-get-2",
@@ -29,7 +50,23 @@ Feature: Get a metaalarm-rule
           },
           "name": "Test alarm get",
           "author": "test-metaalarm-to-get-2-author",
-          "type": "complex"
+          "type": "complex",
+          "output_template": "",
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-get-2-pattern"
+                }
+              }
+            ]
+          ],
+          "old_entity_patterns": null,
+          "old_total_entity_patterns": null,
+          "old_alarm_patterns": null,
+          "old_event_patterns": null
         }
       ],
       "meta": {
@@ -50,10 +87,58 @@ Feature: Get a metaalarm-rule
     {
       "_id": "test-metaalarm-to-get-1",
       "auto_resolve": false,
-      "config": {},
+      "config": {
+        "time_interval": {
+          "value": 10,
+          "unit": "s"
+        }
+      },
       "name": "Test alarm get",
       "author": "test-metaalarm-to-get-1-author",
-      "type": "complex"
+      "type": "complex",
+      "output_template": "",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-get-1-pattern"
+            }
+          }
+        ]
+      ],
+      "old_entity_patterns": null,
+      "old_total_entity_patterns": null,
+      "old_alarm_patterns": null,
+      "old_event_patterns": null
+    }
+    """
+
+  Scenario: given get request should return metaalarm rule with old patterns
+    When I am admin
+    When I do GET /api/v4/cat/metaalarmrules/test-metaalarm-rule-backward-compatibility-to-get
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "_id": "test-metaalarm-rule-backward-compatibility-to-get",
+      "auto_resolve": false,
+      "config": {
+        "threshold_count": 3
+      },
+      "name": "test-metaalarm-rule-backward-compatibility-to-get-name",
+      "type": "complex",
+      "old_alarm_patterns": [
+        {
+          "v": {
+            "component": "test-metaalarm-rule-backward-compatibility-component-to-get"
+          }
+        }
+      ],
+      "old_entity_patterns": null,
+      "old_total_entity_patterns": null,
+      "old_event_patterns": null
     }
     """
 

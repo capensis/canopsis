@@ -1,4 +1,4 @@
-package pattern
+package oldpattern
 
 import (
 	"fmt"
@@ -9,45 +9,52 @@ import (
 	"go.mongodb.org/mongo-driver/bson/bsontype"
 )
 
-// AlarmStepRegexMatches is a type that contains the values of the
+// AlarmTicketRegexMatches is a type that contains the values of the
 // sub-expressions of regular expressions for each of the fields of an
-// AlarmStep that contain strings.
-type AlarmStepRegexMatches struct {
-	Type      RegexMatches
-	Author    RegexMatches
-	Message   RegexMatches
-	Initiator RegexMatches
+// AlarmTicket that contain strings.
+type AlarmTicketRegexMatches struct {
+	Type    RegexMatches
+	Author  RegexMatches
+	Message RegexMatches
+	Value   RegexMatches
+	Data    map[string]RegexMatches
 }
 
-// AlarmStepFields is a type representing a pattern that can be applied to an
-// alarm step.
-// The fields are not defined directly in the AlarmStepRefPattern struct to
+func NewAlarmTicketRegexMatches() AlarmTicketRegexMatches {
+	return AlarmTicketRegexMatches{
+		Data: make(map[string]RegexMatches),
+	}
+}
+
+// AlarmTicketFields is a type representing a pattern that can be applied to an
+// alarm ticket step.
+// The fields are not defined directly in the AlarmTicketRefPattern struct to
 // make the unmarshalling easier.
-type AlarmStepFields struct {
-	Type      StringPattern  `bson:"_t"`
-	Timestamp TimePattern    `bson:"t"`
-	Author    StringPattern  `bson:"a"`
-	Message   StringPattern  `bson:"m"`
-	Value     IntegerPattern `bson:"val"`
-	Initiator StringPattern  `bson:"initiator"`
+type AlarmTicketFields struct {
+	Type      StringPattern            `bson:"_t"`
+	Timestamp TimePattern              `bson:"t"`
+	Author    StringPattern            `bson:"a"`
+	Message   StringPattern            `bson:"m"`
+	Value     StringPattern            `bson:"val"`
+	Data      map[string]StringPattern `bson:"data"`
 
 	// When unmarshalling a BSON document, the fields of this document that are
 	// not defined in this struct are added to UnexpectedFields.
 	UnexpectedFields map[string]interface{} `bson:",inline"`
 }
 
-func (f AlarmStepFields) IsSet() bool {
+func (f AlarmTicketFields) IsSet() bool {
 	return f.Type.IsSet() ||
 		f.Timestamp.IsSet() ||
 		f.Author.IsSet() ||
 		f.Message.IsSet() ||
 		f.Value.IsSet() ||
-		f.Initiator.IsSet()
+		len(f.Data) > 0
 }
 
-// AlarmStepRefPattern is a type representing a pattern that can be applied to
-// a reference to an alarm step.
-type AlarmStepRefPattern struct {
+// AlarmTicketRefPattern is a type representing a pattern that can be applied
+// to a reference to an alarm ticket step.
+type AlarmTicketRefPattern struct {
 	// ShouldNotBeNil is a boolean indicating that the alarm step should not be
 	// nil, and ShouldBeNil is a boolean indicating that the alarm step should
 	// be nil.
@@ -59,20 +66,19 @@ type AlarmStepRefPattern struct {
 	ShouldNotBeNil bool
 	ShouldBeNil    bool
 
-	AlarmStepFields
+	AlarmTicketFields
+}
+
+func (p AlarmTicketRefPattern) IsSet() bool {
+	return p.ShouldBeNil || p.AlarmTicketFields.IsSet()
 }
 
 // Empty returns true if the pattern has not been set
-func (p AlarmStepRefPattern) Empty() bool {
+func (p AlarmTicketRefPattern) Empty() bool {
 	return (!p.ShouldNotBeNil && !p.ShouldBeNil)
 }
 
-func (p AlarmStepRefPattern) IsSet() bool {
-	return p.ShouldBeNil || p.AlarmStepFields.IsSet()
-}
-
-// AsMongoDriverQuery returns a mongodb filter corresponding to the AlarmStepRefPattern.
-func (p AlarmStepRefPattern) AsMongoDriverQuery(prefix string, query bson.M) {
+func (p AlarmTicketRefPattern) AsMongoDriverQuery(prefix string, query bson.M) {
 	if p.ShouldBeNil {
 		query[prefix] = nil
 		return
@@ -98,33 +104,53 @@ func (p AlarmStepRefPattern) AsMongoDriverQuery(prefix string, query bson.M) {
 		query[fmt.Sprintf("%s.val", prefix)] = p.Value.AsMongoDriverQuery()
 	}
 
-	if !p.Initiator.Empty() {
-		query[fmt.Sprintf("%s.initiator", prefix)] = p.Initiator.AsMongoDriverQuery()
+	if len(p.Data) > 0 {
+		for k, v := range p.Data {
+			query[fmt.Sprintf("%s.data.%s", prefix, k)] = v.AsMongoDriverQuery()
+		}
 	}
 }
 
-// Matches returns true if an alarm step is matched by a pattern. If the
+// Matches returns true if an alarm ticket step is matched by a pattern. If the
 // pattern contains regular expressions with sub-expressions, the values of the
 // sub-expressions are written in the matches argument.
-func (p AlarmStepRefPattern) Matches(step *types.AlarmStep, matches *AlarmStepRegexMatches) bool {
+func (p AlarmTicketRefPattern) Matches(step *types.AlarmTicket, matches *AlarmTicketRegexMatches) bool {
 	if p.ShouldBeNil {
 		return step == nil
 	}
 
 	if p.ShouldNotBeNil {
-		return step != nil &&
+		if step == nil {
+			return false
+		}
+
+		fieldsMatch :=
 			p.Type.Matches(step.Type, &matches.Type) &&
-			p.Timestamp.Matches(step.Timestamp) &&
-			p.Author.Matches(step.Author, &matches.Author) &&
-			p.Message.Matches(step.Message, &matches.Message) &&
-			p.Value.Matches(step.Value) &&
-			p.Initiator.Matches(step.Initiator, &matches.Initiator)
+				p.Timestamp.Matches(step.Timestamp) &&
+				p.Author.Matches(step.Author, &matches.Author) &&
+				p.Message.Matches(step.Message, &matches.Message) &&
+				p.Value.Matches(step.Value, &matches.Value)
+
+		dataMatch := true
+
+		for dataKey, stringPattern := range p.Data {
+			var regexMatches RegexMatches
+
+			if stringPattern.Matches(step.Data[dataKey], &regexMatches) {
+				matches.Data[dataKey] = regexMatches
+			} else {
+				dataMatch = false
+				break
+			}
+		}
+
+		return fieldsMatch && dataMatch
 	}
 
 	return true
 }
 
-func (p AlarmStepRefPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
+func (p AlarmTicketRefPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.ShouldBeNil {
 		return bsontype.Null, []byte{}, nil
 	}
@@ -176,13 +202,13 @@ func (p AlarmStepRefPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 		resultBson[bsonFieldName] = p.Value
 	}
 
-	if p.Initiator.IsSet() {
-		bsonFieldName, err := GetFieldBsonName(p, "Initiator", "initiator")
+	if len(p.Data) > 0 {
+		bsonFieldName, err := GetFieldBsonName(p, "Data", "data")
 		if err != nil {
 			return bsontype.Undefined, nil, err
 		}
 
-		resultBson[bsonFieldName] = p.Initiator
+		resultBson[bsonFieldName] = p.Data
 	}
 
 	if len(resultBson) > 0 {
@@ -192,7 +218,7 @@ func (p AlarmStepRefPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	return bsontype.Undefined, nil, nil
 }
 
-func (p *AlarmStepRefPattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
+func (p *AlarmTicketRefPattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 	switch valueType {
 	case bsontype.Null:
 		// The BSON value is null. The field should not be set.
@@ -200,7 +226,7 @@ func (p *AlarmStepRefPattern) UnmarshalBSONValue(valueType bsontype.Type, b []by
 		p.ShouldNotBeNil = false
 		return nil
 	case bsontype.EmbeddedDocument:
-		err := bson.Unmarshal(b, &p.AlarmStepFields)
+		err := bson.Unmarshal(b, &p.AlarmTicketFields)
 		if err != nil {
 			return err
 		}
@@ -215,7 +241,7 @@ func (p *AlarmStepRefPattern) UnmarshalBSONValue(valueType bsontype.Type, b []by
 			}
 		}
 	default:
-		return fmt.Errorf("alarm step pattern should be a document or nil")
+		return fmt.Errorf("alarm ticket pattern should be a document or nil")
 	}
 
 	p.ShouldBeNil = false
