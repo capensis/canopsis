@@ -1,10 +1,10 @@
-package pattern_test
+package oldpattern_test
 
 import (
 	"reflect"
 	"testing"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
@@ -12,7 +12,7 @@ import (
 )
 
 type stringArrayPatternWrapper struct {
-	Pattern pattern.StringArrayPattern `bson:"pattern"`
+	Pattern oldpattern.StringArrayPattern `bson:"pattern"`
 }
 
 func TestValidHasStringArrayPatternMongoDriver(t *testing.T) {
@@ -584,7 +584,7 @@ func TestStringArrayPatternMarshalBSON(t *testing.T) {
 	datasets := []struct {
 		TestName             string
 		ExpectedUnmarshalled bson.M
-		Pattern              pattern.StringArrayPattern
+		Pattern              oldpattern.StringArrayPattern
 	}{
 		{
 			TestName: "test for single has_every value",
@@ -593,8 +593,8 @@ func TestStringArrayPatternMarshalBSON(t *testing.T) {
 					"has_every": bson.A{"test2"},
 				},
 			},
-			Pattern: pattern.StringArrayPattern{
-				StringArrayConditions: pattern.StringArrayConditions{
+			Pattern: oldpattern.StringArrayPattern{
+				StringArrayConditions: oldpattern.StringArrayConditions{
 					HasEvery: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test2"},
@@ -609,8 +609,8 @@ func TestStringArrayPatternMarshalBSON(t *testing.T) {
 					"has_every": bson.A{"test1", "test2"},
 				},
 			},
-			Pattern: pattern.StringArrayPattern{
-				StringArrayConditions: pattern.StringArrayConditions{
+			Pattern: oldpattern.StringArrayPattern{
+				StringArrayConditions: oldpattern.StringArrayConditions{
 					HasEvery: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test1", "test2"},
@@ -625,8 +625,8 @@ func TestStringArrayPatternMarshalBSON(t *testing.T) {
 					"has_not": bson.A{"test2"},
 				},
 			},
-			Pattern: pattern.StringArrayPattern{
-				StringArrayConditions: pattern.StringArrayConditions{
+			Pattern: oldpattern.StringArrayPattern{
+				StringArrayConditions: oldpattern.StringArrayConditions{
 					HasNot: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test2"},
@@ -641,8 +641,8 @@ func TestStringArrayPatternMarshalBSON(t *testing.T) {
 					"has_not": bson.A{"test1", "test2"},
 				},
 			},
-			Pattern: pattern.StringArrayPattern{
-				StringArrayConditions: pattern.StringArrayConditions{
+			Pattern: oldpattern.StringArrayPattern{
+				StringArrayConditions: oldpattern.StringArrayConditions{
 					HasNot: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test1", "test2"},
@@ -657,8 +657,8 @@ func TestStringArrayPatternMarshalBSON(t *testing.T) {
 					"has_not": bson.A{"test1", "test2"},
 				},
 			},
-			Pattern: pattern.StringArrayPattern{
-				StringArrayConditions: pattern.StringArrayConditions{
+			Pattern: oldpattern.StringArrayPattern{
+				StringArrayConditions: oldpattern.StringArrayConditions{
 					HasNot: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test1", "test2"},
@@ -673,8 +673,8 @@ func TestStringArrayPatternMarshalBSON(t *testing.T) {
 					"has_one_of": bson.A{"test2"},
 				},
 			},
-			Pattern: pattern.StringArrayPattern{
-				StringArrayConditions: pattern.StringArrayConditions{
+			Pattern: oldpattern.StringArrayPattern{
+				StringArrayConditions: oldpattern.StringArrayConditions{
 					HasOneOf: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test2"},
@@ -689,8 +689,8 @@ func TestStringArrayPatternMarshalBSON(t *testing.T) {
 					"has_one_of": bson.A{"test1", "test2"},
 				},
 			},
-			Pattern: pattern.StringArrayPattern{
-				StringArrayConditions: pattern.StringArrayConditions{
+			Pattern: oldpattern.StringArrayPattern{
+				StringArrayConditions: oldpattern.StringArrayConditions{
 					HasOneOf: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test1", "test2"},
@@ -706,8 +706,8 @@ func TestStringArrayPatternMarshalBSON(t *testing.T) {
 					"has_not":   bson.A{"test1", "test2"},
 				},
 			},
-			Pattern: pattern.StringArrayPattern{
-				StringArrayConditions: pattern.StringArrayConditions{
+			Pattern: oldpattern.StringArrayPattern{
+				StringArrayConditions: oldpattern.StringArrayConditions{
 					HasEvery: types.OptionalStringArray{
 						Set:   true,
 						Value: []string{"test3"},
@@ -726,8 +726,8 @@ func TestStringArrayPatternMarshalBSON(t *testing.T) {
 					"is_empty": true,
 				},
 			},
-			Pattern: pattern.StringArrayPattern{
-				StringArrayConditions: pattern.StringArrayConditions{
+			Pattern: oldpattern.StringArrayPattern{
+				StringArrayConditions: oldpattern.StringArrayConditions{
 					IsEmpty: types.OptionalBool{
 						Set:   true,
 						Value: true,
@@ -742,8 +742,8 @@ func TestStringArrayPatternMarshalBSON(t *testing.T) {
 					"is_empty": false,
 				},
 			},
-			Pattern: pattern.StringArrayPattern{
-				StringArrayConditions: pattern.StringArrayConditions{
+			Pattern: oldpattern.StringArrayPattern{
+				StringArrayConditions: oldpattern.StringArrayConditions{
 					IsEmpty: types.OptionalBool{
 						Set:   true,
 						Value: false,
@@ -756,8 +756,8 @@ func TestStringArrayPatternMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"pattern": primitive.Undefined{},
 			},
-			Pattern: pattern.StringArrayPattern{
-				StringArrayConditions: pattern.StringArrayConditions{},
+			Pattern: oldpattern.StringArrayPattern{
+				StringArrayConditions: oldpattern.StringArrayConditions{},
 			},
 		},
 	}

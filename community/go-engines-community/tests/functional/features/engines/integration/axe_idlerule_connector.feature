@@ -555,15 +555,17 @@ Feature: update connector alarm
     {
       "name": "test-metaalarmrule-action-correlation-1",
       "type": "attribute",
-      "config": {
-        "alarm_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "v": {
-              "connector": "test-connector-axe-idlerule-connector-6"
+            "field": "v.connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-connector-axe-idlerule-connector-6"
             }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201

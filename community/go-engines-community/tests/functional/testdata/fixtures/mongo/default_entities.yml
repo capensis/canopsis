@@ -4312,3 +4312,491 @@ default_entities:
     measurements: null
     name: test-service-weather-entity-6
     type: service
+
+  default_entities_307:
+    _id: test-complex-rule-rate-backward-compatibility-1-connector/test-complex-rule-rate-backward-compatibility-1-connectorname
+    depends:
+      - test-complex-rule-rate-backward-compatibility-1-component
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-complex-rule-rate-backward-compatibility-1-resource-1/test-complex-rule-rate-backward-compatibility-1-component
+      - test-complex-rule-rate-backward-compatibility-1-resource-2/test-complex-rule-rate-backward-compatibility-1-component
+      - test-complex-rule-rate-backward-compatibility-1-resource-3/test-complex-rule-rate-backward-compatibility-1-component
+      - test-complex-rule-rate-backward-compatibility-1-resource-4/test-complex-rule-rate-backward-compatibility-1-component
+      - test-complex-rule-rate-backward-compatibility-1-resource-5/test-complex-rule-rate-backward-compatibility-1-component
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-complex-rule-rate-backward-compatibility-1-connectorname
+    type: connector
+  default_entities_308:
+    _id: test-complex-rule-rate-backward-compatibility-1-component
+    depends:
+      - test-complex-rule-rate-backward-compatibility-1-resource-1/test-complex-rule-rate-backward-compatibility-1-component
+      - test-complex-rule-rate-backward-compatibility-1-resource-2/test-complex-rule-rate-backward-compatibility-1-component
+      - test-complex-rule-rate-backward-compatibility-1-resource-3/test-complex-rule-rate-backward-compatibility-1-component
+      - test-complex-rule-rate-backward-compatibility-1-resource-4/test-complex-rule-rate-backward-compatibility-1-component
+      - test-complex-rule-rate-backward-compatibility-1-resource-5/test-complex-rule-rate-backward-compatibility-1-component
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-complex-rule-rate-backward-compatibility-1-connector/test-complex-rule-rate-backward-compatibility-1-connectorname
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-complex-rule-rate-backward-compatibility-1-component
+    type: component
+  default_entities_309:
+    _id: test-complex-rule-rate-backward-compatibility-1-resource-1/test-complex-rule-rate-backward-compatibility-1-component
+    component: test-complex-rule-rate-backward-compatibility-1-component
+    depends:
+      - test-complex-rule-rate-backward-compatibility-1-connector/test-complex-rule-rate-backward-compatibility-1-connectorname
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-complex-rule-rate-backward-compatibility-1-component
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-complex-rule-rate-backward-compatibility-1-resource-1
+    type: resource
+  default_entities_310:
+    _id: test-complex-rule-rate-backward-compatibility-1-resource-2/test-complex-rule-rate-backward-compatibility-1-component
+    component: test-complex-rule-rate-backward-compatibility-1-component
+    depends:
+      - test-complex-rule-rate-backward-compatibility-1-connector/test-complex-rule-rate-backward-compatibility-1-connectorname
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-complex-rule-rate-backward-compatibility-1-component
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-complex-rule-rate-backward-compatibility-1-resource-2
+    type: resource
+  default_entities_311:
+    _id: test-complex-rule-rate-backward-compatibility-1-resource-3/test-complex-rule-rate-backward-compatibility-1-component
+    component: test-complex-rule-rate-backward-compatibility-1-component
+    depends:
+      - test-complex-rule-rate-backward-compatibility-1-connector/test-complex-rule-rate-backward-compatibility-1-connectorname
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-complex-rule-rate-backward-compatibility-1-component
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-complex-rule-rate-backward-compatibility-1-resource-3
+    type: resource
+  default_entities_312:
+    _id: test-complex-rule-rate-backward-compatibility-1-resource-4/test-complex-rule-rate-backward-compatibility-1-component
+    component: test-complex-rule-rate-backward-compatibility-1-component
+    depends:
+      - test-complex-rule-rate-backward-compatibility-1-connector/test-complex-rule-rate-backward-compatibility-1-connectorname
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-complex-rule-rate-backward-compatibility-1-component
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-complex-rule-rate-backward-compatibility-1-resource-4
+    type: resource
+  default_entities_313:
+    _id: test-complex-rule-rate-backward-compatibility-1-resource-5/test-complex-rule-rate-backward-compatibility-1-component
+    component: test-complex-rule-rate-backward-compatibility-1-component
+    depends:
+      - test-complex-rule-rate-backward-compatibility-1-connector/test-complex-rule-rate-backward-compatibility-1-connectorname
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-complex-rule-rate-backward-compatibility-1-component
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-complex-rule-rate-backward-compatibility-1-resource-5
+    type: resource
+
+  default_entities_314:
+    _id: test-complex-rule-rate-backward-compatibility-2-connector/test-complex-rule-rate-backward-compatibility-2-connectorname
+    depends:
+      - test-complex-rule-rate-backward-compatibility-2-component
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-complex-rule-rate-backward-compatibility-2-resource-1/test-complex-rule-rate-backward-compatibility-2-component
+      - test-complex-rule-rate-backward-compatibility-2-resource-2/test-complex-rule-rate-backward-compatibility-2-component
+      - test-complex-rule-rate-backward-compatibility-2-resource-3/test-complex-rule-rate-backward-compatibility-2-component
+      - test-complex-rule-rate-backward-compatibility-2-resource-4/test-complex-rule-rate-backward-compatibility-2-component
+      - test-complex-rule-rate-backward-compatibility-2-resource-5/test-complex-rule-rate-backward-compatibility-2-component
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-complex-rule-rate-backward-compatibility-2-connectorname
+    type: connector
+  default_entities_315:
+    _id: test-complex-rule-rate-backward-compatibility-2-component
+    depends:
+      - test-complex-rule-rate-backward-compatibility-2-resource-1/test-complex-rule-rate-backward-compatibility-2-component
+      - test-complex-rule-rate-backward-compatibility-2-resource-2/test-complex-rule-rate-backward-compatibility-2-component
+      - test-complex-rule-rate-backward-compatibility-2-resource-3/test-complex-rule-rate-backward-compatibility-2-component
+      - test-complex-rule-rate-backward-compatibility-2-resource-4/test-complex-rule-rate-backward-compatibility-2-component
+      - test-complex-rule-rate-backward-compatibility-2-resource-5/test-complex-rule-rate-backward-compatibility-2-component
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-complex-rule-rate-backward-compatibility-2-connector/test-complex-rule-rate-backward-compatibility-2-connectorname
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-complex-rule-rate-backward-compatibility-2-component
+    type: component
+  default_entities_316:
+    _id: test-complex-rule-rate-backward-compatibility-2-resource-1/test-complex-rule-rate-backward-compatibility-2-component
+    component: test-complex-rule-rate-backward-compatibility-2-component
+    depends:
+      - test-complex-rule-rate-backward-compatibility-2-connector/test-complex-rule-rate-backward-compatibility-2-connectorname
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-complex-rule-rate-backward-compatibility-2-component
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-complex-rule-rate-backward-compatibility-2-resource-1
+    type: resource
+  default_entities_317:
+    _id: test-complex-rule-rate-backward-compatibility-2-resource-2/test-complex-rule-rate-backward-compatibility-2-component
+    component: test-complex-rule-rate-backward-compatibility-2-component
+    depends:
+      - test-complex-rule-rate-backward-compatibility-2-connector/test-complex-rule-rate-backward-compatibility-2-connectorname
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-complex-rule-rate-backward-compatibility-2-component
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-complex-rule-rate-backward-compatibility-2-resource-2
+    type: resource
+  default_entities_318:
+    _id: test-complex-rule-rate-backward-compatibility-2-resource-3/test-complex-rule-rate-backward-compatibility-2-component
+    component: test-complex-rule-rate-backward-compatibility-2-component
+    depends:
+      - test-complex-rule-rate-backward-compatibility-2-connector/test-complex-rule-rate-backward-compatibility-2-connectorname
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-complex-rule-rate-backward-compatibility-2-component
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-complex-rule-rate-backward-compatibility-2-resource-3
+    type: resource
+  default_entities_319:
+    _id: test-complex-rule-rate-backward-compatibility-2-resource-4/test-complex-rule-rate-backward-compatibility-2-component
+    component: test-complex-rule-rate-backward-compatibility-2-component
+    depends:
+      - test-complex-rule-rate-backward-compatibility-2-connector/test-complex-rule-rate-backward-compatibility-2-connectorname
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-complex-rule-rate-backward-compatibility-2-component
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-complex-rule-rate-backward-compatibility-2-resource-4
+    type: resource
+  default_entities_320:
+    _id: test-complex-rule-rate-backward-compatibility-2-resource-5/test-complex-rule-rate-backward-compatibility-2-component
+    component: test-complex-rule-rate-backward-compatibility-2-component
+    depends:
+      - test-complex-rule-rate-backward-compatibility-2-connector/test-complex-rule-rate-backward-compatibility-2-connectorname
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-complex-rule-rate-backward-compatibility-2-component
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-complex-rule-rate-backward-compatibility-2-resource-5
+    type: resource
+
+  default_entities_321:
+    _id: test-valuegroup-rule-rate-backward-compatibility-1-connector/test-valuegroup-rule-rate-backward-compatibility-1-connectorname
+    depends:
+      - test-valuegroup-rule-rate-backward-compatibility-1-component
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-valuegroup-rule-rate-backward-compatibility-1-resource-1/test-valuegroup-rule-rate-backward-compatibility-1-component
+      - test-valuegroup-rule-rate-backward-compatibility-1-resource-2/test-valuegroup-rule-rate-backward-compatibility-1-component
+      - test-valuegroup-rule-rate-backward-compatibility-1-resource-3/test-valuegroup-rule-rate-backward-compatibility-1-component
+      - test-valuegroup-rule-rate-backward-compatibility-1-resource-4/test-valuegroup-rule-rate-backward-compatibility-1-component
+      - test-valuegroup-rule-rate-backward-compatibility-1-resource-5/test-valuegroup-rule-rate-backward-compatibility-1-component
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-valuegroup-rule-rate-backward-compatibility-1-connectorname
+    type: connector
+  default_entities_322:
+    _id: test-valuegroup-rule-rate-backward-compatibility-1-component
+    depends:
+      - test-valuegroup-rule-rate-backward-compatibility-1-resource-1/test-valuegroup-rule-rate-backward-compatibility-1-component
+      - test-valuegroup-rule-rate-backward-compatibility-1-resource-2/test-valuegroup-rule-rate-backward-compatibility-1-component
+      - test-valuegroup-rule-rate-backward-compatibility-1-resource-3/test-valuegroup-rule-rate-backward-compatibility-1-component
+      - test-valuegroup-rule-rate-backward-compatibility-1-resource-4/test-valuegroup-rule-rate-backward-compatibility-1-component
+      - test-valuegroup-rule-rate-backward-compatibility-1-resource-5/test-valuegroup-rule-rate-backward-compatibility-1-component
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-valuegroup-rule-rate-backward-compatibility-1-connector/test-valuegroup-rule-rate-backward-compatibility-1-connectorname
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-valuegroup-rule-rate-backward-compatibility-1-component
+    type: component
+  default_entities_323:
+    _id: test-valuegroup-rule-rate-backward-compatibility-1-resource-1/test-valuegroup-rule-rate-backward-compatibility-1-component
+    component: test-valuegroup-rule-rate-backward-compatibility-1-component
+    depends:
+      - test-valuegroup-rule-rate-backward-compatibility-1-connector/test-valuegroup-rule-rate-backward-compatibility-1-connectorname
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-valuegroup-rule-rate-backward-compatibility-1-component
+    impact_level: 1
+    infos:
+      valuegroupRateOldPatterns1:
+        description: valuegroupRateOldPatterns1
+        name: valuegroupRateOldPatterns1
+        value: "1"
+    measurements: null
+    name: test-valuegroup-rule-rate-backward-compatibility-1-resource-1
+    type: resource
+  default_entities_324:
+    _id: test-valuegroup-rule-rate-backward-compatibility-1-resource-2/test-valuegroup-rule-rate-backward-compatibility-1-component
+    component: test-valuegroup-rule-rate-backward-compatibility-1-component
+    depends:
+      - test-valuegroup-rule-rate-backward-compatibility-1-connector/test-valuegroup-rule-rate-backward-compatibility-1-connectorname
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-valuegroup-rule-rate-backward-compatibility-1-component
+    impact_level: 1
+    infos:
+      valuegroupRateOldPatterns1:
+        description: valuegroupRateOldPatterns1
+        name: valuegroupRateOldPatterns1
+        value: "1"
+    measurements: null
+    name: test-valuegroup-rule-rate-backward-compatibility-1-resource-2
+    type: resource
+  default_entities_325:
+    _id: test-valuegroup-rule-rate-backward-compatibility-1-resource-3/test-valuegroup-rule-rate-backward-compatibility-1-component
+    component: test-valuegroup-rule-rate-backward-compatibility-1-component
+    depends:
+      - test-valuegroup-rule-rate-backward-compatibility-1-connector/test-valuegroup-rule-rate-backward-compatibility-1-connectorname
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-valuegroup-rule-rate-backward-compatibility-1-component
+    impact_level: 1
+    infos:
+      valuegroupRateOldPatterns1:
+        description: valuegroupRateOldPatterns1
+        name: valuegroupRateOldPatterns1
+        value: "1"
+    measurements: null
+    name: test-valuegroup-rule-rate-backward-compatibility-1-resource-3
+    type: resource
+  default_entities_326:
+    _id: test-valuegroup-rule-rate-backward-compatibility-1-resource-4/test-valuegroup-rule-rate-backward-compatibility-1-component
+    component: test-valuegroup-rule-rate-backward-compatibility-1-component
+    depends:
+      - test-valuegroup-rule-rate-backward-compatibility-1-connector/test-valuegroup-rule-rate-backward-compatibility-1-connectorname
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-valuegroup-rule-rate-backward-compatibility-1-component
+    impact_level: 1
+    infos:
+      valuegroupRateOldPatterns1:
+        description: valuegroupRateOldPatterns1
+        name: valuegroupRateOldPatterns1
+        value: "1"
+    measurements: null
+    name: test-valuegroup-rule-rate-backward-compatibility-1-resource-4
+    type: resource
+  default_entities_327:
+    _id: test-valuegroup-rule-rate-backward-compatibility-1-resource-5/test-valuegroup-rule-rate-backward-compatibility-1-component
+    component: test-valuegroup-rule-rate-backward-compatibility-1-component
+    depends:
+      - test-valuegroup-rule-rate-backward-compatibility-1-connector/test-valuegroup-rule-rate-backward-compatibility-1-connectorname
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-valuegroup-rule-rate-backward-compatibility-1-component
+    impact_level: 1
+    infos:
+      valuegroupRateOldPatterns1:
+        description: valuegroupRateOldPatterns1
+        name: valuegroupRateOldPatterns1
+        value: "1"
+    measurements: null
+    name: test-valuegroup-rule-rate-backward-compatibility-1-resource-5
+    type: resource
+
+  default_entities_328:
+    _id: test-valuegroup-rule-rate-backward-compatibility-2-connector/test-valuegroup-rule-rate-backward-compatibility-2-connectorname
+    depends:
+      - test-valuegroup-rule-rate-backward-compatibility-2-component
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-valuegroup-rule-rate-backward-compatibility-2-resource-1/test-valuegroup-rule-rate-backward-compatibility-2-component
+      - test-valuegroup-rule-rate-backward-compatibility-2-resource-2/test-valuegroup-rule-rate-backward-compatibility-2-component
+      - test-valuegroup-rule-rate-backward-compatibility-2-resource-3/test-valuegroup-rule-rate-backward-compatibility-2-component
+      - test-valuegroup-rule-rate-backward-compatibility-2-resource-4/test-valuegroup-rule-rate-backward-compatibility-2-component
+      - test-valuegroup-rule-rate-backward-compatibility-2-resource-5/test-valuegroup-rule-rate-backward-compatibility-2-component
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-valuegroup-rule-rate-backward-compatibility-2-connectorname
+    type: connector
+  default_entities_329:
+    _id: test-valuegroup-rule-rate-backward-compatibility-2-component
+    depends:
+      - test-valuegroup-rule-rate-backward-compatibility-2-resource-1/test-valuegroup-rule-rate-backward-compatibility-2-component
+      - test-valuegroup-rule-rate-backward-compatibility-2-resource-2/test-valuegroup-rule-rate-backward-compatibility-2-component
+      - test-valuegroup-rule-rate-backward-compatibility-2-resource-3/test-valuegroup-rule-rate-backward-compatibility-2-component
+      - test-valuegroup-rule-rate-backward-compatibility-2-resource-4/test-valuegroup-rule-rate-backward-compatibility-2-component
+      - test-valuegroup-rule-rate-backward-compatibility-2-resource-5/test-valuegroup-rule-rate-backward-compatibility-2-component
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-valuegroup-rule-rate-backward-compatibility-2-connector/test-valuegroup-rule-rate-backward-compatibility-2-connectorname
+    impact_level: 1
+    infos: {}
+    measurements: null
+    name: test-valuegroup-rule-rate-backward-compatibility-2-component
+    type: component
+  default_entities_330:
+    _id: test-valuegroup-rule-rate-backward-compatibility-2-resource-1/test-valuegroup-rule-rate-backward-compatibility-2-component
+    component: test-valuegroup-rule-rate-backward-compatibility-2-component
+    depends:
+      - test-valuegroup-rule-rate-backward-compatibility-2-connector/test-valuegroup-rule-rate-backward-compatibility-2-connectorname
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-valuegroup-rule-rate-backward-compatibility-2-component
+    impact_level: 1
+    infos:
+      valuegroupRateOldPatterns1:
+        description: valuegroupRateOldPatterns1
+        name: valuegroupRateOldPatterns1
+        value: "1"
+    measurements: null
+    name: test-valuegroup-rule-rate-backward-compatibility-2-resource-1
+    type: resource
+  default_entities_331:
+    _id: test-valuegroup-rule-rate-backward-compatibility-2-resource-2/test-valuegroup-rule-rate-backward-compatibility-2-component
+    component: test-valuegroup-rule-rate-backward-compatibility-2-component
+    depends:
+      - test-valuegroup-rule-rate-backward-compatibility-2-connector/test-valuegroup-rule-rate-backward-compatibility-2-connectorname
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-valuegroup-rule-rate-backward-compatibility-2-component
+    impact_level: 1
+    infos:
+      valuegroupRateOldPatterns1:
+        description: valuegroupRateOldPatterns1
+        name: valuegroupRateOldPatterns1
+        value: "1"
+    measurements: null
+    name: test-valuegroup-rule-rate-backward-compatibility-2-resource-2
+    type: resource
+  default_entities_332:
+    _id: test-valuegroup-rule-rate-backward-compatibility-2-resource-3/test-valuegroup-rule-rate-backward-compatibility-2-component
+    component: test-valuegroup-rule-rate-backward-compatibility-2-component
+    depends:
+      - test-valuegroup-rule-rate-backward-compatibility-2-connector/test-valuegroup-rule-rate-backward-compatibility-2-connectorname
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-valuegroup-rule-rate-backward-compatibility-2-component
+    impact_level: 1
+    infos:
+      valuegroupRateOldPatterns1:
+        description: valuegroupRateOldPatterns1
+        name: valuegroupRateOldPatterns1
+        value: "1"
+    measurements: null
+    name: test-valuegroup-rule-rate-backward-compatibility-2-resource-3
+    type: resource
+  default_entities_333:
+    _id: test-valuegroup-rule-rate-backward-compatibility-2-resource-4/test-valuegroup-rule-rate-backward-compatibility-2-component
+    component: test-valuegroup-rule-rate-backward-compatibility-2-component
+    depends:
+      - test-valuegroup-rule-rate-backward-compatibility-2-connector/test-valuegroup-rule-rate-backward-compatibility-2-connectorname
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-valuegroup-rule-rate-backward-compatibility-2-component
+    impact_level: 1
+    infos:
+      valuegroupRateOldPatterns1:
+        description: valuegroupRateOldPatterns1
+        name: valuegroupRateOldPatterns1
+        value: "1"
+    measurements: null
+    name: test-valuegroup-rule-rate-backward-compatibility-2-resource-4
+    type: resource
+  default_entities_334:
+    _id: test-valuegroup-rule-rate-backward-compatibility-2-resource-5/test-valuegroup-rule-rate-backward-compatibility-2-component
+    component: test-valuegroup-rule-rate-backward-compatibility-2-component
+    depends:
+      - test-valuegroup-rule-rate-backward-compatibility-2-connector/test-valuegroup-rule-rate-backward-compatibility-2-connectorname
+    enable_history:
+      - 1620915951
+    enabled: true
+    impact:
+      - test-valuegroup-rule-rate-backward-compatibility-2-component
+    impact_level: 1
+    infos:
+      valuegroupRateOldPatterns1:
+        description: valuegroupRateOldPatterns1
+        name: valuegroupRateOldPatterns1
+        value: "1"
+    measurements: null
+    name: test-valuegroup-rule-rate-backward-compatibility-2-resource-5
+    type: resource
