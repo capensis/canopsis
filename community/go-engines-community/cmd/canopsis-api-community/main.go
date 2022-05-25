@@ -50,11 +50,12 @@ func main() {
 		logger.Fatal().Err(err).Msg("cannot create security enforce")
 	}
 
+	providers := &api.ConfigProviders{}
 	server, _, err := api.Default(
 		ctx,
 		flags,
 		enforcer,
-		nil, nil,
+		providers,
 		logger,
 		metrics.NewNullMetaUpdater(),
 		metrics.NewNullMetaUpdater(),

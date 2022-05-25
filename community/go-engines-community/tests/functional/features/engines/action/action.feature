@@ -291,9 +291,7 @@ Feature: execute action on trigger
       "output" : "test-output-action-2"
     }
     """
-    When I wait the end of event processing
-    When I wait 5s
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-action-2"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:

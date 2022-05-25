@@ -33,18 +33,15 @@ Feature: create and update alarm by main event stream
             "_id": "test-resource-axe-1/test-component-axe-1"
           },
           "infos": {},
-          "t": {{ .createTimestamp }},
           "v": {
             "children": [],
             "component": "test-component-axe-1",
             "connector": "test-connector-axe-1",
             "connector_name": "test-connector-name-axe-1",
-            "creation_date": {{ .createTimestamp }},
             "infos": {},
             "infos_rule_version": {},
             "initial_long_output": "test-long-output-axe-1",
             "initial_output": "test-output-axe-1",
-            "last_event_date": {{ .createTimestamp }},
             "last_update_date": {{ .eventTimestamp }},
             "long_output": "test-long-output-axe-1",
             "long_output_history": ["test-long-output-axe-1"],
@@ -94,6 +91,12 @@ Feature: create and update alarm by main event stream
       }
     }
     """
+    When I save response alarmTimestamp={{ (index .lastResponse.data 0).t }}
+    When I save response alarmCreationDate={{ (index .lastResponse.data 0).v.creation_date }}
+    When I save response alarmLastEventDate={{ (index .lastResponse.data 0).v.last_event_date }}
+    Then the difference between alarmTimestamp createTimestamp is in range -2,2
+    Then the difference between alarmCreationDate createTimestamp is in range -2,2
+    Then the difference between alarmLastEventDate createTimestamp is in range -2,2
 
   Scenario: given check event should update alarm
     Given I am admin
@@ -145,13 +148,11 @@ Feature: create and update alarm by main event stream
             "_id": "test-resource-axe-2/test-component-axe-2"
           },
           "infos": {},
-          "t": {{ .createTimestamp }},
           "v": {
             "children": [],
             "component": "test-component-axe-2",
             "connector": "test-connector-axe-2",
             "connector_name": "test-connector-name-axe-2",
-            "creation_date": {{ .createTimestamp }},
             "infos": {},
             "infos_rule_version": {},
             "initial_long_output": "test-long-output-axe-2-1",
@@ -213,6 +214,10 @@ Feature: create and update alarm by main event stream
       }
     }
     """
+    When I save response alarmTimestamp={{ (index .lastResponse.data 0).t }}
+    When I save response alarmCreationDate={{ (index .lastResponse.data 0).v.creation_date }}
+    Then the difference between alarmTimestamp createTimestamp is in range -2,2
+    Then the difference between alarmCreationDate createTimestamp is in range -2,2
 
   Scenario: given ack event should update alarm
     Given I am admin
@@ -1118,7 +1123,7 @@ Feature: create and update alarm by main event stream
     """json
     {
       "event_type" : "snooze",
-      "duration": 600,
+      "duration": 3600,
       "connector" : "test-connector-axe-11",
       "connector_name" : "test-connector-name-axe-11",
       "source_type" : "resource",
@@ -1147,7 +1152,7 @@ Feature: create and update alarm by main event stream
               "user_id": "test-author-id-11",
               "m": "test-output-axe-11",
               "t": {{ .snoozeEventTimestamp }},
-              "val": {{ .snoozeEventTimestamp | sumTime 600 }}
+              "val": {{ .snoozeEventTimestamp | sumTime 3600 }}
             },
             "component": "test-component-axe-11",
             "connector": "test-connector-axe-11",
@@ -1175,7 +1180,7 @@ Feature: create and update alarm by main event stream
                 "user_id": "test-author-id-11",
                 "m": "test-output-axe-11",
                 "t": {{ .snoozeEventTimestamp }},
-                "val": {{ .snoozeEventTimestamp | sumTime 600 }}
+                "val": {{ .snoozeEventTimestamp | sumTime 3600 }}
               }
             ]
           }
@@ -1214,7 +1219,7 @@ Feature: create and update alarm by main event stream
     """json
     {
       "event_type" : "snooze",
-      "duration": 600,
+      "duration": 3600,
       "connector" : "test-connector-axe-12",
       "connector_name" : "test-connector-name-axe-12",
       "source_type" : "resource",
@@ -1280,7 +1285,7 @@ Feature: create and update alarm by main event stream
                 "user_id": "test-author-id-12",
                 "m": "test-output-axe-12",
                 "t": {{ .snoozeEventTimestamp }},
-                "val": {{ .snoozeEventTimestamp | sumTime 600 }}
+                "val": {{ .snoozeEventTimestamp | sumTime 3600 }}
               }
             ]
           }
@@ -1358,7 +1363,6 @@ Feature: create and update alarm by main event stream
       "data": [
         {
           "v": {
-            "resolved": {{ .resolveTimestamp }},
             "component": "test-component-axe-13",
             "connector": "test-connector-axe-13",
             "connector_name": "test-connector-name-axe-13",
@@ -1398,6 +1402,8 @@ Feature: create and update alarm by main event stream
       }
     }
     """
+    When I save response alarmResolve={{ (index .lastResponse.data 0).v.resolved }}
+    Then the difference between alarmResolve resolveTimestamp is in range -2,2
 
   Scenario: given resolve cancel event should update alarm
     Given I am admin
@@ -1460,7 +1466,6 @@ Feature: create and update alarm by main event stream
       "data": [
         {
           "v": {
-            "resolved": {{ .resolveTimestamp }},
             "component": "test-component-axe-14",
             "connector": "test-connector-axe-14",
             "connector_name": "test-connector-name-axe-14",
@@ -1507,6 +1512,8 @@ Feature: create and update alarm by main event stream
       }
     }
     """
+    When I save response alarmResolve={{ (index .lastResponse.data 0).v.resolved }}
+    Then the difference between alarmResolve resolveTimestamp is in range -2,2
 
   Scenario: given resolve close event should update alarm
     Given I am admin
@@ -1571,7 +1578,6 @@ Feature: create and update alarm by main event stream
       "data": [
         {
           "v": {
-            "resolved": {{ .resolveTimestamp }},
             "component": "test-component-axe-15",
             "connector": "test-connector-axe-15",
             "connector_name": "test-connector-name-axe-15",
@@ -1618,83 +1624,8 @@ Feature: create and update alarm by main event stream
       }
     }
     """
-
-  Scenario: given not alarm event should do nothing
-    Given I am admin
-    When I send an event:
-    """json
-    {
-      "event_type" : "check",
-      "connector" : "test-connector-axe-16",
-      "connector_name" : "test-connector-name-axe-16",
-      "source_type" : "resource",
-      "component" :  "test-component-axe-16",
-      "resource" : "test-resource-axe-16",
-      "state" : 2,
-      "output" : "test-output-axe-16",
-      "long_output" : "test-long-output-axe-16",
-      "author" : "test-author-axe-16",
-      "timestamp": {{ nowAdd "-10s" }}
-    }
-    """
-    When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
-    When I wait the end of event processing
-    When I send an event:
-    """json
-    {
-      "event_type" : "test",
-      "connector" : "test-connector-axe-16",
-      "connector_name" : "test-connector-name-axe-16",
-      "source_type" : "resource",
-      "component" :  "test-component-axe-16",
-      "resource" : "test-resource-axe-16",
-      "output" : "test-output-axe-16",
-      "long_output" : "test-long-output-axe-16",
-      "author" : "test-author-axe-16",
-      "timestamp": {{ nowAdd "-5s" }}
-    }
-    """
-    When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-axe-16"}]}&with_steps=true
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "v": {
-            "component": "test-component-axe-16",
-            "connector": "test-connector-axe-16",
-            "connector_name": "test-connector-name-axe-16",
-            "last_update_date": {{ .checkEventTimestamp }},
-            "resource": "test-resource-axe-16",
-            "state": {
-              "val": 2
-            },
-            "status": {
-              "val": 1
-            },
-            "steps": [
-              {
-                "_t": "stateinc",
-                "val": 2
-              },
-              {
-                "_t": "statusinc",
-                "val": 1
-              }
-            ]
-          }
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
-      }
-    }
-    """
+    When I save response alarmResolve={{ (index .lastResponse.data 0).v.resolved }}
+    Then the difference between alarmResolve resolveTimestamp is in range -2,2
 
   Scenario: given ack resources event should update resource alarms
     Given I am admin
