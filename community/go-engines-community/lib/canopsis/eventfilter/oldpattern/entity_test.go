@@ -1,10 +1,10 @@
-package pattern_test
+package oldpattern_test
 
 import (
 	"reflect"
 	"testing"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	. "github.com/smartystreets/goconvey/convey"
@@ -13,7 +13,7 @@ import (
 )
 
 type entityPatternWrapper struct {
-	Pattern pattern.EntityPattern `bson:"pattern"`
+	Pattern oldpattern.EntityPattern `bson:"pattern"`
 }
 
 func TestEntityPatternToMongoDriverQuery(t *testing.T) {
@@ -121,7 +121,7 @@ func TestNilEntityPatternToMongoDriverQuery(t *testing.T) {
 // EntityPatternList because bson.Unmarshal does not work when called with an
 // array.
 type entityPatternListWrapper struct {
-	PatternList pattern.EntityPatternList `bson:"list"`
+	PatternList oldpattern.EntityPatternList `bson:"list"`
 }
 
 func TestValidEntityPatternListMongoDriver(t *testing.T) {
@@ -271,7 +271,7 @@ func TestEntityPatternMarshalBSON(t *testing.T) {
 	datasets := []struct {
 		TestName             string
 		ExpectedUnmarshalled bson.M
-		Pattern              pattern.EntityPattern
+		Pattern              oldpattern.EntityPattern
 	}{
 		{
 			TestName: "test for pattern",
@@ -291,29 +291,29 @@ func TestEntityPatternMarshalBSON(t *testing.T) {
 					"type": bson.M{"regex_match": "abc-.*-def"},
 				},
 			},
-			Pattern: pattern.EntityPattern{
+			Pattern: oldpattern.EntityPattern{
 				ShouldNotBeNil: true,
 				ShouldBeNil:    false,
-				EntityFields: pattern.EntityFields{
-					ID: pattern.StringPattern{
-						StringConditions: pattern.StringConditions{
+				EntityFields: oldpattern.EntityFields{
+					ID: oldpattern.StringPattern{
+						StringConditions: oldpattern.StringConditions{
 							Equal: types.OptionalString{
 								Set:   true,
 								Value: "123456",
 							},
 						},
 					},
-					Enabled: pattern.BoolPattern{
+					Enabled: oldpattern.BoolPattern{
 						OptionalBool: types.OptionalBool{
 							Set:   true,
 							Value: true,
 						},
 					},
-					Infos: map[string]pattern.InfoPattern{
+					Infos: map[string]oldpattern.InfoPattern{
 						"toto": {
-							InfoFields: pattern.InfoFields{
-								Description: pattern.StringPattern{
-									StringConditions: pattern.StringConditions{
+							InfoFields: oldpattern.InfoFields{
+								Description: oldpattern.StringPattern{
+									StringConditions: oldpattern.StringConditions{
 										Equal: types.OptionalString{
 											Set:   true,
 											Value: "test",
@@ -323,17 +323,17 @@ func TestEntityPatternMarshalBSON(t *testing.T) {
 							},
 						},
 						"tata": {
-							InfoFields: pattern.InfoFields{
-								Description: pattern.StringPattern{
-									StringConditions: pattern.StringConditions{
+							InfoFields: oldpattern.InfoFields{
+								Description: oldpattern.StringPattern{
+									StringConditions: oldpattern.StringConditions{
 										Equal: types.OptionalString{
 											Set:   true,
 											Value: "test",
 										},
 									},
 								},
-								Value: pattern.StringPattern{
-									StringConditions: pattern.StringConditions{
+								Value: oldpattern.StringPattern{
+									StringConditions: oldpattern.StringConditions{
 										Equal: types.OptionalString{
 											Set:   true,
 											Value: "testtest",
@@ -343,8 +343,8 @@ func TestEntityPatternMarshalBSON(t *testing.T) {
 							},
 						},
 					},
-					Type: pattern.StringPattern{
-						StringConditions: pattern.StringConditions{
+					Type: oldpattern.StringPattern{
+						StringConditions: oldpattern.StringConditions{
 							RegexMatch: types.OptionalRegexp{
 								Set:   true,
 								Value: testRegexp,
@@ -359,7 +359,7 @@ func TestEntityPatternMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"pattern": nil,
 			},
-			Pattern: pattern.EntityPattern{
+			Pattern: oldpattern.EntityPattern{
 				ShouldBeNil: true,
 			},
 		},
@@ -368,7 +368,7 @@ func TestEntityPatternMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"pattern": primitive.Undefined{},
 			},
-			Pattern: pattern.EntityPattern{},
+			Pattern: oldpattern.EntityPattern{},
 		},
 	}
 
@@ -399,7 +399,7 @@ func TestEntityListPatternMarshalBSON(t *testing.T) {
 	datasets := []struct {
 		TestName             string
 		ExpectedUnmarshalled bson.M
-		Pattern              pattern.EntityPatternList
+		Pattern              oldpattern.EntityPatternList
 	}{
 		{
 			TestName: "test for list",
@@ -420,16 +420,16 @@ func TestEntityListPatternMarshalBSON(t *testing.T) {
 					},
 				},
 			},
-			Pattern: pattern.EntityPatternList{
+			Pattern: oldpattern.EntityPatternList{
 				Set:   true,
 				Valid: true,
-				Patterns: []pattern.EntityPattern{
+				Patterns: []oldpattern.EntityPattern{
 					{
 						ShouldNotBeNil: true,
 						ShouldBeNil:    false,
-						EntityFields: pattern.EntityFields{
-							ID: pattern.StringPattern{
-								StringConditions: pattern.StringConditions{
+						EntityFields: oldpattern.EntityFields{
+							ID: oldpattern.StringPattern{
+								StringConditions: oldpattern.StringConditions{
 									Equal: types.OptionalString{
 										Set:   true,
 										Value: "id1",
@@ -441,9 +441,9 @@ func TestEntityListPatternMarshalBSON(t *testing.T) {
 					{
 						ShouldNotBeNil: true,
 						ShouldBeNil:    false,
-						EntityFields: pattern.EntityFields{
-							ID: pattern.StringPattern{
-								StringConditions: pattern.StringConditions{
+						EntityFields: oldpattern.EntityFields{
+							ID: oldpattern.StringPattern{
+								StringConditions: oldpattern.StringConditions{
 									Equal: types.OptionalString{
 										Set:   true,
 										Value: "id2",
@@ -455,12 +455,12 @@ func TestEntityListPatternMarshalBSON(t *testing.T) {
 					{
 						ShouldNotBeNil: true,
 						ShouldBeNil:    false,
-						EntityFields: pattern.EntityFields{
-							Infos: map[string]pattern.InfoPattern{
+						EntityFields: oldpattern.EntityFields{
+							Infos: map[string]oldpattern.InfoPattern{
 								"toto": {
-									InfoFields: pattern.InfoFields{
-										Value: pattern.StringPattern{
-											StringConditions: pattern.StringConditions{
+									InfoFields: oldpattern.InfoFields{
+										Value: oldpattern.StringPattern{
+											StringConditions: oldpattern.StringConditions{
 												Equal: types.OptionalString{
 													Set:   true,
 													Value: "tata",
@@ -480,7 +480,7 @@ func TestEntityListPatternMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"list": nil,
 			},
-			Pattern: pattern.EntityPatternList{},
+			Pattern: oldpattern.EntityPatternList{},
 		},
 	}
 
@@ -508,9 +508,9 @@ func TestEntityListPatternMarshalBSON(t *testing.T) {
 }
 
 func BenchmarkEntityPatternList_Matches_Equal(b *testing.B) {
-	cond := pattern.EntityFields{
-		Name: pattern.StringPattern{
-			StringConditions: pattern.StringConditions{
+	cond := oldpattern.EntityFields{
+		Name: oldpattern.StringPattern{
+			StringConditions: oldpattern.StringConditions{
 				Equal: types.OptionalString{
 					Set:   true,
 					Value: "test name2",
@@ -530,9 +530,9 @@ func BenchmarkEntityPatternList_Matches_Regexp(b *testing.B) {
 	if err != nil {
 		b.Fatalf("err is not expected: %s", err)
 	}
-	cond := pattern.EntityFields{
-		Name: pattern.StringPattern{
-			StringConditions: pattern.StringConditions{
+	cond := oldpattern.EntityFields{
+		Name: oldpattern.StringPattern{
+			StringConditions: oldpattern.StringConditions{
 				RegexMatch: types.OptionalRegexp{
 					Set:   true,
 					Value: testRegexp,
@@ -548,12 +548,12 @@ func BenchmarkEntityPatternList_Matches_Regexp(b *testing.B) {
 }
 
 func BenchmarkEntityPatternList_Matches_Infos_Equal(b *testing.B) {
-	cond := pattern.EntityFields{
-		Infos: map[string]pattern.InfoPattern{
+	cond := oldpattern.EntityFields{
+		Infos: map[string]oldpattern.InfoPattern{
 			"test": {
-				InfoFields: pattern.InfoFields{
-					Value: pattern.StringPattern{
-						StringConditions: pattern.StringConditions{
+				InfoFields: oldpattern.InfoFields{
+					Value: oldpattern.StringPattern{
+						StringConditions: oldpattern.StringConditions{
 							Equal: types.OptionalString{
 								Set:   true,
 								Value: "test 2",
@@ -581,12 +581,12 @@ func BenchmarkEntityPatternList_Matches_Infos_Regexp(b *testing.B) {
 	if err != nil {
 		b.Fatalf("err is not expected: %s", err)
 	}
-	cond := pattern.EntityFields{
-		Infos: map[string]pattern.InfoPattern{
+	cond := oldpattern.EntityFields{
+		Infos: map[string]oldpattern.InfoPattern{
 			"test": {
-				InfoFields: pattern.InfoFields{
-					Value: pattern.StringPattern{
-						StringConditions: pattern.StringConditions{
+				InfoFields: oldpattern.InfoFields{
+					Value: oldpattern.StringPattern{
+						StringConditions: oldpattern.StringConditions{
 							RegexMatch: types.OptionalRegexp{
 								Set:   true,
 								Value: testRegexp,
@@ -610,9 +610,9 @@ func BenchmarkEntityPatternList_Matches_Infos_Regexp(b *testing.B) {
 }
 
 func BenchmarkEntityPatternList_UnmarshalBsonAndMatches_Equal(b *testing.B) {
-	cond := pattern.EntityFields{
-		Name: pattern.StringPattern{
-			StringConditions: pattern.StringConditions{
+	cond := oldpattern.EntityFields{
+		Name: oldpattern.StringPattern{
+			StringConditions: oldpattern.StringConditions{
 				Equal: types.OptionalString{
 					Set:   true,
 					Value: "test name2",
@@ -632,9 +632,9 @@ func BenchmarkEntityPatternList_UnmarshalBsonAndMatches_Regexp(b *testing.B) {
 	if err != nil {
 		b.Fatalf("err is not expected: %s", err)
 	}
-	cond := pattern.EntityFields{
-		Name: pattern.StringPattern{
-			StringConditions: pattern.StringConditions{
+	cond := oldpattern.EntityFields{
+		Name: oldpattern.StringPattern{
+			StringConditions: oldpattern.StringConditions{
 				RegexMatch: types.OptionalRegexp{
 					Set:   true,
 					Value: testRegexp,
@@ -650,12 +650,12 @@ func BenchmarkEntityPatternList_UnmarshalBsonAndMatches_Regexp(b *testing.B) {
 }
 
 func BenchmarkEntityPatternList_UnmarshalBsonAndMatches_Infos_Equal(b *testing.B) {
-	cond := pattern.EntityFields{
-		Infos: map[string]pattern.InfoPattern{
+	cond := oldpattern.EntityFields{
+		Infos: map[string]oldpattern.InfoPattern{
 			"test": {
-				InfoFields: pattern.InfoFields{
-					Value: pattern.StringPattern{
-						StringConditions: pattern.StringConditions{
+				InfoFields: oldpattern.InfoFields{
+					Value: oldpattern.StringPattern{
+						StringConditions: oldpattern.StringConditions{
 							Equal: types.OptionalString{
 								Set:   true,
 								Value: "test 2",
@@ -683,12 +683,12 @@ func BenchmarkEntityPatternList_UnmarshalBsonAndMatches_Infos_Regexp(b *testing.
 	if err != nil {
 		b.Fatalf("err is not expected: %s", err)
 	}
-	cond := pattern.EntityFields{
-		Infos: map[string]pattern.InfoPattern{
+	cond := oldpattern.EntityFields{
+		Infos: map[string]oldpattern.InfoPattern{
 			"test": {
-				InfoFields: pattern.InfoFields{
-					Value: pattern.StringPattern{
-						StringConditions: pattern.StringConditions{
+				InfoFields: oldpattern.InfoFields{
+					Value: oldpattern.StringPattern{
+						StringConditions: oldpattern.StringConditions{
 							RegexMatch: types.OptionalRegexp{
 								Set:   true,
 								Value: testRegexp,
@@ -711,17 +711,17 @@ func BenchmarkEntityPatternList_UnmarshalBsonAndMatches_Infos_Regexp(b *testing.
 	benchmarkEntityPatternListUnmarshalBsonAndMatches(b, cond, entity)
 }
 
-func benchmarkEntityPatternListMatches(b *testing.B, cond pattern.EntityFields, entity types.Entity) {
+func benchmarkEntityPatternListMatches(b *testing.B, cond oldpattern.EntityFields, entity types.Entity) {
 	size := 100
-	patterns := make([]pattern.EntityPattern, size)
+	patterns := make([]oldpattern.EntityPattern, size)
 	for i := 0; i < size; i++ {
-		patterns[i] = pattern.EntityPattern{
+		patterns[i] = oldpattern.EntityPattern{
 			ShouldNotBeNil: true,
 			EntityFields:   cond,
 		}
 	}
 
-	p := pattern.EntityPatternList{
+	p := oldpattern.EntityPatternList{
 		Patterns: patterns,
 		Set:      true,
 		Valid:    true,
@@ -733,20 +733,20 @@ func benchmarkEntityPatternListMatches(b *testing.B, cond pattern.EntityFields, 
 	}
 }
 
-func benchmarkEntityPatternListUnmarshalBsonAndMatches(b *testing.B, cond pattern.EntityFields, entity types.Entity) {
+func benchmarkEntityPatternListUnmarshalBsonAndMatches(b *testing.B, cond oldpattern.EntityFields, entity types.Entity) {
 	size := 100
-	patterns := make([]pattern.EntityPattern, size)
+	patterns := make([]oldpattern.EntityPattern, size)
 	for i := 0; i < size; i++ {
-		patterns[i] = pattern.EntityPattern{
+		patterns[i] = oldpattern.EntityPattern{
 			ShouldNotBeNil: true,
 			EntityFields:   cond,
 		}
 	}
 
 	type wrapper struct {
-		Pattern pattern.EntityPatternList `bson:"pattern"`
+		Pattern oldpattern.EntityPatternList `bson:"pattern"`
 	}
-	p := pattern.EntityPatternList{
+	p := oldpattern.EntityPatternList{
 		Patterns: patterns,
 		Set:      true,
 		Valid:    true,
