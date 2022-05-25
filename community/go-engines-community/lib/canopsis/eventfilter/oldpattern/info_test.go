@@ -1,11 +1,11 @@
-package pattern_test
+package oldpattern_test
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"reflect"
 	"testing"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
@@ -13,7 +13,7 @@ import (
 )
 
 type infoPatternWrapper struct {
-	Pattern pattern.InfoPattern `bson:"pattern"`
+	Pattern oldpattern.InfoPattern `bson:"pattern"`
 }
 
 func TestInfoPatternToMongoDriverQuery(t *testing.T) {
@@ -77,7 +77,7 @@ func TestInfoPatternMarshalBSON(t *testing.T) {
 	datasets := []struct {
 		TestName             string
 		ExpectedUnmarshalled bson.M
-		Pattern              pattern.InfoPattern
+		Pattern              oldpattern.InfoPattern
 	}{
 		{
 			TestName: "test for full info pattern",
@@ -88,26 +88,26 @@ func TestInfoPatternMarshalBSON(t *testing.T) {
 					"value":       bson.M{"regex_match": "abc-.*-def"},
 				},
 			},
-			Pattern: pattern.InfoPattern{
-				InfoFields: pattern.InfoFields{
-					Name: pattern.StringPattern{
-						StringConditions: pattern.StringConditions{
+			Pattern: oldpattern.InfoPattern{
+				InfoFields: oldpattern.InfoFields{
+					Name: oldpattern.StringPattern{
+						StringConditions: oldpattern.StringConditions{
 							Equal: types.OptionalString{
 								Set:   true,
 								Value: "test",
 							},
 						},
 					},
-					Description: pattern.StringPattern{
-						StringConditions: pattern.StringConditions{
+					Description: oldpattern.StringPattern{
+						StringConditions: oldpattern.StringConditions{
 							Equal: types.OptionalString{
 								Set:   true,
 								Value: "test info",
 							},
 						},
 					},
-					Value: pattern.StringPattern{
-						StringConditions: pattern.StringConditions{
+					Value: oldpattern.StringPattern{
+						StringConditions: oldpattern.StringConditions{
 							RegexMatch: types.OptionalRegexp{
 								Set:   true,
 								Value: testRegexp,
@@ -125,18 +125,18 @@ func TestInfoPatternMarshalBSON(t *testing.T) {
 					"value":       bson.M{"regex_match": "abc-.*-def"},
 				},
 			},
-			Pattern: pattern.InfoPattern{
-				InfoFields: pattern.InfoFields{
-					Description: pattern.StringPattern{
-						StringConditions: pattern.StringConditions{
+			Pattern: oldpattern.InfoPattern{
+				InfoFields: oldpattern.InfoFields{
+					Description: oldpattern.StringPattern{
+						StringConditions: oldpattern.StringConditions{
 							Equal: types.OptionalString{
 								Set:   true,
 								Value: "test info",
 							},
 						},
 					},
-					Value: pattern.StringPattern{
-						StringConditions: pattern.StringConditions{
+					Value: oldpattern.StringPattern{
+						StringConditions: oldpattern.StringConditions{
 							RegexMatch: types.OptionalRegexp{
 								Set:   true,
 								Value: testRegexp,
@@ -151,7 +151,7 @@ func TestInfoPatternMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"pattern": nil,
 			},
-			Pattern: pattern.InfoPattern{
+			Pattern: oldpattern.InfoPattern{
 				ShouldNotBeSet: true,
 			},
 		},
@@ -160,7 +160,7 @@ func TestInfoPatternMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"pattern": primitive.Undefined{},
 			},
-			Pattern: pattern.InfoPattern{},
+			Pattern: oldpattern.InfoPattern{},
 		},
 	}
 

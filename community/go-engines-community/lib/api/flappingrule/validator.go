@@ -1,7 +1,7 @@
 package flappingrule
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -16,7 +16,7 @@ func ValidateEditRequest(sl validator.StructLevel) {
 	}
 }
 
-func validateEntityPatterns(sl validator.StructLevel, patterns pattern.EntityPatternList) bool {
+func validateEntityPatterns(sl validator.StructLevel, patterns oldpattern.EntityPatternList) bool {
 	patternsIsSet := false
 	if patterns.IsSet() {
 		if !patterns.IsValid() {
@@ -39,7 +39,7 @@ func validateEntityPatterns(sl validator.StructLevel, patterns pattern.EntityPat
 	return patternsIsSet
 }
 
-func validateAlarmPatterns(sl validator.StructLevel, patterns pattern.AlarmPatternList) bool {
+func validateAlarmPatterns(sl validator.StructLevel, patterns oldpattern.AlarmPatternList) bool {
 	patternsIsSet := false
 	if patterns.IsSet() {
 		if !patterns.IsValid() {

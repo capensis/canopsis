@@ -1,7 +1,7 @@
-package pattern_test
+package oldpattern_test
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	. "github.com/smartystreets/goconvey/convey"
@@ -11,7 +11,7 @@ import (
 )
 
 type alarmPatternWrapper struct {
-	Pattern pattern.AlarmPattern `bson:"pattern"`
+	Pattern oldpattern.AlarmPattern `bson:"pattern"`
 }
 
 func TestAlarmPatternToMongoDriverQuery(t *testing.T) {
@@ -155,7 +155,7 @@ func TestAlarmPatternMatchesMongoDriver(t *testing.T) {
 		p := w.Pattern
 
 		Convey("The pattern should match the right alarm values", func() {
-			matches := pattern.NewAlarmRegexMatches()
+			matches := oldpattern.NewAlarmRegexMatches()
 			hardLimit := types.CpsNumber(10)
 			alarm := types.Alarm{
 				ID:       "abc",
@@ -204,7 +204,7 @@ func TestAlarmPatternMatchesMongoDriver(t *testing.T) {
 		})
 
 		Convey("The pattern should not match an alarm value with the wrong ack", func() {
-			matches := pattern.NewAlarmRegexMatches()
+			matches := oldpattern.NewAlarmRegexMatches()
 			hardLimit := types.CpsNumber(10)
 			alarm := types.Alarm{
 				ID:       "abc",
@@ -261,7 +261,7 @@ func TestAlarmPatternMarshalBSON(t *testing.T) {
 	datasets := []struct {
 		TestName             string
 		ExpectedUnmarshalled bson.M
-		Pattern              pattern.AlarmPattern
+		Pattern              oldpattern.AlarmPattern
 	}{
 		{
 			TestName: "test for pattern",
@@ -306,21 +306,21 @@ func TestAlarmPatternMarshalBSON(t *testing.T) {
 					},
 				},
 			},
-			Pattern: pattern.AlarmPattern{
+			Pattern: oldpattern.AlarmPattern{
 				ShouldNotBeNil: true,
 				ShouldBeNil:    false,
-				AlarmFields: pattern.AlarmFields{
-					ID: pattern.StringPattern{
-						StringConditions: pattern.StringConditions{
+				AlarmFields: oldpattern.AlarmFields{
+					ID: oldpattern.StringPattern{
+						StringConditions: oldpattern.StringConditions{
 							RegexMatch: types.OptionalRegexp{
 								Set:   true,
 								Value: testRegexp,
 							},
 						},
 					},
-					Time: pattern.TimePattern{
-						IntegerPattern: pattern.IntegerPattern{
-							IntegerConditions: pattern.IntegerConditions{
+					Time: oldpattern.TimePattern{
+						IntegerPattern: oldpattern.IntegerPattern{
+							IntegerConditions: oldpattern.IntegerConditions{
 								Equal: types.OptionalInt64{
 									Set:   true,
 									Value: 9,
@@ -328,12 +328,12 @@ func TestAlarmPatternMarshalBSON(t *testing.T) {
 							},
 						},
 					},
-					Value: pattern.AlarmValuePattern{
-						AlarmValueFields: pattern.AlarmValueFields{
-							ACK: pattern.AlarmStepRefPattern{
-								AlarmStepFields: pattern.AlarmStepFields{
-									Type: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
+					Value: oldpattern.AlarmValuePattern{
+						AlarmValueFields: oldpattern.AlarmValueFields{
+							ACK: oldpattern.AlarmStepRefPattern{
+								AlarmStepFields: oldpattern.AlarmStepFields{
+									Type: oldpattern.StringPattern{
+										StringConditions: oldpattern.StringConditions{
 											Equal: types.OptionalString{
 												Set:   true,
 												Value: "test1",
@@ -342,10 +342,10 @@ func TestAlarmPatternMarshalBSON(t *testing.T) {
 									},
 								},
 							},
-							Canceled: pattern.AlarmStepRefPattern{
-								AlarmStepFields: pattern.AlarmStepFields{
-									Type: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
+							Canceled: oldpattern.AlarmStepRefPattern{
+								AlarmStepFields: oldpattern.AlarmStepFields{
+									Type: oldpattern.StringPattern{
+										StringConditions: oldpattern.StringConditions{
 											Equal: types.OptionalString{
 												Set:   true,
 												Value: "test2",
@@ -354,10 +354,10 @@ func TestAlarmPatternMarshalBSON(t *testing.T) {
 									},
 								},
 							},
-							Done: pattern.AlarmStepRefPattern{
-								AlarmStepFields: pattern.AlarmStepFields{
-									Type: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
+							Done: oldpattern.AlarmStepRefPattern{
+								AlarmStepFields: oldpattern.AlarmStepFields{
+									Type: oldpattern.StringPattern{
+										StringConditions: oldpattern.StringConditions{
 											Equal: types.OptionalString{
 												Set:   true,
 												Value: "test3",
@@ -366,10 +366,10 @@ func TestAlarmPatternMarshalBSON(t *testing.T) {
 									},
 								},
 							},
-							Snooze: pattern.AlarmStepRefPattern{
-								AlarmStepFields: pattern.AlarmStepFields{
-									Type: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
+							Snooze: oldpattern.AlarmStepRefPattern{
+								AlarmStepFields: oldpattern.AlarmStepFields{
+									Type: oldpattern.StringPattern{
+										StringConditions: oldpattern.StringConditions{
 											Equal: types.OptionalString{
 												Set:   true,
 												Value: "test4",
@@ -378,10 +378,10 @@ func TestAlarmPatternMarshalBSON(t *testing.T) {
 									},
 								},
 							},
-							State: pattern.AlarmStepRefPattern{
-								AlarmStepFields: pattern.AlarmStepFields{
-									Type: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
+							State: oldpattern.AlarmStepRefPattern{
+								AlarmStepFields: oldpattern.AlarmStepFields{
+									Type: oldpattern.StringPattern{
+										StringConditions: oldpattern.StringConditions{
 											Equal: types.OptionalString{
 												Set:   true,
 												Value: "test5",
@@ -390,10 +390,10 @@ func TestAlarmPatternMarshalBSON(t *testing.T) {
 									},
 								},
 							},
-							Status: pattern.AlarmStepRefPattern{
-								AlarmStepFields: pattern.AlarmStepFields{
-									Type: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
+							Status: oldpattern.AlarmStepRefPattern{
+								AlarmStepFields: oldpattern.AlarmStepFields{
+									Type: oldpattern.StringPattern{
+										StringConditions: oldpattern.StringConditions{
 											Equal: types.OptionalString{
 												Set:   true,
 												Value: "test6",
@@ -402,10 +402,10 @@ func TestAlarmPatternMarshalBSON(t *testing.T) {
 									},
 								},
 							},
-							Ticket: pattern.AlarmTicketRefPattern{
-								AlarmTicketFields: pattern.AlarmTicketFields{
-									Type: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
+							Ticket: oldpattern.AlarmTicketRefPattern{
+								AlarmTicketFields: oldpattern.AlarmTicketFields{
+									Type: oldpattern.StringPattern{
+										StringConditions: oldpattern.StringConditions{
 											Equal: types.OptionalString{
 												Set:   true,
 												Value: "test7",
@@ -414,33 +414,33 @@ func TestAlarmPatternMarshalBSON(t *testing.T) {
 									},
 								},
 							},
-							Component: pattern.StringPattern{
-								StringConditions: pattern.StringConditions{
+							Component: oldpattern.StringPattern{
+								StringConditions: oldpattern.StringConditions{
 									Equal: types.OptionalString{
 										Set:   true,
 										Value: "test8",
 									},
 								},
 							},
-							Connector: pattern.StringPattern{
-								StringConditions: pattern.StringConditions{
+							Connector: oldpattern.StringPattern{
+								StringConditions: oldpattern.StringConditions{
 									Equal: types.OptionalString{
 										Set:   true,
 										Value: "test9",
 									},
 								},
 							},
-							ConnectorName: pattern.StringPattern{
-								StringConditions: pattern.StringConditions{
+							ConnectorName: oldpattern.StringPattern{
+								StringConditions: oldpattern.StringConditions{
 									Equal: types.OptionalString{
 										Set:   true,
 										Value: "test10",
 									},
 								},
 							},
-							CreationDate: pattern.TimePattern{
-								IntegerPattern: pattern.IntegerPattern{
-									IntegerConditions: pattern.IntegerConditions{
+							CreationDate: oldpattern.TimePattern{
+								IntegerPattern: oldpattern.IntegerPattern{
+									IntegerConditions: oldpattern.IntegerConditions{
 										Gt: types.OptionalInt64{
 											Set:   true,
 											Value: 10,
@@ -448,9 +448,9 @@ func TestAlarmPatternMarshalBSON(t *testing.T) {
 									},
 								},
 							},
-							HardLimit: pattern.IntegerRefPattern{
-								IntegerPattern: pattern.IntegerPattern{
-									IntegerConditions: pattern.IntegerConditions{
+							HardLimit: oldpattern.IntegerRefPattern{
+								IntegerPattern: oldpattern.IntegerPattern{
+									IntegerConditions: oldpattern.IntegerConditions{
 										Lt: types.OptionalInt64{
 											Set:   true,
 											Value: 11,
@@ -458,17 +458,17 @@ func TestAlarmPatternMarshalBSON(t *testing.T) {
 									},
 								},
 							},
-							InitialOutput: pattern.StringPattern{
-								StringConditions: pattern.StringConditions{
+							InitialOutput: oldpattern.StringPattern{
+								StringConditions: oldpattern.StringConditions{
 									Equal: types.OptionalString{
 										Set:   true,
 										Value: "test12",
 									},
 								},
 							},
-							LastUpdateDate: pattern.TimePattern{
-								IntegerPattern: pattern.IntegerPattern{
-									IntegerConditions: pattern.IntegerConditions{
+							LastUpdateDate: oldpattern.TimePattern{
+								IntegerPattern: oldpattern.IntegerPattern{
+									IntegerConditions: oldpattern.IntegerConditions{
 										Lte: types.OptionalInt64{
 											Set:   true,
 											Value: 12,
@@ -476,9 +476,9 @@ func TestAlarmPatternMarshalBSON(t *testing.T) {
 									},
 								},
 							},
-							LastEventDate: pattern.TimePattern{
-								IntegerPattern: pattern.IntegerPattern{
-									IntegerConditions: pattern.IntegerConditions{
+							LastEventDate: oldpattern.TimePattern{
+								IntegerPattern: oldpattern.IntegerPattern{
+									IntegerConditions: oldpattern.IntegerConditions{
 										Gte: types.OptionalInt64{
 											Set:   true,
 											Value: 13,
@@ -486,29 +486,29 @@ func TestAlarmPatternMarshalBSON(t *testing.T) {
 									},
 								},
 							},
-							Resource: pattern.StringPattern{
-								StringConditions: pattern.StringConditions{
+							Resource: oldpattern.StringPattern{
+								StringConditions: oldpattern.StringConditions{
 									Equal: types.OptionalString{
 										Set:   true,
 										Value: "test13",
 									},
 								},
 							},
-							Resolved: pattern.TimeRefPattern{
-								IntegerRefPattern: pattern.IntegerRefPattern{
+							Resolved: oldpattern.TimeRefPattern{
+								IntegerRefPattern: oldpattern.IntegerRefPattern{
 									EqualNil: true,
 								},
 							},
-							StateChangesSinceStatusUpdate: pattern.IntegerPattern{
-								IntegerConditions: pattern.IntegerConditions{
+							StateChangesSinceStatusUpdate: oldpattern.IntegerPattern{
+								IntegerConditions: oldpattern.IntegerConditions{
 									Gte: types.OptionalInt64{
 										Set:   true,
 										Value: 14,
 									},
 								},
 							},
-							TotalStateChanges: pattern.IntegerPattern{
-								IntegerConditions: pattern.IntegerConditions{
+							TotalStateChanges: oldpattern.IntegerPattern{
+								IntegerConditions: oldpattern.IntegerConditions{
 									Gte: types.OptionalInt64{
 										Set:   true,
 										Value: 15,
@@ -550,7 +550,7 @@ func TestAlarmPatternMarshalBSON(t *testing.T) {
 // AlarmPatternList because bson.Unmarshal does not work when called with an
 // array.
 type alarmPatternListWrapper struct {
-	PatternList pattern.AlarmPatternList `bson:"list"`
+	PatternList oldpattern.AlarmPatternList `bson:"list"`
 }
 
 func TestAlarmPatternListMatchMongoDriver(t *testing.T) {
@@ -742,7 +742,7 @@ func TestAlarmPatternListMarshalBSON(t *testing.T) {
 	datasets := []struct {
 		TestName             string
 		ExpectedUnmarshalled bson.M
-		Pattern              pattern.AlarmPatternList
+		Pattern              oldpattern.AlarmPatternList
 	}{
 		{
 			TestName: "test for pattern list",
@@ -756,14 +756,14 @@ func TestAlarmPatternListMarshalBSON(t *testing.T) {
 					},
 				},
 			},
-			Pattern: pattern.AlarmPatternList{
+			Pattern: oldpattern.AlarmPatternList{
 				Set:   true,
 				Valid: true,
-				Patterns: []pattern.AlarmPattern{
+				Patterns: []oldpattern.AlarmPattern{
 					{
-						AlarmFields: pattern.AlarmFields{
-							EntityID: pattern.StringPattern{
-								StringConditions: pattern.StringConditions{
+						AlarmFields: oldpattern.AlarmFields{
+							EntityID: oldpattern.StringPattern{
+								StringConditions: oldpattern.StringConditions{
 									Equal: types.OptionalString{
 										Set:   true,
 										Value: "id1",
@@ -773,9 +773,9 @@ func TestAlarmPatternListMarshalBSON(t *testing.T) {
 						},
 					},
 					{
-						AlarmFields: pattern.AlarmFields{
-							EntityID: pattern.StringPattern{
-								StringConditions: pattern.StringConditions{
+						AlarmFields: oldpattern.AlarmFields{
+							EntityID: oldpattern.StringPattern{
+								StringConditions: oldpattern.StringConditions{
 									Equal: types.OptionalString{
 										Set:   true,
 										Value: "id2",
@@ -792,7 +792,7 @@ func TestAlarmPatternListMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"list": nil,
 			},
-			Pattern: pattern.AlarmPatternList{},
+			Pattern: oldpattern.AlarmPatternList{},
 		},
 	}
 
@@ -820,9 +820,9 @@ func TestAlarmPatternListMarshalBSON(t *testing.T) {
 }
 
 func BenchmarkAlarmPatternList_Matches_Equal(b *testing.B) {
-	cond := pattern.AlarmValueFields{
-		DisplayName: pattern.StringPattern{
-			StringConditions: pattern.StringConditions{
+	cond := oldpattern.AlarmValueFields{
+		DisplayName: oldpattern.StringPattern{
+			StringConditions: oldpattern.StringConditions{
 				Equal: types.OptionalString{
 					Set:   true,
 					Value: "test name2",
@@ -844,9 +844,9 @@ func BenchmarkAlarmPatternList_Matches_Regexp(b *testing.B) {
 	if err != nil {
 		b.Fatalf("err is not expected: %s", err)
 	}
-	cond := pattern.AlarmValueFields{
-		DisplayName: pattern.StringPattern{
-			StringConditions: pattern.StringConditions{
+	cond := oldpattern.AlarmValueFields{
+		DisplayName: oldpattern.StringPattern{
+			StringConditions: oldpattern.StringConditions{
 				RegexMatch: types.OptionalRegexp{
 					Set:   true,
 					Value: testRegexp,
@@ -864,9 +864,9 @@ func BenchmarkAlarmPatternList_Matches_Regexp(b *testing.B) {
 }
 
 func BenchmarkAlarmPatternList_UnmarshalBsonAndMatches_Equal(b *testing.B) {
-	cond := pattern.AlarmValueFields{
-		DisplayName: pattern.StringPattern{
-			StringConditions: pattern.StringConditions{
+	cond := oldpattern.AlarmValueFields{
+		DisplayName: oldpattern.StringPattern{
+			StringConditions: oldpattern.StringConditions{
 				Equal: types.OptionalString{
 					Set:   true,
 					Value: "test name2",
@@ -888,9 +888,9 @@ func BenchmarkAlarmPatternList_UnmarshalBsonAndMatches_Regexp(b *testing.B) {
 	if err != nil {
 		b.Fatalf("err is not expected: %s", err)
 	}
-	cond := pattern.AlarmValueFields{
-		DisplayName: pattern.StringPattern{
-			StringConditions: pattern.StringConditions{
+	cond := oldpattern.AlarmValueFields{
+		DisplayName: oldpattern.StringPattern{
+			StringConditions: oldpattern.StringConditions{
 				RegexMatch: types.OptionalRegexp{
 					Set:   true,
 					Value: testRegexp,
@@ -912,9 +912,9 @@ func BenchmarkAlarmPatternList_ManyAlarms_UnmarshalBsonAndMatches_Regexp(b *test
 	if err != nil {
 		b.Fatalf("err is not expected: %s", err)
 	}
-	cond := pattern.AlarmValueFields{
-		DisplayName: pattern.StringPattern{
-			StringConditions: pattern.StringConditions{
+	cond := oldpattern.AlarmValueFields{
+		DisplayName: oldpattern.StringPattern{
+			StringConditions: oldpattern.StringConditions{
 				RegexMatch: types.OptionalRegexp{
 					Set:   true,
 					Value: testRegexp,
@@ -935,21 +935,21 @@ func BenchmarkAlarmPatternList_ManyAlarms_UnmarshalBsonAndMatches_Regexp(b *test
 	benchmarkAlarmPatternListUnmarshalBsonAndMatches(b, cond, alarms)
 }
 
-func benchmarkAlarmPatternListMatches(b *testing.B, cond pattern.AlarmValueFields, alarm types.Alarm) {
+func benchmarkAlarmPatternListMatches(b *testing.B, cond oldpattern.AlarmValueFields, alarm types.Alarm) {
 	size := 100
-	patterns := make([]pattern.AlarmPattern, size)
+	patterns := make([]oldpattern.AlarmPattern, size)
 	for i := 0; i < size; i++ {
-		patterns[i] = pattern.AlarmPattern{
+		patterns[i] = oldpattern.AlarmPattern{
 			ShouldNotBeNil: true,
-			AlarmFields: pattern.AlarmFields{
-				Value: pattern.AlarmValuePattern{
+			AlarmFields: oldpattern.AlarmFields{
+				Value: oldpattern.AlarmValuePattern{
 					AlarmValueFields: cond,
 				},
 			},
 		}
 	}
 
-	p := pattern.AlarmPatternList{
+	p := oldpattern.AlarmPatternList{
 		Patterns: patterns,
 		Set:      true,
 		Valid:    true,
@@ -961,14 +961,14 @@ func benchmarkAlarmPatternListMatches(b *testing.B, cond pattern.AlarmValueField
 	}
 }
 
-func benchmarkAlarmPatternListUnmarshalBsonAndMatches(b *testing.B, cond pattern.AlarmValueFields, alarms []types.Alarm) {
+func benchmarkAlarmPatternListUnmarshalBsonAndMatches(b *testing.B, cond oldpattern.AlarmValueFields, alarms []types.Alarm) {
 	size := 100
-	patterns := make([]pattern.AlarmPattern, size)
+	patterns := make([]oldpattern.AlarmPattern, size)
 	for i := 0; i < size; i++ {
-		patterns[i] = pattern.AlarmPattern{
+		patterns[i] = oldpattern.AlarmPattern{
 			ShouldNotBeNil: true,
-			AlarmFields: pattern.AlarmFields{
-				Value: pattern.AlarmValuePattern{
+			AlarmFields: oldpattern.AlarmFields{
+				Value: oldpattern.AlarmValuePattern{
 					AlarmValueFields: cond,
 				},
 			},
@@ -976,9 +976,9 @@ func benchmarkAlarmPatternListUnmarshalBsonAndMatches(b *testing.B, cond pattern
 	}
 
 	type wrapper struct {
-		Pattern pattern.AlarmPatternList `bson:"pattern"`
+		Pattern oldpattern.AlarmPatternList `bson:"pattern"`
 	}
-	p := pattern.AlarmPatternList{
+	p := oldpattern.AlarmPatternList{
 		Patterns: patterns,
 		Set:      true,
 		Valid:    true,
