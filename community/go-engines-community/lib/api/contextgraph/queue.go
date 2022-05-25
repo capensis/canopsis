@@ -6,8 +6,8 @@ import (
 )
 
 type queue struct {
-	list  *list.List
-	mx    sync.Mutex
+	list *list.List
+	mx   sync.Mutex
 }
 
 func NewJobQueue() JobQueue {
