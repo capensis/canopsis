@@ -42,6 +42,8 @@ func NewStore(
 
 		linkedCollections: []string{
 			mongo.WidgetFiltersMongoCollection,
+			mongo.EventFilterRulesMongoCollection,
+			mongo.MetaAlarmRulesMongoCollection,
 		},
 	}
 }
@@ -203,17 +205,29 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error 
 	case savedpattern.TypeEntity:
 		filter = bson.M{"corporate_entity_pattern": pattern.ID}
 		set = bson.M{
-			"entity_pattern":                 pattern.AlarmPattern,
+			"entity_pattern":                 pattern.EntityPattern,
 			"corporate_entity_pattern_title": pattern.Title,
 		}
 	case savedpattern.TypePbehavior:
 		filter = bson.M{"corporate_pbehavior_pattern": pattern.ID}
 		set = bson.M{
-			"pbehavior_pattern":               pattern.AlarmPattern,
-			"pbehavior_pattern_pattern_title": pattern.Title,
+			"pbehavior_pattern":                 pattern.PbehaviorPattern,
+			"corporate_pbehavior_pattern_title": pattern.Title,
 		}
 	default:
 		return fmt.Errorf("unknown pattern type id=%s: %q", pattern.ID, pattern.Type)
+	}
+
+	if pattern.Type == savedpattern.TypeEntity {
+		_, err := s.client.Collection(mongo.MetaAlarmRulesMongoCollection).UpdateMany(ctx, bson.M{"corporate_total_entity_pattern": pattern.ID}, bson.M{
+			"$set": bson.M{
+				"total_entity_pattern":                 pattern.EntityPattern,
+				"corporate_total_entity_pattern_title": pattern.Title,
+			},
+		})
+		if err != nil {
+			return err
+		}
 	}
 
 	for _, collection := range s.linkedCollections {
@@ -243,6 +257,18 @@ func (s *store) cleanLinkedModels(ctx context.Context, pattern Response) error {
 		f = "corporate_pbehavior_pattern"
 	default:
 		return fmt.Errorf("unknown pattern type for deleted pattern id=%s: %q", pattern.ID, pattern.Type)
+	}
+
+	if pattern.Type == savedpattern.TypeEntity {
+		_, err := s.client.Collection(mongo.MetaAlarmRulesMongoCollection).UpdateMany(ctx, bson.M{"corporate_total_entity_pattern": pattern.ID}, bson.M{
+			"$unset": bson.M{
+				"corporate_total_entity_pattern":       "",
+				"corporate_total_entity_pattern_title": "",
+			},
+		})
+		if err != nil {
+			return err
+		}
 	}
 
 	for _, collection := range s.linkedCollections {

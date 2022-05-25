@@ -13,13 +13,17 @@ Feature: correlation feature - timebased rule
           "unit": "s"
         }
       },
-      "patterns": {
-        "entity_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "component": "test-timebased-correlation-1"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-timebased-correlation-1"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -117,13 +121,17 @@ Feature: correlation feature - timebased rule
           "unit": "s"
         }
       },
-      "patterns": {
-        "entity_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "component": "test-timebased-correlation-2"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-timebased-correlation-2"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -311,13 +319,17 @@ Feature: correlation feature - timebased rule
           "unit": "s"
         }
       },
-      "patterns": {
-        "entity_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "component": "test-timebased-correlation-3"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-timebased-correlation-3"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201

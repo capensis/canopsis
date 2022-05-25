@@ -1,11 +1,11 @@
-package pattern_test
+package oldpattern_test
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"reflect"
 	"testing"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
@@ -13,11 +13,11 @@ import (
 )
 
 type stringPatternWrapper struct {
-	Pattern pattern.StringPattern `bson:"pattern"`
+	Pattern oldpattern.StringPattern `bson:"pattern"`
 }
 
 type stringRefPatternWrapper struct {
-	Pattern pattern.StringRefPattern `bson:"pattern"`
+	Pattern oldpattern.StringRefPattern `bson:"pattern"`
 }
 
 func TestEqualStringPatternToMongoDriverQuery(t *testing.T) {
@@ -136,7 +136,7 @@ func TestValidEqualStringPatternMongoDriver(t *testing.T) {
 			So(bson.Unmarshal(bsonPattern, &w), ShouldBeNil)
 			p := w.Pattern
 
-			var m pattern.RegexMatches
+			var m oldpattern.RegexMatches
 
 			Convey("The decoded values should be correct", func() {
 				So(p.Equal.Set, ShouldBeTrue)
@@ -173,7 +173,7 @@ func TestValidRegexPatternMongoDriver(t *testing.T) {
 			So(bson.Unmarshal(bsonPattern, &w), ShouldBeNil)
 			p := w.Pattern
 
-			var m pattern.RegexMatches
+			var m oldpattern.RegexMatches
 
 			Convey("The decoded values should be correct", func() {
 				So(p.Equal.Set, ShouldBeFalse)
@@ -211,7 +211,7 @@ func TestValidRegexPatternMongoDriver(t *testing.T) {
 			So(bson.Unmarshal(bsonPattern, &w), ShouldBeNil)
 			p := w.Pattern
 
-			var m pattern.RegexMatches
+			var m oldpattern.RegexMatches
 
 			Convey("The decoded values should be correct", func() {
 				So(p.Equal.Set, ShouldBeFalse)
@@ -248,7 +248,7 @@ func TestValidEqualNilStringRefPatternMongoDriver(t *testing.T) {
 			So(bson.Unmarshal(bsonPattern, &w), ShouldBeNil)
 			p := w.Pattern
 
-			var m pattern.RegexMatches
+			var m oldpattern.RegexMatches
 
 			Convey("The decoded values should be correct", func() {
 				So(p.EqualNil, ShouldBeTrue)
@@ -292,7 +292,7 @@ func TestValidEqualStringRefPatternMongoDriver(t *testing.T) {
 			So(bson.Unmarshal(bsonPattern, &w), ShouldBeNil)
 			p := w.Pattern
 
-			var m pattern.RegexMatches
+			var m oldpattern.RegexMatches
 
 			Convey("The decoded values should be correct", func() {
 				So(p.EqualNil, ShouldBeFalse)
@@ -333,7 +333,7 @@ func TestValidRegexRefPatternMongoDriver(t *testing.T) {
 			So(bson.Unmarshal(bsonPattern, &w), ShouldBeNil)
 			p := w.Pattern
 
-			var m pattern.RegexMatches
+			var m oldpattern.RegexMatches
 
 			Convey("The decoded values should be correct", func() {
 				So(p.EqualNil, ShouldBeFalse)
@@ -376,7 +376,7 @@ func TestValidRegexRefPatternMongoDriver(t *testing.T) {
 			So(bson.Unmarshal(bsonPattern, &w), ShouldBeNil)
 			p := w.Pattern
 
-			var m pattern.RegexMatches
+			var m oldpattern.RegexMatches
 
 			Convey("The decoded values should be correct", func() {
 				So(p.Equal.Set, ShouldBeFalse)
@@ -559,15 +559,15 @@ func TestStringPatternMarshalBSON(t *testing.T) {
 	datasets := []struct {
 		TestName             string
 		ExpectedUnmarshalled bson.M
-		Pattern              pattern.StringPattern
+		Pattern              oldpattern.StringPattern
 	}{
 		{
 			TestName: "test for equal",
 			ExpectedUnmarshalled: bson.M{
 				"pattern": "test",
 			},
-			Pattern: pattern.StringPattern{
-				StringConditions: pattern.StringConditions{
+			Pattern: oldpattern.StringPattern{
+				StringConditions: oldpattern.StringConditions{
 					Equal: types.OptionalString{
 						Set:   true,
 						Value: "test",
@@ -582,8 +582,8 @@ func TestStringPatternMarshalBSON(t *testing.T) {
 					"regex_match": "abc-.*-def",
 				},
 			},
-			Pattern: pattern.StringPattern{
-				StringConditions: pattern.StringConditions{
+			Pattern: oldpattern.StringPattern{
+				StringConditions: oldpattern.StringConditions{
 					RegexMatch: types.OptionalRegexp{
 						Set:   true,
 						Value: testRegexp,
@@ -596,8 +596,8 @@ func TestStringPatternMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"pattern": primitive.Undefined{},
 			},
-			Pattern: pattern.StringPattern{
-				StringConditions: pattern.StringConditions{},
+			Pattern: oldpattern.StringPattern{
+				StringConditions: oldpattern.StringConditions{},
 			},
 		},
 	}
@@ -634,17 +634,17 @@ func TestStringRefPatternMarshalBSON(t *testing.T) {
 	datasets := []struct {
 		TestName             string
 		ExpectedUnmarshalled bson.M
-		Pattern              pattern.StringRefPattern
+		Pattern              oldpattern.StringRefPattern
 	}{
 		{
 			TestName: "test for ref equal",
 			ExpectedUnmarshalled: bson.M{
 				"pattern": "test",
 			},
-			Pattern: pattern.StringRefPattern{
+			Pattern: oldpattern.StringRefPattern{
 				EqualNil: false,
-				StringPattern: pattern.StringPattern{
-					StringConditions: pattern.StringConditions{
+				StringPattern: oldpattern.StringPattern{
+					StringConditions: oldpattern.StringConditions{
 						Equal: types.OptionalString{
 							Set:   true,
 							Value: "test",
@@ -660,10 +660,10 @@ func TestStringRefPatternMarshalBSON(t *testing.T) {
 					"regex_match": "abc-.*-def",
 				},
 			},
-			Pattern: pattern.StringRefPattern{
+			Pattern: oldpattern.StringRefPattern{
 				EqualNil: false,
-				StringPattern: pattern.StringPattern{
-					StringConditions: pattern.StringConditions{
+				StringPattern: oldpattern.StringPattern{
+					StringConditions: oldpattern.StringConditions{
 						RegexMatch: types.OptionalRegexp{
 							Set:   true,
 							Value: testRegexp,
@@ -677,7 +677,7 @@ func TestStringRefPatternMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"pattern": nil,
 			},
-			Pattern: pattern.StringRefPattern{
+			Pattern: oldpattern.StringRefPattern{
 				EqualNil: true,
 			},
 		},
@@ -686,7 +686,7 @@ func TestStringRefPatternMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"pattern": primitive.Undefined{},
 			},
-			Pattern: pattern.StringRefPattern{},
+			Pattern: oldpattern.StringRefPattern{},
 		},
 	}
 
