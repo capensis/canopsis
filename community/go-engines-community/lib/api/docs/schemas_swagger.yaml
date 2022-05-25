@@ -1066,7 +1066,7 @@ definitions:
       enabled:
         type: boolean
       entity_patterns:
-        $ref: '#/definitions/pattern.EntityPatternList'
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       impact_level:
         maximum: 10
         minimum: 1
@@ -1117,7 +1117,7 @@ definitions:
       enabled:
         type: boolean
       entity_patterns:
-        $ref: '#/definitions/pattern.EntityPatternList'
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       impact_level:
         maximum: 10
         minimum: 1
@@ -1150,7 +1150,7 @@ definitions:
       enabled:
         type: boolean
       entity_patterns:
-        $ref: '#/definitions/pattern.EntityPatternList'
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       impact_level:
         maximum: 10
         minimum: 1
@@ -1199,7 +1199,7 @@ definitions:
       enabled:
         type: boolean
       entity_patterns:
-        $ref: '#/definitions/pattern.EntityPatternList'
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       idle_since:
         type: integer
       impact:
@@ -1433,6 +1433,8 @@ definitions:
         additionalProperties:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
+      old_patterns:
+        $ref: '#/definitions/oldpattern.EventPatternList'
       priority:
         type: integer
       type:
@@ -1535,14 +1537,14 @@ definitions:
       _id:
         type: string
       alarm_patterns:
-        $ref: '#/definitions/pattern.AlarmPatternList'
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
       description:
         maxLength: 255
         type: string
       duration:
         $ref: '#/definitions/types.DurationWithUnit'
       entity_patterns:
-        $ref: '#/definitions/pattern.EntityPatternList'
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       freq_limit:
         type: integer
       name:
@@ -1561,7 +1563,7 @@ definitions:
       _id:
         type: string
       alarm_patterns:
-        $ref: '#/definitions/pattern.AlarmPatternList'
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
       author:
         $ref: '#/definitions/common.User'
       created:
@@ -1571,7 +1573,7 @@ definitions:
       duration:
         $ref: '#/definitions/types.DurationWithUnit'
       entity_patterns:
-        $ref: '#/definitions/pattern.EntityPatternList'
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       freq_limit:
         type: integer
       name:
@@ -1584,14 +1586,14 @@ definitions:
   flappingrule.UpdateRequest:
     properties:
       alarm_patterns:
-        $ref: '#/definitions/pattern.AlarmPatternList'
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
       description:
         maxLength: 255
         type: string
       duration:
         $ref: '#/definitions/types.DurationWithUnit'
       entity_patterns:
-        $ref: '#/definitions/pattern.EntityPatternList'
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       freq_limit:
         type: integer
       name:
@@ -1649,7 +1651,7 @@ definitions:
       alarm_condition:
         type: string
       alarm_patterns:
-        $ref: '#/definitions/pattern.AlarmPatternList'
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
       description:
         maxLength: 255
         type: string
@@ -1662,7 +1664,7 @@ definitions:
       enabled:
         type: boolean
       entity_patterns:
-        $ref: '#/definitions/pattern.EntityPatternList'
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       name:
         maxLength: 255
         type: string
@@ -1702,7 +1704,7 @@ definitions:
       alarm_condition:
         type: string
       alarm_patterns:
-        $ref: '#/definitions/pattern.AlarmPatternList'
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
       description:
         maxLength: 255
         type: string
@@ -1715,7 +1717,7 @@ definitions:
       enabled:
         type: boolean
       entity_patterns:
-        $ref: '#/definitions/pattern.EntityPatternList'
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       name:
         maxLength: 255
         type: string
@@ -1737,7 +1739,7 @@ definitions:
       alarm_condition:
         type: string
       alarm_patterns:
-        $ref: '#/definitions/pattern.AlarmPatternList'
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
       description:
         maxLength: 255
         type: string
@@ -1750,7 +1752,7 @@ definitions:
       enabled:
         type: boolean
       entity_patterns:
-        $ref: '#/definitions/pattern.EntityPatternList'
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       name:
         maxLength: 255
         type: string
@@ -1820,7 +1822,7 @@ definitions:
       alarm_condition:
         type: string
       alarm_patterns:
-        $ref: '#/definitions/pattern.AlarmPatternList'
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
         description: Only for Alarm rules
       author:
         type: string
@@ -1840,7 +1842,7 @@ definitions:
       enabled:
         type: boolean
       entity_patterns:
-        $ref: '#/definitions/pattern.EntityPatternList'
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       name:
         type: string
       operation:
@@ -1871,7 +1873,7 @@ definitions:
       enabled:
         type: boolean
       entity_patterns:
-        $ref: '#/definitions/pattern.EntityPatternList'
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       impact_level:
         type: integer
       infos:
@@ -1962,7 +1964,11 @@ definitions:
       paginate:
         type: boolean
     type: object
-  pattern.AlarmPatternList:
+  oldpattern.AlarmPatternList:
+    type: object
+  oldpattern.EntityPatternList:
+    type: object
+  oldpattern.EventPatternList:
     type: object
   pattern.BulkDeleteRequestItem:
     properties:
@@ -2064,8 +2070,6 @@ definitions:
     - is_corporate
     - title
     - type
-    type: object
-  pattern.EntityPatternList:
     type: object
   pattern.FieldCondition:
     properties:
@@ -2663,14 +2667,14 @@ definitions:
       _id:
         type: string
       alarm_patterns:
-        $ref: '#/definitions/pattern.AlarmPatternList'
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
       description:
         maxLength: 255
         type: string
       duration:
         $ref: '#/definitions/types.DurationWithUnit'
       entity_patterns:
-        $ref: '#/definitions/pattern.EntityPatternList'
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       name:
         maxLength: 255
         type: string
@@ -2686,7 +2690,7 @@ definitions:
       _id:
         type: string
       alarm_patterns:
-        $ref: '#/definitions/pattern.AlarmPatternList'
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
       author:
         $ref: '#/definitions/common.User'
       created:
@@ -2696,7 +2700,7 @@ definitions:
       duration:
         $ref: '#/definitions/types.DurationWithUnit'
       entity_patterns:
-        $ref: '#/definitions/pattern.EntityPatternList'
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       name:
         type: string
       priority:
@@ -2707,14 +2711,14 @@ definitions:
   resolverule.UpdateRequest:
     properties:
       alarm_patterns:
-        $ref: '#/definitions/pattern.AlarmPatternList'
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
       description:
         maxLength: 255
         type: string
       duration:
         $ref: '#/definitions/types.DurationWithUnit'
       entity_patterns:
-        $ref: '#/definitions/pattern.EntityPatternList'
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       name:
         maxLength: 255
         type: string
@@ -2796,7 +2800,7 @@ definitions:
   scenario.Action:
     properties:
       alarm_patterns:
-        $ref: '#/definitions/pattern.AlarmPatternList'
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
       comment:
         type: string
       drop_scenario_if_not_matched:
@@ -2804,7 +2808,7 @@ definitions:
       emit_trigger:
         type: boolean
       entity_patterns:
-        $ref: '#/definitions/pattern.EntityPatternList'
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       parameters:
         $ref: '#/definitions/scenario.Parameters'
       type:
@@ -2813,7 +2817,7 @@ definitions:
   scenario.ActionRequest:
     properties:
       alarm_patterns:
-        $ref: '#/definitions/pattern.AlarmPatternList'
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
       comment:
         type: string
       drop_scenario_if_not_matched:
@@ -2821,7 +2825,7 @@ definitions:
       emit_trigger:
         type: boolean
       entity_patterns:
-        $ref: '#/definitions/pattern.EntityPatternList'
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       parameters:
         $ref: '#/definitions/action.Parameters'
       type:

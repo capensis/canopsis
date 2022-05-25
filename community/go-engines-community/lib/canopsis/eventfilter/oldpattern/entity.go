@@ -1,4 +1,4 @@
-package pattern
+package oldpattern
 
 import (
 	"encoding/json"
@@ -506,6 +506,10 @@ func (l EntityPatternList) IsSet() bool {
 // IsValid returns true if the EntityPatternList is valid.
 func (l EntityPatternList) IsValid() bool {
 	return !l.Set || l.Valid
+}
+
+func (l EntityPatternList) IsZero() bool {
+	return !l.Set
 }
 
 func (l *EntityPatternList) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {

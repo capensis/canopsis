@@ -2939,6 +2939,232 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Rule'
+            examples:
+              CreateDropRule:
+                summary: Create a drop rule
+                description: Create a drop rule.
+                value: {
+                  "type": "drop",
+                  "event_pattern":[[
+                    {
+                      "field": "event_type",
+                      "cond": {
+                        "type": "eq",
+                        "value": "check"
+                      }
+                    },
+                    {
+                      "field": "component",
+                      "cond": {
+                        "type": "eq",
+                        "value": "example-component"
+                      }
+                    }
+                  ]],
+                  "description": "drop rule example",
+                  "priority": 1,
+                  "enabled": true
+                }
+              CreateBreakRule:
+                summary: Create a break rule
+                description: Create a break rule.
+                value: {
+                  "type": "break",
+                  "event_pattern":[[
+                    {
+                      "field": "event_type",
+                      "cond": {
+                        "type": "eq",
+                        "value": "check"
+                      }
+                    },
+                    {
+                      "field": "component",
+                      "cond": {
+                        "type": "eq",
+                        "value": "example-component"
+                      }
+                    }
+                  ]],
+                  "description": "break rule example",
+                  "priority": 1,
+                  "enabled": true
+                }
+              CreateEnrichmentRule:
+                summary: Create an enrichment rule
+                description: Create an enrichment rule.
+                value: {
+                  "description": "enrichment rule example",
+                  "type": "enrichment",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "pattern"
+                        }
+                      }
+                    ]
+                  ],
+                  "priority": 0,
+                  "enabled": true,
+                  "config": {
+                    "actions": [
+                      {
+                        "type": "set_field",
+                        "name": "connector",
+                        "value": "kafka_connector"
+                      }
+                    ],
+                    "on_success": "pass",
+                    "on_failure": "pass"
+                  }
+                }
+              CreateEnrichmentRuleWithTemplate:
+                summary: Create an enrichment rule with template
+                description: Create an enrichment rule with template.
+                value: {
+                  "description": "enrichment rule example with template",
+                  "type": "enrichment",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "pattern"
+                        }
+                      }
+                    ]
+                  ],
+                  "priority": 0,
+                  "enabled": true,
+                  "config": {
+                    "actions": [
+                      {
+                        "type": "set_entity_info_from_template",
+                        "name": "customer",
+                        "description": "Client",
+                        "value": "{{ .Event.ExtraInfos.customer }}"
+                      }
+                    ],
+                    "on_success": "pass",
+                    "on_failure": "pass"
+                  }
+                }
+              CreateEnrichmentRuleWithExternalMongoData:
+                summary: Create an enrichment rule with external mongo data
+                description: Create an enrichment rule with external mongo data.
+                value: {
+                  "type": "enrichment",
+                  "external_data": {
+                    "component": {
+                      "type": "mongo",
+                      "select": {
+                        "component_customer": "{{ .Event.Component }}"
+                      },
+                      "collection": "assets"
+                    }
+                  },
+                  "event_pattern": [
+                    [
+                      {
+                        "field": "component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "example component"
+                        }
+                      }
+                    ]
+                  ],
+                  "description": "enruchment rule with external mongo data",
+                  "priority": 1,
+                  "enabled": true,
+                  "config": {
+                    "actions": [
+                      {
+                        "type": "set_entity_info_from_template",
+                        "name": "status",
+                        "value": "{{ .ExternalData.component.component_status }}",
+                        "description": "status from assets"
+                      }
+                    ],
+                    "on_success": "pass",
+                    "on_failure": "pass"
+                  }
+                }
+              CreateEnrichmentRuleWithExternalApiData:
+                summary: Create an enrichment rule with external api data
+                description: Create an enrichment rule with external api data.
+                value: {
+                  "type": "enrichment",
+                  "external_data": {
+                    "title": {
+                      "type": "api",
+                      "request": {
+                        "url": "http://localhost:3000/api/external_data",
+                        "method": "GET"
+                      }
+                    }
+                  },
+                  "event_pattern": [
+                    [
+                      {
+                        "field": "component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "component-example"
+                        }
+                      }
+                    ]
+                  ],
+                  "description": "enrichment rule with external api data",
+                  "priority": 1,
+                  "enabled": true,
+                  "config": {
+                    "actions": [
+                      {
+                        "type": "set_entity_info_from_template",
+                        "name": "title",
+                        "value": "{{ .ExternalData.title.title }}",
+                        "description": "title from external api"
+                      }
+                    ],
+                    "on_success": "pass",
+                    "on_failure": "pass"
+                  }
+                }
+              CreateChangeEntityRule:
+                summary: Create a change_entity rule
+                description: Create a change_entity rule.
+                value: {
+                  "description": "change_entity rule example",
+                  "type": "change_entity",
+                  "event_pattern": [
+                    [
+                      {
+                        "field": "connector",
+                        "cond": {
+                          "type": "eq",
+                          "value": "test_connector"
+                        }
+                      },
+                      {
+                        "field": "extra.customer_tags",
+                        "field_type": "string",
+                        "cond": {
+                          "type": "regexp",
+                          "value": "CMDB:(?P<SI_CMDB>.*?)($|,)"
+                        }
+                      }
+                    ]
+                  ],
+                  "config": {
+                    "component": "{{ .RegexMatch.ExtraInfos.customer_tags.SI_CMDB }}"
+                  },
+                  "enabled": true
+                }
         required: true
       responses:
         201:
@@ -2999,6 +3225,43 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Rule'
+            examples:
+              Update:
+                summary: Update
+                description: Update an eventfilter.
+                value: {
+                  "description": "test update",
+                  "type": "enrichment",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "updated pattern"
+                        }
+                      }
+                    ]
+                  ],
+                  "priority": 0,
+                  "enabled": true,
+                  "config": {
+                    "actions": [
+                      {
+                        "type": "set_field",
+                        "name": "connector",
+                        "value": "kafka_connector"
+                      }
+                    ],
+                    "on_success": "pass",
+                    "on_failure": "pass"
+                  },
+                  "external_data": {
+                    "test": {
+                      "type": "mongo"
+                    }
+                  }
+                }
         required: true
       responses:
         200:

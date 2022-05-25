@@ -1,10 +1,10 @@
-package pattern_test
+package oldpattern_test
 
 import (
 	"reflect"
 	"testing"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/google/go-cmp/cmp"
@@ -13,7 +13,7 @@ import (
 )
 
 type eventPatternWrapper struct {
-	Pattern pattern.EventPattern `bson:"pattern"`
+	Pattern oldpattern.EventPattern `bson:"pattern"`
 }
 
 func TestPatternUnmarshalMongoDriver(t *testing.T) {
@@ -30,7 +30,7 @@ func TestPatternUnmarshalMongoDriver(t *testing.T) {
 		So(err, ShouldBeNil)
 
 		Convey("The pattern should be decoded without errors", func() {
-			var p pattern.EventPattern
+			var p oldpattern.EventPattern
 			So(bson.Unmarshal(bsonPattern, &p), ShouldBeNil)
 
 			Convey("The values of the pattern should be correct", func() {
@@ -66,7 +66,7 @@ func TestPatternUnmarshalMongoDriver(t *testing.T) {
 		So(err, ShouldBeNil)
 
 		Convey("Decoding the pattern returns an error", func() {
-			var p pattern.EventPattern
+			var p oldpattern.EventPattern
 			So(bson.Unmarshal(bsonPattern, &p), ShouldNotBeNil)
 		})
 	})
@@ -81,7 +81,7 @@ func TestPatternUnmarshalMongoDriver(t *testing.T) {
 		So(err, ShouldBeNil)
 
 		Convey("Decoding the pattern returns an error", func() {
-			var p pattern.EventPattern
+			var p oldpattern.EventPattern
 			So(bson.Unmarshal(bsonPattern, &p), ShouldNotBeNil)
 		})
 	})
@@ -100,7 +100,7 @@ func TestPatternUnmarshalMongoDriver(t *testing.T) {
 		So(err, ShouldBeNil)
 
 		Convey("Decoding the pattern returns an error", func() {
-			var p pattern.EventPattern
+			var p oldpattern.EventPattern
 			So(bson.Unmarshal(bsonPattern, &p), ShouldNotBeNil)
 		})
 	})
@@ -119,7 +119,7 @@ func TestPatternUnmarshalMongoDriver(t *testing.T) {
 		So(err, ShouldBeNil)
 
 		Convey("Decoding the pattern returns an error", func() {
-			var p pattern.EventPattern
+			var p oldpattern.EventPattern
 			So(bson.Unmarshal(bsonPattern, &p), ShouldNotBeNil)
 		})
 	})
@@ -134,7 +134,7 @@ func TestEventPatternMarshalBSON(t *testing.T) {
 	datasets := []struct {
 		TestName             string
 		ExpectedUnmarshalled bson.M
-		Pattern              pattern.EventPattern
+		Pattern              oldpattern.EventPattern
 	}{
 		{
 			TestName: "test for pattern",
@@ -162,9 +162,9 @@ func TestEventPatternMarshalBSON(t *testing.T) {
 					},
 				},
 			},
-			Pattern: pattern.EventPattern{
-				State: pattern.IntegerPattern{
-					IntegerConditions: pattern.IntegerConditions{
+			Pattern: oldpattern.EventPattern{
+				State: oldpattern.IntegerPattern{
+					IntegerConditions: oldpattern.IntegerConditions{
 						Gt: types.OptionalInt64{
 							Set:   true,
 							Value: 0,
@@ -175,29 +175,29 @@ func TestEventPatternMarshalBSON(t *testing.T) {
 						},
 					},
 				},
-				Component: pattern.StringPattern{
-					StringConditions: pattern.StringConditions{
+				Component: oldpattern.StringPattern{
+					StringConditions: oldpattern.StringConditions{
 						Equal: types.OptionalString{
 							Set:   true,
 							Value: "component",
 						},
 					},
 				},
-				Resource: pattern.StringPattern{
-					StringConditions: pattern.StringConditions{
+				Resource: oldpattern.StringPattern{
+					StringConditions: oldpattern.StringConditions{
 						RegexMatch: types.OptionalRegexp{
 							Set:   true,
 							Value: testRegexp,
 						},
 					},
 				},
-				Entity: pattern.EntityPattern{
-					EntityFields: pattern.EntityFields{
-						Infos: map[string]pattern.InfoPattern{
+				Entity: oldpattern.EntityPattern{
+					EntityFields: oldpattern.EntityFields{
+						Infos: map[string]oldpattern.InfoPattern{
 							"info_name": {
-								InfoFields: pattern.InfoFields{
-									Value: pattern.StringPattern{
-										StringConditions: pattern.StringConditions{
+								InfoFields: oldpattern.InfoFields{
+									Value: oldpattern.StringPattern{
+										StringConditions: oldpattern.StringConditions{
 											Equal: types.OptionalString{
 												Set:   true,
 												Value: "info_value",
@@ -209,9 +209,9 @@ func TestEventPatternMarshalBSON(t *testing.T) {
 						},
 					},
 				},
-				ExtraInfos: map[string]pattern.InterfacePattern{
+				ExtraInfos: map[string]oldpattern.InterfacePattern{
 					"extra_info": {
-						StringArrayConditions: pattern.StringArrayConditions{
+						StringArrayConditions: oldpattern.StringArrayConditions{
 							HasEvery: types.OptionalStringArray{
 								Set:   true,
 								Value: []string{"test1", "test2"},
@@ -223,7 +223,7 @@ func TestEventPatternMarshalBSON(t *testing.T) {
 						},
 					},
 					"extra_info_2": {
-						StringArrayConditions: pattern.StringArrayConditions{
+						StringArrayConditions: oldpattern.StringArrayConditions{
 							IsEmpty: types.OptionalBool{
 								Set:   true,
 								Value: false,
@@ -238,7 +238,7 @@ func TestEventPatternMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"pattern": bson.M{},
 			},
-			Pattern: pattern.EventPattern{},
+			Pattern: oldpattern.EventPattern{},
 		},
 	}
 
@@ -270,7 +270,7 @@ func TestEventPatternMarshalBSON(t *testing.T) {
 // EventPatternList because bson.Unmarshal does not work when called with an
 // array.
 type eventPatternListWrapper struct {
-	PatternList pattern.EventPatternList `bson:"list"`
+	PatternList oldpattern.EventPatternList `bson:"list"`
 }
 
 func TestValidEventPatternListMongoDriver(t *testing.T) {
@@ -385,7 +385,7 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 	datasets := []struct {
 		TestName             string
 		ExpectedUnmarshalled bson.M
-		Pattern              pattern.EventPatternList
+		Pattern              oldpattern.EventPatternList
 	}{
 		{
 			TestName: "test for pattern list",
@@ -435,13 +435,13 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 					},
 				},
 			},
-			Pattern: pattern.EventPatternList{
+			Pattern: oldpattern.EventPatternList{
 				Set:   true,
 				Valid: true,
-				Patterns: []pattern.EventPattern{
+				Patterns: []oldpattern.EventPattern{
 					{
-						State: pattern.IntegerPattern{
-							IntegerConditions: pattern.IntegerConditions{
+						State: oldpattern.IntegerPattern{
+							IntegerConditions: oldpattern.IntegerConditions{
 								Gt: types.OptionalInt64{
 									Set:   true,
 									Value: 0,
@@ -452,29 +452,29 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 								},
 							},
 						},
-						Component: pattern.StringPattern{
-							StringConditions: pattern.StringConditions{
+						Component: oldpattern.StringPattern{
+							StringConditions: oldpattern.StringConditions{
 								Equal: types.OptionalString{
 									Set:   true,
 									Value: "component",
 								},
 							},
 						},
-						Resource: pattern.StringPattern{
-							StringConditions: pattern.StringConditions{
+						Resource: oldpattern.StringPattern{
+							StringConditions: oldpattern.StringConditions{
 								RegexMatch: types.OptionalRegexp{
 									Set:   true,
 									Value: testRegexp,
 								},
 							},
 						},
-						Entity: pattern.EntityPattern{
-							EntityFields: pattern.EntityFields{
-								Infos: map[string]pattern.InfoPattern{
+						Entity: oldpattern.EntityPattern{
+							EntityFields: oldpattern.EntityFields{
+								Infos: map[string]oldpattern.InfoPattern{
 									"info_name": {
-										InfoFields: pattern.InfoFields{
-											Value: pattern.StringPattern{
-												StringConditions: pattern.StringConditions{
+										InfoFields: oldpattern.InfoFields{
+											Value: oldpattern.StringPattern{
+												StringConditions: oldpattern.StringConditions{
 													Equal: types.OptionalString{
 														Set:   true,
 														Value: "info_value",
@@ -486,9 +486,9 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 								},
 							},
 						},
-						ExtraInfos: map[string]pattern.InterfacePattern{
+						ExtraInfos: map[string]oldpattern.InterfacePattern{
 							"extra_info": {
-								StringArrayConditions: pattern.StringArrayConditions{
+								StringArrayConditions: oldpattern.StringArrayConditions{
 									HasEvery: types.OptionalStringArray{
 										Set:   true,
 										Value: []string{"test1", "test2"},
@@ -502,8 +502,8 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 						},
 					},
 					{
-						State: pattern.IntegerPattern{
-							IntegerConditions: pattern.IntegerConditions{
+						State: oldpattern.IntegerPattern{
+							IntegerConditions: oldpattern.IntegerConditions{
 								Gt: types.OptionalInt64{
 									Set:   true,
 									Value: 0,
@@ -514,29 +514,29 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 								},
 							},
 						},
-						Component: pattern.StringPattern{
-							StringConditions: pattern.StringConditions{
+						Component: oldpattern.StringPattern{
+							StringConditions: oldpattern.StringConditions{
 								Equal: types.OptionalString{
 									Set:   true,
 									Value: "component",
 								},
 							},
 						},
-						Resource: pattern.StringPattern{
-							StringConditions: pattern.StringConditions{
+						Resource: oldpattern.StringPattern{
+							StringConditions: oldpattern.StringConditions{
 								RegexMatch: types.OptionalRegexp{
 									Set:   true,
 									Value: testRegexp,
 								},
 							},
 						},
-						Entity: pattern.EntityPattern{
-							EntityFields: pattern.EntityFields{
-								Infos: map[string]pattern.InfoPattern{
+						Entity: oldpattern.EntityPattern{
+							EntityFields: oldpattern.EntityFields{
+								Infos: map[string]oldpattern.InfoPattern{
 									"info_name": {
-										InfoFields: pattern.InfoFields{
-											Value: pattern.StringPattern{
-												StringConditions: pattern.StringConditions{
+										InfoFields: oldpattern.InfoFields{
+											Value: oldpattern.StringPattern{
+												StringConditions: oldpattern.StringConditions{
 													Equal: types.OptionalString{
 														Set:   true,
 														Value: "info_value",
@@ -548,9 +548,9 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 								},
 							},
 						},
-						ExtraInfos: map[string]pattern.InterfacePattern{
+						ExtraInfos: map[string]oldpattern.InterfacePattern{
 							"extra_info": {
-								StringArrayConditions: pattern.StringArrayConditions{
+								StringArrayConditions: oldpattern.StringArrayConditions{
 									HasEvery: types.OptionalStringArray{
 										Set:   true,
 										Value: []string{"test1", "test2"},
@@ -562,7 +562,7 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 								},
 							},
 							"extra_info_2": {
-								StringConditions: pattern.StringConditions{
+								StringConditions: oldpattern.StringConditions{
 									Equal: types.OptionalString{
 										Set:   true,
 										Value: "test_info",
@@ -570,7 +570,7 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 								},
 							},
 							"extra_info_3": {
-								StringArrayConditions: pattern.StringArrayConditions{
+								StringArrayConditions: oldpattern.StringArrayConditions{
 									IsEmpty: types.OptionalBool{
 										Set:   true,
 										Value: true,
@@ -587,7 +587,7 @@ func TestEventPatternListMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"list": nil,
 			},
-			Pattern: pattern.EventPatternList{},
+			Pattern: oldpattern.EventPatternList{},
 		},
 	}
 

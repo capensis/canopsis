@@ -104,7 +104,7 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 		}
 	}
 
-	if r.WithInstructions && r.GetOpenedFilter() != OnlyResolved {
+	if r.WithInstructions {
 		anyInstructionMatch, err := s.fillAssignedInstructions(ctx, &result, now)
 		if err != nil {
 			return nil, err
@@ -168,6 +168,15 @@ func (s *store) GetByID(ctx context.Context, id, apiKey string) (*Alarm, error) 
 
 	if len(result.Data) == 0 {
 		return nil, nil
+	}
+
+	_, err = s.fillAssignedInstructions(ctx, &result, types.NewCpsTime())
+	if err != nil {
+		return nil, err
+	}
+	err = s.fillInstructionFlags(ctx, &result)
+	if err != nil {
+		return nil, err
 	}
 
 	err = s.fillLinks(ctx, apiKey, &result)
@@ -348,7 +357,7 @@ func (s *store) GetDetails(ctx context.Context, apiKey string, r DetailsRequest)
 				}
 			}
 
-			if r.WithInstructions && r.GetOpenedFilter() != OnlyResolved {
+			if r.WithInstructions {
 				_, err = s.fillAssignedInstructions(ctx, &children, now)
 				if err != nil {
 					return nil, err
@@ -635,6 +644,9 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 }
 
 func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string) (map[string]ExecutionStatus, error) {
+	if len(alarmIDs) == 0 {
+		return nil, nil
+	}
 	cursor, err := s.dbInstructionExecutionCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"alarm": bson.M{"$in": alarmIDs},
@@ -715,8 +727,10 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 
 func (s *store) fillAssignedInstructions(ctx context.Context, result *AggregationResult, now types.CpsTime) (bson.M, error) {
 	var alarmIds []string
-	for _, alarmDocument := range result.Data {
-		alarmIds = append(alarmIds, alarmDocument.ID)
+	for _, item := range result.Data {
+		if item.Value.Resolved == nil {
+			alarmIds = append(alarmIds, item.ID)
+		}
 	}
 
 	if len(alarmIds) == 0 {
@@ -746,7 +760,12 @@ func (s *store) fillAssignedInstructions(ctx context.Context, result *Aggregatio
 func (s *store) fillInstructionFlags(ctx context.Context, result *AggregationResult) error {
 	alarmIDs := make([]string, len(result.Data))
 	for i, item := range result.Data {
-		alarmIDs[i] = item.ID
+		if item.Value.Resolved == nil {
+			alarmIDs[i] = item.ID
+		}
+	}
+	if len(alarmIDs) == 0 {
+		return nil
 	}
 
 	statusesByAlarm, err := s.GetInstructionExecutionStatuses(ctx, alarmIDs)
