@@ -362,6 +362,35 @@ periodical_alarm:
       <<: *alarm_value
       resource: test-resource-to-instruction-execution-start-5
 
+  alarm_to_pattern_count_1:
+    <<: *alarm
+    _id: test-alarm-to-pattern-count-1
+    d: test-resource-to-pattern-count-1/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-pattern-count-1
+  alarm_to_pattern_count_2:
+    <<: *alarm
+    _id: test-alarm-to-pattern-count-2
+    d: test-resource-to-pattern-count-2/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-pattern-count-2
+  alarm_to_pattern_count_3:
+    <<: *alarm
+    _id: test-alarm-to-pattern-count-3
+    d: test-resource-to-pattern-count-3/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-pattern-count-3
+  alarm_to_pattern_count_4:
+    <<: *alarm
+    _id: test-alarm-to-pattern-count-4
+    d: test-resource-to-pattern-count-4/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-pattern-count-4
+
   periodical_alarm_18:
     _id: test-instruction-execution-next-1
     d: test-instruction-execution-next-resource-1/test-instruction-execution-next-component
@@ -1751,131 +1780,6 @@ periodical_alarm:
           m: test-alarm-to-export-output
           t: 1597030219
           val: 1
-      tags: [ ]
-      total_state_changes: 1
-  periodical_alarm_52:
-    _id: test-idle-rule-count-patterns-alarm-1
-    d: test-idle-rule-count-patterns-resource-1/test-idle-rule-count-patterns-component
-    t: 1596942720
-    v:
-      children: [ ]
-      component: test-idle-rule-count-patterns-component
-      connector: test-idle-rule-count-patterns-connector
-      connector_name: test-idle-rule-count-patterns-connectorname
-      creation_date: 1596942720
-      display_name: RC-KC_tW
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-idle-rule-count-patterns-output
-      last_event_date: 1596942720
-      last_update_date: 1596942720
-      long_output: test-idle-rule-count-patterns-output
-      long_output_history:
-        - ""
-      output: test-idle-rule-count-patterns-output
-      parents: [ ]
-      resource: test-idle-rule-count-patterns-resource-1
-      tags: [ ]
-      total_state_changes: 1
-  periodical_alarm_53:
-    _id: test-idle-rule-count-patterns-alarm-2
-    d: test-idle-rule-count-patterns-resource-2/test-idle-rule-count-patterns-component
-    t: 1596942720
-    v:
-      children: [ ]
-      component: test-idle-rule-count-patterns-component
-      connector: test-idle-rule-count-patterns-connector
-      connector_name: test-idle-rule-count-patterns-connectorname
-      creation_date: 1596942720
-      display_name: RC-KC_tW
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-idle-rule-count-patterns-output
-      last_event_date: 1596942720
-      last_update_date: 1596942720
-      long_output: test-idle-rule-count-patterns-output
-      long_output_history:
-        - ""
-      output: test-idle-rule-count-patterns-output
-      parents: [ ]
-      resource: test-idle-rule-count-patterns-resource-2
-      tags: [ ]
-      total_state_changes: 1
-  periodical_alarm_54:
-    _id: test-idle-rule-count-patterns-alarm-3
-    d: test-idle-rule-count-patterns-resource-3/test-idle-rule-count-patterns-component
-    t: 1596942720
-    v:
-      children: [ ]
-      component: test-idle-rule-count-patterns-component
-      connector: test-idle-rule-count-patterns-connector
-      connector_name: test-idle-rule-count-patterns-connectorname
-      creation_date: 1596942720
-      display_name: RC-KC_tW
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-idle-rule-count-patterns-output
-      last_event_date: 1596942720
-      last_update_date: 1596942720
-      long_output: test-idle-rule-count-patterns-output
-      long_output_history:
-        - ""
-      output: test-idle-rule-count-patterns-output
-      parents: [ ]
-      resource: test-idle-rule-count-patterns-resource-3
-      tags: [ ]
-      total_state_changes: 1
-  periodical_alarm_55:
-    _id: test-idle-rule-count-patterns-alarm-4
-    d: test-idle-rule-count-patterns-resource-4/test-idle-rule-count-patterns-component
-    t: 1596942720
-    v:
-      children: [ ]
-      component: test-idle-rule-count-patterns-component
-      connector: test-idle-rule-count-patterns-connector
-      connector_name: test-idle-rule-count-patterns-connectorname
-      creation_date: 1596942720
-      display_name: RC-KC_tW
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-idle-rule-count-patterns-output
-      last_event_date: 1596942720
-      last_update_date: 1596942720
-      long_output: test-idle-rule-count-patterns-output
-      long_output_history:
-        - ""
-      output: test-idle-rule-count-patterns-output
-      parents: [ ]
-      resource: test-idle-rule-count-patterns-resource-4
-      tags: [ ]
-      total_state_changes: 1
-  periodical_alarm_56:
-    _id: test-idle-rule-count-patterns-alarm-5
-    d: test-idle-rule-count-patterns-resource-5/test-idle-rule-count-patterns-component
-    t: 1596942720
-    v:
-      children: [ ]
-      component: test-idle-rule-count-patterns-component
-      connector: test-idle-rule-count-patterns-connector
-      connector_name: test-idle-rule-count-patterns-connectorname
-      creation_date: 1596942720
-      display_name: RC-KC_tW
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-idle-rule-count-patterns-output
-      last_event_date: 1596942720
-      last_update_date: 1596942720
-      long_output: test-idle-rule-count-patterns-output
-      long_output_history:
-        - ""
-      output: test-idle-rule-count-patterns-output
-      parents: [ ]
-      resource: test-idle-rule-count-patterns-resource-5
       tags: [ ]
       total_state_changes: 1
   periodical_alarm_57:

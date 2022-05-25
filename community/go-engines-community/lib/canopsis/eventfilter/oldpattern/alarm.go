@@ -1,6 +1,6 @@
 // Package pattern.
 // Deprecated: use git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern instead.
-package pattern
+package oldpattern
 
 import (
 	"encoding/json"
