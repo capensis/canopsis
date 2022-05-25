@@ -93,9 +93,7 @@ func (p *parser) Parse(content []byte) (map[string][]interface{}, error) {
 			docs = append(docs, doc)
 		}
 
-		if len(docs) > 0 {
-			docsByCollection[collectionName] = docs
-		}
+		docsByCollection[collectionName] = docs
 	}
 
 	return docsByCollection, nil

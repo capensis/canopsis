@@ -321,3 +321,8 @@ widgets:
     <<: *widget
     _id: test-widget-to-filter-check-access
     tab: test-tab-to-filter-check-access
+
+  widget_to_alarm_get:
+    <<: *widget
+    _id: test-widget-to-alarm-get
+    tab: test-tab-to-alarm-get

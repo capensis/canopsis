@@ -288,11 +288,11 @@ func (c Condition) MatchStringArray(value []string) (bool, error) {
 func (c Condition) MatchTime(value time.Time) (bool, error) {
 	switch c.Type {
 	case ConditionTimeRelative:
-		if c.valueInt == nil {
+		if c.valueDuration == nil {
 			return false, ErrWrongConditionValue
 		}
 
-		return value.After(time.Now().Add(time.Duration(-*c.valueInt) * time.Second)), nil
+		return value.After(time.Now().Add(time.Duration(-*c.valueDuration) * time.Second)), nil
 	case ConditionTimeAbsolute:
 		if c.valueTimeIntervalFrom == nil || c.valueTimeIntervalTo == nil {
 			return false, ErrWrongConditionValue

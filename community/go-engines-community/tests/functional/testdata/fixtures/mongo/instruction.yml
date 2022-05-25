@@ -556,66 +556,6 @@ instruction:
               value: 6
         stop_on_fail: true
 
-  instruction_to_assign_1:
-    <<: *instruction_manual
-    _id: test-instruction-to-assign
-    entity_pattern:
-    alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-alarm-with-instruction-1
-
-  instruction_to_assign_2:
-    <<: *instruction_manual
-    _id: test-instruction-should-not-be-assigned
-    entity_pattern:
-    alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-alarm-with-instruction-1
-
-  instruction_to_assign_3:
-    <<: *instruction_manual
-    _id: test-instruction-to-assign-with-execution
-    entity_pattern:
-    alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-alarm-with-instruction-2
-
-  instruction_to_assign_4:
-    <<: *instruction_manual
-    _id: test-instruction-to-assign-with-execution-2
-    entity_pattern:
-    alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-alarm-with-instruction-3
-
-  instruction_to_assign_5:
-    <<: *instruction_manual
-    _id: test-instruction-to-assign-without-execution
-    entity_pattern:
-    alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-alarm-with-instruction-3
-
-  instruction_to_auto_instruction_filter:
-    <<: *instruction_auto
-    _id: test-instruction-to-auto-instruction-filter
-    entity_pattern:
-    alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-alarm-with-instruction-4
-
   instruction_to_rate_1:
     <<: *instruction_manual
     _id: test-instruction-to-rate-1
@@ -656,53 +596,6 @@ instruction:
   instruction_to_check_rate_notify:
     <<: *instruction_manual
     _id: test-instruction-to-check-rate-notify
-
-  instruction_with_entity_pattern_1:
-    <<: *instruction_manual
-    _id: test-instruction-with-entity-pattern-1
-    entity_pattern:
-      - - field: name
-          cond:
-            type: regexp
-            value: test-alarm-get-resource.*
-    alarm_pattern:
-
-  instruction_with_entity_pattern_2:
-    <<: *instruction_manual
-    _id: test-instruction-with-entity-pattern-2
-    entity_pattern:
-      - - field: name
-          cond:
-            type: regexp
-            value: test-alarm-get-*
-    alarm_pattern:
-
-  instruction_with_patterns_combined:
-    <<: *instruction_manual
-    _id: test-instruction-with-patterns-combined
-    alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-alarm-get-component
-    entity_pattern:
-      - - field: name
-          cond:
-            type: regexp
-            value: test-alarm-get-*
-
-  instruction_with_pbh_to_edit:
-    <<: *instruction_manual
-    _id: test-instruction-with-pbh-to-edit
-    active_on_pbh:
-      - test1
-      - test2
-    entity_pattern:
-    alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-alarm-instruction-with-pbehavior-component-no-match
 
   instruction_to_run_auto_instruction_1_1:
     <<: *instruction_auto
@@ -1146,17 +1039,6 @@ instruction:
     last_executed_on: 1618280210
     last_modified: 1596712203
 
-  instruction_to_get_meta_alarm_with_children_instructions:
-    <<: *instruction_manual
-    _id: test-alarm-meta-children-with-instructions
-    alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-alarm-meta-children-with-instructions-component-1
-    description: test-alarm-meta-children-with-instructions-description
-    name: test-alarm-meta-children-with-instructions-name
-
   instruction_to_stats_executions_get_with_resolved_alarms_1:
     <<: *instruction_manual
     _id: test-instruction-to-stats-executions-get-with-resolved-alarms-1
@@ -1264,3 +1146,188 @@ instruction:
     timeout_after_execution:
       unit: s
       value: 1
+
+  instruction_alarm_instruction_get_1_1:
+    <<: *instruction_auto
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-1
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-auto-instruction-5
+        stop_on_fail: false
+
+  instruction_alarm_instruction_get_1_2:
+    <<: *instruction_auto
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-1
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-auto-instruction-5
+        stop_on_fail: false
+
+  instruction_alarm_instruction_get_2:
+    <<: *instruction_manual
+    _id: test-instruction-to-alarm-instruction-get-2
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-2
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_3_1:
+    <<: *instruction_auto
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-3
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-auto-instruction-6
+        stop_on_fail: false
+
+  instruction_alarm_instruction_get_3_2:
+    <<: *instruction_auto
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-3
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-auto-instruction-5
+        stop_on_fail: false
+
+  instruction_alarm_instruction_get_4_1:
+    <<: *instruction_manual
+    _id: test-instruction-to-alarm-instruction-get-4-1
+    name: test-instruction-to-alarm-instruction-get-4-1-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-4
+    alarm_pattern:
+
+  instruction_alarm_instruction_get_4_2:
+    <<: *instruction_manual
+    _id: test-instruction-to-alarm-instruction-get-4-2
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-4
+    alarm_pattern:
+      - - field: v.state.val
+          cond:
+            type: eq
+            value: 3
+
+  instruction_alarm_instruction_get_4_3:
+    <<: *instruction_auto
+    _id: test-instruction-to-alarm-instruction-get-4-3
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-4
+    alarm_pattern:
+
+  instruction_alarm_instruction_get_5_1:
+    <<: *instruction_manual
+    _id: test-instruction-to-alarm-instruction-get-5-1
+    name: test-instruction-to-alarm-instruction-get-5-1-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-5
+    alarm_pattern:
+
+  instruction_alarm_instruction_get_5_2:
+    <<: *instruction_manual
+    _id: test-instruction-to-alarm-instruction-get-5-2
+    name: test-instruction-to-alarm-instruction-get-5-2-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-5
+    alarm_pattern:
+
+  instruction_alarm_instruction_get_6_1:
+    <<: *instruction_manual
+    _id: test-instruction-to-alarm-instruction-get-6-1
+    entity_pattern:
+      - - field: name
+          cond:
+            type: regexp
+            value: test-resource-to-alarm-instruction-get-6-1
+      - - field: name
+          cond:
+            type: regexp
+            value: test-resource-to-alarm-instruction-get-6-2
+    alarm_pattern:
+      - - field: v.state.val
+          cond:
+            type: eq
+            value: 1
+
+  instruction_alarm_instruction_get_6_2:
+    <<: *instruction_auto
+    _id: test-instruction-to-alarm-instruction-get-6-2
+    entity_pattern:
+      - - field: name
+          cond:
+            type: regexp
+            value: test-resource-to-alarm-instruction-get-6-3
+      - - field: name
+          cond:
+            type: regexp
+            value: test-resource-to-alarm-instruction-get-6-4
+    alarm_pattern:
+      - - field: v.state.val
+          cond:
+            type: eq
+            value: 1
+
+  instruction_alarm_correlation_instruction_get_1_1:
+    <<: *instruction_manual
+    _id: test-instruction-to-alarm-correlation-instruction-get-1-1
+    entity_pattern:
+      - - field: name
+          cond:
+            type: regexp
+            value: test-resource-to-alarm-correlation-get-5-2
+    alarm_pattern:
+
+  instruction_alarm_correlation_instruction_get_1_2:
+    <<: *instruction_auto
+    entity_pattern:
+      - - field: name
+          cond:
+            type: regexp
+            value: test-resource-to-alarm-correlation-get-5-3
+    alarm_pattern:

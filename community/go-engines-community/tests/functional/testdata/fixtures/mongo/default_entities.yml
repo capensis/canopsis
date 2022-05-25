@@ -1,285 +1,106 @@
+template:
+  - &connector {
+      type: connector,
+      enabled: true,
+      impact_level: 1,
+      infos: { }
+  }
+  - &component {
+      type: component,
+      enabled: true,
+      impact_level: 1,
+      infos: { },
+      impact: ["test-connector-default/test-connector-default-name"]
+  }
+  - &resource {
+      type: resource,
+      enabled: true,
+      impact_level: 1,
+      infos: { },
+      component: "test-component-default",
+      impact: ["test-component-default"],
+      depends: ["test-connector-default/test-connector-default-name"]
+  }
+
 default_entities:
-  default_entities_1:
-    _id: test-alarm-get-connector/test-alarm-get-connectorname
-    depends:
-    - test-alarm-get-component
-    enable_history:
-    - 1597030096
-    enabled: true
+  default_connector:
+    <<: *connector
+    _id: test-connector-default/test-connector-default-name
+    name: test-connector-default-name
     impact:
-    - test-alarm-get-resource-1/test-alarm-get-component
-    - test-alarm-get-resource4/test-alarm-get-component
-    - test-alarm-get-resource-2/test-alarm-get-component
-    - test-alarm-get-resource-3/test-alarm-get-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-get-connectorname
-    type: connector
-  default_entities_2:
-    _id: test-alarm-get-component
-    component: test-alarm-get-component
+      - test-resource-to-alarm-get-1
+      - test-resource-to-alarm-get-2
+      - test-resource-to-alarm-get-3
+      - test-resource-to-alarm-get-4
     depends:
-    - test-alarm-get-resource-1/test-alarm-get-component
-    - test-alarm-get-resource-4/test-alarm-get-component
-    - test-alarm-get-resource-2/test-alarm-get-component
-    - test-alarm-get-resource-3/test-alarm-get-component
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-alarm-get-connector/test-alarm-get-connectorname
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-get-component
-    type: component
-  default_entities_3:
-    _id: test-alarm-get-resource-1/test-alarm-get-component
+      - test-component-default
+
+  default_component:
+    <<: *component
+    _id: test-component-default
+    name: <Current()._id>
+    depends:
+      - test-resource-to-alarm-get-1
+      - test-resource-to-alarm-get-2
+      - test-resource-to-alarm-get-3
+      - test-resource-to-alarm-get-4
+
+  entity_to_alarm_get_1:
+    <<: *resource
+    _id: test-resource-to-alarm-get-1/test-component-default
+    name: test-resource-to-alarm-get-1
     category: test-category-to-alarm-get-1
-    component: test-alarm-get-component
-    depends:
-    - test-alarm-get-connector/test-alarm-get-connectorname
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-alarm-get-component
-    impact_level: 1
     infos:
-      test-alarm-get-resource-1-info-1:
-        description: test-alarm-get-resource-1-info-1-description
-        name: test-alarm-get-resource-1-info-1-name
-        value: test-alarm-get-resource-1-info-1-value
-      test-alarm-get-resource-1-info-2:
-        description: test-alarm-get-resource-1-info-2-description
-        name: test-alarm-get-resource-1-info-2-name
+      test-resource-to-alarm-get-1-info-1:
+        name: test-resource-to-alarm-get-1-info-1-name
+        description: test-resource-to-alarm-get-1-info-1-description
+        value: test-resource-to-alarm-get-1-info-1-value
+      test-resource-to-alarm-get-1-info-2:
+        name: test-resource-to-alarm-get-1-info-2-name
+        description: test-resource-to-alarm-get-1-info-2-description
         value: false
-      test-alarm-get-resource-1-info-3:
-        description: test-alarm-get-resource-1-info-3-description
-        name: test-alarm-get-resource-1-info-3-name
+      test-resource-to-alarm-get-1-info-3:
+        name: test-resource-to-alarm-get-1-info-3-name
+        description: test-resource-to-alarm-get-1-info-3-description
         value: 1022
-      test-alarm-get-resource-1-info-4:
-        description: test-alarm-get-resource-1-info-4-description
-        name: test-alarm-get-resource-1-info-4-name
+      test-resource-to-alarm-get-1-info-4:
+        name: test-resource-to-alarm-get-1-info-4-name
+        description: test-resource-to-alarm-get-1-info-4-description
         value: 10.45
-      test-alarm-get-resource-1-info-5:
-        description: test-alarm-get-resource-1-info-5-description
-        name: test-alarm-get-resource-1-info-5-name
+      test-resource-to-alarm-get-1-info-5:
+        name: test-resource-to-alarm-get-1-info-5-name
+        description: test-resource-to-alarm-get-1-info-5-description
         value: null
-      test-alarm-get-resource-1-info-6:
-        description: test-alarm-get-resource-1-info-6-description
-        name: test-alarm-get-resource-1-info-6-name
-        value:
-        - test-alarm-get-resource-1-info-6-value
-        - false
-        - 1022
-        - 10.45
-        - null
-      test-alarm-get-resource-1-info-7:
-        description: test-alarm-get-resource-1-info-7-description
-        value: test-alarm-get-resource-1-info-7-value
-    measurements: null
-    name: test-alarm-get-resource-1
-    type: resource
-  default_entities_4:
-    _id: test-alarm-with-instruction-connector/test-alarm-with-instruction-connectorname
-    depends:
-    - test-alarm-with-instruction-component
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-alarm-with-instruction-resource-1/test-alarm-with-instruction-component
-    - test-alarm-with-instruction-resource-2/test-alarm-with-instruction-component
-    - test-alarm-with-instruction-resource-3/test-alarm-with-instruction-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-with-instruction-connectorname
-    type: connector
-  default_entities_5:
-    _id: test-alarm-with-instruction-component
-    component: test-alarm-with-instruction-component
-    depends:
-    - test-alarm-with-instruction-resource-1/test-alarm-with-instruction-component
-    - test-alarm-with-instruction-resource-2/test-alarm-with-instruction-component
-    - test-alarm-with-instruction-resource-3/test-alarm-with-instruction-component
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-alarm-with-instruction-connector/test-alarm-with-instruction-connectorname
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-with-instruction-component
-    type: component
-  default_entities_6:
-    _id: test-alarm-with-instruction-resource-1/test-alarm-with-instruction-component
-    component: test-alarm-with-instruction-component
-    depends:
-    - test-alarm-with-instruction-connector/test-alarm-with-instruction-connectorname
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-alarm-with-instruction-component
-    impact_level: 1
-    infos:
-      customer:
-        value: test-alarm-with-instruction-customer
-    measurements: null
-    name: test-alarm-with-instruction-resource-1
-    type: resource
-  default_entities_7:
-    _id: test-alarm-with-instruction-resource-2/test-alarm-with-instruction-component
-    component: test-alarm-with-instruction-component
-    depends:
-    - test-alarm-with-instruction-connector/test-alarm-with-instruction-connectorname
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-alarm-with-instruction-component
-    impact_level: 1
-    infos:
-      customer:
-        value: test-alarm-with-instruction-customer
-    measurements: null
-    name: test-alarm-with-instruction-resource-2
-    type: resource
-  default_entities_8:
-    _id: test-alarm-with-instruction-resource-3/test-alarm-with-instruction-component
-    component: test-alarm-with-instruction-component
-    depends:
-    - test-alarm-with-instruction-connector/test-alarm-with-instruction-connectorname
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-alarm-with-instruction-component
-    impact_level: 1
-    infos:
-      customer:
-        value: test-alarm-with-instruction-customer
-    measurements: null
-    name: test-alarm-with-instruction-resource-3
-    type: resource
-  default_entities_9:
-    _id: test-alarm-with-instruction-resource-4/test-alarm-with-instruction-component
-    component: test-alarm-with-instruction-component
-    depends:
-    - test-alarm-with-instruction-connector/test-alarm-with-instruction-connectorname
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-alarm-with-instruction-component
-    impact_level: 1
-    infos:
-      customer:
-        value: test-alarm-with-instruction-customer
-    measurements: null
-    name: test-alarm-with-instruction-resource-4
-    type: resource
-  default_entities_10:
-    _id: test-alarm-get-resource-4/test-alarm-get-component
-    component: test-alarm-get-component
-    depends:
-    - test-alarm-get-connector/test-alarm-get-connectorname
-    enable_history:
-    - 1597030118
-    enabled: true
-    impact:
-    - test-alarm-get-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-get-resource-4
-    type: resource
-  default_entities_11:
-    _id: test-alarm-get-resource-2/test-alarm-get-component
-    component: test-alarm-get-component
-    depends:
-    - test-alarm-get-connector/test-alarm-get-connectorname
-    enable_history:
-    - 1597030219
-    enabled: true
-    impact:
-    - test-alarm-get-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-get-resource-2
-    type: resource
-  default_entities_12:
-    _id: test-alarm-get-entity-meta-1/metaalarm
-    component: metaalarm
-    depends: []
-    enable_history:
-    - 1597030219
-    enabled: true
-    impact: []
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-get-alarm-entity-meta-1
-    type: metaalarm
-  default_entities_13:
-    _id: test-alarm-get-entity-meta-2/metaalarm
-    component: metaalarm
-    depends: []
-    enable_history:
-    - 1597030219
-    enabled: true
-    impact: []
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-get-alarm-entity-meta-2
-    type: metaalarm
-  default_entities_14:
-    _id: test-alarm-get-entity-meta-manual-1/metaalarm
-    component: metaalarm
-    depends: []
-    enable_history:
-    - 1597030219
-    enabled: true
-    impact: []
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-get-alarm-entity-meta-manual-1
-    type: metaalarm
-  default_entities_15:
-    _id: test-alarm-get-entity-meta-manual-2/metaalarm
-    component: metaalarm
-    depends: []
-    enable_history:
-    - 1597030219
-    enabled: true
-    impact: []
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-get-alarm-entity-meta-manual-2
-    type: metaalarm
-  default_entities_16:
-    _id: test-alarm-get-resource-3/test-alarm-get-component
-    component: test-alarm-get-component
-    depends:
-    - test-alarm-get-connector/test-alarm-get-connectorname
-    enable_history:
-    - 1597030220
-    enabled: true
-    impact:
-    - test-alarm-get-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-get-resource-3
-    type: resource
+      test-resource-to-alarm-get-1-info-6:
+        name: test-resource-to-alarm-get-1-info-6-name
+        description: test-resource-to-alarm-get-1-info-6-description
+        value: ["test-resource-to-alarm-get-1-info-6-value"]
+  entity_to_alarm_get_2:
+    <<: *resource
+    _id: test-resource-to-alarm-get-2/test-component-default
+    name: test-resource-to-alarm-get-2
+    category: test-category-to-alarm-get-2
+  entity_to_alarm_get_3:
+    <<: *resource
+    _id: test-resource-to-alarm-get-3/test-component-default
+    name: test-resource-to-alarm-get-3
+  entity_to_alarm_get_4:
+    <<: *resource
+    _id: test-resource-to-alarm-get-4/test-component-default
+    name: test-resource-to-alarm-get-4
+  entity_to_alarm_multi_sort_get_1:
+    <<: *resource
+    _id: test-resource-to-alarm-multi-sort-get-1/test-component-default
+    name: test-resource-to-alarm-multi-sort-get-1
+  entity_to_alarm_multi_sort_get_2:
+    <<: *resource
+    _id: test-resource-to-alarm-multi-sort-get-2/test-component-default
+    name: test-resource-to-alarm-multi-sort-get-2
+  entity_to_alarm_multi_sort_get_3:
+    <<: *resource
+    _id: test-resource-to-alarm-multi-sort-get-3/test-component-default
+    name: test-resource-to-alarm-multi-sort-get-3
+
   default_entities_17:
     _id: test-alarm-pbehavior-get-resource/test-alarm-pbehavior-get-component
     depends: []
@@ -1684,85 +1505,6 @@ default_entities:
     measurements: null
     name: test-case-pbehavior-countfilter-1-3-name
     type: resource
-  default_entities_109:
-    _id: test-idle-since-connector/test-idle-since-connectorname
-    depends:
-    - test-idle-since-component
-    enable_history:
-    - 1620915951
-    enabled: true
-    impact:
-    - test-idle-since-resource-1/test-idle-since-component
-    - test-idle-since-resource-2/test-idle-since-component
-    - test-idle-since-resource-without/test-idle-since-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-idle-since-connectorname
-    type: connector
-  default_entities_110:
-    _id: test-idle-since-component
-    depends:
-    - test-idle-since-resource-1/test-idle-since-component
-    - test-idle-since-resource-2/test-idle-since-component
-    - test-idle-since-resource-without/test-idle-since-component
-    enable_history:
-    - 1620915951
-    enabled: true
-    impact:
-    - test-idle-since-connector/test-idle-since-connectorname
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-idle-since-component
-    type: component
-  default_entities_111:
-    _id: test-idle-since-resource-1/test-idle-since-component
-    component: test-idle-since-component
-    depends:
-    - test-idle-since-connector/test-idle-since-connectorname
-    enable_history:
-    - 1620915951
-    enabled: true
-    idle_since: 123
-    impact:
-    - test-idle-since-connector/test-idle-since-connectorname
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-idle-since-resource-1
-    type: resource
-  default_entities_112:
-    _id: test-idle-since-resource-2/test-idle-since-component
-    component: test-idle-since-component
-    depends:
-    - test-idle-since-connector/test-idle-since-connectorname
-    enable_history:
-    - 1620915951
-    enabled: true
-    idle_since: 321
-    impact:
-    - test-idle-since-connector/test-idle-since-connectorname
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-idle-since-resource-2
-    type: resource
-  default_entities_113:
-    _id: test-idle-since-resource-without/test-idle-since-component
-    component: test-idle-since-component
-    depends:
-    - test-idle-since-connector/test-idle-since-connectorname
-    enable_history:
-    - 1620915951
-    enabled: true
-    impact:
-    - test-idle-since-connector/test-idle-since-connectorname
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-idle-since-resource-without
-    type: resource
   default_entities_114:
     _id: test-idle-since-integration-connector/test-idle-since-integration-connectorname
     depends:
@@ -1899,50 +1641,6 @@ default_entities:
     infos: {}
     measurements: null
     name: test-idle-since-integration-2-resource-1
-    type: resource
-  default_entities_123:
-    _id: test-events-count-connector/test-events-count-connectorname
-    depends:
-    - test-events-count-component
-    enable_history:
-    - 1620915951
-    enabled: true
-    impact:
-    - test-events-count-resource-1/test-events-count-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-events-count-connectorname
-    type: connector
-  default_entities_124:
-    _id: test-events-count-component
-    depends:
-    - test-events-count-resource-1/test-events-count-component
-    enable_history:
-    - 1620915951
-    enabled: true
-    impact:
-    - test-events-count-connector/test-events-count-connectorname
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-events-count-component
-    type: component
-  default_entities_125:
-    _id: test-events-count-resource-1/test-events-count-component
-    component: test-events-count-component
-    depends:
-    - test-events-count-connector/test-events-count-connectorname
-    enable_history:
-    - 1620915951
-    enabled: true
-    idle_since: 123
-    impact:
-    - test-events-count-connector/test-events-count-connectorname
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-events-count-resource-1
     type: resource
   default_entities_126:
     _id: junit/junit
@@ -4335,120 +4033,6 @@ default_entities:
     measurements: null
     name: test-valuegroup-rule-rate-8-resource-12
     type: resource
-  default_entities_262:
-    _id: test-alarm-meta-children-with-instructions-1/metaalarm
-    component: metaalarm
-    depends: []
-    enable_history:
-    - 1597030219
-    enabled: true
-    impact: []
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-meta-children-with-instructions-1
-    type: metaalarm
-  default_entities_263:
-    _id: test-alarm-meta-children-with-instructions-2/metaalarm
-    component: metaalarm
-    depends: []
-    enable_history:
-    - 1597030219
-    enabled: true
-    impact: []
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-meta-children-with-instructions-2
-    type: metaalarm
-  default_entities_264:
-    _id: test-alarm-meta-children-with-instructions-3/metaalarm
-    component: metaalarm
-    depends: []
-    enable_history:
-    - 1597030219
-    enabled: true
-    impact: []
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-meta-children-with-instructions-3
-    type: metaalarm
-  default_entities_265:
-    _id: test-alarm-meta-children-with-instructions-resource-1/test-alarm-meta-children-with-instructions-component-1
-    component: test-alarm-meta-children-with-instructions-component-1
-    depends:
-    - test-alarm-meta-children-with-instructions-connector/test-alarm-meta-children-with-instructions-connectorname
-    enable_history:
-    - 1620915951
-    enabled: true
-    impact:
-    - test-alarm-meta-children-with-instructions-component-1
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-meta-children-with-instructions-resource-1
-    type: resource
-  default_entities_266:
-    _id: test-alarm-meta-children-with-instructions-resource-2/test-alarm-meta-children-with-instructions-component-1
-    component: test-alarm-meta-children-with-instructions-component-1
-    depends:
-    - test-alarm-meta-children-with-instructions-connector/test-alarm-meta-children-with-instructions-connectorname
-    enable_history:
-    - 1620915951
-    enabled: true
-    impact:
-    - test-alarm-meta-children-with-instructions-component-1
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-meta-children-with-instructions-resource-2
-    type: resource
-  default_entities_267:
-    _id: test-alarm-meta-children-with-instructions-resource-1/test-alarm-meta-children-with-instructions-component-2
-    component: test-alarm-meta-children-with-instructions-component-2
-    depends:
-    - test-alarm-meta-children-with-instructions-connector/test-alarm-meta-children-with-instructions-connectorname
-    enable_history:
-    - 1620915951
-    enabled: true
-    impact:
-    - test-alarm-meta-children-with-instructions-component-2
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-meta-children-with-instructions-resource-1
-    type: resource
-  default_entities_268:
-    _id: test-alarm-meta-children-with-instructions-resource-2/test-alarm-meta-children-with-instructions-component-2
-    component: test-alarm-meta-children-with-instructions-component-2
-    depends:
-    - test-alarm-meta-children-with-instructions-connector/test-alarm-meta-children-with-instructions-connectorname
-    enable_history:
-    - 1620915951
-    enabled: true
-    impact:
-    - test-alarm-meta-children-with-instructions-component-2
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-meta-children-with-instructions-resource-2
-    type: resource
-  default_entities_269:
-    _id: test-alarm-get-resource-resolved-collection/test-alarm-get-resolved-collection-component
-    component: test-alarm-get-resolved-collection-component
-    depends:
-    - test-alarm-get-resolved-collection-connector/test-alarm-get-resolved-collection-connectorname
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-alarm-get-resolved-collection-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-get-resource-resolved-collection
-    type: resource
   default_entities_270:
     _id: test-alarmcounter-get-resolved-resource-1/test-alarmcounter-get-resolved-component
     component: test-alarmcounter-get-resolved-component
@@ -4463,70 +4047,6 @@ default_entities:
     infos: {}
     measurements: null
     name: test-alarmcounter-get-resolved-resource-1
-    type: resource
-  default_entities_271:
-    _id: test-alarm-multi-sort-get-resource-1/test-alarm-multi-sort-get-component
-    category: test-category-to-alarm-get-1
-    component: test-alarm-multi-sort-get-component
-    depends:
-    - test-alarm-multi-sort-get-connector/test-alarm-multi-sort-get-connectorname
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-alarm-multi-sort-get-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-multi-sort-get-resource-1
-    type: resource
-  default_entities_272:
-    _id: test-alarm-multi-sort-get-resource-2/test-alarm-multi-sort-get-component
-    category: test-category-to-alarm-get-2
-    component: test-alarm-multi-sort-get-component
-    depends:
-    - test-alarm-multi-sort-get-connector/test-alarm-multi-sort-get-connectorname
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-alarm-multi-sort-get-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-multi-sort-get-resource-2
-    type: resource
-  default_entities_273:
-    _id: test-alarm-multi-sort-get-resource-3/test-alarm-multi-sort-get-component
-    category: test-category-to-alarm-get-3
-    component: test-alarm-multi-sort-get-component
-    depends:
-    - test-alarm-multi-sort-get-connector/test-alarm-multi-sort-get-connectorname
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-alarm-multi-sort-get-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-multi-sort-get-resource-3
-    type: resource
-  default_entities_274:
-    _id: test-alarm-multi-sort-get-resource-4/test-alarm-multi-sort-get-component
-    category: test-category-to-alarm-get-4
-    component: test-alarm-multi-sort-get-component
-    depends:
-    - test-alarm-multi-sort-get-connector/test-alarm-multi-sort-get-connectorname
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-alarm-multi-sort-get-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-multi-sort-get-resource-4
     type: resource
   default_entities_275:
     _id: test-alarm-time-fields-search-get-connector/test-alarm-time-fields-search-get-connectorname
@@ -4566,102 +4086,6 @@ default_entities:
     measurements: null
     name: test-alarm-time-fields-search-get-component
     type: component
-  default_entities_277:
-    _id: test-alarm-time-fields-search-get-resource-1/test-alarm-time-fields-search-get-component
-    category: test-category-to-alarm-get-1
-    component: test-alarm-time-fields-search-get-component
-    depends:
-    - test-alarm-time-fields-search-get-connector/test-alarm-time-fields-search-get-connectorname
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-alarm-time-fields-search-get-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-time-fields-search-get-resource-1
-    type: resource
-  default_entities_278:
-    _id: test-alarm-time-fields-search-get-resource-2/test-alarm-time-fields-search-get-component
-    category: test-category-to-alarm-get-2
-    component: test-alarm-time-fields-search-get-component
-    depends:
-    - test-alarm-time-fields-search-get-connector/test-alarm-time-fields-search-get-connectorname
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-alarm-time-fields-search-get-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-time-fields-search-get-resource-2
-    type: resource
-  default_entities_279:
-    _id: test-alarm-time-fields-search-get-resource-3/test-alarm-time-fields-search-get-component
-    category: test-category-to-alarm-get-3
-    component: test-alarm-time-fields-search-get-component
-    depends:
-    - test-alarm-time-fields-search-get-connector/test-alarm-time-fields-search-get-connectorname
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-alarm-time-fields-search-get-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-time-fields-search-get-resource-3
-    type: resource
-  default_entities_280:
-    _id: test-alarm-time-fields-search-get-resource-4/test-alarm-time-fields-search-get-component
-    category: test-category-to-alarm-get-4
-    component: test-alarm-time-fields-search-get-component
-    depends:
-    - test-alarm-time-fields-search-get-connector/test-alarm-time-fields-search-get-connectorname
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-alarm-time-fields-search-get-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-time-fields-search-get-resource-4
-    type: resource
-  default_entities_281:
-    _id: test-alarm-time-fields-search-get-resource-5/test-alarm-time-fields-search-get-component
-    category: test-category-to-alarm-get-5
-    component: test-alarm-time-fields-search-get-component
-    depends:
-    - test-alarm-time-fields-search-get-connector/test-alarm-time-fields-search-get-connectorname
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-alarm-time-fields-search-get-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-time-fields-search-get-resource-5
-    type: resource
-  default_entities_282:
-    _id: test-alarm-time-fields-search-get-resource-6/test-alarm-time-fields-search-get-component
-    category: test-category-to-alarm-get-6
-    component: test-alarm-time-fields-search-get-component
-    depends:
-    - test-alarm-time-fields-search-get-connector/test-alarm-time-fields-search-get-connectorname
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-alarm-time-fields-search-get-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-time-fields-search-get-resource-6
-    type: resource
   default_entities_283:
     _id: test-alarm-time-fields-search-get-resolved-connector/test-alarm-time-fields-search-get-resolved-connectorname
     depends:
@@ -4694,143 +4118,6 @@ default_entities:
     measurements: null
     name: test-alarm-time-fields-search-get-resolved-component
     type: component
-  default_entities_285:
-    _id: test-alarm-time-fields-search-get-resolved-resource-1/test-alarm-time-fields-search-get-resolved-component
-    category: test-category-to-alarm-get-1
-    component: test-alarm-time-fields-search-get-resolved-component
-    depends:
-    - test-alarm-time-fields-search-get-resolved-connector/test-alarm-time-fields-search-get-resolved-connectorname
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-alarm-time-fields-search-get-resolved-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-time-fields-search-get-resolved-resource-1
-    type: resource
-  default_entities_286:
-    _id: test-alarm-time-fields-search-get-resolved-resource-2/test-alarm-time-fields-search-get-resolved-component
-    category: test-category-to-alarm-get-2
-    component: test-alarm-time-fields-search-get-resolved-component
-    depends:
-    - test-alarm-time-fields-search-get-resolved-connector/test-alarm-time-fields-search-get-resolved-connectorname
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-alarm-time-fields-search-get-resolved-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-time-fields-search-get-resolved-resource-2
-    type: resource
-  default_entities_287:
-    _id: test-alarm-time-fields-search-get-resolved-resource-3/test-alarm-time-fields-search-get-resolved-component
-    category: test-category-to-alarm-get-3
-    component: test-alarm-time-fields-search-get-resolved-component
-    depends:
-    - test-alarm-time-fields-search-get-resolved-connector/test-alarm-time-fields-search-get-resolved-connectorname
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-alarm-time-fields-search-get-resolved-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-alarm-time-fields-search-get-resolved-resource-3
-    type: resource
-  default_entities_288:
-    _id: test-api-correlation-connector/test-api-correlation-connectorname
-    depends:
-    - test-api-correlation-component
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-api-correlation-resource-1/test-api-correlation-component
-    - test-api-correlation-resource-2/test-api-correlation-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-api-correlation-connectorname
-    type: connector
-  default_entities_289:
-    _id: test-api-correlation-component
-    component: test-api-correlation-component
-    depends:
-    - test-api-correlation-resource-1/test-api-correlation-component
-    - test-api-correlation-resource-2/test-api-correlation-component
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-api-correlation-connector/test-api-correlation-connectorname
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-api-correlation-component
-    type: component
-  default_entities_290:
-    _id: test-api-correlation-resource-1/test-api-correlation-component
-    category: test-category-to-alarm-test-api-correlation-1
-    component: test-api-correlation-component
-    depends:
-    - test-api-correlation-connector/test-api-correlation-connectorname
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-api-correlation-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-api-correlation-resource-1
-    type: resource
-  default_entities_291:
-    _id: test-api-correlation-resource-2/test-api-correlation-component
-    category: test-category-to-alarm-test-api-correlation-2
-    component: test-api-correlation-component
-    depends:
-    - test-api-correlation-connector/test-api-correlation-connectorname
-    enable_history:
-    - 1597030096
-    enabled: true
-    impact:
-    - test-api-correlation-component
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-api-correlation-resource-2
-    type: resource
-  default_entities_292:
-    _id: test-api-correlation-1/metaalarm
-    component: metaalarm
-    depends: []
-    enable_history:
-    - 1597030219
-    enabled: true
-    impact: []
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-api-correlation-1
-    type: metaalarm
-  default_entities_293:
-    _id: test-api-correlation-2/metaalarm
-    component: metaalarm
-    depends: []
-    enable_history:
-    - 1597030219
-    enabled: true
-    impact: []
-    impact_level: 1
-    infos: {}
-    measurements: null
-    name: test-api-correlation-2
-    type: metaalarm
   default_entities_294:
     _id: dynamic-info-update-connector/dynamic-info-update-connectorname
     depends:

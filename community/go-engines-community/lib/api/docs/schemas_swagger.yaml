@@ -102,14 +102,12 @@ definitions:
         type: string
       assigned_instructions:
         items:
-          $ref: '#/definitions/alarm.InstructionWithAlarms'
+          $ref: '#/definitions/alarm.AssignedInstruction'
         type: array
-      causes:
-        $ref: '#/definitions/alarm.Causes'
+      children:
+        type: integer
       children_instructions:
         type: boolean
-      consequences:
-        $ref: '#/definitions/alarm.Children'
       entity:
         $ref: '#/definitions/entity.Entity'
       filtered_children:
@@ -133,15 +131,23 @@ definitions:
         type: boolean
       is_manual_instruction_waiting_result:
         type: boolean
+      is_meta_alarm:
+        type: boolean
       links:
         additionalProperties: true
         type: object
-      metaalarm:
-        type: boolean
+      meta_alarm_rule:
+        $ref: '#/definitions/alarm.MetaAlarmRule'
+        description: Meta alarm fields
+      meta_alarm_rules:
+        items:
+          $ref: '#/definitions/alarm.MetaAlarmRule'
+        type: array
+      parents:
+        description: Meta alarm child fields
+        type: integer
       pbehavior:
         $ref: '#/definitions/alarm.Pbehavior'
-      rule:
-        $ref: '#/definitions/alarm.MetaAlarmRule'
       t:
         type: integer
       v:
@@ -230,12 +236,12 @@ definitions:
         type: string
       initial_output:
         type: string
+      last_comment:
+        $ref: '#/definitions/alarm.AlarmStep'
       last_event_date:
         type: integer
       last_update_date:
         type: integer
-      lastComment:
-        $ref: '#/definitions/alarm.AlarmStep'
       long_output:
         type: string
       long_output_history:
@@ -281,23 +287,40 @@ definitions:
       total_state_changes:
         type: integer
     type: object
-  alarm.Causes:
+  alarm.AssignedInstruction:
     properties:
-      rules:
-        items:
-          $ref: '#/definitions/alarm.MetaAlarmRule'
-        type: array
-      total:
-        type: integer
+      _id:
+        type: string
+      execution:
+        $ref: '#/definitions/alarm.Execution'
+      name:
+        type: string
     type: object
-  alarm.Children:
+  alarm.ChildDetailsRequest:
+    properties:
+      limit:
+        type: integer
+      multi_sort:
+        items:
+          type: string
+        type: array
+      page:
+        type: integer
+      paginate:
+        type: boolean
+      sort:
+        type: string
+      sort_by:
+        type: string
+    type: object
+  alarm.ChildrenDetails:
     properties:
       data:
         items:
           $ref: '#/definitions/alarm.Alarm'
         type: array
-      total:
-        type: integer
+      meta:
+        $ref: '#/definitions/common.PaginatedMeta'
     type: object
   alarm.Count:
     properties:
@@ -312,6 +335,43 @@ definitions:
       total:
         type: integer
       total_active:
+        type: integer
+    type: object
+  alarm.Details:
+    properties:
+      children:
+        $ref: '#/definitions/alarm.ChildrenDetails'
+      steps:
+        $ref: '#/definitions/alarm.StepDetails'
+    type: object
+  alarm.DetailsRequest:
+    properties:
+      _id:
+        type: string
+      children:
+        $ref: '#/definitions/alarm.ChildDetailsRequest'
+      opened:
+        type: boolean
+      steps:
+        $ref: '#/definitions/pagination.Query'
+      with_instructions:
+        type: boolean
+    required:
+    - _id
+    type: object
+  alarm.DetailsResponse:
+    properties:
+      _id:
+        type: string
+      data:
+        $ref: '#/definitions/alarm.Details'
+      error:
+        type: string
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      status:
         type: integer
     type: object
   alarm.Execution:
@@ -349,8 +409,6 @@ definitions:
         items:
           type: string
         type: array
-      manual:
-        type: boolean
       opened:
         type: boolean
       search:
@@ -365,10 +423,6 @@ definitions:
         type: integer
       tstop:
         type: integer
-      with_consequences:
-        type: boolean
-      with_steps:
-        type: boolean
     type: object
   alarm.ExportResponse:
     properties:
@@ -377,18 +431,16 @@ definitions:
       status:
         type: integer
     type: object
-  alarm.InstructionWithAlarms:
+  alarm.ManualResponse:
     properties:
       _id:
         type: string
-      execution:
-        $ref: '#/definitions/alarm.Execution'
       name:
         type: string
     type: object
   alarm.MetaAlarmRule:
     properties:
-      id:
+      _id:
         type: string
       name:
         type: string
@@ -399,10 +451,8 @@ definitions:
         type: string
       author:
         type: string
-      comments:
-        items:
-          $ref: '#/definitions/pbehavior.Comment'
-        type: array
+      last_comment:
+        $ref: '#/definitions/pbehavior.Comment'
       name:
         type: string
       rrule:
@@ -413,6 +463,15 @@ definitions:
         type: integer
       type:
         $ref: '#/definitions/pbehavior.Type'
+    type: object
+  alarm.StepDetails:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/alarm.AlarmStep'
+        type: array
+      meta:
+        $ref: '#/definitions/common.PaginatedMeta'
     type: object
   appinfo.AppInfoResponse:
     properties:
@@ -1912,6 +1971,15 @@ definitions:
       instruction:
         $ref: '#/definitions/notification.InstructionNotification'
     type: object
+  pagination.Query:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      paginate:
+        type: boolean
+    type: object
   oldpattern.AlarmPatternList:
     type: object
   oldpattern.EntityPatternList:
@@ -3037,7 +3105,7 @@ definitions:
         type: string
       assigned_instructions:
         items:
-          $ref: '#/definitions/alarm.InstructionWithAlarms'
+          $ref: '#/definitions/alarm.AssignedInstruction'
         type: array
       category:
         $ref: '#/definitions/entitycategory.Category'

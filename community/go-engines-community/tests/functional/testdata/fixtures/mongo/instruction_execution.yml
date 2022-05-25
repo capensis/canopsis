@@ -78,20 +78,6 @@ instruction_execution:
             started_at: 1597905437
         step: test-instruction-execution-resume-1-step-1
 
-  instruction_execution_to_alam_get_1:
-    <<: *execution_running
-    _id: execution-for-test-alarm-with-instruction-resource-2
-    alarm: test-alarm-with-instruction-2
-    instruction: test-instruction-to-assign-with-execution
-    instruction_modified_on: 1596712203
-
-  instruction_execution_to_alam_get_2:
-    <<: *execution_running
-    _id: execution-for-test-alarm-with-instruction-resource-3
-    alarm: test-alarm-with-instruction-3
-    instruction: test-instruction-to-assign-with-execution-2
-    instruction_modified_on: 1596712203
-
   instruction_execution_to_get_stats_1:
     <<: *execution_completed
     _id: test-instruction-execution-to-get-stats-1
