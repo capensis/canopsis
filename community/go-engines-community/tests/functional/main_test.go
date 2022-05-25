@@ -43,7 +43,6 @@ func TestMain(m *testing.M) {
 	var flags Flags
 	flags.ParseArgs()
 
-	logger := liblog.NewLogger(true)
 	var eventLogger zerolog.Logger
 	if flags.eventLogs != "" {
 		f, err := os.OpenFile(flags.eventLogs, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
@@ -94,7 +93,7 @@ func TestMain(m *testing.M) {
 	}
 
 	if flags.onlyFixtures {
-		err := clearStores(ctx, flags, dbClient, redisClient, logger)
+		err := clearStores(ctx, flags, loader, redisClient, logger)
 		if err != nil {
 			logger.Fatal().Err(err).Msg("")
 		}
