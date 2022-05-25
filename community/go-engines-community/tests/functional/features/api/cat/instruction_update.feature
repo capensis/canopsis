@@ -97,6 +97,7 @@ Feature: Instruction update
       "type": 0,
       "status": 0,
       "name": "test-instruction-to-update-1-name",
+      "created": 1596712203,
       "entity_pattern": [
         [
           {
@@ -301,9 +302,10 @@ Feature: Instruction update
     """json
     {
       "_id": "test-instruction-to-update-2",
-      "type": 0,
+      "type": 1,
       "status": 0,
       "name": "test-instruction-to-update-2-name",
+      "created": 1596712203,
       "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
       "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
       "alarm_pattern": [
@@ -407,7 +409,7 @@ Feature: Instruction update
     }
     """
 
-  Scenario: PUT an invalid instruction, where name already exists
+  Scenario: given update request with already exists name should return error
     When I am admin
     When I do PUT /api/v4/cat/instructions/test-instruction-to-update:
     """json
@@ -422,5 +424,287 @@ Feature: Instruction update
       "errors": {
         "name": "Name already exists."
       }
+    }
+    """
+
+  Scenario: given update request for a instruction with old patterns should return keep old patterns
+    When I am admin
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-3:
+    """json
+    {
+      "name": "test-instruction-to-update-3-name",
+      "description": "test-instruction-to-update-3-description",
+      "enabled": true,
+      "priority": 21,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "jobs": [
+        {
+          "job": "test-job-to-instruction-edit-1"
+        }
+      ]
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-instruction-to-update-3",
+      "type": 1,
+      "status": 0,
+      "name": "test-instruction-to-update-3-name",
+      "description": "test-instruction-to-update-3-description",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "enabled": true,
+      "priority": 21,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "created": 1596712203,
+      "old_alarm_patterns": [
+        {
+          "_id": "test-instruction-to-update-3-pattern"
+        }
+      ],
+      "old_entity_patterns": [
+        {
+          "name": "test-instruction-to-update-3-pattern"
+        }
+      ],
+      "jobs": [
+        {
+          "job": {
+            "_id": "test-job-to-instruction-edit-1",
+            "author": {
+              "_id": "root",
+              "name": "root"
+            },
+            "config": {
+              "_id": "test-job-config-to-edit-instruction",
+              "auth_token": "test-auth-token",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
+              "host": "http://example.com",
+              "name": "test-job-config-to-edit-instruction-name",
+              "type": "rundeck"
+            },
+            "job_id": "test-job-to-instruction-edit-1-external-id",
+            "name": "test-job-to-instruction-edit-1-name",
+            "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+          }
+        }
+      ]
+    }
+    """
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-3:
+    """json
+    {
+      "name": "test-instruction-to-update-3-name",
+      "description": "test-instruction-to-update-3-description",
+      "enabled": true,
+      "priority": 21,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-update-3-pattern"
+            }
+          }
+        ]
+      ],
+      "jobs": [
+        {
+          "job": "test-job-to-instruction-edit-1"
+        }
+      ]
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-instruction-to-update-3",
+      "type": 1,
+      "status": 0,
+      "name": "test-instruction-to-update-3-name",
+      "description": "test-instruction-to-update-3-description",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "enabled": true,
+      "priority": 21,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "created": 1596712203,
+      "old_entity_patterns": null,
+      "old_alarm_patterns": [
+        {
+          "_id": "test-instruction-to-update-3-pattern"
+        }
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-update-3-pattern"
+            }
+          }
+        ]
+      ],
+      "jobs": [
+        {
+          "job": {
+            "_id": "test-job-to-instruction-edit-1",
+            "author": {
+              "_id": "root",
+              "name": "root"
+            },
+            "config": {
+              "_id": "test-job-config-to-edit-instruction",
+              "auth_token": "test-auth-token",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
+              "host": "http://example.com",
+              "name": "test-job-config-to-edit-instruction-name",
+              "type": "rundeck"
+            },
+            "job_id": "test-job-to-instruction-edit-1-external-id",
+            "name": "test-job-to-instruction-edit-1-name",
+            "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+          }
+        }
+      ]
+    }
+    """
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-3:
+    """json
+    {
+      "name": "test-instruction-to-update-3-name",
+      "description": "test-instruction-to-update-3-description",
+      "enabled": true,
+      "priority": 21,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-update-3-pattern"
+            }
+          }
+        ]
+      ],
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-update-3-pattern"
+            }
+          }
+        ]
+      ],
+      "jobs": [
+        {
+          "job": "test-job-to-instruction-edit-1"
+        }
+      ]
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-instruction-to-update-3",
+      "type": 1,
+      "status": 0,
+      "name": "test-instruction-to-update-3-name",
+      "description": "test-instruction-to-update-3-description",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "enabled": true,
+      "priority": 21,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "created": 1596712203,
+      "old_entity_patterns": null,
+      "old_alarm_patterns": null,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-update-3-pattern"
+            }
+          }
+        ]
+      ],
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-update-3-pattern"
+            }
+          }
+        ]
+      ],
+      "jobs": [
+        {
+          "job": {
+            "_id": "test-job-to-instruction-edit-1",
+            "author": {
+              "_id": "root",
+              "name": "root"
+            },
+            "config": {
+              "_id": "test-job-config-to-edit-instruction",
+              "auth_token": "test-auth-token",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
+              "host": "http://example.com",
+              "name": "test-job-config-to-edit-instruction-name",
+              "type": "rundeck"
+            },
+            "job_id": "test-job-to-instruction-edit-1-external-id",
+            "name": "test-job-to-instruction-edit-1-name",
+            "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+          }
+        }
+      ]
     }
     """

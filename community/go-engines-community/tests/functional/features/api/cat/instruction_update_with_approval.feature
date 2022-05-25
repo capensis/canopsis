@@ -1778,7 +1778,7 @@ Feature: instruction approval update
           "value": 2,
           "unit": "s"
         },
-        "priority": 15,
+        "priority": 17,
         "jobs": [
           {
             "job": {
@@ -1963,6 +1963,410 @@ Feature: instruction approval update
           "last_executed_on": 1596712203,
           "avg_complete_time": 10,
           "rating": 3.5
+        }
+      ]
+    }
+    """
+
+  Scenario: given update request for a instruction with old patterns should return ok
+    When I am manager
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-12:
+    """json
+    {
+      "name": "test-instruction-to-update-with-approval-12-name-updated",
+      "description": "test-instruction-to-update-with-approval-12-description-updated",
+      "enabled": true,
+      "priority": 1000,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "jobs": [
+        {
+          "job": "test-job-to-instruction-edit-1"
+        }
+      ],
+      "approval": {
+        "user": "user-to-instruction-approve-1",
+        "comment": "test comment"
+      }
+    }
+    """
+    Then the response code should be 200
+    When I am role-to-instruction-approve-1
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-12/approval
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "approval": {
+        "comment": "test comment",
+        "user": {
+          "_id": "user-to-instruction-approve-1",
+          "name": "user-to-instruction-approve-1"
+        },
+        "requested_by": "manageruser"
+      },
+      "original": {
+        "old_alarm_patterns": [
+          {
+            "_id": "test-instruction-to-update-with-approval-12-pattern"
+          }
+        ],
+        "old_entity_patterns": [
+          {
+            "name": "test-instruction-to-update-with-approval-12-pattern"
+          }
+        ]
+      },
+      "updated": {
+        "type": 1,
+        "status": 2,
+        "name": "test-instruction-to-update-with-approval-12-name-updated",
+        "description": "test-instruction-to-update-with-approval-12-description-updated",
+        "author": {
+          "_id": "manageruser",
+          "name": "manageruser"
+        },
+        "enabled": true,
+        "old_alarm_patterns": [
+          {
+            "_id": "test-instruction-to-update-with-approval-12-pattern"
+          }
+        ],
+        "old_entity_patterns": [
+          {
+            "name": "test-instruction-to-update-with-approval-12-pattern"
+          }
+        ],
+        "jobs": [
+          {
+            "job": {
+              "_id": "test-job-to-instruction-edit-1",
+              "name": "test-job-to-instruction-edit-1-name",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
+              "config": {
+                "_id": "test-job-config-to-edit-instruction",
+                "name": "test-job-config-to-edit-instruction-name",
+                "type": "rundeck",
+                "host": "http://example.com",
+                "author": {
+                  "_id": "root",
+                  "name": "root"
+                },
+                "auth_token": "test-auth-token"
+              },
+              "job_id": "test-job-to-instruction-edit-1-external-id",
+              "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+            }
+          }
+        ],
+        "approval": {
+          "comment": "test comment",
+          "user": {
+            "_id": "user-to-instruction-approve-1",
+            "name": "user-to-instruction-approve-1"
+          },
+          "requested_by": "manageruser"
+        }
+      }
+    }
+    """
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-12/approval:
+    """json
+    {
+      "approve": true
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-12
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "type": 1,
+      "status": 0,
+      "name": "test-instruction-to-update-with-approval-12-name-updated",
+      "description": "test-instruction-to-update-with-approval-12-description-updated",
+      "author": {
+        "_id": "manageruser",
+        "name": "manageruser"
+      },
+      "created": 1596712203,
+      "enabled": true,
+      "old_alarm_patterns": [
+        {
+          "_id": "test-instruction-to-update-with-approval-12-pattern"
+        }
+      ],
+      "old_entity_patterns": [
+        {
+          "name": "test-instruction-to-update-with-approval-12-pattern"
+        }
+      ],
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "priority": 1000,
+      "jobs": [
+        {
+          "job": {
+            "_id": "test-job-to-instruction-edit-1",
+            "name": "test-job-to-instruction-edit-1-name",
+            "author": {
+              "_id": "root",
+              "name": "root"
+            },
+            "config": {
+              "_id": "test-job-config-to-edit-instruction",
+              "name": "test-job-config-to-edit-instruction-name",
+              "type": "rundeck",
+              "host": "http://example.com",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
+              "auth_token": "test-auth-token"
+            },
+            "job_id": "test-job-to-instruction-edit-1-external-id",
+            "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+          }
+        }
+      ]
+    }
+    """
+    When I am manager
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-12:
+    """json
+    {
+      "name": "test-instruction-to-update-with-approval-12-name-updated",
+      "description": "test-instruction-to-update-with-approval-12-description-updated",
+      "enabled": true,
+      "priority": 1000,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-update-with-approval-12-pattern-updated"
+            }
+          }
+        ]
+      ],
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "jobs": [
+        {
+          "job": "test-job-to-instruction-edit-1"
+        }
+      ],
+      "approval": {
+        "user": "user-to-instruction-approve-1",
+        "comment": "test comment"
+      }
+    }
+    """
+    Then the response code should be 200
+    When I am role-to-instruction-approve-1
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-12/approval:
+    """json
+    {
+      "approve": true
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-12
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "type": 1,
+      "status": 0,
+      "name": "test-instruction-to-update-with-approval-12-name-updated",
+      "description": "test-instruction-to-update-with-approval-12-description-updated",
+      "author": {
+        "_id": "manageruser",
+        "name": "manageruser"
+      },
+      "created": 1596712203,
+      "enabled": true,
+      "old_alarm_patterns": [
+        {
+          "_id": "test-instruction-to-update-with-approval-12-pattern"
+        }
+      ],
+      "old_entity_patterns": null,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-update-with-approval-12-pattern-updated"
+            }
+          }
+        ]
+      ],
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "priority": 1000,
+      "jobs": [
+        {
+          "job": {
+            "_id": "test-job-to-instruction-edit-1",
+            "name": "test-job-to-instruction-edit-1-name",
+            "author": {
+              "_id": "root",
+              "name": "root"
+            },
+            "config": {
+              "_id": "test-job-config-to-edit-instruction",
+              "name": "test-job-config-to-edit-instruction-name",
+              "type": "rundeck",
+              "host": "http://example.com",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
+              "auth_token": "test-auth-token"
+            },
+            "job_id": "test-job-to-instruction-edit-1-external-id",
+            "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+          }
+        }
+      ]
+    }
+    """
+    When I am manager
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-12:
+    """json
+    {
+      "name": "test-instruction-to-update-with-approval-12-name-updated",
+      "description": "test-instruction-to-update-with-approval-12-description-updated",
+      "enabled": true,
+      "priority": 1000,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-update-with-approval-12-pattern-updated"
+            }
+          }
+        ]
+      ],
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-update-with-approval-12-pattern-updated"
+            }
+          }
+        ]
+      ],
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "jobs": [
+        {
+          "job": "test-job-to-instruction-edit-1"
+        }
+      ],
+      "approval": {
+        "user": "user-to-instruction-approve-1",
+        "comment": "test comment"
+      }
+    }
+    """
+    Then the response code should be 200
+    When I am role-to-instruction-approve-1
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-12/approval:
+    """json
+    {
+      "approve": true
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-12
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "type": 1,
+      "status": 0,
+      "name": "test-instruction-to-update-with-approval-12-name-updated",
+      "description": "test-instruction-to-update-with-approval-12-description-updated",
+      "author": {
+        "_id": "manageruser",
+        "name": "manageruser"
+      },
+      "created": 1596712203,
+      "enabled": true,
+      "old_entity_patterns": null,
+      "old_alarm_patterns": null,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-update-with-approval-12-pattern-updated"
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-update-with-approval-12-pattern-updated"
+            }
+          }
+        ]
+      ],
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "priority": 1000,
+      "jobs": [
+        {
+          "job": {
+            "_id": "test-job-to-instruction-edit-1",
+            "name": "test-job-to-instruction-edit-1-name",
+            "author": {
+              "_id": "root",
+              "name": "root"
+            },
+            "config": {
+              "_id": "test-job-config-to-edit-instruction",
+              "name": "test-job-config-to-edit-instruction-name",
+              "type": "rundeck",
+              "host": "http://example.com",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
+              "auth_token": "test-auth-token"
+            },
+            "job_id": "test-job-to-instruction-edit-1-external-id",
+            "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+          }
         }
       ]
     }

@@ -312,6 +312,56 @@ periodical_alarm:
       resource: test-resource-to-alarm-multi-sort-get-3
       last_event_date: 1597030220
 
+  alarm_to_instruction_start_1:
+    <<: *alarm
+    _id: test-alarm-to-instruction-execution-start-1
+    d: test-resource-to-instruction-execution-start-1/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-instruction-execution-start-1
+  alarm_to_instruction_start_2:
+    <<: *alarm
+    _id: test-alarm-to-instruction-execution-start-2
+    d: test-resource-to-instruction-execution-start-2/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-instruction-execution-start-2
+  alarm_to_instruction_start_3_1:
+    <<: *alarm
+    _id: test-alarm-to-instruction-execution-start-3-1
+    d: test-resource-to-instruction-execution-start-3-1/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-instruction-execution-start-3-1
+  alarm_to_instruction_start_3_2:
+    <<: *alarm
+    _id: test-alarm-to-instruction-execution-start-3-2
+    d: test-resource-to-instruction-execution-start-3-2/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-instruction-execution-start-3-2
+  alarm_to_instruction_start_4_1:
+    <<: *alarm
+    _id: test-alarm-to-instruction-execution-start-4-1
+    d: test-resource-to-instruction-execution-start-4-1/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-instruction-execution-start-4-1
+  alarm_to_instruction_start_4_2:
+    <<: *alarm
+    _id: test-alarm-to-instruction-execution-start-4-2
+    d: test-resource-to-instruction-execution-start-4-2/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-instruction-execution-start-4-2
+  alarm_to_instruction_start_5:
+    <<: *alarm
+    _id: test-alarm-to-instruction-execution-start-5
+    d: test-resource-to-instruction-execution-start-5/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-instruction-execution-start-5
+
   alarm_to_pattern_count_1:
     <<: *alarm
     _id: test-alarm-to-pattern-count-1
@@ -341,224 +391,6 @@ periodical_alarm:
       <<: *alarm_value
       resource: test-resource-to-pattern-count-4
 
-  periodical_alarm_14:
-    _id: test-instruction-execution-start-1
-    d: test-instruction-execution-start-resource-1/test-instruction-execution-start-component
-    t: 1596942720
-    v:
-      children: [ ]
-      component: test-instruction-execution-start-component
-      connector: test-instruction-execution-start-connector
-      connector_name: test-instruction-execution-start-connectorname
-      creation_date: 1596942720
-      display_name: RC-KC_tW
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-instruction-execution-start alarm
-      last_event_date: 1596942720
-      last_update_date: 1596942720
-      long_output: test-instruction-execution-start-correlation-search
-      long_output_history:
-        - ""
-      output: test-instruction-execution-start alarm
-      parents: [ ]
-      resource: test-instruction-execution-start-resource-1
-      state:
-        _t: stateinc
-        a: test-instruction-execution-start-connector.test-instruction-execution-start-connectorname
-        m: test-instruction-execution-start alarm
-        t: 1596942720
-        val: 3
-      status:
-        _t: statusinc
-        a: test-instruction-execution-start-connector.test-instruction-execution-start-connectorname
-        m: test-instruction-execution-start alarm
-        t: 1596942720
-        val: 1
-      steps:
-        - _t: stateinc
-          a: test-instruction-execution-start-connector.test-instruction-execution-start-connectorname
-          m: test-instruction-execution-start alarm
-          t: 1596942720
-          val: 3
-        - _t: statusinc
-          a: test-instruction-execution-start-connector.test-instruction-execution-start-connectorname
-          m: test-instruction-execution-start alarm
-          t: 1596942720
-          val: 1
-        - _t: comment
-          a: system
-          initiator: user
-          m: comment test-instruction-execution-start
-          role: admin
-          t: 1597033041
-          val: 0
-      tags: [ ]
-      total_state_changes: 1
-  periodical_alarm_15:
-    _id: test-instruction-execution-start-2
-    d: test-instruction-execution-start-resource-2/test-instruction-execution-start-component
-    t: 1596942720
-    v:
-      children: [ ]
-      component: test-instruction-execution-start-component
-      connector: test-instruction-execution-start-connector
-      connector_name: test-instruction-execution-start-connectorname
-      creation_date: 1596942720
-      display_name: RC-KC_tW
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-instruction-execution-start alarm
-      last_event_date: 1596942720
-      last_update_date: 1596942720
-      long_output: test-instruction-execution-start-correlation-search
-      long_output_history:
-        - ""
-      output: test-instruction-execution-start alarm
-      parents: [ ]
-      resource: test-instruction-execution-start-resource-2
-      state:
-        _t: stateinc
-        a: test-instruction-execution-start-connector.test-instruction-execution-start-connectorname
-        m: test-instruction-execution-start alarm
-        t: 1596942720
-        val: 3
-      status:
-        _t: statusinc
-        a: test-instruction-execution-start-connector.test-instruction-execution-start-connectorname
-        m: test-instruction-execution-start alarm
-        t: 1596942720
-        val: 1
-      steps:
-        - _t: stateinc
-          a: test-instruction-execution-start-connector.test-instruction-execution-start-connectorname
-          m: test-instruction-execution-start alarm
-          t: 1596942720
-          val: 3
-        - _t: statusinc
-          a: test-instruction-execution-start-connector.test-instruction-execution-start-connectorname
-          m: test-instruction-execution-start alarm
-          t: 1596942720
-          val: 1
-        - _t: comment
-          a: system
-          initiator: user
-          m: comment test-instruction-execution-start
-          role: admin
-          t: 1597033041
-          val: 0
-      tags: [ ]
-      total_state_changes: 1
-  periodical_alarm_16:
-    _id: test-instruction-execution-start-3-1
-    d: test-instruction-execution-start-resource-3-1/test-instruction-execution-start-component
-    t: 1596942720
-    v:
-      children: [ ]
-      component: test-instruction-execution-start-component
-      connector: test-instruction-execution-start-connector
-      connector_name: test-instruction-execution-start-connectorname
-      creation_date: 1596942720
-      display_name: RC-KC_tW
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-instruction-execution-start alarm
-      last_event_date: 1596942720
-      last_update_date: 1596942720
-      long_output_history:
-        - ""
-      output: test-instruction-execution-start alarm
-      parents: [ ]
-      resource: test-instruction-execution-start-resource-3-1
-      state:
-        _t: stateinc
-        a: test-instruction-execution-start-connector.test-instruction-execution-start-connectorname
-        m: test-instruction-execution-start alarm
-        t: 1596942720
-        val: 3
-      status:
-        _t: statusinc
-        a: test-instruction-execution-start-connector.test-instruction-execution-start-connectorname
-        m: test-instruction-execution-start alarm
-        t: 1596942720
-        val: 1
-      steps:
-        - _t: stateinc
-          a: test-instruction-execution-start-connector.test-instruction-execution-start-connectorname
-          m: test-instruction-execution-start alarm
-          t: 1596942720
-          val: 3
-        - _t: statusinc
-          a: test-instruction-execution-start-connector.test-instruction-execution-start-connectorname
-          m: test-instruction-execution-start alarm
-          t: 1596942720
-          val: 1
-        - _t: comment
-          a: system
-          initiator: user
-          m: comment test-instruction-execution-start
-          role: admin
-          t: 1597033041
-          val: 0
-      tags: [ ]
-      total_state_changes: 1
-  periodical_alarm_17:
-    _id: test-instruction-execution-start-3-2
-    d: test-instruction-execution-start-resource-3-2/test-instruction-execution-start-component
-    t: 1596942720
-    v:
-      children: [ ]
-      component: test-instruction-execution-start-component
-      connector: test-instruction-execution-start-connector
-      connector_name: test-instruction-execution-start-connectorname
-      creation_date: 1596942720
-      display_name: RC-KC_tW
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-instruction-execution-start alarm
-      last_event_date: 1596942720
-      last_update_date: 1596942720
-      long_output_history:
-        - ""
-      output: test-instruction-execution-start alarm
-      parents: [ ]
-      resource: test-instruction-execution-start-resource-3-2
-      state:
-        _t: stateinc
-        a: test-instruction-execution-start-connector.test-instruction-execution-start-connectorname
-        m: test-instruction-execution-start alarm
-        t: 1596942720
-        val: 3
-      status:
-        _t: statusinc
-        a: test-instruction-execution-start-connector.test-instruction-execution-start-connectorname
-        m: test-instruction-execution-start alarm
-        t: 1596942720
-        val: 1
-      steps:
-        - _t: stateinc
-          a: test-instruction-execution-start-connector.test-instruction-execution-start-connectorname
-          m: test-instruction-execution-start alarm
-          t: 1596942720
-          val: 3
-        - _t: statusinc
-          a: test-instruction-execution-start-connector.test-instruction-execution-start-connectorname
-          m: test-instruction-execution-start alarm
-          t: 1596942720
-          val: 1
-        - _t: comment
-          a: system
-          initiator: user
-          m: comment test-instruction-execution-start
-          role: admin
-          t: 1597033041
-          val: 0
-      tags: [ ]
-      total_state_changes: 1
   periodical_alarm_18:
     _id: test-instruction-execution-next-1
     d: test-instruction-execution-next-resource-1/test-instruction-execution-next-component
