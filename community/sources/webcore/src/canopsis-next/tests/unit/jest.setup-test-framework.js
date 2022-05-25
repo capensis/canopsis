@@ -12,6 +12,13 @@ global.IntersectionObserver = jest.fn(() => ({
   unobserve: jest.fn(),
 }));
 
+Object.defineProperty(HTMLElement.prototype, 'innerText', {
+  set() {},
+  get() {
+    return this.textContent;
+  },
+});
+
 expect.extend({
   toMatchImageSnapshot,
   toMatchCanvasSnapshot(canvas, options, ...args) {
