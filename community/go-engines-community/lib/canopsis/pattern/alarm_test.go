@@ -38,6 +38,10 @@ func TestAlarm_ToMongoQuery(t *testing.T) {
 			if diff := pretty.Compare(query, data.mongoQueryResult); diff != "" {
 				t.Errorf("unexpected result %s", diff)
 			}
+			fields := data.pattern.GetMongoFields("alarm")
+			if diff := pretty.Compare(fields, data.mongoQueryFields); diff != "" {
+				t.Errorf("unexpected result %s", diff)
+			}
 		})
 	}
 }
@@ -496,6 +500,14 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 }
 
 func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
+	durationCond, err := pattern.NewDurationCondition(pattern.ConditionGT, types.DurationWithUnit{
+		Value: 3,
+		Unit:  "s",
+	})
+	if err != nil {
+		panic(err)
+	}
+
 	return map[string]alarmDataSet{
 		"given one condition": {
 			pattern: pattern.Alarm{
@@ -506,13 +518,11 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 					},
 				},
 			},
-			mongoQueryResult: []bson.M{
-				{"$match": bson.M{"$or": []bson.M{
-					{"$and": []bson.M{
-						{"alarm.v.display_name": bson.M{"$eq": "test name"}},
-					}},
-				}}},
-			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.v.display_name": bson.M{"$eq": "test name"}},
+				}},
+			}},
 		},
 		"given multiple conditions": {
 			pattern: pattern.Alarm{
@@ -527,14 +537,12 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 					},
 				},
 			},
-			mongoQueryResult: []bson.M{
-				{"$match": bson.M{"$or": []bson.M{
-					{"$and": []bson.M{
-						{"alarm.v.display_name": bson.M{"$eq": "test name"}},
-						{"alarm.v.output": bson.M{"$eq": "test output"}},
-					}},
-				}}},
-			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.v.display_name": bson.M{"$eq": "test name"}},
+					{"alarm.v.output": bson.M{"$eq": "test output"}},
+				}},
+			}},
 		},
 		"given multiple groups": {
 			pattern: pattern.Alarm{
@@ -551,16 +559,14 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 					},
 				},
 			},
-			mongoQueryResult: []bson.M{
-				{"$match": bson.M{"$or": []bson.M{
-					{"$and": []bson.M{
-						{"alarm.v.display_name": bson.M{"$eq": "test name"}},
-					}},
-					{"$and": []bson.M{
-						{"alarm.v.output": bson.M{"$eq": "test output"}},
-					}},
-				}}},
-			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.v.display_name": bson.M{"$eq": "test name"}},
+				}},
+				{"$and": []bson.M{
+					{"alarm.v.output": bson.M{"$eq": "test output"}},
+				}},
+			}},
 		},
 		"given invalid condition": {
 			pattern: pattern.Alarm{
@@ -578,27 +584,25 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 				{
 					{
 						Field:     "v.duration",
-						Condition: pattern.NewIntCondition(pattern.ConditionEqual, 3),
+						Condition: durationCond,
 					},
 				},
 			},
-			mongoQueryResult: []bson.M{
-				{"$addFields": bson.M{
-					"alarm.v.duration": bson.M{"$subtract": bson.A{
-						bson.M{"$cond": bson.M{
-							"if":   "$alarm.v.resolved",
-							"then": "$alarm.v.resolved",
-							"else": time.Now().Unix(),
-						}},
-						"$alarm.v.creation_date",
+			mongoQueryFields: bson.M{
+				"alarm.v.duration": bson.M{"$subtract": bson.A{
+					bson.M{"$cond": bson.M{
+						"if":   "$alarm.v.resolved",
+						"then": "$alarm.v.resolved",
+						"else": time.Now().Unix(),
 					}},
+					"$alarm.v.creation_date",
 				}},
-				{"$match": bson.M{"$or": []bson.M{
-					{"$and": []bson.M{
-						{"alarm.v.duration": bson.M{"$eq": 3}},
-					}},
-				}}},
 			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.v.duration": bson.M{"$gt": 3}},
+				}},
+			}},
 		},
 		"given infos condition": {
 			pattern: pattern.Alarm{
@@ -610,19 +614,17 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 					},
 				},
 			},
-			mongoQueryResult: []bson.M{
-				{"$addFields": bson.M{
-					"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
-				}},
-				{"$match": bson.M{"$or": []bson.M{
-					{"$and": []bson.M{
-						{"$and": []bson.M{
-							{"alarm.v.infos_array.v.info_name": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
-							{"alarm.v.infos_array.v.info_name": bson.M{"$eq": 3}},
-						}},
-					}},
-				}}},
+			mongoQueryFields: bson.M{
+				"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
 			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"$and": []bson.M{
+						{"alarm.v.infos_array.v.info_name": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
+						{"alarm.v.infos_array.v.info_name": bson.M{"$eq": 3}},
+					}},
+				}},
+			}},
 		},
 	}
 }
@@ -633,5 +635,6 @@ type alarmDataSet struct {
 	matchErr         error
 	matchResult      bool
 	mongoQueryErr    error
-	mongoQueryResult []bson.M
+	mongoQueryResult bson.M
+	mongoQueryFields bson.M
 }

@@ -36,6 +36,23 @@ Feature: update alarm on pbehavior
     }
     """
     Then the response code should be 201
+    When I save response pbehaviorID={{ .lastResponse._id }}
+    When I do POST /api/v4/pbehavior-comments:
+    """json
+    {
+      "pbehavior": "{{ .pbehaviorID }}",
+      "message": "First comment"
+    }
+    """
+    Then the response code should be 201
+    When I do POST /api/v4/pbehavior-comments:
+    """json
+    {
+      "pbehavior": "{{ .pbehaviorID }}",
+      "message": "Second comment"
+    }
+    """
+    Then the response code should be 201
     When I wait the end of event processing
     When I send an event:
     """json
@@ -51,7 +68,7 @@ Feature: update alarm on pbehavior
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-pbehavior-1"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-1
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -70,26 +87,13 @@ Feature: update alarm on pbehavior
             "connector" : "test-connector-pbehavior-1",
             "connector_name" : "test-connector-name-pbehavior-1",
             "component" : "test-component-pbehavior-1",
-            "resource" : "test-resource-pbehavior-1",
-            "steps": [
-              {
-                "_t": "stateinc",
-                "val": 1
-              },
-              {
-                "_t": "statusinc",
-                "val": 1
-              },
-              {
-                "_t": "pbhenter",
-                "a": "system",
-                "user_id": "",
-                "m": "Pbehavior test-pbehavior-1. Type: Engine maintenance. Reason: Test Engine."
-              }
-            ]
+            "resource" : "test-resource-pbehavior-1"
           },
           "pbehavior": {
             "name": "test-pbehavior-1",
+            "last_comment": {
+              "message": "Second comment"
+            },
             "type": {
               "_id": "test-maintenance-type-to-engine",
               "icon_name": "test-maintenance-to-engine-icon",
@@ -106,6 +110,52 @@ Feature: update alarm on pbehavior
         "total_count": 1
       }
     }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc",
+                "val": 1
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "pbhenter",
+                "a": "system",
+                "user_id": "",
+                "m": "Pbehavior test-pbehavior-1. Type: Engine maintenance. Reason: Test Engine."
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
     """
     When I do GET /api/v4/entities?search=test-resource-pbehavior-1
     Then the response code should be 200
@@ -169,7 +219,7 @@ Feature: update alarm on pbehavior
     """
     Then the response code should be 201
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-pbehavior-2"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-2
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -188,8 +238,38 @@ Feature: update alarm on pbehavior
             "connector" : "test-connector-pbehavior-2",
             "connector_name" : "test-connector-name-pbehavior-2",
             "component" : "test-component-pbehavior-2",
-            "resource" : "test-resource-pbehavior-2",
-            "steps": [
+            "resource" : "test-resource-pbehavior-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 1
@@ -204,17 +284,17 @@ Feature: update alarm on pbehavior
                 "user_id": "",
                 "m": "Pbehavior test-pbehavior-2. Type: Engine maintenance. Reason: Test Engine."
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
 
   Scenario: given pbehavior should update last alarm date of pbehavior
@@ -300,7 +380,7 @@ Feature: update alarm on pbehavior
     """
     Then the response code should be 201
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-pbehavior-4"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-4
     Then the response code should be 200
     Then the response key "data.0.v.pbh_inactive_duration" should not be "0"
 
@@ -390,19 +470,28 @@ Feature: update alarm on pbehavior
     When I do DELETE /api/v4/pbehaviors/{{ .lastResponse._id }}
     Then the response code should be 204
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-pbehavior-6"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-6
     Then the response code should be 200
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
     Then the response body should contain:
     """json
-    {
-      "data": [
-        {
-          "v": {
-            "connector" : "test-connector-pbehavior-6",
-            "connector_name" : "test-connector-name-pbehavior-6",
-            "component" : "test-component-pbehavior-6",
-            "resource" : "test-resource-pbehavior-6",
-            "steps": [
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc"
               },
@@ -421,17 +510,17 @@ Feature: update alarm on pbehavior
                 "user_id": "",
                 "m": "Pbehavior test-pbehavior-6. Type: Engine maintenance. Reason: Test Engine."
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
 
   Scenario: given updated pbehavior filter should delete alarm with pbehavior info
@@ -490,19 +579,28 @@ Feature: update alarm on pbehavior
     """
     Then the response code should be 200
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-pbehavior-7"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-7
     Then the response code should be 200
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
     Then the response body should contain:
     """json
-    {
-      "data": [
-        {
-          "v": {
-            "connector" : "test-connector-pbehavior-7",
-            "connector_name" : "test-connector-name-pbehavior-7",
-            "component" : "test-component-pbehavior-7",
-            "resource" : "test-resource-pbehavior-7",
-            "steps": [
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc"
               },
@@ -521,17 +619,17 @@ Feature: update alarm on pbehavior
                 "user_id": "",
                 "m": "Pbehavior test-pbehavior-7. Type: Engine maintenance. Reason: Test Engine."
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
 
   Scenario: given pbehavior and alarm should update alarm pbehavior info on periodical
@@ -570,7 +668,7 @@ Feature: update alarm on pbehavior
     """
     Then the response code should be 201
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-pbehavior-8"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-8
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -589,8 +687,38 @@ Feature: update alarm on pbehavior
             "connector" : "test-connector-pbehavior-8",
             "connector_name" : "test-connector-name-pbehavior-8",
             "component" : "test-component-pbehavior-8",
-            "resource" : "test-resource-pbehavior-8",
-            "steps": [
+            "resource" : "test-resource-pbehavior-8"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 1
@@ -603,17 +731,17 @@ Feature: update alarm on pbehavior
                 "_t": "pbhenter",
                 "m": "Pbehavior test-pbehavior-8. Type: Engine maintenance. Reason: Test Engine."
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
 
   Scenario: given pbehavior should create alarm with pbehavior info
@@ -652,7 +780,7 @@ Feature: update alarm on pbehavior
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-pbehavior-9"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-9
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -671,26 +799,11 @@ Feature: update alarm on pbehavior
             "connector" : "test-connector-pbehavior-9",
             "connector_name" : "test-connector-name-pbehavior-9",
             "component" : "test-component-pbehavior-9",
-            "resource" : "test-resource-pbehavior-9",
-            "steps": [
-              {
-                "_t": "stateinc",
-                "val": 1
-              },
-              {
-                "_t": "statusinc",
-                "val": 1
-              },
-              {
-                "_t": "pbhenter",
-                "a": "system",
-                "user_id": "",
-                "m": "Pbehavior test-pbehavior-9. Type: Engine maintenance. Reason: Test Engine."
-              }
-            ]
+            "resource" : "test-resource-pbehavior-9"
           },
           "pbehavior": {
             "name": "test-pbehavior-9",
+            "last_comment": null,
             "type": {
               "_id": "test-maintenance-type-to-engine",
               "icon_name": "test-maintenance-to-engine-icon",
@@ -707,6 +820,52 @@ Feature: update alarm on pbehavior
         "total_count": 1
       }
     }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc",
+                "val": 1
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "pbhenter",
+                "a": "system",
+                "user_id": "",
+                "m": "Pbehavior test-pbehavior-9. Type: Engine maintenance. Reason: Test Engine."
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
     """
     When I do GET /api/v4/entities?search=test-resource-pbehavior-9
     Then the response code should be 200
