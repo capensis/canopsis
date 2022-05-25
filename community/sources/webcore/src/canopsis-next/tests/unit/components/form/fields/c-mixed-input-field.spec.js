@@ -11,11 +11,11 @@ const localVue = createVueInstance();
 const stubs = {
   'v-text-field': createInputStub('v-text-field'),
   'v-combobox': createInputStub('v-combobox'),
-  'c-array-mixed-field': true,
+  'c-array-text-field': true,
 };
 
 const snapshotStubs = {
-  'c-array-mixed-field': true,
+  'c-array-text-field': true,
 };
 
 const factory = (options = {}) => shallowMount(CMixedInputField, {
