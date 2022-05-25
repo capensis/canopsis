@@ -7,13 +7,17 @@ Feature: correlation feature - attribute rule
     {
       "name": "test-relation-correlation-1",
       "type": "relation",
-      "patterns": {
-        "entity_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "component": "test-relation-correlation-1"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-relation-correlation-1"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -153,13 +157,17 @@ Feature: correlation feature - attribute rule
     {
       "name": "test-relation-correlation-2",
       "type": "relation",
-      "patterns": {
-        "entity_patterns": [
+      "alarm_pattern": [
+        [
           {
-            "component": "test-relation-correlation-2"
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-relation-correlation-2"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201

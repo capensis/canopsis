@@ -1,18 +1,18 @@
-package pattern_test
+package oldpattern_test
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"reflect"
 	"testing"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type boolPatternWrapper struct {
-	Pattern pattern.BoolPattern `bson:"pattern"`
+	Pattern oldpattern.BoolPattern `bson:"pattern"`
 }
 
 func TestBoolPatternToMongoDriverQuery(t *testing.T) {
@@ -117,14 +117,14 @@ func TestBoolPatternMarshalBSON(t *testing.T) {
 	datasets := []struct {
 		TestName             string
 		ExpectedUnmarshalled bson.M
-		Pattern              pattern.BoolPattern
+		Pattern              oldpattern.BoolPattern
 	}{
 		{
 			TestName: "test for true",
 			ExpectedUnmarshalled: bson.M{
 				"pattern": true,
 			},
-			Pattern: pattern.BoolPattern{
+			Pattern: oldpattern.BoolPattern{
 				OptionalBool: types.OptionalBool{
 					Set:   true,
 					Value: true,
@@ -136,7 +136,7 @@ func TestBoolPatternMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"pattern": false,
 			},
-			Pattern: pattern.BoolPattern{
+			Pattern: oldpattern.BoolPattern{
 				OptionalBool: types.OptionalBool{
 					Set:   true,
 					Value: false,
@@ -148,7 +148,7 @@ func TestBoolPatternMarshalBSON(t *testing.T) {
 			ExpectedUnmarshalled: bson.M{
 				"pattern": primitive.Undefined{},
 			},
-			Pattern: pattern.BoolPattern{},
+			Pattern: oldpattern.BoolPattern{},
 		},
 	}
 

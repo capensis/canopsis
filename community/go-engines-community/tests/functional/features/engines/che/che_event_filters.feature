@@ -2104,3 +2104,41 @@ Feature: modify event on event filter
       }
     }
     """
+
+  Scenario: given rule with old patterns format, backward compatibility test
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-eventfilter-to-backward-compatibility-1",
+      "connector_name": "test-connector-name-eventfilter-to-backward-compatibility-1",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-eventfilter-to-backward-compatibility-1",
+      "resource": "CMDD:TEST_PROD",
+      "state": 2,
+      "output": "test-output-eventfilter-to-backward-compatibility-1",
+      "customer": "test-customer-eventfilter-to-backward-compatibility-1",
+      "manager": "test-manager-eventfilter-to-backward-compatibility-1"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/entitybasics?_id=CMDD:TEST_PROD/test-component-eventfilter-to-backward-compatibility-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "infos": {
+        "customer": {
+          "description": "customer",
+          "name": "customer",
+          "value": "TEST_PROD"
+        },
+        "manager": {
+          "description": "manager",
+          "name": "manager",
+          "value": "TEST_PROD"
+        }
+      }
+    }
+    """
