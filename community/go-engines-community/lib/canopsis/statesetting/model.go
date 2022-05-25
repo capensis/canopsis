@@ -73,4 +73,3 @@ func (s JUnitThresholds) GetState(skipped, errors, failures, total int64) int {
 
 	return worstState
 }
-

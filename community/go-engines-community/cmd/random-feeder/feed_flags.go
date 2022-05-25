@@ -26,10 +26,10 @@ func (f *Flags) ParseArgs() error {
 }
 
 type Flags struct {
-	EventsPerSec 		int
-	NewResourcesPerSec  int
-	Alarms       		int
-	DumpFile 			string
-	FeederTime 			int
-	ExchangeName 		string
+	EventsPerSec       int
+	NewResourcesPerSec int
+	Alarms             int
+	DumpFile           string
+	FeederTime         int
+	ExchangeName       string
 }
