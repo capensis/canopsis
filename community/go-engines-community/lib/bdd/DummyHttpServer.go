@@ -240,7 +240,7 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Method: http.MethodPost,
 			Body:   "{\"ticket_id\":\"testticket\",\"ticket_data\":\"testdata\"}",
 		},
-		"/api/external_data" : {
+		"/api/external_data": {
 			Code:   http.StatusOK,
 			Method: http.MethodGet,
 			Body:   "{\"id\": 1,\"title\": \"test title\"}",
