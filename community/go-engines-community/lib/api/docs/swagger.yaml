@@ -63,6 +63,11 @@ paths:
             type: array
             items:
               type: string
+        - name: filter
+          in: query
+          description: Widget filter id.
+          schema:
+            type: string
         - name: category
           in: query
           schema:
@@ -71,7 +76,7 @@ paths:
           in: query
           schema:
             type: boolean
-        - name: exclude_instruction_types
+        - name: exclude_instruction_types[]
           in: query
           style: form
           explode: true
@@ -79,7 +84,7 @@ paths:
             type: array
             items:
               type: integer
-        - name: exclude_instructions
+        - name: exclude_instructions[]
           in: query
           style: form
           explode: true
@@ -87,11 +92,7 @@ paths:
             type: array
             items:
               type: string
-        - name: filter
-          in: query
-          schema:
-            type: string
-        - name: include_instruction_types
+        - name: include_instruction_types[]
           in: query
           style: form
           explode: true
@@ -99,7 +100,7 @@ paths:
             type: array
             items:
               type: integer
-        - name: include_instructions
+        - name: include_instructions[]
           in: query
           style: form
           explode: true
@@ -107,15 +108,10 @@ paths:
             type: array
             items:
               type: string
-        - name: manual
-          in: query
-          schema:
-            type: boolean
         - name: opened
           in: query
           schema:
             type: boolean
-        - $ref: '#/components/parameters/search'
         - name: time_field
           in: query
           schema:
@@ -235,14 +231,70 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarm-details:
+    post:
+      tags:
+        - alarms
+      summary: Get alarms' details
+      description: Get paginated list of alarms' steps and children.
+      operationId: alarms-details-get
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/alarm.DetailsRequest'
+            examples:
+              get:
+                summary: Get details
+                description: Get details of alarms
+                value: [
+                  {
+                    "_id": "293d7b83-e622-40d9-95ef-86b06eda3746",
+                    "with_instructions": true,
+                    "opened": true,
+                    "steps": {
+                      "page": 1,
+                      "limit": 10
+                    },
+                    "children": {
+                      "page": 1,
+                      "limit": 10,
+                      "sort_by": "v.resource",
+                      "sort": "asc",
+                      "multi_sort": []
+                    }
+                  },
+                  {
+                    "_id": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
+                    "opened": true,
+                    "steps": {
+                      "page": 2
+                    }
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/alarm.DetailsResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /alarms:
     get:
       tags:
         - alarms
       summary: Find all alarms
-      description: Get paginated list of alarms. Use parameters "multi_sort[]=field_1,asc&multi_sort[]=field_2,desc&multi_sort[]=field_3,asc"
-        to sort list by multiple fields. "sort_key", "sort_dir" are left for compatibility
-        with older ways of sorting
+      description: Get paginated list of alarms.
       operationId: alarms-find-all
       parameters:
         - name: active_columns[]
@@ -253,6 +305,11 @@ paths:
             type: array
             items:
               type: string
+        - name: filter
+          in: query
+          description: Widget filter id.
+          schema:
+            type: string
         - name: category
           in: query
           schema:
@@ -261,7 +318,7 @@ paths:
           in: query
           schema:
             type: boolean
-        - name: exclude_instruction_types
+        - name: exclude_instruction_types[]
           in: query
           style: form
           explode: true
@@ -269,7 +326,7 @@ paths:
             type: array
             items:
               type: integer
-        - name: exclude_instructions
+        - name: exclude_instructions[]
           in: query
           style: form
           explode: true
@@ -277,11 +334,7 @@ paths:
             type: array
             items:
               type: string
-        - name: filter
-          in: query
-          schema:
-            type: string
-        - name: include_instruction_types
+        - name: include_instruction_types[]
           in: query
           style: form
           explode: true
@@ -289,20 +342,7 @@ paths:
             type: array
             items:
               type: integer
-        - name: include_instructions
-          in: query
-          style: form
-          explode: true
-          schema:
-            type: array
-            items:
-              type: string
-        - $ref: '#/components/parameters/limit'
-        - name: manual
-          in: query
-          schema:
-            type: boolean
-        - name: multi_sort[]
+        - name: include_instructions[]
           in: query
           style: form
           explode: true
@@ -314,20 +354,6 @@ paths:
           in: query
           schema:
             type: boolean
-        - $ref: '#/components/parameters/page'
-        - name: paginate
-          in: query
-          schema:
-            type: boolean
-        - $ref: '#/components/parameters/search'
-        - name: sort_dir
-          in: query
-          schema:
-            type: string
-        - name: sort_key
-          in: query
-          schema:
-            type: string
         - name: time_field
           in: query
           schema:
@@ -340,18 +366,32 @@ paths:
           in: query
           schema:
             type: integer
-        - name: with_consequences
+        - name: with_links
           in: query
+          description: Links are retrieved from external service so use carefully with big limit.
           schema:
             type: boolean
         - name: with_instructions
           in: query
           schema:
             type: boolean
-        - name: with_steps
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
+        - name: sort_by
           in: query
           schema:
-            type: boolean
+            type: string
+        - name: multi_sort[]
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+          example: t,asc
       responses:
         200:
           description: OK
@@ -372,6 +412,33 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /alarms/{id}:
+    get:
+      tags:
+        - alarms
+      summary: Get alarm by id
+      description: Get alarm by id
+      operationId: alarms-get-by-id
+      parameters:
+        - name: id
+          in: path
+          description: alarm id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/alarm.Alarm'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /app-info:
     get:
       tags:
@@ -2427,6 +2494,48 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /entityservice-alarms/{id}:
+    get:
+      tags:
+        - alarms
+      summary: Find alarms of service's dependencies
+      description: Get paginated list of alarms.
+      operationId: alarms-find-service-alarms
+      parameters:
+        - name: id
+          in: path
+          description: entity service id
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/page'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/alarm.Alarm'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /entityservices:
     post:
       tags:
@@ -3742,6 +3851,24 @@ paths:
           description: OK
       security:
         - BearerAuth: [ ]
+  /manual-meta-alarms:
+    get:
+      tags:
+        - alarms
+      summary: Find manual meta alarms
+      description: Get manual meta alarms.
+      operationId: alarms-find-meta-alarms
+      parameters:
+        - $ref: '#/components/parameters/search'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'schemas_swagger.yaml#/definitions/alarm.ManualResponse'
   /message-rate-stats:
     get:
       tags:

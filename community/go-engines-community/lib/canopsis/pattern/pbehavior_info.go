@@ -72,7 +72,7 @@ func (p PbehaviorInfo) Validate() bool {
 	return true
 }
 
-func (p PbehaviorInfo) ToMongoQuery(prefix string) ([]bson.M, error) {
+func (p PbehaviorInfo) ToMongoQuery(prefix string) (bson.M, error) {
 	if len(p) == 0 {
 		return nil, nil
 	}
@@ -97,7 +97,7 @@ func (p PbehaviorInfo) ToMongoQuery(prefix string) ([]bson.M, error) {
 		groupQueries[i] = bson.M{"$and": condQueries}
 	}
 
-	return []bson.M{{"$match": bson.M{"$or": groupQueries}}}, nil
+	return bson.M{"$or": groupQueries}, nil
 }
 
 func getPbehaviorInfoStringField(pbhInfo types.PbehaviorInfo, f string) (string, bool) {

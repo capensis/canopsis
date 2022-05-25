@@ -152,8 +152,7 @@ func (p Alarm) Validate() bool {
 	return true
 }
 
-func (p Alarm) ToMongoQuery(prefix string) ([]bson.M, error) {
-	pipeline := make([]bson.M, 0)
+func (p Alarm) ToMongoQuery(prefix string) (bson.M, error) {
 	if len(p) == 0 {
 		return nil, nil
 	}
@@ -164,8 +163,6 @@ func (p Alarm) ToMongoQuery(prefix string) ([]bson.M, error) {
 
 	groupQueries := make([]bson.M, len(p))
 	var err error
-	withDuration := false
-	withInfos := false
 
 	for i, group := range p {
 		condQueries := make([]bson.M, len(group))
@@ -173,7 +170,6 @@ func (p Alarm) ToMongoQuery(prefix string) ([]bson.M, error) {
 			f := cond.Field
 
 			if infoName := getAlarmInfoName(f); infoName != "" {
-				withInfos = true
 				f = prefix + "v.infos_array.v." + infoName
 
 				condQueries[j], err = cond.Condition.ToMongoQuery(f)
@@ -191,10 +187,6 @@ func (p Alarm) ToMongoQuery(prefix string) ([]bson.M, error) {
 				continue
 			}
 
-			if f == "v.duration" {
-				withDuration = true
-			}
-
 			f = prefix + f
 			condQueries[j], err = cond.Condition.ToMongoQuery(f)
 			if err != nil {
@@ -203,6 +195,37 @@ func (p Alarm) ToMongoQuery(prefix string) ([]bson.M, error) {
 		}
 
 		groupQueries[i] = bson.M{"$and": condQueries}
+	}
+
+	return bson.M{"$or": groupQueries}, nil
+}
+
+func (p Alarm) GetMongoFields(prefix string) bson.M {
+	if len(p) == 0 {
+		return nil
+	}
+
+	if prefix != "" {
+		prefix += "."
+	}
+
+	withDuration := false
+	withInfos := false
+
+	for _, group := range p {
+		for _, cond := range group {
+			f := cond.Field
+
+			if infoName := getAlarmInfoName(f); infoName != "" {
+				withInfos = true
+
+				continue
+			}
+
+			if f == "v.duration" {
+				withDuration = true
+			}
+		}
 	}
 
 	addFields := bson.M{}
@@ -221,13 +244,31 @@ func (p Alarm) ToMongoQuery(prefix string) ([]bson.M, error) {
 		addFields[prefix+"v.infos_array"] = bson.M{"$objectToArray": "$" + prefix + "v.infos"}
 	}
 
-	if len(addFields) > 0 {
-		pipeline = append(pipeline, bson.M{"$addFields": addFields})
+	return addFields
+}
+
+func (p Alarm) HasField(field string) bool {
+	for _, group := range p {
+		for _, condition := range group {
+			if condition.Field == field {
+				return true
+			}
+		}
 	}
 
-	pipeline = append(pipeline, bson.M{"$match": bson.M{"$or": groupQueries}})
+	return false
+}
 
-	return pipeline, nil
+func (p Alarm) HasInfosField() bool {
+	for _, group := range p {
+		for _, condition := range group {
+			if infoName := getAlarmInfoName(condition.Field); infoName != "" {
+				return true
+			}
+		}
+	}
+
+	return false
 }
 
 func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {

@@ -258,8 +258,7 @@ func (p Entity) Validate() bool {
 	return true
 }
 
-func (p Entity) ToMongoQuery(prefix string) ([]bson.M, error) {
-	pipeline := make([]bson.M, 0)
+func (p Entity) ToMongoQuery(prefix string) (bson.M, error) {
 	if len(p) == 0 {
 		return nil, nil
 	}
@@ -322,9 +321,7 @@ func (p Entity) ToMongoQuery(prefix string) ([]bson.M, error) {
 		groupQueries[i] = bson.M{"$and": condQueries}
 	}
 
-	pipeline = append(pipeline, bson.M{"$match": bson.M{"$or": groupQueries}})
-
-	return pipeline, nil
+	return bson.M{"$or": groupQueries}, nil
 }
 
 func getEntityStringField(entity types.Entity, f string) (string, bool) {

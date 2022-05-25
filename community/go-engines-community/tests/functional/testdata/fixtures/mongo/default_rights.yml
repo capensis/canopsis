@@ -563,7 +563,6 @@ default_rights:
   user_to_check_unique_name:
     <<: *user
     _id: test-user-to-check-unique-name
-    crecord_name: <Current()._id>
     crecord_name: test-user-to-check-unique-name-name
     role: "@role_to_edit_user"
 
@@ -714,7 +713,6 @@ default_rights:
   user_to_rule_author_1:
     <<: *user
     _id: test-user-author-1-id
-    crecord_name: <Current()._id>
     crecord_name: test-user-author-1-username
     role: "@role_noperms"
 
@@ -947,6 +945,11 @@ default_rights:
     _id: test-view-to-filter-edit
     crecord_name: <Current()._id>
 
+  permission_view_to_alarm_get:
+    <<: *permission_rw
+    _id: test-view-to-alarm-get
+    crecord_name: <Current()._id>
+
   role_admin:
     <<: *role
     _id: admin
@@ -1166,6 +1169,9 @@ default_rights:
         checksum: 6
         crecord_type: right
       "@permission_view_to_filter_edit":
+        checksum: 6
+        crecord_type: right
+      "@permission_view_to_alarm_get":
         checksum: 6
         crecord_type: right
 
