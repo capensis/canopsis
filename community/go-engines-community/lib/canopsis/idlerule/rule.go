@@ -1,12 +1,9 @@
-/*
-Package idlerule contains idle rule model and adapter.
-*/
+// Package idlerule contains idle rule model and adapter.
 package idlerule
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 const (
@@ -101,19 +98,4 @@ func (r *Rule) matchesByEntityLastEventDate(entity *types.Entity, now types.CpsT
 	}
 
 	return true
-}
-
-func bsonDtoMap(i interface{}) interface{} {
-	if b, ok := i.(bson.D); ok {
-		m := b.Map()
-		for k := range m {
-			if b, ok := m[k].(bson.D); ok {
-				m[k] = bsonDtoMap(b)
-			}
-		}
-
-		return m
-	}
-
-	return i
 }

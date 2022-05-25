@@ -112,7 +112,6 @@ Feature: run an auto instruction
     }
     """
     When I wait the end of event processing
-    When I wait 1s
     When I send an event:
     """json
     {

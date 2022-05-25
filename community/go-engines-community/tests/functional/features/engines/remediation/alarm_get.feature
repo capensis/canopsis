@@ -31,10 +31,7 @@ Feature: update an instruction statistics
       ]
     }
     """
-    When I wait 6s
-    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-1&with_instructions=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-1&with_instructions=true until response code is 200 and body contains:
     """json
     {
       "data": [

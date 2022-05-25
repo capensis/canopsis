@@ -106,7 +106,11 @@ Feature: create and update meta alarm
       }
     }
     """
+    When I save response metaalarmLastEventDate={{ (index .lastResponse.data 0).v.last_event_date }}
+    When I save response metaalarmCreationDate={{ (index .lastResponse.data 0).v.creation_date }}
     When I save response metalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
+    Then the difference between metaalarmLastEventDate createTimestamp is in range -2,2
+    Then the difference between metaalarmCreationDate createTimestamp is in range -2,2
     When I do GET /api/v4/alarms?filter={"$and":[{"entity.name":"test-resource-axe-correlation-1-2"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
@@ -155,6 +159,10 @@ Feature: create and update meta alarm
       }
     }
     """
+    When I save response alarmLastEventDate={{ (index .lastResponse.data 0).v.last_event_date }}
+    When I save response metaAlarmAttachStepDate={{ ( index (index .lastResponse.data 0).v.steps 2).t }}
+    Then the difference between alarmLastEventDate createTimestamp is in range -2,2
+    Then the difference between metaAlarmAttachStepDate createTimestamp is in range -2,2
 
   Scenario: given meta alarm and ack event should ack children
     Given I am admin
