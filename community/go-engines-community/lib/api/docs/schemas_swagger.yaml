@@ -1955,6 +1955,12 @@ definitions:
       instruction:
         $ref: '#/definitions/notification.InstructionNotification'
     type: object
+  oldpattern.AlarmPatternList:
+    type: object
+  oldpattern.EntityPatternList:
+    type: object
+  oldpattern.EventPatternList:
+    type: object
   pagination.Query:
     properties:
       limit:
@@ -1963,12 +1969,6 @@ definitions:
         type: integer
       paginate:
         type: boolean
-    type: object
-  oldpattern.AlarmPatternList:
-    type: object
-  oldpattern.EntityPatternList:
-    type: object
-  oldpattern.EventPatternList:
     type: object
   pattern.BulkDeleteRequestItem:
     properties:
