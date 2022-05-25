@@ -30,7 +30,6 @@ type Store interface {
 	UpdateByFilter(ctx context.Context, model *Response, filters bson.M) (bool, error)
 	Delete(ctx context.Context, id string) (bool, error)
 	DeleteByName(ctx context.Context, name string) (string, error)
-	Count(context.Context, Filter, int) (*CountFilterResult, error)
 }
 
 type store struct {
@@ -483,32 +482,4 @@ func (s *store) fillActiveStatuses(ctx context.Context, result []Response) error
 	}
 
 	return nil
-}
-
-func (s store) countEntitiesCollection(ctx context.Context, filter Filter) (int64, error) {
-	cursor, err := s.entitiesCollection.Aggregate(ctx, []bson.M{
-		{"$match": filter.v},
-		{"$count": "total_count"},
-	})
-	if err != nil {
-		return 0, err
-	}
-
-	defer cursor.Close(ctx)
-
-	ar := AggregationResult{}
-	if cursor.Next(ctx) {
-		err = cursor.Decode(&ar)
-	}
-	return ar.GetTotal(), err
-}
-
-func (s store) Count(ctx context.Context, filter Filter, timeout int) (*CountFilterResult, error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(timeout)*time.Second)
-	defer cancel()
-
-	res, err := s.countEntitiesCollection(ctx, filter)
-	return &CountFilterResult{
-		TotalCount: res,
-	}, err
 }

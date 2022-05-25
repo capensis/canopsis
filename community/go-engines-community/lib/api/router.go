@@ -387,7 +387,6 @@ func RegisterRoutes(
 				timezoneConfigProvider,
 			),
 			pbhComputeChan,
-			userInterfaceConfig,
 			actionLogger,
 			logger,
 		)
@@ -428,10 +427,6 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(authObjPbh, permDelete, enforcer),
 				pbehaviorApi.Delete)
-			pbehaviorRouter.POST(
-				"/count",
-				middleware.Authorize(authObjPbh, permCreate, enforcer),
-				pbehaviorApi.CountFilter)
 		}
 		pbehaviorCommentRouter := protected.Group("/pbehavior-comments")
 		{
@@ -1098,7 +1093,7 @@ func RegisterRoutes(
 			)
 		}
 
-		idleRuleAPI := idlerule.NewApi(idlerule.NewStore(dbClient), actionLogger, userInterfaceConfig)
+		idleRuleAPI := idlerule.NewApi(idlerule.NewStore(dbClient), actionLogger)
 		idleRuleRouter := protected.Group("/idle-rules")
 		{
 			idleRuleRouter.POST(
@@ -1128,13 +1123,9 @@ func RegisterRoutes(
 				middleware.Authorize(authObjIdleRule, permDelete, enforcer),
 				idleRuleAPI.Delete,
 			)
-			idleRuleRouter.POST(
-				"/count",
-				middleware.Authorize(authObjPbh, permCreate, enforcer),
-				idleRuleAPI.CountPatterns)
 		}
 
-		patternAPI := pattern.NewApi(pattern.NewStore(dbClient), enforcer, actionLogger)
+		patternAPI := pattern.NewApi(pattern.NewStore(dbClient), userInterfaceConfig, enforcer, actionLogger)
 		patternRouter := protected.Group("/patterns")
 		{
 			patternRouter.Use(middleware.OnlyAuth())
@@ -1161,6 +1152,11 @@ func RegisterRoutes(
 				patternAPI.Delete,
 			)
 		}
+		protected.POST(
+			"/patterns-count",
+			middleware.OnlyAuth(),
+			patternAPI.Count,
+		)
 
 		bulkRouter := protected.Group("/bulk")
 		{

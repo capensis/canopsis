@@ -3737,39 +3737,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-  /idle-rules/count:
-    post:
-      tags:
-        - idlerules
-      summary: Count entities and alarm matching patterns
-      description: Count entities and alarm matching patterns
-      operationId: idlerules-countpatterns
-      requestBody:
-        description: body
-        content:
-          application/json:
-            schema:
-              $ref: 'schemas_swagger.yaml#/definitions/idlerule.CountByPatternRequest'
-        required: true
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/idlerule.CountByPatternResult'
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-        408:
-          description: Request Timeout
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /internal/user_interface:
     put:
       tags:
@@ -3961,6 +3928,72 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /patterns-count:
+    post:
+      tags:
+        - saved-patterns
+      summary: Count matches
+      description: Count matches of pattern
+      operationId: saved-patterns-count
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pattern.CountRequest'
+            examples:
+              count:
+                summary: Count
+                description: Count matches of patterns.
+                value: {
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_component"
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "pbehavior_pattern": [
+                    [
+                      {
+                        "field": "pbehavior_info.type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "default_maintenance"
+                        }
+                      }
+                    ]
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.CountResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /patterns:
     get:
       tags:
@@ -4113,7 +4146,7 @@ paths:
                   "pbehavior_pattern": [
                     [
                       {
-                        "field": "pbehavior_info._id",
+                        "field": "pbehavior_info.id",
                         "cond": {
                           "type": "eq",
                           "value": "f7501e0a-a04d-46f1-bf10-4a85c4b37433"
@@ -5350,39 +5383,6 @@ paths:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
         404:
           description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-  /pbehaviors/count:
-    post:
-      tags:
-        - pbehaviors
-      summary: Count entities matching filter
-      description: Count entities matching filter
-      operationId: pbehaviors-countfilter
-      requestBody:
-        description: body
-        content:
-          application/json:
-            schema:
-              $ref: 'schemas_swagger.yaml#/definitions/pbehavior.FilterRequest'
-        required: true
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.CountFilterResult'
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-        408:
-          description: Request Timeout
           content:
             application/json:
               schema:
