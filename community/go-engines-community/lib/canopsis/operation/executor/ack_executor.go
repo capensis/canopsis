@@ -40,8 +40,9 @@ func (e *ackExecutor) Exec(
 		userID = params.User
 	}
 
+	doubleAck := false
 	if alarm.Value.ACK != nil {
-		return "", nil
+		doubleAck = true
 	}
 
 	err := alarm.PartialUpdateAck(
@@ -57,13 +58,17 @@ func (e *ackExecutor) Exec(
 		return "", err
 	}
 
-	go func() {
-		metricsUserID := ""
-		if initiator == types.InitiatorUser {
-			metricsUserID = userID
-		}
-		e.metricsSender.SendAck(context.Background(), *alarm, metricsUserID, time.Time)
-	}()
+	if !doubleAck {
+		go func() {
+			metricsUserID := ""
+			if initiator == types.InitiatorUser {
+				metricsUserID = userID
+			}
+			e.metricsSender.SendAck(context.Background(), *alarm, metricsUserID, time.Time)
+		}()
 
-	return types.AlarmChangeTypeAck, nil
+		return types.AlarmChangeTypeAck, nil
+	}
+
+	return types.AlarmChangeTypeDoubleAck, nil
 }
