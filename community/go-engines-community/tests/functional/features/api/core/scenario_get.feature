@@ -14,15 +14,12 @@ Feature: Get a scenario
           "_id": "test-scenario-to-get-1",
           "actions": [
             {
-              "comment": "",
               "alarm_patterns": [
                 {
                   "_id": "test-scenario-to-get-1-action-1-alarm"
                 }
               ],
-              "comment": "",
               "entity_patterns": null,
-              "comment": "",
               "drop_scenario_if_not_matched": false,
               "emit_trigger": false,
               "type": "ack",
@@ -33,15 +30,12 @@ Feature: Get a scenario
               "comment": "test-scenario-to-get-1-action-1-comment"
             },
             {
-              "comment": "",
               "alarm_patterns": [
                 {
                   "_id": "test-scenario-to-get-1-action-2-alarm"
                 }
               ],
-              "comment": "",
               "entity_patterns": null,
-              "comment": "",
               "drop_scenario_if_not_matched": false,
               "emit_trigger": false,
               "type": "pbehavior",
@@ -88,15 +82,12 @@ Feature: Get a scenario
           "_id": "test-scenario-to-get-2",
           "actions": [
             {
-              "comment": "",
               "alarm_patterns": [
                 {
                   "_id": "test-scenario-to-get-2-action-1-alarm"
                 }
               ],
-              "comment": "",
               "entity_patterns": null,
-              "comment": "",
               "drop_scenario_if_not_matched": false,
               "emit_trigger": false,
               "type": "ack",
@@ -175,15 +166,12 @@ Feature: Get a scenario
       "_id": "test-scenario-to-get-1",
       "actions": [
         {
-          "comment": "",
           "alarm_patterns": [
             {
               "_id": "test-scenario-to-get-1-action-1-alarm"
             }
           ],
-          "comment": "",
           "entity_patterns": null,
-          "comment": "",
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false,
           "type": "ack",
@@ -194,15 +182,12 @@ Feature: Get a scenario
           "comment": "test-scenario-to-get-1-action-1-comment"
         },
         {
-          "comment": "",
           "alarm_patterns": [
             {
               "_id": "test-scenario-to-get-1-action-2-alarm"
             }
           ],
-          "comment": "",
           "entity_patterns": null,
-          "comment": "",
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false,
           "type": "pbehavior",
