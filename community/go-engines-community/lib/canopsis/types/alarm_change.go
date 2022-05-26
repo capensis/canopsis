@@ -1,7 +1,6 @@
 package types
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -100,8 +99,6 @@ func (ac *AlarmChange) GetTriggers() []string {
 			triggers = append(triggers, t)
 		}
 	}
-
-	fmt.Printf("%v\n", triggers)
 
 	return triggers
 }
