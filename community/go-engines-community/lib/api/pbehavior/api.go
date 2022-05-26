@@ -832,10 +832,7 @@ func (a api) CountFilter(c *gin.Context) {
 	}
 
 	data, err := a.store.Count(c.Request.Context(), NewFilter(request.Filter), a.conf.Get().CheckCountRequestTimeout)
-	if errors.Is(err, context.DeadlineExceeded) {
-		c.AbortWithStatusJSON(http.StatusRequestTimeout, common.ErrTimeoutResponse)
-		return
-	} else if err != nil {
+	if err != nil {
 		panic(err)
 	}
 	data.OverLimit = int(data.GetTotal()) > a.conf.Get().MaxMatchedItems
