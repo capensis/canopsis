@@ -208,3 +208,13 @@ indexes:
     created_1:
       keys:
         created: 1
+
+  flapping_rule:
+    priority_1:
+      keys:
+        priority: 1
+
+  resolve_rule:
+    priority_1:
+      keys:
+        priority: 1
