@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
@@ -15,7 +17,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"time"
 )
 
 const permissionPrefix = "Rights on view :"
@@ -33,6 +34,7 @@ type Store interface {
 
 func NewStore(dbClient mongo.DbClient) Store {
 	return &store{
+		dbClient:              dbClient,
 		dbCollection:          dbClient.Collection(mongo.ViewMongoCollection),
 		dbGroupCollection:     dbClient.Collection(mongo.ViewGroupMongoCollection),
 		aclDbCollection:       dbClient.Collection(mongo.RightsMongoCollection),
@@ -43,6 +45,7 @@ func NewStore(dbClient mongo.DbClient) Store {
 }
 
 type store struct {
+	dbClient              mongo.DbClient
 	dbCollection          mongo.DbCollection
 	dbGroupCollection     mongo.DbCollection
 	aclDbCollection       mongo.DbCollection
@@ -143,12 +146,17 @@ func (s *store) Insert(ctx context.Context, userID string, r []EditRequest) ([]v
 		}
 	}
 
-	_, err = s.dbCollection.InsertMany(ctx, docs)
-	if err != nil {
-		return nil, err
-	}
+	var views []viewgroup.View
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		views = []viewgroup.View{}
+		_, err := s.dbCollection.InsertMany(ctx, docs)
+		if err != nil {
+			return err
+		}
 
-	views, err := s.findByIDs(ctx, ids)
+		views, err = s.findByIDs(ctx, ids)
+		return err
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -215,17 +223,22 @@ func (s *store) Update(ctx context.Context, r []BulkUpdateRequestItem) ([]viewgr
 			}})
 	}
 
-	_, err = s.dbCollection.BulkWrite(ctx, models)
-	if err != nil {
-		return nil, err
-	}
+	var newViews []viewgroup.View
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		newViews = []viewgroup.View{}
+		_, err := s.dbCollection.BulkWrite(ctx, models)
+		if err != nil {
+			return err
+		}
 
-	err = s.normalizePositionsOnViewMove(ctx, changedGroup)
-	if err != nil {
-		return nil, err
-	}
+		err = s.normalizePositionsOnViewMove(ctx, changedGroup)
+		if err != nil {
+			return err
+		}
 
-	newViews, err := s.findByIDs(ctx, ids)
+		newViews, err = s.findByIDs(ctx, ids)
+		return err
+	})
 	if err != nil {
 		return nil, err
 	}
