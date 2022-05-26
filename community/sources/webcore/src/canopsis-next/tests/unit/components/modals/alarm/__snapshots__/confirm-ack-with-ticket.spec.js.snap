@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`confirm-ack-with-ticket Renders \`confirm-ack-with-ticket\` with empty modal 1`] = `
+<div
+  class="modal-wrapper"
+  close="close"
+>
+  <div
+    class="title"
+  >
+    <span>
+      Are you sure?
+    </span>
+  </div>
+   
+  <div
+    class="text"
+  >
+    <div
+      class="v-alert info"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light v-alert__icon"
+      >
+        info
+      </i>
+      <div>
+        A ticket number has been specified.
+        Maybe you wanted to associate this ticket number to the alarm.
+        If so, click on "Continue and associate ticket" button.
+        To continue the ack action without taking ticket number into account,
+        click on "Continue" button.
+      </div>
+    </div>
+  </div>
+   
+  <div
+    class="actions"
+  >
+    <button
+      class="v-btn v-btn--flat theme--light"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        Cancel
+      </div>
+    </button>
+    <button
+      class="primary v-btn theme--light"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        Continue
+      </div>
+    </button>
+    <button
+      class="warning v-btn theme--light"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        Continue and associate ticket
+      </div>
+    </button>
+  </div>
+</div>
+`;
