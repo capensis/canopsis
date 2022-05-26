@@ -22,7 +22,9 @@ Feature: Get a metaalarm-rule
           "name": "Test alarm get",
           "author": "test-metaalarm-to-get-1-author",
           "type": "complex",
-          "output_template": "",
+          "output_template": "{{ `Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}` }}",
+          "created": 1592215337,
+          "updated": 1592215337,
           "entity_pattern": [
             [
               {
@@ -51,7 +53,9 @@ Feature: Get a metaalarm-rule
           "name": "Test alarm get",
           "author": "test-metaalarm-to-get-2-author",
           "type": "complex",
-          "output_template": "",
+          "output_template": "{{ `Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}` }}",
+          "created": 1592215337,
+          "updated": 1592215337,
           "entity_pattern": [
             [
               {
@@ -96,7 +100,9 @@ Feature: Get a metaalarm-rule
       "name": "Test alarm get",
       "author": "test-metaalarm-to-get-1-author",
       "type": "complex",
-      "output_template": "",
+      "output_template": "{{ `Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}` }}",
+      "created": 1592215337,
+      "updated": 1592215337,
       "entity_pattern": [
         [
           {

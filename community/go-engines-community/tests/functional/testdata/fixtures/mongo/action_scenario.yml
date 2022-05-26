@@ -57,6 +57,7 @@ action_scenario:
       parameters:
         author: test-scenario-to-get-1-action-1-author
         output: test-scenario-to-get-1-action-1-output
+      comment: test-scenario-to-get-1-action-1-comment
       type: ack
     - alarm_patterns:
       - _id: test-scenario-to-get-1-action-2-alarm
@@ -74,6 +75,7 @@ action_scenario:
         tstart: null
         tstop: null
         type: test-type-to-edit-scenario
+      comment: test-scenario-to-get-1-action-2-comment
       type: pbehavior
     author: test-scenario-to-get-1-author
     created: 1605263992
