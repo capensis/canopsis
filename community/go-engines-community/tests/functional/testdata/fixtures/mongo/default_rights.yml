@@ -511,12 +511,12 @@ default_rights:
       "@permission_to_edit_user_3":
         checksum: 7
 
-  role_to_get_user_1:
+  role_to_user_get_1:
     <<: *role
-    _id: test-role-to-get-user-1
+    _id: test-role-to-user-get-1
     crecord_name: <Current()._id>
     defaultview: test-view-to-edit-user
-    description: test-role-to-get-user-1-description
+    description: test-role-to-user-get-1-description
     rights:
       "@permission_to_edit_user_1":
         checksum: 1
@@ -525,12 +525,22 @@ default_rights:
       "@permission_to_edit_user_3":
         checksum: 7
 
-  role_to_get_user_2:
+  role_to_user_get_2:
     <<: *role
-    _id: test-role-to-get-user-2
+    _id: test-role-to-user-get-2
     crecord_name: <Current()._id>
     defaultview: test-view-to-edit-user
-    description: test-role-to-get-user-2-description
+    description: test-role-to-user-get-2-description
+    rights:
+      "@permission_api_execution":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_instruction":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_instruction_approve":
+        checksum: 1
+        crecord_type: right
 
   user_to_get_1:
     <<: *user
@@ -542,7 +552,7 @@ default_rights:
     groupsNavigationType: side-bar
     lastname: test-user-to-get-1-lastname
     mail: test-user-to-get-1-email@canopsis.net
-    role: "@role_to_get_user_1"
+    role: "@role_to_user_get_1"
     tours:
       test-tour-to-get-user-1: true
     ui_language: en
@@ -557,7 +567,7 @@ default_rights:
     groupsNavigationType: side-bar
     lastname: test-user-to-get-2-lastname
     mail: test-user-to-get-2-email@canopsis.net
-    role: "@role_to_get_user_2"
+    role: "@role_to_user_get_2"
     ui_language: en
 
   user_to_check_unique_name:
