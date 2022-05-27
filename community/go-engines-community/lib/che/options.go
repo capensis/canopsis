@@ -28,7 +28,7 @@ func ParseOptions() Options {
 	flag.BoolVar(&opts.FeatureEventProcessing, "processEvent", true, "enable event processing. enabled by default.")
 	flag.BoolVar(&opts.FeatureContextCreation, "createContext", true, "enable context graph creation. enabled by default. WARNING: disable the old context-graph engine when using this.")
 	flag.BoolVar(&opts.FeatureContextEnrich, "enrichContext", false, "enable context graph enrichment from event. disabled by default. WARNING: disable the old context-graph engine when using this.")
-	flag.StringVar(&opts.PublishToQueue, "publishQueue", canopsis.PBehaviorQueueName, "Publish event to this queue.")
+	flag.StringVar(&opts.PublishToQueue, "publishQueue", canopsis.AxeQueueName, "Publish event to this queue.")
 	flag.StringVar(&opts.ConsumeFromQueue, "consumeQueue", canopsis.CheQueueName, "Consume events from this queue.")
 	flag.StringVar(&opts.EnrichExclude, "enrichExclude", "", "Coma separated list of fields that shall not be part of context enrichment.")
 	flag.StringVar(&opts.EnrichInclude, "enrichInclude", "", "Coma separated list of the only fields that will be part of context enrichment. If present, -enrichExclude is ignored.")

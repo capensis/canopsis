@@ -500,10 +500,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			panic(err)
 		}
 
-		pbh, err := a.store.Update(ctx, UpdateRequest{
-			EditRequest: request.EditRequest,
-			ID:          request.ID,
-		})
+		pbh, err := a.store.Update(ctx, UpdateRequest(request))
 		if err != nil {
 			a.logger.Err(err).Msg("cannot update pbehavior")
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))

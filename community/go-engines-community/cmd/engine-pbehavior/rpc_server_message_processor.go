@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -23,7 +22,10 @@ import (
 
 type rpcServerMessageProcessor struct {
 	FeaturePrintEventOnError bool
-	Processor                createPbehaviorMessageProcessor
+	DbClient                 mongo.DbClient
+	PbhService               libpbehavior.Service
+	EventManager             libpbehavior.EventManager
+	TimezoneConfigProvider   config.TimezoneConfigProvider
 	Decoder                  encoding.Decoder
 	Encoder                  encoding.Encoder
 	Logger                   zerolog.Logger
@@ -33,18 +35,17 @@ func (p *rpcServerMessageProcessor) Process(ctx context.Context, d amqp.Delivery
 	msg := d.Body
 	var event types.RPCPBehaviorEvent
 	err := p.Decoder.Decode(msg, &event)
-	if err != nil || event.Alarm == nil {
+	if err != nil || event.Alarm == nil || event.Entity == nil {
 		p.logError(err, "invalid event", msg)
 
 		return p.getErrRpcEvent(errors.New("invalid event")), nil
 	}
 
-	pbhEvent, err := p.Processor.Process(
+	pbhEvent, err := p.processCreatePbhEvent(
 		ctx,
-		event.Alarm,
-		event.Entity,
+		*event.Alarm,
+		*event.Entity,
 		event.Params,
-		msg,
 	)
 	if err != nil {
 		if engine.IsConnectionError(err) {
@@ -65,57 +66,33 @@ func (p *rpcServerMessageProcessor) Process(ctx context.Context, d amqp.Delivery
 		Alarm:    event.Alarm,
 		Entity:   event.Entity,
 		PbhEvent: *pbhEvent,
-		Error:    nil,
 	})
 }
 
-type createPbehaviorMessageProcessor struct {
-	FeaturePrintEventOnError bool
-	DbClient                 mongo.DbClient
-	PbhService               libpbehavior.Service
-	EventManager             libpbehavior.EventManager
-	AlarmAdapter             alarm.Adapter
-	TimezoneConfigProvider   config.TimezoneConfigProvider
-	Logger                   zerolog.Logger
-}
-
-func (p *createPbehaviorMessageProcessor) Process(
+func (p *rpcServerMessageProcessor) processCreatePbhEvent(
 	ctx context.Context,
-	alarm *types.Alarm,
-	entity *types.Entity,
+	alarm types.Alarm,
+	entity types.Entity,
 	params types.RPCPBehaviorParameters,
-	_ []byte,
 ) (*types.Event, error) {
 	pbehavior, err := p.createPbehavior(ctx, params, entity)
 	if err != nil {
 		return nil, err
 	}
 
-	err = p.recomputePbehavior(ctx, pbehavior.ID)
+	resolver, err := p.PbhService.RecomputeByIds(ctx, []string{pbehavior.ID})
+	if err != nil {
+		return nil, fmt.Errorf("pbehavior recompute failed: %w", err)
+	}
+
+	p.Logger.Debug().Str("pbehavior", pbehavior.ID).Msg("pbehavior recomputed")
+
+	resolveResult, err := p.getResolveResult(ctx, entity, resolver)
 	if err != nil {
 		return nil, err
 	}
 
-	resolveResult, err := p.getResolveResult(ctx, entity)
-	if err != nil {
-		return nil, err
-	}
-
-	if alarm == nil {
-		alarms := make([]types.Alarm, 0)
-		err := p.AlarmAdapter.GetOpenedAlarmsByIDs(ctx, []string{entity.ID}, &alarms)
-		if err != nil {
-			return nil, fmt.Errorf("failed to find alarm: %w", err)
-		}
-
-		if len(alarms) == 0 {
-			return nil, nil
-		}
-
-		alarm = &alarms[0]
-	}
-
-	pbhEvent := p.EventManager.GetEvent(resolveResult, *alarm, time.Now())
+	pbhEvent := p.EventManager.GetEvent(resolveResult, alarm, time.Now())
 	if pbhEvent.EventType == "" {
 		return nil, nil
 	}
@@ -123,10 +100,10 @@ func (p *createPbehaviorMessageProcessor) Process(
 	return &pbhEvent, nil
 }
 
-func (p *createPbehaviorMessageProcessor) createPbehavior(
+func (p *rpcServerMessageProcessor) createPbehavior(
 	ctx context.Context,
 	params types.RPCPBehaviorParameters,
-	entity *types.Entity,
+	entity types.Entity,
 ) (*libpbehavior.PBehavior, error) {
 	typeCollection := p.DbClient.Collection(mongo.PbehaviorTypeMongoCollection)
 	res := typeCollection.FindOne(ctx, bson.M{"_id": params.Type})
@@ -200,22 +177,14 @@ func (p *createPbehaviorMessageProcessor) createPbehavior(
 	return &pbehavior, nil
 }
 
-func (p *createPbehaviorMessageProcessor) recomputePbehavior(ctx context.Context, pbehaviorID string) error {
-	err := p.PbhService.RecomputeByID(ctx, pbehaviorID)
-
-	if err != nil {
-		return fmt.Errorf("pbehavior recompute failed: %w", err)
-	}
-
-	p.Logger.Debug().Str("pbehavior", pbehaviorID).Msg("pbehavior recomputed")
-
-	return nil
-}
-
-func (p *createPbehaviorMessageProcessor) getResolveResult(ctx context.Context, entity *types.Entity) (libpbehavior.ResolveResult, error) {
+func (p *rpcServerMessageProcessor) getResolveResult(
+	ctx context.Context,
+	entity types.Entity,
+	resolver libpbehavior.ComputedEntityTypeResolver,
+) (libpbehavior.ResolveResult, error) {
 	location := p.TimezoneConfigProvider.Get().Location
 	now := time.Now().In(location)
-	resolveResult, err := p.PbhService.Resolve(ctx, entity.ID, now)
+	resolveResult, err := resolver.Resolve(ctx, entity, now)
 	if err != nil {
 		return libpbehavior.ResolveResult{}, fmt.Errorf("resolve an entity failed: %w", err)
 	}

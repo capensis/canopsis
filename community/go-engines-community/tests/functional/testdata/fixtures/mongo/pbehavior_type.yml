@@ -137,6 +137,8 @@ pbehavior_type:
   type_maintenance_type_to_engine:
     <<: *type_maintenance
     _id: test-maintenance-type-to-engine
+    name: Engine maintenance
+    description: Engine maintenance
 
   type_active_type_to_engine:
     <<: *type_active

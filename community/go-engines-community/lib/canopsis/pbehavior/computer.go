@@ -6,7 +6,7 @@ import (
 	"fmt"
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
+	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -21,16 +21,14 @@ import (
 
 const calculateAll = "all"
 
-// Computer is used to implement pbehavior intervals recompute on singnal from channel.
+// Computer is used to implement pbehavior intervals recompute on signal from channel.
 type Computer interface {
 	// Compute recomputes all pbehaviors on empty signal
-	// or recomputes only one pbehavior on signal which conatins pbehavior id.
+	// or recomputes only one pbehavior on signal which contains pbehavior id.
 	Compute(ctx context.Context, ch <-chan ComputeTask)
 }
 
 type ComputeTask struct {
-	// PbehaviorIds defines for which pbehavior intervals should be recomputed.
-	// If empty all intervals are recomputed.
 	PbehaviorIds []string
 }
 
@@ -146,11 +144,12 @@ func (c *cancelableComputer) computePbehaviors(
 		}
 	}
 
+	var resolver ComputedEntityTypeResolver
 	var err error
 	if all {
-		err = c.service.Recompute(ctx)
+		resolver, err = c.service.Recompute(ctx)
 	} else {
-		err = c.service.RecomputeByIds(ctx, pbehaviorIds)
+		resolver, err = c.service.RecomputeByIds(ctx, pbehaviorIds)
 	}
 
 	if err != nil {
@@ -162,11 +161,11 @@ func (c *cancelableComputer) computePbehaviors(
 
 	for _, pbehaviorID := range pbehaviorIds {
 		if pbehaviorID != calculateAll {
-			c.logger.Info().Str("pbehavior", pbehaviorID).Msg("API pbehavior recompute: pbehavior recomputed")
+			c.logger.Info().Str("pbehavior", pbehaviorID).Msg("pbehavior recomputed")
 
-			excludeIds, err = c.updateAlarms(ctx, pbehaviorID, excludeIds)
+			excludeIds, err = c.updateAlarms(ctx, pbehaviorID, excludeIds, resolver)
 			if err != nil {
-				c.logger.Err(err).Msgf("API pbehavior update alarms failed")
+				c.logger.Err(err).Str("pbehavior", pbehaviorID).Msg("API pbehavior update alarms failed")
 				return
 			}
 		}
@@ -177,26 +176,64 @@ func (c *cancelableComputer) updateAlarms(
 	ctx context.Context,
 	pbehaviorID string,
 	excludeIds []string,
+	resolver ComputedEntityTypeResolver,
 ) ([]string, error) {
-	eventGenerator := libevent.NewGenerator(entity.NewAdapter(c.dbClient))
+	eventGenerator := libevent.NewGenerator(libentity.NewAdapter(c.dbClient))
+	pbehavior := PBehavior{}
+	err := c.pbehaviorCollection.FindOne(ctx, bson.M{"_id": pbehaviorID},
+		options.FindOne().SetProjection(bson.M{
+			"entity_pattern":  1,
+			"old_mongo_query": 1,
+		})).Decode(&pbehavior)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, nil
+		}
 
-	cursor, err := c.findEntitiesMatchPbhFilter(ctx, pbehaviorID, excludeIds)
+		return nil, err
+	}
+
+	var query interface{}
+	if len(pbehavior.EntityPattern) > 0 {
+		query, err = pbehavior.EntityPattern.ToMongoQuery("")
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		query = pbehavior.OldMongoQuery
+	}
+
+	matchByPattern := query
+	if len(excludeIds) > 0 {
+		matchByPattern = bson.M{"$and": bson.A{
+			bson.M{"_id": bson.M{"$nin": excludeIds}},
+			matchByPattern,
+		}}
+	}
+
+	cursor, err := c.entityCollection.Find(ctx, matchByPattern)
 	if err != nil {
 		return nil, err
 	}
 
-	idsByFilter, err := c.sendAlarmEvents(ctx, cursor, pbehaviorID, eventGenerator)
+	idsByPattern, err := c.sendAlarmEvents(ctx, cursor, pbehaviorID, eventGenerator, resolver)
 	if err != nil {
 		return nil, err
 	}
 
-	excludeIds = append(excludeIds, idsByFilter...)
-	cursor, err = c.findEntitiesMatchPbhID(ctx, pbehaviorID, excludeIds)
+	excludeIds = append(excludeIds, idsByPattern...)
+
+	matchByPbehaviorId := bson.M{"pbehavior_info.id": pbehaviorID}
+	if len(excludeIds) > 0 {
+		matchByPbehaviorId["_id"] = bson.M{"$nin": excludeIds}
+	}
+
+	cursor, err = c.entityCollection.Find(ctx, matchByPbehaviorId)
 	if err != nil {
 		return nil, err
 	}
 
-	idsByPbhInfo, err := c.sendAlarmEvents(ctx, cursor, pbehaviorID, eventGenerator)
+	idsByPbhInfo, err := c.sendAlarmEvents(ctx, cursor, pbehaviorID, eventGenerator, resolver)
 	if err != nil {
 		return nil, err
 	}
@@ -206,7 +243,13 @@ func (c *cancelableComputer) updateAlarms(
 	return excludeIds, nil
 }
 
-func (c *cancelableComputer) sendAlarmEvents(ctx context.Context, cursor mongo.Cursor, pbehaviorID string, eventGenerator libevent.Generator) ([]string, error) {
+func (c *cancelableComputer) sendAlarmEvents(
+	ctx context.Context,
+	cursor mongo.Cursor,
+	pbehaviorID string,
+	eventGenerator libevent.Generator,
+	resolver ComputedEntityTypeResolver,
+) ([]string, error) {
 	if cursor == nil {
 		return nil, nil
 	}
@@ -224,7 +267,7 @@ func (c *cancelableComputer) sendAlarmEvents(ctx context.Context, cursor mongo.C
 		}
 
 		ids = append(ids, entity.ID)
-		resolveResult, err := c.service.Resolve(ctx, entity.ID, now)
+		resolveResult, err := resolver.Resolve(ctx, entity, now)
 		if err != nil {
 			return nil, fmt.Errorf("cannot resolve pbehavior for entity: %w", err)
 		}
@@ -247,7 +290,6 @@ func (c *cancelableComputer) sendAlarmEvents(ctx context.Context, cursor mongo.C
 			if err != nil {
 				return nil, fmt.Errorf("cannot generate event: %w", err)
 			}
-
 		} else {
 			event.Connector = alarm.Value.Connector
 			event.ConnectorName = alarm.Value.ConnectorName
@@ -284,59 +326,6 @@ func (c *cancelableComputer) sendAlarmEvents(ctx context.Context, cursor mongo.C
 	}
 
 	return ids, nil
-}
-
-func (c *cancelableComputer) findEntitiesMatchPbhFilter(
-	ctx context.Context,
-	pbehaviorID string,
-	excludeIds []string,
-) (mongo.Cursor, error) {
-	pbehavior := PBehavior{}
-	err := c.pbehaviorCollection.FindOne(ctx, bson.M{"_id": pbehaviorID},
-		options.FindOne().SetProjection(bson.M{
-			"filter": 1,
-		})).Decode(&pbehavior)
-
-	if err != nil {
-		if err == mongodriver.ErrNoDocuments {
-			return nil, nil
-		}
-
-		return nil, err
-	}
-
-	var filter interface{}
-	if len(pbehavior.OldMongoQuery) > 0 {
-		filter = pbehavior.OldMongoQuery
-	} else {
-		filter, err = pbehavior.EntityPattern.ToMongoQuery("")
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	if len(excludeIds) > 0 {
-		filter = bson.M{"$and": bson.A{
-			bson.M{"_id": bson.M{"$nin": excludeIds}},
-			filter,
-		}}
-	}
-
-	return c.entityCollection.Find(ctx, filter)
-}
-
-func (c *cancelableComputer) findEntitiesMatchPbhID(
-	ctx context.Context,
-	pbehaviorID string,
-	excludeIds []string,
-) (mongo.Cursor, error) {
-	filter := bson.M{"pbehavior_info.id": pbehaviorID}
-
-	if len(excludeIds) > 0 {
-		filter["_id"] = bson.M{"$nin": excludeIds}
-	}
-
-	return c.entityCollection.Find(ctx, filter)
 }
 
 func (c *cancelableComputer) findLastAlarm(

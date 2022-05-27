@@ -2,6 +2,7 @@ package pbehavior_test
 
 import (
 	"context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -50,7 +51,12 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldRecomputePbehavior(t 
 	mockPbhDbCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(mockSingleResultHelper)
 	mockSingleResultHelper.EXPECT().Decode(gomock.Any()).Do(func(pbh *pbehavior.PBehavior) {
-		pbh.Filter = "{\"name\":\"test-name\"}"
+		pbh.EntityPattern = pattern.Entity{{
+			{
+				Field:     "name",
+				Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-name"),
+			},
+		}}
 	}).Return(nil)
 	mockEntityDbCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockCursor, nil).Times(2)
 	mockCursor.EXPECT().Next(gomock.Any()).Return(false).Times(2)
@@ -141,7 +147,7 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldSendPbehaviorEvent(t 
 	}}
 	entity := types.Entity{ID: "test-entity-id"}
 	resolveResult := pbehavior.ResolveResult{
-		ResolvedType: &pbehavior.Type{
+		ResolvedType: pbehavior.Type{
 			ID:   "test-type-id",
 			Type: pbehavior.TypeMaintenance,
 		},
@@ -149,9 +155,9 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldSendPbehaviorEvent(t 
 	}
 	event := types.Event{EventType: types.EventTypePbhEnter}
 	body := []byte("test-body")
-
-	mockService.EXPECT().RecomputeByIds(gomock.Any(), gomock.Any())
-	mockService.EXPECT().Resolve(gomock.Any(), gomock.Any(), gomock.Any()).Return(resolveResult, nil)
+	mockResolver := mock_pbehavior.NewMockComputedEntityTypeResolver(ctrl)
+	mockService.EXPECT().RecomputeByIds(gomock.Any(), gomock.Any()).Return(mockResolver, nil)
+	mockResolver.EXPECT().Resolve(gomock.Any(), gomock.Any(), gomock.Any()).Return(resolveResult, nil)
 
 	mockDbClient.EXPECT().Collection(gomock.Any()).DoAndReturn(func(collectionName string) mongo.DbCollection {
 		switch collectionName {
@@ -169,7 +175,13 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldSendPbehaviorEvent(t 
 	mockPbhSingleResult := mock_mongo.NewMockSingleResultHelper(ctrl)
 	mockPbhDbCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockPbhSingleResult)
 	mockPbhSingleResult.EXPECT().Decode(gomock.Any()).Do(func(pbh *pbehavior.PBehavior) {
-		*pbh = pbehavior.PBehavior{Filter: "{\"name\":\"test-name\"}"}
+		*pbh = pbehavior.PBehavior{}
+		pbh.EntityPattern = pattern.Entity{{
+			{
+				Field:     "name",
+				Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-name"),
+			},
+		}}
 	}).Return(nil)
 	mockEntityCursor := mock_mongo.NewMockCursor(ctrl)
 	mockEntityDbCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockEntityCursor, nil)

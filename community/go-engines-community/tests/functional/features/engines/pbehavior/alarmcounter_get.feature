@@ -38,13 +38,17 @@ Feature: Get alarms counters
       "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-pbehavior-alarm-count-get-1-2"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-alarm-count-get-1-2"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -100,13 +104,17 @@ Feature: Get alarms counters
       "tstop": {{ nowAdd "1h" }},
       "type": "test-active-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-pbehavior-alarm-count-get-2-2"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-alarm-count-get-2-2"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201

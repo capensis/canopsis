@@ -115,8 +115,28 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 		amqpChannel,
 		logger,
 	)
+	pbhRpcClientForIdleRules := libengine.NewRPCClient(
+		canopsis.AxeRPCConsumerName,
+		canopsis.PBehaviorRPCQueueServerName,
+		"",
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
+		&rpcPBehaviorClientMessageProcessor{
+			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
+			PublishCh:                amqpChannel,
+			ServiceRpc:               serviceRpcClient,
+			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
+			EntityAdapter:            entity.NewAdapter(dbClient),
+			PbehaviorAdapter:         pbehavior.NewAdapter(dbClient),
+			Decoder:                  json.NewDecoder(),
+			Encoder:                  json.NewEncoder(),
+			Logger:                   logger,
+		},
+		amqpChannel,
+		logger,
+	)
 
-	rpcPublishQueues := make([]string, 0)
+	rpcPublishQueues := []string{canopsis.PBehaviorRPCQueueServerName}
 	var remediationRpcClient libengine.RPCClient
 	if options.WithRemediation {
 		remediationRpcClient = libengine.NewRPCClient(
@@ -196,6 +216,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 				metricsSender,
 				metaAlarmEventProcessor,
 				statistics.NewEventStatisticsSender(dbClient, logger, timezoneConfigProvider),
+				pbehavior.NewEntityTypeResolver(pbehavior.NewStore(pbhRedisClient, json.NewEncoder(), json.NewDecoder()), pbehavior.NewEntityMatcher(dbClient), logger),
 				logger,
 			),
 			RemediationRpcClient:   remediationRpcClient,
@@ -253,6 +274,7 @@ func Default(ctx context.Context, options Options, metricsSender metrics.Sender,
 				idlerule.NewRuleAdapter(dbClient),
 				alarm.NewAdapter(dbClient),
 				entity.NewAdapter(dbClient),
+				pbhRpcClientForIdleRules,
 				json.NewEncoder(),
 				logger,
 			),
