@@ -1,32 +1,30 @@
 <template lang="pug">
   div.timeline
     ul(v-for="(steps, day) in groupedSteps", :key="day")
-      li(v-for="(step, index) in steps", :key="`step-${index}`")
+      li(v-for="(step, index) in steps", :key="index")
         div.timeline-item(v-show="index === 0")
           div.date {{ day }}
         div.timeline-item
           div.time {{ step.t | date('time') }}
           time-line-flag.flag(:step="step")
           time-line-card(:step="step", :is-html-enabled="isHtmlEnabled")
+    c-pagination(:total="meta.total_count", :limit="meta.per_page", :page="meta.page")
 </template>
 
 <script>
 import { groupAlarmSteps } from '@/helpers/entities';
-
-import { widgetExpandPanelAlarmMixin } from '@/mixins/widget/expand-panel/alarm/expand-panel';
 
 import TimeLineFlag from './time-line-flag.vue';
 import TimeLineCard from './time-line-card.vue';
 
 export default {
   components: { TimeLineFlag, TimeLineCard },
-  mixins: [widgetExpandPanelAlarmMixin],
   props: {
-    alarm: {
-      type: Object,
+    steps: {
+      type: Array,
       required: true,
     },
-    widget: {
+    meta: {
       type: Object,
       required: true,
     },
@@ -37,7 +35,7 @@ export default {
   },
   computed: {
     groupedSteps() {
-      return groupAlarmSteps(this.alarm?.v?.steps ?? []);
+      return groupAlarmSteps(this.steps);
     },
   },
 };
