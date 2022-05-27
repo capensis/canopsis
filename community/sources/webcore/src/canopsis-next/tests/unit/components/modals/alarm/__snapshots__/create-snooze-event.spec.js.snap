@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`add-info-popup Renders \`add-info-popup\` with empty modal 1`] = `
+exports[`create-snooze-event Renders \`create-snooze-event\` with config data 1`] = `
 <form
   class="v-form"
   novalidate="novalidate"
@@ -13,17 +13,21 @@ exports[`add-info-popup Renders \`add-info-popup\` with empty modal 1`] = `
       class="title"
     >
       <span>
-        Add an info popup
+        Snooze
       </span>
     </div>
      
     <div
       class="text"
     >
-      <info-popup-form-stub
-        columns=""
-        form="[object Object]"
-      />
+      <div
+        class="container"
+      >
+        <snooze-event-form-stub
+          form="[object Object]"
+          isnoterequired="true"
+        />
+      </div>
     </div>
      
     <div
@@ -46,7 +50,7 @@ exports[`add-info-popup Renders \`add-info-popup\` with empty modal 1`] = `
         <div
           class="v-btn__content"
         >
-          Submit
+          Save changes
         </div>
       </button>
     </div>
@@ -54,7 +58,7 @@ exports[`add-info-popup Renders \`add-info-popup\` with empty modal 1`] = `
 </form>
 `;
 
-exports[`add-info-popup Renders \`add-info-popup\` with popup 1`] = `
+exports[`create-snooze-event Renders \`create-snooze-event\` with empty modal 1`] = `
 <form
   class="v-form"
   novalidate="novalidate"
@@ -67,17 +71,20 @@ exports[`add-info-popup Renders \`add-info-popup\` with popup 1`] = `
       class="title"
     >
       <span>
-        Add an info popup
+        Snooze
       </span>
     </div>
      
     <div
       class="text"
     >
-      <info-popup-form-stub
-        columns="[object Object]"
-        form="[object Object]"
-      />
+      <div
+        class="container"
+      >
+        <snooze-event-form-stub
+          form="[object Object]"
+        />
+      </div>
     </div>
      
     <div
@@ -100,7 +107,7 @@ exports[`add-info-popup Renders \`add-info-popup\` with popup 1`] = `
         <div
           class="v-btn__content"
         >
-          Submit
+          Save changes
         </div>
       </button>
     </div>
