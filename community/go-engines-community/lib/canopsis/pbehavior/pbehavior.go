@@ -57,6 +57,6 @@ type PBehavior struct {
 	LastAlarmDate *types.CpsTime `bson:"last_alarm_date,omitempty"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
-	// Deprecated : contains old mongo query which cannot be migrated to pattern.
-	OldMongoQuery map[string]interface{} `bson:"old_mongo_query,omitempty" json:"old_mongo_query,omitempty"`
+	// OldMongoQuery contains old mongo query which cannot be migrated to pattern.
+	OldMongoQuery string `bson:"old_mongo_query,omitempty" json:"old_mongo_query,omitempty"`
 }

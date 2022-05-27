@@ -6,6 +6,7 @@ import (
 	"sort"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"github.com/teambition/rrule-go"
@@ -24,6 +25,7 @@ type TypeComputer interface {
 // typeComputer computes periodical behavior timespans for provided interval.
 type typeComputer struct {
 	modelProvider ModelProvider
+	decoder       encoding.Decoder
 	// workerPoolSize restricts amount of goroutine which can be used during data computing.
 	workerPoolSize int
 }
@@ -70,6 +72,7 @@ type models struct {
 // NewTypeComputer creates new type resolver.
 func NewTypeComputer(
 	modelProvider ModelProvider,
+	decoder encoding.Decoder,
 	workerPoolSize ...int,
 ) TypeComputer {
 	poolSize := DefaultPoolSize
@@ -82,6 +85,7 @@ func NewTypeComputer(
 
 	return &typeComputer{
 		modelProvider:  modelProvider,
+		decoder:        decoder,
 		workerPoolSize: poolSize,
 	}
 }
@@ -223,7 +227,7 @@ func (c *typeComputer) runWorkers(
 
 					res, err := c.computePbehavior(p, span, models)
 					if err != nil {
-						return err
+						return fmt.Errorf("cannot compute pbehavior id=%q: %w", p.ID, err)
 					}
 
 					if len(res.Types) > 0 {
@@ -327,6 +331,14 @@ func (c *typeComputer) computePbehavior(
 			reasonName = reason.Name
 		}
 
+		var oldMongoQuery map[string]interface{}
+		if pbehavior.OldMongoQuery != "" {
+			err = c.decoder.Decode([]byte(pbehavior.OldMongoQuery), &oldMongoQuery)
+			if err != nil {
+				return ComputedPbehavior{}, fmt.Errorf("pbehavior has invalid old mongo query: %w", err)
+			}
+		}
+
 		return ComputedPbehavior{
 			Name:    pbehavior.Name,
 			Reason:  reasonName,
@@ -334,7 +346,7 @@ func (c *typeComputer) computePbehavior(
 			Created: pbehavior.Created.Unix(),
 
 			Patten:        pbehavior.EntityPattern,
-			OldMongoQuery: pbehavior.OldMongoQuery,
+			OldMongoQuery: oldMongoQuery,
 		}, nil
 	}
 
