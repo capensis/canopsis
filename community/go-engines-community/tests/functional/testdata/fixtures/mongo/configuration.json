@@ -26,6 +26,7 @@
       "outputlength": 255,
       "longoutputlength": 1024,
       "disableactionsnoozedelayonpbh": true
+      "allowdoubleack": true
     },
     "global": {
       "prefetchcount": 10000,
