@@ -50,18 +50,18 @@ Feature: update alarm on idle rule
       "output" : "test-output-pbehavior-axe-idlerule-1"
     }
     """
-    When I wait the end of 3 events processing
-    When I do GET /api/v4/entities/pbehaviors?id=test-resource-pbehavior-axe-idlerule-1/test-component-pbehavior-axe-idlerule-1
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/entities/pbehaviors?_id=test-resource-pbehavior-axe-idlerule-1/test-component-pbehavior-axe-idlerule-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     [
       {
         "name": "test-pbehavior-pbehavior-axe-idlerule-1"
       }
     ]
     """
-    When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-pbehavior-axe-idlerule-1/test-component-pbehavior-axe-idlerule-1"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-axe-idlerule-1
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -85,8 +85,38 @@ Feature: update alarm on idle rule
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -100,20 +130,20 @@ Feature: update alarm on idle rule
                 "a": "system",
                 "m": "Pbehavior test-pbehavior-pbehavior-axe-idlerule-1. Type: Engine maintenance. Reason: Test Engine."
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
-    When I do GET /api/v4/entities/pbehaviors?id=test-resource-pbehavior-axe-idlerule-1/test-component-pbehavior-axe-idlerule-1 until response code is 200 and body contains:
-    """
+    When I do GET /api/v4/entities/pbehaviors?_id=test-resource-pbehavior-axe-idlerule-1/test-component-pbehavior-axe-idlerule-1 until response code is 200 and body contains:
+    """json
     [
       {
         "name": "test-pbehavior-pbehavior-axe-idlerule-1"
@@ -174,13 +204,17 @@ Feature: update alarm on idle rule
       "tstop": {{ nowAdd "7s" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-pbehavior-axe-idlerule-2"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-axe-idlerule-2"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -199,7 +233,7 @@ Feature: update alarm on idle rule
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-pbehavior-axe-idlerule-2/test-component-pbehavior-axe-idlerule-2"}]}&with_steps=true until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-axe-idlerule-2 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -221,8 +255,38 @@ Feature: update alarm on idle rule
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -236,20 +300,20 @@ Feature: update alarm on idle rule
                 "a": "system",
                 "m": "Pbehavior test-pbehavior-pbehavior-axe-idlerule-2-name. Type: Engine maintenance. Reason: Test Engine."
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-pbehavior-axe-idlerule-2/test-component-pbehavior-axe-idlerule-2"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-axe-idlerule-2
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -266,8 +330,38 @@ Feature: update alarm on idle rule
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -291,17 +385,17 @@ Feature: update alarm on idle rule
                 "a": "system",
                 "m": "test-pbehavior-pbehavior-axe-idlerule-2-output"
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 5
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
 
   Scenario: given entity idle rule should disable it on pbehavior and create alarm after pbehavior
@@ -329,13 +423,17 @@ Feature: update alarm on idle rule
       "tstop": {{ nowAdd "7s" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-pbehavior-axe-idlerule-3"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-axe-idlerule-3"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -360,7 +458,7 @@ Feature: update alarm on idle rule
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-pbehavior-axe-idlerule-3/test-component-pbehavior-axe-idlerule-3"}]}&with_steps=true until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-axe-idlerule-3 until response code is 200 and body contains:
     """json
     {
       "data": [],
@@ -373,7 +471,7 @@ Feature: update alarm on idle rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-pbehavior-axe-idlerule-3/test-component-pbehavior-axe-idlerule-3"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-axe-idlerule-3
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -390,17 +488,7 @@ Feature: update alarm on idle rule
             },
             "status": {
               "val": 5
-            },
-            "steps": [
-              {
-                "_t": "stateinc",
-                "val": 3
-              },
-              {
-                "_t": "statusinc",
-                "val": 5
-              }
-            ]
+            }
           }
         }
       ],
@@ -411,6 +499,46 @@ Feature: update alarm on idle rule
         "total_count": 1
       }
     }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc",
+                "val": 3
+              },
+              {
+                "_t": "statusinc",
+                "val": 5
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      }
+    ]
     """
 
   Scenario: given entity idle rule should disable it on pbehavior and update alarm after pbehavior
@@ -438,13 +566,17 @@ Feature: update alarm on idle rule
       "tstop": {{ nowAdd "7s" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-pbehavior-axe-idlerule-4"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-axe-idlerule-4"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -469,7 +601,7 @@ Feature: update alarm on idle rule
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-pbehavior-axe-idlerule-4/test-component-pbehavior-axe-idlerule-4"}]}&with_steps=true until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-axe-idlerule-4 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -484,20 +616,7 @@ Feature: update alarm on idle rule
             },
             "status": {
               "val": 1
-            },
-            "steps": [
-              {
-                "_t": "stateinc",
-                "val": 3
-              },
-              {
-                "_t": "statusinc",
-                "val": 1
-              },
-              {
-                "_t": "pbhenter"
-              }
-            ]
+            }
           }
         }
       ],
@@ -509,8 +628,51 @@ Feature: update alarm on idle rule
       }
     }
     """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc",
+                "val": 3
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "pbhenter"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
+    """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-pbehavior-axe-idlerule-4/test-component-pbehavior-axe-idlerule-4"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-axe-idlerule-4
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -527,8 +689,38 @@ Feature: update alarm on idle rule
             },
             "status": {
               "val": 5
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 3
@@ -547,15 +739,15 @@ Feature: update alarm on idle rule
                 "_t": "statusinc",
                 "val": 5
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 5
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """

@@ -449,3 +449,16 @@ pbehavior:
     <<: *pbehavior
     _id: test-pbehavior-to-check-unique
     name: test-pbehavior-to-check-unique-name
+
+  pbehavior_to_pbehavior_13:
+    <<: *pbehavior
+    _id: test-pbehavior-13
+    enabled: false
+    entity_pattern:
+    old_mongo_query: {
+      "$and": [
+        {
+          "name": "test-resource-pbehavior-13"
+        }
+      ]
+    }

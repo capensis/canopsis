@@ -4,7 +4,7 @@ Feature: get a pbehavior by entity id
 
   Scenario: given get request should return pbehaviors
     When I am admin
-    When I do GET /api/v4/entities/pbehaviors?id=test-resource-to-pbehavior-get-by-entity-id-1/test-component-default
+    When I do GET /api/v4/entities/pbehaviors?_id=test-resource-to-pbehavior-get-by-entity-id-1/test-component-default
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -51,7 +51,7 @@ Feature: get a pbehavior by entity id
 
   Scenario: given get request should return pbehaviors with old mongo query
     When I am admin
-    When I do GET /api/v4/entities/pbehaviors?id=test-resource-to-pbehavior-get-by-entity-id-2/test-component-default
+    When I do GET /api/v4/entities/pbehaviors?_id=test-resource-to-pbehavior-get-by-entity-id-2/test-component-default
     Then the response code should be 200
     Then the response body should contain:
     """json

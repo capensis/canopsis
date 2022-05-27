@@ -59,13 +59,17 @@ Feature: Count matches
       "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "component": "test-component-pbehavior-pattern-count-1"
+            "field": "impact",
+            "cond": {
+              "type": "has_one_of",
+              "value": ["test-component-pbehavior-pattern-count-1"]
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
