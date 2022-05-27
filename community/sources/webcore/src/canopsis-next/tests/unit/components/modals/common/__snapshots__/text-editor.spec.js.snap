@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`add-info-popup Renders \`add-info-popup\` with empty modal 1`] = `
+exports[`text-editor Renders \`text-editor\` with all parameters 1`] = `
 <form
   class="v-form"
   novalidate="novalidate"
@@ -13,16 +13,21 @@ exports[`add-info-popup Renders \`add-info-popup\` with empty modal 1`] = `
       class="title"
     >
       <span>
-        Add an info popup
+        Text editor title
       </span>
     </div>
      
     <div
       class="text"
     >
-      <info-popup-form-stub
-        columns=""
-        form="[object Object]"
+      <text-editor-field-stub
+        buttons=""
+        config="[object Object]"
+        errormessages=""
+        extrabuttons=""
+        label="Text editor label"
+        name="text"
+        value="Text"
       />
     </div>
      
@@ -54,7 +59,7 @@ exports[`add-info-popup Renders \`add-info-popup\` with empty modal 1`] = `
 </form>
 `;
 
-exports[`add-info-popup Renders \`add-info-popup\` with popup 1`] = `
+exports[`text-editor Renders \`text-editor\` with empty modal 1`] = `
 <form
   class="v-form"
   novalidate="novalidate"
@@ -67,16 +72,21 @@ exports[`add-info-popup Renders \`add-info-popup\` with popup 1`] = `
       class="title"
     >
       <span>
-        Add an info popup
+        Text editor
       </span>
     </div>
      
     <div
       class="text"
     >
-      <info-popup-form-stub
-        columns="[object Object]"
-        form="[object Object]"
+      <text-editor-field-stub
+        buttons=""
+        config="[object Object]"
+        errormessages=""
+        extrabuttons=""
+        label=""
+        name="text"
+        value=""
       />
     </div>
      
