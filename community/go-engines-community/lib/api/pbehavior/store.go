@@ -2,6 +2,7 @@ package pbehavior
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"time"
 
@@ -388,19 +389,25 @@ func (s *store) getMatchedPbhIDs(ctx context.Context, entity libtypes.Entity) ([
 			return nil, err
 		}
 
-		if len(pbh.OldMongoQuery) > 0 {
-			filters[pbh.ID] = pbh.OldMongoQuery
+		if len(pbh.EntityPattern) > 0 {
+			matched, _, err := pbh.EntityPattern.Match(entity)
+			if err != nil {
+				return nil, err
+			}
+
+			if matched {
+				pbhIDs = append(pbhIDs, pbh.ID)
+			}
+
 			continue
 		}
 
-		matched, _, err := pbh.EntityPattern.Match(entity)
+		var oldMongoQuery map[string]interface{}
+		err = json.Unmarshal([]byte(pbh.OldMongoQuery), &oldMongoQuery)
 		if err != nil {
 			return nil, err
 		}
-
-		if matched {
-			pbhIDs = append(pbhIDs, pbh.ID)
-		}
+		filters[pbh.ID] = oldMongoQuery
 	}
 
 	if len(filters) > 0 {

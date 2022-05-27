@@ -44,13 +44,13 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	lockRedisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	pbhLockerClient := redis.NewLockClient(pbhRedisSession)
 	pbhStore := pbehavior.NewStore(pbhRedisSession, json.NewEncoder(), json.NewDecoder())
+	pbhTypeComputer := pbehavior.NewTypeComputer(pbehavior.NewModelProvider(dbClient), json.NewDecoder())
 	frameDuration := time.Duration(options.FrameDuration) * time.Minute
 	eventManager := pbehavior.NewEventManager()
 
 	enginePbehavior := engine.New(
 		func(ctx context.Context) error {
-			pbhService := pbehavior.NewService(dbClient, pbehavior.NewTypeComputer(pbehavior.NewModelProvider(dbClient)),
-				pbhStore, pbhLockerClient, logger)
+			pbhService := pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger)
 
 			now := time.Now().In(timezoneConfigProvider.Get().Location)
 			newSpan := timespan.New(now, now.Add(frameDuration))
@@ -107,13 +107,12 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		&rpcServerMessageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			DbClient:                 dbClient,
-			PbhService: pbehavior.NewService(dbClient, pbehavior.NewTypeComputer(pbehavior.NewModelProvider(dbClient)),
-				pbhStore, pbhLockerClient, logger),
-			EventManager:           pbehavior.NewEventManager(),
-			TimezoneConfigProvider: timezoneConfigProvider,
-			Decoder:                json.NewDecoder(),
-			Encoder:                json.NewEncoder(),
-			Logger:                 logger,
+			PbhService:               pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
+			EventManager:             pbehavior.NewEventManager(),
+			TimezoneConfigProvider:   timezoneConfigProvider,
+			Decoder:                  json.NewDecoder(),
+			Encoder:                  json.NewEncoder(),
+			Logger:                   logger,
 		},
 		logger,
 	))
@@ -128,10 +127,9 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		redis.NewLockClient(lockRedisSession),
 		redis.PbehaviorPeriodicalLockKey,
 		&periodicalWorker{
-			ChannelPub:         amqpChannel,
-			PeriodicalInterval: options.PeriodicalWaitTime,
-			PbhService: pbehavior.NewService(dbClient, pbehavior.NewTypeComputer(pbehavior.NewModelProvider(dbClient)),
-				pbhStore, pbhLockerClient, logger),
+			ChannelPub:             amqpChannel,
+			PeriodicalInterval:     options.PeriodicalWaitTime,
+			PbhService:             pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
 			AlarmAdapter:           alarm.NewAdapter(dbClient),
 			EntityAdapter:          entity.NewAdapter(dbClient),
 			EventManager:           eventManager,
