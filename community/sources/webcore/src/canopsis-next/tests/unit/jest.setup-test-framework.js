@@ -14,7 +14,7 @@ expect.extend({
     const img = canvas.toDataURL();
     const data = img.replace(/^data:image\/(png|jpg);base64,/, '');
     const newOptions = {
-      failureThreshold: 0.02,
+      failureThreshold: 0.05,
       failureThresholdType: 'percent',
       customSnapshotIdentifier: ({ currentTestName, counter }) => (
         kebabCase(`${currentTestName.replace(/(.*\sRenders\s)|(.$)/g, '')}-${counter}`)
