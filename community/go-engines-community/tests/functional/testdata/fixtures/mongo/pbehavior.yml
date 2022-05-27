@@ -73,13 +73,14 @@ pbehavior:
     created: 1592215337
     enabled: true
     entity_pattern:
-    old_mongo_query: {
-      "$and": [
-        {
-          "name": "test filter"
-        }
-      ]
-    }
+    old_mongo_query: |
+      {
+        "$and": [
+          {
+            "name": "test filter"
+          }
+        ]
+      }
     name: test-pbehavior-to-get-by-name-2-name
     reason: test-reason-to-pbh-edit
     rrule: ""
@@ -123,13 +124,14 @@ pbehavior:
     _id: test-pbehavior-to-update-3
     comments: [ ]
     created: 1592215337
-    old_mongo_query: {
-      "$and": [
-        {
-          "name": "test filter"
-        }
-      ]
-    }
+    old_mongo_query: |
+      {
+        "$and": [
+          {
+            "name": "test filter"
+          }
+        ]
+      }
 
   pbehavior_to_delete_exception:
     <<: *pbehavior
@@ -208,13 +210,14 @@ pbehavior:
     <<: *pbehavior
     _id: test-pbehavior-to-get-by-entity-id-2
     entity_pattern:
-    old_mongo_query: {
-      "$and": [
-        {
-          "name": "test-resource-to-pbehavior-get-by-entity-id-2"
-        }
-      ]
-    }
+    old_mongo_query: |
+      {
+        "$and": [
+          {
+            "name": "test-resource-to-pbehavior-get-by-entity-id-2"
+          }
+        ]
+      }
     author: root
     comments: [ ]
     created: 1592215337
@@ -261,13 +264,14 @@ pbehavior:
     <<: *pbehavior
     _id: test-pbehavior-to-entities-get-2
     entity_pattern:
-    old_mongo_query: {
-      "$and": [
-        {
-          "name": "test-resource-to-entities-get-by-pbh-6"
-        }
-      ]
-    }
+    old_mongo_query: |
+      {
+        "$and": [
+          {
+            "name": "test-resource-to-entities-get-by-pbh-6"
+          }
+        ]
+      }
 
   pbehavior_to_patch_1:
     <<: *pbehavior
@@ -455,10 +459,11 @@ pbehavior:
     _id: test-pbehavior-13
     enabled: false
     entity_pattern:
-    old_mongo_query: {
-      "$and": [
-        {
-          "name": "test-resource-pbehavior-13"
-        }
-      ]
-    }
+    old_mongo_query: |
+      {
+        "$and": [
+          {
+            "name": "test-resource-pbehavior-13"
+          }
+        ]
+      }

@@ -41,6 +41,7 @@ type cancelableComputer struct {
 	entityCollection    mongo.DbCollection
 	pbehaviorCollection mongo.DbCollection
 	eventManager        EventManager
+	decoder             encoding.Decoder
 	encoder             encoding.Encoder
 	publisher           libamqp.Publisher
 	queue               string
@@ -55,6 +56,7 @@ func NewCancelableComputer(
 	dbClient mongo.DbClient,
 	publisher libamqp.Publisher,
 	eventManager EventManager,
+	decoder encoding.Decoder,
 	encoder encoding.Encoder,
 	queue string,
 	logger zerolog.Logger,
@@ -67,6 +69,7 @@ func NewCancelableComputer(
 		entityCollection:    dbClient.Collection(mongo.EntityMongoCollection),
 		pbehaviorCollection: dbClient.Collection(mongo.PbehaviorMongoCollection),
 		eventManager:        eventManager,
+		decoder:             decoder,
 		encoder:             encoder,
 		publisher:           publisher,
 		queue:               queue,
@@ -200,7 +203,13 @@ func (c *cancelableComputer) updateAlarms(
 			return nil, err
 		}
 	} else {
-		query = pbehavior.OldMongoQuery
+		var oldMongoQuery map[string]interface{}
+		err = c.decoder.Decode([]byte(pbehavior.OldMongoQuery), &oldMongoQuery)
+		if err != nil {
+			return nil, err
+		}
+
+		query = oldMongoQuery
 	}
 
 	matchByPattern := query

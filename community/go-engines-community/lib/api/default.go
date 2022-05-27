@@ -143,7 +143,8 @@ func Default(
 	// Create pbehavior computer.
 	pbhComputeChan := make(chan libpbehavior.ComputeTask, chanBuf)
 	pbhStore := libpbehavior.NewStore(pbhRedisSession, json.NewEncoder(), json.NewDecoder())
-	pbhService := libpbehavior.NewService(dbClient, libpbehavior.NewTypeComputer(libpbehavior.NewModelProvider(dbClient)), pbhStore, libredis.NewLockClient(pbhRedisSession), logger)
+	pbhService := libpbehavior.NewService(dbClient, libpbehavior.NewTypeComputer(libpbehavior.NewModelProvider(dbClient), json.NewDecoder()),
+		pbhStore, libredis.NewLockClient(pbhRedisSession), logger)
 	pbhEntityTypeResolver := libpbehavior.NewEntityTypeResolver(pbhStore, libpbehavior.NewEntityMatcher(dbClient), logger)
 	// Create entity service event publisher.
 	entityPublChan := make(chan entityservice.ChangeEntityMessage, chanBuf)
@@ -319,6 +320,7 @@ func Default(
 			dbClient,
 			amqpChannel,
 			libpbehavior.NewEventManager(),
+			json.NewDecoder(),
 			json.NewEncoder(),
 			canopsis.FIFOQueueName,
 			logger,
