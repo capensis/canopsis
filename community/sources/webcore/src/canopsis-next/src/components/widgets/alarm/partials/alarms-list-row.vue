@@ -45,6 +45,7 @@ import featuresService from '@/services/features';
 import { isResolvedAlarm } from '@/helpers/entities';
 import { getStepClass } from '@/helpers/tour';
 
+import { entitiesAlarmDetailsMixin } from '@/mixins/entities/alarm/details';
 import { widgetExpandPanelAlarmMixin } from '@/mixins/widget/expand-panel/alarm/expand-panel';
 
 import ActionsPanel from '../actions/actions-panel.vue';
@@ -58,7 +59,10 @@ export default {
     AlarmColumnValue,
     AlarmListRowIcon,
   },
-  mixins: [widgetExpandPanelAlarmMixin],
+  mixins: [
+    entitiesAlarmDetailsMixin,
+    widgetExpandPanelAlarmMixin,
+  ],
   model: {
     prop: 'selected',
     event: 'input',
@@ -166,26 +170,27 @@ export default {
   },
   methods: {
     async showExpandPanel() {
+      const createEmptyQuery = alarm => ({
+        _id: alarm._id,
+        with_instructions: true,
+        opened: true,
+        steps: {
+          page: 1,
+          limit: 2,
+        },
+        children: {
+          page: 1,
+          limit: 10,
+          sort_by: '',
+          sort: '',
+          multi_sort: [],
+        },
+      });
+
       if (!this.row.expanded) {
-        await this.$store.dispatch('alarm/detail/fetchItem', {
-          data: [{
-            _id: this.alarm._id,
-            with_instructions: true,
-            opened: true,
-            steps: {
-              page: 1,
-              limit: 10,
-            },
-            children: {
-              page: 1,
-              limit: 10,
-              sort_by: '',
-              sort: '',
-              multi_sort: [],
-            },
-          }],
+        await this.fetchAlarmItemDetails({
+          data: [createEmptyQuery(this.alarm)],
         });
-        // await this.fetchAlarmItemWithGroupsAndSteps(this.alarm);
       }
 
       this.row.expanded = !this.row.expanded;
