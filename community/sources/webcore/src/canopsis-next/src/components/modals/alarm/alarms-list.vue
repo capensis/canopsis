@@ -1,8 +1,8 @@
 <template lang="pug">
   modal-wrapper(close)
-    template(slot="title")
+    template(#title="")
       span {{ $t('modals.alarmsList.title') }}
-    template(slot="text")
+    template(#text="")
       alarms-list-widget(:widget="config.widget", local-widget)
 </template>
 
