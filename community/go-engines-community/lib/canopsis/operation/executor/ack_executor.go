@@ -45,6 +45,10 @@ func (e *ackExecutor) Exec(
 		doubleAck = true
 	}
 
+	if doubleAck && !e.configProvider.Get().AllowDoubleAck {
+		return "", nil
+	}
+
 	err := alarm.PartialUpdateAck(
 		time,
 		params.Author,
