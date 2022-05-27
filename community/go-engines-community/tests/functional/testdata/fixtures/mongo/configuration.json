@@ -23,7 +23,8 @@
       "cancelautosolvedelay": "1h",
       "displaynamescheme": "{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3 }}",
       "outputlength": 255,
-      "longoutputlength": 1024
+      "longoutputlength": 1024,
+      "allowdoubleack": true
     },
     "global": {
       "prefetchcount": 10000,
