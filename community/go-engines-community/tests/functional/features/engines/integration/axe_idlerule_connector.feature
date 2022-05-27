@@ -4,7 +4,7 @@ Feature: update connector alarm
   Scenario: given connector alarm should enrich entity infos
     Given I am admin
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idlerule-axe-idlerule-connector-1-name",
       "type": "entity",
@@ -24,7 +24,7 @@ Feature: update connector alarm
     Then the response code should be 201
     Then I save response ruleID={{ .lastResponse._id }}
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "type": "enrichment",
       "event_pattern": [
@@ -65,7 +65,7 @@ Feature: update connector alarm
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-connector-1",
@@ -78,14 +78,15 @@ Feature: update connector alarm
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-connector-axe-idlerule-connector-1/test-connector-name-axe-idlerule-connector-1"}]}
+    When I do GET /api/v4/alarms?search=test-connector-name-axe-idlerule-connector-1&sort_by=entity._id&sort=desc
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
           "entity": {
+            "type": "connector",
             "infos": {
               "client": {
                 "description": "Client",
@@ -98,13 +99,14 @@ Feature: update connector alarm
             "connector": "test-connector-axe-idlerule-connector-1",
             "connector_name": "test-connector-name-axe-idlerule-connector-1"
           }
-        }
+        },
+        {}
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 2
       }
     }
     """
@@ -112,7 +114,7 @@ Feature: update connector alarm
   Scenario: given connector alarm should apply pbehavior on it
     Given I am admin
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idlerule-axe-idlerule-connector-2-name",
       "type": "entity",
@@ -132,7 +134,7 @@ Feature: update connector alarm
     Then the response code should be 201
     Then I save response ruleID={{ .lastResponse._id }}
     When I do POST /api/v4/pbehaviors:
-    """
+    """json
     {
       "enabled": true,
       "name": "test-pbehavior-axe-idlerule-connector-2",
@@ -140,19 +142,23 @@ Feature: update connector alarm
       "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "_id": "test-connector-axe-idlerule-connector-2/test-connector-name-axe-idlerule-connector-2"
+            "field": "_id",
+            "cond": {
+              "type": "eq",
+              "value": "test-connector-axe-idlerule-connector-2/test-connector-name-axe-idlerule-connector-2"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-connector-2",
@@ -164,13 +170,16 @@ Feature: update connector alarm
     }
     """
     When I wait the end of 3 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-connector-axe-idlerule-connector-2/test-connector-name-axe-idlerule-connector-2"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-connector-name-axe-idlerule-connector-2&sort_by=entity._id&sort=desc
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
+          "entity": {
+            "type": "connector"
+          },
           "v": {
             "connector": "test-connector-axe-idlerule-connector-2",
             "connector_name": "test-connector-name-axe-idlerule-connector-2",
@@ -180,8 +189,39 @@ Feature: update connector alarm
               "reason": "Test Engine",
               "type": "test-maintenance-type-to-engine",
               "type_name": "Engine maintenance"
-            },
-            "steps": [
+            }
+          }
+        },
+        {}
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 3
@@ -194,23 +234,23 @@ Feature: update connector alarm
                 "_t": "pbhenter",
                 "m": "Pbehavior test-pbehavior-axe-idlerule-connector-2. Type: Engine maintenance. Reason: Test Engine."
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
 
   Scenario: given connector alarm should update service alarm
     Given I am admin
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idlerule-axe-idlerule-connector-3-name",
       "type": "entity",
@@ -230,7 +270,7 @@ Feature: update connector alarm
     Then the response code should be 201
     Then I save response ruleID={{ .lastResponse._id }}
     When I do POST /api/v4/entityservices:
-    """
+    """json
     {
       "name": "test-service-axe-idlerule-connector-3",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
@@ -249,7 +289,7 @@ Feature: update connector alarm
     When I wait the end of 2 events processing
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-connector-3",
@@ -261,34 +301,36 @@ Feature: update connector alarm
     }
     """
     When I wait the end of 3 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-connector-axe-idlerule-connector-3/test-connector-name-axe-idlerule-connector-3"}]}
+    When I do GET /api/v4/alarms?search=test-connector-name-axe-idlerule-connector-3&sort_by=entity._id&sort=desc
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
           "entity": {
+            "type": "connector",
             "impact": ["{{ .serviceID }}"]
           },
           "v": {
             "connector": "test-connector-axe-idlerule-connector-3",
             "connector_name": "test-connector-name-axe-idlerule-connector-3"
           }
-        }
+        },
+        {}
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 2
       }
     }
     """
-    When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search={{ .serviceID }}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -304,8 +346,38 @@ Feature: update connector alarm
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "a": "service.service",
@@ -318,23 +390,23 @@ Feature: update connector alarm
                 "m": "All: 1; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateInfo: 0; Pbehaviors: map[];",
                 "val": 1
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
 
   Scenario: given connector alarm should apply scenario on it
     Given I am admin
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idlerule-axe-idlerule-connector-4-name",
       "type": "entity",
@@ -354,7 +426,7 @@ Feature: update connector alarm
     Then the response code should be 201
     Then I save response ruleID={{ .lastResponse._id }}
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-axe-idlerule-connector-4-name",
       "enabled": true,
@@ -394,7 +466,7 @@ Feature: update connector alarm
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-connector-4",
@@ -406,17 +478,28 @@ Feature: update connector alarm
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-connector-axe-idlerule-connector-4/test-connector-name-axe-idlerule-connector-4"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-connector-name-axe-idlerule-connector-4&sort_by=entity._id&sort=desc
     Then the response code should be 200
-    Then the response body should contain:
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
     """
-    {
-      "data": [
-        {
-          "v": {
-            "connector": "test-connector-axe-idlerule-connector-4",
-            "connector_name": "test-connector-name-axe-idlerule-connector-4",
-            "steps": [
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc"
               },
@@ -433,23 +516,23 @@ Feature: update connector alarm
                 "a": "system",
                 "m": "test-output-axe-idlerule-connector-4"
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
 
   Scenario: given connector alarm should apply dynamic infos on it
     Given I am admin
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idlerule-axe-idlerule-connector-5-name",
       "type": "entity",
@@ -469,7 +552,7 @@ Feature: update connector alarm
     Then the response code should be 201
     Then I save response ruleID={{ .lastResponse._id }}
     When I do POST /api/v4/cat/dynamic-infos:
-    """
+    """json
     {
       "name": "test-dynamicinfos-axe-idlerule-connector-5-name",
       "description": "test-dynamicinfos-axe-idlerule-connector-5-description",
@@ -489,7 +572,7 @@ Feature: update connector alarm
     When I save response dynamicInfosRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-connector-5",
@@ -501,13 +584,16 @@ Feature: update connector alarm
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-connector-axe-idlerule-connector-5/test-connector-name-axe-idlerule-connector-5"}]}
+    When I do GET /api/v4/alarms?search=test-connector-name-axe-idlerule-connector-5&sort_by=entity._id&sort=desc
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
+          "entity": {
+            "type": "connector"
+          },
           "v": {
             "connector": "test-connector-axe-idlerule-connector-5",
             "connector_name": "test-connector-name-axe-idlerule-connector-5",
@@ -517,13 +603,14 @@ Feature: update connector alarm
               }
             }
           }
-        }
+        },
+        {}
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 2
       }
     }
     """
@@ -531,7 +618,7 @@ Feature: update connector alarm
   Scenario: given connector alarm should not create meta alarm
     Given I am admin
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idlerule-axe-idlerule-connector-6-name",
       "type": "entity",
@@ -551,7 +638,7 @@ Feature: update connector alarm
     Then the response code should be 201
     Then I save response ruleID={{ .lastResponse._id }}
     When I do POST /api/v4/cat/metaalarmrules:
-    """
+    """json
     {
       "name": "test-metaalarmrule-action-correlation-1",
       "type": "attribute",
@@ -572,7 +659,7 @@ Feature: update connector alarm
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-connector-6",
@@ -584,13 +671,27 @@ Feature: update connector alarm
     }
     """
     When I wait the end of 3 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
-    Then the response code should be 200
-    When I save response metalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
-    When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-component-axe-idlerule-connector-6"}]}
+    When I do GET /api/v4/alarms?search=test-component-axe-idlerule-connector-6&correlation=true
     Then the response code should be 200
     Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 1,
+          "v": {
+            "meta": "{{ .metaAlarmRuleID }}"
+          }
+        }
+      ]
+    }
     """
+    When I save response metalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
+    When I do GET /api/v4/alarms?search=test-component-axe-idlerule-connector-6
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
     {
       "data": [
         {
@@ -612,25 +713,29 @@ Feature: update connector alarm
       }
     }
     """
-    When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-connector-axe-idlerule-connector-6/test-connector-name-axe-idlerule-connector-6"}]}
+    When I do GET /api/v4/alarms?search=test-connector-name-axe-idlerule-connector-6&sort_by=entity._id&sort=desc
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
+          "entity": {
+            "type": "connector"
+          },
           "v": {
             "connector": "test-connector-axe-idlerule-connector-6",
             "connector_name": "test-connector-name-axe-idlerule-connector-6",
             "parents": []
           }
-        }
+        },
+        {}
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 2
       }
     }
     """
@@ -638,7 +743,7 @@ Feature: update connector alarm
   Scenario: given connector alarm should update alarm on event
     Given I am admin
     When I do POST /api/v4/idle-rules:
-    """
+    """json
     {
       "name": "test-idlerule-axe-idlerule-connector-7-name",
       "type": "entity",
@@ -659,7 +764,7 @@ Feature: update connector alarm
     Then I save response ruleID={{ .lastResponse._id }}
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "event_type": "check",
       "connector": "test-connector-axe-idlerule-connector-7",
@@ -672,7 +777,7 @@ Feature: update connector alarm
     """
     When I wait the end of 2 events processing
     When I send an event:
-    """
+    """json
     {
       "event_type": "ack",
       "connector": "test-connector-axe-idlerule-connector-7",
@@ -682,17 +787,28 @@ Feature: update connector alarm
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-connector-axe-idlerule-connector-7/test-connector-name-axe-idlerule-connector-7"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-connector-name-axe-idlerule-connector-7&sort_by=entity._id&sort=desc
     Then the response code should be 200
-    Then the response body should contain:
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
     """
-    {
-      "data": [
-        {
-          "v": {
-            "connector": "test-connector-axe-idlerule-connector-7",
-            "connector_name": "test-connector-name-axe-idlerule-connector-7",
-            "steps": [
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 3
@@ -704,15 +820,15 @@ Feature: update connector alarm
               {
                 "_t": "ack"
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """

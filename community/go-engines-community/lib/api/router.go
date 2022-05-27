@@ -1121,7 +1121,7 @@ func RegisterRoutes(
 			)
 		}
 
-		patternAPI := pattern.NewApi(pattern.NewStore(dbClient), userInterfaceConfig, enforcer, actionLogger)
+		patternAPI := pattern.NewApi(pattern.NewStore(dbClient, pbhComputeChan, logger), userInterfaceConfig, enforcer, actionLogger)
 		patternRouter := protected.Group("/patterns")
 		{
 			patternRouter.Use(middleware.OnlyAuth())

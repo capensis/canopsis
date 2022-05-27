@@ -12,14 +12,6 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-const (
-	getPbehaviorsStep = iota
-	getTypesStep
-	getExceptionsStep
-	getReasonsStep
-	computePbehaviorsStep
-)
-
 const DefaultPoolSize = 100
 
 // TypeComputer is used to compute periodical behavior timespans for provided interval.
@@ -63,16 +55,16 @@ type computedType struct {
 // ComputeResult represents computed data.
 type ComputeResult struct {
 	computedPbehaviors map[string]ComputedPbehavior
-	typesByID          map[string]*Type
+	typesByID          map[string]Type
 	defaultActiveType  string
 }
 
 // models contains all required models for computing.
 type models struct {
-	typesByID      map[string]*Type
+	typesByID      map[string]Type
 	defaultTypes   map[string]string
-	exceptionsByID map[string]*Exception
-	reasonsByID    map[string]*Reason
+	exceptionsByID map[string]Exception
+	reasonsByID    map[string]Reason
 }
 
 // NewTypeComputer creates new type resolver.
@@ -105,88 +97,43 @@ func (c *typeComputer) Compute(
 	ctx context.Context,
 	span timespan.Span,
 ) (ComputeResult, error) {
-	stepChan := make(chan int, 1)
-	defer close(stepChan)
-	stepChan <- getPbehaviorsStep
-
-	var (
-		pbehaviorsByID map[string]*PBehavior
-		models         models
-		computed       ComputeResult
-		res            map[string]ComputedPbehavior
-	)
-
-	for {
-		select {
-		case <-ctx.Done():
-			return computed, nil
-		case step := <-stepChan:
-			nextStep := -1
-			var err error
-
-			switch step {
-			case getPbehaviorsStep:
-				pbehaviorsByID, err = c.modelProvider.GetEnabledPbehaviors(ctx)
-				if err != nil {
-					err = fmt.Errorf("cannot fetch pbehaviors: %w", err)
-					break
-				}
-
-				nextStep = getTypesStep
-			case getTypesStep:
-				models.typesByID, err = c.modelProvider.GetTypes(ctx)
-				if err != nil {
-					err = fmt.Errorf("cannot fetch pbehavior types: %w", err)
-					break
-				}
-
-				models.defaultTypes, err = resolveDefaultTypes(models.typesByID)
-				if err != nil {
-					err = fmt.Errorf("cannot fetch defult pbehavior types: %w", err)
-					break
-				}
-
-				nextStep = getExceptionsStep
-			case getExceptionsStep:
-				models.exceptionsByID, err = c.modelProvider.GetExceptions(ctx)
-				if err != nil {
-					err = fmt.Errorf("cannot fetch pbehavior exeptions: %w", err)
-					break
-				}
-
-				nextStep = getReasonsStep
-			case getReasonsStep:
-				models.reasonsByID, err = c.modelProvider.GetReasons(ctx)
-				if err != nil {
-					err = fmt.Errorf("cannot fetch pbehavior reasons: %w", err)
-					break
-				}
-
-				nextStep = computePbehaviorsStep
-			case computePbehaviorsStep:
-				res, err = c.runWorkers(ctx, span, pbehaviorsByID, models)
-				if err != nil {
-					break
-				}
-
-				computed = ComputeResult{
-					computedPbehaviors: res,
-					typesByID:          models.typesByID,
-					defaultActiveType:  models.defaultTypes[TypeActive],
-				}
-			}
-
-			if err != nil {
-				return computed, err
-			}
-
-			if nextStep == -1 {
-				return computed, nil
-			}
-
-			stepChan <- nextStep
-		}
+	res := ComputeResult{}
+	models := models{}
+	pbehaviorsByID, err := c.modelProvider.GetEnabledPbehaviors(ctx)
+	if err != nil {
+		return res, fmt.Errorf("cannot fetch pbehaviors: %w", err)
 	}
+
+	models.typesByID, err = c.modelProvider.GetTypes(ctx)
+	if err != nil {
+		return res, fmt.Errorf("cannot fetch pbehavior types: %w", err)
+	}
+
+	models.defaultTypes, err = resolveDefaultTypes(models.typesByID)
+	if err != nil {
+		return res, fmt.Errorf("cannot fetch defult pbehavior types: %w", err)
+	}
+
+	models.exceptionsByID, err = c.modelProvider.GetExceptions(ctx)
+	if err != nil {
+		return res, fmt.Errorf("cannot fetch pbehavior exeptions: %w", err)
+	}
+
+	models.reasonsByID, err = c.modelProvider.GetReasons(ctx)
+	if err != nil {
+		return res, fmt.Errorf("cannot fetch pbehavior reasons: %w", err)
+	}
+
+	computedPbehaviors, err := c.runWorkers(ctx, span, pbehaviorsByID, models)
+	if err != nil {
+		return res, err
+	}
+
+	return ComputeResult{
+		computedPbehaviors: computedPbehaviors,
+		typesByID:          models.typesByID,
+		defaultActiveType:  models.defaultTypes[TypeActive],
+	}, nil
 }
 
 func (c *typeComputer) Recompute(
@@ -194,98 +141,47 @@ func (c *typeComputer) Recompute(
 	span timespan.Span,
 	pbehaviorIds []string,
 ) (map[string]ComputedPbehavior, error) {
-	stepChan := make(chan int, 1)
-	defer close(stepChan)
-	stepChan <- getPbehaviorsStep
-
-	var (
-		pbehaviorsByID map[string]*PBehavior
-		models         models
-		res            map[string]ComputedPbehavior
-	)
-
-	for {
-		select {
-		case <-ctx.Done():
-			return nil, nil
-		case step := <-stepChan:
-			nextStep := -1
-			var err error
-
-			switch step {
-			case getPbehaviorsStep:
-				pbehaviorsByID, err = c.modelProvider.GetEnabledPbehaviorsByIds(ctx, pbehaviorIds)
-				if err != nil {
-					err = fmt.Errorf("cannot fetch pbehavior: %w", err)
-					break
-				}
-				if len(pbehaviorsByID) == 0 {
-					break
-				}
-
-				nextStep = getTypesStep
-			case getTypesStep:
-				models.typesByID, err = c.modelProvider.GetTypes(ctx)
-				if err != nil {
-					err = fmt.Errorf("cannot fetch pbehavior types: %w", err)
-					break
-				}
-
-				models.defaultTypes, err = resolveDefaultTypes(models.typesByID)
-				if err != nil {
-					err = fmt.Errorf("cannot fetch default pbehavior types: %w", err)
-					break
-				}
-
-				nextStep = getExceptionsStep
-			case getExceptionsStep:
-				models.exceptionsByID, err = c.modelProvider.GetExceptions(ctx)
-				if err != nil {
-					err = fmt.Errorf("cannot fetch pbehavior exceptions: %w", err)
-					break
-				}
-
-				nextStep = getReasonsStep
-			case getReasonsStep:
-				models.reasonsByID, err = c.modelProvider.GetReasons(ctx)
-				if err != nil {
-					err = fmt.Errorf("cannot fetch pbehavior reasons: %w", err)
-					break
-				}
-
-				nextStep = computePbehaviorsStep
-			case computePbehaviorsStep:
-				res, err = c.runWorkers(ctx, span, pbehaviorsByID, models)
-				if err != nil {
-					break
-				}
-			}
-
-			if err != nil {
-				return nil, err
-			}
-
-			if nextStep == -1 {
-				return res, nil
-			}
-
-			stepChan <- nextStep
-		}
+	models := models{}
+	pbehaviorsByID, err := c.modelProvider.GetEnabledPbehaviorsByIds(ctx, pbehaviorIds)
+	if err != nil && len(pbehaviorsByID) == 0 {
+		return nil, fmt.Errorf("cannot fetch pbehavior: %w", err)
 	}
+
+	models.typesByID, err = c.modelProvider.GetTypes(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("cannot fetch pbehavior types: %w", err)
+	}
+
+	models.defaultTypes, err = resolveDefaultTypes(models.typesByID)
+	if err != nil {
+		return nil, fmt.Errorf("cannot fetch default pbehavior types: %w", err)
+	}
+
+	models.exceptionsByID, err = c.modelProvider.GetExceptions(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("cannot fetch pbehavior exceptions: %w", err)
+	}
+
+	models.reasonsByID, err = c.modelProvider.GetReasons(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("cannot fetch pbehavior reasons: %w", err)
+	}
+
+	return c.runWorkers(ctx, span, pbehaviorsByID, models)
 }
 
 // resolveDefaultTypes finds default types which uses :
 // - active default type if there aren't any behaviors
 // - inactive default type if there is behavior with active type
-func resolveDefaultTypes(typesByID map[string]*Type) (map[string]string, error) {
-	defaultTypesByType := map[string]*Type{
-		TypeInactive: nil,
-		TypeActive:   nil,
+func resolveDefaultTypes(typesByID map[string]Type) (map[string]string, error) {
+	defaultTypesByType := map[string]Type{
+		TypeInactive: {},
+		TypeActive:   {},
 	}
 
 	for _, t := range typesByID {
 		for dt := range defaultTypesByType {
-			if t.Type == dt && (defaultTypesByType[dt] == nil ||
+			if t.Type == dt && (defaultTypesByType[dt].ID == "" ||
 				defaultTypesByType[dt].Priority > t.Priority) {
 				defaultTypesByType[dt] = t
 			}
@@ -294,7 +190,7 @@ func resolveDefaultTypes(typesByID map[string]*Type) (map[string]string, error) 
 
 	defaultTypes := make(map[string]string)
 	for dt := range defaultTypesByType {
-		if defaultTypesByType[dt] == nil {
+		if defaultTypesByType[dt].ID == "" {
 			return nil, fmt.Errorf("no default type %v", dt)
 		}
 		defaultTypes[dt] = defaultTypesByType[dt].ID
@@ -307,7 +203,7 @@ func resolveDefaultTypes(typesByID map[string]*Type) (map[string]string, error) 
 func (c *typeComputer) runWorkers(
 	ctx context.Context,
 	span timespan.Span,
-	pbehaviorsByID map[string]*PBehavior,
+	pbehaviorsByID map[string]PBehavior,
 	models models,
 ) (map[string]ComputedPbehavior, error) {
 	resCh := make(chan pbhComputeResult)
@@ -359,8 +255,8 @@ func (c *typeComputer) runWorkers(
 }
 
 // createWorkerCh creates worker chan and fills it.
-func (c *typeComputer) createWorkerCh(ctx context.Context, pbehaviorsByID map[string]*PBehavior) <-chan *PBehavior {
-	workerChan := make(chan *PBehavior)
+func (c *typeComputer) createWorkerCh(ctx context.Context, pbehaviorsByID map[string]PBehavior) <-chan PBehavior {
+	workerChan := make(chan PBehavior)
 
 	go func() {
 		defer close(workerChan)
@@ -380,7 +276,7 @@ func (c *typeComputer) createWorkerCh(ctx context.Context, pbehaviorsByID map[st
 
 // computePbehavior calculates Types for provided timespan.
 func (c *typeComputer) computePbehavior(
-	pbehavior *PBehavior,
+	pbehavior PBehavior,
 	span timespan.Span,
 	models models,
 ) (ComputedPbehavior, error) {
@@ -447,7 +343,7 @@ func (c *typeComputer) computePbehavior(
 
 // computeByExdate returns all time spans for pbehavior on the date which are defined by exdate.
 func (c *typeComputer) computeByExdate(
-	pbehavior *PBehavior,
+	pbehavior PBehavior,
 	event Event,
 	span timespan.Span,
 	models models,
@@ -486,7 +382,7 @@ func (c *typeComputer) computeByExdate(
 
 // computeByRrule returns all time spans for pbehavior on the date which are defined by rrule.
 func (c *typeComputer) computeByRrule(
-	pbehavior *PBehavior,
+	pbehavior PBehavior,
 	event Event,
 	span timespan.Span,
 ) ([]computedType, error) {
@@ -508,7 +404,7 @@ func (c *typeComputer) computeByRrule(
 // computeByActiveType returns time span with default inactive type if pbehavior has
 // active type and pbehavior is in action for the date.
 func (c *typeComputer) computeByActiveType(
-	pbehavior *PBehavior,
+	pbehavior PBehavior,
 	event Event,
 	span timespan.Span,
 	models models,
@@ -548,18 +444,18 @@ func (c *typeComputer) computeByActiveType(
 
 // getSortedExdate returns pbehavior exdate list which is sorted by its type priority.
 func (c *typeComputer) getSortedExdate(
-	pbehavior *PBehavior,
+	pbehavior PBehavior,
 	models models,
-) ([]*Exdate, error) {
-	res := make([]*Exdate, len(pbehavior.Exdates))
+) ([]Exdate, error) {
+	res := make([]Exdate, len(pbehavior.Exdates))
 	for i := range pbehavior.Exdates {
-		res[i] = &pbehavior.Exdates[i]
+		res[i] = pbehavior.Exdates[i]
 	}
 
 	for _, id := range pbehavior.Exceptions {
 		if exception, ok := models.exceptionsByID[id]; ok {
 			for i := range exception.Exdates {
-				res = append(res, &exception.Exdates[i])
+				res = append(res, exception.Exdates[i])
 			}
 		} else {
 			return nil, fmt.Errorf("unknown exception %v", id)

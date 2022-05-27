@@ -103,12 +103,8 @@ type PatchRequest struct {
 	CorporatePattern       *savedpattern.SavedPattern `json:"-"`
 }
 
-type FilterRequest struct {
-	EntityPattern pattern.Entity `json:"entity_pattern" binding:"entity_pattern" binding:"required"`
-}
-
 type FindByEntityIDRequest struct {
-	ID string `form:"id" binding:"required"`
+	ID string `form:"_id" binding:"required"`
 }
 
 type Response struct {
