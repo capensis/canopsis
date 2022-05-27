@@ -7,7 +7,7 @@ import { alarmSchema } from '@/store/schemas';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 
-import detailModule from './detail';
+import detailsModule from './details';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -24,7 +24,7 @@ export const types = {
 export default {
   namespaced: true,
   modules: {
-    detail: detailModule,
+    details: detailsModule,
   },
   state: {
     widgets: {},
@@ -81,19 +81,20 @@ export default {
             commit(types.FETCH_LIST, { widgetId, params });
           }
 
-          const { normalizedData, data } = await dispatch('entities/fetch', {
+          await dispatch('entities/fetch', {
             route: API_ROUTES.alarmList,
             schema: [alarmSchema],
             params,
             cancelToken: source.token,
             dataPreparer: d => d.data,
+            afterCommit: ({ normalizedData, data }) => {
+              commit(types.FETCH_LIST_COMPLETED, {
+                widgetId,
+                allIds: normalizedData.result,
+                meta: data.meta,
+              });
+            },
           }, { root: true });
-
-          commit(types.FETCH_LIST_COMPLETED, {
-            widgetId,
-            allIds: normalizedData.result,
-            meta: data.meta,
-          });
         }, `alarms-list-${widgetId}`);
       } catch (err) {
         await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });

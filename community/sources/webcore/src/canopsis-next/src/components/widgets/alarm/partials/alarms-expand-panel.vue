@@ -1,95 +1,98 @@
 <template lang="pug">
-  v-tabs.expand-panel.secondary.lighten-2(
-    :key="tabsKey",
-    color="secondary lighten-1",
-    slider-color="primary",
-    dark,
-    centered
-  )
-    template(v-if="hasMoreInfos")
-      v-tab(:class="moreInfosTabClass") {{ $t('alarmList.tabs.moreInfos') }}
+  div.position-relative
+    c-progress-overlay(:pending="false")
+    v-tabs.expand-panel.secondary.lighten-2(
+      :key="tabsKey",
+      color="secondary lighten-1",
+      slider-color="primary",
+      dark,
+      centered
+    )
+      template(v-if="hasMoreInfos")
+        v-tab(:class="moreInfosTabClass") {{ $t('alarmList.tabs.moreInfos') }}
+        v-tab-item
+          v-layout.pa-3(row)
+            v-flex(:class="cardFlexClass")
+              v-card.tab-item-card
+                v-card-text
+                  more-infos(:alarm="alarm", :template="widget.parameters.moreInfoTemplate")
+      v-tab(:class="timeLineTabClass") {{ $t('alarmList.tabs.timeLine') }}
       v-tab-item
         v-layout.pa-3(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
               v-card-text
-                more-infos(:alarm="alarm", :template="widget.parameters.moreInfoTemplate")
-    v-tab(:class="timeLineTabClass") {{ $t('alarmList.tabs.timeLine') }}
-    v-tab-item
-      v-layout.pa-3(row)
-        v-flex(:class="cardFlexClass")
-          v-card.tab-item-card
-            v-card-text
-              time-line(
-                :alarm="alarm",
-                :widget="widget",
-                :is-html-enabled="isHtmlEnabled",
-                :hide-groups="hideGroups"
-              )
-    template(v-if="hasCauses")
-      v-tab {{ $t('alarmList.tabs.alarmsCauses') }}
-      v-tab-item
-        v-layout.pa-3.secondary.lighten-2(row)
-          v-flex(:class="cardFlexClass")
-            v-card.tab-item-card
-              v-card-text
-                group-alarms-list(
-                  :widget="widget",
-                  :default-query-id="causesKey",
-                  :tab-id="causesKey",
-                  :alarm="alarm",
-                  :editing="editing"
+                time-line(
+                  :steps="stepsData",
+                  :meta="stepsMeta",
+                  :is-html-enabled="isHtmlEnabled"
                 )
-    template(v-if="hasConsequences")
-      v-tab {{ $t('alarmList.tabs.alarmsConsequences') }}
-      v-tab-item
-        v-layout.pa-3.secondary.lighten-2(row)
-          v-flex(:class="cardFlexClass")
-            v-card.tab-item-card
-              v-card-text
-                group-alarms-list(
-                  :widget="widget",
-                  :default-query-id="consequencesKey",
-                  :tab-id="consequencesKey",
-                  :alarm="alarm",
-                  :editing="editing"
-                )
-    template(v-if="hasServiceDependencies")
-      v-tab {{ $t('alarmList.tabs.trackSource') }}
-      v-tab-item
-        v-layout.pa-3.secondary.lighten-2(row)
-          v-flex(:class="cardFlexClass")
-            v-card.tab-item-card
-              v-card-text
-                service-dependencies(
-                  :root="dependency",
-                  :columns="widget.parameters.serviceDependenciesColumns",
-                  include-root
-                )
-    template(v-if="hasImpactsDependencies")
-      v-tab {{ $t('alarmList.tabs.impactChain') }}
-      v-tab-item
-        v-layout.pa-3.secondary.lighten-2(row)
-          v-flex(:class="cardFlexClass")
-            v-card.tab-item-card
-              v-card-text
-                service-dependencies(
-                  :root="dependency",
-                  :columns="widget.parameters.serviceDependenciesColumns",
-                  include-root,
-                  impact
-                )
-    template(v-if="hasEntityGantt")
-      v-tab {{ $t('alarmList.tabs.entityGantt') }}
-      v-tab-item(lazy)
-        v-layout.pa-3.secondary.lighten-2(row)
-          v-flex(:class="cardFlexClass")
-            v-card.tab-item-card
-              v-card-text
-                entity-gantt(:alarm="alarm")
+      template(v-if="hasCauses")
+        v-tab {{ $t('alarmList.tabs.alarmsCauses') }}
+        v-tab-item
+          v-layout.pa-3.secondary.lighten-2(row)
+            v-flex(:class="cardFlexClass")
+              v-card.tab-item-card
+                v-card-text
+                  group-alarms-list(
+                    :widget="widget",
+                    :default-query-id="causesKey",
+                    :tab-id="causesKey",
+                    :alarm="alarm",
+                    :editing="editing"
+                  )
+      template(v-if="hasConsequences")
+        v-tab {{ $t('alarmList.tabs.alarmsConsequences') }}
+        v-tab-item
+          v-layout.pa-3.secondary.lighten-2(row)
+            v-flex(:class="cardFlexClass")
+              v-card.tab-item-card
+                v-card-text
+                  group-alarms-list(
+                    :widget="widget",
+                    :default-query-id="consequencesKey",
+                    :tab-id="consequencesKey",
+                    :alarm="alarm",
+                    :editing="editing"
+                  )
+      template(v-if="hasServiceDependencies")
+        v-tab {{ $t('alarmList.tabs.trackSource') }}
+        v-tab-item
+          v-layout.pa-3.secondary.lighten-2(row)
+            v-flex(:class="cardFlexClass")
+              v-card.tab-item-card
+                v-card-text
+                  service-dependencies(
+                    :root="dependency",
+                    :columns="widget.parameters.serviceDependenciesColumns",
+                    include-root
+                  )
+      template(v-if="hasImpactsDependencies")
+        v-tab {{ $t('alarmList.tabs.impactChain') }}
+        v-tab-item
+          v-layout.pa-3.secondary.lighten-2(row)
+            v-flex(:class="cardFlexClass")
+              v-card.tab-item-card
+                v-card-text
+                  service-dependencies(
+                    :root="dependency",
+                    :columns="widget.parameters.serviceDependenciesColumns",
+                    include-root,
+                    impact
+                  )
+      template(v-if="hasEntityGantt")
+        v-tab {{ $t('alarmList.tabs.entityGantt') }}
+        v-tab-item(lazy)
+          v-layout.pa-3.secondary.lighten-2(row)
+            v-flex(:class="cardFlexClass")
+              v-card.tab-item-card
+                v-card-text
+                  entity-gantt(:alarm="alarm")
 </template>
 
 <script>
+import { omit } from 'lodash';
+
 import {
   ALARMS_GROUP_PREFIX,
   ENTITY_TYPES,
@@ -102,7 +105,9 @@ import uid from '@/helpers/uid';
 import { getStepClass } from '@/helpers/tour';
 import { serviceToServiceDependency } from '@/helpers/treeview/service-dependencies';
 
+import { queryMixin } from '@/mixins/query';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { entitiesAlarmDetailsMixin } from '@/mixins/entities/alarm/details';
 
 import ServiceDependencies from '@/components/other/service/table/service-dependencies.vue';
 
@@ -119,7 +124,11 @@ export default {
     GroupAlarmsList,
     EntityGantt,
   },
-  mixins: [entitiesInfoMixin],
+  mixins: [
+    queryMixin,
+    entitiesInfoMixin,
+    entitiesAlarmDetailsMixin,
+  ],
   props: {
     alarm: {
       type: Object,
@@ -148,6 +157,26 @@ export default {
     };
   },
   computed: {
+    query: {
+      get() {
+        const query = this.getQueryById(this.queryId);
+
+        return query[this.alarm._id] ?? {};
+      },
+      set(query) {
+        return this.mergeQuery({
+          id: this.queryId,
+          query: {
+            [this.alarm._id]: query,
+          },
+        });
+      },
+    },
+
+    queryId() {
+      return `${this.widget._id}_expand`;
+    },
+
     causesKey() {
       return `${ALARMS_GROUP_PREFIX.CAUSES}${this.alarm._id}`;
     },
@@ -220,6 +249,22 @@ export default {
         && this.alarm.v.connector === JUNIT_ALARM_CONNECTOR
         && [ENTITY_TYPES.component, ENTITY_TYPES.resource].includes(this.alarm.entity.type);
     },
+
+    alarmDetails() {
+      return this.getAlarmDetailsItem(this.alarm._id)?.data;
+    },
+
+    steps() {
+      return this.alarmDetails?.steps;
+    },
+
+    stepsData() {
+      return this.steps?.data;
+    },
+
+    stepsMeta() {
+      return this.steps?.meta;
+    },
   },
   watch: {
     'widget.parameters.moreInfoTemplate': {
@@ -232,13 +277,15 @@ export default {
       this.refreshTabs();
     },
   },
+  beforeDestroy() {
+    return this.updateQuery({
+      id: this.queryId,
+      query: omit(this.getQueryById(this.queryId), this.alarm._id),
+    });
+  },
   methods: {
     refreshTabs() {
       this.tabsKey = uid();
-    },
-
-    fetchAlarmDetails() {
-
     },
   },
 };
