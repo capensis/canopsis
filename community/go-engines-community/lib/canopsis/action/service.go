@@ -7,8 +7,8 @@ import (
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"github.com/streadway/amqp"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -174,6 +174,7 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 			Author:          event.Author,
 			User:            event.UserID,
 			Initiator:       event.Initiator,
+			Output:          event.Output,
 		},
 	}
 

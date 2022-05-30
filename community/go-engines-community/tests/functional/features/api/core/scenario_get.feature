@@ -27,7 +27,8 @@ Feature: Get a scenario
               "parameters": {
                 "author": "test-scenario-to-get-1-action-1-author",
                 "output": "test-scenario-to-get-1-action-1-output"
-              }
+              },
+              "comment": "test-scenario-to-get-1-action-1-comment"
             },
             {
               "alarm_patterns": [
@@ -63,7 +64,8 @@ Feature: Get a scenario
                   "value": 3,
                   "unit": "s"
                 }
-              }
+              },
+              "comment": "test-scenario-to-get-1-action-2-comment"
             }
           ],
           "author": "test-scenario-to-get-1-author",
@@ -95,7 +97,8 @@ Feature: Get a scenario
               "parameters": {
                 "author": "test-scenario-to-get-2-action-1-author",
                 "output": "test-scenario-to-get-2-action-1-output"
-              }
+              },
+              "comment": ""
             }
           ],
           "author": "test-scenario-to-get-2-author",
@@ -179,7 +182,8 @@ Feature: Get a scenario
           "parameters": {
             "author": "test-scenario-to-get-1-action-1-author",
             "output": "test-scenario-to-get-1-action-1-output"
-          }
+          },
+          "comment": "test-scenario-to-get-1-action-1-comment"
         },
         {
           "alarm_patterns": [
@@ -215,7 +219,8 @@ Feature: Get a scenario
               "value": 3,
               "unit": "s"
             }
-          }
+          },
+          "comment": "test-scenario-to-get-1-action-2-comment"
         }
       ],
       "author": "test-scenario-to-get-1-author",

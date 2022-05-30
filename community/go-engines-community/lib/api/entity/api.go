@@ -55,19 +55,8 @@ func NewApi(
 	}
 }
 
-// Find all entities
-// @Summary Find entities
-// @Description Get paginated list of entities
-// @Tags entities
-// @ID entities-find-all
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param request query ListRequestWithPagination true "request"
+// List
 // @Success 200 {object} common.PaginatedListResponse{data=[]Entity}
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /entities [get]
 func (a *api) List(c *gin.Context) {
 	var query ListRequestWithPagination
 	query.Query = pagination.GetDefaultQuery()
@@ -90,18 +79,9 @@ func (a *api) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// Start export entities
-// @Summary Start export entities
-// @Description Start export entities
-// @Tags entities
-// @ID entities-export-start
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
+// StartExport
 // @Param request body ExportRequest true "request"
 // @Success 200 {object} ExportResponse
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /entity-export [post]
 func (a *api) StartExport(c *gin.Context) {
 	var r ExportRequest
 	if err := c.ShouldBind(&r); err != nil {
@@ -150,19 +130,8 @@ func (a *api) StartExport(c *gin.Context) {
 	})
 }
 
-// Get status of export entities
-// @Summary Get status of export entities
-// @Description Get status of export entities
-// @Tags entities
-// @ID entities-export-get
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "export task id"
+// GetExport
 // @Success 200 {object} ExportResponse
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /entity-export/{id} [get]
 func (a *api) GetExport(c *gin.Context) {
 	id := c.Param("id")
 	t, err := a.exportExecutor.GetStatus(c.Request.Context(), id)
@@ -181,19 +150,6 @@ func (a *api) GetExport(c *gin.Context) {
 	})
 }
 
-// Get result of export entities
-// @Summary Get result of export entities
-// @Description Get result of export entities
-// @Tags entities
-// @ID entities-export-download
-// @Produce text/csv
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "export task id"
-// @Success 200 {object} http.Response
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /entity-export/{id}/download [get]
 func (a *api) DownloadExport(c *gin.Context) {
 	id := c.Param("id")
 	t, err := a.exportExecutor.GetStatus(c.Request.Context(), id)
@@ -213,19 +169,6 @@ func (a *api) DownloadExport(c *gin.Context) {
 	c.File(t.File)
 }
 
-// Clean disabled entities
-// @Summary Clean disabled entities
-// @Description Clean disabled entities
-// @Tags entities
-// @ID entities-clean
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param request query CleanRequest true "request"
-// @Success 202
-// @Failure 400 {object} common.ErrorResponse
-// @Router /entities/clean [post]
 func (a *api) Clean(c *gin.Context) {
 	var r CleanRequest
 	if err := c.ShouldBindJSON(&r); err != nil {

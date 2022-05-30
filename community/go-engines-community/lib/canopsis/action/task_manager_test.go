@@ -443,11 +443,12 @@ func TestTaskManager_Run_GiveAbandonedTask_ShouldSendResult(t *testing.T) {
 	inputCh := make(chan action.ExecuteScenariosTask)
 	defer close(inputCh)
 	taskResultCh := make(chan action.TaskResult)
-	defer close(taskResultCh)
 	mockWorkerPool := mock_action.NewMockWorkerPool(ctrl)
 	mockWorkerPool.EXPECT().RunWorkers(gomock.Any(), gomock.Any()).
 		Do(func(_ context.Context, taskCh <-chan action.Task) {
 			go func() {
+				defer close(taskResultCh)
+
 				select {
 				case <-ctx.Done():
 				case task := <-taskCh:

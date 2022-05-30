@@ -5,7 +5,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	libview "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 )
 
 type ListRequest struct {
@@ -41,7 +41,7 @@ type View struct {
 	Title           string                     `bson:"title" json:"title"`
 	Description     string                     `bson:"description" json:"description"`
 	Group           ViewGroup                  `bson:"group" json:"group"`
-	Tabs            []libview.Tab              `bson:"tabs" json:"tabs"`
+	Tabs            []view.Tab                 `bson:"tabs" json:"tabs"`
 	Tags            []string                   `bson:"tags" json:"tags"`
 	PeriodicRefresh *types.DurationWithEnabled `bson:"periodic_refresh" json:"periodic_refresh"`
 	Author          string                     `bson:"author" json:"author"`

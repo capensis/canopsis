@@ -342,7 +342,7 @@ Feature: test dynamic entity api fields
       "enabled": true,
       "name": "test-pbehavior-entity-api-5",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "5m" }},
+      "tstop": {{ nowAdd "1h" }},
       "type": "test-default-maintenance-type",
       "reason": "test-reason-1",
       "filter":{

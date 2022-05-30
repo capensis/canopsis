@@ -76,7 +76,6 @@ Feature: create service entity
           "depends": [
             "test-resource-che-service-1/test-component-che-service-1"
           ],
-          "enable_history": [],
           "enabled": true,
           "impact": [],
           "impact_level": 1,
@@ -188,7 +187,6 @@ Feature: create service entity
           "depends": [
             "test-resource-che-service-2/test-component-che-service-2"
           ],
-          "enable_history": [],
           "enabled": true,
           "impact": [],
           "impact_level": 1,

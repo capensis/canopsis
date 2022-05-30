@@ -476,6 +476,7 @@ Feature: send an event
           "origin": "canopsis",
           "initiator": "user",
           "state_type": 1,
+          "user_id": "root",
           "output": "Output test",
           "display_name":"Test MetaAlarm 1",
           "ma_children": [
