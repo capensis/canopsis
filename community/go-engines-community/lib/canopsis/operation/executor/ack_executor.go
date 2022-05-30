@@ -40,11 +40,7 @@ func (e *ackExecutor) Exec(
 		userID = params.User
 	}
 
-	doubleAck := false
-	if alarm.Value.ACK != nil {
-		doubleAck = true
-	}
-
+	doubleAck := alarm.Value.ACK != nil
 	if doubleAck && !e.configProvider.Get().AllowDoubleAck {
 		return "", nil
 	}
