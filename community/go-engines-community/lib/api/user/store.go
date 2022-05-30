@@ -128,28 +128,42 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r Request) (*User, error) {
-	_, err := s.dbCollection.InsertOne(ctx, r.getInsertBson(s.passwordEncoder))
+	var user *User
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		user = nil
+		_, err := s.dbCollection.InsertOne(ctx, r.getInsertBson(s.passwordEncoder))
+		if err != nil {
+			return err
+		}
+
+		user, err = s.GetOneBy(ctx, r.Name)
+		return err
+	})
 	if err != nil {
 		return nil, err
 	}
-
-	return s.GetOneBy(ctx, r.Name)
+	return user, nil
 }
 
 func (s *store) Update(ctx context.Context, r Request) (*User, error) {
-	res, err := s.dbCollection.UpdateOne(ctx,
-		bson.M{"_id": r.ID, "crecord_type": securitymodel.LineTypeSubject},
-		bson.M{"$set": r.getUpdateBson(s.passwordEncoder)},
-	)
+	var user *User
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		user = nil
+		res, err := s.dbCollection.UpdateOne(ctx,
+			bson.M{"_id": r.ID, "crecord_type": securitymodel.LineTypeSubject},
+			bson.M{"$set": r.getUpdateBson(s.passwordEncoder)},
+		)
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
+
+		user, err = s.GetOneBy(ctx, r.Name)
+		return err
+	})
 	if err != nil {
 		return nil, err
 	}
-
-	if res.MatchedCount == 0 {
-		return nil, nil
-	}
-
-	return s.GetOneBy(ctx, r.ID)
+	return user, nil
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
