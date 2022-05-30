@@ -1,9 +1,9 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ $t('modals.createManualMetaAlarm.title') }}
-      template(slot="text")
+      template(#text="")
         v-container
           v-layout(row)
             v-flex.text-xs-center
@@ -13,7 +13,7 @@
           v-layout(row)
             v-flex(xs12)
               manual-meta-alarm-form(v-model="form")
-      template(slot="actions")
+      template(#actions="")
         v-btn(
           depressed,
           flat,
@@ -67,7 +67,7 @@ export default {
   data() {
     return {
       form: {
-        manualMetaAlarm: null,
+        metaAlarm: null,
         output: '',
       },
     };
