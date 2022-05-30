@@ -61,8 +61,8 @@ Feature: Account auth user
         }
       ],
       "role": {
-        "_id": "test-role-to-get-user-1",
-        "name": "test-role-to-get-user-1",
+        "_id": "test-role-to-user-get-1",
+        "name": "test-role-to-user-get-1",
         "defaultview": {
           "_id": "test-view-to-edit-user",
           "title": "test-view-to-edit-user-title"

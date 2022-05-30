@@ -44,18 +44,8 @@ func NewApi(
 	}
 }
 
-// Get entity by id
-// @Summary Get entity by id
-// @Description Get entity by id
-// @Tags entitybasics
-// @ID entitybasics-get-by-id
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param _id query string true "Entity id"
+// Get
 // @Success 200 {object} Entity
-// @Failure 404 {object} common.ErrorResponse
-// @Router /entitybasics [get]
 func (a *api) Get(c *gin.Context) {
 	var request IdRequest
 	if err := c.ShouldBind(&request); err != nil {
@@ -75,21 +65,9 @@ func (a *api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, entity)
 }
 
-// Update entity by id
-// @Summary Update entity by id
-// @Description Update entity by id
-// @Tags entitybasics
-// @ID entitybasics-update-by-id
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param _id query string true "Entity id"
+// Update
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Entity
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /entitybasics [put]
 func (a *api) Update(c *gin.Context) {
 	idRequest := IdRequest{}
 	if err := c.ShouldBindQuery(&idRequest); err != nil {
@@ -137,18 +115,6 @@ func (a *api) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, entity)
 }
 
-// Delete entity by id
-// @Summary Delete entity by id
-// @Description Delete entity by id
-// @Tags entitybasics
-// @ID entitybasics-delete-by-id
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param _id query string true "Entity id"
-// @Success 204
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /entitybasics [delete]
 func (a *api) Delete(c *gin.Context) {
 	var request IdRequest
 	if err := c.ShouldBind(&request); err != nil {
