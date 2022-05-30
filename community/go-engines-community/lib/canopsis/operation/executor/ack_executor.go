@@ -40,8 +40,9 @@ func (e *ackExecutor) Exec(
 		userID = params.User
 	}
 
+	allowDoubleAck := e.configProvider.Get().AllowDoubleAck
 	doubleAck := alarm.Value.ACK != nil
-	if doubleAck && !e.configProvider.Get().AllowDoubleAck {
+	if doubleAck && !allowDoubleAck {
 		return "", nil
 	}
 
@@ -52,6 +53,7 @@ func (e *ackExecutor) Exec(
 		userID,
 		role,
 		initiator,
+		allowDoubleAck,
 	)
 
 	if err != nil {
