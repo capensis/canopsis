@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"net/http"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
@@ -12,7 +14,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/valyala/fastjson"
-	"net/http"
 )
 
 type API interface {
@@ -115,6 +116,7 @@ func (a *api) Get(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 201 {object} Rule
 // @Failure 400 {object} common.ValidationErrorResponse
+// @Failure 404 {object} common.ErrorResponse
 // @Router /idle-rules [post]
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
@@ -127,6 +129,10 @@ func (a *api) Create(c *gin.Context) {
 	rule, err := a.store.Insert(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
+	}
+	if rule == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
 	}
 
 	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
