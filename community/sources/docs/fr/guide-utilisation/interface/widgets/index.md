@@ -15,6 +15,7 @@ Plusieurs types de widgets sont disponibles dans Canopsis :
     - Courbes
     - Calendrier
     - Texte
+* [Scénarios JUnit](junit/index.md)
 
 ### [Bac à alarmes](bac-a-alarmes/index.md)
 
@@ -82,3 +83,9 @@ Pour les informations concernant le widget en lui-même, voir la partie sur le [
 Le widget **Calendrier** permet d'afficher le nombre d'alarmes par période de temps (par heure, par jour, par mois), dans une vue calendrier.
 
 Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du calendrier](./stats/index.md)
+
+### Scénarios JUnit
+
+Le widget **JUnit** permet d’afficher les résultats d'exécution de scénarios au format XML JUnit.
+
+Pour les informations concernant le widget en lui-même, voir la page [JUnit](./junit/index.md).

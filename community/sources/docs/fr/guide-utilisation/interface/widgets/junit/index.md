@@ -15,28 +15,16 @@ Il comprend :
 
 ## Sommaire
 
-1. [Installation](#installation)<br>
- A. [Docker](#docker)<br>
- B. [Paquet](#paquet)<br>
-2. [Configuration](#configuration)<br>
-3. [Création du widget](#creation-du-widget)<br>
- A. [Vue](#vue)<br>
- B. [Widget](#widget)<br>
-4. [Publication de résultat](#publication-de-resultat)<br>
-
-## Installation
-
-### Docker
-
-Depuis la version [4.4.0](../../../../notes-de-version/4.4.0.md), le connecteur `connector-junit` est installé et démarré avec Canopsis.
-
-### Paquet CentOS 7
-
-<!--- TODO --->
+1. [Configuration](#configuration)<br>
+2. [Création du widget](#creation-du-widget)<br>
+3. [Publication de résultat](#publication-de-resultat)<br>
 
 ## Configuration
 
-La configuration peut être changée dans le fichier `canopsis-pro.toml`.
+!!! Info
+    Le share JUnit API doit être partagé entre l’API de Canopsis et le connecteur JUnit.
+
+La configuration peut être changée dans le fichier [canopsis.toml](../../../../guide-administration/administration-avancee/modification-canopsis-toml.md).
 
 *Configuration par défaut :*
 ```
@@ -49,18 +37,6 @@ JunitApi = "/tmp/canopsis/junit"
 ```
 
 ## Création du widget
-
-### Vue
-
-Cliquer sur le bouton **Paramètres**, puis sur le bouton **Créer une vue** :
-
-![Création vue 1/2](./img/vue1.png)
-
-Remplir le formulaire :
-
-![Création vue 2/2](./img/vue2.png)
-
-### Widget
 
 Aller dans la vue créée. Dans le menu latéral, cliquer sur **Ajouter un widget** :
 
@@ -80,9 +56,7 @@ Configurer le scénario en activant la réponse de l’API :
 
 ## Publication de résultat
 
-Publier les résultats via l’API de Canopsis :
-
-![API](./img/api.png)
+Publier les résultats via l’[API de Canopsis](https://doc.canopsis.net/guide-developpement/swagger/#/junit).
 
 *Par exemple via cURL :*
 ```
