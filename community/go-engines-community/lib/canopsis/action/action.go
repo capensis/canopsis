@@ -53,23 +53,36 @@ type Parameters struct {
 	ForwardAuthor *bool  `json:"forward_author" bson:"forward_author,omitempty"`
 	Author        string `json:"author" bson:"author,omitempty"`
 
-	// ChangeState
+	// State is used in changestate action.
+	//   * `0` - Info
+	//   * `1` - Minor
+	//   * `2` - Major
+	//   * `3` - Critical
 	State *types.CpsNumber `json:"state" bson:"state,omitempty"`
-	// AssocTicket
+	// Ticket is used in assocticket action.
 	Ticket string `json:"ticket" binding:"max=255" bson:"ticket,omitempty"`
-	// Snooze and Pbehavior
+	// Duration is used in snooze and pbehavior actions.
 	Duration *types.DurationWithUnit `json:"duration" bson:"duration,omitempty"`
-	// Pbehavior
-	Name           string         `json:"name" binding:"max=255" bson:"name,omitempty"`
-	Reason         string         `json:"reason" bson:"reason,omitempty"`
-	Type           string         `json:"type" bson:"type,omitempty"`
-	RRule          string         `json:"rrule" bson:"rrule,omitempty"`
-	Tstart         *types.CpsTime `json:"tstart" bson:"tstart,omitempty"`
-	Tstop          *types.CpsTime `json:"tstop" bson:"tstop,omitempty"`
-	StartOnTrigger *bool          `json:"start_on_trigger" bson:"start_on_trigger,omitempty"`
-	// Webhook
-	Request       *types.WebhookRequest       `json:"request" bson:"request,omitempty"`
+	// Name is used in pbehavior action.
+	Name string `json:"name" binding:"max=255" bson:"name,omitempty"`
+	// Reason is used in pbehavior action.
+	Reason string `json:"reason" bson:"reason,omitempty"`
+	// Type is used in pbehavior action.
+	Type string `json:"type" bson:"type,omitempty"`
+	// RRule is used in pbehavior action.
+	RRule string `json:"rrule" bson:"rrule,omitempty"`
+	// Tstart is used in pbehavior action.
+	Tstart *types.CpsTime `json:"tstart" bson:"tstart,omitempty" swaggertype:"integer"`
+	// Tstop is used in pbehavior action.
+	Tstop *types.CpsTime `json:"tstop" bson:"tstop,omitempty" swaggertype:"integer"`
+	// StartOnTrigger is used in pbehavior action.
+	StartOnTrigger *bool `json:"start_on_trigger" bson:"start_on_trigger,omitempty"`
+	// Request is used in webhook action.
+	Request *types.WebhookRequest `json:"request" bson:"request,omitempty"`
+	// DeclareTicket is used in webhook action.
 	DeclareTicket *types.WebhookDeclareTicket `json:"declare_ticket" bson:"declare_ticket,omitempty"`
-	RetryCount    int64                       `json:"retry_count" bson:"retry_count,omitempty" binding:"min=0"`
-	RetryDelay    *types.DurationWithUnit     `json:"retry_delay" bson:"retry_delay,omitempty"`
+	// RetryCount is used in webhook action.
+	RetryCount int64 `json:"retry_count" bson:"retry_count,omitempty" binding:"min=0"`
+	// RetryDelay is used in webhook action.
+	RetryDelay *types.DurationWithUnit `json:"retry_delay" bson:"retry_delay,omitempty"`
 }

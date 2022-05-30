@@ -146,7 +146,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	}
 
 	mustUpdateIdleFields := entityOldIdleSince != event.Entity.IdleSince ||
-		entityOldLastIdleRuleApply == event.Entity.LastIdleRuleApply
+		entityOldLastIdleRuleApply != event.Entity.LastIdleRuleApply
 
 	if changeType == types.AlarmChangeTypeResolve {
 		err := s.adapter.CopyAlarmToResolvedCollection(ctx, *event.Alarm)
