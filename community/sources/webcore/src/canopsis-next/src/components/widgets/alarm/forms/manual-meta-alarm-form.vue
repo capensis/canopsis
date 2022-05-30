@@ -13,7 +13,7 @@
       return-object,
       blur-on-create
     )
-      template(slot="no-data")
+      template(#no-data="")
         v-list-tile
           v-list-tile-content
             v-list-tile-title(v-html="$t('modals.createManualMetaAlarm.noData')")
@@ -25,6 +25,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+
 import { MAX_LIMIT } from '@/constants';
 
 const { mapActions } = createNamespacedHelpers('alarm');
