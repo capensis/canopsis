@@ -1352,7 +1352,6 @@ export default {
       noData: 'Aucune méta-alarme correspondante. Appuyez sur <kbd>Entrée</kbd> pour en créer un nouveau',
       fields: {
         metaAlarm: 'Méta-alarme manuelle',
-        output: 'Note',
       },
     },
     createRemediationInstruction: {
