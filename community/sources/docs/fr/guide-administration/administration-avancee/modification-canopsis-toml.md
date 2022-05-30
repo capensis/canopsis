@@ -100,6 +100,7 @@ ReconnectRetries = 3
 | LongOutputLength                | 1024                  | Nombre maximum de caractères du champ `long_output` avant troncage | 
 | DisableActionSnoozeDelayOnPbh   | true,false            | Si `vrai` alors le délai du snooze n'est pas ajouté à un comportement périodique |
 | TimeToKeepResolvedAlarms        | "720h"                | Délai durant lequel les alarmes résolues sont conservées dans la collection principale des alarmes |
+| AllowDoubleAck                  | true,false            | Permet d'acquitter plusieurs fois une alarme |
 
 
 ### [Canopsis.timezone]
