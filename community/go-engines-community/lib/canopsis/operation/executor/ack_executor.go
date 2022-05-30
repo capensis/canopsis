@@ -40,7 +40,9 @@ func (e *ackExecutor) Exec(
 		userID = params.User
 	}
 
-	if alarm.Value.ACK != nil {
+	allowDoubleAck := e.configProvider.Get().AllowDoubleAck
+	doubleAck := alarm.Value.ACK != nil
+	if doubleAck && !allowDoubleAck {
 		return "", nil
 	}
 
@@ -51,19 +53,24 @@ func (e *ackExecutor) Exec(
 		userID,
 		role,
 		initiator,
+		allowDoubleAck,
 	)
 
 	if err != nil {
 		return "", err
 	}
 
-	go func() {
-		metricsUserID := ""
-		if initiator == types.InitiatorUser {
-			metricsUserID = userID
-		}
-		e.metricsSender.SendAck(context.Background(), *alarm, metricsUserID, time.Time)
-	}()
+	if !doubleAck {
+		go func() {
+			metricsUserID := ""
+			if initiator == types.InitiatorUser {
+				metricsUserID = userID
+			}
+			e.metricsSender.SendAck(context.Background(), *alarm, metricsUserID, time.Time)
+		}()
 
-	return types.AlarmChangeTypeAck, nil
+		return types.AlarmChangeTypeAck, nil
+	}
+
+	return types.AlarmChangeTypeDoubleAck, nil
 }
