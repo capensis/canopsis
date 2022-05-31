@@ -214,6 +214,7 @@ export default {
     ratingSettings: 'Rating settings',
     pbehavior: 'Pbehavior | Pbehaviors',
     template: 'Template',
+    cycleDependency: 'Cycle dependency',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -763,6 +764,11 @@ export default {
         + '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n'
         + '</dl>',
     },
+    density: {
+      title: 'Default view',
+      comfort: 'Comfort view',
+      compact: 'Compact view',
+    },
   },
   modals: {
     common: {
@@ -1095,7 +1101,8 @@ export default {
       },
     },
     alarmsList: {
-      title: 'Alarms list',
+      title: 'Alarm list',
+      prefixTitle: '{prefix} - alarm list',
     },
     createUser: {
       create: {
@@ -2299,6 +2306,7 @@ export default {
     addAction: 'Add action',
     emptyActions: 'No actions added yet',
     output: 'Output Action Format',
+    forwardAuthor: 'Forward author to the next step',
     urlHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>'
       + '<i>For example:</i>'
       + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'

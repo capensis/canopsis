@@ -163,9 +163,9 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 	project := s.getProject(r.ListRequest, entitiesToProject)
 	project = s.insertDeferred(r.FilterRequest, &pipeline, project)
 	if s.isSortByDuration(sort) {
-		pipeline = append(pipeline, s.getDurationFields())
+		pipeline = append(pipeline, s.getDurationFields()...)
 	} else {
-		project = append(project, s.getDurationFields())
+		project = append(project, s.getDurationFields()...)
 	}
 	cursor, err := collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
@@ -1142,10 +1142,19 @@ func (s *store) addNestedObjects(r FilterRequest, pipeline *[]bson.M) {
 	}
 }
 
+// when one of sort_by attributes is an entity's field then entities $lookup should be kept until $sort stage
 func (s *store) resetEntities(r ListRequest, pipeline *[]bson.M) bool {
-	if strings.HasPrefix(r.SortBy, "entity.") || strings.HasPrefix(r.SortBy, "infos.") {
+	if len(r.MultiSort) != 0 {
+		for _, multiSortValue := range r.MultiSort {
+			multiSortData := strings.Split(multiSortValue, ",")
+			if strings.HasPrefix(multiSortData[0], "entity.") || strings.HasPrefix(multiSortData[0], "infos.") {
+				return false
+			}
+		}
+	} else if strings.HasPrefix(r.SortBy, "entity.") || strings.HasPrefix(r.SortBy, "infos.") {
 		return false
 	}
+
 	*pipeline = append(*pipeline, bson.M{"$project": bson.M{"entity": 0}})
 	return true
 }
@@ -1421,37 +1430,62 @@ func (s *store) resolveAlias(v string) string {
 	return v
 }
 
-func (s *store) getDurationFields() bson.M {
+func (s *store) getDurationFields() []bson.M {
 	now := time.Now().Unix()
 
-	return bson.M{"$addFields": bson.M{
-		"v.duration": bson.M{"$subtract": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$v.resolved",
-				"then": "$v.resolved",
-				"else": now,
-			}},
-			"$v.creation_date",
-		}},
-		"v.current_state_duration": bson.M{"$subtract": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$v.resolved",
-				"then": "$v.resolved",
-				"else": now,
-			}},
-			"$v.state.t",
-		}},
-		"v.active_duration": bson.M{"$subtract": bson.A{
-			bson.M{"$cond": bson.M{
-				"if":   "$v.resolved",
-				"then": "$v.resolved",
-				"else": now,
-			}},
-			bson.M{"$sum": bson.A{
+	return []bson.M{
+		{"$addFields": bson.M{
+			"v.duration": bson.M{"$subtract": bson.A{
+				bson.M{"$cond": bson.M{
+					"if":   "$v.resolved",
+					"then": "$v.resolved",
+					"else": now,
+				}},
 				"$v.creation_date",
-				"$v.snooze_duration",
-				"$v.pbh_inactive_duration",
+			}},
+			"v.current_state_duration": bson.M{"$subtract": bson.A{
+				bson.M{"$cond": bson.M{
+					"if":   "$v.resolved",
+					"then": "$v.resolved",
+					"else": now,
+				}},
+				"$v.state.t",
+			}},
+			"v.active_duration": bson.M{"$subtract": bson.A{
+				bson.M{"$cond": bson.M{
+					"if":   "$v.resolved",
+					"then": "$v.resolved",
+					"else": now,
+				}},
+				bson.M{"$sum": bson.A{
+					"$v.creation_date",
+					"$v.snooze_duration",
+					"$v.pbh_inactive_duration",
+				}},
 			}},
 		}},
-	}}
+		{"$addFields": bson.M{
+			"v.duration": bson.M{
+				"$cond": bson.M{
+					"if":   bson.M{"$lt": bson.A{"$v.duration", 0}},
+					"then": 0,
+					"else": "$v.duration",
+				},
+			},
+			"v.current_state_duration": bson.M{
+				"$cond": bson.M{
+					"if":   bson.M{"$lt": bson.A{"$v.current_state_duration", 0}},
+					"then": 0,
+					"else": "$v.current_state_duration",
+				},
+			},
+			"v.active_duration": bson.M{
+				"$cond": bson.M{
+					"if":   bson.M{"$lt": bson.A{"$v.active_duration", 0}},
+					"then": 0,
+					"else": "$v.active_duration",
+				},
+			},
+		}},
+	}
 }

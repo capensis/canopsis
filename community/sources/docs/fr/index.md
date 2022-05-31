@@ -19,6 +19,8 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
 ### Dernières versions
 
 <!-- du plus récent au plus ancien -->
+*  [Canopsis 4.5.7](notes-de-version/4.5.7.md), publié le 12 mai 2022.
+*  [Canopsis 4.5.6](notes-de-version/4.5.6.md), publié le 21 avril 2022.
 *  [Canopsis 4.5.5](notes-de-version/4.5.5.md), publié le 13 avril 2022.
 *  [Canopsis 4.5.4](notes-de-version/4.5.4.md), publié le 25 mars 2022.
 *  [Canopsis 4.5.3](notes-de-version/4.5.3.md), publié le 18 mars 2022.

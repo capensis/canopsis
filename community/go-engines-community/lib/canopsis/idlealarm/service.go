@@ -8,6 +8,7 @@ package idlealarm
 import (
 	"context"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
@@ -204,68 +205,48 @@ func (s *baseService) applyAlarmRule(
 		Component:     alarm.Value.Component,
 		Resource:      alarm.Value.Resource,
 		Timestamp:     now,
+		Author:        canopsis.DefaultEventAuthor,
 		Initiator:     types.InitiatorSystem,
 		IdleRuleApply: fmt.Sprintf("%s_%s", rule.Type, rule.AlarmCondition),
 	}
 	event.SourceType = event.DetectSourceType()
 
+	event.Output = rule.Operation.Parameters.Output
+	event.Ticket = rule.Operation.Parameters.Ticket
+	if rule.Operation.Parameters.State != nil {
+		event.State = *rule.Operation.Parameters.State
+	}
+
 	switch rule.Operation.Type {
 	case types.ActionTypeAck:
-		if params, ok := rule.Operation.Parameters.(types.OperationParameters); ok {
-			event.EventType = types.EventTypeAck
-			event.Output = params.Output
-			event.Author = params.Author
-			event.UserID = params.User
-		}
+		event.EventType = types.EventTypeAck
 	case types.ActionTypeAckRemove:
-		if params, ok := rule.Operation.Parameters.(types.OperationParameters); ok {
-			event.EventType = types.EventTypeAckremove
-			event.Output = params.Output
-			event.Author = params.Author
-			event.UserID = params.User
-		}
+		event.EventType = types.EventTypeAckremove
 	case types.ActionTypeCancel:
-		if params, ok := rule.Operation.Parameters.(types.OperationParameters); ok {
-			event.EventType = types.EventTypeCancel
-			event.Output = params.Output
-			event.Author = params.Author
-			event.UserID = params.User
-		}
+		event.EventType = types.EventTypeCancel
 	case types.ActionTypeAssocTicket:
-		if params, ok := rule.Operation.Parameters.(types.OperationAssocTicketParameters); ok {
-			event.EventType = types.EventTypeAssocTicket
-			event.Ticket = params.Ticket
-			event.Output = params.Output
-			event.Author = params.Author
-			event.UserID = params.User
-		}
+		event.EventType = types.EventTypeAssocTicket
 	case types.ActionTypeChangeState:
-		if params, ok := rule.Operation.Parameters.(types.OperationChangeStateParameters); ok {
-			event.EventType = types.EventTypeChangestate
-			event.State = params.State
-			event.Output = params.Output
-			event.Author = params.Author
-			event.UserID = params.User
-		}
+		event.EventType = types.EventTypeChangestate
 	case types.ActionTypePbehavior:
-		if params, ok := rule.Operation.Parameters.(types.ActionPBehaviorParameters); ok {
-			event.EventType = types.EventTypePbhCreate
-			encodedParams, err := s.encoder.Encode(params)
-			if err != nil {
-				return nil, fmt.Errorf("cannot encode parameters: %w", err)
-			}
-			event.PbhParameters = string(encodedParams)
-			event.Author = params.Author
-			event.UserID = params.UserID
+		event.EventType = types.EventTypePbhCreate
+		encodedParams, err := s.encoder.Encode(types.RPCPBehaviorParameters{
+			Name:           rule.Operation.Parameters.Name,
+			Reason:         rule.Operation.Parameters.Reason,
+			Type:           rule.Operation.Parameters.Type,
+			RRule:          rule.Operation.Parameters.RRule,
+			Tstart:         rule.Operation.Parameters.Tstart,
+			Tstop:          rule.Operation.Parameters.Tstop,
+			StartOnTrigger: rule.Operation.Parameters.StartOnTrigger,
+			Duration:       rule.Operation.Parameters.Duration,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("cannot encode parameters: %w", err)
 		}
+		event.PbhParameters = string(encodedParams)
 	case types.ActionTypeSnooze:
-		if params, ok := rule.Operation.Parameters.(types.OperationSnoozeParameters); ok {
-			event.EventType = types.EventTypeSnooze
-			event.Duration = types.CpsNumber(params.Duration.AddTo(now).Sub(now.Time).Seconds())
-			event.Output = params.Output
-			event.Author = params.Author
-			event.UserID = params.User
-		}
+		event.EventType = types.EventTypeSnooze
+		event.Duration = types.CpsNumber(rule.Operation.Parameters.Duration.AddTo(now).Sub(now.Time).Seconds())
 	default:
 		return nil, fmt.Errorf("unknown idle rule id=%q operation type=%q", rule.ID, rule.Operation.Type)
 	}
@@ -305,7 +286,7 @@ func (s *baseService) applyEntityRule(
 	event.EventType = types.EventTypeNoEvents
 	event.Timestamp = types.CpsTime{Time: time.Now()}
 	event.State = types.AlarmStateCritical
-	event.Author = rule.Author
+	event.Author = canopsis.DefaultEventAuthor
 	event.Initiator = types.InitiatorSystem
 	event.Output = fmt.Sprintf("Idle rule %s", rule.Name)
 	event.IdleRuleApply = rule.Type
