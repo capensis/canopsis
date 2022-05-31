@@ -130,20 +130,18 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		changeType, err := s.processMetaAlarmCreateEvent(ctx, event)
 		alarmChange.Type = changeType
 		return alarmChange, err
+	case types.EventTypeTrigger:
+		if event.AlarmChange == nil || event.Alarm == nil {
+			return types.NewAlarmChange(), nil
+		}
+
+		return *event.AlarmChange, nil
 	}
 
 	if event.Alarm == nil {
 		err = s.processPbhEventsForEntity(ctx, event, &alarmChange)
 
 		return alarmChange, err
-	}
-
-	if event.EventType == types.EventTypeTrigger {
-		if event.AlarmChange == nil {
-			return types.NewAlarmChange(), nil
-		}
-
-		return *event.AlarmChange, nil
 	}
 
 	entityOldIdleSince, entityOldLastIdleRuleApply := event.Entity.IdleSince, event.Entity.LastIdleRuleApply
