@@ -1,11 +1,10 @@
 <template lang="pug">
   div
-    v-textarea(
+    c-description-field(
       v-field="form.comment",
-      v-validate="'required'",
-      :label="$t('modals.createPause.comment')",
-      :error-messages="errors.collect('comment')",
-      name="comment"
+      :label="$tc('common.comment')",
+      name="comment",
+      required
     )
     c-pbehavior-reason-field(v-field="form.reason", required, return-object)
 </template>
