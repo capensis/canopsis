@@ -4,6 +4,7 @@
     :label="label || $t('common.impactLevel')",
     :placeholder="placeholder",
     :single-line="singleLine",
+    :disabled="disabled",
     :name="name",
     :max="max",
     :min="min",
@@ -44,6 +45,10 @@ export default {
       default: 10,
     },
     required: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },

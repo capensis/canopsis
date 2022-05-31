@@ -181,7 +181,7 @@ export default {
       this.isFocused = false;
     },
 
-    getParams(ids) {
+    getQuery(ids) {
       const params = {
         limit: this.limit,
         page: this.query.page,
@@ -200,7 +200,7 @@ export default {
       this.entitiesPending = true;
 
       const { data: entities, meta } = await this.fetchContextEntitiesListWithoutStore({
-        params: this.getParams(ids),
+        params: this.getQuery(ids),
       });
 
       this.pageCount = meta.page_count;

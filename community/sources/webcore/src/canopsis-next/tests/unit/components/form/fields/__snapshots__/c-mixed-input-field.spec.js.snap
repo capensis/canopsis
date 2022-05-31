@@ -93,15 +93,8 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with default props 
       <div
         class="v-text-field__slot"
       >
-        <label
-          aria-hidden="true"
-          class="v-label theme--light"
-          style="left: 0px; position: absolute;"
-        >
-          string
-        </label>
         <input
-          aria-label="string"
+          aria-label=""
           dense="true"
           name="value"
           type="text"
@@ -139,15 +132,8 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with errors correct
       <div
         class="v-text-field__slot"
       >
-        <label
-          aria-hidden="true"
-          class="v-label theme--light"
-          style="left: 0px; position: absolute;"
-        >
-          string
-        </label>
         <input
-          aria-label="string"
+          aria-label=""
           dense="true"
           name="value"
           type="text"
@@ -212,7 +198,6 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with null type corr
 <c-array-mixed-field-stub
   class="c-mixed-input-field"
   name="mixedFieldName"
-  types=""
   values="0,1,,false,"
 />
 `;
