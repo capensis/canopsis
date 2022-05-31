@@ -193,6 +193,7 @@ func (s *store) GetImpacts(ctx context.Context, id string, q pagination.Query) (
 			}},
 		}},
 	}
+	const entitiesListLimit = 100
 	projectPipeline := []bson.M{
 		// Find category
 		{"$lookup": bson.M{
@@ -214,7 +215,12 @@ func (s *store) GetImpacts(ctx context.Context, id string, q pagination.Query) (
 		}},
 		{"$addFields": bson.M{
 			"has_impacts": bson.M{"$gt": bson.A{bson.M{"$size": "$service_impacts"}, 0}},
+			// entity.impact and entity.depends arrays of the output document are
+			// limited by 100 items each to prevent BSONObjectTooLarge error
+			"entity.impact":  bson.M{"$slice": bson.A{"$entity.impact", entitiesListLimit}},
+			"entity.depends": bson.M{"$slice": bson.A{"$entity.depends", entitiesListLimit}},
 		}},
+		{"$project": bson.M{"service_impacts": 0}},
 	}
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		q,
