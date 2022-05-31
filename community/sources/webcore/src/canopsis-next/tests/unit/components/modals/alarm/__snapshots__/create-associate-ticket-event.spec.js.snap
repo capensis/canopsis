@@ -1,0 +1,261 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`create-associate-ticket-event Renders \`create-associate-ticket-event\` with config data 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close="close"
+  >
+    <div
+      class="title"
+    >
+      <span>
+        Associate ticket number
+      </span>
+    </div>
+     
+    <div
+      class="text"
+    >
+      <div
+        class="container"
+      >
+        <div
+          class="layout row"
+        >
+          <div
+            class="flex text-xs-center"
+          >
+            <alarm-general-table-stub
+              items="[object Object]"
+            />
+          </div>
+        </div>
+        <div
+          class="layout row"
+        >
+          <hr
+            class="my-3 v-divider theme--light"
+          />
+        </div>
+        <div
+          class="layout row"
+        >
+          <div
+            class="v-input v-text-field theme--light"
+          >
+            <div
+              class="v-input__control"
+            >
+              <div
+                class="v-input__slot"
+              >
+                <div
+                  class="v-text-field__slot"
+                >
+                  <label
+                    aria-hidden="true"
+                    class="v-label theme--light"
+                    style="left: 0px; position: absolute;"
+                  >
+                    Number of the ticket
+                  </label>
+                  <input
+                    aria-label="Number of the ticket"
+                    name="ticket"
+                    type="text"
+                  />
+                </div>
+              </div>
+              <div
+                class="v-text-field__details"
+              >
+                <div
+                  class="v-messages theme--light"
+                >
+                  <div
+                    class="v-messages__wrapper"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-alert info"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light v-alert__icon"
+          >
+            info
+          </i>
+          <div>
+            <span>
+              There is 1 item without ack. Ack event for the item will send before.
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Save changes
+        </div>
+      </button>
+    </div>
+  </div>
+</form>
+`;
+
+exports[`create-associate-ticket-event Renders \`create-associate-ticket-event\` with empty modal 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close="close"
+  >
+    <div
+      class="title"
+    >
+      <span>
+        Associate ticket number
+      </span>
+    </div>
+     
+    <div
+      class="text"
+    >
+      <div
+        class="container"
+      >
+        <div
+          class="layout row"
+        >
+          <div
+            class="flex text-xs-center"
+          >
+            <alarm-general-table-stub
+              items="[object Object]"
+            />
+          </div>
+        </div>
+        <div
+          class="layout row"
+        >
+          <hr
+            class="my-3 v-divider theme--light"
+          />
+        </div>
+        <div
+          class="layout row"
+        >
+          <div
+            class="v-input v-text-field theme--light"
+          >
+            <div
+              class="v-input__control"
+            >
+              <div
+                class="v-input__slot"
+              >
+                <div
+                  class="v-text-field__slot"
+                >
+                  <label
+                    aria-hidden="true"
+                    class="v-label theme--light"
+                    style="left: 0px; position: absolute;"
+                  >
+                    Number of the ticket
+                  </label>
+                  <input
+                    aria-label="Number of the ticket"
+                    name="ticket"
+                    type="text"
+                  />
+                </div>
+              </div>
+              <div
+                class="v-text-field__details"
+              >
+                <div
+                  class="v-messages theme--light"
+                >
+                  <div
+                    class="v-messages__wrapper"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-alert info"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light v-alert__icon"
+          >
+            info
+          </i>
+          <div>
+            <span>
+              There is 1 item without ack. Ack event for the item will send before.
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Save changes
+        </div>
+      </button>
+    </div>
+  </div>
+</form>
+`;
