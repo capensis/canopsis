@@ -17,8 +17,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"github.com/streadway/amqp"
 )
 
 type messageProcessor struct {
@@ -148,9 +148,6 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 		if updated != nil {
 			updatedEntityServices = updatedEntityServices.Add(*updated)
-		} else {
-			// If context graph is not updated do not recompute service state.
-			event.EventType = types.EventTypeUpdateEntityService
 		}
 	}
 

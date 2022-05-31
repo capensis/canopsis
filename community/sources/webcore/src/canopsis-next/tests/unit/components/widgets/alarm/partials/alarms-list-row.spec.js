@@ -181,7 +181,7 @@ describe('alarms-list-row', () => {
           sort_key: 't',
           limit: 1,
           with_instructions: true,
-          resolved: true,
+          opened: false,
           with_causes: true,
           with_consequences: true,
           with_steps: true,

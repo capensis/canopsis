@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -54,6 +55,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		json.NewEncoder(),
 		entityservice.NewAdapter(mongoClient),
 		entity.NewAdapter(mongoClient),
+		alarm.NewAdapter(mongoClient),
 		entityservice.NewCountersCache(redisSession, logger),
 		entityservice.NewStorage(entityservice.NewAdapter(mongoClient), redisSession, json.NewEncoder(), json.NewDecoder(), logger),
 		serviceLockClient,
