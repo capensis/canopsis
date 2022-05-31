@@ -21,17 +21,6 @@
         with-type,
         @input="errors.remove(entityPatternsFieldName)"
       )
-    c-pattern-panel.mb-2(v-if="withEntity", :title="$t('common.entityPatterns')")
-      c-entity-patterns-field(
-        v-field="value.entity_pattern",
-        :required="isPatternRequired",
-        :disabled="disabled",
-        :name="entityPatternsFieldName",
-        :attributes="entityAttributes",
-        :excluded="entityExcludedItems",
-        with-type,
-        @input="errors.remove(entityPatternsFieldName)"
-      )
 
     c-pattern-panel.mb-2(v-if="withPbehavior", :title="$t('common.pbehaviorPatterns')")
       c-pbehavior-patterns-field(

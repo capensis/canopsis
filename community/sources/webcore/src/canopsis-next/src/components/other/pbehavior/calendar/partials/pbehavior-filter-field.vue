@@ -1,36 +1,27 @@
 <template lang="pug">
   v-flex
     v-btn.ml-0.btn-filter(
-      :color="errors.has('filter') ? 'error' : 'primary'",
+      :color="errors.has(patternsFieldName) ? 'error' : 'primary'",
       @click="showCreateFilterModal"
-    ) {{ hasFilter ? $t('pbehavior.buttons.editFilter') : $t('pbehavior.buttons.addFilter') }}
-    v-tooltip(v-show="hasFilter", fixed, top)
-      v-btn(slot="activator", icon)
-        v-icon(color="grey darken-1") info
-      span.pre {{ form.filter | json }}
+    ) {{ hasPattern ? $t('pbehavior.buttons.editFilter') : $t('pbehavior.buttons.addFilter') }}
+    v-tooltip(v-if="hasPattern", fixed, top)
+      template(#activator="{ on }")
+        v-btn(v-on="on", icon)
+          v-icon(color="grey darken-1") info
+      span.pre {{ entityPattern | json }}
     v-alert(
-      :value="errors.has('filter')",
+      :value="errors.has(patternsFieldName)",
       type="error",
       transition="fade-transition"
-    ) {{ errors.first('filter') }}
-    v-alert(
-      v-model="countAlertShown",
-      type="warning",
-      transition="fade-transition",
-      dismissible
-    )
-      span {{ countAlertMessage }}
+    ) {{ errors.first(patternsFieldName) }}
 </template>
 
 <script>
-import { isEmpty } from 'lodash';
-import { createNamespacedHelpers } from 'vuex';
-
 import { MODALS } from '@/constants';
 
-import { formMixin } from '@/mixins/form';
+import { formGroupsToPatternRules } from '@/helpers/forms/pattern';
 
-const { mapActions } = createNamespacedHelpers('pbehavior');
+import { formMixin } from '@/mixins/form';
 
 export default {
   inject: ['$validator'],
@@ -44,78 +35,56 @@ export default {
       type: Object,
       required: true,
     },
-  },
-  data() {
-    return {
-      countAlertShown: false,
-      countAlertMessage: '',
-      countPending: false,
-    };
+    patternsFieldName: {
+      type: String,
+      default: 'patterns',
+    },
   },
   computed: {
-    hasFilter() {
-      return this.form.filter && !isEmpty(this.form.filter);
+    entityPattern() {
+      return formGroupsToPatternRules(this.form.patterns.entity_pattern.groups);
+    },
+
+    hasPattern() {
+      return this.entityPattern.length;
     },
   },
   created() {
     this.attachFilterRule();
   },
+  beforeDestroy() {
+    this.detachFilterRule();
+  },
   methods: {
-    ...mapActions({
-      fetchPbehaviorEntitiesCountWithoutStore: 'fetchEntitiesCountWithoutStore',
-    }),
-
     attachFilterRule() {
       this.$validator.attach({
-        name: 'filter',
+        name: this.patternsFieldName,
         rules: 'required:true',
-        getter: () => this.hasFilter,
+        getter: () => !!this.hasPattern,
         context: () => this,
         vm: this,
       });
     },
 
+    detachFilterRule() {
+      this.$validator.detach(this.patternsFieldName);
+    },
+
     showCreateFilterModal() {
       this.$modals.show({
-        name: MODALS.createFilter,
+        name: MODALS.pbehaviorPatterns,
         dialogProps: {
           zIndex: 300,
         },
         config: {
-          filter: this.form.filter,
+          patterns: this.form.patterns,
           withEntity: true,
-          action: (filter) => {
-            this.updateField('filter', filter);
-            this.fetchCountForFilter(filter);
-            this.$nextTick(() => this.$validator.validate('filter'));
+          action: (patterns) => {
+            this.updateField('patterns', patterns);
+            this.$nextTick(() => this.$validator.validate(this.patternsFieldName));
           },
         },
       });
-    },
-
-    async fetchCountForFilter(filter) {
-      try {
-        this.countPending = true;
-
-        const {
-          over_limit: overLimit,
-          total_count: totalCount,
-        } = await this.fetchPbehaviorEntitiesCountWithoutStore({ data: { filter } });
-
-        if (overLimit) {
-          this.countAlertMessage = this.$t('entitiesCountAlerts.filter.countOverLimit', { count: totalCount });
-          this.countAlertShown = true;
-
-          return;
-        }
-
-        this.countAlertShown = false;
-      } catch (err) {
-        this.countAlertMessage = this.$t('entitiesCountAlerts.filter.countRequestError');
-        this.countAlertShown = true;
-      } finally {
-        this.countPending = false;
-      }
     },
   },
 };

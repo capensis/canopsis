@@ -1,10 +1,5 @@
 import Vue from 'vue';
-import {
-  omit,
-  isObject,
-  isString,
-  cloneDeep,
-} from 'lodash';
+import { omit, isObject, cloneDeep } from 'lodash';
 import {
   CalendarEvent,
   DaySpan,
@@ -12,6 +7,9 @@ import {
   Schedule,
 } from 'dayspan';
 
+import { PATTERNS_FIELDS } from '@/constants';
+
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 import uid from '@/helpers/uid';
 import {
   convertDateToTimestampByTimezone,
@@ -79,7 +77,7 @@ import { enabledToForm } from './shared/common';
  */
 
 /**
- * @typedef {Object} Pbehavior
+ * @typedef {FilterPatterns} Pbehavior
  * @property {string} _id
  * @property {string} author
  * @property {boolean} enabled
@@ -103,6 +101,7 @@ import { enabledToForm } from './shared/common';
  * @property {PbehaviorExceptionForm[]} exceptions
  * @property {PbehaviorExdateForm[]} exdates
  * @property {Duration} duration
+ * @property {FilterPatternsForm} patterns
  */
 
 /**
@@ -169,13 +168,13 @@ export const exceptionsToRequest = (exceptions = []) => exceptions.map(exception
  * Convert pbehavior entity to form data.
  *
  * @param {Pbehavior} [pbehavior = {}]
- * @param {string|Object} [filter = null]
+ * @param {string|Object} [patterns]
  * @param {string} [timezone = getLocaleTimezone()]
  * @return {PbehaviorForm}
  */
 export const pbehaviorToForm = (
   pbehavior = {},
-  filter = null,
+  patterns,
   timezone = getLocaleTimezone(),
 ) => {
   let rrule = pbehavior.rrule || null;
@@ -183,8 +182,6 @@ export const pbehaviorToForm = (
   if (pbehavior.rrule && isObject(pbehavior.rrule)) {
     ({ rrule } = pbehavior.rrule);
   }
-
-  const resultFilter = filter || pbehavior.filter || {};
 
   return {
     rrule,
@@ -195,7 +192,7 @@ export const pbehaviorToForm = (
     reason: cloneDeep(pbehavior.reason),
     tstart: pbehavior.tstart ? convertDateToDateObjectByTimezone(pbehavior.tstart, timezone) : null,
     tstop: pbehavior.tstop ? convertDateToDateObjectByTimezone(pbehavior.tstop, timezone) : null,
-    filter: isString(resultFilter) ? JSON.parse(resultFilter) : cloneDeep(resultFilter),
+    patterns: patterns ?? filterPatternsToForm(pbehavior, [PATTERNS_FIELDS.entity]),
     exceptions: pbehavior.exceptions ? addKeyInEntities(cloneDeep(pbehavior.exceptions)) : [],
     comments: pbehavior.comments ? addKeyInEntities(cloneDeep(pbehavior.comments)) : [],
     exdates: pbehavior.exdates ? pbehavior.exdates.map(exdate => exdateToForm(exdate, timezone)) : [],
@@ -219,7 +216,7 @@ export const pbehaviorToDuplicateForm = pbehavior => ({
  * @return {Pbehavior}
  */
 export const formToPbehavior = (form, timezone = getLocaleTimezone()) => ({
-  ...form,
+  ...omit(form, ['patterns']),
 
   enabled: enabledToForm(form.enabled),
   reason: form.reason,
@@ -229,6 +226,7 @@ export const formToPbehavior = (form, timezone = getLocaleTimezone()) => ({
   exceptions: removeKeyFromEntities(form.exceptions),
   tstart: form.tstart ? convertDateToTimestampByTimezone(form.tstart, timezone) : null,
   tstop: form.tstop ? convertDateToTimestampByTimezone(form.tstop, timezone) : null,
+  ...formFilterToPatterns(form.patterns),
 });
 
 /**

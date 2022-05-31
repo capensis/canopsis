@@ -101,6 +101,10 @@ export const CreatePbehaviorException = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/create-pbehavior-exception.vue'),
   loading: LoaderOverlay,
 });
+export const PbehaviorPatterns = () => ({
+  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-patterns.vue'),
+  loading: LoaderOverlay,
+});
 export const Confirmation = () => ({
   component: import(/* webpackChunkName: "Common" */ './common/confirmation.vue'),
   loading: LoaderOverlay,
