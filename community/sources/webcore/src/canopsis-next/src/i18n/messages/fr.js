@@ -1144,8 +1144,6 @@ export default merge({
     },
     createPause: {
       title: 'Mettre en pause',
-      comment: 'Commentaire',
-      reason: 'Raison',
     },
     createAckRemove: {
       title: 'Annuler l\'acquittement',
