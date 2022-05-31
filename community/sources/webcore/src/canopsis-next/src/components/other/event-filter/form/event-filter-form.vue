@@ -23,15 +23,12 @@
 <script>
 import { EVENT_FILTER_TYPES } from '@/constants';
 
-import { formMixin } from '@/mixins/form';
-
 import EventFilterEnrichmentForm from '@/components/other/event-filter/form/event-filter-enrichment-form.vue';
 import EventFilterChangeEntityForm from '@/components/other/event-filter/form/event-filter-change-entity-form.vue';
 
 export default {
   inject: ['$validator'],
   components: { EventFilterEnrichmentForm, EventFilterChangeEntityForm },
-  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
