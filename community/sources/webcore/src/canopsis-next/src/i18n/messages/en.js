@@ -1275,9 +1275,6 @@ export default {
     },
     createCommentEvent: {
       title: 'Add comment',
-      fields: {
-        comment: 'Comment',
-      },
     },
     createPlaylist: {
       create: {
