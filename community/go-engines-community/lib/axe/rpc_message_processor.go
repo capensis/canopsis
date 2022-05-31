@@ -160,16 +160,16 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 		}
 	}
 
-	if event.Entity != nil && event.Alarm != nil &&
+	if event.Entity != nil &&
 		alarmChangeType == types.AlarmChangeTypeAutoInstructionFail ||
 		alarmChangeType == types.AlarmChangeTypeInstructionJobFail ||
 		alarmChangeType == types.AlarmChangeTypeAutoInstructionComplete {
 		body, err := p.Encoder.Encode(types.Event{
 			EventType:     types.EventTypeTrigger,
-			Connector:     event.Alarm.Value.Connector,
-			ConnectorName: event.Alarm.Value.ConnectorName,
-			Component:     event.Alarm.Value.Component,
-			Resource:      event.Alarm.Value.Resource,
+			Connector:     alarm.Value.Connector,
+			ConnectorName: alarm.Value.ConnectorName,
+			Component:     alarm.Value.Component,
+			Resource:      alarm.Value.Resource,
 			SourceType:    event.Entity.Type,
 			AlarmChange:   &alarmChange,
 		})
