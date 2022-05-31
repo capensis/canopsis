@@ -7,7 +7,7 @@
         v-text-field(
           v-model="form.output",
           v-validate="'required'",
-          :label="$t('modals.createCommentEvent.fields.comment')",
+          :label="$tc('common.comment')",
           :error-messages="errors.collect('comment')",
           name="comment"
         )
