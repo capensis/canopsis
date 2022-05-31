@@ -214,6 +214,7 @@ export default {
     ratingSettings: 'Paramètres d\'évaluation',
     pbehavior: 'Comportement périodique | Comportements périodiques',
     template: 'Template',
+    cycleDependency: 'Dépendance au cycle',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
