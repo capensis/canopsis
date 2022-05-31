@@ -91,7 +91,7 @@ var MethodNotAllowedResponse = ErrorResponse{Error: http.StatusText(http.StatusM
 var UnauthorizedResponse = ErrorResponse{Error: http.StatusText(http.StatusUnauthorized)}
 var InternalServerErrorResponse = ErrorResponse{Error: "Internal server error"}
 var ForbiddenResponse = ErrorResponse{Error: http.StatusText(http.StatusForbidden)}
-var ErrTimeoutResponse = ErrorResponse{Error: "Request timeout reached"}
+var RequestTimeoutResponse = ErrorResponse{Error: http.StatusText(http.StatusRequestTimeout)}
 
 // ValidationErrorResponse is response for failed validation.
 type ValidationErrorResponse struct {
