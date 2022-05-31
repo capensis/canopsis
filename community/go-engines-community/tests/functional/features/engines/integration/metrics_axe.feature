@@ -1308,3 +1308,107 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
+
+  Scenario: given double acked alarm should affect metrics only one time
+    Given I am admin
+    When I do POST /api/v4/cat/filters:
+    """json
+    {
+      "name": "test-filter-metrics-axe-13-name",
+      "entity_patterns": [
+        {
+          "name": "test-resource-metrics-axe-13"
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filterID={{ .lastResponse._id }}
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-metrics-axe-13",
+      "connector_name" : "test-connector-name-metrics-axe-13",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" : "test-component-metrics-axe-13",
+      "resource" : "test-resource-metrics-axe-13",
+      "state" : 1
+    }
+    """
+    When I wait the end of event processing
+    When I wait 1s
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-metrics-axe-13",
+      "connector_name" : "test-connector-name-metrics-axe-13",
+      "source_type" : "resource",
+      "event_type" : "ack",
+      "component" : "test-component-metrics-axe-13",
+      "resource" : "test-resource-metrics-axe-13"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ack_alarms&parameters[]=average_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "title": "ack_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        },
+        {
+          "title": "average_ack",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        }
+      ]
+    }
+    """
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-metrics-axe-13",
+      "connector_name" : "test-connector-name-metrics-axe-13",
+      "source_type" : "resource",
+      "event_type" : "ack",
+      "component" : "test-component-metrics-axe-13",
+      "resource" : "test-resource-metrics-axe-13"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ack_alarms&parameters[]=average_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "title": "ack_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        },
+        {
+          "title": "average_ack",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        }
+      ]
+    }
+    """

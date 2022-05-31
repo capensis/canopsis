@@ -2,6 +2,7 @@ package entityservice
 
 import (
 	"context"
+	"errors"
 	"reflect"
 	"time"
 
@@ -30,6 +31,7 @@ type ServiceChanges struct {
 }
 
 type store struct {
+	dbClient                  mongo.DbClient
 	dbCollection              mongo.DbCollection
 	alarmDbCollection         mongo.DbCollection
 	resolvedAlarmDbCollection mongo.DbCollection
@@ -37,6 +39,7 @@ type store struct {
 
 func NewStore(db mongo.DbClient) Store {
 	return &store{
+		dbClient:                  db,
 		dbCollection:              db.Collection(mongo.EntityMongoCollection),
 		alarmDbCollection:         db.Collection(mongo.AlarmMongoCollection),
 		resolvedAlarmDbCollection: db.Collection(mongo.ResolvedAlarmMongoCollection),
@@ -190,6 +193,7 @@ func (s *store) GetImpacts(ctx context.Context, id string, q pagination.Query) (
 			}},
 		}},
 	}
+	const entitiesListLimit = 100
 	projectPipeline := []bson.M{
 		// Find category
 		{"$lookup": bson.M{
@@ -211,7 +215,12 @@ func (s *store) GetImpacts(ctx context.Context, id string, q pagination.Query) (
 		}},
 		{"$addFields": bson.M{
 			"has_impacts": bson.M{"$gt": bson.A{bson.M{"$size": "$service_impacts"}, 0}},
+			// entity.impact and entity.depends arrays of the output document are
+			// limited by 100 items each to prevent BSONObjectTooLarge error
+			"entity.impact":  bson.M{"$slice": bson.A{"$entity.impact", entitiesListLimit}},
+			"entity.depends": bson.M{"$slice": bson.A{"$entity.depends", entitiesListLimit}},
 		}},
+		{"$project": bson.M{"service_impacts": 0}},
 	}
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		q,
@@ -261,55 +270,66 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 	}
 
 	entity.ID = request.ID
-	_, err := s.dbCollection.InsertOne(ctx, entity)
+	var response *Response
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		_, err := s.dbCollection.InsertOne(ctx, entity)
+		if err != nil {
+			return err
+		}
+		response, err = s.GetOneBy(ctx, entity.ID)
+		return err
+	})
+
 	if err != nil {
 		return nil, err
 	}
 
-	return s.GetOneBy(ctx, entity.ID)
+	return response, nil
 }
 
 func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, ServiceChanges, error) {
 	serviceChanges := ServiceChanges{}
-	res := s.dbCollection.FindOneAndUpdate(
-		ctx,
-		bson.M{
-			"_id":  request.ID,
-			"type": types.EntityTypeService,
-		},
-		bson.M{"$set": bson.M{
-			"name":            request.Name,
-			"output_template": request.OutputTemplate,
-			"category":        request.Category,
-			"impact_level":    request.ImpactLevel,
-			"enabled":         request.Enabled,
-			"entity_patterns": request.EntityPatterns,
-			"infos":           transformInfos(request.EditRequest),
-			"sli_avail_state": request.SliAvailState,
-		}},
-		options.FindOneAndUpdate().
-			SetProjection(bson.M{"enabled": 1, "entity_patterns": 1}).
-			SetReturnDocument(options.Before),
-	)
-	if err := res.Err(); err != nil {
-		if err == mongodriver.ErrNoDocuments {
+	var service *Response
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		service = nil
+		oldValues := &entityservice.EntityService{}
+
+		err := s.dbCollection.FindOneAndUpdate(
+			ctx,
+			bson.M{
+				"_id":  request.ID,
+				"type": types.EntityTypeService,
+			},
+			bson.M{"$set": bson.M{
+				"name":            request.Name,
+				"output_template": request.OutputTemplate,
+				"category":        request.Category,
+				"impact_level":    request.ImpactLevel,
+				"enabled":         request.Enabled,
+				"entity_patterns": request.EntityPatterns,
+				"infos":           transformInfos(request.EditRequest),
+				"sli_avail_state": request.SliAvailState,
+			}},
+			options.FindOneAndUpdate().
+				SetProjection(bson.M{"enabled": 1, "entity_patterns": 1}).
+				SetReturnDocument(options.Before),
+		).Decode(oldValues)
+		if err != nil {
+			return err
+		}
+		serviceChanges.IsToggled = oldValues.Enabled != *request.Enabled
+		serviceChanges.IsPatternChanged = !reflect.DeepEqual(oldValues.EntityPatterns, request.EntityPatterns)
+
+		service, err = s.GetOneBy(ctx, request.ID)
+		return err
+	})
+
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, serviceChanges, nil
 		}
 
-		return nil, serviceChanges, err
-	}
-
-	oldValues := &entityservice.EntityService{}
-	err := res.Decode(oldValues)
-	if err != nil {
-		return nil, serviceChanges, err
-	}
-
-	serviceChanges.IsToggled = oldValues.Enabled != *request.Enabled
-	serviceChanges.IsPatternChanged = !reflect.DeepEqual(oldValues.EntityPatterns, request.EntityPatterns)
-
-	service, err := s.GetOneBy(ctx, request.ID)
-	if err != nil {
 		return nil, serviceChanges, err
 	}
 

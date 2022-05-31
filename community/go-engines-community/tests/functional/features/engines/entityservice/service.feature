@@ -2765,3 +2765,118 @@ Feature: update service on event
       }
     }
     """
+
+  Scenario: given new entity service shouldn't count double ack
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-service-21",
+      "connector_name": "test-connector-name-service-21",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-service-21",
+      "resource": "test-resource-service-21",
+      "state": 3,
+      "output": "test-output-service-21"
+    }
+    """
+    When I wait the end of event processing
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "name": "test-entityservice-service-21-name",
+      "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
+      "impact_level": 1,
+      "enabled": true,
+      "entity_patterns": [{"name": "test-resource-service-21"}],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 201
+    When I save response serviceID={{ .lastResponse._id }}
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "component": "{{ .serviceID }}",
+            "connector": "service",
+            "connector_name": "service",
+            "state": {
+              "val": 3
+            },
+            "status": {
+              "val": 1
+            },
+            "output": "All: 1; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateInfo: 0; Pbehaviors: map[];"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-service-21",
+      "connector_name": "test-connector-name-service-21",
+      "source_type": "resource",
+      "event_type": "ack",
+      "component": "test-component-service-21",
+      "resource": "test-resource-service-21",
+      "output": "test-output-service-21"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-service-21",
+      "connector_name": "test-connector-name-service-21",
+      "source_type": "resource",
+      "event_type": "ack",
+      "component": "test-component-service-21",
+      "resource": "test-resource-service-21",
+      "output": "test-output-service-21"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"entity._id":"{{ .serviceID }}"}]}&with_steps=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "component": "{{ .serviceID }}",
+            "connector": "service",
+            "connector_name": "service",
+            "state": {
+              "val": 3
+            },
+            "status": {
+              "val": 1
+            },
+            "output": "All: 1; Alarms: 1; Acknowledged: 1; NotAcknowledged: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateInfo: 0; Pbehaviors: map[];"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """

@@ -178,3 +178,43 @@ indexes:
       keys:
         crecord_type: 1
         role: 1
+
+  action_scenario:
+    priority_1:
+      keys:
+        priority: 1
+
+  entity_category:
+    name_1:
+      keys:
+        name: 1
+
+  idle_rule:
+    priority_1:
+      keys:
+        priority: 1
+
+  job_config:
+    created_1:
+      keys:
+        created: 1
+
+  job:
+    created_1:
+      keys:
+        created: 1
+
+  instruction:
+    created_1:
+      keys:
+        created: 1
+
+  flapping_rule:
+    priority_1:
+      keys:
+        priority: 1
+
+  resolve_rule:
+    priority_1:
+      keys:
+        priority: 1
