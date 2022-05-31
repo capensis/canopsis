@@ -7,9 +7,9 @@
     :total-items="totalItems",
     advanced-pagination
   )
-    template(slot="created", slot-scope="props") {{ props.item.created | date }}
-    template(slot="rating", slot-scope="props")
-      rating-field(:value="props.item.rating", readonly)
+    template(#created="{ item }") {{ item.created | date }}
+    template(#rating="{ item }")
+      rating-field(:value="item.rating", readonly)
 </template>
 
 <script>
@@ -23,6 +23,10 @@ export default {
   mixins: [localQueryMixin, entitiesRemediationInstructionStatsMixin],
   props: {
     remediationInstruction: {
+      type: Object,
+      required: true,
+    },
+    interval: {
       type: Object,
       required: true,
     },
@@ -60,6 +64,9 @@ export default {
       ];
     },
   },
+  watch: {
+    interval: 'fetchList',
+  },
   mounted() {
     this.fetchList();
   },
@@ -67,12 +74,17 @@ export default {
     async fetchList() {
       this.pending = true;
 
+      const params = this.getQuery();
+
+      params.from = this.interval.from;
+      params.to = this.interval.to;
+
       const {
         data: remediationInstructionStatsComments,
         meta,
       } = await this.fetchRemediationInstructionStatsCommentsListWithoutStore({
+        params,
         id: this.remediationInstruction._id,
-        params: this.getQuery(),
       });
       this.remediationInstructionStatsComments = remediationInstructionStatsComments;
       this.totalItems = meta.total_count;
