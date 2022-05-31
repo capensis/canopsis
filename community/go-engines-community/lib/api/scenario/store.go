@@ -2,17 +2,19 @@ package scenario
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"errors"
 	"math"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 // Store is an interface for scenarios storage
@@ -30,7 +32,7 @@ type Store interface {
 }
 
 type store struct {
-	db                    mongo.DbClient
+	dbClient              mongo.DbClient
 	collection            mongo.DbCollection
 	transformer           ModelTransformer
 	defaultSearchByFields []string
@@ -40,7 +42,7 @@ type store struct {
 // NewStore instantiates scenario store.
 func NewStore(db mongo.DbClient) Store {
 	return &store{
-		db:                    db,
+		dbClient:              db,
 		collection:            db.Collection(mongo.ScenarioMongoCollection),
 		transformer:           NewModelTransformer(),
 		defaultSearchByFields: []string{"_id", "name", "author"},
@@ -104,12 +106,8 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Scenario, error) {
 }
 
 func (s *store) IsPriorityValid(ctx context.Context, priority int) (bool, error) {
-	err := s.collection.FindOne(ctx, bson.M{"priority": priority}).Err()
-	if err == nil {
-		return false, nil
-	}
-
-	if err == mongodriver.ErrNoDocuments {
+	err := s.collection.FindOne(ctx, bson.M{action.PriorityField: priority}).Err()
+	if errors.Is(err, mongodriver.ErrNoDocuments) {
 		return true, nil
 	}
 
@@ -129,13 +127,23 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Scenario, error) 
 
 	model.Created = now
 	model.Updated = now
+	var result *Scenario
 
-	_, err := s.collection.InsertOne(ctx, model)
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		result = nil
+		_, err := s.collection.InsertOne(ctx, model)
+		if err != nil {
+			return err
+		}
+
+		result, err = s.GetOneBy(ctx, model.ID)
+		return err
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	return s.GetOneBy(ctx, model.ID)
+	return result, nil
 }
 
 // Update scenario.
@@ -144,16 +152,26 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Scenario, error) 
 	model := s.transformer.TransformEditRequestToModel(r.EditRequest)
 	model.Updated = now
 
-	res, err := s.collection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": model})
+	var result *Scenario
+
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		result = nil
+		res, err := s.collection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": model})
+		if err != nil {
+			return err
+		}
+
+		if res.MatchedCount == 0 {
+			return nil
+		}
+		result, err = s.GetOneBy(ctx, r.ID)
+		return err
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	if res.MatchedCount == 0 {
-		return nil, nil
-	}
-
-	return s.GetOneBy(ctx, r.ID)
+	return result, nil
 }
 
 // Delete scenario by id

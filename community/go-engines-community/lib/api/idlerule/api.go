@@ -3,6 +3,8 @@ package idlerule
 import (
 	"context"
 	"encoding/json"
+	"net/http"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
@@ -11,7 +13,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/valyala/fastjson"
-	"net/http"
 )
 
 type API interface {
@@ -92,7 +93,10 @@ func (a *api) Create(c *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-
+	if rule == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
 	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeIdleRule,

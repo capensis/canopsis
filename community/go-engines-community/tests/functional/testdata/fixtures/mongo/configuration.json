@@ -25,7 +25,8 @@
       "displaynamescheme": "{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3 }}",
       "outputlength": 255,
       "longoutputlength": 1024,
-      "disableactionsnoozedelayonpbh": true
+      "disableactionsnoozedelayonpbh": true,
+      "allowdoubleack": true
     },
     "global": {
       "prefetchcount": 10000,
