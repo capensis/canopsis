@@ -26,6 +26,7 @@ type Store interface {
 }
 
 type store struct {
+	dbClient         mongo.DbClient
 	objectCollection mongo.DbCollection
 	configCollection mongo.DbCollection
 	authProviders    []string
@@ -34,6 +35,7 @@ type store struct {
 // NewStore instantiates configuration store.
 func NewStore(db mongo.DbClient, authProviders []string) Store {
 	return &store{
+		dbClient:         db,
 		objectCollection: db.Collection(mongo.ObjectMongoCollection),
 		configCollection: db.Collection(mongo.ConfigurationMongoCollection),
 		authProviders:    authProviders,
@@ -157,20 +159,25 @@ func (s *store) UpdateUserInterfaceConfig(ctx context.Context, model *UserInterf
 		model.PopupTimeout.Info = &defaultInterval
 	}
 
-	_, err := s.configCollection.UpdateOne(ctx, bson.M{"_id": config.UserInterfaceKeyName},
-		bson.M{"$set": model}, options.Update().SetUpsert(true))
+	var updatedModel UserInterfaceConf
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		updatedModel = UserInterfaceConf{}
+		_, err := s.configCollection.UpdateOne(ctx, bson.M{"_id": config.UserInterfaceKeyName},
+			bson.M{"$set": model}, options.Update().SetUpsert(true))
 
-	if err != nil {
+		if err != nil {
+			return err
+		}
+
+		updatedModel, err = s.RetrieveUserInterfaceConfig(ctx)
 		return err
-	}
-
-	updatedModel, err := s.RetrieveUserInterfaceConfig(ctx)
+	})
 	if err != nil {
 		return err
 	}
 	*model = updatedModel
 
-	return err
+	return nil
 }
 
 func (s *store) DeleteUserInterfaceConfig(ctx context.Context) error {
