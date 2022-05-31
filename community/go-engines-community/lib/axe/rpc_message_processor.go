@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -17,6 +19,7 @@ import (
 
 type rpcMessageProcessor struct {
 	FeaturePrintEventOnError bool
+	RMQChannel               libamqp.Channel
 	PbhRpc                   engine.RPCClient
 	ServiceRpc               engine.RPCClient
 	RemediationRpc           engine.RPCClient
@@ -120,6 +123,7 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 		return p.getErrRpcEvent(fmt.Errorf("cannot update alarm: %v", err), alarm), nil
 	}
 	alarmChange.Type = alarmChangeType
+
 	if alarm.IsMetaAlarm() {
 		var childrenAlarms []types.AlarmWithEntity
 		err := p.AlarmAdapter.GetOpenedAlarmsWithEntityByIDs(ctx, event.Alarm.Value.Children, &childrenAlarms)
@@ -153,6 +157,39 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 			if err != nil {
 				p.logError(err, "RPC Message Processor: failed to send rpc call to engine-service", msg)
 			}
+		}
+	}
+
+	if event.Entity != nil && event.Alarm != nil &&
+		alarmChangeType == types.AlarmChangeTypeAutoInstructionFail ||
+		alarmChangeType == types.AlarmChangeTypeInstructionJobFail ||
+		alarmChangeType == types.AlarmChangeTypeAutoInstructionComplete {
+		body, err := p.Encoder.Encode(types.Event{
+			EventType:     types.EventTypeTrigger,
+			Connector:     event.Alarm.Value.Connector,
+			ConnectorName: event.Alarm.Value.ConnectorName,
+			Component:     event.Alarm.Value.Component,
+			Resource:      event.Alarm.Value.Resource,
+			SourceType:    event.Entity.Type,
+			AlarmChange:   &alarmChange,
+		})
+		if err != nil {
+			p.logError(err, "RPC Message Processor: failed to encode a trigger event to engine-fifo", msg)
+		}
+
+		err = p.RMQChannel.Publish(
+			"",
+			canopsis.FIFOQueueName,
+			false,
+			false,
+			amqp.Publishing{
+				ContentType:  "application/json",
+				Body:         body,
+				DeliveryMode: amqp.Persistent,
+			},
+		)
+		if err != nil {
+			p.logError(err, "RPC Message Processor: failed to send a trigger event to engine-fifo", msg)
 		}
 	}
 
