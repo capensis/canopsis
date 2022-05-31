@@ -217,5 +217,35 @@
     "external_id": "test-job-long-succeeded",
     "multiple_executions": false,
     "created": 1596712203
+  },
+  {
+    "_id": "test-job-action-remediation-triggers-1",
+    "name": "test-job-action-remediation-triggers-1-name",
+    "author": "test-user-author-1-id",
+    "config": "test-job-config-to-run-auto-instruction",
+    "external_id": "test-job-failed",
+    "payload": "{\"test-job-action-remediation-triggers-1-key\": \"test-job-action-remediation-triggers-1-val\"}",
+    "multiple_executions": false,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-job-action-remediation-triggers-2",
+    "name": "test-job-action-remediation-triggers-2-name",
+    "author": "test-user-author-1-id",
+    "config": "test-job-config-to-run-manual-job",
+    "external_id": "test-job-failed",
+    "payload": "{\"test-job-action-remediation-triggers-2-key\": \"test-job-action-remediation-triggers-2-val\"}",
+    "multiple_executions": false,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-job-action-remediation-triggers-3",
+    "name": "test-job-action-remediation-triggers-3-name",
+    "author": "test-user-author-1-id",
+    "config": "test-job-config-to-run-auto-instruction",
+    "external_id": "test-job-succeeded",
+    "payload": "{\"test-job-action-remediation-triggers-3-key\": \"test-job-action-remediation-triggers-3-val\"}",
+    "multiple_executions": false,
+    "created": 1596712203
   }
 ]

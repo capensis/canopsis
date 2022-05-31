@@ -94,6 +94,7 @@ Feature: update an instruction statistics
       ]
     }
     """
+    When I wait the end of 2 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-alarm-get-auto-instruction-flags-1&with_instructions=true until response code is 200 and body contains:
     """json
     {
@@ -306,6 +307,7 @@ Feature: update an instruction statistics
       ]
     }
     """
+    When I wait the end of 3 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-alarm-get-auto-instruction-flags-3&with_instructions=true until response code is 200 and body contains:
     """json
     {
