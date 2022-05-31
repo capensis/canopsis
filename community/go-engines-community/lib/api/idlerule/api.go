@@ -3,7 +3,6 @@ package idlerule
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
@@ -501,10 +500,7 @@ func (a *api) CountPatterns(c *gin.Context) {
 	}
 
 	data, err := a.store.CountByPatterns(c.Request.Context(), request, a.conf.Get().CheckCountRequestTimeout, a.conf.Get().MaxMatchedItems)
-	if errors.Is(err, context.DeadlineExceeded) {
-		c.AbortWithStatusJSON(http.StatusRequestTimeout, common.ErrTimeoutResponse)
-		return
-	} else if err != nil {
+	if err != nil {
 		panic(err)
 	}
 
