@@ -74,8 +74,8 @@ export default {
       const updatedPbehaviors = Object.values(this.form.changedPbehaviorsById).map(pbehaviorToRequest);
       const removedPbehaviors = Object.values(this.form.removedPbehaviorsById);
 
-      await this.createPbehaviors(createdPbehaviors);
-      await this.updatePbehaviors(updatedPbehaviors);
+      await this.createPbehaviorsWithComments(createdPbehaviors);
+      await this.updatePbehaviorsWithComments(updatedPbehaviors);
       await this.removePbehaviors(removedPbehaviors);
 
       if (this.config.afterSubmit) {
