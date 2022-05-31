@@ -224,13 +224,7 @@ describe('edit-live-reporting', () => {
 
     await flushPromises();
 
-    const validator = wrapper.getValidator();
-
-    const addedErrors = validator.errors.items.reduce((acc, { field, msg }) => {
-      acc[field] = msg;
-
-      return acc;
-    }, {});
+    const addedErrors = wrapper.getValidatorErrorsObject();
 
     expect(formErrors).toEqual(addedErrors);
     expect(action).toBeCalledWith({

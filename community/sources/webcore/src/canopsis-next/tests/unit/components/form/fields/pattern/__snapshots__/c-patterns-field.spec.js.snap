@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
+<div
+  class="layout column"
+>
+  <c-pattern-panel-stub
+    class="mb-2"
+    title="Alarm patterns"
+  >
+    <c-alarm-patterns-field-stub
+      disabled="true"
+      name="name.alarm_pattern"
+      required="true"
+      value="[object Object]"
+      with-type="with-type"
+    />
+  </c-pattern-panel-stub>
+  <c-pattern-panel-stub
+    class="mb-2"
+    title="Entity patterns"
+  >
+    <c-entity-patterns-field-stub
+      disabled="true"
+      name="name.entity_pattern"
+      required="true"
+      value="[object Object]"
+      with-type="with-type"
+    />
+  </c-pattern-panel-stub>
+  <c-pattern-panel-stub
+    class="mb-2"
+    title="Pbehavior patterns"
+  >
+    <c-pbehavior-patterns-field-stub
+      disabled="true"
+      name="name.pbehavior_pattern"
+      required="true"
+      value="[object Object]"
+      with-type="with-type"
+    />
+  </c-pattern-panel-stub>
+  <c-pattern-panel-stub
+    title="Event patterns"
+  >
+    <c-event-filter-patterns-field-stub
+      disabled="true"
+      name="name.event_pattern"
+      required="true"
+    />
+  </c-pattern-panel-stub>
+</div>
+`;
+
+exports[`c-patterns-field Renders \`c-patterns-field\` with default props 1`] = `
+<div
+  class="layout column"
+>
+  <!---->
+  <!---->
+  <!---->
+  <!---->
+</div>
+`;

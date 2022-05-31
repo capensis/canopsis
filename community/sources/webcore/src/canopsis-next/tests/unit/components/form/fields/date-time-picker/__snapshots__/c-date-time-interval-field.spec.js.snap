@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-date-time-interval-field Renders \`c-date-time-interval-field\` with custom props 1`] = `
+<div
+  class="d-inline-flex"
+>
+  <date-time-picker-field-stub
+    disabled="true"
+    hide-details="true"
+    label="From"
+    name="custom_name.from"
+    value="1386435600000"
+  />
+  <date-time-picker-field-stub
+    class="pl-3"
+    disabled="true"
+    hide-details="true"
+    label="To"
+    name="custom_name.to"
+    value="1386435599000"
+  />
+</div>
+`;
+
+exports[`c-date-time-interval-field Renders \`c-date-time-interval-field\` with default props 1`] = `
+<div
+  class="d-inline-flex"
+>
+  <date-time-picker-field-stub
+    label="From"
+    name="interval.from"
+    value="Sat Dec 07 2013 18:00:00 GMT+0100 (Central European Standard Time)"
+  />
+  <date-time-picker-field-stub
+    class="pl-3"
+    label="To"
+    name="interval.to"
+    value="Sat Dec 07 2013 18:00:00 GMT+0100 (Central European Standard Time)"
+  />
+</div>
+`;

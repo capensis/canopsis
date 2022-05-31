@@ -55,7 +55,7 @@ export default {
     };
   },
   computed: {
-    patternFields() {
+    patternsFields() {
       const { withAlarm, withEntity, withPbehavior, withEvent } = this.config;
 
       return [
@@ -67,7 +67,7 @@ export default {
     },
 
     title() {
-      return this.config.title || this.$t('modals.createFilter.create.title');
+      return this.config.title ?? this.$t('modals.createFilter.create.title');
     },
   },
   methods: {
@@ -76,7 +76,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(formToFilter(this.form, this.patternFields));
+          await this.config.action(formToFilter(this.form, this.patternsFields));
         }
 
         this.$modals.hide();

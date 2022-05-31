@@ -26,9 +26,9 @@
 </template>
 
 <script>
-import { PATTERN_INPUT_TYPES } from '@/constants';
+import { PATTERN_FIELD_TYPES } from '@/constants';
 
-import { convertValueByType, getValueType } from '@/helpers/pattern';
+import { convertValueByType, getFieldType } from '@/helpers/pattern';
 
 import { formBaseMixin } from '@/mixins/form';
 
@@ -92,17 +92,17 @@ export default {
     types: {
       type: Array,
       default: () => [
-        { value: PATTERN_INPUT_TYPES.string },
-        { value: PATTERN_INPUT_TYPES.number },
-        { value: PATTERN_INPUT_TYPES.boolean },
-        { value: PATTERN_INPUT_TYPES.null },
-        { value: PATTERN_INPUT_TYPES.array },
+        { value: PATTERN_FIELD_TYPES.string },
+        { value: PATTERN_FIELD_TYPES.number },
+        { value: PATTERN_FIELD_TYPES.boolean },
+        { value: PATTERN_FIELD_TYPES.null },
+        { value: PATTERN_FIELD_TYPES.stringArray },
       ],
     },
   },
   computed: {
     inputType() {
-      return getValueType(this.value);
+      return getFieldType(this.value);
     },
   },
   watch: {

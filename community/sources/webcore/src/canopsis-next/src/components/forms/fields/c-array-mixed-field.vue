@@ -2,7 +2,11 @@
   div
     v-layout(v-for="(value, index) in values", :key="index", align-center)
       v-flex
-        c-mixed-field(v-field="values[index]", :disabled="disabled", :types="types")
+        v-text-field(
+          v-field="values[index]",
+          :disabled="disabled",
+          :label="$t('common.value')"
+        )
       c-action-btn(v-if="!disabled", type="delete", @click="removeItemFromArray(index)")
     v-btn.mx-0(:disabled="disabled", color="primary", outline, @click="addItem") {{ $t('common.add') }}
 </template>
@@ -23,10 +27,6 @@ export default {
     values: {
       type: Array,
       default: () => [],
-    },
-    types: {
-      type: Array,
-      required: false,
     },
     disabled: {
       type: Boolean,
