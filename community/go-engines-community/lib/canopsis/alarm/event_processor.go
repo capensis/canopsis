@@ -137,6 +137,15 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 
 		return alarmChange, err
 	}
+
+	if event.EventType == types.EventTypeTrigger {
+		if event.AlarmChange == nil {
+			return types.NewAlarmChange(), nil
+		}
+
+		return *event.AlarmChange, nil
+	}
+
 	entityOldIdleSince, entityOldLastIdleRuleApply := event.Entity.IdleSince, event.Entity.LastIdleRuleApply
 
 	operation := s.createOperationFromEvent(event)
