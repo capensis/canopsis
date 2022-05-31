@@ -810,10 +810,28 @@
     }
   },
   {
-    "_id": "test-role-to-get-user-1",
+    "_id": "test-role-to-user-get-1",
     "crecord_type": "role",
-    "crecord_name": "test-role-to-get-user-1",
-    "description": "test-role-to-get-user-1-description",
+    "crecord_name": "test-role-to-user-get-1",
+    "description": "test-role-to-user-get-1-description",
+    "defaultview": "test-view-to-edit-user",
+    "rights": {
+      "test-permission-to-edit-user-1": {
+        "checksum": 1
+      },
+      "test-permission-to-edit-user-2": {
+        "checksum": 15
+      },
+      "test-permission-to-edit-user-3": {
+        "checksum": 7
+      }
+    }
+  },
+  {
+    "_id": "test-role-to-user-get-2",
+    "crecord_type": "role",
+    "crecord_name": "test-role-to-user-get-2",
+    "description": "test-role-to-user-get-2-description",
     "defaultview": "test-view-to-edit-user",
     "rights": {
       "api_instruction_approve": {
@@ -823,20 +841,13 @@
     }
   },
   {
-    "_id": "test-role-to-get-user-2",
-    "crecord_type": "role",
-    "crecord_name": "test-role-to-get-user-2",
-    "description": "test-role-to-get-user-2-description",
-    "defaultview": "test-view-to-edit-user"
-  },
-  {
     "_id": "test-user-to-get-1",
     "crecord_type": "user",
     "crecord_name": "test-user-to-get-1",
     "lastname": "test-user-to-get-1-lastname",
     "firstname": "test-user-to-get-1-firstname",
     "mail": "test-user-to-get-1-email@canopsis.net",
-    "role": "test-role-to-get-user-1",
+    "role": "test-role-to-user-get-1",
     "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
     "ui_language": "en",
     "groupsNavigationType": "side-bar",
@@ -854,7 +865,7 @@
     "lastname": "test-user-to-get-2-lastname",
     "firstname": "test-user-to-get-2-firstname",
     "mail": "test-user-to-get-2-email@canopsis.net",
-    "role": "test-role-to-get-user-2",
+    "role": "test-role-to-user-get-2",
     "shadowpasswd": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
     "ui_language": "en",
     "groupsNavigationType": "side-bar",
