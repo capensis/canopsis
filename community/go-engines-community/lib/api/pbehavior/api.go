@@ -85,8 +85,7 @@ func (a *api) List(c *gin.Context) {
 }
 
 // Calendar
-// @Param body body CalendarRequest true "body"
-// @Success 200 {object} common.PaginatedListResponse{data=[]CalendarResponse}
+// @Success 200 {array} CalendarResponse
 func (a *api) Calendar(c *gin.Context) {
 	var r CalendarRequest
 
@@ -132,7 +131,6 @@ func (a *api) ListByEntityID(c *gin.Context) {
 }
 
 // CalendarByEntityID
-// @Param body body CalendarByEntityIDRequest true "body"
 // @Success 200 {array} CalendarResponse
 func (a *api) CalendarByEntityID(c *gin.Context) {
 	var r CalendarByEntityIDRequest
