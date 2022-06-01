@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    v-tabs(v-model="activeTab", color="secondary lighten-1", dark, centered, slider-color="primary")
+    v-tabs(v-model="activeTab", color="secondary lighten-1", slider-color="primary", dark, centered)
       v-tab {{ $t('common.summary') }}
       v-tab {{ $t('common.statistics') }}
       v-tab(v-if="remediationInstruction.execution_count") {{ $t('remediationInstructionStats.alarmsTimeline') }}
@@ -14,12 +14,21 @@
                 remediation-instruction-stats-summary-tab(:remediation-instruction="remediationInstruction")
             v-tab-item(lazy)
               v-flex(offset-xs2, xs8)
-                remediation-instruction-stats-statistics-tab(:remediation-instruction="remediationInstruction")
+                remediation-instruction-stats-statistics-tab(
+                  :remediation-instruction="remediationInstruction",
+                  :interval="interval"
+                )
             v-tab-item(v-if="remediationInstruction.execution_count", lazy)
-              remediation-instruction-stats-alarms-timeline-tab(:remediation-instruction="remediationInstruction")
+              remediation-instruction-stats-alarms-timeline-tab(
+                :remediation-instruction="remediationInstruction",
+                :interval="interval"
+              )
             v-tab-item(lazy)
               v-flex(offset-xs2, xs8)
-                remediation-instruction-stats-rating-tab(:remediation-instruction="remediationInstruction")
+                remediation-instruction-stats-rating-tab(
+                  :remediation-instruction="remediationInstruction",
+                  :interval="interval"
+                )
 </template>
 
 <script>
@@ -43,6 +52,10 @@ export default {
       type: String,
       required: true,
     },
+    interval: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
@@ -52,6 +65,7 @@ export default {
   },
   watch: {
     remediationInstructionStatsId: 'fetchRemediationInstructionStatsSummary',
+    interval: 'fetchRemediationInstructionStatsSummary',
   },
   mounted() {
     this.fetchRemediationInstructionStatsSummary();
@@ -60,6 +74,10 @@ export default {
     async fetchRemediationInstructionStatsSummary() {
       this.remediationInstruction = await this.fetchRemediationInstructionStatsSummaryWithoutStore({
         id: this.remediationInstructionStatsId,
+        params: {
+          from: this.interval.from,
+          to: this.interval.to,
+        },
       });
     },
   },

@@ -50,39 +50,6 @@ func NewApi(
 	}
 }
 
-// Event structure used with swagger
-type Event struct {
-	Connector     string `json:"connector" example:"test_connector"`
-	ConnectorName string `json:"connector_name" example:"test_connectorname"`
-	SourceType    string `json:"source_type" example:"resource"`
-	EventType     string `json:"event_type" example:"check"`
-	Component     string `json:"component,omitempty" example:"test_component"`
-	State         string `json:"state,omitempty" example:"1"`
-	Resource      string `json:"resource" example:"test_resource"`
-}
-
-// Response structure used with swagger
-type Response struct {
-	SentEvents []Event `json:"sent_events"`
-	// FailedEvents is an empty array left for compatibility with old handler
-	FailedEvents []interface{} `json:"failed_events"`
-	// RetryEvents is an empty array left for compatibility with old handler
-	RetryEvents []interface{} `json:"retry_events"`
-}
-
-// Send event/events
-// @Summary Send event/events
-// @Description Send event/events
-// @Tags events
-// @ID event-send
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param body body Event true "body"
-// @Success 200 {object} Response
-// @Failure 400 {object} common.ErrorResponse
-// @Router /event [post]
 func (api *api) Send(c *gin.Context) {
 	var err error
 	var raw []byte

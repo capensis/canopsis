@@ -117,7 +117,6 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 		pbhTypeUniqueNameValidator.Validate(ctx, sl)
 		pbhTypeUniquePriorityValidator.Validate(ctx, sl)
 	}, pbehaviortype.UpdateRequest{})
-	v.RegisterStructValidation(pbehaviortype.ValidateEditRequest, pbehaviortype.EditRequest{})
 
 	pbhExceptionUniqueIDValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorExceptionMongoCollection, "ID")
 	pbhExceptionUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorExceptionMongoCollection, "Name")
@@ -136,7 +135,6 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	scenarioExistTypeValidator := common.NewExistFieldValidator(client, mongo.PbehaviorTypeMongoCollection, "Type")
 	scenarioExistIdValidator := common.NewUniqueFieldValidator(client, mongo.ScenarioMongoCollection, "ID")
 
-	v.RegisterStructValidation(scenario.ValidateEditRequest, scenario.EditRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		scenarioUniqueNameValidator.Validate(ctx, sl)
 		scenarioUniquePriorityValidator.Validate(ctx, sl)
