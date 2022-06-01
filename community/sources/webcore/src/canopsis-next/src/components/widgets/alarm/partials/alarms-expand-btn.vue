@@ -1,71 +1,34 @@
 <template lang="pug">
-  tr(v-on="listeners", :class="classes")
-    td.pr-0(v-if="hasRowActions")
-      v-layout(row, align-center, justify-space-between)
-        template(v-if="selectable")
-          v-checkbox-functional(
-            v-if="!isResolvedAlarm",
-            v-field="selected",
-            hide-details
-          )
-          v-checkbox-functional(
-            v-else,
-            disabled,
-            hide-details
-          )
-        v-layout(v-if="hasAlarmInstruction", align-center)
-          alarm-list-row-icon(:alarm="alarm")
-        v-layout(v-if="expandable", :class="{ 'ml-3': !hasAlarmInstruction }", align-center)
-          c-expand-btn(
-            :class="expandButtonClass",
-            :expanded="row.expanded",
-            @expand="showExpandPanel"
-          )
-    td(v-for="column in columns")
-      alarm-column-value(
-        :alarm="alarm",
-        :widget="widget",
-        :column="column",
-        :columns-filters="columnsFilters"
-      )
-    td
-      actions-panel(
-        :item="alarm",
-        :widget="widget",
-        :is-resolved-alarm="isResolvedAlarm",
-        :parent-alarm="parentAlarm"
-      )
+  c-expand-btn(
+    :class="expandButtonClass",
+    :expanded="expanded",
+    :disabled="pending",
+    :loading="pending",
+    @expand="showExpandPanel"
+  )
 </template>
 
 <script>
-import { TOURS } from '@/constants';
-
-import featuresService from '@/services/features';
-
-import { isResolvedAlarm } from '@/helpers/entities';
-import { getStepClass } from '@/helpers/tour';
 import { prepareAlarmDetailsQuery, generateAlarmDetailsQueryId } from '@/helpers/query';
+
+import { queryMixin } from '@/mixins/query';
+import { entitiesAlarmDetailsMixin } from '@/mixins/entities/alarm/details';
+import { getStepClass } from '@/helpers/tour';
+import { TOURS } from '@/constants';
 
 export default {
   inject: ['$system'],
+  mixins: [queryMixin, entitiesAlarmDetailsMixin],
   model: {
     prop: 'expanded',
     event: 'input',
   },
   props: {
-    selected: {
+    expanded: {
       type: Boolean,
       default: false,
     },
-    selectable: {
-      type: Boolean,
-      default: false,
-    },
-    expandable: {
-      type: Boolean,
-      default: false,
-    },
-    row: {
+    alarm: {
       type: Object,
       required: true,
     },
@@ -73,89 +36,25 @@ export default {
       type: Object,
       required: true,
     },
-    columns: {
-      type: Array,
-      required: true,
-    },
-    columnsFilters: {
-      type: Array,
-      default: () => [],
-    },
-    isTourEnabled: {
-      type: Boolean,
-      default: false,
-    },
-    parentAlarm: {
-      type: Object,
-      default: null,
-    },
+  },
+  data() {
+    return {
+      pending: false,
+    };
   },
   computed: {
-    ...featuresService.get('components.alarmListRow.computed', {}),
-
-    alarm() {
-      return this.row.item;
-    },
-
-    hasRowActions() {
-      return this.selectable || this.expandable || this.hasAlarmInstruction;
-    },
-
-    hasAlarmInstruction() {
-      const { children_instructions: childrenInstructions = false } = this.parentAlarm || {};
-      const {
-        assigned_instructions: assignedInstructions = [],
-        is_auto_instruction_running: isAutoInstructionRunning = false,
-        is_manual_instruction_waiting_result: isManualInstructionWaitingResult = false,
-        is_all_auto_instructions_completed: isAutoInstructionCompleted = false,
-      } = this.alarm;
-
-      return assignedInstructions.length
-        || isAutoInstructionRunning
-        || isAutoInstructionCompleted
-        || isManualInstructionWaitingResult
-        || childrenInstructions;
-    },
-
-    isResolvedAlarm() {
-      return isResolvedAlarm(this.alarm);
-    },
-
     expandButtonClass() {
-      if (this.isTourEnabled) {
+      if (this.isTourEnabled) { // TODO: move this logic to mixin
         return getStepClass(TOURS.alarmsExpandPanel, 1);
       }
 
       return '';
     },
-
-    isNotFiltered() {
-      return this.parentAlarm
-        && this.parentAlarm.filtered_children
-        && !this.parentAlarm.filtered_children.includes(this.alarm._id);
-    },
-
-    listeners() {
-      if (featuresService.has('components.alarmListRow.computed.listeners')) {
-        return featuresService.call('components.alarmListRow.computed.listeners', this, {});
-      }
-
-      return {};
-    },
-
-    classes() {
-      const classes = { 'not-filtered': this.isNotFiltered };
-
-      if (featuresService.has('components.alarmListRow.computed.classes')) {
-        return featuresService.call('components.alarmListRow.computed.classes', this, classes);
-      }
-
-      return classes;
-    },
   },
   methods: {
     async showExpandPanel() {
-      if (!this.row.expanded) {
+      if (!this.expanded) {
+        this.pending = true;
         const query = prepareAlarmDetailsQuery(this.alarm, this.widget);
 
         this.updateQuery({
@@ -167,9 +66,11 @@ export default {
         await this.fetchAlarmItemDetails({
           data: [query],
         });
+
+        this.pending = false;
       }
 
-      this.row.expanded = !this.row.expanded;
+      this.$emit('input', !this.expanded);
     },
   },
 };
