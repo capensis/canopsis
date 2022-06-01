@@ -4180,6 +4180,9 @@ definitions:
     - title
     - widget
     type: object
+  widgetfilter.OldMongoQuery:
+    additionalProperties: true
+    type: object
   widgetfilter.Response:
     properties:
       _id:
@@ -4215,8 +4218,7 @@ definitions:
       is_private:
         type: boolean
       old_mongo_query:
-        additionalProperties: true
-        type: object
+        $ref: '#/definitions/widgetfilter.OldMongoQuery'
       pbehavior_pattern:
         items:
           items:

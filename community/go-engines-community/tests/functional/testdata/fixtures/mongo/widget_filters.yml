@@ -103,8 +103,10 @@ widget_filters:
     _id: test-widgetfilter-to-update-6
     widget: test-widget-to-filter-edit
     created: 1605263992
-    old_mongo_query:
-      name: test-widgetfilter-to-update-6-pattern
+    old_mongo_query: | 
+      {
+        "name": "test-widgetfilter-to-update-6-pattern"
+      }
 
   filter_to_delete_1:
     <<: *filter
@@ -216,8 +218,10 @@ widget_filters:
     alarm_pattern:
     entity_pattern:
     pbehavior_pattern:
-    old_mongo_query:
-      name: test-widgetfilter-to-get-5-pattern
+    old_mongo_query: |
+      {
+        "name": "test-widgetfilter-to-get-5-pattern"
+      }
 
   filter_to_widget_get_1:
     <<: *filter
@@ -617,7 +621,10 @@ widget_filters:
     _id: test-widgetfilter-to-alarm-get-2
     widget: test-widget-to-alarm-get
     is_private: false
-    old_mongo_query: {$and: [{"entity.name": {$eq: "test-resource-to-alarm-get-2"}}]}
+    old_mongo_query: |
+      {"$and": [
+        {"entity.name": {"$eq": "test-resource-to-alarm-get-2"}}
+      ]}
     alarm_pattern:
     entity_pattern:
     pbehavior_pattern:
