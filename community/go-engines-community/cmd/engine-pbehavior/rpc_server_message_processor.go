@@ -106,8 +106,8 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 	entity types.Entity,
 ) (*libpbehavior.PBehavior, error) {
 	typeCollection := p.DbClient.Collection(mongo.PbehaviorTypeMongoCollection)
-	res := typeCollection.FindOne(ctx, bson.M{"_id": params.Type})
-	if err := res.Err(); err != nil {
+	err := typeCollection.FindOne(ctx, bson.M{"_id": params.Type}).Err()
+	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			return nil, fmt.Errorf("pbehavior type not exist: %q", params.Type)
 		} else {
@@ -116,8 +116,8 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 	}
 
 	reasonCollection := p.DbClient.Collection(mongo.PbehaviorReasonMongoCollection)
-	res = reasonCollection.FindOne(ctx, bson.M{"_id": params.Reason})
-	if err := res.Err(); err != nil {
+	err = reasonCollection.FindOne(ctx, bson.M{"_id": params.Reason}).Err()
+	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			return nil, fmt.Errorf("pbehavior reason not exist: %q", params.Reason)
 		} else {
@@ -168,7 +168,7 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 	}
 
 	collection := p.DbClient.Collection(mongo.PbehaviorMongoCollection)
-	_, err := collection.InsertOne(ctx, pbehavior)
+	_, err = collection.InsertOne(ctx, pbehavior)
 	if err != nil {
 		return nil, fmt.Errorf("create new pbehavior failed: %w", err)
 	}

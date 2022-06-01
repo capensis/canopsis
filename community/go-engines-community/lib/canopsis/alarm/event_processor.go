@@ -366,9 +366,8 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 		return changeType, err
 	}
 
-	alarmConfig := s.alarmConfigProvider.Get()
-
 	if event.Alarm == nil {
+		alarmConfig := s.alarmConfigProvider.Get()
 		alarm := newAlarm(*event, alarmConfig)
 		err := s.updateAlarmOnNoEventsEvent(&alarm, *event.Entity, *event)
 		if err != nil {
