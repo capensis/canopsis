@@ -23,6 +23,7 @@ type Store interface {
 
 func NewStore(dbClient mongo.DbClient) Store {
 	return &store{
+		dbClient:              dbClient,
 		dbCollection:          dbClient.Collection(mongo.ViewGroupMongoCollection),
 		dbViewCollection:      dbClient.Collection(mongo.ViewMongoCollection),
 		defaultSearchByFields: []string{"_id", "title", "author"},
@@ -31,6 +32,7 @@ func NewStore(dbClient mongo.DbClient) Store {
 }
 
 type store struct {
+	dbClient              mongo.DbClient
 	dbCollection          mongo.DbCollection
 	dbViewCollection      mongo.DbCollection
 	defaultSearchByFields []string
@@ -251,72 +253,93 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*ViewGroup, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r EditRequest) (*ViewGroup, error) {
-	count, err := s.dbCollection.CountDocuments(ctx, bson.M{})
-	if err != nil {
-		return nil, err
-	}
+	var response *ViewGroup
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		count, err := s.dbCollection.CountDocuments(ctx, bson.M{})
+		if err != nil {
+			return err
+		}
 
-	now := types.CpsTime{Time: time.Now()}
-	group := ViewGroup{
-		ID:      utils.NewID(),
-		Title:   r.Title,
-		Author:  r.Author,
-		Created: &now,
-		Updated: &now,
-	}
+		now := types.CpsTime{Time: time.Now()}
+		group := ViewGroup{
+			ID:      utils.NewID(),
+			Title:   r.Title,
+			Author:  r.Author,
+			Created: &now,
+			Updated: &now,
+		}
 
-	_, err = s.dbCollection.InsertOne(ctx, view.Group{
-		ID:       group.ID,
-		Title:    group.Title,
-		Author:   group.Author,
-		Position: count,
-		Created:  *group.Created,
-		Updated:  *group.Updated,
+		_, err = s.dbCollection.InsertOne(ctx, view.Group{
+			ID:       group.ID,
+			Title:    group.Title,
+			Author:   group.Author,
+			Position: count,
+			Created:  *group.Created,
+			Updated:  *group.Updated,
+		})
+		if err != nil {
+			return err
+		}
+
+		response = &group
+		return nil
 	})
-	if err != nil {
-		return nil, err
-	}
 
-	return &group, nil
+	return response, err
 }
 
 func (s *store) Update(ctx context.Context, r EditRequest) (*ViewGroup, error) {
-	group, err := s.GetOneBy(ctx, r.ID)
-	if err != nil || group == nil {
-		return nil, err
-	}
+	var response *ViewGroup
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		group, err := s.GetOneBy(ctx, r.ID)
+		if err != nil || group == nil {
+			return err
+		}
 
-	now := types.CpsTime{Time: time.Now()}
-	group.Title = r.Title
-	group.Author = r.Author
-	group.Updated = &now
+		now := types.CpsTime{Time: time.Now()}
+		group.Title = r.Title
+		group.Author = r.Author
+		group.Updated = &now
 
-	_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": group.ID}, bson.M{"$set": bson.M{
-		"title":   group.Title,
-		"author":  group.Author,
-		"updated": group.Updated,
-	}})
-	if err != nil {
-		return nil, err
-	}
+		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": group.ID}, bson.M{"$set": bson.M{
+			"title":   group.Title,
+			"author":  group.Author,
+			"updated": group.Updated,
+		}})
+		if err != nil {
+			return err
+		}
 
-	return group, nil
+		response = group
+		return nil
+	})
+
+	return response, err
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	res := s.dbViewCollection.FindOne(ctx, bson.M{"group_id": id})
-	if err := res.Err(); err != nil {
-		if err != mongodriver.ErrNoDocuments {
-			return false, err
+	res := false
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		res = false
+		err := s.dbViewCollection.FindOne(ctx, bson.M{"group_id": id}).Err()
+		if err != nil {
+			if err != mongodriver.ErrNoDocuments {
+				return err
+			}
+		} else {
+			return ErrLinkedToView
 		}
-	} else {
-		return false, ErrLinkedToView
-	}
 
-	delCount, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
-	if err != nil {
-		return false, err
-	}
+		delCount, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+		if err != nil {
+			return err
+		}
 
-	return delCount > 0, nil
+		res = delCount > 0
+		return nil
+	})
+
+	return res, err
 }

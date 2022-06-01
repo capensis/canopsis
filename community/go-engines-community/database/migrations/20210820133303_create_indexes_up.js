@@ -79,3 +79,19 @@ db.default_rights.createIndex({
     crecord_type: 1,
     role: 1,
 }, {name: "crecord_type_1_role_1"});
+
+db.action_scenario.createIndex({priority: 1}, {name: "priority_1"});
+
+db.entity_category.createIndex({name: 1}, {name: "name_1"});
+
+db.idle_rule.createIndex({priority: 1}, {name: "priority_1"});
+
+db.job_config.createIndex({created: 1}, {name: "created_1"});
+
+db.job.createIndex({created: 1}, {name: "created_1"});
+
+db.instruction.createIndex({created: 1}, {name: "created_1"});
+
+db.flapping_rule.createIndex({priority: 1}, {name: "priority_1"});
+
+db.resolve_rule.createIndex({priority: 1}, {name: "priority_1"});

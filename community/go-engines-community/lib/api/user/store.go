@@ -29,6 +29,7 @@ type Store interface {
 
 func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder) Store {
 	return &store{
+		client:                 dbClient,
 		collection:             dbClient.Collection(mongo.RightsMongoCollection),
 		userPrefCollection:     dbClient.Collection(mongo.UserPreferencesMongoCollection),
 		patternCollection:      dbClient.Collection(mongo.PatternMongoCollection),
@@ -41,6 +42,7 @@ func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder) Store {
 }
 
 type store struct {
+	client                 mongo.DbClient
 	collection             mongo.DbCollection
 	userPrefCollection     mongo.DbCollection
 	patternCollection      mongo.DbCollection
@@ -134,28 +136,44 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r Request) (*User, error) {
-	_, err := s.collection.InsertOne(ctx, r.getInsertBson(s.passwordEncoder))
+	var user *User
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		user = nil
+		_, err := s.collection.InsertOne(ctx, r.getInsertBson(s.passwordEncoder))
+		if err != nil {
+			return err
+		}
+
+		user, err = s.GetOneBy(ctx, r.Name)
+		return err
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	return s.GetOneBy(ctx, r.Name)
+	return user, nil
 }
 
 func (s *store) Update(ctx context.Context, r Request) (*User, error) {
-	res, err := s.collection.UpdateOne(ctx,
-		bson.M{"_id": r.ID, "crecord_type": securitymodel.LineTypeSubject},
-		bson.M{"$set": r.getUpdateBson(s.passwordEncoder)},
-	)
+	var user *User
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		user = nil
+		res, err := s.collection.UpdateOne(ctx,
+			bson.M{"_id": r.ID, "crecord_type": securitymodel.LineTypeSubject},
+			bson.M{"$set": r.getUpdateBson(s.passwordEncoder)},
+		)
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
+
+		user, err = s.GetOneBy(ctx, r.ID)
+		return err
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	if res.MatchedCount == 0 {
-		return nil, nil
-	}
-
-	return s.GetOneBy(ctx, r.ID)
+	return user, nil
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {

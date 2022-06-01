@@ -36,3 +36,19 @@ db.job_history.dropIndex("next_exec_1_status_1");
 db.job_history.dropIndex("execution_1");
 
 db.default_rights.dropIndex("crecord_type_1_role_1");
+
+db.action_scenario.dropIndex("priority_1");
+
+db.entity_category.dropIndex("name_1");
+
+db.idle_rule.dropIndex("priority_1");
+
+db.job_config.dropIndex("created_1");
+
+db.job.dropIndex("created_1");
+
+db.instruction.dropIndex("created_1");
+
+db.flapping_rule.dropIndex("priority_1");
+
+db.resolve_rule.dropIndex("priority_1");
