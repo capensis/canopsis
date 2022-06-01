@@ -16,10 +16,10 @@
         v-layout(v-if="hasAlarmInstruction", align-center)
           alarm-list-row-icon(:alarm="alarm")
         v-layout(v-if="expandable", :class="{ 'ml-3': !hasAlarmInstruction }", align-center)
-          c-expand-btn(
-            :class="expandButtonClass",
-            :expanded="row.expanded",
-            @expand="showExpandPanel"
+          alarms-expand-btn(
+            v-model="row.expanded",
+            :alarm="alarm",
+            :widget="widget"
           )
     td(v-for="column in columns")
       alarm-column-value(
@@ -38,21 +38,14 @@
 </template>
 
 <script>
-import { TOURS } from '@/constants';
-
 import featuresService from '@/services/features';
 
 import { isResolvedAlarm } from '@/helpers/entities';
-import { getStepClass } from '@/helpers/tour';
-import { prepareAlarmDetailsQuery, generateAlarmDetailsQueryId } from '@/helpers/query';
-
-import { queryMixin } from '@/mixins/query';
-import { entitiesAlarmDetailsMixin } from '@/mixins/entities/alarm/details';
-import { widgetExpandPanelAlarmMixin } from '@/mixins/widget/expand-panel/alarm/expand-panel';
 
 import ActionsPanel from '../actions/actions-panel.vue';
 import AlarmColumnValue from '../columns-formatting/alarm-column-value.vue';
 import AlarmListRowIcon from './alarms-list-row-icon.vue';
+import AlarmsExpandBtn from './alarms-expand-btn.vue'; // TODO: rename
 
 export default {
   inject: ['$system'],
@@ -60,12 +53,8 @@ export default {
     ActionsPanel,
     AlarmColumnValue,
     AlarmListRowIcon,
+    AlarmsExpandBtn,
   },
-  mixins: [
-    queryMixin,
-    entitiesAlarmDetailsMixin,
-    widgetExpandPanelAlarmMixin,
-  ],
   model: {
     prop: 'selected',
     event: 'input',
@@ -139,14 +128,6 @@ export default {
       return isResolvedAlarm(this.alarm);
     },
 
-    expandButtonClass() {
-      if (this.isTourEnabled) {
-        return getStepClass(TOURS.alarmsExpandPanel, 1);
-      }
-
-      return '';
-    },
-
     isNotFiltered() {
       return this.parentAlarm
         && this.parentAlarm.filtered_children
@@ -169,25 +150,6 @@ export default {
       }
 
       return classes;
-    },
-  },
-  methods: {
-    async showExpandPanel() {
-      if (!this.row.expanded) {
-        const query = prepareAlarmDetailsQuery(this.alarm, this.widget);
-
-        this.updateQuery({
-          id: generateAlarmDetailsQueryId(this.alarm, this.widget),
-
-          query,
-        });
-
-        await this.fetchAlarmItemDetails({
-          data: [query],
-        });
-      }
-
-      this.row.expanded = !this.row.expanded;
     },
   },
 };
