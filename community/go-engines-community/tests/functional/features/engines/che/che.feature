@@ -16,7 +16,6 @@ Feature: create entities on event
       "output": "test-output-che-1"
     }
     """
-    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-1
     Then the response code should be 200
@@ -30,9 +29,6 @@ Feature: create entities on event
           "component": "test-component-che-1",
           "depends": [
             "test-resource-che-1/test-component-che-1"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
           ],
           "enabled": true,
           "impact": [
@@ -50,9 +46,6 @@ Feature: create entities on event
           "depends": [
             "test-component-che-1"
           ],
-          "enable_history": [
-            {{ .createTimestamp }}
-          ],
           "enabled": true,
           "impact": [
             "test-resource-che-1/test-component-che-1"
@@ -69,9 +62,6 @@ Feature: create entities on event
           "component": "test-component-che-1",
           "depends": [
             "test-connector-che-1/test-connector-name-che-1"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
           ],
           "enabled": true,
           "impact": [
@@ -107,7 +97,6 @@ Feature: create entities on event
       "output": "test-output-che-2"
     }
     """
-    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-2
     Then the response code should be 200
@@ -120,9 +109,6 @@ Feature: create entities on event
           "category": null,
           "component": "test-component-che-2",
           "depends": [],
-          "enable_history": [
-            {{ .createTimestamp }}
-          ],
           "enabled": true,
           "impact": [
             "test-connector-che-2/test-connector-name-che-2"
@@ -138,9 +124,6 @@ Feature: create entities on event
           "category": null,
           "depends": [
             "test-component-che-2"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
           ],
           "enabled": true,
           "impact": [],
@@ -283,7 +266,6 @@ Feature: create entities on event
       "company": "test-company-che-4"
     }
     """
-    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-4
     Then the response code should be 200
@@ -297,9 +279,6 @@ Feature: create entities on event
           "component": "test-component-che-4",
           "depends": [
             "test-resource-che-4/test-component-che-4"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
           ],
           "enabled": true,
           "impact": [
@@ -317,9 +296,6 @@ Feature: create entities on event
           "depends": [
             "test-component-che-4"
           ],
-          "enable_history": [
-            {{ .createTimestamp }}
-          ],
           "enabled": true,
           "impact": [
             "test-resource-che-4/test-component-che-4"
@@ -336,9 +312,6 @@ Feature: create entities on event
           "component": "test-component-che-4",
           "depends": [
             "test-connector-che-4/test-connector-name-che-4"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
           ],
           "enabled": true,
           "impact": [
@@ -386,7 +359,6 @@ Feature: create entities on event
       "output": "test-output-che-5"
     }
     """
-    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I send an event:
     """json
@@ -416,9 +388,6 @@ Feature: create entities on event
           "depends": [
             "test-resource-che-5/test-component-che-5"
           ],
-          "enable_history": [
-            {{ .createTimestamp }}
-          ],
           "enabled": true,
           "impact": [
             "test-connector-che-5/test-connector-name-che-5"
@@ -445,9 +414,6 @@ Feature: create entities on event
           "category": null,
           "depends": [
             "test-component-che-5"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
           ],
           "enabled": true,
           "impact": [
@@ -477,9 +443,6 @@ Feature: create entities on event
           },
           "depends": [
             "test-connector-che-5/test-connector-name-che-5"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
           ],
           "enabled": true,
           "impact": [
@@ -646,7 +609,6 @@ Feature: create entities on event
       "state": 2
     }
     """
-    When I save response createTimestamp={{ now }}
     When I wait the end of event processing
     When I do PUT /api/v4/entitybasics?_id=test-resource-che-7/test-component-che-7:
     """json
@@ -694,9 +656,6 @@ Feature: create entities on event
           "depends": [
             "test-resource-che-7/test-component-che-7"
           ],
-          "enable_history": [
-            {{ .createTimestamp }}
-          ],
           "enabled": true,
           "impact": [
             "test-connector-che-7/test-connector-name-che-7"
@@ -712,9 +671,6 @@ Feature: create entities on event
           "category": null,
           "depends": [
             "test-component-che-7"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
           ],
           "enabled": true,
           "impact": [
@@ -732,9 +688,6 @@ Feature: create entities on event
           "component": "test-component-che-7",
           "depends": [
             "test-connector-che-7/test-connector-name-che-7"
-          ],
-          "enable_history": [
-            {{ .createTimestamp }}
           ],
           "enabled": false,
           "impact": [

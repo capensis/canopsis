@@ -43,7 +43,7 @@ Feature: no execute action when entity is inactive
       "enabled": true,
       "name": "test-pbehavior-action-1",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "20m" }},
+      "tstop": {{ nowAdd "2h" }},
       "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
@@ -264,7 +264,7 @@ Feature: no execute action when entity is inactive
           "parameters": {
             "name": "pbehavior-action-3",
             "tstart": {{ now }},
-            "tstop": {{ nowAdd "10m" }},
+            "tstop": {{ nowAdd "1h" }},
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"
           },
@@ -343,8 +343,8 @@ Feature: no execute action when entity is inactive
             "name": "pbehavior-action-4",
             "start_on_trigger": true,
             "duration": {
-              "value": 600,
-              "unit": "s"
+              "value": 1,
+              "unit": "h"
             },
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"
@@ -425,7 +425,7 @@ Feature: no execute action when entity is inactive
           "parameters": {
             "name": "pbehavior-action-5",
             "tstart": {{ now }},
-            "tstop": {{ nowAdd "10m" }},
+            "tstop": {{ nowAdd "1h" }},
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"
           },
@@ -520,7 +520,7 @@ Feature: no execute action when entity is inactive
           "parameters": {
             "name": "pbehavior-action-6",
             "tstart": {{ now }},
-            "tstop": {{ nowAdd "10m" }},
+            "tstop": {{ nowAdd "1h" }},
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"
           },

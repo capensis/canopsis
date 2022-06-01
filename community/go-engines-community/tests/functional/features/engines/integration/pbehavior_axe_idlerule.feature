@@ -26,8 +26,8 @@ Feature: update alarm on idle rule
           "name": "test-pbehavior-pbehavior-axe-idlerule-1",
           "start_on_trigger": true,
           "duration": {
-            "value": 10,
-            "unit": "m"
+            "value": 1,
+            "unit": "h"
           },
           "type": "test-maintenance-type-to-engine",
           "reason": "test-reason-to-engine"
@@ -112,10 +112,7 @@ Feature: update alarm on idle rule
       }
     }
     """
-    When I wait 5s
-    When I do GET /api/v4/entities/pbehaviors?_id=test-resource-pbehavior-axe-idlerule-1/test-component-pbehavior-axe-idlerule-1
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/entities/pbehaviors?_id=test-resource-pbehavior-axe-idlerule-1/test-component-pbehavior-axe-idlerule-1 until response code is 200 and body contains:
     """
     [
       {
@@ -203,10 +200,7 @@ Feature: update alarm on idle rule
     }
     """
     When I wait the end of event processing
-    When I wait 4s
-    When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-pbehavior-axe-idlerule-2/test-component-pbehavior-axe-idlerule-2"}]}&with_steps=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-pbehavior-axe-idlerule-2/test-component-pbehavior-axe-idlerule-2"}]}&with_steps=true until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -368,10 +362,7 @@ Feature: update alarm on idle rule
     }
     """
     Then the response code should be 201
-    When I wait 4s
-    When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-pbehavior-axe-idlerule-3/test-component-pbehavior-axe-idlerule-3"}]}&with_steps=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-pbehavior-axe-idlerule-3/test-component-pbehavior-axe-idlerule-3"}]}&with_steps=true until response code is 200 and body contains:
     """json
     {
       "data": [],
@@ -481,10 +472,7 @@ Feature: update alarm on idle rule
     }
     """
     Then the response code should be 201
-    When I wait 4s
-    When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-pbehavior-axe-idlerule-4/test-component-pbehavior-axe-idlerule-4"}]}&with_steps=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?filter={"$and":[{"d":"test-resource-pbehavior-axe-idlerule-4/test-component-pbehavior-axe-idlerule-4"}]}&with_steps=true until response code is 200 and body contains:
     """json
     {
       "data": [

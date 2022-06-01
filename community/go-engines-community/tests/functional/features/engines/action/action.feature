@@ -291,9 +291,7 @@ Feature: execute action on trigger
       "output" : "test-output-action-2"
     }
     """
-    When I wait the end of event processing
-    When I wait 5s
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
     When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-action-2"}]}&with_steps=true
     Then the response code should be 200
     Then the response body should contain:
@@ -472,6 +470,144 @@ Feature: execute action on trigger
             "connector_name": "test-connector-name-action-3",
             "component": "test-component-action-3",
             "resource": "test-resource-action-3"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given scenario and ack already acked alarm should trigger scenario
+    Given I am admin
+    When I send an event:
+    """
+    {
+      "connector" : "test-connector-double-ack-alarm-1",
+      "connector_name" : "test-connector-name-double-ack-alarm-1",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" :  "test-component-double-ack-alarm-1",
+      "resource" : "test-resource-double-ack-alarm-1",
+      "state" : 2,
+      "output" : "test-double-ack-alarm-1"
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """
+    {
+      "connector" : "test-connector-double-ack-alarm-1",
+      "connector_name" : "test-connector-name-double-ack-alarm-1",
+      "source_type" : "resource",
+      "event_type" : "ack",
+      "component" :  "test-component-double-ack-alarm-1",
+      "resource" : "test-resource-double-ack-alarm-1",
+      "output" : "test-double-ack-alarm-1"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.component":"test-component-double-ack-alarm-1"}]}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "ack": {
+              "_t": "ack",
+              "a": "root",
+              "user_id": "root",
+              "m": "test-double-ack-alarm-1"
+            },
+            "connector": "test-connector-double-ack-alarm-1",
+            "connector_name": "test-connector-name-double-ack-alarm-1",
+            "component": "test-component-double-ack-alarm-1",
+            "resource": "test-resource-double-ack-alarm-1",
+            "state": {
+              "val": 2
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/scenarios:
+    """json
+    {
+      "name": "test-scenario-double-ack",
+      "enabled": true,
+      "priority": 1653572574,
+      "triggers": ["ack"],
+      "actions": [
+        {
+          "alarm_patterns": [
+            {
+              "v": {
+                "component": "test-component-double-ack-alarm-1"
+              }
+            }
+          ],
+          "type": "changestate",
+          "parameters": {
+            "state": 3,
+            "forward_author": false,
+            "author": "",
+            "output": "state is changed"
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """
+    {
+      "connector" : "test-connector-double-ack-alarm-1",
+      "connector_name" : "test-connector-name-double-ack-alarm-1",
+      "source_type" : "resource",
+      "event_type" : "ack",
+      "component" :  "test-component-double-ack-alarm-1",
+      "resource" : "test-resource-double-ack-alarm-1",
+      "output" : "test-double-ack-alarm-1"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.component":"test-component-double-ack-alarm-1"}]}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "ack": {
+              "_t": "ack",
+              "a": "root",
+              "user_id": "root",
+              "m": "test-double-ack-alarm-1"
+            },
+            "connector": "test-connector-double-ack-alarm-1",
+            "connector_name": "test-connector-name-double-ack-alarm-1",
+            "component": "test-component-double-ack-alarm-1",
+            "resource": "test-resource-double-ack-alarm-1",
+            "state": {
+              "val": 3
+            }
           }
         }
       ],

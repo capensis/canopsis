@@ -44,11 +44,11 @@ type ConfigurationItem struct {
 	EntityPatterns   *pattern.EntityPatternList `bson:"entity_patterns,omitempty" json:"entity_patterns"`
 	OutputTemplate   *string                    `bson:"output_template,omitempty" json:"output_template"`
 	Infos            map[string]interface{}     `json:"infos" bson:"infos"`
-	Type             *string                    `json:"type" bson:"type,omitempty"`
+	Type             *string                    `json:"type" bson:"type,omitempty" binding:"oneof=connector component resource service"`
 	Category         *string                    `json:"category" bson:"category,omitempty"`
 	ImpactLevel      *int64                     `json:"impact_level" bson:"impact_level,omitempty"`
 	Enabled          *bool                      `json:"enabled" bson:"enabled,omitempty"`
-	Action           string                     `json:"action" bson:"-"`
+	Action           string                     `json:"action" bson:"-" binding:"oneof=set create update delete enable disable"`
 	ActionProperties interface{}                `json:"action_properties" bson:"-"`
 	ImportSource     string                     `json:"-" bson:"import_source"`
 	Imported         types.CpsTime              `json:"-" bson:"imported"`
@@ -59,6 +59,6 @@ type Link struct {
 	To               string                 `json:"to"`
 	From             []string               `json:"from"`
 	Infos            map[string]interface{} `json:"infos"`
-	Action           string                 `json:"action"`
+	Action           string                 `json:"action" binding:"oneof=create delete"`
 	ActionProperties interface{}            `json:"action_properties" bson:"-"`
 }

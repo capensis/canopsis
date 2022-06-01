@@ -214,6 +214,7 @@ export default {
     ratingSettings: 'Rating settings',
     pbehavior: 'Pbehavior | Pbehaviors',
     template: 'Template',
+    cycleDependency: 'Cycle dependency',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -1100,7 +1101,8 @@ export default {
       },
     },
     alarmsList: {
-      title: 'Alarms list',
+      title: 'Alarm list',
+      prefixTitle: '{prefix} - alarm list',
     },
     createUser: {
       create: {

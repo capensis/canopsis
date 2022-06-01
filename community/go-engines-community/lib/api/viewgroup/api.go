@@ -27,23 +27,8 @@ func NewApi(
 	}
 }
 
-// Find all view groups
-// @Summary Find view groups
-// @Description Get paginated list of view groups
-// @Tags viewgroups
-// @ID viewgroups-find-all
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param page query integer true "current page"
-// @Param limit query integer true "items per page"
-// @Param search query string false "search query"
-// @Param sort query string false "sort query"
-// @Param sort_by query string false "sort query"
+// List
 // @Success 200 {object} common.PaginatedListResponse{data=[]ViewGroup}
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /view-groups [get]
 func (a *api) List(c *gin.Context) {
 	var query ListRequest
 	query.Query = pagination.GetDefaultQuery()
@@ -73,18 +58,8 @@ func (a *api) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// Get view group by id
-// @Summary Get view group by id
-// @Description Get view group by id
-// @Tags viewgroups
-// @ID viewgroups-get-by-id
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "viewgroup id"
+// Get
 // @Success 200 {object} ViewGroup
-// @Failure 404 {object} common.ErrorResponse
-// @Router /view-groups/{id} [get]
 func (a *api) Get(c *gin.Context) {
 	viewgroup, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
 	if err != nil {
@@ -98,19 +73,9 @@ func (a *api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, viewgroup)
 }
 
-// Create view group
-// @Summary Create view group
-// @Description Create view group
-// @Tags viewgroups
-// @ID viewgroups-create
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
+// Create
 // @Param body body EditRequest true "body"
 // @Success 201 {object} ViewGroup
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /view-groups [post]
 func (a *api) Create(c *gin.Context) {
 	request := EditRequest{}
 	if err := c.ShouldBind(&request); err != nil {
@@ -135,21 +100,9 @@ func (a *api) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, groups[0])
 }
 
-// Update view group by id
-// @Summary Update view group by id
-// @Description Update view group by id
-// @Tags viewgroups
-// @ID viewgroups-update-by-id
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "view group id"
+// Update
 // @Param body body EditRequest true "body"
 // @Success 200 {object} ViewGroup
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /view-groups/{id} [put]
 func (a *api) Update(c *gin.Context) {
 	request := EditRequest{
 		ID: c.Param("id"),
@@ -185,18 +138,6 @@ func (a *api) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, groups[0])
 }
 
-// Delete view group by id
-// @Summary Delete view group by id
-// @Description Delete view group by id
-// @Tags viewgroups
-// @ID viewgroups-delete-by-id
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "view group id"
-// @Success 204
-// @Failure 400 {object} common.ErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /view-groups/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
 	ok, err := a.store.Delete(c.Request.Context(), []string{id})
@@ -226,19 +167,6 @@ func (a *api) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// Bulk create view groups
-// @Summary Bulk create view groups
-// @Description Bulk create view groups
-// @Tags viewgroups
-// @ID viewgroups-bulk-create
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param body body []EditRequest true "body"
-// @Success 201 {array} EditRequest
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /bulk/view-groups [post]
 func (a *api) BulkCreate(c *gin.Context) {
 	var request BulkCreateRequest
 	if err := c.ShouldBind(&request); err != nil {
@@ -265,20 +193,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 	c.JSON(http.StatusCreated, groups)
 }
 
-// Bulk update view groups by id
-// @Summary Bulk update view groups by id
-// @Description Bulk update view groups by id
-// @Tags viewgroups
-// @ID viewgroups-bulk-update-by-id
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param body body []BulkUpdateRequestItem true "body"
-// @Success 200 {array} ViewGroup
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Failure 404 {object} common.ErrorResponse
-// @Router /bulk/view-groups [put]
 func (a *api) BulkUpdate(c *gin.Context) {
 	request := BulkUpdateRequest{}
 	if err := c.ShouldBind(&request); err != nil {
@@ -310,17 +224,6 @@ func (a *api) BulkUpdate(c *gin.Context) {
 	c.JSON(http.StatusOK, groups)
 }
 
-// Bulk delete view groups by id
-// @Summary Bulk delete view groups by id
-// @Description Bulk delete view groups by id
-// @Tags viewgroups
-// @ID viewgroups-bulk-delete-by-id
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param request query BulkDeleteRequest true "request"
-// @Success 204
-// @Failure 404 {object} common.ErrorResponse
-// @Router /bulk/view-groups [delete]
 func (a *api) BulkDelete(c *gin.Context) {
 	request := BulkDeleteRequest{}
 	if err := c.ShouldBind(&request); err != nil {

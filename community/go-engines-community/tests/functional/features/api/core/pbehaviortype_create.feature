@@ -41,7 +41,7 @@ Feature: Create a pbehavior type
     """json
     {
       "errors": {
-        "type": "type must be one of [active inactive maintenance pause]."
+        "type": "Type must be one of [active inactive maintenance pause]."
       }
     }
     """
