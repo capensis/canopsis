@@ -450,11 +450,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 
 	filterId := "test-filter"
 	filter := view.WidgetFilter{
-		OldMongoQuery: map[string]interface{}{
-			"$and": []map[string]interface{}{
-				{"v.connector": "test-connector"},
-			},
-		},
+		OldMongoQuery: `{"$and": [
+			{"v.connector": "test-connector"}
+		]}`,
 	}
 	mockDbClient := createMockDbClientWithFilterFetching(ctrl, filterId, filter)
 	request := ListRequestWithPagination{
@@ -521,15 +519,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 
 	filterId := "test-filter"
 	filter := view.WidgetFilter{
-		OldMongoQuery: map[string]interface{}{
-			"$and": []map[string]interface{}{
-				{"v.connector": "test-connector"},
-				{"v.duration": bson.M{"$gt": 600}},
-				{"pbehavior._id": "test-pbehavior"},
-				{"entity.category.name": "test-category"},
-				{"v.infos.*.info_name": 3},
-			},
-		},
+		OldMongoQuery: `{"$and": [
+			{"v.connector": "test-connector"},
+			{"v.duration": {"$gt": 600}},
+			{"pbehavior._id": "test-pbehavior"},
+			{"entity.category.name": "test-category"},
+			{"v.infos.*.info_name": 3}
+		]}`,
 	}
 	mockDbClient := createMockDbClientWithFilterFetching(ctrl, filterId, filter)
 	request := ListRequestWithPagination{
@@ -838,12 +834,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 
 	filterId := "test-filter"
 	filter := view.WidgetFilter{
-		OldMongoQuery: map[string]interface{}{
-			"$and": []map[string]interface{}{
-				{"pbehavior._id": "test-pbehavior"},
-				{"entity.name": "test-entity"},
-			},
-		},
+		OldMongoQuery: `{"$and": [
+			{"pbehavior._id": "test-pbehavior"},
+			{"entity.name": "test-entity"}
+		]}`,
 	}
 	mockDbClient := createMockDbClientWithFilterFetching(ctrl, filterId, filter)
 	request := ListRequestWithPagination{

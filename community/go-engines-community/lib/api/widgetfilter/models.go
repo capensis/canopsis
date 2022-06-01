@@ -1,10 +1,14 @@
 package widgetfilter
 
 import (
+	"encoding/json"
+	"errors"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"go.mongodb.org/mongo-driver/bson/bsontype"
+	"go.mongodb.org/mongo-driver/x/bsonx/bsoncore"
 )
 
 type ListRequest struct {
@@ -34,11 +38,23 @@ type Response struct {
 	Created   *types.CpsTime `bson:"created" json:"created,omitempty" swaggertype:"integer"`
 	Updated   *types.CpsTime `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
 
-	OldMongoQuery map[string]interface{} `bson:"old_mongo_query" json:"old_mongo_query,omitempty"`
+	OldMongoQuery OldMongoQuery `bson:"old_mongo_query" json:"old_mongo_query,omitempty"`
 
 	savedpattern.AlarmPatternFields     `bson:",inline"`
 	savedpattern.EntityPatternFields    `bson:",inline"`
 	savedpattern.PbehaviorPatternFields `bson:",inline"`
+}
+
+type OldMongoQuery map[string]interface{}
+
+func (q *OldMongoQuery) UnmarshalBSONValue(_ bsontype.Type, b []byte) error {
+	v, _, ok := bsoncore.ReadString(b)
+	if !ok {
+		return errors.New("invalid value, expected string")
+	}
+
+	err := json.Unmarshal([]byte(v), &q)
+	return err
 }
 
 type AggregationResult struct {

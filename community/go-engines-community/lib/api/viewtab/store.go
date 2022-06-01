@@ -25,6 +25,7 @@ type Store interface {
 
 func NewStore(dbClient mongo.DbClient, widgetStore widget.Store) Store {
 	return &store{
+		client:             dbClient,
 		collection:         dbClient.Collection(mongo.ViewTabMongoCollection),
 		widgetCollection:   dbClient.Collection(mongo.WidgetMongoCollection),
 		filterCollection:   dbClient.Collection(mongo.WidgetFiltersMongoCollection),
@@ -36,6 +37,7 @@ func NewStore(dbClient mongo.DbClient, widgetStore widget.Store) Store {
 }
 
 type store struct {
+	client             mongo.DbClient
 	collection         mongo.DbCollection
 	widgetCollection   mongo.DbCollection
 	filterCollection   mongo.DbCollection
@@ -141,27 +143,34 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
-	count, err := s.collection.CountDocuments(ctx, bson.M{"view": r.View})
-	if err != nil {
-		return nil, err
-	}
-	now := types.CpsTime{Time: time.Now()}
-	tab := view.Tab{
-		ID:       utils.NewID(),
-		Title:    r.Title,
-		View:     r.View,
-		Author:   r.Author,
-		Position: count,
-		Created:  now,
-		Updated:  now,
-	}
+	var response *Response
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		count, err := s.collection.CountDocuments(ctx, bson.M{"view": r.View})
+		if err != nil {
+			return err
+		}
+		now := types.CpsTime{Time: time.Now()}
+		tab := view.Tab{
+			ID:       utils.NewID(),
+			Title:    r.Title,
+			View:     r.View,
+			Author:   r.Author,
+			Position: count,
+			Created:  now,
+			Updated:  now,
+		}
 
-	_, err = s.collection.InsertOne(ctx, tab)
-	if err != nil {
-		return nil, err
-	}
+		_, err = s.collection.InsertOne(ctx, tab)
+		if err != nil {
+			return err
+		}
 
-	return s.GetOneBy(ctx, tab.ID)
+		response, err = s.GetOneBy(ctx, tab.ID)
+		return err
+	})
+
+	return response, err
 }
 
 func (s *store) Update(ctx context.Context, oldTab Response, r EditRequest) (*Response, error) {
@@ -176,88 +185,105 @@ func (s *store) Update(ctx context.Context, oldTab Response, r EditRequest) (*Re
 		Updated:  now,
 	}
 
-	_, err := s.collection.UpdateOne(ctx, bson.M{"_id": tab.ID}, bson.M{"$set": tab})
-	if err != nil {
-		return nil, err
-	}
+	var response *Response
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		_, err := s.collection.UpdateOne(ctx, bson.M{"_id": tab.ID}, bson.M{"$set": tab})
+		if err != nil {
+			return err
+		}
 
-	return s.GetOneBy(ctx, tab.ID)
+		response, err = s.GetOneBy(ctx, tab.ID)
+		return err
+	})
+
+	return response, err
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	isLinked, err := s.isLinked(ctx, id)
-	if err != nil {
-		return false, err
-	}
-	if isLinked {
-		return false, ValidationErr{error: errors.New("view tab is linked to playlist")}
-	}
+	res := false
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		res = false
+		isLinked, err := s.isLinked(ctx, id)
+		if err != nil {
+			return err
+		}
+		if isLinked {
+			return ValidationErr{error: errors.New("view tab is linked to playlist")}
+		}
 
-	delCount, err := s.collection.DeleteOne(ctx, bson.M{"_id": id})
-	if err != nil {
-		return false, err
-	}
+		delCount, err := s.collection.DeleteOne(ctx, bson.M{"_id": id})
+		if err != nil || delCount == 0 {
+			return err
+		}
 
-	if delCount == 0 {
-		return false, nil
-	}
+		err = s.deleteWidgets(ctx, id)
+		if err != nil {
+			return err
+		}
 
-	err = s.deleteWidgets(ctx, id)
-	if err != nil {
-		return false, err
-	}
+		res = true
+		return nil
+	})
 
-	return true, nil
+	return res, err
 }
 
 func (s *store) Copy(ctx context.Context, tab Response, r EditRequest) (*Response, error) {
-	count, err := s.collection.CountDocuments(ctx, bson.M{"view": r.View})
-	if err != nil {
-		return nil, err
-	}
-	now := types.CpsTime{Time: time.Now()}
-	newTab := view.Tab{
-		ID:       utils.NewID(),
-		Title:    r.Title,
-		View:     r.View,
-		Author:   r.Author,
-		Position: count,
-		Created:  now,
-		Updated:  now,
-	}
-
-	_, err = s.collection.InsertOne(ctx, newTab)
-	if err != nil {
-		return nil, err
-	}
-
-	cursor, err := s.widgetCollection.Find(ctx, bson.M{"tab": tab.ID})
-	if err != nil {
-		return nil, err
-	}
-	defer cursor.Close(ctx)
-
-	for cursor.Next(ctx) {
-		w := widget.Response{}
-		err := cursor.Decode(&w)
+	var response *Response
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		count, err := s.collection.CountDocuments(ctx, bson.M{"view": r.View})
 		if err != nil {
-			return nil, err
+			return err
+		}
+		now := types.CpsTime{Time: time.Now()}
+		newTab := view.Tab{
+			ID:       utils.NewID(),
+			Title:    r.Title,
+			View:     r.View,
+			Author:   r.Author,
+			Position: count,
+			Created:  now,
+			Updated:  now,
 		}
 
-		_, err = s.widgetStore.Copy(ctx, w, widget.EditRequest{
-			Tab:            newTab.ID,
-			Title:          w.Title,
-			Type:           w.Type,
-			GridParameters: w.GridParameters,
-			Parameters:     w.Parameters,
-			Author:         r.Author,
-		})
+		_, err = s.collection.InsertOne(ctx, newTab)
 		if err != nil {
-			return nil, err
+			return err
 		}
-	}
 
-	return s.GetOneBy(ctx, newTab.ID)
+		cursor, err := s.widgetCollection.Find(ctx, bson.M{"tab": tab.ID})
+		if err != nil {
+			return err
+		}
+		defer cursor.Close(ctx)
+
+		for cursor.Next(ctx) {
+			w := widget.Response{}
+			err := cursor.Decode(&w)
+			if err != nil {
+				return err
+			}
+
+			_, err = s.widgetStore.Copy(ctx, w, widget.EditRequest{
+				Tab:            newTab.ID,
+				Title:          w.Title,
+				Type:           w.Type,
+				GridParameters: w.GridParameters,
+				Parameters:     w.Parameters,
+				Author:         r.Author,
+			})
+			if err != nil {
+				return err
+			}
+		}
+
+		response, err = s.GetOneBy(ctx, newTab.ID)
+		return err
+	})
+
+	return response, err
 }
 
 func (s *store) UpdatePositions(ctx context.Context, tabs []Response) (bool, error) {
@@ -270,27 +296,34 @@ func (s *store) UpdatePositions(ctx context.Context, tabs []Response) (bool, err
 		}
 	}
 
-	count, err := s.collection.CountDocuments(ctx, bson.M{"view": viewId})
-	if err != nil {
-		return false, err
-	}
-	if count != int64(len(tabs)) {
-		return false, ValidationErr{error: errors.New("view tabs are missing")}
-	}
+	res := false
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		res = false
+		count, err := s.collection.CountDocuments(ctx, bson.M{"view": viewId})
+		if err != nil {
+			return err
+		}
+		if count != int64(len(tabs)) {
+			return ValidationErr{error: errors.New("view tabs are missing")}
+		}
 
-	writeModels := make([]mongodriver.WriteModel, len(tabs))
-	for i, tab := range tabs {
-		writeModels[i] = mongodriver.NewUpdateOneModel().
-			SetFilter(bson.M{"_id": tab.ID}).
-			SetUpdate(bson.M{"$set": bson.M{"position": i}})
-	}
+		writeModels := make([]mongodriver.WriteModel, len(tabs))
+		for i, tab := range tabs {
+			writeModels[i] = mongodriver.NewUpdateOneModel().
+				SetFilter(bson.M{"_id": tab.ID}).
+				SetUpdate(bson.M{"$set": bson.M{"position": i}})
+		}
 
-	res, err := s.collection.BulkWrite(ctx, writeModels)
-	if err != nil {
-		return false, err
-	}
+		writeRes, err := s.collection.BulkWrite(ctx, writeModels)
+		if err != nil {
+			return err
+		}
 
-	return res.MatchedCount > 0, nil
+		res = writeRes.MatchedCount > 0
+		return nil
+	})
+
+	return res, err
 }
 
 func (s *store) isLinked(ctx context.Context, id string) (bool, error) {

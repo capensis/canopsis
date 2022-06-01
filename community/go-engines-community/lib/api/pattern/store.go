@@ -73,12 +73,19 @@ func (s *store) Insert(ctx context.Context, request EditRequest) (*Response, err
 	model.Created = now
 	model.Updated = now
 
-	_, err := s.collection.InsertOne(ctx, model)
-	if err != nil {
-		return nil, err
-	}
+	var response *Response
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		_, err := s.collection.InsertOne(ctx, model)
+		if err != nil {
+			return err
+		}
 
-	return s.GetById(ctx, model.ID, model.Author)
+		response, err = s.GetById(ctx, model.ID, model.Author)
+		return err
+	})
+
+	return response, err
 }
 
 func (s *store) GetById(ctx context.Context, id, userId string) (*Response, error) {
@@ -171,40 +178,49 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 	model.ID = request.ID
 	model.Updated = now
 
-	res, err := s.collection.UpdateOne(
-		ctx,
-		bson.M{"_id": request.ID},
-		bson.M{"$set": model},
-	)
-	if err != nil || res.MatchedCount == 0 {
-		return nil, err
-	}
+	var response *Response
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		res, err := s.collection.UpdateOne(
+			ctx,
+			bson.M{"_id": request.ID},
+			bson.M{"$set": model},
+		)
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
 
-	pattern, err := s.GetById(ctx, model.ID, model.Author)
-	if err != nil || pattern == nil {
-		return nil, err
-	}
+		response, err = s.GetById(ctx, model.ID, model.Author)
+		if err != nil || response == nil {
+			return err
+		}
 
-	err = s.updateLinkedModels(ctx, *pattern)
-	if err != nil {
-		return nil, err
-	}
+		err = s.updateLinkedModels(ctx, *response)
+		return err
+	})
 
-	return pattern, nil
+	return response, err
 }
 
 func (s *store) Delete(ctx context.Context, pattern Response) (bool, error) {
-	deleted, err := s.collection.DeleteOne(ctx, bson.M{"_id": pattern.ID})
-	if err != nil || deleted == 0 {
-		return false, err
-	}
+	res := false
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		res = false
+		deleted, err := s.collection.DeleteOne(ctx, bson.M{"_id": pattern.ID})
+		if err != nil || deleted == 0 {
+			return err
+		}
 
-	err = s.cleanLinkedModels(ctx, pattern)
-	if err != nil {
-		return false, err
-	}
+		err = s.cleanLinkedModels(ctx, pattern)
+		if err != nil {
+			return err
+		}
 
-	return true, nil
+		res = true
+		return nil
+	})
+
+	return res, err
 }
 
 func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error {

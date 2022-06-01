@@ -2,6 +2,7 @@ package entityservice
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -127,31 +128,6 @@ func (a *mongoAdapter) UpdateBulk(ctx context.Context, models []mongodriver.Writ
 	_, err := a.collection.BulkWrite(ctx, models)
 
 	return err
-}
-
-func (a *mongoAdapter) GetOpenAlarmsOfServiceDependencies(
-	ctx context.Context,
-	serviceID string,
-) (mongo.Cursor, error) {
-	cursor, err := a.alarmCollection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{"v.resolved": nil}},
-		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
-			"localField":   "d",
-			"foreignField": "_id",
-			"as":           "entity",
-		}},
-		{"$unwind": bson.M{"path": "$entity"}},
-		{"$match": bson.M{
-			"entity.enabled": true,
-			"entity.impact":  serviceID,
-		}},
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return cursor, nil
 }
 
 func (a *mongoAdapter) GetServiceDependencies(
