@@ -97,21 +97,6 @@ func (mr *MockAdapterMockRecorder) GetEnabled(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEnabled", reflect.TypeOf((*MockAdapter)(nil).GetEnabled), arg0)
 }
 
-// GetOpenAlarmsOfServiceDependencies mocks base method.
-func (m *MockAdapter) GetOpenAlarmsOfServiceDependencies(arg0 context.Context, arg1 string) (mongo.Cursor, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetOpenAlarmsOfServiceDependencies", arg0, arg1)
-	ret0, _ := ret[0].(mongo.Cursor)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetOpenAlarmsOfServiceDependencies indicates an expected call of GetOpenAlarmsOfServiceDependencies.
-func (mr *MockAdapterMockRecorder) GetOpenAlarmsOfServiceDependencies(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenAlarmsOfServiceDependencies", reflect.TypeOf((*MockAdapter)(nil).GetOpenAlarmsOfServiceDependencies), arg0, arg1)
-}
-
 // GetServiceDependencies mocks base method.
 func (m *MockAdapter) GetServiceDependencies(arg0 context.Context, arg1 string) (mongo.Cursor, error) {
 	m.ctrl.T.Helper()

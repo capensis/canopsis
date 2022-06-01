@@ -16,6 +16,7 @@ configuration:
   configuration_3:
     _id: global_config
     alarm:
+      allowdoubleack: true
       cancelautosolvedelay: 1h
       disableactionsnoozedelayonpbh: true
       displaynamescheme: '{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3
