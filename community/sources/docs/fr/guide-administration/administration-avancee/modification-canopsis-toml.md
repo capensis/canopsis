@@ -24,13 +24,6 @@ La [variable d'environnement `CPS_DEFAULT_CFG`](variables-environnement.md) perm
 
 Il est recommandé de ne pas modifier cette valeur.
 
-## Liste des différentes options de configuration
-
-Certaines des valeurs pouvant être modifiées dans le fichier `canopsis.toml` sont détaillées dans d'autres pages de cette plateforme de documentation. Lancez une recherche de `canopsis.toml` dans la barre de recherche de [doc.canopsis.net](../../index.md) afin d'identifier ces diverses références.
-
-Il n'existe, à ce jour, pas de documentation répertoriant et décrivant la totalité de ces variables.
-<!-- XXX: à faire -->
-
 ## Modification et maintenance du fichier
 
 === "En environnement paquets RPM"
@@ -65,8 +58,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 
     ```sh
     docker-compose restart reconfigure
-    docker-compose down
-    docker-compose up -d
+    docker-compose restart
     ```
 
 ## Description des options
