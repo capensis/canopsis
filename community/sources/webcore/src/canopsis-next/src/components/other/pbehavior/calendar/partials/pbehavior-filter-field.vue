@@ -1,7 +1,7 @@
 <template lang="pug">
   v-flex
     v-btn.ml-0.btn-filter(
-      :color="errors.has(patternsFieldName) ? 'error' : 'primary'",
+      :color="hasErrors ? 'error' : 'primary'",
       @click="showCreateFilterModal"
     ) {{ hasPattern ? $t('pbehavior.buttons.editFilter') : $t('pbehavior.buttons.addFilter') }}
     v-tooltip(v-if="hasPattern", fixed, top)
@@ -10,7 +10,7 @@
           v-icon(color="grey darken-1") info
       span.pre {{ entityPattern | json }}
     v-alert(
-      :value="errors.has(patternsFieldName)",
+      :value="hasErrors",
       type="error",
       transition="fade-transition"
     ) {{ errors.first(patternsFieldName) }}
@@ -27,11 +27,11 @@ export default {
   inject: ['$validator'],
   mixins: [formMixin],
   model: {
-    prop: 'form',
+    prop: 'patterns',
     event: 'input',
   },
   props: {
-    form: {
+    patterns: {
       type: Object,
       required: true,
     },
@@ -41,12 +41,21 @@ export default {
     },
   },
   computed: {
+    hasErrors() {
+      return this.errors.has(this.patternsFieldName);
+    },
+
     entityPattern() {
-      return formGroupsToPatternRules(this.form.patterns.entity_pattern.groups);
+      return formGroupsToPatternRules(this.patterns.entity_pattern.groups);
     },
 
     hasPattern() {
       return this.entityPattern.length;
+    },
+  },
+  watch: {
+    patterns() {
+      this.$validator.validate(this.patternsFieldName);
     },
   },
   created() {
@@ -77,12 +86,9 @@ export default {
           zIndex: 300,
         },
         config: {
-          patterns: this.form.patterns,
+          patterns: this.patterns,
           withEntity: true,
-          action: (patterns) => {
-            this.updateField('patterns', patterns);
-            this.$nextTick(() => this.$validator.validate(this.patternsFieldName));
-          },
+          action: this.updateModel,
         },
       });
     },

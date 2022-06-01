@@ -6,7 +6,7 @@
       :with-start-on-trigger="withStartOnTrigger"
     )
     pbehavior-comments-form(v-if="!noComments", v-field="form.comments")
-    pbehavior-filter-field(v-if="!noPattern", v-field="form")
+    pbehavior-filter-field(v-if="!noPattern", v-field="form.patterns")
     pbehavior-recurrence-rule-field(v-field="form")
 </template>
 
