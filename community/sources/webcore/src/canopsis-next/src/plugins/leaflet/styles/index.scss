@@ -1,9 +1,5 @@
 .leaflet {
-  &-pane {
-    z-index: 7;
-  }
-
-  &-control, &-top, &-bottom {
+  &-pane, &-control, &-top, &-bottom {
     z-index: 7;
   }
 }
