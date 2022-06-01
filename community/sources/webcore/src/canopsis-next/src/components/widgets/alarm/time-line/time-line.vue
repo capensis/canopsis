@@ -8,7 +8,12 @@
           div.time {{ step.t | date('time') }}
           time-line-flag.flag(:step="step")
           time-line-card(:step="step", :is-html-enabled="isHtmlEnabled")
-    c-pagination(:total="meta.total_count", :limit="meta.per_page", :page="meta.page")
+    c-pagination(
+      :total="meta.total_count",
+      :limit="meta.per_page",
+      :page="meta.page",
+      @input="updateQueryPage"
+    )
 </template>
 
 <script>
@@ -21,12 +26,12 @@ export default {
   components: { TimeLineFlag, TimeLineCard },
   props: {
     steps: {
-      type: Array,
-      required: true,
-    },
-    meta: {
       type: Object,
       required: true,
+    },
+    query: {
+      type: Object,
+      default: () => ({}),
     },
     isHtmlEnabled: {
       type: Boolean,
@@ -34,8 +39,21 @@ export default {
     },
   },
   computed: {
+    meta() {
+      return this.steps?.meta ?? {};
+    },
+
     groupedSteps() {
-      return groupAlarmSteps(this.steps);
+      return groupAlarmSteps(this.steps?.data ?? []);
+    },
+  },
+  methods: {
+    updateQueryPage(page) {
+      this.$emit('update:query', {
+        ...this.query,
+
+        page,
+      });
     },
   },
 };

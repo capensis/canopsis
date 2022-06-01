@@ -148,6 +148,7 @@ import {
 
 /**
  * @typedef {EmptyWidget} Widget
+ * @property {string} [_id]
  * @property {WidgetParameters} parameters
  */
 

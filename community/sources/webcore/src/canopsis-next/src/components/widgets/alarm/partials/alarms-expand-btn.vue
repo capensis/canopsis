@@ -46,28 +46,10 @@ import { isResolvedAlarm } from '@/helpers/entities';
 import { getStepClass } from '@/helpers/tour';
 import { prepareAlarmDetailsQuery, generateAlarmDetailsQueryId } from '@/helpers/query';
 
-import { queryMixin } from '@/mixins/query';
-import { entitiesAlarmDetailsMixin } from '@/mixins/entities/alarm/details';
-import { widgetExpandPanelAlarmMixin } from '@/mixins/widget/expand-panel/alarm/expand-panel';
-
-import ActionsPanel from '../actions/actions-panel.vue';
-import AlarmColumnValue from '../columns-formatting/alarm-column-value.vue';
-import AlarmListRowIcon from './alarms-list-row-icon.vue';
-
 export default {
   inject: ['$system'],
-  components: {
-    ActionsPanel,
-    AlarmColumnValue,
-    AlarmListRowIcon,
-  },
-  mixins: [
-    queryMixin,
-    entitiesAlarmDetailsMixin,
-    widgetExpandPanelAlarmMixin,
-  ],
   model: {
-    prop: 'selected',
+    prop: 'expanded',
     event: 'input',
   },
   props: {
@@ -129,10 +111,10 @@ export default {
       } = this.alarm;
 
       return assignedInstructions.length
-          || isAutoInstructionRunning
-          || isAutoInstructionCompleted
-          || isManualInstructionWaitingResult
-          || childrenInstructions;
+        || isAutoInstructionRunning
+        || isAutoInstructionCompleted
+        || isManualInstructionWaitingResult
+        || childrenInstructions;
     },
 
     isResolvedAlarm() {
@@ -194,12 +176,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .not-filtered {
-    opacity: .4;
-    transition: opacity .3s linear;
+.not-filtered {
+  opacity: .4;
+  transition: opacity .3s linear;
 
-    &:hover {
-      opacity: 1;
-    }
+  &:hover {
+    opacity: 1;
   }
+}
 </style>

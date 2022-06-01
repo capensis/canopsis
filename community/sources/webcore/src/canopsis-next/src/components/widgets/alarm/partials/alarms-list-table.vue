@@ -127,10 +127,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    hasColumns: {
-      type: Boolean,
-      default: false,
-    },
     selectable: {
       type: Boolean,
       default: false,
@@ -167,6 +163,10 @@ export default {
   },
 
   computed: {
+    hasColumns() {
+      return this.columns.length > 0;
+    },
+
     expanded() {
       return this.$refs.dataTable.expanded;
     },
