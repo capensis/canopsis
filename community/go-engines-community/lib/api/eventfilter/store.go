@@ -31,6 +31,7 @@ type AggregationResult struct {
 }
 
 type store struct {
+	dbClient              mongo.DbClient
 	dbCollection          mongo.DbCollection
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -40,6 +41,7 @@ func NewStore(
 	dbClient mongo.DbClient,
 ) Store {
 	return &store{
+		dbClient:              dbClient,
 		dbCollection:          dbClient.Collection(mongo.EventFilterRulesMongoCollection),
 		defaultSearchByFields: []string{"_id", "author", "description", "type"},
 		defaultSortBy:         "created",
@@ -72,12 +74,19 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*eventfilter
 	model.Created = &now
 	model.Updated = &now
 
-	_, err := s.dbCollection.InsertOne(ctx, model)
-	if err != nil {
-		return nil, err
-	}
+	var response *eventfilter.Rule
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		_, err := s.dbCollection.InsertOne(ctx, model)
+		if err != nil {
+			return err
+		}
 
-	return s.GetById(ctx, model.ID)
+		response, err = s.GetById(ctx, model.ID)
+		return err
+	})
+
+	return response, err
 }
 
 func (s *store) GetById(ctx context.Context, id string) (*eventfilter.Rule, error) {
@@ -132,9 +141,7 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 }
 
 func (s *store) Update(ctx context.Context, request UpdateRequest) (*eventfilter.Rule, error) {
-	var data eventfilter.Rule
 	updated := types.NewCpsTime(time.Now().Unix())
-
 	model := s.transformRequestToDocument(request.EditRequest)
 	model.ID = request.ID
 	model.Created = nil
@@ -145,21 +152,23 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*eventfilter
 		update["$unset"] = bson.M{"old_patterns": 1}
 	}
 
-	err := s.dbCollection.FindOneAndUpdate(
-		ctx,
-		bson.M{"_id": model.ID},
-		update,
-	).Decode(&data)
-	model.Created = data.Created
-	if err != nil {
-		if err == mongodriver.ErrNoDocuments {
-			return nil, nil
+	var response *eventfilter.Rule
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		_, err := s.dbCollection.UpdateOne(
+			ctx,
+			bson.M{"_id": model.ID},
+			update,
+		)
+		if err != nil {
+			return err
 		}
 
-		return nil, err
-	}
+		response, err = s.GetById(ctx, model.ID)
+		return err
+	})
 
-	return s.GetById(ctx, model.ID)
+	return response, err
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
