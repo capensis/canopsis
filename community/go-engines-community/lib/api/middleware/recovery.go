@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -57,6 +58,15 @@ func Recovery(logger zerolog.Logger) gin.HandlerFunc {
 					}
 				}
 
+				if err != nil && (errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded)) {
+					logger.Warn().Err(err).Msgf("panic recovered")
+					c.AbortWithStatusJSON(http.StatusRequestTimeout, common.RequestTimeoutResponse)
+					return
+				}
+
+				if err != nil {
+					_ = c.Error(err)
+				}
 				logger.Err(errToLog).Msgf("panic recovered\n%s\n", debug.Stack())
 				c.AbortWithStatusJSON(http.StatusInternalServerError, common.InternalServerErrorResponse)
 			}
