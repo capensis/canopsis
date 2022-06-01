@@ -81,7 +81,6 @@
       :loading="alarmsPending",
       :is-tour-enabled="isTourEnabled",
       :hide-groups="!query.correlation",
-      :has-columns="hasColumns",
       :columns="columns",
       :sticky-header="widget.parameters.sticky_header",
       selectable,

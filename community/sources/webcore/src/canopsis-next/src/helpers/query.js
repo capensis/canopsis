@@ -322,3 +322,36 @@ export function prepareQuery(widget, userPreference) {
 
   return query;
 }
+
+/**
+ * Generate special id for alarm details query
+ *
+ * @param {Alarm} alarm
+ * @param {Widget} widget
+ * @returns {string}
+ */
+export const generateAlarmDetailsQueryId = (alarm, widget) => `${alarm._id}_${widget._id}_details`;
+
+/**
+ * Prepare query for alarm details fetching
+ *
+ * @param {Alarm} alarm
+ * @param {Widget} widget
+ * @returns {Object}
+ */
+export const prepareAlarmDetailsQuery = (alarm, widget) => ({
+  _id: alarm._id,
+  with_instructions: true,
+  opened: widget.parameters.opened,
+  steps: {
+    page: 1,
+    limit: 2,
+  },
+  children: {
+    page: 1,
+    limit: 10,
+    sort_by: '',
+    sort: '',
+    multi_sort: [],
+  },
+});
