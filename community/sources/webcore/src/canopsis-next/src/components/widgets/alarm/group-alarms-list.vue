@@ -2,19 +2,19 @@
   div
     alarms-list-table(
       :widget="widget",
-      :alarms="displayedAlarms",
-      :total-items="alarmsMeta.total_count",
+      :alarms="alarms",
+      :total-items="meta.total_count",
       :pagination.sync="pagination",
       :editing="editing",
-      :has-columns="hasGroupColumns",
-      :columns="groupColumns",
+      :columns="columns",
+      :loading="pending",
       :parent-alarm="alarm",
       expandable,
       hide-groups,
       ref="alarmsTable"
     )
     c-table-pagination(
-      :total-items="alarmsMeta.total_count",
+      :total-items="meta.total_count",
       :rows-per-page="query.limit",
       :page="query.page",
       @update:page="updateQueryPage",
@@ -23,14 +23,11 @@
 </template>
 
 <script>
-import { get, orderBy } from 'lodash';
+import { isEqual, pick } from 'lodash';
 
-import { DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS, ALARM_ENTITY_FIELDS } from '@/constants';
+import { DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS, ALARM_ENTITY_FIELDS, SORT_ORDERS } from '@/constants';
 
 import { defaultColumnsToColumns } from '@/helpers/entities';
-import { convertWidgetToQuery } from '@/helpers/query';
-
-import { queryWidgetMixin } from '@/mixins/widget/query';
 
 /**
  * Group-alarm-list component
@@ -39,8 +36,11 @@ import { queryWidgetMixin } from '@/mixins/widget/query';
  *
  */
 export default {
-  mixins: [queryWidgetMixin],
   props: {
+    children: {
+      type: Object,
+      required: true,
+    },
     alarm: {
       type: Object,
       required: true,
@@ -49,47 +49,29 @@ export default {
       type: Object,
       required: true,
     },
+    query: {
+      type: Object,
+      required: true,
+    },
     editing: {
+      type: Boolean,
+      default: false,
+    },
+    pending: {
       type: Boolean,
       default: false,
     },
   },
   computed: {
     alarms() {
-      return get(this.alarm, 'consequences.data') || get(this.alarm, 'causes.data', []);
+      return this.children?.data ?? [];
     },
 
-    alarmsMeta() {
-      return {
-        total_count: this.alarms.length,
-      };
+    meta() {
+      return this.children?.meta ?? {};
     },
 
-    displayedAlarms() {
-      const {
-        page,
-        limit,
-        multiSortBy = [],
-      } = this.query;
-
-      let { alarms } = this;
-
-      if (multiSortBy.length) {
-        alarms = orderBy(
-          alarms,
-          multiSortBy.map(({ sortBy }) => sortBy),
-          multiSortBy.map(({ descending }) => (descending ? 'desc' : 'asc')),
-        );
-      }
-
-      return alarms.slice((page - 1) * limit, page * limit);
-    },
-
-    hasGroupColumns() {
-      return this.groupColumns.length > 0;
-    },
-
-    groupColumns() {
+    columns() {
       if (this.widget.parameters.widgetGroupColumns) {
         return this.widget.parameters.widgetGroupColumns.map(({ value, label, ...column }) => ({
           ...column,
@@ -101,9 +83,59 @@ export default {
 
       return defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS);
     },
+
+    pagination: { // TODO: move to mixin
+      get() {
+        const { sortDir, sortKey: sortBy = null, multiSortBy = [] } = this.query;
+        const descending = sortDir === SORT_ORDERS.desc;
+
+        return { sortBy, descending, multiSortBy };
+      },
+
+      set(value) {
+        const paginationKeys = ['sortBy', 'descending', 'multiSortBy'];
+        const newPagination = pick(value, paginationKeys);
+        const oldPagination = pick(this.pagination, paginationKeys);
+
+        if (isEqual(newPagination, oldPagination)) {
+          return;
+        }
+
+        const {
+          sortBy = null,
+          descending = false,
+          multiSortBy = [],
+        } = newPagination;
+
+        const newQuery = {
+          sortKey: sortBy,
+          sortDir: descending ? SORT_ORDERS.desc : SORT_ORDERS.asc,
+          multiSortBy,
+        };
+
+        this.$emit('update:query', {
+          ...this.query,
+          ...newQuery,
+        });
+      },
+    },
   },
-  mounted() {
-    this.query = convertWidgetToQuery(this.widget);
+  methods: {
+    updateRecordsPerPage(limit) {
+      this.$emit('update:query', {
+        ...this.query,
+
+        limit,
+      });
+    },
+
+    updateQueryPage(page) {
+      this.$emit('update:query', {
+        ...this.query,
+
+        page,
+      });
+    },
   },
 };
 </script>

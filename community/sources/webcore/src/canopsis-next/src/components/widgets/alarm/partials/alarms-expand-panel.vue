@@ -23,8 +23,8 @@
             v-card.tab-item-card
               v-card-text
                 time-line(
-                  :steps="stepsData",
-                  :meta="stepsMeta",
+                  :steps="steps",
+                  :query.sync="stepsQuery",
                   :is-html-enabled="isHtmlEnabled"
                 )
       template(v-if="hasCauses")
@@ -35,11 +35,13 @@
               v-card.tab-item-card
                 v-card-text
                   group-alarms-list(
+                    :children="children",
                     :widget="widget",
                     :default-query-id="causesKey",
                     :tab-id="causesKey",
                     :alarm="alarm",
-                    :editing="editing"
+                    :editing="editing",
+                    :query.sync="childrenQuery"
                   )
       template(v-if="hasConsequences")
         v-tab {{ $t('alarmList.tabs.alarmsConsequences') }}
@@ -49,11 +51,13 @@
               v-card.tab-item-card
                 v-card-text
                   group-alarms-list(
+                    :children="children",
                     :widget="widget",
                     :default-query-id="consequencesKey",
                     :tab-id="consequencesKey",
                     :alarm="alarm",
-                    :editing="editing"
+                    :editing="editing",
+                    :query.sync="childrenQuery"
                   )
       template(v-if="hasServiceDependencies")
         v-tab {{ $t('alarmList.tabs.trackSource') }}
@@ -91,7 +95,7 @@
 </template>
 
 <script>
-import { omit } from 'lodash';
+import { isEqual } from 'lodash';
 
 import {
   ALARMS_GROUP_PREFIX,
@@ -104,6 +108,7 @@ import {
 import uid from '@/helpers/uid';
 import { getStepClass } from '@/helpers/tour';
 import { serviceToServiceDependency } from '@/helpers/treeview/service-dependencies';
+import { generateAlarmDetailsQueryId } from '@/helpers/query';
 
 import { queryMixin } from '@/mixins/query';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
@@ -159,22 +164,41 @@ export default {
   computed: {
     query: {
       get() {
-        const query = this.getQueryById(this.queryId);
-
-        return query[this.alarm._id] ?? {};
+        return this.getQueryById(this.queryId);
       },
       set(query) {
-        return this.mergeQuery({
-          id: this.queryId,
-          query: {
-            [this.alarm._id]: query,
-          },
-        });
+        return this.updateQuery({ id: this.queryId, query });
+      },
+    },
+
+    stepsQuery: {
+      get() {
+        return this.query?.steps ?? {};
+      },
+      set(stepsQuery) {
+        this.query = {
+          ...this.query,
+
+          steps: stepsQuery,
+        };
+      },
+    },
+
+    childrenQuery: {
+      get() {
+        return this.query?.children ?? {};
+      },
+      set(childrenQuery) {
+        this.query = {
+          ...this.query,
+
+          children: childrenQuery,
+        };
       },
     },
 
     queryId() {
-      return `${this.widget._id}_expand`;
+      return generateAlarmDetailsQueryId(this.alarm, this.widget);
     },
 
     causesKey() {
@@ -222,11 +246,11 @@ export default {
       return this.widget.parameters.moreInfoTemplate || this.isTourEnabled;
     },
 
-    hasCauses() {
-      return this.alarm.causes && !this.hideGroups;
+    hasCauses() { // TODO: rename to children
+      return this.alarm.is_meta_alarm && !this.hideGroups;
     },
 
-    hasConsequences() {
+    hasConsequences() { // TODO: rename to children
       return this.alarm.consequences && !this.hideGroups;
     },
 
@@ -255,15 +279,11 @@ export default {
     },
 
     steps() {
-      return this.alarmDetails?.steps;
+      return this.alarmDetails?.steps ?? {};
     },
 
-    stepsData() {
-      return this.steps?.data;
-    },
-
-    stepsMeta() {
-      return this.steps?.meta;
+    children() {
+      return this.alarmDetails?.children ?? {};
     },
   },
   watch: {
@@ -276,16 +296,25 @@ export default {
     isTourEnabled() {
       this.refreshTabs();
     },
+
+    query(query, oldQuery) {
+      if (!isEqual(query, oldQuery)) {
+        this.fetchList();
+      }
+    },
   },
   beforeDestroy() {
-    return this.updateQuery({
-      id: this.queryId,
-      query: omit(this.getQueryById(this.queryId), this.alarm._id),
-    });
+    return this.removeQuery({ id: this.queryId });
   },
   methods: {
     refreshTabs() {
       this.tabsKey = uid();
+    },
+
+    fetchList() {
+      this.fetchAlarmItemDetails({
+        data: [this.query],
+      });
     },
   },
 };
