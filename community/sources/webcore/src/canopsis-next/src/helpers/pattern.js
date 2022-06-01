@@ -297,6 +297,7 @@ export const isArrayCondition = condition => [
   PATTERN_CONDITIONS.isEmpty,
   PATTERN_CONDITIONS.hasNot,
   PATTERN_CONDITIONS.hasOneOf,
+  PATTERN_CONDITIONS.isOneOf,
   PATTERN_CONDITIONS.hasEvery,
 ].includes(condition);
 

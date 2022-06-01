@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { MODALS, CONTEXT_ACTIONS_TYPES } from '@/constants';
+import { MODALS, CONTEXT_ACTIONS_TYPES, PATTERN_CONDITIONS, ENTITY_PATTERN_FIELDS } from '@/constants';
 
 import { widgetActionsPanelContextMixin } from '@/mixins/widget/actions-panel/context';
 
@@ -79,9 +79,13 @@ export default {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
         config: {
-          filter: {
-            _id: { $in: this.items.map(({ _id: id }) => id) },
-          },
+          entityPattern: [[{
+            field: ENTITY_PATTERN_FIELDS.id,
+            cond: {
+              type: PATTERN_CONDITIONS.isOneOf,
+              value: this.items.map(({ _id: id }) => id),
+            },
+          }]],
         },
       });
     },

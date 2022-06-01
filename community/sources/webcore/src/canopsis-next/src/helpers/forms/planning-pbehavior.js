@@ -81,7 +81,6 @@ import { enabledToForm } from './shared/common';
  * @property {string} _id
  * @property {string} author
  * @property {boolean} enabled
- * @property {Object | string} filter
  * @property {string} name
  * @property {string} rrule
  * @property {boolean} start_on_trigger
@@ -168,13 +167,13 @@ export const exceptionsToRequest = (exceptions = []) => exceptions.map(exception
  * Convert pbehavior entity to form data.
  *
  * @param {Pbehavior} [pbehavior = {}]
- * @param {string|Object} [patterns]
+ * @param {string|Object} [entityPattern]
  * @param {string} [timezone = getLocaleTimezone()]
  * @return {PbehaviorForm}
  */
 export const pbehaviorToForm = (
   pbehavior = {},
-  patterns,
+  entityPattern,
   timezone = getLocaleTimezone(),
 ) => {
   let rrule = pbehavior.rrule || null;
@@ -183,8 +182,16 @@ export const pbehaviorToForm = (
     ({ rrule } = pbehavior.rrule);
   }
 
+  const patterns = filterPatternsToForm(
+    entityPattern
+      ? { entity_pattern: entityPattern }
+      : pbehavior,
+    [PATTERNS_FIELDS.entity],
+  );
+
   return {
     rrule,
+    patterns,
     _id: pbehavior._id || uid('pbehavior'),
     enabled: enabledToForm(pbehavior.enabled),
     name: pbehavior.name || '',
@@ -192,7 +199,6 @@ export const pbehaviorToForm = (
     reason: cloneDeep(pbehavior.reason),
     tstart: pbehavior.tstart ? convertDateToDateObjectByTimezone(pbehavior.tstart, timezone) : null,
     tstop: pbehavior.tstop ? convertDateToDateObjectByTimezone(pbehavior.tstop, timezone) : null,
-    patterns: patterns ?? filterPatternsToForm(pbehavior, [PATTERNS_FIELDS.entity]),
     exceptions: pbehavior.exceptions ? addKeyInEntities(cloneDeep(pbehavior.exceptions)) : [],
     comments: pbehavior.comments ? addKeyInEntities(cloneDeep(pbehavior.comments)) : [],
     exdates: pbehavior.exdates ? pbehavior.exdates.map(exdate => exdateToForm(exdate, timezone)) : [],
@@ -233,13 +239,13 @@ export const formToPbehavior = (form, timezone = getLocaleTimezone()) => ({
  * Convert calendar event to pbehavior form data
  *
  * @param {CalendarEvent} calendarEvent
- * @param {string|Object} filter
+ * @param {Array} entityPattern
  * @param {string} [timezone = getLocaleTimezone()]
  * @return {PbehaviorForm}
  */
 export const calendarEventToPbehaviorForm = (
   calendarEvent,
-  filter,
+  entityPattern,
   timezone = getLocaleTimezone(),
 ) => {
   const {
@@ -250,7 +256,7 @@ export const calendarEventToPbehaviorForm = (
   } = calendarEvent;
 
   const form = {
-    ...pbehaviorToForm(pbehavior, filter, timezone),
+    ...pbehaviorToForm(pbehavior, entityPattern, timezone),
     ...cachedForm,
   };
 
