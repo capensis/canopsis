@@ -150,5 +150,5 @@ type WidgetFilter struct {
 	savedpattern.PbehaviorPatternFields `bson:",inline"`
 
 	// Deprecated : contains old mongo query which cannot be migrated to pattern.
-	OldMongoQuery map[string]interface{} `bson:"old_mongo_query,omitempty"`
+	OldMongoQuery string `bson:"old_mongo_query,omitempty"`
 }
