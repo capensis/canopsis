@@ -33,7 +33,7 @@
             @submit="add",
             @remove="removePbehavior"
           )
-    template(#menuRight)
+    template(#menuRight="")
       pbehavior-planning-calendar-legend(
         :exception-types="exceptionTypes",
         :colors-to-types="colorsToTypes"
