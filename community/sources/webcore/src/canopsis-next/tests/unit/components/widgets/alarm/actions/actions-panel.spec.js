@@ -9,11 +9,12 @@ import {
   CRUD_ACTIONS,
   ENTITIES_STATUSES,
   ENTITIES_TYPES,
+  ENTITY_PATTERN_FIELDS,
   EVENT_DEFAULT_ORIGIN,
   EVENT_ENTITY_TYPES,
   EVENT_INITIATORS,
   META_ALARMS_RULE_TYPES,
-  MODALS,
+  MODALS, PATTERN_CONDITIONS,
   QUICK_RANGES,
   REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
 } from '@/constants';
@@ -352,9 +353,13 @@ describe('actions-panel', () => {
       {
         name: MODALS.pbehaviorPlanning,
         config: {
-          filter: {
-            _id: { $in: [entity._id] },
-          },
+          entityPattern: [[{
+            field: ENTITY_PATTERN_FIELDS.id,
+            cond: {
+              type: PATTERN_CONDITIONS.equal,
+              value: entity._id,
+            },
+          }]],
         },
       },
     );

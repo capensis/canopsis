@@ -5,6 +5,8 @@ import {
   WEATHER_ACK_EVENT_OUTPUT,
   MAX_PBEHAVIOR_DEFAULT_TSTOP,
   WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE,
+  PATTERN_CONDITIONS,
+  ENTITY_PATTERN_FIELDS,
 } from '@/constants';
 
 /**
@@ -129,9 +131,13 @@ export default {
         comments: [{
           message: comment,
         }],
-        filter: {
-          _id: { $in: [entity._id] },
-        },
+        entityPattern: [[{
+          field: ENTITY_PATTERN_FIELDS.id,
+          cond: {
+            type: PATTERN_CONDITIONS.equal,
+            value: entity._id,
+          },
+        }]],
         name: `${WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE}-${entity.name}-${Date.now()}`,
         tstart: new Date(),
         tstop: new Date(MAX_PBEHAVIOR_DEFAULT_TSTOP * 1000),
