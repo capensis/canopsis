@@ -5,7 +5,7 @@
 <script>
 import { pickBy } from 'lodash';
 
-import { MODALS, CONTEXT_ACTIONS_TYPES, ENTITY_TYPES } from '@/constants';
+import { MODALS, CONTEXT_ACTIONS_TYPES, ENTITY_TYPES, PATTERN_CONDITIONS, ENTITY_PATTERN_FIELDS } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
@@ -175,9 +175,13 @@ export default {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
         config: {
-          filter: {
-            _id: { $in: [this.item._id] },
-          },
+          entityPattern: [[{
+            field: ENTITY_PATTERN_FIELDS.id,
+            cond: {
+              type: PATTERN_CONDITIONS.equal,
+              value: this.item._id,
+            },
+          }]],
         },
       });
     },

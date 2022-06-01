@@ -6,6 +6,8 @@ import {
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
   CRUD_ACTIONS,
   QUICK_RANGES,
+  PATTERN_CONDITIONS,
+  ENTITY_PATTERN_FIELDS,
 } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
@@ -17,9 +19,6 @@ import { queryMixin } from '@/mixins/query';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 
-/**
- * @mixin Mixin for the alarms list actions panel, show modal of the action
- */
 export const widgetActionsPanelAlarmMixin = {
   mixins: [
     authMixin,
@@ -144,9 +143,13 @@ export const widgetActionsPanelAlarmMixin = {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
         config: {
-          filter: {
-            _id: { $in: [this.item.entity._id] },
-          },
+          entityPattern: [[{
+            field: ENTITY_PATTERN_FIELDS.id,
+            cond: {
+              type: PATTERN_CONDITIONS.equal,
+              value: this.item.entity._id,
+            },
+          }]],
         },
       });
     },
