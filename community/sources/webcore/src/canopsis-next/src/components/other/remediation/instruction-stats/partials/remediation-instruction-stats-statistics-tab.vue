@@ -7,20 +7,20 @@
     :total-items="totalItems",
     advanced-pagination
   )
-    template(slot="headerCell", slot-scope="props")
-      span.c-table-header__text--multiline {{ props.header.text }}
-    template(slot="modified_on", slot-scope="props")
-      span {{ props.item.modified_on | date }}
-    template(slot="execution_count", slot-scope="props")
-      span {{ props.item.execution_count }}
-    template(slot="avg_complete_time", slot-scope="props")
-      span(v-if="props.item.execution_count") {{ props.item.avg_complete_time | duration }}
+    template(#headerCell="{ header }")
+      span.c-table-header__text--multiline {{ header.text }}
+    template(#modified_on="{ item }")
+      span {{ item.modified_on | date }}
+    template(#execution_count="{ item }")
+      span {{ item.execution_count }}
+    template(#avg_complete_time="{ item }")
+      span(v-if="item.execution_count") {{ item.avg_complete_time | duration }}
       span(v-else) {{ $t('remediationInstructionStats.notAvailable') }}
-    template(slot="alarm_states", slot-scope="props")
-      affect-alarm-states(v-if="props.item.execution_count", :alarm-states="props.item.alarm_states")
+    template(#alarm_states="{ item }")
+      affect-alarm-states(v-if="item.execution_count", :alarm-states="item.alarm_states")
       template(v-else) -
-    template(slot="ok_alarm_states", slot-scope="props")
-      span.c-state-count-changes-chip.primary(v-if="props.item.execution_count") {{ props.item.ok_alarm_states }}
+    template(#ok_alarm_states="{ item }")
+      span.c-state-count-changes-chip.primary(v-if="item.execution_count") {{ item.ok_alarm_states }}
       template(v-else) -
 </template>
 
@@ -37,6 +37,10 @@ export default {
     remediationInstruction: {
       type: Object,
       default: () => ({}),
+    },
+    interval: {
+      type: Object,
+      required: true,
     },
   },
   data() {
@@ -77,6 +81,9 @@ export default {
       ];
     },
   },
+  watch: {
+    interval: 'fetchList',
+  },
   mounted() {
     this.fetchList();
   },
@@ -84,12 +91,17 @@ export default {
     async fetchList() {
       this.pending = true;
 
+      const params = this.getQuery();
+
+      params.from = this.interval.from;
+      params.to = this.interval.to;
+
       const {
         data: remediationInstructionChanges,
         meta,
       } = await this.fetchRemediationInstructionStatsChangesListWithoutStore({
         id: this.remediationInstruction._id,
-        params: this.getQuery(),
+        params,
       });
 
       this.remediationInstructionChanges = remediationInstructionChanges;
