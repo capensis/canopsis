@@ -3,7 +3,6 @@ package pattern
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"net/http"
 	"time"
 
@@ -354,12 +353,7 @@ func (a *api) Count(c *gin.Context) {
 
 	res, err := a.store.Count(ctx, request, int64(conf.MaxMatchedItems))
 	if err != nil {
-		if errors.Is(err, context.DeadlineExceeded) {
-			c.AbortWithStatusJSON(http.StatusRequestTimeout, common.ErrTimeoutResponse)
-			return
-		} else {
-			panic(err)
-		}
+		panic(err)
 	}
 
 	c.JSON(http.StatusOK, res)
