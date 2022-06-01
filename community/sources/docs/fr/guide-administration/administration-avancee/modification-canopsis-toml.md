@@ -121,19 +121,19 @@ ReconnectRetries = 3
 
 | Attribut            | Exemple de valeur     | Description                           |
 | :------------------ | :---------------------| :------------------------------------ |
-| ThdWarnMinPerImport | "30m"                 | A compléter |
-| ThdCritMinPerImport | "60m"                 | A compléter |
-| FilePattern         | "/tmp/import_s.json" | A compléter |
+| ThdWarnMinPerImport | "30m"                 | Durée d'import au délà de laquelle une alarme mineure sera générée |
+| ThdCritMinPerImport | "60m"                 | Durée d'import au délà de laquelle une alarme critique sera générée |
+| FilePattern         | "/tmp/import_s.json"  | Pattern de nommage des fichiers temporaires d'import  |
 
 ### [Canopsis.api]
 
 | Attribut            | Exemple de valeur  | Description                           |
 | :------------------ | :------------------| :------------------------------------ |
 | TokenExpiration     | "24h"              | Durée de validité d'un token d'authentification |
-| TokenSigningMethod  | "HS256"            | ?? |
-| BulkMaxSize         | 1000               | ?? |
+| TokenSigningMethod  | "HS256"            | Méthode de signature d'un token d'authentification |
+| BulkMaxSize         | 1000               | Taille maximum d'un batch de changement de données en base |
 
-[Canopsis.metrics]
+### [Canopsis.metrics]
 
 | Attribut            | Exemple de valeur  | Description                           |
 | :------------------ | :------------------| :------------------------------------ |
