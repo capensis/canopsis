@@ -7,7 +7,7 @@
         :root="config.root",
         :columns="config.columns",
         :impact="config.impact",
-        :openable="config.openable",
+        :openable-root="config.openableRoot",
         include-root
       )
 </template>
