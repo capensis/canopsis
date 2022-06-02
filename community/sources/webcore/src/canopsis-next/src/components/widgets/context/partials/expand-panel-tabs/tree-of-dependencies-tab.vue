@@ -3,7 +3,8 @@
     v-card-text
       service-dependencies.pa-3(
         :root="rootDependency",
-        :columns="widget.parameters.serviceDependenciesColumns"
+        :columns="widget.parameters.serviceDependenciesColumns",
+        openable
       )
 </template>
 
