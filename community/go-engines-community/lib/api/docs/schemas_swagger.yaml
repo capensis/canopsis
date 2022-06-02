@@ -2264,6 +2264,9 @@ definitions:
     - tstart
     - type
     type: object
+  pbehavior.OldMongoQuery:
+    additionalProperties: true
+    type: object
   pbehavior.PatchRequest:
     properties:
       corporate_entity_pattern:
@@ -2352,8 +2355,7 @@ definitions:
       name:
         type: string
       old_mongo_query:
-        additionalProperties: true
-        type: object
+        $ref: '#/definitions/pbehavior.OldMongoQuery'
       reason:
         $ref: '#/definitions/pbehaviorreason.Reason'
       rrule:
