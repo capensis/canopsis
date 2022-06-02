@@ -5,6 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
+	"regexp"
+	"strings"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -13,9 +17,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"reflect"
-	"regexp"
-	"strings"
 )
 
 const (
@@ -782,8 +783,16 @@ func (q *MongoQueryBuilder) resolveAliasesInQuery(query interface{}) interface{}
 		for _, key := range val.MapKeys() {
 			newVal := q.resolveAliasesInQuery(val.MapIndex(key).Interface())
 			newKey := q.resolveAlias(key.String())
+
+			var mapVal reflect.Value
+			if newVal == nil {
+				mapVal = reflect.ValueOf(&newVal).Elem()
+			} else {
+				mapVal = reflect.ValueOf(newVal)
+			}
+
 			val.SetMapIndex(key, reflect.Value{})
-			val.SetMapIndex(reflect.ValueOf(newKey), reflect.ValueOf(newVal))
+			val.SetMapIndex(reflect.ValueOf(newKey), mapVal)
 		}
 	}
 
