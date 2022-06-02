@@ -8,6 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
+	mock_encoding "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/encoding"
 	mock_pbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/pbehavior"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	mock_redis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/redis"
@@ -39,7 +40,8 @@ func TestService(t *testing.T) {
 						MaxTimes(len(suiteData.pbehaviors))
 					mockDbClient.EXPECT().Collection(gomock.Eq(mongo.EntityMongoCollection)).Return(mockDbCollection)
 					mockProvider := newMockModelProvider(ctrl, suiteData)
-					typeComputer := pbehavior.NewTypeComputer(mockProvider)
+					mockDecoder := mock_encoding.NewMockDecoder(ctrl)
+					typeComputer := pbehavior.NewTypeComputer(mockProvider, mockDecoder)
 					mockStore := mock_pbehavior.NewMockStore(ctrl)
 					mockLockClient := mock_redis.NewMockLockClient(ctrl)
 					mockLock := mock_redis.NewMockLock(ctrl)
