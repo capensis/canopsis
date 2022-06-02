@@ -108,6 +108,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    openable: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     const dependenciesByIds = {};
@@ -200,9 +204,7 @@ export default {
     },
 
     showTreeOfDependenciesModal(dependency) {
-      const isServiceEntity = dependency.entity.type === ENTITY_TYPES.service;
-
-      if (!this.impact && !isServiceEntity) {
+      if (!this.openable || (!this.impact && dependency.entity.type !== ENTITY_TYPES.service)) {
         return;
       }
 
