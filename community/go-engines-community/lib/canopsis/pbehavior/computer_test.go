@@ -25,6 +25,7 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldRecomputePbehavior(t 
 	mockService := mock_pbehavior.NewMockService(ctrl)
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockEventManager := mock_pbehavior.NewMockEventManager(ctrl)
+	mockDecoder := mock_encoding.NewMockDecoder(ctrl)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	mockPublisher := mock_amqp.NewMockPublisher(ctrl)
 	pbehaviorID := "test-pbehavior-id"
@@ -62,9 +63,8 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldRecomputePbehavior(t 
 	mockCursor.EXPECT().Next(gomock.Any()).Return(false).Times(2)
 	mockCursor.EXPECT().Close(gomock.Any()).Times(2)
 
-	computer := pbehavior.NewCancelableComputer(mockService,
-		mockDbClient, mockPublisher, mockEventManager, mockEncoder, "test-queue",
-		zerolog.Logger{})
+	computer := pbehavior.NewCancelableComputer(mockService, mockDbClient, mockPublisher, mockEventManager, mockDecoder,
+		mockEncoder, "test-queue", zerolog.Nop())
 
 	ch := make(chan pbehavior.ComputeTask, 1)
 	ch <- pbehavior.ComputeTask{
@@ -104,13 +104,13 @@ func TestCancelableComputer_Compute_GivenEmptyPbehaviorID_ShouldRecomputeAllPbeh
 	}).AnyTimes()
 	mockEventManager := mock_pbehavior.NewMockEventManager(ctrl)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
+	mockDecoder := mock_encoding.NewMockDecoder(ctrl)
 	mockPublisher := mock_amqp.NewMockPublisher(ctrl)
 
 	mockService.EXPECT().Recompute(gomock.Any())
 
-	computer := pbehavior.NewCancelableComputer(mockService,
-		mockDbClient, mockPublisher, mockEventManager, mockEncoder, "test-queue",
-		zerolog.Logger{})
+	computer := pbehavior.NewCancelableComputer(mockService, mockDbClient, mockPublisher, mockEventManager, mockDecoder,
+		mockEncoder, "test-queue", zerolog.Nop())
 
 	ch := make(chan pbehavior.ComputeTask, 1)
 	ch <- pbehavior.ComputeTask{}
@@ -135,6 +135,7 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldSendPbehaviorEvent(t 
 	mockEntityDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockAlarmDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockEventManager := mock_pbehavior.NewMockEventManager(ctrl)
+	mockDecoder := mock_encoding.NewMockDecoder(ctrl)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	mockPublisher := mock_amqp.NewMockPublisher(ctrl)
 	pbehaviorID := "test-pbehavior-id"
@@ -215,9 +216,8 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldSendPbehaviorEvent(t 
 			DeliveryMode: amqp.Persistent,
 		}))
 
-	computer := pbehavior.NewCancelableComputer(mockService,
-		mockDbClient, mockPublisher, mockEventManager, mockEncoder, queue,
-		zerolog.Logger{})
+	computer := pbehavior.NewCancelableComputer(mockService, mockDbClient, mockPublisher, mockEventManager, mockDecoder,
+		mockEncoder, queue, zerolog.Nop())
 
 	ch := make(chan pbehavior.ComputeTask, 1)
 	ch <- pbehavior.ComputeTask{PbehaviorIds: []string{pbehaviorID}}
