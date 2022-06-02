@@ -14,9 +14,9 @@
             hide-details
           )
         v-layout(v-if="hasAlarmInstruction", align-center)
-          alarm-list-row-icon(:alarm="alarm")
+          alarms-list-row-icon(:alarm="alarm")
         v-layout(v-if="expandable", :class="{ 'ml-3': !hasAlarmInstruction }", align-center)
-          alarms-expand-btn(
+          alarms-expand-panel-btn(
             v-model="row.expanded",
             :alarm="alarm",
             :widget="widget"
@@ -44,16 +44,16 @@ import { isResolvedAlarm } from '@/helpers/entities';
 
 import ActionsPanel from '../actions/actions-panel.vue';
 import AlarmColumnValue from '../columns-formatting/alarm-column-value.vue';
-import AlarmListRowIcon from './alarms-list-row-icon.vue';
-import AlarmsExpandBtn from './alarms-expand-btn.vue'; // TODO: rename
+import AlarmsListRowIcon from './alarms-list-row-icon.vue';
+import AlarmsExpandPanelBtn from './alarms-expand-panel-btn.vue';
 
 export default {
   inject: ['$system'],
   components: {
     ActionsPanel,
     AlarmColumnValue,
-    AlarmListRowIcon,
-    AlarmsExpandBtn,
+    AlarmsListRowIcon,
+    AlarmsExpandPanelBtn,
   },
   model: {
     prop: 'selected',
