@@ -108,7 +108,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    openable: {
+    openableRoot: {
       type: Boolean,
       default: false,
     },
@@ -204,7 +204,12 @@ export default {
     },
 
     showTreeOfDependenciesModal(dependency) {
-      if (!this.openable || (!this.impact && dependency.entity.type !== ENTITY_TYPES.service)) {
+      const { entity } = dependency;
+
+      if (
+        (!this.openableRoot && this.rootId === entity._id)
+        || (!this.impact && entity.type !== ENTITY_TYPES.service)
+      ) {
         return;
       }
 

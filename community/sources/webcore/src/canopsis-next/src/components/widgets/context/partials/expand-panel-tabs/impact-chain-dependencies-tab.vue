@@ -5,7 +5,7 @@
         :root="rootDependency",
         :columns="widget.parameters.serviceDependenciesColumns",
         impact,
-        openable
+        openable-root
       )
 </template>
 

@@ -3,7 +3,7 @@
     :root="dependency",
     :columns="columns",
     light,
-    openable
+    openable-root
   )
 </template>
 
