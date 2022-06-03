@@ -1,71 +1,101 @@
+template:
+  - &reason {
+    _id: <UUID()>,
+    name: <Word()>,
+    description: <Phrase()>,
+    created: <NowUnix()>
+  }
+
 pbehavior_reason:
-  pbehavior_reason_1:
+  reason_1:
+    <<: *reason
     _id: test-reason-1
     created: 1592215337
     description: test-reason-1-description
     name: test-reason-1-name
-  pbehavior_reason_2:
+
+  reason_to_get_1:
+    <<: *reason
     _id: test-reason-to-get-1
     created: 1592215337
     description: test-reason-to-get-1-description
     name: test-reason-to-get-1-name
-  pbehavior_reason_3:
+
+  reason_to_update:
+    <<: *reason
     _id: test-reason-to-update
-    created: 1592215337
-    description: test-reason-to-update-description
-    name: test-reason-to-update-name
-  pbehavior_reason_4:
+
+  reason_to_delete:
+    <<: *reason
     _id: test-reason-to-delete
-    created: 1592215337
-    description: test-reason-to-delete-description
-    name: test-reason-to-delete-name
-  pbehavior_reason_5:
+
+  reason_to_delete_linked_to_pbehavior:
+    <<: *reason
     _id: test-reason-to-delete-linked-to-pbehavior
-    created: 1592215337
-    description: test-reason-to-delete-linked-to-pbehavior-description
-    name: test-reason-to-delete-linked-to-pbehavior-name
-  pbehavior_reason_6:
+
+  reason_to_get_2:
+    <<: *reason
     _id: test-reason-to-get-2
     created: 1592215337
     description: test-reason-to-get-2-description
     name: test-reason-to-get-2-name
-  pbehavior_reason_7:
+
+  reason_to_get_3:
+    <<: *reason
     _id: test-reason-to-get-3
     created: 1592215337
     description: test-reason-to-get-3-description
     name: test-reason-to-get-3-name
-  pbehavior_reason_8:
+
+  reason_to_delete_linked_to_action:
+    <<: *reason
     _id: test-reason-to-delete-linked-to-action
-    created: 1592215337
-    description: test-reason-to-delete-linked-to-action-description
-    name: test-reason-to-delete-linked-to-action-name
-  pbehavior_reason_9:
+
+  reason_to_engine:
+    <<: *reason
     _id: test-reason-to-engine
     created: 1592215337
     description: Test Engine
     name: Test Engine
-  pbehavior_reason_10:
+
+  reason_to_pbehavior_get:
+    <<: *reason
     _id: test-reason-to-pbehavior-get
     created: 1592215337
     description: test-reason-to-pbehavior-get-description
     name: test-reason-to-pbehavior-get-name
-  pbehavior_reason_11:
+
+  reason_to_edit_scenario:
+    <<: *reason
     _id: test-reason-to-edit-scenario
     created: 1592215337
     description: test-reason-to-edit-scenario-description
     name: test-reason-to-edit-scenario-name
-  pbehavior_reason_12:
+
+  reason_to_edit_idle_rule:
+    <<: *reason
     _id: test-reason-to-edit-idle-rule
     created: 1592215337
     description: test-reason-to-edit-idle-rule-description
     name: test-reason-to-edit-idle-rule-name
-  pbehavior_reason_13:
+
+  reason_to_patch_pbehavior:
+    <<: *reason
     _id: test-reason-to-patch-pbehavior
     created: 1592215337
     description: test-reason-to-patch-pbehavior-description
     name: test-reason-to-patch-pbehavior-name
-  pbehavior_reason_14:
+
+  reason_to_patch_pbehavior_new:
+    <<: *reason
     _id: test-reason-to-patch-pbehavior-new
     created: 1592215337
     description: test-reason-to-patch-pbehavior-new-description
     name: test-reason-to-patch-pbehavior-new-name
+
+  reason_to_pbh_edit:
+    <<: *reason
+    _id: test-reason-to-pbh-edit
+    created: 1592215337
+    description: test-reason-to-pbh-edit-description
+    name: test-reason-to-pbh-edit-name

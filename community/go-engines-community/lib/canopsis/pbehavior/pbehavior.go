@@ -1,6 +1,7 @@
 package pbehavior
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 )
@@ -42,17 +43,20 @@ type PBehavior struct {
 	Author     string         `bson:"author"`
 	Comments   Comments       `bson:"comments,omitempty"`
 	Enabled    bool           `bson:"enabled"`
-	Filter     string         `bson:"filter"`
 	Name       string         `bson:"name"`
 	Reason     string         `bson:"reason"`
 	RRule      string         `bson:"rrule"`
 	Start      *types.CpsTime `bson:"tstart"`
-	Stop       *types.CpsTime `bson:"tstop"`
+	Stop       *types.CpsTime `bson:"tstop,omitempty"`
 	Type       string         `bson:"type_"`
 	Exdates    []Exdate       `bson:"exdates"`
 	Exceptions []string       `bson:"exceptions"`
-	Created    types.CpsTime  `bson:"created,omitempty"`
-	Updated    types.CpsTime  `bson:"updated,omitempty"`
+	Created    *types.CpsTime `bson:"created,omitempty"`
+	Updated    *types.CpsTime `bson:"updated,omitempty"`
 
 	LastAlarmDate *types.CpsTime `bson:"last_alarm_date,omitempty"`
+
+	savedpattern.EntityPatternFields `bson:",inline"`
+	// OldMongoQuery contains old mongo query which cannot be migrated to pattern.
+	OldMongoQuery string `bson:"old_mongo_query,omitempty" json:"old_mongo_query,omitempty"`
 }

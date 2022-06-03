@@ -50,7 +50,7 @@ func TestGetEvent(t *testing.T) {
 
 	resolvedCanonicalActive := pbehavior.ResolveResult{}
 	resolvedActive := pbehavior.ResolveResult{
-		ResolvedType: &pbehavior.Type{
+		ResolvedType: pbehavior.Type{
 			ID:   "test-type-active",
 			Name: "Active type",
 			Type: pbehavior.TypeActive,
@@ -60,7 +60,7 @@ func TestGetEvent(t *testing.T) {
 		ResolvedPbhReason: "Reason active",
 	}
 	resolvedAnotherActive := pbehavior.ResolveResult{
-		ResolvedType: &pbehavior.Type{
+		ResolvedType: pbehavior.Type{
 			ID:   "test-another-type-active",
 			Name: "Another active type",
 			Type: pbehavior.TypeActive,
@@ -70,7 +70,7 @@ func TestGetEvent(t *testing.T) {
 		ResolvedPbhReason: "Another reason active",
 	}
 	resolvedMaintenance := pbehavior.ResolveResult{
-		ResolvedType: &pbehavior.Type{
+		ResolvedType: pbehavior.Type{
 			ID:   "test-type-maintenance",
 			Name: "Maintenance type",
 			Type: pbehavior.TypeMaintenance,
@@ -80,7 +80,7 @@ func TestGetEvent(t *testing.T) {
 		ResolvedPbhReason: "Reason maintenance",
 	}
 	resolvedAnotherMaintenance := pbehavior.ResolveResult{
-		ResolvedType: &pbehavior.Type{
+		ResolvedType: pbehavior.Type{
 			ID:   "test-another-type-maintenance",
 			Name: "Another maintenance type",
 			Type: pbehavior.TypeMaintenance,

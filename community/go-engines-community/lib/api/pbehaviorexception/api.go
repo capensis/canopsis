@@ -2,7 +2,6 @@ package pbehaviorexception
 
 import (
 	"context"
-	"errors"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
@@ -147,7 +146,7 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if isLinked {
-		a.sendComputeTask(exception.ID)
+		a.sendComputeTask()
 	}
 
 	c.JSON(http.StatusOK, exception)
@@ -198,14 +197,6 @@ func (a *api) Delete(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
-func (a *api) sendComputeTask(exceptionID string) {
-	task := pbehavior.ComputeTask{}
-
-	select {
-	case a.computeChan <- task:
-	default:
-		a.logger.Err(errors.New("channel is full")).
-			Str("exception", exceptionID).
-			Msg("fail to start linked pbehaviors recompute on exception update")
-	}
+func (a *api) sendComputeTask() {
+	a.computeChan <- pbehavior.ComputeTask{}
 }

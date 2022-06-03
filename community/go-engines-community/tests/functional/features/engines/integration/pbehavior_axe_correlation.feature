@@ -38,7 +38,7 @@ Feature: update meta alarm on pbehavior
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-axe-correlation-1&correlation=true
     Then the response code should be 200
     When I save response metalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
     When I do POST /api/v4/pbehaviors:
@@ -50,53 +50,30 @@ Feature: update meta alarm on pbehavior
       "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "_id": "{{ .metalarmEntityID }}"
+            "field": "_id",
+            "cond": {
+              "type": "eq",
+              "value": "{{ .metalarmEntityID }}"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-axe-correlation-1&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "consequences": {
-            "data": [
-              {
-                "v": {
-                  "component": "test-component-pbehavior-axe-correlation-1",
-                  "connector": "test-connector-pbehavior-axe-correlation-1",
-                  "connector_name": "test-connector-name-pbehavior-axe-correlation-1",
-                  "resource": "test-resource-pbehavior-axe-correlation-1",
-                  "steps": [
-                    {
-                      "_t": "stateinc",
-                      "val": 2
-                    },
-                    {
-                      "_t": "statusinc",
-                      "val": 1
-                    },
-                    {
-                      "_t": "metaalarmattach",
-                      "val": 0
-                    }
-                  ]
-                }
-              }
-            ],
-            "total": 1
-          },
-          "metaalarm": true,
-          "rule": {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
             "name": "test-metaalarmrule-pbehavior-axe-correlation-1"
           },
           "v": {
@@ -116,8 +93,38 @@ Feature: update meta alarm on pbehavior
             },
             "status": {
               "val": 1
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -131,15 +138,61 @@ Feature: update meta alarm on pbehavior
                 "m": "Pbehavior test-pbehavior-axe-correlation-1. Type: Engine maintenance. Reason: Test Engine.",
                 "val": 0
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
+    """
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-axe-correlation-1
+    Then the response code should be 200
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc",
+                "val": 2
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "metaalarmattach",
+                "val": 0
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
     """

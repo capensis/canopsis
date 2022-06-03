@@ -40,13 +40,17 @@ Feature: get service weather
       "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-pbehavior-weather-service-1"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-1"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -70,9 +74,9 @@ Feature: get service weather
               "type": {
                 "_id": "test-maintenance-type-to-engine",
                 "description": "Engine maintenance",
-                "icon_name": "test-maintenance-to-engine-icon",
+                "icon_name": "build",
                 "name": "Engine maintenance",
-                "priority": 18,
+                "priority": 17,
                 "type": "maintenance"
               }
             }
@@ -127,13 +131,17 @@ Feature: get service weather
       "tstop": {{ nowAdd "1h" }},
       "type": "test-active-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-pbehavior-weather-service-2"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-2"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -219,13 +227,17 @@ Feature: get service weather
       "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-pbehavior-weather-service-3-1"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-3-1"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -249,9 +261,9 @@ Feature: get service weather
               "type": {
                 "_id": "test-maintenance-type-to-engine",
                 "description": "Engine maintenance",
-                "icon_name": "test-maintenance-to-engine-icon",
+                "icon_name": "build",
                 "name": "Engine maintenance",
-                "priority": 18,
+                "priority": 17,
                 "type": "maintenance"
               }
             }
@@ -292,13 +304,17 @@ Feature: get service weather
       "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-pbehavior-weather-service-4"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-weather-service-4"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -376,13 +392,17 @@ Feature: get service weather
       "tstop": {{ nowAdd "1h" }},
       "type": "test-active-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-pbehavior-weather-service-5"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-weather-service-5"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -475,13 +495,17 @@ Feature: get service weather
       "tstop": {{ nowAdd "2h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-pbehavior-weather-service-6"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-weather-service-6"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -495,13 +519,17 @@ Feature: get service weather
       "tstop": {{ nowAdd "2h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-pbehavior-weather-service-6"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-6"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -525,9 +553,9 @@ Feature: get service weather
               "type": {
                 "_id": "test-maintenance-type-to-engine",
                 "description": "Engine maintenance",
-                "icon_name": "test-maintenance-to-engine-icon",
+                "icon_name": "build",
                 "name": "Engine maintenance",
-                "priority": 18,
+                "priority": 17,
                 "type": "maintenance"
               }
             }
@@ -608,13 +636,17 @@ Feature: get service weather
       "tstop": {{ nowAdd "2h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-pbehavior-weather-service-7"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-weather-service-7"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -628,13 +660,17 @@ Feature: get service weather
       "tstop": {{ nowAdd "2h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-pbehavior-weather-service-7-1"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-7-1"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -658,9 +694,9 @@ Feature: get service weather
               "type": {
                 "_id": "test-maintenance-type-to-engine",
                 "description": "Engine maintenance",
-                "icon_name": "test-maintenance-to-engine-icon",
+                "icon_name": "build",
                 "name": "Engine maintenance",
-                "priority": 18,
+                "priority": 17,
                 "type": "maintenance"
               }
             }
@@ -710,13 +746,17 @@ Feature: get service weather
       "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-pbehavior-weather-service-11"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-weather-service-11"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -795,13 +835,17 @@ Feature: get service weather
       "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-pbehavior-weather-service-12"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-12"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -926,13 +970,17 @@ Feature: get service weather
       "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-pbehavior-weather-service-14-1"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-14-1"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -1043,13 +1091,17 @@ Feature: get service weather
       "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "_id": "test-pbehavior-weather-service-16"
+            "field": "_id",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-weather-service-16"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -1130,13 +1182,17 @@ Feature: get service weather
       "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-pbehavior-weather-service-17"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-17"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -1160,9 +1216,9 @@ Feature: get service weather
               "type": {
                 "_id": "test-maintenance-type-to-engine",
                 "description": "Engine maintenance",
-                "icon_name": "test-maintenance-to-engine-icon",
+                "icon_name": "build",
                 "name": "Engine maintenance",
-                "priority": 18,
+                "priority": 17,
                 "type": "maintenance"
               }
             }
@@ -1251,16 +1307,20 @@ Feature: get service weather
       "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$or":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-pbehavior-weather-service-18-1"
-          },
-          {
-            "name": "test-resource-pbehavior-weather-service-18-2"
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-pbehavior-weather-service-18-1",
+                "test-resource-pbehavior-weather-service-18-2"
+              ]
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -1284,9 +1344,9 @@ Feature: get service weather
               "type": {
                 "_id": "test-maintenance-type-to-engine",
                 "description": "Engine maintenance",
-                "icon_name": "test-maintenance-to-engine-icon",
+                "icon_name": "build",
                 "name": "Engine maintenance",
-                "priority": 18,
+                "priority": 17,
                 "type": "maintenance"
               }
             }
@@ -1334,9 +1394,9 @@ Feature: get service weather
               "type": {
                 "_id": "test-maintenance-type-to-engine",
                 "description": "Engine maintenance",
-                "icon_name": "test-maintenance-to-engine-icon",
+                "icon_name": "build",
                 "name": "Engine maintenance",
-                "priority": 18,
+                "priority": 17,
                 "type": "maintenance"
               }
             }
@@ -1384,9 +1444,9 @@ Feature: get service weather
               "type": {
                 "_id": "test-maintenance-type-to-engine",
                 "description": "Engine maintenance",
-                "icon_name": "test-maintenance-to-engine-icon",
+                "icon_name": "build",
                 "name": "Engine maintenance",
-                "priority": 18,
+                "priority": 17,
                 "type": "maintenance"
               }
             }
@@ -1434,9 +1494,9 @@ Feature: get service weather
               "type": {
                 "_id": "test-maintenance-type-to-engine",
                 "description": "Engine maintenance",
-                "icon_name": "test-maintenance-to-engine-icon",
+                "icon_name": "build",
                 "name": "Engine maintenance",
-                "priority": 18,
+                "priority": 17,
                 "type": "maintenance"
               }
             }
@@ -1494,9 +1554,17 @@ Feature: get service weather
       "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter": {
-        "name": "test-resource-pbehavior-weather-service-19"
-      }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-19"
+            }
+          }
+        ]
+      ]
     }
     """
     Then the response code should be 201
@@ -1521,9 +1589,9 @@ Feature: get service weather
               "type": {
                 "_id": "test-maintenance-type-to-engine",
                 "description": "Engine maintenance",
-                "icon_name": "test-maintenance-to-engine-icon",
+                "icon_name": "build",
                 "name": "Engine maintenance",
-                "priority": 18,
+                "priority": 17,
                 "type": "maintenance"
               }
             }
@@ -1571,9 +1639,9 @@ Feature: get service weather
               "type": {
                 "_id": "test-maintenance-type-to-engine",
                 "description": "Engine maintenance",
-                "icon_name": "test-maintenance-to-engine-icon",
+                "icon_name": "build",
                 "name": "Engine maintenance",
-                "priority": 18,
+                "priority": 17,
                 "type": "maintenance"
               }
             }

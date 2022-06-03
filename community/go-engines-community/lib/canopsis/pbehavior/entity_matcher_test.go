@@ -2,14 +2,13 @@ package pbehavior
 
 import (
 	"context"
-	"reflect"
-	"sort"
-	"testing"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/golang/mock/gomock"
+	"github.com/kylelemons/godebug/pretty"
 	"go.mongodb.org/mongo-driver/bson"
+	"sort"
+	"testing"
 )
 
 func TestEntityMatcher_MatchAll(t *testing.T) {
@@ -111,15 +110,15 @@ func TestEntityMatcher_MatchAll(t *testing.T) {
 		EXPECT().
 		Collection(mongo.EntityMongoCollection).
 		Return(mockDbCollection)
-	filters := map[string]string{
-		"pbh1": "{\"name\": \"resource1\"}",
-		"pbh2": "{\"name\": \"resource2\"}",
-		"pbh3": "{\"name\": \"resource3\"}",
-		"pbh4": "{\"name\": \"resource4\"}",
-		"pbh5": "{\"name\": \"resource5\"}",
-		"pbh6": "{\"name\": \"resource6\"}",
-		"pbh7": "{\"name\": \"resource7\"}",
-		"pbh8": "{\"name\": \"resource8\"}",
+	filters := map[string]interface{}{
+		"pbh1": bson.M{"name": "resource1"},
+		"pbh2": bson.M{"name": "resource2"},
+		"pbh3": bson.M{"name": "resource3"},
+		"pbh4": bson.M{"name": "resource4"},
+		"pbh5": bson.M{"name": "resource5"},
+		"pbh6": bson.M{"name": "resource6"},
+		"pbh7": bson.M{"name": "resource7"},
+		"pbh8": bson.M{"name": "resource8"},
 	}
 	expected := []string{
 		"pbh1",
@@ -136,7 +135,7 @@ func TestEntityMatcher_MatchAll(t *testing.T) {
 
 	sort.Strings(res)
 
-	if !reflect.DeepEqual(expected, res) {
-		t.Errorf("expected %v but got %v", expected, res)
+	if diff := pretty.Compare(expected, res); diff != "" {
+		t.Errorf("unexpected result: %s", diff)
 	}
 }

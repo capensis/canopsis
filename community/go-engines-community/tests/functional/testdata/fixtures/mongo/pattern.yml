@@ -128,7 +128,6 @@ pattern:
     _id: test-pattern-to-bulk-delete-corporate-2
     is_corporate: true
 
-
   pattern_to_get_1:
     <<: *pattern_alarm
     _id: test-pattern-to-get-1
@@ -333,3 +332,14 @@ pattern:
     author: root
     created: 1605263992
     updated: 1605263992
+
+  pattern_to_pbehavior_pattern_1:
+    <<: *pattern_entity
+    _id: test-pattern-to-pbehavior-pattern-1
+    is_corporate: true
+    title: test-pattern-to-pbehavior-pattern-1-title
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-pbehavior-pattern-1-pattern
