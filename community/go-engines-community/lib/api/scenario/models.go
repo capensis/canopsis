@@ -1,10 +1,12 @@
 package scenario
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -91,6 +93,9 @@ type ActionRequest struct {
 	EntityPatterns           oldpattern.EntityPatternList `json:"entity_patterns"`
 	DropScenarioIfNotMatched *bool                        `json:"drop_scenario_if_not_matched" binding:"required"`
 	EmitTrigger              *bool                        `json:"emit_trigger" binding:"required"`
+
+	common.EntityPatternFieldsRequest `bson:",inline"`
+	common.AlarmPatternFieldsRequest  `bson:",inline"`
 }
 
 type Scenario struct {
@@ -115,6 +120,9 @@ type Action struct {
 	EntityPatterns           oldpattern.EntityPatternList `bson:"entity_patterns" json:"entity_patterns"`
 	DropScenarioIfNotMatched bool                         `bson:"drop_scenario_if_not_matched" json:"drop_scenario_if_not_matched"`
 	EmitTrigger              bool                         `bson:"emit_trigger" json:"emit_trigger"`
+
+	savedpattern.EntityPatternFields `bson:",inline"`
+	savedpattern.AlarmPatternFields  `bson:",inline"`
 }
 
 type Parameters struct {
