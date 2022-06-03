@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"net/url"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
@@ -81,11 +80,6 @@ const (
 	UserPreferencesMongoCollection = "userpreferences"
 
 	FilterMongoCollection = "filter"
-)
-
-const (
-	transactionReplicaSetVersion     = "4.0"
-	transactionShardedClusterVersion = "4.2"
 )
 
 type SingleResultHelper interface {
@@ -531,50 +525,36 @@ func (c *dbClient) WithTransaction(ctx context.Context, f func(context.Context) 
 	return err
 }
 
-func (c *dbClient) checkTransactionEnabled(ctx context.Context, logger zerolog.Logger) {
-	res, err := c.Database.RunCommand(ctx, bson.D{{"hello", 1}}).
-		DecodeBytes()
+func (c *dbClient) checkTransactionEnabled(pCtx context.Context, logger zerolog.Logger) {
+	ctx, cancel := context.WithTimeout(pCtx, time.Second)
+	defer cancel()
+
+	session, err := c.Client.StartSession()
 	if err != nil {
 		logger.Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
 		return
 	}
 
-	helloResult := helloCommandResult{}
-	err = bson.Unmarshal(res, &helloResult)
+	defer session.EndSession(ctx)
+
+	collection := c.Collection("test_collection")
+	_, err = collection.InsertOne(ctx, bson.M{})
 	if err != nil {
 		logger.Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
 		return
 	}
 
-	if !helloResult.IsReplicaSet() && !helloResult.IsShardedCluster() {
-		logger.Warn().Msg("MongoDB version does not support transactions, transactions are disabled")
-		return
-	}
+	_, err = session.WithTransaction(ctx, func(sessCtx mongo.SessionContext) (interface{}, error) {
+		return nil, func(ctx mongo.SessionContext) error {
+			_, err = collection.DeleteMany(ctx, bson.M{})
+			return err
+		}(sessCtx)
+	})
 
-	res, err = c.Client.Database("admin").RunCommand(ctx, bson.D{{"getParameter", 1}, {"featureCompatibilityVersion", 1}}).
-		DecodeBytes()
+	_ = collection.Drop(ctx)
+
 	if err != nil {
 		logger.Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
-		return
-	}
-
-	fCVResult := struct {
-		FeatureCompatibilityVersion struct {
-			Version string `bson:"version"`
-		} `bson:"featureCompatibilityVersion"`
-	}{}
-
-	err = bson.Unmarshal(res, &fCVResult)
-	if err != nil {
-		logger.Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
-		return
-	}
-
-	version := fCVResult.FeatureCompatibilityVersion.Version
-	if helloResult.IsReplicaSet() && !isVersionGte(version, transactionReplicaSetVersion) ||
-		helloResult.IsShardedCluster() && !isVersionGte(version, transactionShardedClusterVersion) {
-		logger.Warn().Msg("MongoDB version does not support transactions, transactions are disabled")
-
 		return
 	}
 
@@ -599,48 +579,4 @@ func getURL() (mongoURL, dbName string, err error) {
 func IsConnectionError(err error) bool {
 	return mongo.IsNetworkError(err) ||
 		strings.Contains(err.Error(), "server selection error")
-}
-
-type helloCommandResult struct {
-	SetName string `bson:"setName"`
-	Msg     string `bson:"msg"`
-}
-
-func (r helloCommandResult) IsReplicaSet() bool {
-	return r.SetName != ""
-}
-
-func (r helloCommandResult) IsShardedCluster() bool {
-	return r.Msg == "isdbgrid"
-}
-
-func isVersionGte(version, expectedVersion string) bool {
-	if version == "" || expectedVersion == "" {
-		return false
-	}
-
-	versionParts := strings.Split(version, ".")
-	expectedVersionParts := strings.Split(expectedVersion, ".")
-
-	for i, ev := range expectedVersionParts {
-		if len(versionParts) <= i {
-			return true
-		}
-
-		v := versionParts[i]
-		vi, err := strconv.Atoi(v)
-		if err != nil {
-			return false
-		}
-		evi, err := strconv.Atoi(ev)
-		if err != nil {
-			return false
-		}
-
-		if vi < evi {
-			return false
-		}
-	}
-
-	return true
 }
