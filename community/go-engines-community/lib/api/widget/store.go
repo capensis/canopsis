@@ -19,6 +19,7 @@ type Store interface {
 	Update(ctx context.Context, r EditRequest) (*Response, error)
 	Delete(ctx context.Context, id string) (bool, error)
 	Copy(ctx context.Context, widget Response, r EditRequest) (*Response, error)
+	CopyForTab(ctx context.Context, tabID, newTabID, author string) error
 	UpdateGridPositions(ctx context.Context, items []EditGridPositionItemRequest) (bool, error)
 }
 
@@ -220,6 +221,48 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 }
 
 func (s *store) Copy(ctx context.Context, widget Response, r EditRequest) (*Response, error) {
+	var response *Response
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		var err error
+		response, err = s.copy(ctx, widget, r)
+		return err
+	})
+
+	return response, err
+}
+
+func (s *store) CopyForTab(ctx context.Context, tabID, newTabID, author string) error {
+	cursor, err := s.collection.Find(ctx, bson.M{"tab": tabID})
+	if err != nil {
+		return err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		w := Response{}
+		err := cursor.Decode(&w)
+		if err != nil {
+			return err
+		}
+
+		_, err = s.copy(ctx, w, EditRequest{
+			Tab:            newTabID,
+			Title:          w.Title,
+			Type:           w.Type,
+			GridParameters: w.GridParameters,
+			Parameters:     w.Parameters,
+			Author:         author,
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *store) copy(ctx context.Context, widget Response, r EditRequest) (*Response, error) {
 	now := types.NewCpsTime()
 	newWidget := view.Widget{
 		ID:             utils.NewID(),
@@ -233,60 +276,53 @@ func (s *store) Copy(ctx context.Context, widget Response, r EditRequest) (*Resp
 		Updated:        now,
 	}
 
-	var response *Response
-	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
-		response = nil
-		cursor, err := s.filterCollection.Find(ctx, bson.M{
-			"widget":          widget.ID,
-			"is_private":      false,
-			"old_mongo_query": nil, //do not copy old filters
-		})
-		if err != nil {
-			return err
-		}
-		defer cursor.Close(ctx)
-
-		mainFilter := ""
-		filters := make([]interface{}, 0)
-		for cursor.Next(ctx) {
-			filter := view.WidgetFilter{}
-			err := cursor.Decode(&filter)
-			if err != nil {
-				return err
-			}
-
-			newId := utils.NewID()
-			// Main filter can be old filter so keep main filter in this case.
-			if newWidget.Parameters.MainFilter == filter.ID {
-				mainFilter = newId
-			}
-
-			filter.ID = newId
-			filter.Widget = newWidget.ID
-			filter.Author = r.Author
-			filter.Created = now
-			filter.Updated = now
-			filters = append(filters, filter)
-		}
-
-		newWidget.Parameters.MainFilter = mainFilter
-		_, err = s.collection.InsertOne(ctx, newWidget)
-		if err != nil {
-			return err
-		}
-
-		if len(filters) > 0 {
-			_, err := s.filterCollection.InsertMany(ctx, filters)
-			if err != nil {
-				return err
-			}
-		}
-
-		response, err = s.GetOneBy(ctx, newWidget.ID)
-		return err
+	cursor, err := s.filterCollection.Find(ctx, bson.M{
+		"widget":          widget.ID,
+		"is_private":      false,
+		"old_mongo_query": nil, //do not copy old filters
 	})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
 
-	return response, err
+	mainFilter := ""
+	filters := make([]interface{}, 0)
+	for cursor.Next(ctx) {
+		filter := view.WidgetFilter{}
+		err := cursor.Decode(&filter)
+		if err != nil {
+			return nil, err
+		}
+
+		newId := utils.NewID()
+		// Main filter can be old filter so keep main filter in this case.
+		if newWidget.Parameters.MainFilter == filter.ID {
+			mainFilter = newId
+		}
+
+		filter.ID = newId
+		filter.Widget = newWidget.ID
+		filter.Author = r.Author
+		filter.Created = now
+		filter.Updated = now
+		filters = append(filters, filter)
+	}
+
+	newWidget.Parameters.MainFilter = mainFilter
+	_, err = s.collection.InsertOne(ctx, newWidget)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(filters) > 0 {
+		_, err := s.filterCollection.InsertMany(ctx, filters)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return s.GetOneBy(ctx, newWidget.ID)
 }
 
 func (s *store) UpdateGridPositions(ctx context.Context, items []EditGridPositionItemRequest) (bool, error) {

@@ -269,34 +269,17 @@ func (s *store) Copy(ctx context.Context, id string, r EditRequest) (*Response, 
 			return err
 		}
 
-		response, err = s.Insert(ctx, r, false)
+		newView, err := s.Insert(ctx, r, false)
 		if err != nil {
 			return err
 		}
 
-		cursor, err := s.tabCollection.Find(ctx, bson.M{"view": v.ID})
+		err = s.tabStore.CopyForView(ctx, v.ID, newView.ID, r.Author)
 		if err != nil {
 			return err
 		}
-		defer cursor.Close(ctx)
 
-		for cursor.Next(ctx) {
-			t := viewtab.Response{}
-			err := cursor.Decode(&t)
-			if err != nil {
-				return err
-			}
-
-			_, err = s.tabStore.Copy(ctx, t, viewtab.EditRequest{
-				Title:  t.Title,
-				View:   response.ID,
-				Author: response.Author,
-			})
-			if err != nil {
-				return err
-			}
-		}
-
+		response = newView
 		return nil
 	})
 
@@ -307,27 +290,32 @@ func (s *store) UpdatePositions(ctx context.Context, r EditPositionRequest) (boo
 	res := false
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		res = false
-		groupPositions, viewPositionsByGroup, err := s.findViewPositions(ctx)
-		if err != nil || len(groupPositions) == 0 {
-			return err
-		}
-
-		newGroupPositions, newViewPositions, changedViewGroup := computePositions(r,
-			groupPositions, viewPositionsByGroup)
-		if len(newGroupPositions) == 0 {
-			return nil
-		}
-
-		err = s.updatePositions(ctx, newGroupPositions, newViewPositions, changedViewGroup)
-		if err != nil {
-			return err
-		}
-
-		res = true
-		return nil
+		var err error
+		res, err = s.updatePositions(ctx, r)
+		return err
 	})
 
 	return res, err
+}
+
+func (s *store) updatePositions(ctx context.Context, r EditPositionRequest) (bool, error) {
+	groupPositions, viewPositionsByGroup, err := s.findViewPositions(ctx)
+	if err != nil || len(groupPositions) == 0 {
+		return false, err
+	}
+
+	newGroupPositions, newViewPositions, changedViewGroup := computePositions(r,
+		groupPositions, viewPositionsByGroup)
+	if len(newGroupPositions) == 0 {
+		return false, nil
+	}
+
+	err = s.writePositions(ctx, newGroupPositions, newViewPositions, changedViewGroup)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, error) {
@@ -788,19 +776,19 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 			}
 		}
 		if len(newTabs) > 0 {
-			_, err = s.tabCollection.InsertMany(ctx, newTabs)
+			_, err := s.tabCollection.InsertMany(ctx, newTabs)
 			if err != nil {
 				return err
 			}
 		}
 		if len(newWidgets) > 0 {
-			_, err = s.widgetCollection.InsertMany(ctx, newWidgets)
+			_, err := s.widgetCollection.InsertMany(ctx, newWidgets)
 			if err != nil {
 				return err
 			}
 		}
 		if len(newWidgetFilters) > 0 {
-			_, err = s.filterCollection.InsertMany(ctx, newWidgetFilters)
+			_, err := s.filterCollection.InsertMany(ctx, newWidgetFilters)
 			if err != nil {
 				return err
 			}
@@ -811,7 +799,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 			return err
 		}
 
-		_, err = s.UpdatePositions(ctx, EditPositionRequest{Items: positionItems})
+		_, err = s.updatePositions(ctx, EditPositionRequest{Items: positionItems})
 		return err
 	})
 
@@ -928,7 +916,7 @@ func (s *store) normalizePositionsOnViewMove(ctx context.Context, viewID, groupI
 		viewPositions = append(viewPositions, viewPositionsByGroup[id]...)
 	}
 
-	return s.updatePositions(ctx, groupPositions, viewPositions, nil)
+	return s.writePositions(ctx, groupPositions, viewPositions, nil)
 }
 
 func (s *store) findViewPositions(ctx context.Context) ([]string, map[string][]string, error) {
@@ -979,7 +967,7 @@ func (s *store) findViewPositions(ctx context.Context) ([]string, map[string][]s
 	return groupPositions, viewPositionsByGroup, nil
 }
 
-func (s *store) updatePositions(
+func (s *store) writePositions(
 	ctx context.Context,
 	groups, views []string,
 	changedViewGroup map[string]string,
