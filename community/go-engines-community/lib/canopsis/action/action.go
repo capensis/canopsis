@@ -2,6 +2,7 @@ package action
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -45,6 +46,9 @@ type Action struct {
 	EntityPatterns           oldpattern.EntityPatternList `bson:"entity_patterns" json:"entity_patterns"`
 	DropScenarioIfNotMatched bool                         `bson:"drop_scenario_if_not_matched" json:"drop_scenario_if_not_matched"`
 	EmitTrigger              bool                         `bson:"emit_trigger" json:"emit_trigger"`
+
+	savedpattern.EntityPatternFields `bson:",inline"`
+	savedpattern.AlarmPatternFields  `bson:",inline"`
 }
 
 type Parameters struct {
