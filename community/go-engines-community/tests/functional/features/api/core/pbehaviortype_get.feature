@@ -92,7 +92,7 @@ Feature: Get a pbehavior type
           "description": "Default Type Active",
           "icon_name": "test-active-icon",
           "name": "Default Type Active",
-          "priority": 2,
+          "priority": 1,
           "type": "active",
           "editable": false,
           "deletable": false
@@ -102,7 +102,7 @@ Feature: Get a pbehavior type
           "description": "Default Type Inactive",
           "icon_name": "test-inactive-icon",
           "name": "Default Type Inactive",
-          "priority": 1,
+          "priority": 0,
           "type": "inactive",
           "editable": false,
           "deletable": false
@@ -112,7 +112,7 @@ Feature: Get a pbehavior type
           "description": "Default Type Maintenance",
           "icon_name": "test-maintenance-icon",
           "name": "Default Type Maintenance",
-          "priority": 4,
+          "priority": 3,
           "type": "maintenance",
           "editable": false,
           "deletable": false
@@ -122,7 +122,7 @@ Feature: Get a pbehavior type
           "description": "Default Type Pause",
           "icon_name": "test-pause-icon",
           "name": "Default Type Pause",
-          "priority": 3,
+          "priority": 2,
           "type": "pause",
           "editable": false,
           "deletable": false

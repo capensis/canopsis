@@ -1,535 +1,469 @@
+template:
+  - &pbehavior {
+    _id: <UUID()>,
+    name: <Word()>,
+    enabled: true,
+    tstart: <NowUnix()>,
+    tstop: <NowUnix()>,
+    rrule: "",
+    reason: test-reason-to-pbh-edit,
+    type_: test-default-maintenance-type,
+    author: root,
+    created: <NowUnix()>,
+    updated: <Current().created>,
+    entity_pattern: [
+      [
+        {
+          field: name,
+          cond: {
+            type: eq,
+            value: <Word()>
+          }
+        }
+      ]
+    ],
+    comments: [
+      {
+        _id: <UUID()>,
+        author: root,
+        message: <Phrase()>,
+        ts: <NowUnix()>
+      }
+    ]
+  }
+
 pbehavior:
-  pbehavior_1:
+  pbehavior_to_get_by_name_1:
+    <<: *pbehavior
     _id: test-pbehavior-to-get-by-name-1
     author: root
     comments:
-    - _id: test-comment-1
-      author: root
-      message: qwerty
-      ts: 1592215337
-    - _id: test-comment-2
-      author: root
-      message: asdasd
-      ts: 1592215337
+      - _id: test-pbehavior-to-get-by-name-1-comment-1
+        author: root
+        message: test-pbehavior-to-get-by-name-1-comment-1-message
+        ts: 1592215337
+      - _id: test-pbehavior-to-get-by-name-1-comment-2
+        author: root
+        message: test-pbehavior-to-get-by-name-1-comment-2-message
+        ts: 1592215337
     created: 1592215337
     enabled: true
     exceptions:
-    - test-exception-to-pbh-edit
+      - test-exception-to-pbh-edit
     exdates:
-    - begin: 1591164001
-      end: 1591167601
-      type: test-type-to-pbh-edit-1
-    filter: '{"$and":[{"name":"test filter"}]}'
+      - begin: 1591164001
+        end: 1591167601
+        type: test-type-to-pbh-edit-1
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pbehavior-to-get-by-name-1-pattern
     name: test-pbehavior-to-get-by-name-1-name
-    reason: test-reason-1
+    reason: test-reason-to-pbh-edit
     rrule: ""
     tstart: 1591172881
     tstop: 1591536400
     type_: test-type-to-pbh-edit-1
     updated: 1592215337
-  pbehavior_2:
+
+  pbehavior_to_get_by_name_2:
     _id: test-pbehavior-to-get-by-name-2
     author: root
     created: 1592215337
     enabled: true
-    filter: '{"$and":[{"name":"test filter"}]}'
+    entity_pattern:
+    old_mongo_query: |
+      {
+        "$and": [
+          {
+            "name": "test filter"
+          }
+        ]
+      }
     name: test-pbehavior-to-get-by-name-2-name
-    reason: test-reason-1
+    reason: test-reason-to-pbh-edit
     rrule: ""
     tstart: 1591172881
-    tstop: 1591536400
     type_: test-type-to-pbh-edit-2
+    comments: [ ]
     updated: 1592215337
-  pbehavior_3:
-    _id: test-pbehavior-to-get-by-filter
-    author: root
-    comments:
-    - _id: test-comment-1
-      author: root
-      message: qwerty
-      ts: 1592215337
-    - _id: test-comment-2
-      author: root
-      message: asdasd
-      ts: 1592215337
-    created: 1592215338
-    enabled: true
-    exceptions:
-    - test-exception-to-pbh-edit
-    exdates:
-    - begin: 1591164001
-      end: 1591167601
-      type: test-type-to-pbh-edit-1
-    filter: '{"$and":[{"name":"test-pbehavior-to-get-by-filter-filter"}]}'
-    name: test-pbehavior-to-get-by-filter-name
-    reason: test-reason-1
-    rrule: ""
-    tstart: 1591172881
-    tstop: 1591536400
-    type_: test-type-to-pbh-edit-1
-    updated: 1592215338
-  pbehavior_4:
-    _id: test-pbehavior-which-reason-should-be-updated
-    author: root
-    comments:
-    - _id: test-comment-3
-      author: root
-      message: qwerty
-      ts: 1592215337
-    - _id: test-comment-4
-      author: root
-      message: asdasd
-      ts: 1592215337
-    created: 1592215337
-    enabled: true
-    exceptions: []
-    exdates:
-    - begin: 1591164001
-      end: 1591167601
-      type: test-type-to-pbh-edit-1
-    filter: '{"$and":[{"name":"test filter"}]}'
-    name: "1"
-    reason: test-reason-to-update
-    rrule: ""
-    tstart: 1591172881
-    tstop: 1591536400
-    type_: test-type-to-pbh-edit-1
-    updated: 1592215337
-  pbehavior_5:
+
+  pbehavior_to_delete_1:
+    <<: *pbehavior
     _id: test-pbehavior-to-delete-1
-    author: root
-    comments:
-    - _id: test-comment-1
-      author: root
-      message: qwerty
-      ts: 1592215337
-    - _id: test-comment-2
-      author: root
-      message: asdasd
-      ts: 1592215337
-    created: 1592215337
-    enabled: true
-    exdates:
-    - begin: 1591164001
-      end: 1591167601
-      type: test-type-to-pbh-edit-1
-    filter: '{"$and":[{"name":"test filter"}]}'
-    name: "1"
-    reason: test-reason-1
-    rrule: ""
-    tstart: 1591172881
-    tstop: 1591536400
-    type_: test-type-to-pbh-edit-1
-    updated: 1592215337
-  pbehavior_6:
+
+  pbehavior_to_delete_2:
+    <<: *pbehavior
     _id: test-pbehavior-to-delete-2
-    author: root
-    comments:
-    - _id: test-comment-1
-      author: root
-      message: qwerty
-      ts: 1592215337
-    - _id: test-comment-2
-      author: root
-      message: asdasd
-      ts: 1592215337
+    name: test-pbehavior-to-delete-2-name
+
+  pbehavior_to_update_1:
+    <<: *pbehavior
+    _id: test-pbehavior-to-update-1
     created: 1592215337
-    enabled: true
-    exdates:
-    - begin: 1591164001
-      end: 1591167601
-      type: test-type-to-pbh-edit-1
-    filter: '{"$and":[{"name":"test filter"}]}'
-    name: "1"
-    reason: test-reason-1
-    rrule: ""
-    tstart: 1591172881
-    tstop: 1591536400
-    type_: test-type-to-pbh-edit-1
-    updated: 1592215337
-  pbehavior_7:
-    _id: test-pbehavior-to-update
-    author: root
-    comments:
-    - _id: test-comment-1
-      author: root
-      message: qwerty
-      ts: 1592215337
-    - _id: test-comment-2
-      author: root
-      message: asdasd
-      ts: 1592215337
-    created: 1592215337
-    enabled: true
-    exceptions:
-    - test-exception-to-pbh-edit
-    exdates:
-    - begin: 1591164001
-      end: 1591167601
-      type: test-type-to-pbh-edit-1
-    filter: '{"$and":[{"name":"test filter"}]}'
     last_alarm_date: 1592215337
-    name: "1"
-    reason: test-reason-1
-    rrule: ""
-    tstart: 1591172881
-    tstop: 1591536400
-    type_: test-type-to-pbh-edit-1
-    updated: 1592215337
-  pbehavior_8:
-    _id: test-pbehavior-to-update-invalid
-    author: root
     comments:
-    - _id: test-comment-1
-      author: root
-      message: qwerty
-      ts: 1592215337
-    - _id: test-comment-2
-      author: root
-      message: asdasd
-      ts: 1592215337
+      - _id: test-pbehavior-to-update-1-comment-1
+        author: root
+        ts: 1592215337
+        message: test-pbehavior-to-update-1-comment-1-message
+      - _id: test-pbehavior-to-update-1-comment-2
+        author: root
+        ts: 1592215338
+        message: test-pbehavior-to-update-1-comment-2-message
+
+  pbehavior_to_update_2:
+    <<: *pbehavior
+    _id: test-pbehavior-to-update-2
+    comments: [ ]
     created: 1592215337
-    enabled: true
-    exceptions: []
-    exdates: []
-    filter: '{"$and":[{"name":"test filter"}]}'
-    name: "1"
-    reason: test-reason-1
-    rrule: ""
-    tstart: 1591172881
-    tstop: 1591536400
-    type_: test-type-to-pbh-edit-1
-    updated: 1592215337
-  pbehavior_9:
+
+  pbehavior_to_update_3:
+    <<: *pbehavior
+    _id: test-pbehavior-to-update-3
+    comments: [ ]
+    created: 1592215337
+    old_mongo_query: |
+      {
+        "$and": [
+          {
+            "name": "test filter"
+          }
+        ]
+      }
+
+  pbehavior_to_delete_exception:
+    <<: *pbehavior
     _id: test-pbehavior-to-delete-exception
-    author: root
-    comments:
-    - _id: test-comment-1
-      author: root
-      message: qwerty
-      ts: 1592215337
-    - _id: test-comment-2
-      author: root
-      message: asdasd
-      ts: 1592215337
-    created: 1592215337
-    enabled: true
     exceptions:
-    - test-exception-to-delete-used-by-pbehavior
-    exdates:
-    - begin: 1591164001
-      end: 1591167601
-      type: test-type-to-pbh-edit-2
-    filter: '{"$and":[{"name":"test filter"}]}'
-    name: "1"
-    reason: test-reason-1
-    rrule: ""
-    tstart: 1591172881
-    tstop: 1591536400
-    type_: test-type-to-pbh-edit-1
-    updated: 1592215337
-  pbehavior_10:
-    _id: test-pbehavior-to-delete-reason
-    author: root
-    comments:
-    - _id: test-comment-1
-      author: root
-      message: qwerty
-      ts: 1592215337
-    - _id: test-comment-2
-      author: root
-      message: asdasd
-      ts: 1592215337
-    created: 1592215337
-    enabled: true
-    exceptions:
-    - test-exception-to-delete-used-by-pbehavior
-    exdates:
-    - begin: 1591164001
-      end: 1591167601
-      type: test-type-to-pbh-edit-2
-    filter: '{"$and":[{"name":"test filter"}]}'
-    name: "1"
+      - test-exception-to-delete-used-by-pbehavior
+
+  pbehavior_to_delete_reason:
+    <<: *pbehavior
     reason: test-reason-to-delete-linked-to-pbehavior
-    rrule: ""
-    tstart: 1591172881
-    tstop: 1591536400
-    type_: test-type-to-pbh-edit-1
-    updated: 1592215337
-  pbehavior_11:
-    _id: test-pbehavior-to-get-reason
-    author: root
-    comments:
-    - _id: test-comment-1
-      author: root
-      message: qwerty
-      ts: 1592215337
-    - _id: test-comment-2
-      author: root
-      message: asdasd
-      ts: 1592215337
-    created: 1592215337
-    enabled: true
-    exceptions: []
-    exdates:
-    - begin: 1591164001
-      end: 1591167601
-      type: test-type-to-pbh-edit-2
-    filter: '{"$and":[{"name":"ccccc"}]}'
-    name: "1"
+
+  pbehavior_to_get_reason:
+    <<: *pbehavior
     reason: test-reason-to-get-2
-    rrule: ""
-    tstart: 1591172881
-    tstop: 1591536400
-    type_: test-type-to-pbh-edit-1
-    updated: 1592215337
-  pbehavior_12:
-    _id: test-pbehavior-to-delete-type-1
-    author: root
-    created: 1592215337
-    enabled: true
-    filter: '{"$and":[{"name":"test filter"}]}'
-    name: Delete type
-    reason: test-reason-1
-    rrule: ""
-    tstart: 1591172881
-    tstop: 1591536400
+
+  pbehavior_to_delete_type_1:
+    <<: *pbehavior
     type_: test-type-to-delete-linked-to-pbh-1
-    updated: 1592215337
-  pbehavior_13:
-    _id: test-pbehavior-to-delete-type-2
-    author: root
-    created: 1592215337
-    enabled: true
+
+  pbehavior_to_delete_type_2:
+    <<: *pbehavior
+    type_: test-type-to-delete-linked-to-pbh-1
     exdates:
-    - begin: 1591164001
-      end: 1591167601
-      type: test-type-to-delete-linked-to-pbh-2
-    filter: '{"$and":[{"name":"test filter"}]}'
-    name: Delete type
-    reason: test-reason-1
-    rrule: ""
-    tstart: 1591172881
-    tstop: 1591536400
-    type_: test-type-to-delete-linked-to-pbh-1
-    updated: 1592215337
-  pbehavior_14:
+      - begin: 1591164001
+        end: 1591167601
+        type: test-type-to-delete-linked-to-pbh-2
+
+  pbehavior_to_create_comment:
+    <<: *pbehavior
     _id: test-pbehavior-to-create-comment
-    author: root
     comments:
-    - _id: test-comment-create-comment-1
-      author: root
-      message: qwerty
-      ts: 1592215337
-    - _id: test-comment-create-comment-2
-      author: root
-      message: asdasd
-      ts: 1592215337
-    created: 1592215337
-    enabled: true
-    exdates: []
-    filter: '{"$and":[{"name":"test filter"}]}'
-    name: Create comment
-    reason: test-reason-1
-    rrule: ""
-    tstart: 1591172881
-    tstop: 1591536400
-    type_: test-type-to-pbh-edit-1
-    updated: 1592215337
-  pbehavior_15:
+      - _id: test-pbehavior-to-create-comment-1
+        author: root
+        message: test-pbehavior-to-create-comment-1-message
+        ts: 1592215337
+      - _id: test-pbehavior-to-create-comment-2
+        author: root
+        message: test-pbehavior-to-create-comment-2-message
+        ts: 1592215337
+
+  pbehavior_to_delete_comment:
+    <<: *pbehavior
     _id: test-pbehavior-to-delete-comment
-    author: root
     comments:
-    - _id: test-comment-delete-1
-      author: root
-      message: qwerty
-      ts: 1592215337
-    - _id: test-comment-delete-2
-      author: root
-      message: asdasd
-      ts: 1592215337
-    created: 1592215337
-    enabled: true
-    exdates: []
-    filter: '{"$and":[{"name":"test filter"}]}'
-    name: Create comment
-    reason: test-reason-1
-    rrule: ""
-    tstart: 1591172881
-    tstop: 1591536400
-    type_: test-type-to-pbh-edit-1
-    updated: 1592215337
-  pbehavior_16:
-    _id: test-pbehavior-to-get-by-entity-id
+      - _id: test-pbehavior-to-delete-comment-1
+        author: root
+        message: test-pbehavior-to-delete-comment-1-message
+        ts: 1592215337
+      - _id: test-pbehavior-to-delete-comment-2
+        author: root
+        message: test-pbehavior-to-delete-comment-2-message
+        ts: 1592215337
+
+  pbehavior_to_get_by_entity_id_1:
+    <<: *pbehavior
+    _id: test-pbehavior-to-get-by-entity-id-1
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-pbehavior-get-by-entity-id-1
     author: root
-    comments: []
+    comments: [ ]
     created: 1592215337
     enabled: true
-    exdates: []
-    filter: '{"$and":[{"name":"test-pbehavior-get-by-entity-id-resource"}]}'
-    name: Pbehavior by entity id
-    reason: test-reason-1
+    exdates: [ ]
+    name: test-pbehavior-to-get-by-entity-id-1-name
+    reason: test-reason-to-pbh-edit
     rrule: ""
     tstart: 1591172881
     tstop: 1591536400
     type_: test-type-to-pbh-edit-1
     updated: 1592215337
-  pbehavior_17:
+
+  pbehavior_to_get_by_entity_id_2:
+    <<: *pbehavior
+    _id: test-pbehavior-to-get-by-entity-id-2
+    entity_pattern:
+    old_mongo_query: |
+      {
+        "$and": [
+          {
+            "name": "test-resource-to-pbehavior-get-by-entity-id-2"
+          }
+        ]
+      }
+    author: root
+    comments: [ ]
+    created: 1592215337
+    enabled: true
+    exdates: [ ]
+    name: test-pbehavior-to-get-by-entity-id-2-name
+    reason: test-reason-to-pbh-edit
+    rrule: ""
+    tstart: 1591172881
+    tstop: 1591536400
+    type_: test-type-to-pbh-edit-1
+    updated: 1592215337
+
+  pbehavior_to_get_by_type:
+    <<: *pbehavior
     _id: test-pbehavior-to-get-by-type
-    author: root
-    comments: []
-    created: 1592215337
-    enabled: true
-    exceptions: []
-    exdates: []
-    filter: '{"$and":[{"name":"ccccc"}]}'
-    name: test-pbehavior-to-get-by-type-name
-    reason: test-reason-1
-    rrule: ""
-    tstart: 1591172881
-    tstop: 1591536400
     type_: test-type-to-get-pbehavior
-    updated: 1592215337
-  pbehavior_18:
+
+  pbehavior_to_get_by_reason:
+    <<: *pbehavior
     _id: test-pbehavior-to-get-by-reason
-    author: root
-    comments: []
-    created: 1592215337
-    enabled: true
-    exceptions: []
-    exdates: []
-    filter: '{"$and":[{"name":"ccccc"}]}'
-    name: test-pbehavior-to-get-by-reason-name
     reason: test-reason-to-pbehavior-get
-    rrule: ""
-    tstart: 1591172881
-    tstop: 1591536400
-    type_: test-type-to-pbh-edit-1
-    updated: 1592215337
-  pbehavior_19:
-    _id: test-pbehavior-to-exception-get
-    author: test-pbehavior-to-exception-get-author
-    comments: []
+
+  pbehavior_to_exception_get:
+    <<: *pbehavior
+    exceptions:
+      - test-exception-to-get-2
+
+  pbehavior_to_entities_get_1:
+    <<: *pbehavior
+    _id: test-pbehavior-to-entities-get-1
+    entity_pattern:
+      - - field: name
+          cond:
+            type: is_one_of
+            value:
+              - test-resource-to-entities-get-by-pbh-1
+              - test-resource-to-entities-get-by-pbh-2
+              - test-resource-to-entities-get-by-pbh-3
+              - test-resource-to-entities-get-by-pbh-4
+              - test-resource-to-entities-get-by-pbh-5
+
+  pbehavior_to_entities_get_2:
+    <<: *pbehavior
+    _id: test-pbehavior-to-entities-get-2
+    entity_pattern:
+    old_mongo_query: |
+      {
+        "$and": [
+          {
+            "name": "test-resource-to-entities-get-by-pbh-6"
+          }
+        ]
+      }
+
+  pbehavior_to_patch_1:
+    <<: *pbehavior
+    _id: test-pbehavior-to-patch-1
+    author: noperms
+    comments:
+      - _id: test-pbehavior-to-patch-1-comment-1
+        author: root
+        message: test-pbehavior-to-patch-1-comment-1-message
+        ts: 1592215337
+      - _id: test-pbehavior-to-patch-1-comment-2
+        author: root
+        message: test-pbehavior-to-patch-1-comment-2-message
+        ts: 1592215337
     created: 1592215337
     enabled: true
     exceptions:
-    - test-exception-to-get-2
-    exdates: []
-    filter: '{"$and":[{"name":"test-pbehavior-to-exception-get-filter"}]}'
-    name: test-pbehavior-to-exception-get-name
-    reason: test-reason-1
-    rrule: ""
+      - test-exception-to-pbh-edit
+    exdates:
+      - begin: 1591164001
+        end: 1591167601
+        type: test-type-to-pbh-edit-1
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pbehavior-to-patch-1-pattern
+    name: test-pbehavior-to-patch-1-name
+    reason: test-reason-to-pbh-edit
+    rrule: "FREQ=DAILY"
     tstart: 1591172881
-    tstop: 2591536400
+    tstop: 1591536400
     type_: test-type-to-pbh-edit-1
     updated: 1592215337
-  pbehavior_20:
-    _id: test-pbehavior-to-entities-get
-    author: test-pbehavior-to-entities-get-author
-    comments: []
-    created: 1592215337
-    enabled: true
-    exceptions: []
-    exdates: []
-    filter: '{"$or":[{"name":"test-resource-to-entities-get-by-pbh-1"},{"name":"test-resource-to-entities-get-by-pbh-2"},{"name":"test-resource-to-entities-get-by-pbh-3"},{"name":"test-resource-to-entities-get-by-pbh-4"},{"name":"test-resource-to-entities-get-by-pbh-5"}]}'
-    name: test-pbehavior-to-entities-get-name
-    reason: test-reason-1
-    rrule: ""
+
+  pbehavior_to_patch_2:
+    <<: *pbehavior
+    _id: test-pbehavior-to-patch-2
+    author: noperms
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pbehavior-to-patch-2-pattern
+
+  pbehavior_to_patch_3:
+    <<: *pbehavior
+    _id: test-pbehavior-to-patch-3
+    author: noperms
+    corporate_entity_pattern: test-pattern-to-rule-edit-2
+    corporate_entity_pattern_title: test-pattern-to-rule-edit-2-title
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-rule-edit-2-pattern
+
+  pbehavior_to_patch_4:
+    <<: *pbehavior
+    _id: test-pbehavior-to-patch-4
+    author: noperms
     tstart: 1591172881
     tstop: 1591172981
     type_: test-type-to-pbh-edit-1
-    updated: 1592215337
-  pbehavior_21:
-    _id: test-pbehavior-to-patch-1
-    author: test-pbehavior-to-patch-1-author
-    comments: []
-    created: 1592215337
-    enabled: true
+
+  pbehavior_to_patch_5:
+    <<: *pbehavior
+    _id: test-pbehavior-to-patch-5
+    author: noperms
+    tstart: 1591172881
+    tstop: 1591172981
+    type_: test-type-to-pbh-edit-3
+
+  pbehavior_to_patch_6:
+    _id: test-pbehavior-to-patch-6
+    author: noperms
+    tstart: 1591172881
+    type_: test-type-to-pbh-edit-3
+    name: test-pbehavior-to-patch-6-name
+    reason: test-reason-to-pbh-edit
+    created: <NowUnix()>
+    updated: <Current().created>
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: <Word()>
+
+  pbehavior_to_patch_7:
+    <<: *pbehavior
+    _id: test-pbehavior-to-patch-7
+    author: noperms
+    tstart: 1591172881
+    tstop: 1591172981
+    type_: test-type-to-pbh-edit-1
+
+  pbehavior_to_patch_8:
+    <<: *pbehavior
+    _id: test-pbehavior-to-patch-8
+    author: noperms
+    tstart: 1591172881
+    tstop: 1591172981
+    type_: test-type-to-pbh-edit-1
+
+  pbehavior_to_patch_9:
+    _id: test-pbehavior-to-patch-9
+    author: noperms
+    tstart: 1591172881
+    type_: test-type-to-pbh-edit-3
+    name: test-pbehavior-to-patch-9-name
+    reason: test-reason-to-pbh-edit
+    created: <NowUnix()>
+    updated: <Current().created>
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: <Word()>
+
+  pbehavior_to_patch_10:
+    <<: *pbehavior
+    _id: test-pbehavior-to-patch-10
+    author: noperms
+
+  pbehavior_to_patch_11:
+    <<: *pbehavior
+    _id: test-pbehavior-to-patch-11
+    author: noperms
+    tstart: 1591172881
+    tstop: 1591172981
+    type_: test-type-to-pbh-edit-1
+
+  pbehavior_to_patch_12:
+    _id: test-pbehavior-to-patch-12
+    author: noperms
+    tstart: 1591172881
+    type_: test-type-to-pbh-edit-3
+    name: test-pbehavior-to-patch-12-name
+    reason: test-reason-to-pbh-edit
+    created: <NowUnix()>
+    updated: <Current().created>
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: <Word()>
+
+  pbehavior_to_patch_13:
+    <<: *pbehavior
+    _id: test-pbehavior-to-patch-13
+    author: noperms
+    rrule: FREQ=DAILY
     exceptions:
-    - test-exception-to-patch-pbehavior
+      - test-exception-to-pbh-edit
     exdates:
-    - begin: 1592215337
-      end: 1592215338
-      type: test-active-type-to-patch-pbehavior
-    filter: '{"$and":[{"name":"test-filter"}]}'
-    name: test-pbehavior-to-patch-1-name
-    reason: test-reason-to-patch-pbehavior
-    rrule: FREQ=MONTHLY
-    tstart: 1592215337
-    tstop: 1592215338
-    type_: test-active-type-to-patch-pbehavior
-    updated: 1592215337
-  pbehavior_22:
-    _id: test-pbehavior-to-patch-2
-    author: test-pbehavior-to-patch-2-author
-    comments: []
-    created: 1592215337
-    enabled: true
-    filter: '{"$and":[{"name":"test-filter"}]}'
-    name: test-pbehavior-to-patch-2-name
-    reason: test-reason-to-patch-pbehavior
-    rrule: FREQ=MONTHLY
-    tstart: 1592215337
-    tstop: null
-    type_: test-default-pause-type
-    updated: 1592215337
-  pbehavior_23:
+      - begin: 1591164001
+        end: 1591167601
+        type: test-type-to-pbh-edit-1
+
+  pbehavior_to_bulk_delete_1:
+    <<: *pbehavior
     _id: test-pbehavior-to-bulk-delete-1
-    author: root
-    created: 1592215337
-    enabled: true
-    filter: '{"$and":[{"name":"test filter"}]}'
-    name: test-pbehavior-to-bulk-delete-1-name
-    reason: test-reason-1
-    tstart: 1591172881
-    tstop: 1591536400
-    type_: test-type-to-pbh-edit-1
-    updated: 1592215337
-  pbehavior_24:
+
+  pbehavior_to_bulk_delete_2:
+    <<: *pbehavior
     _id: test-pbehavior-to-bulk-delete-2
-    author: root
-    created: 1592215337
-    enabled: true
-    filter: '{"$and":[{"name":"test filter"}]}'
-    name: test-pbehavior-to-bulk-delete-2-name
-    reason: test-reason-1
-    tstart: 1591172881
-    tstop: 1591536400
-    type_: test-type-to-pbh-edit-1
-    updated: 1592215337
-  pbehavior_25:
+
+  pbehavior_to_bulk_update_1:
+    <<: *pbehavior
     _id: test-pbehavior-to-bulk-update-1
-    author: root
     created: 1592215337
-    enabled: true
-    filter: '{"$and":[{"name":"test filter"}]}'
-    name: test-pbehavior-to-bulk-update-1-name
-    reason: test-reason-1
-    tstart: 1591172881
-    tstop: 1591536400
-    type_: test-type-to-pbh-edit-1
-    updated: 1592215337
-  pbehavior_26:
+
+  pbehavior_to_bulk_update_2:
+    <<: *pbehavior
     _id: test-pbehavior-to-bulk-update-2
-    author: root
     created: 1592215337
-    enabled: true
-    filter: '{"$and":[{"name":"test filter"}]}'
-    name: test-pbehavior-to-bulk-update-2-name
-    reason: test-reason-1
-    tstart: 1591172881
-    tstop: 1591536400
-    type_: test-type-to-pbh-edit-1
-    updated: 1592215337
-  pbehavior_27:
+
+  pbehavior_to_check_unique:
+    <<: *pbehavior
     _id: test-pbehavior-to-check-unique
-    author: root
-    created: 1592215337
-    enabled: true
-    filter: '{"$and":[{"name":"test filter"}]}'
     name: test-pbehavior-to-check-unique-name
-    reason: test-reason-1
-    tstart: 1591172881
-    tstop: 1591536400
-    type_: test-type-to-pbh-edit-1
-    updated: 1592215337
+
+  pbehavior_to_pbehavior_13:
+    <<: *pbehavior
+    _id: test-pbehavior-13
+    enabled: false
+    entity_pattern:
+    old_mongo_query: |
+      {
+        "$and": [
+          {
+            "name": "test-resource-pbehavior-13"
+          }
+        ]
+      }

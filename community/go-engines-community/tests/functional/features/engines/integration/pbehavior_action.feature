@@ -46,13 +46,17 @@ Feature: no execute action when entity is inactive
       "tstop": {{ nowAdd "2h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-pbehavior-action-1"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-action-1"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -71,7 +75,7 @@ Feature: no execute action when entity is inactive
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.ack":{"$exists":false}},{"v.resource":"test-resource-pbehavior-action-1"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-action-1
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -82,17 +86,7 @@ Feature: no execute action when entity is inactive
             "connector" : "test-connector-pbehavior-action-1",
             "connector_name" : "test-connector-name-pbehavior-action-1",
             "component" : "test-component-pbehavior-action-1",
-            "resource" : "test-resource-pbehavior-action-1",
-            "steps": [
-              {"_t": "stateinc"},
-              {"_t": "statusinc"},
-              {
-                "_t": "pbhenter",
-                "a": "system",
-                "user_id": ""
-              },
-              {"_t": "stateinc"}
-            ]
+            "resource" : "test-resource-pbehavior-action-1"
           }
         }
       ],
@@ -103,6 +97,47 @@ Feature: no execute action when entity is inactive
         "total_count": 1
       }
     }
+    """
+    Then the response key "data.0.v.ack" should not exist
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {"_t": "stateinc"},
+              {"_t": "statusinc"},
+              {
+                "_t": "pbhenter",
+                "a": "system",
+                "user_id": ""
+              },
+              {"_t": "stateinc"}
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
+          }
+        }
+      }
+    ]
     """
 
   Scenario: given delayed action and maintenance pbehavior should update alarm after pbehavior
@@ -139,13 +174,17 @@ Feature: no execute action when entity is inactive
       "tstop": {{ nowAdd "10s" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-pbehavior-action-2"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-action-2"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -163,10 +202,8 @@ Feature: no execute action when entity is inactive
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
-    When I wait the end of event processing
-    When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-pbehavior-action-2"}]}&with_steps=true
+    When I wait the end of 3 events processing
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-action-2
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -177,8 +214,38 @@ Feature: no execute action when entity is inactive
             "connector" : "test-connector-pbehavior-action-2",
             "connector_name" : "test-connector-name-pbehavior-action-2",
             "component" : "test-component-pbehavior-action-2",
-            "resource" : "test-resource-pbehavior-action-2",
-            "steps": [
+            "resource" : "test-resource-pbehavior-action-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {"_t": "stateinc"},
               {"_t": "statusinc"},
               {
@@ -191,20 +258,20 @@ Feature: no execute action when entity is inactive
                 "a": "system",
                 "user_id": ""
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-pbehavior-action-2"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-action-2
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -219,8 +286,38 @@ Feature: no execute action when entity is inactive
             "connector" : "test-connector-pbehavior-action-2",
             "connector_name" : "test-connector-name-pbehavior-action-2",
             "component" : "test-component-pbehavior-action-2",
-            "resource" : "test-resource-pbehavior-action-2",
-            "steps": [
+            "resource" : "test-resource-pbehavior-action-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {"_t": "stateinc"},
               {"_t": "statusinc"},
               {
@@ -234,17 +331,17 @@ Feature: no execute action when entity is inactive
                 "user_id": ""
               },
               {"_t": "ack"}
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 5
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
 
   Scenario: given pbehavior action should create pbehavior and update new alarm
@@ -289,7 +386,7 @@ Feature: no execute action when entity is inactive
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-pbehavior-action-3"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-action-3
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -303,16 +400,7 @@ Feature: no execute action when entity is inactive
             "resource" : "test-resource-pbehavior-action-3",
             "pbehavior_info": {
               "canonical_type": "maintenance"
-            },
-            "steps": [
-              {"_t": "stateinc"},
-              {"_t": "statusinc"},
-              {
-                "_t": "pbhenter",
-                "a": "system",
-                "user_id": ""
-              }
-            ]
+            }
           }
         }
       ],
@@ -323,6 +411,45 @@ Feature: no execute action when entity is inactive
         "total_count": 1
       }
     }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {"_t": "stateinc"},
+              {"_t": "statusinc"},
+              {
+                "_t": "pbhenter",
+                "a": "system",
+                "user_id": ""
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
     """
 
   Scenario: given pbehavior action with start on trigger should create pbehavior
@@ -370,7 +497,7 @@ Feature: no execute action when entity is inactive
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-pbehavior-action-4"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-action-4
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -384,16 +511,7 @@ Feature: no execute action when entity is inactive
             "resource" : "test-resource-pbehavior-action-4",
             "pbehavior_info": {
               "canonical_type": "maintenance"
-            },
-            "steps": [
-              {"_t": "stateinc"},
-              {"_t": "statusinc"},
-              {
-                "_t": "pbhenter",
-                "a": "system",
-                "user_id": ""
-              }
-            ]
+            }
           }
         }
       ],
@@ -404,6 +522,45 @@ Feature: no execute action when entity is inactive
         "total_count": 1
       }
     }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {"_t": "stateinc"},
+              {"_t": "statusinc"},
+              {
+                "_t": "pbhenter",
+                "a": "system",
+                "user_id": ""
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
     """
 
   Scenario: given pbehavior action should create pbehavior and update old alarm
@@ -464,7 +621,7 @@ Feature: no execute action when entity is inactive
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-pbehavior-action-5"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-action-5
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -478,17 +635,7 @@ Feature: no execute action when entity is inactive
             "resource" : "test-resource-pbehavior-action-5",
             "pbehavior_info": {
               "canonical_type": "maintenance"
-            },
-            "steps": [
-              {"_t": "stateinc"},
-              {"_t": "statusinc"},
-              {"_t": "stateinc"},
-              {
-                "_t": "pbhenter",
-                "a": "system",
-                "user_id": ""
-              }
-            ]
+            }
           }
         }
       ],
@@ -499,6 +646,46 @@ Feature: no execute action when entity is inactive
         "total_count": 1
       }
     }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {"_t": "stateinc"},
+              {"_t": "statusinc"},
+              {"_t": "stateinc"},
+              {
+                "_t": "pbhenter",
+                "a": "system",
+                "user_id": ""
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
+          }
+        }
+      }
+    ]
     """
 
   Scenario: given pbehavior action should create pbehavior and update last alarm date of pbehavior

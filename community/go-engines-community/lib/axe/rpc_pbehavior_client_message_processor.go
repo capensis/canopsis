@@ -48,6 +48,8 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 		return p.publishResult(routingKey, correlationId, p.getErrRpcEvent(fmt.Errorf("invalid event")))
 	}
 
+	alarmChangeType := types.AlarmChangeTypeNone
+
 	if event.PbhEvent.EventType != "" {
 		alarmChange := types.AlarmChange{
 			Type:                            types.AlarmChangeTypeNone,
@@ -58,7 +60,7 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 			PreviousPbehaviorTypeID:         event.Alarm.Value.PbehaviorInfo.TypeID,
 			PreviousPbehaviorCannonicalType: event.Alarm.Value.PbehaviorInfo.CanonicalType,
 		}
-		alarmChangeType, err := p.Executor.Exec(
+		alarmChangeType, err = p.Executor.Exec(
 			ctx,
 			types.Operation{
 				Type: event.PbhEvent.EventType,
@@ -112,7 +114,7 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 
 	replyEvent, err = p.getRpcEvent(types.RPCAxeResultEvent{
 		Alarm:           event.Alarm,
-		AlarmChangeType: types.AlarmChangeType(event.PbhEvent.EventType),
+		AlarmChangeType: alarmChangeType,
 		Error:           nil,
 	})
 	if err != nil {

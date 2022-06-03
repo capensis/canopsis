@@ -2157,8 +2157,16 @@ definitions:
     properties:
       _id:
         type: string
+      corporate_entity_pattern:
+        type: string
       enabled:
         type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       exceptions:
         items:
           type: string
@@ -2167,7 +2175,6 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
-      filter: {}
       name:
         maxLength: 255
         type: string
@@ -2184,7 +2191,6 @@ definitions:
     required:
     - _id
     - enabled
-    - filter
     - name
     - reason
     - tstart
@@ -2220,8 +2226,16 @@ definitions:
     properties:
       _id:
         type: string
+      corporate_entity_pattern:
+        type: string
       enabled:
         type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       exceptions:
         items:
           type: string
@@ -2230,7 +2244,6 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
-      filter: {}
       name:
         maxLength: 255
         type: string
@@ -2246,18 +2259,26 @@ definitions:
         type: string
     required:
     - enabled
-    - filter
     - name
     - reason
     - tstart
     - type
     type: object
-  pbehavior.Filter:
+  pbehavior.OldMongoQuery:
+    additionalProperties: true
     type: object
   pbehavior.PatchRequest:
     properties:
+      corporate_entity_pattern:
+        type: string
       enabled:
         type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       exceptions:
         items:
           type: string
@@ -2266,7 +2287,6 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
-      filter: {}
       name:
         type: string
       reason:
@@ -2304,10 +2324,20 @@ definitions:
         items:
           $ref: '#/definitions/pbehavior.Comment'
         type: array
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
       created:
         type: integer
       enabled:
         type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       exceptions:
         items:
           $ref: '#/definitions/pbehaviorexception.Exception'
@@ -2316,8 +2346,6 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.Exdate'
         type: array
-      filter:
-        $ref: '#/definitions/pbehavior.Filter'
       is_active_status:
         description: IsActiveStatus represents if pbehavior is in action for current
           time.
@@ -2326,6 +2354,8 @@ definitions:
         type: integer
       name:
         type: string
+      old_mongo_query:
+        $ref: '#/definitions/pbehavior.OldMongoQuery'
       reason:
         $ref: '#/definitions/pbehaviorreason.Reason'
       rrule:
@@ -2358,8 +2388,16 @@ definitions:
     type: object
   pbehavior.UpdateRequest:
     properties:
+      corporate_entity_pattern:
+        type: string
       enabled:
         type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       exceptions:
         items:
           type: string
@@ -2368,7 +2406,6 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
-      filter: {}
       name:
         maxLength: 255
         type: string
@@ -2384,7 +2421,6 @@ definitions:
         type: string
     required:
     - enabled
-    - filter
     - name
     - reason
     - tstart

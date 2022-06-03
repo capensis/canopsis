@@ -119,7 +119,7 @@ Feature: Update a pbehavior type
       "name": "Default Type Pause",
       "description": "Maintenance state type",
       "type": "maintenance",
-      "priority": 3,
+      "priority": 2,
       "icon_name": "exclamation-mark.png"
     }
     """

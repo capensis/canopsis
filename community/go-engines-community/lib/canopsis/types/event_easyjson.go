@@ -341,8 +341,6 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				in.Delim(']')
 			}
-		case "pbh_parameters":
-			out.PbhParameters = string(in.String())
 		case "idle_rule_apply":
 			out.IdleRuleApply = string(in.String())
 		case "execution":
@@ -683,11 +681,6 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			}
 			out.RawByte(']')
 		}
-	}
-	if in.PbhParameters != "" {
-		const prefix string = ",\"pbh_parameters\":"
-		out.RawString(prefix)
-		out.String(string(in.PbhParameters))
 	}
 	if in.IdleRuleApply != "" {
 		const prefix string = ",\"idle_rule_apply\":"
