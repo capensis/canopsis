@@ -5,11 +5,14 @@ import (
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -30,10 +33,16 @@ type store struct {
 
 	defaultSearchByFields []string
 	defaultSortBy         string
+
+	pbhComputeChan chan<- pbehavior.ComputeTask
+
+	logger zerolog.Logger
 }
 
 func NewStore(
 	dbClient mongo.DbClient,
+	pbhComputeChan chan<- pbehavior.ComputeTask,
+	logger zerolog.Logger,
 ) Store {
 	return &store{
 		client:     dbClient,
@@ -47,7 +56,12 @@ func NewStore(
 			mongo.EventFilterRulesMongoCollection,
 			mongo.MetaAlarmRulesMongoCollection,
 			mongo.InstructionMongoCollection,
+			mongo.PbehaviorMongoCollection,
 		},
+
+		pbhComputeChan: pbhComputeChan,
+
+		logger: logger,
 	}
 }
 
@@ -258,6 +272,8 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error 
 		}
 	}
 
+	s.processPbehaviors(ctx, pattern)
+
 	return nil
 }
 
@@ -384,6 +400,40 @@ func (s *store) fetchCount(ctx context.Context, collection mongo.DbCollection, m
 	}
 
 	return res.GetTotal(), err
+}
+
+func (s *store) processPbehaviors(ctx context.Context, pattern Response) {
+	if pattern.Type != savedpattern.TypeEntity {
+		return
+	}
+
+	cursor, err := s.client.Collection(mongo.PbehaviorMongoCollection).Find(ctx, bson.M{
+		"corporate_entity_pattern": pattern.ID,
+	}, options.Find().SetProjection(bson.M{"_id": 1}))
+	if err != nil {
+		s.logger.Err(err).Msg("cannot fetch pbehaviors")
+		return
+	}
+	defer cursor.Close(ctx)
+
+	pbhIds := make([]string, 0)
+	for cursor.Next(ctx) {
+		pbh := pbehavior.PBehavior{}
+		err := cursor.Decode(&pbh)
+		if err != nil {
+			s.logger.Err(err).Msg("cannot decode pbehavior")
+			continue
+		}
+		pbhIds = append(pbhIds, pbh.ID)
+	}
+
+	if len(pbhIds) == 0 {
+		return
+	}
+
+	s.pbhComputeChan <- pbehavior.ComputeTask{
+		PbehaviorIds: pbhIds,
+	}
 }
 
 func getAuthorPipeline() []bson.M {

@@ -4,7 +4,7 @@ Feature: Delete a pbehavior
 
   Scenario: given delete request should delete pbehavior
     When I am admin
-    When I do DELETE /api/v4/pbehaviors?name=test-pbehavior-to-delete-3-name
+    When I do DELETE /api/v4/pbehaviors?name=test-pbehavior-to-delete-2-name
     Then the response code should be 204
     When I do GET /api/v4/pbehaviors/test-pbehavior-to-delete-3
     Then the response code should be 404

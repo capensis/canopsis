@@ -375,11 +375,6 @@ func RegisterRoutes(
 		}
 
 		pbehaviorApi := pbehavior.NewApi(
-			pbehavior.NewModelTransformer(
-				dbClient,
-				pbehaviorreason.NewModelTransformer(),
-				pbehaviorexception.NewModelTransformer(dbClient),
-			),
 			pbehavior.NewStore(
 				dbClient,
 				libpbehavior.NewEntityMatcher(dbClient),
@@ -387,6 +382,7 @@ func RegisterRoutes(
 				timezoneConfigProvider,
 			),
 			pbhComputeChan,
+			common.NewPatternFieldsTransformer(dbClient),
 			actionLogger,
 			logger,
 		)
@@ -1125,7 +1121,7 @@ func RegisterRoutes(
 			)
 		}
 
-		patternAPI := pattern.NewApi(pattern.NewStore(dbClient), userInterfaceConfig, enforcer, actionLogger)
+		patternAPI := pattern.NewApi(pattern.NewStore(dbClient, pbhComputeChan, logger), userInterfaceConfig, enforcer, actionLogger)
 		patternRouter := protected.Group("/patterns")
 		{
 			patternRouter.Use(middleware.OnlyAuth())

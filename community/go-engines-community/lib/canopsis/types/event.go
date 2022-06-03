@@ -61,7 +61,6 @@ const (
 	EventTypePbhEnter           = "pbhenter"
 	EventTypePbhLeaveAndEnter   = "pbhleaveandenter"
 	EventTypePbhLeave           = "pbhleave"
-	EventTypePbhCreate          = "pbhcreate"
 	EventTypeResolveDone        = "resolve_done"
 	EventTypeResolveCancel      = "resolve_cancel"
 	EventTypeResolveClose       = "resolve_close"
@@ -193,9 +192,6 @@ type Event struct {
 	AddedToServices []string `bson:"added_to_services,omitempty" json:"added_to_services,omitempty"`
 	// RemovedFromServices contains ids of entity services from which entity has been removed as dependency.
 	RemovedFromServices []string `bson:"removed_from_services,omitempty" json:"removed_from_services,omitempty"`
-
-	// PbhParameters is used only with EventTypePbhCreate
-	PbhParameters string `bson:"pbh_parameters,omitempty" json:"pbh_parameters,omitempty"`
 
 	// IdleRuleApply is used if event is emitted by idle rule.
 	IdleRuleApply string `bson:"idle_rule_apply,omitempty" json:"idle_rule_apply,omitempty"`
@@ -612,7 +608,6 @@ func isValidEventType(t string) bool {
 		EventTypePbhEnter,
 		EventTypePbhLeaveAndEnter,
 		EventTypePbhLeave,
-		EventTypePbhCreate,
 		EventTypeUpdateStatus,
 		EventTypeMetaAlarm,
 		EventTypeMetaAlarmUpdated,

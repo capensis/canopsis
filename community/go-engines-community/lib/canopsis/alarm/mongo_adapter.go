@@ -744,10 +744,10 @@ func (a *mongoAdapter) ArchiveResolvedAlarms(ctx context.Context, before types.C
 	return archived, nil
 }
 
-func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, createdAfter types.CpsTime, idsWithPbehaviors []string) (libmongo.Cursor, error) {
+func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, createdBefore types.CpsTime, idsWithPbehaviors []string) (libmongo.Cursor, error) {
 	filter := bson.M{
 		"v.resolved": nil,
-		"t":          bson.M{"$lt": createdAfter},
+		"t":          bson.M{"$lt": createdBefore},
 	}
 
 	if len(idsWithPbehaviors) > 0 {

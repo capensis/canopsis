@@ -93,7 +93,11 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*Aggrega
 			"as": "alarm",
 		}},
 		{"$unwind": bson.M{"path": "$alarm", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{"state": "$alarm.v.state.val"}},
+		{"$addFields": bson.M{"state": bson.M{"$cond": bson.M{
+			"if":   "$alarm.v.state.val",
+			"then": "$alarm.v.state.val",
+			"else": 0,
+		}}}},
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorTypeMongoCollection,
 			"foreignField": "_id",

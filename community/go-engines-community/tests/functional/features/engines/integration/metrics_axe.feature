@@ -88,31 +88,25 @@ Feature: Metrics should be added on alarm changes
     ]
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-metrics-axe-2-1"}]}&with_steps=true until response code is 200 and response array key "data.0.v.steps" contains:
+    When I do GET /api/v4/alarms?search=test-resource-metrics-axe-2-1&with_instructions=true until response code is 200 and body contains:
     """json
-    [
-      {
-        "_t": "autoinstructioncomplete",
-        "m": "Instruction test-instruction-metrics-axe-2-1-name."
-      },
-      {
-        "_t": "autoinstructioncomplete",
-        "m": "Instruction test-instruction-metrics-axe-2-2-name."
-      }
-    ]
+    {
+      "data": [
+        {
+          "is_all_auto_instructions_completed": true
+        }
+      ]
+    }
     """
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-metrics-axe-2-2"}]}&with_steps=true until response code is 200 and response array key "data.0.v.steps" contains:
+    When I do GET /api/v4/alarms?search=test-resource-metrics-axe-2-2&with_instructions=true until response code is 200 and body contains:
     """json
-    [
-      {
-        "_t": "autoinstructioncomplete",
-        "m": "Instruction test-instruction-metrics-axe-2-1-name."
-      },
-      {
-        "_t": "autoinstructioncomplete",
-        "m": "Instruction test-instruction-metrics-axe-2-2-name."
-      }
-    ]
+    {
+      "data": [
+        {
+          "is_all_auto_instructions_completed": true
+        }
+      ]
+    }
     """
     When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=instruction_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
     Then the response code should be 200
@@ -179,13 +173,17 @@ Feature: Metrics should be added on alarm changes
       "tstop": {{ nowAdd "1h" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-metrics-axe-3"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-axe-3"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201

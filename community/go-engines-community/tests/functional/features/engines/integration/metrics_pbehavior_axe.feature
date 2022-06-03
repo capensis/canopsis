@@ -38,13 +38,17 @@ Feature: SLI metrics should be added on alarm changes
       "tstop": {{ nowAdd "2s" }},
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-metrics-pbehavior-axe-1"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-pbehavior-axe-1"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -99,13 +103,17 @@ Feature: SLI metrics should be added on alarm changes
       "tstop": {{ nowAdd "3s" }},
       "type": "test-pause-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-metrics-pbehavior-axe-2"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-pbehavior-axe-2"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -160,13 +168,17 @@ Feature: SLI metrics should be added on alarm changes
       "tstop": {{ nowAdd "3s" }},
       "type": "test-inactive-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-metrics-pbehavior-axe-3"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-pbehavior-axe-3"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -221,13 +233,17 @@ Feature: SLI metrics should be added on alarm changes
       "tstop": {{ nowAdd "1h" }},
       "type": "test-active-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-metrics-pbehavior-axe-4"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-pbehavior-axe-4"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
@@ -282,13 +298,17 @@ Feature: SLI metrics should be added on alarm changes
       "tstop": {{ nowAdd "2s" }},
       "type": "test-active-type-to-engine",
       "reason": "test-reason-to-engine",
-      "filter":{
-        "$and":[
+      "entity_pattern": [
+        [
           {
-            "name": "test-resource-metrics-pbehavior-axe-5"
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-pbehavior-axe-5"
+            }
           }
         ]
-      }
+      ]
     }
     """
     Then the response code should be 201
