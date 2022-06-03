@@ -108,7 +108,7 @@ func (a *api) Create(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.computeChan <- pbehavior.ComputeTask{}
+	a.sendComputeTask()
 	c.JSON(http.StatusCreated, pt)
 }
 
@@ -151,7 +151,7 @@ func (a *api) Update(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.sendComputeTask(pt.ID)
+	a.sendComputeTask()
 	c.JSON(http.StatusOK, pt)
 }
 
@@ -184,14 +184,6 @@ func (a *api) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-func (a *api) sendComputeTask(typeID string) {
-	task := pbehavior.ComputeTask{}
-
-	select {
-	case a.computeChan <- task:
-	default:
-		a.logger.Err(errors.New("channel is full")).
-			Str("type", typeID).
-			Msg("fail to start linked pbehaviors recompute on type update")
-	}
+func (a *api) sendComputeTask() {
+	a.computeChan <- pbehavior.ComputeTask{}
 }

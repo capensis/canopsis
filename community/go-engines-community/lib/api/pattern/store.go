@@ -2,7 +2,6 @@ package pattern
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -432,15 +431,8 @@ func (s *store) processPbehaviors(ctx context.Context, pattern Response) {
 		return
 	}
 
-	task := pbehavior.ComputeTask{
+	s.pbhComputeChan <- pbehavior.ComputeTask{
 		PbehaviorIds: pbhIds,
-	}
-	select {
-	case s.pbhComputeChan <- task:
-	default:
-		s.logger.Err(errors.New("channel is full")).
-			Strs("pbehavior", task.PbehaviorIds).
-			Msg("fail to start pbehavior recompute")
 	}
 }
 

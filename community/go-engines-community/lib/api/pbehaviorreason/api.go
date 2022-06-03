@@ -151,7 +151,7 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if isLinked {
-		a.sendComputeTask(reason.ID)
+		a.sendComputeTask()
 	}
 	c.JSON(http.StatusOK, reason)
 }
@@ -184,14 +184,6 @@ func (a *api) Delete(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
-func (a *api) sendComputeTask(reasonID string) {
-	task := pbehavior.ComputeTask{}
-
-	select {
-	case a.computeChan <- task:
-	default:
-		a.logger.Err(errors.New("channel is full")).
-			Str("reason", reasonID).
-			Msg("fail to start linked pbehaviors recompute on reason update")
-	}
+func (a *api) sendComputeTask() {
+	a.computeChan <- pbehavior.ComputeTask{}
 }
