@@ -20,6 +20,7 @@ type Store interface {
 	Update(ctx context.Context, oldTab Response, r EditRequest) (*Response, error)
 	Delete(ctx context.Context, id string) (bool, error)
 	Copy(ctx context.Context, tab Response, r EditRequest) (*Response, error)
+	CopyForView(ctx context.Context, viewID, newViewID, author string) error
 	UpdatePositions(ctx context.Context, tabs []Response) (bool, error)
 }
 
@@ -233,57 +234,68 @@ func (s *store) Copy(ctx context.Context, tab Response, r EditRequest) (*Respons
 	var response *Response
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		count, err := s.collection.CountDocuments(ctx, bson.M{"view": r.View})
-		if err != nil {
-			return err
-		}
-		now := types.CpsTime{Time: time.Now()}
-		newTab := view.Tab{
-			ID:       utils.NewID(),
-			Title:    r.Title,
-			View:     r.View,
-			Author:   r.Author,
-			Position: count,
-			Created:  now,
-			Updated:  now,
-		}
-
-		_, err = s.collection.InsertOne(ctx, newTab)
-		if err != nil {
-			return err
-		}
-
-		cursor, err := s.widgetCollection.Find(ctx, bson.M{"tab": tab.ID})
-		if err != nil {
-			return err
-		}
-		defer cursor.Close(ctx)
-
-		for cursor.Next(ctx) {
-			w := widget.Response{}
-			err := cursor.Decode(&w)
-			if err != nil {
-				return err
-			}
-
-			_, err = s.widgetStore.Copy(ctx, w, widget.EditRequest{
-				Tab:            newTab.ID,
-				Title:          w.Title,
-				Type:           w.Type,
-				GridParameters: w.GridParameters,
-				Parameters:     w.Parameters,
-				Author:         r.Author,
-			})
-			if err != nil {
-				return err
-			}
-		}
-
-		response, err = s.GetOneBy(ctx, newTab.ID)
+		var err error
+		response, err = s.copy(ctx, tab, r)
 		return err
 	})
 
 	return response, err
+}
+
+func (s *store) CopyForView(ctx context.Context, viewID, newViewID, author string) error {
+	cursor, err := s.collection.Find(ctx, bson.M{"view": viewID})
+	if err != nil {
+		return err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		t := Response{}
+		err := cursor.Decode(&t)
+		if err != nil {
+			return err
+		}
+
+		_, err = s.copy(ctx, t, EditRequest{
+			Title:  t.Title,
+			View:   newViewID,
+			Author: author,
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *store) copy(ctx context.Context, tab Response, r EditRequest) (*Response, error) {
+	count, err := s.collection.CountDocuments(ctx, bson.M{"view": r.View})
+	if err != nil {
+		return nil, err
+	}
+	now := types.NewCpsTime()
+	newTab := view.Tab{
+		ID:       utils.NewID(),
+		Title:    r.Title,
+		View:     r.View,
+		Author:   r.Author,
+		Position: count,
+		Created:  now,
+		Updated:  now,
+	}
+
+	_, err = s.collection.InsertOne(ctx, newTab)
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.widgetStore.CopyForTab(ctx, tab.ID, newTab.ID, r.Author)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.GetOneBy(ctx, newTab.ID)
 }
 
 func (s *store) UpdatePositions(ctx context.Context, tabs []Response) (bool, error) {
