@@ -4,17 +4,17 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
-	"github.com/gin-gonic/gin/binding"
-	"github.com/valyala/fastjson"
 	"net/http"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"github.com/rs/zerolog"
+	"github.com/valyala/fastjson"
 )
 
 type API interface {
@@ -616,13 +616,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 }
 
 func (a *api) sendComputeTask(task pbehavior.ComputeTask) {
-	select {
-	case a.computeChan <- task:
-	default:
-		a.logger.Err(errors.New("channel is full")).
-			Strs("pbehavior", task.PbehaviorIds).
-			Msg("fail to start pbehavior recompute")
-	}
+	a.computeChan <- task
 }
 
 func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
