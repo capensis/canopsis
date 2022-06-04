@@ -42,8 +42,8 @@ type Action struct {
 	Type                     string                       `bson:"type" json:"type"`
 	Comment                  string                       `bson:"comment" json:"comment"`
 	Parameters               Parameters                   `bson:"parameters,omitempty" json:"parameters,omitempty"`
-	AlarmPatterns            oldpattern.AlarmPatternList  `bson:"alarm_patterns" json:"alarm_patterns"`
-	EntityPatterns           oldpattern.EntityPatternList `bson:"entity_patterns" json:"entity_patterns"`
+	OldAlarmPatterns         oldpattern.AlarmPatternList  `bson:"old_alarm_patterns,omitempty" json:"old_alarm_patterns,omitempty"`
+	OldEntityPatterns        oldpattern.EntityPatternList `bson:"old_entity_patterns,omitempty" json:"old_entity_patterns,omitempty"`
 	DropScenarioIfNotMatched bool                         `bson:"drop_scenario_if_not_matched" json:"drop_scenario_if_not_matched"`
 	EmitTrigger              bool                         `bson:"emit_trigger" json:"emit_trigger"`
 

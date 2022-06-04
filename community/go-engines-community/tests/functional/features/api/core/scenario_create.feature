@@ -160,8 +160,8 @@ Feature: Create a scenario
       "triggers": ["create"],
       "actions": [
         {
-          "alarm_patterns": null,
-          "entity_patterns": null,
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -198,8 +198,8 @@ Feature: Create a scenario
           "comment": "test comment"
         },
         {
-          "alarm_patterns": null,
-          "entity_patterns": null,
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -251,8 +251,8 @@ Feature: Create a scenario
           "emit_trigger": false
         },
         {
-          "alarm_patterns": null,
-          "entity_patterns": null,
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -316,8 +316,8 @@ Feature: Create a scenario
       "triggers": ["create"],
       "actions": [
         {
-          "alarm_patterns": null,
-          "entity_patterns": null,
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -354,8 +354,8 @@ Feature: Create a scenario
           "comment": "test comment"
         },
         {
-          "alarm_patterns": null,
-          "entity_patterns": null,
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -407,8 +407,8 @@ Feature: Create a scenario
           "emit_trigger": false
         },
         {
-          "alarm_patterns": null,
-          "entity_patterns": null,
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -525,8 +525,8 @@ Feature: Create a scenario
       },
       "actions": [
         {
-          "alarm_patterns": null,
-          "entity_patterns": null,
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -656,8 +656,8 @@ Feature: Create a scenario
       },
       "actions": [
         {
-          "alarm_patterns": null,
-          "entity_patterns": null,
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -694,8 +694,8 @@ Feature: Create a scenario
           "emit_trigger": false
         },
         {
-          "alarm_patterns": null,
-          "entity_patterns": null,
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
           "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
           "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
           "alarm_pattern": [
@@ -732,8 +732,8 @@ Feature: Create a scenario
           "emit_trigger": false
         },
         {
-          "alarm_patterns": null,
-          "entity_patterns": null,
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
           "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
           "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
           "alarm_pattern": [
