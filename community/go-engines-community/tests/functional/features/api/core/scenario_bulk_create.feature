@@ -1876,6 +1876,8 @@ Feature: Bulk create scenarios
           "triggers": ["create"],
           "actions": [
             {
+              "old_alarm_patterns": null,
+              "old_entity_patterns": null,
               "alarm_pattern": [
                 [
                   {
@@ -1910,6 +1912,8 @@ Feature: Bulk create scenarios
               "emit_trigger": false
             },
             {
+              "old_alarm_patterns": null,
+              "old_entity_patterns": null,
               "alarm_pattern": [
                 [
                   {
@@ -1960,6 +1964,8 @@ Feature: Bulk create scenarios
               "emit_trigger": false
             },
             {
+              "old_alarm_patterns": null,
+              "old_entity_patterns": null,
               "alarm_pattern": [
                 [
                   {
@@ -2018,6 +2024,8 @@ Feature: Bulk create scenarios
           "triggers": ["create"],
           "actions": [
             {
+              "old_alarm_patterns": null,
+              "old_entity_patterns": null,
               "alarm_pattern": [
                 [
                   {
@@ -2052,6 +2060,8 @@ Feature: Bulk create scenarios
               "emit_trigger": false
             },
             {
+              "old_alarm_patterns": null,
+              "old_entity_patterns": null,
               "alarm_pattern": [
                 [
                   {
@@ -2102,6 +2112,8 @@ Feature: Bulk create scenarios
               "emit_trigger": false
             },
             {
+              "old_alarm_patterns": null,
+              "old_entity_patterns": null,
               "alarm_pattern": [
                 [
                   {
@@ -2164,8 +2176,8 @@ Feature: Bulk create scenarios
           },
           "actions": [
             {
-              "alarm_patterns": null,
-              "entity_patterns": null,
+              "old_alarm_patterns": null,
+              "old_entity_patterns": null,
               "alarm_pattern": [
                 [
                   {
@@ -2202,8 +2214,8 @@ Feature: Bulk create scenarios
               "emit_trigger": false
             },
             {
-              "alarm_patterns": null,
-              "entity_patterns": null,
+              "old_alarm_patterns": null,
+              "old_entity_patterns": null,
               "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
               "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
               "alarm_pattern": [
@@ -2240,8 +2252,8 @@ Feature: Bulk create scenarios
               "emit_trigger": false
             },
             {
-              "alarm_patterns": null,
-              "entity_patterns": null,
+              "old_alarm_patterns": null,
+              "old_entity_patterns": null,
               "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
               "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
               "alarm_pattern": [

@@ -417,6 +417,18 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			continue
 		}
 
+		err = a.transformEditRequest(ctx, &request.EditRequest)
+		if err != nil {
+			valErr := common.ValidationError{}
+			if errors.As(err, &valErr) {
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
+				continue
+			}
+
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
 		scenario, err := a.store.Update(ctx, UpdateRequest(request))
 		if err != nil {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))

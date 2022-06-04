@@ -45,14 +45,14 @@ func (s *scenarioStorage) ReloadScenarios(ctx context.Context) error {
 	for _, scenario := range scenarios {
 		valid := true
 		for i, action := range scenario.Actions {
-			if !action.EntityPatterns.IsValid() {
+			if !action.OldEntityPatterns.IsValid() {
 				s.logger.Warn().Str("scenario", scenario.ID).Int("action number", i).Msg("failed to parse entity patterns")
 				valid = false
 
 				break
 			}
 
-			if !action.AlarmPatterns.IsValid() {
+			if !action.OldAlarmPatterns.IsValid() {
 				s.logger.Warn().Str("scenario", scenario.ID).Int("action number", i).Msg("failed to parse alarm patterns")
 				valid = false
 
@@ -123,7 +123,7 @@ func (s *scenarioStorage) RunDelayedScenarios(
 			// Check if at least on action matches alarm.
 			matched := false
 			for _, action := range scenario.Actions {
-				if action.AlarmPatterns.Matches(&alarm) && action.EntityPatterns.Matches(&entity) {
+				if action.OldAlarmPatterns.Matches(&alarm) && action.OldEntityPatterns.Matches(&entity) {
 					matched = true
 					break
 				} else if action.DropScenarioIfNotMatched {

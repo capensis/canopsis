@@ -127,7 +127,7 @@ func (s *pool) RunWorkers(ctx context.Context, taskChannel <-chan Task) (<-chan 
 
 						s.logger.Debug().Interface("task", task).Msgf("Worker %d got task", id)
 
-						if !task.Action.AlarmPatterns.Matches(&task.Alarm) || !task.Action.EntityPatterns.Matches(&task.Entity) {
+						if !task.Action.OldAlarmPatterns.Matches(&task.Alarm) || !task.Action.OldEntityPatterns.Matches(&task.Entity) {
 							resultChannel <- TaskResult{
 								Source:      source,
 								Alarm:       task.Alarm,
