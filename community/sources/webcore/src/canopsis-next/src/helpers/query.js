@@ -324,15 +324,6 @@ export function prepareQuery(widget, userPreference) {
 }
 
 /**
- * Generate special id for alarm details query
- *
- * @param {Alarm} alarm
- * @param {Widget} widget
- * @returns {string}
- */
-export const generateAlarmDetailsQueryId = (alarm, widget) => `${alarm._id}_${widget._id}_details`;
-
-/**
  * Prepare query for alarm details fetching
  *
  * @param {Alarm} alarm

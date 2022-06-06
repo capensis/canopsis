@@ -1,6 +1,5 @@
 <template lang="pug">
   v-btn.ma-0(
-    :disabled="disabled",
     :loading="loading",
     icon,
     small,
@@ -23,10 +22,6 @@ export default {
     color: {
       type: String,
       required: false,
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
     },
     loading: {
       type: Boolean,

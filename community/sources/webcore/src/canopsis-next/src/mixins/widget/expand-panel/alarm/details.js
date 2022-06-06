@@ -1,10 +1,7 @@
-import { generateAlarmDetailsQueryId } from '@/helpers/query';
-
-import { queryMixin } from '@/mixins/query';
 import { entitiesAlarmDetailsMixin } from '@/mixins/entities/alarm/details';
 
 export const widgetExpandPanelAlarmDetails = {
-  mixins: [queryMixin, entitiesAlarmDetailsMixin],
+  mixins: [entitiesAlarmDetailsMixin],
   props: {
     alarm: {
       type: Object,
@@ -16,16 +13,12 @@ export const widgetExpandPanelAlarmDetails = {
     },
   },
   computed: {
-    queryId() {
-      return generateAlarmDetailsQueryId(this.alarm, this.widget);
-    },
-
     pending() {
-      return this.getAlarmDetailsPending(this.queryId);
+      return this.getAlarmDetailsPending(this.widget._id, this.alarm._id);
     },
 
     alarmDetails() {
-      return this.getAlarmDetailsItem(this.alarm._id)?.data ?? {};
+      return this.getAlarmDetailsItem(this.widget._id, this.alarm._id)?.data ?? {};
     },
 
     steps() {
@@ -38,10 +31,10 @@ export const widgetExpandPanelAlarmDetails = {
 
     query: {
       get() {
-        return this.getQueryById(this.queryId);
+        return this.getAlarmDetailsQuery(this.widget._id, this.alarm._id);
       },
       set(query) {
-        return this.updateQuery({ id: this.queryId, query });
+        return this.updateAlarmDetailsQuery({ widgetId: this.widget._id, id: this.alarm._id, query });
       },
     },
 
