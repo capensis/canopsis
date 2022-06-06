@@ -4,7 +4,7 @@ import {
   ALARM_PATTERN_FIELDS,
   ENTITY_PATTERN_FIELDS,
   PATTERN_CONDITIONS,
-  PATTERN_INPUT_TYPES,
+  PATTERN_FIELD_TYPES,
   PATTERN_OPERATORS,
   PATTERN_RULE_INFOS_FIELDS,
   QUICK_RANGES,
@@ -31,7 +31,7 @@ describe('pattern form converters', () => {
   };
 
   it('should be converted to form and back to pattern with `equal` operator', () => {
-    const value = Faker.datatype.string();
+    const value = Faker.lorem.word();
 
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.displayName,
@@ -50,7 +50,7 @@ describe('pattern form converters', () => {
   });
 
   it('should be converted to form and back to pattern with `not equal` operator', () => {
-    const value = Faker.datatype.string();
+    const value = Faker.lorem.word();
 
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
@@ -69,7 +69,7 @@ describe('pattern form converters', () => {
   });
 
   it('should be converted to form and back to pattern with `contains` operator', () => {
-    const value = Faker.datatype.string();
+    const value = Faker.lorem.word();
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.component,
       cond: { type: PATTERN_CONDITIONS.regexp, value },
@@ -87,7 +87,7 @@ describe('pattern form converters', () => {
   });
 
   it('should be converted to form and back to pattern with `not contains` operator', () => {
-    const value = Faker.datatype.string();
+    const value = Faker.lorem.word();
     const valueWithRegexp = `^((?!${value}).)*$`;
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.component,
@@ -234,7 +234,7 @@ describe('pattern form converters', () => {
   });
 
   it('should be converted to form and back to pattern with `begins with` operator', () => {
-    const value = Faker.datatype.string();
+    const value = Faker.lorem.word();
     const valueWithRegexp = `^${value}`;
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connector,
@@ -253,7 +253,7 @@ describe('pattern form converters', () => {
   });
 
   it('should be converted to form and back to pattern with `not begin with` operator', () => {
-    const value = Faker.datatype.string();
+    const value = Faker.lorem.word();
     const valueWithRegexp = `^(?!${value})`;
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.resource,
@@ -272,7 +272,7 @@ describe('pattern form converters', () => {
   });
 
   it('should be converted to form and back to pattern with `ends with` operator', () => {
-    const value = Faker.datatype.string();
+    const value = Faker.lorem.word();
     const valueWithRegexp = `${value}$`;
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
@@ -291,7 +291,7 @@ describe('pattern form converters', () => {
   });
 
   it('should be converted to form and back to pattern with `not end with` operator', () => {
-    const value = Faker.datatype.string();
+    const value = Faker.lorem.word();
     const valueWithRegexp = `(?<!${value})$`;
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
@@ -310,7 +310,7 @@ describe('pattern form converters', () => {
   });
 
   it('should be converted to form and back to pattern with alarm infos field and name `exist` operator', () => {
-    const dictionary = Faker.datatype.string();
+    const dictionary = Faker.lorem.word();
 
     const patternRule = {
       field: `${ALARM_PATTERN_FIELDS.infos}.${dictionary}`,
@@ -330,7 +330,7 @@ describe('pattern form converters', () => {
   });
 
   it('should be converted to form and back to pattern with alarm infos field and name `not exist` operator', () => {
-    const dictionary = Faker.datatype.string();
+    const dictionary = Faker.lorem.word();
 
     const patternRule = {
       field: `${ALARM_PATTERN_FIELDS.infos}.${dictionary}`,
@@ -350,7 +350,7 @@ describe('pattern form converters', () => {
   });
 
   it('should be converted to form and back to pattern with entity infos field and name `exist` operator', () => {
-    const dictionary = Faker.datatype.string();
+    const dictionary = Faker.lorem.word();
 
     const patternRule = {
       field: `${ENTITY_PATTERN_FIELDS.infos}.${dictionary}`,
@@ -370,7 +370,7 @@ describe('pattern form converters', () => {
   });
 
   it('should be converted to form and back to pattern with entity infos field and name `not exist` operator', () => {
-    const dictionary = Faker.datatype.string();
+    const dictionary = Faker.lorem.word();
 
     const patternRule = {
       field: `${ENTITY_PATTERN_FIELDS.infos}.${dictionary}`,
@@ -390,10 +390,10 @@ describe('pattern form converters', () => {
   });
 
   it('should be converted to form and back to pattern with `has every` operator', () => {
-    const value = [Faker.datatype.string()];
+    const value = [Faker.lorem.word()];
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
-      field_type: PATTERN_INPUT_TYPES.array,
+      field_type: PATTERN_FIELD_TYPES.stringArray,
       cond: { type: PATTERN_CONDITIONS.hasEvery, value },
     };
 
@@ -409,10 +409,10 @@ describe('pattern form converters', () => {
   });
 
   it('should be converted to form and back to pattern with `has one of` operator', () => {
-    const value = [Faker.datatype.string()];
+    const value = [Faker.lorem.word()];
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
-      field_type: PATTERN_INPUT_TYPES.array,
+      field_type: PATTERN_FIELD_TYPES.stringArray,
       cond: { type: PATTERN_CONDITIONS.hasOneOf, value },
     };
 
@@ -428,10 +428,10 @@ describe('pattern form converters', () => {
   });
 
   it('should be converted to form and back to pattern with `has not` operator', () => {
-    const value = [Faker.datatype.string()];
+    const value = [Faker.lorem.word()];
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
-      field_type: PATTERN_INPUT_TYPES.array,
+      field_type: PATTERN_FIELD_TYPES.stringArray,
       cond: { type: PATTERN_CONDITIONS.hasNot, value },
     };
 
@@ -449,7 +449,7 @@ describe('pattern form converters', () => {
   it('should be converted to form and back to pattern with `is empty` operator', () => {
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
-      field_type: PATTERN_INPUT_TYPES.array,
+      field_type: PATTERN_FIELD_TYPES.stringArray,
       cond: { type: PATTERN_CONDITIONS.isEmpty, value: true },
     };
 
@@ -466,7 +466,7 @@ describe('pattern form converters', () => {
   it('should be converted to form and back to pattern with `is not empty` operator', () => {
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
-      field_type: PATTERN_INPUT_TYPES.array,
+      field_type: PATTERN_FIELD_TYPES.stringArray,
       cond: { type: PATTERN_CONDITIONS.isEmpty, value: false },
     };
 
@@ -604,10 +604,10 @@ describe('pattern form converters', () => {
 
   it('should be converted to form and back to pattern with infos and number value', () => {
     const value = Faker.datatype.number();
-    const dictionary = Faker.datatype.string();
+    const dictionary = Faker.lorem.word();
     const patternRule = {
       field: `${ALARM_PATTERN_FIELDS.infos}.${dictionary}`,
-      field_type: PATTERN_INPUT_TYPES.number,
+      field_type: PATTERN_FIELD_TYPES.number,
       cond: { type: PATTERN_CONDITIONS.equal, value },
     };
 
@@ -625,11 +625,11 @@ describe('pattern form converters', () => {
   });
 
   it('should be converted to form and back to pattern with infos and number value', () => {
-    const value = Faker.datatype.string();
-    const dictionary = Faker.datatype.string();
+    const value = Faker.lorem.word();
+    const dictionary = Faker.lorem.word();
     const patternRule = {
       field: `${ALARM_PATTERN_FIELDS.infos}.${dictionary}`,
-      field_type: PATTERN_INPUT_TYPES.string,
+      field_type: PATTERN_FIELD_TYPES.string,
       cond: { type: PATTERN_CONDITIONS.equal, value },
     };
 
@@ -648,10 +648,10 @@ describe('pattern form converters', () => {
 
   it('should be converted to form and back to pattern with infos and boolean value', () => {
     const value = Faker.datatype.boolean();
-    const dictionary = Faker.datatype.string();
+    const dictionary = Faker.lorem.word();
     const patternRule = {
       field: `${ALARM_PATTERN_FIELDS.infos}.${dictionary}`,
-      field_type: PATTERN_INPUT_TYPES.boolean,
+      field_type: PATTERN_FIELD_TYPES.boolean,
       cond: { type: PATTERN_CONDITIONS.equal, value },
     };
 
@@ -670,10 +670,10 @@ describe('pattern form converters', () => {
 
   it('should be converted to form and back to pattern with infos and number value', () => {
     const value = Faker.datatype.array(2);
-    const dictionary = Faker.datatype.string();
+    const dictionary = Faker.lorem.word();
     const patternRule = {
       field: `${ALARM_PATTERN_FIELDS.infos}.${dictionary}`,
-      field_type: PATTERN_INPUT_TYPES.array,
+      field_type: PATTERN_FIELD_TYPES.stringArray,
       cond: { type: PATTERN_CONDITIONS.hasNot, value },
     };
 
