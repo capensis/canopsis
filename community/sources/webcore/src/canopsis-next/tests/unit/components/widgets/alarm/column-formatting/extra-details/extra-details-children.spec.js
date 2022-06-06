@@ -1,27 +1,25 @@
 import { mount, createVueInstance } from '@unit/utils/vue';
 
-import ExtraDetailsConsequences from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-consequences.vue';
+import ExtraDetailsChildren from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-children.vue';
 
 const localVue = createVueInstance();
 
-const snapshotFactory = (options = {}) => mount(ExtraDetailsConsequences, {
+const snapshotFactory = (options = {}) => mount(ExtraDetailsChildren, {
   localVue,
 
   ...options,
 });
 
-describe('extra-details-consequences', () => {
-  const consequences = {
-    total: 3,
-  };
+describe('extra-details-children', () => {
+  const total = 3;
   const rule = {
     name: 'rule-name',
   };
 
-  it('Renders `extra-details-consequences` with full consequences and rule', () => {
+  it('Renders `extra-details-children` with full children and rule', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        consequences,
+        total,
         rule,
       },
     });

@@ -2,12 +2,12 @@ import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
 import { mount, createVueInstance } from '@unit/utils/vue';
-
 import { createMockedStoreModules } from '@unit/utils/store';
-import { GROUPS_NAVIGATION_TYPES, TOURS } from '@/constants';
-import { DEFAULT_LOCALE } from '@/config';
 
-import AlarmsExpandPanelTour from '@/components/widgets/alarm/partials/alarms-expand-panel-tour.vue';
+import { DEFAULT_LOCALE } from '@/config';
+import { GROUPS_NAVIGATION_TYPES, TOURS } from '@/constants';
+
+import AlarmsExpandPanelTour from '@/components/widgets/alarm/expand-panel/alarms-expand-panel-tour.vue';
 
 const localVue = createVueInstance();
 

@@ -4,7 +4,6 @@ import flushPromises from 'flush-promises';
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
 import { createMockedStoreModules } from '@unit/utils/store';
-import { MAX_LIMIT } from '@/constants';
 
 import ManualMetaAlarmForm from '@/components/widgets/alarm/forms/manual-meta-alarm-form.vue';
 
@@ -32,11 +31,11 @@ const selectTextField = wrapper => wrapper.find('.v-text-field');
 const selectComboboxField = wrapper => wrapper.find('.v-combobox');
 
 describe('manual-meta-alarm-form', () => {
-  const fetchAlarmsListWithoutStore = jest.fn().mockReturnValue({});
+  const fetchManualMetaAlarmListWithoutStore = jest.fn().mockReturnValue([]);
   const alarmModule = {
     name: 'alarm',
     actions: {
-      fetchListWithoutStore: fetchAlarmsListWithoutStore,
+      fetchManualMetaAlarmListWithoutStore,
     },
   };
   const store = createMockedStoreModules([
@@ -51,18 +50,7 @@ describe('manual-meta-alarm-form', () => {
       },
     });
 
-    expect(fetchAlarmsListWithoutStore).toBeCalledWith(
-      expect.any(Object),
-      {
-        params: {
-          manual: true,
-          correlation: true,
-          page: 1,
-          limit: MAX_LIMIT,
-        },
-      },
-      undefined,
-    );
+    expect(fetchManualMetaAlarmListWithoutStore).toBeCalled();
   });
 
   test('Meta alarm changed after trigger text field', () => {
@@ -123,16 +111,9 @@ describe('manual-meta-alarm-form', () => {
   });
 
   test('Renders `manual-meta-alarm-form` with alarms', async () => {
-    fetchAlarmsListWithoutStore.mockReturnValueOnce({
-      data: [
-        {
-          v: { display_name: 'alarm-display-name' },
-          entity: {
-            _id: 'entity-id',
-          },
-        },
-      ],
-    });
+    fetchManualMetaAlarmListWithoutStore.mockReturnValueOnce([
+      { _id: 'entity-id', name: 'alarm-display-name' },
+    ]);
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         alarmModule,

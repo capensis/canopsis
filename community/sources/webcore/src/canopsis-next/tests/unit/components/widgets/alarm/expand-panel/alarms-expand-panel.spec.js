@@ -1,8 +1,10 @@
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { createMockedStoreModules } from '@unit/utils/store';
-import AlarmsExpandPanel from '@/components/widgets/alarm/partials/alarms-expand-panel.vue';
+
 import { CANOPSIS_EDITION, ENTITY_TYPES, JUNIT_ALARM_CONNECTOR } from '@/constants';
+
+import AlarmsExpandPanel from '@/components/widgets/alarm/expand-panel/alarms-expand-panel.vue';
 
 const localVue = createVueInstance();
 
