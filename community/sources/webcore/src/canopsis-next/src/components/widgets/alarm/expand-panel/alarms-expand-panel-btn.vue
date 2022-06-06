@@ -2,7 +2,6 @@
   c-expand-btn(
     :class="expandButtonClass",
     :expanded="expanded",
-    :disabled="pending",
     :loading="pending",
     @expand="showExpandPanel"
   )
@@ -53,18 +52,10 @@ export default {
   methods: {
     async showExpandPanel() {
       if (!this.expanded) {
-        const query = prepareAlarmDetailsQuery(this.alarm, this.widget);
-
-        this.updateQuery({
-          id: this.queryId,
-
-          query,
-        });
-
-        await this.fetchAlarmItemDetails({
-          id: this.queryId,
-
-          query,
+        await this.fetchAlarmDetails({
+          widgetId: this.widget._id,
+          id: this.alarm._id,
+          query: prepareAlarmDetailsQuery(this.alarm, this.widget),
         });
       }
 

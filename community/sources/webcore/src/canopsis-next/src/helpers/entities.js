@@ -99,3 +99,12 @@ export const generateDefaultAlarmListWidget = () => ({
 
   _id: uuid(),
 });
+
+/**
+ * Generate alarm details id by widgetId
+ *
+ * @param {string} alarmId
+ * @param {string} widgetId
+ * @returns {string}
+ */
+export const generateAlarmDetailsId = (alarmId, widgetId) => `${alarmId}_${widgetId}`;

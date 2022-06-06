@@ -155,11 +155,6 @@ export const DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS = [
   },
 ];
 
-export const ALARMS_GROUP_PREFIX = {
-  CAUSES: 'causes_',
-  CONSEQUENCES: 'consequences_',
-};
-
 export const MANUAL_META_ALARM_EVENT_DEFAULT_FIELDS = {
   component: 'metaalarm',
   connector: 'engine',

@@ -88,7 +88,6 @@
 import { isEqual } from 'lodash';
 
 import {
-  ALARMS_GROUP_PREFIX,
   ENTITY_TYPES,
   GRID_SIZES,
   TOURS,
@@ -240,7 +239,7 @@ export default {
     },
   },
   beforeDestroy() {
-    return this.removeQuery({ id: this.queryId });
+    return this.removeAlarmDetailsQuery({ widgetId: this.widget._id, id: this.alarm._id });
   },
   methods: {
     refreshTabs() {
@@ -248,8 +247,9 @@ export default {
     },
 
     fetchList() {
-      this.fetchAlarmItemDetails({
-        id: this.queryId,
+      return this.fetchAlarmDetails({
+        widgetId: this.widget._id,
+        id: this.alarm._id,
         query: this.query,
       });
     },

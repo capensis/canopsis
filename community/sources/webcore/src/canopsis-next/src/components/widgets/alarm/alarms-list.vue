@@ -111,6 +111,7 @@ import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetRemediationInstructionsFilterMixin } from '@/mixins/widget/remediation-instructions-filter-select';
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
+import { entitiesAlarmDetailsMixin } from '@/mixins/entities/alarm/details';
 import { permissionsWidgetsAlarmsListCorrelation } from '@/mixins/permissions/widgets/alarms-list/correlation';
 import { permissionsWidgetsAlarmsListCategory } from '@/mixins/permissions/widgets/alarms-list/category';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
@@ -149,6 +150,7 @@ export default {
     widgetPeriodicRefreshMixin,
     widgetRemediationInstructionsFilterMixin,
     entitiesAlarmMixin,
+    entitiesAlarmDetailsMixin,
     permissionsWidgetsAlarmsListCategory,
     permissionsWidgetsAlarmsListCorrelation,
     permissionsWidgetsAlarmsListFilters,
@@ -295,7 +297,7 @@ export default {
         const query = this.getQuery();
 
         if (isPeriodicRefresh || isQueryNonceUpdate) {
-          // call fetchAllAlarmsDetails
+          this.fetchAlarmsDetailsList({ widgetId: this.widget._id });
         }
 
         await this.fetchAlarmsList({
