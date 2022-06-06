@@ -1,6 +1,5 @@
 <template lang="pug">
   div.position-relative
-    c-progress-overlay(:pending="false")
     v-tabs.expand-panel.secondary.lighten-2(
       :key="tabsKey",
       color="secondary lighten-1",
@@ -15,48 +14,39 @@
             v-flex(:class="cardFlexClass")
               v-card.tab-item-card
                 v-card-text
-                  more-infos(:alarm="alarm", :template="widget.parameters.moreInfoTemplate")
+                  alarms-expand-panel-more-infos(
+                    :alarm="alarm",
+                    :template="widget.parameters.moreInfoTemplate"
+                  )
       v-tab(:class="timeLineTabClass") {{ $t('alarmList.tabs.timeLine') }}
       v-tab-item
         v-layout.pa-3(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
+              v-progress-linear(
+                :active="pending",
+                :height="3",
+                indeterminate
+              )
               v-card-text
                 time-line(
                   :steps="steps",
                   :query.sync="stepsQuery",
                   :is-html-enabled="isHtmlEnabled"
                 )
-      template(v-if="hasCauses")
-        v-tab {{ $t('alarmList.tabs.alarmsCauses') }}
+      template(v-if="hasChildren")
+        v-tab {{ $t('alarmList.tabs.alarmsChildren') }}
         v-tab-item
           v-layout.pa-3.secondary.lighten-2(row)
             v-flex(:class="cardFlexClass")
               v-card.tab-item-card
                 v-card-text
-                  group-alarms-list(
+                  alarms-expand-panel-children(
                     :children="children",
-                    :widget="widget",
-                    :default-query-id="causesKey",
-                    :tab-id="causesKey",
                     :alarm="alarm",
-                    :editing="editing",
-                    :query.sync="childrenQuery"
-                  )
-      template(v-if="hasConsequences")
-        v-tab {{ $t('alarmList.tabs.alarmsConsequences') }}
-        v-tab-item
-          v-layout.pa-3.secondary.lighten-2(row)
-            v-flex(:class="cardFlexClass")
-              v-card.tab-item-card
-                v-card-text
-                  group-alarms-list(
-                    :children="children",
                     :widget="widget",
-                    :default-query-id="consequencesKey",
-                    :tab-id="consequencesKey",
-                    :alarm="alarm",
                     :editing="editing",
+                    :pending="pending",
                     :query.sync="childrenQuery"
                   )
       template(v-if="hasServiceDependencies")
@@ -108,31 +98,30 @@ import {
 import uid from '@/helpers/uid';
 import { getStepClass } from '@/helpers/tour';
 import { serviceToServiceDependency } from '@/helpers/treeview/service-dependencies';
-import { generateAlarmDetailsQueryId } from '@/helpers/query';
 
 import { queryMixin } from '@/mixins/query';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
-import { entitiesAlarmDetailsMixin } from '@/mixins/entities/alarm/details';
+import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
 
 import ServiceDependencies from '@/components/other/service/table/service-dependencies.vue';
 
 import TimeLine from '../time-line/time-line.vue';
-import MoreInfos from '../more-infos/more-infos.vue';
-import GroupAlarmsList from '../group-alarms-list.vue';
 import EntityGantt from '../entity-gantt/entity-gantt.vue';
+import AlarmsExpandPanelMoreInfos from './alarms-expand-panel-more-infos.vue';
+import AlarmsExpandPanelChildren from './alarms-expand-panel-children.vue';
 
 export default {
   components: {
     ServiceDependencies,
     TimeLine,
-    MoreInfos,
-    GroupAlarmsList,
     EntityGantt,
+    AlarmsExpandPanelMoreInfos,
+    AlarmsExpandPanelChildren,
   },
   mixins: [
     queryMixin,
     entitiesInfoMixin,
-    entitiesAlarmDetailsMixin,
+    widgetExpandPanelAlarmDetails,
   ],
   props: {
     alarm: {
@@ -162,53 +151,6 @@ export default {
     };
   },
   computed: {
-    query: {
-      get() {
-        return this.getQueryById(this.queryId);
-      },
-      set(query) {
-        return this.updateQuery({ id: this.queryId, query });
-      },
-    },
-
-    stepsQuery: {
-      get() {
-        return this.query?.steps ?? {};
-      },
-      set(stepsQuery) {
-        this.query = {
-          ...this.query,
-
-          steps: stepsQuery,
-        };
-      },
-    },
-
-    childrenQuery: {
-      get() {
-        return this.query?.children ?? {};
-      },
-      set(childrenQuery) {
-        this.query = {
-          ...this.query,
-
-          children: childrenQuery,
-        };
-      },
-    },
-
-    queryId() {
-      return generateAlarmDetailsQueryId(this.alarm, this.widget);
-    },
-
-    causesKey() {
-      return `${ALARMS_GROUP_PREFIX.CAUSES}${this.alarm._id}`;
-    },
-
-    consequencesKey() {
-      return `${ALARMS_GROUP_PREFIX.CONSEQUENCES}${this.alarm._id}`;
-    },
-
     moreInfosTabClass() {
       if (this.isTourEnabled) {
         return getStepClass(TOURS.alarmsExpandPanel, 2);
@@ -243,15 +185,11 @@ export default {
     },
 
     hasMoreInfos() {
-      return this.widget.parameters.moreInfoTemplate || this.isTourEnabled;
+      return this.widget.parameters.moreInfoTemplate ?? this.isTourEnabled;
     },
 
-    hasCauses() { // TODO: rename to children
-      return this.alarm.is_meta_alarm && !this.hideGroups;
-    },
-
-    hasConsequences() { // TODO: rename to children
-      return this.alarm.consequences && !this.hideGroups;
+    hasChildren() {
+      return this.alarm.children && !this.hideGroups;
     },
 
     hasServiceDependencies() {
@@ -273,23 +211,21 @@ export default {
         && this.alarm.v.connector === JUNIT_ALARM_CONNECTOR
         && [ENTITY_TYPES.component, ENTITY_TYPES.resource].includes(this.alarm.entity.type);
     },
-
-    alarmDetails() {
-      return this.getAlarmDetailsItem(this.alarm._id)?.data;
-    },
-
-    steps() {
-      return this.alarmDetails?.steps ?? {};
-    },
-
-    children() {
-      return this.alarmDetails?.children ?? {};
-    },
   },
   watch: {
     'widget.parameters.moreInfoTemplate': {
       handler() {
         this.refreshTabs();
+      },
+    },
+
+    'widget.parameters.opened': {
+      handler(opened) {
+        this.query = {
+          ...this.query,
+
+          opened,
+        };
       },
     },
 
@@ -313,7 +249,8 @@ export default {
 
     fetchList() {
       this.fetchAlarmItemDetails({
-        data: [this.query],
+        id: this.queryId,
+        query: this.query,
       });
     },
   },

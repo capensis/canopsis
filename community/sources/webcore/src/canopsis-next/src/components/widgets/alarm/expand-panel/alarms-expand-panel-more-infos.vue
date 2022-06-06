@@ -14,12 +14,12 @@ import { compile } from '@/helpers/handlebars';
 export default {
   components: { VRuntimeTemplate },
   props: {
-    template: {
-      type: String,
-      required: false,
-    },
     alarm: {
       type: Object,
+      required: false,
+    },
+    template: {
+      type: String,
       required: false,
     },
   },
@@ -38,8 +38,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .more-infos {
-    width: 90%;
-    margin: 0 auto;
-  }
+.more-infos {
+  width: 90%;
+  margin: 0 auto;
+}
 </style>

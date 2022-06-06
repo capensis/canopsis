@@ -9,6 +9,7 @@ export const entitiesAlarmDetailsMixin = {
   computed: {
     ...mapGetters({
       getAlarmDetailsItem: 'getItem',
+      getAlarmDetailsPending: 'getPending',
     }),
   },
   methods: {

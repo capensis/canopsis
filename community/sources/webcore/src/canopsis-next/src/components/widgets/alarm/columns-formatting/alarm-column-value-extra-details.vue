@@ -24,6 +24,7 @@
     )
     extra-details-parents(
       v-if="alarm.parents",
+      :rules="alarm.meta_alarm_rules",
       :total="alarm.parents"
     )
     extra-details-children(

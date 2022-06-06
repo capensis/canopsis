@@ -97,23 +97,19 @@
 </template>
 
 <script>
-import { omit, pick, isEmpty, isObject } from 'lodash';
+import { omit, pick, isObject } from 'lodash';
 
 import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 
-import FilterSelector from '@/components/other/filter/filter-selector.vue';
-import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
-
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
-
 import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns';
 import { exportCsvMixinCreator } from '@/mixins/widget/export';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
-import widgetRemediationInstructionsFilterMixin from '@/mixins/widget/remediation-instructions-filter-select';
+import { widgetRemediationInstructionsFilterMixin } from '@/mixins/widget/remediation-instructions-filter-select';
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
 import { permissionsWidgetsAlarmsListCorrelation } from '@/mixins/permissions/widgets/alarms-list/correlation';
 import { permissionsWidgetsAlarmsListCategory } from '@/mixins/permissions/widgets/alarms-list/category';
@@ -121,8 +117,11 @@ import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widget
 import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
   from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
 
+import FilterSelector from '@/components/other/filter/filter-selector.vue';
+import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
+
 import AlarmsListTable from './partials/alarms-list-table.vue';
-import AlarmsExpandPanelTour from './partials/alarms-expand-panel-tour.vue';
+import AlarmsExpandPanelTour from './expand-panel/alarms-expand-panel-tour.vue';
 import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-remediation-instructions-filters.vue';
 
 /**
@@ -293,10 +292,10 @@ export default {
 
     async fetchList({ isPeriodicRefresh, isQueryNonceUpdate } = {}) {
       if (this.hasColumns) {
-        const query = this.getQuery(); // TODO: move to helpers
+        const query = this.getQuery();
 
-        if ((isPeriodicRefresh || isQueryNonceUpdate) && !isEmpty(this.$refs.alarmsTable.expanded)) {
-          query.with_steps = true; // TODO: remove it
+        if (isPeriodicRefresh || isQueryNonceUpdate) {
+          // call fetchAllAlarmsDetails
         }
 
         await this.fetchAlarmsList({
