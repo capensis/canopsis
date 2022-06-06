@@ -30,22 +30,6 @@ func (a *mongoAdapter) GetEnabled(ctx context.Context) ([]EntityService, error) 
 	return a.find(ctx, bson.M{"type": types.EntityTypeService, "enabled": true})
 }
 
-func (a *mongoAdapter) GetValid(ctx context.Context) ([]EntityService, error) {
-	res, err := a.GetEnabled(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	filtered := make([]EntityService, 0)
-	for _, s := range res {
-		if s.EntityPatterns.IsSet() && s.EntityPatterns.IsValid() {
-			filtered = append(filtered, s)
-		}
-	}
-
-	return filtered, nil
-}
-
 func (a *mongoAdapter) GetByID(ctx context.Context, id string) (*EntityService, error) {
 	return a.findOne(ctx, bson.M{"type": types.EntityTypeService, "_id": id})
 }

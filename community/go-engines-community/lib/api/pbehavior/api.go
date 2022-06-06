@@ -356,7 +356,6 @@ func (a *api) DeleteByName(c *gin.Context) {
 
 // BulkCreate
 // @Param body body []CreateRequest true "body"
-// @Success 207 {array} BulkCreateResponseItem
 func (a *api) BulkCreate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -403,14 +402,17 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
-		err = a.transformEditRequest(c.Request.Context(), &request.EditRequest)
+		err = a.transformEditRequest(ctx, &request.EditRequest)
 		if err != nil {
 			valErr := common.ValidationError{}
 			if errors.As(err, &valErr) {
-				c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-				return
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
+				continue
 			}
-			panic(err)
+
+			a.logger.Err(err).Msg("cannot create pbehavior")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
+			continue
 		}
 
 		pbh, err := a.store.Insert(ctx, request)
@@ -443,7 +445,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 
 // BulkUpdate
 // @Param body body []BulkUpdateRequestItem true "body"
-// @Success 207 {array} BulkUpdateResponseItem
 func (a *api) BulkUpdate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -490,14 +491,17 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			continue
 		}
 
-		err = a.transformEditRequest(c.Request.Context(), &request.EditRequest)
+		err = a.transformEditRequest(ctx, &request.EditRequest)
 		if err != nil {
 			valErr := common.ValidationError{}
 			if errors.As(err, &valErr) {
-				c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-				return
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
+				continue
 			}
-			panic(err)
+
+			a.logger.Err(err).Msg("cannot update pbehavior")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
+			continue
 		}
 
 		pbh, err := a.store.Update(ctx, UpdateRequest(request))
@@ -508,7 +512,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		}
 
 		if pbh == nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
 			continue
 		}
 
@@ -535,7 +539,6 @@ func (a *api) BulkUpdate(c *gin.Context) {
 
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
-// @Success 207 {array} BulkDeleteResponseItem
 func (a *api) BulkDelete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -590,7 +593,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 		}
 
 		if !ok {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
 			continue
 		}
 

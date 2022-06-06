@@ -2,9 +2,11 @@ package pattern
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -12,8 +14,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/sync/errgroup"
+	"reflect"
 )
 
 type Store interface {
@@ -36,12 +40,15 @@ type store struct {
 
 	pbhComputeChan chan<- pbehavior.ComputeTask
 
+	serviceChangeListener chan<- entityservice.ChangeEntityMessage
+
 	logger zerolog.Logger
 }
 
 func NewStore(
 	dbClient mongo.DbClient,
 	pbhComputeChan chan<- pbehavior.ComputeTask,
+	serviceChangeListener chan<- entityservice.ChangeEntityMessage,
 	logger zerolog.Logger,
 ) Store {
 	return &store{
@@ -57,9 +64,12 @@ func NewStore(
 			mongo.MetaAlarmRulesMongoCollection,
 			mongo.InstructionMongoCollection,
 			mongo.PbehaviorMongoCollection,
+			mongo.EntityMongoCollection,
 		},
 
 		pbhComputeChan: pbhComputeChan,
+
+		serviceChangeListener: serviceChangeListener,
 
 		logger: logger,
 	}
@@ -178,14 +188,22 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 	model.Updated = now
 
 	var response *Response
+	var pbhIds, serviceIds []string
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		res, err := s.collection.UpdateOne(
+		pbhIds = nil
+		serviceIds = nil
+		prevPattern := savedpattern.SavedPattern{}
+		err := s.collection.FindOneAndUpdate(
 			ctx,
 			bson.M{"_id": request.ID},
 			bson.M{"$set": model},
-		)
-		if err != nil || res.MatchedCount == 0 {
+			options.FindOneAndUpdate().SetReturnDocument(options.Before),
+		).Decode(&prevPattern)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
 			return err
 		}
 
@@ -195,8 +213,41 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 		}
 
 		err = s.updateLinkedModels(ctx, *response)
-		return err
+		if err != nil {
+			return err
+		}
+
+		if !reflect.DeepEqual(response.EntityPattern, prevPattern.EntityPattern) {
+			pbhIds, err = s.findPbehaviors(ctx, *response)
+			if err != nil {
+				return err
+			}
+
+			serviceIds, err = s.findEntityServices(ctx, *response)
+			if err != nil {
+				return err
+			}
+
+		}
+
+		return nil
 	})
+
+	if len(pbhIds) > 0 {
+		s.pbhComputeChan <- pbehavior.ComputeTask{
+			PbehaviorIds: pbhIds,
+		}
+	}
+
+	if len(serviceIds) > 0 {
+		for _, serviceId := range serviceIds {
+			s.serviceChangeListener <- entityservice.ChangeEntityMessage{
+				ID:                      serviceId,
+				EntityType:              types.EntityTypeService,
+				IsServicePatternChanged: true,
+			}
+		}
+	}
 
 	return response, err
 }
@@ -271,8 +322,6 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error 
 			return err
 		}
 	}
-
-	s.processPbehaviors(ctx, pattern)
 
 	return nil
 }
@@ -402,21 +451,20 @@ func (s *store) fetchCount(ctx context.Context, collection mongo.DbCollection, m
 	return res.GetTotal(), err
 }
 
-func (s *store) processPbehaviors(ctx context.Context, pattern Response) {
+func (s *store) findPbehaviors(ctx context.Context, pattern Response) ([]string, error) {
 	if pattern.Type != savedpattern.TypeEntity {
-		return
+		return nil, nil
 	}
 
 	cursor, err := s.client.Collection(mongo.PbehaviorMongoCollection).Find(ctx, bson.M{
 		"corporate_entity_pattern": pattern.ID,
 	}, options.Find().SetProjection(bson.M{"_id": 1}))
 	if err != nil {
-		s.logger.Err(err).Msg("cannot fetch pbehaviors")
-		return
+		return nil, err
 	}
 	defer cursor.Close(ctx)
 
-	pbhIds := make([]string, 0)
+	ids := make([]string, 0)
 	for cursor.Next(ctx) {
 		pbh := pbehavior.PBehavior{}
 		err := cursor.Decode(&pbh)
@@ -424,16 +472,38 @@ func (s *store) processPbehaviors(ctx context.Context, pattern Response) {
 			s.logger.Err(err).Msg("cannot decode pbehavior")
 			continue
 		}
-		pbhIds = append(pbhIds, pbh.ID)
+		ids = append(ids, pbh.ID)
 	}
 
-	if len(pbhIds) == 0 {
-		return
+	return ids, nil
+}
+
+func (s *store) findEntityServices(ctx context.Context, pattern Response) ([]string, error) {
+	if pattern.Type != savedpattern.TypeEntity {
+		return nil, nil
 	}
 
-	s.pbhComputeChan <- pbehavior.ComputeTask{
-		PbehaviorIds: pbhIds,
+	cursor, err := s.client.Collection(mongo.EntityMongoCollection).Find(ctx, bson.M{
+		"type":                     types.EntityTypeService,
+		"corporate_entity_pattern": pattern.ID,
+	}, options.Find().SetProjection(bson.M{"_id": 1}))
+	if err != nil {
+		return nil, err
 	}
+	defer cursor.Close(ctx)
+
+	ids := make([]string, 0)
+	for cursor.Next(ctx) {
+		entity := types.Entity{}
+		err := cursor.Decode(&entity)
+		if err != nil {
+			s.logger.Err(err).Msg("cannot decode entity service")
+			continue
+		}
+		ids = append(ids, entity.ID)
+	}
+
+	return ids, nil
 }
 
 func getAuthorPipeline() []bson.M {

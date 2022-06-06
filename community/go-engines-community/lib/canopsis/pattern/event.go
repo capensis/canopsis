@@ -65,34 +65,37 @@ func (p Event) Match(event types.Event) (bool, EventRegexMatches, error) {
 			var regexMatches map[string]string
 
 			if infoName := getEventExtraInfoName(f); infoName != "" {
-				infoVal := getEventExtraInfoVal(event, infoName)
-
-				switch v.FieldType {
-				case FieldTypeString:
-					var s string
-					if s, err = getStringValue(infoVal); err == nil {
-						matched, regexMatches, err = cond.MatchString(s)
-						if matched {
-							eventRegexMatches.SetInfoRegexMatches(infoName, regexMatches)
-						}
-					}
-				case FieldTypeInt:
-					var i int64
-					if i, err = getIntValue(infoVal); err == nil {
-						matched, err = cond.MatchInt(i)
-					}
-				case FieldTypeBool:
-					var b bool
-					if b, err = getBoolValue(infoVal); err == nil {
-						matched, err = cond.MatchBool(b)
-					}
-				case FieldTypeStringArray:
-					var a []string
-					if a, err = getStringArrayValue(infoVal); err == nil {
-						matched, err = cond.MatchStringArray(a)
-					}
-				default:
+				infoVal, ok := getEventExtraInfoVal(event, infoName)
+				if v.FieldType == "" {
 					matched, err = cond.MatchRef(infoVal)
+				} else if ok {
+					switch v.FieldType {
+					case FieldTypeString:
+						var s string
+						if s, err = getStringValue(infoVal); err == nil {
+							matched, regexMatches, err = cond.MatchString(s)
+							if matched {
+								eventRegexMatches.SetInfoRegexMatches(infoName, regexMatches)
+							}
+						}
+					case FieldTypeInt:
+						var i int64
+						if i, err = getIntValue(infoVal); err == nil {
+							matched, err = cond.MatchInt(i)
+						}
+					case FieldTypeBool:
+						var b bool
+						if b, err = getBoolValue(infoVal); err == nil {
+							matched, err = cond.MatchBool(b)
+						}
+					case FieldTypeStringArray:
+						var a []string
+						if a, err = getStringArrayValue(infoVal); err == nil {
+							matched, err = cond.MatchStringArray(a)
+						}
+					default:
+						return false, eventRegexMatches, fmt.Errorf("invalid field type for %q field: %s", f, v.FieldType)
+					}
 				}
 
 				if err != nil {
@@ -210,10 +213,10 @@ func getEventExtraInfoName(f string) string {
 	return ""
 }
 
-func getEventExtraInfoVal(event types.Event, f string) interface{} {
+func getEventExtraInfoVal(event types.Event, f string) (interface{}, bool) {
 	if v, ok := event.ExtraInfos[f]; ok {
-		return v
+		return v, true
 	}
 
-	return nil
+	return nil, false
 }

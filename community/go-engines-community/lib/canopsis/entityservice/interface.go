@@ -17,8 +17,6 @@ type Adapter interface {
 
 	GetEnabled(ctx context.Context) ([]EntityService, error)
 
-	GetValid(ctx context.Context) ([]EntityService, error)
-
 	GetByID(ctx context.Context, id string) (*EntityService, error)
 
 	AddDepends(ctx context.Context, id string, depends []string) (bool, error)
