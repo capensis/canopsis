@@ -21,7 +21,7 @@ export const alarmSchema = new schema.Entity(ENTITIES_TYPES.alarm, {}, {
 
 alarmSchema.disabledCache = true;
 
-export const alarmDetailSchema = new schema.Entity(ENTITIES_TYPES.alarmDetail, {}, {
+export const alarmDetailsSchema = new schema.Entity(ENTITIES_TYPES.alarmDetails, {}, {
   idAttribute: '_id',
 });
 
@@ -153,7 +153,7 @@ export const patternSchema = new schema.Entity(ENTITIES_TYPES.pattern, {}, { idA
 
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
-  [ENTITIES_TYPES.alarmDetail]: alarmDetailSchema,
+  [ENTITIES_TYPES.alarmDetails]: alarmDetailsSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
   [ENTITIES_TYPES.service]: serviceSchema,
   [ENTITIES_TYPES.weatherService]: weatherServiceSchema,

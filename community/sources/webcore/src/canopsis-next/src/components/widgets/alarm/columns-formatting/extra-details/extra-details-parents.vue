@@ -1,22 +1,14 @@
 <template lang="pug">
   div
     v-tooltip.c-extra-details(top)
-      v-icon.c-extra-details__badge.brown.darken-1.white--text(
-        slot="activator",
-        small
-      ) {{ icon }}
+      template(#activator="{ on, attrs }")
+        v-icon.c-extra-details__badge.brown.darken-1.white--text(v-on="on", v-bind="attrs", small) {{ icon }}
       div.text-md-center
         strong {{ $t('alarmList.actions.iconsTitles.grouping') }}
-        v-layout(row)
-          v-flex
-            div {{ $tc('alarmList.actions.iconsFields.rule', causesRules.length) }}&nbsp;:
-          v-flex
-            div(
-              v-for="(rule, index) in causesRules",
-              :key="rule.id",
-              :style="getRuleStyle(index)"
-            ) &nbsp;{{ rule.name }}
-        div {{ $t('alarmList.actions.iconsFields.causes') }} : {{ parents.total }}
+        v-layout(column)
+          div {{ $tc('alarmList.actions.iconsFields.rule', rules.length) }}&nbsp;:
+          div.rule-name(v-for="rule in rules", :key="rule.id") &nbsp;{{ rule.name }}
+        div {{ $t('alarmList.actions.iconsFields.parents') }} : {{ total }}
 </template>
 
 <script>
@@ -24,28 +16,25 @@ import { EVENT_ENTITY_STYLE } from '@/constants';
 
 export default {
   props: {
-    parents: {
-      type: Object,
-      required: true,
+    rules: {
+      type: Array,
+      default: () => [],
+    },
+    total: {
+      type: Number,
+      default: 0,
     },
   },
   computed: {
-    causesRules() {
-      return this.parents?.rules ?? [];
-    },
-
     icon() {
-      return EVENT_ENTITY_STYLE.groupCauses.icon;
-    },
-  },
-  methods: {
-    getRuleStyle(index) {
-      if (index % 2 === 1) {
-        return { color: '#b5b5b5' };
-      }
-
-      return {};
+      return EVENT_ENTITY_STYLE.groupParents.icon;
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.rule-name:nth-of-type(odd) {
+  color: #b5b5b5;
+}
+</style>

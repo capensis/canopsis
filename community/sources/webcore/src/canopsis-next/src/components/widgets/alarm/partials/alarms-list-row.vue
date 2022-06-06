@@ -19,7 +19,8 @@
           alarms-expand-panel-btn(
             v-model="row.expanded",
             :alarm="alarm",
-            :widget="widget"
+            :widget="widget",
+            :is-tour-enabled="isTourEnabled"
           )
     td(v-for="column in columns")
       alarm-column-value(
@@ -44,16 +45,16 @@ import { isResolvedAlarm } from '@/helpers/entities';
 
 import ActionsPanel from '../actions/actions-panel.vue';
 import AlarmColumnValue from '../columns-formatting/alarm-column-value.vue';
+import AlarmsExpandPanelBtn from '../expand-panel/alarms-expand-panel-btn.vue';
 import AlarmsListRowIcon from './alarms-list-row-icon.vue';
-import AlarmsExpandPanelBtn from './alarms-expand-panel-btn.vue';
 
 export default {
   inject: ['$system'],
   components: {
     ActionsPanel,
     AlarmColumnValue,
-    AlarmsListRowIcon,
     AlarmsExpandPanelBtn,
+    AlarmsListRowIcon,
   },
   model: {
     prop: 'selected',
