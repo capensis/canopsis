@@ -7,6 +7,7 @@ import (
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"math"
+	"strings"
 	"sync"
 )
 
@@ -99,14 +100,35 @@ func (m *manager) UpdateService(ctx context.Context, serviceID string) (bool, []
 		return true, nil, nil
 	}
 
-	removedIDs, err := m.entityAdapter.RemoveImpactByQuery(ctx, data.EntityPatterns.AsNegativeMongoDriverQuery(), data.ID)
+	var negativeQuery interface{}
+	if len(data.EntityPattern) > 0 {
+		negativeQuery, err = data.EntityPattern.ToNegativeMongoQuery("")
+		if err != nil {
+			m.logger.Err(err).Str("service", data.ID).Msgf("service has invalid pattern")
+		}
+	} else if data.OldEntityPatterns.IsSet() && data.OldEntityPatterns.IsValid() {
+		negativeQuery = data.OldEntityPatterns.AsNegativeMongoDriverQuery()
+	}
+	removedIDs, err := m.entityAdapter.RemoveImpactByQuery(ctx, negativeQuery, data.ID)
 	if err != nil {
 		return false, nil, err
 	}
 
-	addedIDs, err := m.entityAdapter.AddImpactByQuery(ctx, data.EntityPatterns.AsMongoDriverQuery(), data.ID)
-	if err != nil {
-		return false, nil, err
+	var query interface{}
+	if len(data.EntityPattern) > 0 {
+		query, err = data.EntityPattern.ToMongoQuery("")
+		if err != nil {
+			m.logger.Err(err).Str("service", data.ID).Msgf("service has invalid pattern")
+		}
+	} else if data.OldEntityPatterns.IsSet() && data.OldEntityPatterns.IsValid() {
+		query = data.OldEntityPatterns.AsMongoDriverQuery()
+	}
+	var addedIDs []string
+	if query != nil {
+		addedIDs, err = m.entityAdapter.AddImpactByQuery(ctx, query, data.ID)
+		if err != nil {
+			return false, nil, err
+		}
 	}
 
 	if len(removedIDs) > 0 {
@@ -138,9 +160,19 @@ func (m *manager) HasEntityServiceByComponentInfos(ctx context.Context) (bool, e
 	}
 
 	for _, s := range services {
-		for _, p := range s.EntityPatterns.Patterns {
-			if len(p.ComponentInfos) > 0 {
-				return true, nil
+		if len(s.EntityPattern) > 0 {
+			for _, group := range s.EntityPattern {
+				for _, condition := range group {
+					if strings.HasPrefix(condition.Field, "component_infos") {
+						return true, nil
+					}
+				}
+			}
+		} else if s.OldEntityPatterns.IsSet() && s.OldEntityPatterns.IsValid() {
+			for _, p := range s.OldEntityPatterns.Patterns {
+				if len(p.ComponentInfos) > 0 {
+					return true, nil
+				}
 			}
 		}
 	}
@@ -242,7 +274,18 @@ func (m *manager) processService(ctx context.Context, data ServiceData, entities
 			}
 		}
 
-		if data.EntityPatterns.Matches(&e) {
+		match := false
+		if len(data.EntityPattern) > 0 {
+			var err error
+			match, _, err = data.EntityPattern.Match(e)
+			if err != nil {
+				m.logger.Err(err).Str("service", data.ID).Msgf("service has invalid pattern")
+			}
+		} else if data.OldEntityPatterns.IsSet() && data.OldEntityPatterns.IsValid() {
+			match = data.OldEntityPatterns.Matches(&e)
+		}
+
+		if match {
 			if !found {
 				added = append(added, e.ID)
 			}

@@ -710,15 +710,23 @@ paths:
                     "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
                     "impact_level": 2,
                     "enabled": true,
-                    "entity_patterns": [
-                      {
-                        "type": "resource",
-                        "infos": {
-                          "group": {
+                    "entity_pattern": [
+                      [
+                        {
+                          "field": "type",
+                          "cond": {
+                            "type": "eq",
+                            "value": "resource"
+                          }
+                        },
+                        {
+                          "field": "infos.group",
+                          "cond": {
+                            "type": "eq",
                             "value": "g1"
                           }
                         }
-                      }
+                      ]
                     ],
                     "sli_avail_state": 1,
                     "infos": [
@@ -741,7 +749,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/entityservice.BulkUpdateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/entityservice.BulkUpdateRequestItem'
         400:
           description: Bad Request
           content:
@@ -783,15 +796,23 @@ paths:
                     "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
                     "impact_level": 2,
                     "enabled": true,
-                    "entity_patterns": [
-                      {
-                        "type": "resource",
-                        "infos": {
-                          "group": {
+                    "entity_pattern": [
+                      [
+                        {
+                          "field": "type",
+                          "cond": {
+                            "type": "eq",
+                            "value": "resource"
+                          }
+                        },
+                        {
+                          "field": "infos.group",
+                          "cond": {
+                            "type": "eq",
                             "value": "g1"
                           }
                         }
-                      }
+                      ]
                     ],
                     "sli_avail_state": 1,
                     "infos": [
@@ -814,7 +835,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/entityservice.BulkCreateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/entityservice.CreateRequest'
         400:
           description: Bad Request
           content:
@@ -853,9 +879,12 @@ paths:
               schema:
                 type: array
                 items:
-                  type: array
-                  items:
-                    $ref: 'schemas_swagger.yaml#/definitions/entityservice.BulkDeleteResponseItem'
+                  allOf:
+                    - $ref: '#/components/schemas/BulkResponseItem'
+                    - type: object
+                      properties:
+                        item:
+                          $ref: 'schemas_swagger.yaml#/definitions/entityservice.BulkDeleteRequestItem'
         400:
           description: Bad Request
           content:
@@ -888,7 +917,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/eventfilter.BulkUpdateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/eventfilter.BulkUpdateRequestItem'
         400:
           description: Bad Request
           content:
@@ -908,7 +942,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.Rule'
+                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.CreateRequest'
         required: true
       responses:
         207:
@@ -920,7 +954,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/eventfilter.BulkCreateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/eventfilter.CreateRequest'
         400:
           description: Bad Request
           content:
@@ -952,7 +991,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/eventfilter.BulkDeleteResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/eventfilter.BulkDeleteRequestItem'
         400:
           description: Bad Request
           content:
@@ -985,7 +1029,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/idlerule.BulkUpdateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/idlerule.BulkUpdateRequestItem'
         400:
           description: Bad Request
           content:
@@ -1017,7 +1066,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/idlerule.BulkCreateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/idlerule.CreateRequest'
         400:
           description: Bad Request
           content:
@@ -1049,7 +1103,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/idlerule.BulkDeleteResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/idlerule.BulkDeleteRequestItem'
         400:
           description: Bad Request
           content:
@@ -1091,7 +1150,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/pattern.BulkDeleteResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/pattern.BulkDeleteRequestItem'
         400:
           description: Bad Request
           content:
@@ -1159,7 +1223,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkUpdateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkUpdateRequestItem'
         400:
           description: Bad Request
           content:
@@ -1225,7 +1294,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkCreateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/pbehavior.CreateRequest'
         400:
           description: Bad Request
           content:
@@ -1266,7 +1340,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkDeleteResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkDeleteRequestItem'
         400:
           description: Bad Request
           content:
@@ -1342,7 +1421,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/scenario.BulkUpdateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/scenario.BulkUpdateRequestItem'
         400:
           description: Bad Request
           content:
@@ -1416,7 +1500,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/scenario.BulkCreateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/scenario.CreateRequest'
         400:
           description: Bad Request
           content:
@@ -1457,7 +1546,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/scenario.BulkDeleteResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/scenario.BulkDeleteRequestItem'
         400:
           description: Bad Request
           content:
@@ -1490,7 +1584,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/user.BulkUpdateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/user.BulkUpdateRequestItem'
         400:
           description: Bad Request
           content:
@@ -1522,7 +1621,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/user.BulkCreateResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/user.Request'
         400:
           description: Bad Request
           content:
@@ -1554,7 +1658,12 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: 'schemas_swagger.yaml#/definitions/user.BulkDeleteResponseItem'
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/user.BulkDeleteRequestItem'
         400:
           description: Bad Request
           content:
@@ -1700,15 +1809,23 @@ paths:
                           Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
                           Pause: {{index .PbehaviorCounters \"default_pause\"}}
                           Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
-                        "entity_patterns": [
-                          {
-                            "type": "resource",
-                            "infos": {
-                              "group": {
+                        "entity_pattern": [
+                          [
+                            {
+                              "field": "type",
+                              "cond": {
+                                "type": "eq",
+                                "value": "resource"
+                              }
+                            },
+                            {
+                              "field": "infos.group",
+                              "cond": {
+                                "type": "eq",
                                 "value": "g1"
                               }
                             }
-                          }
+                          ]
                         ],
                         "type": "service",
                         "impact_level": 2,
@@ -1736,15 +1853,23 @@ paths:
                           Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
                           Pause: {{index .PbehaviorCounters \"default_pause\"}}
                           Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
-                        "entity_patterns": [
-                          {
-                            "type": "resource",
-                            "infos": {
-                              "group": {
+                        "entity_pattern": [
+                          [
+                            {
+                              "field": "type",
+                              "cond": {
+                                "type": "eq",
+                                "value": "resource"
+                              }
+                            },
+                            {
+                              "field": "infos.group",
+                              "cond": {
+                                "type": "eq",
                                 "value": "g2"
                               }
                             }
-                          }
+                          ]
                         ],
                         "type": "service",
                         "impact_level": 2,
@@ -1772,15 +1897,23 @@ paths:
                           Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
                           Pause: {{index .PbehaviorCounters \"default_pause\"}}
                           Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
-                        "entity_patterns": [
-                          {
-                            "type": "resource",
-                            "infos": {
-                              "group": {
+                        "entity_pattern": [
+                          [
+                            {
+                              "field": "type",
+                              "cond": {
+                                "type": "eq",
+                                "value": "resource"
+                              }
+                            },
+                            {
+                              "field": "infos.group",
+                              "cond": {
+                                "type": "eq",
                                 "value": "g3"
                               }
                             }
-                          }
+                          ]
                         ],
                         "type": "service",
                         "impact_level": 2,
@@ -2556,7 +2689,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/entityservice.EditRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/entityservice.CreateRequest'
             examples:
               create:
                 summary: Create
@@ -2577,15 +2710,23 @@ paths:
                   "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
                   "impact_level": 2,
                   "enabled": true,
-                  "entity_patterns": [
-                    {
-                      "type": "resource",
-                      "infos": {
-                        "group": {
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "resource"
+                        }
+                      },
+                      {
+                        "field": "infos.group",
+                        "cond": {
+                          "type": "eq",
                           "value": "g1"
                         }
                       }
-                    }
+                    ]
                   ],
                   "sli_avail_state": 1,
                   "infos": [
@@ -2655,7 +2796,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/entityservice.EditRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/entityservice.UpdateRequest'
             examples:
               update:
                 summary: Update
@@ -2676,15 +2817,23 @@ paths:
                   "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
                   "impact_level": 2,
                   "enabled": true,
-                  "entity_patterns": [
-                    {
-                      "type": "resource",
-                      "infos": {
-                        "group": {
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "resource"
+                        }
+                      },
+                      {
+                        "field": "infos.group",
+                        "cond": {
+                          "type": "eq",
                           "value": "g1"
                         }
                       }
-                    }
+                    ]
                   ],
                   "sli_avail_state": 1,
                   "infos": [
@@ -8880,6 +9029,21 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/event.Event'
+    BulkResponseItem:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: integer
+        item:
+          type: object
+        error:
+          type: string
+        errors:
+          type: object
+          additionalProperties:
+            type: string
 
   securitySchemes:
     BasicAuth:

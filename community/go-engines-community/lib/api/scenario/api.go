@@ -12,12 +12,14 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/rs/zerolog"
 	"github.com/valyala/fastjson"
 )
 
 type api struct {
 	store        Store
 	actionLogger logger.ActionLogger
+	logger       zerolog.Logger
 
 	//todo: priority intervals with new requirements are looks weird now, should think about cleaner solution
 	priorityIntervals action.PriorityIntervals
@@ -32,11 +34,13 @@ type API interface {
 func NewApi(
 	store Store,
 	actionLogger logger.ActionLogger,
+	logger zerolog.Logger,
 	intervals action.PriorityIntervals,
 ) API {
 	return &api{
 		store:             store,
 		actionLogger:      actionLogger,
+		logger:            logger,
 		priorityIntervals: intervals,
 	}
 }
@@ -243,7 +247,6 @@ func (a *api) CheckPriority(c *gin.Context) {
 
 // BulkCreate
 // @Param body body []CreateRequest true "body"
-// @Success 207 {array} BulkCreateResponseItem
 func (a *api) BulkCreate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -296,7 +299,8 @@ func (a *api) BulkCreate(c *gin.Context) {
 
 		scenario, err := a.store.Insert(ctx, request)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			a.logger.Err(err).Msg("cannot create scenario")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
@@ -318,7 +322,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 
 // BulkUpdate
 // @Param body body []BulkUpdateRequestItem true "body"
-// @Success 207 {array} BulkUpdateResponseItem
 func (a *api) BulkUpdate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -371,23 +374,25 @@ func (a *api) BulkUpdate(c *gin.Context) {
 
 		oldScenario, err := a.store.GetOneBy(c.Request.Context(), request.ID)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			a.logger.Err(err).Msg("cannot update scenario")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
 		if oldScenario == nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
 			continue
 		}
 
 		scenario, err := a.store.Update(ctx, UpdateRequest(request))
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			a.logger.Err(err).Msg("cannot update scenario")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
 		if scenario == nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
 			continue
 		}
 
@@ -410,7 +415,6 @@ func (a *api) BulkUpdate(c *gin.Context) {
 
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
-// @Success 207 {array} BulkDeleteResponseItem
 func (a *api) BulkDelete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -458,23 +462,25 @@ func (a *api) BulkDelete(c *gin.Context) {
 
 		scenario, err := a.store.GetOneBy(c.Request.Context(), request.ID)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			a.logger.Err(err).Msg("cannot delete scenario")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
 		if scenario == nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
 			continue
 		}
 
 		ok, err := a.store.Delete(ctx, request.ID)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			a.logger.Err(err).Msg("cannot delete scenario")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
 		if !ok {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
 			continue
 		}
 

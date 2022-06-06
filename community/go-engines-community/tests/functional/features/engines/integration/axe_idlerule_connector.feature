@@ -276,10 +276,16 @@ Feature: update connector alarm
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "enabled": true,
       "impact_level": 1,
-      "entity_patterns": [
-        {
-          "_id": "test-connector-axe-idlerule-connector-3/test-connector-name-axe-idlerule-connector-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "_id",
+            "cond": {
+              "type": "eq",
+              "value": "test-connector-axe-idlerule-connector-3/test-connector-name-axe-idlerule-connector-3"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }

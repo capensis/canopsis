@@ -316,7 +316,6 @@ func getEventMatchDataSets() map[string]eventDataSet {
 				},
 			},
 			event:       types.Event{},
-			matchErr:    pattern.ErrWrongConditionValue,
 			matchResult: false,
 		},
 	}

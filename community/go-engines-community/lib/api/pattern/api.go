@@ -16,6 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/rs/zerolog"
 	"github.com/valyala/fastjson"
 )
 
@@ -29,6 +30,7 @@ type api struct {
 	store        Store
 	enforcer     security.Enforcer
 	actionLogger logger.ActionLogger
+	logger       zerolog.Logger
 
 	configProvider config.UserInterfaceConfigProvider
 }
@@ -38,11 +40,13 @@ func NewApi(
 	configProvider config.UserInterfaceConfigProvider,
 	enforcer security.Enforcer,
 	actionLogger logger.ActionLogger,
+	logger zerolog.Logger,
 ) API {
 	return &api{
 		store:        store,
 		enforcer:     enforcer,
 		actionLogger: actionLogger,
+		logger:       logger,
 
 		configProvider: configProvider,
 	}
@@ -245,7 +249,6 @@ func (a *api) Delete(c *gin.Context) {
 
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
-// @Success 207 {array} BulkDeleteResponseItem
 func (a *api) BulkDelete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -302,23 +305,24 @@ func (a *api) BulkDelete(c *gin.Context) {
 		}
 
 		if pattern == nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
 			continue
 		}
 
 		if pattern.IsCorporate && !canDeleteCorporate {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusForbidden, rawObject, ar.NewString("Forbidden")))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusForbidden, rawObject, ar.NewString(common.ForbiddenResponse.Error)))
 			continue
 		}
 
 		ok, err := a.store.Delete(ctx, *pattern)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			a.logger.Err(err).Msg("cannot delete pattern")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
 		if !ok {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
 			continue
 		}
 
