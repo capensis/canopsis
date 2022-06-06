@@ -29,7 +29,7 @@ import {
   EVENT_FILTER_TYPES,
   PATTERN_OPERATORS,
   PATTERN_TYPES,
-  PATTERN_INPUT_TYPES,
+  PATTERN_FIELD_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -241,6 +241,8 @@ export default {
     resolvedAt: 'Resolved at',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Personnalisé',
+    eventType: 'Type d\'événement',
+    sourceType: 'Type de Source',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -347,6 +349,18 @@ export default {
 
       [PATTERN_OPERATORS.acked]: 'Acquis',
       [PATTERN_OPERATORS.notAcked]: 'Non confirmé',
+    },
+    entityEventTypes: {
+      [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
+      [EVENT_ENTITY_TYPES.ackRemove]: 'Suppression d\'acquittement',
+      [EVENT_ENTITY_TYPES.assocTicket]: 'Associer un ticket',
+      [EVENT_ENTITY_TYPES.declareTicket]: 'Déclarer un incident',
+      [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
+      [EVENT_ENTITY_TYPES.uncancel]: 'Uncancel',
+      [EVENT_ENTITY_TYPES.changeState]: 'Changer d\'état',
+      [EVENT_ENTITY_TYPES.check]: 'Vérifier',
+      [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
+      [EVENT_ENTITY_TYPES.snooze]: 'Snooze',
     },
   },
   variableTypes: {
@@ -1259,9 +1273,6 @@ export default {
     },
     createCommentEvent: {
       title: 'Ajouter un commentaire',
-      fields: {
-        comment: 'Commentaire',
-      },
     },
     createPlaylist: {
       create: {
@@ -1336,7 +1347,6 @@ export default {
       noData: 'Aucune méta-alarme correspondante. Appuyez sur <kbd>Entrée</kbd> pour en créer un nouveau',
       fields: {
         metaAlarm: 'Méta-alarme manuelle',
-        output: 'Note',
       },
     },
     createRemediationInstruction: {
@@ -1895,10 +1905,6 @@ export default {
     copyWidgetId: 'Copier l\'identifiant du widget',
     autoHeightButton: 'Si ce bouton est sélectionné, la hauteur sera calculée automatiquement.',
   },
-  patternsList: {
-    noData: 'Aucun modèle. Cliquez sur \'Ajouter\' pour ajouter des champs au modèle',
-    noDataDisabled: 'Aucun modèle.',
-  },
   validation: {
     messages: {
       _default: "Le champ n'est pas valide",
@@ -2357,11 +2363,11 @@ export default {
 
   mixedField: {
     types: {
-      [PATTERN_INPUT_TYPES.string]: '@:variableTypes.string',
-      [PATTERN_INPUT_TYPES.number]: '@:variableTypes.number',
-      [PATTERN_INPUT_TYPES.boolean]: '@:variableTypes.boolean',
-      [PATTERN_INPUT_TYPES.null]: '@:variableTypes.null',
-      [PATTERN_INPUT_TYPES.array]: '@:variableTypes.array',
+      [PATTERN_FIELD_TYPES.string]: '@:variableTypes.string',
+      [PATTERN_FIELD_TYPES.number]: '@:variableTypes.number',
+      [PATTERN_FIELD_TYPES.boolean]: '@:variableTypes.boolean',
+      [PATTERN_FIELD_TYPES.null]: '@:variableTypes.null',
+      [PATTERN_FIELD_TYPES.stringArray]: '@:variableTypes.array',
     },
   },
 
@@ -2767,14 +2773,16 @@ export default {
   },
 
   pattern: {
-    patterns: 'Filtres',
-    myPatterns: 'Mes filtres',
-    corporatePatterns: 'Filtres partagés',
+    patterns: 'Modèles',
+    myPatterns: 'Mes modèles',
+    corporatePatterns: 'Modèles partagés',
     addRule: 'Ajouter une règle',
     addGroup: 'Ajouter un groupe',
     removeRule: 'Supprimer la règle',
     advancedEditor: 'Éditeur avancé',
     simpleEditor: 'Éditeur simple',
+    noData: 'Aucun modèle. Cliquez sur \'@:pattern.addGroup\' pour ajouter des champs au modèle',
+    noDataDisabled: 'Aucun modèle.',
     types: {
       [PATTERN_TYPES.alarm]: 'Modèle d\'alarme',
       [PATTERN_TYPES.entity]: 'Modèle d\'entité',
@@ -2783,6 +2791,7 @@ export default {
     errors: {
       ruleRequired: 'Veuillez ajouter au moins une règle',
       groupRequired: 'Veuillez ajouter au moins un groupe',
+      invalidPatterns: 'Les modèles ne sont pas valides ou il y a un champ de modèle désactivé',
     },
   },
 

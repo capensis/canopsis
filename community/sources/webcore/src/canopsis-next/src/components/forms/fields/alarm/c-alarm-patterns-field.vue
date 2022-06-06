@@ -1,16 +1,18 @@
 <template lang="pug">
-  c-patterns-editor-field(
+  c-pattern-editor-field(
     v-field="patterns",
     :disabled="disabled",
     :name="name",
     :type="$constants.PATTERN_TYPES.alarm",
     :required="required",
-    :attributes="alarmAttributes",
+    :attributes="availableAlarmAttributes",
     :with-type="withType"
   )
 </template>
 
 <script>
+import { keyBy, merge } from 'lodash';
+
 import {
   ALARM_PATTERN_FIELDS,
   BASIC_ENTITY_TYPES,
@@ -29,6 +31,10 @@ export default {
     patterns: {
       type: Object,
       required: true,
+    },
+    attributes: {
+      type: Array,
+      default: () => [],
     },
     disabled: {
       type: Boolean,
@@ -284,6 +290,24 @@ export default {
           options: this.canceledOptions,
         },
       ];
+    },
+
+    availableAttributesByValue() {
+      return keyBy(this.alarmAttributes, 'value');
+    },
+
+    externalAttributesByValue() {
+      return keyBy(this.attributes, 'value');
+    },
+
+    availableAlarmAttributes() {
+      const mergedAttributes = merge(
+        {},
+        this.availableAttributesByValue,
+        this.externalAttributesByValue,
+      );
+
+      return Object.values(mergedAttributes);
     },
   },
 };

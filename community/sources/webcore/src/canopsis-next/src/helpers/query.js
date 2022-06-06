@@ -336,11 +336,11 @@ export const prepareAlarmDetailsQuery = (alarm, widget) => ({
   opened: widget.parameters.opened,
   steps: {
     page: 1,
-    limit: 2,
+    limit: PAGINATION_LIMIT,
   },
   children: {
     page: 1,
-    limit: 10,
+    limit: PAGINATION_LIMIT,
     sort_by: '',
     sort: '',
     multi_sort: [],
