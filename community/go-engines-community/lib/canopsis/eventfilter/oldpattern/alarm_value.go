@@ -198,12 +198,12 @@ func (p AlarmValuePattern) AsMongoDriverQuery(prefix string, query bson.M) {
 	}
 
 	q := p.Parents.AsMongoDriverQuery()
-	if q != nil && len(q) != 0 {
+	if len(q) != 0 {
 		query[fmt.Sprintf("%s.parents", prefix)] = q
 	}
 
 	q = p.Children.AsMongoDriverQuery()
-	if q != nil && len(q) != 0 {
+	if len(q) != 0 {
 		query[fmt.Sprintf("%s.children", prefix)] = q
 	}
 }

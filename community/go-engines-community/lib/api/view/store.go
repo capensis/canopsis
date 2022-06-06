@@ -958,10 +958,7 @@ func (s *store) findViewPositions(ctx context.Context) ([]string, map[string][]s
 	for i, group := range res {
 		groupPositions[i] = group.ID
 		viewPositionsByGroup[group.ID] = make([]string, len(group.Views))
-
-		for j, viewID := range group.Views {
-			viewPositionsByGroup[group.ID][j] = viewID
-		}
+		copy(viewPositionsByGroup[group.ID], group.Views)
 	}
 
 	return groupPositions, viewPositionsByGroup, nil
