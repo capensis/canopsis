@@ -9,16 +9,16 @@
 </template>
 
 <script>
-import { prepareAlarmDetailsQuery, generateAlarmDetailsQueryId } from '@/helpers/query';
-
-import { queryMixin } from '@/mixins/query';
-import { entitiesAlarmDetailsMixin } from '@/mixins/entities/alarm/details';
-import { getStepClass } from '@/helpers/tour';
 import { TOURS } from '@/constants';
+
+import { getStepClass } from '@/helpers/tour';
+import { prepareAlarmDetailsQuery } from '@/helpers/query';
+
+import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
 
 export default {
   inject: ['$system'],
-  mixins: [queryMixin, entitiesAlarmDetailsMixin],
+  mixins: [widgetExpandPanelAlarmDetails],
   model: {
     prop: 'expanded',
     event: 'input',
@@ -36,15 +36,14 @@ export default {
       type: Object,
       required: true,
     },
-  },
-  data() {
-    return {
-      pending: false,
-    };
+    isTourEnabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     expandButtonClass() {
-      if (this.isTourEnabled) { // TODO: move this logic to mixin
+      if (this.isTourEnabled) {
         return getStepClass(TOURS.alarmsExpandPanel, 1);
       }
 
@@ -54,20 +53,19 @@ export default {
   methods: {
     async showExpandPanel() {
       if (!this.expanded) {
-        this.pending = true;
         const query = prepareAlarmDetailsQuery(this.alarm, this.widget);
 
         this.updateQuery({
-          id: generateAlarmDetailsQueryId(this.alarm, this.widget),
+          id: this.queryId,
 
           query,
         });
 
         await this.fetchAlarmItemDetails({
-          data: [query],
-        });
+          id: this.queryId,
 
-        this.pending = false;
+          query,
+        });
       }
 
       this.$emit('input', !this.expanded);

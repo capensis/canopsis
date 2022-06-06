@@ -71,7 +71,7 @@ import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-
 
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
 import MassActionsPanel from '../actions/mass-actions-panel.vue';
-import AlarmsExpandPanel from './alarms-expand-panel.vue';
+import AlarmsExpandPanel from '../expand-panel/alarms-expand-panel.vue';
 import AlarmsListRow from './alarms-list-row.vue';
 
 /**
@@ -86,10 +86,10 @@ export default {
     },
   },
   components: {
-    AlarmsListRow,
-    AlarmsExpandPanel,
-    MassActionsPanel,
     AlarmHeaderCell,
+    MassActionsPanel,
+    AlarmsExpandPanel,
+    AlarmsListRow,
 
     ...featuresService.get('components.alarmListTable.components', {}),
   },

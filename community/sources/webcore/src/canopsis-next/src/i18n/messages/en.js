@@ -474,8 +474,8 @@ export default {
       },
       iconsFields: {
         ticketNumber: 'Ticket number',
-        causes: 'Causes',
-        consequences: 'Consequences',
+        parents: 'Causes',
+        children: 'Consequences',
         rule: 'Rule | Rules',
       },
     },
@@ -526,8 +526,7 @@ export default {
     tabs: {
       moreInfos: 'More infos',
       timeLine: 'Timeline',
-      alarmsConsequences: 'Alarms consequences',
-      alarmsCauses: 'Alarms causes',
+      alarmsChildren: 'Alarms consequences',
       trackSource: 'Track source',
       impactChain: 'Impact chain',
       entityGantt: 'Gantt chart',
