@@ -187,11 +187,20 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 		if !enableSameServiceNames {
 			entityserviceUniqueNameValidator.Validate(ctx, sl)
 		}
+		entityserviceValidator.ValidateCreateRequest(sl)
 	}, entityservice.CreateRequest{})
-	if !enableSameServiceNames {
-		v.RegisterStructValidationCtx(entityserviceUniqueNameValidator.Validate, entityservice.UpdateRequest{})
-		v.RegisterStructValidationCtx(entityserviceUniqueNameValidator.Validate, entityservice.BulkUpdateRequestItem{})
-	}
+	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		if !enableSameServiceNames {
+			entityserviceUniqueNameValidator.Validate(ctx, sl)
+		}
+		entityserviceValidator.ValidateUpdateRequest(ctx, sl)
+	}, entityservice.UpdateRequest{})
+	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		if !enableSameServiceNames {
+			entityserviceUniqueNameValidator.Validate(ctx, sl)
+		}
+		entityserviceValidator.ValidateUpdateRequest(ctx, sl)
+	}, entityservice.BulkUpdateRequestItem{})
 	v.RegisterStructValidationCtx(entityserviceValidator.ValidateEditRequest, entityservice.EditRequest{})
 
 	entityCategoryUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.EntityCategoryMongoCollection, "Name")

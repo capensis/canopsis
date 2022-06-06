@@ -26,31 +26,34 @@ func (p Alarm) Match(alarm types.Alarm) (bool, error) {
 			matched = false
 
 			if infoName := getAlarmInfoName(f); infoName != "" {
-				infoVal := getAlarmInfoVal(alarm, infoName)
-
-				switch v.FieldType {
-				case FieldTypeString:
-					var s string
-					if s, err = getStringValue(infoVal); err == nil {
-						matched, _, err = cond.MatchString(s)
-					}
-				case FieldTypeInt:
-					var i int64
-					if i, err = getIntValue(infoVal); err == nil {
-						matched, err = cond.MatchInt(i)
-					}
-				case FieldTypeBool:
-					var b bool
-					if b, err = getBoolValue(infoVal); err == nil {
-						matched, err = cond.MatchBool(b)
-					}
-				case FieldTypeStringArray:
-					var a []string
-					if a, err = getStringArrayValue(infoVal); err == nil {
-						matched, err = cond.MatchStringArray(a)
-					}
-				default:
+				infoVal, ok := getAlarmInfoVal(alarm, infoName)
+				if v.FieldType == "" {
 					matched, err = cond.MatchRef(infoVal)
+				} else if ok {
+					switch v.FieldType {
+					case FieldTypeString:
+						var s string
+						if s, err = getStringValue(infoVal); err == nil {
+							matched, _, err = cond.MatchString(s)
+						}
+					case FieldTypeInt:
+						var i int64
+						if i, err = getIntValue(infoVal); err == nil {
+							matched, err = cond.MatchInt(i)
+						}
+					case FieldTypeBool:
+						var b bool
+						if b, err = getBoolValue(infoVal); err == nil {
+							matched, err = cond.MatchBool(b)
+						}
+					case FieldTypeStringArray:
+						var a []string
+						if a, err = getStringArrayValue(infoVal); err == nil {
+							matched, err = cond.MatchStringArray(a)
+						}
+					default:
+						return false, fmt.Errorf("invalid field type for %q field: %s", f, v.FieldType)
+					}
 				}
 
 				if err != nil {
@@ -360,14 +363,14 @@ func getAlarmDurationField(alarm types.Alarm, field string) (int64, bool) {
 	}
 }
 
-func getAlarmInfoVal(alarm types.Alarm, f string) interface{} {
+func getAlarmInfoVal(alarm types.Alarm, f string) (interface{}, bool) {
 	for _, infosByRule := range alarm.Value.Infos {
 		if v, ok := infosByRule[f]; ok {
-			return v
+			return v, true
 		}
 	}
 
-	return nil
+	return nil, false
 }
 
 func getAlarmInfoName(f string) string {

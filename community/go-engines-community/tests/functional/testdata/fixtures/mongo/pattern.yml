@@ -343,3 +343,14 @@ pattern:
           cond:
             type: eq
             value: test-pattern-to-pbehavior-pattern-1-pattern
+
+  pattern_to_entityservice_pattern_1:
+    <<: *pattern_entity
+    _id: test-pattern-to-entityservice-pattern-1
+    is_corporate: true
+    title: test-pattern-to-entityservice-pattern-1-title
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-entityservice-pattern-1-pattern
