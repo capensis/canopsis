@@ -71,14 +71,22 @@
 
 <script>
 import {
-  PATTERN_INPUT_TYPES,
+  PATTERN_FIELD_TYPES,
   PATTERN_QUICK_RANGES,
   PATTERN_RULE_INFOS_FIELDS,
   PATTERN_RULE_TYPES,
   QUICK_RANGES,
 } from '@/constants';
 
-import { convertValueByType, getValueType, isOperatorHasValue } from '@/helpers/pattern';
+import {
+  convertValueByType,
+  getFieldType,
+  isDateRuleType,
+  isDurationRuleType,
+  isExtraInfosRuleType,
+  isInfosRuleType,
+  isOperatorHasValue,
+} from '@/helpers/pattern';
 
 import { formMixin } from '@/mixins/form';
 
@@ -111,10 +119,10 @@ export default {
     inputTypes: {
       type: Array,
       default: () => [
-        { value: PATTERN_INPUT_TYPES.string },
-        { value: PATTERN_INPUT_TYPES.number },
-        { value: PATTERN_INPUT_TYPES.boolean },
-        { value: PATTERN_INPUT_TYPES.array },
+        { value: PATTERN_FIELD_TYPES.string },
+        { value: PATTERN_FIELD_TYPES.number },
+        { value: PATTERN_FIELD_TYPES.boolean },
+        { value: PATTERN_FIELD_TYPES.stringArray },
       ],
     },
     intervalRanges: {
@@ -148,7 +156,7 @@ export default {
     },
 
     inputType() {
-      return getValueType(this.rule.value);
+      return getFieldType(this.rule.value);
     },
 
     isCustomRange() {
@@ -156,11 +164,11 @@ export default {
     },
 
     isInfosRule() {
-      return this.type === PATTERN_RULE_TYPES.infos;
+      return isInfosRuleType(this.type);
     },
 
     isExtraInfosRule() {
-      return this.type === PATTERN_RULE_TYPES.extraInfos;
+      return isExtraInfosRuleType(this.type);
     },
 
     isInfosValueField() {
@@ -168,11 +176,11 @@ export default {
     },
 
     isDateRule() {
-      return this.type === PATTERN_RULE_TYPES.date;
+      return isDateRuleType(this.type);
     },
 
     isDurationRule() {
-      return this.type === PATTERN_RULE_TYPES.duration;
+      return isDurationRuleType(this.type);
     },
 
     valueComponent() {

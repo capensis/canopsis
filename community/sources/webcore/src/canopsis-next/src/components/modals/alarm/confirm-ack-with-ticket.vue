@@ -1,12 +1,11 @@
 <template lang="pug">
-  modal-wrapper(data-test="confirmAckModal", close)
-    template(slot="title")
+  modal-wrapper(close)
+    template(#title="")
       span {{ $t('common.confirmation') }}
-    template(slot="text")
+    template(#text="")
       v-alert(:value="true", type="info") {{ $t('modals.confirmAckWithTicket.infoMessage') }}
-    template(slot="actions")
+    template(#actions="")
       v-btn(
-        data-test="confirmAckCancelButton",
         depressed,
         flat,
         @click="$modals.hide"
@@ -14,13 +13,11 @@
       v-btn.primary(
         :loading="submitting",
         :disabled="isDisabled || submittingWithTicket",
-        data-test="confirmAckContinueButton",
         @click="submit"
       ) {{ $t('common.continue') }}
       v-btn.warning(
         :loading="submittingWithTicket",
         :disabled="isDisabledWithTicket || submitting",
-        data-test="confirmAckContinueWithTicketButton",
         @click="submitWithTicket"
       ) {{ $t('modals.confirmAckWithTicket.continueAndAssociateTicket') }}
 </template>

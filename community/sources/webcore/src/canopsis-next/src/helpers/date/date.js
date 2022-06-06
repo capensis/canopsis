@@ -1,11 +1,16 @@
+import { isNumber } from 'lodash';
 import moment from 'moment-timezone';
-
-import 'moment/locale/fr';
 
 import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
 
 /**
  * @typedef {Date | number | string | moment.Moment} LocalDate
+ */
+
+/**
+ * @typedef {Object} Interval
+ * @property {number} from
+ * @property {number} to
  */
 
 /**
@@ -442,5 +447,24 @@ export const isSameOrBeforeDate = (left, right) => convertDateToMoment(left).isS
  * @return {string}
  */
 export const formatDate = (date, format) => convertDateToMoment(date).format(format);
+
+/**
+ * Check time unit is valid
+ *
+ * @param {string} unit
+ * @return {boolean}
+ */
+export const isValidTimeUnit = unit => Object.values(TIME_UNITS).includes(unit);
+
+/**
+ * Check is interval valid
+ *
+ * @param {Interval | *} value
+ * @return {boolean}
+ */
+export const isValidDateInterval = value => value
+  && isNumber(value?.from)
+  && isNumber(value?.to)
+  && value.from < value.to;
 
 export default convertDateToMoment;

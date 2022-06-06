@@ -67,7 +67,7 @@ export default {
   data() {
     return {
       form: {
-        manualMetaAlarm: null,
+        metaAlarm: null,
         output: '',
       },
     };

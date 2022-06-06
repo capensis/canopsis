@@ -12,6 +12,15 @@ global.IntersectionObserver = jest.fn(() => ({
   unobserve: jest.fn(),
 }));
 
+Object.defineProperty(HTMLElement.prototype, 'innerText', {
+  set(value) {
+    this.textContent = value;
+  },
+  get() {
+    return this.textContent;
+  },
+});
+
 expect.extend({
   toMatchImageSnapshot,
   toMatchCanvasSnapshot(canvas, options, ...args) {
@@ -39,11 +48,19 @@ expect.extend({
 
     return toMatchSnapshot.call(this, menu.element);
   },
-  toEmit(wrapper, event, data) {
+  toEmit(wrapper, event, ...data) {
     const emittedEvents = wrapper.emitted(event);
 
+    if (this.isNot) {
+      try {
+        expect(emittedEvents).not.toBeTruthy();
+      } catch (err) {
+        return err.matcherResult;
+      }
+    }
+
     try {
-      expect(emittedEvents).toHaveLength(1);
+      expect(emittedEvents).toHaveLength(data.length);
     } catch (err) {
       return {
         pass: false,
@@ -51,10 +68,10 @@ expect.extend({
       };
     }
 
-    const [eventData] = emittedEvents[0];
-
     try {
-      expect(eventData).toEqual(data);
+      expect(
+        emittedEvents.map(events => events[0]),
+      ).toEqual(data);
     } catch (err) {
       return err.matcherResult;
     }

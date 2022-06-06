@@ -1,14 +1,13 @@
 <template lang="pug">
-  v-form(data-test="createSnoozeEventModal", @submit.prevent="submit")
+  v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ $t('modals.createSnoozeEvent.title') }}
-      template(slot="text")
+      template(#text="")
         v-container
           snooze-event-form(v-model="form", :is-note-required="isNoteRequired")
-      template(slot="actions")
+      template(#actions="")
         v-btn(
-          data-test="createSnoozeEventCancelButton",
           depressed,
           flat,
           @click="$modals.hide"
@@ -16,7 +15,6 @@
         v-btn.primary(
           :loading="submitting",
           :disabled="isDisabled",
-          data-test="createSnoozeEventSubmitButton",
           type="submit"
         ) {{ $t('common.actions.saveChanges') }}
 </template>
