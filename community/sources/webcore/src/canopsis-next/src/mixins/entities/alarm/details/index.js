@@ -10,11 +10,15 @@ export const entitiesAlarmDetailsMixin = {
     ...mapGetters({
       getAlarmDetailsItem: 'getItem',
       getAlarmDetailsPending: 'getPending',
+      getAlarmDetailsQuery: 'getQuery',
     }),
   },
   methods: {
     ...mapActions({
-      fetchAlarmItemDetails: 'fetchItem',
+      fetchAlarmDetails: 'fetchItem',
+      fetchAlarmsDetailsList: 'fetchList',
+      updateAlarmDetailsQuery: 'updateQuery',
+      removeAlarmDetailsQuery: 'removeQuery',
     }),
   },
 };
