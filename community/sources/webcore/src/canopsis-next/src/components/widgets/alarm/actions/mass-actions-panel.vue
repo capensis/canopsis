@@ -113,7 +113,7 @@ export default {
     },
 
     hasMetaAlarm() {
-      return this.items.some(item => item.metaalarm);
+      return this.items.some(item => item.is_meta_alarm);
     },
 
     modalConfig() {
