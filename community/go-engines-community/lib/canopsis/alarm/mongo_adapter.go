@@ -3,6 +3,7 @@ package alarm
 import (
 	"context"
 	"errors"
+	"fmt"
 	"math"
 	"time"
 
@@ -784,7 +785,7 @@ func (a *mongoAdapter) GetWorstAlarmState(ctx context.Context, entityIds []strin
 		}},
 		{"$group": bson.M{
 			"_id":   nil,
-			"state": bson.M{"$max": "$v.state.v"},
+			"state": bson.M{"$max": "$v.state.val"},
 		}},
 	})
 	if err != nil {
@@ -796,6 +797,9 @@ func (a *mongoAdapter) GetWorstAlarmState(ctx context.Context, entityIds []strin
 		res := struct {
 			State int64 `bson:"state"`
 		}{}
+
+		fmt.Printf("res %d\n", res.State)
+
 		err := cursor.Decode(&res)
 
 		return res.State, err
