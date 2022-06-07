@@ -37,6 +37,7 @@ import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
 import DaySpanVuetifyPlugin from '@/plugins/dayspan-vuetify';
 import GridPlugin from '@/plugins/grid';
 import SocketPlugin from '@/plugins/socket';
+import FlowchartPlugin from '@/plugins/flowchart';
 
 import { setSeveralFields } from '@/helpers/immutable';
 
@@ -463,6 +464,7 @@ Vue.use(UpdateFieldPlugin);
 Vue.use(ToursPlugin);
 Vue.use(VuetifyReplacerPlugin);
 Vue.use(SocketPlugin);
+Vue.use(FlowchartPlugin);
 
 Vue.config.productionTip = false;
 
