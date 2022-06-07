@@ -68,6 +68,7 @@ export default {
     by: 'By',
     date: 'Date',
     comment: 'Comment | Comments',
+    lastComment: 'Last comment',
     start: 'Start',
     end: 'End',
     message: 'Message',
