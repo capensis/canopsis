@@ -6,22 +6,22 @@ Feature: create service entity
     When I send an event:
     """json
     {
-      "connector": "test-connector-che-service-1",
-      "connector_name": "test-connector-name-che-service-1",
+      "connector": "test-connector-che-service-first",
+      "connector_name": "test-connector-name-che-service-first",
       "source_type": "resource",
       "event_type": "check",
-      "component": "test-component-che-service-1",
-      "resource": "test-resource-che-service-1",
+      "component": "test-component-che-service-first",
+      "resource": "test-resource-che-service-first",
       "state": 2,
-      "output": "test-output-che-service-1"
+      "output": "test-output-che-service-first"
     }
     """
     When I wait the end of event processing
     When I do POST /api/v4/entityservices:
     """json
     {
-      "name": "test-entityservice-che-service-1-name",
-      "output_template": "test-entityservice-che-service-1-output",
+      "name": "test-entityservice-che-service-first-name",
+      "output_template": "test-entityservice-che-service-first-output",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -30,7 +30,7 @@ Feature: create service entity
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-che-service-1"
+              "value": "test-resource-che-service-first"
             }
           }
         ]
@@ -41,75 +41,75 @@ Feature: create service entity
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
-    When I do GET /api/v4/entities?search=che-service-1&sort_by=name
+    When I do GET /api/v4/entities?search=che-service-first&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "_id": "test-component-che-service-1",
+          "_id": "test-component-che-service-first",
           "category": null,
-          "component": "test-component-che-service-1",
+          "component": "test-component-che-service-first",
           "depends": [
-            "test-resource-che-service-1/test-component-che-service-1"
+            "test-resource-che-service-first/test-component-che-service-first"
           ],
           "enabled": true,
           "impact": [
-            "test-connector-che-service-1/test-connector-name-che-service-1"
+            "test-connector-che-service-first/test-connector-name-che-service-first"
           ],
           "impact_level": 1,
           "infos": {},
           "measurements": null,
-          "name": "test-component-che-service-1",
+          "name": "test-component-che-service-first",
           "type": "component"
         },
         {
-          "_id": "test-connector-che-service-1/test-connector-name-che-service-1",
+          "_id": "test-connector-che-service-first/test-connector-name-che-service-first",
           "category": null,
           "depends": [
-            "test-component-che-service-1"
+            "test-component-che-service-first"
           ],
           "enabled": true,
           "impact": [
-            "test-resource-che-service-1/test-component-che-service-1"
+            "test-resource-che-service-first/test-component-che-service-first"
           ],
           "impact_level": 1,
           "infos": {},
           "measurements": null,
-          "name": "test-connector-name-che-service-1",
+          "name": "test-connector-name-che-service-first",
           "type": "connector"
         },
         {
           "_id": "{{ .serviceID }}",
           "category": null,
           "depends": [
-            "test-resource-che-service-1/test-component-che-service-1"
+            "test-resource-che-service-first/test-component-che-service-first"
           ],
           "enabled": true,
           "impact": [],
           "impact_level": 1,
           "infos": {},
           "measurements": null,
-          "name": "test-entityservice-che-service-1-name",
+          "name": "test-entityservice-che-service-first-name",
           "type": "service"
         },
         {
-          "_id": "test-resource-che-service-1/test-component-che-service-1",
+          "_id": "test-resource-che-service-first/test-component-che-service-first",
           "category": null,
-          "component": "test-component-che-service-1",
+          "component": "test-component-che-service-first",
           "depends": [
-            "test-connector-che-service-1/test-connector-name-che-service-1"
+            "test-connector-che-service-first/test-connector-name-che-service-first"
           ],
           "enabled": true,
           "impact": [
-            "test-component-che-service-1",
+            "test-component-che-service-first",
             "{{ .serviceID }}"
           ],
           "impact_level": 1,
           "infos": {},
           "measurements": null,
-          "name": "test-resource-che-service-1",
+          "name": "test-resource-che-service-first",
           "type": "resource"
         }
       ],
