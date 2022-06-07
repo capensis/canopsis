@@ -163,7 +163,7 @@ export default {
       return {
         itemsType: ENTITIES_TYPES.alarm,
         itemsIds: [this.item._id],
-        afterSubmit: () => this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id }),
+        afterSubmit: this.$refreshAlarmsList,
       };
     },
     resolvedActions() {
