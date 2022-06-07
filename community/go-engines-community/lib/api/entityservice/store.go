@@ -246,6 +246,14 @@ func (s *store) GetImpacts(ctx context.Context, id string, q pagination.Query) (
 }
 
 func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, error) {
+	var enabled bool
+	if request.Enabled != nil {
+		enabled = *request.Enabled
+	}
+	var sliAvailState int64
+	if request.SliAvailState != nil {
+		sliAvailState = *request.SliAvailState
+	}
 	entity := entityservice.EntityService{
 		Entity: types.Entity{
 			ID:            utils.NewID(),
@@ -253,12 +261,12 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 			Depends:       []string{},
 			Impacts:       []string{},
 			EnableHistory: []types.CpsTime{},
-			Enabled:       *request.Enabled,
+			Enabled:       enabled,
 			Infos:         transformInfos(request.EditRequest),
 			Type:          types.EntityTypeService,
 			Category:      request.Category,
 			ImpactLevel:   request.ImpactLevel,
-			SliAvailState: *request.SliAvailState,
+			SliAvailState: sliAvailState,
 			Created:       types.CpsTime{Time: time.Now()},
 		},
 		EntityPatternFields: request.EntityPatternFieldsRequest.ToModel(),
@@ -325,7 +333,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 			}
 			return err
 		}
-		serviceChanges.IsToggled = oldValues.Enabled != *request.Enabled
+		serviceChanges.IsToggled = request.Enabled != nil && oldValues.Enabled != *request.Enabled
 		if oldValues.OldEntityPatterns.IsSet() {
 			serviceChanges.IsPatternChanged = len(request.EntityPattern) > 0
 		} else {
