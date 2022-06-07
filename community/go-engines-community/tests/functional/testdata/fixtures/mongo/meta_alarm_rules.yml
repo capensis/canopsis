@@ -366,6 +366,7 @@ meta_alarm_rules:
   meta_alarm_rules_27:
     <<: *metaaalarm_rule_attribute
     _id: test-metaalarmrule-axe-correlation-5
+    auto_resolve: true
     entity_pattern:
     alarm_pattern:
       - - field: v.component
