@@ -21,6 +21,7 @@ import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
  * @mixin Mixin for the alarms list actions panel, show modal of the action
  */
 export const widgetActionsPanelAlarmMixin = {
+  inject: ['$refreshAlarmsList'],
   mixins: [
     authMixin,
     queryMixin,
@@ -28,14 +29,16 @@ export const widgetActionsPanelAlarmMixin = {
     entitiesPbehaviorMixin,
   ],
   methods: {
-    createFastAckEvent() {
+    async createFastAckEvent() {
       let eventData = {};
 
       if (this.widget.parameters.fastAckOutput && this.widget.parameters.fastAckOutput.enabled) {
         eventData = { output: this.widget.parameters.fastAckOutput.value };
       }
 
-      return this.createEvent(EVENT_ENTITY_TYPES.ack, this.item, eventData);
+      await this.createEvent(EVENT_ENTITY_TYPES.ack, this.item, eventData);
+
+      return this.$refreshAlarmsList();
     },
 
     showCreateCommentModal() {
@@ -70,6 +73,7 @@ export const widgetActionsPanelAlarmMixin = {
         name: MODALS.createAckEvent,
         config: {
           ...this.modalConfig,
+
           isNoteRequired: this.widget.parameters.isAckNoteRequired,
         },
       });
@@ -82,9 +86,10 @@ export const widgetActionsPanelAlarmMixin = {
         name: MODALS.pbehaviorList,
         config: {
           ...this.modalConfig,
+
+          availableActions,
           pbehaviors: [this.item.pbehavior],
           entityId: this.item.entity._id,
-          availableActions,
         },
       });
     },
@@ -94,6 +99,7 @@ export const widgetActionsPanelAlarmMixin = {
         name: MODALS.createEvent,
         config: {
           ...this.modalConfig,
+
           title: this.$t('modals.createCancelEvent.title'),
           eventType: EVENT_ENTITY_TYPES.cancel,
         },
@@ -105,6 +111,7 @@ export const widgetActionsPanelAlarmMixin = {
         name: MODALS.createEvent,
         config: {
           ...this.modalConfig,
+
           title: this.$t('modals.createAckRemove.title'),
           eventType: EVENT_ENTITY_TYPES.ackRemove,
         },
@@ -197,6 +204,7 @@ export const widgetActionsPanelAlarmMixin = {
         name: MODALS.createEvent,
         config: {
           ...this.modalConfig,
+
           title: this.$t('alarmList.actions.titles.manualMetaAlarmUngroup'),
           eventType: EVENT_ENTITY_TYPES.manualMetaAlarmUngroup,
           parentsIds: [get(this.parentAlarm, 'd')],

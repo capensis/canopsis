@@ -135,6 +135,11 @@ import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-rem
  * @event openSettings#click
  */
 export default {
+  provide: {
+    $refreshAlarmsList() {
+      return this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id });
+    },
+  },
   components: {
     FilterSelector,
     FiltersListBtn,
