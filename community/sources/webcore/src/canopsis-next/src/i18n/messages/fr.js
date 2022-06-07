@@ -68,6 +68,7 @@ export default {
     by: 'Par',
     date: 'Date',
     comment: 'Commentaire | Commentaires',
+    lastComment: 'Dernier commentaire',
     end: 'Fin',
     start: 'Début',
     message: 'Message',

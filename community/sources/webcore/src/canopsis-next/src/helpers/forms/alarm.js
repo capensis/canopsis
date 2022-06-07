@@ -90,10 +90,15 @@
  */
 
 /**
+ * @typedef {Pbehavior} AlarmPbehavior
+ * @property {Comment} last_comment
+ */
+
+/**
  * @typedef {Object} Alarm
  * @property {string} _id
  * @property {Entity} entity
- * @property {boolean} metaalarm
+ * @property {boolean} is_meta_alarm
  * @property {AlarmAssignedInstruction[]} [assigned_instructions]
  * @property {boolean} [is_auto_instruction_running]
  * @property {boolean} [is_manual_instruction_waiting_result]
@@ -103,7 +108,7 @@
  * @property {AlarmRule} rule
  * @property {Correlation} consequences
  * @property {Correlation} causes
- * @property {Pbehavior} pbehavior
+ * @property {AlarmPbehavior} pbehavior
  * @property {string} links
  * @property {number} t
  * @property {AlarmValue} v

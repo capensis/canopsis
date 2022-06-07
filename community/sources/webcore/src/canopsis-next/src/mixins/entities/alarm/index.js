@@ -56,24 +56,7 @@ export const entitiesAlarmMixin = {
         return;
       }
 
-      const params = {
-        limit: 1,
-        correlation: !!alarm.consequences || !!alarm.causes,
-        with_instructions: true,
-      };
-
-      if (alarm.v.steps) {
-        params.with_steps = true;
-      }
-
-      if (alarm.v.resolved) {
-        params.resolved = true;
-      }
-
-      await this.fetchAlarmItem({
-        id: alarm._id,
-        params,
-      });
+      await this.fetchAlarmItem({ id: alarm._id });
     },
   },
 };
