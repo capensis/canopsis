@@ -3,8 +3,7 @@
     v-layout(v-if="!pending")
       the-navigation#main-navigation(v-if="shownNavigation")
       v-content#main-content
-        active-broadcast-message
-        router-view(:key="routeViewKey")
+        c-flowchart-editor
     the-sidebar
     the-modals
     the-popups
