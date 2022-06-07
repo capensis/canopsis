@@ -22,14 +22,19 @@ Feature: update service when alarm is updated by action pbehavior
     {
       "name": "test-scenario-action-axe-pbehavior-service-1-name",
       "enabled": true,
-      "priority": 91,
       "triggers": ["cancel"],
       "actions": [
         {
-          "entity_patterns": [
-            {
-              "name": "test-resource-action-axe-pbehavior-service-1"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-axe-pbehavior-service-1"
+                }
+              }
+            ]
           ],
           "type": "pbehavior",
           "parameters": {

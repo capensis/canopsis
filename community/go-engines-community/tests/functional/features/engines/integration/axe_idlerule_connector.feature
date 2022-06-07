@@ -434,10 +434,16 @@ Feature: update connector alarm
       "triggers": ["create"],
       "actions": [
         {
-          "entity_patterns": [
-            {
-              "_id": "test-connector-axe-idlerule-connector-4/test-connector-name-axe-idlerule-connector-4"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-connector-name-axe-idlerule-connector-4"
+                }
+              }
+            ]
           ],
           "type": "assocticket",
           "parameters": {
@@ -448,10 +454,16 @@ Feature: update connector alarm
           "emit_trigger": false
         },
         {
-          "entity_patterns": [
-            {
-              "_id": "test-connector-axe-idlerule-connector-4/test-connector-name-axe-idlerule-connector-4"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-connector-name-axe-idlerule-connector-4"
+                }
+              }
+            ]
           ],
           "type": "ack",
           "parameters": {

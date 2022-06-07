@@ -8,11 +8,20 @@ Feature: send activation event on unsnooze
     {
       "name": "test-scenario-axe-action-activation-name",
       "enabled": true,
-      "priority": 61,
       "triggers": ["create"],
       "actions": [
         {
-          "entity_patterns":[{"name":"test-resource-axe-action-activation-event"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-axe-action-activation-event"
+                }
+              }
+            ]
+          ],
           "type":"snooze",
           "parameters": {
             "duration": {

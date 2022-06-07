@@ -72,24 +72,27 @@ Feature: resolve meta alarm
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resolved":{"$gt":0}},{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true until response code is 200 and response key "data.0.v.resolved" is greater or equal than 1
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
     """
-    {
-      "data": [
-        {
-          "v": {
-            "component": "metaalarm",
-            "connector": "engine",
-            "connector_name": "correlation",
-            "state": {
-              "val": 0
-            },
-            "status": {
-              "val": 0
-            },
-            "steps": [
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -106,15 +109,15 @@ Feature: resolve meta alarm
                 "_t": "statusdec",
                 "val": 0
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
