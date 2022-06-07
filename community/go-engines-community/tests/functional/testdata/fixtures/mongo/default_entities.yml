@@ -374,6 +374,94 @@ default_entities:
     old_entity_patterns:
       - name: test-resource-che-service-19
 
+  connector_to_entity_get:
+    <<: *connector
+    _id: test-connector-to-entity-get/test-connector-name-to-entity-get
+    name: test-connector-name-to-entity-get
+    impact_level: 1
+    category: test-category-to-entity-get-1
+    depends:
+      - test-component-to-entity-get
+    enable_history:
+      - 1597030220
+    impact:
+      - test-resource-to-entity-get-1/test-component-to-entity-get
+      - test-resource-to-entity-get-2/test-component-to-entity-get
+
+  component_to_entity_get:
+    <<: *component
+    _id: test-component-to-entity-get
+    name: test-component-to-entity-get
+    impact_level: 2
+    category: test-category-to-entity-get-2
+    depends:
+      - test-resource-to-entity-get-1/test-component-to-entity-get
+      - test-resource-to-entity-get-2/test-component-to-entity-get
+    enable_history:
+      - 1597030220
+    impact:
+      - test-component-to-entity-get
+
+  resource_to_entity_get_1:
+    <<: *resource
+    _id: test-resource-to-entity-get-1/test-component-to-entity-get
+    name: test-resource-to-entity-get-1
+    category: test-category-to-entity-get-2
+    depends:
+      - test-connector-to-entity-get/test-connector-name-to-entity-get
+    enable_history:
+      - 1597030220
+    impact:
+      - test-component-to-entity-get
+    component: test-component-to-entity-get
+    impact_level: 3
+    infos:
+      test-resource-to-entity-get-1-info-1:
+        description: test-resource-to-entity-get-1-info-1-description
+        name: test-resource-to-entity-get-1-info-1-name
+        value: test-resource-to-entity-get-1-info-1-value
+      test-resource-to-entity-get-1-info-2:
+        description: test-resource-to-entity-get-1-info-2-description
+        name: test-resource-to-entity-get-1-info-2-name
+        value: false
+      test-resource-to-entity-get-1-info-3:
+        description: test-resource-to-entity-get-1-info-3-description
+        name: test-resource-to-entity-get-1-info-3-name
+        value: 1022
+      test-resource-to-entity-get-1-info-4:
+        description: test-resource-to-entity-get-1-info-4-description
+        name: test-resource-to-entity-get-1-info-4-name
+        value: 10.45
+      test-resource-to-entity-get-1-info-5:
+        description: test-resource-to-entity-get-1-info-5-description
+        name: test-resource-to-entity-get-1-info-5-name
+        value: null
+      test-resource-to-entity-get-1-info-6:
+        description: test-resource-to-entity-get-1-info-6-description
+        name: test-resource-to-entity-get-1-info-6-name
+        value:
+          - test-resource-to-entity-get-1-info-6-value
+          - false
+          - 1022
+          - 10.45
+          - null
+      test-resource-to-entity-get-1-info-7:
+        description: test-resource-to-entity-get-1-info-7-description
+        value: test-resource-to-entity-get-1-info-7-value
+
+  resource_to_entity_get_2:
+    <<: *resource
+    _id: test-resource-to-entity-get-2/test-component-to-entity-get
+    name: test-resource-to-entity-get-2
+    depends:
+      - test-connector-to-entity-get/test-connector-name-to-entity-get
+    enable_history:
+      - 1597030220
+    impact:
+      - test-component-to-entity-get
+    component: test-component-to-entity-get
+    impact_level: 1
+
   default_entities_17:
     _id: test-alarm-pbehavior-get-resource/test-alarm-pbehavior-get-component
     depends: [ ]
@@ -837,132 +925,6 @@ default_entities:
     infos: { }
     measurements: null
     name: test-instruction-execution-get-resource-43
-    type: resource
-  default_entities_57:
-    _id: test-entity-to-get-connector/test-entity-to-get-connector-name
-    category: test-category-to-entity-get-1
-    depends:
-      - test-entity-to-get-component
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact:
-      - test-entity-to-get-resource/test-entity-to-get-component
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-entity-to-get-connector-name
-    type: connector
-  default_entities_58:
-    _id: test-entity-to-get-component
-    category: test-category-to-entity-get-2
-    depends:
-      - test-entity-to-get-resource/test-entity-to-get-component
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact:
-      - test-entity-to-get-component
-    impact_level: 2
-    infos: { }
-    measurements: null
-    name: test-entity-to-get-component
-    type: component
-  default_entities_59:
-    _id: test-entity-to-get-resource/test-entity-to-get-component
-    category: test-category-to-entity-get-2
-    depends:
-      - test-entity-to-get-connector/test-entity-to-get-connector-name
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact:
-      - test-entity-to-get-component
-    impact_level: 3
-    infos:
-      test-entity-to-get-info-1:
-        description: test-entity-to-get-info-1-description
-        name: test-entity-to-get-info-1-name
-        value: test-entity-to-get-info-1-value
-      test-entity-to-get-info-2:
-        description: test-entity-to-get-info-2-description
-        name: test-entity-to-get-info-2-name
-        value: false
-      test-entity-to-get-info-3:
-        description: test-entity-to-get-info-3-description
-        name: test-entity-to-get-info-3-name
-        value: 1022
-      test-entity-to-get-info-4:
-        description: test-entity-to-get-info-4-description
-        name: test-entity-to-get-info-4-name
-        value: 10.45
-      test-entity-to-get-info-5:
-        description: test-entity-to-get-info-5-description
-        name: test-entity-to-get-info-5-name
-        value: null
-      test-entity-to-get-info-6:
-        description: test-entity-to-get-info-6-description
-        name: test-entity-to-get-info-6-name
-        value:
-          - test-entity-to-get-info-6-value
-          - false
-          - 1022
-          - 10.45
-          - null
-      test-entity-to-get-info-7:
-        description: test-entity-to-get-info-7-description
-        value: test-entity-to-get-info-7-value
-    measurements: null
-    name: test-entity-to-get-resource
-    type: resource
-  default_entities_69:
-    _id: test-entity-to-check-deletable-connector/test-entity-to-check-deletable-connector-name
-    category: null
-    depends:
-      - test-entity-to-check-deletable-component
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact:
-      - test-entity-to-check-deletable-resource/test-entity-to-check-deletable-component
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-entity-to-check-deletable-connector-name
-    type: connector
-  default_entities_70:
-    _id: test-entity-to-check-deletable-component
-    category: null
-    depends:
-      - test-entity-to-check-deletable-resource/test-entity-to-check-deletable-component
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact:
-      - test-entity-to-check-deletable-component
-    impact_level: 2
-    infos: { }
-    measurements: null
-    name: test-entity-to-check-deletable-component
-    type: component
-  default_entities_71:
-    _id: test-entity-to-check-deletable-resource/test-entity-to-check-deletable-component
-    category: null
-    depends:
-      - test-entity-to-check-deletable-connector/test-entity-to-check-deletable-connector-name
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact:
-      - test-entity-to-check-deletable-component
-    impact_level: 3
-    infos:
-      test-entity-to-check-deletable-info:
-        description: test-entity-to-check-deletable-info-description
-        name: test-entity-to-check-deletable-info-name
-        value: test-entity-to-check-deletable-info-value
-    measurements: null
-    name: test-entity-to-check-deletable-resource
     type: resource
   default_entities_72:
     _id: test-entitybasic-to-check-unique-name

@@ -828,6 +828,8 @@ definitions:
         type: array
       filter:
         type: string
+      no_events:
+        type: boolean
       search:
         type: string
       separator:

@@ -13,13 +13,12 @@ type ListRequestWithPagination struct {
 	pagination.Query
 	ListRequest
 	WithFlags bool `form:"with_flags" json:"with_flags"`
-	NoEvents  bool `form:"no_events" json:"no_events"`
 }
 
 type ListRequest struct {
 	BaseFilterRequest
 	Sort     string   `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
-	SortBy   string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=_id name type category impact_level category.name idle_since infos.* last_event_date enabled"`
+	SortBy   string   `form:"sort_by" json:"sort_by"`
 	SearchBy []string `form:"active_columns[]" json:"active_columns[]"`
 }
 
@@ -27,6 +26,7 @@ type BaseFilterRequest struct {
 	Search   string `form:"search" json:"search"`
 	Filter   string `form:"filter" json:"filter"`
 	Category string `form:"category" json:"category"`
+	NoEvents bool   `form:"no_events" json:"no_events"`
 }
 
 type ExportRequest struct {

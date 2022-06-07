@@ -326,3 +326,8 @@ widgets:
     <<: *widget
     _id: test-widget-to-alarm-get
     tab: test-tab-to-alarm-get
+
+  widget_to_entity_get:
+    <<: *widget
+    _id: test-widget-to-entity-get
+    tab: test-tab-to-entity-get
