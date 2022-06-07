@@ -36,10 +36,6 @@ export default {
         return this.config.afterSubmit();
       }
 
-      if (this.widget) {
-        return this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id });
-      }
-
       return Promise.resolve();
     },
   },

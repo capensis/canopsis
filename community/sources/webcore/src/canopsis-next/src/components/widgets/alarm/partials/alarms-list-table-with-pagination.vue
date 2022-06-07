@@ -7,11 +7,10 @@
       :pagination.sync="pagination",
       :editing="editing",
       :columns="columns",
-      :loading="pending",
-      :parent-alarm="alarm",
+      :loading="loading",
+      :parent-alarm="parentAlarm",
       expandable,
-      hide-groups,
-      ref="alarmsTable"
+      hide-groups
     )
     c-table-pagination(
       :total-items="meta.total_count",
@@ -25,9 +24,7 @@
 <script>
 import { isEqual, pick } from 'lodash';
 
-import { DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS, ALARM_ENTITY_FIELDS, SORT_ORDERS } from '@/constants';
-
-import { defaultColumnsToColumns } from '@/helpers/entities';
+import { SORT_ORDERS } from '@/constants';
 
 /**
  * Group-alarm-list component
@@ -37,15 +34,15 @@ import { defaultColumnsToColumns } from '@/helpers/entities';
  */
 export default {
   props: {
-    children: {
-      type: Object,
-      required: true,
-    },
-    alarm: {
-      type: Object,
-      required: true,
-    },
     widget: {
+      type: Object,
+      required: true,
+    },
+    alarms: {
+      type: Array,
+      required: true,
+    },
+    meta: {
       type: Object,
       required: true,
     },
@@ -53,38 +50,25 @@ export default {
       type: Object,
       required: true,
     },
+    parentAlarm: {
+      type: Object,
+      default: null,
+    },
+    columns: {
+      type: Array,
+      default: () => [],
+    },
     editing: {
       type: Boolean,
       default: false,
     },
-    pending: {
+    loading: {
       type: Boolean,
       default: false,
     },
   },
   computed: {
-    alarms() {
-      return this.children?.data ?? [];
-    },
-
-    meta() {
-      return this.children?.meta ?? {};
-    },
-
-    columns() {
-      if (this.widget.parameters.widgetGroupColumns) {
-        return this.widget.parameters.widgetGroupColumns.map(({ value, label, ...column }) => ({
-          ...column,
-          value,
-          text: label,
-          sortable: value !== ALARM_ENTITY_FIELDS.extraDetails,
-        }));
-      }
-
-      return defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS);
-    },
-
-    pagination: { // TODO: move to mixin
+    pagination: {
       get() {
         const { sortDir, sortKey: sortBy = null, multiSortBy = [] } = this.query;
         const descending = sortDir === SORT_ORDERS.desc;

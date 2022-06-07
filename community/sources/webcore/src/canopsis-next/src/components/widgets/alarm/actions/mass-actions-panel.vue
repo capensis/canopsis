@@ -21,6 +21,7 @@ const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
  * @prop {Array} [itemIds] - Items selected for the mass action
  */
 export default {
+  inject: ['$refreshAlarmsList'],
   components: { SharedMassActionsPanel },
   mixins: [widgetActionsPanelAlarmMixin],
   props: {
@@ -133,7 +134,7 @@ export default {
     afterSubmit() {
       this.clearItems();
 
-      return this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id });
+      return this.$refreshAlarmsList();
     },
 
     showAddPbehaviorModal() {
