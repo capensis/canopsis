@@ -102,9 +102,9 @@ func NewMongoQueryBuilder(client mongo.DbClient) *MongoQueryBuilder {
 
 func (q *MongoQueryBuilder) clear(now types.CpsTime) {
 	q.alarmMatch = make([]bson.M, 0)
-	q.additionalMatch = make([]bson.M, 0)
+	q.additionalMatch = []bson.M{{"$match": bson.M{"entity.enabled": true}}}
 
-	q.lookupsForAdditionalMatch = make(map[string]bool)
+	q.lookupsForAdditionalMatch = map[string]bool{"entity": true}
 	q.lookupsForSort = make(map[string]bool)
 	q.excludeLookupsBeforeSort = make([]string, 0)
 	q.lookups = []lookupWithKey{

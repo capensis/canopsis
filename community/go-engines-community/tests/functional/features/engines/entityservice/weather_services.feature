@@ -12,7 +12,17 @@ Feature: update service weather on event
       "category": "test-category-service-weather",
       "enabled": true,
       "impact_level": 1,
-      "entity_patterns": [{"name": "test-resource-service-weather-1"}],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-weather-1"
+            }
+          }
+        ]
+      ],
       "sli_avail_state": 0
     }
     """
@@ -79,10 +89,20 @@ Feature: update service weather on event
       "output_template": "Test-service-weather-2",
       "category": "test-category-service-weather",
       "impact_level": 1,
-      "entity_patterns": [
-        {"name": "test-resource-service-weather-2-1"},
-        {"name": "test-resource-service-weather-2-2"},
-        {"name": "test-resource-service-weather-2-3"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-service-weather-2-1",
+                "test-resource-service-weather-2-2",
+                "test-resource-service-weather-2-3"
+              ]
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -179,8 +199,16 @@ Feature: update service weather on event
       "output_template": "Test-service-weather-3",
       "category": "test-category-service-weather",
       "impact_level": 1,
-      "entity_patterns": [
-        {"name": "test-resource-service-weather-3"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-weather-3"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -251,9 +279,19 @@ Feature: update service weather on event
       "output_template": "Test-service-weather-4",
       "category": "test-category-service-weather",
       "impact_level": 1,
-      "entity_patterns": [
-        {"name": "test-resource-service-weather-4-1"},
-        {"name": "test-resource-service-weather-4-2"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-service-weather-4-1",
+                "test-resource-service-weather-4-2"
+              ]
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -361,7 +399,17 @@ Feature: update service weather on event
       "output_template": "Test-service-weather-5",
       "category": "test-category-service-weather",
       "impact_level": 5,
-      "entity_patterns": [{"name": "test-resource-service-weather-5"}],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-weather-5"
+            }
+          }
+        ]
+      ],
       "sli_avail_state": 0
     }
     """

@@ -3,7 +3,7 @@ template:
       _id: <UUID>,
       name: <Word()>,
       author: root,
-      created: <NowUnix>,
+      created: <NowUnix()>,
       updated: <Current().created>
   }
 

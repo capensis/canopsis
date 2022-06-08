@@ -67,34 +67,37 @@ func (p Entity) Match(entity types.Entity) (bool, EntityRegexMatches, error) {
 			var regexMatches map[string]string
 
 			if infoName := getEntityInfoName(f); infoName != "" {
-				infoVal := getEntityInfoVal(entity, infoName)
-
-				switch v.FieldType {
-				case FieldTypeString:
-					var s string
-					if s, err = getStringValue(infoVal); err == nil {
-						matched, regexMatches, err = cond.MatchString(s)
-						if matched {
-							entityRegexMatches.SetInfoRegexMatches(infoName, regexMatches)
-						}
-					}
-				case FieldTypeInt:
-					var i int64
-					if i, err = getIntValue(infoVal); err == nil {
-						matched, err = cond.MatchInt(i)
-					}
-				case FieldTypeBool:
-					var b bool
-					if b, err = getBoolValue(infoVal); err == nil {
-						matched, err = cond.MatchBool(b)
-					}
-				case FieldTypeStringArray:
-					var a []string
-					if a, err = getStringArrayValue(infoVal); err == nil {
-						matched, err = cond.MatchStringArray(a)
-					}
-				default:
+				infoVal, ok := getEntityInfoVal(entity, infoName)
+				if v.FieldType == "" {
 					matched, err = cond.MatchRef(infoVal)
+				} else if ok {
+					switch v.FieldType {
+					case FieldTypeString:
+						var s string
+						if s, err = getStringValue(infoVal); err == nil {
+							matched, regexMatches, err = cond.MatchString(s)
+							if matched {
+								entityRegexMatches.SetInfoRegexMatches(infoName, regexMatches)
+							}
+						}
+					case FieldTypeInt:
+						var i int64
+						if i, err = getIntValue(infoVal); err == nil {
+							matched, err = cond.MatchInt(i)
+						}
+					case FieldTypeBool:
+						var b bool
+						if b, err = getBoolValue(infoVal); err == nil {
+							matched, err = cond.MatchBool(b)
+						}
+					case FieldTypeStringArray:
+						var a []string
+						if a, err = getStringArrayValue(infoVal); err == nil {
+							matched, err = cond.MatchStringArray(a)
+						}
+					default:
+						return false, entityRegexMatches, fmt.Errorf("invalid field type for %q field: %s", f, v.FieldType)
+					}
 				}
 
 				if err != nil {
@@ -109,34 +112,37 @@ func (p Entity) Match(entity types.Entity) (bool, EntityRegexMatches, error) {
 			}
 
 			if infoName := getEntityComponentInfoName(f); infoName != "" {
-				infoVal := getEntityComponentInfoVal(entity, infoName)
-
-				switch v.FieldType {
-				case FieldTypeString:
-					var s string
-					if s, err = getStringValue(infoVal); err == nil {
-						matched, regexMatches, err = cond.MatchString(s)
-						if matched {
-							entityRegexMatches.SetComponentInfoRegexMatches(infoName, regexMatches)
-						}
-					}
-				case FieldTypeInt:
-					var i int64
-					if i, err = getIntValue(infoVal); err == nil {
-						matched, err = cond.MatchInt(i)
-					}
-				case FieldTypeBool:
-					var b bool
-					if b, err = getBoolValue(infoVal); err == nil {
-						matched, err = cond.MatchBool(b)
-					}
-				case FieldTypeStringArray:
-					var a []string
-					if a, err = getStringArrayValue(infoVal); err == nil {
-						matched, err = cond.MatchStringArray(a)
-					}
-				default:
+				infoVal, ok := getEntityComponentInfoVal(entity, infoName)
+				if v.FieldType == "" {
 					matched, err = cond.MatchRef(infoVal)
+				} else if ok {
+					switch v.FieldType {
+					case FieldTypeString:
+						var s string
+						if s, err = getStringValue(infoVal); err == nil {
+							matched, regexMatches, err = cond.MatchString(s)
+							if matched {
+								entityRegexMatches.SetComponentInfoRegexMatches(infoName, regexMatches)
+							}
+						}
+					case FieldTypeInt:
+						var i int64
+						if i, err = getIntValue(infoVal); err == nil {
+							matched, err = cond.MatchInt(i)
+						}
+					case FieldTypeBool:
+						var b bool
+						if b, err = getBoolValue(infoVal); err == nil {
+							matched, err = cond.MatchBool(b)
+						}
+					case FieldTypeStringArray:
+						var a []string
+						if a, err = getStringArrayValue(infoVal); err == nil {
+							matched, err = cond.MatchStringArray(a)
+						}
+					default:
+						return false, entityRegexMatches, fmt.Errorf("invalid field type for %q field: %s", f, v.FieldType)
+					}
 				}
 
 				if err != nil {
@@ -259,6 +265,22 @@ func (p Entity) Validate() bool {
 }
 
 func (p Entity) ToMongoQuery(prefix string) (bson.M, error) {
+	groupQueries, err := p.getGroupMongoQueries(prefix)
+	if err != nil || len(groupQueries) == 0 {
+		return nil, err
+	}
+	return bson.M{"$or": groupQueries}, nil
+}
+
+func (p Entity) ToNegativeMongoQuery(prefix string) (bson.M, error) {
+	groupQueries, err := p.getGroupMongoQueries(prefix)
+	if err != nil || len(groupQueries) == 0 {
+		return nil, err
+	}
+	return bson.M{"$nor": groupQueries}, nil
+}
+
+func (p Entity) getGroupMongoQueries(prefix string) ([]bson.M, error) {
 	if len(p) == 0 {
 		return nil, nil
 	}
@@ -276,7 +298,7 @@ func (p Entity) ToMongoQuery(prefix string) (bson.M, error) {
 			f := cond.Field
 
 			if infoName := getEntityInfoName(f); infoName != "" {
-				f = prefix + "infos." + infoName + ".val"
+				f = prefix + "infos." + infoName + ".value"
 
 				condQueries[j], err = cond.Condition.ToMongoQuery(f)
 				if err != nil {
@@ -294,7 +316,7 @@ func (p Entity) ToMongoQuery(prefix string) (bson.M, error) {
 			}
 
 			if infoName := getEntityComponentInfoName(f); infoName != "" {
-				f = prefix + "component_infos." + infoName + ".val"
+				f = prefix + "component_infos." + infoName + ".value"
 
 				condQueries[j], err = cond.Condition.ToMongoQuery(f)
 				if err != nil {
@@ -321,7 +343,7 @@ func (p Entity) ToMongoQuery(prefix string) (bson.M, error) {
 		groupQueries[i] = bson.M{"$and": condQueries}
 	}
 
-	return bson.M{"$or": groupQueries}, nil
+	return groupQueries, nil
 }
 
 func getEntityStringField(entity types.Entity, f string) (string, bool) {
@@ -372,12 +394,12 @@ func getEntityStringArrayField(entity types.Entity, f string) ([]string, bool) {
 	}
 }
 
-func getEntityInfoVal(entity types.Entity, f string) interface{} {
+func getEntityInfoVal(entity types.Entity, f string) (interface{}, bool) {
 	if v, ok := entity.Infos[f]; ok {
-		return v.Value
+		return v.Value, true
 	}
 
-	return nil
+	return nil, false
 }
 
 func getEntityInfoName(f string) string {
@@ -388,12 +410,12 @@ func getEntityInfoName(f string) string {
 	return ""
 }
 
-func getEntityComponentInfoVal(entity types.Entity, f string) interface{} {
+func getEntityComponentInfoVal(entity types.Entity, f string) (interface{}, bool) {
 	if v, ok := entity.ComponentInfos[f]; ok {
-		return v.Value
+		return v.Value, true
 	}
 
-	return nil
+	return nil, false
 }
 
 func getEntityComponentInfoName(f string) string {

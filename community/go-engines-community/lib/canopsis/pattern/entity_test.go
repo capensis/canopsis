@@ -415,7 +415,6 @@ func getEntityMatchDataSets() map[string]entityDataSet {
 				},
 			},
 			entity:      types.Entity{},
-			matchErr:    pattern.ErrWrongConditionValue,
 			matchResult: false,
 		},
 		"given exist info condition should match": {
@@ -573,7 +572,6 @@ func getEntityMatchDataSets() map[string]entityDataSet {
 				},
 			},
 			entity:      types.Entity{},
-			matchErr:    pattern.ErrWrongConditionValue,
 			matchResult: false,
 		},
 		"given exist component info condition should match": {
@@ -744,8 +742,8 @@ func getEntityMongoQueryDataSets() map[string]entityDataSet {
 			mongoQueryResult: bson.M{"$or": []bson.M{
 				{"$and": []bson.M{
 					{"$and": []bson.M{
-						{"entity.infos.info_name.val": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
-						{"entity.infos.info_name.val": bson.M{"$eq": 3}},
+						{"entity.infos.info_name.value": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
+						{"entity.infos.info_name.value": bson.M{"$eq": 3}},
 					}},
 				}},
 			}},
@@ -763,8 +761,8 @@ func getEntityMongoQueryDataSets() map[string]entityDataSet {
 			mongoQueryResult: bson.M{"$or": []bson.M{
 				{"$and": []bson.M{
 					{"$and": []bson.M{
-						{"entity.component_infos.info_name.val": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
-						{"entity.component_infos.info_name.val": bson.M{"$eq": 3}},
+						{"entity.component_infos.info_name.value": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
+						{"entity.component_infos.info_name.value": bson.M{"$eq": 3}},
 					}},
 				}},
 			}},

@@ -23,7 +23,17 @@ Feature: Bulk create entityservices
         "category": "test-category-to-entityservice-edit",
         "impact_level": 1,
         "enabled": true,
-        "entity_patterns": [{"name": "test-entityservice-to-bulk-create-1-pattern"}],
+        "entity_pattern": [
+          [
+            {
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-entityservice-to-bulk-create-1-pattern"
+              }
+            }
+          ]
+        ],
         "sli_avail_state": 1,
         "infos": [
           {
@@ -65,7 +75,17 @@ Feature: Bulk create entityservices
         "category": "test-category-to-entityservice-edit",
         "impact_level": 1,
         "enabled": true,
-        "entity_patterns": [{"name": "test-entityservice-to-bulk-create-1-pattern"}],
+        "entity_pattern": [
+          [
+            {
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-entityservice-to-bulk-create-1-pattern"
+              }
+            }
+          ]
+        ],
         "sli_avail_state": 1,
         "infos": [
           {
@@ -119,7 +139,17 @@ Feature: Bulk create entityservices
         "category": "test-category-to-entityservice-edit",
         "impact_level": 1,
         "enabled": true,
-        "entity_patterns": [{"name": "test-entityservice-to-bulk-create-2-pattern"}],
+        "entity_pattern": [
+          [
+            {
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-entityservice-to-bulk-create-2-pattern"
+              }
+            }
+          ]
+        ],
         "sli_avail_state": 1,
         "infos": [
           {
@@ -170,7 +200,17 @@ Feature: Bulk create entityservices
           "category": "test-category-to-entityservice-edit",
           "impact_level": 1,
           "enabled": true,
-          "entity_patterns": [{"name": "test-entityservice-to-bulk-create-1-pattern"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-entityservice-to-bulk-create-1-pattern"
+                }
+              }
+            ]
+          ],
           "sli_avail_state": 1,
           "infos": [
             {
@@ -215,7 +255,17 @@ Feature: Bulk create entityservices
           "category": "test-category-to-entityservice-edit",
           "impact_level": 1,
           "enabled": true,
-          "entity_patterns": [{"name": "test-entityservice-to-bulk-create-1-pattern"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-entityservice-to-bulk-create-1-pattern"
+                }
+              }
+            ]
+          ],
           "sli_avail_state": 1,
           "infos": [
             {
@@ -304,7 +354,17 @@ Feature: Bulk create entityservices
           "category": "test-category-to-entityservice-edit",
           "impact_level": 1,
           "enabled": true,
-          "entity_patterns": [{"name": "test-entityservice-to-bulk-create-2-pattern"}],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-entityservice-to-bulk-create-2-pattern"
+                }
+              }
+            ]
+          ],
           "sli_avail_state": 1,
           "infos": [
             {
@@ -358,10 +418,16 @@ Feature: Bulk create entityservices
       "depends": [],
       "enabled": true,
       "enable_history": [],
-      "entity_patterns": [
-        {
-          "name": "test-entityservice-to-bulk-create-1-pattern"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-to-bulk-create-1-pattern"
+            }
+          }
+        ]
       ],
       "impact": [],
       "impact_level": 1,
@@ -420,10 +486,16 @@ Feature: Bulk create entityservices
       "depends": [],
       "enabled": true,
       "enable_history": [],
-      "entity_patterns": [
-        {
-          "name": "test-entityservice-to-bulk-create-2-pattern"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-to-bulk-create-2-pattern"
+            }
+          }
+        ]
       ],
       "impact": [],
       "impact_level": 1,
