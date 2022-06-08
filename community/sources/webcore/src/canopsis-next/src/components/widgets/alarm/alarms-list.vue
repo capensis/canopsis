@@ -80,9 +80,10 @@
       :pagination.sync="pagination",
       :loading="alarmsPending",
       :is-tour-enabled="isTourEnabled",
-      :hide-groups="!query.correlation",
+      :hide-children="!query.correlation",
       :columns="columns",
       :sticky-header="widget.parameters.sticky_header",
+      :refresh-alarms-list="fetchList",
       selectable,
       expandable
     )
@@ -135,11 +136,6 @@ import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-rem
  * @event openSettings#click
  */
 export default {
-  provide() {
-    return {
-      $refreshAlarmsList: this.refreshList,
-    };
-  },
   components: {
     FilterSelector,
     FiltersListBtn,
@@ -297,17 +293,11 @@ export default {
       });
     },
 
-    refreshList() {
-      return this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id });
-    },
-
-    async fetchList({ isPeriodicRefresh, isQueryNonceUpdate } = {}) {
+    async fetchList() {
       if (this.hasColumns) {
         const query = this.getQuery();
 
-        if (isPeriodicRefresh || isQueryNonceUpdate) {
-          this.fetchAlarmsDetailsList({ widgetId: this.widget._id });
-        }
+        this.fetchAlarmsDetailsList({ widgetId: this.widget._id });
 
         await this.fetchAlarmsList({
           widgetId: this.widget._id,

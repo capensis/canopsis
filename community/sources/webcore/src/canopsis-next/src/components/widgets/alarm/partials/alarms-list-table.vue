@@ -4,6 +4,7 @@
       mass-actions-panel(
         :items-ids="selectedIds",
         :widget="widget",
+        :refresh-alarms-list="refreshAlarmsList",
         @clear:items="clearSelected"
       )
     c-empty-data-table-columns(v-if="!hasColumns")
@@ -39,18 +40,19 @@
             :widget="widget",
             :columns="columns",
             :columns-filters="columnsFilters",
-            :hide-groups="hideGroups",
             :parent-alarm="parentAlarm",
-            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)"
+            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)",
+            :refresh-alarms-list="refreshAlarmsList"
           )
         template(#expand="{ item, index }")
           alarms-expand-panel(
             :alarm="item",
             :widget="widget",
-            :hide-groups="hideGroups",
+            :hide-children="hideChildren",
             :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)"
           )
-    slot
+    slot(name="pagination")
+
     component(
       v-bind="additionalComponent.props",
       v-on="additionalComponent.on",
@@ -131,7 +133,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    hideGroups: {
+    hideChildren: {
       type: Boolean,
       default: false,
     },
@@ -146,6 +148,10 @@ export default {
     parentAlarm: {
       type: Object,
       default: null,
+    },
+    refreshAlarmsList: {
+      type: Function,
+      default: () => {},
     },
   },
   data() {

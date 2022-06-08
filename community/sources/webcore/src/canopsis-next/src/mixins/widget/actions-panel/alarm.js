@@ -192,7 +192,7 @@ export const widgetActionsPanelAlarmMixin = {
       widget.parameters.viewFilters = [entityFilter];
 
       this.$modals.show({
-        name: MODALS.alarmsList,
+        name: MODALS.alarmsList, // TODO: do it like on service
         config: {
           widget,
         },

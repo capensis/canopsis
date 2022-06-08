@@ -49,8 +49,8 @@ export default {
     ),
   },
   mutations: {
-    [types.FETCH_LIST](state, { widgetId, params }) {
-      Vue.setSeveral(state.widgets, widgetId, { pending: true, fetchingParams: params });
+    [types.FETCH_LIST](state, { widgetId }) {
+      Vue.setSeveral(state.widgets, widgetId, { pending: true });
     },
     [types.FETCH_LIST_COMPLETED](state, { widgetId, allIds, meta }) {
       Vue.setSeveral(state.widgets, widgetId, { allIds, meta, pending: false });
@@ -78,7 +78,7 @@ export default {
       try {
         await useRequestCancelling(async (source) => {
           if (!withoutPending) {
-            commit(types.FETCH_LIST, { widgetId, params });
+            commit(types.FETCH_LIST, { widgetId });
           }
 
           await dispatch('entities/fetch', {
@@ -101,14 +101,6 @@ export default {
 
         commit(types.FETCH_LIST_FAILED, { widgetId });
       }
-    },
-
-    fetchListWithPreviousParams({ dispatch, state }, { widgetId }) {
-      return dispatch('fetchList', {
-        widgetId,
-        params: get(state, ['widgets', widgetId, 'fetchingParams'], {}),
-        withoutPending: true,
-      });
     },
 
     fetchItem({ dispatch }, { id }) {
