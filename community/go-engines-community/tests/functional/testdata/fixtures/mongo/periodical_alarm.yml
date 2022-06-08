@@ -391,6 +391,44 @@ periodical_alarm:
       <<: *alarm_value
       resource: test-resource-to-pattern-count-4
 
+  alarm_to_entity_get_1:
+    <<: *alarm
+    _id: test-alarm-to-entity-get-1
+    d: test-resource-to-entity-get-1/test-component-to-entity-get
+    v:
+      <<: *alarm_value
+      connector: test-connector-to-entity-get
+      connector_name: test-connector-name-to-entity-get
+      component: test-component-to-entity-get
+      resource: test-resource-to-entity-get-1
+      state:
+        _t: stateinc
+        a: test-connector-to-entity-get.test-connector-name-to-entity-get
+        m: test-alarm-to-get-1-output
+        t: 1597030219
+        initiator: external
+        val: 3
+      status:
+        _t: statusinc
+        a: test-connector-to-entity-get.test-connector-name-to-entity-get
+        m: test-alarm-to-get-1-output
+        t: 1597030219
+        initiator: external
+        val: 1
+      steps:
+        - _t: stateinc
+          a: test-connector-to-entity-get.test-connector-name-to-entity-get
+          m: test-alarm-to-get-1-output
+          t: 1597030219
+          initiator: external
+          val: 3
+        - _t: statusinc
+          a: test-connector-to-entity-get.test-connector-name-to-entity-get
+          m: test-alarm-to-get-1-output
+          t: 1597030219
+          initiator: external
+          val: 1
+
   periodical_alarm_18:
     _id: test-instruction-execution-next-1
     d: test-instruction-execution-next-resource-1/test-instruction-execution-next-component
