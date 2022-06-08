@@ -37,7 +37,6 @@ export const entitiesAlarmMixin = {
     ...mapActions({
       fetchAlarmItem: 'fetchItem',
       fetchAlarmsList: 'fetchList',
-      fetchAlarmsListWithPreviousParams: 'fetchListWithPreviousParams',
       createAlarmsListExport: 'createAlarmsListExport',
       fetchAlarmsListExport: 'fetchAlarmsListExport',
       fetchAlarmsListCsvFile: 'fetchAlarmsListCsvFile',
@@ -49,14 +48,8 @@ export const entitiesAlarmMixin = {
      * @param {string} alarmId
      * @returns {Promise<void>}
      */
-    async refreshAlarmById(alarmId) {
-      const alarm = this.getAlarmItem(alarmId);
-
-      if (!alarm) {
-        return;
-      }
-
-      await this.fetchAlarmItem({ id: alarm._id });
+    refreshAlarmById(alarmId) {
+      return this.fetchAlarmItem({ id: alarmId });
     },
   },
 };

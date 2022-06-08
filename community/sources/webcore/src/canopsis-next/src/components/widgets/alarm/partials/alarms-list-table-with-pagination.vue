@@ -1,17 +1,20 @@
 <template lang="pug">
-  div
-    alarms-list-table(
-      :widget="widget",
-      :alarms="alarms",
-      :total-items="meta.total_count",
-      :pagination.sync="pagination",
-      :editing="editing",
-      :columns="columns",
-      :loading="loading",
-      :parent-alarm="parentAlarm",
-      expandable,
-      hide-groups
-    )
+  alarms-list-table(
+    :widget="widget",
+    :alarms="alarms",
+    :total-items="meta.total_count",
+    :pagination.sync="pagination",
+    :editing="editing",
+    :columns="columns",
+    :loading="loading",
+    :parent-alarm="parentAlarm",
+    :is-tour-enabled="isTourEnabled",
+    :hide-children="hideChildren",
+    :sticky-header="stickyHeader",
+    :refresh-alarms-list="refreshAlarmsList",
+    :selectable="selectable",
+    :expandable="expandable"
+  )
     c-table-pagination(
       :total-items="meta.total_count",
       :rows-per-page="query.limit",
@@ -65,6 +68,30 @@ export default {
     loading: {
       type: Boolean,
       default: false,
+    },
+    isTourEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    expandable: {
+      type: Boolean,
+      default: false,
+    },
+    selectable: {
+      type: Boolean,
+      default: false,
+    },
+    stickyHeader: {
+      type: Boolean,
+      default: false,
+    },
+    hideChildren: {
+      type: Boolean,
+      default: false,
+    },
+    refreshAlarmsList: {
+      type: Function,
+      default: () => {},
     },
   },
   computed: {

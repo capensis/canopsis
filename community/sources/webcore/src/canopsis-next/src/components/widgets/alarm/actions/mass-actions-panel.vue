@@ -33,6 +33,10 @@ export default {
       type: Object,
       required: true,
     },
+    refreshAlarmsList: {
+      type: Function,
+      default: () => {},
+    },
   },
   computed: {
     ...entitiesMapGetters({
@@ -134,7 +138,7 @@ export default {
     afterSubmit() {
       this.clearItems();
 
-      return this.$refreshAlarmsList();
+      return this.refreshAlarmsList();
     },
 
     showAddPbehaviorModal() {
