@@ -86,11 +86,13 @@ type CheckPriorityResponse struct {
 }
 
 type ActionRequest struct {
-	Type                     string            `json:"type" binding:"required,oneof=ack ackremove assocticket cancel changestate pbehavior snooze webhook"`
-	Parameters               action.Parameters `json:"parameters,omitempty"`
-	Comment                  string            `json:"comment"`
-	DropScenarioIfNotMatched *bool             `json:"drop_scenario_if_not_matched" binding:"required"`
-	EmitTrigger              *bool             `json:"emit_trigger" binding:"required"`
+	Type                     string                       `json:"type" binding:"required,oneof=ack ackremove assocticket cancel changestate pbehavior snooze webhook"`
+	Parameters               action.Parameters            `json:"parameters,omitempty"`
+	Comment                  string                       `json:"comment"`
+	AlarmPatterns            oldpattern.AlarmPatternList  `json:"old_alarm_patterns"`
+	EntityPatterns           oldpattern.EntityPatternList `json:"old_entity_patterns"`
+	DropScenarioIfNotMatched *bool                        `json:"drop_scenario_if_not_matched" binding:"required"`
+	EmitTrigger              *bool                        `json:"emit_trigger" binding:"required"`
 
 	common.EntityPatternFieldsRequest `bson:",inline"`
 	common.AlarmPatternFieldsRequest  `bson:",inline"`

@@ -393,3 +393,62 @@ action_scenario:
         type: ack
     name: test-scenario-to-bulk-update-3-name
     priority: 20
+  action_scenario_21:
+    _id: test-scenario-backward-compatibility-to-get-1
+    actions:
+      - old_alarm_patterns:
+          - _id: test-scenario-backward-compatibility-to-get-1-action-1-alarm
+        old_entity_patterns:
+          - name: test-scenario-backward-compatibility-to-get-1-action-1-name
+        drop_scenario_if_not_matched: false
+        emit_trigger: false
+        parameters:
+          author: test-scenario-backward-compatibility-to-get-1-action-1-author
+          output: test-scenario-backward-compatibility-to-get-1-action-1-output
+        type: ack
+    author: test-scenario-backward-compatibility-to-get-1-author
+    created: 1605263993
+    enabled: true
+    name: test-scenario-backward-compatibility-to-get-1
+    priority: 21
+    triggers:
+      - create
+    updated: 1605263993
+    
+  action_scenario_22:
+    _id: test-scenario-backward-compatibility-actions-1
+    actions:
+      - old_alarm_patterns:
+          - v:
+              component: test-scenario-backward-compatibility-actions-component
+        drop_scenario_if_not_matched: false
+        emit_trigger: false
+        parameters:
+          author: test-scenario-backward-compatibility-actions-1-author
+          output: test-scenario-backward-compatibility-actions-1-output
+        type: ack
+      - old_entity_patterns:
+          - name: test-scenario-backward-compatibility-actions-resource
+        drop_scenario_if_not_matched: false
+        emit_trigger: false
+        parameters:
+          author: test-scenario-backward-compatibility-actions-1-author
+          output: test-scenario-backward-compatibility-actions-1-output
+          ticket: test-scenario-backward-compatibility-actions-1-ticket
+        type: assocticket
+      - old_alarm_patterns:
+          - v:
+              component: test-scenario-backward-compatibility-actions-component
+        old_entity_patterns:
+          - name: test-scenario-backward-compatibility-actions-resource
+        parameters:
+          state: 3
+        type: changestate
+    author: test-scenario-backward-compatibility-actions-1-author
+    created: 1605263993
+    enabled: true
+    name: test-scenario-backward-compatibility-actions-1
+    priority: 22
+    triggers:
+      - create
+    updated: 1605263993
