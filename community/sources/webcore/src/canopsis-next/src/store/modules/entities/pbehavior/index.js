@@ -94,7 +94,7 @@ export default {
         const { normalizedData } = await dispatch('entities/fetch', {
           route: API_ROUTES.pbehavior.pbehaviorById,
           schema: [schemas.pbehavior],
-          params: { id },
+          params: { _id: id },
         }, { root: true });
 
         commit(types.FETCH_BY_ID_COMPLETED, { allIds: normalizedData.result });
