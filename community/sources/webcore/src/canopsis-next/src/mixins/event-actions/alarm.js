@@ -1,11 +1,8 @@
 import { isArray } from 'lodash';
-import { createNamespacedHelpers } from 'vuex';
 
 import { prepareEventByAlarm, prepareEventsByAlarms } from '@/helpers/forms/event';
 
 import eventActionsMixin from './index';
-
-const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 
 /**
  * @mixin
@@ -13,10 +10,6 @@ const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 export default {
   mixins: [eventActionsMixin],
   methods: {
-    ...alarmMapActions({
-      fetchAlarmsListWithPreviousParams: 'fetchListWithPreviousParams',
-    }),
-
     /**
      * Function calls dataPreparation and createEvent action and reload list of the entities
      *

@@ -161,7 +161,7 @@ export const widgetActionsPanelAlarmMixin = {
     showHistoryModal() {
       const widget = generateDefaultAlarmListWidget();
 
-      const filter = { $and: [{ 'entity._id': get(this.item, 'entity._id') }] };
+      const filter = { $and: [{ 'entity._id': get(this.item, 'entity._id') }] }; // TODO: do it like on service
       const entityFilter = {
         title: this.item.entity.name,
         filter,

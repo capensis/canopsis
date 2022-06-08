@@ -135,10 +135,10 @@ import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-rem
  * @event openSettings#click
  */
 export default {
-  provide: {
-    $refreshAlarmsList() {
-      return this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id });
-    },
+  provide() {
+    return {
+      $refreshAlarmsList: this.refreshList,
+    };
   },
   components: {
     FilterSelector,
@@ -295,6 +295,10 @@ export default {
           action: params => this.query = { ...this.query, ...params },
         },
       });
+    },
+
+    refreshList() {
+      return this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id });
     },
 
     async fetchList({ isPeriodicRefresh, isQueryNonceUpdate } = {}) {
