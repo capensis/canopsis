@@ -51,8 +51,7 @@
             :hide-children="hideChildren",
             :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)"
           )
-    slot(name="pagination")
-
+    slot
     component(
       v-bind="additionalComponent.props",
       v-on="additionalComponent.on",
@@ -66,7 +65,6 @@ import { ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
 
 import { isResolvedAlarm } from '@/helpers/entities';
 
-import Observer from '@/services/observer';
 import featuresService from '@/services/features';
 
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
@@ -82,11 +80,6 @@ import AlarmsListRow from './alarms-list-row.vue';
    * @module alarm
    */
 export default {
-  inject: {
-    $periodicRefresh: {
-      default: new Observer(),
-    },
-  },
   components: {
     AlarmHeaderCell,
     MassActionsPanel,

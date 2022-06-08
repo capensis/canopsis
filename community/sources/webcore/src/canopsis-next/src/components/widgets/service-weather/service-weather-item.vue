@@ -193,32 +193,15 @@ export default {
       try {
         const widget = generateDefaultAlarmListWidget();
 
-        const filter = { $and: [{ 'entity.impact': this.service._id }] };
-
-        const serviceFilter = {
-          title: this.service.name,
-          filter,
-        };
-
-        const widgetParameters = {
-          ...this.widget.parameters.alarmsList,
-
-          mainFilter: serviceFilter,
-          viewFilters: [serviceFilter],
-          serviceDependenciesColumns: this.widget.parameters.serviceDependenciesColumns,
-        };
+        widget.parameters.serviceDependenciesColumns = this.widget.parameters.serviceDependenciesColumns;
 
         this.$modals.show({
-          name: MODALS.alarmsList, // TODO: do it like on service
+          name: MODALS.serviceAlarms,
           config: {
-            widget: {
-              ...widget,
+            widget,
 
-              parameters: {
-                ...widget.parameters,
-                ...widgetParameters,
-              },
-            },
+            columns: this.widget.parameters.serviceDependenciesColumns,
+            fetchList: () => {}, // TODO: finish it
           },
         });
       } catch (err) {

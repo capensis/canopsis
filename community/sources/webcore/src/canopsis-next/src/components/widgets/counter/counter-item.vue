@@ -126,7 +126,7 @@ export default {
 
         opened: this.widget.parameters.opened,
         mainFilter: this.counter.filter,
-        viewFilters: [this.counter.filter],
+        viewFilters: [this.counter.filter], // TODO: use filter ID
       };
 
       this.$modals.show({

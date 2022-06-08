@@ -38,6 +38,7 @@ export default {
     widget() {
       return this.config.widget;
     },
+
     columns() {
       return this.config.columns;
     },
@@ -46,7 +47,9 @@ export default {
     async fetchList() {
       this.pending = true;
 
-      this.alarms = await this.fetchServiceAlarms({ id: this.config.service._id });
+      if (this.config.fetchList) {
+        this.alarms = await this.config.fetchList({ query: this.query });
+      }
 
       this.pending = false;
     },
