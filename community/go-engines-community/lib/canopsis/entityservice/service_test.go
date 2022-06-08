@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_v8 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/go-redis/redis/v8"
 	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
@@ -30,7 +29,6 @@ func TestService_Process_GivenEvent_ShouldUpdateServices(t *testing.T) {
 		{
 			ID:             serviceID,
 			OutputTemplate: "test-service-output",
-			EntityPatterns: oldpattern.EntityPatternList{},
 		},
 	}
 	alarm := types.Alarm{
@@ -135,7 +133,6 @@ func TestService_Process_GivenEventAndCachedAlarmCounters_ShouldUpdateServices(t
 		{
 			ID:             serviceID,
 			OutputTemplate: "test-service-output",
-			EntityPatterns: oldpattern.EntityPatternList{},
 		},
 	}
 	alarm := types.Alarm{
@@ -246,7 +243,6 @@ func TestService_Process_GivenEventAndLockedService_ShouldSkipEvent(t *testing.T
 		{
 			ID:             serviceID,
 			OutputTemplate: "test-service-output",
-			EntityPatterns: oldpattern.EntityPatternList{},
 		},
 	}
 	alarm := types.Alarm{
@@ -328,7 +324,6 @@ func TestService_Process_GivenEventAndLockedService_ShouldSkipEvent(t *testing.T
 func TestService_UpdateService_GivenEvent_ShouldUpdateService(t *testing.T) {
 	serviceID := "test-service"
 	serviceData := entityservice.ServiceData{
-		EntityPatterns: oldpattern.EntityPatternList{},
 		OutputTemplate: "test-output",
 	}
 	entity := types.Entity{

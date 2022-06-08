@@ -1020,21 +1020,6 @@ definitions:
       impact_state:
         type: integer
     type: object
-  entityservice.BulkCreateResponseItem:
-    properties:
-      error:
-        type: string
-      errors:
-        additionalProperties:
-          type: string
-        type: object
-      id:
-        type: string
-      item:
-        $ref: '#/definitions/entityservice.CreateRequest'
-      status:
-        type: integer
-    type: object
   entityservice.BulkDeleteRequestItem:
     properties:
       _id:
@@ -1042,31 +1027,22 @@ definitions:
     required:
     - _id
     type: object
-  entityservice.BulkDeleteResponseItem:
-    properties:
-      error:
-        type: string
-      errors:
-        additionalProperties:
-          type: string
-        type: object
-      id:
-        type: string
-      item:
-        $ref: '#/definitions/entityservice.BulkDeleteRequestItem'
-      status:
-        type: integer
-    type: object
   entityservice.BulkUpdateRequestItem:
     properties:
       _id:
         type: string
       category:
         type: string
+      corporate_entity_pattern:
+        type: string
       enabled:
         type: boolean
-      entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       impact_level:
         maximum: 10
         minimum: 1
@@ -1093,64 +1069,22 @@ definitions:
     - output_template
     - sli_avail_state
     type: object
-  entityservice.BulkUpdateResponseItem:
-    properties:
-      error:
-        type: string
-      errors:
-        additionalProperties:
-          type: string
-        type: object
-      id:
-        type: string
-      item:
-        $ref: '#/definitions/entityservice.BulkUpdateRequestItem'
-      status:
-        type: integer
-    type: object
   entityservice.CreateRequest:
     properties:
       _id:
         type: string
       category:
         type: string
+      corporate_entity_pattern:
+        type: string
       enabled:
         type: boolean
-      entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
-      impact_level:
-        maximum: 10
-        minimum: 1
-        type: integer
-      infos:
+      entity_pattern:
         items:
-          $ref: '#/definitions/entitybasic.InfoRequest'
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
         type: array
-      name:
-        maxLength: 255
-        type: string
-      output_template:
-        maxLength: 500
-        type: string
-      sli_avail_state:
-        maximum: 3
-        minimum: 0
-        type: integer
-    required:
-    - enabled
-    - impact_level
-    - name
-    - output_template
-    - sli_avail_state
-    type: object
-  entityservice.EditRequest:
-    properties:
-      category:
-        type: string
-      enabled:
-        type: boolean
-      entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
       impact_level:
         maximum: 10
         minimum: 1
@@ -1186,6 +1120,10 @@ definitions:
         type: string
       component_infos:
         $ref: '#/definitions/entity.Infos'
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
       deletable:
         type: boolean
       depends:
@@ -1198,8 +1136,12 @@ definitions:
         type: array
       enabled:
         type: boolean
-      entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       idle_since:
         type: integer
       impact:
@@ -1219,6 +1161,8 @@ definitions:
         type: string
       ok_events:
         type: integer
+      old_entity_patterns:
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       output_template:
         type: string
       pbehavior_info:
@@ -1230,6 +1174,45 @@ definitions:
       type:
         type: string
     type: object
+  entityservice.UpdateRequest:
+    properties:
+      category:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      impact_level:
+        maximum: 10
+        minimum: 1
+        type: integer
+      infos:
+        items:
+          $ref: '#/definitions/entitybasic.InfoRequest'
+        type: array
+      name:
+        maxLength: 255
+        type: string
+      output_template:
+        maxLength: 500
+        type: string
+      sli_avail_state:
+        maximum: 3
+        minimum: 0
+        type: integer
+    required:
+    - enabled
+    - impact_level
+    - name
+    - output_template
+    - sli_avail_state
+    type: object
   eventfilter.Action:
     properties:
       description:
@@ -1240,42 +1223,12 @@ definitions:
         type: string
       value: {}
     type: object
-  eventfilter.BulkCreateResponseItem:
-    properties:
-      error:
-        type: string
-      errors:
-        additionalProperties:
-          type: string
-        type: object
-      id:
-        type: string
-      item:
-        $ref: '#/definitions/eventfilter.CreateRequest'
-      status:
-        type: integer
-    type: object
   eventfilter.BulkDeleteRequestItem:
     properties:
       _id:
         type: string
     required:
     - _id
-    type: object
-  eventfilter.BulkDeleteResponseItem:
-    properties:
-      error:
-        type: string
-      errors:
-        additionalProperties:
-          type: string
-        type: object
-      id:
-        type: string
-      item:
-        $ref: '#/definitions/eventfilter.BulkDeleteRequestItem'
-      status:
-        type: integer
     type: object
   eventfilter.BulkUpdateRequestItem:
     properties:
@@ -1323,21 +1276,6 @@ definitions:
     - _id
     - description
     - type
-    type: object
-  eventfilter.BulkUpdateResponseItem:
-    properties:
-      error:
-        type: string
-      errors:
-        additionalProperties:
-          type: string
-        type: object
-      id:
-        type: string
-      item:
-        $ref: '#/definitions/eventfilter.BulkUpdateRequestItem'
-      status:
-        type: integer
     type: object
   eventfilter.CreateRequest:
     properties:
@@ -1607,42 +1545,12 @@ definitions:
     - name
     - priority
     type: object
-  idlerule.BulkCreateResponseItem:
-    properties:
-      error:
-        type: string
-      errors:
-        additionalProperties:
-          type: string
-        type: object
-      id:
-        type: string
-      item:
-        $ref: '#/definitions/idlerule.CreateRequest'
-      status:
-        type: integer
-    type: object
   idlerule.BulkDeleteRequestItem:
     properties:
       _id:
         type: string
     required:
     - _id
-    type: object
-  idlerule.BulkDeleteResponseItem:
-    properties:
-      error:
-        type: string
-      errors:
-        additionalProperties:
-          type: string
-        type: object
-      id:
-        type: string
-      item:
-        $ref: '#/definitions/idlerule.BulkDeleteRequestItem'
-      status:
-        type: integer
     type: object
   idlerule.BulkUpdateRequestItem:
     properties:
@@ -1681,21 +1589,6 @@ definitions:
     - name
     - priority
     - type
-    type: object
-  idlerule.BulkUpdateResponseItem:
-    properties:
-      error:
-        type: string
-      errors:
-        additionalProperties:
-          type: string
-        type: object
-      id:
-        type: string
-      item:
-        $ref: '#/definitions/idlerule.BulkUpdateRequestItem'
-      status:
-        type: integer
     type: object
   idlerule.CreateRequest:
     properties:
@@ -1872,8 +1765,12 @@ definitions:
         type: string
       enabled:
         type: boolean
-      entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       impact_level:
         type: integer
       infos:
@@ -1976,21 +1873,6 @@ definitions:
         type: string
     required:
     - _id
-    type: object
-  pattern.BulkDeleteResponseItem:
-    properties:
-      error:
-        type: string
-      errors:
-        additionalProperties:
-          type: string
-        type: object
-      id:
-        type: string
-      item:
-        $ref: '#/definitions/pattern.BulkDeleteRequestItem'
-      status:
-        type: integer
     type: object
   pattern.Condition:
     properties:
@@ -2116,42 +1998,12 @@ definitions:
       updated:
         type: integer
     type: object
-  pbehavior.BulkCreateResponseItem:
-    properties:
-      error:
-        type: string
-      errors:
-        additionalProperties:
-          type: string
-        type: object
-      id:
-        type: string
-      item:
-        $ref: '#/definitions/pbehavior.CreateRequest'
-      status:
-        type: integer
-    type: object
   pbehavior.BulkDeleteRequestItem:
     properties:
       _id:
         type: string
     required:
     - _id
-    type: object
-  pbehavior.BulkDeleteResponseItem:
-    properties:
-      error:
-        type: string
-      errors:
-        additionalProperties:
-          type: string
-        type: object
-      id:
-        type: string
-      item:
-        $ref: '#/definitions/pbehavior.BulkDeleteRequestItem'
-      status:
-        type: integer
     type: object
   pbehavior.BulkUpdateRequestItem:
     properties:
@@ -2195,21 +2047,6 @@ definitions:
     - reason
     - tstart
     - type
-    type: object
-  pbehavior.BulkUpdateResponseItem:
-    properties:
-      error:
-        type: string
-      errors:
-        additionalProperties:
-          type: string
-        type: object
-      id:
-        type: string
-      item:
-        $ref: '#/definitions/pbehavior.BulkUpdateRequestItem'
-      status:
-        type: integer
     type: object
   pbehavior.Comment:
     properties:
@@ -2880,42 +2717,12 @@ definitions:
     - emit_trigger
     - type
     type: object
-  scenario.BulkCreateResponseItem:
-    properties:
-      error:
-        type: string
-      errors:
-        additionalProperties:
-          type: string
-        type: object
-      id:
-        type: string
-      item:
-        $ref: '#/definitions/scenario.CreateRequest'
-      status:
-        type: integer
-    type: object
   scenario.BulkDeleteRequestItem:
     properties:
       _id:
         type: string
     required:
     - _id
-    type: object
-  scenario.BulkDeleteResponseItem:
-    properties:
-      error:
-        type: string
-      errors:
-        additionalProperties:
-          type: string
-        type: object
-      id:
-        type: string
-      item:
-        $ref: '#/definitions/scenario.BulkDeleteRequestItem'
-      status:
-        type: integer
     type: object
   scenario.BulkUpdateRequestItem:
     properties:
@@ -2952,21 +2759,6 @@ definitions:
     - enabled
     - name
     - triggers
-    type: object
-  scenario.BulkUpdateResponseItem:
-    properties:
-      error:
-        type: string
-      errors:
-        additionalProperties:
-          type: string
-        type: object
-      id:
-        type: string
-      item:
-        $ref: '#/definitions/scenario.BulkUpdateRequestItem'
-      status:
-        type: integer
     type: object
   scenario.CheckPriorityRequest:
     properties:
@@ -3640,42 +3432,12 @@ definitions:
     - method
     - url
     type: object
-  user.BulkCreateResponseItem:
-    properties:
-      error:
-        type: string
-      errors:
-        additionalProperties:
-          type: string
-        type: object
-      id:
-        type: string
-      item:
-        $ref: '#/definitions/user.Request'
-      status:
-        type: integer
-    type: object
   user.BulkDeleteRequestItem:
     properties:
       _id:
         type: string
     required:
     - _id
-    type: object
-  user.BulkDeleteResponseItem:
-    properties:
-      error:
-        type: string
-      errors:
-        additionalProperties:
-          type: string
-        type: object
-      id:
-        type: string
-      item:
-        $ref: '#/definitions/user.BulkDeleteRequestItem'
-      status:
-        type: integer
     type: object
   user.BulkUpdateRequestItem:
     properties:
@@ -3714,21 +3476,6 @@ definitions:
     - enable
     - name
     - role
-    type: object
-  user.BulkUpdateResponseItem:
-    properties:
-      error:
-        type: string
-      errors:
-        additionalProperties:
-          type: string
-        type: object
-      id:
-        type: string
-      item:
-        $ref: '#/definitions/user.BulkUpdateRequestItem'
-      status:
-        type: integer
     type: object
   user.EditRequest:
     properties:
