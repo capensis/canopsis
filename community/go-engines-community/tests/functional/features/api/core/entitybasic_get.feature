@@ -72,10 +72,7 @@ Feature: Get entity basic
       "measurements": null,
       "name": "test-entitybasic-to-get-resource",
       "sli_avail_state": 0,
-      "type": "resource",
-      "ok_events": 0,
-      "ko_events": 0,
-      "state": 0
+      "type": "resource"
     }
     """
 

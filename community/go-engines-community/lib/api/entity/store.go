@@ -2,9 +2,6 @@ package entity
 
 import (
 	"context"
-	"encoding/json"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -23,12 +20,12 @@ type Store interface {
 }
 
 type store struct {
-	db                     mongo.DbClient
-	mainCollection         mongo.DbCollection
-	archivedCollection     mongo.DbCollection
+	db                 mongo.DbClient
+	mainCollection     mongo.DbCollection
+	archivedCollection mongo.DbCollection
+
+	queryBuilder           *MongoQueryBuilder
 	timezoneConfigProvider config.TimezoneConfigProvider
-	defaultSearchByFields  []string
-	defaultSortBy          string
 }
 
 func NewStore(db mongo.DbClient, timezoneConfigProvider config.TimezoneConfigProvider) Store {
@@ -36,99 +33,21 @@ func NewStore(db mongo.DbClient, timezoneConfigProvider config.TimezoneConfigPro
 		db:                     db,
 		mainCollection:         db.Collection(mongo.EntityMongoCollection),
 		archivedCollection:     db.Collection(mongo.ArchivedEntitiesMongoCollection),
+		queryBuilder:           NewMongoQueryBuilder(db),
 		timezoneConfigProvider: timezoneConfigProvider,
-		defaultSearchByFields: []string{
-			"_id", "name", "type",
-		},
-		defaultSortBy: "_id",
 	}
 }
 
 func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*AggregationResult, error) {
-	pipeline := make([]bson.M, 0)
-	err := s.addFilter(r.ListRequest, &pipeline)
+	location := s.timezoneConfigProvider.Get().Location
+	now := types.CpsTime{Time: time.Now().In(location)}
+
+	pipeline, err := s.queryBuilder.CreateListAggregationPipeline(ctx, r, now)
 	if err != nil {
 		return nil, err
 	}
 
-	location := s.timezoneConfigProvider.Get().Location
-
-	year, month, day := time.Now().In(location).Date()
-	truncatedInLocation := time.Date(year, month, day, 0, 0, 0, 0, location)
-
-	project := []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.EntityCategoryMongoCollection,
-			"localField":   "category",
-			"foreignField": "_id",
-			"as":           "category",
-		}},
-		{"$unwind": bson.M{"path": "$category", "preserveNullAndEmptyArrays": true}},
-		{"$lookup": bson.M{
-			"from": mongo.EventStatistics,
-			"let":  bson.M{"id": "$_id"},
-			"pipeline": []bson.M{
-				{"$match": bson.M{"$and": []bson.M{
-					{"$expr": bson.M{"$eq": bson.A{"$_id", "$$id"}}},
-					{"last_event": bson.M{"$gt": truncatedInLocation.Unix()}},
-				}}},
-			},
-			"as": "eventStatistics",
-		}},
-		{"$unwind": bson.M{"path": "$eventStatistics", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
-			"ok_events": "$eventStatistics.ok",
-			"ko_events": "$eventStatistics.ko",
-		}},
-		{"$lookup": bson.M{
-			"from": mongo.AlarmMongoCollection,
-			"let":  bson.M{"id": "$_id"},
-			"pipeline": []bson.M{
-				{"$match": bson.M{"$and": []bson.M{
-					{"$expr": bson.M{"$eq": bson.A{"$d", "$$id"}}},
-					{"v.resolved": nil},
-				}}},
-				{"$limit": 1},
-			},
-			"as": "alarm",
-		}},
-		{"$unwind": bson.M{"path": "$alarm", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{"state": bson.M{"$cond": bson.M{
-			"if":   "$alarm.v.state.val",
-			"then": "$alarm.v.state.val",
-			"else": 0,
-		}}}},
-		{"$lookup": bson.M{
-			"from":         mongo.PbehaviorTypeMongoCollection,
-			"foreignField": "_id",
-			"localField":   "pbehavior_info.type",
-			"as":           "pbehavior_type",
-		}},
-		{"$unwind": bson.M{"path": "$pbehavior_type", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
-			"pbehavior_info": bson.M{"$cond": bson.M{
-				"if": "$pbehavior_info",
-				"then": bson.M{"$mergeObjects": bson.A{
-					"$pbehavior_info",
-					bson.M{"icon_name": "$pbehavior_type.icon_name"},
-				}},
-				"else": nil,
-			}},
-		}},
-	}
-	if r.NoEvents {
-		pipeline = append(pipeline, bson.M{"$match": bson.M{"idle_since": bson.M{"$gt": 0}}})
-	}
-	if r.WithFlags {
-		project = append(project, getDeletablePipeline()...)
-	}
-
-	cursor, err := s.mainCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
-		r.Query,
-		pipeline,
-		s.getSort(r.ListRequest),
-		project,
-	), options.Aggregate().SetAllowDiskUse(true))
+	cursor, err := s.mainCollection.Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
 
 	if err != nil {
 		return nil, err
@@ -303,88 +222,4 @@ func (s *store) DeleteArchivedEntities(ctx context.Context) (int64, error) {
 	deleted, err := s.archivedCollection.DeleteMany(ctx, bson.M{})
 
 	return deleted, err
-}
-
-func (s *store) addFilter(r ListRequest, pipeline *[]bson.M) error {
-	match := make([]bson.M, 0)
-	err := s.addQueryFilter(r, &match)
-	if err != nil {
-		return err
-	}
-
-	s.addCategoryFilter(r, &match)
-	s.addSearchFilter(r, &match)
-
-	if len(match) > 0 {
-		*pipeline = append(*pipeline, bson.M{"$match": bson.M{"$and": match}})
-	}
-
-	return nil
-}
-
-func (s *store) addCategoryFilter(r ListRequest, match *[]bson.M) {
-	if r.Category == "" {
-		return
-	}
-
-	*match = append(*match, bson.M{"category": r.Category})
-}
-
-func (s *store) addQueryFilter(r ListRequest, match *[]bson.M) error {
-	if r.Filter == "" {
-		return nil
-	}
-
-	var queryFilter bson.M
-	err := json.Unmarshal([]byte(r.Filter), &queryFilter)
-	if err != nil {
-		return err
-	}
-
-	*match = append(*match, queryFilter)
-	return nil
-}
-
-func (s *store) addSearchFilter(r ListRequest, match *[]bson.M) {
-	searchBy := r.SearchBy
-	if len(searchBy) == 0 {
-		searchBy = s.defaultSearchByFields
-	}
-
-	query := common.GetSearchQuery(r.Search, searchBy)
-	if len(query) != 0 {
-		*match = append(*match, query)
-	}
-}
-
-func (s *store) getSort(r ListRequest) bson.M {
-	sortBy := r.SortBy
-	if sortBy == "" {
-		sortBy = s.defaultSortBy
-	}
-
-	return common.GetSortQuery(sortBy, r.Sort)
-}
-
-func getDeletablePipeline() []bson.M {
-	return []bson.M{
-		// Entity can be deleted if entity is service or if there aren't any alarm which is related to entity.
-		{"$lookup": bson.M{
-			"from":         mongo.AlarmMongoCollection,
-			"localField":   "_id",
-			"foreignField": "d",
-			"as":           "alarms",
-		}},
-		{"$addFields": bson.M{
-			"deletable": bson.M{"$cond": bson.M{
-				"if": bson.M{"$or": []bson.M{
-					{"$eq": bson.A{"$type", types.EntityTypeService}},
-					{"$eq": bson.A{"$alarms", bson.A{}}},
-				}},
-				"then": true,
-				"else": false,
-			}},
-		}},
-		{"$project": bson.M{"alarms": 0}},
-	}
 }

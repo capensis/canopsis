@@ -158,11 +158,21 @@ Feature: get service entities with assigned instructions
       "impact_level": 1,
       "enabled": true,
       "sli_avail_state": 1,
-      "entity_patterns": [
-        {"name": "test-alarm-weather-widget-instructions-resource-1"},
-        {"name": "test-alarm-weather-widget-instructions-resource-2"},
-        {"name": "test-alarm-weather-widget-instructions-resource-3"},
-        {"name": "test-alarm-weather-widget-instructions-resource-4"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-alarm-weather-widget-instructions-resource-1",
+                "test-alarm-weather-widget-instructions-resource-2",
+                "test-alarm-weather-widget-instructions-resource-3",
+                "test-alarm-weather-widget-instructions-resource-4"
+              ]
+            }
+          }
+        ]
       ]
     }
     """
@@ -318,8 +328,16 @@ Feature: get service entities with assigned instructions
       "impact_level": 1,
       "enabled": true,
       "sli_avail_state": 1,
-      "entity_patterns": [
-        {"name": "test-alarm-weather-widget-instructions-resource-5"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-alarm-weather-widget-instructions-resource-5"
+            }
+          }
+        ]
       ]
     }
     """
@@ -459,8 +477,16 @@ Feature: get service entities with assigned instructions
       "impact_level": 1,
       "enabled": true,
       "sli_avail_state": 1,
-      "entity_patterns": [
-        {"name": "test-alarm-weather-widget-instructions-resource-6"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-alarm-weather-widget-instructions-resource-6"
+            }
+          }
+        ]
       ]
     }
     """
@@ -620,8 +646,16 @@ Feature: get service entities with assigned instructions
       "impact_level": 1,
       "enabled": true,
       "sli_avail_state": 1,
-      "entity_patterns": [
-        {"name": "test-alarm-weather-widget-instructions-resource-7"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-alarm-weather-widget-instructions-resource-7"
+            }
+          }
+        ]
       ]
     }
     """

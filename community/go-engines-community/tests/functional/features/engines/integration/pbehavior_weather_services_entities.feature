@@ -26,7 +26,17 @@ Feature: get service entities
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-pbehavior-weather-service-entity-1"}],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-entity-1"
+            }
+          }
+        ]
+      ],
       "sli_avail_state": 0
     }
     """
@@ -113,7 +123,17 @@ Feature: get service entities
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-pbehavior-weather-service-entity-2"}],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-entity-2"
+            }
+          }
+        ]
+      ],
       "sli_avail_state": 0
     }
     """
@@ -214,9 +234,19 @@ Feature: get service entities
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-         {"name": "test-resource-pbehavior-weather-service-entity-3-1"},
-         {"name": "test-resource-pbehavior-weather-service-entity-3-2"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-pbehavior-weather-service-entity-3-1",
+                "test-resource-pbehavior-weather-service-entity-3-2"
+              ]
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -313,8 +343,16 @@ Feature: get service entities
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-         {"name": "test-resource-pbehavior-weather-service-entity-4"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-entity-4"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -395,8 +433,16 @@ Feature: get service entities
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-         {"name": "test-resource-pbehavior-weather-service-entity-5"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-entity-5"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -477,8 +523,16 @@ Feature: get service entities
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-         {"name": "test-resource-pbehavior-weather-service-entity-6"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-entity-6"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
