@@ -628,3 +628,41 @@ widget_filters:
     alarm_pattern:
     entity_pattern:
     pbehavior_pattern:
+
+  filter_to_entity_get_1:
+    <<: *filter
+    _id: test-widgetfilter-to-entity-get-1
+    widget: test-widget-to-entity-get
+    is_private: false
+    alarm_pattern:
+      - - field: v.state.val
+          cond:
+            type: eq
+            value: 3
+        - field: v.status.val
+          cond:
+            type: eq
+            value: 1
+      - - field: v.duration
+          cond:
+            type: gt
+            value: 1
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-entity-get-1
+    pbehavior_pattern:
+
+  filter_to_entity_get_2:
+    <<: *filter
+    _id: test-widgetfilter-to-entity-get-2
+    widget: test-widget-to-entity-get
+    is_private: false
+    old_mongo_query: |
+      {"$and": [
+        {"name": {"$eq": "test-resource-to-entity-get-1"}}
+      ]}
+    alarm_pattern:
+    entity_pattern:
+    pbehavior_pattern:
