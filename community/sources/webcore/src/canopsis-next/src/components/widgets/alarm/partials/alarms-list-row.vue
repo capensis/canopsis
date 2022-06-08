@@ -34,7 +34,8 @@
         :item="alarm",
         :widget="widget",
         :is-resolved-alarm="isResolvedAlarm",
-        :parent-alarm="parentAlarm"
+        :parent-alarm="parentAlarm",
+        :refresh-alarms-list="refreshAlarmsList"
       )
 </template>
 
@@ -96,6 +97,10 @@ export default {
     parentAlarm: {
       type: Object,
       default: null,
+    },
+    refreshAlarmsList: {
+      type: Function,
+      default: () => {},
     },
   },
   computed: {

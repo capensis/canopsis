@@ -56,6 +56,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    refreshAlarmsList: {
+      type: Function,
+      default: () => {},
+    },
   },
   data() {
     return {
@@ -163,7 +167,7 @@ export default {
       return {
         itemsType: ENTITIES_TYPES.alarm,
         itemsIds: [this.item._id],
-        afterSubmit: this.$refreshAlarmsList,
+        afterSubmit: this.refreshAlarmsList,
       };
     },
     resolvedActions() {

@@ -135,7 +135,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    hideGroups: {
+    hideChildren: {
       type: Boolean,
       default: false,
     },
@@ -188,7 +188,7 @@ export default {
     },
 
     hasChildren() {
-      return this.alarm.children && !this.hideGroups;
+      return this.alarm.children && !this.hideChildren;
     },
 
     hasServiceDependencies() {
