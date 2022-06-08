@@ -88,13 +88,29 @@
 <script>
 export default {
   props: {
-    shape: {
-      type: Object,
+    x: {
+      type: Number,
       required: true,
+    },
+    y: {
+      type: Number,
+      required: true,
+    },
+    width: {
+      type: Number,
+      required: true,
+    },
+    height: {
+      type: Number,
+      required: true,
+    },
+    rotate: {
+      type: Number,
+      default: 0,
     },
     padding: {
       type: Number,
-      default: 2,
+      default: 0,
     },
     color: {
       type: String,
@@ -107,19 +123,19 @@ export default {
   },
   computed: {
     leftX() {
-      return this.shape.x - this.padding;
+      return this.x - this.padding;
     },
 
     topY() {
-      return this.shape.y - this.padding;
+      return this.y - this.padding;
     },
 
     rightX() {
-      return this.shape.x + this.shape.width + this.padding;
+      return this.x + this.width + this.padding;
     },
 
     bottomY() {
-      return this.shape.y + this.shape.height + this.padding;
+      return this.y + this.height + this.padding;
     },
 
     selectionWidth() {
