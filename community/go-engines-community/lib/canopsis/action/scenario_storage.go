@@ -136,7 +136,7 @@ func (s *scenarioStorage) RunDelayedScenarios(
 				if action.OldAlarmPatterns.IsSet() {
 					if !action.OldAlarmPatterns.IsValid() {
 						s.logger.Warn().Msgf("Action %d from scenario %s has an invalid old alarm pattern, skip", idx, scenario.ID)
-						continue
+						break
 					}
 
 					matched = action.OldAlarmPatterns.Matches(&alarm)
@@ -144,7 +144,7 @@ func (s *scenarioStorage) RunDelayedScenarios(
 					matched, err = action.AlarmPattern.Match(alarm)
 					if err != nil {
 						s.logger.Err(err).Msgf("Action %d from scenario %s alarm pattern match returned error", idx, scenario.ID)
-						continue
+						break
 					}
 				}
 
@@ -159,7 +159,7 @@ func (s *scenarioStorage) RunDelayedScenarios(
 				if action.OldEntityPatterns.IsSet() {
 					if !action.OldEntityPatterns.IsValid() {
 						s.logger.Warn().Msgf("Action %d from scenario %s has an invalid old entity pattern, skip", idx, scenario.ID)
-						continue
+						break
 					}
 
 					matched = action.OldEntityPatterns.Matches(&entity)
@@ -167,7 +167,7 @@ func (s *scenarioStorage) RunDelayedScenarios(
 					matched, _, err = action.EntityPattern.Match(entity)
 					if err != nil {
 						s.logger.Err(err).Msgf("Action %d from scenario %s entity pattern match returned error", idx, scenario.ID)
-						continue
+						break
 					}
 				}
 

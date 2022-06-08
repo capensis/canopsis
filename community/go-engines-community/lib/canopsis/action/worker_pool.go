@@ -133,15 +133,13 @@ func (s *pool) RunWorkers(ctx context.Context, taskChannel <-chan Task) (<-chan 
 						if task.Action.OldAlarmPatterns.IsSet() {
 							if !task.Action.OldAlarmPatterns.IsValid() {
 								s.logger.Warn().Msgf("Action %d from scenario %s has an invalid old alarm pattern, skip", task.Step, task.ScenarioID)
-								continue
+							} else {
+								match = task.Action.OldAlarmPatterns.Matches(&task.Alarm)
 							}
-
-							match = task.Action.OldAlarmPatterns.Matches(&task.Alarm)
 						} else {
 							match, err = task.Action.AlarmPattern.Match(task.Alarm)
 							if err != nil {
 								s.logger.Err(err).Msgf("Action %d from scenario %s alarm pattern match returned error", task.Step, task.ScenarioID)
-								continue
 							}
 						}
 
@@ -162,15 +160,13 @@ func (s *pool) RunWorkers(ctx context.Context, taskChannel <-chan Task) (<-chan 
 						if task.Action.OldEntityPatterns.IsSet() {
 							if !task.Action.OldEntityPatterns.IsValid() {
 								s.logger.Warn().Msgf("Action %d from scenario %s has an invalid old alarm pattern, skip", task.Step, task.ScenarioID)
-								continue
+							} else {
+								match = task.Action.OldEntityPatterns.Matches(&task.Entity)
 							}
-
-							match = task.Action.OldEntityPatterns.Matches(&task.Entity)
 						} else {
 							match, _, err = task.Action.EntityPattern.Match(task.Entity)
 							if err != nil {
 								s.logger.Err(err).Msgf("Action %d from scenario %s alarm pattern match returned error", task.Step, task.ScenarioID)
-								continue
 							}
 						}
 
