@@ -3,7 +3,6 @@ package alarm
 import (
 	"context"
 	"errors"
-	"fmt"
 	"math"
 	"time"
 
@@ -797,8 +796,6 @@ func (a *mongoAdapter) GetWorstAlarmState(ctx context.Context, entityIds []strin
 		res := struct {
 			State int64 `bson:"state"`
 		}{}
-
-		fmt.Printf("res %d\n", res.State)
 
 		err := cursor.Decode(&res)
 

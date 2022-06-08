@@ -175,7 +175,6 @@ func (v *uniqueFieldValidator) Validate(ctx context.Context, sl validator.Struct
 	err := v.dbCollection.FindOne(ctx, bson.M{fieldType.Tag.Get("json"): val}).Decode(&found)
 	if err == nil {
 		if found.ID != id || strings.ToLower(v.field) == "id" {
-			fmt.Printf("%v\n", found.ID)
 			sl.ReportError(val, v.field, v.field, "unique", "")
 		}
 	} else if err != mongodriver.ErrNoDocuments {
