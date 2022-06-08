@@ -42,9 +42,17 @@ Dans un environnement Docker Compose, la procédure est la même, tant que vous 
 
 On peut, par exemple, exécuter un shell dans le conteneur `oldapi` :
 
-```sh
-docker-compose exec oldapi /bin/bash
-```
+=== "Docker Compose Community"
+
+    ```sh
+    CPS_EDITION=community docker-compose exec oldapi /bin/bash
+    ```
+
+=== "Docker Compose Pro"
+
+    ```sh
+    CPS_EDITION=pro docker-compose exec oldapi /bin/bash
+    ```
 
 Puis, une fois connecté sur celui-ci, `amqp2tty` sera disponible dans le virtualenv Python :
 ```sh
