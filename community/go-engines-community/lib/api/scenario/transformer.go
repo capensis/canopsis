@@ -21,6 +21,8 @@ func (modelTransformer) TransformEditRequestToModel(r EditRequest) libaction.Sce
 			Type:                     r.Actions[i].Type,
 			Comment:                  r.Actions[i].Comment,
 			Parameters:               r.Actions[i].Parameters,
+			OldAlarmPatterns:         r.Actions[i].AlarmPatterns,
+			OldEntityPatterns:        r.Actions[i].EntityPatterns,
 			EntityPatternFields:      r.Actions[i].EntityPatternFieldsRequest.ToModel(),
 			AlarmPatternFields:       r.Actions[i].AlarmPatternFieldsRequest.ToModel(),
 			DropScenarioIfNotMatched: *r.Actions[i].DropScenarioIfNotMatched,

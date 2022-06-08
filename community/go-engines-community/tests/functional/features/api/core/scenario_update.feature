@@ -627,12 +627,22 @@ Feature: Update a scenario
               }
             ]
           ],
+          "old_entity_patterns": [
+            {
+              "name": "test-scenario-to-update-3-name-1"
+            }
+          ],
           "comment": "first ack",
           "type": "ack",
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false
         },
         {
+          "old_alarm_patterns": [
+            {
+              "_id": "test-scenario-to-update-3-alarm-2"
+            }
+          ],
           "entity_pattern": [
             [
               {
