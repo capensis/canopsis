@@ -2835,15 +2835,35 @@ definitions:
     type: object
   scenario.Action:
     properties:
-      alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       comment:
+        type: string
+      corporate_alarm_pattern:
+        type: string
+      corporate_alarm_pattern_title:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
         type: string
       drop_scenario_if_not_matched:
         type: boolean
       emit_trigger:
         type: boolean
-      entity_patterns:
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      old_alarm_patterns:
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
+      old_entity_patterns:
         $ref: '#/definitions/oldpattern.EntityPatternList'
       parameters:
         $ref: '#/definitions/scenario.Parameters'
@@ -2852,15 +2872,31 @@ definitions:
     type: object
   scenario.ActionRequest:
     properties:
-      alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       comment:
+        type: string
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
         type: string
       drop_scenario_if_not_matched:
         type: boolean
       emit_trigger:
         type: boolean
-      entity_patterns:
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      old_alarm_patterns:
+        $ref: '#/definitions/oldpattern.AlarmPatternList'
+      old_entity_patterns:
         $ref: '#/definitions/oldpattern.EntityPatternList'
       parameters:
         $ref: '#/definitions/action.Parameters'
