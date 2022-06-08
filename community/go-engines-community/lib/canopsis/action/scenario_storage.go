@@ -45,6 +45,14 @@ func (s *scenarioStorage) ReloadScenarios(ctx context.Context) error {
 	for _, scenario := range scenarios {
 		valid := true
 		for i, action := range scenario.Actions {
+			if !action.OldEntityPatterns.IsSet() && !action.OldAlarmPatterns.IsSet() &&
+				len(action.AlarmPattern) == 0 && len(action.EntityPattern) == 0 {
+				s.logger.Warn().Str("scenario", scenario.ID).Int("action number", i).Msg("action doesn't have patterns")
+				valid = false
+
+				break
+			}
+
 			if !action.OldEntityPatterns.IsValid() {
 				s.logger.Warn().Str("scenario", scenario.ID).Int("action number", i).Msg("failed to parse entity patterns")
 				valid = false
