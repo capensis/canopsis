@@ -115,8 +115,8 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 	addedLookups := make(map[string]bool)
 	addedComputedFields := make(map[string]bool)
-	beforeLimit := make([]bson.M, 0)
-	beforeLimit = append(beforeLimit, q.entityMatch...)
+	beforeLimit := make([]bson.M, len(q.entityMatch))
+	copy(beforeLimit, q.entityMatch)
 
 	q.addLookupsToPipeline(q.lookupsForAdditionalMatch, addedLookups, &beforeLimit)
 	q.addFieldsToPipeline(q.computedFieldsForAdditionalMatch, addedComputedFields, &beforeLimit)
