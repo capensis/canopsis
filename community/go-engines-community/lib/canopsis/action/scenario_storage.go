@@ -171,13 +171,7 @@ func (s *scenarioStorage) RunDelayedScenarios(
 					}
 				}
 
-				if !matched {
-					if action.DropScenarioIfNotMatched {
-						break
-					}
-
-					continue
-				} else {
+				if matched || action.DropScenarioIfNotMatched {
 					break
 				}
 			}
