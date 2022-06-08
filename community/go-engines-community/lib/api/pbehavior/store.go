@@ -431,9 +431,7 @@ func (s *store) transformRequestToDocument(r EditRequest) pbehavior.PBehavior {
 	}
 
 	exceptions := make([]string, len(r.Exceptions))
-	for i := range r.Exceptions {
-		exceptions[i] = r.Exceptions[i]
-	}
+	copy(exceptions, r.Exceptions)
 
 	return pbehavior.PBehavior{
 		Author:     r.Author,
