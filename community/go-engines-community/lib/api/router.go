@@ -197,7 +197,8 @@ func RegisterRoutes(
 			userPreferencesRouter.PUT("", userPreferencesApi.Update)
 		}
 
-		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder()), actionLogger, metricsUserMetaUpdater)
+		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder()), actionLogger, logger,
+			metricsUserMetaUpdater)
 		userRouter := protected.Group("/users")
 		{
 			userRouter.POST("",
@@ -346,6 +347,7 @@ func RegisterRoutes(
 		eventFilterApi := eventfilter.NewApi(
 			eventfilter.NewStore(dbClient),
 			actionLogger,
+			logger,
 			common.NewPatternFieldsTransformer(dbClient),
 		)
 		eventFilterRouter := protected.Group("/eventfilter/rules")
@@ -482,7 +484,8 @@ func RegisterRoutes(
 			)
 		}
 
-		entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient), entityPublChan, metricsEntityMetaUpdater, actionLogger, logger)
+		entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient), entityPublChan, metricsEntityMetaUpdater,
+			common.NewPatternFieldsTransformer(dbClient), actionLogger, logger)
 		entityserviceRouter := protected.Group("/entityservices")
 		{
 			entityserviceRouter.POST(
@@ -964,7 +967,7 @@ func RegisterRoutes(
 			)
 		}
 
-		scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient), actionLogger, scenarioPriorityIntervals, common.NewPatternFieldsTransformer(dbClient))
+		scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient), actionLogger, common.NewPatternFieldsTransformer(dbClient), logger, scenarioPriorityIntervals)
 		scenarioRouter := protected.Group("/scenarios")
 		{
 			scenarioRouter.POST(
@@ -1089,7 +1092,7 @@ func RegisterRoutes(
 			)
 		}
 
-		idleRuleAPI := idlerule.NewApi(idlerule.NewStore(dbClient), actionLogger)
+		idleRuleAPI := idlerule.NewApi(idlerule.NewStore(dbClient), actionLogger, logger)
 		idleRuleRouter := protected.Group("/idle-rules")
 		{
 			idleRuleRouter.POST(
@@ -1121,7 +1124,8 @@ func RegisterRoutes(
 			)
 		}
 
-		patternAPI := pattern.NewApi(pattern.NewStore(dbClient, pbhComputeChan, logger), userInterfaceConfig, enforcer, actionLogger)
+		patternAPI := pattern.NewApi(pattern.NewStore(dbClient, pbhComputeChan, entityPublChan, logger), userInterfaceConfig,
+			enforcer, actionLogger, logger)
 		patternRouter := protected.Group("/patterns")
 		{
 			patternRouter.Use(middleware.OnlyAuth())

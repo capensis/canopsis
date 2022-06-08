@@ -290,3 +290,7 @@ views:
   view_to_alarm_get:
     <<: *view
     _id: test-view-to-alarm-get
+
+  view_to_entity_get:
+    <<: *view
+    _id: test-view-to-entity-get

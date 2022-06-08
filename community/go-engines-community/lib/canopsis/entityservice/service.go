@@ -213,7 +213,7 @@ func (s *service) RecomputeIdleSince(parentCtx context.Context) error {
 
 	defer trace.StartRegion(ctx, "service.RecomputeIdleSince").End()
 
-	services, err := s.adapter.GetValid(ctx)
+	services, err := s.adapter.GetEnabled(ctx)
 	if err != nil {
 		return err
 	}
