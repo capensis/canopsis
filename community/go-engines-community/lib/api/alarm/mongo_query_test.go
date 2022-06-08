@@ -54,6 +54,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	})
 	expected := []bson.M{
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
+	}
+	expected = append(expected, getEntityLookup()...)
+	expected = append(expected, []bson.M{
+		{"$match": bson.M{"entity.enabled": true}},
+		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
 			"total_count": []bson.M{{"$count": "count"}},
@@ -61,7 +66,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 		{"$addFields": bson.M{
 			"total_count": bson.M{"$sum": "$total_count.count"},
 		}},
-	}
+	}...)
 
 	b := NewMongoQueryBuilder(mockDbClient)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
@@ -142,6 +147,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			{"v.pbehavior_info.canonical_type": bson.M{"$eq": "pause"}},
 		}}}}},
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
+	}
+	expected = append(expected, getEntityLookup()...)
+	expected = append(expected, []bson.M{
+		{"$match": bson.M{"entity.enabled": true}},
+		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
 			"total_count": []bson.M{{"$count": "count"}},
@@ -149,7 +159,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		{"$addFields": bson.M{
 			"total_count": bson.M{"$sum": "$total_count.count"},
 		}},
-	}
+	}...)
 
 	b := NewMongoQueryBuilder(mockDbClient)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
@@ -233,6 +243,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			{"v.duration": bson.M{"$gt": 600}},
 		}}}}},
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
+	}
+	expected = append(expected, getEntityLookup()...)
+	expected = append(expected, []bson.M{
+		{"$match": bson.M{"entity.enabled": true}},
+		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
 			"total_count": []bson.M{{"$count": "count"}},
@@ -240,7 +255,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		{"$addFields": bson.M{
 			"total_count": bson.M{"$sum": "$total_count.count"},
 		}},
-	}
+	}...)
 
 	b := NewMongoQueryBuilder(mockDbClient)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
@@ -318,6 +333,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			}},
 		}}}}},
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
+	}
+	expected = append(expected, getEntityLookup()...)
+	expected = append(expected, []bson.M{
+		{"$match": bson.M{"entity.enabled": true}},
+		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
 			"total_count": []bson.M{{"$count": "count"}},
@@ -325,7 +345,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		{"$addFields": bson.M{
 			"total_count": bson.M{"$sum": "$total_count.count"},
 		}},
-	}
+	}...)
 
 	b := NewMongoQueryBuilder(mockDbClient)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
@@ -419,6 +439,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected,
+		bson.M{"$match": bson.M{"entity.enabled": true}},
 		bson.M{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"entity.category": bson.M{"$eq": "test-category"}},
 		}}}}},
@@ -492,6 +513,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			{"v.connector": "test-connector"},
 		}}},
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
+	}
+	expected = append(expected, getEntityLookup()...)
+	expected = append(expected, []bson.M{
+		{"$match": bson.M{"entity.enabled": true}},
+		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
 			"total_count": []bson.M{{"$count": "count"}},
@@ -499,7 +525,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		{"$addFields": bson.M{
 			"total_count": bson.M{"$sum": "$total_count.count"},
 		}},
-	}
+	}...)
 
 	b := NewMongoQueryBuilder(mockDbClient)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
@@ -576,6 +602,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expected = append(expected, getEntityCategoryLookup()...)
 	expected = append(expected, getPbehaviorLookup()...)
 	expected = append(expected,
+		bson.M{"$match": bson.M{"entity.enabled": true}},
 		bson.M{"$match": bson.M{"$and": []bson.M{
 			{"v.connector": "test-connector"},
 			{"v.duration": bson.M{"$gt": 600}},
@@ -650,6 +677,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected,
+		bson.M{"$match": bson.M{"entity.enabled": true}},
 		bson.M{"$match": bson.M{"$and": []bson.M{
 			{"entity.category": bson.M{"$eq": "test-category"}},
 		}}},
@@ -786,6 +814,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected,
+		bson.M{"$match": bson.M{"entity.enabled": true}},
 		bson.M{"$match": bson.M{"$and": []bson.M{
 			{"$or": []bson.M{
 				{"$and": []bson.M{
@@ -886,6 +915,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, getPbehaviorLookup()...)
 	expected = append(expected,
+		bson.M{"$match": bson.M{"entity.enabled": true}},
 		bson.M{"$match": bson.M{"$and": []bson.M{
 			{"pbehavior._id": "test-pbehavior"},
 			{"entity.name": "test-entity"},
@@ -992,6 +1022,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 			{"v.duration": bson.M{"$gt": 600}},
 		}}}}},
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
+	}
+	expected = append(expected, getEntityLookup()...)
+	expected = append(expected, []bson.M{
+		{"$match": bson.M{"entity.enabled": true}},
+		{"$project": bson.M{"entity": 0}},
 		{"$addFields": bson.M{"v.active_duration": activeDurationField}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -1000,7 +1035,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 		{"$addFields": bson.M{
 			"total_count": bson.M{"$sum": "$total_count.count"},
 		}},
-	}
+	}...)
 
 	b := NewMongoQueryBuilder(mockDbClient)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
@@ -1065,6 +1100,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 				{"v.resource": searchRegexp},
 			}},
 		}}},
+	}
+	expected = append(expected, getEntityLookup()...)
+	expected = append(expected, []bson.M{
+		{"$match": bson.M{"entity.enabled": true}},
+		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
 			"total_count": []bson.M{{"$count": "count"}},
@@ -1072,7 +1112,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 		{"$addFields": bson.M{
 			"total_count": bson.M{"$sum": "$total_count.count"},
 		}},
-	}
+	}...)
 
 	b := NewMongoQueryBuilder(mockDbClient)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
@@ -1084,7 +1124,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	}
 }
 
-func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchAndOnlyParenrs_ShouldBuildQuery(t *testing.T) {
+func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchAndOnlyParents_ShouldBuildQuery(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	ctx, cancel := context.WithCancel(context.Background())
@@ -1149,8 +1189,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 			{"v.meta": bson.M{"$ne": nil}},
 		}}}}},
 	}
+	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, filteredChildrenLookup...)
 	expected = append(expected,
+		bson.M{"$match": bson.M{"entity.enabled": true}},
 		bson.M{"$match": bson.M{"$or": []bson.M{
 			{"v.connector": searchRegexp},
 			{"v.connector_name": searchRegexp},
@@ -1158,7 +1200,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 			{"v.resource": searchRegexp},
 			{"filtered_children": bson.M{"$ne": bson.A{}}},
 		}}},
-		bson.M{"$project": bson.M{"filtered_children": 0}},
+		bson.M{"$project": bson.M{"entity": 0, "filtered_children": 0}},
 		bson.M{"$facet": bson.M{
 			"data":        expectedDataPipeline,
 			"total_count": []bson.M{{"$count": "count"}},

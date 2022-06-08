@@ -460,9 +460,7 @@ func (c *typeComputer) getSortedExdate(
 	models models,
 ) ([]Exdate, error) {
 	res := make([]Exdate, len(pbehavior.Exdates))
-	for i := range pbehavior.Exdates {
-		res[i] = pbehavior.Exdates[i]
-	}
+	copy(res, pbehavior.Exdates)
 
 	for _, id := range pbehavior.Exceptions {
 		if exception, ok := models.exceptionsByID[id]; ok {

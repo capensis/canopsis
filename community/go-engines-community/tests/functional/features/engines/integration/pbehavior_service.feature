@@ -24,7 +24,17 @@ Feature: no update service when entity is inactive
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-pbehavior-service-1"}],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-service-1"
+            }
+          }
+        ]
+      ],
       "sli_avail_state": 0
     }
     """
@@ -93,7 +103,17 @@ Feature: no update service when entity is inactive
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-pbehavior-service-2"}],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-service-2"
+            }
+          }
+        ]
+      ],
       "sli_avail_state": 0
     }
     """
@@ -232,7 +252,17 @@ Feature: no update service when entity is inactive
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [{"name": "test-resource-pbehavior-service-3"}],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-service-3"
+            }
+          }
+        ]
+      ],
       "sli_avail_state": 0
     }
     """
@@ -383,9 +413,19 @@ Feature: no update service when entity is inactive
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-        {"name": "test-resource-pbehavior-service-4-1"},
-        {"name": "test-resource-pbehavior-service-4-2"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-pbehavior-service-4-1",
+                "test-resource-pbehavior-service-4-2"
+              ]
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }

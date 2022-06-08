@@ -48,18 +48,20 @@ func (m *computedEntityMatcher) LoadAll(ctx context.Context, filters map[string]
 	}
 	resCh := make(chan workerResult)
 
-	go func() {
+	g, ctx := errgroup.WithContext(ctx)
+
+	g.Go(func() error {
 		defer close(ch)
 		for key := range filters {
 			select {
 			case <-ctx.Done():
-				return
+				return nil
 			case ch <- key:
 			}
 		}
-	}()
 
-	g, ctx := errgroup.WithContext(ctx)
+		return nil
+	})
 
 	for i := 0; i < DefaultPoolSize; i++ {
 		g.Go(func() error {

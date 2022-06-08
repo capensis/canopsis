@@ -249,3 +249,8 @@ viewtabs:
     <<: *tab
     _id: test-tab-to-alarm-get
     view: test-view-to-alarm-get
+
+  tab_to_entity_get:
+    <<: *tab
+    _id: test-tab-to-entity-get
+    view: test-view-to-entity-get

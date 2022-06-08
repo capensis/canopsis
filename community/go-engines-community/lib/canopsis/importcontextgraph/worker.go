@@ -414,8 +414,8 @@ func (w *worker) validate(ci ConfigurationItem) error {
 		return fmt.Errorf("type is not valid %q", *ci.Type)
 	}
 
-	if *ci.Type != types.EntityTypeService && ci.EntityPatterns != nil {
-		return fmt.Errorf("contains entity patterns, but ci is not a service")
+	if *ci.Type != types.EntityTypeService && len(ci.EntityPattern) > 0 {
+		return fmt.Errorf("contains entity pattern, but ci is not a service")
 	}
 
 	return nil
