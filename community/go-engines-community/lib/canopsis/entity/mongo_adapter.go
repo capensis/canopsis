@@ -250,13 +250,14 @@ func (a *mongoAdapter) AddImpactByQuery(ctx context.Context, query interface{}, 
 }
 
 func (a *mongoAdapter) RemoveImpactByQuery(ctx context.Context, query interface{}, impact string) ([]string, error) {
+	and := []interface{}{bson.M{"enabled": true}}
+	if query != nil {
+		and = append(and, query)
+	}
+	and = append(and, bson.M{"impact": bson.M{"$in": bson.A{impact}}})
 	res, err := a.dbCollection.Find(
 		ctx,
-		bson.M{"$and": []interface{}{
-			bson.M{"enabled": true},
-			query,
-			bson.M{"impact": bson.M{"$in": bson.A{impact}}},
-		}},
+		bson.M{"$and": and},
 		options.Find().SetProjection(bson.M{"_id": 1}))
 	if err != nil {
 		return nil, err

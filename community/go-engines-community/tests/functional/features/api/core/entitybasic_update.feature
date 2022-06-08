@@ -104,10 +104,7 @@ Feature: Update entity basic
       "measurements": null,
       "name": "test-entitybasic-to-update-connector-name",
       "sli_avail_state": 1,
-      "type": "connector",
-      "ok_events": 0,
-      "ko_events": 0,
-      "state": 0
+      "type": "connector"
     }
     """
     Then the response array key "changeable_depends" should contain:

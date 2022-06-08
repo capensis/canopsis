@@ -9,10 +9,16 @@ Feature: entity_service idle_rules integration
       "output_template": "123",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-        {
-            "name": "test-idle-since-integration-resource-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-idle-since-integration-resource-1"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -114,10 +120,16 @@ Feature: entity_service idle_rules integration
       "output_template": "123",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-        {
-          "name": "test-idle-since-integration-2-resource-1"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-idle-since-integration-2-resource-1"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -179,10 +191,16 @@ Feature: entity_service idle_rules integration
       "output_template": "123",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-        {
-          "name": "test-idle-since-integration-resource-2"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-idle-since-integration-resource-2"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -197,10 +215,16 @@ Feature: entity_service idle_rules integration
       "output_template": "123",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-        {
-          "name": "test-entityservice-idle-since-integration-3"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-idle-since-integration-3"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -283,13 +307,19 @@ Feature: entity_service idle_rules integration
       "output_template": "123",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-        {
-          "name": "test-idle-since-integration-resource-3"
-        },
-        {
-          "name": "test-idle-since-integration-resource-4"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-idle-since-integration-resource-3",
+                "test-idle-since-integration-resource-4"
+              ]
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }

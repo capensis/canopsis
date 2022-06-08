@@ -299,8 +299,16 @@ Feature: Entities and users should be synchronized in metrics db
       "output_template": "test-entityservice-metrics-api-4-output",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-        {"name": "test-resource-metrics-api-4"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-api-4"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -373,8 +381,16 @@ Feature: Entities and users should be synchronized in metrics db
       "output_template": "test-entityservice-metrics-api-5-output",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-        {"name": "test-resource-metrics-api-5"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-api-5"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -418,8 +434,16 @@ Feature: Entities and users should be synchronized in metrics db
       "output_template": "test-entityservice-metrics-api-5-output",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-        {"name": "test-resource-metrics-api-5"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-api-5"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -481,8 +505,16 @@ Feature: Entities and users should be synchronized in metrics db
       "output_template": "test-entityservice-metrics-api-6-output",
       "impact_level": 1,
       "enabled": true,
-      "entity_patterns": [
-        {"name": "test-resource-metrics-api-6"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-api-6"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }

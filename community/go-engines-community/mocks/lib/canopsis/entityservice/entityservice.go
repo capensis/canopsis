@@ -112,21 +112,6 @@ func (mr *MockAdapterMockRecorder) GetServiceDependencies(arg0, arg1 interface{}
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetServiceDependencies", reflect.TypeOf((*MockAdapter)(nil).GetServiceDependencies), arg0, arg1)
 }
 
-// GetValid mocks base method.
-func (m *MockAdapter) GetValid(arg0 context.Context) ([]entityservice.EntityService, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetValid", arg0)
-	ret0, _ := ret[0].([]entityservice.EntityService)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetValid indicates an expected call of GetValid.
-func (mr *MockAdapterMockRecorder) GetValid(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetValid", reflect.TypeOf((*MockAdapter)(nil).GetValid), arg0)
-}
-
 // RemoveDependByQuery mocks base method.
 func (m *MockAdapter) RemoveDependByQuery(arg0 context.Context, arg1 interface{}, arg2 string) ([]string, error) {
 	m.ctrl.T.Helper()

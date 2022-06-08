@@ -12,8 +12,16 @@ Feature: get service entities
       "category": "test-category-service-weather-entities",
       "enabled": true,
       "impact_level": 1,
-      "entity_patterns": [
-        {"name": "test-resource-service-weather-entity-1"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-weather-entity-1"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -81,10 +89,20 @@ Feature: get service entities
       "category": "test-category-service-weather-entities",
       "enabled": true,
       "impact_level": 1,
-      "entity_patterns": [
-        {"name": "test-resource-service-weather-entity-2-1"},
-        {"name": "test-resource-service-weather-entity-2-2"},
-        {"name": "test-resource-service-weather-entity-2-3"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-service-weather-entity-2-1",
+                "test-resource-service-weather-entity-2-2",
+                "test-resource-service-weather-entity-2-3"
+              ]
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -220,8 +238,16 @@ Feature: get service entities
       "category": "test-category-service-weather-entities",
       "enabled": true,
       "impact_level": 1,
-      "entity_patterns": [
-        {"name": "test-resource-service-weather-entity-3"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-weather-entity-3"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
@@ -291,8 +317,16 @@ Feature: get service entities
       "category": "test-category-service-weather-entities",
       "enabled": true,
       "impact_level": 1,
-      "entity_patterns": [
-        {"name": "test-resource-service-weather-entity-4"}
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-weather-entity-4"
+            }
+          }
+        ]
       ],
       "sli_avail_state": 0
     }
