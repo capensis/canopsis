@@ -81,7 +81,7 @@ export const queryWidgetMixin = {
     },
   },
   methods: {
-    getQuery() {
+    getQuery() { // TODO: use convertAlarmsListQueryToRequest here
       const query = omit(this.query, [
         'tstart',
         'tstop',

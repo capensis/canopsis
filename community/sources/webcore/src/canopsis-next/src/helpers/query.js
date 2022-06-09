@@ -1,4 +1,4 @@
-import { isUndefined, isEmpty } from 'lodash';
+import { isUndefined, isEmpty, omit } from 'lodash';
 
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
 import {
@@ -6,7 +6,7 @@ import {
   QUICK_RANGES,
   ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP,
   SORT_ORDERS,
-  ALARMS_OPENED_VALUES,
+  ALARMS_OPENED_VALUES, DATETIME_FORMATS,
 } from '@/constants';
 
 import { prepareMainFilterToQueryFilter, getMainFilterAndCondition } from './filter';
@@ -14,6 +14,7 @@ import {
   prepareRemediationInstructionsFiltersToQuery,
   getRemediationInstructionsFilters,
 } from './filter/remediation-instructions-filter';
+import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
 
 /**
  * WIDGET CONVERTERS
@@ -346,3 +347,50 @@ export const prepareAlarmDetailsQuery = (alarm, widget) => ({
     multi_sort: [],
   },
 });
+
+export const convertAlarmsListQueryToRequest = (query) => { // TODO: add doc
+  const result = omit(query, [
+    'tstart',
+    'tstop',
+    'sortKey',
+    'sortDir',
+    'category',
+    'multiSortBy',
+    'limit',
+  ]);
+
+  const {
+    tstart,
+    tstop,
+    sortKey,
+    sortDir,
+    category,
+    multiSortBy = [],
+    limit = PAGINATION_LIMIT,
+  } = query;
+
+  if (tstart) {
+    result.tstart = convertStartDateIntervalToTimestamp(tstart, DATETIME_FORMATS.dateTimePicker);
+  }
+
+  if (tstop) {
+    result.tstop = convertStopDateIntervalToTimestamp(tstop, DATETIME_FORMATS.dateTimePicker);
+  }
+
+  if (sortKey) {
+    result.sort_by = sortKey;
+    result.sort = sortDir.toLowerCase();
+  }
+
+  if (category) {
+    result.category = category;
+  }
+
+  if (multiSortBy.length) {
+    result.multi_sort = multiSortBy.map(({ sortBy, descending }) => `${sortBy},${(descending ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase()}`);
+  }
+
+  result.limit = limit;
+
+  return result;
+};
