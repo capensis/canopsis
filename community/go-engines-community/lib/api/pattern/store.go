@@ -278,45 +278,58 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error 
 		return nil
 	}
 
-	var filter, set bson.M
+	var filter bson.M
 	switch pattern.Type {
 	case savedpattern.TypeAlarm:
 		filter = bson.M{"corporate_alarm_pattern": pattern.ID}
-		set = bson.M{
-			"alarm_pattern":                 pattern.AlarmPattern,
-			"corporate_alarm_pattern_title": pattern.Title,
-		}
 	case savedpattern.TypeEntity:
 		filter = bson.M{"corporate_entity_pattern": pattern.ID}
-		set = bson.M{
-			"entity_pattern":                 pattern.EntityPattern,
-			"corporate_entity_pattern_title": pattern.Title,
-		}
 	case savedpattern.TypePbehavior:
 		filter = bson.M{"corporate_pbehavior_pattern": pattern.ID}
-		set = bson.M{
-			"pbehavior_pattern":                 pattern.PbehaviorPattern,
-			"corporate_pbehavior_pattern_title": pattern.Title,
-		}
 	default:
 		return fmt.Errorf("unknown pattern type id=%s: %q", pattern.ID, pattern.Type)
 	}
 
-	if pattern.Type == savedpattern.TypeEntity {
-		_, err := s.client.Collection(mongo.MetaAlarmRulesMongoCollection).UpdateMany(ctx, bson.M{"corporate_total_entity_pattern": pattern.ID}, bson.M{
-			"$set": bson.M{
-				"total_entity_pattern":                 pattern.EntityPattern,
-				"corporate_total_entity_pattern_title": pattern.Title,
-			},
+	for _, collection := range s.linkedCollections {
+		var set bson.M
+		switch pattern.Type {
+		case savedpattern.TypeAlarm:
+			set = bson.M{
+				"alarm_pattern": pattern.AlarmPattern.RemoveFields(
+					common.GetForbiddenFieldsInAlarmPattern(collection),
+					common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection),
+				),
+				"corporate_alarm_pattern_title": pattern.Title,
+			}
+		case savedpattern.TypeEntity:
+			set = bson.M{
+				"entity_pattern":                 pattern.EntityPattern.RemoveFields(common.GetForbiddenFieldsInEntityPattern(collection)),
+				"corporate_entity_pattern_title": pattern.Title,
+			}
+		case savedpattern.TypePbehavior:
+			set = bson.M{
+				"pbehavior_pattern":                 pattern.PbehaviorPattern,
+				"corporate_pbehavior_pattern_title": pattern.Title,
+			}
+		default:
+			return fmt.Errorf("unknown pattern type id=%s: %q", pattern.ID, pattern.Type)
+		}
+
+		_, err := s.client.Collection(collection).UpdateMany(ctx, filter, bson.M{
+			"$set": set,
 		})
 		if err != nil {
 			return err
 		}
 	}
 
-	for _, collection := range s.linkedCollections {
-		_, err := s.client.Collection(collection).UpdateMany(ctx, filter, bson.M{
-			"$set": set,
+	if pattern.Type == savedpattern.TypeEntity {
+		collection := mongo.MetaAlarmRulesMongoCollection
+		_, err := s.client.Collection(collection).UpdateMany(ctx, bson.M{"corporate_total_entity_pattern": pattern.ID}, bson.M{
+			"$set": bson.M{
+				"total_entity_pattern":                 pattern.EntityPattern.RemoveFields(common.GetForbiddenFieldsInEntityPattern(collection)),
+				"corporate_total_entity_pattern_title": pattern.Title,
+			},
 		})
 		if err != nil {
 			return err

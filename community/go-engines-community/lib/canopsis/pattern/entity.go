@@ -188,8 +188,12 @@ func (p Entity) Match(entity types.Entity) (bool, EntityRegexMatches, error) {
 	return false, entityRegexMatches, nil
 }
 
-func (p Entity) Validate() bool {
+func (p Entity) Validate(forbiddenFields []string) bool {
 	emptyEntity := types.Entity{}
+	forbiddenFieldsMap := make(map[string]bool, len(forbiddenFields))
+	for _, field := range forbiddenFields {
+		forbiddenFieldsMap[field] = true
+	}
 
 	for _, group := range p {
 		if len(group) == 0 {
@@ -200,6 +204,10 @@ func (p Entity) Validate() bool {
 			f := v.Field
 			cond := v.Condition
 			var err error
+
+			if forbiddenFieldsMap[f] {
+				return false
+			}
 
 			if infoName := getEntityInfoName(f); infoName != "" {
 				switch v.FieldType {
@@ -278,6 +286,70 @@ func (p Entity) ToNegativeMongoQuery(prefix string) (bson.M, error) {
 		return nil, err
 	}
 	return bson.M{"$nor": groupQueries}, nil
+}
+
+func (p Entity) HasField(field string) bool {
+	for _, group := range p {
+		for _, condition := range group {
+			if condition.Field == field {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+func (p Entity) HasInfosField() bool {
+	for _, group := range p {
+		for _, condition := range group {
+			if infoName := getEntityInfoName(condition.Field); infoName != "" {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+func (p Entity) HasComponentInfosField() bool {
+	for _, group := range p {
+		for _, condition := range group {
+			if infoName := getEntityComponentInfoName(condition.Field); infoName != "" {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+func (p Entity) RemoveFields(fields []string) Entity {
+	forbiddenFieldsMap := make(map[string]bool, len(fields))
+	for _, field := range fields {
+		forbiddenFieldsMap[field] = true
+	}
+
+	newGroups := make(Entity, 0, len(p))
+	for _, group := range p {
+		newGroup := make([]FieldCondition, 0, len(group))
+		for _, condition := range group {
+			if forbiddenFieldsMap[condition.Field] {
+				continue
+			}
+
+			newGroup = append(newGroup, condition)
+		}
+		if len(newGroup) > 0 {
+			newGroups = append(newGroups, newGroup)
+		}
+	}
+
+	if len(newGroups) > 0 {
+		return newGroups
+	}
+
+	return nil
 }
 
 func (p Entity) getGroupMongoQueries(prefix string) ([]bson.M, error) {
