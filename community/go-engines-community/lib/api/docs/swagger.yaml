@@ -5964,6 +5964,14 @@ paths:
           required: true
           schema:
             type: string
+        - name: tstart
+          in: query
+          schema:
+            type: integer
+        - name: tstop
+          in: query
+          schema:
+            type: integer
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/sort'
