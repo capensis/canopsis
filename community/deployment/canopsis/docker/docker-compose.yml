@@ -151,12 +151,10 @@ services:
   axe:
     <<: *app_service_base
     image: ${DOCKER_REPOSITORY}${CPS_EDITION}/engine-axe:${CANOPSIS_IMAGE_TAG}
-    command: /engine-axe -publishQueue Engine_correlation -withRemediation=true
 
   che:
     <<: *app_service_base
     image: ${DOCKER_REPOSITORY}${CPS_EDITION}/engine-che:${CANOPSIS_IMAGE_TAG}
-    command: /engine-che -enrichContext -enrichInclude "profil,client,company" # -dataSourceDirectory /plugins/datasource
 
   fifo:
     <<: *app_service_base
@@ -188,7 +186,6 @@ services:
   service:
     <<: *app_service_base
     image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}engine-service:${CANOPSIS_IMAGE_TAG}
-    command: /engine-service -publishQueue Engine_dynamic_infos
 
   api:
     <<: *app_service_base
