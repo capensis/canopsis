@@ -206,7 +206,7 @@ export default {
           name: MODALS.alarmsList,
           config: {
             widget,
-
+            title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.service.name }),
             fetchList: params => this.fetchServiceAlarmsWithoutStore({ id: this.service._id, params }),
           },
         });

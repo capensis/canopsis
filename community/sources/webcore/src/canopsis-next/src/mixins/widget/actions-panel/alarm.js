@@ -194,6 +194,7 @@ export const widgetActionsPanelAlarmMixin = {
         name: MODALS.alarmsList,
         config: {
           widget,
+          title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.item.entity._id }),
         },
       });
     },
