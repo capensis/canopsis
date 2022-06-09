@@ -110,16 +110,27 @@ describe('actions-panel', () => {
 
   const assignedInstructions = [
     {
+      _id: 1,
       name: 'Running instruction',
       execution: {
         status: REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running,
       },
     },
     {
+      _id: 2,
+      name: 'New instruction',
+      execution: null,
+    },
+  ];
+
+  const assignedInstructionsWithPaused = [
+    {
+      _id: 1,
       name: 'New instruction',
       execution: null,
     },
     {
+      _id: 2,
       name: 'Paused instruction',
       execution: {
         status: REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.paused,
@@ -834,6 +845,7 @@ describe('actions-panel', () => {
       {
         name: MODALS.alarmsList,
         config: {
+          title: expect.any(String),
           widget: {
             ...defaultWidget,
             _id: expect.any(String),
@@ -1003,7 +1015,7 @@ describe('actions-panel', () => {
   });
 
   it('Execute instruction alarm modal showed after trigger execute instruction action', () => {
-    const assignedInstruction = assignedInstructions[2];
+    const assignedInstruction = assignedInstructionsWithPaused[1];
     const alarmData = {
       ...alarm,
       _id: Faker.datatype.string(),
@@ -1127,6 +1139,79 @@ describe('actions-panel', () => {
 
     featureHasSpy.mockClear();
     featureGetSpy.mockClear();
+  });
+
+  // TODO: put tests for: no active instructions, one active instruction
+  it('Renders `actions-panel` with manual instruction in running', () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+      ]),
+      propsData: {
+        item: {
+          ...alarm,
+
+          is_manual_instruction_running: true,
+        },
+        widget,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `actions-panel` with manual instruction in waiting result', () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+      ]),
+      propsData: {
+        item: {
+          ...alarm,
+
+          is_manual_instruction_waiting_result: true,
+        },
+        widget,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `actions-panel` with auto instruction in running', () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+      ]),
+      propsData: {
+        item: {
+          ...alarm,
+
+          is_auto_instruction_running: true,
+        },
+        widget,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `actions-panel` with paused manual instruction', () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+      ]),
+      propsData: {
+        item: {
+          ...alarm,
+
+          assigned_instructions: assignedInstructionsWithPaused,
+        },
+        widget,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with unresolved alarm and flapping status', () => {

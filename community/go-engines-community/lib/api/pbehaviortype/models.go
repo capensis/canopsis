@@ -13,7 +13,7 @@ type ListRequest struct {
 type EditRequest struct {
 	Name        string `json:"name" binding:"required,max=255"`
 	Description string `json:"description" binding:"required,max=255"`
-	Type        string `json:"type" binding:"required"`
+	Type        string `json:"type" binding:"required,oneof=active inactive maintenance pause"`
 	Priority    *int   `json:"priority" binding:"required"`
 	IconName    string `json:"icon_name" binding:"required,max=255"`
 	Color       string `json:"color"`
