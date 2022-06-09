@@ -283,6 +283,18 @@ func (a *ApiClient) TheResponseKeyShouldNotExist(path string) error {
 	return nil
 }
 
+/**
+Step example:
+	Then the response key "data.0.created_at" should exist
+*/
+func (a *ApiClient) TheResponseKeyShouldExist(path string) error {
+	if _, ok := getNestedJsonVal(a.responseBody, strings.Split(path, ".")); !ok {
+		return fmt.Errorf("%s not exists in response:\n%v", path, a.responseBodyOutput)
+	}
+
+	return nil
+}
+
 /*
 Step example:
 	Then the difference between metaalarmLastEventDate createTimestamp is in range -2,2

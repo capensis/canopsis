@@ -51,6 +51,43 @@ type Action struct {
 	savedpattern.AlarmPatternFields  `bson:",inline"`
 }
 
+func (a Action) Match(entity types.Entity, alarm types.Alarm) (bool, error) {
+	var matched bool
+	var err error
+
+	if a.OldAlarmPatterns.IsSet() {
+		if !a.OldAlarmPatterns.IsValid() {
+			return false, InvalidOldAlarmPattern
+		}
+
+		matched = a.OldAlarmPatterns.Matches(&alarm)
+	} else {
+		matched, err = a.AlarmPattern.Match(alarm)
+		if err != nil {
+			return false, AlarmPatternError
+		}
+	}
+
+	if !matched {
+		return false, nil
+	}
+
+	if a.OldEntityPatterns.IsSet() {
+		if !a.OldEntityPatterns.IsValid() {
+			return false, InvalidOldEntityPattern
+		}
+
+		matched = a.OldEntityPatterns.Matches(&entity)
+	} else {
+		matched, _, err = a.EntityPattern.Match(entity)
+		if err != nil {
+			return false, EntityPatternError
+		}
+	}
+
+	return matched, nil
+}
+
 type Parameters struct {
 	Output string `json:"output" bson:"output,omitempty" binding:"max=255"`
 
