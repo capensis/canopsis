@@ -1,7 +1,7 @@
 <template lang="pug">
   modal-wrapper(close)
     template(#title="")
-      span {{ $t('modals.alarmsList.title') }}
+      span {{ title }}
     template(#text="")
       alarms-list-table-with-pagination(
         :widget="widget",
@@ -48,6 +48,10 @@ export default {
     };
   },
   computed: {
+    title() {
+      return this.config.title ?? this.$t('modals.alarmsList.title');
+    },
+
     widget() {
       return this.config.widget ?? generateDefaultAlarmListWidget();
     },

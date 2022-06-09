@@ -47,7 +47,7 @@ type ActionProcessor interface {
 // by an enrichment rule.
 type Action struct {
 	ActionBase
-	ActionProcessor
+	ActionProcessor `swaggerignore:"true"`
 
 	timezoneConfig *config.TimezoneConfig
 }
@@ -339,7 +339,7 @@ func (p SetEntityInfoFromTemplateProcessor) Apply(event types.Event, parameters 
 	}
 	value := p.buffer.String()
 	entityUpdated := setEntityInfo(event.Entity, value, p.Name, p.Description)
-	if report != nil {
+	if report != nil && entityUpdated {
 		report.EntityUpdated = entityUpdated
 	}
 
@@ -425,7 +425,7 @@ func (p SetEntityInfoProcessor) Apply(event types.Event, parameters ActionParame
 
 	value := p.Value.Value
 	entityUpdated := setEntityInfo(event.Entity, value, p.Name, p.Description)
-	if report != nil {
+	if report != nil && entityUpdated {
 		report.EntityUpdated = entityUpdated
 	}
 
@@ -472,7 +472,7 @@ func (p CopyToEntityInfoProcessor) Apply(event types.Event, parameters ActionPar
 	}
 
 	entityUpdated := setEntityInfo(event.Entity, value, p.Name, p.Description)
-	if report != nil {
+	if report != nil && entityUpdated {
 		report.EntityUpdated = entityUpdated
 	}
 

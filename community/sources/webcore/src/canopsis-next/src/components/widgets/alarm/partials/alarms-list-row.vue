@@ -27,7 +27,8 @@
         :alarm="alarm",
         :widget="widget",
         :column="column",
-        :columns-filters="columnsFilters"
+        :columns-filters="columnsFilters",
+        @activate="activateRow"
       )
     td
       actions-panel(
@@ -103,6 +104,11 @@ export default {
       default: () => {},
     },
   },
+  data() {
+    return {
+      active: false,
+    };
+  },
   computed: {
     ...featuresService.get('components.alarmListRow.computed', {}),
 
@@ -115,7 +121,7 @@ export default {
     },
 
     hasAlarmInstruction() {
-      const { children_instructions: childrenInstructions = false } = this.parentAlarm || {};
+      const { children_instructions: parentAlarmChildrenInstructions = false } = this.parentAlarm || {};
       const {
         assigned_instructions: assignedInstructions = [],
         is_auto_instruction_running: isAutoInstructionRunning = false,
@@ -123,11 +129,16 @@ export default {
         is_all_auto_instructions_completed: isAutoInstructionCompleted = false,
       } = this.alarm;
 
-      return assignedInstructions.length
+      const hasAssignedInstructions = !!assignedInstructions.length;
+
+      if (parentAlarmChildrenInstructions && hasAssignedInstructions) {
+        return true;
+      }
+
+      return hasAssignedInstructions
           || isAutoInstructionRunning
           || isAutoInstructionCompleted
-          || isManualInstructionWaitingResult
-          || childrenInstructions;
+          || isManualInstructionWaitingResult;
     },
 
     isResolvedAlarm() {
@@ -149,13 +160,18 @@ export default {
     },
 
     classes() {
-      const classes = { 'not-filtered': this.isNotFiltered };
+      const classes = { 'not-filtered': this.isNotFiltered, 'grey lighten-3': this.active };
 
       if (featuresService.has('components.alarmListRow.computed.classes')) {
         return featuresService.call('components.alarmListRow.computed.classes', this, classes);
       }
 
       return classes;
+    },
+  },
+  methods: {
+    activateRow(value) {
+      this.active = value;
     },
   },
 };

@@ -17,6 +17,15 @@
           block,
           @click="$emit('execute-job', job)"
         ) {{ job.name }}
+        v-tooltip(v-show="isRunningJob && hasJobsInQueue", top)
+          v-btn.error.ml-2(
+            slot="activator",
+            round,
+            small,
+            block,
+            @click="$emit('cancel-job-execution', job)"
+          ) {{ $t('common.cancel') }}
+          span {{ queueNumberTooltip }}
     td.text-xs-center
       span(v-if="!isCancelledJob") {{ job.started_at | date('long', '-') }}
       span(v-else) -
@@ -83,8 +92,19 @@ export default {
       return this.job.output || this.job.fail_reason;
     },
 
+    hasJobsInQueue() {
+      return this.job.queue_number > 0;
+    },
+
     statusIcon() {
       return this.isFailedJob ? 'cancel' : 'check';
+    },
+
+    queueNumberTooltip() {
+      return this.$t('remediationInstructionExecute.queueNumber', {
+        number: this.job.queue_number,
+        name: this.job.name,
+      });
     },
   },
 };

@@ -8,7 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -16,8 +17,8 @@ import (
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/bsm/redislock"
 	"github.com/go-redis/redis/v8"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	libamqp "github.com/streadway/amqp"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/sync/errgroup"
@@ -34,12 +35,13 @@ const (
 const BulkMaxSize = 10000
 
 type service struct {
-	pubChannel      amqp.Publisher
+	pubChannel      libamqp.Publisher
 	pubExchangeName string
 	pubQueueName    string
 	encoder         encoding.Encoder
 	adapter         Adapter
 	entityAdapter   entity.Adapter
+	alarmAdapter    libalarm.Adapter
 	countersCache   CountersCache
 	storage         Storage
 	lockClient      libredis.LockClient
@@ -49,11 +51,12 @@ type service struct {
 
 // NewService gives the correct service adapter.
 func NewService(
-	pubChannel amqp.Publisher,
+	pubChannel libamqp.Publisher,
 	pubExchangeName, pubQueueName string,
 	encoder encoding.Encoder,
 	adapter Adapter,
 	entityAdapter entity.Adapter,
+	alarmAdapter libalarm.Adapter,
 	countersCache CountersCache,
 	storage Storage,
 	lockClient libredis.LockClient,
@@ -67,6 +70,7 @@ func NewService(
 		encoder:         encoder,
 		adapter:         adapter,
 		entityAdapter:   entityAdapter,
+		alarmAdapter:    alarmAdapter,
 		countersCache:   countersCache,
 		storage:         storage,
 		lockClient:      lockClient,
@@ -87,7 +91,7 @@ func (s *service) sendEvent(event types.Event) error {
 		s.pubQueueName,
 		false,
 		false,
-		libamqp.Publishing{
+		amqp.Publishing{
 			Body:        body,
 			ContentType: "application/json",
 		},
@@ -788,7 +792,7 @@ func (s *service) processSkippedQueue(ctx context.Context, serviceID string) err
 			s.pubQueueName,
 			false,
 			false,
-			libamqp.Publishing{
+			amqp.Publishing{
 				Body:        []byte(body),
 				ContentType: "application/json",
 			},
@@ -805,34 +809,9 @@ func (s *service) processSkippedQueue(ctx context.Context, serviceID string) err
 
 func (s *service) computeServiceCounters(ctx context.Context, serviceID, outputTemplate string,
 	saveAlarmCounters bool) error {
-	alarmCursor, err := s.adapter.GetOpenAlarmsOfServiceDependencies(ctx, serviceID)
-	if err != nil {
-		return err
-	}
-
-	defer alarmCursor.Close(ctx)
 
 	processedEntities := make(map[string]bool)
 	counters := AlarmCounters{}
-	for alarmCursor.Next(ctx) {
-		alarm := types.Alarm{}
-		err := alarmCursor.Decode(&alarm)
-		if err != nil {
-			return err
-		}
-
-		alarmCounters := GetAlarmCountersFromAlarm(alarm)
-		counters = counters.Add(alarmCounters)
-		processedEntities[alarm.EntityID] = true
-		if saveAlarmCounters {
-			key := fmt.Sprintf("%s&&%s", serviceID, alarm.EntityID)
-			err := s.countersCache.Replace(ctx, key, alarmCounters)
-			if err != nil {
-				return err
-			}
-		}
-	}
-
 	entityCursor, err := s.adapter.GetServiceDependencies(ctx, serviceID)
 	if err != nil {
 		return err
@@ -840,11 +819,34 @@ func (s *service) computeServiceCounters(ctx context.Context, serviceID, outputT
 
 	defer entityCursor.Close(ctx)
 
+	alarms := make([]types.Alarm, 0)
 	for entityCursor.Next(ctx) {
 		e := types.Entity{}
 		err := entityCursor.Decode(&e)
 		if err != nil {
 			return err
+		}
+
+		if processedEntities[e.ID] {
+			continue
+		}
+
+		alarms = alarms[:0]
+		err = s.alarmAdapter.GetOpenedAlarmsByIDs(ctx, []string{e.ID}, &alarms)
+		if err != nil {
+			return err
+		}
+		for _, alarm := range alarms {
+			alarmCounters := GetAlarmCountersFromAlarm(alarm)
+			counters = counters.Add(alarmCounters)
+			processedEntities[alarm.EntityID] = true
+			if saveAlarmCounters {
+				key := fmt.Sprintf("%s&&%s", serviceID, alarm.EntityID)
+				err := s.countersCache.Replace(ctx, key, alarmCounters)
+				if err != nil {
+					return err
+				}
+			}
 		}
 
 		if processedEntities[e.ID] {

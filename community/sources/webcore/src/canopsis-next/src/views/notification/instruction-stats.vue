@@ -7,6 +7,7 @@
       :pagination.sync="pagination",
       :total-items="remediationInstructionStatsMeta.total_count",
       :accumulated-before="remediationInstructionStatsMeta.accumulated_before",
+      :interval="interval",
       @rate="showRateInstructionModal"
     )
     c-fab-btn(@refresh="fetchList")
@@ -51,6 +52,18 @@ export default {
       },
     };
   },
+  computed: {
+    interval() {
+      return {
+        from: convertDateToStartOfDayTimestamp(convertStartDateIntervalToTimestamp(
+          this.query.interval.from,
+        )),
+        to: convertDateToEndOfDayTimestamp(convertStopDateIntervalToTimestamp(
+          this.query.interval.to,
+        )),
+      };
+    },
+  },
   mounted() {
     this.fetchList();
   },
@@ -71,14 +84,10 @@ export default {
 
     fetchList() {
       const params = this.getQuery();
-      params.with_flags = true;
 
-      params.from = convertDateToStartOfDayTimestamp(convertStartDateIntervalToTimestamp(
-        this.pagination.interval.from,
-      ));
-      params.to = convertDateToEndOfDayTimestamp(convertStopDateIntervalToTimestamp(
-        this.pagination.interval.to,
-      ));
+      params.with_flags = true;
+      params.from = this.interval.from;
+      params.to = this.interval.to;
 
       this.fetchRemediationInstructionStatsList({ params });
     },

@@ -244,6 +244,7 @@ export default {
     custom: 'Personnalisé',
     eventType: 'Type d\'événement',
     sourceType: 'Type de Source',
+    cycleDependency: 'Dépendance au cycle',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -258,7 +259,7 @@ export default {
       [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
       [EVENT_ENTITY_TYPES.assocTicket]: 'Associer un ticket',
       [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
-      [EVENT_ENTITY_TYPES.executeInstruction]: 'Exécuter l\'instruction',
+      [EVENT_ENTITY_TYPES.executeInstruction]: 'Exécuter la consigne',
     },
     times: {
       second: 'seconde | secondes',
@@ -530,10 +531,10 @@ export default {
         [EVENT_ENTITY_TYPES.instructionJobComplete]: 'L\'exécution de la tâche de remédiation est terminée',
         [EVENT_ENTITY_TYPES.instructionJobAbort]: 'L\'exécution de la tâche de remédiation a été abandonnée',
         [EVENT_ENTITY_TYPES.instructionJobFail]: 'L\'exécution de la tâche de remédiation a échouée',
-        [EVENT_ENTITY_TYPES.autoInstructionStart]: 'L\'instruction a été lancée automatiquement',
-        [EVENT_ENTITY_TYPES.autoInstructionComplete]: 'L\'instruction a été complétée automatiquement',
-        [EVENT_ENTITY_TYPES.autoInstructionFail]: 'L\'instruction a échoué automatiquement',
-        [EVENT_ENTITY_TYPES.autoInstructionAlreadyRunning]: 'L\'instruction a été lancée automatiquement pour une autre alarme',
+        [EVENT_ENTITY_TYPES.autoInstructionStart]: 'La consigne automatique a été lancée',
+        [EVENT_ENTITY_TYPES.autoInstructionComplete]: 'La consigne automatique a été complétée',
+        [EVENT_ENTITY_TYPES.autoInstructionFail]: 'La consigne automatique a échoué',
+        [EVENT_ENTITY_TYPES.autoInstructionAlreadyRunning]: 'La consigne automatique a déjà été lancée pour une autre alarme',
         [EVENT_ENTITY_TYPES.junitTestSuiteUpdate]: 'La suite de tests a été mise à jour',
         [EVENT_ENTITY_TYPES.junitTestCaseUpdate]: 'Le cas de test a été mis à jour',
       },
@@ -552,16 +553,18 @@ export default {
     infoPopup: 'Info popup',
     tooltips: {
       priority: 'Le paramètre de priorité est dérivé de la gravité de l\'alarme multipliée par le niveau d\'impact de l\'entité sur laquelle l\'alarme est déclenchée',
-      hasInstruction: 'Au moins une consigne est attachée à cette alarme',
-      hasAutoInstructionInRunning: 'Instruction automatique en cours',
-      allAutoInstructionExecuted: 'Toutes les instructions automatiques ont été exécutées',
-      awaitingInstructionComplete: 'En attente de l\'instruction pour terminer',
+      hasInstruction: 'Au moins une consigne de remédiation est attachée à cette alarme',
+      hasManualInstructionInRunning: 'Consigne manuelle en cours',
+      hasAutoInstructionInRunning: 'Consigne automatique en cours',
+      allAutoInstructionExecuted: 'Toutes les consignes automatiques ont été exécutées',
+      awaitingInstructionComplete: 'En attente de la fin de la consigne pour terminer',
+      autoInstructionsFailed: 'Les instructions automatiques ont échoué',
     },
     metrics: {
       [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Nombre d\'alarmes créées',
       [ALARM_METRIC_PARAMETERS.activeAlarms]: 'Nombre d\'alarmes actives',
       [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: 'Nombre d\'alarmes non affichées',
-      [ALARM_METRIC_PARAMETERS.instructionAlarms]: 'Nombre d\'alarmes en cours de correction automatique',
+      [ALARM_METRIC_PARAMETERS.instructionAlarms]: 'Nombre d\'alarmes en cours de remédiation automatique',
       [ALARM_METRIC_PARAMETERS.pbehaviorAlarms]: 'Nombre d\'alarmes avec PBehavior',
       [ALARM_METRIC_PARAMETERS.correlationAlarms]: 'Nombre d\'alarmes corrélées',
       [ALARM_METRIC_PARAMETERS.ackAlarms]: 'Nombre d\'alarmes avec acquittement',
@@ -570,7 +573,7 @@ export default {
       [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: 'Nombre d\'alarmes actives avec acks',
       [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: 'Nombre d\'alarmes actives sans tickets',
       [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '% d\'alarmes corrélées',
-      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% d\'alarmes avec correction automatique',
+      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% d\'alarmes avec remédiation automatique',
       [ALARM_METRIC_PARAMETERS.ratioTickets]: '% d\'alarmes avec tickets créés',
       [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '% d\'alarmes non affichées',
       [ALARM_METRIC_PARAMETERS.averageAck]: 'Délai moyen d\'acquittement des alarmes',
@@ -796,6 +799,11 @@ export default {
         + '<dd>Par exemple:</dd>\n'
         + '<dd>"^(?P&lt;name&gt;\\\\w+)_(.+)\\\\.xml$"</dd>\n'
         + '</dl>',
+    },
+    density: {
+      title: 'Vue par défaut',
+      comfort: 'Vue confort',
+      compact: 'Vue compacte',
     },
   },
   modals: {
@@ -1114,6 +1122,7 @@ export default {
     },
     alarmsList: {
       title: 'Bac à alarmes',
+      prefixTitle: '{prefix} - bac à alarmes',
     },
     createUser: {
       create: {
@@ -1399,6 +1408,7 @@ export default {
         configuration: 'Configuration',
         jobId: 'Identifiant de la tâche',
         query: 'Requête',
+        multipleExecutions: 'Autoriser l\'exécution parallèle',
       },
       errors: {
         invalidJSON: 'JSON non valide',
@@ -1478,7 +1488,7 @@ export default {
       },
     },
     remediationInstructionApproval: {
-      title: 'Approbation des instructions',
+      title: 'Approbation des consignes',
       requested: 'demandé pour approbation',
       tabs: {
         updated: 'Mise à jour',
@@ -2042,7 +2052,7 @@ export default {
   },
 
   pbehaviorTypes: {
-    usingType: 'Le type ne peut être supprimé car il est en cours d\'utilisation/',
+    usingType: 'Le type ne peut être supprimé car il est en cours d\'utilisation.',
     defaultType: 'Le type par défaut ne peut pas être modifié.',
   },
 
@@ -2168,7 +2178,7 @@ export default {
 
       [HEALTHCHECK_ENGINES_NAMES.remediation]: {
         name: 'Remédiation',
-        description: 'Déclenche les instructions',
+        description: 'Déclenche les consignes',
       },
     },
   },
@@ -2198,9 +2208,9 @@ export default {
     emptySteps: 'Aucune étape ajoutée pour le moment',
     emptyOperations: 'Aucune opération ajoutée pour le moment',
     emptyJobs: 'Aucune tâche ajoutée pour le moment',
-    timeoutAfterExecution: 'Délai d\'attente après l\'exécution de l\'instruction',
+    timeoutAfterExecution: 'Délai d\'attente après l\'exécution de la consigne',
     requestApproval: 'Demande d\'approbation',
-    type: 'Type d\'instruction',
+    type: 'Type de consigne',
     approvalPending: 'En attente d\'approbation',
     needApprove: 'Une approbation est nécessaire',
     types: {
@@ -2245,11 +2255,12 @@ export default {
     failedAt: 'Échec à {time}',
     startedAt: 'Commencé à {time}\n(Date de lancement Canopsis)',
     closeConfirmationText: 'Souhaitez-vous reprendre cette consigne plus tard ?',
+    queueNumber: '{number} {name} travaux sont dans la file d\'attente',
     popups: {
       success: '{instructionName} a été exécutée avec succès',
       failed: '{instructionName} a échoué. Veuillez faire remonter ce problème',
       connectionError: 'Il y a un problème de connexion. Veuillez cliquer sur le bouton d\'actualisation ou recharger la page.',
-      wasAborted: '{instructionName} a été abandonné',
+      wasAborted: '{instructionName} a été abandonnée',
       wasPaused: 'La consigne {instructionName} sur l\'alarme {alarmName} a été interrompue à {date}. Vous pouvez la reprendre manuellement.',
     },
     jobs: {
@@ -2266,12 +2277,12 @@ export default {
   },
 
   remediationInstructionsFilters: {
-    button: 'Créer un filtre de consignes',
+    button: 'Créer un filtre sur les consignes de remédiation',
     with: 'Avec les consignes sélectionnées',
     without: 'Sans les consignes sélectionnées',
     selectAll: 'Tout sélectionner',
     selectedInstructions: 'Consignes sélectionnées',
-    selectedInstructionsHelp: 'Les instructions du type sélectionné sont exclues de la liste',
+    selectedInstructionsHelp: 'Les consignes du type sélectionné sont exclues de la liste',
     chip: {
       with: 'AVEC',
       without: 'SANS',
@@ -2285,12 +2296,12 @@ export default {
     executedOn: 'Exécuté sur',
     lastExecutedOn: 'Dernière exécution le',
     modifiedOn: 'Dernière modification le',
-    averageCompletionTime: 'Temps moyen\n\'achèvement',
-    executionCount: 'Nombre de\nexécutions',
+    averageCompletionTime: 'Temps moyen\nd\'achèvement',
+    executionCount: 'Nombre\nd\'exécutions',
     alarmStates: 'Alarmes affectées par l\'état',
     okAlarmStates: 'Nombre de résultats\nÉtats OK',
     notAvailable: 'Indisponible',
-    instructionChanged: 'L\'instruction a été modifiée',
+    instructionChanged: 'La consigne a été modifiée',
     actions: {
       needRate: 'Notez-le!',
       rate: 'Évaluer',
@@ -2326,6 +2337,7 @@ export default {
     addAction: 'Ajouter une action',
     emptyActions: 'Aucune action ajoutée pour le moment',
     output: 'Format d\'action de sortie',
+    forwardAuthor: 'Transmettre l\'auteur à l\'étape suivante',
     urlHelp: '<p>Les variables accessibles sont : <strong>.Alarm</strong>, <strong>.Entity</strong> et <strong>.Children</strong></p>'
       + '<i>Quelques exemples :</i>'
       + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'
@@ -2481,10 +2493,10 @@ export default {
       deleteAfterHelpText: 'Lorsque cette option est activée, les données des suites de tests JUnit (XML, captures d\'écran et vidéos) sont supprimées après la période définie.',
     },
     remediation: {
-      title: 'Instructions de stockage des données',
-      accumulateAfter: 'Accumuler les statistiques des instructions après',
-      deleteAfter: 'Supprimer les données des instructions après',
-      deleteAfterHelpText: 'Lorsque cette option est activée, les données statistiques des instructions sont supprimées après la période de temps définie.',
+      title: 'Stockage des données de consigne',
+      accumulateAfter: 'Accumuler les statistiques des consignes après',
+      deleteAfter: 'Supprimer les données des consignes après',
+      deleteAfterHelpText: 'Lorsque cette option est activée, les données statistiques des consignes sont supprimées après la période de temps définie.',
     },
     entity: {
       title: 'Stockage des données des entités',
@@ -2520,7 +2532,7 @@ export default {
   notificationSettings: {
     instruction: {
       header: 'Instructions',
-      rate: 'Notifications "Évaluer l\'instruction"',
+      rate: 'Notifications "Évaluer les consignes"',
       rateFrequency: 'La fréquence',
       duration: 'Intervalle de temps',
     },
@@ -2676,15 +2688,15 @@ export default {
     },
     [USERS_PERMISSIONS.technical.remediation]: {
       title: 'Consignes',
-      message: 'La fonction de remédiation de Canopsis peut être utilisée pour créer des plans ou des instructions visant à corriger des situations.',
+      message: 'La fonction de remédiation de Canopsis peut être utilisée pour créer des plans ou des consignes visant à corriger des situations.',
     },
 
     /**
      * Notifications
      */
     [USERS_PERMISSIONS.technical.notification.instructionStats]: {
-      title: 'Évaluation de l\'instruction',
-      message: 'Cette page contient les statistiques sur l\'exécution des instructions. Les utilisateurs peuvent noter les instructions en fonction de leurs performances.',
+      title: 'Évaluation des consignes',
+      message: 'Cette page contient les statistiques sur l\'exécution des consignes. Les utilisateurs peuvent noter les consignes en fonction de leurs performances.',
     },
   },
 
@@ -2739,7 +2751,7 @@ export default {
       [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: '{value} alarmes actives avec acks',
       [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: '{value} alarmes actives sans tickets',
       [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '{value}% d\'alarmes avec correction automatique',
-      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '{value}% d\'alarmes avec instructions',
+      [ALARM_METRIC_PARAMETERS.ratioInstructions]: '{value}% d\'alarmes avec consigne',
       [ALARM_METRIC_PARAMETERS.ratioTickets]: '{value}% d\'alarmes avec tickets créés',
       [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '{value}% des alarmes non affichées',
       [ALARM_METRIC_PARAMETERS.averageAck]: '{value} accuser les alarmes',
