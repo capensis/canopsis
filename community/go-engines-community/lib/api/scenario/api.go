@@ -330,7 +330,8 @@ func (a *api) BulkCreate(c *gin.Context) {
 				continue
 			}
 
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			a.logger.Err(err).Msg("cannot create scenario")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
@@ -429,7 +430,8 @@ func (a *api) BulkUpdate(c *gin.Context) {
 				continue
 			}
 
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(err.Error())))
+			a.logger.Err(err).Msg("cannot update scenario")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
