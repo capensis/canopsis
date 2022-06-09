@@ -24,6 +24,8 @@ type API interface {
 	GetDetails(c *gin.Context)
 	ListManual(c *gin.Context)
 	ListByService(c *gin.Context)
+	ListByComponent(c *gin.Context)
+	ResolvedList(c *gin.Context)
 	Count(c *gin.Context)
 	StartExport(c *gin.Context)
 	GetExport(c *gin.Context)
@@ -234,7 +236,9 @@ func (a *api) ListManual(c *gin.Context) {
 // ListByService
 // @Success 200 {object} common.PaginatedListResponse{data=[]Alarm}
 func (a *api) ListByService(c *gin.Context) {
-	r := pagination.GetDefaultQuery()
+	r := SimpleListRequest{
+		Query: pagination.GetDefaultQuery(),
+	}
 	if err := c.ShouldBind(&r); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
 		return
@@ -251,7 +255,67 @@ func (a *api) ListByService(c *gin.Context) {
 		return
 	}
 
-	res, err := common.NewPaginatedResponse(r, aggregationResult)
+	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+// ListByComponent
+// @Success 200 {object} common.PaginatedListResponse{data=[]Alarm}
+func (a *api) ListByComponent(c *gin.Context) {
+	r := SimpleIdListRequest{}
+	r.Query = pagination.GetDefaultQuery()
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+		return
+	}
+
+	apiKey := c.MustGet(auth.ApiKey).(string)
+	aggregationResult, err := a.store.FindByComponent(c.Request.Context(), r.ID, apiKey, r.SimpleListRequest)
+	if err != nil {
+		panic(err)
+	}
+
+	if aggregationResult == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+// ResolvedList
+// @Success 200 {object} common.PaginatedListResponse{data=[]Alarm}
+func (a *api) ResolvedList(c *gin.Context) {
+	r := SimpleIdListRequest{}
+	r.Query = pagination.GetDefaultQuery()
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+		return
+	}
+
+	apiKey := c.MustGet(auth.ApiKey).(string)
+	aggregationResult, err := a.store.FindResolved(c.Request.Context(), r.ID, apiKey, r.SimpleListRequest)
+	if err != nil {
+		panic(err)
+	}
+
+	if aggregationResult == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 		return
