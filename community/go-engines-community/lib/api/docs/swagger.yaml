@@ -1399,7 +1399,14 @@ paths:
                         "entity_pattern": [
                           [
                             {
-                              "field": "name",
+                              "field": "type",
+                              "cond": {
+                                "type": "eq",
+                                "value": "resource"
+                              }
+                            },
+                            {
+                              "field": "infos.group",
                               "cond": {
                                 "type": "eq",
                                 "value": "g1"
@@ -1481,7 +1488,14 @@ paths:
                         "entity_pattern": [
                           [
                             {
-                              "field": "name",
+                              "field": "type",
+                              "cond": {
+                                "type": "eq",
+                                "value": "resource"
+                              }
+                            },
+                            {
+                              "field": "infos.group",
                               "cond": {
                                 "type": "eq",
                                 "value": "g1"
@@ -6145,7 +6159,14 @@ paths:
                       "entity_pattern": [
                         [
                           {
-                            "field": "name",
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
                             "cond": {
                               "type": "eq",
                               "value": "g1"
@@ -6187,7 +6208,14 @@ paths:
                       "entity_pattern": [
                         [
                           {
-                            "field": "name",
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
                             "cond": {
                               "type": "eq",
                               "value": "g1"
@@ -6230,7 +6258,14 @@ paths:
                       "entity_pattern": [
                         [
                           {
-                            "field": "name",
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
                             "cond": {
                               "type": "eq",
                               "value": "g1"
@@ -6272,7 +6307,14 @@ paths:
                       "entity_pattern": [
                         [
                           {
-                            "field": "name",
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
                             "cond": {
                               "type": "eq",
                               "value": "g1"
@@ -6315,7 +6357,14 @@ paths:
                       "entity_pattern": [
                         [
                           {
-                            "field": "name",
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
                             "cond": {
                               "type": "eq",
                               "value": "g1"
@@ -6364,7 +6413,14 @@ paths:
                       "entity_pattern": [
                         [
                           {
-                            "field": "name",
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
                             "cond": {
                               "type": "eq",
                               "value": "g1"
@@ -6410,7 +6466,14 @@ paths:
                       "entity_pattern": [
                         [
                           {
-                            "field": "name",
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
                             "cond": {
                               "type": "eq",
                               "value": "g1"
@@ -6472,7 +6535,14 @@ paths:
                       "entity_pattern": [
                         [
                           {
-                            "field": "name",
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
                             "cond": {
                               "type": "eq",
                               "value": "g1"
@@ -6581,7 +6651,14 @@ paths:
                       "entity_pattern": [
                         [
                           {
-                            "field": "name",
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
                             "cond": {
                               "type": "eq",
                               "value": "g1"
@@ -6623,7 +6700,14 @@ paths:
                       "entity_pattern": [
                         [
                           {
-                            "field": "name",
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
                             "cond": {
                               "type": "eq",
                               "value": "g1"
@@ -6666,7 +6750,14 @@ paths:
                       "entity_pattern": [
                         [
                           {
-                            "field": "name",
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
                             "cond": {
                               "type": "eq",
                               "value": "g1"
@@ -6708,7 +6799,14 @@ paths:
                       "entity_pattern": [
                         [
                           {
-                            "field": "name",
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
                             "cond": {
                               "type": "eq",
                               "value": "g1"
@@ -6751,7 +6849,14 @@ paths:
                       "entity_pattern": [
                         [
                           {
-                            "field": "name",
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
                             "cond": {
                               "type": "eq",
                               "value": "g1"
@@ -6800,7 +6905,14 @@ paths:
                       "entity_pattern": [
                         [
                           {
-                            "field": "name",
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
                             "cond": {
                               "type": "eq",
                               "value": "g1"
@@ -6846,7 +6958,14 @@ paths:
                       "entity_pattern": [
                         [
                           {
-                            "field": "name",
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
                             "cond": {
                               "type": "eq",
                               "value": "g1"
@@ -6908,7 +7027,14 @@ paths:
                       "entity_pattern": [
                         [
                           {
-                            "field": "name",
+                            "field": "type",
+                            "cond": {
+                              "type": "eq",
+                              "value": "resource"
+                            }
+                          },
+                          {
+                            "field": "infos.group",
                             "cond": {
                               "type": "eq",
                               "value": "g1"
