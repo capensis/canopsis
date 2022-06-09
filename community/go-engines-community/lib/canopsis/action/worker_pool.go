@@ -157,6 +157,8 @@ func (s *pool) RunWorkers(ctx context.Context, taskChannel <-chan Task) (<-chan 
 
 								break
 							}
+
+							s.logger.Debug().Msgf("Worker %d send rpc for action '%s'", id, task.Action.Type)
 						}
 
 						s.logger.Debug().Interface("task", task).Msgf("Worker %d finished task", id)
