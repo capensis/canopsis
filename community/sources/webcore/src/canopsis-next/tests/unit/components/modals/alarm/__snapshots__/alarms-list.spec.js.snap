@@ -9,7 +9,7 @@ exports[`alarms-list Renders \`alarms-list\` 1`] = `
     class="title"
   >
     <span>
-      Alarms list
+      Alarm list
     </span>
   </div>
    

@@ -22,17 +22,8 @@ type api struct {
 	store Store
 }
 
-// Get account
-// @Summary Get account
-// @Description Get account
-// @Tags account
-// @ID account-get
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
+// Me
 // @Success 200 {object} User
-// @Failure 401 {object} common.ErrorResponse
-// @Router /account/me [get]
 func (a *api) Me(c *gin.Context) {
 	userID := c.MustGet(auth.UserKey)
 

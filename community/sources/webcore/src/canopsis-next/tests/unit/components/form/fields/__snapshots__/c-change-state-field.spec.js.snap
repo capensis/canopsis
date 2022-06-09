@@ -63,48 +63,6 @@ exports[`c-change-state-field Renders \`c-change-state-field\` after validate co
       </div>
     </div>
   </div>
-  <div
-    class="layout row"
-  >
-    <div
-      class="v-input v-text-field theme--light"
-    >
-      <div
-        class="v-input__control"
-      >
-        <div
-          class="v-input__slot"
-        >
-          <div
-            class="v-text-field__slot"
-          >
-            <label
-              aria-hidden="true"
-              class="v-label theme--light"
-              style="left: 0px; position: absolute;"
-            >
-              Author
-            </label>
-            <input
-              aria-label="Author"
-              type="text"
-            />
-          </div>
-        </div>
-        <div
-          class="v-text-field__details"
-        >
-          <div
-            class="v-messages theme--light"
-          >
-            <div
-              class="v-messages__wrapper"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 `;
 
@@ -165,48 +123,6 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with allowed chan
       </div>
     </div>
   </div>
-  <div
-    class="layout row"
-  >
-    <div
-      class="v-input v-text-field theme--light"
-    >
-      <div
-        class="v-input__control"
-      >
-        <div
-          class="v-input__slot"
-        >
-          <div
-            class="v-text-field__slot"
-          >
-            <label
-              aria-hidden="true"
-              class="v-label theme--light"
-              style="left: 0px; position: absolute;"
-            >
-              Author
-            </label>
-            <input
-              aria-label="Author"
-              type="text"
-            />
-          </div>
-        </div>
-        <div
-          class="v-text-field__details"
-        >
-          <div
-            class="v-messages theme--light"
-          >
-            <div
-              class="v-messages__wrapper"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 `;
 
@@ -261,48 +177,6 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with custom label
               class="v-messages__wrapper"
               name="message-transition"
               tag="div"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div
-    class="layout row"
-  >
-    <div
-      class="v-input v-text-field theme--light"
-    >
-      <div
-        class="v-input__control"
-      >
-        <div
-          class="v-input__slot"
-        >
-          <div
-            class="v-text-field__slot"
-          >
-            <label
-              aria-hidden="true"
-              class="v-label theme--light"
-              style="left: 0px; position: absolute;"
-            >
-              Author
-            </label>
-            <input
-              aria-label="Author"
-              type="text"
-            />
-          </div>
-        </div>
-        <div
-          class="v-text-field__details"
-        >
-          <div
-            class="v-messages theme--light"
-          >
-            <div
-              class="v-messages__wrapper"
             />
           </div>
         </div>
@@ -375,48 +249,6 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with errors corre
       </div>
     </div>
   </div>
-  <div
-    class="layout row"
-  >
-    <div
-      class="v-input v-text-field theme--light"
-    >
-      <div
-        class="v-input__control"
-      >
-        <div
-          class="v-input__slot"
-        >
-          <div
-            class="v-text-field__slot"
-          >
-            <label
-              aria-hidden="true"
-              class="v-label theme--light"
-              style="left: 0px; position: absolute;"
-            >
-              Author
-            </label>
-            <input
-              aria-label="Author"
-              type="text"
-            />
-          </div>
-        </div>
-        <div
-          class="v-text-field__details"
-        >
-          <div
-            class="v-messages theme--light"
-          >
-            <div
-              class="v-messages__wrapper"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 `;
 
@@ -471,48 +303,6 @@ exports[`c-change-state-field Renders \`c-change-state-field\` without allowed c
               class="v-messages__wrapper"
               name="message-transition"
               tag="div"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div
-    class="layout row"
-  >
-    <div
-      class="v-input v-text-field theme--light"
-    >
-      <div
-        class="v-input__control"
-      >
-        <div
-          class="v-input__slot"
-        >
-          <div
-            class="v-text-field__slot"
-          >
-            <label
-              aria-hidden="true"
-              class="v-label theme--light"
-              style="left: 0px; position: absolute;"
-            >
-              Author
-            </label>
-            <input
-              aria-label="Author"
-              type="text"
-            />
-          </div>
-        </div>
-        <div
-          class="v-text-field__details"
-        >
-          <div
-            class="v-messages theme--light"
-          >
-            <div
-              class="v-messages__wrapper"
             />
           </div>
         </div>

@@ -32,20 +32,8 @@ type api struct {
 	store    Store
 }
 
-// Upload files
-// @Summary Upload files
-// @Description Upload files
-// @Tags files
-// @ID file-upload
-// @Accept multipart/form-data
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param files formData string true "request"
-// @Param public query bool false "file visibility"
+// Create
 // @Success 200 {array} File
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /file [post]
 func (a *api) Create(c *gin.Context) {
 	form, err := c.MultipartForm()
 	if err != nil {
@@ -76,19 +64,6 @@ func (a *api) Create(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// Get file
-// @Summary Get file by ID
-// @Description Get file content by ID or download with file name
-// @Tags files
-// @ID files-get
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param id path string true "file id"
-// @Success 200 {object} http.Response
-// @Failure 404 {object} common.ErrorResponse
-// @Router /file/{id} [get]
 func (a *api) Get(c *gin.Context) {
 	m, err := a.store.Get(c.Request.Context(), c.Param("id"))
 	if err != nil {
@@ -118,19 +93,8 @@ func (a *api) Get(c *gin.Context) {
 	c.FileAttachment(path, m.FileName)
 }
 
-// List all files
-// @Summary List files by ID
-// @Description Get list of file objects by ID
-// @Tags files
-// @ID files-list
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
+// List
 // @Success 200 {object} []File
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Success 404 {object} http.Response{content=string} "Not Found"
-// @Router /file [get]
 func (a *api) List(c *gin.Context) {
 	res, err := a.store.List(c.Request.Context(), c.QueryArray("id"))
 	if err != nil || res == nil {
@@ -157,20 +121,6 @@ func (a *api) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// Delete file
-// @Summary Delete file
-// @Description Delete file by ID
-// @Tags files
-// @ID files-delete
-// @Accept json
-// @Produce json
-// @Security JWTAuth
-// @Security BasicAuth
-// @Param id path string true "file id"
-// @Success 204
-// @Failure 404 {object} common.ErrorResponse
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /file/{id} [delete]
 func (a *api) Delete(c *gin.Context) {
 	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
 	if err != nil {
