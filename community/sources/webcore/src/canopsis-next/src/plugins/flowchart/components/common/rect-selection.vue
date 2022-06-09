@@ -88,25 +88,9 @@
 <script>
 export default {
   props: {
-    x: {
-      type: Number,
+    rect: {
+      type: Object,
       required: true,
-    },
-    y: {
-      type: Number,
-      required: true,
-    },
-    width: {
-      type: Number,
-      required: true,
-    },
-    height: {
-      type: Number,
-      required: true,
-    },
-    rotate: {
-      type: Number,
-      default: 0,
     },
     padding: {
       type: Number,
@@ -123,19 +107,19 @@ export default {
   },
   computed: {
     leftX() {
-      return this.x - this.padding;
+      return this.rect.x - this.padding;
     },
 
     topY() {
-      return this.y - this.padding;
+      return this.rect.y - this.padding;
     },
 
     rightX() {
-      return this.x + this.width + this.padding;
+      return this.rect.x + this.rect.width + this.padding;
     },
 
     bottomY() {
-      return this.y + this.height + this.padding;
+      return this.rect.y + this.rect.height + this.padding;
     },
 
     selectionWidth() {
@@ -155,8 +139,8 @@ export default {
     },
   },
   methods: {
-    startResize(direction, event) {
-      this.$emit('start:resize', direction, event);
+    startResize(direction) {
+      this.$emit('start:resize', direction);
     },
   },
 };

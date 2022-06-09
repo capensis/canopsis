@@ -6,34 +6,30 @@
     @dblclick.stop="",
     @click.stop=""
   )
-    rect(
+    circle(
       v-bind="shape.style",
-      :x="shape.x",
-      :y="shape.y",
-      :width="shape.width",
-      :height="shape.height",
+      :cx="centerX",
+      :cy="centerY",
+      :r="radius",
       pointer-events="all"
     )
-    rect-shape-selection(
+    square-shape-selection(
       v-if="selected",
-      :x="shape.x",
-      :y="shape.y",
-      :width="shape.width",
-      :height="shape.height",
-      @start:resize="onStartResize"
+      :square="selection",
+      @resize="onResize"
     )
 </template>
 
 <script>
 import { formBaseMixin } from '@/mixins/form';
 
-import RectShapeSelection from './rect-shape-selection.vue';
+import SquareShapeSelection from '../square-shape/square-shape-selection.vue';
 
 export default {
-  components: { RectShapeSelection },
+  components: { SquareShapeSelection },
   mixins: [formBaseMixin],
   model: {
-    value: 'shape',
+    prop: 'shape',
     event: 'input',
   },
   props: {
@@ -50,6 +46,27 @@ export default {
       default: 0,
     },
   },
+  computed: {
+    radius() {
+      return this.shape.diameter / 2;
+    },
+
+    centerX() {
+      return this.shape.x + this.radius;
+    },
+
+    centerY() {
+      return this.shape.y + this.radius;
+    },
+
+    selection() {
+      return {
+        x: this.shape.x,
+        y: this.shape.y,
+        size: this.shape.diameter,
+      };
+    },
+  },
   methods: {
     move(newOffset, oldOffset) {
       const { x, y } = this.shape;
@@ -62,8 +79,13 @@ export default {
       });
     },
 
-    onStartResize(direction) {
-      this.$emit('start:resize', direction);
+    onResize(square) {
+      this.updateModel({
+        ...this.shape,
+        x: square.x,
+        y: square.y,
+        diameter: square.size,
+      });
     },
   },
 };
