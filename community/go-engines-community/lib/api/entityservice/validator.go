@@ -3,6 +3,7 @@ package entityservice
 import (
 	"context"
 	"errors"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
@@ -28,6 +29,12 @@ func (v *basicValidator) ValidateEditRequest(ctx context.Context, sl validator.S
 	r := sl.Current().Interface().(EditRequest)
 
 	v.validateCategory(ctx, sl, r.Category)
+
+	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 {
+		if !r.EntityPattern.Validate(common.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection)) {
+			sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
+		}
+	}
 }
 
 func (v *basicValidator) ValidateCreateRequest(sl validator.StructLevel) {

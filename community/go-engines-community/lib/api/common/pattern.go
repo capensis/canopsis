@@ -38,6 +38,20 @@ func (r AlarmPatternFieldsRequest) ToModel() savedpattern.AlarmPatternFields {
 	}
 }
 
+func (r AlarmPatternFieldsRequest) ToModelWithoutFields(forbiddenFields, onlyTimeAbsoluteFields []string) savedpattern.AlarmPatternFields {
+	if r.CorporatePattern.ID == "" {
+		return savedpattern.AlarmPatternFields{
+			AlarmPattern: r.AlarmPattern,
+		}
+	}
+
+	return savedpattern.AlarmPatternFields{
+		AlarmPattern:               r.CorporatePattern.AlarmPattern.RemoveFields(forbiddenFields, onlyTimeAbsoluteFields),
+		CorporateAlarmPattern:      r.CorporatePattern.ID,
+		CorporateAlarmPatternTitle: r.CorporatePattern.Title,
+	}
+}
+
 type EntityPatternFieldsRequest struct {
 	EntityPattern          pattern.Entity `json:"entity_pattern" binding:"entity_pattern"`
 	CorporateEntityPattern string         `json:"corporate_entity_pattern"`
@@ -54,6 +68,20 @@ func (r EntityPatternFieldsRequest) ToModel() savedpattern.EntityPatternFields {
 
 	return savedpattern.EntityPatternFields{
 		EntityPattern:               r.CorporatePattern.EntityPattern,
+		CorporateEntityPattern:      r.CorporatePattern.ID,
+		CorporateEntityPatternTitle: r.CorporatePattern.Title,
+	}
+}
+
+func (r EntityPatternFieldsRequest) ToModelWithoutFields(forbiddenFields []string) savedpattern.EntityPatternFields {
+	if r.CorporatePattern.ID == "" {
+		return savedpattern.EntityPatternFields{
+			EntityPattern: r.EntityPattern,
+		}
+	}
+
+	return savedpattern.EntityPatternFields{
+		EntityPattern:               r.CorporatePattern.EntityPattern.RemoveFields(forbiddenFields),
 		CorporateEntityPattern:      r.CorporatePattern.ID,
 		CorporateEntityPatternTitle: r.CorporatePattern.Title,
 	}
@@ -175,7 +203,7 @@ func ValidateAlarmPattern(fl validator.FieldLevel) bool {
 		return false
 	}
 
-	return p.Validate()
+	return p.Validate(nil, nil)
 }
 
 func ValidateEventPattern(fl validator.FieldLevel) bool {
@@ -188,7 +216,7 @@ func ValidateEventPattern(fl validator.FieldLevel) bool {
 		return false
 	}
 
-	return p.Validate()
+	return p.Validate(nil)
 }
 
 func ValidateEntityPattern(fl validator.FieldLevel) bool {
@@ -201,7 +229,7 @@ func ValidateEntityPattern(fl validator.FieldLevel) bool {
 		return false
 	}
 
-	return p.Validate()
+	return p.Validate(nil)
 }
 
 func ValidatePbehaviorPattern(fl validator.FieldLevel) bool {
@@ -214,5 +242,54 @@ func ValidatePbehaviorPattern(fl validator.FieldLevel) bool {
 		return false
 	}
 
-	return p.Validate()
+	return p.Validate(nil)
+}
+
+func GetForbiddenFieldsInEntityPattern(collection string) []string {
+	switch collection {
+	case mongo.EntityMongoCollection:
+		return []string{"last_event_date", "impact", "depends"}
+	case mongo.PbehaviorMongoCollection,
+		mongo.IdleRuleMongoCollection,
+		mongo.DynamicInfosRulesMongoCollection,
+		mongo.MetaAlarmRulesMongoCollection,
+		mongo.FlappingRuleMongoCollection,
+		mongo.ResolveRuleMongoCollection,
+		mongo.ScenarioMongoCollection,
+		mongo.InstructionMongoCollection,
+		mongo.FilterMongoCollection:
+		return []string{"last_event_date"}
+	default:
+		return nil
+	}
+}
+
+func GetForbiddenFieldsInAlarmPattern(collection string) []string {
+	switch collection {
+	case mongo.IdleRuleMongoCollection,
+		mongo.DynamicInfosRulesMongoCollection,
+		mongo.MetaAlarmRulesMongoCollection,
+		mongo.FlappingRuleMongoCollection,
+		mongo.ResolveRuleMongoCollection,
+		mongo.ScenarioMongoCollection,
+		mongo.InstructionMongoCollection:
+		return []string{"v.last_event_date", "v.last_update_date", "v.resolved"}
+	default:
+		return nil
+	}
+}
+
+func GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection string) []string {
+	switch collection {
+	case mongo.IdleRuleMongoCollection,
+		mongo.FlappingRuleMongoCollection,
+		mongo.DynamicInfosRulesMongoCollection,
+		mongo.MetaAlarmRulesMongoCollection,
+		mongo.ResolveRuleMongoCollection,
+		mongo.ScenarioMongoCollection,
+		mongo.InstructionMongoCollection:
+		return []string{"v.creation_date", "v.ack.t"}
+	default:
+		return nil
+	}
 }

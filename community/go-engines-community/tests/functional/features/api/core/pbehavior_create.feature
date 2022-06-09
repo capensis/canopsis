@@ -582,6 +582,41 @@ Feature: create a PBehavior
     When I do POST /api/v4/pbehaviors:
     """json
     {
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pbehavior-to-create-8-pattern"
+            }
+          },
+          {
+            "field": "last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "entity_pattern": "EntityPattern is invalid entity pattern."
+      }
+    }
+    """
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
       "corporate_entity_pattern": "test-pattern-to-rule-edit-1",
       "enabled":true,
       "name": "test-pbehavior-to-create-7",

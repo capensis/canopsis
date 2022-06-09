@@ -3,13 +3,14 @@ package pbehavior
 import (
 	"context"
 	"errors"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
-	"github.com/teambition/rrule-go"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorexception"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
+	"github.com/teambition/rrule-go"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
@@ -60,6 +61,12 @@ func (v *Validator) ValidateUpdateRequest(ctx context.Context, sl validator.Stru
 
 func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.StructLevel) {
 	r := sl.Current().Interface().(EditRequest)
+
+	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 {
+		if !r.EntityPattern.Validate(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)) {
+			sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
+		}
+	}
 
 	if r.RRule != "" {
 		if !v.checkRrule(r.RRule) {
@@ -124,10 +131,10 @@ func (v *Validator) ValidatePatchRequest(ctx context.Context, sl validator.Struc
 		sl.ReportError(r.CorporateEntityPattern, "CorporateEntityPattern", "CorporateEntityPattern", "required", "")
 	}
 
-	if r.EntityPattern != nil {
+	if r.CorporateEntityPattern == nil && r.EntityPattern != nil {
 		if len(r.EntityPattern) == 0 {
 			sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "required", "")
-		} else if !r.EntityPattern.Validate() {
+		} else if !r.EntityPattern.Validate(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)) {
 			sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
 		}
 	}
