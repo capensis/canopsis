@@ -1670,6 +1670,53 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /component-alarms:
+    get:
+      tags:
+        - alarms
+      summary: Find opened alarms of component's resource
+      description: Get paginated list of alarms.
+      operationId: alarms-find-component-alarms
+      parameters:
+        - name: _id
+          in: query
+          description: component id
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/sort'
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/alarm.Alarm'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /contextgraph/import:
     put:
       tags:
@@ -2639,7 +2686,7 @@ paths:
     get:
       tags:
         - alarms
-      summary: Find alarms of service's dependencies
+      summary: Find opened alarms of service's dependencies
       description: Get paginated list of alarms.
       operationId: alarms-find-service-alarms
       parameters:
@@ -5897,6 +5944,53 @@ paths:
       responses:
         204:
           description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /resolved-alarms:
+    get:
+      tags:
+        - alarms
+      summary: Find resolved alarms of entity
+      description: Get paginated list of alarms.
+      operationId: alarms-find-resolved-alarms
+      parameters:
+        - name: _id
+          in: query
+          description: entity id
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/sort'
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/alarm.Alarm'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
