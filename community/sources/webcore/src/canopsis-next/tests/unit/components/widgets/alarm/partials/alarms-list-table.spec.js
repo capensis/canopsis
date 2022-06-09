@@ -505,4 +505,25 @@ describe('alarms-list-table', () => {
 
     expect(wrapper.element).toMatchSnapshot();
   });
+
+  it('Renders `alarms-list-table` with default and required props with compact mode', () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        widget: {
+          ...defaultWidget,
+          parameters: {
+            ...defaultWidget.parameters,
+
+            dense: true,
+          },
+        },
+        alarms: [],
+        columns: [],
+        hasColumns: true,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
 });

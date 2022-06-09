@@ -262,6 +262,70 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
 </div>
 `;
 
+exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props with compact mode 1`] = `
+<div
+  class="flex white"
+>
+  <div
+    class="flex px-3 xs12"
+    style="display: none;"
+  >
+    <mass-actions-panel-stub
+      itemsids=""
+      widget="[object Object]"
+    />
+  </div>
+  <div>
+    <div
+      class="alarms-list-table columns-sm"
+    >
+      <div
+        class="v-table__overflow"
+      >
+        <table
+          class="v-datatable v-table theme--light"
+        >
+          <thead>
+            <tr>
+              <th
+                aria-label="common.actionsLabel: Not sorted."
+                aria-sort="none"
+                class="column text-xs-left"
+                role="columnheader"
+                scope="col"
+              >
+                <alarm-header-cell-stub
+                  header="[object Object]"
+                />
+              </th>
+            </tr>
+            <tr
+              class="v-datatable__progress"
+            >
+              <th
+                class="column"
+                colspan="1"
+              />
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                class="text-xs-center"
+                colspan="1"
+              >
+                No data available
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!---->
+</div>
+`;
+
 exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but without selectable 1`] = `
 <div
   class="flex white"
