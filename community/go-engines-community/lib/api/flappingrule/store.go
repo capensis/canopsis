@@ -46,31 +46,39 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 	if id == "" {
 		id = utils.NewID()
 	}
-	now := types.NewCpsTime(time.Now().Unix())
+	var resp *Response
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		resp = nil
+		now := types.NewCpsTime(time.Now().Unix())
 
-	_, err := s.dbCollection.InsertOne(ctx, flappingrule.Rule{
-		ID:             id,
-		Name:           request.Name,
-		Description:    request.Description,
-		FreqLimit:      request.FreqLimit,
-		Duration:       request.Duration,
-		AlarmPatterns:  request.AlarmPatterns,
-		EntityPatterns: request.EntityPatterns,
-		Priority:       request.Priority,
-		Author:         request.Author,
-		Created:        now,
-		Updated:        now,
+		_, err := s.dbCollection.InsertOne(ctx, flappingrule.Rule{
+			ID:             id,
+			Name:           request.Name,
+			Description:    request.Description,
+			FreqLimit:      request.FreqLimit,
+			Duration:       request.Duration,
+			AlarmPatterns:  request.AlarmPatterns,
+			EntityPatterns: request.EntityPatterns,
+			Priority:       request.Priority,
+			Author:         request.Author,
+			Created:        now,
+			Updated:        now,
+		})
+		if err != nil {
+			return err
+		}
+
+		err = s.updateFollowingPriorities(ctx, id, request.Priority)
+		if err != nil {
+			return err
+		}
+		resp, err = s.GetById(ctx, id)
+		return err
 	})
 	if err != nil {
 		return nil, err
 	}
-
-	err = s.updateFollowingPriorities(ctx, id, request.Priority)
-	if err != nil {
-		return nil, err
-	}
-
-	return s.GetById(ctx, id)
+	return resp, nil
 }
 
 func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
@@ -140,36 +148,45 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 		return nil, err
 	}
 
-	now := types.NewCpsTime(time.Now().Unix())
-	_, err = s.dbCollection.UpdateOne(
-		ctx,
-		bson.M{"_id": request.ID},
-		bson.M{"$set": flappingrule.Rule{
-			ID:             request.ID,
-			Name:           request.Name,
-			Description:    request.Description,
-			FreqLimit:      request.FreqLimit,
-			Duration:       request.Duration,
-			AlarmPatterns:  request.AlarmPatterns,
-			EntityPatterns: request.EntityPatterns,
-			Priority:       request.Priority,
-			Author:         request.Author,
-			Created:        model.Created,
-			Updated:        now,
-		}},
-	)
+	var resp *Response
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		resp = nil
+		now := types.NewCpsTime(time.Now().Unix())
+		_, err = s.dbCollection.UpdateOne(
+			ctx,
+			bson.M{"_id": request.ID},
+			bson.M{"$set": flappingrule.Rule{
+				ID:             request.ID,
+				Name:           request.Name,
+				Description:    request.Description,
+				FreqLimit:      request.FreqLimit,
+				Duration:       request.Duration,
+				AlarmPatterns:  request.AlarmPatterns,
+				EntityPatterns: request.EntityPatterns,
+				Priority:       request.Priority,
+				Author:         request.Author,
+				Created:        model.Created,
+				Updated:        now,
+			}},
+		)
+		if err != nil {
+			return err
+		}
+
+		if model.Priority != request.Priority {
+			err := s.updateFollowingPriorities(ctx, request.ID, request.Priority)
+			if err != nil {
+				return err
+			}
+		}
+
+		resp, err = s.GetById(ctx, model.ID)
+		return err
+	})
 	if err != nil {
 		return nil, err
 	}
-
-	if model.Priority != request.Priority {
-		err := s.updateFollowingPriorities(ctx, request.ID, request.Priority)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return s.GetById(ctx, model.ID)
+	return resp, nil
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {

@@ -342,3 +342,89 @@ Feature: Get alarms
       }
     }
     """
+
+  Scenario: instruction must not run if alarm is under pbh
+    When I am admin
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "type": 1,
+      "name": "test-instruction-instruction-pbehavior-alarm-api-2-name",
+      "entity_patterns": [
+        {
+          "name": "test-resource-instruction-pbehavior-alarm-api-2"
+        }
+      ],
+      "description": "test-instruction-instruction-pbehavior-alarm-api-2-description",
+      "enabled": true,
+      "disabled_on_pbh": ["test-maintenance-type-to-engine"],
+      "timeout_after_execution": {
+        "value": 1,
+        "unit": "s"
+      },
+      "jobs": [
+        {
+          "job": "test-job-to-run-auto-instruction-8"
+        }
+      ],
+      "priority": 30
+    }
+    """
+    Then the response code should be 201
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-instruction-pbehavior-alarm-api-2",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "1h" }},
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "filter":{
+        "$and":[
+          {
+            "name": "test-resource-instruction-pbehavior-alarm-api-2"
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-instruction-pbehavior-alarm-api-2",
+      "connector_name": "test-connector-name-instruction-pbehavior-alarm-api-2",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-instruction-pbehavior-alarm-api-2",
+      "resource": "test-resource-instruction-pbehavior-alarm-api-2",
+      "state": 1
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-resource-instruction-pbehavior-alarm-api-2&with_steps=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "steps": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc"
+              },
+              {
+                "_t": "pbhenter"
+              }
+            ]
+          }
+        }
+      ]
+    }
+    """

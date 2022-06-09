@@ -2,7 +2,6 @@ package executor
 
 import (
 	"context"
-	"fmt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -24,10 +23,9 @@ func NewInstructionExecutor(metricsSender metrics.Sender) operation.Executor {
 			types.EventTypeInstructionCompleted: types.AlarmStepInstructionComplete,
 			types.EventTypeInstructionFailed:    types.AlarmStepInstructionFail,
 			// Auto instruction
-			types.EventTypeAutoInstructionStarted:        types.AlarmStepAutoInstructionStart,
-			types.EventTypeAutoInstructionCompleted:      types.AlarmStepAutoInstructionComplete,
-			types.EventTypeAutoInstructionFailed:         types.AlarmStepAutoInstructionFail,
-			types.EventTypeAutoInstructionAlreadyRunning: types.AlarmStepAutoInstructionAlreadyRunning,
+			types.EventTypeAutoInstructionStarted:   types.AlarmStepAutoInstructionStart,
+			types.EventTypeAutoInstructionCompleted: types.AlarmStepAutoInstructionComplete,
+			types.EventTypeAutoInstructionFailed:    types.AlarmStepAutoInstructionFail,
 			// Manual and auto instruction
 			types.EventTypeInstructionAborted: types.AlarmStepInstructionAbort,
 			// Job
@@ -44,10 +42,9 @@ func NewInstructionExecutor(metricsSender metrics.Sender) operation.Executor {
 			types.EventTypeInstructionCompleted: types.AlarmChangeTypeInstructionComplete,
 			types.EventTypeInstructionFailed:    types.AlarmChangeTypeInstructionFail,
 			// Auto instruction
-			types.EventTypeAutoInstructionStarted:        types.AlarmChangeTypeAutoInstructionStart,
-			types.EventTypeAutoInstructionCompleted:      types.AlarmChangeTypeAutoInstructionComplete,
-			types.EventTypeAutoInstructionFailed:         types.AlarmChangeTypeAutoInstructionFail,
-			types.EventTypeAutoInstructionAlreadyRunning: types.AlarmChangeTypeAutoInstructionAlreadyRunning,
+			types.EventTypeAutoInstructionStarted:   types.AlarmChangeTypeAutoInstructionStart,
+			types.EventTypeAutoInstructionCompleted: types.AlarmChangeTypeAutoInstructionComplete,
+			types.EventTypeAutoInstructionFailed:    types.AlarmChangeTypeAutoInstructionFail,
 			// Manual and auto instruction
 			types.EventTypeInstructionAborted: types.AlarmChangeTypeInstructionAbort,
 			// Job
@@ -68,11 +65,7 @@ func (e *instructionExecutor) Exec(
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
-	var params types.OperationInstructionParameters
-	var ok bool
-	if params, ok = operation.Parameters.(types.OperationInstructionParameters); !ok {
-		return "", fmt.Errorf("invalid parameters")
-	}
+	params := operation.Parameters
 
 	if userID == "" {
 		userID = params.User
@@ -103,7 +96,7 @@ func (e *instructionExecutor) Exec(
 	}
 
 	switch alarmChangeType {
-	case types.AlarmStepAutoInstructionStart, types.AlarmStepAutoInstructionAlreadyRunning:
+	case types.AlarmStepAutoInstructionStart:
 		go e.metricsSender.SendAutoInstructionStart(context.Background(), *alarm, time.Time)
 	}
 

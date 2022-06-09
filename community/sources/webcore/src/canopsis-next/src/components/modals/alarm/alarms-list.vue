@@ -1,7 +1,7 @@
 <template lang="pug">
   modal-wrapper(close)
     template(#title="")
-      span {{ $t('modals.alarmsList.title') }}
+      span {{ title }}
     template(#text="")
       alarms-list-widget(:widget="config.widget", local-widget)
 </template>
@@ -26,6 +26,11 @@ export default {
   },
   components: { AlarmsListWidget, ModalWrapper },
   mixins: [modalInnerMixin],
+  computed: {
+    title() {
+      return this.config.title ?? this.$t('modals.alarmsList.title');
+    },
+  },
   beforeCreate() {
     this.$periodicRefresh = new Observer();
   },

@@ -98,9 +98,9 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 				Action: action.Action{
 					EntityPatterns: p,
 					Type:           "action_1",
-					Parameters: map[string]interface{}{
-						"output": "output 1",
-						"author": "author 1",
+					Parameters: action.Parameters{
+						Output: "output 1",
+						Author: "author 1",
 					},
 				},
 				Alarm: types.Alarm{
@@ -126,9 +126,9 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 				Action: action.Action{
 					EntityPatterns: p,
 					Type:           "action_2",
-					Parameters: map[string]interface{}{
-						"output": "output 2",
-						"author": "author 2",
+					Parameters: action.Parameters{
+						Output: "output 2",
+						Author: "author 2",
 					},
 				},
 				Alarm: types.Alarm{
@@ -144,9 +144,9 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 				Action: action.Action{
 					EntityPatterns: p,
 					Type:           "action_3",
-					Parameters: map[string]interface{}{
-						"output": "output 3",
-						"author": "author 3",
+					Parameters: action.Parameters{
+						Output: "output 3",
+						Author: "author 3",
 					},
 				},
 				Alarm: types.Alarm{
@@ -173,9 +173,9 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 				Action: action.Action{
 					EntityPatterns: p,
 					Type:           "action_1",
-					Parameters: map[string]interface{}{
-						"output": "rendered output: {{.Entity.ID}}",
-						"author": "rendered author: {{.Alarm.ID}}",
+					Parameters: action.Parameters{
+						Output: "rendered output: {{.Entity.ID}}",
+						Author: "rendered author: {{.Alarm.ID}}",
 					},
 				},
 				Alarm: types.Alarm{
@@ -223,16 +223,14 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 						err := decoder.Decode(message.Body, &event)
 						if err != nil {
 							t.Error("failed to decode rpc axe event")
-						} else if params, ok := event.Parameters.(types.OperationParameters); ok {
-							if params.Output != dataset.expectedOutput {
-								t.Errorf("expected output = %s, got %s", dataset.expectedOutput, params.Output)
+						} else {
+							if event.Parameters.Output != dataset.expectedOutput {
+								t.Errorf("expected output = %s, got %s", dataset.expectedOutput, event.Parameters.Output)
 							}
 
-							if params.Author != dataset.expectedAuthor {
-								t.Errorf("expected author = %s, got %s", dataset.expectedAuthor, params.Author)
+							if event.Parameters.Author != dataset.expectedAuthor {
+								t.Errorf("expected author = %s, got %s", dataset.expectedAuthor, event.Parameters.Author)
 							}
-						} else {
-							t.Errorf("unexpected action params: %+v", event.Parameters)
 						}
 
 						rpcWait <- 1

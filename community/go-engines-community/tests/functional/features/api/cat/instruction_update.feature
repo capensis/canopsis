@@ -409,7 +409,7 @@ Feature: Instruction update
         }
       ],
       "active_on_pbh": [
-        "pbh-type-for-instruction-with-pbehavior-1"
+        "test-default-maintenance-type"
       ]
     }
     """
@@ -419,7 +419,7 @@ Feature: Instruction update
     {
       "name": "test-instruction-with-pbh-to-edit-name",
       "active_on_pbh": [
-        "pbh-type-for-instruction-with-pbehavior-1"
+        "test-default-maintenance-type"
       ]
     }
     """
@@ -430,7 +430,7 @@ Feature: Instruction update
     """json
     {
       "active_on_pbh": [
-        "pbh-type-for-instruction-with-pbehavior-1",
+        "test-default-maintenance-type",
         "not-exist"
       ]
     }
