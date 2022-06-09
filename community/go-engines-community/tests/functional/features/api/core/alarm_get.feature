@@ -1272,6 +1272,42 @@ Feature: Get alarms
       }
     }
     """
+    When I do GET /api/v4/resolved-alarms?_id=test-resource-to-alarm-get-3/test-component-to-alarm-get&tstart=1597030241
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-alarm-to-get-3"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/resolved-alarms?_id=test-resource-to-alarm-get-3/test-component-to-alarm-get&tstop=1597030141
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-alarm-to-get-4"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
 
   Scenario: given get resolved by entity request should return validation error
     When I am admin
