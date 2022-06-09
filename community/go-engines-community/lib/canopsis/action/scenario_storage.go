@@ -133,42 +133,10 @@ func (s *scenarioStorage) RunDelayedScenarios(
 			var err error
 
 			for idx, action := range scenario.Actions {
-				if action.OldAlarmPatterns.IsSet() {
-					if !action.OldAlarmPatterns.IsValid() {
-						s.logger.Warn().Msgf("Action %d from scenario %s has an invalid old alarm pattern, skip", idx, scenario.ID)
-						break
-					}
-
-					matched = action.OldAlarmPatterns.Matches(&alarm)
-				} else {
-					matched, err = action.AlarmPattern.Match(alarm)
-					if err != nil {
-						s.logger.Err(err).Msgf("Action %d from scenario %s alarm pattern match returned error", idx, scenario.ID)
-						break
-					}
-				}
-
-				if !matched {
-					if action.DropScenarioIfNotMatched {
-						break
-					}
-
-					continue
-				}
-
-				if action.OldEntityPatterns.IsSet() {
-					if !action.OldEntityPatterns.IsValid() {
-						s.logger.Warn().Msgf("Action %d from scenario %s has an invalid old entity pattern, skip", idx, scenario.ID)
-						break
-					}
-
-					matched = action.OldEntityPatterns.Matches(&entity)
-				} else {
-					matched, _, err = action.EntityPattern.Match(entity)
-					if err != nil {
-						s.logger.Err(err).Msgf("Action %d from scenario %s entity pattern match returned error", idx, scenario.ID)
-						break
-					}
+				matched, err = action.Match(entity, alarm)
+				if err != nil {
+					s.logger.Err(err).Msgf("match action %d from scenario %s returned error", idx, scenario.ID)
+					break
 				}
 
 				if matched || action.DropScenarioIfNotMatched {
