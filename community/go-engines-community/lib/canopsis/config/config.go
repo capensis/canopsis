@@ -25,6 +25,7 @@ type SectionAlarm struct {
 	DisableActionSnoozeDelayOnPbh bool `toml:"DisableActionSnoozeDelayOnPbh"`
 	// TimeToKeepResolvedAlarms defines how long resolved alarms will be kept in main alarm collection
 	TimeToKeepResolvedAlarms string `toml:"TimeToKeepResolvedAlarms"`
+	AllowDoubleAck           bool   `toml:"AllowDoubleAck"`
 }
 
 // SectionGlobal ...

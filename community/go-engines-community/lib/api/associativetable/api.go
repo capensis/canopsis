@@ -36,19 +36,9 @@ func NewApi(
 	}
 }
 
-// Create/update associativetable
-// @Summary Create/update associativetable
-// @Description Create/update associativetable
-// @Tags associativetables
-// @ID associativetables-update
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
+// Update
 // @Param body body AssociativeTable true "body"
 // @Success 200 {object} AssociativeTable
-// @Failure 400 {object} common.ErrorResponse
-// @Router /associativetable [post]
 func (a api) Update(c *gin.Context) {
 	request := AssociativeTable{}
 	if err := c.ShouldBind(&request); err != nil {
@@ -78,18 +68,8 @@ func (a api) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, request)
 }
 
-// Get associativetable by name
-// @Summary Get associativetable by name
-// @Description Get associativetable by name
-// @Tags associativetables
-// @ID associativetables-get-by-name
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param name query string true "associativetable name"
+// Get
 // @Success 200 {object} AssociativeTable
-// @Failure 404 {object} common.ErrorResponse
-// @Router /associativetable [get]
 func (a api) Get(c *gin.Context) {
 	request := GetRequest{}
 	if err := c.ShouldBind(&request); err != nil {
@@ -109,17 +89,6 @@ func (a api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, at)
 }
 
-// Delete associativetable by name
-// @Summary Delete associativetable by name
-// @Description Delete associativetable by name
-// @Tags associativetables
-// @ID associativetables-delete-by-name
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param name query string true "associativetable name"
-// @Success 204
-// @Failure 404 {object} common.ErrorResponse
-// @Router /associativetable [delete]
 func (a api) Delete(c *gin.Context) {
 	request := GetRequest{}
 	if err := c.ShouldBind(&request); err != nil {

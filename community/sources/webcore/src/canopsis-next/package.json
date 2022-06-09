@@ -141,6 +141,7 @@
     ]
   },
   "resolutions": {
-    "dayspan/moment": "^2.22.2"
+    "dayspan/moment": "^2.22.2",
+    "moment-timezone/moment": "^2.22.2"
   }
 }

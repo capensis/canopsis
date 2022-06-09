@@ -146,6 +146,13 @@ import EngineeringIcon from '@/components/icons/engineering.vue';
 import InsightsIcon from '@/components/icons/insights.vue';
 import MiscellaneousServicesIcon from '@/components/icons/miscellaneous_services.vue';
 import PublishedWithChangesIcon from '@/components/icons/published_with_changes.vue';
+import DensityMediumIcon from '@/components/icons/density_medium.vue';
+import DensitySmallIcon from '@/components/icons/density_small.vue';
+
+/**
+ * Groups
+ */
+import CDensityBtnToggle from '@/components/common/groups/c-density-btn-toggle.vue';
 
 import * as modalsComponents from '@/components/modals';
 import * as sidebarsComponents from '@/components/sidebars';
@@ -183,6 +190,12 @@ Vue.use(Vuetify, {
     },
     published_with_changes: {
       component: PublishedWithChangesIcon,
+    },
+    density_medium: {
+      component: DensityMediumIcon,
+    },
+    density_small: {
+      component: DensitySmallIcon,
     },
   },
 });
@@ -265,6 +278,7 @@ Vue.component('c-fab-btn', CFabBtn);
 Vue.component('c-refresh-btn', CRefreshBtn);
 Vue.component('c-download-btn', CDownloadBtn);
 Vue.component('c-copy-btn', CCopyBtn);
+Vue.component('c-density-btn-toggle', CDensityBtnToggle);
 Vue.component('c-empty-data-table-columns', CEmptyDataTableColumns);
 Vue.component('c-enabled', CEnabled);
 Vue.component('c-ellipsis', CEllipsis);
@@ -348,7 +362,7 @@ Vue.use(ModalsPlugin, {
   dialogPropsMap: {
     [MODALS.pbehaviorList]: { maxWidth: 1280, lazy: true },
     [MODALS.createWidget]: { maxWidth: 500, lazy: true },
-    [MODALS.alarmsList]: { fullscreen: true, lazy: true },
+    [MODALS.alarmsList]: { maxWidth: '95%', lazy: true },
     [MODALS.createFilter]: { maxWidth: 1100, lazy: true },
     [MODALS.textEditor]: { maxWidth: 700, lazy: true, persistent: true },
     [MODALS.addInfoPopup]: { maxWidth: 700, lazy: true, persistent: true },

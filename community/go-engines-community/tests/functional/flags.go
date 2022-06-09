@@ -28,6 +28,7 @@ type Flags struct {
 	eventWaitExchange   string
 	eventLogs           string
 	checkUncaughtEvents bool
+	onlyFixtures        bool
 }
 
 type arrayFlag []string
@@ -52,9 +53,10 @@ func (f *Flags) ParseArgs() {
 	flag.StringVar(&f.eventLogs, "eventlogs", "", "Log all received events.")
 	flag.Int64Var(&f.dummyHttpPort, "dummyHttpPort", 3000, "Port for dummy http server.")
 	flag.BoolVar(&f.checkUncaughtEvents, "checkUncaughtEvents", false, "Enable catching event after each scenario.")
+	flag.BoolVar(&f.onlyFixtures, "onlyFixtures", false, "Only apply fixtures.")
 	flag.Parse()
 
-	if len(f.paths) == 0 {
+	if !f.onlyFixtures && len(f.paths) == 0 {
 		log.Fatal(fmt.Errorf("paths cannot be empty"))
 	}
 

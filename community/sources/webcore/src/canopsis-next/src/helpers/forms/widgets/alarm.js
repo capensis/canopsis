@@ -64,6 +64,7 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  * @property {boolean} isMultiAckEnabled
  * @property {boolean} isHtmlEnabledOnTimeLine
  * @property {boolean} sticky_header
+ * @property {boolean} dense
  */
 
 /**
@@ -160,6 +161,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isMultiAckEnabled: !!parameters.isMultiAckEnabled,
   isHtmlEnabledOnTimeLine: !!parameters.isHtmlEnabledOnTimeLine,
   sticky_header: !!parameters.sticky_header,
+  dense: !!parameters.dense,
   fastAckOutput: parameters.fastAckOutput
     ? { ...parameters.fastAckOutput }
     : {

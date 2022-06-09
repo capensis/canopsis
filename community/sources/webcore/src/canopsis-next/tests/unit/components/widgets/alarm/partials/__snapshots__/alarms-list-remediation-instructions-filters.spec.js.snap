@@ -24,7 +24,7 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
         aria-hidden="true"
         class="v-icon material-icons theme--light black--text"
       >
-        adjust
+        assignment
       </i>
     </div>
   </button>
@@ -62,7 +62,7 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
         aria-hidden="true"
         class="v-icon material-icons theme--light primary--text"
       >
-        adjust
+        assignment
       </i>
     </div>
   </button>
@@ -111,7 +111,7 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
         aria-hidden="true"
         class="v-icon material-icons theme--light primary--text"
       >
-        adjust
+        assignment
       </i>
     </div>
   </button>

@@ -24,24 +24,8 @@ type api struct {
 	store Store
 }
 
-// Find all services
-// @Summary Find all services
-// @Description Get paginated list of services
-// @Tags weather-services
-// @ID weather-services-find-all
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param page query integer true "current page"
-// @Param limit query integer true "items per page"
-// @Param filter query string false "filter query"
-// @Param sort query string false "sort query"
-// @Param sort_by query string false "sort query"
-// @Param category query string false "category"
+// List
 // @Success 200 {object} common.PaginatedListResponse{data=[]Service}
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /weather-services [get]
 func (a *api) List(c *gin.Context) {
 	var query ListRequest
 	query.Query = pagination.GetDefaultQuery()
@@ -65,24 +49,8 @@ func (a *api) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// Find all entity by service id
-// @Summary Find all entity by service id
-// @Description Get paginated list of entities
-// @Tags weather-services
-// @ID weather-services-find-all-entities
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Security BasicAuth
-// @Param id path string true "service id"
-// @Param page query integer true "current page"
-// @Param limit query integer true "items per page"
-// @Param sort query string false "sort query"
-// @Param sort_by query string false "sort query"
-// @Param with_instructions query boolean false "show assigned instructions and execution flags"
+// EntityList
 // @Success 200 {object} common.PaginatedListResponse{data=[]Entity}
-// @Failure 400 {object} common.ValidationErrorResponse
-// @Router /weather-services/{id} [get]
 func (a *api) EntityList(c *gin.Context) {
 	var query EntitiesListRequest
 	query.Query = pagination.GetDefaultQuery()
