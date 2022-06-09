@@ -98,8 +98,16 @@ func (p Alarm) Match(alarm types.Alarm) (bool, error) {
 	return false, nil
 }
 
-func (p Alarm) Validate() bool {
+func (p Alarm) Validate(forbiddenFields, onlyTimeAbsoluteFields []string) bool {
 	emptyAlarm := types.Alarm{}
+	forbiddenFieldsMap := make(map[string]bool, len(forbiddenFields))
+	for _, field := range forbiddenFields {
+		forbiddenFieldsMap[field] = true
+	}
+	timeAbsoluteFieldsMap := make(map[string]bool, len(onlyTimeAbsoluteFields))
+	for _, field := range onlyTimeAbsoluteFields {
+		timeAbsoluteFieldsMap[field] = true
+	}
 
 	for _, group := range p {
 		if len(group) == 0 {
@@ -110,6 +118,13 @@ func (p Alarm) Validate() bool {
 			f := v.Field
 			cond := v.Condition
 			var err error
+
+			if forbiddenFieldsMap[f] {
+				return false
+			}
+			if timeAbsoluteFieldsMap[f] && cond.Type == ConditionTimeRelative {
+				return false
+			}
 
 			if infoName := getAlarmInfoName(f); infoName != "" {
 				switch v.FieldType {
@@ -272,6 +287,41 @@ func (p Alarm) HasInfosField() bool {
 	}
 
 	return false
+}
+
+func (p Alarm) RemoveFields(fields, onlyTimeAbsoluteFields []string) Alarm {
+	forbiddenFieldsMap := make(map[string]bool, len(fields))
+	for _, field := range fields {
+		forbiddenFieldsMap[field] = true
+	}
+	timeAbsoluteFieldsMap := make(map[string]bool, len(onlyTimeAbsoluteFields))
+	for _, field := range onlyTimeAbsoluteFields {
+		timeAbsoluteFieldsMap[field] = true
+	}
+
+	newGroups := make(Alarm, 0, len(p))
+	for _, group := range p {
+		newGroup := make([]FieldCondition, 0, len(group))
+		for _, condition := range group {
+			if forbiddenFieldsMap[condition.Field] {
+				continue
+			}
+			if timeAbsoluteFieldsMap[condition.Field] && condition.Condition.Type == ConditionTimeRelative {
+				continue
+			}
+
+			newGroup = append(newGroup, condition)
+		}
+		if len(newGroup) > 0 {
+			newGroups = append(newGroups, newGroup)
+		}
+	}
+
+	if len(newGroups) > 0 {
+		return newGroups
+	}
+
+	return nil
 }
 
 func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {

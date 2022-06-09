@@ -50,6 +50,16 @@ Feature: update a pbehavior
               "type": "eq",
               "value": "test-pattern-to-pbehavior-pattern-1-pattern-updated"
             }
+          },
+          {
+            "field": "last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
           }
         ]
       ]
