@@ -176,29 +176,22 @@ func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 	return q.createPaginationAggregationPipeline(query), nil
 }
 
-func (q *MongoQueryBuilder) CreateServiceAggregationPipeline(
-	dependencies []string,
-	query pagination.Query,
+func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
+	match bson.M,
+	r SimpleListRequest,
 	now types.CpsTime,
 ) ([]bson.M, error) {
 	q.clear(now)
-
-	q.alarmMatch = append(q.alarmMatch,
-		bson.M{"$match": bson.M{
-			"d":          bson.M{"$in": dependencies},
-			"v.resolved": nil,
-		}},
-	)
-
+	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
 	err := q.handleSort(SortRequest{
-		Sort:   common.SortDesc,
-		SortBy: defaultTimeFieldOpened,
+		Sort:   r.Sort,
+		SortBy: r.SortBy,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	return q.createPaginationAggregationPipeline(query), nil
+	return q.createPaginationAggregationPipeline(r.Query), nil
 }
 
 func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(

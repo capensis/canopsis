@@ -62,6 +62,17 @@ func (r FilterRequest) GetOpenedFilter() int {
 	return OnlyResolved
 }
 
+type SimpleListRequest struct {
+	pagination.Query
+	Sort   string `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
+	SortBy string `form:"sort_by" json:"sort_by"`
+}
+
+type SimpleIdListRequest struct {
+	SimpleListRequest
+	ID string `form:"_id" json:"_id" binding:"required"`
+}
+
 type SortRequest struct {
 	MultiSort []string `form:"multi_sort[]" json:"multi_sort"`
 	Sort      string   `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`

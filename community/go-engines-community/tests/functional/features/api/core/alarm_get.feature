@@ -12,15 +12,15 @@ Feature: Get alarms
         {
           "_id": "test-alarm-to-get-3",
           "entity": {
-            "_id": "test-resource-to-alarm-get-3/test-component-default",
+            "_id": "test-resource-to-alarm-get-3/test-component-to-alarm-get",
             "category": null,
-            "component": "test-component-default",
+            "component": "test-component-to-alarm-get",
             "depends": [
               "test-connector-default/test-connector-default-name"
             ],
             "enabled": true,
             "impact": [
-              "test-component-default"
+              "test-component-to-alarm-get"
             ],
             "impact_level": 1,
             "infos": {},
@@ -33,7 +33,7 @@ Feature: Get alarms
           "t": 1597030221,
           "v": {
             "children": [],
-            "component": "test-component-default",
+            "component": "test-component-to-alarm-get",
             "connector": "test-connector-default",
             "connector_name": "test-connector-default-name",
             "creation_date": 1597030221,
@@ -78,7 +78,7 @@ Feature: Get alarms
         {
           "_id": "test-alarm-to-get-2",
           "entity": {
-            "_id": "test-resource-to-alarm-get-2/test-component-default",
+            "_id": "test-resource-to-alarm-get-2/test-component-to-alarm-get",
             "category": {
               "_id": "test-category-to-alarm-get-2",
               "name": "test-category-to-alarm-get-2-name",
@@ -86,13 +86,13 @@ Feature: Get alarms
               "created": 1592215337,
               "updated": 1592215337
             },
-            "component": "test-component-default",
+            "component": "test-component-to-alarm-get",
             "depends": [
               "test-connector-default/test-connector-default-name"
             ],
             "enabled": true,
             "impact": [
-              "test-component-default"
+              "test-component-to-alarm-get"
             ],
             "impact_level": 1,
             "infos": {},
@@ -105,7 +105,7 @@ Feature: Get alarms
           "t": 1597030220,
           "v": {
             "children": [],
-            "component": "test-component-default",
+            "component": "test-component-to-alarm-get",
             "connector": "test-connector-default",
             "connector_name": "test-connector-default-name",
             "creation_date": 1597030220,
@@ -148,7 +148,7 @@ Feature: Get alarms
         {
           "_id": "test-alarm-to-get-1",
           "entity": {
-            "_id": "test-resource-to-alarm-get-1/test-component-default",
+            "_id": "test-resource-to-alarm-get-1/test-component-to-alarm-get",
             "category": {
               "_id": "test-category-to-alarm-get-1",
               "name": "test-category-to-alarm-get-1-name",
@@ -156,13 +156,13 @@ Feature: Get alarms
               "created": 1592215337,
               "updated": 1592215337
             },
-            "component": "test-component-default",
+            "component": "test-component-to-alarm-get",
             "depends": [
               "test-connector-default/test-connector-default-name"
             ],
             "enabled": true,
             "impact": [
-              "test-component-default"
+              "test-component-to-alarm-get"
             ],
             "impact_level": 1,
             "infos": {
@@ -206,7 +206,7 @@ Feature: Get alarms
           "t": 1597030219,
           "v": {
             "children": [],
-            "component": "test-component-default",
+            "component": "test-component-to-alarm-get",
             "connector": "test-connector-default",
             "connector_name": "test-connector-default-name",
             "creation_date": 1597030219,
@@ -671,7 +671,7 @@ Feature: Get alarms
     {
       "_id": "test-alarm-to-get-1",
       "entity": {
-        "_id": "test-resource-to-alarm-get-1/test-component-default",
+        "_id": "test-resource-to-alarm-get-1/test-component-to-alarm-get",
         "category": {
           "_id": "test-category-to-alarm-get-1",
           "name": "test-category-to-alarm-get-1-name",
@@ -679,13 +679,13 @@ Feature: Get alarms
           "created": 1592215337,
           "updated": 1592215337
         },
-        "component": "test-component-default",
+        "component": "test-component-to-alarm-get",
         "depends": [
           "test-connector-default/test-connector-default-name"
         ],
         "enabled": true,
         "impact": [
-          "test-component-default"
+          "test-component-to-alarm-get"
         ],
         "impact_level": 1,
         "infos": {
@@ -729,7 +729,7 @@ Feature: Get alarms
       "t": 1597030219,
       "v": {
         "children": [],
-        "component": "test-component-default",
+        "component": "test-component-to-alarm-get",
         "connector": "test-connector-default",
         "connector_name": "test-connector-default-name",
         "creation_date": 1597030219,
@@ -785,20 +785,20 @@ Feature: Get alarms
     {
       "_id": "test-alarm-to-get-4",
       "entity": {
-        "_id": "test-resource-to-alarm-get-4/test-component-default",
+        "_id": "test-resource-to-alarm-get-3/test-component-to-alarm-get",
         "category": null,
-        "component": "test-component-default",
+        "component": "test-component-to-alarm-get",
         "depends": [
           "test-connector-default/test-connector-default-name"
         ],
         "enabled": true,
         "impact": [
-          "test-component-default"
+          "test-component-to-alarm-get"
         ],
         "impact_level": 1,
         "infos": {},
         "measurements": null,
-        "name": "test-resource-to-alarm-get-4",
+        "name": "test-resource-to-alarm-get-3",
         "type": "resource"
       },
       "impact_state": 0,
@@ -806,7 +806,7 @@ Feature: Get alarms
       "t": 1597030121,
       "v": {
         "children": [],
-        "component": "test-component-default",
+        "component": "test-component-to-alarm-get",
         "connector": "test-connector-default",
         "connector_name": "test-connector-default-name",
         "creation_date": 1597030121,
@@ -824,7 +824,7 @@ Feature: Get alarms
         ],
         "output": "test-alarm-to-get-4-output",
         "parents": [],
-        "resource": "test-resource-to-alarm-get-4",
+        "resource": "test-resource-to-alarm-get-3",
         "duration": 20,
         "current_state_duration": 0,
         "active_duration": 20,
@@ -1190,4 +1190,118 @@ Feature: Get alarms
   Scenario: given get details request and auth user without permissions should not allow access
     When I am noperms
     When I do POST /api/v4/alarm-details
+    Then the response code should be 403
+
+  Scenario: given get by component request should return opened resource alarms
+    When I am admin
+    When I do GET /api/v4/component-alarms?_id=test-component-to-alarm-get&sort_by=v.resource&sort=desc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-alarm-to-get-2"
+        },
+        {
+          "_id": "test-alarm-to-get-1"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+
+  Scenario: given get by component request should return validation error
+    When I am admin
+    When I do GET /api/v4/component-alarms
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "_id": "ID is missing."
+      }
+    }
+    """
+
+  Scenario: given get by component request should return not found error
+    When I am admin
+    When I do GET /api/v4/component-alarms?_id=not-exist
+    Then the response code should be 404
+    Then the response body should be:
+    """json
+    {
+      "error": "Not found"
+    }
+    """
+
+  Scenario: given get by component unauth request should not allow access
+    When I do GET /api/v4/component-alarms
+    Then the response code should be 401
+
+  Scenario: given get by component and auth user without permissions should not allow access
+    When I am noperms
+    When I do GET /api/v4/component-alarms
+    Then the response code should be 403
+
+  Scenario: given get resolved by entity request should return resolved entity alarms
+    When I am admin
+    When I do GET /api/v4/resolved-alarms?_id=test-resource-to-alarm-get-3/test-component-to-alarm-get&sort_by=_id&sort=desc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-alarm-to-get-4"
+        },
+        {
+          "_id": "test-alarm-to-get-3"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+
+  Scenario: given get resolved by entity request should return validation error
+    When I am admin
+    When I do GET /api/v4/resolved-alarms
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "_id": "ID is missing."
+      }
+    }
+    """
+
+  Scenario: given get resolved by entity request should return not found error
+    When I am admin
+    When I do GET /api/v4/resolved-alarms?_id=not-exist
+    Then the response code should be 404
+    Then the response body should be:
+    """json
+    {
+      "error": "Not found"
+    }
+    """
+
+  Scenario: given get resolved by entity unauth request should not allow access
+    When I do GET /api/v4/resolved-alarms
+    Then the response code should be 401
+
+  Scenario: given get resolved by entity and auth user without permissions should not allow access
+    When I am noperms
+    When I do GET /api/v4/resolved-alarms
     Then the response code should be 403

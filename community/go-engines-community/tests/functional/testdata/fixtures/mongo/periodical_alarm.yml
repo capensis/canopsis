@@ -125,13 +125,13 @@ periodical_alarm:
   alarm_to_get_1:
     <<: *alarm
     _id: test-alarm-to-get-1
-    d: test-resource-to-alarm-get-1/test-component-default
+    d: test-resource-to-alarm-get-1/test-component-to-alarm-get
     t: 1597030219
     v:
       <<: *alarm_value
       connector: test-connector-default
       connector_name: test-connector-default-name
-      component: test-component-default
+      component: test-component-to-alarm-get
       resource: test-resource-to-alarm-get-1
       display_name: RC-KC_tW
       creation_date: 1597030219
@@ -179,13 +179,13 @@ periodical_alarm:
   alarm_to_get_2:
     <<: *alarm
     _id: test-alarm-to-get-2
-    d: test-resource-to-alarm-get-2/test-component-default
+    d: test-resource-to-alarm-get-2/test-component-to-alarm-get
     t: 1597030220
     v:
       <<: *alarm_value
       connector: test-connector-default
       connector_name: test-connector-default-name
-      component: test-component-default
+      component: test-component-to-alarm-get
       resource: test-resource-to-alarm-get-2
       display_name: PU-YA-QB
       creation_date: 1597030220
@@ -226,13 +226,13 @@ periodical_alarm:
   alarm_to_get_3: &alarm_to_get_3
     <<: *resolved_alarm
     _id: test-alarm-to-get-3
-    d: test-resource-to-alarm-get-3/test-component-default
+    d: test-resource-to-alarm-get-3/test-component-to-alarm-get
     t: 1597030221
     v:
       <<: *alarm_value
       connector: test-connector-default
       connector_name: test-connector-default-name
-      component: test-component-default
+      component: test-component-to-alarm-get
       resource: test-resource-to-alarm-get-3
       display_name: PU-YA-QB
       creation_date: 1597030221
@@ -2764,14 +2764,14 @@ resolved_alarms:
   alarm_to_get_4:
     <<: *resolved_alarm
     _id: test-alarm-to-get-4
-    d: test-resource-to-alarm-get-4/test-component-default
+    d: test-resource-to-alarm-get-3/test-component-to-alarm-get
     t: 1597030121
     v:
       <<: *alarm_value
       connector: test-connector-default
       connector_name: test-connector-default-name
-      component: test-component-default
-      resource: test-resource-to-alarm-get-4
+      component: test-component-to-alarm-get
+      resource: test-resource-to-alarm-get-3
       display_name: PU-YA-QB
       creation_date: 1597030121
       last_event_date: 1597030121
@@ -2821,406 +2821,3 @@ resolved_alarms:
           t: 1597030141
           initiator: external
           val: 0
-
-  resolved_alarms_1:
-    _id: test-alarm-get-resolved-collection
-    d: test-alarm-get-resource-resolved-collection/test-alarm-get-resolved-collection-component
-    t: 1597030222
-    v:
-      ack:
-        _t: ack
-        a: root
-        initiator: user
-        m: ""
-        role: admin
-        t: 1597030351
-        val: 0
-      canceled:
-        _t: cancel
-        a: root
-        initiator: user
-        m: Test
-        role: admin
-        t: 1597030366
-        val: 4
-      children: [ ]
-      component: test-alarm-get-resolved-collection-component
-      connector: test-alarm-get-resolved-collection-connector
-      connector_name: test-alarm-get-resolved-collection-connectorname
-      creation_date: 1597030222
-      display_name: PK-SL-XK
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-alarm-get alarm
-      last_event_date: 1597030222
-      last_update_date: 1597030366
-      long_output: ""
-      long_output_history:
-        - ""
-      output: test-alarm-get criticité
-      parents: [ ]
-      resolved: 1597034023
-      resource: test-alarm-get-resource-resolved-collection
-      state:
-        _t: stateinc
-        a: test-alarm-get-resolved-collection-connector.test-alarm-get-resolved-collection-connectorname
-        m: test-alarm-get alarm
-        t: 1597030222
-        val: 1
-      status:
-        _t: cancel
-        a: root
-        initiator: user
-        m: Test
-        role: admin
-        t: 1597030366
-        val: 4
-      steps:
-        - _t: stateinc
-          a: test-alarm-get-resolved-collection-connector.test-alarm-get-resolved-collection-connectorname
-          m: test-alarm-get alarm
-          t: 1597030222
-          val: 1
-        - _t: statusinc
-          a: test-alarm-get-resolved-collection-connector.test-alarm-get-resolved-collection-connectorname
-          m: test-alarm-get alarm
-          t: 1597030222
-          val: 1
-        - _t: ack
-          a: root
-          initiator: user
-          m: ""
-          role: admin
-          t: 1597030351
-          val: 0
-        - _t: cancel
-          a: root
-          initiator: user
-          m: Test
-          role: admin
-          t: 1597030366
-          val: 0
-        - _t: statusinc
-          a: test-alarm-get-resolved-collection-connector.test-alarm-get-resolved-collection-connectorname
-          m: Test
-          t: 1597030366
-          val: 4
-      tags: [ ]
-      total_state_changes: 1
-  resolved_alarms_2:
-    _id: test-alarmcounter-get-resolved-1
-    d: test-alarmcounter-get-resolved-resource-1/test-alarmcounter-get-resolved-component
-    t: 1597030118
-    v:
-      ack:
-        _t: ack
-        a: root
-        initiator: user
-        m: ""
-        role: admin
-        t: 1597030351
-        val: 0
-      canceled:
-        _t: cancel
-        a: root
-        initiator: user
-        m: Test
-        role: admin
-        t: 1597030366
-        val: 4
-      children: [ ]
-      component: test-alarmcounter-get-resolved-component
-      connector: test-alarmcounter-get-resolved-connector
-      connector_name: test-alarmcounter-get-resolved-connectorname
-      creation_date: 1597030118
-      display_name: PK-SL-XK
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-alarmcounter-get-resolved alarm
-      last_event_date: 1597030118
-      last_update_date: 1597030366
-      long_output: ""
-      long_output_history:
-        - ""
-      output: test-alarmcounter-get-resolved alarm
-      parents: [ ]
-      resolved: 1597034023
-      resource: test-alarmcounter-get-resolved-resource-1
-      state:
-        _t: stateinc
-        a: test-alarmcounter-get-resolved-connector.test-alarmcounter-get-resolved-connectorname
-        m: test-alarmcounter-get-resolved alarm
-        t: 1597030118
-        val: 1
-      status:
-        _t: cancel
-        a: root
-        initiator: user
-        m: Test
-        role: admin
-        t: 1597030366
-        val: 4
-      steps:
-        - _t: stateinc
-          a: test-alarmcounter-get-resolved-connector.test-alarmcounter-get-resolved-connectorname
-          m: test-alarmcounter-get-resolved alarm
-          t: 1597030118
-          val: 1
-        - _t: statusinc
-          a: test-alarmcounter-get-resolved-connector.test-alarmcounter-get-resolved-connectorname
-          m: test-alarmcounter-get-resolved alarm
-          t: 1597030118
-          val: 1
-        - _t: ack
-          a: root
-          initiator: user
-          m: ""
-          role: admin
-          t: 1597030351
-          val: 0
-        - _t: cancel
-          a: root
-          initiator: user
-          m: Test
-          role: admin
-          t: 1597030366
-          val: 0
-        - _t: statusinc
-          a: test-alarmcounter-get-resolved-connector.test-alarmcounter-get-resolved-connectorname
-          m: Test
-          t: 1597030366
-          val: 4
-      tags: [ ]
-      total_state_changes: 1
-  resolved_alarms_3:
-    _id: test-alarm-to-stats-executions-get-with-resolved-alarms-resolved
-    d: test-resource-to-stats-executions-get-with-resolved-alarms-2/test-component-to-stats-executions-get-with-resolved-alarms-2
-    t: 1596942720
-    v:
-      children: [ ]
-      component: test-component-to-stats-executions-get-with-resolved-alarms-2
-      connector: test-connector-to-stats-executions-get-with-resolved-alarms-2
-      connector_name: test-connector-name-to-stats-executions-get-with-resolved-alarms-2
-      creation_date: 1596942720
-      display_name: RC-KC_tW
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: ""
-      last_event_date: 1596942720
-      last_update_date: 1596942720
-      long_output: ""
-      long_output_history:
-        - ""
-      output: ""
-      parents: [ ]
-      resolved: 1596943720
-      resource: test-resource-to-stats-executions-get-with-resolved-alarms-2
-      state:
-        _t: stateinc
-        a: ""
-        m: ""
-        t: 1596942720
-        val: 3
-      status:
-        _t: statusinc
-        a: ""
-        m: ""
-        t: 1596942720
-        val: 1
-      steps:
-        - _t: stateinc
-          a: ""
-          m: ""
-          t: 1596942720
-          val: 3
-        - _t: statusinc
-          a: ""
-          m: ""
-          t: 1596942720
-          val: 1
-        - _t: instructionstart
-          a: ""
-          m: ""
-          t: 1596942720
-          val: 1
-        - _t: instructioncomplete
-          a: ""
-          m: ""
-          t: 1596942720
-          val: 1
-      tags: [ ]
-      total_state_changes: 1
-  resolved_alarms_4:
-    _id: test-alarm-time-fields-search-get-resolved-1
-    d: test-alarm-time-fields-search-get-resolved-resource-1/test-alarm-time-fields-search-get-resolved-component
-    t: 2000000120
-    v:
-      children: [ ]
-      component: test-alarm-time-fields-search-get-resolved-component
-      connector: test-alarm-time-fields-search-get-resolved-connector
-      connector_name: test-alarm-time-fields-search-get-resolved-connectorname
-      creation_date: 1900000020
-      display_name: RC-KC_tW
-      extra: { }
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-alarm-time-fields-search-get-resolved alarm
-      last_event_date: 1700000020
-      last_update_date: 1800000020
-      long_output: test-alarm-time-fields-search-get-resolved-correlation-search
-      long_output_history:
-        - ""
-      output: test-alarm-time-fields-search-get-resolved alarm
-      parents: [ ]
-      resolved: 2200000000
-      resource: test-alarm-time-fields-search-get-resolved-resource-1
-      state:
-        _t: stateinc
-        a: test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname
-        m: test-alarm-time-fields-search-get-resolved alarm
-        t: 1596942720
-        val: 3
-      status:
-        _t: statusinc
-        a: test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname
-        m: test-alarm-time-fields-search-get-resolved alarm
-        t: 1596942720
-        val: 1
-      steps:
-        - _t: stateinc
-          a: test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname
-          m: test-alarm-time-fields-search-get-resolved alarm
-          t: 1596942720
-          val: 3
-        - _t: statusinc
-          a: test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname
-          m: test-alarm-time-fields-search-get-resolved alarm
-          t: 1596942720
-          val: 1
-        - _t: comment
-          a: system
-          initiator: user
-          m: comment test-alarm-time-fields-search-get-resolved
-          role: admin
-          t: 1597033041
-          val: 0
-      tags: [ ]
-      total_state_changes: 1
-  resolved_alarms_5:
-    _id: test-alarm-time-fields-search-get-resolved-2
-    d: test-alarm-time-fields-search-get-resolved-resource-2/test-alarm-time-fields-search-get-resolved-component
-    t: 2000000120
-    v:
-      children: [ ]
-      component: test-alarm-time-fields-search-get-resolved-component
-      connector: test-alarm-time-fields-search-get-resolved-connector
-      connector_name: test-alarm-time-fields-search-get-resolved-connectorname
-      creation_date: 1900000020
-      display_name: RC-KC_tW
-      extra: { }
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-alarm-time-fields-search-get-resolved alarm
-      last_event_date: 1700000020
-      last_update_date: 1800000020
-      long_output: test-alarm-time-fields-search-get-resolved-correlation-search
-      long_output_history:
-        - ""
-      output: test-alarm-time-fields-search-get-resolved alarm
-      parents: [ ]
-      resolved: 2200000010
-      resource: test-alarm-time-fields-search-get-resolved-resource-2
-      state:
-        _t: stateinc
-        a: test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname
-        m: test-alarm-time-fields-search-get-resolved alarm
-        t: 1596942720
-        val: 3
-      status:
-        _t: statusinc
-        a: test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname
-        m: test-alarm-time-fields-search-get-resolved alarm
-        t: 1596942720
-        val: 1
-      steps:
-        - _t: stateinc
-          a: test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname
-          m: test-alarm-time-fields-search-get-resolved alarm
-          t: 1596942720
-          val: 3
-        - _t: statusinc
-          a: test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname
-          m: test-alarm-time-fields-search-get-resolved alarm
-          t: 1596942720
-          val: 1
-        - _t: comment
-          a: system
-          initiator: user
-          m: comment test-alarm-time-fields-search-get-resolved
-          role: admin
-          t: 1597033041
-          val: 0
-      tags: [ ]
-      total_state_changes: 1
-  resolved_alarms_6:
-    _id: test-alarm-time-fields-search-get-resolved-3
-    d: test-alarm-time-fields-search-get-resolved-resource-3/test-alarm-time-fields-search-get-resolved-component
-    t: 2000000120
-    v:
-      children: [ ]
-      component: test-alarm-time-fields-search-get-resolved-component
-      connector: test-alarm-time-fields-search-get-resolved-connector
-      connector_name: test-alarm-time-fields-search-get-resolved-connectorname
-      creation_date: 1900000020
-      display_name: RC-KC_tW
-      extra: { }
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-alarm-time-fields-search-get-resolved alarm
-      last_event_date: 1700000020
-      last_update_date: 1800000020
-      long_output: test-alarm-time-fields-search-get-resolved-correlation-search
-      long_output_history:
-        - ""
-      output: test-alarm-time-fields-search-get-resolved alarm
-      parents: [ ]
-      resolved: 2200000020
-      resource: test-alarm-time-fields-search-get-resolved-resource-3
-      state:
-        _t: stateinc
-        a: test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname
-        m: test-alarm-time-fields-search-get-resolved alarm
-        t: 1596942720
-        val: 3
-      status:
-        _t: statusinc
-        a: test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname
-        m: test-alarm-time-fields-search-get-resolved alarm
-        t: 1596942720
-        val: 1
-      steps:
-        - _t: stateinc
-          a: test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname
-          m: test-alarm-time-fields-search-get-resolved alarm
-          t: 1596942720
-          val: 3
-        - _t: statusinc
-          a: test-alarm-time-fields-search-get-resolved-connector.test-alarm-time-fields-search-get-resolved-connectorname
-          m: test-alarm-time-fields-search-get-resolved alarm
-          t: 1596942720
-          val: 1
-        - _t: comment
-          a: system
-          initiator: user
-          m: comment test-alarm-time-fields-search-get-resolved
-          role: admin
-          t: 1597033041
-          val: 0
-      tags: [ ]
-      total_state_changes: 1

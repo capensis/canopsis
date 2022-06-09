@@ -289,6 +289,16 @@ func RegisterRoutes(
 			alarmAPI.ListByService,
 		)
 		protected.GET(
+			"/component-alarms",
+			middleware.Authorize(authPermAlarmRead, permCan, enforcer),
+			alarmAPI.ListByComponent,
+		)
+		protected.GET(
+			"/resolved-alarms",
+			middleware.Authorize(authPermAlarmRead, permCan, enforcer),
+			alarmAPI.ResolvedList,
+		)
+		protected.GET(
 			"/alarm-counters",
 			middleware.Authorize(authPermAlarmRead, permCan, enforcer),
 			alarmAPI.Count,
