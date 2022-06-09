@@ -3,7 +3,6 @@
     ref="svg",
     width="100%",
     height="100%",
-    @click="addShape",
     @mousemove="onContainerMouseMove",
     @mouseup="onContainerMouseUp"
   )
@@ -16,32 +15,22 @@
       :shape="shape",
       :selected="isSelected(shape)",
       @mousedown="onShapeMouseDown(shape, $event)",
-      @mouseup="onShapeMouseUp(shape, $event)",
-      @start:resize="onShapeStartResize(shape, $event)"
+      @mouseup="onShapeMouseUp(shape, $event)"
     )
 </template>
 
 <script>
-import { omit } from 'lodash';
+import { cloneDeep, omit } from 'lodash';
 
 import Observer from '@/services/observer';
 
 import { roundByStep } from '../utils/round';
 
-import RectShape from './rect-shape.vue';
-import LineShape from './line-shape.vue';
-
-const SHAPE_TYPES = {
-  rect: 'rect',
-  line: 'line',
-};
-
-const DIRECTIONS = {
-  north: 'n',
-  west: 'w',
-  south: 's',
-  east: 'e',
-};
+import RectShape from './rect-shape/rect-shape.vue';
+import LineShape from './line-shape/line-shape.vue';
+import ArrowLineShape from './arrow-line/arrow-line-shape.vue';
+import CircleShape from './circle-shape/circle-shape.vue';
+import SquareShape from './square-shape/square-shape.vue';
 
 export default {
   provide() {
@@ -50,9 +39,13 @@ export default {
       $mouseUp: this.$mouseUp,
     };
   },
-  components: { RectShape, LineShape },
+  components: { RectShape, LineShape, ArrowLineShape, CircleShape, SquareShape },
   props: {
-    movingStep: {
+    shapes: {
+      type: Object,
+      default: () => ({}),
+    },
+    gridSize: {
       type: Number,
       default: 5,
     },
@@ -77,12 +70,16 @@ export default {
     };
   },
   computed: {
-    shapes() {
-      return this.data;
-    },
-
     hasSelected() {
       return !!this.selected.length;
+    },
+  },
+  watch: {
+    shapes: {
+      immediate: true,
+      handler(value) {
+        this.data = cloneDeep(value);
+      },
     },
   },
   beforeCreate() {
@@ -114,52 +111,10 @@ export default {
       this.selected = this.selected.filter(id => id !== shape.id);
     },
 
-    addShape() {
-      if (this.resizing || this.moving) {
-        return;
-      }
+    getShapeComponentById(shapeId) {
+      const [shapeComponent] = this.$refs[`shape_${shapeId}`];
 
-      if (this.hasSelected) {
-        this.clearSelected();
-        return;
-      }
-
-      const { width, height } = this.$refs.svg.getBoundingClientRect();
-      const types = Object.values(SHAPE_TYPES);
-      const index = Math.floor(Math.random() * types.length);
-      const type = types[index];
-      const centerX = roundByStep(width / 2, this.movingStep);
-      const centerY = roundByStep(height / 2, this.movingStep);
-
-      const newShape = type === SHAPE_TYPES.rect
-        ? {
-          id: Date.now(),
-          type,
-          width: 100,
-          height: 100,
-          x: centerX,
-          y: centerY,
-          style: {
-            fill: 'orange',
-          },
-        }
-        : {
-          id: Date.now(),
-          type,
-          x1: centerX - 50,
-          y1: centerY,
-          x2: centerX + 50,
-          y2: centerY,
-          style: {
-            stroke: 'orange',
-            'stroke-width': 1,
-          },
-        };
-
-      this.$set(this.data, newShape.id, newShape);
-
-      this.clearSelected();
-      this.setSelected(newShape);
+      return shapeComponent;
     },
 
     onShapeMouseDown(shape, event) {
@@ -174,18 +129,14 @@ export default {
 
       const { offsetX, offsetY } = event;
       this.moving = true;
-      this.movingStart = { x: offsetX, y: offsetY };
-    },
-
-    onShapeStartResize(shape, direction) {
-      this.resizing = {
-        id: shape.id,
-        direction,
+      this.movingStart = {
+        x: roundByStep(offsetX, this.gridSize),
+        y: roundByStep(offsetY, this.gridSize),
       };
     },
 
     onShapeMouseUp(shape, event) {
-      if (this.resizing || this.movingOffset.x || this.movingOffset.y) {
+      if (this.movingOffset.x || this.movingOffset.y) {
         return;
       }
 
@@ -210,127 +161,48 @@ export default {
     },
 
     onContainerMouseUp() {
-      if (this.resizing) {
-        this.resizing = undefined;
-        return;
-      }
-
       if (this.moving) {
         this.moving = false;
         this.movingStart = { x: 0, y: 0 };
         this.movingOffset = { x: 0, y: 0 };
+        return;
       }
 
       this.$mouseUp.notify();
+      this.clearSelected();
     },
 
-    handleShapeResize(event) {
-      const offsetX = roundByStep(event.offsetX, this.movingStep);
-      const offsetY = roundByStep(event.offsetY, this.movingStep);
-      const shape = this.data[this.resizing.id];
+    moveSelected(newOffset, oldOffset = { x: 0, y: 0 }) {
+      this.selected.forEach((id) => {
+        const shapeComponent = this.getShapeComponentById(id);
 
-      const directionArray = this.resizing.direction.split('');
-
-      directionArray.forEach((direction, index) => {
-        switch (direction) {
-          case DIRECTIONS.south: {
-            const newHeight = offsetY - shape.y;
-
-            if (newHeight > 0) {
-              shape.height = newHeight;
-            } else {
-              shape.height = Math.abs(newHeight);
-              shape.y -= shape.height;
-
-              directionArray[index] = DIRECTIONS.north;
-            }
-
-            break;
-          }
-          case DIRECTIONS.north: {
-            const newHeight = shape.height + shape.y - offsetY;
-
-            if (newHeight > 0) {
-              shape.height = newHeight;
-              shape.y = offsetY;
-            } else {
-              shape.height = Math.abs(newHeight);
-              shape.y = offsetY - shape.height;
-
-              directionArray[index] = DIRECTIONS.south;
-            }
-
-            break;
-          }
-          case DIRECTIONS.east: {
-            const newWidth = offsetX - shape.x;
-
-            if (newWidth > 0) {
-              shape.width = newWidth;
-            } else {
-              shape.width = Math.abs(newWidth);
-              shape.x = offsetX;
-
-              directionArray[index] = DIRECTIONS.west;
-            }
-
-            break;
-          }
-          case DIRECTIONS.west: {
-            const newWidth = shape.width + shape.x - offsetX;
-
-            if (newWidth > 0) {
-              shape.width = newWidth;
-              shape.x = offsetX;
-            } else {
-              shape.width = Math.abs(newWidth);
-              shape.x = offsetX - shape.width;
-
-              directionArray[index] = DIRECTIONS.east;
-            }
-
-            break;
-          }
+        if (shapeComponent.move) {
+          shapeComponent.move(newOffset, oldOffset);
         }
       });
-
-      this.resizing.direction = directionArray.join('');
     },
 
     handleShapeMove(event) {
-      const newMovingOffsetX = roundByStep(event.offsetX - this.movingStart.x, this.movingStep);
-      const newMovingOffsetY = roundByStep(event.offsetY - this.movingStart.y, this.movingStep);
+      const newMovingOffsetX = roundByStep(event.offsetX - this.movingStart.x, this.gridSize);
+      const newMovingOffsetY = roundByStep(event.offsetY - this.movingStart.y, this.gridSize);
       const newMovingOffset = {
         x: newMovingOffsetX,
         y: newMovingOffsetY,
       };
 
-      this.selected.forEach((id) => {
-        const shape = this.data[id];
-
-        const [shapeComponent] = this.$refs[`shape_${shape.id}`];
-
-        if (shapeComponent.move) {
-          shapeComponent.move(newMovingOffset, this.movingOffset);
-        }
-      });
+      this.moveSelected(newMovingOffset, this.movingOffset);
 
       this.movingOffset = newMovingOffset;
     },
 
     onContainerMouseMove(event) {
-      if (this.resizing) {
-        this.handleShapeResize(event);
-        return;
-      }
-
       if (this.moving) {
         this.handleShapeMove(event);
       }
 
       const cursor = {
-        x: roundByStep(event.offsetX, this.movingStep),
-        y: roundByStep(event.offsetY, this.movingStep),
+        x: roundByStep(event.offsetX, this.gridSize),
+        y: roundByStep(event.offsetY, this.gridSize),
       };
 
       if (this.cursor.x !== cursor.x || this.cursor.y !== cursor.y) {
@@ -341,27 +213,19 @@ export default {
     },
 
     moveSelectedDown() {
-      this.selected.forEach((id) => {
-        this.data[id].y += this.movingStep;
-      });
+      this.moveSelected({ x: 0, y: this.gridSize });
     },
 
     moveSelectedTop() {
-      this.selected.forEach((id) => {
-        this.data[id].y -= this.movingStep;
-      });
+      this.moveSelected({ x: 0, y: -this.gridSize });
     },
 
     moveSelectedRight() {
-      this.selected.forEach((id) => {
-        this.data[id].x += this.movingStep;
-      });
+      this.moveSelected({ x: this.gridSize, y: 0 });
     },
 
     moveSelectedLeft() {
-      this.selected.forEach((id) => {
-        this.data[id].x -= this.movingStep;
-      });
+      this.moveSelected({ x: -this.gridSize, y: 0 });
     },
 
     removeSelected() {
