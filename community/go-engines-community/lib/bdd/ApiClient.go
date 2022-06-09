@@ -727,7 +727,7 @@ func (a *ApiClient) IDoRequestWithBody(method, uri string, doc string) error {
 	if doc == "" {
 		return fmt.Errorf("body is empty")
 	}
-	if strings.Contains(uri, "until response") {
+	if strings.Contains(uri, "until") {
 		return fmt.Errorf("step is wrongly matched to IDoRequestWithBody")
 	}
 
