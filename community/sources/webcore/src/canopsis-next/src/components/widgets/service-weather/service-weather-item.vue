@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import VRuntimeTemplate from 'v-runtime-template';
 
 import {
@@ -55,6 +56,8 @@ import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import AlarmCounters from './alarm-counters.vue';
 import ImpactStateIndicator from './impact-state-indicator.vue';
+
+const { mapActions } = createNamespacedHelpers('service');
 
 export default {
   components: {
@@ -168,6 +171,10 @@ export default {
     },
   },
   methods: {
+    ...mapActions({
+      fetchServiceAlarmsWithoutStore: 'fetchAlarmsWithoutStore',
+    }),
+
     showAdditionalInfoModal(e) {
       if (e.target.tagName !== 'A' || !e.target.href) {
         if (this.isAlarmListModalType && this.hasAlarmsListAccess) {
@@ -196,12 +203,11 @@ export default {
         widget.parameters.serviceDependenciesColumns = this.widget.parameters.serviceDependenciesColumns;
 
         this.$modals.show({
-          name: MODALS.serviceAlarms,
+          name: MODALS.alarmsList,
           config: {
             widget,
 
-            columns: this.widget.parameters.serviceDependenciesColumns,
-            fetchList: () => {}, // TODO: finish it
+            fetchList: params => this.fetchServiceAlarmsWithoutStore({ id: this.service._id, params }),
           },
         });
       } catch (err) {

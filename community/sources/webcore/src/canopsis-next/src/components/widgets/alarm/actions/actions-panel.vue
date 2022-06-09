@@ -265,7 +265,7 @@ export default {
   },
   methods: {
     showExecuteInstructionModal(assignedInstruction) {
-      const refreshAlarm = () => this.refreshAlarmById(this.item._id);
+      const refreshAlarm = () => this.refreshAlarmsList();
 
       this.$modals.show({
         id: `${this.item._id}${assignedInstruction._id}`,

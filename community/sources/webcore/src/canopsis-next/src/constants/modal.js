@@ -13,7 +13,6 @@ export const MODALS = {
   createEntityInfo: 'create-entity-info',
   serviceEntities: 'service-entities',
   serviceDependencies: 'service-dependencies',
-  serviceAlarms: 'service-alarms',
   createServicePauseEvent: 'create-service-pause-event',
   pbehaviorList: 'pbehavior-list',
   editLiveReporting: 'edit-live-reporting',
