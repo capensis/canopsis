@@ -21,7 +21,6 @@ import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
  * @mixin Mixin for the alarms list actions panel, show modal of the action
  */
 export const widgetActionsPanelAlarmMixin = {
-  inject: ['$refreshAlarmsList'],
   mixins: [
     authMixin,
     queryMixin,
@@ -38,7 +37,7 @@ export const widgetActionsPanelAlarmMixin = {
 
       await this.createEvent(EVENT_ENTITY_TYPES.ack, this.item, eventData);
 
-      return this.$refreshAlarmsList();
+      return this.refreshAlarmsList();
     },
 
     showCreateCommentModal() {
@@ -192,7 +191,7 @@ export const widgetActionsPanelAlarmMixin = {
       widget.parameters.viewFilters = [entityFilter];
 
       this.$modals.show({
-        name: MODALS.alarmsList, // TODO: do it like on service
+        name: MODALS.alarmsList,
         config: {
           widget,
         },

@@ -277,3 +277,14 @@ export const formToAlarmListWidgetParameters = form => ({
   infoPopups: formInfoPopupsToInfoPopups(form.infoPopups),
   sort: formSortToWidgetSort(form.sort),
 });
+
+/**
+ * TODO: Add DOC
+ * @param columns
+ * @returns {(*&{text: *})[]}
+ */
+export const alarmsListColumnsToTableColumns = (columns = []) => columns.map(({ label, ...column }) => ({
+  ...column,
+
+  text: label,
+}));
