@@ -130,75 +130,35 @@ func (s *pool) RunWorkers(ctx context.Context, taskChannel <-chan Task) (<-chan 
 						var err error
 						var match bool
 
-						if task.Action.OldAlarmPatterns.IsSet() {
-							if !task.Action.OldAlarmPatterns.IsValid() {
-								s.logger.Warn().Msgf("Action %d from scenario %s has an invalid old alarm pattern, skip", task.Step, task.ScenarioID)
-							} else {
-								match = task.Action.OldAlarmPatterns.Matches(&task.Alarm)
-							}
-						} else {
-							match, err = task.Action.AlarmPattern.Match(task.Alarm)
-							if err != nil {
-								s.logger.Err(err).Msgf("Action %d from scenario %s alarm pattern match returned error", task.Step, task.ScenarioID)
-							}
-						}
-
-						if !match {
-							resultChannel <- TaskResult{
-								Source:      source,
-								Alarm:       task.Alarm,
-								Step:        task.Step,
-								ExecutionID: task.ExecutionID,
-								Status:      TaskNotMatched,
-							}
-
-							s.logger.Debug().Interface("task", task).Msgf("Worker %d finished task", id)
-
-							continue
-						}
-
-						if task.Action.OldEntityPatterns.IsSet() {
-							if !task.Action.OldEntityPatterns.IsValid() {
-								s.logger.Warn().Msgf("Action %d from scenario %s has an invalid old alarm pattern, skip", task.Step, task.ScenarioID)
-							} else {
-								match = task.Action.OldEntityPatterns.Matches(&task.Entity)
-							}
-						} else {
-							match, _, err = task.Action.EntityPattern.Match(task.Entity)
-							if err != nil {
-								s.logger.Err(err).Msgf("Action %d from scenario %s alarm pattern match returned error", task.Step, task.ScenarioID)
-							}
-						}
-
-						if !match {
-							resultChannel <- TaskResult{
-								Source:      source,
-								Alarm:       task.Alarm,
-								Step:        task.Step,
-								ExecutionID: task.ExecutionID,
-								Status:      TaskNotMatched,
-							}
-
-							s.logger.Debug().Interface("task", task).Msgf("Worker %d finished task", id)
-
-							continue
-						}
-
-						err = s.call(ctx, task, id)
+						match, err = task.Action.Match(task.Entity, task.Alarm)
 						if err != nil {
+							s.logger.Err(err).Msgf("match action %d from scenario %s returned error", task.Step, task.ScenarioID)
+						}
+
+						if !match {
 							resultChannel <- TaskResult{
 								Source:      source,
 								Alarm:       task.Alarm,
 								Step:        task.Step,
 								ExecutionID: task.ExecutionID,
-								Status:      TaskRpcError,
-								Err:         err,
+								Status:      TaskNotMatched,
 							}
+						} else {
+							err = s.call(ctx, task, id)
+							if err != nil {
+								resultChannel <- TaskResult{
+									Source:      source,
+									Alarm:       task.Alarm,
+									Step:        task.Step,
+									ExecutionID: task.ExecutionID,
+									Status:      TaskRpcError,
+									Err:         err,
+								}
 
-							break
+								break
+							}
 						}
 
-						s.logger.Debug().Msgf("Worker %d send rpc for action '%s'", id, task.Action.Type)
 						s.logger.Debug().Interface("task", task).Msgf("Worker %d finished task", id)
 					}
 				}

@@ -17,6 +17,12 @@ func ValidateActionRequest(sl validator.StructLevel) {
 	if r.Type != "" {
 		validateActionParametersRequest(sl, r.Type, r.Parameters)
 	}
+
+	if len(r.EntityPattern) == 0 && r.CorporateEntityPattern == "" &&
+		len(r.AlarmPattern) == 0 && r.CorporateAlarmPattern == "" {
+		sl.ReportError(r.AlarmPattern, "AlarmPattern", "AlarmPattern", "required_or", "EntityPattern")
+		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "required_or", "AlarmPattern")
+	}
 }
 
 func validateActionParametersRequest(sl validator.StructLevel, t string, params action.Parameters) {

@@ -871,6 +871,18 @@ Feature: Create a scenario
           },
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false
+        },
+        {
+          "type": "snooze",
+          "parameters": {
+            "output": "test snooze",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
         }
       ]
     }
@@ -883,7 +895,9 @@ Feature: Create a scenario
         "actions.0.alarm_pattern": "AlarmPattern is invalid alarm pattern.",
         "actions.1.entity_pattern": "EntityPattern is invalid entity pattern.",
         "actions.2.alarm_pattern": "Can't be present both AlarmPattern and CorporateAlarmPattern.",
-        "actions.2.entity_pattern": "Can't be present both EntityPattern and CorporateEntityPattern."
+        "actions.2.entity_pattern": "Can't be present both EntityPattern and CorporateEntityPattern.",
+        "actions.3.alarm_pattern": "AlarmPattern or EntityPattern is required.",
+        "actions.3.entity_pattern": "EntityPattern or AlarmPattern is required."
       }
     }
     """
@@ -1035,7 +1049,7 @@ Feature: Create a scenario
     }
     """
     Then the response code should be 400
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "errors": {
