@@ -236,7 +236,7 @@ func (a *api) ListManual(c *gin.Context) {
 // ListByService
 // @Success 200 {object} common.PaginatedListResponse{data=[]Alarm}
 func (a *api) ListByService(c *gin.Context) {
-	r := SimpleListRequest{
+	r := ListByServiceRequest{
 		Query: pagination.GetDefaultQuery(),
 	}
 	if err := c.ShouldBind(&r); err != nil {
@@ -267,15 +267,16 @@ func (a *api) ListByService(c *gin.Context) {
 // ListByComponent
 // @Success 200 {object} common.PaginatedListResponse{data=[]Alarm}
 func (a *api) ListByComponent(c *gin.Context) {
-	r := SimpleIdListRequest{}
-	r.Query = pagination.GetDefaultQuery()
+	r := ListByComponentRequest{
+		Query: pagination.GetDefaultQuery(),
+	}
 	if err := c.ShouldBind(&r); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
 		return
 	}
 
 	apiKey := c.MustGet(auth.ApiKey).(string)
-	aggregationResult, err := a.store.FindByComponent(c.Request.Context(), r.ID, apiKey, r.SimpleListRequest)
+	aggregationResult, err := a.store.FindByComponent(c.Request.Context(), r, apiKey)
 	if err != nil {
 		panic(err)
 	}
@@ -297,15 +298,16 @@ func (a *api) ListByComponent(c *gin.Context) {
 // ResolvedList
 // @Success 200 {object} common.PaginatedListResponse{data=[]Alarm}
 func (a *api) ResolvedList(c *gin.Context) {
-	r := SimpleIdListRequest{}
-	r.Query = pagination.GetDefaultQuery()
+	r := ResolvedListRequest{
+		Query: pagination.GetDefaultQuery(),
+	}
 	if err := c.ShouldBind(&r); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
 		return
 	}
 
 	apiKey := c.MustGet(auth.ApiKey).(string)
-	aggregationResult, err := a.store.FindResolved(c.Request.Context(), r.ID, apiKey, r.SimpleListRequest)
+	aggregationResult, err := a.store.FindResolved(c.Request.Context(), r, apiKey)
 	if err != nil {
 		panic(err)
 	}

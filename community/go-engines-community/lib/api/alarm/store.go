@@ -41,9 +41,9 @@ type Store interface {
 	Count(ctx context.Context, r FilterRequest) (*Count, error)
 	GetByID(ctx context.Context, id, apiKey string) (*Alarm, error)
 	FindManual(ctx context.Context, search string) ([]ManualResponse, error)
-	FindByService(ctx context.Context, id, apiKey string, r SimpleListRequest) (*AggregationResult, error)
-	FindByComponent(ctx context.Context, id, apiKey string, r SimpleListRequest) (*AggregationResult, error)
-	FindResolved(ctx context.Context, id, apiKey string, r SimpleListRequest) (*AggregationResult, error)
+	FindByService(ctx context.Context, id, apiKey string, r ListByServiceRequest) (*AggregationResult, error)
+	FindByComponent(ctx context.Context, r ListByComponentRequest, apiKey string) (*AggregationResult, error)
+	FindResolved(ctx context.Context, r ResolvedListRequest, apiKey string) (*AggregationResult, error)
 	GetDetails(ctx context.Context, apiKey string, r DetailsRequest) (*Details, error)
 }
 
@@ -232,7 +232,7 @@ func (s *store) FindManual(ctx context.Context, search string) ([]ManualResponse
 	return res, nil
 }
 
-func (s *store) FindByService(ctx context.Context, id, apiKey string, r SimpleListRequest) (*AggregationResult, error) {
+func (s *store) FindByService(ctx context.Context, id, apiKey string, r ListByServiceRequest) (*AggregationResult, error) {
 	now := types.NewCpsTime()
 	service := types.Entity{}
 	err := s.dbEntityCollection.FindOne(ctx, bson.M{
@@ -250,7 +250,7 @@ func (s *store) FindByService(ctx context.Context, id, apiKey string, r SimpleLi
 	pipeline, err := s.queryBuilder.CreateAggregationPipelineByMatch(bson.M{
 		"d":          bson.M{"$in": service.Depends},
 		"v.resolved": nil,
-	}, r, now)
+	}, r.Query, r.SortRequest, now)
 	if err != nil {
 		return nil, err
 	}
@@ -286,11 +286,11 @@ func (s *store) FindByService(ctx context.Context, id, apiKey string, r SimpleLi
 	return &result, nil
 }
 
-func (s *store) FindByComponent(ctx context.Context, id, apiKey string, r SimpleListRequest) (*AggregationResult, error) {
+func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, apiKey string) (*AggregationResult, error) {
 	now := types.NewCpsTime()
 	component := types.Entity{}
 	err := s.dbEntityCollection.FindOne(ctx, bson.M{
-		"_id":     id,
+		"_id":     r.ID,
 		"type":    types.EntityTypeComponent,
 		"enabled": true,
 	}).Decode(&component)
@@ -304,7 +304,7 @@ func (s *store) FindByComponent(ctx context.Context, id, apiKey string, r Simple
 	pipeline, err := s.queryBuilder.CreateAggregationPipelineByMatch(bson.M{
 		"d":          bson.M{"$in": component.Depends},
 		"v.resolved": nil,
-	}, r, now)
+	}, r.Query, r.SortRequest, now)
 	if err != nil {
 		return nil, err
 	}
@@ -340,11 +340,11 @@ func (s *store) FindByComponent(ctx context.Context, id, apiKey string, r Simple
 	return &result, nil
 }
 
-func (s *store) FindResolved(ctx context.Context, id, apiKey string, r SimpleListRequest) (*AggregationResult, error) {
+func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest, apiKey string) (*AggregationResult, error) {
 	now := types.NewCpsTime()
 
 	err := s.dbEntityCollection.FindOne(ctx, bson.M{
-		"_id":     id,
+		"_id":     r.ID,
 		"enabled": true,
 	}).Err()
 	if err != nil {
@@ -354,7 +354,14 @@ func (s *store) FindResolved(ctx context.Context, id, apiKey string, r SimpleLis
 		return nil, err
 	}
 
-	pipeline, err := s.queryBuilder.CreateAggregationPipelineByMatch(bson.M{"d": id}, r, now)
+	match := bson.M{"d": r.ID}
+	if r.StartFrom != nil {
+		match[defaultTimeFieldResolved] = bson.M{"$gte": r.StartFrom}
+	}
+	if r.StartTo != nil {
+		match[defaultTimeFieldResolved] = bson.M{"$lte": r.StartTo}
+	}
+	pipeline, err := s.queryBuilder.CreateAggregationPipelineByMatch(match, r.Query, r.SortRequest, now)
 	if err != nil {
 		return nil, err
 	}
