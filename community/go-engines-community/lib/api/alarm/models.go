@@ -62,15 +62,23 @@ func (r FilterRequest) GetOpenedFilter() int {
 	return OnlyResolved
 }
 
-type SimpleListRequest struct {
+type ListByServiceRequest struct {
 	pagination.Query
-	Sort   string `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
-	SortBy string `form:"sort_by" json:"sort_by"`
+	SortRequest
 }
 
-type SimpleIdListRequest struct {
-	SimpleListRequest
+type ListByComponentRequest struct {
+	pagination.Query
+	SortRequest
 	ID string `form:"_id" json:"_id" binding:"required"`
+}
+
+type ResolvedListRequest struct {
+	pagination.Query
+	SortRequest
+	ID        string         `form:"_id" json:"_id" binding:"required"`
+	StartFrom *types.CpsTime `form:"tstart" json:"tstart" swaggertype:"integer"`
+	StartTo   *types.CpsTime `form:"tstop" json:"tstop" swaggertype:"integer"`
 }
 
 type SortRequest struct {
