@@ -178,20 +178,18 @@ func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 
 func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
 	match bson.M,
-	r SimpleListRequest,
+	paginationQuery pagination.Query,
+	sortRequest SortRequest,
 	now types.CpsTime,
 ) ([]bson.M, error) {
 	q.clear(now)
 	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
-	err := q.handleSort(SortRequest{
-		Sort:   r.Sort,
-		SortBy: r.SortBy,
-	})
+	err := q.handleSort(sortRequest)
 	if err != nil {
 		return nil, err
 	}
 
-	return q.createPaginationAggregationPipeline(r.Query), nil
+	return q.createPaginationAggregationPipeline(paginationQuery), nil
 }
 
 func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
