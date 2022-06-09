@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -42,7 +41,9 @@ type Store interface {
 	Count(ctx context.Context, r FilterRequest) (*Count, error)
 	GetByID(ctx context.Context, id, apiKey string) (*Alarm, error)
 	FindManual(ctx context.Context, search string) ([]ManualResponse, error)
-	FindByService(ctx context.Context, id, apiKey string, query pagination.Query) (*AggregationResult, error)
+	FindByService(ctx context.Context, id, apiKey string, r SimpleListRequest) (*AggregationResult, error)
+	FindByComponent(ctx context.Context, id, apiKey string, r SimpleListRequest) (*AggregationResult, error)
+	FindResolved(ctx context.Context, id, apiKey string, r SimpleListRequest) (*AggregationResult, error)
 	GetDetails(ctx context.Context, apiKey string, r DetailsRequest) (*Details, error)
 }
 
@@ -231,7 +232,7 @@ func (s *store) FindManual(ctx context.Context, search string) ([]ManualResponse
 	return res, nil
 }
 
-func (s *store) FindByService(ctx context.Context, id, apiKey string, query pagination.Query) (*AggregationResult, error) {
+func (s *store) FindByService(ctx context.Context, id, apiKey string, r SimpleListRequest) (*AggregationResult, error) {
 	now := types.NewCpsTime()
 	service := types.Entity{}
 	err := s.dbEntityCollection.FindOne(ctx, bson.M{
@@ -246,7 +247,10 @@ func (s *store) FindByService(ctx context.Context, id, apiKey string, query pagi
 		return nil, err
 	}
 
-	pipeline, err := s.queryBuilder.CreateServiceAggregationPipeline(service.Depends, query, now)
+	pipeline, err := s.queryBuilder.CreateAggregationPipelineByMatch(bson.M{
+		"d":          bson.M{"$in": service.Depends},
+		"v.resolved": nil,
+	}, r, now)
 	if err != nil {
 		return nil, err
 	}
@@ -272,6 +276,101 @@ func (s *store) FindByService(ctx context.Context, id, apiKey string, query pagi
 	err = s.fillInstructionFlags(ctx, &result)
 	if err != nil {
 		return nil, err
+	}
+
+	err = s.fillLinks(ctx, apiKey, &result)
+	if err != nil {
+		s.logger.Err(err).Msg("cannot fill links")
+	}
+
+	return &result, nil
+}
+
+func (s *store) FindByComponent(ctx context.Context, id, apiKey string, r SimpleListRequest) (*AggregationResult, error) {
+	now := types.NewCpsTime()
+	component := types.Entity{}
+	err := s.dbEntityCollection.FindOne(ctx, bson.M{
+		"_id":     id,
+		"type":    types.EntityTypeComponent,
+		"enabled": true,
+	}).Decode(&component)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	pipeline, err := s.queryBuilder.CreateAggregationPipelineByMatch(bson.M{
+		"d":          bson.M{"$in": component.Depends},
+		"v.resolved": nil,
+	}, r, now)
+	if err != nil {
+		return nil, err
+	}
+
+	cursor, err := s.mainDbCollection.Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var result AggregationResult
+	for cursor.Next(ctx) {
+		err = cursor.Decode(&result)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	_, err = s.fillAssignedInstructions(ctx, &result, now)
+	if err != nil {
+		return nil, err
+	}
+	err = s.fillInstructionFlags(ctx, &result)
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.fillLinks(ctx, apiKey, &result)
+	if err != nil {
+		s.logger.Err(err).Msg("cannot fill links")
+	}
+
+	return &result, nil
+}
+
+func (s *store) FindResolved(ctx context.Context, id, apiKey string, r SimpleListRequest) (*AggregationResult, error) {
+	now := types.NewCpsTime()
+
+	err := s.dbEntityCollection.FindOne(ctx, bson.M{
+		"_id":     id,
+		"enabled": true,
+	}).Err()
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	pipeline, err := s.queryBuilder.CreateAggregationPipelineByMatch(bson.M{"d": id}, r, now)
+	if err != nil {
+		return nil, err
+	}
+
+	cursor, err := s.resolvedDbCollection.Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var result AggregationResult
+	for cursor.Next(ctx) {
+		err = cursor.Decode(&result)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	err = s.fillLinks(ctx, apiKey, &result)
