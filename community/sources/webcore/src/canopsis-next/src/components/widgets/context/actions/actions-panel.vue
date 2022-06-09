@@ -1,9 +1,9 @@
 <template lang="pug">
-  shared-actions-panel(:actions="actions")
+  shared-actions-panel(:actions="actions.inline", :drop-down-actions="actions.dropDown")
 </template>
 
 <script>
-import { pickBy } from 'lodash';
+import { compact, pickBy } from 'lodash';
 
 import { MODALS, CONTEXT_ACTIONS_TYPES, ENTITY_TYPES } from '@/constants';
 
@@ -82,7 +82,7 @@ export default {
     actions() {
       const { filteredActionsMap } = this;
 
-      const actions = [
+      let actions = [
         filteredActionsMap.editEntity,
       ];
 
@@ -94,13 +94,18 @@ export default {
         actions.push(filteredActionsMap.deleteEntity);
       }
 
-      actions.push(filteredActionsMap.pbehavior);
+      actions.push(filteredActionsMap.pbehavior, filteredActionsMap.variablesHelp);
 
       if (this.editing) {
         actions.push(filteredActionsMap.variablesHelp);
       }
 
-      return actions.filter(action => !!action);
+      actions = compact(actions);
+
+      return {
+        inline: actions.slice(0, 3),
+        dropDown: actions.slice(3),
+      };
     },
   },
   methods: {

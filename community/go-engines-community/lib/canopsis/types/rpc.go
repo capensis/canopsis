@@ -3,89 +3,35 @@ package types
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
-	"github.com/mitchellh/mapstructure"
 )
 
 type RPCAxeEvent struct {
-	EventType  string      `json:"event_type"`
-	Parameters interface{} `json:"parameters,omitempty"`
-	Alarm      *Alarm      `json:"alarm"`
-	Entity     *Entity     `json:"entity"`
+	EventType  string           `json:"event_type"`
+	Parameters RPCAxeParameters `json:"parameters,omitempty"`
+	Alarm      *Alarm           `json:"alarm"`
+	Entity     *Entity          `json:"entity"`
 }
 
-func (e *RPCAxeEvent) UnmarshalJSON(b []byte) error {
-	type Alias RPCAxeEvent
-	tmp := struct {
-		*Alias
-	}{
-		Alias: (*Alias)(e),
-	}
-
-	err := json.Unmarshal(b, &tmp)
-	if err != nil {
-		return err
-	}
-
-	switch e.EventType {
-	case ActionTypeSnooze:
-		var params OperationSnoozeParameters
-		err := mapstructure.Decode(e.Parameters, &params)
-		if err != nil {
-			return fmt.Errorf("cannot decode map struct : %v", err)
-		}
-		e.Parameters = params
-	case ActionTypeChangeState:
-		var params OperationChangeStateParameters
-		err := mapstructure.Decode(e.Parameters, &params)
-		if err != nil {
-			return fmt.Errorf("cannot decode map struct : %v", err)
-		}
-		e.Parameters = params
-	case ActionTypeAssocTicket:
-		var params OperationAssocTicketParameters
-		err := mapstructure.Decode(e.Parameters, &params)
-		if err != nil {
-			return fmt.Errorf("cannot decode map struct : %v", err)
-		}
-		e.Parameters = params
-	case ActionTypePbehavior:
-		var params ActionPBehaviorParameters
-		err := mapstructure.Decode(e.Parameters, &params)
-		if err != nil {
-			return fmt.Errorf("cannot decode map struct : %v", err)
-		}
-		e.Parameters = params
-	case ActionTypeWebhook:
-		var params WebhookParameters
-		err := mapstructure.Decode(e.Parameters, &params)
-		if err != nil {
-			return fmt.Errorf("cannot decode map struct : %v", err)
-		}
-		e.Parameters = params
-	case EventTypeInstructionStarted, EventTypeInstructionPaused,
-		EventTypeInstructionResumed, EventTypeInstructionCompleted,
-		EventTypeInstructionFailed, EventTypeInstructionAborted,
-		EventTypeAutoInstructionStarted, EventTypeAutoInstructionCompleted,
-		EventTypeAutoInstructionFailed, EventTypeAutoInstructionAlreadyRunning,
-		EventTypeInstructionJobStarted, EventTypeInstructionJobCompleted,
-		EventTypeInstructionJobAborted, EventTypeInstructionJobFailed:
-		var params OperationInstructionParameters
-		err := mapstructure.Decode(e.Parameters, &params)
-		if err != nil {
-			return fmt.Errorf("cannot decode map struct : %v", err)
-		}
-		e.Parameters = params
-	default:
-		var params OperationParameters
-		err := mapstructure.Decode(e.Parameters, &params)
-		if err != nil {
-			return fmt.Errorf("cannot decode map struct : %v", err)
-		}
-		e.Parameters = params
-	}
-
-	return nil
+type RPCAxeParameters struct {
+	Output string `json:"output"`
+	Author string `json:"author"`
+	User   string `json:"user"`
+	// ChangeState
+	State *CpsNumber `json:"state"`
+	// AssocTicket
+	Ticket string `json:"ticket"`
+	// Snooze and Pbehavior
+	Duration *DurationWithUnit `json:"duration"`
+	// Pbehavior
+	Name           string   `json:"name"`
+	Reason         string   `json:"reason"`
+	Type           string   `json:"type"`
+	RRule          string   `json:"rrule"`
+	Tstart         *CpsTime `json:"tstart"`
+	Tstop          *CpsTime `json:"tstop"`
+	StartOnTrigger *bool    `json:"start_on_trigger"`
+	// Instruction
+	Execution string `json:"execution"`
 }
 
 type RPCAxeResultEvent struct {
@@ -105,9 +51,22 @@ type RPCServiceResultEvent struct {
 }
 
 type RPCPBehaviorEvent struct {
-	Alarm  *Alarm                    `json:"alarm"`
-	Entity *Entity                   `json:"entity"`
-	Params ActionPBehaviorParameters `json:"params"`
+	Alarm  *Alarm                 `json:"alarm"`
+	Entity *Entity                `json:"entity"`
+	Params RPCPBehaviorParameters `json:"params"`
+}
+
+type RPCPBehaviorParameters struct {
+	Author         string            `json:"author"`
+	UserID         string            `json:"user"`
+	Name           string            `json:"name"`
+	Reason         string            `json:"reason"`
+	Type           string            `json:"type"`
+	RRule          string            `json:"rrule"`
+	Tstart         *CpsTime          `json:"tstart,omitempty"`
+	Tstop          *CpsTime          `json:"tstop,omitempty"`
+	StartOnTrigger *bool             `json:"start_on_trigger,omitempty"`
+	Duration       *DurationWithUnit `json:"duration,omitempty"`
 }
 
 type RPCPBehaviorResultEvent struct {
@@ -138,13 +97,22 @@ func (e *RPCError) UnmarshalJSON(b []byte) error {
 }
 
 type RPCWebhookEvent struct {
-	Parameters   WebhookParameters      `json:"parameters"`
+	Parameters   RPCWebhookParameters   `json:"parameters"`
 	Alarm        *Alarm                 `json:"alarm"`
 	Entity       *Entity                `json:"entity"`
 	AckResources bool                   `json:"ack_resources"`
 	Header       map[string]string      `json:"header,omitempty"`
 	Response     map[string]interface{} `json:"response,omitempty"`
 	Message      string                 `json:"message"`
+}
+
+type RPCWebhookParameters struct {
+	Request       WebhookRequest        `json:"request"`
+	DeclareTicket *WebhookDeclareTicket `json:"declare_ticket,omitempty"`
+	RetryCount    int64                 `json:"retry_count,omitempty"`
+	RetryDelay    *DurationWithUnit     `json:"retry_delay,omitempty"`
+	Author        string                `json:"author"`
+	User          string                `json:"user"`
 }
 
 type RPCWebhookResultEvent struct {
@@ -162,10 +130,5 @@ type RPCRemediationEvent struct {
 }
 
 type RPCRemediationJobEvent struct {
-	Alarm          *Alarm  `json:"alarm"`
-	Entity         *Entity `json:"entity"`
-	JobExecutionID string  `json:"job_execution_id"`
-	Output         string  `json:"output"`
-	Author         string  `json:"author"`
-	ExecutionID    string  `json:"execution"`
+	JobExecutionID string `json:"job_execution_id"`
 }
