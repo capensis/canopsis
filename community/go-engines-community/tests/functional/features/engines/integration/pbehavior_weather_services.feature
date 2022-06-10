@@ -1375,9 +1375,25 @@ Feature: get service weather
     {
       "_id": "test-resolve-rule-pbehavior-weather-service-18",
       "name": "test-resolve-rule-pbehavior-weather-service-18-name",
-      "entity_patterns": [
-         {"name": "test-resource-pbehavior-weather-service-18-1"},
-         {"name": "test-resource-pbehavior-weather-service-18-2"}
+      "entity_pattern":[
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-18-1"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-18-2"
+            }
+          }
+        ]
       ],
       "duration": {
         "value": 1,

@@ -53,16 +53,16 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 		now := types.NewCpsTime(time.Now().Unix())
 
 		_, err := s.dbCollection.InsertOne(ctx, resolverule.Rule{
-			ID:             id,
-			Name:           request.Name,
-			Description:    request.Description,
-			Duration:       request.Duration,
-			AlarmPatterns:  request.AlarmPatterns,
-			EntityPatterns: request.EntityPatterns,
-			Priority:       request.Priority,
-			Author:         request.Author,
-			Created:        now,
-			Updated:        now,
+			ID:                  id,
+			Name:                request.Name,
+			Description:         request.Description,
+			Duration:            request.Duration,
+			AlarmPatternFields:  request.AlarmPatternFieldsRequest.ToModel(),
+			EntityPatternFields: request.EntityPatternFieldsRequest.ToModel(),
+			Priority:            request.Priority,
+			Author:              request.Author,
+			Created:             now,
+			Updated:             now,
 		})
 		if err != nil {
 			return err
@@ -149,25 +149,39 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 		return nil, err
 	}
 
+	update := bson.M{"$set": resolverule.Rule{
+		ID:                  request.ID,
+		Name:                request.Name,
+		Description:         request.Description,
+		Duration:            request.Duration,
+		AlarmPatternFields:  request.AlarmPatternFieldsRequest.ToModel(),
+		EntityPatternFields: request.EntityPatternFieldsRequest.ToModel(),
+		Priority:            request.Priority,
+		Author:              request.Author,
+		Created:             model.Created,
+		Updated:             types.NewCpsTime(time.Now().Unix()),
+	}}
+
+	unset := bson.M{}
+	if len(request.AlarmPattern) > 0 {
+		unset["old_alarm_patterns"] = 1
+	}
+
+	if len(request.EntityPattern) > 0 {
+		unset["old_entity_patterns"] = 1
+	}
+
+	if len(unset) > 0 {
+		update["$unset"] = unset
+	}
+
 	var res *Response
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		res = nil
-		now := types.NewCpsTime(time.Now().Unix())
 		_, err = s.dbCollection.UpdateOne(
 			ctx,
 			bson.M{"_id": request.ID},
-			bson.M{"$set": resolverule.Rule{
-				ID:             request.ID,
-				Name:           request.Name,
-				Description:    request.Description,
-				Duration:       request.Duration,
-				AlarmPatterns:  request.AlarmPatterns,
-				EntityPatterns: request.EntityPatterns,
-				Priority:       request.Priority,
-				Author:         request.Author,
-				Created:        model.Created,
-				Updated:        now,
-			}},
+			update,
 		)
 		if err != nil {
 			return err
