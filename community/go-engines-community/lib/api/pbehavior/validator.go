@@ -62,16 +62,13 @@ func (v *Validator) ValidateUpdateRequest(ctx context.Context, sl validator.Stru
 func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.StructLevel) {
 	r := sl.Current().Interface().(EditRequest)
 
-	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 {
-		if !r.EntityPattern.Validate(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)) {
-			sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
-		}
+	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 &&
+		!r.EntityPattern.Validate(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)) {
+		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
 	}
 
-	if r.RRule != "" {
-		if !v.checkRrule(r.RRule) {
-			sl.ReportError(r.RRule, "RRule", "RRule", "rrule", "")
-		}
+	if r.RRule != "" && !v.checkRrule(r.RRule) {
+		sl.ReportError(r.RRule, "RRule", "RRule", "rrule", "")
 	}
 
 	var foundType *pbehavior.Type
@@ -121,10 +118,8 @@ func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.Struct
 func (v *Validator) ValidatePatchRequest(ctx context.Context, sl validator.StructLevel) {
 	r := sl.Current().Interface().(PatchRequest)
 
-	if r.RRule != nil && *r.RRule != "" {
-		if !v.checkRrule(*r.RRule) {
-			sl.ReportError(r.RRule, "RRule", "RRule", "rrule", "")
-		}
+	if r.RRule != nil && *r.RRule != "" && !v.checkRrule(*r.RRule) {
+		sl.ReportError(r.RRule, "RRule", "RRule", "rrule", "")
 	}
 
 	if r.CorporateEntityPattern != nil && *r.CorporateEntityPattern == "" {
