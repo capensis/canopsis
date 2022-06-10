@@ -29,7 +29,7 @@ tarball: $(CURRENT_BUILD_OUTPUT_DIR) $(CURRENT_ROOT_DIR)
 		--dereference \
 		--exclude-vcs --exclude-vcs-ignores \
 		--exclude=Makefile --exclude=build \
-		--transform='s;^$(notdir $(CURRENT_ROOT_DIR));;' \
+		--transform='s;^$(notdir $(CURRENT_ROOT_DIR))/;;' \
 		$(notdir $(CURRENT_ROOT_DIR))
 
 $(CURRENT_BUILD_OUTPUT_DIR):
