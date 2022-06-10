@@ -30,10 +30,16 @@ Feature: resolve meta alarm
       "_id": "test-resolve-rule-axe-resolverule-correlation-1",
       "name": "test-resolve-rule-axe-resolverule-correlation-1-name",
       "description": "test-resolve-rule-axe-resolverule-correlation-1-desc",
-      "entity_patterns":[
-        {
-          "name": "test-resource-axe-resolverule-correlation-1"
-        }
+      "entity_pattern":[
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-axe-resolverule-correlation-1"
+            }
+          }
+        ]
       ],
       "duration": {
         "value": 2,
@@ -72,7 +78,7 @@ Feature: resolve meta alarm
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resolved":{"$gt":0}},{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&correlation=true
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -88,8 +94,39 @@ Feature: resolve meta alarm
             },
             "status": {
               "val": 0
-            },
-            "steps": [
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    Then the response key "data.0.v.resolved" should be greater than 0
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -106,15 +143,15 @@ Feature: resolve meta alarm
                 "_t": "statusdec",
                 "val": 0
               }
-            ]
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """

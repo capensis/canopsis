@@ -4,17 +4,21 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type EditRequest struct {
-	Name           string                       `json:"name" binding:"required,max=255"`
-	Description    string                       `json:"description" binding:"max=255"`
-	Duration       types.DurationWithUnit       `json:"duration" binding:"required"`
-	AlarmPatterns  oldpattern.AlarmPatternList  `json:"alarm_patterns"`
-	EntityPatterns oldpattern.EntityPatternList `json:"entity_patterns"`
-	Priority       int                          `json:"priority" binding:"required,gt=0"`
-	Author         string                       `json:"author" swaggerignore:"true"`
+	Name              string                       `json:"name" binding:"required,max=255"`
+	Description       string                       `json:"description" binding:"max=255"`
+	Duration          types.DurationWithUnit       `json:"duration" binding:"required"`
+	OldAlarmPatterns  oldpattern.AlarmPatternList  `json:"old_alarm_patterns"`
+	OldEntityPatterns oldpattern.EntityPatternList `json:"old_entity_patterns"`
+	Priority          int                          `json:"priority" binding:"required,gt=0"`
+	Author            string                       `json:"author" swaggerignore:"true"`
+
+	common.AlarmPatternFieldsRequest
+	common.EntityPatternFieldsRequest
 }
 
 type CreateRequest struct {
@@ -28,16 +32,19 @@ type UpdateRequest struct {
 }
 
 type Response struct {
-	ID             string                       `bson:"_id" json:"_id"`
-	Name           string                       `bson:"name" json:"name"`
-	Description    string                       `bson:"description" json:"description"`
-	Duration       types.DurationWithUnit       `bson:"duration" json:"duration"`
-	AlarmPatterns  oldpattern.AlarmPatternList  `bson:"alarm_patterns" json:"alarm_patterns"`
-	EntityPatterns oldpattern.EntityPatternList `bson:"entity_patterns" json:"entity_patterns"`
-	Priority       int                          `bson:"priority" json:"priority"`
-	Author         common.User                  `bson:"author" json:"author"`
-	Created        types.CpsTime                `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated        types.CpsTime                `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	ID                string                       `bson:"_id" json:"_id"`
+	Name              string                       `bson:"name" json:"name"`
+	Description       string                       `bson:"description" json:"description"`
+	Duration          types.DurationWithUnit       `bson:"duration" json:"duration"`
+	OldAlarmPatterns  oldpattern.AlarmPatternList  `bson:"old_alarm_patterns" json:"old_alarm_patterns"`
+	OldEntityPatterns oldpattern.EntityPatternList `bson:"old_entity_patterns" json:"old_entity_patterns"`
+	Priority          int                          `bson:"priority" json:"priority"`
+	Author            common.User                  `bson:"author" json:"author"`
+	Created           types.CpsTime                `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated           types.CpsTime                `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+
+	savedpattern.EntityPatternFields `bson:",inline"`
+	savedpattern.AlarmPatternFields  `bson:",inline"`
 }
 
 type AggregationResult struct {
