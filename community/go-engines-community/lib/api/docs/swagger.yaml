@@ -5945,9 +5945,9 @@ paths:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/resolverule.UpdateRequest'
             examples:
-              create:
-                summary: Create a resolve rule
-                description: Create a resolve rule
+              update:
+                summary: Update a resolve rule
+                description: Update a resolve rule
                 value: {
                   "_id": "test-resolve-rule",
                   "name": "test-resolve-rule-name-updated",

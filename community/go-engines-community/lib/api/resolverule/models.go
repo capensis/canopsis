@@ -9,13 +9,11 @@ import (
 )
 
 type EditRequest struct {
-	Name              string                       `json:"name" binding:"required,max=255"`
-	Description       string                       `json:"description" binding:"max=255"`
-	Duration          types.DurationWithUnit       `json:"duration" binding:"required"`
-	OldAlarmPatterns  oldpattern.AlarmPatternList  `json:"old_alarm_patterns"`
-	OldEntityPatterns oldpattern.EntityPatternList `json:"old_entity_patterns"`
-	Priority          int                          `json:"priority" binding:"required,gt=0"`
-	Author            string                       `json:"author" swaggerignore:"true"`
+	Name        string                 `json:"name" binding:"required,max=255"`
+	Description string                 `json:"description" binding:"max=255"`
+	Duration    types.DurationWithUnit `json:"duration" binding:"required"`
+	Priority    int                    `json:"priority" binding:"required,gt=0"`
+	Author      string                 `json:"author" swaggerignore:"true"`
 
 	common.AlarmPatternFieldsRequest
 	common.EntityPatternFieldsRequest
