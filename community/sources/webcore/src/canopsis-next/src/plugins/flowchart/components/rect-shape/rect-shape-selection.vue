@@ -1,11 +1,25 @@
 <template lang="pug">
-  rect-selection(
-    :rect="rect",
-    :padding="padding",
-    :color="color",
-    :corner-radius="cornerRadius",
-    @start:resize="startResize"
-  )
+  g
+    rect(
+      :x="rect.x",
+      :y="rect.y",
+      :width="rect.width",
+      :height="rect.height",
+      fill="transparent",
+      cursor="move",
+      pointer-events="all",
+      @mousedown.stop="$listeners.mousedown",
+      @mouseup="$listeners.mouseup"
+    )
+    rect-selection(
+      v-if="selected",
+      :rect="rect",
+      :padding="padding",
+      :color="color",
+      :corner-radius="cornerRadius",
+      cursor="move",
+      @start:resize="startResize"
+    )
 </template>
 
 <script>
@@ -20,6 +34,10 @@ export default {
     rect: {
       type: Object,
       required: true,
+    },
+    selected: {
+      type: Boolean,
+      default: false,
     },
     padding: {
       type: Number,

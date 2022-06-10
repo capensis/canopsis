@@ -2,7 +2,8 @@
   path(
     :d="path",
     fill="transparent",
-    pointer-events="all"
+    pointer-events="all",
+    v-on="$listeners"
   )
 </template>
 
@@ -20,7 +21,7 @@ export default {
   },
   computed: {
     path() {
-      return this.points.reduce((acc, { x, y }) => `${acc} ${x} ${y}`, 'M');
+      return this.points.map(({ x, y }, index) => `${index === 0 ? 'M' : 'L'} ${x} ${y}`).join(' ');
     },
   },
 };
