@@ -254,3 +254,8 @@ viewtabs:
     <<: *tab
     _id: test-tab-to-entity-get
     view: test-view-to-entity-get
+
+  tab_to_weather_get:
+    <<: *tab
+    _id: test-tab-to-weather-get
+    view: test-view-to-weather-get

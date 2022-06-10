@@ -55,10 +55,12 @@ Feature: get service entities
           "connector_name": "test-connector_name-service-weather-entity-1",
           "component": "test-component-service-weather-entity-1",
           "resource": "test-resource-service-weather-entity-1",
+          "source_type": "resource",
           "state": {"val": 2},
           "status": {"val": 1},
           "impact_state": 2,
           "impact_level": 1,
+          "category": null,
           "is_grey": false,
           "icon": "major",
           "ack": null,
@@ -151,25 +153,25 @@ Feature: get service entities
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/weather-services/test-service-weather-entity-2
+    When I do GET /api/v4/weather-services/test-service-weather-entity-2?sort_by=state&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "_id": "test-resource-service-weather-entity-2-1/test-component-service-weather-entity-2",
-          "name": "test-resource-service-weather-entity-2-1",
+          "_id": "test-resource-service-weather-entity-2-3/test-component-service-weather-entity-2",
+          "name": "test-resource-service-weather-entity-2-3",
           "connector": "test-connector-service-weather-entity-2",
           "connector_name": "test-connector_name-service-weather-entity-2",
           "component": "test-component-service-weather-entity-2",
-          "resource": "test-resource-service-weather-entity-2-1",
-          "state": {"val": 1},
+          "resource": "test-resource-service-weather-entity-2-3",
+          "state": {"val": 3},
           "status": {"val": 1},
-          "impact_state": 1,
+          "impact_state": 3,
           "impact_level": 1,
           "is_grey": false,
-          "icon": "minor",
+          "icon": "critical",
           "ack": null,
           "snooze": null,
           "ticket": null,
@@ -198,18 +200,18 @@ Feature: get service entities
           "pbehaviors": []
         },
         {
-          "_id": "test-resource-service-weather-entity-2-3/test-component-service-weather-entity-2",
-          "name": "test-resource-service-weather-entity-2-3",
+          "_id": "test-resource-service-weather-entity-2-1/test-component-service-weather-entity-2",
+          "name": "test-resource-service-weather-entity-2-1",
           "connector": "test-connector-service-weather-entity-2",
           "connector_name": "test-connector_name-service-weather-entity-2",
           "component": "test-component-service-weather-entity-2",
-          "resource": "test-resource-service-weather-entity-2-3",
-          "state": {"val": 3},
+          "resource": "test-resource-service-weather-entity-2-1",
+          "state": {"val": 1},
           "status": {"val": 1},
-          "impact_state": 3,
+          "impact_state": 1,
           "impact_level": 1,
           "is_grey": false,
-          "icon": "critical",
+          "icon": "minor",
           "ack": null,
           "snooze": null,
           "ticket": null,
