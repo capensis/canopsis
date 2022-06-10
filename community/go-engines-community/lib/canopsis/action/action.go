@@ -52,7 +52,7 @@ type Action struct {
 }
 
 func (a Action) Match(entity types.Entity, alarm types.Alarm) (bool, error) {
-	if len(a.EntityPattern) == 0 && len(a.AlarmPattern) == 0 {
+	if !a.OldAlarmPatterns.IsSet() && !a.OldEntityPatterns.IsSet() && len(a.EntityPattern) == 0 && len(a.AlarmPattern) == 0 {
 		return false, nil
 	}
 
