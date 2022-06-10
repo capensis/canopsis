@@ -88,6 +88,36 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false,
           "comment": "snooze 4"
+        },
+        {
+          "corporate_entity_pattern": "test-pattern-to-scenario-corporate-update-3",
+          "type": "snooze",
+          "parameters": {
+            "author": "scenario-pattern-1-action-1-author",
+            "output": "scenario-pattern-1-action-1-output",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "comment": "snooze 5"
+        },
+        {
+          "corporate_alarm_pattern": "test-pattern-to-scenario-corporate-update-4",
+          "type": "snooze",
+          "parameters": {
+            "author": "scenario-pattern-1-action-1-author",
+            "output": "scenario-pattern-1-action-1-output",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "comment": "snooze 6"
         }
       ]
     }
@@ -215,6 +245,64 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false,
           "comment": "snooze 4"
+        },
+        {
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
+          "corporate_entity_pattern": "test-pattern-to-scenario-corporate-update-3",
+          "corporate_entity_pattern_title": "test-pattern-to-scenario-corporate-update-3-title",
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-scenario-corporate-update-3-pattern"
+                }
+              }
+            ]
+          ],
+          "type": "snooze",
+          "parameters": {
+            "author": "scenario-pattern-1-action-1-author",
+            "output": "scenario-pattern-1-action-1-output",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "comment": "snooze 5"
+        },
+        {
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
+          "corporate_alarm_pattern": "test-pattern-to-scenario-corporate-update-4",
+          "corporate_alarm_pattern_title": "test-pattern-to-scenario-corporate-update-4-title",
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-scenario-corporate-update-4-pattern"
+                }
+              }
+            ]
+          ],
+          "type": "snooze",
+          "parameters": {
+            "author": "scenario-pattern-1-action-1-author",
+            "output": "scenario-pattern-1-action-1-output",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "comment": "snooze 6"
         }
       ]
     }
@@ -361,6 +449,64 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false,
           "comment": "snooze 4"
+        },
+        {
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
+          "corporate_entity_pattern": "test-pattern-to-scenario-corporate-update-3",
+          "corporate_entity_pattern_title": "test-pattern-to-scenario-corporate-update-3-title",
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-scenario-corporate-update-3-pattern"
+                }
+              }
+            ]
+          ],
+          "type": "snooze",
+          "parameters": {
+            "author": "scenario-pattern-1-action-1-author",
+            "output": "scenario-pattern-1-action-1-output",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "comment": "snooze 5"
+        },
+        {
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
+          "corporate_alarm_pattern": "test-pattern-to-scenario-corporate-update-4",
+          "corporate_alarm_pattern_title": "test-pattern-to-scenario-corporate-update-4-title",
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-scenario-corporate-update-4-pattern"
+                }
+              }
+            ]
+          ],
+          "type": "snooze",
+          "parameters": {
+            "author": "scenario-pattern-1-action-1-author",
+            "output": "scenario-pattern-1-action-1-output",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "comment": "snooze 6"
         }
       ]
     }
@@ -507,6 +653,64 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false,
           "comment": "snooze 4"
+        },
+        {
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
+          "corporate_entity_pattern": "test-pattern-to-scenario-corporate-update-3",
+          "corporate_entity_pattern_title": "test-pattern-to-scenario-corporate-update-3-title",
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-scenario-corporate-update-3-pattern"
+                }
+              }
+            ]
+          ],
+          "type": "snooze",
+          "parameters": {
+            "author": "scenario-pattern-1-action-1-author",
+            "output": "scenario-pattern-1-action-1-output",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "comment": "snooze 5"
+        },
+        {
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
+          "corporate_alarm_pattern": "test-pattern-to-scenario-corporate-update-4",
+          "corporate_alarm_pattern_title": "test-pattern-to-scenario-corporate-update-4-title",
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-scenario-corporate-update-4-pattern"
+                }
+              }
+            ]
+          ],
+          "type": "snooze",
+          "parameters": {
+            "author": "scenario-pattern-1-action-1-author",
+            "output": "scenario-pattern-1-action-1-output",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "comment": "snooze 6"
         }
       ]
     }
@@ -633,12 +837,68 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false,
           "comment": "snooze 4"
+        },
+        {
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
+          "corporate_entity_pattern": "test-pattern-to-scenario-corporate-update-3",
+          "corporate_entity_pattern_title": "test-pattern-to-scenario-corporate-update-3-title",
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-scenario-corporate-update-3-pattern"
+                }
+              }
+            ]
+          ],
+          "type": "snooze",
+          "parameters": {
+            "author": "scenario-pattern-1-action-1-author",
+            "output": "scenario-pattern-1-action-1-output",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "comment": "snooze 5"
+        },
+        {
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
+          "corporate_alarm_pattern": "test-pattern-to-scenario-corporate-update-4",
+          "corporate_alarm_pattern_title": "test-pattern-to-scenario-corporate-update-4-title",
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-scenario-corporate-update-4-pattern"
+                }
+              }
+            ]
+          ],
+          "type": "snooze",
+          "parameters": {
+            "author": "scenario-pattern-1-action-1-author",
+            "output": "scenario-pattern-1-action-1-output",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "comment": "snooze 6"
         }
       ]
     }
     """
-    Then the response key "actions.2.corporate_alarm_pattern" should exist
-    Then the response key "actions.2.corporate_alarm_pattern_title" should exist
     Then the response key "actions.3.corporate_entity_pattern" should not exist
     Then the response key "actions.3.corporate_entity_pattern_title" should not exist
     When I do DELETE /api/v4/patterns/test-pattern-to-scenario-corporate-update-2
@@ -761,6 +1021,64 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false,
           "comment": "snooze 4"
+        },
+        {
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
+          "corporate_entity_pattern": "test-pattern-to-scenario-corporate-update-3",
+          "corporate_entity_pattern_title": "test-pattern-to-scenario-corporate-update-3-title",
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-scenario-corporate-update-3-pattern"
+                }
+              }
+            ]
+          ],
+          "type": "snooze",
+          "parameters": {
+            "author": "scenario-pattern-1-action-1-author",
+            "output": "scenario-pattern-1-action-1-output",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "comment": "snooze 5"
+        },
+        {
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
+          "corporate_alarm_pattern": "test-pattern-to-scenario-corporate-update-4",
+          "corporate_alarm_pattern_title": "test-pattern-to-scenario-corporate-update-4-title",
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-scenario-corporate-update-4-pattern"
+                }
+              }
+            ]
+          ],
+          "type": "snooze",
+          "parameters": {
+            "author": "scenario-pattern-1-action-1-author",
+            "output": "scenario-pattern-1-action-1-output",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "comment": "snooze 6"
         }
       ]
     }

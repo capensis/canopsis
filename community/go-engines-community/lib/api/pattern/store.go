@@ -289,7 +289,7 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error 
 
 		//special case for scenario actions
 		_, err := s.client.Collection(mongo.ScenarioMongoCollection).UpdateMany(ctx,
-			bson.M{},
+			bson.M{"actions.corporate_alarm_pattern": pattern.ID},
 			bson.M{"$set": bson.M{
 				"actions.$[action].alarm_pattern":                 pattern.AlarmPattern,
 				"actions.$[action].corporate_alarm_pattern_title": pattern.Title,
@@ -311,7 +311,7 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response) error 
 
 		//special case for scenario actions
 		_, err := s.client.Collection(mongo.ScenarioMongoCollection).UpdateMany(ctx,
-			bson.M{},
+			bson.M{"actions.corporate_entity_pattern": pattern.ID},
 			bson.M{"$set": bson.M{
 				"actions.$[action].entity_pattern":                 pattern.EntityPattern,
 				"actions.$[action].corporate_entity_pattern_title": pattern.Title,
@@ -370,7 +370,7 @@ func (s *store) cleanLinkedModels(ctx context.Context, pattern Response) error {
 
 		//special case for scenario actions
 		_, err := s.client.Collection(mongo.ScenarioMongoCollection).UpdateMany(ctx,
-			bson.M{},
+			bson.M{"actions.corporate_alarm_pattern": pattern.ID},
 			bson.M{"$unset": bson.M{
 				"actions.$[action].corporate_alarm_pattern":       1,
 				"actions.$[action].corporate_alarm_pattern_title": 1,
@@ -388,7 +388,7 @@ func (s *store) cleanLinkedModels(ctx context.Context, pattern Response) error {
 
 		//special case for scenario actions
 		_, err := s.client.Collection(mongo.ScenarioMongoCollection).UpdateMany(ctx,
-			bson.M{},
+			bson.M{"actions.corporate_entity_pattern": pattern.ID},
 			bson.M{"$unset": bson.M{
 				"actions.$[action].corporate_entity_pattern":       1,
 				"actions.$[action].corporate_entity_pattern_title": 1,

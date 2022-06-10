@@ -361,6 +361,34 @@ pattern:
     created: 1605263992
     updated: 1605263992
 
+  pattern_to_scenario_corporate_update_3:
+    <<: *pattern_entity
+    _id: test-pattern-to-scenario-corporate-update-3
+    title: test-pattern-to-scenario-corporate-update-3-title
+    is_corporate: true
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-scenario-corporate-update-3-pattern
+    author: root
+    created: 1605263992
+    updated: 1605263992
+
+  pattern_to_scenario_corporate_update_4:
+    <<: *pattern_alarm
+    _id: test-pattern-to-scenario-corporate-update-4
+    title: test-pattern-to-scenario-corporate-update-4-title
+    is_corporate: true
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-pattern-to-scenario-corporate-update-4-pattern
+    author: root
+    created: 1605263992
+    updated: 1605263992
+
   pattern_to_pbehavior_pattern_1:
     <<: *pattern_entity
     _id: test-pattern-to-pbehavior-pattern-1
