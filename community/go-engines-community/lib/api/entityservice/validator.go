@@ -30,10 +30,9 @@ func (v *basicValidator) ValidateEditRequest(ctx context.Context, sl validator.S
 
 	v.validateCategory(ctx, sl, r.Category)
 
-	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 {
-		if !r.EntityPattern.Validate(common.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection)) {
-			sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
-		}
+	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 &&
+		!r.EntityPattern.Validate(common.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection)) {
+		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
 	}
 }
 
