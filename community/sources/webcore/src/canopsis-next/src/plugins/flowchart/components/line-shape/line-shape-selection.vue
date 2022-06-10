@@ -1,38 +1,51 @@
 <template lang="pug">
   g
-    points-path(
+    points-line(
       :points="line.points",
-      :stroke="color",
-      fill="transparent",
-      stroke-width="1",
-      stroke-dasharray="4 4",
-      pointer-events="none"
+      cursor="move",
+      stroke-width="10",
+      pointer-events="stroke",
+      @mousedown.stop="$emit('mousedown', $event)",
+      @mouseup="$emit('mouseup', $event)"
     )
-    circle(
-      v-for="(point, index) in points",
-      :key="index",
-      :cx="point.x",
-      :cy="point.y",
-      :fill="color",
-      :r="cornerRadius",
-      :opacity="point.ghost ? 0.4 : 1",
-      cursor="crosshair",
-      @mousedown.stop="onStartMovePoint(index, point)"
-    )
+    template(v-if="selected")
+      points-line(
+        :points="editedPoints",
+        :stroke="color",
+        fill="transparent",
+        stroke-width="1",
+        stroke-dasharray="4 4",
+        pointer-events="none"
+      )
+      circle(
+        v-for="(point, index) in points",
+        :key="index",
+        :cx="point.x",
+        :cy="point.y",
+        :fill="color",
+        :r="cornerRadius",
+        :opacity="point.ghost ? 0.4 : 1",
+        cursor="crosshair",
+        @mousedown.stop="onStartMovePoint(index, point)"
+      )
 </template>
 
 <script>
 import { getPointsWithGhosts } from '../../utils/points';
 
-import PointsPath from '../common/points-path.vue';
+import PointsLine from '../common/points-line.vue';
 
 export default {
   inject: ['$mouseMove', '$mouseUp'],
-  components: { PointsPath },
+  components: { PointsLine },
   props: {
     line: {
       type: Object,
       required: true,
+    },
+    selected: {
+      type: Boolean,
+      default: false,
     },
     color: {
       type: String,
@@ -45,29 +58,30 @@ export default {
   },
   data() {
     return {
+      editedPoints: [],
       movedPointIndex: undefined,
     };
   },
   computed: {
     points() {
-      return getPointsWithGhosts(this.line.points);
+      return getPointsWithGhosts(this.editedPoints);
+    },
+  },
+  watch: {
+    'line.points': {
+      immediate: true,
+      handler(points) {
+        this.editedPoints = [...points];
+      },
     },
   },
   methods: {
     movePoint({ x, y }) {
-      const points = this.line.points.slice();
-
-      points.splice(this.movedPointIndex, 1, { x, y });
-
-      this.$emit('resize', { points });
+      this.editedPoints.splice(this.movedPointIndex, 1, { x, y });
     },
 
     addPointAfterIndex(index, { x, y }) {
-      const points = this.line.points.slice();
-
-      points.splice(index, 0, { x, y });
-
-      this.$emit('resize', { points });
+      this.editedPoints.splice(index, 0, { x, y });
     },
 
     onStartMovePoint(index, point) {
@@ -82,6 +96,8 @@ export default {
     },
 
     finishMovePoints() {
+      this.$emit('resize', { points: this.editedPoints });
+
       this.$mouseMove.unregister(this.movePoint);
       this.$mouseUp.unregister(this.onMouseUp);
     },

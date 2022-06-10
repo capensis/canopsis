@@ -4,7 +4,8 @@
     width="100%",
     height="100%",
     @mousemove="onContainerMouseMove",
-    @mouseup="onContainerMouseUp"
+    @mouseup="onContainerMouseUp",
+    @mousedown="onContainerMouseDown"
   )
     component(
       v-for="shape in shapes",
@@ -12,7 +13,6 @@
       :ref="`shape_${shape.id}`",
       :key="shape.id",
       :is="`${shape.type}-shape`",
-      :shape="shape",
       :selected="isSelected(shape)",
       @mousedown="onShapeMouseDown(shape, $event)",
       @mouseup="onShapeMouseUp(shape, $event)"
@@ -28,9 +28,10 @@ import { roundByStep } from '../utils/round';
 
 import RectShape from './rect-shape/rect-shape.vue';
 import LineShape from './line-shape/line-shape.vue';
-import ArrowLineShape from './arrow-line/arrow-line-shape.vue';
+import ArrowLineShape from './arrow-line-shape/arrow-line-shape.vue';
 import CircleShape from './circle-shape/circle-shape.vue';
 import SquareShape from './square-shape/square-shape.vue';
+import TextShape from './text-shape/text-shape.vue';
 
 export default {
   provide() {
@@ -39,7 +40,7 @@ export default {
       $mouseUp: this.$mouseUp,
     };
   },
-  components: { RectShape, LineShape, ArrowLineShape, CircleShape, SquareShape },
+  components: { RectShape, LineShape, ArrowLineShape, CircleShape, SquareShape, TextShape },
   props: {
     shapes: {
       type: Object,
@@ -127,12 +128,14 @@ export default {
         this.setSelected(shape);
       }
 
-      const { offsetX, offsetY } = event;
-      this.moving = true;
-      this.movingStart = {
-        x: roundByStep(offsetX, this.gridSize),
-        y: roundByStep(offsetY, this.gridSize),
-      };
+      if (this.isSelected(shape)) {
+        const { offsetX, offsetY } = event;
+        this.moving = true;
+        this.movingStart = {
+          x: roundByStep(offsetX, this.gridSize),
+          y: roundByStep(offsetY, this.gridSize),
+        };
+      }
     },
 
     onShapeMouseUp(shape, event) {
@@ -169,6 +172,9 @@ export default {
       }
 
       this.$mouseUp.notify();
+    },
+
+    onContainerMouseDown() {
       this.clearSelected();
     },
 

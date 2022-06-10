@@ -1,15 +1,13 @@
 <template lang="pug">
   g
-    rect(
-      v-bind="rect.style",
-      :x="rect.x",
-      :y="rect.y",
-      :width="rect.width",
-      :height="rect.height"
-    )
+    foreign-object(width="100%", height="100%")
+      div(
+        :contenteditable="editable",
+        :style="`position: absolute; top: ${text.y}px;left: ${text.x}px;`"
+      ) {{ text.text }}
     rect-shape-selection(
       :selected="selected",
-      :rect="rect",
+      :rect="text",
       @resize="onResize",
       @mousedown="$emit('mousedown', $event)",
       @mouseup="$emit('mouseup', $event)"
@@ -19,17 +17,17 @@
 <script>
 import { formBaseMixin } from '@/mixins/form';
 
-import RectShapeSelection from './rect-shape-selection.vue';
+import RectShapeSelection from '../rect-shape/rect-shape-selection.vue';
 
 export default {
   components: { RectShapeSelection },
   mixins: [formBaseMixin],
   model: {
-    prop: 'rect',
+    prop: 'text',
     event: 'input',
   },
   props: {
-    rect: {
+    text: {
       type: Object,
       required: true,
     },
@@ -42,12 +40,17 @@ export default {
       default: 0,
     },
   },
+  data() {
+    return {
+      editable: false,
+    };
+  },
   methods: {
     move(newOffset, oldOffset) {
-      const { x, y } = this.rect;
+      const { x, y } = this.text;
 
       this.updateModel({
-        ...this.rect,
+        ...this.text,
 
         x: (x - oldOffset.x) + newOffset.x,
         y: (y - oldOffset.y) + newOffset.y,
@@ -55,7 +58,7 @@ export default {
     },
 
     onResize(rect) {
-      this.updateModel({ ...this.rect, ...rect });
+      this.updateModel({ ...this.text, ...rect });
     },
   },
 };

@@ -14,10 +14,20 @@
       pointer-events="all"
     )
     square-shape-selection(
-      v-if="selected",
-      :square="selection",
+      :selected="selected",
+      :square="square",
       @resize="onResize"
     )
+      circle(
+        :cx="centerX",
+        :cy="centerY",
+        :r="radius",
+        fill="transparent",
+        cursor="move",
+        pointer-events="all",
+        @mousedown.stop="$listeners.mousedown",
+        @mouseup="$listeners.mouseup"
+      )
 </template>
 
 <script>
@@ -59,7 +69,7 @@ export default {
       return this.shape.y + this.radius;
     },
 
-    selection() {
+    square() {
       return {
         x: this.shape.x,
         y: this.shape.y,

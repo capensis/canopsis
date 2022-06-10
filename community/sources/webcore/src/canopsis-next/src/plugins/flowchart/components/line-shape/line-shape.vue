@@ -1,22 +1,11 @@
 <template lang="pug">
-  g(
-    cursor="move",
-    @mousedown="$emit('mousedown', $event)",
-    @mouseup="$emit('mouseup', $event)",
-    @dblclick.stop="",
-    @click.stop=""
-  )
-    points-path(
-      v-bind="shape.style",
-      :points="shape.points"
-    )
-    points-path(
-      :points="shape.points",
-      stroke-width="10"
-    )
+  g
+    points-line(v-bind="shape.style", :points="shape.points", pointer-events="none")
     line-shape-selection(
-      v-if="selected",
+      :selected="selected",
       :line="shape",
+      @mousedown="$emit('mousedown', $event)",
+      @mouseup="$emit('mouseup', $event)",
       @resize="onResize"
     )
 </template>
@@ -24,12 +13,12 @@
 <script>
 import { formBaseMixin } from '@/mixins/form';
 
-import PointsPath from '../common/points-path.vue';
+import PointsLine from '../common/points-line.vue';
 
 import LineShapeSelection from './line-shape-selection.vue';
 
 export default {
-  components: { PointsPath, LineShapeSelection },
+  components: { PointsLine, LineShapeSelection },
   mixins: [formBaseMixin],
   model: {
     prop: 'shape',
