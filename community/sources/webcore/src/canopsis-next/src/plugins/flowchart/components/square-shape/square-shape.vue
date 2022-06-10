@@ -1,22 +1,17 @@
 <template lang="pug">
-  g(
-    cursor="move",
-    @mousedown="$emit('mousedown', $event)",
-    @mouseup="$emit('mouseup', $event)",
-    @dblclick.stop="",
-    @click.stop=""
-  )
+  g
     rect(
-      v-bind="shape.style",
-      :x="shape.x",
-      :y="shape.y",
-      :width="shape.size",
-      :height="shape.size",
-      pointer-events="all"
+      v-bind="square.style",
+      :x="square.x",
+      :y="square.y",
+      :width="square.size",
+      :height="square.size"
     )
     square-shape-selection(
-      v-if="selected",
-      :square="shape",
+      :selected="selected",
+      :square="square",
+      @mousedown="$emit('mousedown', $event)",
+      @mouseup="$emit('mouseup', $event)",
       @resize="onResize"
     )
 </template>
@@ -30,11 +25,11 @@ export default {
   components: { SquareShapeSelection },
   mixins: [formBaseMixin],
   model: {
-    prop: 'shape',
+    prop: 'square',
     event: 'input',
   },
   props: {
-    shape: {
+    square: {
       type: Object,
       required: true,
     },
@@ -49,10 +44,10 @@ export default {
   },
   methods: {
     move(newOffset, oldOffset) {
-      const { x, y } = this.shape;
+      const { x, y } = this.square;
 
       this.updateModel({
-        ...this.shape,
+        ...this.square,
 
         x: (x - oldOffset.x) + newOffset.x,
         y: (y - oldOffset.y) + newOffset.y,
@@ -61,7 +56,7 @@ export default {
 
     onResize(square) {
       this.updateModel({
-        ...this.shape,
+        ...this.square,
         x: square.x,
         y: square.y,
         size: square.size,
