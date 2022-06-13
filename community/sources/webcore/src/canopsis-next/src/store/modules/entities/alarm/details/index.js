@@ -6,7 +6,7 @@ import { API_ROUTES } from '@/config';
 import { alarmDetailsSchema } from '@/store/schemas';
 import { ENTITIES_TYPES } from '@/constants';
 
-import { generateAlarmDetailsId } from '@/helpers/entities';
+import { generateAlarmDetailsId, getAlarmDetailsDataPreparer } from '@/helpers/entities';
 
 export const types = {
   FETCH_ITEM: 'FETCH_ITEM',
@@ -18,24 +18,6 @@ export const types = {
   UPDATE_QUERY: 'UPDATE_QUERY',
   REMOVE_QUERY: 'REMOVE_QUERY',
 };
-
-/**
- * Get dataPreparer for alarmDetails entity
- *
- * @param {string} widgetId
- * @returns {Function}
- */
-const getAlarmDetailsDataPreparer = widgetId => data => ( // TODO: move it
-  data.map(item => ({
-    ...item,
-
-    /**
-     * We are generating new id based on alarmId and widgetId to avoiding collision with two widgets
-     * on the same view with opened expand panel on the same alarm
-     */
-    _id: generateAlarmDetailsId(item._id, widgetId),
-  }))
-);
 
 export default {
   namespaced: true,

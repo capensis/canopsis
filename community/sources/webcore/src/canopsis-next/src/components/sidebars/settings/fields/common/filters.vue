@@ -35,7 +35,7 @@ export default {
       default: () => [],
     },
     value: {
-      type: [Object, Array],
+      type: String,
       default: null,
     },
     addable: {

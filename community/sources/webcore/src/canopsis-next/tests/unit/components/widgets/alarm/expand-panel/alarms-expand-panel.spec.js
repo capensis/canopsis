@@ -1,6 +1,8 @@
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
-import { createMockedStoreModules } from '@unit/utils/store';
+import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/store';
+
+import { fakeAlarmDetails } from '@unit/data/alarm';
 
 import { CANOPSIS_EDITION, ENTITY_TYPES, JUNIT_ALARM_CONNECTOR } from '@/constants';
 
@@ -11,7 +13,7 @@ const localVue = createVueInstance();
 const stubs = {
   'more-infos': true,
   'time-line': true,
-  'group-alarms-list': true,
+  'alarms-expand-panel-children': true,
   'service-dependencies': true,
   'entity-gantt': true,
 };
@@ -32,21 +34,60 @@ const snapshotFactory = (options = {}) => mount(AlarmsExpandPanel, {
 
 const selectTabs = wrapper => wrapper.find('v-tabs-stub');
 
-describe('alarms-expand-panel', () => {
+describe('alarms-expand-panel', () => { // TODO: add tests for children, timeline, query
   const infoModule = {
     name: 'info',
     getters: { edition: CANOPSIS_EDITION.core },
   };
+
   const catInfoModule = {
     name: 'info',
     getters: { edition: CANOPSIS_EDITION.cat },
   };
 
-  it('Tab key updated after change tour enabled', async () => {
+  const fetchAlarmDetails = jest.fn();
+  const fetchAlarmsDetailsList = jest.fn();
+  const updateAlarmDetailsQuery = jest.fn();
+  const removeAlarmDetailsQuery = jest.fn();
+
+  const alarmDetailsModule = createMockedStoreModule({
+    name: 'details',
+    getters: {
+      getItem: () => () => fakeAlarmDetails(),
+      getPending: () => () => false,
+      getQuery: () => () => ({ page: 1, limit: 10 }),
+      getQueries: () => () => [
+        { page: 2, limit: 5 },
+        { page: 1, limit: 10 },
+      ],
+    },
+    actions: {
+      fetchItem: fetchAlarmDetails,
+      fetchList: fetchAlarmsDetailsList,
+      updateQuery: updateAlarmDetailsQuery,
+      removeQuery: removeAlarmDetailsQuery,
+    },
+  });
+
+  const alarmModule = {
+    name: 'alarm',
+    modules: {
+      details: alarmDetailsModule,
+    },
+  };
+
+  const store = createMockedStoreModules([
+    alarmModule,
+    infoModule,
+  ]);
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('Tabs key updated after change tour enabled', async () => {
     const wrapper = factory({
-      store: createMockedStoreModules([
-        infoModule,
-      ]),
+      store,
       propsData: {
         alarm: {
           _id: 'alarm-id',
@@ -66,14 +107,14 @@ describe('alarms-expand-panel', () => {
     });
 
     // eslint-disable-next-line no-underscore-dangle
-    const prevKey = selectTabs(wrapper).vm._vnode.key;
+    const prevKey = selectTabs(wrapper).vm.$vnode.key;
 
     await wrapper.setProps({
       isTourEnabled: true,
     });
 
     // eslint-disable-next-line no-underscore-dangle
-    expect(prevKey !== selectTabs(wrapper).vm._vnode.key).toBe(true);
+    expect(prevKey !== selectTabs(wrapper).vm.$vnode.key).toBe(true);
   });
 
   it('Tab key updated after change moreInfoTemplate', async () => {
@@ -83,9 +124,7 @@ describe('alarms-expand-panel', () => {
       },
     };
     const wrapper = factory({
-      store: createMockedStoreModules([
-        infoModule,
-      ]),
+      store,
       propsData: {
         alarm: {
           _id: 'alarm-id',
@@ -99,7 +138,7 @@ describe('alarms-expand-panel', () => {
     });
 
     // eslint-disable-next-line no-underscore-dangle
-    const prevKey = selectTabs(wrapper).vm._vnode.key;
+    const prevKey = selectTabs(wrapper).vm.$vnode.key;
 
     await wrapper.setProps({
       widget: {
@@ -110,14 +149,12 @@ describe('alarms-expand-panel', () => {
     });
 
     // eslint-disable-next-line no-underscore-dangle
-    expect(prevKey !== selectTabs(wrapper).vm._vnode.key).toBe(true);
+    expect(prevKey !== selectTabs(wrapper).vm.$vnode.key).toBe(true);
   });
 
   it('Renders `alarms-expand-panel` with required props', () => {
     const wrapper = snapshotFactory({
-      store: createMockedStoreModules([
-        infoModule,
-      ]),
+      store,
       propsData: {
         alarm: {
           _id: 'alarm-id',
@@ -141,9 +178,7 @@ describe('alarms-expand-panel', () => {
 
   it('Renders `alarms-expand-panel` with custom props', () => {
     const wrapper = snapshotFactory({
-      store: createMockedStoreModules([
-        infoModule,
-      ]),
+      store,
       propsData: {
         alarm: {
           _id: 'alarm-id',
@@ -161,7 +196,8 @@ describe('alarms-expand-panel', () => {
             serviceDependenciesColumns: [],
           },
         },
-        hideGroups: true,
+        hideChildren: true,
+        editing: true,
         isTourEnabled: true,
       },
     });
@@ -171,9 +207,7 @@ describe('alarms-expand-panel', () => {
 
   it('Renders `alarms-expand-panel` with full alarm', () => {
     const wrapper = snapshotFactory({
-      store: createMockedStoreModules([
-        infoModule,
-      ]),
+      store,
       propsData: {
         alarm: {
           _id: 'alarm-id',
@@ -200,6 +234,7 @@ describe('alarms-expand-panel', () => {
   it('Renders `alarms-expand-panel` with gantt', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
+        alarmModule,
         catInfoModule,
       ]),
       propsData: {

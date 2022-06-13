@@ -12,17 +12,6 @@ export const widgetFilterSelectMixin = {
     viewFilters() {
       return this.userPreference.content.viewFilters || [];
     },
-
-    // TODO: remove
-    widgetViewFilters() {
-      const { mainFilter, viewFilters } = this.widget.parameters;
-
-      if (!this.hasAccessToListFilters) {
-        return mainFilter ? [mainFilter] : [];
-      }
-
-      return viewFilters || [];
-    },
   },
   methods: {
     updateFieldsInWidgetPreferences(fields = {}) {
@@ -35,7 +24,6 @@ export const widgetFilterSelectMixin = {
       return Promise.resolve();
     },
 
-    // TODO: remove
     async updateSelectedFilter(mainFilter = null) {
       await this.updateFieldsInWidgetPreferences({ mainFilter, mainFilterUpdatedAt: Date.now() });
       this.updateQueryBySelectedFilter(mainFilter);

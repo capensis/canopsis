@@ -1,4 +1,4 @@
-import { cloneDeep, isFunction } from 'lodash';
+import { cloneDeep, isFunction, omit } from 'lodash';
 import Vuex from 'vuex';
 import AxiosMockAdapter from 'axios-mock-adapter';
 import Faker from 'faker';
@@ -23,8 +23,22 @@ const convertMockedGettersToStore = (getters = {}) => Object
 
     return acc;
   }, {});
+
 /**
  * Create mocked store module.
+ *
+ * @param {Module} module
+ * @returns {{}}
+ */
+export const createMockedStoreModule = module => ({
+  ...omit(module, ['name']),
+
+  namespaced: true,
+  getters: convertMockedGettersToStore(module.getters),
+});
+
+/**
+ * Create mocked whole store by special modules
  *
  * @example
  *  createMockedStoreModules({
@@ -42,13 +56,8 @@ const convertMockedGettersToStore = (getters = {}) => Object
  * @returns {Store}
  */
 export const createMockedStoreModules = modules => new Vuex.Store({
-  modules: modules.reduce((acc, { name, actions = {}, getters, state }) => {
-    acc[name] = {
-      namespaced: true,
-      state,
-      actions,
-      getters: convertMockedGettersToStore(getters),
-    };
+  modules: modules.reduce((acc, module) => {
+    acc[module.name] = createMockedStoreModule(module);
 
     return acc;
   }, {}),

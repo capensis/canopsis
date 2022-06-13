@@ -79,7 +79,7 @@ export default {
 
       const testSuiteFilter = {
         title: this.testSuite.name,
-        filter: { $and: [{ 'entity.impact': this.testSuite._id }] }, // TODO: new API resource
+        filter: { $and: [{ 'entity.impact': this.testSuite._id }] },
       };
 
       widget.parameters = {
@@ -89,7 +89,7 @@ export default {
       };
 
       this.$modals.show({
-        name: MODALS.alarmsList,
+        name: MODALS.alarmsList, // TODO: do it like on service
         config: {
           widget,
           title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.testSuite.name }),
