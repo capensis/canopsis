@@ -23,9 +23,7 @@
             :filters="userPreference.filters",
             :locked-filters="widget.filters",
             :value="mainFilter",
-            :condition="mainFilterCondition",
             :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
-            @update:condition="updateSelectedCondition",
             @input="updateSelectedFilter"
           )
           filters-list-btn(

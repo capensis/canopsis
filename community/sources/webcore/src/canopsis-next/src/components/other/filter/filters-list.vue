@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-alert(
-      :value="!filters.length",
+      :value="!pending && !filters.length",
       type="info"
     ) {{ $t('modals.createFilter.emptyFilters') }}
     filter-tile(
@@ -9,20 +9,18 @@
       :filter="filter",
       :key="filter._id",
       :editable="editable",
-      @edit="showEditFilterModal(filter)",
-      @delete="showDeleteFilterModal(filter)"
+      @edit="$emit('edit', filter)",
+      @delete="$emit('delete', filter)"
     )
     v-btn.ml-0(
       v-if="addable",
       color="primary",
       outline,
-      @click.prevent="showCreateFilterModal"
+      @click.prevent="$emit('add', $event)"
     ) {{ $t('common.addFilter') }}
 </template>
 
 <script>
-import { MODALS } from '@/constants';
-
 import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 
 import FilterTile from './partials/filter-tile.vue';
@@ -31,11 +29,11 @@ export default {
   components: { FilterTile },
   mixins: [entitiesWidgetMixin],
   props: {
-    widgetId: {
-      type: String,
-      required: true,
+    filters: {
+      type: Array,
+      default: () => [],
     },
-    private: {
+    pending: {
       type: Boolean,
       default: false,
     },
@@ -46,95 +44,6 @@ export default {
     editable: {
       type: Boolean,
       default: true,
-    },
-    withAlarm: {
-      type: Boolean,
-      default: false,
-    },
-    withEntity: {
-      type: Boolean,
-      default: false,
-    },
-    withPbehavior: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  computed: {
-    widget() {
-      return this.getWidgetById(this.widgetId);
-    },
-
-    userPreference() {
-      return this.getWidgetById(this.widgetId);
-    },
-
-    filters() {
-      return (this.widget?.filters ?? []).filter(filter => filter.is_private === this.private);
-    },
-  },
-  methods: {
-    showCreateFilterModal() {
-      this.$modals.show({
-        name: MODALS.createFilter,
-        config: {
-          title: this.$t('modals.createFilter.create.title'),
-          withTitle: true,
-          withAlarm: this.withAlarm,
-          withEntity: this.withEntity,
-          withPbehavior: this.withPbehavior,
-          action: async (newFilter) => {
-            await this.createWidgetFilter({
-              data: {
-                ...newFilter,
-
-                widget: this.widgetId,
-                is_private: this.private,
-              },
-            });
-
-            // fetch widget filters
-          },
-        },
-      });
-    },
-
-    showEditFilterModal(filter) {
-      this.$modals.show({
-        name: MODALS.createFilter,
-        config: {
-          filter,
-
-          title: this.$t('modals.createFilter.edit.title'),
-          withTitle: true,
-          withAlarm: this.withAlarm,
-          withEntity: this.withEntity,
-          withPbehavior: this.withPbehavior,
-          action: async (newFilter) => {
-            await this.updateWidgetFilter({
-              id: filter._id,
-              data: newFilter,
-            });
-
-            // fetch widget filters
-          },
-        },
-      });
-    },
-
-    showDeleteFilterModal(filter) {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            await this.removeWidgetFilter({
-              id: filter._id,
-            });
-
-            // fetch widget filters
-          },
-        },
-      });
     },
   },
 };

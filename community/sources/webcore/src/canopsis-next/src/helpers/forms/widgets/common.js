@@ -49,10 +49,6 @@ import {
  */
 
 /**
- * @typedef {'$and' | '$or'} WidgetFilterCondition
- */
-
-/**
  * @typedef {Object} WidgetColumn
  * @property {string} value
  * @property {string} label
@@ -142,7 +138,8 @@ import {
  * @typedef {Object} EmptyWidget
  * @property {WidgetType} type
  * @property {string} title
- * @property {{}} parameters
+ * @property {Object} parameters
+ * @property {WidgetFilter[]} [filters]
  * @property {WidgetGridParameters} grid_parameters
  */
 
@@ -218,6 +215,7 @@ export const getEmptyWidgetByType = type => ({
 export const widgetToForm = (widget = { type: WIDGET_TYPES.alarmList }) => ({
   type: widget.type,
   title: widget.title ?? '',
+  filters: widget.filters ?? [],
   parameters: widgetParametersToForm(widget),
   grid_parameters: widget.grid_parameters
     ? cloneDeep(widget.grid_parameters)

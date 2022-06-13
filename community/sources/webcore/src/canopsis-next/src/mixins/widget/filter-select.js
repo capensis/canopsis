@@ -1,26 +1,12 @@
-import { FILTER_DEFAULT_VALUES } from '@/constants';
-
-import { prepareMainFilterToQueryFilter, getMainFilterAndCondition } from '@/helpers/filter';
+import { getMainFilter } from '@/helpers/filter';
 
 import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 
 export const widgetFilterSelectMixin = {
   mixins: [entitiesWidgetMixin],
   computed: {
-    mainFilterAndCondition() {
-      return getMainFilterAndCondition(this.widget, this.userPreference);
-    },
-
-    mainFilterCondition() {
-      const { condition } = this.mainFilterAndCondition;
-
-      return condition;
-    },
-
     mainFilter() {
-      const { mainFilter } = this.mainFilterAndCondition;
-
-      return mainFilter;
+      return getMainFilter(this.widget, this.userPreference);
     },
 
     viewFilters() {
@@ -49,22 +35,17 @@ export const widgetFilterSelectMixin = {
       return Promise.resolve();
     },
 
-    async updateSelectedCondition(condition = FILTER_DEFAULT_VALUES.condition) {
-      await this.updateFieldsInWidgetPreferences({ mainFilterCondition: condition });
-      this.updateQueryBySelectedFilterAndCondition(this.mainFilter, condition);
-    },
-
     // TODO: remove
     async updateSelectedFilter(mainFilter = null) {
       await this.updateFieldsInWidgetPreferences({ mainFilter, mainFilterUpdatedAt: Date.now() });
-      this.updateQueryBySelectedFilterAndCondition(mainFilter, this.mainFilterCondition);
+      this.updateQueryBySelectedFilter(mainFilter);
     },
 
-    updateQueryBySelectedFilterAndCondition(filter, condition) {
+    updateQueryBySelectedFilter(filter) {
       this.query = {
         ...this.query,
-        ...prepareMainFilterToQueryFilter(filter, condition),
 
+        filter,
         page: 1,
       };
     },

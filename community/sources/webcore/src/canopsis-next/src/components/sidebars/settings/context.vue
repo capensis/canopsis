@@ -29,7 +29,6 @@
               v-model="form.parameters.mainFilter",
               :entities-type="$constants.ENTITIES_TYPES.entity",
               :filters.sync="form.parameters.viewFilters",
-              :condition.sync="form.parameters.mainFilterCondition",
               :addable="hasAccessToAddFilter",
               :editable="hasAccessToEditFilter",
               @input="updateMainFilterUpdatedAt"

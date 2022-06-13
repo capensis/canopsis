@@ -8,12 +8,9 @@
           :value="mainFilter",
           :filters="viewFilters",
           :locked-filters="widgetViewFilters",
-          :condition="mainFilterCondition",
           :label="$t('settings.selectAFilter')",
           :has-access-to-user-filter="hasAccessToUserFilter",
-          @input="updateSelectedFilter",
-          @update:condition="updateSelectedCondition",
-          @update:filters="updateFilters"
+          @input="updateSelectedFilter"
         )
     v-fade-transition(v-if="servicesPending", key="progress", mode="out-in")
       v-progress-linear.progress-linear-absolute--top(height="2", indeterminate)

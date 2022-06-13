@@ -28,6 +28,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    withAlarm: {
+      type: Boolean,
+      default: false,
+    },
+    withEntity: {
+      type: Boolean,
+      default: false,
+    },
+    withPbehavior: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
     showFiltersListModal() {
@@ -38,9 +50,9 @@ export default {
           private: this.private,
           addable: this.addable,
           editable: this.editable,
-          withAlarm: true,
-          withEntity: true,
-          withPbehavior: true,
+          withAlarm: this.withAlarm,
+          withEntity: this.withEntity,
+          withPbehavior: this.withPbehavior,
         },
       });
     },
