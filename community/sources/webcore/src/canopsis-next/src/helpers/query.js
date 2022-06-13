@@ -9,7 +9,7 @@ import {
   ALARMS_OPENED_VALUES, DATETIME_FORMATS,
 } from '@/constants';
 
-import { prepareMainFilterToQueryFilter, getMainFilterAndCondition } from './filter';
+import { getMainFilter } from './filter';
 import {
   prepareRemediationInstructionsFiltersToQuery,
   getRemediationInstructionsFilters,
@@ -291,25 +291,16 @@ export function convertWidgetToQuery(widget) {
 export function prepareQuery(widget, userPreference) {
   const widgetQuery = convertWidgetToQuery(widget);
   const userPreferenceQuery = convertUserPreferenceToQuery(userPreference, widget.type);
+
   let query = {
     ...widgetQuery,
     ...userPreferenceQuery,
   };
 
-  const WIDGET_FILTER_KEYS_MAP = {
-    [WIDGET_TYPES.alarmList]: 'filter',
-    [WIDGET_TYPES.context]: 'mainFilter',
-    [WIDGET_TYPES.serviceWeather]: 'filter',
-  };
+  const filter = getMainFilter(widget, userPreference);
 
-  const filterKey = WIDGET_FILTER_KEYS_MAP[widget.type];
-
-  if (filterKey) {
-    const { mainFilter: activeMainFilter, condition } = getMainFilterAndCondition(widget, userPreference);
-
-    if (activeMainFilter) {
-      query[filterKey] = prepareMainFilterToQueryFilter(activeMainFilter, condition);
-    }
+  if (filter) {
+    query.filter = filter;
   }
 
   const remediationInstructionsFilters = getRemediationInstructionsFilters(widget, userPreference);
