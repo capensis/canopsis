@@ -171,12 +171,12 @@ export default {
       };
 
       if (!isEmpty(meta.filter)) {
-        widgetParameters.viewFilters = [meta.filter]; // TODO: use filter ID
+        widgetParameters.viewFilters = [meta.filter];
         widgetParameters.mainFilter = meta.filter;
       }
 
       this.$modals.show({
-        name: MODALS.alarmsList,
+        name: MODALS.alarmsList, // TODO: do it like on service
         config: {
           widget: {
             ...widget,

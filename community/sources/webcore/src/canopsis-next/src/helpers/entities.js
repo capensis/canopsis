@@ -108,3 +108,21 @@ export const generateDefaultAlarmListWidget = () => ({
  * @returns {string}
  */
 export const generateAlarmDetailsId = (alarmId, widgetId) => `${alarmId}_${widgetId}`;
+
+/**
+ * Get dataPreparer for alarmDetails entity
+ *
+ * @param {string} widgetId
+ * @returns {Function}
+ */
+export const getAlarmDetailsDataPreparer = widgetId => data => (
+  data.map(item => ({
+    ...item,
+
+    /**
+     * We are generating new id based on alarmId and widgetId to avoiding collision with two widgets
+     * on the same view with opened expand panel on the same alarm
+     */
+    _id: generateAlarmDetailsId(item._id, widgetId),
+  }))
+);

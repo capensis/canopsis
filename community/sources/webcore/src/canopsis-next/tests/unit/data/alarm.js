@@ -78,7 +78,7 @@ export const fakeAlarmsResponse = ({ count, limit = 10, page = 1 } = {}) => ({
 export const fakeStaticAlarms = ({
   totalItems = 5,
   timestamp = 0,
-}) => range(totalItems).map(value => ({
+} = {}) => range(totalItems).map(value => ({
   _id: `alarm-${value}`,
   t: timestamp,
   entity: {
@@ -135,3 +135,81 @@ export const fakeStaticAlarms = ({
   infos: {},
   links: {},
 }));
+
+export const fakeAlarmDetails = () => ({ // TODO: finish it
+  children: {
+    data: [fakeStaticAlarms()],
+    meta: {
+      page: 1,
+      page_count: 1,
+      per_page: 10,
+      total_count: 5,
+    },
+  },
+  steps: {
+    data: [
+      {
+        _t: 'stateinc',
+        t: 1626159262,
+        a: 'root',
+        m: 'Idle rule Test all resource',
+        val: 3,
+        initiator: 'system',
+      },
+      {
+        _t: 'statusinc',
+        t: 1626159262,
+        a: 'root',
+        m: 'Idle rule Test all resource',
+        val: 5,
+        initiator: 'system',
+      },
+      {
+        _t: 'pbhenter',
+        t: 1627641985,
+        a: 'system',
+        m: 'Pbehavior Name pbh. Type: Default pause. Reason: Test reason',
+        val: 0,
+        initiator: 'external',
+      },
+      {
+        _t: 'pbhleave',
+        t: 1632723441,
+        a: 'system',
+        m: 'Pbehavior Name pbh. Type: Default pause. Reason: Test reason',
+        val: 0,
+        initiator: 'external',
+      },
+      {
+        _t: 'ack',
+        t: 1632725253,
+        a: 'root',
+        m: '',
+        val: 0,
+        initiator: 'user',
+      },
+      {
+        _t: 'pbhenter',
+        t: 1632977650,
+        a: 'system',
+        m: 'Pbehavior Name. Type: Default maintenance. Reason: Test reason',
+        val: 0,
+        initiator: 'external',
+      },
+      {
+        _t: 'pbhleave',
+        t: 1634553310,
+        a: 'system',
+        m: 'Pbehavior Name. Type: Default maintenance. Reason: Test reason',
+        val: 0,
+        initiator: 'external',
+      },
+    ],
+    meta: {
+      page: 1,
+      page_count: 1,
+      per_page: 10,
+      total_count: 7,
+    },
+  },
+});

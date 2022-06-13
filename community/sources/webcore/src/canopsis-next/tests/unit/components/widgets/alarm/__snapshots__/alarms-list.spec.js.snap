@@ -31,16 +31,20 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
     <div
       class="flex"
     >
-      <filter-selector-stub
-        condition="$and"
-        filters=""
-        hasaccesstoaddfilter="true"
-        itemtext="title"
-        itemvalue="title"
-        label="Select a filter"
-        lockedfilters=""
-        withalarm="true"
-      />
+      <div
+        class="layout row wrap align-center"
+      >
+        <filter-selector-stub
+          disabled="true"
+          filters=""
+          label="Select a filter"
+          lockedfilters=""
+        />
+        <filters-list-btn-stub
+          private="true"
+          widgetid="880c5d0c-3f31-477c-8365-2f90389326cc"
+        />
+      </div>
     </div>
     <div
       class="flex"
@@ -95,10 +99,10 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
     alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     expandable="true"
-    hascolumns="true"
-    hidegroups="true"
+    hidechildren="true"
     istourenabled="true"
     pagination="[object Object]"
+    refreshalarmslist="[Function]"
     selectable="true"
     totalitems="10"
     widget="[object Object]"

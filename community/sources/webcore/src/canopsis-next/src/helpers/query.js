@@ -339,7 +339,13 @@ export const prepareAlarmDetailsQuery = (alarm, widget) => ({
   },
 });
 
-export const convertAlarmsListQueryToRequest = (query) => { // TODO: add doc
+/**
+ * Convert alarms list query to request parameters
+ *
+ * @param {Object} query
+ * @returns {Object}
+ */
+export const convertAlarmsListQueryToRequest = (query) => {
   const result = omit(query, [
     'tstart',
     'tstop',
@@ -378,7 +384,8 @@ export const convertAlarmsListQueryToRequest = (query) => { // TODO: add doc
   }
 
   if (multiSortBy.length) {
-    result.multi_sort = multiSortBy.map(({ sortBy, descending }) => `${sortBy},${(descending ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase()}`);
+    result.multi_sort = multiSortBy
+      .map(({ sortBy, descending }) => `${sortBy},${(descending ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase()}`);
   }
 
   result.limit = limit;
