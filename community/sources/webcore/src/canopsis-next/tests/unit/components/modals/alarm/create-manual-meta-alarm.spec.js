@@ -251,9 +251,7 @@ describe('create-manual-meta-alarm', () => {
     const newData = {
       output: Faker.datatype.string(),
       metaAlarm: {
-        entity: {
-          _id: Faker.datatype.string(),
-        },
+        _id: Faker.datatype.string(),
       },
     };
 
@@ -272,7 +270,7 @@ describe('create-manual-meta-alarm', () => {
       {
         data: [{
           ...manualMetaAlarmEventData,
-          ma_parents: [newData.metaAlarm.entity._id],
+          ma_parents: [newData.metaAlarm._id],
           ma_children: [alarm.entity._id],
           output: newData.output,
           event_type: EVENT_ENTITY_TYPES.manualMetaAlarmUpdate,

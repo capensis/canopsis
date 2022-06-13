@@ -12,7 +12,7 @@
       :total="meta.total_count",
       :limit="meta.per_page",
       :page="meta.page",
-      @input="updateQueryPage"
+      @input="updatePage"
     )
 </template>
 
@@ -29,10 +29,6 @@ export default {
       type: Object,
       required: true,
     },
-    query: {
-      type: Object,
-      default: () => ({}),
-    },
     isHtmlEnabled: {
       type: Boolean,
       default: false,
@@ -48,12 +44,8 @@ export default {
     },
   },
   methods: {
-    updateQueryPage(page) {
-      this.$emit('update:query', {
-        ...this.query,
-
-        page,
-      });
+    updatePage(page) {
+      this.$emit('update:page', page);
     },
   },
 };

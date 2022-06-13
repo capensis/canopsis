@@ -31,8 +31,8 @@
               v-card-text
                 time-line(
                   :steps="steps",
-                  :query.sync="stepsQuery",
-                  :is-html-enabled="isHtmlEnabled"
+                  :is-html-enabled="isHtmlEnabled",
+                  @update:page="updateStepsQueryPage"
                 )
       template(v-if="hasChildren")
         v-tab {{ $t('alarmList.tabs.alarmsChildren') }}
@@ -98,7 +98,6 @@ import uid from '@/helpers/uid';
 import { getStepClass } from '@/helpers/tour';
 import { serviceToServiceDependency } from '@/helpers/treeview/service-dependencies';
 
-import { queryMixin } from '@/mixins/query';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
 
@@ -118,7 +117,6 @@ export default {
     AlarmsExpandPanelChildren,
   },
   mixins: [
-    queryMixin,
     entitiesInfoMixin,
     widgetExpandPanelAlarmDetails,
   ],

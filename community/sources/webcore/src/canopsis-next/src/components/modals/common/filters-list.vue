@@ -129,7 +129,7 @@ export default {
               id: filter._id,
             });
 
-            return this.refreshFilters(); // TODO: check selected filter
+            return this.refreshFilters(); // TODO: check selected filter (discuss with backend team)
           },
         },
       });

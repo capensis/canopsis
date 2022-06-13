@@ -23,19 +23,21 @@
         v-flex(v-if="hasAccessToCategory")
           c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
         v-flex
-          filter-selector(
-            :label="$t('settings.selectAFilter')",
-            :filters="viewFilters",
-            :locked-filters="widgetViewFilters",
-            :value="mainFilter",
-            :has-access-to-edit-filter="hasAccessToEditFilter",
-            :has-access-to-user-filter="hasAccessToUserFilter",
-            :has-access-to-list-filters="hasAccessToListFilters",
-            :entities-type="$constants.ENTITIES_TYPES.entity",
-            @input="updateSelectedFilter",
-            @update:condition="updateSelectedCondition",
-            @update:filters="updateFilters"
-          )
+          v-layout(row, wrap, align-center)
+            filter-selector(
+              :label="$t('settings.selectAFilter')",
+              :filters="userPreference.filters",
+              :locked-filters="widget.filters",
+              :value="mainFilter",
+              :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
+              @input="updateSelectedFilter"
+            )
+            filters-list-btn(
+              :widget-id="widget._id",
+              :addable="hasAccessToAddFilter",
+              :editable="hasAccessToEditFilter",
+              private
+            )
         v-flex
           v-checkbox(
             :input-value="query.no_events",
@@ -104,7 +106,8 @@ import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-
 import { permissionsWidgetsContextFilters } from '@/mixins/permissions/widgets/context/filters';
 import { permissionsWidgetsContextCategory } from '@/mixins/permissions/widgets/context/category';
 
-import FilterSelector from '@/components/forms/filters/filter-selector.vue';
+import FilterSelector from '@/components/other/filter/filter-selector.vue';
+import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
 
 import EntityColumnCell from './columns-formatting/entity-column-cell.vue';
 import EntitiesListExpandPanel from './partials/entities-list-expand-panel.vue';
@@ -115,6 +118,7 @@ import MassActionsPanel from './actions/mass-actions-panel.vue';
 export default {
   components: {
     FilterSelector,
+    FiltersListBtn,
     EntitiesListExpandPanel,
     ContextFab,
     EntityColumnCell,
@@ -211,20 +215,11 @@ export default {
       };
     },
 
-    updateQueryBySelectedFilter(filter) {
-      this.query = {
-        ...this.query,
-
-        page: 1,
-        mainFilter: filter,
-      };
-    },
-
-    getQuery() {
+    getQuery() { // TODO: finish it
       const query = omit(this.query, [
         'sortKey',
         'sortDir',
-        'mainFilter',
+        'filter',
         'searchFilter',
         'typesFilter',
       ]);
@@ -234,7 +229,7 @@ export default {
         query.sort_by = this.query.sortKey;
       }
 
-      const filters = ['mainFilter', 'typesFilter'].reduce((acc, filterKey) => {
+      const filters = ['filter', 'typesFilter'].reduce((acc, filterKey) => {
         const queryFilter = isString(this.query[filterKey]) ? JSON.parse(this.query[filterKey]) : this.query[filterKey];
 
         if (queryFilter) {

@@ -20,16 +20,10 @@
 </template>
 
 <script>
-import { formMixin } from '@/mixins/form';
-
-import FiltersListForm from '@/components/forms/filters/filters-list-form.vue';
-
 export default {
-  components: { FiltersListForm },
-  mixins: [formMixin],
   props: {
     value: {
-      type: [String, Array],
+      type: String,
       default: () => null,
     },
     filters: {

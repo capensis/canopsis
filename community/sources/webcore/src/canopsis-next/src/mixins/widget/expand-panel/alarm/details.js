@@ -64,4 +64,13 @@ export const widgetExpandPanelAlarmDetails = {
       },
     },
   },
+  methods: {
+    updateStepsQueryPage(page) {
+      this.stepsQuery = {
+        ...this.stepsQuery,
+
+        page,
+      };
+    },
+  },
 };
