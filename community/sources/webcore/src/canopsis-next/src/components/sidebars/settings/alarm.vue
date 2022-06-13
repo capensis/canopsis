@@ -46,10 +46,9 @@
             field-filters(
               v-model="form.parameters.mainFilter",
               :widget-id="widget._id",
-              :filters="form.parameters.viewFilters",
+              :filters="form.filters",
               :addable="hasAccessToAddFilter",
               :editable="hasAccessToEditFilter",
-              :condition.sync="form.parameters.mainFilterCondition",
               @input="updateMainFilterUpdatedAt"
             )
             v-divider

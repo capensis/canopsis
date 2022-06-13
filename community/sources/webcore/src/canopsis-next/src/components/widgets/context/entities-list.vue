@@ -28,7 +28,6 @@
             :filters="viewFilters",
             :locked-filters="widgetViewFilters",
             :value="mainFilter",
-            :condition="mainFilterCondition",
             :has-access-to-edit-filter="hasAccessToEditFilter",
             :has-access-to-user-filter="hasAccessToUserFilter",
             :has-access-to-list-filters="hasAccessToListFilters",
@@ -94,8 +93,6 @@
 import { omit, isString, isObject } from 'lodash';
 
 import { USERS_PERMISSIONS } from '@/constants';
-
-import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
@@ -214,12 +211,12 @@ export default {
       };
     },
 
-    updateQueryBySelectedFilterAndCondition(filter, condition) {
+    updateQueryBySelectedFilter(filter) {
       this.query = {
         ...this.query,
 
         page: 1,
-        mainFilter: prepareMainFilterToQueryFilter(filter, condition),
+        mainFilter: filter,
       };
     },
 
