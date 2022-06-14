@@ -6,6 +6,7 @@ const localVue = createVueInstance();
 
 const snapshotFactory = (options = {}) => mount(ExtraDetailsParents, {
   localVue,
+  attachTo: document.body,
 
   ...options,
 });
