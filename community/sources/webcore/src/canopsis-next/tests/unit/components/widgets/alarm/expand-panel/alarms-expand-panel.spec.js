@@ -32,7 +32,7 @@ const snapshotFactory = (options = {}) => mount(AlarmsExpandPanel, {
   ...options,
 });
 
-const selectTabs = wrapper => wrapper.find('v-tabs-stub');
+const selectTabs = wrapper => wrapper.vm.$children[0];
 
 describe('alarms-expand-panel', () => { // TODO: add tests for children, timeline, query
   const infoModule = {
@@ -106,15 +106,13 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
       },
     });
 
-    // eslint-disable-next-line no-underscore-dangle
-    const prevKey = selectTabs(wrapper).vm.$vnode.key;
+    const prevKey = selectTabs(wrapper).$vnode.key;
 
     await wrapper.setProps({
       isTourEnabled: true,
     });
 
-    // eslint-disable-next-line no-underscore-dangle
-    expect(prevKey !== selectTabs(wrapper).vm.$vnode.key).toBe(true);
+    expect(prevKey !== selectTabs(wrapper).$vnode.key).toBe(true);
   });
 
   it('Tab key updated after change moreInfoTemplate', async () => {
@@ -137,8 +135,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
       },
     });
 
-    // eslint-disable-next-line no-underscore-dangle
-    const prevKey = selectTabs(wrapper).vm.$vnode.key;
+    const prevKey = selectTabs(wrapper).$vnode.key;
 
     await wrapper.setProps({
       widget: {
@@ -148,8 +145,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
       },
     });
 
-    // eslint-disable-next-line no-underscore-dangle
-    expect(prevKey !== selectTabs(wrapper).vm.$vnode.key).toBe(true);
+    expect(prevKey !== selectTabs(wrapper).$vnode.key).toBe(true);
   });
 
   it('Renders `alarms-expand-panel` with required props', () => {
