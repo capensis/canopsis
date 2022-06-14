@@ -42,6 +42,17 @@ func NewStore(
 }
 
 func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, error) {
+	now := types.NewCpsTime(time.Now().Unix())
+	model := s.transformRequestToDocument(request.EditRequest)
+
+	if request.ID == "" {
+		request.ID = utils.NewID()
+	}
+
+	model.ID = request.ID
+	model.Created = now
+	model.Updated = now
+
 	id := request.ID
 	if id == "" {
 		id = utils.NewID()
@@ -50,20 +61,8 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 	var res *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		res = nil
-		now := types.NewCpsTime(time.Now().Unix())
 
-		_, err := s.dbCollection.InsertOne(ctx, resolverule.Rule{
-			ID:                  id,
-			Name:                request.Name,
-			Description:         request.Description,
-			Duration:            request.Duration,
-			AlarmPatternFields:  request.AlarmPatternFieldsRequest.ToModel(),
-			EntityPatternFields: request.EntityPatternFieldsRequest.ToModel(),
-			Priority:            request.Priority,
-			Author:              request.Author,
-			Created:             now,
-			Updated:             now,
-		})
+		_, err := s.dbCollection.InsertOne(ctx, model)
 		if err != nil {
 			return err
 		}
@@ -144,8 +143,8 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 		return nil, ErrDefaultRule
 	}
 
-	model := resolverule.Rule{}
-	err := s.dbCollection.FindOne(ctx, bson.M{"_id": request.ID}).Decode(&model)
+	originalModel := resolverule.Rule{}
+	err := s.dbCollection.FindOne(ctx, bson.M{"_id": request.ID}).Decode(&originalModel)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, nil
@@ -153,18 +152,11 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 		return nil, err
 	}
 
-	update := bson.M{"$set": resolverule.Rule{
-		ID:                  request.ID,
-		Name:                request.Name,
-		Description:         request.Description,
-		Duration:            request.Duration,
-		AlarmPatternFields:  request.AlarmPatternFieldsRequest.ToModel(),
-		EntityPatternFields: request.EntityPatternFieldsRequest.ToModel(),
-		Priority:            request.Priority,
-		Author:              request.Author,
-		Created:             model.Created,
-		Updated:             types.NewCpsTime(time.Now().Unix()),
-	}}
+	now := types.CpsTime{Time: time.Now()}
+	model := s.transformRequestToDocument(request.EditRequest)
+	model.Updated = now
+
+	update := bson.M{"$set": model}
 
 	unset := bson.M{}
 	if len(request.AlarmPattern) > 0 {
@@ -191,14 +183,14 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 			return err
 		}
 
-		if model.Priority != request.Priority {
+		if originalModel.Priority != request.Priority {
 			err := s.updateFollowingPriorities(ctx, request.ID, request.Priority)
 			if err != nil {
 				return err
 			}
 		}
 
-		res, err = s.GetById(ctx, model.ID)
+		res, err = s.GetById(ctx, originalModel.ID)
 		return err
 	})
 	if err != nil {
@@ -254,5 +246,22 @@ func (s *store) authorPipeline() []bson.M {
 			"as":           "author",
 		}},
 		{"$unwind": bson.M{"path": "$author", "preserveNullAndEmptyArrays": true}},
+	}
+}
+
+func (s *store) transformRequestToDocument(r EditRequest) resolverule.Rule {
+	return resolverule.Rule{
+		Name:        r.Name,
+		Description: r.Description,
+		Duration:    r.Duration,
+		AlarmPatternFields: r.AlarmPatternFieldsRequest.ToModelWithoutFields(
+			common.GetForbiddenFieldsInAlarmPattern(mongo.ResolveRuleMongoCollection),
+			common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.ResolveRuleMongoCollection),
+		),
+		EntityPatternFields: r.EntityPatternFieldsRequest.ToModelWithoutFields(
+			common.GetForbiddenFieldsInEntityPattern(mongo.ResolveRuleMongoCollection),
+		),
+		Priority: r.Priority,
+		Author:   r.Author,
 	}
 }

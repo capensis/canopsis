@@ -10,7 +10,7 @@ import (
 const DefaultRule = "default-rule"
 
 type Rule struct {
-	ID                string                       `bson:"_id"`
+	ID                string                       `bson:"_id,omitempty"`
 	Name              string                       `bson:"name"`
 	Description       string                       `bson:"description"`
 	Duration          types.DurationWithUnit       `bson:"duration"`
@@ -18,8 +18,8 @@ type Rule struct {
 	OldEntityPatterns oldpattern.EntityPatternList `bson:"old_entity_patterns,omitempty"`
 	Priority          int                          `bson:"priority"`
 	Author            string                       `bson:"author"`
-	Created           types.CpsTime                `bson:"created"`
-	Updated           types.CpsTime                `bson:"updated"`
+	Created           types.CpsTime                `bson:"created,omitempty"`
+	Updated           types.CpsTime                `bson:"updated,omitempty"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	savedpattern.AlarmPatternFields  `bson:",inline"`

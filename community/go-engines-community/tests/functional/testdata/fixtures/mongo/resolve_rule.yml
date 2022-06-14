@@ -252,6 +252,48 @@ resolve_rule:
     priority: 5
     updated: 1619083733
   resolve_rule_13:
+    _id: test-resolve-rule-to-update-9
+    alarm_pattern:
+      - - field: v.connector
+          cond:
+            type: eq
+            value: test-resolve-rule-to-update-9-pattern
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resolve-rule-to-update-9-resource
+    author: root
+    created: 1619083733
+    description: test-resolve-rule-to-update-9-description
+    duration:
+      unit: s
+      value: 10
+    name: test-resolve-rule-to-update-9-name
+    priority: 5
+    updated: 1619083733
+  resolve_rule_14:
+    _id: test-resolve-rule-to-update-10
+    alarm_pattern:
+      - - field: v.connector
+          cond:
+            type: eq
+            value: test-resolve-rule-to-update-10-pattern
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resolve-rule-to-update-10-resource
+    author: root
+    created: 1619083733
+    description: test-resolve-rule-to-update-10-description
+    duration:
+      unit: s
+      value: 10
+    name: test-resolve-rule-to-update-10-name
+    priority: 5
+    updated: 1619083733    
+  resolve_rule_15:
     _id: test-resolve-rule-backward-compatibility-to-update
     old_alarm_patterns:
       - v:
@@ -268,7 +310,7 @@ resolve_rule:
     name: test-resolve-rule-backward-compatibility-to-update-name
     priority: 5
     updated: 1619083733
-  resolve_rule_14:
+  resolve_rule_16:
     _id: test-resolve-rule-backward-compatibility-1
     old_alarm_patterns:
       - v:
