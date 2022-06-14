@@ -8,14 +8,19 @@ Feature: update alarm on action
     {
       "name": "test-scenario-action-axe-1-name",
       "enabled": true,
-      "priority": 190,
       "triggers": ["resolve"],
       "actions": [
         {
-          "entity_patterns": [
-            {
-              "name": "test-resource-action-axe-1"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-axe-1"
+                }
+              }
+            ]
           ],
           "type": "webhook",
           "parameters": {
@@ -27,7 +32,7 @@ Feature: update alarm on action
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"{{ `{{ .Entity.ID }}` }}\",\"enabled\":true,\"priority\":191,\"triggers\":[\"create\"],\"actions\":[{\"alarm_patterns\":[{\"_id\":\"test-scenario-action-axe-1-alarm\"}],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\":\"{{ `{{ .Entity.ID }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-axe-1-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             }
           },
           "drop_scenario_if_not_matched": false,
@@ -102,14 +107,19 @@ Feature: update alarm on action
     {
       "name": "test-scenario-action-axe-2-name",
       "enabled": true,
-      "priority": 192,
       "triggers": ["resolve"],
       "actions": [
         {
-          "entity_patterns": [
-            {
-              "name": "test-resource-action-axe-2"
-            }
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-axe-2"
+                }
+              }
+            ]
           ],
           "type": "ack",
           "parameters": {
@@ -164,7 +174,7 @@ Feature: update alarm on action
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter={"$and":[{"v.resource":"test-resource-action-axe-2"}]}&with_steps=true
+    When I do GET /api/v4/alarms?search=test-resource-action-axe-2
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -172,7 +182,41 @@ Feature: update alarm on action
       "data": [
         {
           "v": {
-            "steps": [
+            "connector": "test-connector-action-axe-2",
+            "connector_name": "test-connector-name-action-axe-2",
+            "component": "test-component-action-axe-2",
+            "resource": "test-resource-action-axe-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
               {
                 "_t": "stateinc",
                 "val": 2
@@ -190,18 +234,14 @@ Feature: update alarm on action
                 "val": 0
               }
             ],
-            "connector": "test-connector-action-axe-2",
-            "connector_name": "test-connector-name-action-axe-2",
-            "component": "test-component-action-axe-2",
-            "resource": "test-resource-action-axe-2"
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
-    }
+    ]
     """
