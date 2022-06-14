@@ -3,13 +3,14 @@ package pbehavior
 import (
 	"context"
 	"errors"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
-	"github.com/teambition/rrule-go"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorexception"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
+	"github.com/teambition/rrule-go"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
@@ -61,10 +62,13 @@ func (v *Validator) ValidateUpdateRequest(ctx context.Context, sl validator.Stru
 func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.StructLevel) {
 	r := sl.Current().Interface().(EditRequest)
 
-	if r.RRule != "" {
-		if !v.checkRrule(r.RRule) {
-			sl.ReportError(r.RRule, "RRule", "RRule", "rrule", "")
-		}
+	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 &&
+		!r.EntityPattern.Validate(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)) {
+		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
+	}
+
+	if r.RRule != "" && !v.checkRrule(r.RRule) {
+		sl.ReportError(r.RRule, "RRule", "RRule", "rrule", "")
 	}
 
 	var foundType *pbehavior.Type
@@ -114,20 +118,18 @@ func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.Struct
 func (v *Validator) ValidatePatchRequest(ctx context.Context, sl validator.StructLevel) {
 	r := sl.Current().Interface().(PatchRequest)
 
-	if r.RRule != nil && *r.RRule != "" {
-		if !v.checkRrule(*r.RRule) {
-			sl.ReportError(r.RRule, "RRule", "RRule", "rrule", "")
-		}
+	if r.RRule != nil && *r.RRule != "" && !v.checkRrule(*r.RRule) {
+		sl.ReportError(r.RRule, "RRule", "RRule", "rrule", "")
 	}
 
 	if r.CorporateEntityPattern != nil && *r.CorporateEntityPattern == "" {
 		sl.ReportError(r.CorporateEntityPattern, "CorporateEntityPattern", "CorporateEntityPattern", "required", "")
 	}
 
-	if r.EntityPattern != nil {
+	if r.CorporateEntityPattern == nil && r.EntityPattern != nil {
 		if len(r.EntityPattern) == 0 {
 			sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "required", "")
-		} else if !r.EntityPattern.Validate() {
+		} else if !r.EntityPattern.Validate(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)) {
 			sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
 		}
 	}

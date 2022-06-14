@@ -7,7 +7,6 @@ import (
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"math"
-	"strings"
 	"sync"
 )
 
@@ -100,30 +99,18 @@ func (m *manager) UpdateService(ctx context.Context, serviceID string) (bool, []
 		return true, nil, nil
 	}
 
-	var negativeQuery interface{}
-	if len(data.EntityPattern) > 0 {
-		negativeQuery, err = data.EntityPattern.ToNegativeMongoQuery("")
-		if err != nil {
-			m.logger.Err(err).Str("service", data.ID).Msgf("service has invalid pattern")
-		}
-	} else if data.OldEntityPatterns.IsSet() && data.OldEntityPatterns.IsValid() {
-		negativeQuery = data.OldEntityPatterns.AsNegativeMongoDriverQuery()
+	query, negativeQuery, err := getServiceQueries(*data)
+	if err != nil {
+		m.logger.Err(err).Str("service", data.ID).Msgf("service has invalid pattern")
 	}
+	// Do not ignore empty negativeQuery to remove service from context graph.
 	removedIDs, err := m.entityAdapter.RemoveImpactByQuery(ctx, negativeQuery, data.ID)
 	if err != nil {
 		return false, nil, err
 	}
 
-	var query interface{}
-	if len(data.EntityPattern) > 0 {
-		query, err = data.EntityPattern.ToMongoQuery("")
-		if err != nil {
-			m.logger.Err(err).Str("service", data.ID).Msgf("service has invalid pattern")
-		}
-	} else if data.OldEntityPatterns.IsSet() && data.OldEntityPatterns.IsValid() {
-		query = data.OldEntityPatterns.AsMongoDriverQuery()
-	}
 	var addedIDs []string
+	// Ignore empty query to not add service to context graph.
 	if query != nil {
 		addedIDs, err = m.entityAdapter.AddImpactByQuery(ctx, query, data.ID)
 		if err != nil {
@@ -161,12 +148,8 @@ func (m *manager) HasEntityServiceByComponentInfos(ctx context.Context) (bool, e
 
 	for _, s := range services {
 		if len(s.EntityPattern) > 0 {
-			for _, group := range s.EntityPattern {
-				for _, condition := range group {
-					if strings.HasPrefix(condition.Field, "component_infos") {
-						return true, nil
-					}
-				}
+			if s.EntityPattern.HasComponentInfosField() {
+				return true, nil
 			}
 		} else if s.OldEntityPatterns.IsSet() && s.OldEntityPatterns.IsValid() {
 			for _, p := range s.OldEntityPatterns.Patterns {
@@ -366,4 +349,26 @@ func (m *manager) removeService(ctx context.Context, serviceID string) ([]string
 	}
 
 	return removedFromIDs, nil
+}
+
+func getServiceQueries(data ServiceData) (interface{}, interface{}, error) {
+	var query, negativeQuery interface{}
+	var err error
+
+	if len(data.EntityPattern) > 0 {
+		query, err = data.EntityPattern.ToMongoQuery("")
+		if err != nil {
+			return nil, nil, err
+		}
+
+		negativeQuery, err = data.EntityPattern.ToNegativeMongoQuery("")
+		if err != nil {
+			return nil, nil, err
+		}
+	} else if data.OldEntityPatterns.IsSet() && data.OldEntityPatterns.IsValid() {
+		query = data.OldEntityPatterns.AsMongoDriverQuery()
+		negativeQuery = data.OldEntityPatterns.AsNegativeMongoDriverQuery()
+	}
+
+	return query, negativeQuery, nil
 }

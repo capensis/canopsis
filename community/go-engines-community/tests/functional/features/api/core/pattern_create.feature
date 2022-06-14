@@ -36,6 +36,78 @@ Feature: Create a saved pattern
               "value": false
             }
           }
+        ],
+        [
+          {
+            "field": "v.last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.last_update_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.resolved",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          }
         ]
       ]
     }
@@ -75,6 +147,78 @@ Feature: Create a saved pattern
             "cond": {
               "type": "eq",
               "value": false
+            }
+          }
+        ],
+        [
+          {
+            "field": "v.last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.last_update_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.resolved",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
             }
           }
         ]
@@ -117,6 +261,78 @@ Feature: Create a saved pattern
             "cond": {
               "type": "eq",
               "value": false
+            }
+          }
+        ],
+        [
+          {
+            "field": "v.last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.last_update_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.resolved",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          },
+          {
+            "field": "v.creation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          },
+          {
+            "field": "v.ack.t",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
             }
           }
         ]
@@ -140,6 +356,32 @@ Feature: Create a saved pattern
               "type": "eq",
               "value": "test-pattern-to-create-2-pattern"
             }
+          },
+          {
+            "field": "last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ],
+        [
+          {
+            "field": "impact",
+            "cond": {
+              "type": "has_one_of",
+              "value": ["test-pattern-to-create-2-pattern"]
+            }
+          },
+          {
+            "field": "depends",
+            "cond": {
+              "type": "has_one_of",
+              "value": ["test-pattern-to-create-2-pattern"]
+            }
           }
         ]
       ]
@@ -163,6 +405,32 @@ Feature: Create a saved pattern
             "cond": {
               "type": "eq",
               "value": "test-pattern-to-create-2-pattern"
+            }
+          },
+          {
+            "field": "last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ],
+        [
+          {
+            "field": "impact",
+            "cond": {
+              "type": "has_one_of",
+              "value": ["test-pattern-to-create-2-pattern"]
+            }
+          },
+          {
+            "field": "depends",
+            "cond": {
+              "type": "has_one_of",
+              "value": ["test-pattern-to-create-2-pattern"]
             }
           }
         ]
@@ -188,6 +456,32 @@ Feature: Create a saved pattern
             "cond": {
               "type": "eq",
               "value": "test-pattern-to-create-2-pattern"
+            }
+          },
+          {
+            "field": "last_event_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
+          }
+        ],
+        [
+          {
+            "field": "impact",
+            "cond": {
+              "type": "has_one_of",
+              "value": ["test-pattern-to-create-2-pattern"]
+            }
+          },
+          {
+            "field": "depends",
+            "cond": {
+              "type": "has_one_of",
+              "value": ["test-pattern-to-create-2-pattern"]
             }
           }
         ]
